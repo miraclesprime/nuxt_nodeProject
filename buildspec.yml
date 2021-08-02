@@ -1,0 +1,24 @@
+# Don't change this version, this version is buildspec.yml file's version
+​
+version: 0.2
+​
+phases:
+  pre_build:
+    commands:
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:latest}
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Installign BIB Shared components library
+      - echo Installign dependencies...
+      - cp -r ../../github.com/Biztree/bib-shared .
+      - echo installing dependencies  
+      - npm install
+      - echo Building the Front End distro...
+      - npm run build
+artifacts:
+  base-directory: 'dist'
+​
+  files:
+    - '**/*'
