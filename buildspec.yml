@@ -1,7 +1,8 @@
 # Don't change this version, this version is buildspec.yml file's version
-​version: 0.2
 
-​phases:
+version: 0.2
+
+phases:
   pre_build:
     commands:
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
@@ -12,12 +13,17 @@
       - echo Installign BIB Shared components library
       - echo Installign dependencies...
       - cp -r ../../github.com/Biztree/bib-shared .
+      - echo copying environment file
+      - aws s3 cp ${STAGE_ENV_FILE_PATH} .env
       - echo installing dependencies  
       - npm install
       - echo Building the Front End distro...
-      - npm run build
-
+      - npm run build 
+  post_build:
+    commands:
+      - echo Build completed on `date`
 artifacts:
-  base-directory:'dist'
-​  files:
-    - '**/*'
+  base-directory: 'dist'
+
+  files:
+    - '**/*' 
