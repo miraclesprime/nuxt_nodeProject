@@ -1,8 +1,7 @@
 # Don't change this version, this version is buildspec.yml file's version
-​
-version: 0.2
-​
-phases:
+​version: 0.2
+
+​phases:
   pre_build:
     commands:
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
@@ -17,8 +16,8 @@ phases:
       - npm install
       - echo Building the Front End distro...
       - npm run build
+
 artifacts:
-  base-directory: 'dist'
-​
-  files:
+  base-directory:'dist'
+​  files:
     - '**/*'
