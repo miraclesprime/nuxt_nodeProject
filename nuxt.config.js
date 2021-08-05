@@ -43,7 +43,11 @@ export default {
     middleware: ['auth']
   },
   axios:{
-    baseURL: 'http://bib-p-Publi-131T2CTIVTR09-1931617786.us-east-1.elb.amazonaws.com'
+    proxy: true,
+    baseURL: 'http://api.proj-mgmt.biztree.com/auth'
+  },
+  proxy: {
+    '/api/': { target: 'http://localhost:3000', pathRewrite: {'^/api/': ''} }
   },
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
@@ -56,7 +60,8 @@ export default {
       local: { 
         endpoints:{
           login: { url: '/login', method: 'POST', propertyName: 'token'},
-          logout: { url: '/logout', method: 'DELETE', propertyName: 'token'}
+          logout: { url: '/logout', method: 'DELETE', propertyName: 'token'},
+          tokenType: ''
         }
        }
     }

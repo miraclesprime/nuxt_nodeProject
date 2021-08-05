@@ -6,17 +6,12 @@
     <div class="pt-2">
       <bib-tabs :tabs="tabs" @change="changeTab" :value="activeTab"></bib-tabs>
     </div>
-    <div >
-        <bib-form-group label="Email *">
-            <template v-slot:input>
-            <bib-input></bib-input>
-            </template>
-        </bib-form-group>
-    </div>
+   
   </div>
 </template>
 <script>
 export default {
+    auth: false,
   methods: {
     changeTab(value) {
       this.activeTab = value;

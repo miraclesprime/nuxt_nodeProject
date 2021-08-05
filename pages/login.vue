@@ -7,15 +7,15 @@
       <bib-tabs :tabs="tabs" @change="changeTab" :value="activeTab"></bib-tabs>
     </div>
      <div class="wrapper__form" v-if="activeTab == 'Sign in'">
-        <bib-form-group label="Email *">
+        <bib-form-group required label="Email ">
             <template v-slot:input>
-                <bib-input @change="(event) => { userInfo.email = event.target.value }" placeholder="Enter email..."></bib-input>
+                <bib-input :value="userInfo.email" @change="(event) => { userInfo.email = event.target.value }" placeholder="Enter email..."></bib-input>
             </template>
         </bib-form-group>
 
-        <bib-form-group class="pt-1" label="Password *">
+        <bib-form-group required class="pt-1" label="Password ">
             <template v-slot:input>
-                <bib-input @change="(event) => { userInfo.password = event.target.value }" type="password" placeholder="Enter password..."></bib-input>
+                <bib-input :value="userInfo.password" @change="(event) => { userInfo.password = event.target.value }" type="password" placeholder="*********"></bib-input>
             </template>
         </bib-form-group>
         <div class="d-flex justify-end">
@@ -49,7 +49,7 @@ export default {
   data() {
     return {
       activeTab: "Sign in",
-      userInfo: {email: "", password: ""},
+      userInfo: {email: "kevin-biz@biztree.com", password: "password123"},
       tabs: [
         "Register",
         "Sign in"
