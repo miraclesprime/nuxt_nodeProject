@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <div class="d-flex justify-center pt-1">
-      <h3 class="text-primary">Business in a Box</h3>
+      <img src="/img/logo_vertical.png" class="wrapper__logo">
     </div>
     <div class="pt-2">
       <bib-tabs :tabs="tabs" @change="changeTab" :value="activeTab"></bib-tabs>
@@ -40,7 +40,7 @@ export default {
     async loginWith(){
         try {
         let response = await this.$auth.loginWith('local', { data: this.userInfo })
-            console.log(response)
+            // console.log(response)
         } catch (err) {
             console.log(err)
         }
@@ -64,7 +64,9 @@ export default {
   margin: 6.5rem auto;
   padding: 1.5rem;
   border: 1px solid $gray4;
-
+  &__logo{
+      width: 11rem;
+  }
   &__form{
       border-top: 1px solid $gray4;
       padding-top: 1.5rem;

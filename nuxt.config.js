@@ -29,6 +29,7 @@ export default {
   modules: [
     '@nuxtjs/axios',
     '@nuxtjs/auth',
+    '@nuxtjs/proxy',
     '@nuxtjs/style-resources'
   ],
   styleResources: {
@@ -43,11 +44,10 @@ export default {
     middleware: ['auth']
   },
   axios:{
-    proxy: true,
     baseURL: 'http://api.proj-mgmt.biztree.com/auth'
   },
   proxy: {
-    '/api/': { target: 'http://localhost:3000', pathRewrite: {'^/api/': ''} }
+    '/auth/': { target: 'http://api.proj-mgmt.biztree.com', pathRewrite: {'^/auth/': ''}}
   },
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
@@ -61,7 +61,6 @@ export default {
         endpoints:{
           login: { url: '/login', method: 'POST', propertyName: 'token'},
           logout: { url: '/logout', method: 'DELETE', propertyName: 'token'},
-          tokenType: ''
         }
        }
     }
