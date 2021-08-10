@@ -44,10 +44,7 @@ export default {
     middleware: ['auth']
   },
   axios:{
-    baseURL: 'http://api.proj-mgmt.biztree.com/auth'
-  },
-  proxy: {
-    '/auth/': { target: 'http://api.proj-mgmt.biztree.com', pathRewrite: {'^/auth/': ''}}
+    baseURL: process.env.API_HOST_URL + '/auth'
   },
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
@@ -61,6 +58,7 @@ export default {
         endpoints:{
           login: { url: '/login', method: 'POST', propertyName: 'token'},
           logout: { url: '/logout', method: 'DELETE', propertyName: 'token'},
+
         }
        }
     }

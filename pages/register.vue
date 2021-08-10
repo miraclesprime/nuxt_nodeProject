@@ -114,6 +114,9 @@ export default {
     a:not(.button){
         color: $gray6;
     }
+    small{
+        font-size: .79rem;
+    }
   }
 }
 </style>
