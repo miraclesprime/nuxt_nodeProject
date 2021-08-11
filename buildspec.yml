@@ -18,6 +18,7 @@ phases:
       - echo installing dependencies  
       - npm install
       - echo Building the Front End distro...
+      - npm run dev
       - npm run build 
   post_build:
     commands:
