@@ -18,12 +18,12 @@ phases:
       - echo installing dependencies  
       - npm install
       - echo Building the Front End distro...
-      - npm run build 
+      - npm run build
   post_build:
     commands:
       - echo Build completed on `date`
 artifacts:
-  base-directory: 'dist'
+  base-directory: '.nuxt'
 
   files:
     - '**/*' 
