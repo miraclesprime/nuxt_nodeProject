@@ -23,6 +23,10 @@ export default {
   components: [{ path: '~/components/', pathPrefix: false }, { path: '~/../bib-shared/components/', pathPrefix: false }],
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
+    '@nuxtjs/axios',
+    '@nuxtjs/auth',
+    '@nuxtjs/proxy',
+    '@nuxtjs/style-resources'
   ],
 
   // Modules (https://go.nuxtjs.dev/config-modules)
