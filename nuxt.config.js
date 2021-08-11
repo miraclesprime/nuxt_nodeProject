@@ -18,7 +18,7 @@ export default {
     '~/assets/global.scss'
   ],
   /// Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
-  // plugins: ['~/../bib-shared/js/plugins.js'],
+  plugins: ['~/plugins/vuelidate'],
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: [{ path: '~/components/', pathPrefix: false }, { path: '~/../bib-shared/components/', pathPrefix: false }],
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
@@ -58,7 +58,7 @@ export default {
         endpoints:{
           login: { url: '/login', method: 'POST', propertyName: 'token'},
           logout: { url: '/logout', method: 'DELETE', propertyName: 'token'},
-          user:{ url: '/me', method: 'GET', propertyName: 'token'}
+          user:{ url: '/me', method: 'GET', propertyName: 'data'}
         }
        }
     }

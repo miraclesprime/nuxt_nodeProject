@@ -9,7 +9,7 @@
      <div class="wrapper__form" v-if="activeTab == 'Sign in'">
         <bib-form-group required label="Email ">
             <template v-slot:input>
-                <bib-input :value="userInfo.email" @change="(event) => { userInfo.email = event.target.value }" placeholder="Enter email..."></bib-input>
+                <bib-input :value="userInfo.email" @change="setEmail" placeholder="Enter email..."></bib-input>
             </template>
         </bib-form-group>
 
@@ -29,6 +29,8 @@
   </div>
 </template>
 <script>
+import { required, minLength, between } from 'vuelidate/lib/validators'
+
 export default {
   methods: {
     changeTab(value) {
@@ -37,13 +39,29 @@ export default {
          window.location.href = '/register';
       }
     },
+    setEmail(event) {
+      this.userInfo.email = event.target.value
+      this.$v.email.$touch()
+
+      if (this.$v.$invalid) {
+        this.submitStatus = 'ERROR'
+      } else {
+        // do your submit logic here
+        this.submitStatus = 'PENDING'
+        setTimeout(() => {
+          this.submitStatus = 'OK'
+        }, 500)
+      }
+      console.log(this.submitStatus)
+    },
     async loginWith(){
         try {
         let response = await this.$auth.loginWith('local', { data: this.userInfo })
-        console.log(response.log)
         } catch (err) {
             console.log(err)
         }
+
+        console.log(this.$auth.loggedIn)
     }
   },
   data() {
@@ -56,6 +74,11 @@ export default {
       ],
     };
   },
+  validations: {
+    email: {
+      required
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>
