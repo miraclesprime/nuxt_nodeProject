@@ -44,7 +44,7 @@ export default {
     middleware: ['auth']
   },
   axios:{
-    baseURL: process.env.API_HOST_URL + '/auth'
+    baseURL: process.env.VUE_APP_API_ENDPOINT + '/auth'
   },
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
