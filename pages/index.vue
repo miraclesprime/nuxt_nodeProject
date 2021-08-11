@@ -14,6 +14,7 @@
         >
           Documentation
         </a>
+        {{this.$auth.user}}
         <a
           href="https://github.com/nuxt/nuxt.js"
           target="_blank"
@@ -22,6 +23,7 @@
         >
           GitHub
         </a>
+        <a @click="logout">Logout</a>
       </div>
     </div>
   </div>
@@ -31,6 +33,16 @@
 // import Logo from '/Logo';
 export default {
   // components:[Logo]
+  methods:{
+    async logout(){
+      try {
+        let response = await this.$auth.logout()
+        } catch (err) {
+            console.log(err)
+        }
+
+    }
+  }
 }
 </script>
 
