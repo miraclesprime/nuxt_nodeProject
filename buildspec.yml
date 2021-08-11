@@ -18,7 +18,7 @@ phases:
       - echo installing dependencies  
       - npm install
       - echo Building the Front End distro...
-      - npm run generate 
+      - npm run build 
   post_build:
     commands:
       - echo Build completed on `date`
@@ -26,7 +26,4 @@ artifacts:
   base-directory: 'dist'
 
   files:
-    - '**/*'
-cache:
-    paths:
-      - node_modules/**/*
+    - '**/*' 
