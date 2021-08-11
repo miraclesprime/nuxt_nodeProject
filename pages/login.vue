@@ -40,7 +40,7 @@ export default {
     async loginWith(){
         try {
         let response = await this.$auth.loginWith('local', { data: this.userInfo })
-            // console.log(response)
+        console.log(response.log)
         } catch (err) {
             console.log(err)
         }
@@ -49,7 +49,7 @@ export default {
   data() {
     return {
       activeTab: "Sign in",
-      userInfo: {email: "kevin-biz@biztree.com", password: "password123"},
+      userInfo: {email: "jest-user@biztree.com", password: "password123"},
       tabs: [
         "Register",
         "Sign in"
