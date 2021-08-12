@@ -49,7 +49,7 @@ export default {
   },
   proxy: {
     '/auth': {
-      target: process.env.VUE_APP_API_ENDPOINT+'/auth',
+      target: 'http://api.proj-mgmt.biztree.com/auth',
       pathRewrite: { '^/auth': '' },
       changeOrigin: true
     },
@@ -65,9 +65,9 @@ export default {
     strategies: {
       local: {
         endpoints: {
-          login: { url: 'auth/login', method: 'POST', propertyName: 'token' },
-          logout: { url: 'auth/logout', method: 'DELETE', propertyName: 'token' },
-          user: { url: 'auth/me', method: 'GET', propertyName: 'data' }
+          login: { url: '/auth/login', method: 'POST', propertyName: 'token' },
+          logout: { url: '/auth/logout', method: 'DELETE', propertyName: 'token' },
+          user: { url: '/auth/me', method: 'GET', propertyName: 'data' }
         }
       }
     }
