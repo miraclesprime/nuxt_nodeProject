@@ -45,15 +45,16 @@ export default {
     middleware: ['auth']
   },
   axios: {
-    proxy: true,
+    // proxy: true,
+    baseURL: process.env.VUE_APP_API_ENDPOINT+'/auth',
   },
-  proxy: {
-    '/auth': {
-      target: 'http://api.proj-mgmt.biztree.com/auth',
-      pathRewrite: { '^/auth': '' },
-      changeOrigin: true
-    },
-  },
+  // proxy: {
+  //   '/auth': {
+  //     target: process.env.VUE_APP_API_ENDPOINT+'/auth',
+  //     pathRewrite: { '^/auth': '' },
+  //     changeOrigin: true
+  //   },
+  // },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
@@ -65,9 +66,9 @@ export default {
     strategies: {
       local: {
         endpoints: {
-          login: { url: '/auth/login', method: 'POST', propertyName: 'token' },
-          logout: { url: '/auth/logout', method: 'DELETE', propertyName: 'token' },
-          user: { url: '/auth/me', method: 'GET', propertyName: 'data' }
+          login: { url: '/login', method: 'POST', propertyName: 'token' },
+          logout: { url: '/logout', method: 'DELETE', propertyName: 'token' },
+          user: { url: '/me', method: 'GET', propertyName: 'data' }
         }
       }
     }
