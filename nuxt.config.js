@@ -23,10 +23,6 @@ export default {
   components: [{ path: '~/components/', pathPrefix: false }, { path: '~/../bib-shared/components/', pathPrefix: false }],
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
-    '@nuxtjs/axios',
-    '@nuxtjs/auth',
-    '@nuxtjs/proxy',
-    '@nuxtjs/style-resources'
   ],
 
   // Modules (https://go.nuxtjs.dev/config-modules)
@@ -47,24 +43,31 @@ export default {
   router: {
     middleware: ['auth']
   },
-  axios:{
-    baseURL: process.env.VUE_APP_API_ENDPOINT + '/auth'
+  axios: {
+    proxy: true,
   },
+  proxy: {
+    '/auth/': {
+      target: process.env.VUE_APP_API_ENDPOINT+'/auth',
+      pathRewrite: { '^/auth/': '' },
+    },
+  },
+
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
-    extend(config, { loaders }){
+    extend(config, { loaders }) {
       loaders.scss.additionalData = '@use "sass:math";'
     }
   },
   auth: {
     strategies: {
-      local: { 
-        endpoints:{
-          login: { url: '/login', method: 'POST', propertyName: 'token'},
-          logout: { url: '/logout', method: 'DELETE', propertyName: 'token'},
-          user:{ url: '/me', method: 'GET', propertyName: 'data'}
+      local: {
+        endpoints: {
+          login: { url: '/auth/login', method: 'POST', propertyName: 'token' },
+          logout: { url: '/auth/logout', method: 'DELETE', propertyName: 'token' },
+          user: { url: '/auth/me', method: 'GET', propertyName: 'data' }
         }
-       }
+      }
     }
   }
 }
