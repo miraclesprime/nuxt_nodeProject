@@ -23,14 +23,15 @@ export default {
   components: [{ path: '~/components/', pathPrefix: false }, { path: '~/../bib-shared/components/', pathPrefix: false }],
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
-  ],
-
-  // Modules (https://go.nuxtjs.dev/config-modules)
-  modules: [
     '@nuxtjs/axios',
     '@nuxtjs/auth',
     '@nuxtjs/proxy',
     '@nuxtjs/style-resources'
+  ],
+
+  // Modules (https://go.nuxtjs.dev/config-modules)
+  modules: [
+
   ],
   styleResources: {
     scss: [
@@ -47,9 +48,9 @@ export default {
     proxy: true,
   },
   proxy: {
-    '/auth/': {
+    '/auth': {
       target: process.env.VUE_APP_API_ENDPOINT+'/auth',
-      pathRewrite: { '^/auth/': '' },
+      pathRewrite: { '^/auth': '' },
     },
   },
 
