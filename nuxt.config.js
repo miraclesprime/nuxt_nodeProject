@@ -51,6 +51,7 @@ export default {
     '/auth': {
       target: process.env.VUE_APP_API_ENDPOINT+'/auth',
       pathRewrite: { '^/auth': '' },
+      changeOrigin: true
     },
   },
 
