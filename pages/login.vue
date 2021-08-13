@@ -9,13 +9,13 @@
      <div class="wrapper__form" v-if="activeTab == 'Sign in'">
         <bib-form-group required label="Email ">
             <template v-slot:input>
-                <bib-input :value="userInfo.email" @change="setEmail" placeholder="Enter email..."></bib-input>
+                <bib-input :variant="emailVariant" :value="userInfo.email" @change="setEmail" placeholder="Enter email..."></bib-input>
             </template>
         </bib-form-group>
 
         <bib-form-group required class="pt-1" label="Password ">
             <template v-slot:input>
-                <bib-input :value="userInfo.password" @change="(event) => { userInfo.password = event.target.value }" type="password" placeholder="*********"></bib-input>
+                <bib-input :variant="passwordVariant" :value="userInfo.password" @change="setPassword" type="password" placeholder="*********"></bib-input>
             </template>
         </bib-form-group>
         <div class="d-flex justify-end">
@@ -29,7 +29,7 @@
   </div>
 </template>
 <script>
-import { required, minLength, between } from 'vuelidate/lib/validators'
+import { email, required, minLength } from 'vuelidate/lib/validators'
 
 export default {
   methods: {
@@ -40,19 +40,30 @@ export default {
       }
     },
     setEmail(event) {
-      this.userInfo.email = event.target.value
-      this.$v.email.$touch()
+        this.userInfo.email = event.target.value
+        this.$v.$touch()
 
-      if (this.$v.$invalid) {
-        this.submitStatus = 'ERROR'
-      } else {
-        // do your submit logic here
-        this.submitStatus = 'PENDING'
-        setTimeout(() => {
+        if (this.$v.$pending || this.$v.$error) {
+            this.submitStatus = 'ERROR'
+            this.emailVariant = "danger"
+        } else {
           this.submitStatus = 'OK'
-        }, 500)
+          this.emailVariant = ""
       }
-      console.log(this.submitStatus)
+
+    },
+    setPassword(event) {
+        this.userInfo.password = event.target.value
+        this.$v.$touch()
+
+        if (this.$v.$pending || this.$v.$error) {
+            this.submitStatus = 'ERROR'
+            this.passwordVariant = "danger"
+        } else {
+          this.submitStatus = 'OK'
+          this.passwordVariant = ""
+      }
+
     },
     async loginWith(){
         try {
@@ -68,6 +79,8 @@ export default {
     return {
       activeTab: "Sign in",
       userInfo: {email: "jest-user@biztree.com", password: "password123"},
+      emailVariant: '',
+      passwordVariant: '',
       tabs: [
         "Register",
         "Sign in"
@@ -75,8 +88,9 @@ export default {
     };
   },
   validations: {
-    email: {
-      required
+    userInfo: {
+      email: { required, email },
+      password: { required, minLength: minLength(6) },
     }
   }
 };
