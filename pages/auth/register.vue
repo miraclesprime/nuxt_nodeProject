@@ -60,7 +60,7 @@ export default {
     changeTab(value) {
       this.activeTab = value;
       if(value == 'Sign in'){
-         window.location.href = '/login';
+         window.location.href = '/auth/login';
       }
     },
      async register(){
