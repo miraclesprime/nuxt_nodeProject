@@ -1,88 +1,93 @@
 <template>
-  <div class="container">
     <div>
-      <Logo />
-      <h1 class="title">
-        bib-pm-front-app
-      </h1>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        {{this.$auth.user}}
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-        <a @click="logout">Logout</a>
-      </div>
+        <bib-header></bib-header>
+        <bib-sidebar></bib-sidebar>
+        <div class="main">
+            <div class="bread d-flex">
+                <div class="d-flex align-center">
+                  <bib-icon icon="previous" :scale="2.0"></bib-icon>
+                </div>
+                <h3 class="bold mt-auto mb-auto d-flex">Project Name
+                    <div class="pl-1 mt-auto mb-auto">
+                        <bib-icon icon="heart" :scale="1.25"></bib-icon>
+                    </div>
+                    <div class="pl-1 mt-auto mb-auto">
+                       <bib-button pop="elipsis">
+                <template v-slot:menu>
+                  <div class="list__section">
+                    <span class="list__item">item 1</span>
+                    <span class="list__item">item 2</span>
+                    <span class="list__item">item 3</span>
+                  </div>
+                </template>
+              </bib-button>
+                    </div>
+                </h3>
+               
+            </div>
+            <div class="menu">
+                <bib-tabs :value="activeTab" @change="tabChange" :tabs="tabs"></bib-tabs>
+            </div>
+            <div class="">
+                <bib-toolbar label="Add Task/Section"></bib-toolbar>
+                {{this.$auth.user}}
+                <bib-button @click.native="logout" class="bg-danger" size="md" label="logout"></bib-button>
+            </div>
+        </div> 
     </div>
-  </div>
 </template>
-
 <script>
-// import Logo from '/Logo';
 export default {
-  // components:[Logo]
-  methods:{
-    async logout(){
-      try {
-        let response = await this.$auth.logout()
-        } catch (err) {
-            console.log(err)
+    methods:{
+        tabChange(value){
+            this.activeTab = value;
+        },
+        async logout(){
+          try {
+            let response = await this.$auth.logout()
+            } catch (err) {
+                console.log(err)
+            }
         }
-
+    },
+    data(){
+       return{
+            activeTab: "Overview",
+            tabs:["Overview", "Tasks", "Timeline", "Calendar","Team","Conversations","Files"]
+       }
     }
-  }
+    
 }
 </script>
-
-<style>
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+<style lang="scss" scoped>
+  *{
+    font-family: 'Lato', sans-serif;
 }
+.main{
+	width: calc(100% - (#{$item-height} * 1.8) );
+	height: 100%;
+	display: grid;
+	position: absolute;
+	top: 4rem;
+	overflow: hidden;
+	left: $item-height * 1.8;
+	background-color: white;
+	grid-template-rows: 2.5rem 2.5rem 100%;
 
-.title {
-  font-family:
-    'Quicksand',
-    'Source Sans Pro',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
+	.menu{
+		padding: 0 1rem 0 .25rem;   
+    max-width:40%;     
+	}
+	.bread{
+		padding: 0 .15rem 0 .15rem;
+		display: grid;
+		grid-template-columns: 2rem auto;
+		line-height: 1.8rem;
+	}
 }
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
+details{
+    summary::-webkit-details-marker{
+        display: none;
+    }
 }
 </style>
