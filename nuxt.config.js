@@ -63,6 +63,12 @@ export default {
     }
   },
   auth: {
+    redirect: {
+      login: '/auth/login',
+      logout: '/auth/login',
+      callback: '/auth/login',
+      home: '/dashboard'
+    },
     strategies: {
       local: {
         endpoints: {
