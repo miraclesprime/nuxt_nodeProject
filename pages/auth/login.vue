@@ -22,7 +22,7 @@
             <small><bib-link label="Forgot Password?" class="text-bold text-primary"></bib-link></small>
         </div>
         <div class="wrapper__form__submit">
-            <bib-button @click.native="loginWith" label="Sign in" class="text-center" size="md" :variant="submitVariant"></bib-button>
+            <bib-button :disabled="isDisabled" @click.native="loginWith" label="Sign in" class="text-center" size="md" :variant="submitVariant"></bib-button>
         </div>
     </div>
 
@@ -39,6 +39,7 @@ export default {
       emailVariant: '',
       submitVariant: 'secondary',
       passwordVariant: '',
+      isDisabled: false,
       tabs: [
         "Register",
         "Sign in"
@@ -55,6 +56,7 @@ export default {
     this.$v.$touch()
     if (this.$v.$pending || this.$v.$error) {
       this.submitVariant = 'secondary'
+      this.isDisabled = true
     }else{
       this.submitVariant = 'success'
     }
@@ -74,10 +76,12 @@ export default {
             this.submitStatus = 'ERROR'
             this.emailVariant = "danger"
             this.submitVariant = "secondary"
+            this.isDisabled = true
         } else {
           this.submitStatus = 'OK'
           this.emailVariant = ""
           this.submitVariant = "success"
+          this.isDisabled = false
       }
 
     },
@@ -89,11 +93,13 @@ export default {
             this.submitStatus = 'ERROR'
             this.passwordVariant = "danger"
             this.submitVariant = "secondary"
+            this.isDisabled = true
 
         } else {
           this.submitStatus = 'OK'
           this.passwordVariant = ""
           this.submitVariant = "success"
+          this.isDisabled = false
           
       }
 
