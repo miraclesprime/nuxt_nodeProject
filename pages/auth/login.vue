@@ -9,29 +9,56 @@
      <div class="wrapper__form" v-if="activeTab == 'Sign in'">
         <bib-form-group required label="Email ">
             <template v-slot:input>
-                <bib-input :value="userInfo.email" @change="setEmail" placeholder="Enter email..."></bib-input>
+                <bib-input :variant="emailVariant" :value="userInfo.email" @change="setEmail" placeholder="Enter email..."></bib-input>
             </template>
         </bib-form-group>
 
         <bib-form-group required class="pt-1" label="Password ">
             <template v-slot:input>
-                <bib-input :value="userInfo.password" @change="(event) => { userInfo.password = event.target.value }" type="password" placeholder="*********"></bib-input>
+                <bib-input :variant="passwordVariant" :value="userInfo.password" @change="setPassword" type="password" placeholder="*********"></bib-input>
             </template>
         </bib-form-group>
         <div class="d-flex justify-end">
             <small><bib-link label="Forgot Password?" class="text-bold text-primary"></bib-link></small>
         </div>
         <div class="wrapper__form__submit">
-            <bib-button @click.native="loginWith" label="Sign in" class="text-center" size="md" variant="success"></bib-button>
+            <bib-button @click.native="loginWith" label="Sign in" class="text-center" size="md" :variant="submitVariant"></bib-button>
         </div>
     </div>
 
   </div>
 </template>
 <script>
-import { required, minLength, between } from 'vuelidate/lib/validators'
+import { email, required, minLength } from 'vuelidate/lib/validators'
 
 export default {
+  data() {
+    return {
+      activeTab: "Sign in",
+      userInfo: {email: "jest-user@biztree.com", password: "password123"},
+      emailVariant: '',
+      submitVariant: 'secondary',
+      passwordVariant: '',
+      tabs: [
+        "Register",
+        "Sign in"
+      ],
+    };
+  },
+  validations: {
+    userInfo: {
+      email: { required, email },
+      password: { required, minLength: minLength(6) },
+    }
+  },
+  created(){
+    this.$v.$touch()
+    if (this.$v.$pending || this.$v.$error) {
+      this.submitVariant = 'secondary'
+    }else{
+      this.submitVariant = 'success'
+    }
+  },
   methods: {
     changeTab(value) {
       this.activeTab = value;
@@ -40,19 +67,36 @@ export default {
       }
     },
     setEmail(event) {
-      this.userInfo.email = event.target.value
-      this.$v.email.$touch()
+        this.userInfo.email = event.target.value
+        this.$v.$touch()
 
-      if (this.$v.$invalid) {
-        this.submitStatus = 'ERROR'
-      } else {
-        // do your submit logic here
-        this.submitStatus = 'PENDING'
-        setTimeout(() => {
+        if (this.$v.$pending || this.$v.$error) {
+            this.submitStatus = 'ERROR'
+            this.emailVariant = "danger"
+            this.submitVariant = "secondary"
+        } else {
           this.submitStatus = 'OK'
-        }, 500)
+          this.emailVariant = ""
+          this.submitVariant = "success"
       }
-      console.log(this.submitStatus)
+
+    },
+    setPassword(event) {
+        this.userInfo.password = event.target.value
+        this.$v.$touch()
+
+        if (this.$v.$pending || this.$v.$error) {
+            this.submitStatus = 'ERROR'
+            this.passwordVariant = "danger"
+            this.submitVariant = "secondary"
+
+        } else {
+          this.submitStatus = 'OK'
+          this.passwordVariant = ""
+          this.submitVariant = "success"
+          
+      }
+
     },
     async loginWith(){
         try {
@@ -64,21 +108,7 @@ export default {
         console.log(this.$auth.loggedIn)
     }
   },
-  data() {
-    return {
-      activeTab: "Sign in",
-      userInfo: {email: "jest-user@biztree.com", password: "password123"},
-      tabs: [
-        "Register",
-        "Sign in"
-      ],
-    };
-  },
-  validations: {
-    email: {
-      required
-    }
-  }
+  
 };
 </script>
 <style lang="scss" scoped>

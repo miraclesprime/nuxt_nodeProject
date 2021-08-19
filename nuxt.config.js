@@ -18,7 +18,7 @@ export default {
     '~/assets/global.scss'
   ],
   /// Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
-  plugins: ['~/plugins/vuelidate'],
+  plugins: ['~/plugins/plugins'],
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: [{ path: '~/components/', pathPrefix: false }, { path: '~/../bib-shared/components/', pathPrefix: false }],
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
@@ -44,6 +44,9 @@ export default {
   router: {
     middleware: ['auth']
   },
+  serverMiddleware: [
+    '~/middleware/redirects.js'
+  ],
   axios: {
     // proxy: true,
     baseURL: process.env.VUE_APP_API_ENDPOINT+'/auth',
