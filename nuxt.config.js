@@ -45,7 +45,7 @@ export default {
     middleware: ['auth']
   },
   serverMiddleware: [
-    '~/middleware/redirects.js'
+    '~/middleware/redirects'
   ],
   axios: {
     // proxy: true,
@@ -70,7 +70,7 @@ export default {
       login: '/auth/login',
       logout: '/auth/login',
       callback: '/auth/login',
-      home: '/dashboard'
+      home: '/'
     },
     strategies: {
       local: {
