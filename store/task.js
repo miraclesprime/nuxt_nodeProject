@@ -23,6 +23,18 @@ export const mutations = {
   },
 };
 
+export const getters = {
+  tasksForListView (state) {
+    return [
+      {
+        label: "Task List View",
+        variant: "success",
+        items: state.list,
+      },
+    ];
+  },
+};
+
 export const actions = {
   async fetchTasks (ctx) {
     const res = await this.$axios.$get('/task?page=1&limit=99999');

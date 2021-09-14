@@ -26,15 +26,30 @@
         </h3>
       </div>
       <div class="menu">
-        <bib-tabs
-          :value="activeTab"
-          @change="tabChange"
-          :tabs="TABS"
-        ></bib-tabs>
+        <bib-tabs :value="activeTab" @change="tabChange" :tabs="TABS" />
       </div>
       <div class="">
         <bib-toolbar label="Add Task/Section"></bib-toolbar>
-        <bib-table :fields="TABLE_FIELDS" :sections="list" />
+        <bib-table :fields="TABLE_FIELDS" :sections="tasks">
+          <template #cell(id)="data">
+            {{ data.value }}
+          </template>
+          <template #cell(title)="data">
+            {{ data.value }}
+          </template>
+          <template #cell(status)="data">
+            {{ data.value }}
+          </template>
+          <template #cell(priority)="data">
+            {{ data.value }}
+          </template>
+          <template #cell(assignee)="data">
+            {{ data.value }}
+          </template>
+          <template #cell(dueDate)="data">
+            {{ $toDate(data.value) }}
+          </template>
+        </bib-table>
         <!--
         {{ this.$auth.user }}
         <bib-button
@@ -44,13 +59,12 @@
           label="logout"
         ></bib-button>
         -->
-        {{ JSON.stringify(list) }}
       </div>
     </div>
   </div>
 </template>
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import { TABLE_FIELDS, TABS, DEFAULT_TAB } from "config/constants";
 
 export default {
@@ -62,7 +76,10 @@ export default {
     };
   },
   computed: {
-    ...mapState("task", ["list", "single"])
+    ...mapState("task", ["list", "single"]),
+    ...mapGetters({
+      tasks: "task/tasksForListView"
+    })
   },
   methods: {
     // Change Tab
