@@ -25,14 +25,16 @@ export const TABLE_FIELDS = [
   }
 ];
 
-export const TABS = [
-  "Overview",
-  "Tasks",
-  "Timeline",
-  "Calendar",
-  "Team",
-  "Conversations",
-  "Files"
-];
+export const TAB_TITLES = {
+  overview: "Overview",
+  task: "Tasks",
+  timeline: "Timeline",
+  calendar: "Calendar",
+  team: "Team",
+  conversation: "Conversations",
+  file: "Files"
+};
 
-export const DEFAULT_TAB = "Overview";
+export const TABS = Object.keys(TAB_TITLES).map(field => TAB_TITLES[field]);
+
+export const DEFAULT_TAB = TAB_TITLES.overview;

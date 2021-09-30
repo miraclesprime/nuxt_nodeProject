@@ -30,26 +30,26 @@
       </div>
       <div class="">
         <bib-toolbar label="Add Task/Section"></bib-toolbar>
-        <bib-table :fields="TABLE_FIELDS" :sections="tasks">
-          <template #cell(id)="data">
-            {{ data.value }}
-          </template>
-          <template #cell(title)="data">
-            {{ data.value }}
-          </template>
-          <template #cell(status)="data">
-            {{ data.value }}
-          </template>
-          <template #cell(priority)="data">
-            {{ data.value }}
-          </template>
-          <template #cell(assignee)="data">
-            {{ data.value }}
-          </template>
-          <template #cell(dueDate)="data">
-            {{ $toDate(data.value) }}
-          </template>
-        </bib-table>
+        <task-overview
+          v-if="activeTab == TAB_TITLES.overview"
+          :fields="TABLE_FIELDS"
+          :tasks="tasks"
+        />
+        <task-view
+          v-else-if="activeTab == TAB_TITLES.task"
+          :fields="TABLE_FIELDS"
+          :tasks="tasks"
+        />
+        <task-timeline-view
+          v-else-if="activeTab == TAB_TITLES.timeline"
+          :fields="TABLE_FIELDS"
+          :tasks="tasks"
+        />
+        <task-calendar-view
+          v-else-if="activeTab == TAB_TITLES.calendar"
+          :fields="TABLE_FIELDS"
+          :tasks="tasks"
+        />
         <!--
         {{ this.$auth.user }}
         <bib-button
@@ -65,13 +65,14 @@
 </template>
 <script>
 import { mapState, mapGetters } from "vuex";
-import { TABLE_FIELDS, TABS, DEFAULT_TAB } from "config/constants";
+import { TABLE_FIELDS, TABS, DEFAULT_TAB, TAB_TITLES } from "config/constants";
 
 export default {
   data() {
     return {
       activeTab: DEFAULT_TAB,
       TABS,
+      TAB_TITLES,
       TABLE_FIELDS
     };
   },

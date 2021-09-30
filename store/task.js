@@ -1,5 +1,7 @@
 import { mapTasks } from 'services/task';
 
+import { DUMMY_TASKS } from 'dummy/tasks';
+
 export const state = () => ({
   list: [],
   single: undefined,
@@ -37,7 +39,8 @@ export const getters = {
 
 export const actions = {
   async fetchTasks (ctx) {
-    const res = await this.$axios.$get('/task?page=1&limit=99999');
-    ctx.commit('initialize', mapTasks(res.data));
+    // const res = await this.$axios.$get('/task?page=1&limit=99999');
+    // ctx.commit('initialize', mapTasks(res.data));
+    ctx.commit('initialize', DUMMY_TASKS);
   },
 };

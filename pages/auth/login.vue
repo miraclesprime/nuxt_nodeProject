@@ -121,9 +121,10 @@ export default {
     },
     async loginWith() {
       try {
-        let response = await this.$auth.loginWith("local", {
-          data: this.userInfo
-        });
+        this.$router.push("/dashboard");
+        // let response = await this.$auth.loginWith("local", {
+        //   data: this.userInfo
+        // });
       } catch (err) {
         console.log(err);
       }

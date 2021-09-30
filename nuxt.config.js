@@ -52,7 +52,8 @@ export default {
     ]
   },
   router: {
-    middleware: ["auth"]
+    // base: '/dashboard',
+    // middleware: ["auth"],
   },
   serverMiddleware: ["~/middleware/redirects"],
   axios: {
@@ -74,25 +75,26 @@ export default {
     }
   },
   auth: {
-    redirect: {
-      login: "/auth/login",
-      logout: "/auth/login",
-      callback: "/auth/login",
-      home: "/"
-    },
-    strategies: {
-      local: {
-        endpoints: {
-          login: { url: "/auth/login", method: "POST", propertyName: "token" },
-          logout: { url: "/auth/logout", method: "DELETE", propertyName: "token" },
-          user: { url: "/auth/me", method: "GET", propertyName: "data" }
-        }
-      }
-    }
+    // redirect: {
+    //   login: "/auth/login",
+    //   logout: "/auth/login",
+    //   callback: "/auth/login",
+    //   home: "/"
+    // },
+    // strategies: {
+    //   local: {
+    //     endpoints: {
+    //       login: { url: "/auth/login", method: "POST", propertyName: "token" },
+    //       logout: { url: "/auth/logout", method: "DELETE", propertyName: "token" },
+    //       user: { url: "/auth/me", method: "GET", propertyName: "data" }
+    //     }
+    //   }
+    // }
   },
   alias: {
     config: resolve(__dirname, "./config"),
     services: resolve(__dirname, "./services"),
+    dummy: resolve(__dirname, "./dummy"),
   },
   loadingIndicator: {
     name: 'circle',
