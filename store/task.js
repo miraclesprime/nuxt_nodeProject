@@ -27,13 +27,7 @@ export const mutations = {
 
 export const getters = {
   tasksForListView (state) {
-    return [
-      {
-        label: "Task List View",
-        variant: "success",
-        items: state.list,
-      },
-    ];
+    return state.list;
   },
 };
 

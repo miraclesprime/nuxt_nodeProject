@@ -1,22 +1,22 @@
 <template>
   <bib-table :fields="fields" :sections="tasks">
     <template #cell(id)="data">
-      {{ data.value }}
+      {{ data.value.id }}
     </template>
     <template #cell(title)="data">
-      {{ data.value }}
+      {{ data.value.title }}
     </template>
     <template #cell(status)="data">
-      {{ data.value }}
+      {{ data.value.status }}
     </template>
     <template #cell(priority)="data">
-      {{ data.value }}
+      {{ data.value.priority }}
     </template>
     <template #cell(assignee)="data">
-      {{ data.value }}
+      {{ data.value.assignee }}
     </template>
     <template #cell(dueDate)="data">
-      {{ $toDate(data.value) }}
+      {{ $toDate(data.value.dueDate) }}
     </template>
   </bib-table>
 </template>
