@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { resolve } from "path";
 
 export default {
   // Global page headers (https://go.nuxtjs.dev/config-head)
@@ -22,11 +22,7 @@ export default {
   // Global CSS (https://go.nuxtjs.dev/config-css)
   css: ["~/assets/global.scss"],
   /// Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
-  plugins: [
-    "~/plugins/plugins",
-    "~/plugins/axios.js",
-    "~/plugins/dayjs.js",
-  ],
+  plugins: ["~/plugins/plugins", "~/plugins/axios.js", "~/plugins/dayjs.js"],
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: [
     { path: "~/components/", pathPrefix: false },
@@ -48,7 +44,8 @@ export default {
       "../bib-shared/css/colors.scss",
       "../bib-shared/css/variables.scss",
       "../bib-shared/css/mixins.scss",
-      "../bib-shared/css/utilities.scss"
+      "../bib-shared/css/utilities.scss",
+      "../bib-shared/css/basic.scss"
     ]
   },
   router: {
@@ -94,23 +91,18 @@ export default {
   alias: {
     config: resolve(__dirname, "./config"),
     services: resolve(__dirname, "./services"),
-    dummy: resolve(__dirname, "./dummy"),
+    dummy: resolve(__dirname, "./dummy")
   },
   loadingIndicator: {
-    name: 'circle',
-    color: '#3B8070',
-    background: 'transparent',
+    name: "circle",
+    color: "#3B8070",
+    background: "transparent"
   },
   dayjs: {
-    locales: ['en', 'ca'],
-    defaultLocale: 'en',
-    defaultTimeZone: 'Canada/Toronto',
-    plugins: [
-      'utc',
-      'timezone',
-      'weekday',
-      'localizedFormat',
-      'isSameOrAfter',
-    ],
+    locales: ["en", "ca"],
+    defaultLocale: "en",
+    defaultTimeZone: "Canada/Toronto",
+    plugins: ["utc", "timezone", "weekday", "localizedFormat", "isSameOrAfter"]
   },
+  ssr: false,
 };

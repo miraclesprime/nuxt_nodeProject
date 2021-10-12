@@ -110,7 +110,7 @@ export default {
 }
 .main {
   width: calc(100% - (#{$item-height} * 1.8));
-  height: 100%;
+  // height: 100%;
   display: grid;
   position: absolute;
   top: 4rem;
