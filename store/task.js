@@ -29,6 +29,9 @@ export const getters = {
   tasksForListView (state) {
     return state.list;
   },
+  tasksForOverview (state) {
+    
+  }
 };
 
 export const actions = {
