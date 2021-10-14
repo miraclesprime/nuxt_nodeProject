@@ -45,7 +45,8 @@ export default {
       "../bib-shared/css/variables.scss",
       "../bib-shared/css/mixins.scss",
       "../bib-shared/css/utilities.scss",
-      "../bib-shared/css/basic.scss"
+      "../bib-shared/css/basic.scss",
+      "./assets/global.scss"
     ]
   },
   router: {

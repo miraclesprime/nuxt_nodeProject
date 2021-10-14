@@ -191,11 +191,11 @@
 import { Teammates } from "config/constants";
 
 export default {
-  data: function () {
+  data: function() {
     return {
-      teammates: Teammates,
+      teammates: Teammates
     };
-  },
+  }
 };
 </script>
 
@@ -243,7 +243,7 @@ export default {
     width: 100%;
     padding: 8px 0;
     font-size: $sidebar-size;
-    border-bottom: 1px solid $gray7;
+    border-bottom: 1px solid $gray6;
   }
 }
 

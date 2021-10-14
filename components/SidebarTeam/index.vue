@@ -41,21 +41,21 @@
 import { Teammates } from "config/constants";
 
 export default {
-  data: function () {
+  data: function() {
     return {
-      teammates: Teammates,
+      teammates: Teammates
     };
-  },
+  }
 };
 </script>
 
 <style lang="scss" scoped>
 .teammate {
   padding: 7px 0;
-  border-bottom: 1px solid $gray7;
+  border-bottom: 1px solid $gray6;
 
   &:first-child {
-    border-top: 1px solid $gray7;
+    border-top: 1px solid $gray6;
   }
 }
 

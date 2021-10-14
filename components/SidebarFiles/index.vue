@@ -107,7 +107,7 @@
   .file-name {
     display: flex;
     position: relative;
-    border-top: 1px solid $gray7;
+    border-top: 1px solid $gray6;
 
     &:last-child {
       border-bottom: 1px solid $gray4;
