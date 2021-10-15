@@ -50,7 +50,7 @@ export default {
     ]
   },
   router: {
-    base: '/dashboard',
+    // base: '/dashboard',
     // middleware: ["auth"],
   },
   serverMiddleware: ["~/middleware/redirects"],
