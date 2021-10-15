@@ -1,5 +1,9 @@
 <template> </template>
 
 <script>
-export default {};
+export default {
+  mounted() {
+    this.$router.push("/dashboard");
+  }
+};
 </script>
