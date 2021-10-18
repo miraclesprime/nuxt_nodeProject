@@ -104,7 +104,7 @@
         </li>
       </ul>
 
-      <a href="#" class="nav-toggle" @click="toggleNav">
+      <a href="#" class="nav-toggle icon-angle-left" @click="toggleNav">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="25"
@@ -115,6 +115,26 @@
             <path
               d="M20.8,24,31.4,13.4a1.9,1.9,0,0,0-.2-3,2.1,2.1,0,0,0-2.7.2l-11.9,12a1.9,1.9,0,0,0,0,2.8l11.9,12a2.1,2.1,0,0,0,2.7.2,1.9,1.9,0,0,0,.2-3Z"
             ></path>
+          </g>
+        </svg>
+      </a>
+
+      <a href="#" class="nav-toggle icon-angle-right" @click="toggleNav">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="25"
+          height="25"
+          viewBox="0 0 48 48"
+        >
+          <g id="Layer_2" data-name="Layer 2">
+            <g id="invisible_box" data-name="invisible box">
+              <rect width="48" height="48" fill="none"></rect>
+            </g>
+            <g id="icons_Q2" data-name="icons Q2">
+              <path
+                d="M27.2,24,16.6,34.6a1.9,1.9,0,0,0,.2,3,2.1,2.1,0,0,0,2.7-.2l11.9-12a1.9,1.9,0,0,0,0-2.8l-11.9-12a2.1,2.1,0,0,0-2.7-.2,1.9,1.9,0,0,0-.2,3Z"
+              ></path>
+            </g>
           </g>
         </svg>
       </a>
@@ -161,8 +181,44 @@ export default {
   z-index: 10;
 }
 
-.hide-nav .nav-content {
-  transform: translateX(-100%);
+.hide-nav {
+  .nav-content {
+    padding-right: 10px;
+  }
+
+  .nav-item svg {
+    margin-right: 0;
+  }
+
+  .nav-items {
+    padding-top: 2rem;
+
+    span {
+      width: 0;
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+
+  .icon-angle-left {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .icon-angle-right {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.icon-angle-right {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.icon-angle-left {
+  opacity: 1;
+  visibility: visible;
 }
 
 .nav-content {
@@ -170,7 +226,7 @@ export default {
   left: 4rem;
   top: 4rem;
   height: 100%;
-  padding: 1rem 6rem 1rem 10px;
+  padding: 1rem 1rem 1rem 10px;
   background: $dark;
   transform: none;
   transition: transform 0.5s;
@@ -183,6 +239,13 @@ export default {
 
 .nav-items {
   padding-left: 0;
+  transition: padding 0.5s;
+
+  span {
+    display: inline-block;
+    width: 11rem;
+    transition: width 0.5s;
+  }
 }
 
 .nav-item {
@@ -225,7 +288,7 @@ export default {
 .nav-toggle {
   position: absolute;
   top: 1rem;
-  right: 1rem;
+  right: 14px;
 
   g {
     fill: $gray6;

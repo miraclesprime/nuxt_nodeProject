@@ -16,26 +16,39 @@
 
       <span>Add Team Members</span>
     </a>
-    <bib-table :fields="fields" :sections="tasks">
-      <template #cell(id)="data">
-        {{ data.value.id }}
-      </template>
-      <template #cell(title)="data">
-        {{ data.value.title }}
-      </template>
-      <template #cell(status)="data">
-        {{ data.value.status }}
-      </template>
-      <template #cell(priority)="data">
-        {{ data.value.priority }}
-      </template>
-      <template #cell(assignee)="data">
-        {{ data.value.assignee }}
-      </template>
-      <template #cell(dueDate)="data">
-        {{ $toDate(data.value.dueDate) }}
-      </template>
-    </bib-table>
+    <ul class="task-bundle">
+      <li class="task-item task-number">
+        <span>#</span>
+      </li>
+      <li class="task-item task-name">
+        <span>Task name</span>
+      </li>
+      <li class="task-item task-status">
+        <span>Status</span>
+      </li>
+      <li class="task-item task-priority">
+        <span>Priority</span>
+      </li>
+      <li class="task-item task-assignee">
+        <span>Assignee</span>
+      </li>
+      <li class="task-item task-date">
+        <span>Due date</span>
+      </li>
+      <li class="task-item" style="flex: 1">
+        <span></span>
+      </li>
+    </ul>
+
+    <task-bundle
+      title="Section"
+      :tasks="tasks.slice(2, 9)"
+      :isExpanded="true"
+    />
+    <task-bundle title="Section" :tasks="tasks.slice(2, 9)" />
+    <task-bundle title="Section" :tasks="tasks.slice(2, 9)" />
+    <task-bundle title="Section" :tasks="tasks.slice(2, 9)" />
+    <task-bundle title="Section" :tasks="tasks.slice(2, 9)" />
   </div>
 </template>
 
