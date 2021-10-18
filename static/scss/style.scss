@@ -169,12 +169,13 @@ ul {
 
 
 #__layout .main {
-  left: 19.5rem;
+  left: 18.6rem;
+  padding-bottom: 1rem;
   transition: left 0.5s;
 }
 
 #__layout.hide-nav .main {
-  left: 4.5rem;
+  left: 6.9rem;
 }
 
 .header {
@@ -190,4 +191,70 @@ ul {
 
 #__layout.hide-sidebar .sidebar {
   transform: translateX(100%);
+}
+
+// task bundle
+.task-bundle {
+  display: flex;
+  padding-left: 0;
+  background-color: $gray3;
+  border: 1px solid $gray4;
+
+  &:not(:first-of-type) {
+    border-top: none;
+  }
+
+  &:last-of-type:not(:first-of-type) {
+    border-bottom: none;
+  }
+}
+
+.padding-sm .task-item {
+  padding: 0 10px;
+
+  &.task-name span {
+    margin-left: 24px;
+  }
+}
+
+.bundle-title {
+  padding: 10px 16px;
+  font-size: 13px;
+
+  span {
+    margin-left: 14px;
+  }
+}
+
+.task-item {
+  display: flex;
+  position: relative;
+  padding: 10px;
+  font-size: 13px;
+  border-right: 1px solid $gray4;
+  align-items: center;
+
+  &.task-name {
+    width: 30%;
+  }
+
+  &.task-number {
+    width: 30px;
+    padding: 10px 11px;
+  }
+
+  &.task-status,
+  &.task-priority,
+  &.task-assignee,
+  &.task-date {
+    width: 16%;
+  }
+
+  .custom-control-label::before {
+    left: 8px;
+  }
+
+  .custom-checkbox svg {
+    left: 10px;
+  }
 }

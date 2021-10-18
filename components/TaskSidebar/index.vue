@@ -302,7 +302,7 @@ export default {
   position: fixed;
   top: 4rem;
   right: 0;
-  height: 90%;
+  height: calc(100% - 4rem);
   overflow-y: scroll;
   overflow-x: hidden;
   width: 36%;
