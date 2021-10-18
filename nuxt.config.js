@@ -19,8 +19,7 @@ export default {
     ]
   },
 
-  // Global CSS (https://go.nuxtjs.dev/config-css)
-  css: ["~/assets/global.scss"],
+  css: ["./static/scss/style.scss"],
   /// Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: ["~/plugins/plugins", "~/plugins/axios.js", "~/plugins/dayjs.js"],
   // Auto import components (https://go.nuxtjs.dev/config-components)
@@ -46,7 +45,7 @@ export default {
       "../bib-shared/css/mixins.scss",
       "../bib-shared/css/utilities.scss",
       "../bib-shared/css/basic.scss",
-      "./assets/global.scss"
+      "./static/scss/style.scss"
     ]
   },
   router: {
