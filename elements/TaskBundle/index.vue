@@ -1,5 +1,5 @@
 <template>
-  <div class="tasks">
+  <div class="tasks" :class="activeColor">
     <a class="bundle-title" href="#" @click="isOpened = !isOpened">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -38,6 +38,7 @@
           </g>
         </g>
       </svg>
+
       <span>{{ title }}</span>
     </a>
 
@@ -45,7 +46,8 @@
       <ul
         class="task-bundle padding-sm"
         v-for="(item, index) in tasks"
-        :key="item.id + item.name"
+        :key="item.id + item.title"
+        @click="toggleSidebar($event)"
       >
         <li class="task-item task-number">
           <span>0</span>
@@ -55,9 +57,12 @@
             <input
               type="checkbox"
               class="custom-control-input"
-              :id="'brand-1-' + index"
+              :id="'brand-1-' + item.id + index"
             />
-            <label class="custom-control-label" :for="'brand-1-' + index">
+            <label
+              class="custom-control-label"
+              :for="'brand-1-' + item.id + index"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="15"
@@ -74,11 +79,17 @@
           </div>
           <span>{{ item.title }}</span>
         </li>
-        <li class="task-item task-status">
+        <li
+          class="task-item task-status"
+          :class="progressColor(item.status[0])"
+        >
           <span>{{ item.status[0] }}</span>
           <span class="ml-auto">{{ item.status[1] }}</span>
         </li>
-        <li class="task-item task-priority">
+        <li
+          class="task-item task-priority"
+          :class="priorityColor(item.priority)"
+        >
           <span>{{ item.priority }}</span>
         </li>
         <li class="task-item task-assignee">
@@ -110,13 +121,36 @@ export default {
   data: function () {
     return {
       isOpened: this.isExpanded,
+      activeColor: "blue",
     };
+  },
+  methods: {
+    toggleSidebar: function (event) {
+      document.querySelector("#__layout").classList.toggle("show-sidebar");
+      event.currentTarget.classList.toggle("active");
+    },
+    priorityColor: function (priority) {
+      if (priority === "Urgent") return "text-red";
+      if (priority === "Top") return "text-orange";
+      if (priority === "Priority") return "text-green";
+    },
+    progressColor: function (progress) {
+      if (progress === "Past Due") return "text-red";
+      if (progress === "In-progress") return "text-blue";
+    },
+  },
+  created: function () {
+    if (this.title === "Past Due") this.activeColor = "red";
+    if (this.title === "Due Today") this.activeColor = "orange";
+    if (this.title === "Tomorrow") this.activeColor = "green";
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .bundle-title {
+  font-weight: 600;
+
   &:hover {
     color: #333;
   }
@@ -124,5 +158,113 @@ export default {
 
 .tasks {
   border-bottom: 1px solid $gray4;
+}
+
+.red,
+.orange,
+.green,
+.blue {
+  .task-bundle.active {
+    .bundle-title,
+    .task-number,
+    .task-name,
+    .task-status,
+    .task-date,
+    .task-priority,
+    .task-assignee {
+      color: #fff;
+    }
+  }
+}
+
+.red .task-bundle.active {
+  background-color: $red;
+}
+
+.orange .task-bundle.active {
+  background-color: $orange;
+
+  .custom-control-label:before {
+    border-color: $orange;
+  }
+}
+
+.green .task-bundle.active {
+  background-color: $green;
+
+  .custom-control-label:before {
+    border-color: $green;
+  }
+}
+
+.blue .task-bundle.active {
+  background-color: $blue;
+
+  .custom-control-label:before {
+    border-color: $blue;
+  }
+}
+
+.task-bundle {
+  cursor: pointer;
+}
+
+.tasks.red {
+  .bundle-title span,
+  .task-name,
+  .task-date {
+    color: $red;
+  }
+
+  .custom-control-label::before {
+    border-color: $red;
+  }
+
+  .bundle-title svg g,
+  .custom-control-label g {
+    fill: $red;
+  }
+
+  .custom-control-input:checked ~ .custom-control-label:before {
+    border-color: $red;
+  }
+}
+
+.tasks.orange {
+  .bundle-title span,
+  .task-date {
+    color: $orange;
+  }
+  .bundle-title svg g,
+  .custom-control-label g {
+    fill: $orange;
+  }
+
+  .custom-control-input:checked ~ .custom-control-label:before {
+    border-color: $orange;
+  }
+}
+
+.tasks.green {
+  .bundle-title span,
+  .task-date {
+    color: $green;
+  }
+
+  .bundle-title svg g,
+  .custom-control-label g {
+    fill: $green;
+  }
+
+  .custom-control-input:checked ~ .custom-control-label:before {
+    border-color: $green;
+  }
+}
+
+.task-bundle.active {
+  .custom-control-label svg {
+    opacity: 1;
+    visibility: visible;
+  }
 }
 </style>

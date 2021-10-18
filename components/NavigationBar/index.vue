@@ -288,7 +288,7 @@ export default {
 .nav-toggle {
   position: absolute;
   top: 1rem;
-  right: 14px;
+  right: 12px;
 
   g {
     fill: $gray6;
