@@ -3,7 +3,7 @@ export const DUMMY_TASKS = [
     id: 1,
     title: "Task name",
     status: ["Past Due", "80%"],
-    priority: "URGENT",
+    priority: "Urgent",
     assignee: "John Doe",
     dueDate: "Nov 23, 2032"
   },

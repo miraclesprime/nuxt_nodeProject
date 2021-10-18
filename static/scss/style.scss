@@ -185,12 +185,12 @@ ul {
 }
 
 .sidebar {
-  transform: translateX(0);
+  transform: translateX(100%);
   transition: transform .5s;
 }
 
-#__layout.hide-sidebar .sidebar {
-  transform: translateX(100%);
+#__layout.show-sidebar .sidebar {
+  transform: translateX(0);
 }
 
 // task bundle
@@ -257,4 +257,37 @@ ul {
   .custom-checkbox svg {
     left: 10px;
   }
+}
+
+//
+.bg-red {
+  background: $red;
+}
+
+.bg-green {
+  background: $green;
+}
+
+.bg-orange {
+  background: $orange;
+}
+
+.bg-blue {
+  background: $blue;
+}
+
+.text-red {
+  color: $red;
+}
+
+.text-orange {
+  color: $orange;
+}
+
+.text-green {
+  color: $green;
+}
+
+.text-blue {
+  color: $blue;
 }

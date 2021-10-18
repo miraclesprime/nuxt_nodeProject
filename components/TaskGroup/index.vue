@@ -18,7 +18,7 @@
     </a>
     <div class="task" v-for="(item, index) in tasks" :key="'sub-task-' + index">
       <span class="task-number">{{ index + 1 }}</span>
-      <div class="divider" style="left: 5%" />
+      <div class="divider" style="left: 3.5%" />
 
       <div class="custom-control custom-checkbox">
         <input
@@ -49,7 +49,7 @@
         <bib-avatar size="20px" />
         <span>{{ item.author }}</span>
       </div>
-      <div class="divider" style="left: 77%" />
+      <div class="divider" style="left: 76%" />
 
       <span>{{ item.date }}</span>
       <div class="divider" style="left: 94%" />
