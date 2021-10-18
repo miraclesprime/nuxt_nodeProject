@@ -14,7 +14,7 @@
         </g>
       </svg>
 
-      <span>Add Team Member</span>
+      <span>Add Team Members</span>
     </a>
 
     <div class="team-list w-100">

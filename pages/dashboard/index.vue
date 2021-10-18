@@ -1,7 +1,7 @@
 <template>
   <div>
-    <bib-header></bib-header>
-    <bib-sidebar></bib-sidebar>
+    <bib-header />
+    <task-sidebar />
     <div class="main">
       <div class="bread d-flex">
         <div class="d-flex align-center">
@@ -29,7 +29,7 @@
         <bib-tabs :value="activeTab" @change="tabChange" :tabs="TABS" />
       </div>
       <div class="">
-        <bib-toolbar label="Add Task/Section"></bib-toolbar>
+        <!-- <bib-toolbar label="Add Task/Section"></bib-toolbar> -->
         <task-overview
           v-if="activeTab == TAB_TITLES.overview"
           :fields="TABLE_FIELDS"
@@ -40,6 +40,11 @@
           :fields="TABLE_FIELDS"
           :tasks="tasks"
         />
+        <task-conversations
+          v-else-if="activeTab == TAB_TITLES.conversation"
+          :fields="TABLE_FIELDS"
+          :tasks="tasks"
+        />
         <task-timeline-view
           v-else-if="activeTab == TAB_TITLES.timeline"
           :fields="TABLE_FIELDS"
@@ -47,6 +52,16 @@
         />
         <task-calendar-view
           v-else-if="activeTab == TAB_TITLES.calendar"
+          :fields="TABLE_FIELDS"
+          :tasks="tasks"
+        />
+        <task-team
+          v-else-if="activeTab == TAB_TITLES.team"
+          :fields="TABLE_FIELDS"
+          :tasks="tasks"
+        />
+        <task-file-group
+          v-else-if="activeTab == TAB_TITLES.file"
           :fields="TABLE_FIELDS"
           :tasks="tasks"
         />
@@ -61,6 +76,7 @@
         -->
       </div>
     </div>
+    <navigation-bar />
   </div>
 </template>
 <script>
@@ -73,14 +89,14 @@ export default {
       activeTab: DEFAULT_TAB,
       TABS,
       TAB_TITLES,
-      TABLE_FIELDS
+      TABLE_FIELDS,
     };
   },
   computed: {
     ...mapState("task", ["list", "single"]),
     ...mapGetters({
-      tasks: "task/tasksForListView"
-    })
+      tasks: "task/tasksForListView",
+    }),
   },
   methods: {
     // Change Tab
@@ -95,13 +111,13 @@ export default {
       } catch (err) {
         console.log(err);
       }
-    }
+    },
   },
   created() {
     this.$nextTick(async () => {
       await this.$store.dispatch("task/fetchTasks");
     });
-  }
+  },
 };
 </script>
 <style lang="scss" scoped>
