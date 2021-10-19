@@ -135,7 +135,7 @@
 }
 
 .custom-control-label::before {
-  left: 2.9rem;
+  left: 3.5rem;
 }
 
 .custom-checkbox svg {
