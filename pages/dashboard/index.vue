@@ -39,6 +39,7 @@
           v-else-if="activeTab == TAB_TITLES.task"
           :fields="TABLE_FIELDS"
           :tasks="tasks"
+          :gridType="gridType"
         />
         <task-conversations
           v-else-if="activeTab == TAB_TITLES.conversation"
@@ -60,7 +61,7 @@
           :fields="TABLE_FIELDS"
           :tasks="tasks"
         />
-        <task-file-group
+        <task-files
           v-else-if="activeTab == TAB_TITLES.file"
           :fields="TABLE_FIELDS"
           :tasks="tasks"
@@ -90,6 +91,7 @@ export default {
       TABS,
       TAB_TITLES,
       TABLE_FIELDS,
+      gridType: "grid",
     };
   },
   computed: {
@@ -116,6 +118,11 @@ export default {
   created() {
     this.$nextTick(async () => {
       await this.$store.dispatch("task/fetchTasks");
+    });
+
+    this.$root.$on("changeGridType", (type) => {
+      this.activeTab = TAB_TITLES.task;
+      this.gridType = type;
     });
   },
 };
