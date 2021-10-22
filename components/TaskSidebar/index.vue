@@ -87,8 +87,8 @@
         :tasks="tasks"
       />
 
-      <div class="container pt-1">
-        <task-group v-if="activeFileInfoTab == 'Subtasks'" />
+      <div class="container pt-1" v-if="activeFileInfoTab == 'Subtasks'">
+        <task-group />
       </div>
 
       <sidebar-team v-if="activeFileInfoTab == 'Team'" />
@@ -193,9 +193,12 @@ svg {
   padding-top: 1rem;
 }
 
+.container.pt-2::v-deep {
+  padding-top: 2rem;
+}
+
 .d-flex {
   width: 50%;
   margin-left: auto;
 }
 </style>
-  

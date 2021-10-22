@@ -139,7 +139,7 @@
 }
 
 .custom-checkbox svg {
-  left: 49px;
+  left: 58px;
 }
 
 .task {

@@ -172,7 +172,7 @@ import BibAvatar from "../../../bib-shared/components/Atoms/BibAvatar.vue";
 
 export default {
   components: { BibAvatar },
-  data: function() {
+  data: function () {
     return {
       activeItem: -1,
       selectItems: [
@@ -181,18 +181,18 @@ export default {
         { label: "List Item", value: "3" },
         { label: "List Item", value: "4" },
         { label: "List Item", value: "5" },
-        { label: "List Item", value: "6" }
+        { label: "List Item", value: "6" },
       ],
       description: "",
       isContentExpanded: false,
       form: {
         time: "08:45:25",
-        profile: ""
+        profile: "",
       },
       teammates: Teammates,
-      activeMate: 0
+      activeMate: 0,
     };
-  }
+  },
 };
 </script>
 

@@ -1,22 +1,8 @@
 <template>
   <div>
-    <a href="#" class="add-task w-100">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 48 48"
-      >
-        <g>
-          <path
-            d="M39,22H26V9a2,2,0,0,0-4,0V22H9a2,2,0,0,0,0,4H22V39a2,2,0,0,0,4,0V26H39a2,2,0,0,0,0-4Z"
-          ></path>
-        </g>
-      </svg>
+    <task-actions></task-actions>
 
-      <span>Add Team Members</span>
-    </a>
-    <ul class="task-bundle">
+    <ul class="task-bundle" v-if="gridType === 'grid'">
       <li class="task-item task-number">
         <span>#</span>
       </li>
@@ -40,15 +26,16 @@
       </li>
     </ul>
 
-    <task-bundle
-      title="Section"
-      :tasks="tasks.slice(2, 9)"
-      :isExpanded="true"
-    />
-    <task-bundle title="Section" :tasks="tasks.slice(2, 9)" />
-    <task-bundle title="Section" :tasks="tasks.slice(2, 9)" />
-    <task-bundle title="Section" :tasks="tasks.slice(2, 9)" />
-    <task-bundle title="Section" :tasks="tasks.slice(2, 9)" />
+    <div :class="{ 'd-flex': gridType === 'list' }">
+      <task-bundle
+        title="Section"
+        :tasks="tasks.slice(2, 5)"
+        :isExpanded="index === 0 ? true : false"
+        :gridType="gridType"
+        v-for="(item, index) in [1, 2, 3, 4, 5]"
+        :key="'task-bundle-' + index"
+      />
+    </div>
   </div>
 </template>
 
@@ -62,6 +49,15 @@ export default {
     fields: {
       type: Array,
       default: [],
+    },
+    gridType: {
+      type: String,
+      default: "grid",
+    },
+  },
+  watch: {
+    gridType() {
+      console.log("this gird", this.gridType);
     },
   },
 };

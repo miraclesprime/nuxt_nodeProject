@@ -1,5 +1,5 @@
 <template>
-  <div class="container pt-1">
+  <div class="container pt-2">
     <div class="task-team w-100">
       <div class="team-list">
         Team
@@ -182,7 +182,7 @@
         </div>
       </div>
 
-      <vue-text-editor :value="'abc'" @change="handleChange"></vue-text-editor>
+      <!-- <vue-text-editor :value="'abc'" @change="handleChange"></vue-text-editor> -->
     </div>
   </div>
 </template>
@@ -191,11 +191,12 @@
 import { Teammates } from "config/constants";
 
 export default {
-  data: function() {
+  data: function () {
     return {
-      teammates: Teammates
+      teammates: Teammates,
+      activeMate: 0,
     };
-  }
+  },
 };
 </script>
 
