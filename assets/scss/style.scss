@@ -168,14 +168,26 @@ ul {
 }
 
 
-#__layout .main {
-  left: 18.6rem;
-  padding-bottom: 1rem;
-  transition: left 0.5s;
-}
+#__layout {
+  .main {
+    left: 18.6rem;
+    width: calc(100% - 18.6rem);
+    padding-bottom: 1rem;
+    transition: left 0.5s, width .5s;
+  }
+  
+  &.hide-nav .main {
+    left: 6.9rem;
+    width: calc(100% - 6.9rem);
+  }
 
-#__layout.hide-nav .main {
-  left: 6.9rem;
+  &.show-sidebar .main {
+    width: calc(100% - 62.6rem);
+  }
+
+  &.show-sidebar.hide-nav .main {
+    width: calc(100% - 50.9rem);
+  }
 }
 
 .header {
@@ -237,7 +249,7 @@ ul {
   align-items: center;
 
   &.task-name {
-    width: 30%;
+    width: 28%;
   }
 
   &.task-number {
