@@ -26,43 +26,43 @@
         </h3>
       </div>
       <div class="menu">
-        <bib-tabs :value="activeTab" @change="tabChange" :tabs="TABS" />
+        <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="TABS" />
       </div>
       <div class="">
         <!-- <bib-toolbar label="Add Task/Section"></bib-toolbar> -->
         <task-overview
-          v-if="activeTab == TAB_TITLES.overview"
+          v-if="activeTab.value == TAB_TITLES.overview"
           :fields="TABLE_FIELDS"
           :tasks="tasks"
         />
         <task-view
-          v-else-if="activeTab == TAB_TITLES.task"
+          v-else-if="activeTab.value == TAB_TITLES.tasks"
           :fields="TABLE_FIELDS"
           :tasks="tasks"
           :gridType="gridType"
         />
         <task-conversations
-          v-else-if="activeTab == TAB_TITLES.conversation"
+          v-else-if="activeTab.value == TAB_TITLES.conversations"
           :fields="TABLE_FIELDS"
           :tasks="tasks"
         />
         <task-timeline-view
-          v-else-if="activeTab == TAB_TITLES.timeline"
+          v-else-if="activeTab.value == TAB_TITLES.timeline"
           :fields="TABLE_FIELDS"
           :tasks="tasks"
         />
         <task-calendar-view
-          v-else-if="activeTab == TAB_TITLES.calendar"
+          v-else-if="activeTab.value == TAB_TITLES.calendar"
           :fields="TABLE_FIELDS"
           :tasks="tasks"
         />
         <task-team
-          v-else-if="activeTab == TAB_TITLES.team"
+          v-else-if="activeTab.value == TAB_TITLES.team"
           :fields="TABLE_FIELDS"
           :tasks="tasks"
         />
         <task-files
-          v-else-if="activeTab == TAB_TITLES.file"
+          v-else-if="activeTab.value == TAB_TITLES.files"
           :fields="TABLE_FIELDS"
           :tasks="tasks"
         />

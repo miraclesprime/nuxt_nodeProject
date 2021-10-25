@@ -26,13 +26,13 @@ export const TABLE_FIELDS = [
 ];
 
 export const TAB_TITLES = {
-  overview: "Overview",
-  task: "Tasks",
-  timeline: "Timeline",
-  calendar: "Calendar",
-  team: "Team",
-  conversation: "Conversations",
-  file: "Files"
+  overview: "overview",
+  tasks: "tasks",
+  timeline: "timeline",
+  calendar: "calendar",
+  team: "team",
+  conversations: "conversations",
+  files: "files"
 };
 
 export const TASKS = [
@@ -51,7 +51,7 @@ export const TASKS = [
     author: "Johny Boy",
     date: "Jan-22"
   }
-]
+];
 
 export const Teammates = [
   {
@@ -78,8 +78,48 @@ export const Teammates = [
     name: "Capt. Jean Luc-Picard",
     role: "Assignee"
   }
-]
+];
 
-export const TABS = Object.keys(TAB_TITLES).map(field => TAB_TITLES[field]);
+export const TABS = [
+  {
+    key: "overview",
+    value: "overview",
+    title: "Overview"
+  },
+  {
+    key: "tasks",
+    value: "tasks",
+    title: "Tasks"
+  },
+  {
+    key: "timeline",
+    value: "timeline",
+    title: "Timeline"
+  },
+  {
+    key: "calendar",
+    value: "calendar",
+    title: "Calendar"
+  },
+  {
+    key: "team",
+    value: "team",
+    title: "Team"
+  },
+  {
+    key: "conversations",
+    value: "conversations",
+    title: "Conversations"
+  },
+  {
+    key: "files",
+    value: "files",
+    title: "Files"
+  }
+];
 
-export const DEFAULT_TAB = TAB_TITLES.overview;
+export const DEFAULT_TAB = {
+  key: "overview",
+  value: "overview",
+  title: "Overview"
+};
