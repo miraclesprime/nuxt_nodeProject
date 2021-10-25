@@ -121,7 +121,7 @@ export default {
     });
 
     this.$root.$on("changeGridType", (type) => {
-      this.activeTab = TAB_TITLES.task;
+      this.activeTab = TABS.find(t => t.value === TAB_TITLES.tasks);
       this.gridType = type;
     });
   },
