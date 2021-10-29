@@ -19,7 +19,9 @@ export default {
     ]
   },
 
-  css: ["./assets/scss/variable.scss", "./assets/scss/style.scss"],
+  css: [
+    "~/assets/scss/style.scss"
+  ],
   /// Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: ["~/plugins/plugins", "~/plugins/axios.js", "~/plugins/dayjs.js"],
   // Auto import components (https://go.nuxtjs.dev/config-components)
@@ -46,8 +48,7 @@ export default {
       "../bib-shared/css/mixins.scss",
       "../bib-shared/css/utilities.scss",
       "../bib-shared/css/basic.scss",
-      "./assets/scss/variable.scss",
-      "./assets/scss/style.scss",
+      "~/assets/scss/variable.scss"
     ]
   },
   router: {
@@ -105,6 +106,5 @@ export default {
     defaultLocale: "en",
     defaultTimeZone: "Canada/Toronto",
     plugins: ["utc", "timezone", "weekday", "localizedFormat", "isSameOrAfter"]
-  },
-  ssr: false,
+  }
 };

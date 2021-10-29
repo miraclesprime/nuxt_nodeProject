@@ -1,85 +1,100 @@
 <template>
-  <div>
-    <bib-header />
-    <task-sidebar />
-    <div class="main">
-      <div class="bread d-flex">
-        <div class="d-flex align-center">
-          <bib-icon icon="previous" :scale="2.0"></bib-icon>
+  <bib-app-wrapper
+    :navigationCollapsed="collapseNavigation"
+    @collapseNavigation="
+      () => {
+        collapseNavigation = !collapseNavigation;
+      }
+    "
+  >
+    <template #topbar>
+      <bib-header></bib-header>
+    </template>
+
+    <template #switcher>
+      <bib-app-switcher :menuItems="appItems"></bib-app-switcher>
+    </template>
+
+    <template #navigation>
+      <bib-app-navigation :items="navItems1"></bib-app-navigation>
+      <bib-app-navigation :items="navItems2"></bib-app-navigation>
+    </template>
+
+    <template #content>
+      <div class="main" :class="openSidebar ? 'open-sidebar' : ''">
+        <task-sidebar />
+
+        <div class="bread d-flex">
+          <div class="d-flex align-center">
+            <bib-icon icon="previous" :scale="2.0"></bib-icon>
+          </div>
+          <h3 class="bold mt-auto mb-auto d-flex">
+            Project Name
+            <div class="pl-1 mt-auto mb-auto">
+              <bib-icon icon="heart" :scale="1.25"></bib-icon>
+            </div>
+            <div class="pl-1 mt-auto mb-auto">
+              <bib-button pop="elipsis">
+                <template v-slot:menu>
+                  <div class="list__section">
+                    <span class="list__item">item 1</span>
+                    <span class="list__item">item 2</span>
+                    <span class="list__item">item 3</span>
+                  </div>
+                </template>
+              </bib-button>
+            </div>
+          </h3>
         </div>
-        <h3 class="bold mt-auto mb-auto d-flex">
-          Project Name
-          <div class="pl-1 mt-auto mb-auto">
-            <bib-icon icon="heart" :scale="1.25"></bib-icon>
-          </div>
-          <div class="pl-1 mt-auto mb-auto">
-            <bib-button pop="elipsis">
-              <template v-slot:menu>
-                <div class="list__section">
-                  <span class="list__item">item 1</span>
-                  <span class="list__item">item 2</span>
-                  <span class="list__item">item 3</span>
-                </div>
-              </template>
-            </bib-button>
-          </div>
-        </h3>
+
+        <div class="menu">
+          <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="TABS" />
+        </div>
+
+        <div class="">
+          <task-overview
+            v-if="activeTab.value == TAB_TITLES.overview"
+            :fields="TABLE_FIELDS"
+            :tasks="tasks"
+            :gridType="gridType"
+          />
+          <task-view
+            v-else-if="activeTab.value == TAB_TITLES.tasks"
+            :fields="TABLE_FIELDS"
+            :tasks="tasks"
+            :gridType="gridType"
+          />
+          <task-conversations
+            v-else-if="activeTab.value == TAB_TITLES.conversations"
+            :fields="TABLE_FIELDS"
+            :tasks="tasks"
+          />
+          <task-timeline-view
+            v-else-if="activeTab.value == TAB_TITLES.timeline"
+            :fields="TABLE_FIELDS"
+            :tasks="tasks"
+          />
+          <task-calendar-view
+            v-else-if="activeTab.value == TAB_TITLES.calendar"
+            :fields="TABLE_FIELDS"
+            :tasks="tasks"
+          />
+          <task-team
+            v-else-if="activeTab.value == TAB_TITLES.team"
+            :fields="TABLE_FIELDS"
+            :tasks="tasks"
+          />
+          <task-files
+            v-else-if="activeTab.value == TAB_TITLES.files"
+            :fields="TABLE_FIELDS"
+            :tasks="tasks"
+          />
+        </div>
       </div>
-      <div class="menu">
-        <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="TABS" />
-      </div>
-      <div class="">
-        <!-- <bib-toolbar label="Add Task/Section"></bib-toolbar> -->
-        <task-overview
-          v-if="activeTab.value == TAB_TITLES.overview"
-          :fields="TABLE_FIELDS"
-          :tasks="tasks"
-        />
-        <task-view
-          v-else-if="activeTab.value == TAB_TITLES.tasks"
-          :fields="TABLE_FIELDS"
-          :tasks="tasks"
-          :gridType="gridType"
-        />
-        <task-conversations
-          v-else-if="activeTab.value == TAB_TITLES.conversations"
-          :fields="TABLE_FIELDS"
-          :tasks="tasks"
-        />
-        <task-timeline-view
-          v-else-if="activeTab.value == TAB_TITLES.timeline"
-          :fields="TABLE_FIELDS"
-          :tasks="tasks"
-        />
-        <task-calendar-view
-          v-else-if="activeTab.value == TAB_TITLES.calendar"
-          :fields="TABLE_FIELDS"
-          :tasks="tasks"
-        />
-        <task-team
-          v-else-if="activeTab.value == TAB_TITLES.team"
-          :fields="TABLE_FIELDS"
-          :tasks="tasks"
-        />
-        <task-files
-          v-else-if="activeTab.value == TAB_TITLES.files"
-          :fields="TABLE_FIELDS"
-          :tasks="tasks"
-        />
-        <!--
-        {{ this.$auth.user }}
-        <bib-button
-          @click.native="logout"
-          class="bg-danger"
-          size="md"
-          label="logout"
-        ></bib-button>
-        -->
-      </div>
-    </div>
-    <navigation-bar />
-  </div>
+    </template>
+  </bib-app-wrapper>
 </template>
+
 <script>
 import { mapState, mapGetters } from "vuex";
 import { TABLE_FIELDS, TABS, DEFAULT_TAB, TAB_TITLES } from "config/constants";
@@ -92,6 +107,28 @@ export default {
       TAB_TITLES,
       TABLE_FIELDS,
       gridType: "grid",
+      openSidebar: false,
+      appItems: [
+        {
+          img: "Layers",
+          color: "primary",
+          active: true,
+          text: "Templates",
+          href: "#",
+        },
+        { img: "Files", color: "success-sub1", text: "Files", href: "#" },
+        { img: "Signature", color: "orange", text: "eSign", href: "#" },
+        { img: "Tick", color: "primary", text: "Project", href: "#" },
+        { img: "CommentForum", color: "purple", text: "Chat", href: "#" },
+      ],
+      navItems1: [
+        { label: "Project Home", icon: "home", selected: true },
+        { label: "Inbox", icon: "nodes" },
+        { label: "My tasks", icon: "check-circle" },
+        { label: "Favorites", icon: "heart-like" },
+      ],
+      navItems2: [{ label: "trash", icon: "Trash" }],
+      collapseNavigation: false,
     };
   },
   computed: {
@@ -121,30 +158,28 @@ export default {
     });
 
     this.$root.$on("changeGridType", (type) => {
-      this.activeTab = TABS.find(t => t.value === TAB_TITLES.tasks);
       this.gridType = type;
+    });
+
+    this.$root.$on("openSidebar", (flag) => {
+      this.openSidebar = flag;
     });
   },
 };
 </script>
+
 <style lang="scss" scoped>
 * {
   font-family: "Lato", sans-serif;
 }
 .main {
-  width: calc(100% - (#{$item-height} * 1.8));
-  // height: 100%;
   display: grid;
-  position: absolute;
-  top: 4rem;
   overflow: hidden;
-  left: $item-height * 1.8;
   background-color: white;
   grid-template-rows: 2.5rem 2.5rem 100%;
 
   .menu {
     padding: 0 1rem 0 0.25rem;
-    max-width: 40%;
   }
   .bread {
     padding: 0 0.15rem 0 0.15rem;
@@ -153,9 +188,20 @@ export default {
     line-height: 1.8rem;
   }
 }
+
 details {
   summary::-webkit-details-marker {
     display: none;
+  }
+}
+
+::v-deep .app-wrapper__collapser {
+  justify-content: center;
+}
+
+::v-deep .app-wrapper__navigation--collapsed {
+  .nav-item {
+    padding: 0;
   }
 }
 </style>

@@ -1,98 +1,133 @@
 export const DUMMY_TASKS = [
   {
-    id: 1,
-    title: "Task name",
-    status: ["Past Due", "80%"],
+    key: 1,
+    name: "Task name",
+    status: "Past Due",
+    progress: "80%",
     priority: "Urgent",
     assignee: "John Doe",
     dueDate: "Nov 23, 2032"
   },
   {
-    id: 2,
-    title: "Task name",
-    status: ["Past Due", "80%"],
+    key: 2,
+    name: "Task name",
+    status: "Past Due",
+    progress: "80%",
     priority: "Top",
     assignee: "John Doe",
     dueDate: "Nov 23, 2032"
   },
   {
-    id: 3,
-    title: "Task name",
-    status: ["In-progress", "80%"],
+    key: 3,
+    name: "Task name",
+    status: "In-progress",
+    progress: "80%",
     priority: "Priority",
     assignee: "John Doe",
     dueDate: "Nov 23, 2032"
   },
   {
-    id: 4,
-    title: "Task name",
-    status: ["In-progress", "80%"],
+    key: 4,
+    name: "Task name",
+    status: "In-progress",
+    progress: "80%",
     priority: "Priority",
     assignee: "John Doe",
     dueDate: "Nov 23, 2032"
   },
   {
-    id: 5,
-    title: "Task name",
-    status: ["In-progress", "80%"],
+    key: 5,
+    name: "Task name",
+    status: "In-progress",
+    progress: "80%",
     priority: "Priority",
     assignee: "John Doe",
     dueDate: "Nov 23, 2032"
   },
   {
-    id: 6,
-    title: "Task name",
-    status: ["In-progress", "80%"],
+    key: 6,
+    name: "Task name",
+    status: "In-progress",
+    progress: "80%",
     priority: "Priority",
     assignee: "John Doe",
     dueDate: "Nov 23, 2032"
   },
   {
-    id: 7,
-    title: "Task name",
-    status: ["In-progress", "80%"],
+    key: 7,
+    name: "Task name",
+    status: "In-progress",
+    progress: "80%",
     priority: "Priority",
     assignee: "John Doe",
     dueDate: "Nov 23, 2032"
   },
   {
-    id: 8,
-    title: "Task name",
-    status: ["In-progress", "80%"],
+    key: 8,
+    name: "Task name",
+    status: "In-progress",
+    progress: "80%",
     priority: "Priority",
     assignee: "John Doe",
     dueDate: "Nov 23, 2032"
   },
   {
-    id: 9,
-    title: "Task name",
-    status: ["In-progress", "80%"],
+    key: 9,
+    name: "Task name",
+    status: "In-progress",
+    progress: "80%",
     priority: "Priority",
     assignee: "John Doe",
     dueDate: "Nov 23, 2032"
   },
   {
-    id: 10,
-    title: "Task - 10",
+    key: 10,
+    name: "Task - 10",
     status: "DONE",
-    priority: "LOW",
+    priorit: "LOW",
     assignee: "Ramon",
     dueDate: "2021-10-01"
   },
   {
-    id: 11,
-    title: "Task - 11",
-    status: "DONE",
-    priority: "LOW",
+    key: 11,
+    name: "Task - 11",
+    status: "DONE", priorit: "LOW",
     assignee: "Bruno",
     dueDate: "2021-10-01"
   },
   {
-    id: 12,
-    title: "Task - 12",
-    status: "PROGRESS",
-    priority: "LOW",
+    key: 12,
+    name: "Task - 12",
+    status: "DONE",
+    priorit: "LOW",
     assignee: "Bruno",
     dueDate: "2021-10-01"
   }
 ];
+
+export const DUMMY_TASK_FIELDS = [
+  {
+    key: "key",
+    label: "#",
+  },
+  {
+    key: "name",
+    label: "Task name",
+  },
+  {
+    key: "status",
+    label: "Status",
+  },
+  {
+    key: "priority",
+    label: "Priority",
+  },
+  {
+    key: "assignee",
+    label: "Assignee",
+  },
+  {
+    key: "dueDate",
+    label: "Due Date",
+  },
+]
