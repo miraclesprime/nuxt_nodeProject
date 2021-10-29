@@ -62,14 +62,14 @@ export default {
       submitVariant: "secondary",
       passwordVariant: "",
       isDisabled: false,
-      tabs: ["Register", "Sign in"]
+      tabs: ["Register", "Sign in"],
     };
   },
   validations: {
     userInfo: {
       email: { required, email },
-      password: { required, minLength: minLength(6) }
-    }
+      password: { required, minLength: minLength(6) },
+    },
   },
   created() {
     this.$v.$touch();
@@ -130,8 +130,8 @@ export default {
       }
 
       console.log(this.$auth.loggedIn);
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>
