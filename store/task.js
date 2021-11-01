@@ -8,34 +8,38 @@ export const state = () => ({
 });
 
 export const mutations = {
-  initialize (state, list) {
+  initialize(state, list) {
     state.list = [...(list || [])];
   },
-  
-  add (state, task) {
+
+  add(state, task) {
     state.list.push(task);
   },
 
-  remove (state, taskId) {
+  remove(state, taskId) {
     state.list = state.list.filter(task => task.id !== taskId);
   },
 
-  update (state, updatedTask) {
+  update(state, updatedTask) {
     state.list = state.list.map(task => task.id === updatedTask.id ? updatedTask : task);
   },
+
+  setSingleTask(state, currentTask) {
+    single = currentTask;
+  }
 };
 
 export const getters = {
-  tasksForListView (state) {
+  tasksForListView(state) {
     return state.list;
   },
-  tasksForOverview (state) {
-    
+  tasksForOverview(state) {
+
   }
 };
 
 export const actions = {
-  async fetchTasks (ctx) {
+  async fetchTasks(ctx) {
     // const res = await this.$axios.$get('/task?page=1&limit=99999');
     // ctx.commit('initialize', mapTasks(res.data));
     ctx.commit('initialize', DUMMY_TASKS);

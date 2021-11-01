@@ -32,7 +32,8 @@ export default {
   methods: {
     openSidebar() {
       this.flag = !this.flag;
-      this.$root.$emit("openSidebar", this.flag);
+      this.$root.$emit("open-sidebar", this.flag);
+      this.$root.$emit("set-active-task", this.sections[key]);
     },
   },
 };
