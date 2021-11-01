@@ -106,7 +106,7 @@ export default {
       TABS,
       TAB_TITLES,
       TABLE_FIELDS,
-      gridType: "grid",
+      gridType: "list",
       openSidebar: false,
       appItems: [
         {

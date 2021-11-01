@@ -1,72 +1,137 @@
 <template>
-  <div :class="adClass">
-    <a href="#" class="add-task w-100">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 48 48"
-      >
-        <g>
-          <path
-            d="M39,22H26V9a2,2,0,0,0-4,0V22H9a2,2,0,0,0,0,4H22V39a2,2,0,0,0,4,0V26H39a2,2,0,0,0,0-4Z"
-          ></path>
-        </g>
-      </svg>
+  <div class="task-group w-100">
+    <section-title />
 
-      <span>Add Team Members</span>
-    </a>
+    <custom-table
+      :fields="taskFields"
+      :taskSections="taskSections"
+      class="bg-white p-0"
+      :groupName="groupName"
+    >
+      <template #cell(key)="data">
+        {{ data.value.key }}
+      </template>
 
-    <div class="team-list w-100">
-      <div
-        class="teammate"
-        v-for="(item, index) in teammates"
-        :key="'teammate-' + index"
-      >
-        <bib-avatar :src="'https://i.pravatar.cc/' + index * 100" size="25px">
-        </bib-avatar>
+      <template #cell(name)="data">
+        <custom-check-box :id="'team-' + groupName + '-' + data.value.key" />
+        <span class="ml-05">{{ data.value.name }}</span>
+      </template>
 
-        <span class="teammate-name"
-          >{{ item.name }}
-          <template v-if="item.role !== 'developer'">
-            ( {{ item.role }} )
-          </template>
+      <template #cell(location)="data">
+        <span class="assignee-name ml-05">
+          {{ data.value.location }}
         </span>
-      </div>
-    </div>
+      </template>
+
+      <template #cell(position)="data">
+        {{ data.value.position }}
+      </template>
+
+      <template #cell(options)="data">
+        {{ data.value.options }}
+      </template>
+    </custom-table>
   </div>
 </template>
 
 <script>
-import { Teammates } from "config/constants";
-
 export default {
   props: {
-    adClass: {
+    groupName: {
       type: String,
-      default: "container pt-1",
+      default() {
+        return "123";
+      },
     },
   },
   data: function () {
     return {
-      teammates: Teammates,
+      taskSections: [
+        {
+          key: 1,
+          name: "Persons Name",
+          location: "Location",
+          position: "Position",
+          options: "Added/Modified",
+        },
+        {
+          key: 2,
+          name: "Persons Name",
+          location: "Location",
+          position: "Position",
+          options: "Added/Modified",
+        },
+        {
+          key: 3,
+          name: "Persons Name",
+          location: "Location",
+          position: "Position",
+          options: "Added/Modified",
+        },
+        {
+          key: 4,
+          name: "Persons Name",
+          location: "Location",
+          position: "Position",
+          options: "Added/Modified",
+        },
+        {
+          key: 5,
+          name: "Persons Name",
+          location: "Location",
+          position: "Position",
+          options: "Added/Modified",
+        },
+      ],
+      taskFields: [
+        {
+          key: "key",
+          label: "#",
+        },
+        {
+          key: "name",
+          label: "Task name",
+        },
+        {
+          key: "location",
+          label: "Location",
+        },
+        {
+          key: "position",
+          label: "Position",
+        },
+        {
+          key: "options",
+          label: "Add/Modified",
+        },
+      ],
+      flag: false,
     };
   },
 };
 </script>
 
-<style lang="scss" scoped>
-.teammate {
-  padding: 7px 0;
-  border-bottom: 1px solid $gray6;
-
-  &:first-child {
-    border-top: 1px solid $gray6;
-  }
+<style scoped lang="scss">
+.task-group {
+  margin-bottom: 3rem;
 }
 
-.teammate-name {
-  font-size: $sidebar-size;
-  font-weight: 400;
+::v-deep {
+  .task-key {
+    width: 4%;
+    justify-content: center;
+  }
+  .task-name {
+    width: 50%;
+  }
+  .task-location {
+    width: 16%;
+  }
+  .task-position {
+    width: 15%;
+  }
+  .task-options {
+    width: 15%;
+  }
 }
 </style>
