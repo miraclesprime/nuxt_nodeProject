@@ -5,8 +5,8 @@
         <div class="row">
           <div class="col-4">
             <bib-input
-              type="select"
-              v-model="activeItem"
+              type="text"
+              :value="activeItem.name"
               :options="selectItems"
               placeholder="Please select..."
               label="Assignee"
@@ -15,8 +15,8 @@
 
           <div class="col-8">
             <bib-input
-              type="select"
-              v-model="activeItem"
+              type="text"
+              :value="activeItem.name"
               :options="selectItems"
               placeholder="Please select..."
               label="Project"
@@ -27,8 +27,8 @@
         <div class="row">
           <div class="col-4">
             <bib-input
-              type="select"
-              v-model="activeItem"
+              type="text"
+              :value="activeItem.name"
               :options="selectItems"
               placeholder="Please select..."
               label="Department"
@@ -37,8 +37,8 @@
 
           <div class="col-4">
             <bib-input
-              type="select"
-              v-model="activeItem"
+              type="text"
+              :value="activeItem.priority"
               :options="selectItems"
               placeholder="Please select..."
               label="Priority"
@@ -47,8 +47,8 @@
 
           <div class="col-4">
             <bib-input
-              type="select"
-              v-model="activeItem"
+              type="text"
+              :value="activeItem.status"
               :options="selectItems"
               placeholder="Please select..."
               label="Status"
@@ -170,11 +170,14 @@
 import { Teammates } from "config/constants";
 
 export default {
+  props: {
+    activeTask: Object,
+  },
   data: function () {
     return {
-      activeItem: -1,
+      activeItem: this.activeTask,
       selectItems: [
-        { label: "List Item", value: "1" },
+        { label: "Task name", value: "1" },
         { label: "List Item", value: "2" },
         { label: "List Item", value: "3" },
         { label: "List Item", value: "4" },
@@ -190,6 +193,11 @@ export default {
       teammates: Teammates,
       activeMate: 0,
     };
+  },
+  watch: {
+    activeTask() {
+      this.activeItem = this.activeTask;
+    },
   },
 };
 </script>

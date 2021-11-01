@@ -85,6 +85,7 @@
         v-if="activeSidebarTab == 'Overview'"
         :fields="taskFields"
         :tasks="tasks"
+        :activeTask="activeTask"
       />
 
       <div class="container pt-1" v-if="activeSidebarTab == 'Subtasks'">
@@ -106,6 +107,9 @@
 import { mapGetters } from "vuex";
 
 export default {
+  props: {
+    activeTask: Object,
+  },
   data: function () {
     return {
       form: {
@@ -156,7 +160,7 @@ export default {
   },
   methods: {
     hideSidebar() {
-      this.$root.$emit("openSidebar", false);
+      this.$root.$emit("open-sidebar", false);
     },
     sidebarTabChange(tab) {
       this.activeSidebarTab = tab.value;

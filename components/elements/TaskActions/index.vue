@@ -69,7 +69,7 @@ export default {
   methods: {
     changeGridType(gType) {
       this.type = gType;
-      this.$root.$emit("changeGridType", this.type);
+      this.$root.$emit("change-grid-type", this.type);
     },
   },
 };

@@ -93,7 +93,8 @@ export default {
   methods: {
     selectItem(key) {
       this.flag = !this.flag;
-      this.$root.$emit("openSidebar", this.flag);
+      this.$root.$emit("open-sidebar", this.flag);
+      this.$root.$emit("set-active-task", this.sections[key]);
 
       this.unselectAll();
       document.getElementById(key).classList.toggle("active");

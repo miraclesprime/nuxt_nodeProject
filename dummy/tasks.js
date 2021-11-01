@@ -1,7 +1,7 @@
 export const DUMMY_TASKS = [
   {
     key: 1,
-    name: "Task name",
+    name: "Task - 1",
     status: "Past Due",
     progress: "80%",
     priority: "Urgent",
@@ -10,7 +10,7 @@ export const DUMMY_TASKS = [
   },
   {
     key: 2,
-    name: "Task name",
+    name: "Task - 2",
     status: "Past Due",
     progress: "80%",
     priority: "Top",
@@ -19,7 +19,7 @@ export const DUMMY_TASKS = [
   },
   {
     key: 3,
-    name: "Task name",
+    name: "Task - 3",
     status: "In-progress",
     progress: "80%",
     priority: "Priority",
@@ -28,7 +28,7 @@ export const DUMMY_TASKS = [
   },
   {
     key: 4,
-    name: "Task name",
+    name: "Task - 4",
     status: "In-progress",
     progress: "80%",
     priority: "Priority",
@@ -37,7 +37,7 @@ export const DUMMY_TASKS = [
   },
   {
     key: 5,
-    name: "Task name",
+    name: "Task - 5",
     status: "In-progress",
     progress: "80%",
     priority: "Priority",
@@ -46,7 +46,7 @@ export const DUMMY_TASKS = [
   },
   {
     key: 6,
-    name: "Task name",
+    name: "Task - 6",
     status: "In-progress",
     progress: "80%",
     priority: "Priority",
@@ -55,7 +55,7 @@ export const DUMMY_TASKS = [
   },
   {
     key: 7,
-    name: "Task name",
+    name: "Task - 7",
     status: "In-progress",
     progress: "80%",
     priority: "Priority",
@@ -64,7 +64,7 @@ export const DUMMY_TASKS = [
   },
   {
     key: 8,
-    name: "Task name",
+    name: "Task - 8",
     status: "In-progress",
     progress: "80%",
     priority: "Priority",
@@ -73,7 +73,7 @@ export const DUMMY_TASKS = [
   },
   {
     key: 9,
-    name: "Task name",
+    name: "Task - 9",
     status: "In-progress",
     progress: "80%",
     priority: "Priority",

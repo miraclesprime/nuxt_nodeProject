@@ -18,11 +18,12 @@
     <template #navigation>
       <bib-app-navigation :items="navItems1"></bib-app-navigation>
       <bib-app-navigation :items="navItems2"></bib-app-navigation>
+      <bib-app-navigation :items="navItems3"></bib-app-navigation>
     </template>
 
     <template #content>
       <div class="main" :class="openSidebar ? 'open-sidebar' : ''">
-        <task-sidebar />
+        <task-sidebar :activeTask="activeTask" />
 
         <div class="bread d-flex">
           <div class="d-flex align-center">
@@ -108,6 +109,11 @@ export default {
       TABLE_FIELDS,
       gridType: "list",
       openSidebar: false,
+      activeTask: {
+        assignee: null,
+        priority: null,
+        status: null,
+      },
       appItems: [
         {
           img: "Layers",
@@ -127,7 +133,16 @@ export default {
         { label: "My tasks", icon: "check-circle" },
         { label: "Favorites", icon: "heart-like" },
       ],
-      navItems2: [{ label: "trash", icon: "Trash" }],
+      navItems2: [
+        { label: "Dream", icon: "home", selected: true },
+        { label: "Goals", icon: "nodes" },
+        { label: "Projects", icon: "folder-add" },
+        { label: "Tasks", icon: "check-circle" },
+      ],
+      navItems3: [
+        { label: "Departments", icon: "home", selected: true },
+        { label: "People", icon: "user-group" },
+      ],
       collapseNavigation: false,
     };
   },
@@ -157,12 +172,16 @@ export default {
       await this.$store.dispatch("task/fetchTasks");
     });
 
-    this.$root.$on("changeGridType", (type) => {
+    this.$root.$on("change-grid-type", (type) => {
       this.gridType = type;
     });
 
-    this.$root.$on("openSidebar", (flag) => {
+    this.$root.$on("open-sidebar", (flag) => {
       this.openSidebar = flag;
+    });
+
+    this.$root.$on("set-active-task", (task) => {
+      this.activeTask = task;
     });
   },
 };
