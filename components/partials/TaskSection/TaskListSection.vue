@@ -1,7 +1,7 @@
 <template>
   <bib-detail-collapse :label="label" :open="open" :class="labelClass">
     <template v-slot:content>
-      <task-table
+      <task-list
         :fields="taskFields"
         :taskSections="taskSections"
         :headless="headless"
@@ -39,7 +39,7 @@
         <template #cell(dueDate)="data">
           {{ data.value.dueDate }}
         </template>
-      </task-table>
+      </task-list>
     </template>
   </bib-detail-collapse>
 </template>

@@ -29,17 +29,17 @@
         </li>
         <li class="action">
           <span style="margin-right: 5px">Views</span>
-          <a href="#" class="grid-type" @click.prevent="changeGridType('grid')">
+          <a href="#" class="grid-type" @click.prevent="changeGridType('list')">
             <bib-icon
               icon="list"
-              :variant="gridType === 'grid' ? 'black' : 'gray'"
+              :variant="type === 'list' ? 'black' : 'gray'"
             />
           </a>
 
-          <a href="#" class="grid-type" @click.prevent="changeGridType('list')">
+          <a href="#" class="grid-type" @click.prevent="changeGridType('grid')">
             <bib-icon
               icon="kanban"
-              :variant="gridType === 'list' ? 'black' : 'gray'"
+              :variant="type === 'grid' ? 'black' : 'gray'"
             />
           </a>
         </li>
@@ -54,18 +54,22 @@
 </template>
 
 <script>
-import SectionTitle from "../SectionTitle.vue";
 export default {
-  components: { SectionTitle },
+  props: {
+    gridType: {
+      type: String,
+      default: "list",
+    },
+  },
   data() {
     return {
-      gridType: "grid",
+      type: this.gridType,
     };
   },
   methods: {
-    changeGridType(type) {
-      this.gridType = type;
-      this.$root.$emit("changeGridType", type);
+    changeGridType(gType) {
+      this.type = gType;
+      this.$root.$emit("changeGridType", this.type);
     },
   },
 };
