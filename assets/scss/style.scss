@@ -7,6 +7,7 @@ body {
   font-size: 14px;
 }
 
+// basic tags
 a {
   display: inline-block;
   color: $secondary;
@@ -20,15 +21,6 @@ a {
 
 ul {
     list-style: none;
-}
-
-.divider {
-  content: "";
-  position: absolute;
-  top: 0;
-  width: 1px;
-  height: 100%;
-  background-color: $gray6;
 }
 
 // layout
@@ -103,10 +95,15 @@ ul {
 
 .padding-sm .task-item {
   padding: 0 10px;
+}
 
-  // &.task-name span {
-  //   margin-left: 24px;
-  // }
+.divider {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background-color: $gray6;
 }
 
 .bundle-title {
@@ -151,7 +148,7 @@ ul {
   }
 }
 
-//
+// colors
 .bg-red {
   background: $red;
 }

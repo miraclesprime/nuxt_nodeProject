@@ -24,25 +24,8 @@
     </ul>
 
     <div class="file w-100">
-      <div class="folder-name">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="15"
-          height="15"
-          viewBox="0 0 48 48"
-        >
-          <title>folder</title>
-          <g id="Layer_2" data-name="Layer 2">
-            <g id="invisible_box" data-name="invisible box">
-              <rect width="48" height="48" fill="none"></rect>
-            </g>
-            <g id="icons_Q2" data-name="icons Q2">
-              <path
-                d="M19.3,10l4.9,4.8L25.3,16H42V38H6V10H19.3M21,6H4A2,2,0,0,0,2,8V40a2,2,0,0,0,2,2H44a2,2,0,0,0,2-2V14a2,2,0,0,0-2-2H27L21,6Z"
-              ></path>
-            </g>
-          </g>
-        </svg>
+      <div class="folder-name d-flex align-center">
+        <bib-icon icon="folder" />
         <span>Folder</span>
       </div>
 
@@ -70,69 +53,18 @@
           <bib-icon icon="elipsis"></bib-icon>
         </li>
       </ul>
-      <div class="folder-name">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="15"
-          height="15"
-          viewBox="0 0 48 48"
-        >
-          <title>folder</title>
-          <g id="Layer_2" data-name="Layer 2">
-            <g id="invisible_box" data-name="invisible box">
-              <rect width="48" height="48" fill="none"></rect>
-            </g>
-            <g id="icons_Q2" data-name="icons Q2">
-              <path
-                d="M19.3,10l4.9,4.8L25.3,16H42V38H6V10H19.3M21,6H4A2,2,0,0,0,2,8V40a2,2,0,0,0,2,2H44a2,2,0,0,0,2-2V14a2,2,0,0,0-2-2H27L21,6Z"
-              ></path>
-            </g>
-          </g>
-        </svg>
+      <div class="folder-name d-flex align-center">
+        <bib-icon icon="folder" />
         <span>Folder</span>
       </div>
 
-      <div class="folder-name">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="15"
-          height="15"
-          viewBox="0 0 48 48"
-        >
-          <title>folder</title>
-          <g id="Layer_2" data-name="Layer 2">
-            <g id="invisible_box" data-name="invisible box">
-              <rect width="48" height="48" fill="none"></rect>
-            </g>
-            <g id="icons_Q2" data-name="icons Q2">
-              <path
-                d="M19.3,10l4.9,4.8L25.3,16H42V38H6V10H19.3M21,6H4A2,2,0,0,0,2,8V40a2,2,0,0,0,2,2H44a2,2,0,0,0,2-2V14a2,2,0,0,0-2-2H27L21,6Z"
-              ></path>
-            </g>
-          </g>
-        </svg>
+      <div class="folder-name d-flex align-center">
+        <bib-icon icon="folder" />
         <span>Folder</span>
       </div>
 
-      <div class="folder-name">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="15"
-          height="15"
-          viewBox="0 0 48 48"
-        >
-          <title>folder</title>
-          <g id="Layer_2" data-name="Layer 2">
-            <g id="invisible_box" data-name="invisible box">
-              <rect width="48" height="48" fill="none"></rect>
-            </g>
-            <g id="icons_Q2" data-name="icons Q2">
-              <path
-                d="M19.3,10l4.9,4.8L25.3,16H42V38H6V10H19.3M21,6H4A2,2,0,0,0,2,8V40a2,2,0,0,0,2,2H44a2,2,0,0,0,2-2V14a2,2,0,0,0-2-2H27L21,6Z"
-              ></path>
-            </g>
-          </g>
-        </svg>
+      <div class="folder-name d-flex align-center">
+        <bib-icon icon="folder" />
         <span>Folder</span>
       </div>
     </div>
