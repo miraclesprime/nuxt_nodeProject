@@ -30,10 +30,10 @@ export default {
     };
   },
   methods: {
-    openSidebar() {
+    openSidebar(key) {
       this.flag = !this.flag;
       this.$root.$emit("open-sidebar", this.flag);
-      this.$root.$emit("set-active-task", this.sections[key]);
+      this.$root.$emit("set-active-task", this.task);
     },
   },
 };

@@ -74,12 +74,12 @@
 </template>
 
 <script>
-import { Teammates } from "config/constants";
+import { TEAMMATES } from "config/constants";
 
 export default {
   data: function () {
     return {
-      teammates: Teammates,
+      teammates: TEAMMATES,
       activeMate: 0,
     };
   },

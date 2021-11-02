@@ -167,7 +167,7 @@
 </template>
 
 <script>
-import { Teammates } from "config/constants";
+import { TEAMMATES } from "config/constants";
 
 export default {
   props: {
@@ -190,7 +190,7 @@ export default {
         time: "08:45:25",
         profile: "",
       },
-      teammates: Teammates,
+      teammates: TEAMMATES,
       activeMate: 0,
     };
   },

@@ -53,7 +53,7 @@ export const TASKS = [
   }
 ];
 
-export const Teammates = [
+export const TEAMMATES = [
   {
     name: "Bruno Goulet",
     role: "Developer"
