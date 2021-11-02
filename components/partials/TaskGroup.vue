@@ -104,23 +104,4 @@ export default {
 .task-group {
   margin-bottom: 3rem;
 }
-
-::v-deep {
-  .task-key {
-    width: 4%;
-    justify-content: center;
-  }
-  .task-name {
-    width: 50%;
-  }
-  .task-assignee {
-    width: 25%;
-  }
-  .task-dueDate {
-    width: 16%;
-  }
-  .task-options {
-    justify-content: center;
-  }
-}
 </style>
