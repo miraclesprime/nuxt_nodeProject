@@ -1,17 +1,15 @@
 <template>
   <bib-detail-collapse :label="label" :open="open" :class="labelClass">
     <template v-slot:content>
-      <bib-table
+      <task-list
         :fields="taskFields"
-        :sections="taskSections"
+        :taskSections="taskSections"
         :headless="headless"
         :groupName="groupName"
         class="bg-white p-0"
       >
         <template #cell(key)="data">
-          <div class="task-key">
-            {{ data.value.key }}
-          </div>
+          {{ data.value.key }}
         </template>
 
         <template #cell(name)="data">
@@ -41,7 +39,7 @@
         <template #cell(dueDate)="data">
           {{ data.value.dueDate }}
         </template>
-      </bib-table>
+      </task-list>
     </template>
   </bib-detail-collapse>
 </template>
@@ -131,34 +129,6 @@ export default {
 
   .border-top-gray4 {
     border-top: 1px solid $gray4;
-  }
-
-  td {
-    display: flex;
-    align-items: center;
-    color: $dark !important;
-    font-weight: 600;
-  }
-  td:first-child {
-    width: 4%;
-    justify-content: center;
-  }
-  td:nth-child(2) {
-    width: 28%;
-  }
-  td:nth-child(3) {
-    width: 19%;
-    justify-content: space-between;
-  }
-  td:nth-child(4),
-  td:nth-child(5) {
-    width: 17%;
-  }
-  td:nth-child(6) {
-    width: 15%;
-  }
-  tr {
-    display: flex;
   }
 }
 </style>

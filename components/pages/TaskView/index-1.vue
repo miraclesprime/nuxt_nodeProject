@@ -10,36 +10,28 @@
       >
       </custom-table>
 
-      <section>
-        <task-list-section
-          :headless="true"
-          label="Section"
-          :taskFields="tableFields"
-          :taskSections="tableSections.slice(0, 3)"
-          :open="true"
-          groupName="1"
-        />
-      </section>
-
-      <section>
-        <task-list-section
-          :headless="true"
-          label="Section"
-          :taskFields="tableFields"
-          :taskSections="tableSections.slice(3, 6)"
-          groupName="1"
-        />
-      </section>
-
-      <section>
-        <task-list-section
-          :headless="true"
-          label="Section"
-          :taskFields="tableFields"
-          :taskSections="tableSections.slice(6, 9)"
-          groupName="1"
-        />
-      </section>
+      <task-list-section
+        :headless="true"
+        label="Section"
+        :taskFields="tableFields"
+        :taskSections="tableSections.slice(0, 3)"
+        :open="true"
+        groupName="1"
+      />
+      <task-list-section
+        :headless="true"
+        label="Section"
+        :taskFields="tableFields"
+        :taskSections="tableSections.slice(3, 6)"
+        groupName="1"
+      />
+      <task-list-section
+        :headless="true"
+        label="Section"
+        :taskFields="tableFields"
+        :taskSections="tableSections.slice(6, 9)"
+        groupName="1"
+      />
     </template>
 
     <template v-else>

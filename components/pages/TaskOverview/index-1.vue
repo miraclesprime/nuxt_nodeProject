@@ -10,41 +10,33 @@
       >
       </custom-table>
 
-      <section>
-        <task-list-section
-          :headless="true"
-          label="Past Due"
-          :taskFields="tableFields"
-          :taskSections="tableSections.slice(0, 3)"
-          :open="true"
-          labelClass="text-red"
-          groupName="1"
-        />
-      </section>
-
-      <section>
-        <task-list-section
-          :headless="true"
-          label="Due Today"
-          :taskFields="tableFields"
-          :taskSections="tableSections.slice(3, 6)"
-          :open="true"
-          labelClass="text-orange"
-          groupName="1"
-        />
-      </section>
-
-      <section>
-        <task-list-section
-          :headless="true"
-          label="Tomorrow"
-          :taskFields="tableFields"
-          :taskSections="tableSections.slice(6, 9)"
-          :open="true"
-          labelClass="text-green"
-          groupName="1"
-        />
-      </section>
+      <task-list-section
+        :headless="true"
+        label="Past Due"
+        :taskFields="tableFields"
+        :taskSections="tableSections.slice(0, 3)"
+        :open="true"
+        labelClass="text-red"
+        groupName="1"
+      />
+      <task-list-section
+        :headless="true"
+        label="Due Today"
+        :taskFields="tableFields"
+        :taskSections="tableSections.slice(3, 6)"
+        :open="true"
+        labelClass="text-orange"
+        groupName="1"
+      />
+      <task-list-section
+        :headless="true"
+        label="Tomorrow"
+        :taskFields="tableFields"
+        :taskSections="tableSections.slice(6, 9)"
+        :open="true"
+        labelClass="text-green"
+        groupName="1"
+      />
     </template>
 
     <template v-else>
