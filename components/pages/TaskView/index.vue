@@ -17,7 +17,7 @@
           :taskFields="tableFields"
           :taskSections="tableSections.slice(0, 3)"
           :open="true"
-          groupName="1"
+          groupName="1" 
         />
       </section>
 

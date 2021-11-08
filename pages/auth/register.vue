@@ -12,7 +12,7 @@
           <bib-input
             :value="userInfo.email"
             @change="
-              event => {
+              (event) => {
                 userInfo.email = event.target.value;
               }
             "
@@ -26,7 +26,7 @@
           <bib-input
             :value="userInfo.fname"
             @change="
-              event => {
+              (event) => {
                 userInfo.fname = event.target.value;
               }
             "
@@ -40,7 +40,7 @@
           <bib-input
             :value="userInfo.lname"
             @change="
-              event => {
+              (event) => {
                 userInfo.lname = event.target.value;
               }
             "
@@ -54,7 +54,7 @@
           <bib-input
             :value="userInfo.phone"
             @change="
-              event => {
+              (event) => {
                 userInfo.phone = event.target.value;
               }
             "
@@ -68,7 +68,7 @@
           <bib-input
             :value="userInfo.password"
             @change="
-              event => {
+              (event) => {
                 userInfo.password = event.target.value;
               }
             "
@@ -83,7 +83,7 @@
           <bib-input
             :value="userInfo.confirmPassword"
             @change="
-              event => {
+              (event) => {
                 userInfo.confirmPassword = event.target.value;
               }
             "
@@ -125,13 +125,13 @@ export default {
     async register() {
       try {
         let response = await this.$auth.loginWith("local", {
-          data: this.userInfo
+          data: this.userInfo,
         });
         // console.log(response)
       } catch (err) {
         console.log(err);
       }
-    }
+    },
   },
   data() {
     return {
@@ -142,11 +142,11 @@ export default {
         fname: "",
         lname: "",
         phone: "",
-        confirmPassword: ""
+        confirmPassword: "",
       },
-      tabs: ["Register", "Sign in"]
+      tabs: ["Register", "Sign in"],
     };
-  }
+  },
 };
 </script>
 <style lang="scss" scoped>

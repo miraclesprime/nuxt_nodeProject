@@ -6,7 +6,8 @@
         :sections="taskSections"
         :headless="headless"
         :groupName="groupName"
-        class="bg-white p-0"
+        class="bg-white p-0 task-table"
+        @item-clicked="itemClicked()"
       >
         <template #cell(key)="data">
           <div class="task-key">
@@ -92,6 +93,11 @@ export default {
       },
     },
   },
+  data() {
+    return {
+      flag: false,
+    };
+  },
   methods: {
     activeTab(e) {},
 
@@ -104,6 +110,11 @@ export default {
       if (priority === "Urgent") return "text-red";
       if (priority === "Top") return "text-orange";
       return "text-green";
+    },
+
+    itemClicked() {
+      this.flag = !this.flag;
+      this.$root.$emit("open-sidebar", this.flag);
     },
   },
 };
