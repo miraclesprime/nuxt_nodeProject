@@ -6,6 +6,7 @@
         collapseNavigation = !collapseNavigation;
       }
     "
+    :header-actions="appHeaderActions"
   >
     <template #topbar>
       <bib-header></bib-header>
@@ -144,6 +145,33 @@ export default {
         { label: "People", icon: "user-group" },
       ],
       collapseNavigation: false,
+      appHeaderActions: {
+        button: {
+          label: "Create / Upload",
+          event: "button-click",
+          variant: "success",
+          icon: "add",
+        },
+        select: {
+          items: [
+            {
+              label: "Organization Name",
+              event: "item-click",
+              img: "https://i.pravatar.cc/300",
+            },
+            {
+              label: "Organization Name",
+              event: "item-click",
+              img: "https://i.pravatar.cc/300",
+            },
+          ],
+          footer: {
+            label: "Add organization",
+            icon: "plus",
+            event: "add-organization",
+          },
+        },
+      },
     };
   },
   computed: {
@@ -214,13 +242,20 @@ details {
   }
 }
 
-::v-deep .app-wrapper__collapser {
-  justify-content: center;
-}
-
-::v-deep .app-wrapper__navigation--collapsed {
-  .nav-item {
-    padding: 0;
+::v-deep {
+  .align-start.d-flex.flex-d-column {
+    padding-left: 0 !important;
+  }
+  .app-wrapper__collapser {
+    justify-content: center;
+  }
+  .app-wrapper__collapser--collapsed {
+    right: 0 !important;
+  }
+  .app-wrapper__navigation--collapsed {
+    .nav-item {
+      padding: 0;
+    }
   }
 }
 </style>
