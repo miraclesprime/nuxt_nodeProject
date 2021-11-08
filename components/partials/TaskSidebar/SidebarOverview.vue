@@ -176,14 +176,16 @@ export default {
   data: function () {
     return {
       activeItem: this.activeTask,
-      selectItems: [
-        { label: "Task name", value: "1" },
-        { label: "List Item", value: "2" },
-        { label: "List Item", value: "3" },
-        { label: "List Item", value: "4" },
-        { label: "List Item", value: "5" },
-        { label: "List Item", value: "6" },
-      ],
+      selectItems: {
+        items: [
+          { label: "Task name", value: "1" },
+          { label: "List Item", value: "2" },
+          { label: "List Item", value: "3" },
+          { label: "List Item", value: "4" },
+          { label: "List Item", value: "5" },
+          { label: "List Item", value: "6" },
+        ],
+      },
       description: "",
       isContentExpanded: false,
       form: {
