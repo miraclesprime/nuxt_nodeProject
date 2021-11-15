@@ -1,20 +1,12 @@
 # bib-pm-front-app
 
-## Build Setup
+## Env Variables
 
-```bash
-# install dependencies
-$ npm install
-
-# serve with hot reload at localhost:3000
-$ npm run dev
-
-# build for production and launch server
-$ npm run build
-$ npm run start
-
-# generate static project
-$ npm run generate
 ```
-
-For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
+NODE_ENV=
+VUE_APP_TITLE=
+VUE_APP_API_ENDPOINT=
+AUTH_REDIRECT_URL=
+VUE_APP_URL=
+URLIFY_PREVIEW_DURATION=
+```

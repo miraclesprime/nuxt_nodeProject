@@ -22,6 +22,10 @@ export default {
   css: [
     "~/assets/scss/style.scss"
   ],
+  axios: {
+    // proxy: true,
+    baseURL: process.env.VUE_APP_API_ENDPOINT,
+  },
   /// Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: ["~/plugins/plugins", "~/plugins/axios.js", "~/plugins/dayjs.js"],
   // Auto import components (https://go.nuxtjs.dev/config-components)
@@ -32,9 +36,11 @@ export default {
   ],
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
-    "@nuxtjs/axios",
-    "@nuxtjs/auth",
-    "@nuxtjs/proxy",
+    'cookie-universal-nuxt',
+    '@nuxtjs/axios',
+    '@nuxtjs/auth',
+    '@nuxtjs/proxy',
+    '@nuxtjs/dotenv',
     "@nuxtjs/dayjs",
     "@nuxtjs/style-resources"
   ],
@@ -53,7 +59,7 @@ export default {
   },
   router: {
     // base: '/dashboard',
-    // middleware: ["auth"],
+    middleware: ["auth"],
   },
   serverMiddleware: ["~/middleware/redirects"],
   axios: {
@@ -74,23 +80,6 @@ export default {
       loaders.scss.additionalData = '@use "sass:math";';
     }
   },
-  auth: {
-    // redirect: {
-    //   login: "/auth/login",
-    //   logout: "/auth/login",
-    //   callback: "/auth/login",
-    //   home: "/"
-    // },
-    // strategies: {
-    //   local: {
-    //     endpoints: {
-    //       login: { url: "/auth/login", method: "POST", propertyName: "token" },
-    //       logout: { url: "/auth/logout", method: "DELETE", propertyName: "token" },
-    //       user: { url: "/auth/me", method: "GET", propertyName: "data" }
-    //     }
-    //   }
-    // }
-  },
   alias: {
     config: resolve(__dirname, "./config"),
     services: resolve(__dirname, "./services"),
@@ -106,5 +95,21 @@ export default {
     defaultLocale: "en",
     defaultTimeZone: "Canada/Toronto",
     plugins: ["utc", "timezone", "weekday", "localizedFormat", "isSameOrAfter"]
-  }
+  },
+  auth: {
+    plugins: ['~/plugins/auth'],
+    redirect: {
+      login: process.env.AUTH_REDIRECT_URL + process.env.VUE_APP_URL + '/dashboard',
+      callback: '/auth/login',
+      home: '/'
+    },
+    strategies: {
+      local: {
+        autoFetchUser: false,
+        tokenName: 'Authorization',
+        required: true,
+        tokenType: "Bearer"
+      }
+    }
+  },
 };

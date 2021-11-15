@@ -55,7 +55,7 @@ export default {
 }
 
 .task-grid {
-  margin: 1rem 4px 1rem;
+  margin: 8px 4px 8px;
   padding: 8px;
   background: #fff;
   border: 1px solid $gray4;
@@ -63,7 +63,12 @@ export default {
   cursor: pointer;
 
   span {
-    font-size: 14px;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .task-bottom span {
+    font-size: 13px;
   }
 }
 
