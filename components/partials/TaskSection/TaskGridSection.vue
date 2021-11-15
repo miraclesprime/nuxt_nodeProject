@@ -84,11 +84,11 @@ export default {
 
 <style scoped lang="scss">
 .task-grid-section {
-  width: 14%;
-  min-width: 200px;
+  width: 16%;
+  min-width: 230px;
   min-height: 100vh;
   padding: 8px 10px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   border-right: 1px solid $gray4;
 }

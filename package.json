@@ -16,6 +16,7 @@
     "@nuxtjs/dayjs": "^1.4.1",
     "@nuxtjs/dotenv": "^1.4.1",
     "@nuxtjs/style-resources": "^1.2.1",
+    "cookie-universal-nuxt": "^2.1.5",
     "core-js": "^3.19.0",
     "nuxt": "^2.15.8",
     "path": "^0.12.7",
