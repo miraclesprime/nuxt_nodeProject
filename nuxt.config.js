@@ -19,12 +19,10 @@ export default {
     ]
   },
 
-  css: [
-    "~/assets/scss/style.scss"
-  ],
+  css: ["~/assets/scss/style.scss"],
   axios: {
     // proxy: true,
-    baseURL: process.env.VUE_APP_API_ENDPOINT,
+    baseURL: process.env.VUE_APP_API_ENDPOINT
   },
   /// Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: ["~/plugins/plugins", "~/plugins/axios.js", "~/plugins/dayjs.js"],
@@ -36,11 +34,11 @@ export default {
   ],
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
-    'cookie-universal-nuxt',
-    '@nuxtjs/axios',
-    '@nuxtjs/auth',
-    '@nuxtjs/proxy',
-    '@nuxtjs/dotenv',
+    "cookie-universal-nuxt",
+    "@nuxtjs/axios",
+    "@nuxtjs/auth",
+    "@nuxtjs/proxy",
+    "@nuxtjs/dotenv",
     "@nuxtjs/dayjs",
     "@nuxtjs/style-resources"
   ],
@@ -57,10 +55,10 @@ export default {
       "~/assets/scss/variable.scss"
     ]
   },
-  // router: {
-  //   // base: '/dashboard',
-  //   middleware: ["auth"],
-  // },
+  router: {
+    // base: '/dashboard',
+    middleware: ["auth"]
+  },
   serverMiddleware: ["~/middleware/redirects"],
   // proxy: {
   //   '/auth': {
@@ -91,22 +89,22 @@ export default {
     defaultLocale: "en",
     defaultTimeZone: "Canada/Toronto",
     plugins: ["utc", "timezone", "weekday", "localizedFormat", "isSameOrAfter"]
+  },
+  auth: {
+    plugins: ["~/plugins/auth"],
+    redirect: {
+      login:
+        process.env.AUTH_REDIRECT_URL + process.env.VUE_APP_URL + "/dashboard",
+      callback: "/auth/login",
+      home: "/"
+    },
+    strategies: {
+      local: {
+        autoFetchUser: false,
+        tokenName: "Authorization",
+        required: true,
+        tokenType: "Bearer"
+      }
+    }
   }
 };
-
-// auth: {
-//   plugins: ['~/plugins/auth'],
-//   redirect: {
-//     login: process.env.AUTH_REDIRECT_URL + process.env.VUE_APP_URL + '/dashboard',
-//     callback: '/auth/login',
-//     home: '/'
-//   },
-//   strategies: {
-//     local: {
-//       autoFetchUser: false,
-//       tokenName: 'Authorization',
-//       required: true,
-//       tokenType: "Bearer"
-//     }
-//   }
-// }
