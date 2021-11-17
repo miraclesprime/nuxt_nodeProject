@@ -19,12 +19,10 @@ export default {
     ]
   },
 
-  css: [
-    "~/assets/scss/style.scss"
-  ],
+  css: ["~/assets/scss/style.scss"],
   axios: {
     // proxy: true,
-    baseURL: process.env.VUE_APP_API_ENDPOINT,
+    baseURL: process.env.VUE_APP_API_ENDPOINT
   },
   /// Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: ["~/plugins/plugins", "~/plugins/axios.js", "~/plugins/dayjs.js"],
@@ -36,11 +34,11 @@ export default {
   ],
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
-    'cookie-universal-nuxt',
-    '@nuxtjs/axios',
-    '@nuxtjs/auth',
-    '@nuxtjs/proxy',
-    '@nuxtjs/dotenv',
+    "cookie-universal-nuxt",
+    "@nuxtjs/axios",
+    "@nuxtjs/auth",
+    "@nuxtjs/proxy",
+    "@nuxtjs/dotenv",
     "@nuxtjs/dayjs",
     "@nuxtjs/style-resources"
   ],
@@ -59,13 +57,9 @@ export default {
   },
   router: {
     // base: '/dashboard',
-    middleware: ["auth"],
+    middleware: ["auth"]
   },
   serverMiddleware: ["~/middleware/redirects"],
-  axios: {
-    // proxy: true,
-    baseURL: process.env.VUE_APP_API_ENDPOINT
-  },
   // proxy: {
   //   '/auth': {
   //     target: process.env.VUE_APP_API_ENDPOINT+'/auth',
@@ -97,19 +91,20 @@ export default {
     plugins: ["utc", "timezone", "weekday", "localizedFormat", "isSameOrAfter"]
   },
   auth: {
-    plugins: ['~/plugins/auth'],
+    plugins: ["~/plugins/auth"],
     redirect: {
-      login: process.env.AUTH_REDIRECT_URL + process.env.VUE_APP_URL + '/dashboard',
-      callback: '/auth/login',
-      home: '/'
+      login:
+        process.env.AUTH_REDIRECT_URL + process.env.VUE_APP_URL + "/dashboard",
+      callback: "/auth/login",
+      home: "/"
     },
     strategies: {
       local: {
         autoFetchUser: false,
-        tokenName: 'Authorization',
+        tokenName: "Authorization",
         required: true,
         tokenType: "Bearer"
       }
     }
-  },
+  }
 };

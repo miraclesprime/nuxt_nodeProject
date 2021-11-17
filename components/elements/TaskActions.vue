@@ -79,7 +79,7 @@ export default {
 <style scoped lang="scss">
 .task-actions {
   display: flex;
-  // border-bottom: 1px solid $gray4;
+  border-bottom: 1px solid $gray4;
   align-items: center;
 }
 .action-right {

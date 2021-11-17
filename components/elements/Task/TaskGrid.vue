@@ -4,12 +4,12 @@
       <div class="d-flex">
         <custom-check-box :id="'task-' + task.key" />
 
-        <span class="ml-05"
+        <span class="ml-05" style="margin-top: 2px"
           >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do</span
         >
       </div>
 
-      <bib-icon icon="elipsis" />
+      <bib-icon icon="elipsis" style="margin-top: 4px" />
     </div>
     <div class="task-bottom">
       <bib-avatar size="25px"></bib-avatar>

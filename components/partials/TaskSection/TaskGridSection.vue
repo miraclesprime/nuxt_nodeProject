@@ -1,9 +1,9 @@
 <template>
   <div class="task-grid-section">
-    <div class="w-100 d-flex justify-between">
+    <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
       <div class="title text-gray">{{ label }}</div>
 
-      <div class="d-flex">
+      <div class="d-flex section-options">
         <div class="mr-1">
           <bib-icon icon="add" variant="success" :scale="1.2" />
         </div>
@@ -87,9 +87,38 @@ export default {
   width: 16%;
   min-width: 230px;
   min-height: 100vh;
-  padding: 8px 10px;
+  padding: 10px;
   font-size: 15px;
   font-weight: 600;
-  border-right: 1px solid $gray4;
+
+  &:not(:first-child) {
+    border-left: 1px solid $gray4;
+  }
+
+  &:last-child {
+    border-right: 1px solid $gray4;
+  }
+
+  &:hover {
+    &,
+    & + .task-grid-section {
+      border-left-color: $gray5;
+    }
+
+    .section-options {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+
+  &:last-child:hover {
+    border-right-color: $gray5;
+  }
+}
+
+.section-options {
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.3s;
 }
 </style>
