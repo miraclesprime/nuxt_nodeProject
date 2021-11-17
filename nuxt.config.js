@@ -57,15 +57,11 @@ export default {
       "~/assets/scss/variable.scss"
     ]
   },
-  router: {
-    // base: '/dashboard',
-    middleware: ["auth"],
-  },
+  // router: {
+  //   // base: '/dashboard',
+  //   middleware: ["auth"],
+  // },
   serverMiddleware: ["~/middleware/redirects"],
-  axios: {
-    // proxy: true,
-    baseURL: process.env.VUE_APP_API_ENDPOINT
-  },
   // proxy: {
   //   '/auth': {
   //     target: process.env.VUE_APP_API_ENDPOINT+'/auth',
@@ -95,21 +91,22 @@ export default {
     defaultLocale: "en",
     defaultTimeZone: "Canada/Toronto",
     plugins: ["utc", "timezone", "weekday", "localizedFormat", "isSameOrAfter"]
-  },
-  auth: {
-    plugins: ['~/plugins/auth'],
-    redirect: {
-      login: process.env.AUTH_REDIRECT_URL + process.env.VUE_APP_URL + '/dashboard',
-      callback: '/auth/login',
-      home: '/'
-    },
-    strategies: {
-      local: {
-        autoFetchUser: false,
-        tokenName: 'Authorization',
-        required: true,
-        tokenType: "Bearer"
-      }
-    }
-  },
+  }
 };
+
+// auth: {
+//   plugins: ['~/plugins/auth'],
+//   redirect: {
+//     login: process.env.AUTH_REDIRECT_URL + process.env.VUE_APP_URL + '/dashboard',
+//     callback: '/auth/login',
+//     home: '/'
+//   },
+//   strategies: {
+//     local: {
+//       autoFetchUser: false,
+//       tokenName: 'Authorization',
+//       required: true,
+//       tokenType: "Bearer"
+//     }
+//   }
+// }
