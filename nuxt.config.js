@@ -55,10 +55,10 @@ export default {
       "~/assets/scss/variable.scss"
     ]
   },
-  router: {
-    // base: '/dashboard',
-    middleware: ["auth"]
-  },
+  // router: {
+  //   // base: '/dashboard',
+  //   middleware: ["auth"]
+  // },
   serverMiddleware: ["~/middleware/redirects"],
   // proxy: {
   //   '/auth': {
@@ -90,21 +90,24 @@ export default {
     defaultTimeZone: "Canada/Toronto",
     plugins: ["utc", "timezone", "weekday", "localizedFormat", "isSameOrAfter"]
   },
-  auth: {
-    plugins: ["~/plugins/auth"],
-    redirect: {
-      login:
-        process.env.AUTH_REDIRECT_URL + process.env.VUE_APP_URL + "/dashboard",
-      callback: "/auth/login",
-      home: "/"
-    },
-    strategies: {
-      local: {
-        autoFetchUser: false,
-        tokenName: "Authorization",
-        required: true,
-        tokenType: "Bearer"
-      }
-    }
-  }
+  server: {
+    port: 4000
+  },
+  // auth: {
+  //   plugins: ["~/plugins/auth"],
+  //   redirect: {
+  //     login:
+  //       process.env.AUTH_REDIRECT_URL + process.env.VUE_APP_URL + "/dashboard",
+  //     callback: "/auth/login",
+  //     home: "/"
+  //   },
+  //   strategies: {
+  //     local: {
+  //       autoFetchUser: false,
+  //       tokenName: "Authorization",
+  //       required: true,
+  //       tokenType: "Bearer"
+  //     }
+  //   }
+  // }
 };

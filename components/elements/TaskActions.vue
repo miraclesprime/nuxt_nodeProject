@@ -1,11 +1,24 @@
 <template>
   <div class="task-actions ml-05">
     <div class="action-left">
-      <section-title
+      <!-- <section-title
         title="Add Task/Section"
         titleSize="15px"
         itemSpace="5px"
-      />
+      /> -->
+
+      <bib-button pop="add" label="Add Task/Section" size="xl">
+        <template v-slot:menu>
+          <div class="list">
+            <span class="list__item" @click="showCreateTaskModal"
+              >Add Task</span
+            >
+            <span class="list__item" @click="showCreateSectionModal"
+              >Add Section</span
+            >
+          </div>
+        </template>
+      </bib-button>
     </div>
 
     <div class="action-right">
@@ -50,6 +63,20 @@
         </li>
       </ul>
     </div>
+
+    <task-modals
+      @create-task="
+        (task) => {
+          createTask(task);
+        }
+      "
+      @create-section="
+        (section) => {
+          createSection(section);
+        }
+      "
+      ref="modals"
+    ></task-modals>
   </div>
 </template>
 
@@ -71,6 +98,39 @@ export default {
       this.type = gType;
       this.$root.$emit("change-grid-type", this.type);
     },
+    showCreateTaskModal() {
+      this.$refs.modals.showCreateTaskModal = true;
+    },
+    showCreateSectionModal() {
+      this.$refs.modals.showCreateSectionModal = true;
+    },
+    async createTask(task) {
+      //COLLECTING FOLDER INFO
+      if (task.name != "") {
+        try {
+          const response = await this.$axios.$post("/v1/folders", data);
+          this.createdFolder = response.data;
+          if (goTo == true) {
+            this.goToFolder(this.createdFolder);
+          }
+          this.nav.bread = [{ name: "My Drive", _id: "root" }];
+          await this.getFullPath(this.parent._id);
+          this.$refs.modals.showCreateFolderModal = false;
+          if (!response.data.parent) {
+            let item = this.navItems1[0];
+            item.sub.push({
+              label: response.data.name,
+              icon: "folder-solid",
+              _id: response.data._id,
+            });
+            this.navItems1[0] = item;
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    },
+    async createSection(section) {},
   },
 };
 </script>
@@ -79,6 +139,7 @@ export default {
 <style scoped lang="scss">
 .task-actions {
   display: flex;
+  padding: 8px 0;
   border-bottom: 1px solid $gray4;
   align-items: center;
 }

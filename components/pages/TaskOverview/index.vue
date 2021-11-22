@@ -1,6 +1,6 @@
 <template>
   <div>
-    <task-actions :gridType="gridType" />
+    <task-actions />
 
     <template v-if="gridType === 'list'">
       <bib-table
@@ -207,6 +207,7 @@ export default {
       if (priority === "Top") return "text-orange";
       return "text-green";
     },
+    
   },
 };
 </script>
