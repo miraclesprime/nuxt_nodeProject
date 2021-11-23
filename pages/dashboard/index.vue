@@ -3,6 +3,7 @@
     :navigationCollapsed="collapseNavigation"
     @collapseNavigation="
       () => {
+        resizeCalendar()
         collapseNavigation = !collapseNavigation;
       }
     "
@@ -102,7 +103,6 @@ import { mapState, mapGetters } from "vuex";
 import { TABLE_FIELDS, TABS, DEFAULT_TAB, TAB_TITLES } from "config/constants";
 
 export default {
-  auth: false,
   data() {
     return {
       activeTab: DEFAULT_TAB,
@@ -182,6 +182,14 @@ export default {
     }),
   },
   methods: {
+    // resize for Calendar Page View
+    resizeCalendar() {
+      if(document.getElementById('myDiv')) {
+        window.dispatchEvent(new Event('resize'));
+      } 
+      return false;
+    },
+
     // Change Tab
     tabChange(value) {
       this.activeTab = value;
