@@ -6,27 +6,28 @@
       v-show="showCreateTaskModal"
       title="Create Task"
       id="create-task"
+      :size="modalSize"
       @keypress.native="bindEnter($event, 'create-task-btn')"
     >
       <template v-slot:content>
         <div class="mt-1">
           <div class="d-flex">
-            <bib-form-group required class="w-50 mr-05" label="Task Name">
+            <bib-form-group required class="w-50" label="Task Name">
               <template v-slot:content>
                 <bib-input
-                  :value="taskInfo.name"
+                  :value="taskInfo.title"
                   @input="
                     (val) => {
-                      taskInfo.name = val;
+                      taskInfo.title = val;
                     }
                   "
                   type="text"
-                  placeholder="Enter task name..."
+                  placeholder="Enter task title..."
                 ></bib-input>
               </template>
             </bib-form-group>
 
-            <bib-form-group class="w-50 ml-05" label="Section Name">
+            <bib-form-group class="w-50 ml-05" label="Section Title" required>
               <template v-slot:content>
                 <bib-input
                   :value="taskInfo.section"
@@ -35,14 +36,43 @@
                       taskInfo.section = val;
                     }
                   "
-                  placeholder="Enter section name..."
+                  placeholder="Enter section title..."
+                ></bib-input>
+              </template>
+            </bib-form-group>
+
+            <bib-form-group class="w-50 ml-05" label="Task Budget" required>
+              <template v-slot:content>
+                <bib-input
+                  :value="taskInfo.budget"
+                  @input="
+                    (val) => {
+                      taskInfo.budget = val;
+                    }
+                  "
+                  placeholder="Enter budget..."
                 ></bib-input>
               </template>
             </bib-form-group>
           </div>
 
           <div class="d-flex">
-            <bib-form-group class="w-50 mr-05" label="Status">
+            <bib-form-group required class="w-50" label="Task Progress">
+              <template v-slot:content>
+                <bib-input
+                  :value="taskInfo.progress"
+                  @input="
+                    (val) => {
+                      taskInfo.progress = val;
+                    }
+                  "
+                  type="text"
+                  placeholder="Enter task progress..."
+                ></bib-input>
+              </template>
+            </bib-form-group>
+
+            <bib-form-group class="w-50 ml-05" label="Task Status" required>
               <template v-slot:content>
                 <bib-input
                   :value="taskInfo.status"
@@ -51,7 +81,7 @@
                       taskInfo.status = val;
                     }
                   "
-                  placeholder="Enter status..."
+                  placeholder="Enter task status..."
                 ></bib-input>
               </template>
             </bib-form-group>
@@ -67,37 +97,6 @@
                   "
                   type="text"
                   placeholder="Enter priority..."
-                ></bib-input>
-              </template>
-            </bib-form-group>
-          </div>
-
-          <div class="d-flex">
-            <bib-form-group class="w-50 mr-05" label="Assignee">
-              <template v-slot:content>
-                <bib-input
-                  :value="taskInfo.assignee"
-                  @input="
-                    (val) => {
-                      taskInfo.assignee = val;
-                    }
-                  "
-                  placeholder="Enter assignee..."
-                ></bib-input>
-              </template>
-            </bib-form-group>
-
-            <bib-form-group required class="w-50 ml-05" label="Due Date">
-              <template v-slot:content>
-                <bib-input
-                  :value="taskInfo.date"
-                  @input="
-                    (val) => {
-                      taskInfo.date = val;
-                    }
-                  "
-                  type="text"
-                  placeholder="Enter due date..."
                 ></bib-input>
               </template>
             </bib-form-group>
@@ -181,16 +180,20 @@ export default {
     return {
       showCreateTaskModal: false,
       showCreateSectionModal: false,
+      modalSize: "md",
       contextSection: {
         name: "",
       },
       taskInfo: {
         section: "",
-        name: "",
+        title: "",
         priority: "",
+        progress: "",
         status: "",
         assignee: "",
-        date: "",
+        budget: "",
+        description: "",
+        dueDate: "2021-02-11",
       },
     };
   },

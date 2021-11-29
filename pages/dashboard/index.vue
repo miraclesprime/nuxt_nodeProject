@@ -1,6 +1,8 @@
 <template>
   <bib-app-wrapper
+    class="test"
     :navigationCollapsed="collapseNavigation"
+    @button-click="rightClkFileSection"
     @collapseNavigation="
       () => {
         collapseNavigation = !collapseNavigation;
@@ -193,6 +195,38 @@ export default {
         let response = await this.$auth.logout();
       } catch (err) {
         console.log(err);
+      }
+    },
+
+    rightClkFileSection(event) {
+      event.preventDefault();
+      var menu = document.getElementById("file__section__context");
+      this.closeMenus();
+      this.showFileSectionMenu = true;
+
+      var body = document.body,
+        html = document.documentElement;
+
+      var height = Math.max(
+        body.scrollHeight,
+        body.offsetHeight,
+        html.clientHeight,
+        html.scrollHeight,
+        html.offsetHeight
+      );
+
+      if (menu) {
+        menu.style.position = "fixed";
+        menu.style.left = event.clientX + "px";
+        menu.style.top = event.clientY + "px";
+
+        if (height - event.pageY < 150) {
+          menu.style.maxHeight = height - event.pageY + "px";
+          menu.style.overflowY = "scroll";
+          menu.scroll(1, 1);
+        } else {
+          menu.style.maxHeight = "max-content";
+        }
       }
     },
   },

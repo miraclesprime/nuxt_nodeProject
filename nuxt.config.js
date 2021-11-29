@@ -19,7 +19,7 @@ export default {
     ]
   },
 
-  css: ["~/assets/scss/style.scss"],
+  css: ["~/assets/global.scss"],
   axios: {
     // proxy: true,
     baseURL: process.env.VUE_APP_API_ENDPOINT
@@ -52,7 +52,7 @@ export default {
       "../bib-shared/css/mixins.scss",
       "../bib-shared/css/utilities.scss",
       "../bib-shared/css/basic.scss",
-      "~/assets/scss/variable.scss"
+      "~/assets/variable.scss"
     ]
   },
   // router: {
