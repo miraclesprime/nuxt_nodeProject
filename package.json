@@ -11,10 +11,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@fullcalendar/daygrid": "^5.10.1",
-    "@fullcalendar/interaction": "^5.10.1",
-    "@fullcalendar/timegrid": "^5.10.1",
-    "@fullcalendar/vue": "^5.10.1",
     "@nuxtjs/auth": "^4.9.1",
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/dayjs": "^1.4.1",
@@ -24,6 +20,7 @@
     "core-js": "^3.19.0",
     "nuxt": "^2.15.8",
     "path": "^0.12.7",
+    "preact": "^10.6.1",
     "v-click-outside": "^3.1.2",
     "v-movable": "^0.3.2",
     "vue-columns-resizable": "^0.0.1",

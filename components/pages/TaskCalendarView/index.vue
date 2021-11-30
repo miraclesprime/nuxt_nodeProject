@@ -4,29 +4,41 @@
     <div id='myDiv'>
     <FullCalendar class='demo-app-calendar' :options='calendarOptions'>
         <template v-slot:eventContent='arg'>
-          <div style='overflow: hidden;'>
+          <div style="display: flex;">
             <span v-if='arg.event.extendedProps.completed == false'>
-                <b style="font-size: 14px; color: red">&#10003;</b>
+                <div class="not-completed"></div>
             </span>
             <span v-else>
-                &#9989;
+                <div class="success-checkmark"></div>
             </span>
-              <b>{{ arg.timeText }}</b>
-              <i>{{ arg.event.title }}</i>
-              <br/>
-              <i>Due Date: {{arg.event.extendedProps.dueDate}}</i>
+
+            <div class="event-box">
+              <span class='event-title' :class="{'limitTitle': isExpand}">{{ arg.event.title }}</span>
+              <br>
+              <span class="due-date">Due {{arg.event.extendedProps.dueDate}}</span>
+            </div> 
+
+            <div class="dropdown">
+                <button class="dropbtn">...</button>
+                <div class="dropdown-content">
+                  <a href="#">Edit</a>
+                  <a href="#">Delete</a>
+                </div>
+              </div> 
           </div>
         </template>
       </FullCalendar>
     </div>
+    
+    <span style="display:none">{{trimEventTitles}}</span>
   </div>
 </template>
 
 <script>
-import FullCalendar from '@fullcalendar/vue'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import interactionPlugin from '@fullcalendar/interaction'
-// import timeGridPlugin from '@fullcalendar/timegrid'
+import FullCalendar from '../../../module/@fullcalendar/vue'
+import dayGridPlugin from '../../../module/@fullcalendar/daygrid'
+import interactionPlugin from '../../../module/@fullcalendar/interaction'
+// import timeGridPlugin from '../../../module/@fullcalendar/timegrid'
 import { SAMPLE_EVENTS, createEventId } from './calendar-utils'
 
 export default {
@@ -38,11 +50,13 @@ export default {
     fields: {
       type: Array,
       default: []
-    }
+    },
   },
   components: {FullCalendar},
   data: function() {
     return {
+      sampleAssets: SAMPLE_EVENTS,
+      isExpand: true,
       calendarOptions: {
         plugins: [
           dayGridPlugin,
@@ -64,6 +78,12 @@ export default {
         selectMirror: true,
         dayMaxEvents: true,
         weekends: true,
+        // style related
+        eventColor: '#7287c3',
+        eventBackgroundColor: '#fcfcfc',
+        eventTextColor: 'black',
+        eventBorderColor: '#ccc',
+        // event handling
         select: this.handleDateSelect,
         eventClick: this.handleEventClick,
         eventsSet: this.handleEvents,
@@ -84,7 +104,7 @@ export default {
     },
 
     handleDateSelect(selectInfo) {
-      let title = prompt('Please enter a new title for your event')
+      let title = alert('Please use add task/secton above to create your task')
       let calendarApi = selectInfo.view.calendar
 
       calendarApi.unselect() // clear date selection
@@ -93,7 +113,7 @@ export default {
         calendarApi.addEvent({
           id: createEventId(),
           title,
-          dueDate: '22/11/2021',
+          dueDate: 'Nov 30, 2021',
           completed: false,
           start: selectInfo.startStr,
           end: selectInfo.endStr,
@@ -103,9 +123,10 @@ export default {
     },
 
     handleEventClick(clickInfo) {
-      if (confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
-        clickInfo.event.remove()
-      }
+      // if (confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
+      //   clickInfo.event.remove()
+      // }
+      console.log('hello')
     },
 
     handleEvents(events) {
@@ -132,9 +153,28 @@ export default {
 
     handleEventChange(changeInfo) {
       console.log('change Info: ',  changeInfo)
-    }
+    },
 
-  }
+  },
+  // computed: {
+  //   trimEventTitles() {
+  //     // console.log(this.currentEvents[0]._def)
+  //     console.log(document.querySelectorAll('.fc-daygrid-event'))
+  //     // return this.sampleAssets.map((el) => {
+  //     //   if(el.title.length > 16) {
+  //     //     el.title = el.title.substring(0,16);
+  //     //   }
+  //     // })
+  //   }
+  // },
+  // mounted() {
+  //   let arr = document.querySelectorAll('.eventTitle');
+  //    for(let i=0; i<arr.length; i++) {
+  //       console.log(document.querySelectorAll('.eventTitle')[i].textContent)
+  //       document.querySelectorAll('.eventTitle')[i].innerHTML = document.querySelectorAll('.eventTitle')[i].textContent.substring(0,16)
+  //       console.log(document.querySelectorAll('.eventTitle')[i].textContent)
+  //    }
+  // }
 };
 </script>
 
@@ -144,6 +184,109 @@ export default {
   overflow: auto; 
   box-sizing: content-box; 
   width: 100%; 
-  padding: 3px;
+  /* padding: 3px; */
 }
+
+.event-box {
+  margin-right: auto; 
+  font-size: 11px;
+  color: #2E2F31; 
+  padding: 2px;
+}
+
+.limitTitle {
+  width: 15ch;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.due-date {
+  font-size: 8px; 
+  color: #6d7278;
+}
+
+.event-title {
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+/* Dropdown Button */
+.dropbtn {
+  opacity: 0;
+  color: grey;
+  font-size: 16px;
+  border: none;
+  background: none;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1; /* dropdown content color */
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 9999;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #ddd;}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {display: block;}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {background: none; color: grey; opacity: 1;}
+
+a.fc-event:hover .dropbtn {
+  opacity: 1;
+}
+
+/* CIRCULAR TICK */
+.success-checkmark:after {
+      content: '✔';
+      position: relative;
+      left:0; top: 5px;
+      padding: 3px;
+      width: 20px; 
+      height: 20px;
+      text-align: center;
+      border: 1px solid #2E2F31;
+      background: #2ba026;
+      border-radius: 50%;
+      margin-right: 2px;
+      color: white;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,.3)
+    }
+  
+  .not-completed:after {
+    content: '✔';
+    position: relative;
+    left:0; top: 5px;
+    padding: 3px;
+    width: 20px; 
+    height: 20px;
+    text-align: center;
+    border: 1px solid #2E2F31;
+    background: #ccc; 
+    color: rgb(95, 95, 95);
+    border-radius: 50%;
+    margin: 2px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,.3)
+  }
+
 </style>
