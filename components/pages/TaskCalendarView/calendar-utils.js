@@ -6,18 +6,32 @@ let todayStr = new Date().toISOString().replace(/T.*$/, '') // YYYY-MM-DD of tod
 export const SAMPLE_EVENTS = [
   {
     id: createEventId(),
-    title: 'Demo Event 1',
-    dueDate: 'Nov 22, 2021',
+    title: 'Demo Event 123',
+    dueDate: 'Nov 30, 2021',
     completed: false,
     start: todayStr,
     // end: '2021-11-22'
   },
   {
     id: createEventId(),
-    title: 'Demo Timed event',
-    dueDate: '22/11/2021',
+    title: 'Demo Timed 12',
+    dueDate: 'Nov 30, 2021',
     completed: true,
-    start: todayStr + 'T12:00:00'
+    start: todayStr //  + 'T12:00:00'
+  },
+  {
+    id: createEventId(),
+    title: 'Demo Timed c',
+    dueDate: 'Nov 30, 2021',
+    completed: true,
+    start: todayStr //  + 'T12:00:00'
+  },
+  {
+    id: createEventId(),
+    title: 'Demo Timed d',
+    dueDate: 'Nov 30, 2021',
+    completed: true,
+    start: todayStr //  + 'T12:00:00'
   }
 ]
 
