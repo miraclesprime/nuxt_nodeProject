@@ -30,7 +30,6 @@
       </FullCalendar>
     </div>
     
-    <span style="display:none">{{trimEventTitles}}</span>
   </div>
 </template>
 
@@ -39,7 +38,7 @@ import FullCalendar from '../../../module/@fullcalendar/vue'
 import dayGridPlugin from '../../../module/@fullcalendar/daygrid'
 import interactionPlugin from '../../../module/@fullcalendar/interaction'
 // import timeGridPlugin from '../../../module/@fullcalendar/timegrid'
-import { SAMPLE_EVENTS, createEventId } from './calendar-utils'
+import { SAMPLE_EVENTS, createEventId } from '../../../utils/calendar-utils'
 
 export default {
   props: {
@@ -156,25 +155,6 @@ export default {
     },
 
   },
-  // computed: {
-  //   trimEventTitles() {
-  //     // console.log(this.currentEvents[0]._def)
-  //     console.log(document.querySelectorAll('.fc-daygrid-event'))
-  //     // return this.sampleAssets.map((el) => {
-  //     //   if(el.title.length > 16) {
-  //     //     el.title = el.title.substring(0,16);
-  //     //   }
-  //     // })
-  //   }
-  // },
-  // mounted() {
-  //   let arr = document.querySelectorAll('.eventTitle');
-  //    for(let i=0; i<arr.length; i++) {
-  //       console.log(document.querySelectorAll('.eventTitle')[i].textContent)
-  //       document.querySelectorAll('.eventTitle')[i].innerHTML = document.querySelectorAll('.eventTitle')[i].textContent.substring(0,16)
-  //       console.log(document.querySelectorAll('.eventTitle')[i].textContent)
-  //    }
-  // }
 };
 </script>
 
