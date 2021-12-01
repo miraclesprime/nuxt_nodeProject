@@ -11,6 +11,10 @@
     "test": "jest"
   },
   "dependencies": {
+    "@fullcalendar/daygrid": "file:modules/@fullcalendar/daygrid",
+    "@fullcalendar/interaction": "file:modules/@fullcalendar/interaction",
+    "@fullcalendar/timegrid": "file:modules/@fullcalendar/timegrid",
+    "@fullcalendar/vue": "file:modules/@fullcalendar/vue",
     "@nuxtjs/auth": "^4.9.1",
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/dayjs": "^1.4.1",
