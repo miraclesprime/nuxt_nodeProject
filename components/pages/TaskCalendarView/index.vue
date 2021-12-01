@@ -34,10 +34,10 @@
 </template>
 
 <script>
-import FullCalendar from '../../../module/@fullcalendar/vue'
-import dayGridPlugin from '../../../module/@fullcalendar/daygrid'
-import interactionPlugin from '../../../module/@fullcalendar/interaction'
-// import timeGridPlugin from '../../../module/@fullcalendar/timegrid'
+import FullCalendar from '../../../modules/@fullcalendar/vue'
+import dayGridPlugin from '../../../modules/@fullcalendar/daygrid'
+import interactionPlugin from '../../../modules/@fullcalendar/interaction'
+// import timeGridPlugin from '../../../modules/@fullcalendar/timegrid'
 import { SAMPLE_EVENTS, createEventId } from '../../../utils/calendar-utils'
 
 export default {
