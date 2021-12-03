@@ -54,7 +54,7 @@
             <span>{{ data.value.dueDate }}</span>
           </div>
         </template>
-      </bib-table>
+      </bib-table> -->
     </template>
 
     <template v-else>

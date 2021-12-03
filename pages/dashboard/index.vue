@@ -1,5 +1,6 @@
 <template>
   <bib-app-wrapper
+    class="test"
     :navigationCollapsed="collapseNavigation"
     :select="appHeaderActions.select"
     :button="appHeaderActions.button"
@@ -229,6 +230,7 @@ export default {
         }
       }
     },
+<<<<<<< HEAD
     closeMenus() {
       // this.showSortMenu = false;
       // this.showMoreMenu = false;
@@ -239,6 +241,8 @@ export default {
       //   file.active = false;
       // }
     },
+=======
+>>>>>>> 0d0f105f16080660904b93b99b5a2dbddc72485f
   },
   created() {
     this.$nextTick(async () => {
