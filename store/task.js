@@ -1,10 +1,10 @@
-import { mapTasks } from 'services/task';
+import { mapTasks } from "services/task";
 
-import { DUMMY_TASKS } from 'dummy/tasks';
+import { DUMMY_TASKS } from "dummy/tasks";
 
 export const state = () => ({
   list: [],
-  single: undefined,
+  single: undefined
 });
 
 export const mutations = {
@@ -21,7 +21,9 @@ export const mutations = {
   },
 
   update(state, updatedTask) {
-    state.list = state.list.map(task => task.id === updatedTask.id ? updatedTask : task);
+    state.list = state.list.map(task =>
+      task.id === updatedTask.id ? updatedTask : task
+    );
   },
 
   setSingleTask(state, currentTask) {
@@ -33,15 +35,13 @@ export const getters = {
   tasksForListView(state) {
     return state.list;
   },
-  tasksForOverview(state) {
-
-  }
+  tasksForOverview(state) {}
 };
 
 export const actions = {
   async fetchTasks(ctx) {
     // const res = await this.$axios.$get('/task?page=1&limit=99999');
     // ctx.commit('initialize', mapTasks(res.data));
-    ctx.commit('initialize', DUMMY_TASKS);
-  },
+    ctx.commit("initialize", DUMMY_TASKS);
+  }
 };
