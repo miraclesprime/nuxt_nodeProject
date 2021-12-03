@@ -92,6 +92,7 @@ export default {
   server: {
     port: 4000,
   },
+  target: 'static',
   // auth: {
   //   plugins: ["~/plugins/auth"],
   //   redirect: {
