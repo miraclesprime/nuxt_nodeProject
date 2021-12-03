@@ -1,5 +1,5 @@
 import { resolve } from "path";
-import i18n from './config/i18n'
+import i18n from "./config/i18n";
 
 export default {
   // Global page headers (https://go.nuxtjs.dev/config-head)
@@ -8,22 +8,21 @@ export default {
     meta: [
       { charset: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { hid: "description", name: "description", content: "" }
+      { hid: "description", name: "description", content: "" },
     ],
     link: [
       {
         rel: "stylesheet",
-        href:
-          "https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700&display=swap"
+        href: "https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700&display=swap",
       },
-      { rel: "icon", type: "image/x-icon", href: "/favicon.ico" }
-    ]
+      { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+    ],
   },
 
-  css: ["~/assets/scss/style.scss"],
+  css: ["~/assets/global.scss"],
   axios: {
     // proxy: true,
-    baseURL: process.env.VUE_APP_API_ENDPOINT
+    baseURL: process.env.VUE_APP_API_ENDPOINT,
   },
   /// Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: ["~/plugins/plugins", "~/plugins/axios.js", "~/plugins/dayjs.js"],
@@ -31,7 +30,7 @@ export default {
   components: [
     { path: "~/components/", pathPrefix: false },
     { path: "~/elements/", pathPrefix: false },
-    { path: "~/../bib-shared/components/", pathPrefix: false }
+    { path: "~/../bib-shared/components/", pathPrefix: false },
   ],
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
@@ -43,23 +42,23 @@ export default {
     "@nuxtjs/dayjs",
     "@nuxtjs/style-resources",
     [
-      'nuxt-i18n',
+      "nuxt-i18n",
       {
         vueI18nLoader: true,
-        defaultLocale: 'fr',
-         locales: [
+        defaultLocale: "fr",
+        locales: [
           {
-             code: 'en',
-             name: 'English'
+            code: "en",
+            name: "English",
           },
           {
-             code: 'fr',
-             name: 'Français'
-          }
+            code: "fr",
+            name: "Français",
+          },
         ],
-        vueI18n: i18n
-      }
-     ]
+        vueI18n: i18n,
+      },
+    ],
   ],
 
   // Modules (https://go.nuxtjs.dev/config-modules)
@@ -71,8 +70,8 @@ export default {
       "../bib-shared/css/mixins.scss",
       "../bib-shared/css/utilities.scss",
       "../bib-shared/css/basic.scss",
-      "~/assets/scss/variable.scss"
-    ]
+      "~/assets/variable.scss",
+    ],
   },
   // router: {
   //   // base: '/dashboard',
@@ -91,28 +90,28 @@ export default {
   build: {
     extend(config, { loaders }) {
       loaders.scss.additionalData = '@use "sass:math";';
-    }
+    },
   },
   alias: {
     config: resolve(__dirname, "./config"),
     services: resolve(__dirname, "./services"),
-    dummy: resolve(__dirname, "./dummy")
+    dummy: resolve(__dirname, "./dummy"),
   },
   loadingIndicator: {
     name: "circle",
     color: "#3B8070",
-    background: "transparent"
+    background: "transparent",
   },
   dayjs: {
     locales: ["en", "ca"],
     defaultLocale: "en",
     defaultTimeZone: "Canada/Toronto",
-    plugins: ["utc", "timezone", "weekday", "localizedFormat", "isSameOrAfter"]
+    plugins: ["utc", "timezone", "weekday", "localizedFormat", "isSameOrAfter"],
   },
   server: {
-    port: 4000
+    port: 4000,
   },
-  target: 'static',
+  target: "static",
   // auth: {
   //   plugins: ["~/plugins/auth"],
   //   redirect: {

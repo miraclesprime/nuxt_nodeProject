@@ -99,6 +99,7 @@ export default {
       this.$root.$emit("change-grid-type", this.type);
     },
     showCreateTaskModal() {
+      this.$refs.modals.modalSize = "lg";
       this.$refs.modals.showCreateTaskModal = true;
     },
     showCreateSectionModal() {
@@ -106,31 +107,40 @@ export default {
     },
     async createTask(task) {
       //COLLECTING FOLDER INFO
-      if (task.name != "") {
+      if (task.title != "" && task.title !== "") {
         try {
-          const response = await this.$axios.$post("/v1/folders", data);
-          this.createdFolder = response.data;
-          if (goTo == true) {
-            this.goToFolder(this.createdFolder);
-          }
-          this.nav.bread = [{ name: "My Drive", _id: "root" }];
-          await this.getFullPath(this.parent._id);
-          this.$refs.modals.showCreateFolderModal = false;
-          if (!response.data.parent) {
-            let item = this.navItems1[0];
-            item.sub.push({
-              label: response.data.name,
-              icon: "folder-solid",
-              _id: response.data._id,
-            });
-            this.navItems1[0] = item;
-          }
+          const response = await this.$axios.$post("/task", {
+            company: task.company,
+            status: task.status,
+            title: task.title,
+            description: task.description,
+            dueDate: task.dueDate,
+            priority: task.priority,
+            budget: task.budget,
+            section: task.section,
+          });
+
+          this.$refs.modals.showCreateTaskModal = false;
+          this.$refs.modals.modalSize = "md";
+          this.$emit("change-data");
         } catch (err) {
           console.log(err);
         }
       }
     },
-    async createSection(section) {},
+    async createSection(section) {
+      if (section.name != "") {
+        try {
+          await this.$axios.$post("/section", {
+            title: section.name,
+          });
+          this.$refs.modals.showCreateSectionModal = false;
+          this.$emit("change-data");
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    },
   },
 };
 </script>

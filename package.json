@@ -21,7 +21,6 @@
     "nuxt": "^2.15.8",
     "nuxt-i18n": "^6.28.1",
     "path": "^0.12.7",
-    "preact": "^10.6.1",
     "v-click-outside": "^3.1.2",
     "v-movable": "^0.3.2",
     "vue-columns-resizable": "^0.0.1",
