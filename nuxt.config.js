@@ -1,4 +1,5 @@
 import { resolve } from "path";
+import i18n from "./config/i18n";
 
 export default {
   // Global page headers (https://go.nuxtjs.dev/config-head)
@@ -40,6 +41,24 @@ export default {
     "@nuxtjs/dotenv",
     "@nuxtjs/dayjs",
     "@nuxtjs/style-resources",
+    [
+      "nuxt-i18n",
+      {
+        vueI18nLoader: true,
+        defaultLocale: "fr",
+        locales: [
+          {
+            code: "en",
+            name: "English",
+          },
+          {
+            code: "fr",
+            name: "Français",
+          },
+        ],
+        vueI18n: i18n,
+      },
+    ],
   ],
 
   // Modules (https://go.nuxtjs.dev/config-modules)
@@ -92,7 +111,7 @@ export default {
   server: {
     port: 4000,
   },
-  target: 'static',
+  target: "static",
   // auth: {
   //   plugins: ["~/plugins/auth"],
   //   redirect: {
