@@ -1,13 +1,15 @@
 <template>
   <bib-app-wrapper
+    class="test"
     :navigationCollapsed="collapseNavigation"
+    :select="appHeaderActions.select"
+    :button="appHeaderActions.button"
+    @button-click="rightClkFileSection"
     @collapseNavigation="
       () => {
-        resizeCalendar()
         collapseNavigation = !collapseNavigation;
       }
     "
-    :header-actions="appHeaderActions"
   >
     <template #topbar>
       <bib-header></bib-header>
@@ -103,6 +105,7 @@ import { mapState, mapGetters } from "vuex";
 import { TABLE_FIELDS, TABS, DEFAULT_TAB, TAB_TITLES } from "config/constants";
 
 export default {
+  auth: false,
   data() {
     return {
       activeTab: DEFAULT_TAB,
@@ -182,14 +185,6 @@ export default {
     }),
   },
   methods: {
-    // resize for Calendar Page View
-    resizeCalendar() {
-      if(document.getElementById('myDiv')) {
-        window.dispatchEvent(new Event('resize'));
-      } 
-      return false;
-    },
-
     // Change Tab
     tabChange(value) {
       this.activeTab = value;
@@ -202,6 +197,48 @@ export default {
       } catch (err) {
         console.log(err);
       }
+    },
+
+    rightClkFileSection(event) {
+      event.preventDefault();
+      var menu = document.getElementById("file__section__context");
+      this.closeMenus();
+      this.showFileSectionMenu = true;
+
+      var body = document.body,
+        html = document.documentElement;
+
+      var height = Math.max(
+        body.scrollHeight,
+        body.offsetHeight,
+        html.clientHeight,
+        html.scrollHeight,
+        html.offsetHeight
+      );
+
+      if (menu) {
+        menu.style.position = "fixed";
+        menu.style.left = event.clientX + "px";
+        menu.style.top = event.clientY + "px";
+
+        if (height - event.pageY < 150) {
+          menu.style.maxHeight = height - event.pageY + "px";
+          menu.style.overflowY = "scroll";
+          menu.scroll(1, 1);
+        } else {
+          menu.style.maxHeight = "max-content";
+        }
+      }
+    },
+    closeMenus() {
+      // this.showSortMenu = false;
+      // this.showMoreMenu = false;
+      // this.showFolderMenu = false;
+      // this.showFileMenu = false;
+      // this.showFileSectionMenu = false;
+      // for (let file of this.files.data) {
+      //   file.active = false;
+      // }
     },
   },
   created() {
@@ -291,6 +328,13 @@ details {
 }
 
 ::v-deep {
+  .panel-wrapper.side-panel {
+    position: fixed;
+    right: 0;
+    max-width: $sidebar-width;
+    border-left: 1px solid $gray4;
+  }
+
   .align-start.d-flex.flex-d-column {
     padding-left: 0 !important;
   }
