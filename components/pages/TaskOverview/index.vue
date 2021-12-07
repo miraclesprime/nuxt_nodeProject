@@ -51,10 +51,12 @@
         </template>
         <template #cell(dueDate)="data">
           <div class="text-dark">
-            <span>{{ data.value.dueDate }}</span>
+            <span>{{
+              new Date(data.value.dueDate).toLocaleString("en-US")
+            }}</span>
           </div>
         </template>
-      </bib-table> -->
+      </bib-table>
     </template>
 
     <template v-else>
