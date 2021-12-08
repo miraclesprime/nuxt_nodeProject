@@ -22,7 +22,6 @@ export default {
   css: ["~/assets/global.scss"],
   axios: {
     proxy: true,
-    // baseURL: process.env.VUE_APP_API_ENDPOINT,
   },
   proxy: {
     '/section': {
