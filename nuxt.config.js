@@ -21,15 +21,8 @@ export default {
 
   css: ["~/assets/global.scss"],
   axios: {
-    proxy: true,
-  },
-  proxy: {
-    '/section': {
-      target: process.env.VUE_APP_API_ENDPOINT
-    },
-    '/task': {
-      target: process.env.VUE_APP_API_ENDPOINT
-    },
+    // proxy: true,
+    baseURL: process.env.VUE_APP_API_ENDPOINT,
   },
   /// Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: ["~/plugins/plugins", "~/plugins/axios.js", "~/plugins/dayjs.js"],
