@@ -7,6 +7,7 @@
     @button-click="rightClkFileSection"
     @collapseNavigation="
       () => {
+        resizeCalendar()
         collapseNavigation = !collapseNavigation;
       }
     "
@@ -185,6 +186,14 @@ export default {
     }),
   },
   methods: {
+    // resize for Calendar Page View
+    resizeCalendar() {
+      if(document.getElementById('myDiv')) {
+        window.dispatchEvent(new Event('resize'));
+      } 
+      return false;
+    },
+
     // Change Tab
     tabChange(value) {
       this.activeTab = value;
