@@ -1,7 +1,7 @@
 <template>
-  <div class="task-grid" @click="openSidebar()">
+  <div class="task-grid">
     <div class="task-top">
-      <div class="d-flex">
+      <div class="d-flex" @click="openSidebar()">
         <custom-check-box :id="'task-' + task.key" />
 
         <span class="ml-05" style="margin-top: 2px"
@@ -9,7 +9,24 @@
         >
       </div>
 
-      <bib-icon icon="elipsis" style="margin-top: 4px" />
+      <bib-button pop="elipsis" icon="elipsis" style="margin-top: 2px" size="xl">
+        <template v-slot:menu>
+          <div class="list">
+            <span class="list__item"
+              >Add to favorites</span
+            >
+            <span class="list__item"
+              >Copy Task Link</span
+            >
+            <span class="list__item"
+              >Delete Task</span
+            >
+            <span class="list__item" @click="openSidebar"
+              >View Task Details</span
+            >
+          </div>
+        </template>
+      </bib-button>
     </div>
     <div class="task-bottom">
       <bib-avatar size="25px"></bib-avatar>
