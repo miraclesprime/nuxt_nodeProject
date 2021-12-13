@@ -107,26 +107,27 @@ export default {
     },
     async createTask(task) {
       //COLLECTING FOLDER INFO
-      if (task.title != "" && task.title !== "") {
-        try {
-          const response = await this.$axios.$post("/task", {
-            company: task.company,
-            status: task.status,
-            title: task.title,
-            description: task.description,
-            dueDate: task.dueDate,
-            priority: task.priority,
-            budget: task.budget,
-            section: task.section,
-          });
+      console.log(task);
+      // if (task.title != "" && task.title !== "") {
+      //   try {
+      //     const response = await this.$axios.$post("/task", {
+      //       company: task.company,
+      //       status: task.status,
+      //       title: task.title,
+      //       description: task.description,
+      //       dueDate: task.dueDate,
+      //       priority: task.priority,
+      //       budget: task.budget,
+      //       section: task.section,
+      //     });
 
-          this.$refs.modals.showCreateTaskModal = false;
-          this.$refs.modals.modalSize = "md";
-          this.$emit("change-data");
-        } catch (err) {
-          console.log(err);
-        }
-      }
+      //     this.$refs.modals.showCreateTaskModal = false;
+      //     this.$refs.modals.modalSize = "md";
+      //     this.$emit("change-data");
+      //   } catch (err) {
+      //     console.log(err);
+      //   }
+      // }
     },
     async createSection(section) {
       if (section.name != "") {
