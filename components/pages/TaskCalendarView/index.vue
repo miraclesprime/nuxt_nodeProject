@@ -1,6 +1,6 @@
 <template>
   <div>
-    <task-actions />
+    <task-actions ref="childComponent" @change-data='taskCreate' />
     <div id='myDiv'>
     <FullCalendar class='demo-app-calendar' :options='calendarOptions'>
         <template v-slot:eventContent='arg'>
@@ -103,20 +103,26 @@ export default {
     },
 
     handleDateSelect(selectInfo) {
-      let title = alert('Please use add task/secton above to create your task')
-      let calendarApi = selectInfo.view.calendar
+      // let title = prompt('Please use add task/secton above to create your task')
+      this.$refs.childComponent.showCreateTaskModal(selectInfo);
+    },
+    
+    taskCreate($event) {
+      console.log("data", $event)
+
+      let calendarApi = $event.selectInfo.view.calendar
 
       calendarApi.unselect() // clear date selection
+      console.log($event.title)
 
-      if (title) {
+      if ($event.title) {
         calendarApi.addEvent({
           id: createEventId(),
-          title,
-          dueDate: 'Nov 30, 2021',
-          completed: false,
-          start: selectInfo.startStr,
-          end: selectInfo.endStr,
-          allDay: selectInfo.allDay
+          title: $event.title,
+          dueDate: $event.dueDate,
+          start: $event.selectInfo.startStr,
+          end: $event.selectInfo.endStr,
+          allDay: $event.selectInfo.allDay
         })
       }
     },
@@ -155,25 +161,6 @@ export default {
     },
 
   },
-  // computed: {
-  //   trimEventTitles() {
-  //     // console.log(this.currentEvents[0]._def)
-  //     console.log(document.querySelectorAll('.fc-daygrid-event'))
-  //     // return this.sampleAssets.map((el) => {
-  //     //   if(el.title.length > 16) {
-  //     //     el.title = el.title.substring(0,16);
-  //     //   }
-  //     // })
-  //   }
-  // },
-  // mounted() {
-  //   let arr = document.querySelectorAll('.eventTitle');
-  //    for(let i=0; i<arr.length; i++) {
-  //       console.log(document.querySelectorAll('.eventTitle')[i].textContent)
-  //       document.querySelectorAll('.eventTitle')[i].innerHTML = document.querySelectorAll('.eventTitle')[i].textContent.substring(0,16)
-  //       console.log(document.querySelectorAll('.eventTitle')[i].textContent)
-  //    }
-  // }
 };
 </script>
 

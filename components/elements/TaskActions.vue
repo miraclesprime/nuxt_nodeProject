@@ -86,11 +86,12 @@ export default {
     gridType: {
       type: String,
       default: "list",
-    },
+    }
   },
   data() {
     return {
       type: this.gridType,
+      selectInfo: null
     };
   },
   methods: {
@@ -98,9 +99,10 @@ export default {
       this.type = gType;
       this.$root.$emit("change-grid-type", this.type);
     },
-    showCreateTaskModal() {
+    showCreateTaskModal(data) {
       this.$refs.modals.modalSize = "lg";
       this.$refs.modals.showCreateTaskModal = true;
+      this.selectInfo = data;
     },
     showCreateSectionModal() {
       this.$refs.modals.showCreateSectionModal = true;
@@ -122,7 +124,17 @@ export default {
 
           this.$refs.modals.showCreateTaskModal = false;
           this.$refs.modals.modalSize = "md";
-          this.$emit("change-data");
+          this.$emit("change-data", {
+            company: task.company,
+            status: task.status,
+            title: task.title,
+            description: task.description,
+            dueDate: task.dueDate,
+            priority: task.priority,
+            budget: task.budget,
+            section: task.section,
+            selectInfo: this.selectInfo
+          });
         } catch (err) {
           console.log(err);
         }
