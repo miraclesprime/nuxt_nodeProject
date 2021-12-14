@@ -7,7 +7,7 @@
         itemSpace="5px"
       /> -->
 
-      <bib-button pop="add" label="Add Task/Section" size="xl">
+      <bib-button pop="add" label="Add Task/Section" size="sm">
         <template v-slot:menu>
           <div class="list">
             <span class="list__item" @click="showCreateTaskModal"

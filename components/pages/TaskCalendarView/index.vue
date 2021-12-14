@@ -1,5 +1,6 @@
 <template>
   <div>
+    
     <task-actions ref="childComponent" @change-data='taskCreate' />
     <div id='myDiv'>
     <FullCalendar class='demo-app-calendar' :options='calendarOptions'>
@@ -108,12 +109,9 @@ export default {
     },
     
     taskCreate($event) {
-      console.log("data", $event)
-
       let calendarApi = $event.selectInfo.view.calendar
 
       calendarApi.unselect() // clear date selection
-      console.log($event.title)
 
       if ($event.title) {
         calendarApi.addEvent({
