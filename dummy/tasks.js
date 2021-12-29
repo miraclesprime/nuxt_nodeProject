@@ -6,6 +6,7 @@ export const DUMMY_TASKS = [
     progress: "80%",
     priority: "Urgent",
     assignee: "John Doe",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do",
     dueDate: "Nov 23, 2032"
   },
   {
@@ -15,6 +16,7 @@ export const DUMMY_TASKS = [
     progress: "80%",
     priority: "Top",
     assignee: "John Doe",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do",
     dueDate: "Nov 23, 2032"
   },
   {
@@ -24,6 +26,7 @@ export const DUMMY_TASKS = [
     progress: "80%",
     priority: "Priority",
     assignee: "John Doe",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do",
     dueDate: "Nov 23, 2032"
   },
   {
@@ -33,6 +36,7 @@ export const DUMMY_TASKS = [
     progress: "80%",
     priority: "Priority",
     assignee: "John Doe",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do",
     dueDate: "Nov 23, 2032"
   },
   {
@@ -42,6 +46,7 @@ export const DUMMY_TASKS = [
     progress: "80%",
     priority: "Priority",
     assignee: "John Doe",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do",
     dueDate: "Nov 23, 2032"
   },
   {
@@ -69,6 +74,7 @@ export const DUMMY_TASKS = [
     progress: "80%",
     priority: "Priority",
     assignee: "John Doe",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do",
     dueDate: "Nov 23, 2032"
   },
   {
@@ -78,6 +84,7 @@ export const DUMMY_TASKS = [
     progress: "80%",
     priority: "Priority",
     assignee: "John Doe",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do",
     dueDate: "Nov 23, 2032"
   },
   {
@@ -86,6 +93,7 @@ export const DUMMY_TASKS = [
     status: "DONE",
     priorit: "LOW",
     assignee: "Ramon",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do",
     dueDate: "2021-10-01"
   },
   {
@@ -93,6 +101,7 @@ export const DUMMY_TASKS = [
     name: "Task - 11",
     status: "DONE", priorit: "LOW",
     assignee: "Bruno",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do",
     dueDate: "2021-10-01"
   },
   {
@@ -101,9 +110,20 @@ export const DUMMY_TASKS = [
     status: "DONE",
     priorit: "LOW",
     assignee: "Bruno",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do",
     dueDate: "2021-10-01"
   }
 ];
+
+export const DUMMY_PROJECT = {
+  companyId: 1,
+  title: "Tom's Business project",
+  description: "2030 Project Description",
+  dueDate: "2030-8-31",
+  priority: "medium",
+  buget: 10.0
+  
+}
 
 export const DUMMY_TASK_FIELDS = [
   {

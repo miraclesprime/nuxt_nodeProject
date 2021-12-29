@@ -1,109 +1,120 @@
 <template>
-  <bib-app-wrapper
-    class="test"
-    :navigationCollapsed="collapseNavigation"
-    :select="appHeaderActions.select"
-    :button="appHeaderActions.button"
-    @button-click="rightClkFileSection"
-    @collapseNavigation="
-      () => {
-        resizeCalendar()
-        collapseNavigation = !collapseNavigation;
-      }
-    "
-  >
-    <template #topbar>
-      <bib-header></bib-header>
-    </template>
+  <div>
+    <bib-app-wrapper
+      class="test"
+      :navigationCollapsed="collapseNavigation"
+      :select="appHeaderActions.select"
+      :button="appHeaderActions.button"
+      @button-click="rightClkFileSection"
+      @collapseNavigation="
+        () => {
+          resizeCalendar()
+          collapseNavigation = !collapseNavigation;
+        }
+      "
+    >
+      <template #topbar>
+        <bib-header></bib-header>
+      </template>
 
-    <template #switcher>
-      <bib-app-switcher :menuItems="appItems"></bib-app-switcher>
-    </template>
+      <template #switcher>
+        <bib-app-switcher :menuItems="appItems"></bib-app-switcher>
+      </template>
 
-    <template #navigation>
-      <bib-app-navigation :items="navItems1"></bib-app-navigation>
-      <bib-app-navigation :items="navItems2"></bib-app-navigation>
-      <bib-app-navigation :items="navItems3"></bib-app-navigation>
-    </template>
+      <template #navigation>
+        <bib-app-navigation :items="navItems1"></bib-app-navigation>
+        <bib-app-navigation :items="navItems2"></bib-app-navigation>
+        <bib-app-navigation :items="navItems3"></bib-app-navigation>
+      </template>
 
-    <template #content>
-      <div class="main" :class="openSidebar ? 'open-sidebar' : ''">
-        <task-sidebar :activeTask="activeTask" />
+      <template #content>
+        <div class="main" :class="openSidebar ? 'open-sidebar' : ''">
+          <task-sidebar :activeTask="activeTask" />
 
-        <div class="bread d-flex">
-          <div class="d-flex align-center">
-            <bib-icon icon="previous" :scale="2.0"></bib-icon>
+          <div class="bread d-flex">
+            <div class="d-flex align-center">
+              <bib-icon icon="previous" :scale="2.0"></bib-icon>
+            </div>
+            <h3 class="bold mt-auto mb-auto d-flex">
+              {{ projectName }}
+              <div class="pl-1 mt-auto mb-auto">
+                <bib-icon icon="heart" :scale="1.25"></bib-icon>
+              </div>
+              <div class="pl-1 mt-auto mb-auto">
+                <bib-button pop="elipsis">
+                  <template v-slot:menu>
+                    <div class="list__section">
+                      <span class="list__item">item 1</span>
+                      <span class="list__item">item 2</span>
+                      <span class="list__item">item 3</span>
+                    </div>
+                  </template>
+                </bib-button>
+              </div>
+            </h3>
           </div>
-          <h3 class="bold mt-auto mb-auto d-flex">
-            Project Name
-            <div class="pl-1 mt-auto mb-auto">
-              <bib-icon icon="heart" :scale="1.25"></bib-icon>
-            </div>
-            <div class="pl-1 mt-auto mb-auto">
-              <bib-button pop="elipsis">
-                <template v-slot:menu>
-                  <div class="list__section">
-                    <span class="list__item">item 1</span>
-                    <span class="list__item">item 2</span>
-                    <span class="list__item">item 3</span>
-                  </div>
-                </template>
-              </bib-button>
-            </div>
-          </h3>
-        </div>
 
-        <div class="menu">
-          <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="TABS" />
-        </div>
+          <div class="menu">
+            <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="TABS" />
+          </div>
 
-        <div class="">
-          <task-overview
-            v-if="activeTab.value == TAB_TITLES.overview"
-            :fields="TABLE_FIELDS"
-            :tasks="tasks"
-            :gridType="gridType"
-          />
-          <task-view
-            v-else-if="activeTab.value == TAB_TITLES.tasks"
-            :fields="TABLE_FIELDS"
-            :tasks="tasks"
-            :gridType="gridType"
-          />
-          <task-conversations
-            v-else-if="activeTab.value == TAB_TITLES.conversations"
-            :fields="TABLE_FIELDS"
-            :tasks="tasks"
-          />
-          <task-timeline-view
-            v-else-if="activeTab.value == TAB_TITLES.timeline"
-            :fields="TABLE_FIELDS"
-            :tasks="tasks"
-          />
-          <task-calendar-view
-            v-else-if="activeTab.value == TAB_TITLES.calendar"
-            :fields="TABLE_FIELDS"
-            :tasks="tasks"
-          />
-          <task-team
-            v-else-if="activeTab.value == TAB_TITLES.team"
-            :fields="TABLE_FIELDS"
-            :tasks="tasks"
-          />
-          <task-files
-            v-else-if="activeTab.value == TAB_TITLES.files"
-            :fields="TABLE_FIELDS"
-            :tasks="tasks"
-          />
+          <div class="">
+            <task-overview
+              v-if="activeTab.value == TAB_TITLES.overview"
+              :fields="TABLE_FIELDS"
+              :tasks="tasks"
+              :gridType="gridType"
+            />
+            <task-view
+              v-else-if="activeTab.value == TAB_TITLES.tasks"
+              :fields="TABLE_FIELDS"
+              :tasks="tasks"
+              :gridType="gridType"
+            />
+            <task-conversations
+              v-else-if="activeTab.value == TAB_TITLES.conversations"
+              :fields="TABLE_FIELDS"
+              :tasks="tasks"
+            />
+            <task-timeline-view
+              v-else-if="activeTab.value == TAB_TITLES.timeline"
+              :fields="TABLE_FIELDS"
+              :tasks="tasks"
+            />
+            <task-calendar-view
+              v-else-if="activeTab.value == TAB_TITLES.calendar"
+              :fields="TABLE_FIELDS"
+              :tasks="tasks"
+            />
+            <task-team
+              v-else-if="activeTab.value == TAB_TITLES.team"
+              :fields="TABLE_FIELDS"
+              :tasks="tasks"
+            />
+            <task-files
+              v-else-if="activeTab.value == TAB_TITLES.files"
+              :fields="TABLE_FIELDS"
+              :tasks="tasks"
+            />
+          </div>
         </div>
-      </div>
-    </template>
-  </bib-app-wrapper>
+      </template>
+    </bib-app-wrapper>
+    <task-modals
+      @create-project="
+        (project) => {
+          createProject(project);
+        }
+      "
+      ref="modals"
+    ></task-modals>
+  </div>
 </template>
 
 <script>
 import { mapState, mapGetters } from "vuex";
 import { TABLE_FIELDS, TABS, DEFAULT_TAB, TAB_TITLES } from "config/constants";
+import { DUMMY_PROJECT } from "~/dummy/tasks.js";
 
 export default {
   auth: false,
@@ -177,6 +188,7 @@ export default {
           },
         },
       },
+      projectName: ''
     };
   },
   computed: {
@@ -199,6 +211,23 @@ export default {
       this.activeTab = value;
     },
 
+    async createProject(project) {
+      //COLLECTING FOLDER INFO
+      if (project.name != "") {
+        try {
+          DUMMY_PROJECT.description = project.name
+          const projectData = await this.$axios.$post("/project",
+            DUMMY_PROJECT
+            );
+          this.projectName = projectData.data.description
+          this.$refs.modals.showCreateProjectModal = false;
+          this.$emit("change-data");
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    },
+
     // Handle User logout
     async logout() {
       try {
@@ -209,35 +238,36 @@ export default {
     },
 
     rightClkFileSection(event) {
-      event.preventDefault();
-      var menu = document.getElementById("file__section__context");
-      this.closeMenus();
-      this.showFileSectionMenu = true;
+      this.$refs.modals.showCreateProjectModal = true;
+      // event.preventDefault();
+      // var menu = document.getElementById("file__section__context");
+      // this.closeMenus();
+      // this.showFileSectionMenu = true;
 
-      var body = document.body,
-        html = document.documentElement;
+      // var body = document.body,
+      //   html = document.documentElement;
 
-      var height = Math.max(
-        body.scrollHeight,
-        body.offsetHeight,
-        html.clientHeight,
-        html.scrollHeight,
-        html.offsetHeight
-      );
+      // var height = Math.max(
+      //   body.scrollHeight,
+      //   body.offsetHeight,
+      //   html.clientHeight,
+      //   html.scrollHeight,
+      //   html.offsetHeight
+      // );
 
-      if (menu) {
-        menu.style.position = "fixed";
-        menu.style.left = event.clientX + "px";
-        menu.style.top = event.clientY + "px";
+      // if (menu) {
+      //   menu.style.position = "fixed";
+      //   menu.style.left = event.clientX + "px";
+      //   menu.style.top = event.clientY + "px";
 
-        if (height - event.pageY < 150) {
-          menu.style.maxHeight = height - event.pageY + "px";
-          menu.style.overflowY = "scroll";
-          menu.scroll(1, 1);
-        } else {
-          menu.style.maxHeight = "max-content";
-        }
-      }
+      //   if (height - event.pageY < 150) {
+      //     menu.style.maxHeight = height - event.pageY + "px";
+      //     menu.style.overflowY = "scroll";
+      //     menu.scroll(1, 1);
+      //   } else {
+      //     menu.style.maxHeight = "max-content";
+      //   }
+      // }
     },
     closeMenus() {
       // this.showSortMenu = false;

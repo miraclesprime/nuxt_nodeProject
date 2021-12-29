@@ -5,14 +5,14 @@
         <custom-check-box :id="'task-' + task.key" />
 
         <span class="ml-05" style="margin-top: 2px"
-          >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do</span
+          >{{ task.description }}</span
         >
       </div>
 
       <bib-button pop="elipsis" icon="elipsis" style="margin-top: 2px" size="xl">
         <template v-slot:menu>
           <div class="list">
-            <span class="list__item"
+            <span class="list__item" @click="addToFavorites"
               >Add to favorites</span
             >
             <span class="list__item"
@@ -52,6 +52,8 @@ export default {
       this.$root.$emit("open-sidebar", this.flag);
       this.$root.$emit("set-active-task", this.task);
     },
+    addToFavorites() {
+    }
   },
 };
 </script>

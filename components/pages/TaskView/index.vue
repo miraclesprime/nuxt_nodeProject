@@ -174,6 +174,13 @@
           :taskSections="tableSections.slice(6, 9)"
           groupName="1"
         />
+        <task-grid-section
+          :headless="true"
+          label="Section"
+          :taskFields="tableFields"
+          :taskSections="tableSections.slice(9, 12)"
+          groupName="1"
+        />
       </div>
     </template>
   </div>

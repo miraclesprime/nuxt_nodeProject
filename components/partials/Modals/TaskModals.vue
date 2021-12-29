@@ -171,6 +171,50 @@
         </div>
       </template>
     </bib-modal-wrapper>
+
+    <bib-modal-wrapper
+      @close="showCreateProjectModal = false"
+      v-show="showCreateProjectModal"
+      title="Create Project"
+      id="create-project"
+      @keypress.native="bindEnter($event, 'create-project-btn')"
+    >
+      <template v-slot:content>
+        <bib-input
+          class="placeholder--dark"
+          :value="contextProject.name"
+          @input="
+            ($event) => {
+              contextProject.name = $event;
+            }
+          "
+          placeholder="Enter Project name..."
+        ></bib-input>
+      </template>
+      <template v-slot:footer>
+        <div class="m-auto pt-1 d-flex justify-between">
+          <bib-button
+            @click.native="
+              () => {
+                showCreateProjectModal = false;
+              }
+            "
+            variant="light"
+            size="lg"
+            pill
+            label="Cancel"
+          ></bib-button>
+          <bib-button
+            @click.native="triggerModalAction('create-project', contextProject)"
+            variant="success"
+            size="lg"
+            id="create-project-btn"
+            pill
+            label="Create"
+          ></bib-button>
+        </div>
+      </template>
+    </bib-modal-wrapper>
   </div>
 </template>
 <script>
@@ -180,8 +224,12 @@ export default {
     return {
       showCreateTaskModal: false,
       showCreateSectionModal: false,
+      showCreateProjectModal: false,
       modalSize: "md",
       contextSection: {
+        name: "",
+      },
+      contextProject: {
         name: "",
       },
       taskInfo: {
