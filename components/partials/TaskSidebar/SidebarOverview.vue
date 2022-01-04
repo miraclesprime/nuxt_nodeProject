@@ -1,12 +1,11 @@
 <template>
   <div>
-    <div class="container">
+    <div class="container" v-if="activeItem">
       <div class="task-info w-100">
         <div class="row">
           <div class="col-4">
             <bib-input
-              type="text"
-              :value="activeItem.name"
+              type="select"
               :options="selectItems"
               placeholder="Please select..."
               label="Assignee"
@@ -37,9 +36,9 @@
 
           <div class="col-4">
             <bib-input
-              type="text"
+              type="select"
               :value="activeItem.priority"
-              :options="selectItems"
+              :options="priorityValues"
               placeholder="Please select..."
               label="Priority"
             ></bib-input>
@@ -47,9 +46,9 @@
 
           <div class="col-4">
             <bib-input
-              type="text"
-              :value="activeItem.status"
-              :options="selectItems"
+              type="select"
+              :value="activeItem.status ? activeItem.status.text : '' "
+              :options="statusValues"
               placeholder="Please select..."
               label="Status"
             ></bib-input>
@@ -60,7 +59,7 @@
           <div class="col-12">
             <bib-input
               type="textarea"
-              v-model="description"
+              :value="activeItem.description"
               placeholder="Enter task description..."
               label="Description"
             ></bib-input>
@@ -168,6 +167,7 @@
 
 <script>
 import { TEAMMATES } from "config/constants";
+import {mapGetters} from 'vuex';
 
 export default {
   props: {
@@ -175,17 +175,20 @@ export default {
   },
   data: function () {
     return {
-      activeItem: this.activeTask,
-      selectItems: {
-        items: [
-          { label: "Task name", value: "1" },
-          { label: "List Item", value: "2" },
-          { label: "List Item", value: "3" },
-          { label: "List Item", value: "4" },
-          { label: "List Item", value: "5" },
-          { label: "List Item", value: "6" },
-        ],
-      },
+      // activeItem: this.activeTask,
+      selectItems: [
+        {label: 'Please Choose One', value: "orange"}
+      ],
+      statusValues: [
+        {label: 'done', value: 'done'},
+        {label: 'In-Progress', value: 'progress'},
+        {label: 'pending', value: 'pending'}
+      ],
+      priorityValues: [
+        {label: 'low', value: 'low'},
+        {label: 'medium', value: 'medium'},
+        {label: 'high', value: 'high'}
+      ],
       description: "",
       isContentExpanded: false,
       form: {
@@ -200,6 +203,11 @@ export default {
     activeTask() {
       this.activeItem = this.activeTask;
     },
+  },
+  computed: {
+    ...mapGetters({
+      activeItem: 'task/getSingleTask'
+    }),
   },
 };
 </script>

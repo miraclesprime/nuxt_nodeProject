@@ -1,5 +1,6 @@
 <template>
   <bib-panel-wrapper class="side-panel">
+    {{formattedDate(activeItem.dueDate)}}
     <template v-slot:header>
       <div class="side-panel__header">
         <div class="side-panel__header__file__info">
@@ -52,7 +53,7 @@
           <div class="col-8">
             <bib-input
               type="text"
-              v-model="form.name"
+              :value="activeItem.title"
               placeholder="Enter task name..."
               label="Task name"
             ></bib-input>
@@ -61,7 +62,7 @@
           <div class="col-4">
             <bib-input
               type="date"
-              v-model="form.dueDate"
+              :value="activeItem.dueDate ? formattedDate(activeItem.dueDate) : ''"
               placeholder="Enter date/range"
               label="Due date"
             ></bib-input>
@@ -156,6 +157,7 @@ export default {
   computed: {
     ...mapGetters({
       tasks: "task/tasksForListView",
+      activeItem: 'task/getSingleTask'
     }),
   },
   methods: {
@@ -165,6 +167,14 @@ export default {
     sidebarTabChange(tab) {
       this.activeSidebarTab = tab.value;
     },
+    formattedDate(d) {
+      let date = new Date(d);
+      let month = date.getMonth() + 1;
+      let day = '0' + date.getDay();
+      let year = date.getFullYear()
+      return `${year}-${month}-${day}`
+      
+    }
   },
 };
 </script>

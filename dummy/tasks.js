@@ -131,7 +131,7 @@ export const DUMMY_TASK_FIELDS = [
     label: "#",
   },
   {
-    key: "name",
+    key: "title",
     label: "Task name",
   },
   {
