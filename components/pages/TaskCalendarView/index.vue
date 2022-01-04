@@ -1,6 +1,7 @@
 <template>
   <div>
-    <task-actions />
+    
+    <task-actions ref="childComponent" @change-data='taskCreate' />
     <div id='myDiv'>
     <FullCalendar class='demo-app-calendar' :options='calendarOptions'>
         <template v-slot:eventContent='arg'>
@@ -49,6 +50,51 @@ export default {
     fields: {
       type: Array,
       default: []
+    },
+  },
+  components: {FullCalendar},
+  data: function() {
+    return {
+      sampleAssets: SAMPLE_EVENTS,
+      isExpand: true,
+      calendarOptions: {
+        plugins: [
+          dayGridPlugin,
+          // timeGridPlugin,
+          interactionPlugin
+        ],
+        headerToolbar: {
+          left: 'title', 
+          right: 'dayGridMonth,dayGridWeek,dayGridDay'
+        },
+        views: {
+          // we can specify particular view for particular layout here
+        },
+        initialView: 'dayGridMonth',
+        windowResizeDelay: 200,
+        initialEvents: SAMPLE_EVENTS,
+        editable: true,
+        selectable: true,
+        selectMirror: true,
+        dayMaxEvents: true,
+        weekends: true,
+        // style related
+        eventColor: '#7287c3',
+        eventBackgroundColor: '#fcfcfc',
+        eventTextColor: 'black',
+        eventBorderColor: '#ccc',
+        // event handling
+        select: this.handleDateSelect,
+        eventClick: this.handleEventClick,
+        eventsSet: this.handleEvents,
+        eventDrop: this.handleEventDrop,
+        eventResize: this.handleEventResize,
+        // Events that can be used after API is hit -------
+        eventAdd: this.handleEventAdd, 
+        eventChange: this.handleEventChange, 
+        eventRemove: this.handleEventRemove 
+      },
+      currentEvents: []
     }
   }, 
   methods: {
@@ -58,20 +104,23 @@ export default {
     },
 
     handleDateSelect(selectInfo) {
-      let title = alert('Please use add task/secton above to create your task')
-      let calendarApi = selectInfo.view.calendar
+      // let title = prompt('Please use add task/secton above to create your task')
+      this.$refs.childComponent.showCreateTaskModal(selectInfo);
+    },
+    
+    taskCreate($event) {
+      let calendarApi = $event.selectInfo.view.calendar
 
       calendarApi.unselect() // clear date selection
 
-      if (title) {
+      if ($event.title) {
         calendarApi.addEvent({
           id: createEventId(),
-          title,
-          dueDate: 'Nov 30, 2021',
-          completed: false,
-          start: selectInfo.startStr,
-          end: selectInfo.endStr,
-          allDay: selectInfo.allDay
+          title: $event.title,
+          dueDate: $event.dueDate,
+          start: $event.selectInfo.startStr,
+          end: $event.selectInfo.endStr,
+          allDay: $event.selectInfo.allDay
         })
       }
     },
@@ -112,3 +161,116 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+#myDiv {
+  max-height: 75vh; 
+  overflow: auto; 
+  box-sizing: content-box; 
+  width: 100%; 
+  /* padding: 3px; */
+}
+
+.event-box {
+  margin-right: auto; 
+  font-size: 11px;
+  color: #2E2F31; 
+  padding: 2px;
+}
+
+.limitTitle {
+  width: 15ch;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.due-date {
+  font-size: 8px; 
+  color: #6d7278;
+}
+
+.event-title {
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+/* Dropdown Button */
+.dropbtn {
+  opacity: 0;
+  color: grey;
+  font-size: 16px;
+  border: none;
+  background: none;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1; /* dropdown content color */
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 9999;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #ddd;}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {display: block;}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {background: none; color: grey; opacity: 1;}
+
+a.fc-event:hover .dropbtn {
+  opacity: 1;
+}
+
+/* CIRCULAR TICK */
+.success-checkmark:after {
+      content: '✔';
+      position: relative;
+      left:0; top: 5px;
+      padding: 3px;
+      width: 20px; 
+      height: 20px;
+      text-align: center;
+      border: 1px solid #2E2F31;
+      background: #2ba026;
+      border-radius: 50%;
+      margin-right: 2px;
+      color: white;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,.3)
+    }
+  
+  .not-completed:after {
+    content: '✔';
+    position: relative;
+    left:0; top: 5px;
+    padding: 3px;
+    width: 20px; 
+    height: 20px;
+    text-align: center;
+    border: 1px solid #2E2F31;
+    background: #ccc; 
+    color: rgb(95, 95, 95);
+    border-radius: 50%;
+    margin: 2px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,.3)
+  }
+
+</style>

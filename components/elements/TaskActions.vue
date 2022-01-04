@@ -86,11 +86,12 @@ export default {
     gridType: {
       type: String,
       default: "list",
-    },
+    }
   },
   data() {
     return {
       type: this.gridType,
+      selectInfo: null
     };
   },
   methods: {
@@ -98,9 +99,10 @@ export default {
       this.type = gType;
       this.$root.$emit("change-grid-type", this.type);
     },
-    showCreateTaskModal() {
+    showCreateTaskModal(data) {
       this.$refs.modals.modalSize = "lg";
       this.$refs.modals.showCreateTaskModal = true;
+      this.selectInfo = data;
     },
     showCreateSectionModal() {
       this.$refs.modals.showCreateSectionModal = true;

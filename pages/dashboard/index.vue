@@ -8,6 +8,7 @@
       @button-click="rightClkFileSection"
       @collapseNavigation="
         () => {
+          resizeCalendar()
           collapseNavigation = !collapseNavigation;
         }
       "
@@ -66,7 +67,7 @@
             />
             <task-view
               v-else-if="activeTab.value == TAB_TITLES.tasks"
-              :fields="TABLE_FIELDS"
+              :fields="taskFields"
               :tasks="tasks"
               :gridType="gridType"
             />
@@ -191,12 +192,21 @@ export default {
     };
   },
   computed: {
-    ...mapState("task", ["list", "single"]),
+    // ...mapState("task", ["list", "single"]),
     ...mapGetters({
       tasks: "task/tasksForListView",
+      taskFields: "task/tableFields"
     }),
   },
   methods: {
+    // resize for Calendar Page View
+    resizeCalendar() {
+      if(document.getElementById('myDiv')) {
+        window.dispatchEvent(new Event('resize'));
+      } 
+      return false;
+    },
+
     // Change Tab
     tabChange(value) {
       this.activeTab = value;
@@ -272,9 +282,9 @@ export default {
     },
   },
   created() {
-    this.$nextTick(async () => {
-      await this.$store.dispatch("task/fetchTasks");
-    });
+    // this.$nextTick(async () => {
+    //   await this.$store.dispatch("task/fetchTasks");
+    // });
 
     this.$root.$on("change-grid-type", (type) => {
       this.gridType = type;
@@ -288,6 +298,46 @@ export default {
       this.activeTask = task;
     });
   },
+  mounted() {
+  //     if (document.cookie.includes("b_ssojwt=")) {
+  //           let jwt = document.cookie
+  //           .split("; ")
+  //           .find((row) => row.includes("b_ssojwt="))
+  //           .split("=")[1];
+  //           localStorage.setItem("accessToken", jwt);
+  //     }
+  //     console.log(">>>>>>>")
+  //     let accessToken = localStorage.getItem("accessToken");
+  //     if (accessToken) {
+  //     console.log("Access Token",accessToken)
+  //         axios
+  //         .post(
+  //             "https://www.biztree.com/usr-ctrl-test/api/sso/verify",
+  //             {},
+  //             {
+  //                 headers: {
+  //                     authorization: "Bearer "+accessToken,
+  //                 },
+  //             }
+  //             )
+  //             .then((value) => {
+  //                 console.log(">> in if direction",value.data);
+  //                 document.querySelector(".customLoader").style.display="none";
+  //                 if(value.data.code!="valid_token"){
+  //                     console.log("Not valid code")
+  //                     window.location.href ="https://dev.business-in-a-box.com/account/login?redirect=http://dev.proj-mgmt.business-in-a-box.com/en/dashboard/";
+  //                 }
+  //             })
+  //             .catch((err) => {
+  //                 console.log(err);
+  //             });
+  //         } else {
+  //             console.log(">> in else redirection");
+  //             window.location.href ="https://dev.business-in-a-box.com/account/login?redirect=http://dev.proj-mgmt.business-in-a-box.com/en/dashboard/";
+  //         }
+
+  }
+
 };
 </script>
 

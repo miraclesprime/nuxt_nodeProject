@@ -1,13 +1,30 @@
-import { mapTasks } from "services/task";
+// import { mapTasks } from "services/task";
 
 export const state = () => ({
   list: [],
-  single: undefined
+  tasks: [],
+  selectedTask: {},
+  single: undefined,
+  taskInfo: {
+    section: "",
+    title: "",
+    priority: "",
+    progress: "",
+    status: "",
+    assignee: "",
+    budget: "",
+    description: "",
+    dueDate: "2021-02-11",
+  },
 });
 
 export const mutations = {
   initialize(state, list) {
     state.list = [...(list || [])];
+  },
+
+  fetchTasks(state, payload) {
+    state.tasks = payload;
   },
 
   add(state, task) {
@@ -25,7 +42,7 @@ export const mutations = {
   },
 
   setSingleTask(state, currentTask) {
-    single = currentTask;
+    state.selectedTask = currentTask;
   }
 };
 
@@ -33,12 +50,29 @@ export const getters = {
   tasksForListView(state) {
     return state.list;
   },
+  tableFields(state) {
+    return state.TABLE_FIELDS;
+  },
+  getAllTasks(state) {
+    return state.tasks.filter((task) => {
+      return task.isDeleted !== true;
+    });
+  },
+  getSelectedTask(state) {
+    return state.selectedTask;
+  },
+  getSingleTask(state) {
+    return state.selectedTask;
+  },
   tasksForOverview(state) {}
 };
 
 export const actions = {
   async fetchTasks(ctx) {
     const res = await this.$axios.$get('/task?page=1&limit=99999');
-    ctx.commit('initialize', mapTasks(res.data));
+    ctx.commit('fetchTasks', res.data);
+  },
+  setSingleTask(ctx, payload) {
+    ctx.commit('setSingleTask', payload)
   }
 };

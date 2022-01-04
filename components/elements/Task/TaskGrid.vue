@@ -5,7 +5,7 @@
         <custom-check-box :id="'task-' + task.key" />
 
         <span class="ml-05" style="margin-top: 2px"
-          >{{ task.description }}</span
+          >{{ task.title }}</span
         >
       </div>
 
