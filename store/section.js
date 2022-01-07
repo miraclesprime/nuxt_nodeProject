@@ -1,3 +1,4 @@
+
 export const state = () => ({
     sections: []
   });
@@ -6,15 +7,15 @@ export const state = () => ({
     
     fetchSections(state, payload) {
       state.sections = payload;
+    },
+
+    createSection(state, payload) {
+      state.sections.push(payload)
     }
 
   };
   
   export const getters = {
-    
-    tableFields(state) {
-      return state.TABLE_FIELDS
-    },
     
     getAllSections(state) {
       return state.sections;
@@ -26,6 +27,11 @@ export const state = () => ({
     async fetchSections(ctx) {
       const res = await this.$axios.$get('/section');
       ctx.commit('fetchSections', res.data);
+    },
+
+    async createSection(ctx) {
+      const res = await this.$axios.$post('/section');
+      ctx.commit('createSection', res.data)
     }
   };
   
