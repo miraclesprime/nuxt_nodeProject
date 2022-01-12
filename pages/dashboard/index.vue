@@ -195,7 +195,8 @@ export default {
     // ...mapState("task", ["list", "single"]),
     ...mapGetters({
       tasks: "task/tasksForListView",
-      taskFields: "task/tableFields"
+      taskFields: "task/tableFields",
+      token: "token/getToken"
     }),
   },
   methods: {
@@ -299,42 +300,42 @@ export default {
     });
   },
   mounted() {
-  //     if (document.cookie.includes("b_ssojwt=")) {
-  //           let jwt = document.cookie
-  //           .split("; ")
-  //           .find((row) => row.includes("b_ssojwt="))
-  //           .split("=")[1];
-  //           localStorage.setItem("accessToken", jwt);
-  //     }
-  //     console.log(">>>>>>>")
-  //     let accessToken = localStorage.getItem("accessToken");
-  //     if (accessToken) {
-  //     console.log("Access Token",accessToken)
-  //         axios
-  //         .post(
-  //             "https://www.biztree.com/usr-ctrl-test/api/sso/verify",
-  //             {},
-  //             {
-  //                 headers: {
-  //                     authorization: "Bearer "+accessToken,
-  //                 },
-  //             }
-  //             )
-  //             .then((value) => {
-  //                 console.log(">> in if direction",value.data);
-  //                 document.querySelector(".customLoader").style.display="none";
-  //                 if(value.data.code!="valid_token"){
-  //                     console.log("Not valid code")
-  //                     window.location.href ="https://dev.business-in-a-box.com/account/login?redirect=http://dev.proj-mgmt.business-in-a-box.com/en/dashboard/";
-  //                 }
-  //             })
-  //             .catch((err) => {
-  //                 console.log(err);
-  //             });
-  //         } else {
-  //             console.log(">> in else redirection");
-  //             window.location.href ="https://dev.business-in-a-box.com/account/login?redirect=http://dev.proj-mgmt.business-in-a-box.com/en/dashboard/";
-  //         }
+      // if (document.cookie.includes("b_ssojwt=")) {
+      //       let jwt = document.cookie
+      //       .split("; ")
+      //       .find((row) => row.includes("b_ssojwt="))
+      //       .split("=")[1];
+      //       this.$store.dispatch('token/setToken', jwt);
+      // }
+      // console.log(">>>>>>>")
+      // let accessToken = this.token;
+      // if (accessToken) {
+      // console.log("Access Token",accessToken)
+      //     axios
+      //     .post(
+      //         "https://www.biztree.com/usr-ctrl-test/api/sso/verify",
+      //         {},
+      //         {
+      //             headers: {
+      //                 authorization: "Bearer "+accessToken,
+      //             },
+      //         }
+      //         )
+      //         .then((value) => {
+      //             console.log(">> in if direction",value.data);
+      //             document.querySelector(".customLoader").style.display="none";
+      //             if(value.data.code!="valid_token"){
+      //                 console.log("Not valid code")
+      //                 window.location.href ="https://dev.business-in-a-box.com/account/login?redirect=http://dev.proj-mgmt.business-in-a-box.com/en/dashboard/";
+      //             }
+      //         })
+      //         .catch((err) => {
+      //             console.log(err);
+      //         });
+      //     } else {
+      //         console.log(">> in else redirection");
+      //         window.location.href ="https://dev.business-in-a-box.com/account/login?redirect=http://dev.proj-mgmt.business-in-a-box.com/en/dashboard/";
+      //     }
 
   }
 

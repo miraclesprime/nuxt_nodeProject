@@ -85,6 +85,7 @@
 
 <script>
 import { DUMMY_TASKS, DUMMY_TASK_FIELDS } from "~/dummy/tasks.js";
+import {mapGetters} from 'vuex';
 
 export default {
   props: {
@@ -100,6 +101,11 @@ export default {
   },
   created() {
     this.getData();
+  },
+  computed: {
+    ...mapGetters({
+      token: 'token/getToken'
+    }),
   },
   methods: {
     toggleSidebar() {
@@ -119,7 +125,11 @@ export default {
     },
 
     async getData() {
-      let response = await this.$axios.$get("/section");
+      let response = await this.$axios.$get("/section", {
+ headers: {
+   Authorization: 'Bearer ' + this.token //the token is a variable which holds the token
+ }
+});
       this.sections = response.data;
     },
   },
