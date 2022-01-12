@@ -1,6 +1,7 @@
 
 export const state = () => ({
-    sections: []
+    sections: [],
+    token: null
   });
   
   export const mutations = {
@@ -25,7 +26,9 @@ export const state = () => ({
   
   export const actions = {
     async fetchSections(ctx) {
-      const res = await this.$axios.$get('/section');
+      const res = await this.$axios.$get('/section', {
+        headers: {'Authorization': `Bearer ${ctx.rootState.token.token}`}
+      });
       ctx.commit('fetchSections', res.data);
     },
 

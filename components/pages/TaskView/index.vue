@@ -137,8 +137,8 @@ export default {
   
   mounted() {
     this.$nextTick(async () => {
-      await this.$store.dispatch("task/fetchTasks");
-      await this.$store.dispatch("section/fetchSections");
+       this.$store.dispatch("task/fetchTasks");
+       this.$store.dispatch("section/fetchSections");
     });
     // mapActions({fetchSections: 'section/fetchSections'})
   }
