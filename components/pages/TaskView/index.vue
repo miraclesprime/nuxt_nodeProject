@@ -16,12 +16,6 @@
         :style="{ borderBottom: 'none' }"
         @item-clicked="toggleSidebar"
       >
-        <!-- <template #cell(name)="data">
-          <div class="d-flex gap-05">
-            <bib-avatar class="mt-auto mb-auto" size="1.5rem"></bib-avatar>
-            <span class="text-dark">{{ data.value.name }}</span>
-          </div>
-        </template> -->
          <template #cell(title)="data">
             <div class="d-flex gap-05">
               <span class="text-dark" @click="taskSelected(data.value)">{{ data.value.title }}</span>
@@ -71,20 +65,6 @@
           :open="true"
           groupName="1"
         />
-        <!-- <task-grid-section
-          :headless="true"
-          label="Section"
-          :taskFields="tableFields"
-          :taskSections="tasks.slice(3, 6)"
-          groupName="1"
-        />
-        <task-grid-section
-          :headless="true"
-          label="Section"
-          :taskFields="tableFields"
-          :taskSections="tasks.slice(6, 9)"
-          groupName="1"
-        /> -->
       </div>
     </template>
   </div>

@@ -21,9 +21,9 @@ export const mutations = {
     state.list = [...(list || [])];
   },
 
-  fetchTasks(state, payload) {
-    state.tasks = payload;
-  },
+  // fetchTasks(state, payload) {
+  //   state.tasks = payload;
+  // },
 
   add(state, task) {
     state.list.push(task);
@@ -55,11 +55,11 @@ export const getters = {
   tableFields(state) {
     return state.TABLE_FIELDS;
   },
-  getAllTasks(state) {
-    return state.tasks.filter((task) => {
-      return task.isDeleted !== true;
-    });
-  },
+  // getAllTasks(state) {
+  //   return state.tasks.filter((task) => {
+  //     return task.isDeleted !== true;
+  //   });
+  // },
   getSelectedTask(state) {
     return state.selectedTask;
   },
@@ -71,10 +71,10 @@ export const getters = {
 
 export const actions = {
   // fetch all tasks
-  async fetchTasks(ctx) {
-    const res = await this.$axios.$get('/task?page=1&limit=99999');
-    ctx.commit('fetchTasks', res.data);
-  },
+  // async fetchTasks(ctx) {
+  //   const res = await this.$axios.$get('/task?page=1&limit=99999');
+  //   ctx.commit('fetchTasks', res.data);
+  // },
 
   // set single task
   setSingleTask(ctx, payload) {

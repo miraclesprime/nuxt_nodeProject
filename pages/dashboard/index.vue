@@ -23,12 +23,13 @@
 
       <template #navigation>
         <bib-app-navigation :items="navItems1"></bib-app-navigation>
-        <bib-app-navigation :items="navItems2"></bib-app-navigation>
+        <bib-app-navigation :items="navItems2" @click='goToRoute($event)'></bib-app-navigation>
         <bib-app-navigation :items="navItems3"></bib-app-navigation>
       </template>
 
       <template #content>
         <div class="main" :class="openSidebar ? 'open-sidebar' : ''">
+          <div id="project-name" style="border-bottom: 1px solid #dcdcdf" class="p-05 text-secondary font-sm">{{project.title ? project.title : 'My Project'}}</div>
           <task-sidebar :activeTask="activeTask" />
 
           <div class="bread d-flex">
@@ -153,7 +154,7 @@ export default {
       navItems2: [
         { label: "Dream", icon: "home", selected: true },
         { label: "Goals", icon: "nodes" },
-        { label: "Projects", icon: "folder-add" },
+        { label: "Projects", icon: "folder-add", key: 'project-route'  },
         { label: "Tasks", icon: "check-circle" },
       ],
       navItems3: [
@@ -196,7 +197,8 @@ export default {
     ...mapGetters({
       tasks: "task/tasksForListView",
       taskFields: "task/tableFields",
-      token: "token/getToken"
+      token: "token/getToken",
+      project: "project/getSingleProject"
     }),
   },
   methods: {
@@ -220,6 +222,12 @@ export default {
           this.$refs.modals.showCreateProjectModal = false;
           // this.$emit("change-data");
       }
+    },
+
+    goToRoute($event) {
+        if($event.key == 'project-route') {
+          this.$router.push('/projects')
+        }
     },
 
     // Handle User logout
@@ -342,7 +350,7 @@ export default {
   display: grid;
   overflow: hidden;
   background-color: white;
-  grid-template-rows: 2.5rem 2.5rem 100%;
+  grid-template-rows: 2.5rem 2.5rem 2.5rem 100%;
 
   .menu {
     padding: 0 1rem 0 0.25rem;
