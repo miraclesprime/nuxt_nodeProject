@@ -11,8 +11,8 @@ export const mutations = {
   },
 
   // To set a single project
-  setSingleProject(state, currentTask) {
-    state.selectedTask = currentTask;
+  setSingleProject(state, currentProject) {
+    state.selectedProject = currentProject;
   },
 
   // To create project
@@ -64,6 +64,13 @@ export const actions = {
       headers: {'Authorization': `Bearer ${ctx.rootState.token.token}`}
     });
     ctx.commit('createProject', res.data);
+    ctx.commit('setSingleProject', res.data);
+      if (window.history.pushState) {
+        const newURL = new URL(window.location.href);
+        newURL.search = `?project=${res.data.title}`;
+        window.history.pushState({ path: newURL.href }, '', newURL.href);
+      }
+      
   }
 };
 
