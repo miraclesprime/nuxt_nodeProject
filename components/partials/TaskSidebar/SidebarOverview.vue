@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div class="container" v-if="activeItem">
-      <div class="task-info w-100">
-        <div class="row">
-          <div class="col-4">
+    <div class="container" id='sidebar-wrapper' v-if="activeItem">
+      <div class="task-info w-100" id='sidebar-inner-wrap'>
+        <div class="row" id='sidebar-row-1'>
+          <div class="col-4" id='sidebar-col-1'>
             <bib-input
               type="select"
               :options="selectItems"
@@ -12,7 +12,7 @@
             ></bib-input>
           </div>
 
-          <div class="col-8">
+          <div class="col-8" id='sidebar-col-2'>
             <bib-input
               type="text"
               :value="activeItem.name"
@@ -23,8 +23,8 @@
           </div>
         </div>
 
-        <div class="row">
-          <div class="col-4">
+        <div class="row" id='sidebar-row-2'>
+          <div class="col-4" id='sidebar-col-3'>
             <bib-input
               type="text"
               :value="activeItem.name"
@@ -34,7 +34,7 @@
             ></bib-input>
           </div>
 
-          <div class="col-4">
+          <div class="col-4" id='sidebar-col-4'>
             <bib-input
               type="select"
               :value="activeItem.priority"
@@ -44,7 +44,7 @@
             ></bib-input>
           </div>
 
-          <div class="col-4">
+          <div class="col-4" id='sidebar-col-5'>
             <bib-input
               type="select"
               :value="activeItem.status ? activeItem.status.text : '' "
@@ -55,8 +55,8 @@
           </div>
         </div>
 
-        <div class="row">
-          <div class="col-12">
+        <div class="row" id='sidebar-row-3'>
+          <div class="col-12" id='sidebar-col-6'>
             <bib-input
               type="textarea"
               :value="activeItem.description"
@@ -69,9 +69,10 @@
 
       <task-group title="Subtasks"></task-group>
 
-      <div class="task-details w-100">
+      <div class="task-details w-100" id='sidebar-details'>
         <a
           href="#"
+          id='sidebar-link'
           class="title"
           @click="isContentExpanded = !isContentExpanded"
         >
@@ -81,7 +82,7 @@
             height="15"
             viewBox="0 0 48 48"
           >
-            <title>arrowhead-right</title>
+            <title id='sidebar-icon'>arrowhead-right</title>
             <g id="Layer_2" data-name="Layer 2">
               <g id="invisible_box" data-name="invisible box">
                 <rect width="48" height="48" fill="none"></rect>
@@ -96,8 +97,8 @@
           Other details
         </a>
 
-        <div class="row" v-if="isContentExpanded">
-          <div class="col-4">
+        <div class="row" id='sidebar-row-4' v-if="isContentExpanded">
+          <div class="col-4" id='sidebar-col-7'>
             <bib-input
               type="time"
               v-model="form.time"
@@ -106,7 +107,7 @@
             ></bib-input>
           </div>
 
-          <div class="col-4">
+          <div class="col-4" id='sidebar-col-8'>
             <bib-input
               type="text"
               v-model="form.budget"
@@ -115,7 +116,7 @@
             ></bib-input>
           </div>
 
-          <div class="col-4">
+          <div class="col-4" id='sidebar-col-9'>
             <bib-input
               type="text"
               v-model="form.progress"
@@ -127,17 +128,18 @@
       </div>
     </div>
 
-    <div class="task-team">
-      <div class="container">
-        <div class="team-list w-100">
+    <div class="task-team" id='sidebar-team'>
+      <div class="container" id='sidebar-container'>
+        <div class="team-list w-100" id='sidebar-team-heading'>
           Team
-          <div class="teammate active">
+          <div class="teammate active" id='sidebar-team-active'>
             <bib-avatar size="25px"></bib-avatar>
           </div>
 
           <template v-for="(item, index) in teammates">
             <div
               class="teammate"
+              :id="'teammate-' + index"
               v-if="index !== activeMate"
               :key="'teammate-' + index"
               :style="'z-index:' + (100 - index)"
@@ -146,12 +148,12 @@
             </div>
           </template>
 
-          <span class="teammates-count"> + {{ teammates.length }} others </span>
+          <span class="teammates-count" id='sidebar-team-count'> + {{ teammates.length }} others </span>
 
-          <a href="#" class="ml-auto">Add a team member</a>
+          <a href="#" class="ml-auto" id='sidebar-add-team'>Add a team member</a>
         </div>
 
-        <div class="add-comment w-100">
+        <div class="add-comment w-100" id='sidebar-add-comment'>
           <bib-avatar size="40px"></bib-avatar>
 
           <bib-input

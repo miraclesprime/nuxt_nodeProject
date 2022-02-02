@@ -29,32 +29,30 @@
 
       <template #content>
         
-        <div class="main">
+        <div class="main" id='project-main-content'>
 
-        <div class="bread d-flex">
-            <div class="d-flex align-center">
+        <div class="bread d-flex" id='project-bread-icons'>
+            <div class="d-flex align-center" id='p-prev-icon'>
               <bib-icon icon="previous" :scale="2.0"></bib-icon>
             </div>
-            <h3 class="bold mt-auto mb-auto d-flex">
+            <h3 class="bold mt-auto mb-auto d-flex" id='proj-name'>
               {{ projectName }}
-              <div class="pl-1 mt-auto mb-auto">
+              <div class="pl-1 mt-auto mb-auto" id='p-heart-icon'>
                 <bib-icon icon="heart" :scale="1.25"></bib-icon>
               </div>
-              <div class="pl-1 mt-auto mb-auto">
+              <div class="pl-1 mt-auto mb-auto" id='p-list-items'>
                 <bib-button pop="elipsis">
                   <template v-slot:menu>
-                    <div class="list__section">
-                      <span class="list__item">item 1</span>
-                      <span class="list__item">item 2</span>
-                      <span class="list__item">item 3</span>
+                    <div class="list__section" id='p-list-section'>
+                      <span class="list__item" id='p-list-item-1'>item 1</span>
+                      <span class="list__item" id='p-list-item-2'>item 2</span>
+                      <span class="list__item" id='p-list-item-3'>item 3</span>
                     </div>
                   </template>
                 </bib-button>
               </div>
             </h3>
           </div>
-
-        {{projects}}
         
         <bib-table
             :fields="tableFields"
@@ -63,7 +61,7 @@
             @item-clicked="handleItemClick_Table"
         >
             <template #cell(name)="data">
-                <div class="d-flex gap-05">
+                <div class="d-flex gap-05" id='proj-cell-data'>
                 <bib-avatar
                     class="mt-auto mb-auto"
                     shape="rounded"
@@ -71,13 +69,13 @@
                     size="1.5rem"
                 >
                 </bib-avatar>
-                <span class="text-dark">
+                <span class="text-dark" id='proj-cell-values'>
                     {{ data.value.name }}
                 </span>
                 </div>
             </template>
             <template #cell(type)="data">
-                <div class="justify-between text-dark">
+                <div class="justify-between text-dark" id='centered-values'>
                 <span>
                     {{
                     data.value.type.charAt(0) +
@@ -90,10 +88,10 @@
             <template #cell_action="data">
                 <bib-button pop="elipsis">
                     <template v-slot:menu>
-                        <div class="list">
-                            <span class="list__item" @click="handleAction_Table(data)">View profile</span>
-                            <span class="list__item">Edit</span>
-                            <span class="list__item">Delete</span>
+                        <div class="list" id='proj-list'>
+                            <span class="list__item" id='handle-proj1' @click="handleAction_Table(data)">View profile</span>
+                            <span class="list__item" id='handle-proj-edit'>Edit</span>
+                            <span class="list__item" id='handle-proj-delete'>Delete</span>
                         </div>
                     </template>
                 </bib-button>
