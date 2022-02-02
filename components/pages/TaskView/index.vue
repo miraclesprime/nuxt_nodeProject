@@ -17,37 +17,37 @@
         @item-clicked="toggleSidebar"
       >
          <template #cell(title)="data">
-            <div class="d-flex gap-05">
-              <span class="text-dark" @click="taskSelected(data.value)">{{ data.value.title }}</span>
+            <div class="d-flex gap-05" id='task-wrapper'>
+              <span class="text-dark" id='task-text' @click="taskSelected(data.value)">{{ data.value.title }}</span>
             </div>
           </template>
         <template #cell(status)="data">
-          <div class="justify-between text-dark">
-            <span :class="statusClass(data.value.status.text)">
+          <div class="justify-between text-dark" id='t-status-wrapper'>
+            <span :class="statusClass(data.value.status.text)" id='task-status'>
               {{ data.value.status.text }}
             </span>
-            <span :class="statusClass(data.value.status)">
+            <span :class="statusClass(data.value.status)" id='task-progress'>
               {{ data.value.progress }}<span v-if="data.value.progress">%</span></span
             >
           </div>
         </template>
         <template #cell(priority)="data">
-          <div class="justify-between text-dark">
-            <span :class="priorityClass(data.value.priority)">
+          <div class="justify-between text-dark" id='t-priority-wrapper'>
+            <span :class="priorityClass(data.value.priority)" id='task-priority'>
               {{ data.value.priority }}
             </span>
           </div>
         </template>
         <template #cell(assignee)="data">
-          <div class="text-dark">
+          <div class="text-dark" id='t-assignee-wrapper'>
             <bib-avatar class="mt-auto mb-auto" size="1.5rem"></bib-avatar>
 
-            <span>{{ data.value.assignee }}</span>
+            <span id='task-assignee'>{{ data.value.assignee }}</span>
           </div>
         </template>
         <template #cell(dueDate)="data">
-          <div class="text-dark">
-            <span>{{ new Date(data.value.dueDate).toLocaleString("en-US") }}</span>
+          <div class="text-dark" id='t-dueDate-wrapper'>
+            <span id='task-dueDate'>{{ new Date(data.value.dueDate).toLocaleString("en-US") }}</span>
           </div>
         </template>
       </bib-table>
@@ -56,7 +56,7 @@
     </template>
 
     <template v-else>
-      <div class="d-flex">
+      <div class="d-flex" id='task-grid'>
         <task-grid-section
           :headless="true"
           label="Section"

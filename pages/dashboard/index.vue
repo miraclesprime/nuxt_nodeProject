@@ -28,26 +28,26 @@
       </template>
 
       <template #content>
-        <div class="main" :class="openSidebar ? 'open-sidebar' : ''">
+        <div class="main" id='main-content' :class="openSidebar ? 'open-sidebar' : ''">
           <div id="project-name" style="border-bottom: 1px solid #dcdcdf" class="p-05 text-secondary font-sm">{{project.title ? project.title : 'My Project'}}</div>
           <task-sidebar :activeTask="activeTask" />
 
-          <div class="bread d-flex">
-            <div class="d-flex align-center">
+          <div class="bread d-flex" id='bread-icons'>
+            <div class="d-flex align-center" id='prev-icon'>
               <bib-icon icon="previous" :scale="2.0"></bib-icon>
             </div>
-            <h3 class="bold mt-auto mb-auto d-flex">
+            <h3 class="bold mt-auto mb-auto d-flex" id='project-heading'>
               {{ projectName }}
-              <div class="pl-1 mt-auto mb-auto">
+              <div class="pl-1 mt-auto mb-auto" id='heart-icon'>
                 <bib-icon icon="heart" :scale="1.25"></bib-icon>
               </div>
-              <div class="pl-1 mt-auto mb-auto">
+              <div class="pl-1 mt-auto mb-auto" id='list-items'>
                 <bib-button pop="elipsis">
                   <template v-slot:menu>
-                    <div class="list__section">
-                      <span class="list__item">item 1</span>
-                      <span class="list__item">item 2</span>
-                      <span class="list__item">item 3</span>
+                    <div class="list__section" id='list-section'>
+                      <span class="list__item" id='list-item-1'>item 1</span>
+                      <span class="list__item" id='list-item-2'>item 2</span>
+                      <span class="list__item" id='list-item-3'>item 3</span>
                     </div>
                   </template>
                 </bib-button>
@@ -55,11 +55,11 @@
             </h3>
           </div>
 
-          <div class="menu">
+          <div class="menu" id='menu-content'>
             <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="TABS" />
           </div>
 
-          <div class="">
+          <div id='task-overview'>
             <task-overview
               v-if="activeTab.value == TAB_TITLES.overview"
               :fields="TABLE_FIELDS"
@@ -293,6 +293,7 @@ export default {
     //           .find((row) => row.includes("b_ssojwt="))
     //           .split("=")[1];
     //           this.$store.dispatch('token/setToken', jwt);
+    //           localStorage.setItem('accessToken', jwt)
     //     }
     // }
 
@@ -310,6 +311,7 @@ export default {
   },
   mounted() {
       // let accessToken = this.token;
+      
       // if (accessToken) {
       //     this.$axios
       //     .$post(
