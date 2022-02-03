@@ -22,8 +22,8 @@ export default {
   css: ["~/assets/global.scss"],
   axios: {
     // proxy: true,
-    baseURL: 'http://api.proj-mgmt.biztree.com/',
-    // baseURL: 'http://localhost:9000',
+    // baseURL: 'http://api.proj-mgmt.biztree.com/',
+    baseURL: 'http://localhost:9000',
   },
   /// Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: ["~/plugins/plugins", "~/plugins/axios.js", "~/plugins/dayjs.js"],
