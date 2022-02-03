@@ -54,7 +54,7 @@
             </h3>
           </div>
         
-        <bib-table
+        <!-- <bib-table
             :fields="tableFields"
             class="border-gray4 bg-white"
             :sections="tableSections"
@@ -96,7 +96,7 @@
                     </template>
                 </bib-button>
             </template>
-            </bib-table>
+            </bib-table> -->
         </div>
       </template>
 

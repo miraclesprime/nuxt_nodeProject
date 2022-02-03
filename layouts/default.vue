@@ -4,6 +4,34 @@
   </div>
 </template>
 
+<script>
+
+  export default {
+    created() {
+      if(process.client) {
+        if (document.cookie.includes("b_ssojwt=")) {
+              let jwt = document.cookie
+              .split("; ")
+              .find((row) => row.includes("b_ssojwt="))
+              .split("=")[1];
+              this.$store.dispatch('token/setToken', jwt);
+              localStorage.setItem('accessToken', jwt)
+        }
+      }
+    },
+
+    mounted() {
+      console.log('Running!!')
+      console.log(localStorage.getItem('accessToken'))
+      if(!localStorage.getItem('accessToken')){
+        window.location.href ="http://dev.account.business-in-a-box.com/login/?redirect=http://dev.proj-mgmt.business-in-a-box.com/en/dashboard/";
+      }
+    }
+  }
+  
+</script>
+
+
 <style>
 html {
   font-family:
