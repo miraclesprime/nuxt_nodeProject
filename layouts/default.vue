@@ -21,7 +21,7 @@
     },
 
     mounted() {
-      if(!localStorage.getItem('accessToken')){
+      if(localStorage.getItem('accessToken')){
         this.$axios
           .$post(
               "https://www.biztree.com/usr-ctrl-test/api/sso/verify",
