@@ -21,6 +21,7 @@
     },
 
     mounted() {
+      let accessToken = localStorage.getItem('accessToken')
       if(localStorage.getItem('accessToken')){
         this.$axios
           .$post(
