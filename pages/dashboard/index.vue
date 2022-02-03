@@ -299,52 +299,7 @@ export default {
       this.activeTask = task;
     });
 
-    // if(process.client) {
-    //   if (document.cookie.includes("b_ssojwt=")) {
-    //           let jwt = document.cookie
-    //           .split("; ")
-    //           .find((row) => row.includes("b_ssojwt="))
-    //           .split("=")[1];
-    //           this.$store.dispatch('token/setToken', jwt);
-    //           localStorage.setItem('accessToken', jwt)
-    //     }
-    //     // if(!localStorage.getItem('accessToken')){
-    //     //   window.location.href ="http://dev.account.business-in-a-box.com/login/?redirect=http://dev.proj-mgmt.business-in-a-box.com/en/dashboard/";
-    //     // }
-    // }
   },
-  mounted() {
-      // let accessToken = this.token;
-      
-      // if (accessToken) {
-      //     this.$axios
-      //     .$post(
-      //         "https://www.biztree.com/usr-ctrl-test/api/sso/verify",
-      //         {},
-      //         {
-      //             headers: {
-      //                 authorization: "Bearer "+accessToken,
-      //             },
-      //         }
-      //         )
-      //         .then((value) => {
-      //             console.log(">> in if direction",value.data);
-      //             if(value.data.code!="valid_token"){
-      //                 console.log("Not valid code")
-      //                 window.location.href ="http://dev.account.business-in-a-box.com/login/?redirect=http://dev.proj-mgmt.business-in-a-box.com/en/dashboard/";
-      //             }
-      //             // User API (user exist or not)
-      //         })
-      //         .catch((err) => {
-      //             console.log(err);
-      //         });
-      //     } else {
-      //         console.log(">> in else redirection");
-      //         localStorage.removeItem('accessToken')
-      //         window.location.href ="http://dev.account.business-in-a-box.com/login/?redirect=http://dev.proj-mgmt.business-in-a-box.com/en/dashboard/";
-      //     }
-
-  }
 
 };
 </script>

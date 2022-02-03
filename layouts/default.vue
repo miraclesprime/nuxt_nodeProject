@@ -21,11 +21,34 @@
     },
 
     mounted() {
-      console.log('Running!!')
-      console.log(localStorage.getItem('accessToken'))
       if(!localStorage.getItem('accessToken')){
-        window.location.href ="http://dev.account.business-in-a-box.com/login/?redirect=http://dev.proj-mgmt.business-in-a-box.com/en/dashboard/";
-      }
+        this.$axios
+          .$post(
+              "https://www.biztree.com/usr-ctrl-test/api/sso/verify",
+              {},
+              {
+                  headers: {
+                      authorization: "Bearer "+accessToken,
+                  },
+              }
+              )
+              .then((value) => {
+                  console.log(">> in if direction",value.data);
+                  if(value.data.code!="valid_token"){
+                      console.log("Not valid code")
+                      window.location.href ="http://dev.account.business-in-a-box.com/login/?redirect=http://dev.proj-mgmt.business-in-a-box.com/en/dashboard/";
+                  }
+                  // User API (user exist or not)
+                  console.log('user created!!!')
+              })
+              .catch((err) => {
+                  console.log(err);
+              });
+          } else {
+              console.log(">> in else redirection");
+              localStorage.removeItem('accessToken')
+              window.location.href ="http://dev.account.business-in-a-box.com/login/?redirect=http://dev.proj-mgmt.business-in-a-box.com/en/dashboard/";
+          }
     }
   }
   
