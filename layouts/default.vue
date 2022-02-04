@@ -34,8 +34,7 @@
               }
               )
               .then((value) => {
-                  console.log(">> in if direction",value.data);
-                  if(value.data.code!="valid_token"){
+                  if(value.code!="valid_token"){
                       console.log("Not valid code")
                       window.location.href ="http://dev.account.business-in-a-box.com/login/?redirect=http://dev.proj-mgmt.business-in-a-box.com/en/dashboard/";
                   }
