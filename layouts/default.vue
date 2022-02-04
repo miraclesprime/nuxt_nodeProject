@@ -25,7 +25,7 @@
       if(localStorage.getItem('accessToken')){
         this.$axios
           .$post(
-              "https://www.biztree.com/usr-ctrl-test/api/sso/verify",
+              "http://api.proj-mgmt.biztree.com/auth/verifyToken",
               {},
               {
                   headers: {
