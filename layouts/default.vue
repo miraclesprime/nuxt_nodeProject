@@ -22,33 +22,33 @@
 
     mounted() {
       let accessToken = localStorage.getItem('accessToken')
-      if(localStorage.getItem('accessToken')){
-        this.$axios
-          .$post(
-              "http://api.proj-mgmt.biztree.com/auth/verifyToken",
-              {},
-              {
-                  headers: {
-                      authorization: "Bearer "+accessToken,
-                  },
-              }
-              )
-              .then((value) => {
-                  if(value.code!="valid_token"){
-                      console.log("Not valid code")
-                      window.location.href ="http://dev.account.business-in-a-box.com/login/?redirect=http://dev.proj-mgmt.business-in-a-box.com/en/dashboard/";
-                  }
-                  // User API (user exist or not)
-                  console.log('user created!!!')
-              })
-              .catch((err) => {
-                  console.log(err);
-              });
-          } else {
-              console.log(">> in else redirection");
-              localStorage.removeItem('accessToken')
-              window.location.href ="http://dev.account.business-in-a-box.com/login/?redirect=http://dev.proj-mgmt.business-in-a-box.com/en/dashboard/";
-          }
+      // if(localStorage.getItem('accessToken')){
+      //   this.$axios
+      //     .$post(
+      //         "http://api.proj-mgmt.biztree.com/auth/verifyToken",
+      //         {},
+      //         {
+      //             headers: {
+      //                 authorization: "Bearer "+accessToken,
+      //             },
+      //         }
+      //         )
+      //         .then((value) => {
+      //             if(value.code!="valid_token"){
+      //                 console.log("Not valid code")
+      //                 window.location.href ="http://dev.account.business-in-a-box.com/login/?redirect=http://dev.proj-mgmt.business-in-a-box.com/en/dashboard/";
+      //             }
+      //             // User API (user exist or not)
+      //             console.log('user created!!!')
+      //         })
+      //         .catch((err) => {
+      //             console.log(err);
+      //         });
+      //     } else {
+      //         console.log(">> in else redirection");
+      //         localStorage.removeItem('accessToken')
+      //         window.location.href ="http://dev.account.business-in-a-box.com/login/?redirect=http://dev.proj-mgmt.business-in-a-box.com/en/dashboard/";
+      //     }
     }
   }
   
