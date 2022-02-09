@@ -9,7 +9,6 @@
   export default {
     async created() {
       if(process.client) {
-
         if (this.$cookies.get('b_ssojwt')) {
               let jwt = this.$cookies.get('b_ssojwt');
 
@@ -37,7 +36,7 @@
               this.$store.dispatch('token/setToken', jwt);
               localStorage.setItem('accessToken', jwt)
         } else {
-              window.location.href = process.env.AUTH_REDIRECT_URL + process.env.VITE_BIB_PROJECT_APP_URL;
+              window.location.href = process.env.AUTH_REDIRECT_URL + process.env.VUE_APP_URL;
         }
       }
     },
