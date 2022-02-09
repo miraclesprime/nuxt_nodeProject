@@ -7,49 +7,40 @@
 <script>
 
   export default {
-    created() {
+    async created() {
       if(process.client) {
-        if (document.cookie.includes("b_ssojwt=")) {
-              let jwt = document.cookie
-              .split("; ")
-              .find((row) => row.includes("b_ssojwt="))
-              .split("=")[1];
+
+        if (this.$cookies.get('b_ssojwt')) {
+              let jwt = this.$cookies.get('b_ssojwt');
+
+              // extract user
+              var base64Url = jwt.split('.')[1];
+              var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+              var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                  return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+              }).join(''));
+
+              let user = JSON.parse(jsonPayload);
+              console.log(user)
+
+              await this.$axios
+              .$post(process.env.VUE_APP_API_ENDPOINT + "/user/create", 
+              { 
+                id: user.sub, 
+                email:  user.sube
+              }).then((value) => {
+                console.log('user created!! => ' + value)
+              }).catch((err) => {
+                console.log('there was some issue!!! ' + err)
+              })
+
               this.$store.dispatch('token/setToken', jwt);
               localStorage.setItem('accessToken', jwt)
+        } else {
+              window.location.href = process.env.AUTH_REDIRECT_URL + process.env.VITE_BIB_PROJECT_APP_URL;
         }
       }
     },
-
-    mounted() {
-      let accessToken = localStorage.getItem('accessToken')
-      if(localStorage.getItem('accessToken')){
-        this.$axios
-          .$post(
-              "http://api.proj-mgmt.biztree.com/auth/verifyToken",
-              {},
-              {
-                  headers: {
-                      authorization: "Bearer "+accessToken,
-                  },
-              }
-              )
-              .then((value) => {
-                  if(value.code!="valid_token"){
-                      console.log("Not valid code")
-                      window.location.href ="http://dev.account.business-in-a-box.com/login/?redirect=http://dev.proj-mgmt.business-in-a-box.com/en/dashboard/";
-                  }
-                  // User API (user exist or not)
-                  console.log('user created!!!')
-              })
-              .catch((err) => {
-                  console.log(err);
-              });
-          } else {
-              console.log(">> in else redirection");
-              localStorage.removeItem('accessToken')
-              window.location.href ="http://dev.account.business-in-a-box.com/login/?redirect=http://dev.proj-mgmt.business-in-a-box.com/en/dashboard/";
-          }
-    }
   }
   
 </script>
