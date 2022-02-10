@@ -11,10 +11,7 @@ export default {
       { hid: "description", name: "description", content: "" },
     ],
     link: [
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700&display=swap",
-      },
+      { rel: "stylesheet", type: "text/css", href: "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap"},
       { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
     ],
   },
@@ -29,7 +26,7 @@ export default {
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: [
     { path: "~/components/", pathPrefix: false },
-    { path: "~/elements/", pathPrefix: false },
+    { path: "~/components/elements/", pathPrefix: false },
     { path: "~/../bib-shared/components/", pathPrefix: false },
   ],
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
