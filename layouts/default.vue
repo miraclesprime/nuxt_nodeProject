@@ -24,7 +24,6 @@
               }).join(''));
 
               let user = JSON.parse(jsonPayload);
-              console.log(user)
 
               await this.$axios
               .$post(process.env.VUE_APP_API_ENDPOINT + "/user/create", 
@@ -32,9 +31,9 @@
                 id: user.sub, 
                 email:  user.sube
               }).then((value) => {
-                console.log('user created!! => ' + value)
+                console.log('user created!!')
               }).catch((err) => {
-                console.log('there was some issue!!! ' + err)
+                console.log('there was some issue!!!')
               })
 
               this.$store.dispatch('token/setToken', jwt);
