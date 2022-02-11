@@ -22,9 +22,9 @@
       </template>
 
       <template #navigation>
-        <bib-app-navigation :items="navItems1"></bib-app-navigation>
+        <bib-app-navigation :items="navItems1" class="mb-1"></bib-app-navigation>
         <bib-app-navigation :items="navItems2" @click='goToRoute($event)'></bib-app-navigation>
-        <bib-app-navigation :items="navItems3"></bib-app-navigation>
+        <!-- <bib-app-navigation :items="navItems3"></bib-app-navigation> -->
       </template>
 
       <template #content>
@@ -133,32 +133,27 @@ export default {
         status: null,
       },
       appItems: [
-        {
-          img: "Layers",
-          color: "primary",
-          active: true,
-          text: "Templates",
-          href: "#",
+        { img: "Layers", color: "primary", text: "Templates", href: process.env.VITE_BIB_TEMPLATES_APP_URL,
         },
-        { img: "Files", color: "success-sub1", text: "Files", href: "#" },
-        { img: "Signature", color: "orange", text: "eSign", href: "#" },
-        { img: "Tick", color: "primary", text: "Project", href: "#" },
-        { img: "CommentForum", color: "purple", text: "Chat", href: "#" },
+        { img: "Files", color: "success-sub1", text: "Files", href: process.env.VITE_BIB_DRIVE_URL },
+        { img: "Signature", color: "orange", text: "eSign", href: process.env.VITE_BIB_ESIGN_APP_URL },
+        { img: "Tick", color: "primary", text: "Project", active: true, href: process.env.VUE_APP_URL },
+        { img: "CommentForum", color: "purple", text: "Chat", href: process.env.VITE_BIB_CHAT_APP_URL },
       ],
       navItems1: [
-        { label: "Project Home", icon: "home", selected: true },
-        { label: "Inbox", icon: "nodes" },
+        { label: "Home", icon: "home", selected: true },
+        { label: "Inbox", icon: "mail-new" },
         { label: "My tasks", icon: "check-circle" },
         { label: "Favorites", icon: "heart-like" },
       ],
       navItems2: [
-        { label: "Dream", icon: "home", selected: true },
-        { label: "Goals", icon: "nodes" },
-        { label: "Projects", icon: "folder-add", key: 'project-route'  },
         { label: "Tasks", icon: "check-circle" },
+        { label: "Projects", icon: "folder-add", key: 'project-route'  },
+        { label: "Goals", icon: "plans" },
+        { label: "Dream", icon: "star" },
       ],
       navItems3: [
-        { label: "Departments", icon: "home", selected: true },
+        { label: "Departments", icon: "home" },
         { label: "People", icon: "user-group" },
       ],
       collapseNavigation: false,
