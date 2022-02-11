@@ -128,7 +128,7 @@ export default {
         this.$store.dispatch('token/setToken', jwt);
         localStorage.setItem('accessToken', jwt)
       } else {
-        window.location.href = process.env.AUTH_REDIRECT_URL + process.env.VUE_APP_URL;
+        window.location.href = "http://dev.account.business-in-a-box.com/login/?redirect=" + process.env.VUE_APP_URL;
       }
     }
   },
