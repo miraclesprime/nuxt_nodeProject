@@ -96,9 +96,6 @@ export default {
   mounted() {
     if (process.client) {
 
-      const jwt = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0cTJWb2xlalJlak5tR1FCIiwic3ViZSI6Imh0YW5nQGJpenRyZWUuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiQURNSU4iLCJzdWJjIjoiQ2FuYWRhIiwiaWF0IjoxNjQzOTc2NDcxMDE2LCJleHAiOjE2NTE3NTI0NzEwMTYsImp0aSI6IjU0YjM4ZjQ1LWI0YTgtNDQ4Yy1iMDZhLWQ0ZTk5Y2NhY2UzNCJ9.2WuLnfCQVVOBGB6BACi4QJC8zJIm_7UEDljFZIT2950';
-      this.$cookies.set('b_ssojwt', jwt);
-
       if (this.$cookies.get('b_ssojwt')) {
         let jwt = this.$cookies.get('b_ssojwt');
 
@@ -110,6 +107,8 @@ export default {
         }).join(''));
 
         let user = JSON.parse(jsonPayload);
+
+        this.$store.dispatch('user/setUser', user)
 
         this.$axios
           .$post(process.env.VUE_APP_API_ENDPOINT + "/user/create", {
@@ -167,6 +166,7 @@ export default {
 }
 
 </script>
+
 <style lang="scss">
 html {
   font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
