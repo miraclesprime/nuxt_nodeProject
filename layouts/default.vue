@@ -9,6 +9,9 @@
   export default {
     async created() {
       if(process.client) {
+        let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImlhdCI6MTY0NDU1MjQ3ODgwMCwiZXhwIjoxNjUyMzI4NDc4ODAwLCJqdGkiOiJjZmVhZTA1OC03NmE5LTRlYWMtOTVjMy03NmYxNzhlZjA3ZGQifQ._STkz-xT4N82Qix25BrfCVUt2rf488yGPG5N_kHIG5I"
+        this.$cookies.set('b_ssojwt', cookie)
+        this.$store.dispatch('token/setToken', cookie)
         if (this.$cookies.get('b_ssojwt')) {
               let jwt = this.$cookies.get('b_ssojwt');
 
@@ -20,6 +23,8 @@
               }).join(''));
 
               let user = JSON.parse(jsonPayload);
+
+              this.$store.dispatch('user/setUser', user)
 
               await this.$axios
               .$post(process.env.VUE_APP_API_ENDPOINT + "/user/create", 

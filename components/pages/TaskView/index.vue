@@ -34,7 +34,7 @@
         <template #cell(priority)="data">
           <div class="justify-between text-dark" id='t-priority-wrapper'>
             <span :class="priorityClass(data.value.priority)" id='task-priority'>
-              {{ data.value.priority }}
+              {{ data.value.priority.text }}
             </span>
           </div>
         </template>
@@ -46,7 +46,7 @@
           </div>
         </template>
         <template #cell(dueDate)="data">
-          <div class="text-dark" id='t-dueDate-wrapper'>
+          <div class="text-dark" id='t-dueDate-wrapper'> 
             <span id='task-dueDate'>{{ new Date(data.value.dueDate).toLocaleString("en-US") }}</span>
           </div>
         </template>
@@ -89,7 +89,8 @@ export default {
   computed: {
     ...mapGetters({
       tasks: "task/getAllTasks",
-      sections: "section/getAllSections"
+      sections: "section/getAllSections",
+      user: "user/getUser"
     }),
   },
   methods: {
@@ -109,7 +110,6 @@ export default {
       return "text-green";
     },
     taskSelected($event) {
-      console.log('working!!')
       this.$store.dispatch('task/setSingleTask', $event)
     }
   },
@@ -120,7 +120,6 @@ export default {
        this.$store.dispatch("task/fetchTasks");
        this.$store.dispatch("section/fetchSections");
     });
-    // mapActions({fetchSections: 'section/fetchSections'})
   }
 };
 </script>
