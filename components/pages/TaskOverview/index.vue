@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { DUMMY_TASKS, DUMMY_TASK_FIELDS } from "~/dummy/tasks.js";
+import { DUMMY_TASKS, TASK_FIELDS } from "~/dummy/tasks.js";
 import {mapGetters} from 'vuex';
 
 export default {
@@ -15,7 +15,7 @@ export default {
   },
   data() {
     return {
-      tableFields: DUMMY_TASK_FIELDS,
+      tableFields: TASK_FIELDS,
       tableSections: DUMMY_TASKS,
       flag: false,
     };

@@ -125,7 +125,7 @@ export const DUMMY_PROJECT = {
   
 }
 
-export const DUMMY_TASK_FIELDS = [
+export const TASK_FIELDS = [
   {
     key: "key",
     label: "#",
