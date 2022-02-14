@@ -73,7 +73,7 @@
 
 <script>
 import { DUMMY_TASK_FIELDS } from "~/dummy/tasks.js";
-import {mapGetters, mapActions} from 'vuex';
+import {mapGetters} from 'vuex';
 
 export default {
   props: {
@@ -116,10 +116,10 @@ export default {
   
   
   mounted() {
-    this.$nextTick(async () => {
+    // this.$nextTick(async () => {
        this.$store.dispatch("task/fetchTasks");
        this.$store.dispatch("section/fetchSections");
-    });
+    // });
   }
 };
 </script>

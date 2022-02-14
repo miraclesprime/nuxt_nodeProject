@@ -72,7 +72,9 @@ export const getters = {
 export const actions = {
   // fetch all tasks
   async fetchTasks(ctx) {
-    const res = await this.$axios.$get('/task?page=1&limit=99999');
+    const res = await this.$axios.$get('/task?page=1&limit=99999', {
+      headers: {'Authorization': `Bearer ${ctx.rootState.token.token}`}
+    });
     ctx.commit('fetchTasks', res.data);
   },
 
@@ -83,7 +85,9 @@ export const actions = {
 
   // create Task
   async createTask(ctx) {
-    const res = await this.$axios.$post('/task');
+    const res = await this.$axios.$post('/task', {
+      headers: {'Authorization': `Bearer ${ctx.rootState.token.token}`}
+    });
     ctx.commit('createTask', res.data);
   }
 };

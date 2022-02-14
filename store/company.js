@@ -20,7 +20,9 @@ export const state = () => ({
   
   export const actions = {
     async fetchCompanies(ctx) {
-      const res = await this.$axios.$get('/company');
+      const res = await this.$axios.$get('/company', {
+        headers: {'Authorization': `Bearer ${ctx.rootState.token.token}`}
+      });
       ctx.commit('fetchCompanies', res.data);
     }
   };
