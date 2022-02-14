@@ -116,7 +116,7 @@ export default {
         this.$store.dispatch('user/setUser', user)
 
         this.$axios
-          .$post(process.env.VUE_APP_API_ENDPOINT + "/user/create", {
+          .$post("/user/create", {
             id: user.sub,
             email: user.sube
           }).then((value) => {
