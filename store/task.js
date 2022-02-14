@@ -71,12 +71,12 @@ export const getters = {
 
 export const actions = {
   // fetch all tasks
-  async fetchTasks(ctx) {
-    const res = await this.$axios.$get('/task?page=1&limit=99999', {
-      headers: {'Authorization': `${ctx.rootState.token.token}`}
-    });
-    ctx.commit('fetchTasks', res.data);
-  },
+  // async fetchTasks(ctx) {
+  //   const res = await this.$axios.$get('/task?page=1&limit=99999', {
+  //     headers: {'Authorization': `${ctx.rootState.token.token}`}
+  //   });
+  //   ctx.commit('fetchTasks', res.data);
+  // },
 
   // set single task
   setSingleTask(ctx, payload) {
