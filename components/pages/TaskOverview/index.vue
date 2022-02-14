@@ -1,6 +1,6 @@
 <template>
   <div>
-    <task-actions @change-data="getData" />
+    <task-actions  />
 
     <template v-if="gridType === 'list'">
       <bib-table
@@ -100,7 +100,10 @@ export default {
     };
   },
   created() {
-    this.getData();
+    // this.getData();
+  },
+  mounted(){
+    this.$store.dispatch("section/fetchSections");
   },
   computed: {
     ...mapGetters({
@@ -124,14 +127,14 @@ export default {
       return "text-green";
     },
 
-    async getData() {
+    /*async getData() {
       let response = await this.$axios.$get("/section", {
  headers: {
    Authorization: 'Bearer ' + this.token //the token is a variable which holds the token
  }
 });
       this.sections = response.data;
-    },
+    },*/
   },
 };
 </script>
