@@ -33,7 +33,9 @@ export const state = () => ({
     },
 
     async createSection(ctx) {
-      const res = await this.$axios.$post('/section');
+      const res = await this.$axios.$post('/section', {
+        headers: {'Authorization': `Bearer ${ctx.rootState.token.token}`}
+      });
       ctx.commit('createSection', res.data)
     }
   };
