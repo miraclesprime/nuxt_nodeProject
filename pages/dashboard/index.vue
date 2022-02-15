@@ -23,11 +23,11 @@
       <task-team v-if="activeTab.value == TAB_TITLES.team" :fields="TABLE_FIELDS" :tasks="tasks" />
       <task-files v-if="activeTab.value == TAB_TITLES.files" :fields="TABLE_FIELDS" :tasks="tasks" />
     </div>
-    <!-- <task-modals @create-project="
+    <task-modals @create-project="
         (project) => {
           createProject(project);
         }
-      " ref="modals"></task-modals> -->
+      " ref="modals"></task-modals>
   </div>
 </template>
 <script>

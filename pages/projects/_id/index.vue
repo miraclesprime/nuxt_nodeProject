@@ -8,7 +8,7 @@
       <span class="font-lg font-w-700 p-05 mr-1 rounded ">Project Name</span>
       <!-- <bib-page-title label="Page Title"></bib-page-title> -->
       <span class=" badge-status">Status</span>
-      <div class="ml-auto d-flex">
+      <div class="ml-auto d-flex align-center">
         <bib-avatar></bib-avatar>
         <bib-button label="invite" variant="light" pill class="ml-05"></bib-button>
         <div class="shape-circle bg-light width-2 height-2 d-flex ml-05">
@@ -18,7 +18,7 @@
           <bib-icon icon="elipsis" class="m-auto">
             </bib-icon>
         </div> -->
-        <bib-button dropdown="horizontal-dots" variant="light" pill >
+        <bib-button pop="horizontal-dots" variant="light" >
           <template v-slot:menu>
             <div class="list">
               <span class="list__item">Show project details</span>
@@ -29,8 +29,7 @@
               <div class="mt-1"></div>
               <span class="list__item"><bib-icon icon="warning" class="mr-075"></bib-icon> Report</span>
               <hr>
-              <span class="list__item "><bib-icon icon="trash" variant="danger" class="mr-075"></bib-icon> <span class="text-danger">Delete</span></span>
-
+              <span class="list__item danger">Delete task</span>
             </div>
           </template>
         </bib-button>

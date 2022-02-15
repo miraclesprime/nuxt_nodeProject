@@ -51,7 +51,6 @@
           </div>
         </template>
       </bib-table>
-<!--  -->
       
     </template>
 
@@ -67,6 +66,7 @@
         />
       </div>
     </template>
+    <task-sidebar @open-sidebar="toggleSidebar()"></task-sidebar>
   </div>
 </template>
 

@@ -18,7 +18,7 @@
         <!-- <bib-app-navigation :items="navItems3"></bib-app-navigation> -->
       </template>
       <template #content>
-        <div class="main" id='main-content' :class="openSidebar ? 'open-sidebar' : ''">
+        <div class="main" id='main-content' :class="openSidebar ? 'open-sidebar' : ''" >
           <Nuxt />
         </div>
       </template>
@@ -224,6 +224,7 @@ html {
   grid-template-rows: 2.5rem 2.5rem 2.5rem 100%;*/
   overflow: hidden;
   background-color: white;
+  position: relative;
 
   .menu {
     padding: 0 1rem 0 0.25rem;
