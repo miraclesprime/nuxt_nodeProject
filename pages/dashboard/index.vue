@@ -10,6 +10,7 @@
         {{ projectName }}
       </h3>
     </div> -->
+    
     <div class="menu" id='menu-content'>
       <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="TABS" />
     </div>

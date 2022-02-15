@@ -117,7 +117,6 @@ export default {
   
   mounted() {
     // this.$nextTick(async () => {
-       this.$store.dispatch("task/fetchTasks");
        this.$store.dispatch("section/fetchSections");
     // });
   }
