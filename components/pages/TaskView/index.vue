@@ -72,7 +72,7 @@
 
 
 <script>
-import { DUMMY_TASK_FIELDS } from "~/dummy/tasks.js";
+import { TASK_FIELDS } from "~/dummy/tasks.js";
 import {mapGetters} from 'vuex';
 
 export default {
@@ -81,8 +81,7 @@ export default {
   },
   data() {
     return {
-      tableFields: DUMMY_TASK_FIELDS,
-      // tableSections: DUMMY_TASKS,
+      tableFields: TASK_FIELDS,
       flag: false,
     };
   },

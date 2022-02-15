@@ -26,8 +26,10 @@
   </div>
 </template>
 <script>
+
 import { DUMMY_TASKS, DUMMY_TASK_FIELDS } from "~/dummy/tasks.js";
 import { mapGetters } from 'vuex';
+
 
 export default {
   props: {
