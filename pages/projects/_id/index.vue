@@ -5,7 +5,7 @@
         <bib-icon icon="arrowhead-left" :scale="1.5"></bib-icon>
       </nuxt-link>
       <bib-avatar shape="rounded"></bib-avatar>
-      <span class="font-lg font-w-700 p-05 mr-1 rounded ">Project Name</span>
+      <span class="font-lg font-w-700 p-05 mr-1 rounded ">{{project.title}}</span>
       <!-- <bib-page-title label="Page Title"></bib-page-title> -->
       <span class=" badge-status">Status</span>
       <div class="ml-auto d-flex">
@@ -38,15 +38,31 @@
     </nav>
   </div>
 </template>
+
 <script>
+import {mapGetters} from 'vuex'
+
 export default {
-
   name: 'ProjectId',
-
   data() {
     return {
-
+      
     }
+  },
+
+  computed: {
+    ...mapGetters({
+      token: 'token/getToken',
+      project: 'project/getSingleProject'
+    })
+  },
+
+  async mounted() {
+    let proj = await this.$axios.$get(`project/${this.$route.params.id}`, {
+      headers: {'Authorization': `Bearer ${this.token}`}
+    })
+    this.$store.dispatch('project/setSingleProject', proj.data)
+    console.log(proj)
   }
 }
 

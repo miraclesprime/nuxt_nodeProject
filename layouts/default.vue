@@ -96,7 +96,7 @@ export default {
   mounted() {
     if (process.client) {
 
-      let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImlhdCI6MTY0NDgxMzM0OTc2NiwiZXhwIjoxNjUyNTg5MzQ5NzY2LCJqdGkiOiJhNWVlZjU4NC1hMWMxLTQ2OTMtYWZkMy1hNWFmNzNjNmE5ZTQifQ.b8R8fF7tJKswlQNi2ig6nkNLwqQU9L3Bqy-KW-UDfcU"
+      let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImlhdCI6MTY0NDg5OTc3MjI1OCwiZXhwIjoxNjUyNjc1NzcyMjU4LCJqdGkiOiJlMWJlMzRiMC0wZDdmLTRiMTAtYWJkMy1jMWEwOWJhMmVjZDEifQ.OXonKBcIpNn84_nlgw-kMrxezEhbvtRNbPdLkV6lu3w"
 
       this.$cookies.set('b_ssojwt', cookie);
       this.$store.dispatch('token/setToken', cookie);
@@ -115,7 +115,7 @@ export default {
 
         this.$store.dispatch('user/setUser', user)
 
-        /*this.$axios
+        this.$axios
           .$post("/user/create", {
             id: user.sub,
             email: user.sube
@@ -123,7 +123,7 @@ export default {
             console.log('user created!!')
           }).catch((err) => {
             console.log('there was some issue!!!')
-          })*/
+          })
 
         this.$store.dispatch('token/setToken', jwt);
         localStorage.setItem('accessToken', jwt)

@@ -42,7 +42,6 @@ export const actions = {
     const res = await this.$axios.$get(`/project/company/${ctx.rootState.user.user.subb}`, {
       headers: {'Authorization': `Bearer ${ctx.rootState.token.token}`}
     });
-    console.log(res.data)
     ctx.commit('fetchProjects', res.data);
   },
   

@@ -9,10 +9,6 @@
 </template>
 <script>
 
-import { DUMMY_TASKS, DUMMY_TASK_FIELDS } from "~/dummy/tasks.js";
-import { mapGetters } from 'vuex';
-
-
 export default {
   props: {
     gridType: String,
@@ -23,18 +19,6 @@ export default {
     };
   },
 
-  created() {
-    // this.getData();
-  },
-  mounted() {
-    this.$store.dispatch("section/fetchSections");
-  },
-
-  computed: {
-    ...mapGetters({
-      token: 'token/getToken'
-    }),
-  },
   methods: {
     toggleSidebar() {
       this.flag = !this.flag;
