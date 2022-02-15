@@ -5,14 +5,14 @@
       Projects
     </div>
 
-    <task-actions />
+    <project-actions />
      <bib-table
         :fields="tableFields"
         class="border-gray4 bg-white"
         :sections="projects"
       >
         <template #cell(title)="data">
-          <div class="justify-between text-dark">
+          <div class="justify-between text-dark" @click="$router.push(`/projects/${data.value.id}`)">
             <span>{{data.value.title}}</span>
           </div>
         </template>
@@ -60,10 +60,10 @@
 // import { TABLE_FIELDS, TABS, DEFAULT_TAB, TAB_TITLES } from "config/constants";
 import { PROJECT_FIELDS } from '../../dummy/project';
 import { mapGetters } from 'vuex';
-import TaskActions from '../../components/elements/TaskActions.vue';
+import ProjectActions from '../../components/elements/Project/ProjectActions.vue';
 
 export default {
-  components: { TaskActions },
+  components: { ProjectActions },
   data() {
     return {
       tableFields: PROJECT_FIELDS,
