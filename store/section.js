@@ -12,6 +12,10 @@ export const state = () => ({
 
     createSection(state, payload) {
       state.sections.push(payload)
+    },
+
+    setSections(state, payload) {
+      state.sections = payload;
     }
 
   };
@@ -30,6 +34,10 @@ export const state = () => ({
         headers: {'Authorization': `Bearer ${ctx.rootState.token.token}`}
       });
       ctx.commit('fetchSections', res.data);
+    },
+
+    setSections(ctx, payload) {
+      ctx.commit('setSections', payload)
     },
 
     async createSection(ctx) {

@@ -52,7 +52,8 @@ export default {
   computed: {
     ...mapGetters({
       token: 'token/getToken',
-      project: 'project/getSingleProject'
+      project: 'project/getSingleProject',
+      sections: 'section/getAllSections'
     })
   },
 
@@ -60,8 +61,11 @@ export default {
     let proj = await this.$axios.$get(`project/${this.$route.params.id}`, {
       headers: {'Authorization': `Bearer ${this.token}`}
     })
+    let sec = await this.$axios.$get(`section/project/${this.$route.params.id}`, {
+      headers: {'Authorization': `Bearer ${this.token}`}
+    })
+    this.$store.dispatch('section/setSections', sec.data)
     this.$store.dispatch('project/setSingleProject', proj.data)
-    console.log(proj)
   }
 }
 
