@@ -70,12 +70,13 @@ ul {
   position: absolute;
   z-index:6;
   right:0;
-  max-width:30rem;
+  width: $sidebar-width;
+  // max-width: $sidebar-width;
   top:0;
   bottom: 0;
   background-color: $white;
   box-shadow: 5px 2px 15px $gray6;
-  &__header__actions { padding: 0.25rem;}
+  &__header__actions { padding: 0.5rem;}
 }
 .side-panel {
   transform: translateX(100%);
