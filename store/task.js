@@ -52,21 +52,14 @@ export const getters = {
   tasksForListView(state) {
     return state.list;
   },
+  
   tableFields(state) {
     return state.TABLE_FIELDS;
   },
-  // getAllTasks(state) {
-  //   return state.tasks.filter((task) => {
-  //     return task.isDeleted !== true;
-  //   });
-  // },
+
   getSelectedTask(state) {
     return state.selectedTask;
   },
-  getSingleTask(state) {
-    return state.selectedTask;
-  },
-  tasksForOverview(state) {}
 };
 
 export const actions = {
