@@ -208,7 +208,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      activeItem: 'task/getSingleTask'
+      activeItem: 'task/getSelectedTask'
     }),
   },
 };

@@ -5,9 +5,9 @@
         <bib-icon icon="arrowhead-left" :scale="1.5"></bib-icon>
       </nuxt-link>
       <bib-avatar></bib-avatar>
-      <span class="font-lg font-w-700  mr-1 ">{{project.title}}</span>
+      <span class="font-lg font-w-700  mr-1 ">{{project ? project.title : ''}}</span>
       <!-- <bib-page-title label="Page Title"></bib-page-title> -->
-      <span class=" badge-status">{{project.status.text}}</span>
+      <span class=" badge-status">{{project ? project.status.text : ''}}</span>
       <div class="ml-auto d-flex gap-05 align-center">
         <bib-avatar></bib-avatar>
         <bib-button label="invite" variant="light" pill></bib-button>
