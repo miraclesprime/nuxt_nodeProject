@@ -1,13 +1,13 @@
 <template>
   <div>
-    <!-- <task-actions /> -->
+
+    <div class="border-gray4">
+      <section-title></section-title>
+    </div>
     
   </div>
 </template>
-
 <script>
-import { DUMMY_TASKS, TASK_FIELDS } from "~/dummy/tasks.js";
-import {mapGetters} from 'vuex';
 
 export default {
   props: {
@@ -15,16 +15,10 @@ export default {
   },
   data() {
     return {
-      tableFields: TASK_FIELDS,
-      tableSections: DUMMY_TASKS,
       flag: false,
     };
   },
-  computed: {
-    ...mapGetters({
-      token: 'token/getToken'
-    }),
-  },
+
   methods: {
     toggleSidebar() {
       this.flag = !this.flag;
@@ -42,7 +36,7 @@ export default {
       return "text-green";
     },
 
-    
   },
 };
+
 </script>

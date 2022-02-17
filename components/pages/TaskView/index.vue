@@ -18,13 +18,13 @@
       >
          <template #cell(title)="data">
             <div class="d-flex gap-05" id='task-wrapper'>
-              <span class="text-dark" id='task-text' @click="taskSelected(data.value)">{{ data.value.title }}</span>
+              <span class="text-dark" id='task-text' @click="taskSelected(data.value)">{{ data.value ? data.value.title : '' }}</span>
             </div>
           </template>
         <template #cell(status)="data">
           <div class="justify-between text-dark" id='t-status-wrapper'>
-            <span :class="statusClass(data.value.status.text)" id='task-status'>
-              {{ data.value.status.text }}
+            <span :class="statusClass( data.value.status ? data.value.status.text : '')" id='task-status'>
+              {{ data.value.status ? data.value.status.text : '' }}
             </span>
             <span :class="statusClass(data.value.status)" id='task-progress'>
               {{ data.value.progress }}<span v-if="data.value.progress">%</span></span
@@ -34,7 +34,7 @@
         <template #cell(priority)="data">
           <div class="justify-between text-dark" id='t-priority-wrapper'>
             <span :class="priorityClass(data.value.priority)" id='task-priority'>
-              {{ data.value.priority.text }}
+              {{ data.value.priority ? data.value.priority.text : '' }}
             </span>
           </div>
         </template>
@@ -51,7 +51,6 @@
           </div>
         </template>
       </bib-table>
-<!--  -->
       
     </template>
 
@@ -67,6 +66,7 @@
         />
       </div>
     </template>
+    <task-sidebar @open-sidebar="toggleSidebar()"></task-sidebar>
   </div>
 </template>
 
@@ -87,7 +87,6 @@ export default {
   },
   computed: {
     ...mapGetters({
-      tasks: "task/getAllTasks",
       sections: "section/getAllSections",
       user: "user/getUser"
     }),

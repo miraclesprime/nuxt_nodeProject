@@ -1,5 +1,5 @@
 body {
-    font-family: 'Lato';
+  font-family: 'Lato';
 }
 
 .sidebar select,
@@ -20,7 +20,7 @@ a {
 }
 
 ul {
-    list-style: none;
+  list-style: none;
 }
 
 // layout
@@ -33,19 +33,19 @@ ul {
 
 /** layout **/
 .row {
-	display: flex;
-	margin: 0 -.5rem;
+  display: flex;
+  margin: 0 -.5rem;
 }
 
 [class*='col'] {
-	padding: 0 .5rem;
+  padding: 0 .5rem;
 }
 
 @for $i from 1 through 12 {
-    .col-#{$i} { 
-		max-width: #{ math.div(round(math.div(100%, 12) * $i * 10000), 10000) }; 
-		flex: 0 0 #{ math.div(round(math.div(100%, 12) * $i * 10000), 10000) }; 
-	}
+  .col-#{$i} {
+    max-width: #{ math.div(round(math.div(100%, 12) * $i * 10000), 10000) };
+    flex: 0 0 #{ math.div(round(math.div(100%, 12) * $i * 10000), 10000) };
+  }
 }
 
 
@@ -53,10 +53,10 @@ ul {
   .main {
     width: 100%;
     transition: width .2s;
-  
-    &.open-sidebar {
+
+    /*&.open-sidebar {
       width: calc(100% - #{$sidebar-width});
-    }
+    }*/
   }
 }
 
@@ -64,6 +64,22 @@ ul {
   position: fixed;
   top: 0;
   z-index: 10;
+}
+
+.side-panel {
+  position: absolute;
+  z-index: 6;
+  right: 0;
+  width: $sidebar-width;
+  // max-width: $sidebar-width;
+  top: 0;
+  bottom: 0;
+  background-color: $white;
+  box-shadow: 5px 2px 15px $gray6;
+
+  &__header__actions {
+    padding: 0.5rem;
+  }
 }
 
 .side-panel {
@@ -182,7 +198,7 @@ ul {
 }
 
 .side-panel .wrapper select {
-    line-height: 2;
+  line-height: 2;
 }
 
 // margin
@@ -192,4 +208,12 @@ ul {
 
 .p-0 {
   padding: 0 !important;
+}
+
+.badge-status {
+  padding: 0.35rem 2rem;
+  font-size: 0.75rem;
+  background-color: var(--bib-light);
+  color: var(--bib-gray5);
+  border-radius: 0.15rem;
 }

@@ -7,7 +7,29 @@
         }
       ">
       <template #topbar>
-        <bib-header></bib-header>
+        <bib-header>
+          <template #avatar_menu>
+            <bib-button pop="arrowhead-right" :scale="1.3">
+              <template v-slot:menu>
+                <div class="list">
+                  <!-- <span class="list__item">
+                    <bib-icon icon="home" :scale="1.1" variant="gray5" class="mr-075"></bib-icon> My Account
+                  </span> -->
+                  <span class="list__item">
+                    <a :href="userProfileUrl">
+                      <bib-icon icon="user-canonical" :scale="1.1" variant="gray5" class="mr-075"></bib-icon> My Profile
+                    </a>
+                  </span>
+                  <span class="list__item">
+                    <a :href="logoutUrl">
+                      <bib-icon icon="output" :scale="1.1" variant="gray5" class="mr-075"></bib-icon> Logout
+                    </a>
+                  </span>
+                </div>
+              </template>
+            </bib-button>
+          </template>
+        </bib-header>
       </template>
       <template #switcher>
         <bib-app-switcher :menuItems="appItems"></bib-app-switcher>
@@ -15,7 +37,22 @@
       <template #navigation>
         <bib-app-navigation :items="navItems1" @click='goToRoute($event)' class="mb-1"></bib-app-navigation>
         <bib-app-navigation :items="navItems2" @click='goToRoute($event)'></bib-app-navigation>
-        <!-- <bib-app-navigation :items="navItems3"></bib-app-navigation> -->
+        <bib-detail-collapse label="Favorite Projects" variant="white" open class="mt-1">
+          <template v-slot:content>
+            <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light">
+              <bib-icon icon="add" variant="success" :scale="1.5" class="p-025 ml-025"></bib-icon> <span class="p-025">Create a project</span>
+            </div>
+            <bib-app-navigation :items="favProjects"></bib-app-navigation>
+          </template>
+        </bib-detail-collapse>
+        <bib-detail-collapse label="People" variant="white" open class="mt-1">
+          <template v-slot:content>
+            <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light">
+              <bib-icon icon="add" variant="success" :scale="2" class="p-025 ml-025"></bib-icon> <span class="p-025">Add a team mate</span>
+            </div>
+            <bib-app-navigation :items="teammate"></bib-app-navigation>
+          </template>
+        </bib-detail-collapse>
       </template>
       <template #content>
         <div class="main" id='main-content' :class="openSidebar ? 'open-sidebar' : ''">
@@ -44,20 +81,23 @@ export default {
         { img: "CommentForum", color: "purple", text: "Chat", href: process.env.VITE_BIB_CHAT_APP_URL },
       ],
       navItems1: [
-        { label: "Home", icon: "home", key:"dashboard-route" },
+        { label: "Home", icon: "home", key: "dashboard-route" },
         { label: "Inbox", icon: "mail-new" },
         { label: "My tasks", icon: "check-circle" },
         { label: "Favorites", icon: "heart-like" },
       ],
       navItems2: [
-        { label: "Tasks", icon: "check-circle", key:"task-route" },
+        { label: "Tasks", icon: "check-circle", key: "task-route" },
         { label: "Projects", icon: "folder-add", key: 'project-route', selected: true },
         { label: "Goals", icon: "plans" },
         { label: "Dream", icon: "star" },
       ],
-      navItems3: [
-        { label: "Departments", icon: "home" },
-        { label: "People", icon: "user-group" },
+      favProjects: [
+        { label: "Project one", icon: "bib-logo" },
+        { label: "Project two", icon: "bib-logo" },
+      ],
+      teammate: [
+        { label: "Person one", icon: "user" }
       ],
       collapseNavigation: false,
       appHeaderActions: {
@@ -86,6 +126,8 @@ export default {
           },
         },
       },
+      userProfileUrl: process.env.USER_PROFILE_URL,
+      logoutUrl: process.env.LOGOUT_URL,
     }
   },
   created() {
@@ -96,7 +138,7 @@ export default {
   mounted() {
     if (process.client) {
 
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImlhdCI6MTY0NDgxMzM0OTc2NiwiZXhwIjoxNjUyNTg5MzQ5NzY2LCJqdGkiOiJhNWVlZjU4NC1hMWMxLTQ2OTMtYWZkMy1hNWFmNzNjNmE5ZTQifQ.b8R8fF7tJKswlQNi2ig6nkNLwqQU9L3Bqy-KW-UDfcU"
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImlhdCI6MTY0NDg5OTc3MjI1OCwiZXhwIjoxNjUyNjc1NzcyMjU4LCJqdGkiOiJlMWJlMzRiMC0wZDdmLTRiMTAtYWJkMy1jMWEwOWJhMmVjZDEifQ.OXonKBcIpNn84_nlgw-kMrxezEhbvtRNbPdLkV6lu3w"
 
       // this.$cookies.set('b_ssojwt', cookie);
       // this.$store.dispatch('token/setToken', cookie);
@@ -137,14 +179,14 @@ export default {
     rightClkFileSection(event) {
       this.$refs.modals.showCreateProjectModal = true;
     },
-    
+
     resizeCalendar() {
       if (document.getElementById('myDiv')) {
         window.dispatchEvent(new Event('resize'));
       }
       return false;
     },
-    
+
 
     goToRoute($event) {
       console.log($event.key)
@@ -171,7 +213,6 @@ export default {
 }
 
 </script>
-
 <style lang="scss">
 html {
   font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -219,11 +260,13 @@ html {
   color: #fff;
   background-color: #35495e;
 }
+
 .main {
   /*display: grid;
   grid-template-rows: 2.5rem 2.5rem 2.5rem 100%;*/
   overflow: hidden;
   background-color: white;
+  position: relative;
 
   .menu {
     padding: 0 1rem 0 0.25rem;
@@ -236,6 +279,7 @@ html {
     line-height: 1.8rem;
   }
 }
+
 ::v-deep {
   .panel-wrapper.side-panel {
     position: fixed;
