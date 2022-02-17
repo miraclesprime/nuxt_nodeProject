@@ -137,7 +137,7 @@ export default {
   computed: {
     ...mapGetters({
       tasks: "task/tasksForListView",
-      activeItem: 'task/getSingleTask'
+      activeItem: 'task/getSelectedTask'
     }),
   },
   methods: {
