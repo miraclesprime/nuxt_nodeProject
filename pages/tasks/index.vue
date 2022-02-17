@@ -25,7 +25,7 @@ export default {
   computed: {
     ...mapGetters({
       tasks: "task/tasksForListView",
-      taskFields: "task/tableFields",
+      // taskFields: "task/tableFields",
       token: "token/getToken",
       project: "project/getSingleProject"
     }),

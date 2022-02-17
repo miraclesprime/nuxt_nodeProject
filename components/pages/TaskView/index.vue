@@ -3,11 +3,17 @@
     <task-actions :gridType="gridType"></task-actions>
 
     <template v-if="gridType === 'list'">
-      <bib-table
+      <ul>
+        <li v-for="(item, index) in sections">
+          {{item.title}}
+        </li>
+      </ul>
+
+      <!-- <bib-table
         v-for="(item, index) in sections"
         :key="'table-section-' + index"
-        :fields="tableFields"
-        :sections="item.tasks"
+        :fields="item.tasks"
+        :sections="sections"
         :collapseObj="{
           collapsed: false,
           label: item.title,
@@ -50,11 +56,11 @@
             <span id='task-dueDate'>{{ new Date(data.value.dueDate).toLocaleString("en-US") }}</span>
           </div>
         </template>
-      </bib-table>
+      </bib-table> -->
       
     </template>
 
-    <template v-else>
+    <!-- <template v-else>
       <div class="d-flex" id='task-grid'>
         <task-grid-section
           :headless="true"
@@ -65,7 +71,7 @@
           groupName="1"
         />
       </div>
-    </template>
+    </template> -->
     <task-sidebar @open-sidebar="toggleSidebar()"></task-sidebar>
   </div>
 </template>
@@ -81,13 +87,18 @@ export default {
   },
   data() {
     return {
-      tableFields: TASK_FIELDS,
+      tableFields: [TASK_FIELDS],
       flag: false,
     };
   },
+  mounted() {
+    // this.$nextTick(async () => {
+       this.$store.dispatch("section/fetchSections");
+    // });
+  },
   computed: {
     ...mapGetters({
-      tasks: "task/getAllTasks",
+      // tasks: "task/getAllTasks",
       sections: "section/getAllSections",
       user: "user/getUser"
     }),
@@ -113,11 +124,5 @@ export default {
     }
   },
   
-  
-  mounted() {
-    // this.$nextTick(async () => {
-       this.$store.dispatch("section/fetchSections");
-    // });
-  }
 };
 </script>
