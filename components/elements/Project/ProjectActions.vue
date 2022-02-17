@@ -13,43 +13,67 @@
     <div class="action-right">
       <ul class="actions">
         <li class="action">
-          <custom-check-box />
+          <span>Viewing: {{selectedView}}</span>
+            <bib-button pop="arrow-down">
+                <template v-slot:menu>
+                    <div class="list">
+                        <span class="list__item" @click="changeViewName('Incompleted Tasks')">Incompleted Tasks</span>
+                        <span class="list__item" @click="changeViewName('Completed Tasks')">Completed Tasks</span>
+                        <span class="list__item" @click="changeViewName('All')">All</span>
+                    </div>
+                </template>
+            </bib-button>
+        </li>
+        
+          <li class="action">
+          <span>Filter By:</span>
+            <bib-button pop="filter-horizontal">
+                <template v-slot:menu>
+                    <div class="list">
+                        <span class="list__item" @click="changeViewName('Incompleted Tasks')">Incompleted Tasks</span>
+                        <span class="list__item" @click="changeViewName('Completed Tasks')">Completed Tasks</span>
+                        <span class="list__item" @click="changeViewName('All')">All</span>
+                    </div>
+                </template>
+            </bib-button>
+        </li>
+       
+        <li class="action">
+          <span>Sorted By: {{selectedSort}}</span>
+            <bib-button pop="swap-vertical">
+                <template v-slot:menu>
+                    <div class="list">
+                        <span class="list__item" @click="changeSortName('Name')">Name</span>
+                        <span class="list__item" @click="changeSortName('Project')">Project</span>
+                        <span class="list__item" @click="changeSortName('Owner')">Owner</span>
+                        <span class="list__item" @click="changeSortName('Status')">Status</span>
+                        <span class="list__item" @click="changeSortName('Start Date')">Start Date</span>
+                        <span class="list__item" @click="changeSortName('Due Date')">Due Date</span>
+                        <span class="list__item" @click="changeSortName('Tag')">Tag</span>
+                        <span class="list__item" @click="changeSortName('Team')">Team</span>
+                    </div>
+                </template>
+            </bib-button>
+        </li>
 
-          <span>My items only</span>
-        </li>
-        <li class="action">
-          <bib-icon icon="sort" />
-          <span>Sort</span>
-        </li>
-        <li class="action">
-          <bib-icon icon="filter-horizontal" />
-          <span>Filter</span>
-        </li>
-        <li class="action">
-          <bib-icon icon="group" />
-          <span>Group</span>
-        </li>
         <li class="action">
           <span style="margin-right: 5px">Views</span>
           <a href="#" class="grid-type" @click.prevent="changeGridType('list')">
             <bib-icon
-              icon="list"
+              icon="apps-large"
               :variant="type === 'list' ? 'black' : 'gray'"
             />
           </a>
 
           <a href="#" class="grid-type" @click.prevent="changeGridType('grid')">
             <bib-icon
-              icon="kanban"
+              icon="apps-large-solid"
               :variant="type === 'grid' ? 'black' : 'gray'"
             />
           </a>
         </li>
-        <li class="action">
-          <a href="#">
-            <bib-icon icon="horizontal-dots" />
-          </a>
-        </li>
+
+      
       </ul>
     </div>
 
@@ -80,7 +104,9 @@ export default {
   data() {
     return {
       type: this.gridType,
-      selectInfo: null
+      selectInfo: null,
+      selectedView: null,
+      selectedSort: null
     };
   },
   methods: {
@@ -133,6 +159,14 @@ export default {
         }
       }
     },
+
+    changeViewName(viewName) {
+      this.selectedView = viewName;
+    },
+
+    changeSortName(sortName) {
+      this.selectedSort = sortName;
+    }
   },
 };
 </script>
