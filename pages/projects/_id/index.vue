@@ -7,7 +7,7 @@
       <bib-avatar></bib-avatar>
       <span class="font-lg font-w-700  mr-1 ">{{project ? project.title : ''}}</span>
       <!-- <bib-page-title label="Page Title"></bib-page-title> -->
-      <span class=" badge-status">{{project ? project.status.text : ''}}</span>
+      <span class=" badge-status">{{project.status ? project.status.text : ''}}</span>
       <div class="ml-auto d-flex gap-05 align-center">
         <bib-avatar></bib-avatar>
         <bib-button label="invite" variant="light" pill></bib-button>
@@ -19,7 +19,7 @@
             </bib-icon>
         </div> -->
         <div class="shape-circle bg-light width-2 height-2 d-flex justify-center align-center">
-          <bib-button pop="horizontal-dots" >
+          <bib-button pop="horizontal-dots">
             <template v-slot:menu>
               <div class="list">
                 <span class="list__item">Show project details</span>
@@ -50,7 +50,7 @@
     </div>
     <div id='task-overview'>
       <task-overview v-if="activeTab.value == TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="tasks" :gridType="gridType" />
-      <task-view v-if="activeTab.value == TAB_TITLES.tasks" :fields="taskFields" :tasks="tasks" :gridType="gridType" />
+      <task-view v-if="activeTab.value == TAB_TITLES.tasks" :fields="taskFields" :tasks="tasks" :sections="sections" :gridType="gridType" />
       <task-conversations v-if="activeTab.value == TAB_TITLES.conversations" :fields="TABLE_FIELDS" :tasks="tasks" />
       <task-timeline-view v-if="activeTab.value == TAB_TITLES.timeline" :fields="TABLE_FIELDS" :tasks="tasks" />
       <task-calendar-view v-if="activeTab.value == TAB_TITLES.calendar" :fields="TABLE_FIELDS" :tasks="tasks" />
@@ -72,6 +72,7 @@ export default {
       TAB_TITLES,
       TABLE_FIELDS,
       gridType: "list",
+      sections: []
     }
   },
 
@@ -79,7 +80,7 @@ export default {
     ...mapGetters({
       token: 'token/getToken',
       project: 'project/getSingleProject',
-      sections: 'section/getAllSections',
+      // sections: 'section/getAllSections',
       tasks: "task/tasksForListView",
       taskFields: "task/tableFields",
     })
@@ -95,15 +96,23 @@ export default {
     });
   },
 
-  mounted() {
-    /*let proj = this.$axios.$get(`project/${this.$route.params.id}`, {
+  async mounted() {
+    const proj = await this.$axios.$get(`project/${this.$route.params.id}`, {
       headers: { 'Authorization': `Bearer ${this.token}` }
     })
-    let sec = this.$axios.$get(`section/project/${this.$route.params.id}`, {
+    if (proj) {
+      // console.log(proj)
+      this.$store.dispatch('project/setSingleProject', proj.data)
+    }
+
+    const sec = await this.$axios.$get(`section/project/${this.$route.params.id}`, {
       headers: { 'Authorization': `Bearer ${this.token}` }
     })
-    this.$store.dispatch('section/setSections', sec.data)
-    this.$store.dispatch('project/setSingleProject', proj.data)*/
+    if (sec) {
+      // console.log(sec)
+      this.sections = sec.data
+    }
+
   },
   methods: {
     tabChange(value) {
@@ -114,7 +123,11 @@ export default {
 
 </script>
 <style lang="scss" scoped>
-.button--pop {
-  .menu { margin-left: auto; margin-right: auto; padding: 0 0.25rem; }
+.shape-circle {
+  .menu {
+    margin-left: auto;
+    margin-right: auto
+  }
 }
+
 </style>

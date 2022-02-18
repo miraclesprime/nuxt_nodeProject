@@ -42,7 +42,7 @@
             <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light">
               <bib-icon icon="add" variant="success" :scale="1.5" class="p-025 ml-025"></bib-icon> <span class="p-025">Create a project</span>
             </div>
-            <bib-app-navigation :items="favProjects"></bib-app-navigation>
+            <bib-app-navigation :items="favProjects" @click="goToProject($event)"></bib-app-navigation>
           </template>
         </bib-detail-collapse>
         <bib-detail-collapse label="People" variant="white" open class="mt-1">
@@ -60,10 +60,20 @@
         </div>
       </template>
     </bib-app-wrapper>
+    <create-project-modal @create-project="
+        (project) => {
+          createProject(project);
+        }
+      " ref="modals"></create-project-modal>
+      <create-task-modals @create-task="
+        (task) => {
+          createTask(task);
+        }
+      " ref="modals"></create-task-modals>
   </div>
 </template>
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   data() {
@@ -92,17 +102,17 @@ export default {
         { label: "Goals", icon: "plans" },
         { label: "Dream", icon: "star" },
       ],
-      favProjects: [
-        { label: "Project one", icon: "bib-logo" },
-        { label: "Project two", icon: "bib-logo" },
-      ],
+      /*favProjects: [
+        { label: "Project one", icon: "folder-solid" },
+        { label: "Project two", icon: "folder-solid" },
+      ],*/
       teammate: [
         { label: "Person one", icon: "user" }
       ],
       collapseNavigation: false,
       appHeaderActions: {
         button: {
-          label: "Create / Upload",
+          label: "Create",
           event: "button-click",
           variant: "success",
           icon: "add",
@@ -157,26 +167,35 @@ export default {
 
         this.$store.dispatch('user/setUser', user)
 
-        this.$axios
-          .$post("/user/create", {
-            id: user.sub,
-            email: user.sube
-          }).then((value) => {
-            console.log('user created!!')
-          }).catch((err) => {
-            console.log('there was some issue!!!')
-          })
+        this.$axios.$post("/user/create", {
+          id: user.sub,
+          email: user.sube
+        }).then((value) => {
+          console.log('user created!!')
+          this.$store.dispatch("project/setFavProjects")
+        }).catch((err) => {
+          console.log('there was some issue!!!')
+        })
 
         this.$store.dispatch('token/setToken', jwt);
-        localStorage.setItem('accessToken', jwt)
+        localStorage.setItem('accessToken', jwt);
+
       } else {
         window.location.href = "http://dev.account.business-in-a-box.com/login/?redirect=" + process.env.VUE_APP_URL;
       }
     }
   },
+
+  computed: {
+    ...mapGetters({
+      favProjects: 'project/getFavProjects',
+    })
+  },
+
   methods: {
 
     rightClkFileSection(event) {
+      console.log('create button clicked')
       this.$refs.modals.showCreateProjectModal = true;
     },
 
@@ -199,6 +218,10 @@ export default {
       if ($event.key == 'task-route') {
         this.$router.push('/tasks')
       }
+    },
+
+    goToProject($event){
+      this.$router.push("/projects/"+$event.id)
     },
 
     // Handle User logout
