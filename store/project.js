@@ -89,7 +89,6 @@ export const actions = {
           "Authorization": `Bearer ${ctx.rootState.token.token}`
         }
       })
-      console.log(fav)
       if (fav) {
         ctx.commit("SETFAVPROJECTS", fav)
       } else {
