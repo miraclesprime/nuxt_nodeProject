@@ -64,7 +64,7 @@
         (project) => {
           createProject(project);
         }
-      " ref="modals"></create-project-modal>
+      " ref="projectModals"></create-project-modal>
       <create-task-modals @create-task="
         (task) => {
           createTask(task);
@@ -196,7 +196,7 @@ export default {
 
     rightClkFileSection(event) {
       console.log('create button clicked')
-      this.$refs.modals.showCreateProjectModal = true;
+      this.$refs.projectModals.showCreateProjectModal = true;
     },
 
     resizeCalendar() {

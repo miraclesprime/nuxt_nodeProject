@@ -64,7 +64,6 @@ export const actions = {
   // create project 
   async createProject(ctx, payload) {
     const res = await this.$axios.$post('/project', {
-      companyId: 1,
       statusId: null,
       title: payload,
       description: null,

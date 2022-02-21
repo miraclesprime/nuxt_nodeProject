@@ -182,9 +182,11 @@ export default {
         {label: 'Please Choose One', value: "orange"}
       ],
       statusValues: [
-        {label: 'done', value: 'done'},
-        {label: 'In-Progress', value: 'progress'},
-        {label: 'pending', value: 'pending'}
+        {label: 'Not Started', value: 'Not Started'},
+        {label: 'In-Progress', value: 'In-Progress'},
+        {label: 'Waiting', value: 'Waiting'},
+        {label: 'Deferred', value: 'Deferred'},
+        {label: 'Done', value: 'Done'},
       ],
       priorityValues: [
         {label: 'low', value: 'low'},
