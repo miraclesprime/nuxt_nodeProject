@@ -21,12 +21,18 @@
             </ul>
           </template>
         </bib-button>
-        <div id="project-team-members">
-          <div class="m-auto p-05 bg-light shape-rounded">
+        <div id="project-team-members" class="d-flex gap-05 flex-wrap">
+          <email-chip :email="user ? user.sube : 'bruno@biztree.com'" avatar="B" v-bind:close="true" v-on:remove-email="getUser"></email-chip>
+          <!-- <div class="align-center text-secondary p-05 bg-light shape-rounded">
             <bib-avatar size="1.5rem"></bib-avatar>
-            <!-- <bib-icon icon="folder" :scale="1.25"></bib-icon> -->
-            <span class="pl-025 ">bruno@biztree.com</span>
+            <span class="pl-025 pr-025">bruno@biztree.com</span>
+            <bib-icon icon="close" :scale="1" class="cursor-pointer"></bib-icon>
           </div>
+          <div class="align-center text-secondary p-05 bg-light shape-rounded">
+            <bib-avatar size="1.5rem"></bib-avatar>
+            <span class="pl-025 pr-025">ramon@biztree.com</span>
+            <bib-icon icon="close" :scale="1" class="cursor-pointer"></bib-icon>
+          </div> -->
         </div>
         <div class="d-flex p-075 bg-light shape-rounded mt-1">
           <div class="width-2 height-2">
@@ -49,6 +55,7 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: "BibDriveModals",
   data() {
@@ -61,8 +68,19 @@ export default {
       contextProject: {
         name: "",
       },
-
+      department: "",
     };
+  },
+  mounted() {
+    /*if (process.client) {
+      this.user = localStorage.getItem("user")
+    }*/
+  },
+  computed: {
+    ...mapGetters({
+      user: "user/getUser"
+    })
+
   },
   methods: {
     bindEnter(event, button) {
@@ -74,6 +92,23 @@ export default {
     triggerModalAction(modal, payload, e = null) {
       this.$emit(modal, payload, e);
     },
+    removeEmail($event) {
+      alert($event)
+      if ($event) {
+
+      }
+    },
+    getUser() {
+      var requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
+      };
+
+      fetch("https://www.biztree.com/usr-ctrl-test/api/user/4q2VolejRejNmGQB", requestOptions)
+        .then(response => response.text())
+        .then(result => console.log(result))
+        .catch(error => console.log('error', error));
+    }
   },
 };
 
