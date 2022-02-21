@@ -219,7 +219,7 @@
 </template>
 <script>
 export default {
-  name: "BibDriveModals",
+  name: "CreateTaskModal",
   data() {
     return {
       showCreateTaskModal: false,

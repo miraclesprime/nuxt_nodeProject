@@ -57,7 +57,7 @@
 <script>
 import { mapGetters } from 'vuex'
 export default {
-  name: "BibDriveModals",
+  name: "CreateProjectModal",
   data() {
     return {
       showCreateProjectModal: false,
