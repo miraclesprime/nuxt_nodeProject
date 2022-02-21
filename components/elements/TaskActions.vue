@@ -64,7 +64,7 @@
       </ul>
     </div>
 
-    <task-modals
+    <!-- <task-modals
       @create-task="
         (task) => {
           createTask(task);
@@ -76,7 +76,7 @@
         }
       "
       ref="modals"
-    ></task-modals>
+    ></task-modals> -->
   </div>
 </template>
 

@@ -65,11 +65,11 @@
           createProject(project);
         }
       " ref="projectModals"></create-project-modal>
-      <create-task-modals @create-task="
+      <!-- <create-task-modals @create-task="
         (task) => {
           createTask(task);
         }
-      " ref="modals"></create-task-modals>
+      " ref="modals"></create-task-modals> -->
   </div>
 </template>
 <script>
