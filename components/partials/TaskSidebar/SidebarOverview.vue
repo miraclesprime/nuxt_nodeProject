@@ -14,9 +14,8 @@
 
           <div class="col-8" id='sidebar-col-2'>
             <bib-input
-              type="text"
-              :value="activeItem.name"
-              :options="selectItems"
+              type="select"
+              :options="projects"
               placeholder="Please select..."
               label="Project"
             ></bib-input>
@@ -26,9 +25,8 @@
         <div class="row" id='sidebar-row-2'>
           <div class="col-4" id='sidebar-col-3'>
             <bib-input
-              type="text"
-              :value="activeItem.name"
-              :options="selectItems"
+              type="select"
+              :options="department"
               placeholder="Please select..."
               label="Department"
             ></bib-input>
@@ -37,7 +35,7 @@
           <div class="col-4" id='sidebar-col-4'>
             <bib-input
               type="select"
-              :value="activeItem.priority"
+              :value="activeItem.priority ? activeItem.priority.text : ''"
               :options="priorityValues"
               placeholder="Please select..."
               label="Priority"
@@ -192,6 +190,12 @@ export default {
         {label: 'low', value: 'low'},
         {label: 'medium', value: 'medium'},
         {label: 'high', value: 'high'}
+      ],
+      projects: [
+        {label: 'Project 1', value: "p1"}
+      ],
+      department: [
+        {label: 'IT', value: "it"}
       ],
       description: "",
       isContentExpanded: false,
