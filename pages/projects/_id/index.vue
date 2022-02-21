@@ -85,7 +85,7 @@ export default {
       taskFields: "task/tableFields",
     })
   },
-
+  
   created() {
     this.$root.$on("change-grid-type", (type) => {
       this.gridType = type;
@@ -95,26 +95,31 @@ export default {
       this.activeTask = task;
     });
   },
+  
+  fetch(){
+    this.fetchProject()
+  },
 
-  async mounted() {
-    const proj = await this.$axios.$get(`project/${this.$route.params.id}`, {
-      headers: { 'Authorization': `Bearer ${this.token}` }
-    })
-    if (proj) {
-      // console.log(proj)
-      this.$store.dispatch('project/setSingleProject', proj.data)
-    }
-
-    const sec = await this.$axios.$get(`section/project/${this.$route.params.id}`, {
-      headers: { 'Authorization': `Bearer ${this.token}` }
-    })
-    if (sec) {
-      // console.log(sec)
-      this.sections = sec.data
-    }
-
+  mounted() {
+    
   },
   methods: {
+    async fetchProject() {
+      const proj = await this.$axios.$get(`project/${this.$route.params.id}`, {
+        headers: { 'Authorization': `Bearer ${this.token}` }
+      })
+      if (proj) {
+        // console.log(proj)
+        this.$store.dispatch('project/setSingleProject', proj.data)
+      }
+      const sec = await this.$axios.$get(`section/project/${this.$route.params.id}`, {
+        headers: { 'Authorization': `Bearer ${this.token}` }
+      })
+      if (sec) {
+        // console.log(sec)
+        this.sections = sec.data
+      }
+    },
     tabChange(value) {
       this.activeTab = value;
     },
