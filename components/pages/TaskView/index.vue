@@ -78,6 +78,7 @@ import {mapGetters} from 'vuex';
 export default {
   props: {
     gridType: String,
+    sections: Array,
   },
   data() {
     return {
@@ -87,9 +88,14 @@ export default {
   },
   computed: {
     ...mapGetters({
-      sections: "section/getAllSections",
+      // sections: "section/getAllSections",
       user: "user/getUser"
     }),
+  },
+  mounted() {
+    // this.$nextTick(async () => {
+       this.$store.dispatch("section/fetchSections");
+    // });
   },
   methods: {
     toggleSidebar() {
@@ -112,11 +118,5 @@ export default {
     }
   },
   
-  
-  mounted() {
-    // this.$nextTick(async () => {
-       this.$store.dispatch("section/fetchSections");
-    // });
-  }
 };
 </script>
