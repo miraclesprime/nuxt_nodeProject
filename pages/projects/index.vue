@@ -19,7 +19,7 @@
       <template #cell(userId)="data">
         <div class="d-flex gap-05">
           <bib-avatar class="mt-auto mb-auto" :src="data.value.preview" size="1.5rem"></bib-avatar>
-          <span class="text-dark">{{ data.value.userId }}</span>
+          <span class="text-dark"><user-info :id="data.value ? data.value.userId : ''"  /></span>
         </div>
       </template>
       <template #cell(status)="data">
@@ -50,9 +50,10 @@
 import { PROJECT_FIELDS } from '../../dummy/project';
 import { mapGetters } from 'vuex';
 import ProjectActions from '../../components/elements/Project/ProjectActions.vue';
+import UserInfo from '../../components/elements/UserInfo.vue';
 
 export default {
-  components: { ProjectActions },
+  components: { ProjectActions, UserInfo },
   data() {
     return {
       tableFields: PROJECT_FIELDS,

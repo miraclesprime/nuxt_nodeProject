@@ -42,7 +42,7 @@
           <div class="text-dark" id='t-assignee-wrapper'>
             <bib-avatar class="mt-auto mb-auto" size="1.5rem"></bib-avatar>
 
-            <span id='task-assignee'>{{ data.value.assignee }}</span>
+            <span id='task-assignee'><user-info :id="data.value ? data.value.userId : ''"  /></span>
           </div>
         </template>
         <template #cell(dueDate)="data">
