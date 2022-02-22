@@ -22,7 +22,13 @@ export default {
     baseURL: process.env.VUE_APP_API_ENDPOINT || "http://localhost:9000",
   },
   /// Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
-  plugins: ["~/plugins/plugins", "~/plugins/axios.js", "~/plugins/dayjs.js", "~/plugins/userInfo.js"],
+  plugins: [
+    "~/plugins/plugins",
+    "~/plugins/axios.js",
+    "~/plugins/dayjs.js",
+    "~/plugins/dateFormat.client.js",
+    "~/plugins/userInfo.js"
+    ],
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: [
     { path: "~/components/", pathPrefix: false },
