@@ -7,7 +7,7 @@
       </nuxt-link>
       <span class="font-lg font-w-700 ">{{title}}</span>
     </nav>
-    <task-view :fields="taskFields" :tasks="tasks" :gridType="gridType" />
+    <task-view :fields="taskFields" :tasks="tasks" :sections="sections" :gridType="gridType" />
   </div>
 </template>
 <script>
@@ -25,11 +25,21 @@ export default {
   computed: {
     ...mapGetters({
       tasks: "task/tasksForListView",
-      // taskFields: "task/tableFields",
+      taskFields: "task/tableFields",
       token: "token/getToken",
-      project: "project/getSingleProject"
+      // project: "project/getSingleProject",
+      sections: [],
     }),
   },
+  async mounted() {
+    const sec = await this.$axios.$get(`section/project/${this.$route.params.id}`, {
+      headers: { 'Authorization': `Bearer ${this.token}` }
+    })
+    if (sec) {
+      // console.log(sec)
+      this.sections = sec.data
+    }
+  }
 }
 
 </script>
