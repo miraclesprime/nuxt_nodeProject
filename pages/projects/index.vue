@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <!-- <div id="project-name" class="project-heading p-05 text-secondary font-sm"> -->
     <nav class="d-flex align-center gap-05 pt-05 pb-05">
       <nuxt-link to="/" class="d-flex">
@@ -30,12 +29,12 @@
       </template>
       <template #cell(createdAt)="data">
         <div class="justify-between text-dark">
-          <span>{{new Date(data.value.createdAt).toLocaleString("en-US")}}</span>
+          <span v-format-date="data.value.createdAt" ></span>
         </div>
       </template>
       <template #cell(dueDate)="data">
         <div class="justify-between text-dark">
-          <span>{{new Date(data.value.dueDate).toLocaleString("en-US")}}</span>
+          <span v-format-date="data.value.dueDate"></span>
         </div>
       </template>
       <template #cell(priority)="data">
@@ -44,7 +43,6 @@
         </div>
       </template>
     </bib-table>
-    
   </div>
 </template>
 <script>
@@ -70,28 +68,28 @@ export default {
       projectName: ''
     }
   },
-  methods: {
-
-    tabChange(value) {
-      this.activeTab = value;
-    },
-
+  mounted() {
+    this.$store.dispatch('project/fetchProjects')
   },
-
   computed: {
     ...mapGetters({
       projects: 'project/getAllProjects'
     })
   },
 
-  mounted() {
-    this.$store.dispatch('project/fetchProjects')
-  },
   methods: {
+    tabChange(value) {
+      this.activeTab = value;
+    },
     goToProjectId(project) {
       // console.log(project)
       // this.$store.dispatch('project/setSingleProject', project)
       this.$router.push("/projects/" + project.id)
+    },
+    formattedDate(date){
+      let d = new Date(date);
+      let m = (d.getMonth()+1) < 10 ? '0'+ (d.getMonth()+1) : d.getMonth()+1
+      return `${d.getDate()}/${m}/${d.getFullYear()}`
     }
   }
 }
@@ -103,7 +101,5 @@ details {
     display: none;
   }
 }
-
-
 
 </style>

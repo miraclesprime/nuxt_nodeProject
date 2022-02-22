@@ -47,7 +47,7 @@
         </template>
         <template #cell(dueDate)="data">
           <div class="text-dark" id='t-dueDate-wrapper'> 
-            <span id='task-dueDate'>{{ new Date(data.value.dueDate).toLocaleString("en-US") }}</span>
+            <span id='task-dueDate' v-format-date="data.value.dueDate"></span>
           </div>
         </template>
       </bib-table>
