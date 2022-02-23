@@ -35,6 +35,10 @@ export default {
     { path: "~/components/elements/", pathPrefix: false },
     { path: "~/../bib-shared/components/", pathPrefix: false },
   ],
+  transition: {
+    name: 'page',
+    mode: 'out-in'
+  },
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
     "cookie-universal-nuxt",
@@ -100,10 +104,8 @@ export default {
     services: resolve(__dirname, "./services"),
     dummy: resolve(__dirname, "./dummy"),
   },
-  loadingIndicator: {
-    name: "circle",
-    color: "#3B8070",
-    background: "transparent",
+  loading: {
+    color: "#1f42a2",
   },
   dayjs: {
     locales: ["en", "ca"],
