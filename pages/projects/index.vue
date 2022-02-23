@@ -49,7 +49,7 @@
 // import { TABLE_FIELDS, TABS, DEFAULT_TAB, TAB_TITLES } from "config/constants";
 import { PROJECT_FIELDS } from '../../dummy/project';
 import { mapGetters } from 'vuex';
-import ProjectActions from '../../components/elements/Project/ProjectActions.vue';
+import ProjectActions from '../../components/project/ProjectActions.vue';
 import UserInfo from '../../components/elements/UserInfo.vue';
 
 export default {

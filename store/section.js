@@ -1,7 +1,6 @@
 
 export const state = () => ({
     sections: [],
-    token: null
   });
   
   export const mutations = {

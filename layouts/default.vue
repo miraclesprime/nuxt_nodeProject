@@ -97,9 +97,9 @@ export default {
         { label: "Favorites", icon: "heart-like" },
       ],
       navItems2: [
-        { label: "Tasks", icon: "check-circle", key: "task-route" },
-        { label: "Projects", icon: "folder-add", key: 'project-route', selected: true },
-        { label: "Goals", icon: "plans" },
+        { label: "Tasks", icon: "check-all", key: "task-route" },
+        { label: "Projects", icon: "briefcase", key: 'project-route', selected: true },
+        { label: "Goals", icon: "flag-racing" },
         { label: "Dream", icon: "star" },
       ],
       /*favProjects: [
@@ -148,10 +148,10 @@ export default {
   mounted() {
     if (process.client) {
 
-      let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY0NTU5MzY5NDQ5NywiZXhwIjoxNjUzMzY5Njk0NDk3LCJqdGkiOiIyNDRlM2VmYS0xMDY2LTQyMzktYjYxYi0xMjQzY2YxOTI4MzkifQ.b2vxAyg6t9Gt8L0O-X1a7zw9fx85R5vT_bNv-n-mfTA"
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY0NTU5MzY5NDQ5NywiZXhwIjoxNjUzMzY5Njk0NDk3LCJqdGkiOiIyNDRlM2VmYS0xMDY2LTQyMzktYjYxYi0xMjQzY2YxOTI4MzkifQ.b2vxAyg6t9Gt8L0O-X1a7zw9fx85R5vT_bNv-n-mfTA"
 
-      this.$cookies.set('b_ssojwt', cookie);
-      this.$store.dispatch('token/setToken', cookie);
+      // this.$cookies.set('b_ssojwt', cookie);
+      // this.$store.dispatch('token/setToken', cookie);
 
       if (this.$cookies.get('b_ssojwt')) {
         let jwt = this.$cookies.get('b_ssojwt');
