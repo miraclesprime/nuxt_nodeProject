@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="sidebar-overview-wrapper">
     <div class="container" id='sidebar-wrapper' v-if="activeItem">
       <div class="task-info w-100" id='sidebar-inner-wrap'>
         <div class="row" id='sidebar-row-1'>

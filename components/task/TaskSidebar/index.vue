@@ -1,19 +1,19 @@
 <template>
-  <article class="side-panel">
+  <article id="side-panel" class="side-panel">
     <div class="side-panel__header" id='ts-header'>
       <!-- <div class="side-panel__header__file__info" id='ts-header-file-info'>
         <div id='ts-secondary-text' class="p-05 of-hidden text-of-elipsis h-fit text-wrap text-secondary"></div>
       </div> -->
       <div class="d-flex justify-between side-panel__header__actions mb-1" id='ts-side-panel'>
-        <div class="d-flex align-center gap-05">
+        <div class="d-flex align-center gap-05" id="ts-icon-close-Wrapper">
           <div id='ts-icon-7' class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" @click="hideSidebar()">
             <bib-icon icon="close" class="m-auto"></bib-icon>
           </div>
-          <div class="d-flex cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2" id='ts-icon-1'>
+          <div class="d-flex cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2" id='ts-icon-external-wrapper'>
             <bib-icon icon="external" variant="gray6" class="m-auto"></bib-icon>
           </div>
         </div>
-        <div class="d-flex gap-05 align-center">
+        <div class="d-flex gap-05 align-center" id="ts-icon-attachment-wrapper">
           <bib-button variant="light" pill label="invite"></bib-button>
           <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex" id='ts-icon-2'>
             <bib-icon icon="attachment" variant="gray5" class="m-auto"></bib-icon>
@@ -32,30 +32,30 @@
           </div> -->
           <bib-button pop="horizontal-dots" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex">
             <template v-slot:menu>
-              <div class="list">
-                <span class="list__item ">
+              <div class="list" id="ts-list">
+                <span class="list__item" id="ts-list-item-1">
                   <bib-icon icon="check-circle" variant="gray5" class="mr-075"></bib-icon> Mark Completed
                 </span>
-                <span class="list__item">
+                <span class="list__item" id="ts-list-item-2">
                   <bib-icon icon="heart-like" variant="gray5" class="mr-075"></bib-icon> Add to favorites
                 </span>
-                <span class="list__item">
+                <span class="list__item" id="ts-list-item-3">
                   <bib-icon icon="upload" variant="gray5" class="mr-075"></bib-icon> Attach file...
                 </span>
-                <span class="list__item">
+                <span class="list__item" id="ts-list-item-4">
                   <bib-icon icon="user-add" variant="gray5" class="mr-075"></bib-icon> Invite
                 </span>
-                <span class="list__item">
+                <span class="list__item" id="ts-list-item-5">
                   <bib-icon icon="notification" variant="gray5" class="mr-075"></bib-icon> Set reminder
                 </span>
-                <span class="list__item">
+                <span class="list__item" id="ts-list-item-6">
                   <bib-icon icon="duplicate" variant="gray5" class="mr-075"></bib-icon> Copy
                 </span>
-                <span class="list__item">
+                <span class="list__item" id="ts-list-item-7">
                   <bib-icon icon="warning" variant="gray5" class="mr-075"></bib-icon> Report
                 </span>
                 <hr>
-                <span class="list__item danger">Delete</span>
+                <span class="list__item danger" id="ts-list-item-8">Delete</span>
               </div>
             </template>
           </bib-button>
@@ -73,7 +73,7 @@
     <div class="menu" id='ts-menu'>
       <bib-tabs :value="activeSidebarTab" @change="sidebarTabChange" :tabs="sidebarTabs"></bib-tabs>
     </div>
-    <div class="of-scroll-y">
+    <div class="of-scroll-y" id="of-scroll-y">
       <sidebar-overview v-if="activeSidebarTab == 'Overview'" :fields="taskFields" :tasks="tasks" :activeTask="activeTask" />
       <div class="container pt-1" id='ts-subtask-container' v-if="activeSidebarTab == 'Subtasks'">
         <task-group />
@@ -85,6 +85,7 @@
     </div>
   </article>
 </template>
+
 <script>
 import { mapGetters } from "vuex";
 

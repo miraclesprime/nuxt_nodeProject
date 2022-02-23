@@ -2,7 +2,6 @@
   <div>
     <task-actions :gridType="gridType"></task-actions>
     <template v-if="gridType === 'list'">
-      <!-- <bib-table :fields="tableFields" :sections="sections" @item-clicked="toggleSidebar"> -->
         <bib-table
             v-for="(item, index) in sections"
             :key="index"
@@ -14,7 +13,6 @@
             :style="{ borderBottom: 'none'}"
             @item-clicked="toggleSidebar"
           >
-        <!-- <div v-for="(item, index) in sections"> -->
           <template #cell(title)="data">
             <div class="d-flex gap-05" id='task-wrapper'>
               <span class="text-dark" id='task-text' @click="taskSelected(data.value)">{{ data.value ? data.value.title : '' }}</span>
@@ -47,7 +45,6 @@
               <span id='task-dueDate' v-format-date="data.value.dueDate"></span>
             </div>
           </template>
-        <!-- </div> -->
       </bib-table>
     </template>
     <template v-else>
@@ -79,11 +76,7 @@ export default {
       user: "user/getUser"
     }),
   },
-  mounted() {
-    // this.$nextTick(async () => {
-    this.$store.dispatch("section/fetchSections");
-    // });
-  },
+  
   methods: {
     toggleSidebar() {
       this.flag = !this.flag;

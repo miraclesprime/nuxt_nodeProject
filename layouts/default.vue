@@ -47,9 +47,9 @@
         </bib-detail-collapse>
         <bib-detail-collapse label="People" variant="white" open class="mt-1">
           <template v-slot:content>
-            <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light">
+            <!-- <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light">
               <bib-icon icon="add" variant="success" :scale="2" class="p-025 ml-025"></bib-icon> <span class="p-025">Add a team mate</span>
-            </div>
+            </div> -->
             <bib-app-navigation :items="teammate"></bib-app-navigation>
           </template>
         </bib-detail-collapse>
@@ -97,18 +97,18 @@ export default {
         { label: "Favorites", icon: "heart-like" },
       ],
       navItems2: [
-        { label: "Tasks", icon: "check-circle", key: "task-route" },
-        { label: "Projects", icon: "folder-add", key: 'project-route', selected: true },
-        { label: "Goals", icon: "plans" },
+        { label: "Tasks", icon: "check-all", key: "task-route" },
+        { label: "Projects", icon: "briefcase", key: 'project-route', selected: true },
+        { label: "Goals", icon: "flag-racing" },
         { label: "Dream", icon: "star" },
       ],
       /*favProjects: [
         { label: "Project one", icon: "folder-solid" },
         { label: "Project two", icon: "folder-solid" },
       ],*/
-      teammate: [
-        { label: "Person one", icon: "user" }
-      ],
+      // teammate: [
+      //   { label: "Person one", icon: "user" }
+      // ],
       collapseNavigation: false,
       appHeaderActions: {
         button: {
@@ -148,7 +148,7 @@ export default {
   mounted() {
     if (process.client) {
 
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImlhdCI6MTY0NDg5OTc3MjI1OCwiZXhwIjoxNjUyNjc1NzcyMjU4LCJqdGkiOiJlMWJlMzRiMC0wZDdmLTRiMTAtYWJkMy1jMWEwOWJhMmVjZDEifQ.OXonKBcIpNn84_nlgw-kMrxezEhbvtRNbPdLkV6lu3w"
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY0NTU5MzY5NDQ5NywiZXhwIjoxNjUzMzY5Njk0NDk3LCJqdGkiOiIyNDRlM2VmYS0xMDY2LTQyMzktYjYxYi0xMjQzY2YxOTI4MzkifQ.b2vxAyg6t9Gt8L0O-X1a7zw9fx85R5vT_bNv-n-mfTA"
 
       // this.$cookies.set('b_ssojwt', cookie);
       // this.$store.dispatch('token/setToken', cookie);
@@ -173,6 +173,7 @@ export default {
         }).then((value) => {
           console.log('user created!!')
           this.$store.dispatch("project/setFavProjects")
+          this.$store.dispatch("user/setTeamMembers")
         }).catch((err) => {
           console.log('there was some issue!!!')
         })
@@ -189,6 +190,7 @@ export default {
   computed: {
     ...mapGetters({
       favProjects: 'project/getFavProjects',
+      teammate: 'user/getTeamMembers'
     })
   },
 

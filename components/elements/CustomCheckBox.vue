@@ -1,7 +1,7 @@
 <template>
-  <div class="custom-control custom-checkbox">
+  <div id="custom-checkbox-wrapper" class="custom-control custom-checkbox">
     <input type="checkbox" class="custom-control-input" :id="id" />
-    <label class="custom-control-label" :for="id">
+    <label :id="id" class="custom-control-label" :for="id">
       <bib-icon icon="tick" variant="dark" />
     </label>
   </div>

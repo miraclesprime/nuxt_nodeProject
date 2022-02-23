@@ -1,14 +1,15 @@
 <template>
-  <div class="container pt-2">
-    <div class="task-team w-100">
-      <div class="team-list">
+  <div class="container pt-2" id="sc-container">
+    <div class="task-team w-100" id="sc-task-team">
+      <div class="team-list" id="sc-team-list">
         Team
-        <div class="teammate active">
+        <div class="teammate active" id="sc-active-teammate">
           <bib-avatar size="25px"></bib-avatar>
         </div>
 
         <template v-for="(item, index) in teammates">
           <div
+            :id="index"
             class="teammate"
             v-if="index !== activeMate"
             :key="'teammate-' + index"
@@ -18,47 +19,47 @@
           </div>
         </template>
 
-        <a data-v-5ecd2b72="" href="#" class="add-task">
+        <a id="sc-add-task" data-v-5ecd2b72="" href="#" class="add-task">
           <bib-icon icon="add" variant="secondary"></bib-icon>
         </a>
       </div>
 
-      <div class="mail" v-for="item in [1, 2, 3]" :key="'mail' + item">
-        <a class="title" href="#">
+      <div class="mail" id="sc-mail" v-for="item in [1, 2, 3]" :key="'mail' + item">
+        <a class="title" href="#" id="sc-title">
           <bib-icon icon="next" />
           Mmm 00, 000
         </a>
 
-        <div class="mail-sender w-100 mt-05">
+        <div class="mail-sender w-100 mt-05" id="sc-mail-sender">
           <bib-avatar size="35px"></bib-avatar>
-          <span class="sender-name">Persons Name</span>
-          <span class="sending-time">8:00</span>
+          <span class="sender-name" id="sc-person-name">Persons Name</span>
+          <span class="sending-time" id="sc-sending-time">8:00</span>
 
-          <div class="mail-actions">
-            <a href="#">
+          <div class="mail-actions" id="sc-mail-actions">
+            <a href="#" id="sc-icon-comment">
               <bib-icon icon="comment" size="15px" />
             </a>
 
-            <a href="#">
+            <a href="#" id="sc-icon-face-success">
               <bib-icon icon="face-success" size="15px" />
             </a>
 
-            <a href="#">
+            <a href="#" id="sc-icon-thumbs-up">
               <bib-icon icon="thumbs-up" size="15px" />
             </a>
 
-            <a href="#">
+            <a href="#" id="sc-icon-trash">
               <bib-icon icon="trash" size="15px" />
             </a>
 
-            <a href="#">
+            <a href="#" id="sc-icon-horizontal-dots">
               <bib-icon icon="horizontal-dots" size="15px" />
             </a>
           </div>
         </div>
 
-        <div class="mail-content">
-          <p>
+        <div class="mail-content" id="sc-mail-content">
+          <p id="sc-mail-content-text">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor Bruno Goulet et dolore magna aliqua. Ut enim adminim
             venia, quis nostrud <a href="#">External link</a> ullamco laboris
