@@ -76,11 +76,7 @@ export default {
       user: "user/getUser"
     }),
   },
-  mounted() {
-    // this.$nextTick(async () => {
-    this.$store.dispatch("section/fetchSections");
-    // });
-  },
+  
   methods: {
     toggleSidebar() {
       this.flag = !this.flag;

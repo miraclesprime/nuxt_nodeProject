@@ -72,7 +72,6 @@ export default {
       TAB_TITLES,
       TABLE_FIELDS,
       gridType: "list",
-      sections: []
     }
   },
 
@@ -80,13 +79,13 @@ export default {
     ...mapGetters({
       token: 'token/getToken',
       project: 'project/getSingleProject',
-      // sections: 'section/getAllSections',
+      sections: 'section/getAllSections',
       tasks: "task/tasksForListView",
       taskFields: "task/tableFields",
     })
   },
-  
-  created() {
+
+  async created() {
     this.$root.$on("change-grid-type", (type) => {
       this.gridType = type;
     });
@@ -94,15 +93,21 @@ export default {
     this.$root.$on("set-active-task", (task) => {
       this.activeTask = task;
     });
-  },
-  
-  fetch(){
-    this.fetchProject()
+
+    const proj = await this.$axios.$get(`project/${this.$route.params.id}`, {
+      headers: { 'Authorization': `Bearer ${this.token}` }
+    })
+    if (proj) {
+      this.$store.dispatch('project/setSingleProject', proj.data)
+    }
+    const sec = await this.$axios.$get(`section/project/${this.$route.params.id}`, {
+      headers: { 'Authorization': `Bearer ${this.token}` }
+    })
+    if (sec) {
+      this.$store.dispatch("section/setSections", sec.data)
+    }
   },
 
-  mounted() {
-    
-  },
   methods: {
     async fetchProject() {
       const proj = await this.$axios.$get(`project/${this.$route.params.id}`, {
