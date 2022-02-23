@@ -1,21 +1,21 @@
 <template>
-  <div class="container pt-1">
+  <div id="sf-container" class="container pt-1">
     <section-title title="Add Files/Folders" />
 
-    <div class="file w-100">
-      <div class="folder-name">
+    <div id="sf-file" class="file w-100">
+      <div id="sf-folder-name" class="folder-name">
         <bib-icon icon="folder" :scale="1.25"></bib-icon>
 
-        <span>Folder</span>
+        <span id="sf-folder-text">Folder</span>
       </div>
 
-      <div class="file-name">
+      <div id="sf-file-name" class="file-name">
         <bib-icon icon="awesome-file" :scale="1.25"></bib-icon>
-        <div class="divider" style="left: 68%"></div>
-        <span style="width: 65%">File</span>
-        <div class="divider" style="left: 95%"></div>
-        <span class="date">Nov 23, 2032</span>
-        <span class="options">. . .</span>
+        <div id="sf-divider" class="divider" style="left: 68%"></div>
+        <span id="sf-span" style="width: 65%">File</span>
+        <div id="sf-divider-2" class="divider" style="left: 95%"></div>
+        <span id="sf-date" class="date">Nov 23, 2032</span>
+        <span id="sf-options" class="options">. . .</span>
       </div>
     </div>
   </div>

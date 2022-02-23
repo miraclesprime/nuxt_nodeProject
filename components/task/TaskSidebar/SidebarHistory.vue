@@ -1,6 +1,6 @@
 <template>
-  <div class="container pt-1">
-    <div class="task-group w-100">
+  <div id="sh-container" class="container pt-1">
+    <div id="sh-task-group" class="task-group w-100">
       <section-title title="Day or Date" icon="arrowhead-down" />
 
       <custom-table
@@ -18,9 +18,9 @@
           <custom-check-box
             :id="'sidebar-' + groupName + '-' + data.value.key"
           />
-          <span class="ml-05">Entity</span>
-          <span class="ml-05">Action</span>
-          <span class="ml-05 text-blue">Location</span>
+          <span id="sh-entitiy" class="ml-05">Entity</span>
+          <span id="sh-action" class="ml-05">Action</span>
+          <span id="sh-location" class="ml-05 text-blue">Location</span>
         </template>
       </custom-table>
     </div>

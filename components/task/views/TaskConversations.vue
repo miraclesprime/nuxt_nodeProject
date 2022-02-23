@@ -1,54 +1,54 @@
 <template>
-  <div class="container pt-1 row">
-    <div class="row col-7 position-relative">
-      <div class="col-4">
+  <div class="container pt-1 row" id="task-conv-container">
+    <div class="row col-7 position-relative" id="task-conv-row">
+      <div class="col-4" id="task-conv-col1">
         <sidebar-team adClass="" />
       </div>
 
-      <div class="divider" style="left: 33.8%" />
+      <div class="divider" id="task-conv-divider" style="left: 33.8%" />
 
-      <div class="col-8 mt-2">
-        <div class="task-team w-100">
-          <div class="mail" v-for="item in [1, 2, 3]" :key="'mail' + item">
-            <div class="title d-flex align-center">
+      <div class="col-8 mt-2" id="task-conv-col2">
+        <div class="task-team w-100" id="task-conv-task-team">
+          <div class="mail" v-for="item in [1, 2, 3]" :id="'mail' + item" :key="'mail' + item">
+            <div class="title d-flex align-center" id="task-conv-title">
               <bib-icon icon="next" />
               Mmm 00, 000
             </div>
 
-            <div class="mail-sender w-100 mt-05">
+            <div class="mail-sender w-100 mt-05" id="task-conv-mail-sender">
               <bib-avatar size="35px"></bib-avatar>
-              <span class="sender-name">Persons Name</span>
-              <span class="sending-time">8:00</span>
+              <span class="sender-name" id="task-conv-sender-name">Persons Name</span>
+              <span class="sending-time" id="task-conv-sending-time">8:00</span>
 
-              <div class="mail-actions">
-                <a href="#">
+              <div class="mail-actions" id="task-mail-actions">
+                <a href="#" id="task-mail-action-link1">
                   <bib-icon icon="comment" />
                 </a>
 
-                <a href="#">
+                <a href="#" id="task-mail-action-link2">
                   <bib-icon icon="face-success" variant="gray" />
                 </a>
 
-                <a href="#">
+                <a href="#" id="task-mail-action-link3">
                   <bib-icon icon="thumbs-up" />
                 </a>
 
-                <a href="#">
+                <a href="#"  id="task-mail-action-link4">
                   <bib-icon icon="trash" />
                 </a>
 
-                <a href="#">
+                <a href="#"  id="task-mail-action-link5">
                   <bib-icon icon="elipsis" />
                 </a>
               </div>
             </div>
 
-            <div class="mail-content">
-              <p>
+            <div class="mail-content"  id="task-conv-mail-content-1">
+              <p id="task-conv-mail-content-text">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor Bruno Goulet et dolore magna aliqua. Ut enim
                 adminim venia, quis nostrud
-                <a href="#">External link</a> ullamco laboris nisi utaliquip ex
+                <a href="#" id="tc-mc-link1">External link</a> ullamco laboris nisi utaliquip ex
                 ea commodo consequat. <br /><br />
                 Duis aute irure dolor in reprehenderit in volutate velit esse
                 cillum

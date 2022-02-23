@@ -1,6 +1,6 @@
 <template>
-  <div class="task-actions ml-05">
-    <div class="action-left">
+  <div id="project-action-wrapper" class="task-actions ml-05">
+    <div id="pa-add-project-wrapper" class="action-left">
       <!-- <section-title
         title="Add Task/Section"
         titleSize="15px"
@@ -10,62 +10,62 @@
       <bib-button pop="add" label="Add Project" size="sm"></bib-button>
     </div>
 
-    <div class="action-right">
-      <ul class="actions">
-        <li class="action">
-          <span>Viewing: {{selectedView}}</span>
+    <div class="action-right" id="pa-action-right">
+      <ul class="actions" id="pa-actions-list">
+        <li class="action" id="pa-action-item1">
+          <span id="pa-action-item1-text">Viewing: {{selectedView}}</span>
             <bib-button pop="arrow-down">
                 <template v-slot:menu>
-                    <div class="list">
-                        <span class="list__item" @click="changeViewName('Incompleted Tasks')">Incompleted Tasks</span>
-                        <span class="list__item" @click="changeViewName('Completed Tasks')">Completed Tasks</span>
-                        <span class="list__item" @click="changeViewName('All')">All</span>
+                    <div class="list" id="pa-item1-dropdown">
+                        <span id="pa-item1-dropdown-el1" class="list__item" @click="changeViewName('Incompleted Tasks')">Incompleted Tasks</span>
+                        <span id="pa-item1-dropdown-el2" class="list__item" @click="changeViewName('Completed Tasks')">Completed Tasks</span>
+                        <span id="pa-item1-dropdown-el3" class="list__item" @click="changeViewName('All')">All</span>
                     </div>
                 </template>
             </bib-button>
         </li>
         
-          <li class="action">
-          <span>Filter By:</span>
+          <li class="action" id="pa-action-item2">
+          <span id="pa-action-item2-text">Filter By:</span>
             <bib-button pop="filter-horizontal">
                 <template v-slot:menu>
-                    <div class="list">
-                        <span class="list__item" @click="changeViewName('Incompleted Tasks')">Incompleted Tasks</span>
-                        <span class="list__item" @click="changeViewName('Completed Tasks')">Completed Tasks</span>
-                        <span class="list__item" @click="changeViewName('All')">All</span>
+                    <div class="list" id="pa-item2-dropdown">
+                        <span id="pa-item2-dropdown-el1" class="list__item" @click="changeViewName('Incompleted Tasks')">Incompleted Tasks</span>
+                        <span id="pa-item2-dropdown-el2" class="list__item" @click="changeViewName('Completed Tasks')">Completed Tasks</span>
+                        <span id="pa-item2-dropdown-el3" class="list__item" @click="changeViewName('All')">All</span>
                     </div>
                 </template>
             </bib-button>
         </li>
        
-        <li class="action">
-          <span>Sorted By: {{selectedSort}}</span>
+        <li class="action" id="pa-action-item3">
+          <span id="pa-action-item3-text">Sorted By: {{selectedSort}}</span>
             <bib-button pop="swap-vertical">
                 <template v-slot:menu>
-                    <div class="list">
-                        <span class="list__item" @click="changeSortName('Name')">Name</span>
-                        <span class="list__item" @click="changeSortName('Project')">Project</span>
-                        <span class="list__item" @click="changeSortName('Owner')">Owner</span>
-                        <span class="list__item" @click="changeSortName('Status')">Status</span>
-                        <span class="list__item" @click="changeSortName('Start Date')">Start Date</span>
-                        <span class="list__item" @click="changeSortName('Due Date')">Due Date</span>
-                        <span class="list__item" @click="changeSortName('Tag')">Tag</span>
-                        <span class="list__item" @click="changeSortName('Team')">Team</span>
+                    <div class="list" id="pa-item3-dropdown">
+                        <span id="pa-item3-dropdown-el1" class="list__item" @click="changeSortName('Name')">Name</span>
+                        <span id="pa-item3-dropdown-el2" class="list__item" @click="changeSortName('Project')">Project</span>
+                        <span id="pa-item3-dropdown-el3" class="list__item" @click="changeSortName('Owner')">Owner</span>
+                        <span id="pa-item3-dropdown-el4" class="list__item" @click="changeSortName('Status')">Status</span>
+                        <span id="pa-item3-dropdown-el5" class="list__item" @click="changeSortName('Start Date')">Start Date</span>
+                        <span id="pa-item3-dropdown-el6" class="list__item" @click="changeSortName('Due Date')">Due Date</span>
+                        <span id="pa-item3-dropdown-el7" class="list__item" @click="changeSortName('Tag')">Tag</span>
+                        <span id="pa-item3-dropdown-el8" class="list__item" @click="changeSortName('Team')">Team</span>
                     </div>
                 </template>
             </bib-button>
         </li>
 
-        <li class="action">
-          <span style="margin-right: 5px">Views</span>
-          <a href="#" class="grid-type" @click.prevent="changeGridType('list')">
+        <li class="action" id="pa-action-item4">
+          <span id="pa-action-item4-text" style="margin-right: 5px">Views</span>
+          <a href="#" id="pa-action-item4-list" class="grid-type" @click.prevent="changeGridType('list')">
             <bib-icon
               icon="apps-large"
               :variant="type === 'list' ? 'black' : 'gray'"
             />
           </a>
 
-          <a href="#" class="grid-type" @click.prevent="changeGridType('grid')">
+          <a href="#" id="pa-action-item4-grid" class="grid-type" @click.prevent="changeGridType('grid')">
             <bib-icon
               icon="apps-large-solid"
               :variant="type === 'grid' ? 'black' : 'gray'"

@@ -47,9 +47,9 @@
         </bib-detail-collapse>
         <bib-detail-collapse label="People" variant="white" open class="mt-1">
           <template v-slot:content>
-            <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light">
+            <!-- <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light">
               <bib-icon icon="add" variant="success" :scale="2" class="p-025 ml-025"></bib-icon> <span class="p-025">Add a team mate</span>
-            </div>
+            </div> -->
             <bib-app-navigation :items="teammate"></bib-app-navigation>
           </template>
         </bib-detail-collapse>
@@ -106,9 +106,9 @@ export default {
         { label: "Project one", icon: "folder-solid" },
         { label: "Project two", icon: "folder-solid" },
       ],*/
-      teammate: [
-        { label: "Person one", icon: "user" }
-      ],
+      // teammate: [
+      //   { label: "Person one", icon: "user" }
+      // ],
       collapseNavigation: false,
       appHeaderActions: {
         button: {
@@ -173,6 +173,7 @@ export default {
         }).then((value) => {
           console.log('user created!!')
           this.$store.dispatch("project/setFavProjects")
+          this.$store.dispatch("user/setTeamMembers")
         }).catch((err) => {
           console.log('there was some issue!!!')
         })
@@ -189,6 +190,7 @@ export default {
   computed: {
     ...mapGetters({
       favProjects: 'project/getFavProjects',
+      teammate: 'user/getTeamMembers'
     })
   },
 

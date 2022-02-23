@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div id="task-overview-view-wrapper">
 
-    <div class="border-gray4">
+    <div id="task-overview-view-inner" class="border-gray4">
       <section-title></section-title>
     </div>
     

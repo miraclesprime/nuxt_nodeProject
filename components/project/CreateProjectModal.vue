@@ -1,21 +1,21 @@
 <template>
-  <div>
+  <div id="create-project-modal-wrapper">
     <bib-modal-wrapper @close="showCreateProjectModal = false" v-show="showCreateProjectModal" title="Create Project" id="create-project" @keypress.native="bindEnter($event, 'create-project-btn')">
       <template v-slot:content>
         <bib-input label="Project name" :value="contextProject.name" @input="($event) => { contextProject.name = $event; }" placeholder="Name your project"></bib-input>
         <bib-input label="Department" :value="department" placeholder="Type or select department name"></bib-input>
-        <label class="text-gray6">Assign a project lead</label>
+        <label id="create-project-modal-heading" class="text-gray6">Assign a project lead</label>
         <bib-button dropdown1="" label="Enter name or email" opend-label="Select or invite participants" class="mt-05 mb-05">
           <template v-slot:menu>
-            <ul>
-              <li @click="dd1ItemClick(1)">
+            <ul id="cpm-fields">
+              <li id="cpm-field-1" @click="dd1ItemClick(1)">
                 <bib-avatar size="1.5rem"></bib-avatar>
-                <span class="ml-05"> Persons Name </span>
+                <span id="cpm-person-name" class="ml-05"> Persons Name </span>
               </li>
-              <li @click="dd1ItemClick(0)">
-                <div class="d-flex">
+              <li id="cpm-field-2" @click="dd1ItemClick(0)">
+                <div class="d-flex" id="cpm-field-wrap">
                   <bib-icon icon="add" variant="success" :scale="1.125"></bib-icon>
-                  <span class="ml-05"> Invite via email </span>
+                  <span class="ml-05" id="cpm-email-invite"> Invite via email </span>
                 </div>
               </li>
             </ul>
@@ -34,11 +34,11 @@
             <bib-icon icon="close" :scale="1" class="cursor-pointer"></bib-icon>
           </div> -->
         </div>
-        <div class="d-flex p-075 bg-light shape-rounded mt-1">
-          <div class="width-2 height-2">
+        <div id="cpm-jumbotron-wrapper" class="d-flex p-075 bg-light shape-rounded mt-1">
+          <div id="cpm-jumbotron" class="width-2 height-2">
             <bib-avatar text="!" variant="primary" text-variant="light" size="1rem"></bib-avatar>
           </div>
-          <span class="pl-05 font-sm text-gray6">Lorem ipsum, dolor sit amet consectetur adipisicing, Lorem ipsum dolor sit, amet. elit. Ad, Lorem ipsum dolor sit amet. sunt.</span>
+          <span id="cpm-jumbotron-text" class="pl-05 font-sm text-gray6">Lorem ipsum, dolor sit amet consectetur adipisicing, Lorem ipsum dolor sit, amet. elit. Ad, Lorem ipsum dolor sit amet. sunt.</span>
         </div>
       </template>
       <template v-slot:footer>
@@ -54,8 +54,10 @@
     </bib-modal-wrapper>
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
+
 export default {
   name: "CreateProjectModal",
   data() {

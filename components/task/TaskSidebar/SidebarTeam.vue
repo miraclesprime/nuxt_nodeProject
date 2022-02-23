@@ -1,9 +1,10 @@
 <template>
-  <div :class="adClass">
+  <div :class="adClass" :id="adClass">
     <section-title title="Add Team Member" />
 
-    <div class="team-list w-100">
+    <div class="team-list w-100" id="sidebar-team-team-list">
       <div
+        :id="'teammate-' + index"
         class="teammate"
         v-for="(item, index) in teammates"
         :key="'teammate-' + index"
@@ -12,6 +13,7 @@
         </bib-avatar>
 
         <span class="teammate-name"
+            :id="item.name"
           >{{ item.name }}
           <template v-if="item.role !== 'developer'">
             ( {{ item.role }} )
