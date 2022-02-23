@@ -1,8 +1,8 @@
 <template>
-  <div class="section-title w-100 d-flex align-center" @click="openSidebar">
+  <div id="section-title-wrapper" class="section-title w-100 d-flex align-center" @click="openSidebar">
     <bib-icon :icon="icon" variant="success" :scale="1.2" />
 
-    <span :style="titleStyle">{{ title }}</span>
+    <span :style="titleStyle" id="section-title">{{ title }}</span>
   </div>
 </template>
 

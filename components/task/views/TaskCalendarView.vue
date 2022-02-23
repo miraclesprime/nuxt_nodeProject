@@ -1,29 +1,29 @@
 <template>
-  <div>
+  <div id="task-calendar-wrapper">
     
     <task-actions ref="childComponent" @change-data='taskCreate' />
     <div id='myDiv'>
     <FullCalendar class='demo-app-calendar' :options='calendarOptions'>
         <template v-slot:eventContent='arg'>
-          <div style="display: flex;">
-            <span v-if='arg.event.extendedProps.completed == false'>
-                <div class="not-completed"></div>
+          <div id="task-calendar-inner-wrap" style="display: flex;">
+            <span id="tc-v-if" v-if='arg.event.extendedProps.completed == false'>
+                <div id="tc-not-completed" class="not-completed"></div>
             </span>
-            <span v-else>
-                <div class="success-checkmark"></div>
+            <span id="tc-v-else" v-else>
+                <div id="tc-success-checkmark" class="success-checkmark"></div>
             </span>
 
-            <div class="event-box">
-              <span class='event-title' :class="{'limitTitle': isExpand}">{{ arg.event.title }}</span>
+            <div class="event-box" id="tc-event-box">
+              <span class='event-title' id="tc-event-title" :class="{'limitTitle': isExpand}">{{ arg.event.title }}</span>
               <br>
-              <span class="due-date">Due {{arg.event.extendedProps.dueDate}}</span>
+              <span class="due-date" id="tc-event-due-date">Due {{arg.event.extendedProps.dueDate}}</span>
             </div> 
 
-            <div class="dropdown">
-                <button class="dropbtn">...</button>
-                <div class="dropdown-content">
-                  <a href="#">Edit</a>
-                  <a href="#">Delete</a>
+            <div class="dropdown" id="tc-dropdown">
+                <button class="dropbtn" id="tc-dropbtn">...</button>
+                <div class="dropdown-content" id="tc-dropdown-content">
+                  <a href="#" id="tc-dropdown-content-link1">Edit</a>
+                  <a href="#" id="tc-dropdown-content-link2">Delete</a>
                 </div>
               </div> 
           </div>

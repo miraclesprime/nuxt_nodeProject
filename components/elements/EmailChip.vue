@@ -1,9 +1,9 @@
 <template>
-  <div class="align-center text-secondary p-05 bg-light shape-rounded">
+  <div id="email-chip-wrapper" class="align-center text-secondary p-05 bg-light shape-rounded">
     <template v-if="avatar">
       <bib-avatar :src="avatar" size="1.5rem"></bib-avatar>
     </template>
-    <span class="pl-025 pr-025">{{email}}</span>
+    <span id="email" class="pl-025 pr-025">{{email}}</span>
     <template v-if="close">
       <bib-icon icon="close" :scale="1" class="cursor-pointer" v-on:click="onClose"></bib-icon>
     </template>
