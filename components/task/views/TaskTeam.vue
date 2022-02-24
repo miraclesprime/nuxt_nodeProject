@@ -1,5 +1,5 @@
 <template>
-  <div class="task-group w-100">
+  <div id="task-team-wrapper" class="task-group w-100">
     <section-title />
 
     <custom-table
@@ -14,11 +14,11 @@
 
       <template #cell(name)="data">
         <custom-check-box :id="'team-' + groupName + '-' + data.value.key" />
-        <span class="ml-05">{{ data.value.name }}</span>
+        <span id="tt-name" class="ml-05">{{ data.value.name }}</span>
       </template>
 
       <template #cell(location)="data">
-        <span class="assignee-name ml-05">
+        <span id="tt-location" class="assignee-name ml-05">
           {{ data.value.location }}
         </span>
       </template>
