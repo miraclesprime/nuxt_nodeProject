@@ -1,57 +1,58 @@
 <template>
-  <div>
+  <div id="task-view-wrapper">
     <task-actions :gridType="gridType"></task-actions>
     <template v-if="loading">
-      <div id="comp-loading" class="position-absolute d-flex align-center justify-center comp-loading">
+      <div id="tv-comp-loading" class="position-absolute d-flex align-center justify-center comp-loading">
         <bib-spinner variant="primary"></bib-spinner>
       </div>
     </template>
     <template v-if="gridType === 'list'">
       <bib-table v-for="(item, index) in sections" :key="index" :fields="tableFields" :sections="item.tasks" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
         <template #cell(title)="data">
-          <div class="d-flex gap-05" id='task-wrapper'>
-            <span class="text-dark" id='task-text' @click="taskSelected(data.value)">{{ data.value ? data.value.title : '' }}</span>
+          <div class="d-flex gap-05" id='tv-title-wrap'>
+            <span class="text-dark" id='tv-title-text' @click="taskSelected(data.value)">{{ data.value ? data.value.title : '' }}</span>
           </div>
         </template>
         <template #cell(status)="data">
-          <div class="justify-between text-dark" id='t-status-wrapper'>
-            <span :class="statusClass( data.value.statusId ? data.value.statusId : '')" id='task-status'>
+          <div class="justify-between text-dark" id='tv-status-wrap'>
+            <span :class="statusClass( data.value.statusId ? data.value.statusId : '')" id='tv-status-text'>
               {{ data.value.status ? data.value.status.text : '' }}
             </span>
-            <!-- <span :class="statusClass(data.value.statusId)" id='task-progress'>
-              {{ data.value.progress }}<span v-if="data.value.progress">%</span></span> -->
+            <!-- <span :class="statusClass(data.value.statusId)" id='tv-progress-wrap'>
+              {{ data.value.progress }}<span v-if="data.value.progress" id="tv-percent-sign">%</span></span> -->
           </div>
         </template>
         <template #cell(priority)="data">
-          <div class="justify-between text-dark" id='t-priority-wrapper'>
-            <span :class="priorityClass(data.value.priorityId)" id='task-priority'>
+          <div class="justify-between text-dark" id='tv-priority-wrap'>
+            <span :class="priorityClass(data.value.priorityId)" id='tv-priority-text'>
               {{ data.value.priority ? data.value.priority.text : '' }}
             </span>
           </div>
         </template>
         <template #cell(assignee)="data">
-          <div class="text-dark" id='t-assignee-wrapper'>
+          <div class="text-dark" id='tv-assignee-wrap'>
             <!-- <bib-avatar class="mt-auto mb-auto" size="1.5rem"></bib-avatar> -->
-            <span id='task-assignee'>
+            <span id='tv-assignee-text'>
               <user-info :id="data.value ? data.value.userId : ''" />
             </span>
           </div>
         </template>
         <template #cell(dueDate)="data">
-          <div class="text-dark" id='t-dueDate-wrapper'>
-            <span id='task-dueDate' v-format-date="data.value.dueDate"></span>
+          <div class="text-dark" id='tv-dueDate-wrap'>
+            <span id='tv-dueDate-text' v-format-date="data.value.dueDate"></span>
           </div>
         </template>
       </bib-table>
     </template>
     <template v-else>
-      <div class="d-flex" id='task-grid'>
+      <div class="d-flex" id='tv-grid-wrap'>
         <task-grid-section :headless="true" label="Section" :taskFields="tableFields" :taskSections="tasks.slice(0, 3)" :open="true" groupName="1" />
       </div>
     </template>
     <task-sidebar @open-sidebar="toggleSidebar()"></task-sidebar>
   </div>
 </template>
+
 <script>
 import { TASK_FIELDS } from "~/dummy/tasks.js";
 import { mapGetters } from 'vuex';

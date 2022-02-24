@@ -1,6 +1,6 @@
 <template>
-  <div class="task-actions ml-05">
-    <div class="action-left">
+  <div id="task-actions-wrapper" class="task-actions ml-05">
+    <div class="action-left" id="ta-action-left">
       <!-- <section-title
         title="Add Task/Section"
         titleSize="15px"
@@ -9,11 +9,11 @@
 
       <bib-button pop="add" label="Add Task/Section" size="sm">
         <template v-slot:menu>
-          <div class="list">
-            <span class="list__item" @click="showCreateTaskModal"
+          <div class="list" id="ta-list">
+            <span class="list__item" id="ta-list-item1" @click="showCreateTaskModal"
               >Add Task</span
             >
-            <span class="list__item" @click="showCreateSectionModal"
+            <span class="list__item" id="ta-list-item2" @click="showCreateSectionModal"
               >Add Section</span
             >
           </div>
@@ -21,43 +21,43 @@
       </bib-button>
     </div>
 
-    <div class="action-right">
-      <ul class="actions">
-        <li class="action">
+    <div class="action-right" id="ta-action-right">
+      <ul class="actions" id="ta-action-right-actions">
+        <li class="action" id="ta-action1">
           <custom-check-box />
 
-          <span>My items only</span>
+          <span id="ta-action1-text">My items only</span>
         </li>
-        <li class="action">
+        <li class="action" id="ta-action2">
           <bib-icon icon="sort" />
-          <span>Sort</span>
+          <span id="ta-action2-text">Sort</span>
         </li>
-        <li class="action">
+        <li class="action" id="ta-action3">
           <bib-icon icon="filter-horizontal" />
-          <span>Filter</span>
+          <span id="ta-action3-text">Filter</span>
         </li>
-        <li class="action">
+        <li class="action" id="ta-action4">
           <bib-icon icon="group" />
-          <span>Group</span>
+          <span id="ta-action4-text">Group</span>
         </li>
-        <li class="action">
-          <span style="margin-right: 5px">Views</span>
-          <a href="#" class="grid-type" @click.prevent="changeGridType('list')">
+        <li class="action" id="ta-action5">
+          <span style="margin-right: 5px" id="ta-action5-text">Views</span>
+          <a href="#" class="grid-type" id="ta-action5-link" @click.prevent="changeGridType('list')">
             <bib-icon
               icon="list"
               :variant="type === 'list' ? 'black' : 'gray'"
             />
           </a>
 
-          <a href="#" class="grid-type" @click.prevent="changeGridType('grid')">
+          <a href="#" class="grid-type" id="ta-action5-link2" @click.prevent="changeGridType('grid')">
             <bib-icon
               icon="kanban"
               :variant="type === 'grid' ? 'black' : 'gray'"
             />
           </a>
         </li>
-        <li class="action">
-          <a href="#">
+        <li class="action" id="ta-action6">
+          <a href="#" id="ta-action6-link">
             <bib-icon icon="horizontal-dots" />
           </a>
         </li>

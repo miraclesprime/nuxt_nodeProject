@@ -1,20 +1,20 @@
 <template>
-  <div class="task-grid-section">
-    <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
-      <div class="title text-gray">{{ label }}</div>
+  <div class="task-grid-section" id="task-grid-section-wrapper">
+    <div class="w-100 d-flex justify-between" id="tgs-inner-wrap" style="margin-bottom: 10px">
+      <div class="title text-gray" id="tgs-label">{{ label }}</div>
 
-      <div class="d-flex section-options">
-        <div class="mr-1">
+      <div class="d-flex section-options" id="tgs-section-options">
+        <div class="mr-1" id="tgs-add-icon">
           <bib-icon icon="add" variant="success" :scale="1.2" />
         </div>
 
-        <div>
+        <div id="tgs-elipsis-icon">
           <bib-icon icon="elipsis" :scale="1.2" />
         </div>
       </div>
     </div>
 
-    <div class="task-section__body">
+    <div class="task-section__body" id="tgs-task-section-body">
       <Container
         :group-name="groupName"
         @drop="onDrop('sections', $event)"

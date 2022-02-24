@@ -1,54 +1,55 @@
 <template>
-  <div>
-    <nav class="d-flex align-center gap-05 pt-05 pb-05">
+  <div id="project-id-wrapper">
+    <nav id="project-id-nav" class="d-flex align-center gap-05 pt-05 pb-05">
       <nuxt-link to="/projects" class="d-flex">
         <bib-icon icon="arrowhead-left" :scale="1.5"></bib-icon>
       </nuxt-link>
       <bib-avatar></bib-avatar>
-      <span class="font-lg font-w-700  mr-1 ">{{project ? project.title : ''}}</span>
+      <span id="project-id-project-title" class="font-lg font-w-700  mr-1 ">{{project ? project.title : ''}}</span>
       <!-- <bib-page-title label="Page Title"></bib-page-title> -->
-      <span class=" badge-status">{{project.status ? project.status.text : ''}}</span>
-      <div class="ml-auto d-flex gap-05 align-center">
+      <span id="project-id-badge-status" class="badge-status">{{project.status ? project.status.text : ''}}</span>
+      <div class="ml-auto d-flex gap-05 align-center" id="project-id-button-wraps">
         <bib-avatar></bib-avatar>
         <bib-button label="invite" variant="light" pill></bib-button>
-        <div class="shape-circle bg-light width-2 height-2 d-flex cursor-pointer">
+        <div class="shape-circle bg-light width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark">
           <bib-icon icon="bookmark" class="m-auto"></bib-icon>
         </div>
         <!-- <div class="shape-circle bg-light width-2 height-2 d-flex ">
           <bib-icon icon="elipsis" class="m-auto">
             </bib-icon>
         </div> -->
-        <div class="shape-circle bg-light width-2 height-2 d-flex justify-center align-center">
-          <bib-button pop="horizontal-dots">
+        <div class="shape-circle bg-light width-2 height-2 d-flex justify-center align-center" id="project-id-menu-list">
+          <bib-button pop="horizontal-dots" id="project-id-horizontal-dots">
             <template v-slot:menu>
-              <div class="list">
-                <span class="list__item">Show project details</span>
-                <hr>
-                <span class="list__item">
+              <div class="list" id="project-id-list">
+                <span class="list__item" id="project-id-list-item1">Show project details</span>
+                <hr id="project-id-hr">
+                <span class="list__item" id="project-id-list-item2">
                   <bib-icon icon="heart-like" class="mr-075"></bib-icon> Add to favorites
                 </span>
-                <span class="list__item">
+                <span class="list__item" id="project-id-list-item3">
                   <bib-icon icon="user-add" class="mr-075"></bib-icon> Share with
                 </span>
-                <span class="list__item">
+                <span class="list__item" id="project-id-list-item4">
                   <bib-icon icon="pencil" class="mr-075"></bib-icon> Rename
                 </span>
-                <div class="mt-1"></div>
-                <span class="list__item">
+                <div class="mt-1" id="project-id-div"></div>
+                <span class="list__item" id="project-id-list-item5">
                   <bib-icon icon="warning" class="mr-075"></bib-icon> Report
                 </span>
-                <hr>
-                <span class="list__item danger">Delete </span>
+                <hr  id="project-id-hr2">
+                <span class="list__item danger" id="project-id-list-item6">Delete </span>
               </div>
             </template>
           </bib-button>
         </div>
       </div>
     </nav>
-    <div class="menu" id='menu-content'>
+
+    <div class="menu" id='project-idmenu-content'>
       <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="TABS" />
     </div>
-    <div id='task-overview' class="position-relative">
+    <div id='project-id-task-overview' class="position-relative">
       <task-overview v-if="activeTab.value == TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="tasks" :gridType="gridType" />
       <task-view v-if="activeTab.value == TAB_TITLES.tasks" :fields="taskFields" :tasks="tasks" :sections="sections" :gridType="gridType" />
       <task-conversations v-if="activeTab.value == TAB_TITLES.conversations" :fields="TABLE_FIELDS" :tasks="tasks" />
@@ -59,6 +60,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
 import { TABLE_FIELDS, TABS, DEFAULT_TAB, TAB_TITLES } from "config/constants";
@@ -94,9 +96,9 @@ export default {
       this.activeTask = task;
     });
 
-    if (this.token) {
+    if (process.client) {
       this.$axios.$get(`project/${this.$route.params.id}`, {
-        headers: { 'Authorization': `Bearer ${this.token}` }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       }).then((res) => {
         if (res) {
           this.$store.dispatch('project/setSingleProject', res.data)
@@ -106,7 +108,7 @@ export default {
       })
 
       this.$axios.$get(`section/project/${this.$route.params.id}`, {
-        headers: { 'Authorization': `Bearer ${this.token}` }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       }).then((res) => {
         if (res) {
           this.$store.dispatch("section/setSections", res.data)

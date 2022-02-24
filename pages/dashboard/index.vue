@@ -1,6 +1,6 @@
 <template>
-  <div class="text-center">
-    <h2 class="p-2 text-secondary">Welcome <user-info :id="user ? user.sub : ''" /></h2>
+  <div class="text-center" id="dashboard-wrapper">
+    <h2 class="p-2 text-secondary" id="dashboard-title">Welcome <user-info :id="user ? user : ''" /></h2>
 
   </div>
 </template>
@@ -20,7 +20,13 @@ import UserInfo from '../../components/elements/UserInfo.vue';
     computed: {
       ...mapGetters({
         user: 'user/getUser'
-      })
+      }),
+
+      user() {
+        if(process.client) {
+          return JSON.parse(localStorage.getItem('user')).sub
+        }
+      }
     },
   }
 </script>

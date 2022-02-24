@@ -50,8 +50,8 @@ export const actions = {
 
   // for dispatch fetching projects
   async fetchProjects(ctx) {
-    const res = await this.$axios.$get(`/project/company/${ctx.rootState.user.user.subb}`, {
-      headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
+    const res = await this.$axios.$get(`/project/company/${JSON.parse(window.localStorage.getItem('user')).subb}`, {
+      headers: { 'Authorization': `Bearer ${window.localStorage.getItem('accessToken')}` }
     });
     ctx.commit('fetchProjects', res.data);
   },
