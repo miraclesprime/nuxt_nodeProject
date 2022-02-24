@@ -20,27 +20,28 @@ export default {
   data() {
     return {
       title: "Tasks",
+      tasks: [],
       gridType: "list",
+      sections: [],
     }
   },
   computed: {
     ...mapGetters({
-      tasks: "task/tasksForListView",
+      // tasks: "task/tasksForListView",
       taskFields: "task/tableFields",
       token: "token/getToken",
+      user: "user/getUser"
       // project: "project/getSingleProject",
-      sections: [],
     }),
   },
-  async mounted() {
-    const sec = await this.$axios.$get(`section/project/${this.$route.params.id}`, {
-      headers: { 'Authorization': `Bearer ${this.token}` }
-    })
-    if (sec) {
-      // console.log(sec)
-      this.sections = sec.data
-    }
-  }
+  created(){
+    let compid = JSON.parse(localStorage.getItem("user")).subb;
+    this.$axios.$get("task/company/"+compid, {
+        headers: { 'Authorization': localStorage.getItem("accessToken") }
+      }).then(res => {
+        this.tasks = res.data;
+      });
+  },
 }
 
 </script>

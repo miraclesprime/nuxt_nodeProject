@@ -67,12 +67,12 @@ ul {
 }
 
 .side-panel {
-  position: absolute;
-  z-index: 6;
+  position: fixed;
+  z-index: 11;
   right: 0;
   width: $sidebar-width;
   // max-width: $sidebar-width;
-  top: 0;
+  top: 65px;
   bottom: 0;
   background-color: $white;
   box-shadow: 5px 2px 15px $gray6;

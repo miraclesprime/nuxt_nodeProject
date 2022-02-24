@@ -3,7 +3,7 @@
     <task-actions :gridType="gridType"></task-actions>
     <template v-if="loading">
       <div id="tv-comp-loading" class="position-absolute d-flex align-center justify-center comp-loading">
-        <bib-spinner variant="primary" ></bib-spinner>
+        <bib-spinner variant="primary"></bib-spinner>
       </div>
     </template>
     <template v-if="gridType === 'list'">
@@ -15,25 +15,26 @@
         </template>
         <template #cell(status)="data">
           <div class="justify-between text-dark" id='tv-status-wrap'>
-            <span :class="statusClass( data.value.status ? data.value.status.text : '')" id='tv-status-text'>
+            <span :class="statusClass( data.value.statusId ? data.value.statusId : '')" id='tv-status-text'>
               {{ data.value.status ? data.value.status.text : '' }}
             </span>
-            <span :class="statusClass(data.value.status)" id='tv-progress-wrap'>
-              {{ data.value.progress }}<span v-if="data.value.progress" id="tv-percent-sign">%</span></span>
+            <!-- <span :class="statusClass(data.value.statusId)" id='tv-progress-wrap'>
+              {{ data.value.progress }}<span v-if="data.value.progress" id="tv-percent-sign">%</span></span> -->
           </div>
         </template>
         <template #cell(priority)="data">
           <div class="justify-between text-dark" id='tv-priority-wrap'>
-            <span :class="priorityClass(data.value.priority)" id='tv-priority-text'>
+            <span :class="priorityClass(data.value.priorityId)" id='tv-priority-text'>
               {{ data.value.priority ? data.value.priority.text : '' }}
             </span>
           </div>
         </template>
         <template #cell(assignee)="data">
           <div class="text-dark" id='tv-assignee-wrap'>
-            <bib-avatar class="mt-auto mb-auto" size="1.5rem"></bib-avatar>
+            <!-- <bib-avatar class="mt-auto mb-auto" size="1.5rem"></bib-avatar> -->
             <span id='tv-assignee-text'>
-              <user-info :id="data.value ? data.value.userId : ''" /></span>
+              <user-info :id="data.value ? data.value.userId : ''" />
+            </span>
           </div>
         </template>
         <template #cell(dueDate)="data">
@@ -74,7 +75,7 @@ export default {
       user: "user/getUser"
     }),
   },
-  mounted(){
+  mounted() {
     this.loading = false
   },
 
@@ -85,14 +86,45 @@ export default {
     },
 
     statusClass(status) {
-      if (status === "Past Due") return "text-red";
-      if (status === "In-progress") return "text-blue";
+      /*1 Not Started
+      2 In-Progress
+      3 Waiting
+      4 Deferred
+      5 Done*/
+      switch (status) {
+        case 1:
+          return "text-secondary"
+          break;
+        case 2:
+          return "text-blue"
+          break;
+        case 3:
+          return "text-orange"
+          break;
+        case 4:
+          return "text-red"
+          break;
+        default:
+          return "text-green"
+          break;
+      }
     },
 
     priorityClass(priority) {
-      if (priority === "Urgent") return "text-red";
-      if (priority === "Top") return "text-orange";
-      return "text-green";
+      /*1 high
+      2 medium
+      3 low*/
+      switch (priority) {
+        case 1:
+          return "text-red"
+          break;
+        case 2:
+          return "text-orange"
+          break;
+        default:
+          return "text-green"
+          break;
+      }
     },
     taskSelected($event) {
       this.$store.dispatch('task/setSingleTask', $event)
@@ -104,6 +136,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .comp-loading {
-  top: 0; right: 0; bottom:0; left:0; background-color: var(--bib-white); z-index: 29;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: var(--bib-white);
+  z-index: 29;
 }
+
 </style>

@@ -37,7 +37,7 @@
       <template #navigation>
         <bib-app-navigation :items="navItems1" @click='goToRoute($event)' class="mb-1"></bib-app-navigation>
         <bib-app-navigation :items="navItems2" @click='goToRoute($event)'></bib-app-navigation>
-        <bib-detail-collapse label="Favorite Projects" variant="white" open class="mt-1">
+        <bib-detail-collapse v-show="!collapseNavigation" label="Favorite Projects" variant="white" open class="mt-1">
           <template v-slot:content>
             <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light" id="layout-add-icon">
               <bib-icon icon="add" variant="success" :scale="1.5" class="p-025 ml-025"></bib-icon> <span id=" layout-icon-text" class="p-025">Create a project</span>
@@ -45,7 +45,7 @@
             <bib-app-navigation :items="favProjects" @click="goToProject($event)"></bib-app-navigation>
           </template>
         </bib-detail-collapse>
-        <bib-detail-collapse label="People" variant="white" open class="mt-1">
+        <bib-detail-collapse v-show="!collapseNavigation" label="People" variant="white" open class="mt-1">
           <template v-slot:content>
             <!-- <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light">
               <bib-icon icon="add" variant="success" :scale="2" class="p-025 ml-025"></bib-icon> <span class="p-025">Add a team mate</span>
@@ -148,10 +148,10 @@ export default {
   mounted() {
     if (process.client) {
 
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY0NTU5MzY5NDQ5NywiZXhwIjoxNjUzMzY5Njk0NDk3LCJqdGkiOiIyNDRlM2VmYS0xMDY2LTQyMzktYjYxYi0xMjQzY2YxOTI4MzkifQ.b2vxAyg6t9Gt8L0O-X1a7zw9fx85R5vT_bNv-n-mfTA"
+      /*let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY0NTU5MzY5NDQ5NywiZXhwIjoxNjUzMzY5Njk0NDk3LCJqdGkiOiIyNDRlM2VmYS0xMDY2LTQyMzktYjYxYi0xMjQzY2YxOTI4MzkifQ.b2vxAyg6t9Gt8L0O-X1a7zw9fx85R5vT_bNv-n-mfTA"
 
-      // this.$cookies.set('b_ssojwt', cookie);
-      // this.$store.dispatch('token/setToken', cookie);
+      this.$cookies.set('b_ssojwt', cookie);
+      this.$store.dispatch('token/setToken', cookie);*/
 
       if (this.$cookies.get('b_ssojwt')) {
         let jwt = this.$cookies.get('b_ssojwt');
