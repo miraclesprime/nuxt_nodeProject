@@ -38,7 +38,7 @@
         </div>
       </template>
       <template #cell(priority)="data">
-        <div class="justify-between text-dark" :id="'projects-' + data.value.priority-text">
+        <div class="justify-between text-dark" :id="'projects-' + data.value.priority.text">
           <span :id="'projects-' + data.value.priority.text + '-text'">{{data.value.priority.text}}</span>
         </div>
       </template>
