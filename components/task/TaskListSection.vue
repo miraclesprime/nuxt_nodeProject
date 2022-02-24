@@ -10,32 +10,32 @@
         @item-clicked="itemClicked()"
       >
         <template #cell(key)="data">
-          <div class="task-key">
+          <div class="task-key" id="tls-task-key">
             {{ data.value.key }}
           </div>
         </template>
 
         <template #cell(name)="data">
           <custom-check-box :id="groupName + '-' + data.value.key" />
-          <span class="ml-05">{{ data.value.name }}</span>
+          <span class="ml-05" id="tls-name">{{ data.value.name }}</span>
         </template>
 
         <template #cell(status)="data">
-          <span :class="statusClass(data.value.status)">
+          <span :class="statusClass(data.value.status)" id="tls-status">
             {{ data.value.status }}
           </span>
-          <span :class="statusClass(data.value.status)">
+          <span :class="statusClass(data.value.status)" id="tls-progress">
             {{ data.value.progress }}</span
           >
         </template>
         <template #cell(priority)="data">
-          <span :class="priorityClass(data.value.priority)">
+          <span :class="priorityClass(data.value.priority)" id="tls-priority">
             {{ data.value.priority }}
           </span>
         </template>
         <template #cell(assignee)="data">
           <bib-avatar size="25px"></bib-avatar>
-          <span class="assignee-name ml-05">
+          <span class="assignee-name ml-05" id="tls-assignee">
             {{ data.value.assignee }}
           </span>
         </template>

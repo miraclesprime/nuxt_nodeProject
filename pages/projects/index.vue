@@ -1,50 +1,51 @@
 <template>
-  <div>
+  <div id="projects-wrapper">
     <!-- <div id="project-name" class="project-heading p-05 text-secondary font-sm"> -->
-    <nav class="d-flex align-center gap-05 pt-05 pb-05">
+    <nav id="projects-nav-wrapper" class="d-flex align-center gap-05 pt-05 pb-05">
       <nuxt-link to="/" class="d-flex">
         <bib-icon icon="arrowhead-left" :scale="1.5"></bib-icon>
       </nuxt-link>
       <!-- <bib-icon icon="arrowhead-left" class="p-05 project-top-icon" :scale="2"></bib-icon> -->
-      <span class="font-lg font-w-700  mr-1 ">Projects</span>
+      <span class="font-lg font-w-700  mr-1" id="projects-title-head">Projects</span>
     </nav>
     <!-- </div> -->
     <project-actions />
     <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="projects">
       <template #cell(title)="data">
-        <div class="justify-between text-dark" @click="goToProjectId(data.value)">
-          <span>{{data.value.title}}</span>
+        <div class="justify-between text-dark" :id="'projects-' + data.value.title" @click="goToProjectId(data.value)">
+          <span :id="'projects-' + data.value.title + '-text'">{{data.value.title}}</span>
         </div>
       </template>
       <template #cell(userId)="data">
-        <div class="d-flex gap-05">
+        <div class="d-flex gap-05" id="projects-userInfo-wrap">
           <bib-avatar class="mt-auto mb-auto" :src="data.value.preview" size="1.5rem"></bib-avatar>
-          <span class="text-dark"><user-info :id="data.value ? data.value.userId : ''"  /></span>
+          <span class="text-dark" id="projects-userInfo-text"><user-info :id="data.value ? data.value.userId : ''"  /></span>
         </div>
       </template>
       <template #cell(status)="data">
-        <div class="justify-between text-dark">
-          <span>{{data.value.status.text}}</span>
+        <div class="justify-between text-dark" :id="'projects-' + data.value.status.text">
+          <span :id="'projects-' + data.value.status.text + '-text'">{{data.value.status.text}}</span>
         </div>
       </template>
       <template #cell(createdAt)="data">
-        <div class="justify-between text-dark">
-          <span v-format-date="data.value.createdAt" ></span>
+        <div class="justify-between text-dark" :id="'projects-' + data.value.createdAt">
+          <span :id="'projects-' + data.value.createdAt + '-text'" v-format-date="data.value.createdAt" ></span>
         </div>
       </template>
       <template #cell(dueDate)="data">
-        <div class="justify-between text-dark">
-          <span v-format-date="data.value.dueDate"></span>
+        <div class="justify-between text-dark" :id="'projects-' + data.value.dueDate">
+          <span :id="'projects-' + data.value.dueDate + '-text'" v-format-date="data.value.dueDate"></span>
         </div>
       </template>
       <template #cell(priority)="data">
-        <div class="justify-between text-dark">
-          <span>{{data.value.priority.text}}</span>
+        <div class="justify-between text-dark" :id="'projects-' + data.value.priority-text">
+          <span :id="'projects-' + data.value.priority.text + '-text'">{{data.value.priority.text}}</span>
         </div>
       </template>
     </bib-table>
   </div>
 </template>
+
 <script>
 // import { TABLE_FIELDS, TABS, DEFAULT_TAB, TAB_TITLES } from "config/constants";
 import { PROJECT_FIELDS } from '../../dummy/project';

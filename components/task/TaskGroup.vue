@@ -1,5 +1,5 @@
 <template>
-  <div class="task-group w-100">
+  <div class="task-group w-100" id="task-group-main-wrapper">
     <section-title />
 
     <custom-table
@@ -15,12 +15,12 @@
 
       <template #cell(name)="data">
         <custom-check-box :id="'sidebar-' + groupName + '-' + data.value.key" />
-        <span class="ml-05">{{ data.value.name }}</span>
+        <span class="ml-05" id="tgroup-name">{{ data.value.name }}</span>
       </template>
 
       <template #cell(assignee)="data">
         <bib-avatar size="25px"></bib-avatar>
-        <span class="assignee-name ml-05">
+        <span class="assignee-name ml-05" id="tgroup-assignee">
           {{ data.value.assignee }}
         </span>
       </template>

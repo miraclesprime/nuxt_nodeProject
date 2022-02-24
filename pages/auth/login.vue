@@ -1,12 +1,12 @@
 <template>
-  <div class="wrapper">
-    <div class="d-flex justify-center pt-1">
-      <img src="/img/logo_vertical.png" class="wrapper__logo" />
+  <div class="wrapper" id="login-wrapper">
+    <div class="d-flex justify-center pt-1" id="login-image-wrapper">
+      <img src="/img/logo_vertical.png" class="wrapper__logo" id="login-wrapper__logo" />
     </div>
-    <div class="pt-2">
+    <div class="pt-2" id="login-changeTab">
       <bib-tabs :tabs="tabs" @change="changeTab" :value="activeTab"></bib-tabs>
     </div>
-    <div class="wrapper__form" v-if="activeTab == 'Sign in'">
+    <div class="wrapper__form" id="login-wrapper__form" v-if="activeTab == 'Sign in'">
       <bib-form-group required label="Email ">
         <template v-slot:content>
           <bib-input
@@ -29,15 +29,15 @@
           ></bib-input>
         </template>
       </bib-form-group>
-      <div class="d-flex justify-end">
-        <small
+      <div class="d-flex justify-end" id="login-forgot-password">
+        <small id="login-forgot-password-small"
           ><bib-link
             label="Forgot Password?"
             class="text-bold text-primary"
           ></bib-link
         ></small>
       </div>
-      <div class="wrapper__form__submit">
+      <div class="wrapper__form__submit" id="login-wrapper__form__submit">
         <bib-button
           :disabled="isDisabled"
           @click.native="loginWith"
@@ -50,6 +50,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import { email, required, minLength } from "vuelidate/lib/validators";
 

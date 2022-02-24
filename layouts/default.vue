@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="layout-wrapper">
     <bib-app-wrapper class="test" :navigationCollapsed="collapseNavigation" :select="appHeaderActions.select" :button="appHeaderActions.button" @button-click="rightClkFileSection" @collapseNavigation="
         () => {
           resizeCalendar()
@@ -11,17 +11,17 @@
           <template #avatar_menu>
             <bib-button pop="arrowhead-right" :scale="1.3">
               <template v-slot:menu>
-                <div class="list">
+                <div class="list" id="layout-list">
                   <!-- <span class="list__item">
                     <bib-icon icon="home" :scale="1.1" variant="gray5" class="mr-075"></bib-icon> My Account
                   </span> -->
-                  <span class="list__item">
-                    <a :href="userProfileUrl">
+                  <span class="list__item" id="layout-list-item1">
+                    <a :href="userProfileUrl"  id="layout-list-item1-link">
                       <bib-icon icon="user-canonical" :scale="1.1" variant="gray5" class="mr-075"></bib-icon> My Profile
                     </a>
                   </span>
-                  <span class="list__item">
-                    <a :href="logoutUrl">
+                  <span class="list__item"  id="layout-list-item2">
+                    <a :href="logoutUrl"  id="layout-list-item2-link">
                       <bib-icon icon="output" :scale="1.1" variant="gray5" class="mr-075"></bib-icon> Logout
                     </a>
                   </span>
@@ -39,8 +39,8 @@
         <bib-app-navigation :items="navItems2" @click='goToRoute($event)'></bib-app-navigation>
         <bib-detail-collapse label="Favorite Projects" variant="white" open class="mt-1">
           <template v-slot:content>
-            <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light">
-              <bib-icon icon="add" variant="success" :scale="1.5" class="p-025 ml-025"></bib-icon> <span class="p-025">Create a project</span>
+            <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light" id="layout-add-icon">
+              <bib-icon icon="add" variant="success" :scale="1.5" class="p-025 ml-025"></bib-icon> <span id=" layout-icon-text" class="p-025">Create a project</span>
             </div>
             <bib-app-navigation :items="favProjects" @click="goToProject($event)"></bib-app-navigation>
           </template>

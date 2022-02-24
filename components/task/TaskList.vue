@@ -1,10 +1,11 @@
 <template>
-  <table v-click-outside="handleOutClick" class="table" cellspacing="0">
+  <table v-click-outside="handleOutClick" id="tlist-table" class="table" cellspacing="0">
     <template v-if="!headless">
-      <tr class="table__hrow">
-        <th
+      <tr class="table__hrow"  id="tlist-tr">
+        <th 
           v-for="(field, key) in fields"
           :key="key"
+          :id="'item-' + key"
           :class="'task-' + field.key"
         >
           {{ field.label }}
@@ -19,15 +20,15 @@
       @drop="onDrop('sections', $event)"
     >
       <Draggable v-for="(item, keyI) in sections" :key="'table' + item.key">
-        <div class="draggable-item">
-          <tr
+        <div class="draggable-item"  id="tlist-draggable-item">
+          <tr 
             class="table__irow"
             @contextmenu="rightClickItem($event, keyI)"
             @click="selectItem(keyI)"
             :id="keyI"
             :key="'item-' + keyI"
           >
-            <td v-for="(col, key) in cols" :key="key" :class="'task-' + col">
+            <td v-for="(col, key) in cols" :key="key" :class="'task-' + col" :id="'tlist-td-' + col">
               <slot
                 :name="'cell(' + col + ')'"
                 v-bind:keyI="keyI"
