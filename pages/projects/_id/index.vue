@@ -48,7 +48,7 @@
     <div class="menu" id='menu-content'>
       <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="TABS" />
     </div>
-    <div id='task-overview'>
+    <div id='task-overview' class="position-relative">
       <task-overview v-if="activeTab.value == TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="tasks" :gridType="gridType" />
       <task-view v-if="activeTab.value == TAB_TITLES.tasks" :fields="taskFields" :tasks="tasks" :sections="sections" :gridType="gridType" />
       <task-conversations v-if="activeTab.value == TAB_TITLES.conversations" :fields="TABLE_FIELDS" :tasks="tasks" />
@@ -94,28 +94,28 @@ export default {
       this.activeTask = task;
     });
 
-  // if(this.token) {
-    this.$axios.$get(`project/${this.$route.params.id}`, {
-      headers: { 'Authorization': `Bearer ${this.token}` }
-    }).then((res) => {
-      if (res) {
-        this.$store.dispatch('project/setSingleProject', res.data)
-      }
-    }).catch(err => {
-      console.log("There was some issue in project API "+ err);
-    })
-    
-    this.$axios.$get(`section/project/${this.$route.params.id}`, {
-      headers: { 'Authorization': `Bearer ${this.token}` }
-    }).then((res) => {
-      if (res) {
-        this.$store.dispatch("section/setSections", res.data)
-      }
-    }).catch(err => {
-      console.log("There was some issue in sections API " + err)
-    })
-  // }
-    
+    // if (this.token) {
+      this.$axios.$get(`project/${this.$route.params.id}`, {
+        headers: { 'Authorization': `Bearer ${this.token}` }
+      }).then((res) => {
+        if (res) {
+          this.$store.dispatch('project/setSingleProject', res.data)
+        }
+      }).catch(err => {
+        console.log("There was some issue in project API " + err);
+      })
+
+      this.$axios.$get(`section/project/${this.$route.params.id}`, {
+        headers: { 'Authorization': `Bearer ${this.token}` }
+      }).then((res) => {
+        if (res) {
+          this.$store.dispatch("section/setSections", res.data)
+        }
+      }).catch(err => {
+        console.log("There was some issue in sections API " + err)
+      })
+    // }
+
   },
 
   methods: {
