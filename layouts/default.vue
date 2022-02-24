@@ -165,6 +165,7 @@ export default {
 
         let user = JSON.parse(jsonPayload);
 
+        localStorage.setItem('user', JSON.stringify(user))
         this.$store.dispatch('user/setUser', user)
 
         this.$axios.$post("/user/create", {

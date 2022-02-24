@@ -94,9 +94,9 @@ export default {
       this.activeTask = task;
     });
 
-    // if (this.token) {
+    if (process.client) {
       this.$axios.$get(`project/${this.$route.params.id}`, {
-        headers: { 'Authorization': `Bearer ${this.token}` }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       }).then((res) => {
         if (res) {
           this.$store.dispatch('project/setSingleProject', res.data)
@@ -106,7 +106,7 @@ export default {
       })
 
       this.$axios.$get(`section/project/${this.$route.params.id}`, {
-        headers: { 'Authorization': `Bearer ${this.token}` }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       }).then((res) => {
         if (res) {
           this.$store.dispatch("section/setSections", res.data)
@@ -114,7 +114,7 @@ export default {
       }).catch(err => {
         console.log("There was some issue in sections API " + err)
       })
-    // }
+    }
 
   },
 
