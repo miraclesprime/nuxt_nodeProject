@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="create-task-modal-wrapper">
     <!-- CREATE FOLDER  -->
     <bib-modal-wrapper
       @close="showCreateTaskModal = false"
@@ -10,8 +10,8 @@
       @keypress.native="bindEnter($event, 'create-task-btn')"
     >
       <template v-slot:content>
-        <div class="mt-1" id='task-modal-wrapper'>
-          <div class="d-flex" id='tm-inner-wrap'>
+        <div class="mt-1" id='ctm-wrapper'>
+          <div class="d-flex" id='ctm-inner-wrap'>
             <bib-form-group required class="w-50" label="Task Name">
               <template v-slot:content>
                 <bib-input
@@ -56,7 +56,7 @@
             </bib-form-group>
           </div>
 
-          <div class="d-flex" id='tm-form'>
+          <div class="d-flex" id='ctm-form'>
             <bib-form-group required class="w-50" label="Task Progress">
               <template v-slot:content>
                 <bib-input
@@ -104,7 +104,7 @@
         </div>
       </template>
       <template v-slot:footer>
-        <div class="m-auto pt-1 d-flex justify-between" id='tm-show-model'>
+        <div class="m-auto pt-1 d-flex justify-between" id='ctm-show-model'>
           <bib-button
             @click.native="
               () => {
@@ -148,7 +148,7 @@
         ></bib-input>
       </template>
       <template v-slot:footer>
-        <div class="m-auto pt-1 d-flex justify-between" id='tm-create-section-model'>
+        <div class="m-auto pt-1 d-flex justify-between" id='ctm-create-section-model'>
           <bib-button
             @click.native="
               () => {
@@ -192,7 +192,7 @@
         ></bib-input>
       </template>
       <template v-slot:footer>
-        <div class="m-auto pt-1 d-flex justify-between" id='tm-create-project-model'>
+        <div class="m-auto pt-1 d-flex justify-between" id='ctm-create-project-model'>
           <bib-button
             @click.native="
               () => {
@@ -217,6 +217,7 @@
     </bib-modal-wrapper>
   </div>
 </template>
+
 <script>
 export default {
   name: "CreateTaskModal",

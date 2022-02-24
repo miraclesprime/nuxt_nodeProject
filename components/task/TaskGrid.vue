@@ -1,37 +1,37 @@
 <template>
   <div class="task-grid" id='task-grid-wrapper'>
-    <div class="task-top" id='task-top-wrap'>
-      <div class="d-flex" id='task-inside-wrap' @click="openSidebar()">
-        <custom-check-box :id="'task-' + task.key" />
+    <div class="task-top" id='tg-top-wrap'>
+      <div class="d-flex" id='tg-inside-wrap' @click="openSidebar()">
+        <custom-check-box :id="'tg-' + task.key" />
 
-        <span class="ml-05" style="margin-top: 2px" id='task-grid-title'
+        <span class="ml-05" style="margin-top: 2px" id='tg-title'
           >{{ task.title }}</span
         >
       </div>
 
       <bib-button pop="elipsis" icon="elipsis" style="margin-top: 2px" size="xl">
         <template v-slot:menu>
-          <div class="list" id='task-list'>
-            <span class="list__item" id='t-fav' @click="addToFavorites"
+          <div class="list" id='tg-list'>
+            <span class="list__item" id='tg-fav' @click="addToFavorites"
               >Add to favorites</span
             >
-            <span class="list__item" id='t-copy-link'
+            <span class="list__item" id='tg-copy-link'
               >Copy Task Link</span
             >
-            <span class="list__item" id='t-delete-task'
+            <span class="list__item" id='tg-delete-task'
               >Delete Task</span
             >
-            <span class="list__item" id='t-view-task' @click="openSidebar"
+            <span class="list__item" id='tg-view-task' @click="openSidebar"
               >View Task Details</span
             >
           </div>
         </template>
       </bib-button>
     </div>
-    <div class="task-bottom" id='task-bottom'>
+    <div class="task-bottom" id='tg-bottom'>
       <bib-avatar size="25px"></bib-avatar>
 
-      <span id='task-bottom-duedate'>{{ task.dueDate }}</span>
+      <span id='tg-bottom-duedate'>{{ task.dueDate }}</span>
     </div>
   </div>
 </template>

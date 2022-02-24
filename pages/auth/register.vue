@@ -1,12 +1,12 @@
 <template>
-  <div class="wrapper">
-    <div class="d-flex justify-center pt-1">
-      <img src="/img/logo_vertical.png" class="wrapper__logo" />
+  <div class="wrapper" id="register-wrapper">
+    <div class="d-flex justify-center pt-1" id="register-image-wrap">
+      <img src="/img/logo_vertical.png" class="wrapper__logo"  id="register-wrapper__logo" />
     </div>
-    <div class="pt-2">
+    <div class="pt-2"  id="register-change-tab">
       <bib-tabs :tabs="tabs" @change="changeTab" :value="activeTab"></bib-tabs>
     </div>
-    <div class="wrapper__form" v-if="activeTab == 'Register'">
+    <div class="wrapper__form" id="register-wrapper__form" v-if="activeTab == 'Register'">
       <bib-form-group required label="Email Address ">
         <template v-slot:content>
           <bib-input
@@ -93,7 +93,7 @@
         </template>
       </bib-form-group>
 
-      <div class="wrapper__form__submit">
+      <div class="wrapper__form__submit" id="register-wrapper__form__submit">
         <bib-button
           @click.native="register"
           label="Register"
@@ -102,16 +102,17 @@
           variant="success"
         ></bib-button>
       </div>
-      <div class="text-gray6 pt-1">
-        <small
+      <div class="text-gray6 pt-1" id="register-wrap-tC">
+        <small id="register-tc"
           >By selecting Register, you agree to our
-          <a href="#">Terms of Use</a> and have read and acknowledge our
-          <a href="#">Privacy Policy</a>.</small
+          <a href="#" id="register-tc-link1">Terms of Use</a> and have read and acknowledge our
+          <a href="#" id="register-tc-link2">Privacy Policy</a>.</small
         >
       </div>
     </div>
   </div>
 </template>
+
 <script>
 export default {
   auth: false,
