@@ -1,11 +1,8 @@
 <template>
   <div id="task-view-wrapper">
     <task-actions :gridType="gridType"></task-actions>
-    <template v-if="loading">
-      <div id="tv-comp-loading" class="position-absolute d-flex align-center justify-center comp-loading">
-        <bib-spinner variant="primary"></bib-spinner>
-      </div>
-    </template>
+    
+    <loading :loading="loading"></loading>
     <template v-if="gridType === 'list'">
       <bib-table v-for="(item, index) in sections" :key="index" :fields="tableFields" :sections="item.tasks" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
         <template #cell(title)="data">
@@ -66,7 +63,7 @@ export default {
     return {
       tableFields: TASK_FIELDS,
       flag: false,
-      loading: true
+      // loading: true
     };
   },
   computed: {
@@ -74,9 +71,13 @@ export default {
       // sections: "section/getAllSections",
       user: "user/getUser"
     }),
-  },
-  mounted() {
-    this.loading = false
+    loading(){
+      if (this.sections != null) {
+        return false
+      } else {
+        return true
+      }
+    }
   },
 
   methods: {
@@ -134,14 +135,3 @@ export default {
 };
 
 </script>
-<style lang="scss" scoped>
-.comp-loading {
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background-color: var(--bib-white);
-  z-index: 29;
-}
-
-</style>
