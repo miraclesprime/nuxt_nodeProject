@@ -94,7 +94,7 @@ export default {
       this.activeTask = task;
     });
 
-  if(this.token) {
+  // if(this.token) {
     this.$axios.$get(`project/${this.$route.params.id}`, {
       headers: { 'Authorization': `Bearer ${this.token}` }
     }).then((res) => {
@@ -114,7 +114,7 @@ export default {
     }).catch(err => {
       console.log("There was some issue in sections API " + err)
     })
-  }
+  // }
     
   },
 
