@@ -18,7 +18,6 @@
       </template>
       <template #cell(userId)="data">
         <div class="d-flex gap-05">
-          <bib-avatar class="mt-auto mb-auto" :src="data.value.preview" size="1.5rem"></bib-avatar>
           <span class="text-dark"><user-info :id="data.value ? data.value.userId : ''"  /></span>
         </div>
       </template>

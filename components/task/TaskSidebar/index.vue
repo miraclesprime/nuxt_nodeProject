@@ -7,10 +7,10 @@
       <div class="d-flex justify-between side-panel__header__actions mb-1" id='ts-side-panel'>
         <div class="d-flex align-center gap-05" id="ts-icon-close-Wrapper">
           <div id='ts-icon-7' class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" @click="hideSidebar()">
-            <bib-icon icon="close" class="m-auto"></bib-icon>
+            <bib-icon icon="page-last" class="m-auto"></bib-icon>
           </div>
           <div class="d-flex cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2" id='ts-icon-external-wrapper'>
-            <bib-icon icon="external" variant="gray6" class="m-auto"></bib-icon>
+            <bib-icon icon="expand-fullscreen" variant="gray6" class="m-auto"></bib-icon>
           </div>
         </div>
         <div class="d-flex gap-05 align-center" id="ts-icon-attachment-wrapper">
