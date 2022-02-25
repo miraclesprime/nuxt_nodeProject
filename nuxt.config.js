@@ -35,7 +35,7 @@ export default {
     { path: "~/components/elements/", pathPrefix: false },
     { path: "~/../bib-shared/components/", pathPrefix: false },
   ],
-  transition: {
+  pageTransition: {
     name: 'page',
     mode: 'out-in'
   },
