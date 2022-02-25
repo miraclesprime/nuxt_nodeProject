@@ -9,7 +9,7 @@
 
         <template v-for="(item, index) in teammates">
           <div
-            :id="index"
+            :id="'teammate-' + index"
             class="teammate"
             v-if="index !== activeMate"
             :key="'teammate-' + index"
@@ -24,7 +24,7 @@
         </a>
       </div>
 
-      <div class="mail" id="sc-mail" v-for="item in [1, 2, 3]" :key="'mail' + item">
+      <div class="mail" :id="'sc-mail' + item" v-for="item in [1, 2, 3]" :key="'mail' + item">
         <a class="title" href="#" id="sc-title">
           <bib-icon icon="next" />
           Mmm 00, 000

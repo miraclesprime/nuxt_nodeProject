@@ -28,7 +28,7 @@
             :id="keyI"
             :key="'item-' + keyI"
           >
-            <td v-for="(col, key) in cols" :key="key" :class="'task-' + col" :id="'tlist-td-' + col">
+            <td v-for="(col, key) in cols" :key="key" :class="'task-' + col" :id="'tlist-td-' + key">
               <slot
                 :name="'cell(' + col + ')'"
                 v-bind:keyI="keyI"

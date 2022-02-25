@@ -5,6 +5,7 @@
         <th
           v-for="(field, key) in fields"
           :key="key"
+          :id="key"
           :class="'task-' + field.key"
         >
           {{ field.label }}
@@ -19,7 +20,7 @@
         :id="keyI"
         :key="'item-' + keyI"
       >
-        <td v-for="(col, key) in cols" :key="key" :class="'task-' + col">
+        <td v-for="(col, key) in cols" :key="key" :id="key" :class="'task-' + col">
           <slot
             :name="'cell(' + col + ')'"
             v-bind:keyI="keyI"
