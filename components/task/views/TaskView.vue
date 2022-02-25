@@ -43,7 +43,7 @@
     </template>
     <template v-else>
       <div class="d-flex" id='tv-grid-wrap'>
-        <task-grid-section :headless="true" label="Section" :taskFields="tableFields" :taskSections="tasks.slice(0, 3)" :open="true" groupName="1" />
+        <task-grid-section :headless="true" label="Section" :taskFields="tableFields" :taskSections="sections" :open="true" groupName="1" />
       </div>
     </template>
     <task-sidebar @open-sidebar="toggleSidebar()"></task-sidebar>
@@ -79,6 +79,10 @@ export default {
       }
     }
   },
+
+  /*created(){
+    this.$nuxt.$on("change-grid-type")
+  },*/
 
   methods: {
     toggleSidebar() {

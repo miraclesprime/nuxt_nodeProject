@@ -88,11 +88,11 @@ export default {
   },
 
   created() {
-    this.$root.$on("change-grid-type", (type) => {
+    this.$nuxt.$on("change-grid-type", (type) => {
       this.gridType = type;
     });
 
-    this.$root.$on("set-active-task", (task) => {
+    this.$nuxt.$on("set-active-task", (task) => {
       this.activeTask = task;
     });
 

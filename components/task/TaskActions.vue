@@ -16,57 +16,67 @@
     <div class="action-right d-flex gap-05" id="ta-action-right">
       <ul class="actions" id="ta-action-right-actions">
         <li class="action" id="ta-action1">
-          <span id="ta-action1-text">Viewing</span>
-          <bib-button pop="eye-open">
-            <template v-slot:menu>
-              <div class="list">
-                <span class="list__item">Incomplete</span>
-                <span class="list__item">Completed</span>
-                <span class="list__item primary">All</span>
-              </div>
-            </template>
-          </bib-button>
+          <span id="ta-action1-text" class="mr-025">Viewing</span>
+          <div id="ta-action1-ddwrap" class="shape-rounded bg-dark width-105 height-105 d-flex justify-center align-center">
+            <bib-button pop="eye-open" icon-variant="white" size="sm">
+              <template v-slot:menu>
+                <div id="ta-action1-dd" class="list">
+                  <span id="ta-action1-dd1" class="list__item">Incomplete</span>
+                  <span id="ta-action1-dd2" class="list__item">Completed</span>
+                  <span id="ta-action1-dd3" class="list__item primary">All</span>
+                </div>
+              </template>
+            </bib-button>
+          </div>
         </li>
         <li class="action" id="ta-action2">
-          <span id="ta-action2-text">Sorted by</span>
-          <bib-button pop="swap-vertical">
-            <template v-slot:menu>
-              <div class="list">
-                <span class="list__item">Name</span>
-                <span class="list__item">Project</span>
-                <span class="list__item">Owner</span>
-                <span class="list__item">Status</span>
-                <span class="list__item">Start Date</span>
-                <span class="list__item">Due Date</span>
-                <span class="list__item">Priority</span>
-              </div>
-            </template>
-          </bib-button>
+          <span id="ta-action2-text" class="mr-025">Sorted by</span>
+          <div id="ta-action2-ddwrap" class="shape-rounded bg-dark width-105 height-105 d-flex justify-center align-center">
+            <bib-button pop="swap-vertical" icon-variant="warning" size="sm">
+              <template v-slot:menu>
+                <div id="ta-action2-dd" class="list">
+                  <span id="ta-action2-dd1" class="list__item">Name</span>
+                  <span id="ta-action2-dd2" class="list__item">Project</span>
+                  <span id="ta-action2-dd3" class="list__item">Owner</span>
+                  <span id="ta-action2-dd4" class="list__item">Status</span>
+                  <span id="ta-action2-dd4" class="list__item">Start Date</span>
+                  <span id="ta-action2-dd6" class="list__item">Due Date</span>
+                  <span id="ta-action2-dd7" class="list__item">Priority</span>
+                </div>
+              </template>
+            </bib-button>
+          </div>
         </li>
         <li class="action" id="ta-action3">
-          <span id="ta-action3-text">Filter by</span>
-          <bib-button pop="filter-horizontal">
+          <span id="ta-action3-text" class="mr-025">Filter by</span>
+          <bib-button pop="filter-horizontal" class="bg-dark" icon-variant="white" size="sm">
             <template v-slot:menu>
-              <div class="list filter">
-                <span class="list__item">Enter keyword</span>
+              <div id="ta-action3-dd" class="list filter of-y-scroll" style="max-height:8rem;">
+                <span id="ta-action3-dd1" class="list__item">Enter keyword</span>
                 <hr>
-                <span class="list__item filter">
+                <span id="ta-action3-dd2" class="list__item filter">
                   <!-- <bib-checkbox value="projectName" label="Name" name="project-name"></bib-checkbox> -->
                   <bib-input type="text" label="Name" name="name" placeholder="Enter name" size="sm"></bib-input>
                 </span>
-                <span class="list__item filter">
+                <span id="ta-action3-dd3" class="list__item filter">
                   <!-- <bib-checkbox value="projectName" label="Name" name="project-name"></bib-checkbox> -->
                   <bib-input type="text" label="Project" name="project" placeholder="Enter project name" size="sm"></bib-input>
                 </span>
-                <span class="list__item filter">
+                <span id="ta-action3-dd4" class="list__item filter">
                   <!-- <bib-checkbox value="projectName" label="Name" name="project-name"></bib-checkbox> -->
                   <bib-input type="text" label="Owner" name="owner" placeholder="Enter owner name" size="sm"></bib-input>
                 </span>
-                <span class="list__item filter"></span>
-                <span class="list__item filter"></span>
-                <span class="list__item filter"></span>
-                <span class="list__item filter"></span>
-                <span class="list__item filter"></span>
+                <span id="ta-action3-dd5" class="list__item filter">
+                  <bib-input type="text" label="Status" name="status" placeholder="Search for status" size="sm"></bib-input>
+                </span>
+                <span id="ta-action3-dd6" class="list__item filter">
+                  <bib-input type="text" label="Priority" name="priority" placeholder="Search for priority" size="sm"></bib-input>
+                </span>
+                <span id="ta-action3-dd7" class="list__item filter">
+                  <bib-input type="date" label="Start date" name="start-date" placeholder="Start date" size="sm"></bib-input>
+                </span>
+                <span id="ta-action3-dd8" class="list__item filter"></span>
+                <span id="ta-action3-dd9" class="list__item filter"></span>
               </div>
             </template>
           </bib-button>
@@ -76,14 +86,11 @@
           <span id="ta-action4-text">Group</span>
         </li> -->
         <li class="action" id="ta-action5">
-          <span style="margin-right: 5px" id="ta-action5-text">View</span>
-          <a href="#" class="grid-type" id="ta-action5-link" @click.prevent="changeGridType('list')">
-            <bib-icon icon="list" />
-            <bib-icon icon="apps-large" />
-          </a>
-          <!-- <a href="#" class="grid-type" id="ta-action5-link2" @click.prevent="changeGridType('grid')">
-            <bib-icon icon="apps-large"  />
-          </a> -->
+          <span class="mr-025" id="ta-action5-text">View</span>
+          <div class="d-flex width-105 height-105 align-center justify-center bg-dark shape-rounded p-025" id="ta-action5-link">
+            <bib-icon v-if="gridType == 'list'" icon="apps-large" variant="white" @click.native="changeGridType('grid')"></bib-icon>
+            <bib-icon v-if="gridType == 'grid'" icon="list" variant="white" @click.native="changeGridType('list')"></bib-icon>
+          </div>
         </li>
         <!-- <li class="action" id="ta-action6">
           <a href="#" id="ta-action6-link">
@@ -117,14 +124,12 @@ export default {
   },
   data() {
     return {
-      type: this.gridType,
       selectInfo: null
     };
   },
   methods: {
-    changeGridType(gType) {
-      this.type = gType;
-      this.$root.$emit("change-grid-type", this.type);
+    changeGridType($event) {
+      this.$nuxt.$emit("change-grid-type", $event);
     },
     showCreateTaskModal(data) {
       this.$refs.modals.modalSize = "lg";
@@ -208,21 +213,19 @@ export default {
   align-items: center;
 }
 
-.custom-control-label {
-  &::before {
-    position: static;
-    transform: none;
-  }
+.button {
+  .list.filter {
+    .list__item {
+      height: auto;
 
-  svg {
-    left: 2px;
-  }
-}
+      .input--sm {
+        input {
+          min-height: 1.75rem;
+        }
+      }
+    }
 
-.grid-type {
-  border: 1px solid $gray4;
-  padding: 2px 3px 0px;
-  border-radius: 5px;
+  }
 }
 
 </style>
