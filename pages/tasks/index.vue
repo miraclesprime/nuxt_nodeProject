@@ -10,7 +10,6 @@
     <task-view :fields="taskFields" :tasks="tasks" :sections="sections" :gridType="gridType" />
   </div>
 </template>
-
 <script>
 import { mapGetters } from "vuex";
 export default {
@@ -34,13 +33,15 @@ export default {
       // project: "project/getSingleProject",
     }),
   },
-  created(){
-    let compid = JSON.parse(localStorage.getItem("user")).subb;
-    this.$axios.$get("task/company/"+compid, {
-        headers: { 'Authorization': localStorage.getItem("accessToken") }
+  created() {
+    if (process.client) {
+      let compid = JSON.parse(localStorage.getItem("user")).subb;
+      this.$axios.$get("task/company/" + compid, {
+        headers: { 'Authorization': "Bearer " + localStorage.getItem("accessToken") }
       }).then(res => {
         this.tasks = res.data;
       });
+    }
   },
 }
 

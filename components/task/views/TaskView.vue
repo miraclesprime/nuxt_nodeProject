@@ -1,11 +1,8 @@
 <template>
   <div id="task-view-wrapper">
     <task-actions :gridType="gridType"></task-actions>
-    <template v-if="loading">
-      <div id="tv-comp-loading" class="position-absolute d-flex align-center justify-center comp-loading">
-        <bib-spinner variant="primary"></bib-spinner>
-      </div>
-    </template>
+    
+    <loading :loading="loading"></loading>
     <template v-if="gridType === 'list'">
       <bib-table v-for="(item, index) in sections" :key="index" :fields="tableFields" :sections="item.tasks" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
         <template #cell(title)="data">
@@ -46,7 +43,7 @@
     </template>
     <template v-else>
       <div class="d-flex" id='tv-grid-wrap'>
-        <task-grid-section :headless="true" label="Section" :taskFields="tableFields" :taskSections="tasks.slice(0, 3)" :open="true" groupName="1" />
+        <task-grid-section :headless="true" label="Section" :taskFields="tableFields" :taskSections="sections" :open="true" groupName="1" />
       </div>
     </template>
     <task-sidebar @open-sidebar="toggleSidebar()"></task-sidebar>
@@ -66,7 +63,7 @@ export default {
     return {
       tableFields: TASK_FIELDS,
       flag: false,
-      loading: true
+      // loading: true
     };
   },
   computed: {
@@ -74,10 +71,18 @@ export default {
       // sections: "section/getAllSections",
       user: "user/getUser"
     }),
+    loading(){
+      if (this.sections != null) {
+        return false
+      } else {
+        return true
+      }
+    }
   },
-  mounted() {
-    this.loading = false
-  },
+
+  /*created(){
+    this.$nuxt.$on("change-grid-type")
+  },*/
 
   methods: {
     toggleSidebar() {
@@ -134,14 +139,3 @@ export default {
 };
 
 </script>
-<style lang="scss" scoped>
-.comp-loading {
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background-color: var(--bib-white);
-  z-index: 29;
-}
-
-</style>

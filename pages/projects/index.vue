@@ -10,6 +10,7 @@
     </nav>
     <!-- </div> -->
     <project-actions />
+    <loading :loading="loading"></loading>
     <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="projects">
       <template #cell(title)="data">
         <div class="justify-between text-dark" :id="'projects-' + data.value.title" @click="goToProjectId(data.value)">
@@ -56,6 +57,7 @@ export default {
   components: { ProjectActions, UserInfo },
   data() {
     return {
+      loading: true,
       tableFields: PROJECT_FIELDS,
       gridType: "list",
       activeTask: {
@@ -70,7 +72,7 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch('project/fetchProjects')
+    this.$store.dispatch('project/fetchProjects').then(p=>{this.loading = false})
   },
   computed: {
     ...mapGetters({
