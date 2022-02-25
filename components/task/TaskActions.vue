@@ -6,7 +6,7 @@
         titleSize="15px"
         itemSpace="5px"
       /> -->
-      <div class="d-flex gap-05 cursor-pointer text-secondary text-hover-dark" id="ta-add-task-button">
+      <div class="d-flex gap-05 cursor-pointer text-secondary text-hover-dark" id="ta-add-task-button" v-on:click="showCreateTaskModal">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-task-text" class="">New Task</span>
       </div>
       <div class="d-flex gap-05 ml-1 cursor-pointer text-secondary text-hover-dark" id="ta-add-section-button">
@@ -131,10 +131,9 @@ export default {
     changeGridType($event) {
       this.$nuxt.$emit("change-grid-type", $event);
     },
-    showCreateTaskModal(data) {
-      this.$refs.modals.modalSize = "lg";
-      this.$refs.modals.showCreateTaskModal = true;
-      this.selectInfo = data;
+    showCreateTaskModal() {
+      this.$emit("create-task", false) //event will be captured by parent only
+      this.$nuxt.$emit("create-task", false) //event will be available to all
     },
     showCreateSectionModal() {
       this.$refs.modals.showCreateSectionModal = true;

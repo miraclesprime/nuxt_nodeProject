@@ -4,128 +4,59 @@
       <div class="task-info w-100" id='sidebar-inner-wrap'>
         <div class="row" id='sidebar-row-1'>
           <div class="col-4" id='sidebar-col-1'>
-            <bib-input
-              type="select"
-              :options="selectItems"
-              placeholder="Please select..."
-              label="Assignee"
-            ></bib-input>
+            <bib-input type="select" :options="selectItems" placeholder="Please select..." label="Assignee"></bib-input>
           </div>
-
           <div class="col-8" id='sidebar-col-2'>
-            <bib-input
-              type="select"
-              :options="projects"
-              placeholder="Please select..."
-              label="Project"
-            ></bib-input>
+            <!-- <bib-input type="select" :options="projects" placeholder="Please select..." label="Project"></bib-input> -->
+            <bib-input type="text" label="Project" :value="project.title" disabled></bib-input>
           </div>
         </div>
-
         <div class="row" id='sidebar-row-2'>
           <div class="col-4" id='sidebar-col-3'>
-            <bib-input
-              type="select"
-              :options="department"
-              placeholder="Please select..."
-              label="Department"
-            ></bib-input>
+            <bib-input type="select" :options="department" placeholder="Please select..." label="Department"></bib-input>
           </div>
-
           <div class="col-4" id='sidebar-col-4'>
-            <bib-input
-              type="select"
-              :value="activeItem.priority ? activeItem.priority.text : ''"
-              :options="priorityValues"
-              placeholder="Please select..."
-              label="Priority"
-            ></bib-input>
+            <bib-input type="select" :value="activeItem.priority ? activeItem.priority.text : ''" :options="priorityValues" placeholder="Please select..." label="Priority"></bib-input>
           </div>
-
           <div class="col-4" id='sidebar-col-5'>
-            <bib-input
-              type="select"
-              :value="activeItem.status ? activeItem.status.text : '' "
-              :options="statusValues"
-              placeholder="Please select..."
-              label="Status"
-            ></bib-input>
+            <bib-input type="select" :value="activeItem.status ? activeItem.status.text : '' " :options="statusValues" placeholder="Please select..." label="Status"></bib-input>
           </div>
         </div>
-
         <div class="row" id='sidebar-row-3'>
           <div class="col-12" id='sidebar-col-6'>
-            <bib-input
-              type="textarea"
-              :value="activeItem.description"
-              placeholder="Enter task description..."
-              label="Description"
-            ></bib-input>
+            <bib-input type="textarea" :value="activeItem.description" placeholder="Enter task description..." label="Description"></bib-input>
           </div>
         </div>
       </div>
-
       <task-group title="Subtasks"></task-group>
-
       <div class="task-details w-100" id='sidebar-details'>
-        <a
-          href="#"
-          id='sidebar-link'
-          class="title"
-          @click="isContentExpanded = !isContentExpanded"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="15"
-            height="15"
-            viewBox="0 0 48 48"
-          >
+        <a href="#" id='sidebar-link' class="title" @click="isContentExpanded = !isContentExpanded">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 48 48">
             <title id='sidebar-icon'>arrowhead-right</title>
             <g id="Layer_2" data-name="Layer 2">
               <g id="invisible_box" data-name="invisible box">
                 <rect width="48" height="48" fill="none"></rect>
               </g>
               <g id="icons_Q2" data-name="icons Q2">
-                <path
-                  d="M27.2,24,16.6,34.6a1.9,1.9,0,0,0,.2,3,2.1,2.1,0,0,0,2.7-.2l11.9-12a1.9,1.9,0,0,0,0-2.8l-11.9-12a2.1,2.1,0,0,0-2.7-.2,1.9,1.9,0,0,0-.2,3Z"
-                ></path>
+                <path d="M27.2,24,16.6,34.6a1.9,1.9,0,0,0,.2,3,2.1,2.1,0,0,0,2.7-.2l11.9-12a1.9,1.9,0,0,0,0-2.8l-11.9-12a2.1,2.1,0,0,0-2.7-.2,1.9,1.9,0,0,0-.2,3Z"></path>
               </g>
             </g>
           </svg>
           Other details
         </a>
-
         <div class="row" id='sidebar-row-4' v-if="isContentExpanded">
           <div class="col-4" id='sidebar-col-7'>
-            <bib-input
-              type="time"
-              v-model="form.time"
-              placeholder="Select your time"
-              label="Time"
-            ></bib-input>
+            <bib-input type="time" v-model="form.time" placeholder="Select your time" label="Time"></bib-input>
           </div>
-
           <div class="col-4" id='sidebar-col-8'>
-            <bib-input
-              type="text"
-              v-model="form.budget"
-              placeholder="Set your Budget"
-              label="Budget"
-            ></bib-input>
+            <bib-input type="text" v-model="form.budget" placeholder="Set your Budget" label="Budget"></bib-input>
           </div>
-
           <div class="col-4" id='sidebar-col-9'>
-            <bib-input
-              type="text"
-              v-model="form.progress"
-              placeholder="Select your progress"
-              label="Progress"
-            ></bib-input>
+            <bib-input type="text" v-model="form.progress" placeholder="Select your progress" label="Progress"></bib-input>
           </div>
         </div>
       </div>
     </div>
-
     <div class="task-team" id='sidebar-team'>
       <div class="container" id='sidebar-container'>
         <div class="team-list w-100" id='sidebar-team-heading'>
@@ -133,69 +64,53 @@
           <div class="teammate active" id='sidebar-team-active'>
             <bib-avatar size="25px"></bib-avatar>
           </div>
-
           <template v-for="(item, index) in teammates">
-            <div
-              class="teammate"
-              :id="'teammate-' + index"
-              v-if="index !== activeMate"
-              :key="'teammate-' + index"
-              :style="'z-index:' + (100 - index)"
-            >
+            <div class="teammate" :id="'teammate-' + index" v-if="index !== activeMate" :key="'teammate-' + index" :style="'z-index:' + (100 - index)">
               <bib-avatar size="25px"></bib-avatar>
             </div>
           </template>
-
           <span class="teammates-count" id='sidebar-team-count'> + {{ teammates.length }} others </span>
-
           <a href="#" class="ml-auto" id='sidebar-add-team'>Add a team member</a>
         </div>
-
         <div class="add-comment w-100" id='sidebar-add-comment'>
           <bib-avatar size="40px"></bib-avatar>
-
-          <bib-input
-            type="text"
-            v-model="form.profile"
-            placeholder="Add your comment..."
-          ></bib-input>
+          <bib-input type="text" v-model="form.profile" placeholder="Add your comment..."></bib-input>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 import { TEAMMATES } from "config/constants";
-import {mapGetters} from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
   props: {
     activeTask: Object,
   },
-  data: function () {
+  data: function() {
     return {
       // activeItem: this.activeTask,
       selectItems: [
-        {label: 'Please Choose One', value: "orange"}
+        { label: 'Please Choose One', value: "orange" }
       ],
       statusValues: [
-        {label: 'Not Started', value: 'Not Started'},
-        {label: 'In-Progress', value: 'In-Progress'},
-        {label: 'Waiting', value: 'Waiting'},
-        {label: 'Deferred', value: 'Deferred'},
-        {label: 'Done', value: 'Done'},
+        { label: 'Not Started', value: 'Not Started' },
+        { label: 'In-Progress', value: 'In-Progress' },
+        { label: 'Waiting', value: 'Waiting' },
+        { label: 'Deferred', value: 'Deferred' },
+        { label: 'Done', value: 'Done' },
       ],
       priorityValues: [
-        {label: 'low', value: 'low'},
-        {label: 'medium', value: 'medium'},
-        {label: 'high', value: 'high'}
+        { label: 'low', value: 'low' },
+        { label: 'medium', value: 'medium' },
+        { label: 'high', value: 'high' }
       ],
       projects: [
-        {label: 'Project 1', value: "p1"}
+        // {label: 'Project 1', value: "p1"}
       ],
       department: [
-        {label: 'IT', value: "it"}
+        { label: 'IT', value: "it" }
       ],
       description: "",
       isContentExpanded: false,
@@ -214,12 +129,18 @@ export default {
   },
   computed: {
     ...mapGetters({
-      activeItem: 'task/getSelectedTask'
+      activeItem: 'task/getSelectedTask',
+      project: "project/getSingleProject",
     }),
-  },
-};
-</script>
 
+    /*projects() {
+      return { label: this.project.title, value: this.project.id }
+    },*/
+  },
+  
+};
+
+</script>
 <style lang="scss" scoped>
 .task-info {
   padding: 1rem 0;
@@ -297,4 +218,5 @@ export default {
     margin: 0 0 0 10px;
   }
 }
+
 </style>

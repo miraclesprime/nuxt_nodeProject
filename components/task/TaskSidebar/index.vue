@@ -30,35 +30,37 @@
           <!-- <div class="p-025 cursor-pointer" id='ts-icon-6'>
             <bib-icon icon="horizontal-dots" variant="gray5" :scale="1.25"></bib-icon>
           </div> -->
-          <bib-button pop="horizontal-dots" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex">
-            <template v-slot:menu>
-              <div class="list" id="ts-list">
-                <span class="list__item" id="ts-list-item-1">
-                  <bib-icon icon="check-circle" variant="gray5" class="mr-075"></bib-icon> Mark Completed
-                </span>
-                <span class="list__item" id="ts-list-item-2">
-                  <bib-icon icon="heart-like" variant="gray5" class="mr-075"></bib-icon> Add to favorites
-                </span>
-                <span class="list__item" id="ts-list-item-3">
-                  <bib-icon icon="upload" variant="gray5" class="mr-075"></bib-icon> Attach file...
-                </span>
-                <span class="list__item" id="ts-list-item-4">
-                  <bib-icon icon="user-add" variant="gray5" class="mr-075"></bib-icon> Invite
-                </span>
-                <span class="list__item" id="ts-list-item-5">
-                  <bib-icon icon="notification" variant="gray5" class="mr-075"></bib-icon> Set reminder
-                </span>
-                <span class="list__item" id="ts-list-item-6">
-                  <bib-icon icon="duplicate" variant="gray5" class="mr-075"></bib-icon> Copy
-                </span>
-                <span class="list__item" id="ts-list-item-7">
-                  <bib-icon icon="warning" variant="gray5" class="mr-075"></bib-icon> Report
-                </span>
-                <hr>
-                <span class="list__item danger" id="ts-list-item-8">Delete</span>
-              </div>
-            </template>
-          </bib-button>
+          <div id="ts-list-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center">
+            <bib-button pop="horizontal-dots">
+              <template v-slot:menu>
+                <div class="list" id="ts-list">
+                  <span class="list__item" id="ts-list-item-1">
+                    <bib-icon icon="check-circle" variant="gray5" class="mr-075"></bib-icon> Mark Completed
+                  </span>
+                  <span class="list__item" id="ts-list-item-2">
+                    <bib-icon icon="heart-like" variant="gray5" class="mr-075"></bib-icon> Add to favorites
+                  </span>
+                  <span class="list__item" id="ts-list-item-3">
+                    <bib-icon icon="upload" variant="gray5" class="mr-075"></bib-icon> Attach file...
+                  </span>
+                  <span class="list__item" id="ts-list-item-4">
+                    <bib-icon icon="user-add" variant="gray5" class="mr-075"></bib-icon> Invite
+                  </span>
+                  <span class="list__item" id="ts-list-item-5">
+                    <bib-icon icon="notification" variant="gray5" class="mr-075"></bib-icon> Set reminder
+                  </span>
+                  <span class="list__item" id="ts-list-item-6">
+                    <bib-icon icon="duplicate" variant="gray5" class="mr-075"></bib-icon> Copy
+                  </span>
+                  <span class="list__item" id="ts-list-item-7">
+                    <bib-icon icon="warning" variant="gray5" class="mr-075"></bib-icon> Report
+                  </span>
+                  <hr>
+                  <span class="list__item danger" id="ts-list-item-8">Delete</span>
+                </div>
+              </template>
+            </bib-button>
+          </div>
         </div>
       </div>
       <div class="row" id='ts-row'>
@@ -85,7 +87,6 @@
     </div>
   </article>
 </template>
-
 <script>
 import { mapGetters } from "vuex";
 
@@ -138,11 +139,12 @@ export default {
   computed: {
     ...mapGetters({
       tasks: "task/tasksForListView",
-      activeItem: 'task/getSelectedTask'
+      activeItem: 'task/getSelectedTask',
     }),
   },
   methods: {
     hideSidebar() {
+      this.$emit("open-sidebar", false)
       this.$root.$emit("open-sidebar", false);
     },
     sidebarTabChange(tab) {
@@ -161,9 +163,15 @@ export default {
 
 </script>
 <style lang="scss" scoped>
-.side-panel { display: grid; grid-auto-flow: row; align-content: start; }
+.side-panel {
+  display: grid;
+  grid-auto-flow: row;
+  align-content: start;
+}
+
 .row {
   padding: 0 1rem;
+
   .input {
     font-size: $sidebar-size;
     color: #ccc;

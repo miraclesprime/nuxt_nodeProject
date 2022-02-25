@@ -1,6 +1,6 @@
 <template>
   <div id="task-view-wrapper">
-    <task-actions :gridType="gridType"></task-actions>
+    <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" ></task-actions>
     
     <loading :loading="loading"></loading>
     <template v-if="gridType === 'list'">
@@ -80,14 +80,16 @@ export default {
     }
   },
 
-  /*created(){
-    this.$nuxt.$on("change-grid-type")
-  },*/
-
   methods: {
-    toggleSidebar() {
+    toggleSidebar($event) {
+      // console.log($event)
+      // in case of create task 
+      if (!$event) {
+        this.$store.dispatch("task/setSingleTask", {})
+      }
       this.flag = !this.flag;
-      this.$root.$emit("open-sidebar", this.flag);
+      this.$emit("open-sidebar", this.flag);
+      this.$nuxt.$emit("open-sidebar", this.flag);
     },
 
     statusClass(status) {

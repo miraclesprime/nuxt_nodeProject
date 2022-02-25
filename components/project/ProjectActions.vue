@@ -6,7 +6,10 @@
         titleSize="15px"
         itemSpace="5px"
       /> -->
-      <bib-button pop="add" label="Add Project" size="sm"></bib-button>
+      <div class="d-flex gap-05 cursor-pointer text-secondary text-hover-dark" id="pa-add-project-button" v-on:click="showCreateTaskModal">
+        <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-task-text" >New Project</span>
+      </div>
+      <!-- <bib-button pop="add" label="Add Project" size="sm"></bib-button> -->
     </div>
     <div class="action-right" id="pa-action-right">
       <ul class="actions" id="pa-actions-list">
