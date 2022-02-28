@@ -9,7 +9,7 @@
       <div class="d-flex gap-05 cursor-pointer text-secondary text-hover-dark" id="ta-add-task-button" v-on:click="showCreateTaskModal">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-task-text" class="">New Task</span>
       </div>
-      <div class="d-flex gap-05 ml-1 cursor-pointer text-secondary text-hover-dark" id="ta-add-section-button">
+      <div class="d-flex gap-05 ml-1 cursor-pointer text-secondary text-hover-dark" id="ta-add-section-button" v-on:click="createSectionInline">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-section-text" class="">New Section</span>
       </div>
     </div>
@@ -137,6 +137,10 @@ export default {
     },
     showCreateSectionModal() {
       this.$refs.modals.showCreateSectionModal = true;
+    },
+    createSectionInline(){
+      this.$emit("create-section")
+      this.$nuxt.$emit("create-section")
     },
     async createTask(task) {
       //COLLECTING FOLDER INFO

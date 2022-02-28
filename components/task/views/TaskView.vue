@@ -1,8 +1,11 @@
 <template>
   <div id="task-view-wrapper">
-    <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" ></task-actions>
+    <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:create-section="createSectionInline" ></task-actions>
     
     <loading :loading="loading"></loading>
+    <section v-if="newsecion">
+      <bib-input type="text" ref="newsectioninput" v-model="newSectionName" name="sectionname" size="sm" placeholder="Enter section name"></bib-input>
+    </section>
     <template v-if="gridType === 'list'">
       <bib-table v-for="(item, index) in sections" :key="index" :fields="tableFields" :sections="item.tasks" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
         <template #cell(title)="data">
@@ -63,6 +66,8 @@ export default {
     return {
       tableFields: TASK_FIELDS,
       flag: false,
+      newsecion: false,
+      newSectionName: null
       // loading: true
     };
   },
@@ -90,6 +95,12 @@ export default {
       this.flag = !this.flag;
       this.$emit("open-sidebar", this.flag);
       this.$nuxt.$emit("open-sidebar", this.flag);
+    },
+
+    createSectionInline(){
+      this.newsecion = true
+      console.log(this.$refs)
+      // this.$refs.newsectioninput.focus()
     },
 
     statusClass(status) {
