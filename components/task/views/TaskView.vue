@@ -26,12 +26,17 @@
             </span>
           </div>
         </template>
-        <template #cell(assignee)="data">
+        <template #cell(owner)="data">
           <div class="text-dark" id='tv-assignee-wrap'>
             <!-- <bib-avatar class="mt-auto mb-auto" size="1.5rem"></bib-avatar> -->
             <span id='tv-assignee-text'>
               <user-info :id="data.value ? data.value.userId : ''" />
             </span>
+          </div>
+        </template>
+        <template #cell(startDate)="data">
+          <div class="text-dark" id='tv-startDate-wrap'>
+            <span id='tv-startDate-text' v-format-date="data.value.createdAt"></span>
           </div>
         </template>
         <template #cell(dueDate)="data">

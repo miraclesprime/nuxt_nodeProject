@@ -1,6 +1,8 @@
+export const strict = false;
 
 export const state = () => ({
     sections: [],
+    sortType: null
   });
   
   export const mutations = {
@@ -15,6 +17,10 @@ export const state = () => ({
 
     setSections(state, payload) {
       state.sections = payload;
+    },
+
+    setSortType(state, payload) {
+      state.sortType = payload
     }
 
   };
@@ -22,7 +28,69 @@ export const state = () => ({
   export const getters = {
     
     getAllSections(state) {
-      return state.sections;
+      if(state.sortType == 'name') {
+
+          let arr = JSON.parse(JSON.stringify(state.sections))
+          arr.sort((a, b) => a.title.localeCompare(b.title));
+
+          for(let i=0; i<arr.length; i++) {
+            arr[i].tasks.sort((a, b) => a.title.localeCompare(b.title));
+          }
+          return arr;
+
+      } else if(state.sortType == 'owner') {
+
+          let arr = JSON.parse(JSON.stringify(state.sections))
+          arr.sort((a, b) => a.title.localeCompare(b.title));
+
+          for(let i=0; i<arr.length; i++) {
+            arr[i].tasks.sort((a, b) => a.userId.localeCompare(b.userId));
+          }
+          return arr;
+
+      } else if(state.sortType == 'status') {
+
+          let arr = JSON.parse(JSON.stringify(state.sections))
+          arr.sort((a, b) => a.title.localeCompare(b.title));
+
+          for(let i=0; i<arr.length; i++) {
+            arr[i].tasks.sort((a, b) => a.status.text.localeCompare(b.status.text));
+          }
+          return arr;
+
+      } else if(state.sortType == 'startDate') {
+
+          let arr = JSON.parse(JSON.stringify(state.sections))
+          arr.sort((a, b) => a.title.localeCompare(b.title));
+
+          for(let i=0; i<arr.length; i++) {
+            arr[i].tasks.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+          }
+          return arr;
+
+      } else if(state.sortType == 'dueDate') {
+
+          let arr = JSON.parse(JSON.stringify(state.sections))
+          arr.sort((a, b) => a.title.localeCompare(b.title));
+
+          for(let i=0; i<arr.length; i++) {
+            arr[i].tasks.sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+          }
+          return arr;
+
+      } else if(state.sortType == 'priority') {
+
+          let arr = JSON.parse(JSON.stringify(state.sections))
+            arr.sort((a, b) => a.title.localeCompare(b.title));
+
+            for(let i=0; i<arr.length; i++) {
+              arr[i].tasks.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
+            }
+            return arr;
+
+      } else {
+        return state.sections;
+      }
     }
 
   };
@@ -37,6 +105,10 @@ export const state = () => ({
 
     setSections(ctx, payload) {
       ctx.commit('setSections', payload)
+    },
+
+    setSortType(ctx, payload) {
+      ctx.commit('setSortType', payload)
     },
 
     async createSection(ctx) {

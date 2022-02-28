@@ -35,13 +35,12 @@
             <bib-button pop="swap-vertical" icon-variant="warning" size="sm">
               <template v-slot:menu>
                 <div id="ta-action2-dd" class="list">
-                  <span id="ta-action2-dd1" class="list__item">Name</span>
-                  <span id="ta-action2-dd2" class="list__item">Project</span>
-                  <span id="ta-action2-dd3" class="list__item">Owner</span>
-                  <span id="ta-action2-dd4" class="list__item">Status</span>
-                  <span id="ta-action2-dd4" class="list__item">Start Date</span>
-                  <span id="ta-action2-dd6" class="list__item">Due Date</span>
-                  <span id="ta-action2-dd7" class="list__item">Priority</span>
+                  <span id="ta-action2-dd1" class="list__item" @click="sortBy('name')">Name</span>
+                  <span id="ta-action2-dd3" class="list__item" @click="sortBy('owner')">Owner</span>
+                  <span id="ta-action2-dd4" class="list__item" @click="sortBy('status')">Status</span>
+                  <span id="ta-action2-dd4" class="list__item" @click="sortBy('startDate')">Start Date</span>
+                  <span id="ta-action2-dd6" class="list__item" @click="sortBy('dueDate')">Due Date</span>
+                  <span id="ta-action2-dd7" class="list__item" @click="sortBy('priority')">Priority</span>
                 </div>
               </template>
             </bib-button>
@@ -176,6 +175,10 @@ export default {
         }
       }
     },
+
+    sortBy(value) {
+      this.$store.dispatch('section/setSortType', value)
+    }
   },
 };
 
