@@ -64,7 +64,7 @@ export const state = () => ({
           arr.sort((a, b) => a.title.localeCompare(b.title));
 
           for(let i=0; i<arr.length; i++) {
-            arr[i].tasks.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+            arr[i].tasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
           }
           return arr;
 
@@ -74,7 +74,7 @@ export const state = () => ({
           arr.sort((a, b) => a.title.localeCompare(b.title));
 
           for(let i=0; i<arr.length; i++) {
-            arr[i].tasks.sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+            arr[i].tasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
           }
           return arr;
 
