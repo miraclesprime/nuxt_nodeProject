@@ -148,10 +148,11 @@ export default {
   mounted() {
     if (process.client) {
 
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY0NTU5MzY5NDQ5NywiZXhwIjoxNjUzMzY5Njk0NDk3LCJqdGkiOiIyNDRlM2VmYS0xMDY2LTQyMzktYjYxYi0xMjQzY2YxOTI4MzkifQ.b2vxAyg6t9Gt8L0O-X1a7zw9fx85R5vT_bNv-n-mfTA"
+      let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0cTJWb2xlalJlak5tR1FCIiwic3ViZSI6Imh0YW5nQGJpenRyZWUuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiQURNSU4iLCJzdWJjIjoiQ2FuYWRhIiwiZW52IjoiZGV2IiwiaWF0IjoxNjQ2MDM5MDYyMjY5LCJleHAiOjE2NTM4MTUwNjIyNjksImp0aSI6IjYzYTliMmNhLWNiYTItNDZkZC05NTExLTkwYzFjMDcyYjZiMSJ9.P0em4Q8Wpb91TeZZ0hqW4wrXA75SAArA8ov5LGR9zkM"
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0cTJWb2xlalJlak5tR1FCIiwic3ViZSI6Imh0YW5nQGJpenRyZWUuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiQURNSU4iLCJzdWJjIjoiQ2FuYWRhIiwiaWF0IjoxNjQ0ODM4ODkxNzEwLCJleHAiOjE2NTI2MTQ4OTE3MTAsImp0aSI6IjlhMmJkMTRlLTU3NmUtNDNmOS05YjNjLTk4MzVmYTFkNjc2YSJ9.J31bf_Z-pPe1IFrUihvSH0W6XQ3cCnMJOcs-_6kPoPI"
 
-      // this.$cookies.set('b_ssojwt', cookie);
-      // this.$store.dispatch('token/setToken', cookie);
+      this.$cookies.set('b_ssojwt', cookie);
+      this.$store.dispatch('token/setToken', cookie);
 
       if (this.$cookies.get('b_ssojwt')) {
         let jwt = this.$cookies.get('b_ssojwt');

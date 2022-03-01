@@ -1,121 +1,136 @@
 export const strict = false;
 
 export const state = () => ({
-    sections: [],
-    sortType: null
-  });
-  
-  export const mutations = {
-    
-    fetchSections(state, payload) {
-      state.sections = payload;
-    },
+  sections: []
+});
 
-    createSection(state, payload) {
-      state.sections.push(payload)
-    },
+export const mutations = {
 
-    setSections(state, payload) {
-      state.sections = payload;
-    },
+  fetchSections(state, payload) {
+    state.sections = payload;
+  },
 
-    setSortType(state, payload) {
-      state.sortType = payload
-    }
+  createSection(state, payload) {
+    state.sections.push(payload)
+  },
 
-  };
-  
-  export const getters = {
-    
-    getAllSections(state) {
-      if(state.sortType == 'name') {
+  setSections(state, payload) {
+    state.sections = payload;
+  },
 
-          let arr = JSON.parse(JSON.stringify(state.sections))
-          arr.sort((a, b) => a.title.localeCompare(b.title));
+  setSortType(state, payload) {
+    state.sortType = payload
+  },
 
-          for(let i=0; i<arr.length; i++) {
-            arr[i].tasks.sort((a, b) => a.title.localeCompare(b.title));
-          }
-          return arr;
+  sortSections(state, payload) {
+    if (payload == 'name') {
 
-      } else if(state.sortType == 'owner') {
+      let arr = JSON.parse(JSON.stringify(state.sections))
+      state.sections = [];
+      arr.sort((a, b) => a.title.localeCompare(b.title));
 
-          let arr = JSON.parse(JSON.stringify(state.sections))
-          arr.sort((a, b) => a.title.localeCompare(b.title));
-
-          for(let i=0; i<arr.length; i++) {
-            arr[i].tasks.sort((a, b) => a.userId.localeCompare(b.userId));
-          }
-          return arr;
-
-      } else if(state.sortType == 'status') {
-
-          let arr = JSON.parse(JSON.stringify(state.sections))
-          arr.sort((a, b) => a.title.localeCompare(b.title));
-
-          for(let i=0; i<arr.length; i++) {
-            arr[i].tasks.sort((a, b) => a.status.text.localeCompare(b.status.text));
-          }
-          return arr;
-
-      } else if(state.sortType == 'startDate') {
-
-          let arr = JSON.parse(JSON.stringify(state.sections))
-          arr.sort((a, b) => a.title.localeCompare(b.title));
-
-          for(let i=0; i<arr.length; i++) {
-            arr[i].tasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-          }
-          return arr;
-
-      } else if(state.sortType == 'dueDate') {
-
-          let arr = JSON.parse(JSON.stringify(state.sections))
-          arr.sort((a, b) => a.title.localeCompare(b.title));
-
-          for(let i=0; i<arr.length; i++) {
-            arr[i].tasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
-          }
-          return arr;
-
-      } else if(state.sortType == 'priority') {
-
-          let arr = JSON.parse(JSON.stringify(state.sections))
-            arr.sort((a, b) => a.title.localeCompare(b.title));
-
-            for(let i=0; i<arr.length; i++) {
-              arr[i].tasks.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
-            }
-            return arr;
-
-      } else {
-        return state.sections;
+      for (let i = 0; i < arr.length; i++) {
+        arr[i].tasks.sort((a, b) => a.title.localeCompare(b.title));
       }
+      state.sections = arr;
+
     }
+    if (payload == 'owner') {
 
-  };
-  
-  export const actions = {
-    async fetchSections(ctx) {
-      const res = await this.$axios.$get('/section', {
-        headers: {'Authorization': `Bearer ${ctx.rootState.token.token}`}
-      });
-      ctx.commit('fetchSections', res.data);
-    },
+      let arr = JSON.parse(JSON.stringify(state.sections))
+      state.sections = [];
+      arr.sort((a, b) => a.title.localeCompare(b.title));
 
-    setSections(ctx, payload) {
-      ctx.commit('setSections', payload)
-    },
+      for (let i = 0; i < arr.length; i++) {
+        arr[i].tasks.sort((a, b) => a.userId.localeCompare(b.userId));
+      }
+      state.sections = arr;
 
-    setSortType(ctx, payload) {
-      ctx.commit('setSortType', payload)
-    },
-
-    async createSection(ctx) {
-      const res = await this.$axios.$post('/section', {
-        headers: {'Authorization': `Bearer ${ctx.rootState.token.token}`}
-      });
-      ctx.commit('createSection', res.data)
     }
-  };
-  
+    if (payload == 'status') {
+
+      let arr = JSON.parse(JSON.stringify(state.sections))
+      state.sections = [];
+      arr.sort((a, b) => a.title.localeCompare(b.title));
+
+      for (let i = 0; i < arr.length; i++) {
+        arr[i].tasks.sort((a, b) => a.status.text.localeCompare(b.status.text));
+      }
+      state.sections = arr;
+
+    }
+    if (payload == 'startDate') {
+
+      let arr = JSON.parse(JSON.stringify(state.sections))
+      state.sections = [];
+      arr.sort((a, b) => a.title.localeCompare(b.title));
+
+      for (let i = 0; i < arr.length; i++) {
+        arr[i].tasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      }
+      state.sections = arr;
+
+    }
+    if (payload == 'dueDate') {
+
+      let arr = JSON.parse(JSON.stringify(state.sections))
+      state.sections = [];
+      arr.sort((a, b) => a.title.localeCompare(b.title));
+
+      for (let i = 0; i < arr.length; i++) {
+        arr[i].tasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+      }
+      state.sections = arr;
+
+    }
+    if (payload == 'priority') {
+
+      let arr = JSON.parse(JSON.stringify(state.sections))
+      state.sections = [];
+      arr.sort((a, b) => a.title.localeCompare(b.title));
+
+      for (let i = 0; i < arr.length; i++) {
+        arr[i].tasks.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
+      }
+      state.sections = arr;
+
+    }
+  }
+
+};
+
+export const getters = {
+
+  getAllSections(state) {
+    return state.sections;
+  }
+
+};
+
+export const actions = {
+  async fetchSections(ctx) {
+    const res = await this.$axios.$get('/section', {
+      headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
+    });
+    ctx.commit('fetchSections', res.data);
+  },
+
+  setSections(ctx, payload) {
+    ctx.commit('setSections', payload)
+  },
+
+  setSortType(ctx, payload) {
+    ctx.commit('setSortType', payload)
+  },
+
+  async createSection(ctx) {
+    const res = await this.$axios.$post('/section', {
+      headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
+    });
+    ctx.commit('createSection', res.data)
+  },
+
+  sortSections(ctx, payload) {
+    ctx.commit('sortSections', payload)
+  }
+};
