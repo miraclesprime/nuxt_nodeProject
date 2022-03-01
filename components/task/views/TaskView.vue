@@ -3,9 +3,12 @@
     <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:create-section="createSectionInline"></task-actions>
     <loading :loading="loading"></loading>
     <section v-show="newSection" id="tv-new-section-input-container">
-      <div id="tv-new-section-input-wrapper" class="d-flex justify-between p-05 bg-light">
+      <div id="tv-new-section-input-wrapper" class="d-flex align-center p-05 bg-light">
         <input id="tv-new-section-input" type="text" class="new-section-input" ref="newsectioninput" v-model="newSectionName" v-on:blur="clickOutside" placeholder="Enter section name">
-        <bib-icon icon="close" v-on:click="clickOutside"></bib-icon>
+        <div v-show="sectionLoading" class="d-flex align-center">
+          <bib-spinner :scale="2"></bib-spinner> <span class="text-secondary">Creating section ...</span>
+        </div>
+        <bib-icon icon="close" class="ml-auto" v-on:click="clickOutside"></bib-icon>
       </div>
       <!-- <bib-input type="text" ref="newsectionbibinput" v-model="newSectionName" name="sectionname" size="sm" placeholder="Enter section name"></bib-input> -->
     </section>
@@ -74,7 +77,8 @@ export default {
       tableFields: TASK_FIELDS,
       flag: false,
       newSection: false,
-      newSectionName: ""
+      newSectionName: "",
+      sectionLoading: false,
       // loading: true
     };
   },
@@ -118,24 +122,24 @@ export default {
       console.log('focus', event)
       console.log(this.$refs.newsectioninput.clientWidth, this.$refs.newsectioninput.clientHeight)
     },*/
-    clickOutside($event) {
-      this.newSection = false
+    async clickOutside($event) {
       // console.log("blur ", $event.target)
       let newvalue = this.newSectionName;
       if (newvalue.trim()) {
-        // console.log("Data", {"projectId": this.project.id, "title": newvalue.trim()})
-        this.$axios.$post("/section", {
+        this.$refs.newsectioninput.setAttribute("disabled", true)
+        this.sectionLoading = true
+
+        this.$store.dispatch("section/createSection", {
           "projectId": this.project.id,
           "title": newvalue.trim()
-        }, {
-          headers: {
-            "Authorization": "Bearer " + this.token
-          }
-        }).then(s => {
-          console.log(s);
-          this.$store.dispatch("section/fetchSections")
-        }).catch(e => alert(e))
+        }).then(()=>{
+          this.sectionLoading = false
+          this.newSection = false
+          this.$refs.newsectioninput.removeAttribute("disabled")
+        }).catch(e=>console.log(e))
+
       } else {
+        this.newSection = false
         console.log('No section added')
       }
     },
