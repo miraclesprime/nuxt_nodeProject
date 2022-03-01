@@ -11,7 +11,7 @@ export const mutations = {
   },
 
   createSection(state, payload) {
-    state.sections.push(payload)
+    state.sections.unshift(payload)
   },
 
   setSections(state, payload) {
@@ -123,8 +123,8 @@ export const actions = {
     ctx.commit('setSortType', payload)
   },
 
-  async createSection(ctx) {
-    const res = await this.$axios.$post('/section', {
+  async createSection(ctx, payload) {
+    const res = await this.$axios.$post('/section', payload, {
       headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
     });
     ctx.commit('createSection', res.data)
