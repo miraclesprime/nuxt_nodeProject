@@ -143,8 +143,12 @@ export const TASK_FIELDS = [
     label: "Priority",
   },
   {
-    key: "assignee",
-    label: "Assignee",
+    key: "owner",
+    label: "Owner",
+  },
+  {
+    key: "startDate",
+    label: "Start Date"
   },
   {
     key: "dueDate",
