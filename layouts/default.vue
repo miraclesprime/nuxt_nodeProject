@@ -294,10 +294,6 @@ html {
   background-color: white;
   position: relative;
 
-  .menu {
-    padding: 0 1rem 0 0.25rem;
-  }
-
   .bread {
     padding: 0 0.15rem 0 0.15rem;
     display: grid;

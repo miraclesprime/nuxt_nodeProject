@@ -1,5 +1,5 @@
 <template>
-  <div id="task-actions-wrapper" class="task-actions ml-05">
+  <div id="task-actions-wrapper" class="task-actions p-025 ">
     <div class="action-left d-flex " id="ta-action-left">
       <!-- <section-title
         title="Add Task/Section"
@@ -9,7 +9,7 @@
       <div class="d-flex gap-05 cursor-pointer text-secondary text-hover-dark" id="ta-add-task-button" v-on:click="showCreateTaskModal">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-task-text" class="">New Task</span>
       </div>
-      <div class="d-flex gap-05 ml-1 cursor-pointer text-secondary text-hover-dark" id="ta-add-section-button" v-on:click="createSectionInline">
+      <div class="d-flex gap-05 ml-1 cursor-pointer text-secondary text-hover-dark" id="ta-add-section-button" v-on:click="createSectionInline('true')" >
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-section-text" class="">New Section</span>
       </div>
     </div>
@@ -17,7 +17,7 @@
       <ul class="actions" id="ta-action-right-actions">
         <li class="action" id="ta-action1">
           <span id="ta-action1-text" class="mr-025">Viewing</span>
-          <div id="ta-action1-ddwrap" class="shape-rounded bg-dark width-105 height-105 d-flex justify-center align-center">
+          <div id="ta-action1-ddwrap" class="shape-rounded bg-dark bg-hover-light width-105 height-105 d-flex justify-center align-center">
             <bib-button pop="eye-open" icon-variant="white" size="sm">
               <template v-slot:menu>
                 <div id="ta-action1-dd" class="list">
@@ -138,9 +138,9 @@ export default {
     showCreateSectionModal() {
       this.$refs.modals.showCreateSectionModal = true;
     },
-    createSectionInline(){
-      this.$emit("create-section")
-      this.$nuxt.$emit("create-section")
+    createSectionInline($event){
+      this.$emit("create-section", $event)
+      this.$nuxt.$emit("create-section", $event)
     },
     async createTask(task) {
       //COLLECTING FOLDER INFO
@@ -186,7 +186,6 @@ export default {
 <style scoped lang="scss">
 .task-actions {
   display: flex;
-  padding: 8px 0;
   border-bottom: 1px solid $gray4;
   align-items: center;
 }
