@@ -1,8 +1,14 @@
 <template>
   <div id="task-view-wrapper">
-    <task-actions :gridType="gridType"></task-actions>
-    
+    <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:create-section="createSectionInline"></task-actions>
     <loading :loading="loading"></loading>
+    <section v-show="newSection" ref="newsection" id="tv-new-section-input-container">
+      <div id="tv-new-section-input-wrapper" class="d-flex justify-between p-05 bg-light">
+        <input id="tv-new-section-input" type="text" ref="newsectioninput" v-model="newSectionName" value="Section-B" v-on:focus="onFocus" v-on:blur="clickOutside" placeholder="Enter section name">
+        <bib-icon icon="close" v-on:click="clickOutside"></bib-icon>
+      </div>
+      <!-- <bib-input type="text" ref="newsectionbibinput" v-model="newSectionName" name="sectionname" size="sm" placeholder="Enter section name"></bib-input> -->
+    </section>
     <template v-if="gridType === 'list'">
       <bib-table v-for="(item, index) in sections" :key="index" :fields="tableFields" :sections="item.tasks" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
         <template #cell(title)="data">
@@ -54,7 +60,6 @@
     <task-sidebar @open-sidebar="toggleSidebar()"></task-sidebar>
   </div>
 </template>
-
 <script>
 import { TASK_FIELDS } from "~/dummy/tasks.js";
 import { mapGetters } from 'vuex';
@@ -68,6 +73,8 @@ export default {
     return {
       tableFields: TASK_FIELDS,
       flag: false,
+      newSection: false,
+      newSectionName: null
       // loading: true
     };
   },
@@ -76,7 +83,7 @@ export default {
       // sections: "section/getAllSections",
       user: "user/getUser"
     }),
-    loading(){
+    loading() {
       if (this.sections != null) {
         return false
       } else {
@@ -85,14 +92,38 @@ export default {
     }
   },
 
-  /*created(){
-    this.$nuxt.$on("change-grid-type")
-  },*/
+  mounted() {
+    console.log(this.$refs)
+  },
 
   methods: {
-    toggleSidebar() {
+    toggleSidebar($event) {
+      // console.log($event)
+      // in case of create task 
+      if (!$event) {
+        this.$store.dispatch("task/setSingleTask", {})
+      }
       this.flag = !this.flag;
-      this.$root.$emit("open-sidebar", this.flag);
+      this.$emit("open-sidebar", this.flag);
+      this.$nuxt.$emit("open-sidebar", this.flag);
+    },
+
+    createSectionInline() {
+      this.newSection = true
+      // console.log(this.$refs.newsectioninput.clientWidth, this.$refs.newsectioninput.clientHeight)
+      var inputdisplay = setTimeout(() => {
+        console.log(this.$refs.newsection.clientHeight)
+        this.$refs.newsectioninput.focus()
+      }, 200)
+    },
+    onFocus(event) {
+      console.log('focus', event)
+      console.log(this.$refs.newsectioninput.clientWidth, this.$refs.newsectioninput.clientHeight)
+    },
+    clickOutside($event) {
+      this.newSection = false
+      // console.log("blur ", $event.target)
+      console.log(this.$refs.newsectioninput.clientWidth, this.$refs.newsectioninput.clientHeight)
     },
 
     statusClass(status) {

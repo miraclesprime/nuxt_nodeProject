@@ -119,7 +119,7 @@ export const TABS = [
 ];
 
 export const DEFAULT_TAB = {
-  key: "overview",
-  value: "overview",
-  title: "Overview"
+  key: "tasks",
+  value: "tasks",
+  title: "Tasks"
 };

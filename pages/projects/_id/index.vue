@@ -11,15 +11,11 @@
       <div class="ml-auto d-flex gap-05 align-center" id="project-id-button-wraps">
         <bib-avatar></bib-avatar>
         <bib-button label="invite" variant="light" pill></bib-button>
-        <div class="shape-circle bg-light width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark">
+        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark">
           <bib-icon icon="bookmark" class="m-auto"></bib-icon>
         </div>
-        <!-- <div class="shape-circle bg-light width-2 height-2 d-flex ">
-          <bib-icon icon="elipsis" class="m-auto">
-            </bib-icon>
-        </div> -->
-        <div class="shape-circle bg-light width-2 height-2 d-flex justify-center align-center" id="project-id-menu-list">
-          <bib-button pop="horizontal-dots" id="project-id-horizontal-dots">
+        <div id="project-id-horizontal-dots-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center">
+          <bib-button pop="horizontal-dots" id="project-id-horizontal-dots" >
             <template v-slot:menu>
               <div class="list" id="project-id-list">
                 <span class="list__item" id="project-id-list-item1">Show project details</span>
@@ -43,6 +39,7 @@
             </template>
           </bib-button>
         </div>
+
       </div>
     </nav>
 
