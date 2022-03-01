@@ -180,7 +180,7 @@ export default {
     },
 
     sortBy(value) {
-      this.$store.dispatch('section/setSortType', value)
+      this.$store.dispatch('section/sortSections', value)
     }
   },
 };
