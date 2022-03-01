@@ -2,9 +2,9 @@
   <div id="task-view-wrapper">
     <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:create-section="createSectionInline"></task-actions>
     <loading :loading="loading"></loading>
-    <section v-show="newSection" ref="newsection" id="tv-new-section-input-container">
+    <section v-show="newSection" id="tv-new-section-input-container">
       <div id="tv-new-section-input-wrapper" class="d-flex justify-between p-05 bg-light">
-        <input id="tv-new-section-input" type="text" ref="newsectioninput" v-model="newSectionName" value="Section-B" v-on:focus="onFocus" v-on:blur="clickOutside" placeholder="Enter section name">
+        <input id="tv-new-section-input" type="text" class="new-section-input" ref="newsectioninput" v-model="newSectionName" v-on:blur="clickOutside" placeholder="Enter section name">
         <bib-icon icon="close" v-on:click="clickOutside"></bib-icon>
       </div>
       <!-- <bib-input type="text" ref="newsectionbibinput" v-model="newSectionName" name="sectionname" size="sm" placeholder="Enter section name"></bib-input> -->
@@ -74,14 +74,16 @@ export default {
       tableFields: TASK_FIELDS,
       flag: false,
       newSection: false,
-      newSectionName: null
+      newSectionName: ""
       // loading: true
     };
   },
   computed: {
     ...mapGetters({
+      token: "token/getToken",
       // sections: "section/getAllSections",
-      user: "user/getUser"
+      user: "user/getUser",
+      project: "project/getSingleProject"
     }),
     loading() {
       if (this.sections != null) {
@@ -90,10 +92,6 @@ export default {
         return true
       }
     }
-  },
-
-  mounted() {
-    console.log(this.$refs)
   },
 
   methods: {
@@ -112,18 +110,34 @@ export default {
       this.newSection = true
       // console.log(this.$refs.newsectioninput.clientWidth, this.$refs.newsectioninput.clientHeight)
       var inputdisplay = setTimeout(() => {
-        console.log(this.$refs.newsection.clientHeight)
+        console.log(this.$refs.newsectioninput.clientHeight)
         this.$refs.newsectioninput.focus()
-      }, 200)
+      }, 500)
     },
-    onFocus(event) {
+    /*onFocus(event) {
       console.log('focus', event)
       console.log(this.$refs.newsectioninput.clientWidth, this.$refs.newsectioninput.clientHeight)
-    },
+    },*/
     clickOutside($event) {
       this.newSection = false
       // console.log("blur ", $event.target)
-      console.log(this.$refs.newsectioninput.clientWidth, this.$refs.newsectioninput.clientHeight)
+      let newvalue = this.newSectionName;
+      if (newvalue.trim()) {
+        // console.log("Data", {"projectId": this.project.id, "title": newvalue.trim()})
+        this.$axios.$post("/section", {
+          "projectId": this.project.id,
+          "title": newvalue.trim()
+        }, {
+          headers: {
+            "Authorization": "Bearer " + this.token
+          }
+        }).then(s => {
+          console.log(s);
+          this.$store.dispatch("section/fetchSections")
+        }).catch(e => alert(e))
+      } else {
+        console.log('No section added')
+      }
     },
 
     statusClass(status) {
@@ -175,3 +189,19 @@ export default {
 };
 
 </script>
+<style lang="scss" scoped>
+.new-section-input {
+  min-height: 2rem;
+  padding: 0 0.5rem;
+  font-size: $font-size-sm;
+  border-radius: 0.18rem;
+  border: 1px solid var(--bib-gray4);
+
+  &:focus {
+    outline: none;
+    border: 2px solid var(--bib-gray6);
+    border-radius: 0;
+  }
+}
+
+</style>
