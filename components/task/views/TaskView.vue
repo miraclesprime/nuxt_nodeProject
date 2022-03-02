@@ -57,7 +57,16 @@
     </template>
     <template v-else>
       <div class="d-flex" id='tv-grid-wrap'>
-        <task-grid-section :headless="true" label="Section" :taskFields="tableFields" :taskSections="sections" :open="true" groupName="1" />
+        <task-grid-section 
+        v-for="(item, index) in sections"
+        :key="item.tasks[0] ? item.tasks[0].title : '' + index"
+        :headless="true" 
+        :label="item.title" 
+        :taskFields="tableFields" 
+        :taskSections="item.tasks" 
+        :open="true" 
+        groupName="1"
+       />
       </div>
     </template>
     <task-sidebar @open-sidebar="toggleSidebar()"></task-sidebar>

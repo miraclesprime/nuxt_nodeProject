@@ -91,16 +91,16 @@ export const TABS = [
     value: "tasks",
     title: "Tasks"
   },
-  {
-    key: "timeline",
-    value: "timeline",
-    title: "Timeline"
-  },
-  {
-    key: "calendar",
-    value: "calendar",
-    title: "Calendar"
-  },
+  // {
+  //   key: "timeline",
+  //   value: "timeline",
+  //   title: "Timeline"
+  // },
+  // {
+  //   key: "calendar",
+  //   value: "calendar",
+  //   title: "Calendar"
+  // },
   {
     key: "team",
     value: "team",

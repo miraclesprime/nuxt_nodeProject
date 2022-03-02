@@ -5,7 +5,7 @@
         <custom-check-box :id="'tg-' + task.key" />
 
         <span class="ml-05" style="margin-top: 2px" id='tg-title'
-          >{{ task.title }}</span
+          >{{ task.description }}</span
         >
       </div>
 
@@ -31,7 +31,7 @@
     <div class="task-bottom" id='tg-bottom'>
       <bib-avatar size="25px"></bib-avatar>
 
-      <span id='tg-bottom-duedate'>{{ task.dueDate }}</span>
+      <span id='tg-bottom-duedate' v-format-date="task.dueDate"></span>
     </div>
   </div>
 </template>
