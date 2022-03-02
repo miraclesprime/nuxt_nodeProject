@@ -60,13 +60,13 @@
             </bib-button>
           </div>
         </li>
-        <li class="action" id="pa-action-item4">
+        <!-- <li class="action" id="pa-action-item4">
           <span id="pa-action-item4-text" class="mr-025">Views</span>
           <div class="d-flex width-105 height-105 align-center justify-center bg-dark shape-rounded p-025" id="pa-action5-link">
             <bib-icon v-if="gridType == 'list'" icon="apps-large" variant="white" @click.native="changeGridType('grid')"></bib-icon>
             <bib-icon v-if="gridType == 'grid'" icon="list" variant="white" @click.native="changeGridType('list')"></bib-icon>
           </div>
-        </li>
+        </li> -->
       </ul>
     </div>
     <!-- <task-modals
@@ -96,7 +96,7 @@ export default {
     return {
       type: this.gridType,
       selectInfo: null,
-      selectedView: null,
+      selectedView: 'All',
       selectedSort: null
     };
   },
