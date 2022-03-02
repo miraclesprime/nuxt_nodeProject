@@ -21,16 +21,14 @@
         </template>
         <template #cell(status)="data">
           <div class="justify-between text-dark" id='tv-status-wrap'>
-            <span :class="statusClass( data.value.statusId ? data.value.statusId : '')" id='tv-status-text'>
-              {{ data.value.status ? data.value.status.text : '' }}
-            </span>
+            <span v-format-status="data.value.statusId ? data.value.statusId : ''">{{ data.value.status.text }}</span>
             <!-- <span :class="statusClass(data.value.statusId)" id='tv-progress-wrap'>
               {{ data.value.progress }}<span v-if="data.value.progress" id="tv-percent-sign">%</span></span> -->
           </div>
         </template>
         <template #cell(priority)="data">
           <div class="justify-between text-dark" id='tv-priority-wrap'>
-            <span :class="priorityClass(data.value.priorityId)" id='tv-priority-text'>
+            <span id='tv-priority-text' v-format-priority="data.value.priorityId ? data.value.priorityId : ''">
               {{ data.value.priority ? data.value.priority.text : '' }}
             </span>
           </div>
@@ -57,16 +55,7 @@
     </template>
     <template v-else>
       <div class="d-flex" id='tv-grid-wrap'>
-        <task-grid-section 
-        v-for="(item, index) in sections"
-        :key="item.tasks[0] ? item.tasks[0].title : '' + index"
-        :headless="true" 
-        :label="item.title" 
-        :taskFields="tableFields" 
-        :taskSections="item.tasks" 
-        :open="true" 
-        groupName="1"
-       />
+        <task-grid-section v-for="(item, index) in sections" :key="item.tasks[0] ? item.tasks[0].title : '' + index" :headless="true" :label="item.title" :taskFields="tableFields" :taskSections="item.tasks" :open="true" groupName="1" />
       </div>
     </template>
     <task-sidebar @open-sidebar="toggleSidebar()"></task-sidebar>
@@ -141,11 +130,11 @@ export default {
         this.$store.dispatch("section/createSection", {
           "projectId": this.project.id,
           "title": newvalue.trim()
-        }).then(()=>{
+        }).then(() => {
           this.sectionLoading = false
           this.newSection = false
           this.$refs.newsectioninput.removeAttribute("disabled")
-        }).catch(e=>console.log(e))
+        }).catch(e => console.log(e))
 
       } else {
         this.newSection = false

@@ -1,5 +1,4 @@
-export const TABLE_FIELDS = [
-  {
+export const TABLE_FIELDS = [{
     key: "id",
     label: "#"
   },
@@ -35,8 +34,7 @@ export const TAB_TITLES = {
   files: "files"
 };
 
-export const TASKS = [
-  {
+export const TASKS = [{
     name: "Remind me what time it is",
     author: "Bruno Goulet",
     date: "Jan-22"
@@ -53,8 +51,7 @@ export const TASKS = [
   }
 ];
 
-export const TEAMMATES = [
-  {
+export const TEAMMATES = [{
     name: "Bruno Goulet",
     role: "Developer"
   },
@@ -80,8 +77,7 @@ export const TEAMMATES = [
   }
 ];
 
-export const TABS = [
-  {
+export const TABS = [{
     key: "overview",
     value: "overview",
     title: "Overview"
@@ -123,3 +119,29 @@ export const DEFAULT_TAB = {
   value: "tasks",
   title: "Tasks"
 };
+
+export const VIEW_FILTER = [
+  { label: 'Incompleted', key: 'incomplete', },
+  { label: 'Completed', key: 'complete' },
+  { label: 'All', key: 'all' }
+]
+
+export const PROJECT_SORT = [
+  { label: 'Name', key: '' },
+  { label: 'Project', key: '' },
+  { label: 'Owner', key: '' },
+  { label: 'Status', key: '' },
+  { label: 'Start Date', key: '' },
+  { label: 'Due Date', key: '' },
+  { label: 'Tag', key: '' },
+  { label: 'Team', key: '' },
+]
+
+export const TASK_SORT = [
+  { label: 'Name', key: '' },
+  { label: 'Owner', key: '' },
+  { label: 'Priority', key: '' },
+  { label: 'Status', key: '' },
+  { label: 'Start Date', key: '' },
+  { label: 'Due Date', key: '' },
+]

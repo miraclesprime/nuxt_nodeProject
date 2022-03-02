@@ -7,25 +7,14 @@
         itemSpace="5px"
       /> -->
       <div class="d-flex gap-05 cursor-pointer text-secondary text-hover-dark" id="pa-add-project-button" v-on:click="showCreateTaskModal">
-        <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-task-text" >New Project</span>
+        <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-task-text">New Project</span>
       </div>
       <!-- <bib-button pop="add" label="Add Project" size="sm"></bib-button> -->
     </div>
     <div class="action-right" id="pa-action-right">
       <ul class="actions" id="pa-actions-list">
         <li class="action" id="pa-action-item1">
-          <span id="pa-action-item1-text" class="mr-025">Viewing: {{selectedView}}</span>
-          <div class="shape-rounded bg-dark width-105 height-105 d-flex justify-center align-center">
-            <bib-button pop="eye-open" icon-variant="white" size="sm">
-              <template v-slot:menu>
-                <div class="list" id="pa-item1-dropdown">
-                  <span id="pa-item1-dropdown-el1" class="list__item" @click="changeViewName('Incompleted Tasks')">Incompleted Tasks</span>
-                  <span id="pa-item1-dropdown-el2" class="list__item" @click="changeViewName('Completed Tasks')">Completed Tasks</span>
-                  <span id="pa-item1-dropdown-el3" class="list__item" @click="changeViewName('All')">All</span>
-                </div>
-              </template>
-            </bib-button>
-          </div>
+          <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="changeViewName" ></sorting-comp>
         </li>
         <li class="action" id="pa-action-item2">
           <span id="pa-action-item2-text" class="mr-025">Filter By:</span>
@@ -42,23 +31,7 @@
           </div>
         </li>
         <li class="action" id="pa-action-item3">
-          <span id="pa-action-item3-text" class="mr-025">Sorted By: {{selectedSort}}</span>
-          <div class="shape-rounded bg-dark width-105 height-105 d-flex justify-center align-center">
-            <bib-button pop="swap-vertical" icon-variant="white" size="sm">
-              <template v-slot:menu>
-                <div class="list" id="pa-item3-dropdown">
-                  <span id="pa-item3-dropdown-el1" class="list__item" @click="changeSortName('Name')">Name</span>
-                  <span id="pa-item3-dropdown-el2" class="list__item" @click="changeSortName('Project')">Project</span>
-                  <span id="pa-item3-dropdown-el3" class="list__item" @click="changeSortName('Owner')">Owner</span>
-                  <span id="pa-item3-dropdown-el4" class="list__item" @click="changeSortName('Status')">Status</span>
-                  <span id="pa-item3-dropdown-el5" class="list__item" @click="changeSortName('Start Date')">Start Date</span>
-                  <span id="pa-item3-dropdown-el6" class="list__item" @click="changeSortName('Due Date')">Due Date</span>
-                  <span id="pa-item3-dropdown-el7" class="list__item" @click="changeSortName('Tag')">Tag</span>
-                  <span id="pa-item3-dropdown-el8" class="list__item" @click="changeSortName('Team')">Team</span>
-                </div>
-              </template>
-            </bib-button>
-          </div>
+          <sorting-comp label="Sorted by" :items="sorting" icon="swap-vertical" v-on:change-sort="changeSortName"></sorting-comp>
         </li>
         <!-- <li class="action" id="pa-action-item4">
           <span id="pa-action-item4-text" class="mr-025">Views</span>
@@ -85,6 +58,7 @@
   </div>
 </template>
 <script>
+import { VIEW_FILTER, PROJECT_SORT } from 'config/constants.js'
 export default {
   props: {
     gridType: {
@@ -97,7 +71,9 @@ export default {
       type: this.gridType,
       selectInfo: null,
       selectedView: 'All',
-      selectedSort: null
+      selectedSort: null,
+      viewing: VIEW_FILTER,
+      sorting: PROJECT_SORT
     };
   },
   methods: {
@@ -151,8 +127,8 @@ export default {
       }
     },
 
-    changeViewName(viewName) {
-      this.selectedView = viewName;
+    changeViewName(view) {
+      this.selectedView = view;
     },
 
     changeSortName(sortName) {
@@ -177,16 +153,6 @@ export default {
 .actions {
   display: flex;
   color: $gray1;
-
-  span {
-    margin-left: 5px;
-    font-size: 13px;
-  }
-
-  svg,
-  svg g {
-    fill: $gray1;
-  }
 }
 
 .action {
