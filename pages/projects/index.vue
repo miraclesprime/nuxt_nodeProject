@@ -9,9 +9,9 @@
       <span class="font-lg font-w-700  mr-1" id="projects-title-head">Projects</span>
     </nav>
     <!-- </div> -->
-    <project-actions @sortValue='sortName=$event' />
+    <project-actions @sortValue='sortName=$event' @viewValue='viewName=$event' />
     <loading :loading="loading"></loading>
-    <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="projects" :key="'sort-'+ sortName">
+    <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="projects" :key="'sort-'+ sortName ? sortName : 'sName' + 'view-' + viewName ? viewName : 'vName'  ">
       <template #cell(title)="data">
         <div class="justify-between text-dark" :id="'projects-' + data.value.title" @click="goToProjectId(data.value)">
           <span :id="'projects-' + data.value.title + '-text'">{{data.value.title}}</span>
@@ -58,6 +58,7 @@ export default {
   data() {
     return {
       sortName: '',
+      viewName: '',
       loading: true,
       tableFields: PROJECT_FIELDS,
       gridType: "list",

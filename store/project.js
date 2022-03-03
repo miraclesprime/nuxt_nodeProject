@@ -88,15 +88,16 @@ export const mutations = {
       state.projects = arr;
     }
 
-  }
+  },
+
 };
 
 export const actions = {
 
   // for dispatch fetching projects
-  async fetchProjects(ctx) {
+  async fetchProjects(ctx, payload) {
     const res = await this.$axios.$get(`/project/company/${JSON.parse(window.localStorage.getItem('user')).subb}`, {
-      headers: { 'Authorization': `Bearer ${window.localStorage.getItem('accessToken')}` }
+      headers: { 'Authorization': `Bearer ${window.localStorage.getItem('accessToken')}`, 'Filter': payload ? payload : 'all' }
     });
     ctx.commit('fetchProjects', res.data);
   },
@@ -146,5 +147,6 @@ export const actions = {
 
   sortProjects(ctx, payload) {
     ctx.commit('sortProjects', payload)
-  }
+  },
+
 }

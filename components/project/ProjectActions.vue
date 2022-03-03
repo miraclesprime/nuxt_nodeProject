@@ -14,7 +14,7 @@
     <div class="action-right" id="pa-action-right">
       <ul class="actions" id="pa-actions-list">
         <li class="action" id="pa-action-item1">
-          <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="changeViewName" ></sorting-comp>
+          <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="viewProjects($event)" ></sorting-comp>
         </li>
         <li class="action" id="pa-action-item2">
           <span id="pa-action-item2-text" class="mr-025">Filter By:</span>
@@ -127,8 +127,10 @@ export default {
       }
     },
 
-    changeViewName(view) {
-      this.selectedView = view;
+    viewProjects($event) {
+      this.$store.dispatch('project/fetchProjects', $event);
+      this.selectedView = $event;
+      this.$emit('viewValue', $event)
     },
 
     sortBy($event) {
