@@ -31,8 +31,6 @@ export default {
   mounted() {
     let sample = this.items.find(el => el.selected)
 
-    // console.log(typeof(sample), sample)
-
     for (let key in sample) {
       console.log(sample['label'])
       this.selectedView = sample['label'];

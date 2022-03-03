@@ -142,47 +142,6 @@ export default {
       }
     },
 
-    statusClass(status) {
-      /*1 Not Started
-      2 In-Progress
-      3 Waiting
-      4 Deferred
-      5 Done*/
-      switch (status) {
-        case 1:
-          return "text-secondary"
-          break;
-        case 2:
-          return "text-blue"
-          break;
-        case 3:
-          return "text-orange"
-          break;
-        case 4:
-          return "text-red"
-          break;
-        default:
-          return "text-green"
-          break;
-      }
-    },
-
-    priorityClass(priority) {
-      /*1 high
-      2 medium
-      3 low*/
-      switch (priority) {
-        case 1:
-          return "text-red"
-          break;
-        case 2:
-          return "text-orange"
-          break;
-        default:
-          return "text-green"
-          break;
-      }
-    },
     taskSelected($event) {
       this.$store.dispatch('task/setSingleTask', $event)
     }
