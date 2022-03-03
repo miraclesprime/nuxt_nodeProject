@@ -123,7 +123,7 @@ export const DEFAULT_TAB = {
 export const VIEW_FILTER = [
   { label: 'Incompleted', key: 'incomplete', },
   { label: 'Completed', key: 'complete' },
-  { label: 'All', key: 'all' }
+  { label: 'All', key: 'all', selected: true }
 ]
 
 export const PROJECT_SORT = [

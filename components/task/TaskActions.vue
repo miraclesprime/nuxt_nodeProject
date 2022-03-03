@@ -9,14 +9,14 @@
       <div class="d-flex gap-05 cursor-pointer text-secondary text-hover-dark" id="ta-add-task-button" v-on:click="showCreateTaskModal">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-task-text" class="">New Task</span>
       </div>
-      <div class="d-flex gap-05 ml-1 cursor-pointer text-secondary text-hover-dark" id="ta-add-section-button" v-on:click="createSectionInline('true')" >
+      <div class="d-flex gap-05 ml-1 cursor-pointer text-secondary text-hover-dark" id="ta-add-section-button" v-on:click="createSectionInline('true')">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-section-text" class="">New Section</span>
       </div>
     </div>
     <div class="action-right d-flex gap-05" id="ta-action-right">
       <ul class="actions" id="ta-action-right-actions">
         <li class="action" id="ta-action1">
-          <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="changeViewName" ></sorting-comp>
+          <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="changeViewName"></sorting-comp>
           <!-- <span id="ta-action1-text" class="mr-025">Viewing</span>
           <div id="ta-action1-ddwrap" class="shape-rounded bg-dark bg-hover-gray1 width-105 height-105 d-flex justify-center align-center">
             <bib-button pop="eye-open" icon-variant="white" size="sm">
@@ -142,7 +142,7 @@ export default {
     showCreateSectionModal() {
       this.$refs.modals.showCreateSectionModal = true;
     },
-    createSectionInline($event){
+    createSectionInline($event) {
       this.$emit("create-section", $event)
       this.$nuxt.$emit("create-section", $event)
     },
@@ -186,6 +186,10 @@ export default {
 
     sortBy(value) {
       this.$store.dispatch('section/sortSections', value)
+    },
+    changeViewName() {},
+    changeSortName() {
+
     }
   },
 };
