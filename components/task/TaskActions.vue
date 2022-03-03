@@ -30,7 +30,7 @@
           </div>
         </li>
         <li class="action" id="ta-action2">
-          <span id="ta-action2-text" class="mr-025">Sorted by</span>
+          <span id="ta-action2-text" class="mr-025">Sorted by: {{sortName}}</span>
           <div id="ta-action2-ddwrap" class="shape-rounded bg-dark bg-hover-gray1 width-105 height-105 d-flex justify-center align-center">
             <bib-button pop="swap-vertical" icon-variant="white" size="sm">
               <template v-slot:menu>
@@ -123,7 +123,8 @@ export default {
   },
   data() {
     return {
-      selectInfo: null
+      selectInfo: null,
+      sortName: ''
     };
   },
   methods: {
@@ -181,6 +182,7 @@ export default {
 
     sortBy(value) {
       this.$store.dispatch('section/sortSections', value)
+      this.sortName = value;
     }
   },
 };

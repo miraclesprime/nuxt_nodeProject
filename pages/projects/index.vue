@@ -9,9 +9,9 @@
       <span class="font-lg font-w-700  mr-1" id="projects-title-head">Projects</span>
     </nav>
     <!-- </div> -->
-    <project-actions />
+    <project-actions @sortValue='sortName=$event' />
     <loading :loading="loading"></loading>
-    <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="projects">
+    <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="projects" :key="'sort-'+ sortName">
       <template #cell(title)="data">
         <div class="justify-between text-dark" :id="'projects-' + data.value.title" @click="goToProjectId(data.value)">
           <span :id="'projects-' + data.value.title + '-text'">{{data.value.title}}</span>
@@ -57,6 +57,7 @@ export default {
   components: { ProjectActions, UserInfo },
   data() {
     return {
+      sortName: '',
       loading: true,
       tableFields: PROJECT_FIELDS,
       gridType: "list",

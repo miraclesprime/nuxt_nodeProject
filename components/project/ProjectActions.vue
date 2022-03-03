@@ -47,14 +47,14 @@
             <bib-button pop="swap-vertical" icon-variant="white" size="sm">
               <template v-slot:menu>
                 <div class="list" id="pa-item3-dropdown">
-                  <span id="pa-item3-dropdown-el1" class="list__item" @click="changeSortName('Name')">Name</span>
-                  <span id="pa-item3-dropdown-el2" class="list__item" @click="changeSortName('Project')">Project</span>
-                  <span id="pa-item3-dropdown-el3" class="list__item" @click="changeSortName('Owner')">Owner</span>
-                  <span id="pa-item3-dropdown-el4" class="list__item" @click="changeSortName('Status')">Status</span>
-                  <span id="pa-item3-dropdown-el5" class="list__item" @click="changeSortName('Start Date')">Start Date</span>
-                  <span id="pa-item3-dropdown-el6" class="list__item" @click="changeSortName('Due Date')">Due Date</span>
-                  <span id="pa-item3-dropdown-el7" class="list__item" @click="changeSortName('Tag')">Tag</span>
-                  <span id="pa-item3-dropdown-el8" class="list__item" @click="changeSortName('Team')">Team</span>
+                  <span id="pa-item3-dropdown-el1" class="list__item" @click="sortBy('name')">Name</span>
+                  <span id="pa-item3-dropdown-el2" class="list__item" @click="sortBy('project')">Project</span>
+                  <span id="pa-item3-dropdown-el3" class="list__item" @click="sortBy('owner')">Owner</span>
+                  <span id="pa-item3-dropdown-el4" class="list__item" @click="sortBy('status')">Status</span>
+                  <span id="pa-item3-dropdown-el5" class="list__item" @click="sortBy('startDate')">Start Date</span>
+                  <span id="pa-item3-dropdown-el6" class="list__item" @click="sortBy('dueDate')">Due Date</span>
+                  <span id="pa-item3-dropdown-el7" class="list__item" @click="sortBy('tag')">Tag</span>
+                  <span id="pa-item3-dropdown-el8" class="list__item" @click="sortBy('team')">Team</span>
                 </div>
               </template>
             </bib-button>
@@ -155,8 +155,10 @@ export default {
       this.selectedView = viewName;
     },
 
-    changeSortName(sortName) {
-      this.selectedSort = sortName;
+    sortBy(value) {
+      this.$store.dispatch('project/sortProjects', value)
+      this.selectedSort = value;
+      this.$emit('sortValue', value)
     }
   },
 };
