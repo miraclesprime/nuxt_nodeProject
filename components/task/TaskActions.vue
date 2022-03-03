@@ -9,14 +9,15 @@
       <div class="d-flex gap-05 cursor-pointer text-secondary text-hover-dark" id="ta-add-task-button" v-on:click="showCreateTaskModal">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-task-text" class="">New Task</span>
       </div>
-      <div class="d-flex gap-05 ml-1 cursor-pointer text-secondary text-hover-dark" id="ta-add-section-button" v-on:click="createSectionInline('true')" >
+      <div class="d-flex gap-05 ml-1 cursor-pointer text-secondary text-hover-dark" id="ta-add-section-button" v-on:click="createSectionInline('true')">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-section-text" class="">New Section</span>
       </div>
     </div>
     <div class="action-right d-flex gap-05" id="ta-action-right">
       <ul class="actions" id="ta-action-right-actions">
         <li class="action" id="ta-action1">
-          <span id="ta-action1-text" class="mr-025">Viewing</span>
+          <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="changeViewName"></sorting-comp>
+          <!-- <span id="ta-action1-text" class="mr-025">Viewing</span>
           <div id="ta-action1-ddwrap" class="shape-rounded bg-dark bg-hover-gray1 width-105 height-105 d-flex justify-center align-center">
             <bib-button pop="eye-open" icon-variant="white" size="sm">
               <template v-slot:menu>
@@ -27,10 +28,11 @@
                 </div>
               </template>
             </bib-button>
-          </div>
+          </div> -->
         </li>
         <li class="action" id="ta-action2">
-          <span id="ta-action2-text" class="mr-025">Sorted by: {{sortName}}</span>
+          <sorting-comp label="Sorted by" :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy"></sorting-comp>
+          <!-- <span id="ta-action2-text" class="mr-025">Sorted by</span>
           <div id="ta-action2-ddwrap" class="shape-rounded bg-dark bg-hover-gray1 width-105 height-105 d-flex justify-center align-center">
             <bib-button pop="swap-vertical" icon-variant="white" size="sm">
               <template v-slot:menu>
@@ -44,7 +46,7 @@
                 </div>
               </template>
             </bib-button>
-          </div>
+          </div> -->
         </li>
         <li class="action" id="ta-action3">
           <span id="ta-action3-text" class="mr-025">Filter by</span>
@@ -114,6 +116,7 @@
   </div>
 </template>
 <script>
+import { VIEW_FILTER, TASK_SORT } from 'config/constants.js'
 export default {
   props: {
     gridType: {
@@ -124,7 +127,9 @@ export default {
   data() {
     return {
       selectInfo: null,
-      sortName: ''
+      sortName: '',
+      viewing: VIEW_FILTER,
+      sorting: TASK_SORT
     };
   },
   methods: {
@@ -138,7 +143,7 @@ export default {
     showCreateSectionModal() {
       this.$refs.modals.showCreateSectionModal = true;
     },
-    createSectionInline($event){
+    createSectionInline($event) {
       this.$emit("create-section", $event)
       this.$nuxt.$emit("create-section", $event)
     },
@@ -184,6 +189,7 @@ export default {
       this.$store.dispatch('section/sortSections', value)
       this.sortName = value;
     }
+
   },
 };
 

@@ -19,17 +19,18 @@
       </template>
       <template #cell(userId)="data">
         <div class="d-flex gap-05" id="projects-userInfo-wrap">
-          <span class="text-dark" id="projects-userInfo-text"><user-info :id="data.value ? data.value.userId : ''"  /></span>
+          <span class="text-dark" id="projects-userInfo-text">
+            <user-info :id="data.value ? data.value.userId : ''" /></span>
         </div>
       </template>
       <template #cell(status)="data">
         <div class="justify-between text-dark" :id="'projects-' + data.value.status.text">
-          <span :id="'projects-' + data.value.status.text + '-text'">{{data.value.status.text}}</span>
+          <span :id="'projects-' + data.value.status.text + '-text'" v-format-status="data.value.statusId ? data.value.statusId : ''">{{ data.value.status.text }}</span>
         </div>
       </template>
       <template #cell(createdAt)="data">
         <div class="justify-between text-dark" :id="'projects-' + data.value.createdAt">
-          <span :id="'projects-' + data.value.createdAt + '-text'" v-format-date="data.value.createdAt" ></span>
+          <span :id="'projects-' + data.value.createdAt + '-text'" v-format-date="data.value.createdAt"></span>
         </div>
       </template>
       <template #cell(dueDate)="data">
@@ -39,13 +40,12 @@
       </template>
       <template #cell(priority)="data">
         <div class="justify-between text-dark" :id="'projects-' + data.value.priority.text">
-          <span :id="'projects-' + data.value.priority.text + '-text'">{{data.value.priority.text}}</span>
+          <span :id="'projects-' + data.value.priority.text + '-text'" v-format-priority="data.value.priorityId ? data.value.priorityId : ''">{{data.value.priority.text}}</span>
         </div>
       </template>
     </bib-table>
   </div>
 </template>
-
 <script>
 // import { TABLE_FIELDS, TABS, DEFAULT_TAB, TAB_TITLES } from "config/constants";
 import { PROJECT_FIELDS } from '../../dummy/project';
@@ -73,7 +73,7 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch('project/fetchProjects').then(p=>{this.loading = false})
+    this.$store.dispatch('project/fetchProjects').then(p => { this.loading = false })
   },
   computed: {
     ...mapGetters({
@@ -90,9 +90,9 @@ export default {
       // this.$store.dispatch('project/setSingleProject', project)
       this.$router.push("/projects/" + project.id)
     },
-    formattedDate(date){
+    formattedDate(date) {
       let d = new Date(date);
-      let m = (d.getMonth()+1) < 10 ? '0'+ (d.getMonth()+1) : d.getMonth()+1
+      let m = (d.getMonth() + 1) < 10 ? '0' + (d.getMonth() + 1) : d.getMonth() + 1
       return `${d.getDate()}/${m}/${d.getFullYear()}`
     }
   }
