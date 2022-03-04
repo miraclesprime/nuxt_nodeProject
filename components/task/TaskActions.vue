@@ -188,6 +188,9 @@ export default {
     sortBy(value) {
       this.$store.dispatch('section/sortSections', value)
       this.sortName = value;
+    },
+    changeViewName($event){
+      console.log($event)
     }
 
   },

@@ -77,10 +77,10 @@ export default {
     };
   },
   methods: {
-    changeGridType(gType) {
+    /*changeGridType(gType) {
       this.type = gType;
       this.$root.$emit("change-grid-type", this.type);
-    },
+    },*/
     showCreateTaskModal(data) {
       this.$refs.modals.modalSize = "lg";
       this.$refs.modals.showCreateTaskModal = true;
@@ -128,7 +128,8 @@ export default {
     },
 
     viewProjects($event) {
-      this.$store.dispatch('project/fetchProjects', $event);
+      this.$emit("loading", true)
+      this.$store.dispatch('project/fetchProjects', $event).then(()=>{this.$emit("loading", false)})
       this.selectedView = $event;
       this.$emit('viewValue', $event)
     },

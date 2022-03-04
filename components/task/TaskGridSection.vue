@@ -20,15 +20,15 @@
             <div class="task-top" id='tg-card-top'>
               <div class="d-flex" id='tg-card-inside-wrap' >
                 <custom-check-box :id="'tg-' + item.key" />
-                <span class="ml-05" style="margin-top: 2px" id='tg-title'>{{ item.description }}</span>
+                <span class="ml-05" id='tg-title'>{{ item.description }}</span>
               </div>
               <bib-button pop="elipsis" icon="elipsis" icon-variant="secondary" >
                 <template v-slot:menu>
                   <div class="list" id='tg-list'>
-                    <span class="list__item bg-success" id='tg-fav' @click="addToFavorites">Add to favorites</span>
-                    <span class="list__item" id='tg-copy-link'>Copy Task Link</span>
+                    <span class="list__item success" id='tg-fav' @click="addToFavorites">Add to favorites</span>
+                    <span class="list__item " id='tg-copy-link'>Copy Task Link</span>
                     <span class="list__item danger" id='tg-delete-task'>Delete Task</span>
-                    <span class="list__item" id='tg-view-task' @click="openSidebar(item)">View Task Details</span>
+                    <span class="list__item primary" id='tg-view-task' @click="openSidebar(item)">View Task Details</span>
                   </div>
                 </template>
               </bib-button>
@@ -167,7 +167,6 @@ export default {
   cursor: pointer;
 
   .task-image {
-    /*height: 150px;*/
     aspect-ratio: 16 / 9;
     background-repeat: no-repeat;
     background-position: center;
@@ -182,9 +181,15 @@ export default {
   .task-bottom span {
     font-size: 13px;
   }
+
+
 }
 
 ::v-deep {
+  .user-info-wrapper {
+    .user-name { visibility: hidden; opacity: 0; transition: opacity 200ms ease-out; }
+    &:hover .user-name { visibility: visible; opacity: 1; }
+  }
   .custom-control-label {
     &::before {
       width: 1.4rem;
