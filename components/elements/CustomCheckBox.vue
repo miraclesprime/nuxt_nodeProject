@@ -53,8 +53,8 @@ export default {
   &::before {
     content: "";
     display: block;
-    width: 1.2rem;
-    height: 1.2rem;
+    width: 1rem;
+    height: 1rem;
     border-radius: 50%;
     color: #fff;
     border: 1px solid #333;

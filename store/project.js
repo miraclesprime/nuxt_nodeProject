@@ -15,6 +15,8 @@ export const getters = {
   getSingleProject(state) {
     return state.selectedProject;
   },
+
+  // get favorite projects
   getFavProjects(state) {
     let fav = []
     state.favProjects.map(f=>{
@@ -44,14 +46,58 @@ export const mutations = {
   SETFAVPROJECTS(state, payload) {
     state.favProjects = payload
   },
+
+  sortProjects(state, payload) {
+
+    if (payload == 'name') {
+      let arr = JSON.parse(JSON.stringify(state.projects));
+      arr.sort((a, b) => a.title.localeCompare(b.title));
+      state.projects = arr;
+    }
+
+    if (payload == 'owner') {
+      let arr = JSON.parse(JSON.stringify(state.projects))
+      arr.sort((a, b) => a.userId.localeCompare(b.userId));
+      state.projects = arr;
+    }
+
+    if (payload == 'status') {
+
+      let arr = JSON.parse(JSON.stringify(state.projects))
+      arr.sort((a, b) => a.status.text.localeCompare(b.status.text));
+      state.projects = arr;
+
+    }
+    if (payload == 'startDate') {
+
+      let arr = JSON.parse(JSON.stringify(state.projects))
+      arr.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      state.projects = arr;
+
+    }
+
+    if (payload == 'dueDate') {
+      let arr = JSON.parse(JSON.stringify(state.projects))
+      arr.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+      state.projects = arr;
+    }
+
+    if (payload == 'priority') {
+      let arr = JSON.parse(JSON.stringify(state.projects))
+      arr.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
+      state.projects = arr;
+    }
+
+  },
+
 };
 
 export const actions = {
 
   // for dispatch fetching projects
-  async fetchProjects(ctx) {
+  async fetchProjects(ctx, payload) {
     const res = await this.$axios.$get(`/project/company/${JSON.parse(window.localStorage.getItem('user')).subb}`, {
-      headers: { 'Authorization': `Bearer ${window.localStorage.getItem('accessToken')}` }
+      headers: { 'Authorization': `Bearer ${window.localStorage.getItem('accessToken')}`, 'Filter': payload ? payload : 'all' }
     });
     ctx.commit('fetchProjects', res.data);
   },
@@ -97,5 +143,10 @@ export const actions = {
     } catch (e) {
       console.log(e);
     }
-  }
+  },
+
+  sortProjects(ctx, payload) {
+    ctx.commit('sortProjects', payload)
+  },
+
 }

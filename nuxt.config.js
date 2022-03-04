@@ -27,6 +27,8 @@ export default {
     "~/plugins/axios.js",
     "~/plugins/dayjs.js",
     "~/plugins/dateFormat.client.js",
+    "~/plugins/statusFormat.client.js",
+    "~/plugins/priorityFormat.client.js",
     "~/plugins/userInfo.js"
     ],
   // Auto import components (https://go.nuxtjs.dev/config-components)

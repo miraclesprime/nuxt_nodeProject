@@ -15,22 +15,21 @@
     <template v-if="gridType === 'list'">
       <bib-table v-for="(item, index) in sections" :key="item.tasks[0] ? item.tasks[0].title : '' + index" :fields="tableFields" :sections="item.tasks" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
         <template #cell(title)="data">
-          <div class="d-flex gap-05" id='tv-title-wrap'>
+          <div class="d-flex align-center gap-05" id='tv-title-wrap'>
+            <custom-check-box id="'tv-task-check-'+index"></custom-check-box>
             <span class="text-dark" id='tv-title-text' @click="taskSelected(data.value)">{{ data.value ? data.value.title : '' }}</span>
           </div>
         </template>
         <template #cell(status)="data">
           <div class="justify-between text-dark" id='tv-status-wrap'>
-            <span :class="statusClass( data.value.statusId ? data.value.statusId : '')" id='tv-status-text'>
-              {{ data.value.status ? data.value.status.text : '' }}
-            </span>
+            <span v-format-status="data.value.statusId ? data.value.statusId : ''">{{ data.value.status.text }}</span>
             <!-- <span :class="statusClass(data.value.statusId)" id='tv-progress-wrap'>
               {{ data.value.progress }}<span v-if="data.value.progress" id="tv-percent-sign">%</span></span> -->
           </div>
         </template>
         <template #cell(priority)="data">
           <div class="justify-between text-dark" id='tv-priority-wrap'>
-            <span :class="priorityClass(data.value.priorityId)" id='tv-priority-text'>
+            <span id='tv-priority-text' v-format-priority="data.value.priorityId ? data.value.priorityId : ''">
               {{ data.value.priority ? data.value.priority.text : '' }}
             </span>
           </div>
@@ -56,8 +55,8 @@
       </bib-table>
     </template>
     <template v-else>
-      <div class="d-flex" id='tv-grid-wrap'>
-        <task-grid-section :headless="true" label="Section" :taskFields="tableFields" :taskSections="sections" :open="true" groupName="1" />
+      <div class="d-flex of-scroll-x" id='tv-grid-wrap'>
+        <task-grid-section v-for="(item, index) in sections" :key="item.tasks[0] ? item.tasks[0].title : '' + index" :headless="true" :label="item.title" :taskFields="tableFields" :taskSections="item.tasks" :open="true" groupName="1" />
       </div>
     </template>
     <task-sidebar @open-sidebar="toggleSidebar()"></task-sidebar>
@@ -132,11 +131,11 @@ export default {
         this.$store.dispatch("section/createSection", {
           "projectId": this.project.id,
           "title": newvalue.trim()
-        }).then(()=>{
+        }).then(() => {
           this.sectionLoading = false
           this.newSection = false
           this.$refs.newsectioninput.removeAttribute("disabled")
-        }).catch(e=>console.log(e))
+        }).catch(e => console.log(e))
 
       } else {
         this.newSection = false
@@ -144,47 +143,6 @@ export default {
       }
     },
 
-    statusClass(status) {
-      /*1 Not Started
-      2 In-Progress
-      3 Waiting
-      4 Deferred
-      5 Done*/
-      switch (status) {
-        case 1:
-          return "text-secondary"
-          break;
-        case 2:
-          return "text-blue"
-          break;
-        case 3:
-          return "text-orange"
-          break;
-        case 4:
-          return "text-red"
-          break;
-        default:
-          return "text-green"
-          break;
-      }
-    },
-
-    priorityClass(priority) {
-      /*1 high
-      2 medium
-      3 low*/
-      switch (priority) {
-        case 1:
-          return "text-red"
-          break;
-        case 2:
-          return "text-orange"
-          break;
-        default:
-          return "text-green"
-          break;
-      }
-    },
     taskSelected($event) {
       this.$store.dispatch('task/setSingleTask', $event)
     }

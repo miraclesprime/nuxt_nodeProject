@@ -1,6 +1,6 @@
 <template>
   <div id="layout-wrapper">
-    <bib-app-wrapper class="test" :navigationCollapsed="collapseNavigation" :select="appHeaderActions.select" :button="appHeaderActions.button" @button-click="rightClkFileSection" @collapseNavigation="
+    <bib-app-wrapper class="test" :navigationCollapsed="collapseNavigation" :select="appHeaderActions.select" @collapseNavigation="
         () => {
           resizeCalendar()
           collapseNavigation = !collapseNavigation;
@@ -16,12 +16,12 @@
                     <bib-icon icon="home" :scale="1.1" variant="gray5" class="mr-075"></bib-icon> My Account
                   </span> -->
                   <span class="list__item" id="layout-list-item1">
-                    <a :href="userProfileUrl"  id="layout-list-item1-link">
+                    <a :href="userProfileUrl" id="layout-list-item1-link">
                       <bib-icon icon="user-canonical" :scale="1.1" variant="gray5" class="mr-075"></bib-icon> My Profile
                     </a>
                   </span>
-                  <span class="list__item"  id="layout-list-item2">
-                    <a :href="logoutUrl"  id="layout-list-item2-link">
+                  <span class="list__item" id="layout-list-item2">
+                    <a :href="logoutUrl" id="layout-list-item2-link">
                       <bib-icon icon="output" :scale="1.1" variant="gray5" class="mr-075"></bib-icon> Logout
                     </a>
                   </span>
@@ -35,6 +35,19 @@
         <bib-app-switcher :menuItems="appItems"></bib-app-switcher>
       </template>
       <template #navigation>
+        <div v-show="!collapseNavigation">
+          <bib-button label="Create" variant="success" size="lg" pill class="w-75"></bib-button>
+          <bib-button dropdown="" label="" class="w-75" style="transform: translateY(-28px); z-index:9;" >
+            <template v-slot:menu>
+              <ul>
+                <li v-for="item in appHeaderActions.button.items" :key="item.label" class="d-flex align-center" @click="createAction(item)">
+                  <bib-icon :variant="item.iconVariant" :icon="item.icon" :scale="1.1"></bib-icon>
+                  <span class="ml-05">{{item.label}}</span>
+                </li>
+              </ul>
+            </template>
+          </bib-button>
+        </div>
         <bib-app-navigation :items="navItems1" @click='goToRoute($event)' class="mb-1"></bib-app-navigation>
         <bib-app-navigation :items="navItems2" @click='goToRoute($event)'></bib-app-navigation>
         <bib-detail-collapse v-show="!collapseNavigation" label="Favorite Projects" variant="white" open class="mt-1">
@@ -65,7 +78,7 @@
           createProject(project);
         }
       " ref="projectModals"></create-project-modal>
-      <!-- <create-task-modals @create-task="
+    <!-- <create-task-modals @create-task="
         (task) => {
           createTask(task);
         }
@@ -116,6 +129,12 @@ export default {
           event: "button-click",
           variant: "success",
           icon: "add",
+          items: [
+            { label: "New Task", icon: "check-circle", iconVariant: "success", key: "new-task" },
+            { label: "New Project", icon: "briefcase", key: "new-project" },
+            { label: "New File", icon: "file", key: "new-file" },
+            { label: "New Folder", icon: "folder", key: "new-folder" },
+          ]
         },
         select: {
           items: [{
@@ -149,7 +168,9 @@ export default {
     if (process.client) {
 
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0cTJWb2xlalJlak5tR1FCIiwic3ViZSI6Imh0YW5nQGJpenRyZWUuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiQURNSU4iLCJzdWJjIjoiQ2FuYWRhIiwiZW52IjoiZGV2IiwiaWF0IjoxNjQ2MDM5MDYyMjY5LCJleHAiOjE2NTM4MTUwNjIyNjksImp0aSI6IjYzYTliMmNhLWNiYTItNDZkZC05NTExLTkwYzFjMDcyYjZiMSJ9.P0em4Q8Wpb91TeZZ0hqW4wrXA75SAArA8ov5LGR9zkM"
+
       // // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0cTJWb2xlalJlak5tR1FCIiwic3ViZSI6Imh0YW5nQGJpenRyZWUuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiQURNSU4iLCJzdWJjIjoiQ2FuYWRhIiwiaWF0IjoxNjQ0ODM4ODkxNzEwLCJleHAiOjE2NTI2MTQ4OTE3MTAsImp0aSI6IjlhMmJkMTRlLTU3NmUtNDNmOS05YjNjLTk4MzVmYTFkNjc2YSJ9.J31bf_Z-pPe1IFrUihvSH0W6XQ3cCnMJOcs-_6kPoPI"
+
 
       // this.$cookies.set('b_ssojwt', cookie);
       // this.$store.dispatch('token/setToken', cookie);
@@ -199,8 +220,30 @@ export default {
   methods: {
 
     rightClkFileSection(event) {
-      console.log('create button clicked')
-      this.$refs.projectModals.showCreateProjectModal = true;
+      console.log('click outside event')
+      // this.$refs.projectModals.showCreateProjectModal = true;
+    },
+
+    createAction($event) {
+      // console.log($event.key)
+      switch ($event.key) {
+        case "new-task":
+          console.log($event.key)
+          break;
+        case "new-project":
+          console.log($event.key)
+          this.$refs.projectModals.showCreateProjectModal = true;
+          break;
+        case "new-file":
+          console.log($event.key)
+          break;
+        case "new-folder":
+          console.log($event.key)
+          break;
+        default:
+          console.log('default')
+          break;
+      }
     },
 
     resizeCalendar() {
@@ -224,8 +267,8 @@ export default {
       }
     },
 
-    goToProject($event){
-      this.$router.push("/projects/"+$event.id)
+    goToProject($event) {
+      this.$router.push("/projects/" + $event.id)
     },
 
     // Handle User logout

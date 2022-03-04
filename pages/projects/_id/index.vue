@@ -44,14 +44,14 @@
     </nav>
 
     <div class="menu" id='project-idmenu-content'>
-      <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="TABS" />
+      <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="TABS" flexible-width />
     </div>
     <div id="project-id-tab-content" class="project-id-tab-content position-relative ">
       <task-overview v-if="activeTab.value == TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="tasks" :gridType="gridType" />
       <task-view v-if="activeTab.value == TAB_TITLES.tasks" :fields="taskFields" :tasks="tasks" :sections="sections" :gridType="gridType" />
       <task-conversations v-if="activeTab.value == TAB_TITLES.conversations" :fields="TABLE_FIELDS" :tasks="tasks" />
-      <task-timeline-view v-if="activeTab.value == TAB_TITLES.timeline" :fields="TABLE_FIELDS" :tasks="tasks" />
-      <task-calendar-view v-if="activeTab.value == TAB_TITLES.calendar" :fields="TABLE_FIELDS" :tasks="tasks" />
+      <!-- <task-timeline-view v-if="activeTab.value == TAB_TITLES.timeline" :fields="TABLE_FIELDS" :tasks="tasks" />
+      <task-calendar-view v-if="activeTab.value == TAB_TITLES.calendar" :fields="TABLE_FIELDS" :tasks="tasks" /> -->
       <task-team v-if="activeTab.value == TAB_TITLES.team" :fields="TABLE_FIELDS" :tasks="tasks" />
       <task-files v-if="activeTab.value == TAB_TITLES.files" :fields="TABLE_FIELDS" :tasks="tasks" />
     </div>
@@ -146,9 +146,6 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-}
-.project-id-tab-content {
-
 }
 .shape-circle {
   .menu {
