@@ -14,7 +14,7 @@
     <div class="action-right" id="pa-action-right">
       <ul class="actions" id="pa-actions-list">
         <li class="action" id="pa-action-item1">
-          <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="viewProjects($event)" ></sorting-comp>
+          <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="viewProjects($event)"></sorting-comp>
         </li>
         <li class="action" id="pa-action-item2">
           <span id="pa-action-item2-text" class="mr-025">Filter By:</span>
@@ -76,6 +76,7 @@ export default {
       sorting: PROJECT_SORT
     };
   },
+  
   methods: {
     /*changeGridType(gType) {
       this.type = gType;
@@ -129,7 +130,7 @@ export default {
 
     viewProjects($event) {
       this.$emit("loading", true)
-      this.$store.dispatch('project/fetchProjects', $event).then(()=>{this.$emit("loading", false)})
+      this.$store.dispatch('project/fetchProjects', $event).then(() => { this.$emit("loading", false) })
       this.selectedView = $event;
       this.$emit('viewValue', $event)
     },

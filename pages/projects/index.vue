@@ -74,14 +74,13 @@ export default {
         priority: null,
         status: null,
       },
-      project: {
+      /*project: {
         title: "Project One"
-      },
-      projectName: ''
+      },*/
     }
   },
   mounted() {
-    this.$store.dispatch('project/fetchProjects').then(p => { this.loading = false })
+    this.$store.dispatch('project/fetchProjects').then(() => { this.loading = false })
   },
   computed: {
     ...mapGetters({

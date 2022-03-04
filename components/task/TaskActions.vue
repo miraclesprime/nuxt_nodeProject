@@ -190,7 +190,8 @@ export default {
       this.sortName = value;
     },
     changeViewName($event){
-      console.log($event)
+      // console.log($event)
+      this.$emit("filterView", $event)
     }
 
   },

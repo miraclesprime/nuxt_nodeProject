@@ -47,11 +47,15 @@ export default {
 
 </script>
 <style lang="css" scoped>
-.menu {
-  .list {
-    .list__item {
-      &.dark { background-color: var(--bib-dark); color: var(--bib-white);}
+::v-deep {
+
+  .list__item {
+    &.dark {
+      background-color: var(--bib-dark);
+      color: var(--bib-white);
     }
   }
+
 }
+
 </style>
