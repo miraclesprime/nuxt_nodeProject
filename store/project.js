@@ -78,7 +78,7 @@ export const mutations = {
 
     if (payload == 'dueDate') {
       let arr = JSON.parse(JSON.stringify(state.projects))
-      arr.sort((a, b) => new Date(a.dueDate) - new Date(b.title));
+      arr.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
       state.projects = arr;
     }
 
