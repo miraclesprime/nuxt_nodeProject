@@ -15,7 +15,8 @@
     <template v-if="gridType === 'list'">
       <bib-table v-for="(item, index) in sections" :key="item.tasks[0] ? item.tasks[0].title : '' + index" :fields="tableFields" :sections="item.tasks" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
         <template #cell(title)="data">
-          <div class="d-flex gap-05" id='tv-title-wrap'>
+          <div class="d-flex align-center gap-05" id='tv-title-wrap'>
+            <custom-check-box id="'tv-task-check-'+index"></custom-check-box>
             <span class="text-dark" id='tv-title-text' @click="taskSelected(data.value)">{{ data.value ? data.value.title : '' }}</span>
           </div>
         </template>
@@ -54,7 +55,7 @@
       </bib-table>
     </template>
     <template v-else>
-      <div class="d-flex" id='tv-grid-wrap'>
+      <div class="d-flex of-scroll-x" id='tv-grid-wrap'>
         <task-grid-section v-for="(item, index) in sections" :key="item.tasks[0] ? item.tasks[0].title : '' + index" :headless="true" :label="item.title" :taskFields="tableFields" :taskSections="item.tasks" :open="true" groupName="1" />
       </div>
     </template>
