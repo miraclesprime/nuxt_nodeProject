@@ -55,6 +55,7 @@ export default {
   },
   data() {
     return {
+      dragItems: [],
       sections: this.taskSections,
       flag: false,
     };
@@ -87,6 +88,8 @@ export default {
   },
   methods: {
     onDrop(collection, dropResult) {
+      // this.dragItems = dropResult
+      // console.log(dropResult)
       this[collection] = applyDrag(this[collection], dropResult);
     },
     getChildPayload(index) {
@@ -181,7 +184,6 @@ export default {
   .task-bottom span {
     font-size: 13px;
   }
-
 
 }
 

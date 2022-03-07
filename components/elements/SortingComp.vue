@@ -30,11 +30,15 @@ export default {
 
   mounted() {
     let sample = this.items.find(el => el.selected)
-
-    for (let key in sample) {
-      console.log(sample['label'])
-      this.selectedView = sample['label'];
-    }
+    // console.info(sample.hasOwnProperty('selected'))
+    
+    // console.assert(typeof(sample) == 'object');
+    /*if (sample.hasOwnProperty('selected')) {
+      for (let key in sample) {
+        console.log(sample['label'])
+        this.selectedView = sample['label'];
+      }
+    }*/
   },
 
   methods: {
