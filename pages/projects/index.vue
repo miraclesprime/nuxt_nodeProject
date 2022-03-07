@@ -9,41 +9,54 @@
       <span class="font-lg font-w-700  mr-1" id="projects-title-head">Projects</span>
     </nav>
     <!-- </div> -->
-    <project-actions @sortValue='sortName=$event' @viewValue='viewName=$event' />
+    <project-actions @sortValue='sortName=$event' @viewValue='viewName=$event' v-on:loading="loading = $event" />
     <loading :loading="loading"></loading>
-    <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="projects" :key="'sort-'+ sortName ? sortName : 'sName' + 'view-' + viewName ? viewName : 'vName'  ">
-      <template #cell(title)="data">
-        <div class="justify-between text-dark" :id="'projects-' + data.value.title" @click="goToProjectId(data.value)">
-          <span :id="'projects-' + data.value.title + '-text'">{{data.value.title}}</span>
-        </div>
-      </template>
-      <template #cell(userId)="data">
-        <div class="d-flex gap-05" id="projects-userInfo-wrap">
-          <span class="text-dark" id="projects-userInfo-text">
-            <user-info :id="data.value ? data.value.userId : ''" /></span>
-        </div>
-      </template>
-      <template #cell(status)="data">
-        <div class="justify-between text-dark" :id="'projects-' + data.value.status.text">
-          <span :id="'projects-' + data.value.status.text + '-text'" v-format-status="data.value.statusId ? data.value.statusId : ''">{{ data.value.status.text }}</span>
-        </div>
-      </template>
-      <template #cell(createdAt)="data">
-        <div class="justify-between text-dark" :id="'projects-' + data.value.createdAt">
-          <span :id="'projects-' + data.value.createdAt + '-text'" v-format-date="data.value.createdAt"></span>
-        </div>
-      </template>
-      <template #cell(dueDate)="data">
-        <div class="justify-between text-dark" :id="'projects-' + data.value.dueDate">
-          <span :id="'projects-' + data.value.dueDate + '-text'" v-format-date="data.value.dueDate"></span>
-        </div>
-      </template>
-      <template #cell(priority)="data">
-        <div class="justify-between text-dark" :id="'projects-' + data.value.priority.text">
-          <span :id="'projects-' + data.value.priority.text + '-text'" v-format-priority="data.value.priorityId ? data.value.priorityId : ''">{{data.value.priority.text}}</span>
-        </div>
-      </template>
-    </bib-table>
+    <template v-if="projects.length">
+      <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="projects" :key="'sort-'+ sortName ? sortName : 'sName' + 'view-' + viewName ? viewName : 'vName'  ">
+        <template #cell(title)="data">
+          <div class="justify-between text-dark" :id="'projects-' + data.value.title" @click="goToProjectId(data.value)">
+            <span :id="'projects-' + data.value.title + '-text'">{{data.value.title}}</span>
+          </div>
+        </template>
+        <template #cell(userId)="data">
+          <div class="d-flex gap-05" id="projects-userInfo-wrap">
+            <span class="text-dark" id="projects-userInfo-text">
+              <user-info :id="data.value ? data.value.userId : ''" /></span>
+          </div>
+        </template>
+        <template #cell(status)="data">
+          <div class="justify-between text-dark" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
+            <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" v-format-status="data.value.statusId ? data.value.statusId : ''">{{ data.value.status ? data.value.status.text : "" }}</span>
+          </div>
+        </template>
+        <template #cell(createdAt)="data">
+          <div class="justify-between text-dark" :id="'projects-' + data.value.createdAt">
+            <span :id="'projects-' + data.value.createdAt + '-text'" v-format-date="data.value.createdAt"></span>
+          </div>
+        </template>
+        <template #cell(dueDate)="data">
+          <div class="justify-between text-dark" :id="'projects-' + data.value.dueDate">
+            <span :id="'projects-' + data.value.dueDate + '-text'" v-format-date="data.value.dueDate"></span>
+          </div>
+        </template>
+        <template #cell(priority)="data">
+          <div class="justify-between text-dark" 
+          id="projects"
+          >
+            <span id="project-text" 
+            v-format-priority="data.value.priorityId ? data.value.priorityId : ''"
+            >
+              {{ data.value.priority ? data.value.priority.text : ''}}
+            </span>
+          </div>
+        </template>
+      </bib-table>
+    </template>
+    <template v-else>
+      <span id="projects-0" class="d-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
+        <bib-icon icon="warning" ></bib-icon> No records found
+      </span>
+    </template>
   </div>
 </template>
 <script>
@@ -67,14 +80,13 @@ export default {
         priority: null,
         status: null,
       },
-      project: {
+      /*project: {
         title: "Project One"
-      },
-      projectName: ''
+      },*/
     }
   },
   mounted() {
-    this.$store.dispatch('project/fetchProjects').then(p => { this.loading = false })
+    this.$store.dispatch('project/fetchProjects').then(() => { this.loading = false })
   },
   computed: {
     ...mapGetters({
@@ -91,11 +103,7 @@ export default {
       // this.$store.dispatch('project/setSingleProject', project)
       this.$router.push("/projects/" + project.id)
     },
-    formattedDate(date) {
-      let d = new Date(date);
-      let m = (d.getMonth() + 1) < 10 ? '0' + (d.getMonth() + 1) : d.getMonth() + 1
-      return `${d.getDate()}/${m}/${d.getFullYear()}`
-    }
+    
   }
 }
 

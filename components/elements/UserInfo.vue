@@ -3,7 +3,7 @@
     <template v-if="avatar">
       <bib-avatar :text="avatar" size="1.5rem"></bib-avatar>
     </template>
-    <span v-if="userName" id="user-info-username" class="pl-025 pr-025">{{userName}} </span>
+    <span v-if="userName" id="user-info-username" class="user-name pl-025 pr-025">{{userName}} </span>
     <bib-spinner v-else :scale="1.5"></bib-spinner>
   </span>
 </template>

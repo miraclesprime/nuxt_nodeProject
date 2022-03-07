@@ -1,6 +1,6 @@
 <template>
   <div id="task-view-wrapper">
-    <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:create-section="createSectionInline"></task-actions>
+    <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:create-section="createSectionInline" v-on:filterView="filterView"></task-actions>
     <loading :loading="loading"></loading>
     <section v-show="newSection" id="tv-new-section-input-container">
       <div id="tv-new-section-input-wrapper" class="d-flex align-center p-05 bg-light">
@@ -14,44 +14,46 @@
     </section>
     <template v-if="gridType === 'list'">
       <bib-table v-for="(item, index) in sections" :key="item.tasks[0] ? item.tasks[0].title : '' + index" :fields="tableFields" :sections="item.tasks" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
-        <template #cell(title)="data">
-          <div class="d-flex align-center gap-05" id='tv-title-wrap'>
-            <custom-check-box id="'tv-task-check-'+index"></custom-check-box>
-            <span class="text-dark" id='tv-title-text' @click="taskSelected(data.value)">{{ data.value ? data.value.title : '' }}</span>
-          </div>
-        </template>
-        <template #cell(status)="data">
-          <div class="justify-between text-dark" id='tv-status-wrap'>
-            <span v-format-status="data.value.statusId ? data.value.statusId : ''">{{ data.value.status.text }}</span>
-            <!-- <span :class="statusClass(data.value.statusId)" id='tv-progress-wrap'>
+        
+          <template #cell(title)="data" >
+            <div class="d-flex align-center gap-05" id='tv-title-wrap' >
+              <custom-check-box :id="'tv-task-check-'+index" :checked="data.value.statusId == 4"></custom-check-box>
+              <span class="text-dark" id='tv-title-text' @click="taskSelected(data.value)">{{ data.value ? data.value.title : '' }}</span>
+            </div>
+          </template>
+          <template #cell(status)="data">
+            <div class="justify-between text-dark" id='tv-status-wrap'>
+              <span v-format-status="data.value.statusId ? data.value.statusId : ''">{{ data.value.status.text }}</span>
+              <!-- <span :class="statusClass(data.value.statusId)" id='tv-progress-wrap'>
               {{ data.value.progress }}<span v-if="data.value.progress" id="tv-percent-sign">%</span></span> -->
-          </div>
-        </template>
-        <template #cell(priority)="data">
-          <div class="justify-between text-dark" id='tv-priority-wrap'>
-            <span id='tv-priority-text' v-format-priority="data.value.priorityId ? data.value.priorityId : ''">
-              {{ data.value.priority ? data.value.priority.text : '' }}
-            </span>
-          </div>
-        </template>
-        <template #cell(owner)="data">
-          <div class="text-dark" id='tv-assignee-wrap'>
-            <!-- <bib-avatar class="mt-auto mb-auto" size="1.5rem"></bib-avatar> -->
-            <span id='tv-assignee-text'>
-              <user-info :id="data.value ? data.value.userId : ''" />
-            </span>
-          </div>
-        </template>
-        <template #cell(startDate)="data">
-          <div class="text-dark" id='tv-startDate-wrap'>
-            <span id='tv-startDate-text' v-format-date="data.value.createdAt"></span>
-          </div>
-        </template>
-        <template #cell(dueDate)="data">
-          <div class="text-dark" id='tv-dueDate-wrap'>
-            <span id='tv-dueDate-text' v-format-date="data.value.dueDate"></span>
-          </div>
-        </template>
+            </div>
+          </template>
+          <template #cell(priority)="data">
+            <div class="justify-between text-dark" id='tv-priority-wrap'>
+              <span id='tv-priority-text' v-format-priority="data.value.priorityId ? data.value.priorityId : ''">
+                {{ data.value.priority ? data.value.priority.text : '' }}
+              </span>
+            </div>
+          </template>
+          <template #cell(owner)="data">
+            <div class="text-dark" id='tv-assignee-wrap'>
+              <!-- <bib-avatar class="mt-auto mb-auto" size="1.5rem"></bib-avatar> -->
+              <span id='tv-assignee-text'>
+                <user-info :id="data.value ? data.value.userId : ''" />
+              </span>
+            </div>
+          </template>
+          <template #cell(startDate)="data">
+            <div class="text-dark" id='tv-startDate-wrap'>
+              <span id='tv-startDate-text' v-format-date="data.value.createdAt"></span>
+            </div>
+          </template>
+          <template #cell(dueDate)="data">
+            <div class="text-dark" id='tv-dueDate-wrap'>
+              <span id='tv-dueDate-text' v-format-date="data.value.dueDate"></span>
+            </div>
+          </template>
+        
       </bib-table>
     </template>
     <template v-else>
@@ -78,13 +80,15 @@ export default {
       newSection: false,
       newSectionName: "",
       sectionLoading: false,
-      // loading: true
+      // loading: true,
+      filterTask: [],
+      a: ""
     };
   },
   computed: {
     ...mapGetters({
       token: "token/getToken",
-      // sections: "section/getAllSections",
+      vuexSections: "section/getAllSections",
       user: "user/getUser",
       project: "project/getSingleProject"
     }),
@@ -145,6 +149,23 @@ export default {
 
     taskSelected($event) {
       this.$store.dispatch('task/setSingleTask', $event)
+    },
+    filterView($event) {
+      console.log($event)
+      /*if ($event == 'incomplete') {
+        this.vuexSections.forEach((s) => {
+          let sect = s;
+          let ftask = [];
+          sect.tasks.filter(t => {
+            if (t.statusId == 2) {
+              ftask.push(t)
+            }
+          })
+          sect.tasks = ftask
+          console.log(sect)
+          this.filterTask.push(sect)
+        })
+      }*/
     }
   },
 
