@@ -29,12 +29,12 @@ export default {
   },
 
   mounted() {
-    let sample = this.items.find(el => el.selected)
+    // let sample = this.items.find(el => el.selected)
 
-    for (let key in sample) {
-      console.log(sample['label'])
-      this.selectedView = sample['label'];
-    }
+    // for (let key in sample) {
+    //   console.log(sample['label'])
+    //   this.selectedView = sample['label'];
+    // }
   },
 
   methods: {
