@@ -190,9 +190,9 @@ export default {
         localStorage.setItem('user', JSON.stringify(user))
         this.$store.dispatch('user/setUser', user)
 
-      const userResult = this.$axios.get(`${process.env.USER_API_URL}/${user.sub}`).then((res) => {
-          let firstName = userResult.data[0].FirstName;
-          let lastName = userResult.data[0].LastName;
+      this.$axios.get(`${process.env.USER_API_URL}/${user.sub}`).then((res) => {
+          let firstName = res.data[0].FirstName;
+          let lastName = res.data[0].LastName;
 
           this.$axios.$post("/user/create", {
             id: user.sub,
