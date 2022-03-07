@@ -25,8 +25,8 @@
           </div>
         </template>
         <template #cell(status)="data">
-          <div class="justify-between text-dark" :id="'projects-' + data.value.status.text">
-            <span :id="'projects-' + data.value.status.text + '-text'" v-format-status="data.value.statusId ? data.value.statusId : ''">{{ data.value.status.text }}</span>
+          <div class="justify-between text-dark" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
+            <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" v-format-status="data.value.statusId ? data.value.statusId : ''">{{ data.value.status ? data.value.status.text : "" }}</span>
           </div>
         </template>
         <template #cell(createdAt)="data">
@@ -40,8 +40,14 @@
           </div>
         </template>
         <template #cell(priority)="data">
-          <div class="justify-between text-dark" :id="'projects-' + data.value.priority.text">
-            <span :id="'projects-' + data.value.priority.text + '-text'" v-format-priority="data.value.priorityId ? data.value.priorityId : ''">{{data.value.priority.text}}</span>
+          <div class="justify-between text-dark" 
+          id="projects"
+          >
+            <span id="project-text" 
+            v-format-priority="data.value.priorityId ? data.value.priorityId : ''"
+            >
+              {{ data.value.priority ? data.value.priority.text : ''}}
+            </span>
           </div>
         </template>
       </bib-table>

@@ -50,16 +50,6 @@ export default {
 }
 
 </script>
+
 <style lang="css" scoped>
-::v-deep {
-
-  .list__item {
-    &.dark {
-      background-color: var(--bib-dark);
-      color: var(--bib-white);
-    }
-  }
-
-}
-
 </style>
