@@ -5,7 +5,7 @@
       <bib-button :pop="icon" icon-variant="white" size="sm">
         <template v-slot:menu>
           <div class="list" id="sc-dd-menu">
-            <span :id="'sc-dd-item-' + item.key" class="list__item d-flex justify-between" v-for="item in items" @click="changeViewName(item)" :key="'sc-dd-item-' + item.label">{{item.label}} <bib-icon v-if="selectedView == item.label" icon="long-arrow-down" :scale="1" variant="secondary"></bib-icon></span>
+            <span :id="'sc-dd-item-' + item.key" class="list__item d-flex justify-between" :class="{'dark': selectedView == item.label}" v-for="item in items" @click="changeViewName(item)" :key="'sc-dd-item-' + item.label">{{item.label}} <bib-icon v-if="selectedView == item.label" icon="long-arrow-down" :scale="1" variant="secondary"></bib-icon></span>
           </div>
         </template>
       </bib-button>
@@ -29,12 +29,16 @@ export default {
   },
 
   mounted() {
-    // let sample = this.items.find(el => el.selected)
-
-    // for (let key in sample) {
-    //   console.log(sample['label'])
-    //   this.selectedView = sample['label'];
-    // }
+    let sample = this.items.find(el => el.selected)
+    // console.info(sample.hasOwnProperty('selected'))
+    
+    // console.assert(typeof(sample) == 'object');
+    /*if (sample.hasOwnProperty('selected')) {
+      for (let key in sample) {
+        console.log(sample['label'])
+        this.selectedView = sample['label'];
+      }
+    }*/
   },
 
   methods: {
@@ -46,5 +50,6 @@ export default {
 }
 
 </script>
+
 <style lang="css" scoped>
 </style>

@@ -234,6 +234,10 @@ export default {
       // this.$refs.projectModals.showCreateProjectModal = true;
     },
 
+    createProject(data) {
+      this.$store.dispatch('project/createProject', data.name);
+    },
+
     createAction($event) {
       // console.log($event.key)
       switch ($event.key) {
