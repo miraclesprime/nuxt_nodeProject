@@ -78,6 +78,7 @@ export default {
       newSection: false,
       newSectionName: "",
       sectionLoading: false,
+      a: ""
       // loading: true
     };
   },

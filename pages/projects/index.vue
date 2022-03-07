@@ -91,11 +91,6 @@ export default {
       // this.$store.dispatch('project/setSingleProject', project)
       this.$router.push("/projects/" + project.id)
     },
-    formattedDate(date) {
-      let d = new Date(date);
-      let m = (d.getMonth() + 1) < 10 ? '0' + (d.getMonth() + 1) : d.getMonth() + 1
-      return `${d.getDate()}/${m}/${d.getFullYear()}`
-    }
   }
 }
 
