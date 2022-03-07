@@ -82,6 +82,7 @@ export default {
       sectionLoading: false,
       // loading: true,
       filterTask: [],
+      a: ""
     };
   },
   computed: {
