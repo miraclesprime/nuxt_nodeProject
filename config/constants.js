@@ -130,6 +130,7 @@ export const PROJECT_SORT = [
   { label: 'Name', key: 'name' },
   { label: 'Owner', key: 'owner' },
   { label: 'Status', key: 'status' },
+  { label: 'Priority', key: 'priority' },
   { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },
   { label: 'Tag', key: 'tag' },

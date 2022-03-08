@@ -77,9 +77,9 @@ export const actions = {
   },
 
   // create Task
-  async createTask(ctx) {
-    const res = await this.$axios.$post('/task', {
-      headers: {'Authorization': `${ctx.rootState.token.token}`}
+  async createTask(ctx, payload) {
+    const res = await this.$axios.$post('/task', payload, {
+      headers: {'Authorization': `Bearer ${ctx.rootState.token.token}`}
     });
     ctx.commit('createTask', res.data);
   }

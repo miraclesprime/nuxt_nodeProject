@@ -2,11 +2,6 @@ import Vue from 'vue'
 
 Vue.directive('format-priority', {
   bind: (el, binding, vnode) => {
-    /*1 Not Started
-    2 In-Progress
-    3 Waiting
-    4 Deferred
-    5 Done*/
 
     switch (binding.value) {
       case 1:

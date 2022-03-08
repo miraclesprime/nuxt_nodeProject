@@ -1,32 +1,37 @@
 <template>
   <div id="sidebar-overview-wrapper">
-    <div class="container" id='sidebar-wrapper' v-if="activeItem">
+    <div class="container" id='sidebar-wrapper'>
       <div class="task-info w-100" id='sidebar-inner-wrap'>
+        <!-- <pre v-if="Object.keys(activeItem).length">{{activeItem}}</pre> -->
         <div class="row" id='sidebar-row-1'>
           <div class="col-4" id='sidebar-col-1'>
             <bib-input type="select" :options="selectItems" placeholder="Please select..." label="Assignee"></bib-input>
           </div>
-          <div class="col-8" id='sidebar-col-2'>
+          <div class="col-4" id='sidebar-col-2'>
             <!-- <bib-input type="select" :options="projects" placeholder="Please select..." label="Project"></bib-input> -->
             <bib-input type="text" label="Project" :value="project.title" disabled></bib-input>
+          </div>
+          <div class="col-4">
+              <bib-input type="select" label="Section" :options="sectionOpts" v-model="Object.keys(activeItem).length ? activeItem.sectionId : form.section" placeholder="Please select ..."></bib-input>
           </div>
         </div>
         <div class="row" id='sidebar-row-2'>
           <div class="col-4" id='sidebar-col-3'>
-            <bib-input type="select" :options="department" placeholder="Please select..." label="Department"></bib-input>
+            <bib-input type="select" label="Department" :options="department" placeholder="Please select..."></bib-input>
           </div>
           <div class="col-4" id='sidebar-col-4'>
-            <bib-input type="select" :value="activeItem.priority ? activeItem.priority.text : ''" :options="priorityValues" placeholder="Please select..." label="Priority"></bib-input>
+              <bib-input type="select" label="Priority" v-model="Object.keys(activeItem).length ? activeItem.priorityId : form.priority" :options="priorityValues" placeholder="Please select..."></bib-input>
           </div>
           <div class="col-4" id='sidebar-col-5'>
-            <bib-input type="select" :value="activeItem.status ? activeItem.status.text : '' " :options="statusValues" placeholder="Please select..." label="Status"></bib-input>
+              <bib-input type="select" label="Status" v-model="Object.keys(activeItem).length ? activeItem.statusId : form.status" :options="statusValues" placeholder="Please select..."></bib-input>
           </div>
         </div>
         <div class="row" id='sidebar-row-3'>
           <div class="col-12" id='sidebar-col-6'>
-            <bib-input type="textarea" :value="activeItem.description" placeholder="Enter task description..." label="Description"></bib-input>
+            <bib-input type="textarea" v-model="Object.keys(activeItem).length ? activeItem.description : form.description" placeholder="Enter task description..." label="Description"></bib-input>
           </div>
         </div>
+        <bib-button label="Create Task" variant="primary" v-on:click="createTask(); $emit('create-task', newTaskForm)"></bib-button>
       </div>
       <task-group title="Subtasks"></task-group>
       <div class="task-details w-100" id='sidebar-details'>
@@ -90,31 +95,36 @@ export default {
   },
   data: function() {
     return {
-      // activeItem: this.activeTask,
+      // activeItem: "",
       selectItems: [
         { label: 'Please Choose One', value: "orange" }
       ],
       statusValues: [
-        { label: 'Not Started', value: 'Not Started' },
-        { label: 'In-Progress', value: 'In-Progress' },
-        { label: 'Waiting', value: 'Waiting' },
-        { label: 'Deferred', value: 'Deferred' },
-        { label: 'Done', value: 'Done' },
+        { label: 'Not Started', value: '1' },
+        { label: 'In-Progress', value: '2' },
+        { label: 'Waiting', value: '3' },
+        { label: 'Delayed', value: '4' },
+        { label: 'Done', value: '5' },
       ],
       priorityValues: [
-        { label: 'low', value: 'low' },
-        { label: 'medium', value: 'medium' },
-        { label: 'high', value: 'high' }
+        { label: 'Low', value: '3' },
+        { label: 'Medium', value: '2' },
+        { label: 'High', value: '1' },
       ],
       projects: [
         // {label: 'Project 1', value: "p1"}
       ],
       department: [
-        { label: 'IT', value: "it" }
+        { label: 'IT', value: "it" },
+        { label: 'Marketing', value: "marketing" }
       ],
       description: "",
       isContentExpanded: false,
       form: {
+        section: 0,
+        status: 0,
+        priority: 0,
+        description: '',
         time: "08:45:25",
         profile: "",
       },
@@ -122,22 +132,49 @@ export default {
       activeMate: 0,
     };
   },
-  watch: {
+  mounted() {
+    // this.getSectionOptions
+    console.log(this.section)
+  },
+  /*watch: {
     activeTask() {
       this.activeItem = this.activeTask;
     },
-  },
+  },*/
   computed: {
     ...mapGetters({
       activeItem: 'task/getSelectedTask',
       project: "project/getSingleProject",
+      sections: "section/getAllSections",
     }),
 
-    /*projects() {
-      return { label: this.project.title, value: this.project.id }
-    },*/
+    sectionOpts() {
+      let sec = [{ label: "Select section" }]
+      this.sections.forEach((s) => {
+        sec.push({ label: s.title, value: s.id })
+      });
+      return sec
+    },
+
+    newTaskForm() {
+      return {
+        sectionId: this.form.section,
+        projectId: this.project.id,
+        title: "",
+        description: this.form.description,
+        dueDate: "",
+        priorityId: this.form.priority,
+        budget: 0,
+        statusId: this.form.status
+      }
+    }
   },
-  
+
+  methods: {
+    createTask() {
+      console.log('create task')
+    }
+  }
 };
 
 </script>

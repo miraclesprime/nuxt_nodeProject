@@ -12,7 +12,7 @@
     <project-actions @sortValue='sortName=$event' @viewValue='viewName=$event' v-on:loading="loading = $event" />
     <loading :loading="loading"></loading>
     <template v-if="projects.length">
-      <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="projects" :key="'sort-'+ sortName ? sortName : 'sName' + 'view-' + viewName ? viewName : 'vName'  ">
+      <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="projects" :key="'sort-'+ sortName ? sortName : 'sName' + 'view-' + viewName ? viewName : 'vName'  " :hide-no-column="true" >
         <template #cell(title)="data">
           <div class="justify-between text-dark" :id="'projects-' + data.value.title" @click="goToProjectId(data.value)">
             <span :id="'projects-' + data.value.title + '-text'">{{data.value.title}}</span>

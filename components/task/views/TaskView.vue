@@ -13,7 +13,7 @@
       <!-- <bib-input type="text" ref="newsectionbibinput" v-model="newSectionName" name="sectionname" size="sm" placeholder="Enter section name"></bib-input> -->
     </section>
     <template v-if="gridType === 'list'">
-      <bib-table v-for="(item, index) in sections" :key="item.tasks[0] ? item.tasks[0].title : '' + index" :fields="tableFields" :sections="item.tasks" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
+      <bib-table v-for="(item, index) in sections" :key="item.tasks[0] ? item.tasks[0].title : '' + index" :fields="tableFields" :sections="item.tasks" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" :hide-no-column="true" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
         
           <template #cell(title)="data" >
             <div class="d-flex align-center gap-05" id='tv-title-wrap' >
