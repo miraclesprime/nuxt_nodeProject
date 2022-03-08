@@ -39,7 +39,10 @@
             <div class="text-dark" id='tv-assignee-wrap'>
               <!-- <bib-avatar class="mt-auto mb-auto" size="1.5rem"></bib-avatar> -->
               <span id='tv-assignee-text'>
-                <user-info :id="data.value ? data.value.userId : ''" />
+                <template>
+                  <bib-avatar :text="data.value.user.firstName[0]" size="1.5rem"></bib-avatar>
+                </template>
+                {{data.value.user ? data.value.user.firstName + ' ' + data.value.user.lastName : ''}}
               </span>
             </div>
           </template>

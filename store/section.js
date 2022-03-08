@@ -42,7 +42,7 @@ export const mutations = {
       arr.sort((a, b) => a.title.localeCompare(b.title));
 
       for (let i = 0; i < arr.length; i++) {
-        arr[i].tasks.sort((a, b) => a.userId.localeCompare(b.userId));
+        arr[i].tasks.sort((a, b) => a.user.firstName.localeCompare(b.user.firstName));
       }
       state.sections = arr;
 
