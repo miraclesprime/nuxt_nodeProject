@@ -21,7 +21,11 @@
         <template #cell(userId)="data">
           <div class="d-flex gap-05" id="projects-userInfo-wrap">
             <span class="text-dark" id="projects-userInfo-text">
-              <user-info :id="data.value ? data.value.userId : ''" /></span>
+              <template>
+                <bib-avatar :text="data.value.user.firstName[0]" size="1.5rem"></bib-avatar>
+              </template>
+              {{data.value.user ? data.value.user.firstName + ' ' + data.value.user.lastName : ''}}
+            </span>
           </div>
         </template>
         <template #cell(status)="data">
