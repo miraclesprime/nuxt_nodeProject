@@ -13,7 +13,7 @@
       <!-- <bib-input type="text" ref="newsectionbibinput" v-model="newSectionName" name="sectionname" size="sm" placeholder="Enter section name"></bib-input> -->
     </section>
     <template v-if="gridType === 'list'">
-      <bib-table v-for="(item, index) in sections" :key="item.tasks[0] ? item.tasks[0].title : '' + index" :fields="tableFields" :sections="item.tasks" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" :hide-no-column="true" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
+      <bib-table v-for="(item, index) in sections" :key="item.tasks.length ? item.tasks[0].title : 'title-' + index" :fields="tableFields" :sections="item.tasks.length ? item.tasks : []" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" :hide-no-column="true" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
           <template #cell(title)="data" >
             <div class="d-flex align-center gap-05" id='tv-title-wrap' >
               <custom-check-box :id="'tv-task-check-'+index" :checked="data.value.statusId == 4"></custom-check-box>
@@ -60,7 +60,7 @@
     </template>
     <template v-else>
       <div class="d-flex of-scroll-x" id='tv-grid-wrap'>
-        <task-grid-section v-for="(item, index) in sections" :key="item.tasks[0] ? item.tasks[0].title : '' + index" :headless="true" :label="item.title" :taskFields="tableFields" :taskSections="item.tasks" :open="true" groupName="1" />
+        <task-grid-section v-for="(item, index) in sections" :key="item.tasks.length ? item.tasks[0].title : 'title-' + index" :headless="true" :label="item.title" :taskFields="tableFields" :taskSections="item ? item.tasks : []" :open="true" groupName="1" />
       </div>
     </template>
     <task-sidebar @open-sidebar="toggleSidebar()"></task-sidebar>

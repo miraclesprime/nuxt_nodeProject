@@ -75,7 +75,8 @@
     <div class="menu" id='ts-menu'>
       <bib-tabs :value="activeSidebarTab" @change="sidebarTabChange" :tabs="sidebarTabs"></bib-tabs>
     </div>
-    <div class="of-scroll-y" id="of-scroll-y">
+    <div class="of-scroll-y position-relative" id="ts-of-scroll-y">
+      <loading :loading="loading"></loading>
       <sidebar-overview v-if="activeSidebarTab == 'Overview'" :fields="taskFields" :activeTask="activeItem" v-on:create-task="createTask" />
       <div class="container pt-1" id='ts-subtask-container' v-if="activeSidebarTab == 'Subtasks'">
         <task-group />
@@ -96,6 +97,7 @@ export default {
   },
   data: function() {
     return {
+      loading: false,
       form: {
         name: "",
         dueDate: "2021/11/7",
@@ -159,6 +161,7 @@ export default {
 
     },
     createTask($event) {
+      this.loading = true
       // console.table($event);
       this.$store.dispatch("task/createTask", {
         "sectionId": $event.sectionId,
@@ -169,9 +172,12 @@ export default {
         "priorityId": $event.priorityId,
         "budget": 0,
         "statusId": $event.statusId
-      }).then(res=>{
-        console.log(res)
-      }).catch(e=>console.warn(e))
+      }).then(() => {
+        this.loading = false
+        this.hideSidebar()
+      }).catch(e => console.warn(e)).then(() => {
+        this.loading = false
+      })
 
     }
   },
