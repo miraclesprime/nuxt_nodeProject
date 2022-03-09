@@ -2,7 +2,8 @@
   <div id="sidebar-overview-wrapper">
     <div class="container" id='sidebar-wrapper'>
       <div class="task-info w-100" id='sidebar-inner-wrap'>
-        <!-- <pre v-if="Object.keys(activeItem).length">{{activeItem}}</pre> -->
+        <!-- <pre>{{activeTask}}</pre> -->
+        <pre>{{activeItem}}</pre>
         <div class="row" id='sidebar-row-1'>
           <div class="col-4" id='sidebar-col-1'>
             <bib-input type="select" :options="selectItems" placeholder="Please select..." label="Assignee"></bib-input>
@@ -12,7 +13,8 @@
             <bib-input type="text" label="Project" :value="project.title" disabled></bib-input>
           </div>
           <div class="col-4">
-              <bib-input type="select" label="Section" :options="sectionOpts" v-model="Object.keys(activeItem).length ? activeItem.sectionId : form.section" placeholder="Please select ..."></bib-input>
+            <bib-input type="select" label="Section" :options="sectionOpts" v-model="activeItem.sectionId" placeholder="Please select ..."></bib-input>
+            <!-- <bib-input type="select" label="Section" :options="sectionOpts" v-model="Object.keys(activeItem).length ? activeItem.sectionId : form.sectionId" placeholder="Please select ..."></bib-input> -->
           </div>
         </div>
         <div class="row" id='sidebar-row-2'>
@@ -20,10 +22,10 @@
             <bib-input type="select" label="Department" :options="department" placeholder="Please select..."></bib-input>
           </div>
           <div class="col-4" id='sidebar-col-4'>
-              <bib-input type="select" label="Priority" v-model="Object.keys(activeItem).length ? activeItem.priorityId : form.priority" :options="priorityValues" placeholder="Please select..."></bib-input>
+            <bib-input type="select" label="Priority" v-model="Object.keys(activeItem).length ? activeItem.priorityId : form.priorityId" :options="priorityValues" placeholder="Please select..."></bib-input>
           </div>
           <div class="col-4" id='sidebar-col-5'>
-              <bib-input type="select" label="Status" v-model="Object.keys(activeItem).length ? activeItem.statusId : form.status" :options="statusValues" placeholder="Please select..."></bib-input>
+            <bib-input type="select" label="Status" v-model="Object.keys(activeItem).length ? activeItem.statusId : form.statusId" :options="statusValues" placeholder="Please select..."></bib-input>
           </div>
         </div>
         <div class="row" id='sidebar-row-3'>
@@ -93,9 +95,9 @@ export default {
   props: {
     activeTask: Object,
   },
-  data: function() {
+  data() {
     return {
-      // activeItem: "",
+      activeItem: this.activeTask,
       selectItems: [
         { label: 'Please Choose One', value: "orange" }
       ],
@@ -118,12 +120,12 @@ export default {
         { label: 'IT', value: "it" },
         { label: 'Marketing', value: "marketing" }
       ],
-      description: "",
+      // description: "",
       isContentExpanded: false,
       form: {
-        section: 0,
-        status: 0,
-        priority: 0,
+        sectionId: 0,
+        statusId: 0,
+        priorityId: 0,
         description: '',
         time: "08:45:25",
         profile: "",
@@ -134,7 +136,8 @@ export default {
   },
   mounted() {
     // this.getSectionOptions
-    console.log(this.section)
+    // console.log(this.section)
+    // this.activeItem = this.activeTask;
   },
   /*watch: {
     activeTask() {
@@ -143,10 +146,14 @@ export default {
   },*/
   computed: {
     ...mapGetters({
-      activeItem: 'task/getSelectedTask',
+      // activeItem: 'task/getSelectedTask',
       project: "project/getSingleProject",
       sections: "section/getAllSections",
     }),
+
+    /*activeItem(){
+      return this.activeTask
+    },*/
 
     sectionOpts() {
       let sec = [{ label: "Select section" }]
@@ -158,16 +165,20 @@ export default {
 
     newTaskForm() {
       return {
-        sectionId: this.form.section,
+        sectionId: this.form.sectionId,
         projectId: this.project.id,
         title: "",
         description: this.form.description,
         dueDate: "",
-        priorityId: this.form.priority,
+        priorityId: this.form.priorityId,
         budget: 0,
-        statusId: this.form.status
+        statusId: this.form.statusId
       }
     }
+  },
+
+  updated(){
+    this.activeItem = this.activeTask;
   },
 
   methods: {

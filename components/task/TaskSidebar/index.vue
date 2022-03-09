@@ -76,7 +76,7 @@
       <bib-tabs :value="activeSidebarTab" @change="sidebarTabChange" :tabs="sidebarTabs"></bib-tabs>
     </div>
     <div class="of-scroll-y" id="of-scroll-y">
-      <sidebar-overview v-if="activeSidebarTab == 'Overview'" :fields="taskFields" :tasks="tasks" :activeTask="activeTask" v-on:create-task="createTask" />
+      <sidebar-overview v-if="activeSidebarTab == 'Overview'" :fields="taskFields" :activeTask="activeItem" v-on:create-task="createTask" />
       <div class="container pt-1" id='ts-subtask-container' v-if="activeSidebarTab == 'Subtasks'">
         <task-group />
       </div>

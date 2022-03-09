@@ -299,7 +299,7 @@ export default {
 </script>
 <style lang="scss">
 html {
-  font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: $font-family;
   font-size: 16px;
   word-spacing: 1px;
   -ms-text-size-adjust: 100%;

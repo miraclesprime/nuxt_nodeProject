@@ -14,7 +14,6 @@
     </section>
     <template v-if="gridType === 'list'">
       <bib-table v-for="(item, index) in sections" :key="item.tasks[0] ? item.tasks[0].title : '' + index" :fields="tableFields" :sections="item.tasks" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" :hide-no-column="true" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
-        
           <template #cell(title)="data" >
             <div class="d-flex align-center gap-05" id='tv-title-wrap' >
               <custom-check-box :id="'tv-task-check-'+index" :checked="data.value.statusId == 4"></custom-check-box>
@@ -68,7 +67,7 @@
   </div>
 </template>
 <script>
-import { TASK_FIELDS } from "~/dummy/tasks.js";
+import { TASK_FIELDS } from "config/constants";
 import { mapGetters } from 'vuex';
 
 export default {
