@@ -190,26 +190,26 @@ export default {
         localStorage.setItem('user', JSON.stringify(user))
         this.$store.dispatch('user/setUser', user)
 
-      // this.$axios.get(`${process.env.USER_API_URL}/${user.sub}`).then((res) => {
-      //     let firstName = res.data[0].FirstName;
-      //     let lastName = res.data[0].LastName;
+      this.$axios.get(`${process.env.USER_API_URL}/${user.sub}`).then((res) => {
+          let firstName = res.data[0].FirstName;
+          let lastName = res.data[0].LastName;
 
-      //     this.$axios.$post("/user/create", {
-      //       id: user.sub,
-      //       email: user.sube,
-      //       firstName: firstName,
-      //       lastName: lastName
-      //     }).then((value) => {
-      //       console.log('user created!!')
-      //       this.$store.dispatch("project/setFavProjects")
-      //       this.$store.dispatch("user/setTeamMembers")
-      //     }).catch((err) => {
-      //       console.log('there was some issue!!!')
-      //     })
+          this.$axios.$post("/user/create", {
+            id: user.sub,
+            email: user.sube,
+            firstName: firstName,
+            lastName: lastName
+          }).then((value) => {
+            console.log('user created!!')
+            this.$store.dispatch("project/setFavProjects")
+            this.$store.dispatch("user/setTeamMembers")
+          }).catch((err) => {
+            console.log('there was some issue!!!')
+          })
 
-      // }).catch((err) => {
-      //   console.log(err);
-      // })
+      }).catch((err) => {
+        console.log(err);
+      })
 
         this.$store.dispatch('token/setToken', jwt);
         localStorage.setItem('accessToken', jwt);

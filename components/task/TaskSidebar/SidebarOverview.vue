@@ -3,7 +3,7 @@
     <div class="container" id='sidebar-wrapper'>
       <div class="task-info w-100" id='sidebar-inner-wrap'>
         <!-- <pre>{{activeTask}}</pre> -->
-        <pre>{{activeItem}}</pre>
+        <!-- <pre>{{activeItem}}</pre> -->
         <div class="row" id='sidebar-row-1'>
           <div class="col-4" id='sidebar-col-1'>
             <bib-input type="select" :options="selectItems" placeholder="Please select..." label="Assignee"></bib-input>
@@ -13,7 +13,7 @@
             <bib-input type="text" label="Project" :value="project.title" disabled></bib-input>
           </div>
           <div class="col-4">
-            <bib-input type="select" label="Section" :options="sectionOpts" v-model="activeItem.sectionId" placeholder="Please select ..."></bib-input>
+            <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="activeItem.sectionId" placeholder="Please select ..."></bib-input>
             <!-- <bib-input type="select" label="Section" :options="sectionOpts" v-model="Object.keys(activeItem).length ? activeItem.sectionId : form.sectionId" placeholder="Please select ..."></bib-input> -->
           </div>
         </div>
@@ -22,18 +22,18 @@
             <bib-input type="select" label="Department" :options="department" placeholder="Please select..."></bib-input>
           </div>
           <div class="col-4" id='sidebar-col-4'>
-            <bib-input type="select" label="Priority" v-model="Object.keys(activeItem).length ? activeItem.priorityId : form.priorityId" :options="priorityValues" placeholder="Please select..."></bib-input>
+            <bib-input type="select" label="Priority" v-model.number="activeItem.priorityId" :options="priorityValues" placeholder="Please select..."></bib-input>
           </div>
           <div class="col-4" id='sidebar-col-5'>
-            <bib-input type="select" label="Status" v-model="Object.keys(activeItem).length ? activeItem.statusId : form.statusId" :options="statusValues" placeholder="Please select..."></bib-input>
+            <bib-input type="select" label="Status" v-model.number="activeItem.statusId" :options="statusValues" placeholder="Please select..."></bib-input>
           </div>
         </div>
         <div class="row" id='sidebar-row-3'>
           <div class="col-12" id='sidebar-col-6'>
-            <bib-input type="textarea" v-model="Object.keys(activeItem).length ? activeItem.description : form.description" placeholder="Enter task description..." label="Description"></bib-input>
+            <bib-input type="textarea" v-model.trim="activeItem.description" placeholder="Enter task description..." label="Description"></bib-input>
           </div>
         </div>
-        <bib-button label="Create Task" variant="primary" v-on:click="createTask(); $emit('create-task', newTaskForm)"></bib-button>
+        <bib-button v-if="!activeTask.id" label="Create Task" variant="primary" v-on:click="createTask(); $emit('create-task', newTaskForm)"></bib-button>
       </div>
       <task-group title="Subtasks"></task-group>
       <div class="task-details w-100" id='sidebar-details'>
@@ -97,7 +97,8 @@ export default {
   },
   data() {
     return {
-      activeItem: this.activeTask,
+      activeItem: {},
+      // loading: true,
       selectItems: [
         { label: 'Please Choose One', value: "orange" }
       ],
@@ -134,16 +135,24 @@ export default {
       activeMate: 0,
     };
   },
-  mounted() {
-    // this.getSectionOptions
-    // console.log(this.section)
-    // this.activeItem = this.activeTask;
-  },
-  /*watch: {
+
+  watch: {
     activeTask() {
-      this.activeItem = this.activeTask;
+      // this.activeItem = this.activeTask;
+      if (Object.keys(this.activeTask).length) {
+        this.activeItem = JSON.parse(JSON.stringify(this.activeTask));
+      } else {
+        this.activeItem = {
+          sectionId: '',
+          projectId: this.project.id,
+          statusId: 1,
+          priorityId: 2,
+          description: '',
+          budget: 0,
+        }
+      }
     },
-  },*/
+  },
   computed: {
     ...mapGetters({
       // activeItem: 'task/getSelectedTask',
@@ -165,20 +174,16 @@ export default {
 
     newTaskForm() {
       return {
-        sectionId: this.form.sectionId,
+        sectionId: this.activeItem.sectionId,
         projectId: this.project.id,
         title: "",
-        description: this.form.description,
+        description: this.activeItem.description,
         dueDate: "",
-        priorityId: this.form.priorityId,
+        priorityId: this.activeItem.priorityId,
         budget: 0,
-        statusId: this.form.statusId
+        statusId: this.activeItem.statusId
       }
     }
-  },
-
-  updated(){
-    this.activeItem = this.activeTask;
   },
 
   methods: {
@@ -193,6 +198,7 @@ export default {
 .task-info {
   padding: 1rem 0;
   font-size: $sidebar-size;
+  position: relative;
 }
 
 .task-team {
