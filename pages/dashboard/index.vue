@@ -1,9 +1,9 @@
 <template>
   <div class="text-center" id="dashboard-wrapper">
     <h2 class="pt-2 pb-1 text-secondary" id="dashboard-title">Welcome </h2>
-    <div class="d-flex justify-center">
+    <!-- <div class="d-flex justify-center">
       <user-info :id="user ? user : ''" />
-    </div>
+    </div> -->
   </div>
 </template>
 <script>

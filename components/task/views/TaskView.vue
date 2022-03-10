@@ -36,13 +36,7 @@
           </template>
           <template #cell(owner)="data">
             <div class="text-dark" id='tv-assignee-wrap'>
-              <!-- <bib-avatar class="mt-auto mb-auto" size="1.5rem"></bib-avatar> -->
-              <span id='tv-assignee-text'>
-                <template>
-                  <bib-avatar :text="data.value.user.firstName[0]" size="1.5rem"></bib-avatar>
-                </template>
-                {{data.value.user ? data.value.user.firstName + ' ' + data.value.user.lastName : ''}}
-              </span>
+              <user-info :user="data.value.user"></user-info>
             </div>
           </template>
           <template #cell(startDate)="data">

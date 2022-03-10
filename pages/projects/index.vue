@@ -14,19 +14,21 @@
     <template v-if="projects.length">
       <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="projects" :key="'sort-'+ sortName ? sortName : 'sName' + 'view-' + viewName ? viewName : 'vName'  " :hide-no-column="true" >
         <template #cell(title)="data">
-          <div class="justify-between text-dark" :id="'projects-' + data.value.title" @click="goToProjectId(data.value)">
+          <div class="d-flex align-center text-dark" :id="'projects-' + data.value.title" @click="goToProjectId(data.value)">
+            <bib-icon icon="briefcase" variant="gray5" :scale="1.1" class="mr-025"></bib-icon>
             <span :id="'projects-' + data.value.title + '-text'">{{data.value.title}}</span>
           </div>
         </template>
         <template #cell(userId)="data">
-          <div class="d-flex gap-05" id="projects-userInfo-wrap">
+          <user-info :user="data.value.user"></user-info>
+          <!-- <div class="d-flex gap-05" id="projects-userInfo-wrap">
             <span class="text-dark" id="projects-userInfo-text">
               <template>
                 <bib-avatar :text="data.value.user.firstName[0]" size="1.5rem"></bib-avatar>
               </template>
               {{data.value.user ? data.value.user.firstName + ' ' + data.value.user.lastName : ''}}
             </span>
-          </div>
+          </div> -->
         </template>
         <template #cell(status)="data">
           <div class="justify-between text-dark" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
