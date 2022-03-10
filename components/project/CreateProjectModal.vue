@@ -101,15 +101,15 @@ export default {
       }
     },
     getUser() {
-      var requestOptions = {
-        method: 'GET',
-        redirect: 'follow'
-      };
+      // var requestOptions = {
+      //   method: 'GET',
+      //   redirect: 'follow'
+      // };
 
-      fetch("https://www.biztree.com/usr-ctrl-test/api/user/4q2VolejRejNmGQB", requestOptions)
-        .then(response => response.text())
-        .then(result => console.log(result))
-        .catch(error => console.log('error', error));
+      // fetch("https://www.biztree.com/usr-ctrl-test/api/user/4q2VolejRejNmGQB", requestOptions)
+      //   .then(response => response.text())
+      //   .then(result => console.log(result))
+      //   .catch(error => console.log('error', error));
     }
   },
 };
