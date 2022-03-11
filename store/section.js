@@ -19,7 +19,9 @@ export const mutations = {
   },
 
   createSection(state, payload) {
-    state.sections.unshift(payload)
+    let ns = payload
+    ns.tasks = []
+    state.sections.unshift(ns)
   },
 
   setSections(state, payload) {
