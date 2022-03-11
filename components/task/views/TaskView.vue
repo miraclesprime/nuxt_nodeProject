@@ -13,7 +13,7 @@
       <!-- <bib-input type="text" ref="newsectionbibinput" v-model="newSectionName" name="sectionname" size="sm" placeholder="Enter section name"></bib-input> -->
     </section>
     <template v-if="gridType === 'list'">
-      <bib-table v-for="(item, index) in sections" :key="item.tasks.length ? item.tasks[0].title : 'title-' + index" :fields="tableFields" :sections="item.tasks.length ? item.tasks : []" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" :hide-no-column="true" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
+      <!-- <bib-table v-for="(item, index) in sections" :key="item.tasks.length ? item.tasks[0].title : 'title-' + index" :fields="tableFields" :sections="item.tasks.length ? item.tasks : []" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" :hide-no-column="true" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
           <template #cell(title)="data" >
             <div class="d-flex align-center gap-05" id='tv-title-wrap' >
               <custom-check-box :id="'tv-task-check-'+index" :checked="data.value.statusId == 4"></custom-check-box>
@@ -23,8 +23,6 @@
           <template #cell(status)="data">
             <div class="justify-between text-dark" id='tv-status-wrap'>
               <span v-format-status="data.value.statusId ? data.value.statusId : ''">{{ data.value.status.text }}</span>
-              <!-- <span :class="statusClass(data.value.statusId)" id='tv-progress-wrap'>
-              {{ data.value.progress }}<span v-if="data.value.progress" id="tv-percent-sign">%</span></span> -->
             </div>
           </template>
           <template #cell(priority)="data">
@@ -50,11 +48,45 @@
             </div>
           </template>
         
-      </bib-table>
+      </bib-table> -->
+      
+  <table id="tlist-table" class="table" cellspacing="0">
+    <template v-if="!headless">
+      <tr class="table__hrow"  id="tlist-tr">
+        <th 
+          v-for="(item, index) in tableFields"
+          :key="item ? item.label : 'title-' + index"
+          :id="item ? item.label : 'title-' + index"
+          :class="'table-' + item.index"
+        >
+          {{ item.label }}
+        </th>
+      </tr>
+    </template>
+
+        <tbody>
+          <template v-for="(sec) in sections">
+            <tr :key="'section-' + sec.title + '-' + sec.id">
+              <td colspan="6"><b>{{sec.title}}</b></td>
+            </tr>
+            <tr class="table__irow" v-for="(t, i) in sec.tasks" 
+              :key="'task-' + t.title + '-' + t.id"
+              :id="t ? t.title : 'title-' + i">
+              <td>{{t.title}}</td>
+              <td>{{t.status ? t.status.text: ""}}</td>
+              <td>{{t.priority ? t.priority.text : ""}}</td>
+              <td>{{t.userId}}</td>
+              <td>{{t.createdAt}}</td>
+              <td>{{t.dueDate}}</td>
+            </tr>
+          </template>
+        </tbody>
+  </table>
+    
     </template>
     <template v-else>
       <div class="d-flex of-scroll-x" id='tv-grid-wrap'>
-        <task-grid-section v-for="(item, index) in sections" :key="item.tasks.length ? item.tasks[0].title : 'title-' + index" :headless="true" :label="item.title" :taskFields="tableFields" :taskSections="item ? item.tasks : []" :open="true" groupName="1" />
+        <task-grid-section v-for="(item, index) in sections" :key="item.tasks ? item.tasks[0].title : 'title-' + index" :headless="true" :label="item.title" :taskFields="tableFields" :taskSections="item ? item.tasks : []" :open="true" groupName="1" />
       </div>
     </template>
     <task-sidebar @open-sidebar="toggleSidebar()"></task-sidebar>
@@ -72,6 +104,7 @@ export default {
   data() {
     return {
       tableFields: TASK_FIELDS,
+      headless: null,
       flag: false,
       newSection: false,
       newSectionName: "",

@@ -36,10 +36,10 @@ export const TAB_TITLES = {
 };
 
 export const TASK_FIELDS = [
-  {
-    key: "",
-    label: "#"
-  },
+  // {
+  //   key: "",
+  //   label: "#"
+  // },
   {
     key: "title",
     label: "Task name",
