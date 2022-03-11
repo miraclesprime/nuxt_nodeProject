@@ -7,28 +7,28 @@
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex';
-import UserInfo from '../../components/elements/UserInfo.vue';
+// import { mapGetters } from 'vuex';
+// import UserInfo from '../../components/elements/UserInfo.vue';
 
 export default {
-  components: { UserInfo },
+  // components: { UserInfo },
   name: 'dashboard',
-  data() {
-    return {
-      name: ''
-    }
-  },
-  computed: {
-    ...mapGetters({
-      user: 'user/getUser'
-    }),
+  // data() {
+  //   return {
+  //     name: ''
+  //   }
+  // },
+  // computed: {
+  //   ...mapGetters({
+  //     user: 'user/getUser'
+  //   }),
 
-    user() {
-      if (process.client) {
-        return JSON.parse(localStorage.getItem('user')).sub
-      }
-    }
-  },
+  //   user() {
+  //     if (process.client) {
+  //       return JSON.parse(localStorage.getItem('user')).sub
+  //     }
+  //   }
+  // },
 }
 
 </script>

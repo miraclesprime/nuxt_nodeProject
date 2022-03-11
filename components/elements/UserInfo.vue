@@ -10,7 +10,7 @@
 <script>
 export default {
 
-  name: 'UserInfo',
+  // name: 'UserInfo',
 
   props: {
     user: { type: Object, required: true }
