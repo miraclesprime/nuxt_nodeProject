@@ -14,7 +14,7 @@
           </div>
           <div class="col-4">
             <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="activeItem.sectionId" placeholder="Please select ..."></bib-input>
-            <!-- <bib-input type="select" label="Section" :options="sectionOpts" v-model="Object.keys(activeItem).length ? activeItem.sectionId : form.sectionId" placeholder="Please select ..."></bib-input> -->
+            
           </div>
         </div>
         <div class="row" id='sidebar-row-2'>
@@ -124,10 +124,6 @@ export default {
       // description: "",
       isContentExpanded: false,
       form: {
-        sectionId: 0,
-        statusId: 0,
-        priorityId: 0,
-        description: '',
         time: "08:45:25",
         profile: "",
       },

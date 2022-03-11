@@ -82,5 +82,6 @@ export const actions = {
       headers: {'Authorization': `Bearer ${ctx.rootState.token.token}`}
     });
     ctx.commit('createTask', res.data);
+    ctx.commit("section/addTaskToSection", res.data, { root: true });
   }
 };

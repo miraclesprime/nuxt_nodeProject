@@ -4,6 +4,14 @@ export const state = () => ({
   sections: []
 });
 
+export const getters = {
+
+  getAllSections(state) {
+    return state.sections;
+  }
+
+};
+
 export const mutations = {
 
   fetchSections(state, payload) {
@@ -95,14 +103,14 @@ export const mutations = {
       state.sections = arr;
 
     }
-  }
+  },
 
-};
-
-export const getters = {
-
-  getAllSections(state) {
-    return state.sections;
+  addTaskToSection(state, payload) {
+    state.sections.forEach((s) => {
+      if (s.id == payload.sectionId) {
+        s.tasks.push(payload)
+      }
+    })
   }
 
 };
