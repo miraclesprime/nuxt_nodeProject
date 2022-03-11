@@ -65,18 +65,19 @@
       </div>
       <div class="row" id='ts-row'>
         <div class="col-8" id='ts-col-1'>
-          <bib-input type="text" :value="activeItem.title" placeholder="Enter task name..." label="Task name"></bib-input>
+          <bib-input type="text" v-model="Object.keys(activeItem).length ? activeItem.title : form.name" placeholder="Enter task name..." label="Task name"></bib-input>
         </div>
         <div class="col-4" id='ts-col-2'>
-          <bib-input type="date" :value="activeItem.dueDate ? formattedDate(activeItem.dueDate) : ''" placeholder="Enter date/range" label="Due date"></bib-input>
+          <bib-input type="date" v-model="Object.keys(activeItem).length ? activeItem.dueDate : form.dueDate" placeholder="Enter date/range" label="Due date"></bib-input>
         </div>
       </div>
     </div>
     <div class="menu" id='ts-menu'>
       <bib-tabs :value="activeSidebarTab" @change="sidebarTabChange" :tabs="sidebarTabs"></bib-tabs>
     </div>
-    <div class="of-scroll-y" id="of-scroll-y">
-      <sidebar-overview v-if="activeSidebarTab == 'Overview'" :fields="taskFields" :tasks="tasks" :activeTask="activeTask" />
+    <div class="of-scroll-y position-relative" id="ts-of-scroll-y">
+      <loading :loading="loading"></loading>
+      <sidebar-overview v-if="activeSidebarTab == 'Overview'" :fields="taskFields" :activeTask="activeItem" v-on:create-task="createTask" />
       <div class="container pt-1" id='ts-subtask-container' v-if="activeSidebarTab == 'Subtasks'">
         <task-group />
       </div>
@@ -96,6 +97,7 @@ export default {
   },
   data: function() {
     return {
+      loading: false,
       form: {
         name: "",
         dueDate: "2021/11/7",
@@ -156,6 +158,26 @@ export default {
       let day = '0' + date.getDay();
       let year = date.getFullYear()
       return `${year}-${month}-${day}`
+
+    },
+    createTask($event) {
+      this.loading = true
+      // console.table($event);
+      this.$store.dispatch("task/createTask", {
+        "sectionId": $event.sectionId,
+        "projectId": $event.projectId,
+        "title": this.form.name,
+        "description": $event.description,
+        "dueDate": this.form.dueDate,
+        "priorityId": $event.priorityId,
+        "budget": 0,
+        "statusId": $event.statusId
+      }).then(() => {
+        this.loading = false
+        this.hideSidebar()
+      }).catch(e => console.warn(e)).then(() => {
+        this.loading = false
+      })
 
     }
   },

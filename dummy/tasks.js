@@ -124,34 +124,3 @@ export const DUMMY_PROJECT = {
   buget: 10.0
   
 }
-
-export const TASK_FIELDS = [
-  {
-    key: "key",
-    label: "#",
-  },
-  {
-    key: "title",
-    label: "Task name",
-  },
-  {
-    key: "status",
-    label: "Status",
-  },
-  {
-    key: "priority",
-    label: "Priority",
-  },
-  {
-    key: "owner",
-    label: "Owner",
-  },
-  {
-    key: "startDate",
-    label: "Start Date"
-  },
-  {
-    key: "dueDate",
-    label: "Due Date",
-  },
-]

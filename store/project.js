@@ -57,7 +57,7 @@ export const mutations = {
 
     if (payload == 'owner') {
       let arr = JSON.parse(JSON.stringify(state.projects))
-      arr.sort((a, b) => a.userId.localeCompare(b.userId));
+      arr.sort((a, b) => a.user.firstName.localeCompare(b.user.firstName));
       state.projects = arr;
     }
 

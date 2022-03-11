@@ -167,7 +167,7 @@ export default {
   mounted() {
     if (process.client) {
 
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0cTJWb2xlalJlak5tR1FCIiwic3ViZSI6Imh0YW5nQGJpenRyZWUuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiQURNSU4iLCJzdWJjIjoiQ2FuYWRhIiwiZW52IjoiZGV2IiwiaWF0IjoxNjQ2MDM5MDYyMjY5LCJleHAiOjE2NTM4MTUwNjIyNjksImp0aSI6IjYzYTliMmNhLWNiYTItNDZkZC05NTExLTkwYzFjMDcyYjZiMSJ9.P0em4Q8Wpb91TeZZ0hqW4wrXA75SAArA8ov5LGR9zkM"
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY0Njk3MjYzNzcxNSwiZXhwIjoxNjU0NzQ4NjM3NzE1LCJqdGkiOiIyMDFjZGExYy02MDVjLTQ4ZDMtODhiMi1lODhjMDFhZGQ3YWUifQ.aw6BfQV6G5iDlWXNvMiV9AgxaMGjPVyF2LRgteMo5OU"
 
       // // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0cTJWb2xlalJlak5tR1FCIiwic3ViZSI6Imh0YW5nQGJpenRyZWUuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiQURNSU4iLCJzdWJjIjoiQ2FuYWRhIiwiaWF0IjoxNjQ0ODM4ODkxNzEwLCJleHAiOjE2NTI2MTQ4OTE3MTAsImp0aSI6IjlhMmJkMTRlLTU3NmUtNDNmOS05YjNjLTk4MzVmYTFkNjc2YSJ9.J31bf_Z-pPe1IFrUihvSH0W6XQ3cCnMJOcs-_6kPoPI"
 
@@ -190,7 +190,11 @@ export default {
         localStorage.setItem('user', JSON.stringify(user))
         this.$store.dispatch('user/setUser', user)
 
-      this.$axios.get(`${process.env.USER_API_URL}/${user.sub}`).then((res) => {
+      this.$axios.get(`${process.env.USER_API_URL}/${user.sub}`, {
+        headers: {
+          'Authorization': `Bearer ${jwt}`
+        }
+      }).then((res) => {
           let firstName = res.data[0].FirstName;
           let lastName = res.data[0].LastName;
 
@@ -299,7 +303,7 @@ export default {
 </script>
 <style lang="scss">
 html {
-  font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: $font-family;
   font-size: 16px;
   word-spacing: 1px;
   -ms-text-size-adjust: 100%;

@@ -1,32 +1,39 @@
 <template>
   <div id="sidebar-overview-wrapper">
-    <div class="container" id='sidebar-wrapper' v-if="activeItem">
+    <div class="container" id='sidebar-wrapper'>
       <div class="task-info w-100" id='sidebar-inner-wrap'>
+        <!-- <pre>{{activeTask}}</pre> -->
+        <!-- <pre>{{activeItem}}</pre> -->
         <div class="row" id='sidebar-row-1'>
           <div class="col-4" id='sidebar-col-1'>
             <bib-input type="select" :options="selectItems" placeholder="Please select..." label="Assignee"></bib-input>
           </div>
-          <div class="col-8" id='sidebar-col-2'>
+          <div class="col-4" id='sidebar-col-2'>
             <!-- <bib-input type="select" :options="projects" placeholder="Please select..." label="Project"></bib-input> -->
             <bib-input type="text" label="Project" :value="project.title" disabled></bib-input>
+          </div>
+          <div class="col-4">
+            <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="activeItem.sectionId" placeholder="Please select ..."></bib-input>
+            
           </div>
         </div>
         <div class="row" id='sidebar-row-2'>
           <div class="col-4" id='sidebar-col-3'>
-            <bib-input type="select" :options="department" placeholder="Please select..." label="Department"></bib-input>
+            <bib-input type="select" label="Department" :options="department" placeholder="Please select..."></bib-input>
           </div>
           <div class="col-4" id='sidebar-col-4'>
-            <bib-input type="select" :value="activeItem.priority ? activeItem.priority.text : ''" :options="priorityValues" placeholder="Please select..." label="Priority"></bib-input>
+            <bib-input type="select" label="Priority" v-model.number="activeItem.priorityId" :options="priorityValues" placeholder="Please select..."></bib-input>
           </div>
           <div class="col-4" id='sidebar-col-5'>
-            <bib-input type="select" :value="activeItem.status ? activeItem.status.text : '' " :options="statusValues" placeholder="Please select..." label="Status"></bib-input>
+            <bib-input type="select" label="Status" v-model.number="activeItem.statusId" :options="statusValues" placeholder="Please select..."></bib-input>
           </div>
         </div>
         <div class="row" id='sidebar-row-3'>
           <div class="col-12" id='sidebar-col-6'>
-            <bib-input type="textarea" :value="activeItem.description" placeholder="Enter task description..." label="Description"></bib-input>
+            <bib-input type="textarea" v-model.trim="activeItem.description" placeholder="Enter task description..." label="Description"></bib-input>
           </div>
         </div>
+        <bib-button v-if="!activeTask.id" label="Create Task" variant="primary" v-on:click="createTask(); $emit('create-task', newTaskForm)"></bib-button>
       </div>
       <task-group title="Subtasks"></task-group>
       <div class="task-details w-100" id='sidebar-details'>
@@ -88,31 +95,33 @@ export default {
   props: {
     activeTask: Object,
   },
-  data: function() {
+  data() {
     return {
-      // activeItem: this.activeTask,
+      activeItem: {},
+      // loading: true,
       selectItems: [
         { label: 'Please Choose One', value: "orange" }
       ],
       statusValues: [
-        { label: 'Not Started', value: 'Not Started' },
-        { label: 'In-Progress', value: 'In-Progress' },
-        { label: 'Waiting', value: 'Waiting' },
-        { label: 'Deferred', value: 'Deferred' },
-        { label: 'Done', value: 'Done' },
+        { label: 'Not Started', value: '1' },
+        { label: 'In-Progress', value: '2' },
+        { label: 'Waiting', value: '3' },
+        { label: 'Delayed', value: '4' },
+        { label: 'Done', value: '5' },
       ],
       priorityValues: [
-        { label: 'low', value: 'low' },
-        { label: 'medium', value: 'medium' },
-        { label: 'high', value: 'high' }
+        { label: 'Low', value: '3' },
+        { label: 'Medium', value: '2' },
+        { label: 'High', value: '1' },
       ],
       projects: [
         // {label: 'Project 1', value: "p1"}
       ],
       department: [
-        { label: 'IT', value: "it" }
+        { label: 'IT', value: "it" },
+        { label: 'Marketing', value: "marketing" }
       ],
-      description: "",
+      // description: "",
       isContentExpanded: false,
       form: {
         time: "08:45:25",
@@ -122,22 +131,62 @@ export default {
       activeMate: 0,
     };
   },
+
   watch: {
     activeTask() {
-      this.activeItem = this.activeTask;
+      // this.activeItem = this.activeTask;
+      if (Object.keys(this.activeTask).length) {
+        this.activeItem = JSON.parse(JSON.stringify(this.activeTask));
+      } else {
+        this.activeItem = {
+          sectionId: '',
+          projectId: this.project.id,
+          statusId: 1,
+          priorityId: 2,
+          description: '',
+          budget: 0,
+        }
+      }
     },
   },
   computed: {
     ...mapGetters({
-      activeItem: 'task/getSelectedTask',
+      // activeItem: 'task/getSelectedTask',
       project: "project/getSingleProject",
+      sections: "section/getAllSections",
     }),
 
-    /*projects() {
-      return { label: this.project.title, value: this.project.id }
+    /*activeItem(){
+      return this.activeTask
     },*/
+
+    sectionOpts() {
+      let sec = [{ label: "Select section" }]
+      this.sections.forEach((s) => {
+        sec.push({ label: s.title, value: s.id })
+      });
+      return sec
+    },
+
+    newTaskForm() {
+      return {
+        sectionId: this.activeItem.sectionId,
+        projectId: this.project.id,
+        title: "",
+        description: this.activeItem.description,
+        dueDate: "",
+        priorityId: this.activeItem.priorityId,
+        budget: 0,
+        statusId: this.activeItem.statusId
+      }
+    }
   },
-  
+
+  methods: {
+    createTask() {
+      console.log('create task')
+    }
+  }
 };
 
 </script>
@@ -145,6 +194,7 @@ export default {
 .task-info {
   padding: 1rem 0;
   font-size: $sidebar-size;
+  position: relative;
 }
 
 .task-team {

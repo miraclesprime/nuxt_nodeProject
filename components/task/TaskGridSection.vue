@@ -12,17 +12,23 @@
       </div>
     </div>
     <div class="task-section__body" id="tgs-task-section-body">
-      <Container :group-name="groupName" @drop="onDrop('sections', $event)" :get-child-payload="getChildPayload">
-        <Draggable v-for="(item, index) in taskSections" :key="item.name + '-' + index">
-          <!-- <task-grid :task="item" /> -->
-          <div class="task-grid" id='tg-card'>
+      <!-- <Container @drop="onDrop" :get-child-payload="getChildPayload">            
+          <Draggable v-for="item in dragItems" :key="item.id">
+            <div class="draggable-item p-1 border-gray4 mb-025">
+              {{item.label}}
+            </div>
+          </Draggable>
+        </Container> -->
+      <Container @drop="onDrop" :get-child-payload="getChildPayload" >
+        <Draggable v-for="(item, index) in sections" :key="item.name + '-' + index">
+          <div class="task-grid draggable-item" id='tg-card'>
             <figure v-if="item.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
             <div class="task-top" id='tg-card-top'>
-              <div class="d-flex" id='tg-card-inside-wrap' >
+              <div class="d-flex" id='tg-card-inside-wrap'>
                 <custom-check-box :id="'tg-' + item.key" />
                 <span class="ml-05" id='tg-title'>{{ item.description }}</span>
               </div>
-              <bib-button pop="elipsis" icon="elipsis" icon-variant="secondary" >
+              <bib-button pop="elipsis" icon="elipsis" icon-variant="secondary">
                 <template v-slot:menu>
                   <div class="list" id='tg-list'>
                     <span class="list__item success" id='tg-fav' @click="addToFavorites">Add to favorites</span>
@@ -34,8 +40,7 @@
               </bib-button>
             </div>
             <div class="task-bottom" id='tg-card-bottom'>
-              <!-- <bib-avatar size="25px"></bib-avatar> -->
-              <user-info :id="item.userId"></user-info>
+              <user-info :user="item.user"></user-info>
               <span id='tg-bottom-duedate' v-format-date="item.dueDate"></span>
             </div>
           </div>
@@ -55,7 +60,12 @@ export default {
   },
   data() {
     return {
-      dragItems: [],
+      dragItems: [
+        {label: "Item one", id: 1},
+        {label: "Item two", id: 2},
+        {label: "Item three", id: 3},
+        {label: "Item four", id: 4},
+      ],
       sections: this.taskSections,
       flag: false,
     };
@@ -87,13 +97,18 @@ export default {
     },
   },
   methods: {
-    onDrop(collection, dropResult) {
+    onDrop(dropResult) {
       // this.dragItems = dropResult
       // console.log(dropResult)
-      this[collection] = applyDrag(this[collection], dropResult);
+      // this[collection] = applyDrag(this[collection], dropResult);
+      this.sections = applyDrag(this.sections, dropResult);
     },
     getChildPayload(index) {
+      // console.log(index)
       return this.sections[index];
+    },
+    shouldAcceptDrop(sourceContainerOptions, payload) {
+      return true;
     },
     openSidebar($event) {
       // this.flag = !this.flag;
@@ -101,12 +116,18 @@ export default {
       // this.$nuxt.$emit("set-active-task", task);
       this.$store.dispatch('task/setSingleTask', $event)
     },
+    addToFavorites(){
+      console.log('favorites')
+    }
   },
 };
 
 </script>
 <style scoped lang="scss">
-.smooth-dnd-container.vertical > .smooth-dnd-draggable-wrapper { overflow: initial;}
+.smooth-dnd-container.vertical>.smooth-dnd-draggable-wrapper {
+  overflow: initial;
+}
+
 .task-grid-section {
   width: 18%;
   min-width: 240px;
@@ -121,7 +142,9 @@ export default {
     border-right: 1px solid $gray4;
   }
 
-  .title { font-weight: bold; }
+  .title {
+    font-weight: bold;
+  }
 
   &:hover {
 
@@ -189,9 +212,18 @@ export default {
 
 ::v-deep {
   .user-info-wrapper {
-    .user-name { visibility: hidden; opacity: 0; transition: opacity 200ms ease-out; }
-    &:hover .user-name { visibility: visible; opacity: 1; }
+    .user-name {
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 200ms ease-out;
+    }
+
+    &:hover .user-name {
+      visibility: visible;
+      opacity: 1;
+    }
   }
+
   .custom-control-label {
     &::before {
       width: 1.4rem;

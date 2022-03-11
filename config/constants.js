@@ -1,10 +1,11 @@
-export const TABLE_FIELDS = [{
-    key: "id",
+export const TABLE_FIELDS = [
+  {
+    key: "",
     label: "#"
   },
   {
     key: "title",
-    label: "Task name"
+    label: "Task name",
   },
   {
     key: "status",
@@ -33,6 +34,43 @@ export const TAB_TITLES = {
   conversations: "conversations",
   files: "files"
 };
+
+export const TASK_FIELDS = [
+  {
+    key: "",
+    label: "#"
+  },
+  {
+    key: "title",
+    label: "Task name",
+    width: "32%",
+  },
+  {
+    key: "status",
+    label: "Status",
+    width: "10%",
+  },
+  {
+    key: "priority",
+    label: "Priority",
+    width: "8%",
+  },
+  {
+    key: "owner",
+    label: "Owner",
+    width: "20%",
+  },
+  {
+    key: "startDate",
+    label: "Start Date",
+    width: "10%",
+  },
+  {
+    key: "dueDate",
+    label: "Due Date",
+    width: "10%",
+  },
+]
 
 export const TASKS = [{
     name: "Remind me what time it is",
@@ -130,6 +168,7 @@ export const PROJECT_SORT = [
   { label: 'Name', key: 'name' },
   { label: 'Owner', key: 'owner' },
   { label: 'Status', key: 'status' },
+  { label: 'Priority', key: 'priority' },
   { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },
   { label: 'Tag', key: 'tag' },
