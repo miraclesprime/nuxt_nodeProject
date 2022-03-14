@@ -112,7 +112,7 @@ export default {
       let added = this.sections[addedIndex]
 
       // this.sections = applyDrag(this.sections, dropResult);
-      let dnd = await this.$axios.$put("/task/dragdrop", { removedIndex, addedIndex, removedItem:payload, addedItem: added }, {
+      let dnd = await this.$axios.$put("/task/dragdrop", { removedIndex, addedIndex, source:payload, target: added }, {
         headers: {
           "Authorization": `Bearer ${this.token}`,
           "Content-Type": "application/json"

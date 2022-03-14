@@ -83,8 +83,9 @@ export default {
       this.$root.$emit("change-grid-type", this.type);
     },*/
     showCreateTaskModal(data) {
-      this.$refs.modals.modalSize = "lg";
-      this.$refs.modals.showCreateTaskModal = true;
+      /*this.$refs.modals.modalSize = "lg";
+      this.$refs.modals.showCreateTaskModal = true;*/
+      this.$nuxt.$emit("create-project-modal");
       this.selectInfo = data;
     },
     showCreateSectionModal() {
