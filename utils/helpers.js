@@ -1,7 +1,7 @@
 import axios from 'axios'
 export const applyDrag = async (arr, dragResult) => {
   console.log(dragResult)
-  let dnd = await axios.put("http://localhost:9000/task/dragdrop", dragResult, { headers: {
+  let dnd = await axios.put(process.env.VUE_APP_API_ENDPOINT + "/task/dragdrop", dragResult, { headers: {
         "Authorization": `Bearer ${localStorage.getItem('accessToken')}`,
         "Content-Type": "application/json"
       }})

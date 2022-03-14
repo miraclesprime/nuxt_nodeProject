@@ -1,5 +1,5 @@
 <template>
-  <div id="task-view-wrapper">
+  <div id="task-view-wrapper" class="position-relative">
     <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:create-section="createSectionInline" v-on:filterView="filterView"></task-actions>
     <loading :loading="loading"></loading>
     <section v-show="newSection" id="tv-new-section-input-container">
@@ -13,7 +13,7 @@
       <!-- <bib-input type="text" ref="newsectionbibinput" v-model="newSectionName" name="sectionname" size="sm" placeholder="Enter section name"></bib-input> -->
     </section>
     <template v-if="gridType === 'list'">
-      <!-- <bib-table v-for="(item, index) in sections" :key="item.tasks.length ? item.tasks[0].title : 'title-' + index" :fields="tableFields" :sections="item.tasks.length ? item.tasks : []" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" :hide-no-column="true" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
+      <!-- <bib-table v-for="(item, index) in sections" :key="listKey(index)" :fields="tableFields" :sections="item.tasks.length ? item.tasks : []" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" :hide-no-column="true" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
           <template #cell(title)="data" >
             <div class="d-flex align-center gap-05" id='tv-title-wrap' >
               <custom-check-box :id="'tv-task-check-'+index" :checked="data.value.statusId == 4"></custom-check-box>
@@ -127,10 +127,13 @@ export default {
       } else {
         return true
       }
-    }
+    },
   },
 
   methods: {
+    listKey(index){
+      return 'key-' + Math.random().toString().slice(-3) + index
+    },
     toggleSidebar($event) {
       // console.log($event)
       // in case of create task 

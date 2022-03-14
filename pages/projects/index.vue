@@ -1,5 +1,5 @@
 <template>
-  <div id="projects-wrapper">
+  <div id="projects-wrapper" class="projects-wrapper" >
     <!-- <div id="project-name" class="project-heading p-05 text-secondary font-sm"> -->
     <nav id="projects-nav-wrapper" class="d-flex align-center gap-05 pt-05 pb-05">
       <nuxt-link to="/" class="d-flex">
@@ -10,59 +10,49 @@
     </nav>
     <!-- </div> -->
     <project-actions @sortValue='sortName=$event' @viewValue='viewName=$event' v-on:loading="loading = $event" />
-    <loading :loading="loading"></loading>
-    <template v-if="projects.length">
-      <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="projects" :key="'sort-'+ sortName ? sortName : 'sName' + 'view-' + viewName ? viewName : 'vName'  " :hide-no-column="true" >
-        <template #cell(title)="data">
-          <div class="d-flex align-center text-dark" :id="'projects-' + data.value.title" @click="goToProjectId(data.value)">
-            <bib-icon icon="briefcase" variant="gray5" :scale="1.1" class="mr-025"></bib-icon>
-            <span :id="'projects-' + data.value.title + '-text'">{{data.value.title}}</span>
-          </div>
-        </template>
-        <template #cell(userId)="data">
-          <user-info :user="data.value.user"></user-info>
-          <!-- <div class="d-flex gap-05" id="projects-userInfo-wrap">
-            <span class="text-dark" id="projects-userInfo-text">
-              <template>
-                <bib-avatar :text="data.value.user.firstName[0]" size="1.5rem"></bib-avatar>
-              </template>
-              {{data.value.user ? data.value.user.firstName + ' ' + data.value.user.lastName : ''}}
-            </span>
-          </div> -->
-        </template>
-        <template #cell(status)="data">
-          <div class="justify-between text-dark" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
-            <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" v-format-status="data.value.statusId ? data.value.statusId : ''">{{ data.value.status ? data.value.status.text : "" }}</span>
-          </div>
-        </template>
-        <template #cell(createdAt)="data">
-          <div class="justify-between text-dark" :id="'projects-' + data.value.createdAt">
-            <span :id="'projects-' + data.value.createdAt + '-text'" v-format-date="data.value.createdAt"></span>
-          </div>
-        </template>
-        <template #cell(dueDate)="data">
-          <div class="justify-between text-dark" :id="'projects-' + data.value.dueDate">
-            <span :id="'projects-' + data.value.dueDate + '-text'" v-format-date="data.value.dueDate"></span>
-          </div>
-        </template>
-        <template #cell(priority)="data">
-          <div class="justify-between text-dark" 
-          id="projects"
-          >
-            <span id="project-text" 
-            v-format-priority="data.value.priorityId ? data.value.priorityId : ''"
-            >
-              {{ data.value.priority ? data.value.priority.text : ''}}
-            </span>
-          </div>
-        </template>
-      </bib-table>
-    </template>
-    <template v-else>
-      <span id="projects-0" class="d-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
-        <bib-icon icon="warning" ></bib-icon> No records found
-      </span>
-    </template>
+    <div id="projects-list-wrapper" class="projects-list-wrapper of-scroll-y position-relative" >
+      <loading :loading="loading"></loading>
+      <template v-if="projects.length">
+        <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="projects" :key="'sort-'+ sortName ? sortName : 'sName' + 'view-' + viewName ? viewName : 'vName'  " :hide-no-column="true">
+          <template #cell(title)="data">
+            <div class="d-flex align-center text-dark" :id="'projects-' + data.value.title" @click="goToProjectId(data.value)">
+              <bib-icon icon="briefcase" variant="gray5" :scale="1.1" class="mr-025"></bib-icon>
+              <span :id="'projects-' + data.value.title + '-text'">{{data.value.title}}</span>
+            </div>
+          </template>
+          <template #cell(userId)="data">
+            <user-info :user="data.value.user"></user-info>
+          </template>
+          <template #cell(status)="data">
+            <div class="justify-between text-dark" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
+              <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" v-format-status="data.value.statusId ? data.value.statusId : ''">{{ data.value.status ? data.value.status.text : "" }}</span>
+            </div>
+          </template>
+          <template #cell(createdAt)="data">
+            <div class="justify-between text-dark" :id="'projects-' + data.value.createdAt">
+              <span :id="'projects-' + data.value.createdAt + '-text'" v-format-date="data.value.createdAt"></span>
+            </div>
+          </template>
+          <template #cell(dueDate)="data">
+            <div class="justify-between text-dark" :id="'projects-' + data.value.dueDate">
+              <span :id="'projects-' + data.value.dueDate + '-text'" v-format-date="data.value.dueDate"></span>
+            </div>
+          </template>
+          <template #cell(priority)="data">
+            <div class="justify-between text-dark" id="projects">
+              <span id="project-text" v-format-priority="data.value.priorityId ? data.value.priorityId : ''">
+                {{ data.value.priority ? data.value.priority.text : ''}}
+              </span>
+            </div>
+          </template>
+        </bib-table>
+      </template>
+      <template v-else>
+        <span id="projects-0" class="d-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
+          <bib-icon icon="warning"></bib-icon> No records found
+        </span>
+      </template>
+    </div>
   </div>
 </template>
 <script>
@@ -109,12 +99,14 @@ export default {
       // this.$store.dispatch('project/setSingleProject', project)
       this.$router.push("/projects/" + project.id)
     },
-    
+
   }
 }
 
 </script>
 <style lang="scss" scoped>
+.projects-wrapper { display: flex; flex-direction: column; height: 100%; }
+
 details {
   summary::-webkit-details-marker {
     display: none;
