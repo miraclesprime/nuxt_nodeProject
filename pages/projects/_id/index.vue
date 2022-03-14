@@ -43,8 +43,8 @@
       </div>
     </nav>
 
-    <div class="menu" id='project-idmenu-content'>
-      <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="TABS" flexible-width />
+    <div class="menu " id='project-idmenu-content'>
+      <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="TABS" />
     </div>
     <div id="project-id-tab-content" class="project-id-tab-content position-relative ">
       <task-overview v-if="activeTab.value == TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="tasks" :gridType="gridType" />

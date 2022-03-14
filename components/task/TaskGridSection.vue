@@ -19,7 +19,7 @@
             </div>
           </Draggable>
         </Container> -->
-      <Container @drop="onDrop" :get-child-payload="getChildPayload" >
+      <Container @drop="onDrop" :get-child-payload="getChildPayload">
         <Draggable v-for="(item, index) in sections" :key="item.name + '-' + index">
           <div class="task-grid draggable-item" id='tg-card'>
             <figure v-if="item.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
@@ -51,7 +51,8 @@
 </template>
 <script>
 import { Container, Draggable } from "vue-smooth-dnd";
-import { applyDrag } from "~/utils/helpers";
+// import { applyDrag } from "~/utils/helpers";
+import { mapGetters } from 'vuex';
 
 export default {
   components: {
@@ -60,12 +61,12 @@ export default {
   },
   data() {
     return {
-      dragItems: [
-        {label: "Item one", id: 1},
-        {label: "Item two", id: 2},
-        {label: "Item three", id: 3},
-        {label: "Item four", id: 4},
-      ],
+      /*dragItems: [
+        { label: "Item one", id: 1 },
+        { label: "Item two", id: 2 },
+        { label: "Item three", id: 3 },
+        { label: "Item four", id: 4 },
+      ],*/
       sections: this.taskSections,
       flag: false,
     };
@@ -96,12 +97,42 @@ export default {
       },
     },
   },
+  computed: {
+    ...mapGetters({
+      token: "token/getToken"
+    })
+  },
   methods: {
-    onDrop(dropResult) {
+    async onDrop(dropResult) {
       // this.dragItems = dropResult
       // console.log(dropResult)
-      // this[collection] = applyDrag(this[collection], dropResult);
-      this.sections = applyDrag(this.sections, dropResult);
+      const { removedIndex, addedIndex, payload } = dropResult
+      // console.log(this.sections[addedIndex])
+
+      let added = this.sections[addedIndex]
+
+      // this.sections = applyDrag(this.sections, dropResult);
+      let dnd = await this.$axios.$put("/task/dragdrop", { removedIndex, addedIndex, removedItem:payload, addedItem: added }, {
+        headers: {
+          "Authorization": `Bearer ${this.token}`,
+          "Content-Type": "application/json"
+        }
+      })
+      console.log(dnd)
+
+      /*if (removedIndex === null && addedIndex === null) return arr
+
+      const result = [...arr]
+      let itemToAdd = payload
+
+      if (removedIndex !== null) {
+        itemToAdd = result.splice(removedIndex, 1)[0]
+      }
+
+      if (addedIndex !== null) {
+        result.splice(addedIndex, 0, itemToAdd)
+      }
+      this.sections = result*/
     },
     getChildPayload(index) {
       // console.log(index)
@@ -116,7 +147,7 @@ export default {
       // this.$nuxt.$emit("set-active-task", task);
       this.$store.dispatch('task/setSingleTask', $event)
     },
-    addToFavorites(){
+    addToFavorites() {
       console.log('favorites')
     }
   },
