@@ -5,6 +5,7 @@ export const applyDrag = async (arr, dragResult) => {
         "Authorization": `Bearer ${localStorage.getItem('accessToken')}`,
         "Content-Type": "application/json"
       }})
+  console.log(dnd)
   
   const { removedIndex, addedIndex, payload } = dragResult
   if (removedIndex === null && addedIndex === null) return arr
@@ -19,7 +20,6 @@ export const applyDrag = async (arr, dragResult) => {
   if (addedIndex !== null) {
     result.splice(addedIndex, 0, itemToAdd)
   }
-
 
   return result
 }
