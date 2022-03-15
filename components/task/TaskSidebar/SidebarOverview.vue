@@ -6,15 +6,14 @@
         <!-- <pre>{{activeItem}}</pre> -->
         <div class="row" id='sidebar-row-1'>
           <div class="col-4" id='sidebar-col-1'>
-            <bib-input type="select" :options="selectItems" placeholder="Please select..." label="Assignee"></bib-input>
+            <bib-input type="select" :options="selectItems" placeholder="Please select..." label="Assignee *"></bib-input>
           </div>
           <div class="col-4" id='sidebar-col-2'>
             <!-- <bib-input type="select" :options="projects" placeholder="Please select..." label="Project"></bib-input> -->
             <bib-input type="text" label="Project" :value="project.title" disabled></bib-input>
           </div>
           <div class="col-4">
-            <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="activeItem.sectionId" placeholder="Please select ..."></bib-input>
-            
+            <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="activeItem.sectionId" :variant="alert=='invalid'?'alert':''" placeholder="Please select ..."></bib-input>
           </div>
         </div>
         <div class="row" id='sidebar-row-2'>
@@ -33,7 +32,10 @@
             <bib-input type="textarea" v-model.trim="activeItem.description" placeholder="Enter task description..." label="Description"></bib-input>
           </div>
         </div>
-        <bib-button v-if="!activeTask.id" label="Create Task" variant="primary" v-on:click="createTask(); $emit('create-task', newTaskForm)"></bib-button>
+        <!-- <div v-show="alert == 'invalid'" class="shape-rounded d-flex align-center border-danger p-05 my-1">
+          <bib-icon icon="warning" variant="danger-sub2" class="mr-025"></bib-icon> <span class="text-danger">{{alert}}</span>
+        </div> -->
+        <bib-button v-if="!activeTask.id" label="Create Task" variant="primary" v-on:click="createTask"></bib-button>
       </div>
       <task-group title="Subtasks"></task-group>
       <div class="task-details w-100" id='sidebar-details'>
@@ -156,6 +158,13 @@ export default {
       sections: "section/getAllSections",
     }),
 
+    alert() {
+      if (this.activeItem.sectionId) {
+        return "valid"
+      } else {
+        return "invalid"
+      }
+    },
     /*activeItem(){
       return this.activeTask
     },*/
@@ -185,6 +194,15 @@ export default {
   methods: {
     createTask() {
       console.log('create task')
+      if (this.alert == 'valid') {
+        // this.invalid = false
+        this.$emit('create-task', this.newTaskForm)
+      } 
+      /*if (this.newTaskForm.sectionId) {
+        this.$emit('create-task', newTaskForm)
+      } else {
+        this.alert = "Please fill required fields"
+      }*/
     }
   }
 };

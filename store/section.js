@@ -122,7 +122,16 @@ export const actions = {
     const res = await this.$axios.$get('/section', {
       headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
     });
-    ctx.commit('fetchSections', res.data);
+
+    let d = res.data;
+
+    for (let i = 0; i < d.length; i++) {
+      d[i].tasks.sort((a, b) => {
+        return a.order - b.order;
+      })
+    }
+
+    ctx.commit('fetchSections', d);
   },
 
   setSections(ctx, payload) {
