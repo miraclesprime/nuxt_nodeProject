@@ -2,12 +2,13 @@
   <div id="task-overview-view-wrapper">
 
     <div id="task-overview-view-inner" class="border-gray4">
-      <section-title></section-title>
+      <!-- <section-title></section-title> -->
     </div>
     
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 
 export default {
   props: {
@@ -16,7 +17,24 @@ export default {
   data() {
     return {
       flag: false,
+      tasks: []
     };
+  },
+
+  computed: {
+    ...mapGetters({
+      token: 'token/getToken',
+    })
+  },
+
+  mounted(){
+    this.$axios.$get("task/project/1",{
+      headers: {
+        "Authorization": "Bearer "+ this.token
+      }
+    }).then(r=>{
+      this.tasks = r
+    }).catch(e=> console.log(e))
   },
 
   methods: {

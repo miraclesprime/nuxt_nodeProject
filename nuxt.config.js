@@ -37,10 +37,10 @@ export default {
     { path: "~/components/elements/", pathPrefix: false },
     { path: "~/../bib-shared/components/", pathPrefix: false },
   ],
-  pageTransition: {
+  /*pageTransition: {
     name: 'page',
     mode: 'out-in'
-  },
+  },*/
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
     "cookie-universal-nuxt",
