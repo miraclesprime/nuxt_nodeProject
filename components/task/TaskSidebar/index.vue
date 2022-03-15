@@ -65,7 +65,8 @@
       </div>
       <div class="row" id='ts-row'>
         <div class="col-8" id='ts-col-1'>
-          <bib-input type="text" v-model="Object.keys(activeItem).length ? activeItem.title : form.name" placeholder="Enter task name..." label="Task name"></bib-input>
+          <bib-input type="text" v-model="Object.keys(activeItem).length ? activeItem.title : form.name" placeholder="Enter task name..." :variant="error == 'invalid'?'alert':''" label="Task name"></bib-input>
+          <!-- <small v-show="error == 'invalid'" class="text-danger font-xs " style="display:block; margin-top: -0.25rem;">Task name is required</small> -->
         </div>
         <div class="col-4" id='ts-col-2'>
           <bib-input type="date" v-model="Object.keys(activeItem).length ? activeItem.dueDate : form.dueDate" placeholder="Enter date/range" label="Due date"></bib-input>
@@ -136,13 +137,22 @@ export default {
           label: "Due Date",
         },
       ],
+      // error: false
     };
   },
+
   computed: {
     ...mapGetters({
       tasks: "task/tasksForListView",
       activeItem: 'task/getSelectedTask',
     }),
+    error() {
+      if (this.form.name || this.activeItem.title) {
+        return "valid"
+      } else {
+        return "invalid"
+      }
+    }
   },
   methods: {
     hideSidebar() {
@@ -161,24 +171,25 @@ export default {
 
     },
     createTask($event) {
-      this.loading = true
       // console.table($event);
-      this.$store.dispatch("task/createTask", {
-        "sectionId": $event.sectionId,
-        "projectId": $event.projectId,
-        "title": this.form.name,
-        "description": $event.description,
-        "dueDate": this.form.dueDate,
-        "priorityId": $event.priorityId,
-        "budget": 0,
-        "statusId": $event.statusId
-      }).then(() => {
-        this.loading = false
-        this.hideSidebar()
-      }).catch(e => console.warn(e)).then(() => {
-        this.loading = false
-      })
-
+      if (this.error == "valid") {
+        this.loading = true
+        this.$store.dispatch("task/createTask", {
+          "sectionId": $event.sectionId,
+          "projectId": $event.projectId,
+          "title": this.form.name,
+          "description": $event.description,
+          "dueDate": this.form.dueDate,
+          "priorityId": $event.priorityId,
+          "budget": 0,
+          "statusId": $event.statusId
+        }).then(() => {
+          this.loading = false
+          this.hideSidebar()
+        }).catch(e => console.warn(e)).then(() => {
+          this.loading = false
+        })
+      }
     }
   },
 };

@@ -163,6 +163,9 @@ export default {
     this.$root.$on("open-sidebar", (flag) => {
       this.openSidebar = flag;
     });
+    this.$root.$on("create-project-modal", ()=>{
+      this.$refs.projectModals.showCreateProjectModal = true;
+    })
   },
   mounted() {
     if (process.client) {

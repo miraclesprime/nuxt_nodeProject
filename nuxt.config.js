@@ -11,7 +11,7 @@ export default {
       { hid: "description", name: "description", content: "" },
     ],
     link: [
-      { rel: "stylesheet", type: "text/css", href: "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap"},
+      /*{ rel: "stylesheet", type: "text/css", href: "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap"},*/
       { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
     ],
   },
@@ -37,10 +37,10 @@ export default {
     { path: "~/components/elements/", pathPrefix: false },
     { path: "~/../bib-shared/components/", pathPrefix: false },
   ],
-  pageTransition: {
+  /*pageTransition: {
     name: 'page',
     mode: 'out-in'
-  },
+  },*/
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
     "cookie-universal-nuxt",
