@@ -13,50 +13,52 @@
       <!-- <bib-input type="text" ref="newsectionbibinput" v-model="newSectionName" name="sectionname" size="sm" placeholder="Enter section name"></bib-input> -->
     </section>
     <template v-if="gridType === 'list'">
-      <bib-table v-for="(item, index) in sections" :key="listKey(index)" :fields="tableFields" :sections="item.tasks.length ? item.tasks : []" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" :hide-no-column="true" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
-          <template #cell(title)="data" >
-            <div class="d-flex align-center gap-05" id='tv-title-wrap' >
-              <custom-check-box :id="'tv-task-check-'+index" :checked="data.value.statusId == 4"></custom-check-box>
-              <span class="text-dark" id='tv-title-text' @click="taskSelected(data.value)">{{ data.value ? data.value.title : '' }}</span>
-            </div>
-          </template>
-          <template #cell(status)="data">
-            <div class="justify-between text-dark" id='tv-status-wrap'>
-              <span v-format-status="data.value.statusId ? data.value.statusId : ''">{{ data.value.status.text }}</span>
-              <!-- <span :class="statusClass(data.value.statusId)" id='tv-progress-wrap'>
+      <bib-table v-for="(item, index) in sections" :key="listKey(index)" :fields="tableFields" :sections="taskWithSection(item.id)" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" :hide-no-column="true" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
+        <template #cell(title)="data">
+          <div class="d-flex align-center gap-05" id='tv-title-wrap'>
+            <custom-check-box :id="'tv-task-check-'+index" :checked="data.value.statusId == 4"></custom-check-box>
+            <span class="text-dark" id='tv-title-text' @click="taskSelected(data.value)">{{ data.value ? data.value.title : '' }}</span>
+          </div>
+        </template>
+        <template #cell(status)="data">
+          <div class="justify-between text-dark" id='tv-status-wrap'>
+            <span v-format-status="data.value.statusId ? data.value.statusId : ''">{{ data.value.status.text }}</span>
+            <!-- <span :class="statusClass(data.value.statusId)" id='tv-progress-wrap'>
               {{ data.value.progress }}<span v-if="data.value.progress" id="tv-percent-sign">%</span></span> -->
-            </div>
-          </template>
-          <template #cell(priority)="data">
-            <div class="justify-between text-dark" id='tv-priority-wrap'>
-              <span id='tv-priority-text' v-format-priority="data.value.priorityId ? data.value.priorityId : ''">
-                {{ data.value.priority ? data.value.priority.text : '' }}
-              </span>
-            </div>
-          </template>
-          <template #cell(owner)="data">
-            <div class="text-dark" id='tv-assignee-wrap'>
-              <user-info :user="data.value.user"></user-info>
-            </div>
-          </template>
-          <template #cell(startDate)="data">
-            <div class="text-dark" id='tv-startDate-wrap'>
-              <span id='tv-startDate-text' v-format-date="data.value.createdAt"></span>
-            </div>
-          </template>
-          <template #cell(dueDate)="data">
-            <div class="text-dark" id='tv-dueDate-wrap'>
-              <span id='tv-dueDate-text' v-format-date="data.value.dueDate"></span>
-            </div>
-          </template>
-        
+          </div>
+        </template>
+        <template #cell(priority)="data">
+          <div class="justify-between text-dark" id='tv-priority-wrap'>
+            <span id='tv-priority-text' v-format-priority="data.value.priorityId ? data.value.priorityId : ''">
+              {{ data.value.priority ? data.value.priority.text : '' }}
+            </span>
+          </div>
+        </template>
+        <template #cell(owner)="data">
+          <div class="text-dark" id='tv-assignee-wrap'>
+            <user-info :user="data.value.user"></user-info>
+          </div>
+        </template>
+        <template #cell(startDate)="data">
+          <div class="text-dark" id='tv-startDate-wrap'>
+            <span id='tv-startDate-text' v-format-date="data.value.createdAt"></span>
+          </div>
+        </template>
+        <template #cell(dueDate)="data">
+          <div class="text-dark" id='tv-dueDate-wrap'>
+            <span id='tv-dueDate-text' v-format-date="data.value.dueDate"></span>
+          </div>
+        </template>
       </bib-table>
     </template>
     <template v-else>
       <div class="d-flex of-scroll-x" id='tv-grid-wrap'>
-        <task-grid-section v-for="(item, index) in sections" :key="item.tasks.length ? item.tasks[0].title : 'title-' + index" :headless="true" :label="item.title" :taskFields="tableFields" :taskSections="item ? item.tasks : []" :open="true" groupName="1" />
+        <task-grid-section v-for="(item, index) in sections" :key="listKey(index)" :headless="true" :label="item.title" :taskFields="tableFields" :taskSections="taskWithSection(item.id)" :open="true" groupName="1" />
       </div>
     </template>
+    <span id="projects-0" class="d-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
+      <bib-icon icon="warning"></bib-icon> No records found
+    </span>
     <task-sidebar @open-sidebar="toggleSidebar()"></task-sidebar>
   </div>
 </template>
@@ -68,6 +70,7 @@ export default {
   props: {
     gridType: String,
     sections: Array,
+    tasks: Array,
   },
   data() {
     return {
@@ -98,8 +101,19 @@ export default {
   },
 
   methods: {
-    listKey(index){
+    listKey(index) {
       return 'key-' + Math.random().toString().slice(-3) + index
+    },
+    taskWithSection(sectionId) {
+      var arr = []
+
+      for (var j = 0; j < this.tasks.length; ++j) {
+        if (this.tasks[j].sectionId == sectionId) {
+          arr.push(this.tasks[j]);
+        }
+      }
+
+      return arr;
     },
     toggleSidebar($event) {
       // console.log($event)
