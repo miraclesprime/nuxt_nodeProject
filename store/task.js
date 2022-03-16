@@ -88,5 +88,35 @@ export const actions = {
     });
     ctx.commit('createTask', res.data);
     ctx.commit("section/addTaskToSection", res.data, { root: true });
+  },
+
+  async updateTaskStatus(ctx, payload) {
+
+    if(payload.value.statusId !== 5) {
+      const res = await this.$axios.$put('/task', {
+        id: payload.value.id,
+        data: {
+          statusId: 5
+        }
+      }, 
+      {
+        headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
+      });
+    }
+
+    if(payload.value.statusId == 5) {
+      const res = await this.$axios.$put('/task', {
+        id: payload.value.id,
+        data: {
+          statusId: 2
+        }
+      }, 
+      {
+        headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
+      });
+    }
+    
+    ctx.dispatch("fetchTasks", ctx.rootState.project.selectedProject.id)
+
   }
 };

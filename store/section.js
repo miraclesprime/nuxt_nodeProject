@@ -170,5 +170,5 @@ export const actions = {
 
   sortSections(ctx, payload) {
     ctx.commit('sortSections', payload)
-  }
+  }  
 };
