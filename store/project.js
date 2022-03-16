@@ -135,8 +135,8 @@ export const actions = {
           "Authorization": `Bearer ${ctx.rootState.token.token}`
         }
       })
-      if (fav) {
-        ctx.commit("SETFAVPROJECTS", fav)
+      if (fav.statusCode == 200) {
+        ctx.commit("SETFAVPROJECTS", fav.data)
       } else {
         ctx.commit("SETFAVPROJECTS", [])
       }

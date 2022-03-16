@@ -20,7 +20,7 @@ export const getters = {
   tasksForListView(state) {
     return state.tasks;
   },
-  
+
   tableFields(state) {
     return state.TABLE_FIELDS;
   },
@@ -36,7 +36,10 @@ export const mutations = {
   },
 
   fetchTasks(state, payload) {
-    state.tasks = payload;
+    let arr = payload.map(t=>{
+      return t.task
+    });
+    state.tasks = arr;
   },
 
   add(state, task) {
@@ -64,12 +67,14 @@ export const mutations = {
 
 export const actions = {
   // fetch all tasks
-  /*async fetchTasks(ctx) {
-    const res = await this.$axios.$get('/task?page=1&limit=99999', {
-      headers: {'Authorization': `${ctx.rootState.token.token}`}
+  async fetchTasks(ctx, payload) {
+    const res = await this.$axios.$get('/task/project/' + payload, {
+      headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
     });
-    ctx.commit('fetchTasks', res.data);
-  },*/
+    if (res.statusCode == 200) {
+      ctx.commit('fetchTasks', res.data);
+    }
+  },
 
   // set single task
   setSingleTask(ctx, payload) {
@@ -79,9 +84,39 @@ export const actions = {
   // create Task
   async createTask(ctx, payload) {
     const res = await this.$axios.$post('/task', payload, {
-      headers: {'Authorization': `Bearer ${ctx.rootState.token.token}`}
+      headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
     });
     ctx.commit('createTask', res.data);
     ctx.commit("section/addTaskToSection", res.data, { root: true });
+  },
+
+  async updateTaskStatus(ctx, payload) {
+
+    if(payload.value.statusId !== 5) {
+      const res = await this.$axios.$put('/task', {
+        id: payload.value.id,
+        data: {
+          statusId: 5
+        }
+      }, 
+      {
+        headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
+      });
+    }
+
+    if(payload.value.statusId == 5) {
+      const res = await this.$axios.$put('/task', {
+        id: payload.value.id,
+        data: {
+          statusId: 2
+        }
+      }, 
+      {
+        headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
+      });
+    }
+    
+    ctx.dispatch("fetchTasks", ctx.rootState.project.selectedProject.id)
+
   }
 };
