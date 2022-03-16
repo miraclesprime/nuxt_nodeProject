@@ -291,10 +291,8 @@ export default {
     capitalizeFirstLetter(str) {
       return str.charAt(0).toUpperCase() + str.slice(1)
     },
-    handleTaskTable_status(data) {
-      console.log(data)
-      // let status = this.tableTaskSections[data.keyI].status ? this.tableTaskSections[data.keyI].status.text : ''
-      // this.tableTaskSections[data.keyI].status.text = status === 'Done' ? 'In-Progress': 'Done';
+    handleTaskTable_status(item) {
+      this.$store.dispatch('task/updateTaskStatus', item)
     },
   },
 
