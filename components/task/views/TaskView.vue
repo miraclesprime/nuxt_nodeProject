@@ -13,7 +13,7 @@
       <!-- <bib-input type="text" ref="newsectionbibinput" v-model="newSectionName" name="sectionname" size="sm" placeholder="Enter section name"></bib-input> -->
     </section>
     <template v-if="gridType === 'list'">
-      <!-- <bib-table v-for="(item, index) in sections" :key="listKey(index)" :fields="tableFields" :sections="item.tasks.length ? item.tasks : []" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" :hide-no-column="true" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
+      <bib-table v-for="(item, index) in sections" :key="listKey(index)" :fields="tableFields" :sections="item.tasks.length ? item.tasks : []" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" :hide-no-column="true" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
           <template #cell(title)="data" >
             <div class="d-flex align-center gap-05" id='tv-title-wrap' >
               <custom-check-box :id="'tv-task-check-'+index" :checked="data.value.statusId == 4"></custom-check-box>
@@ -48,9 +48,9 @@
             </div>
           </template>
         
-      </bib-table> -->
+      </bib-table>
       
-  <table id="tlist-table" class="table" cellspacing="0">
+  <!-- <table id="tlist-table" class="table" cellspacing="0">
     <template v-if="!headless">
       <tr class="table__hrow"  id="tlist-tr">
         <th 
@@ -81,7 +81,7 @@
             </tr>
           </template>
         </tbody>
-  </table>
+  </table> -->
     
     </template>
     <template v-else>

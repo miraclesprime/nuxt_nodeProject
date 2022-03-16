@@ -136,7 +136,7 @@ export const actions = {
         }
       })
       if (fav) {
-        ctx.commit("SETFAVPROJECTS", fav)
+        ctx.commit("SETFAVPROJECTS", fav.data)
       } else {
         ctx.commit("SETFAVPROJECTS", [])
       }
