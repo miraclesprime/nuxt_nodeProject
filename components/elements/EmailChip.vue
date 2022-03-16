@@ -1,11 +1,11 @@
 <template>
-  <div id="email-chip-wrapper" class="align-center text-secondary p-05 bg-light shape-rounded">
-    <template v-if="avatar">
-      <bib-avatar :src="avatar" size="1.5rem"></bib-avatar>
+  <div id="email-chip-wrapper" class="d-flex align-center py-025 px-05 bg-light shape-rounded">
+    <template v-if="avatar || text">
+      <bib-avatar :src="avatar" :text="text" size="1.25rem" class="mr-025"></bib-avatar>
     </template>
-    <span id="email" class="pl-025 pr-025">{{email}}</span>
+    <span id="email" class="px-05 ">{{email}}</span>
     <template v-if="close">
-      <bib-icon icon="close" :scale="1" class="cursor-pointer" v-on:click="onClose"></bib-icon>
+      <bib-icon icon="close" variant="gray5" :scale="1" class="cursor-pointer ml-05" v-on:click="onClose" ></bib-icon>
     </template>
   </div>
 </template>
@@ -16,7 +16,8 @@ export default {
 
   props: {
     email: { type: String, required: true, default: "john.doe@biztree.com" },
-    avatar: { type: String, default: "" },
+    avatar: { type: String },
+    text: { type: String},
     close: { type: Boolean, default: false },
   },
   methods: {

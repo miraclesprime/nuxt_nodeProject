@@ -73,11 +73,7 @@
         </div>
       </template>
     </bib-app-wrapper>
-    <create-project-modal @create-project="
-        (project) => {
-          createProject(project);
-        }
-      " ref="projectModals"></create-project-modal>
+    <create-project-modal ref="projectModals"></create-project-modal>
     <!-- <create-task-modals @create-task="
         (task) => {
           createTask(task);
@@ -241,9 +237,9 @@ export default {
       // this.$refs.projectModals.showCreateProjectModal = true;
     },
 
-    createProject(data) {
+    /*createProject(data) {
       this.$store.dispatch('project/createProject', data.name);
-    },
+    },*/
 
     createAction($event) {
       // console.log($event.key)
