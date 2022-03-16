@@ -13,82 +13,116 @@
       <!-- <bib-input type="text" ref="newsectionbibinput" v-model="newSectionName" name="sectionname" size="sm" placeholder="Enter section name"></bib-input> -->
     </section>
     <template v-if="gridType === 'list'">
-      <bib-table v-for="(item, index) in sections" :key="listKey(index)" :fields="tableFields" :sections="item.tasks.length ? item.tasks : []" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" :hide-no-column="true" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
-          <template #cell(title)="data" >
-            <div class="d-flex align-center gap-05" id='tv-title-wrap' >
-              <custom-check-box :id="'tv-task-check-'+index" :checked="data.value.statusId == 4"></custom-check-box>
-              <span class="text-dark" id='tv-title-text' @click="taskSelected(data.value)">{{ data.value ? data.value.title : '' }}</span>
-            </div>
-          </template>
-          <template #cell(status)="data">
-            <div class="justify-between text-dark" id='tv-status-wrap'>
-              <span v-format-status="data.value.statusId ? data.value.statusId : ''">{{ data.value.status.text }}</span>
-            </div>
-          </template>
-          <template #cell(priority)="data">
-            <div class="justify-between text-dark" id='tv-priority-wrap'>
-              <span id='tv-priority-text' v-format-priority="data.value.priorityId ? data.value.priorityId : ''">
-                {{ data.value.priority ? data.value.priority.text : '' }}
-              </span>
+      <!-- <bib-table v-for="(item, index) in sections" :key="listKey(index)" :fields="tableFields" :sections="taskWithSection(item.id)" :headless="index == 0 ? false : true" :collapseObj="{collapsed: false, label: `${item.title}`}" :hide-no-column="true" class="border-gray4 bg-white" :style="{ borderBottom: 'none'}" @item-clicked="toggleSidebar">
+        <template #cell(title)="data">
+          <div class="d-flex align-center gap-05" id='tv-title-wrap'>
+            <custom-check-box :id="'tv-task-check-'+index" :checked="data.value.statusId == 4"></custom-check-box>
+            <span class="text-dark" id='tv-title-text' @click="taskSelected(data.value)">{{ data.value ? data.value.title : '' }}</span>
+          </div>
+        </template>
+        <template #cell(status)="data">
+          <div class="justify-between text-dark" id='tv-status-wrap'>
+            <span v-format-status="data.value.statusId ? data.value.statusId : ''">{{ data.value.status.text }}</span>
+          </div>
+        </template>
+        <template #cell(priority)="data">
+          <div class="justify-between text-dark" id='tv-priority-wrap'>
+            <span id='tv-priority-text' v-format-priority="data.value.priorityId ? data.value.priorityId : ''">
+              {{ data.value.priority ? data.value.priority.text : '' }}
+            </span>
+          </div>
+        </template>
+        <template #cell(owner)="data">
+          <div class="text-dark" id='tv-assignee-wrap'>
+            <user-info :user="data.value.user"></user-info>
+          </div>
+        </template>
+        <template #cell(startDate)="data">
+          <div class="text-dark" id='tv-startDate-wrap'>
+            <span id='tv-startDate-text' v-format-date="data.value.createdAt"></span>
+          </div>
+        </template>
+        <template #cell(dueDate)="data">
+          <div class="text-dark" id='tv-dueDate-wrap'>
+            <span id='tv-dueDate-text' v-format-date="data.value.dueDate"></span>
+          </div>
+        </template>
+      </bib-table> -->
+      
+
+        <bib-table
+          v-for="(item, index) in sections" 
+          :key="listKey(index)"
+          :fields="tableFields"
+          :sections="taskWithSection(item.id)"
+          :headless="index == 0 ? false : true"
+          :collapseObj="{
+            collapsed: false,
+            label: `${item.title}`,
+            variant: 'black',
+          }"
+          hide-no-column
+          class="border-gray4 bg-white"
+        >
+          <template #cell(title)="data">
+            <div class="d-flex gap-05 align-center">
+              <bib-icon
+                icon="check-circle"
+                :scale="1.5"
+                :variant="data.value.status.text === 'Done' ? 'success' : 'secondary-sub1'"
+                class="cursor-pointer"
+                @click="handleTaskTable_status(data)"
+              ></bib-icon>
+              <span class="text-dark" @click="taskSelected(data.value)">{{ data.value.title }}</span>
             </div>
           </template>
           <template #cell(owner)="data">
-            <div class="text-dark" id='tv-assignee-wrap'>
-              <user-info :user="data.value.user"></user-info>
+            <div class="d-flex gap-05 align-center">
+              <bib-avatar
+                class="mt-auto mb-auto"
+                shape="circle"
+                src="https://i.pravatar.cc/300"
+                size="1.5rem"
+              ></bib-avatar>
+              <span class="text-dark">
+                <user-info :user="data.value.user"></user-info>
+              </span>
+            </div>
+          </template>
+          <template #cell(status)="data">
+            <div class="d-flex gap-05 align-center">
+              <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + taskStatusVariable(data.value.status ? data.value.status.text : '')"></div>
+              <span class="text-dark">{{ taskStatusLabel(data.value.status ? data.value.status.text : '') }}</span>
             </div>
           </template>
           <template #cell(startDate)="data">
-            <div class="text-dark" id='tv-startDate-wrap'>
-              <span id='tv-startDate-text' v-format-date="data.value.createdAt"></span>
+            <div class="d-flex gap-05">
+              <span class="text-dark" v-format-date="data.value.createdAt"></span>
             </div>
           </template>
           <template #cell(dueDate)="data">
-            <div class="text-dark" id='tv-dueDate-wrap'>
-              <span id='tv-dueDate-text' v-format-date="data.value.dueDate"></span>
+            <div class="d-flex gap-05">
+              <span class="text-dark" v-format-date="data.value.dueDate"></span>
             </div>
           </template>
-        
-      </bib-table>
-      
-  <!-- <table id="tlist-table" class="table" cellspacing="0">
-    <template v-if="!headless">
-      <tr class="table__hrow"  id="tlist-tr">
-        <th 
-          v-for="(item, index) in tableFields"
-          :key="item ? item.label : 'title-' + index"
-          :id="item ? item.label : 'title-' + index"
-          :class="'table-' + item.index"
-        >
-          {{ item.label }}
-        </th>
-      </tr>
-    </template>
-
-        <tbody>
-          <template v-for="(sec) in sections">
-            <tr :key="'section-' + sec.title + '-' + sec.id">
-              <td colspan="6"><b>{{sec.title}}</b></td>
-            </tr>
-            <tr class="table__irow" v-for="(t, i) in sec.tasks" 
-              :key="'task-' + t.title + '-' + t.id"
-              :id="t ? t.title : 'title-' + i">
-              <td>{{t.title}}</td>
-              <td>{{t.status ? t.status.text: ""}}</td>
-              <td>{{t.priority ? t.priority.text : ""}}</td>
-              <td>{{t.userId}}</td>
-              <td>{{t.createdAt}}</td>
-              <td>{{t.dueDate}}</td>
-            </tr>
+          <template #cell(priority)="data">
+            <div class="d-flex gap-05 align-center">
+              <bib-icon icon="urgent-solid" :scale="1.1" :variant="taskPriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
+              <span :class="'text-' + taskPriorityVariable(data.value.priority ? data.value.priority.text : '')">{{ capitalizeFirstLetter(data.value.priority ? data.value.priority.text : '') }}</span>
+            </div>
           </template>
-        </tbody>
-  </table> -->
+        </bib-table>
+
     
     </template>
     <template v-else>
       <div class="d-flex of-scroll-x" id='tv-grid-wrap'>
-        <task-grid-section v-for="(item, index) in sections" :key="item.tasks ? item.tasks[0].title : 'title-' + index" :headless="true" :label="item.title" :taskFields="tableFields" :taskSections="item ? item.tasks : []" :open="true" groupName="1" />
+        <task-grid-section v-for="(item, index) in sections" :key="listKey(index)" :headless="true" :label="item.title" :taskFields="tableFields" :taskSections="taskWithSection(item.id)" :open="true" groupName="1" />
       </div>
     </template>
+    <span id="projects-0" class="d-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
+      <bib-icon icon="warning"></bib-icon> No records found
+    </span>
     <task-sidebar @open-sidebar="toggleSidebar()"></task-sidebar>
   </div>
 </template>
@@ -100,6 +134,7 @@ export default {
   props: {
     gridType: String,
     sections: Array,
+    tasks: Array,
   },
   data() {
     return {
@@ -131,8 +166,19 @@ export default {
   },
 
   methods: {
-    listKey(index){
+    listKey(index) {
       return 'key-' + Math.random().toString().slice(-3) + index
+    },
+    taskWithSection(sectionId) {
+      var arr = []
+
+      for (var j = 0; j < this.tasks.length; ++j) {
+        if (this.tasks[j].sectionId == sectionId) {
+          arr.push(this.tasks[j]);
+        }
+      }
+
+      return arr;
     },
     toggleSidebar($event) {
       // console.log($event)
@@ -198,7 +244,58 @@ export default {
           this.filterTask.push(sect)
         })
       }*/
-    }
+    },
+
+    // methods for bib-table
+
+    taskStatusLabel(status) {
+      switch(status) {
+        case 'Delayed':
+          return 'Delayed'
+        case 'In-Progress':
+          return 'In-Progress'
+        case 'Done':
+          return 'Done'
+        case 'Waiting':
+          return 'Waiting'
+        case 'Not Started':
+          return 'Not Started'
+      }
+    },
+    taskStatusVariable(status) {
+      switch(status) {
+        case 'Delayed':
+          return 'danger'
+        case 'In-Progress':
+          return 'primary'
+        case 'Done':
+          return 'success'
+        case 'Waiting':
+          return 'warning'
+        case 'Not Started':
+          return 'secondary'
+      }
+    },
+    taskPriorityVariable(priority) {
+      switch(priority) {
+        case 'high':
+          return 'danger'
+        case 'medium':
+          return 'orange'
+        case 'low':
+          return 'success'
+        case 'none':
+          return 'secondary'
+      }
+    },
+    capitalizeFirstLetter(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1)
+    },
+    handleTaskTable_status(data) {
+      console.log(data)
+      // let status = this.tableTaskSections[data.keyI].status ? this.tableTaskSections[data.keyI].status.text : ''
+      // this.tableTaskSections[data.keyI].status.text = status === 'Done' ? 'In-Progress': 'Done';
+    },
   },
 
 };

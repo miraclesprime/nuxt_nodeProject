@@ -15,7 +15,7 @@
           <bib-icon icon="bookmark" class="m-auto"></bib-icon>
         </div>
         <div id="project-id-horizontal-dots-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center">
-          <bib-button pop="horizontal-dots" id="project-id-horizontal-dots" >
+          <bib-button pop="horizontal-dots" id="project-id-horizontal-dots">
             <template v-slot:menu>
               <div class="list" id="project-id-list">
                 <span class="list__item" id="project-id-list-item1">Show project details</span>
@@ -33,22 +33,20 @@
                 <span class="list__item" id="project-id-list-item5">
                   <bib-icon icon="warning" class="mr-075"></bib-icon> Report
                 </span>
-                <hr  id="project-id-hr2">
+                <hr id="project-id-hr2">
                 <span class="list__item danger" id="project-id-list-item6">Delete </span>
               </div>
             </template>
           </bib-button>
         </div>
-
       </div>
     </nav>
-
     <div class="menu " id='project-idmenu-content'>
       <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="TABS" />
     </div>
     <div id="project-id-tab-content" class="project-id-tab-content position-relative ">
-      <task-overview v-if="activeTab.value == TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="tasks" :gridType="gridType" />
-      <task-view v-if="activeTab.value == TAB_TITLES.tasks" :fields="taskFields" :tasks="tasks" :sections="sections" :gridType="gridType" />
+      <task-overview v-if="activeTab.value == TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="taskWithSection" :gridType="gridType" />
+      <task-view v-if="activeTab.value == TAB_TITLES.tasks" :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType" />
       <task-conversations v-if="activeTab.value == TAB_TITLES.conversations" :fields="TABLE_FIELDS" :tasks="tasks" />
       <!-- <task-timeline-view v-if="activeTab.value == TAB_TITLES.timeline" :fields="TABLE_FIELDS" :tasks="tasks" />
       <task-calendar-view v-if="activeTab.value == TAB_TITLES.calendar" :fields="TABLE_FIELDS" :tasks="tasks" /> -->
@@ -57,7 +55,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import { mapGetters } from 'vuex'
 import { TABLE_FIELDS, TABS, DEFAULT_TAB, TAB_TITLES } from "config/constants";
@@ -78,10 +75,37 @@ export default {
     ...mapGetters({
       token: 'token/getToken',
       project: 'project/getSingleProject',
-      sections: 'section/getAllSections',
-      tasks: "task/tasksForListView",
+      projectSections: 'section/getProjectSections',
+      projectTasks: "task/tasksForListView",
       taskFields: "task/tableFields",
-    })
+    }),
+    /*taskWithSection() {
+      var s = []
+      for (var i = 0; i < this.projectSections.length; ++i) {
+        var arr = []; // Array to contain match elements
+        s.push(this.projectSections[i])
+        for (var j = 0; j < this.projectTasks.length; ++j) {
+          if (this.projectTasks[j].sectionId == this.projectSections[i].id) { 
+            arr.push(this.projectTasks[j]);
+          }
+        }
+        s[i].tasks = arr
+      }
+
+      return s;
+    },*/
+    /*taskNoSection() {
+      var arr = []; // Array to contain match elements
+      for (var i = 0; i < this.projectTasks.length; ++i) {
+        for (var j = 0; j < this.projectSections.length; ++j) {
+          if (this.projectTasks[i].sectionId != this.projectSections[j].id) { // If element is in both the arrays
+            arr.push(this.projectTasks[i]); // Push to arr array
+          }
+        }
+      }
+
+      return arr; // Return the arr elements
+    }*/
   },
 
   created() {
@@ -104,7 +128,7 @@ export default {
         console.log("There was some issue in project API " + err);
       })
 
-      this.$axios.$get(`section/project/${this.$route.params.id}`, {
+      /*this.$axios.$get(`section/project/${this.$route.params.id}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       }).then((res) => {
         if (res) {
@@ -112,12 +136,17 @@ export default {
         }
       }).catch(err => {
         console.log("There was some issue in sections API " + err)
-      })
+      })*/
     }
 
   },
+  mounted() {
+    this.$store.dispatch("section/fetchProjectSections", this.$route.params.id);
+    this.$store.dispatch("task/fetchTasks", this.$route.params.id);
+  },
 
   methods: {
+    
     async fetchProject() {
       const proj = await this.$axios.$get(`project/${this.$route.params.id}`, {
         headers: { 'Authorization': `Bearer ${this.token}` }
@@ -147,6 +176,7 @@ export default {
   flex-direction: column;
   height: 100%;
 }
+
 .shape-circle {
   .menu {
     margin-left: auto;

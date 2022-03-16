@@ -1,7 +1,7 @@
 <template>
   <span :id="'user-info-wrapper-'+user.id" class="user-info-wrapper d-flex align-center">
     <template v-if="user">
-      <bib-avatar :text="user.firstName[0]" size="1.5rem"></bib-avatar>
+      <!-- <bib-avatar :text="user.firstName[0]" size="1.5rem"></bib-avatar> -->
       <span :id="'user-info-'+user.id" class="user-name text-dark pl-025 pr-025">{{user.firstName + user.lastName}} </span>
     </template>
     <bib-spinner v-else :scale="1.5"></bib-spinner>

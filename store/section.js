@@ -1,13 +1,18 @@
 export const strict = false;
 
 export const state = () => ({
-  sections: []
+  sections: [],
+  projectSections: [],
 });
 
 export const getters = {
 
   getAllSections(state) {
     return state.sections;
+  },
+
+  getProjectSections(state) {
+    return state.projectSections
   }
 
 };
@@ -16,6 +21,10 @@ export const mutations = {
 
   fetchSections(state, payload) {
     state.sections = payload;
+  },
+
+  fetchProjectSections(state, payload){
+    state.projectSections = payload
   },
 
   createSection(state, payload) {
@@ -132,6 +141,16 @@ export const actions = {
     }
 
     ctx.commit('fetchSections', d);
+  },
+
+  async fetchProjectSections(ctx, payload) {
+    const res = await this.$axios.$get('/section/project/' + payload, {
+      headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
+    });
+
+    if (res.statusCode == 200) {
+      ctx.commit('fetchProjectSections', res.data);
+    }
   },
 
   setSections(ctx, payload) {

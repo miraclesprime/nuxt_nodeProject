@@ -1,6 +1,6 @@
 <template>
   <div id="create-project-modal-wrapper">
-    <bib-modal-wrapper @close="showCreateProjectModal = false" v-show="showCreateProjectModal" title="Create Project" id="create-project" @keypress.native="bindEnter($event, 'create-project-btn')">
+    <bib-modal-wrapper size="lg" @close="showCreateProjectModal = false" v-show="showCreateProjectModal" title="Create Project" id="create-project" @keypress.native="bindEnter($event, 'create-project-btn')">
       <template v-slot:content>
         <bib-input label="Project name" :value="contextProject.name" @input="($event) => { contextProject.name = $event; }" placeholder="Name your project"></bib-input>
         <bib-input label="Department" :value="department" placeholder="Type or select department name"></bib-input>
