@@ -30,7 +30,7 @@ export const mutations = {
   createSection(state, payload) {
     let ns = payload
     ns.tasks = []
-    state.sections.unshift(ns)
+    state.projectSections.unshift(ns)
   },
 
   setSections(state, payload) {

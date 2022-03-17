@@ -1,5 +1,4 @@
-export const TABLE_FIELDS = [
-  {
+export const TABLE_FIELDS = [{
     key: "",
     label: "#"
   },
@@ -35,8 +34,7 @@ export const TAB_TITLES = {
   files: "files"
 };
 
-export const TASK_FIELDS = [
-  {
+export const TASK_FIELDS = [{
     key: "",
     label: "#"
   },
@@ -171,8 +169,8 @@ export const PROJECT_SORT = [
   { label: 'Priority', key: 'priority' },
   { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },
-  { label: 'Tag', key: 'tag' },
-  { label: 'Department', key: 'department' },
+  // { label: 'Tag', key: 'tag' },
+  // { label: 'Department', key: 'department' },
 ]
 
 export const TASK_SORT = [
@@ -182,4 +180,22 @@ export const TASK_SORT = [
   { label: 'Status', key: 'status' },
   { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },
+]
+
+export const DEPARTMENT = [
+  { label: 'Choose department', value: null },
+  { label: 'IT', value: "it" },
+  { label: 'Marketing', value: "marketing" },
+]
+export const STATUS = [
+  { label: 'Not Started', value: '1' },
+  { label: 'In-Progress', value: '2' },
+  { label: 'Waiting', value: '3' },
+  { label: 'Delayed', value: '4' },
+  { label: 'Done', value: '5' },
+]
+export const PRIORITY = [
+  { label: 'Low', value: '3' },
+  { label: 'Medium', value: '2' },
+  { label: 'High', value: '1' },
 ]

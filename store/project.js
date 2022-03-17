@@ -64,8 +64,22 @@ export const mutations = {
     if (payload == 'status') {
 
       let arr = JSON.parse(JSON.stringify(state.projects))
-      arr.sort((a, b) => a.status.text.localeCompare(b.status.text));
-      state.projects = arr;
+      let newArr = []
+
+      for(let i=0; i<arr.length; i++) {
+        if(arr[i].statusId) {
+          newArr.unshift(arr[i])
+        } else {
+          newArr.push(arr[i])
+        }
+      }
+
+      newArr.sort((a, b) => {
+          if(a.status && b.status) {
+            return a.status.text.localeCompare(b.status.text)
+          } 
+      });
+      state.projects = newArr;
 
     }
     if (payload == 'startDate') {
@@ -77,15 +91,44 @@ export const mutations = {
     }
 
     if (payload == 'dueDate') {
+
       let arr = JSON.parse(JSON.stringify(state.projects))
-      arr.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
-      state.projects = arr;
+      let newArr = []
+
+      for(let i=0; i<arr.length; i++) {
+        if(arr[i].dueDate) {
+          newArr.unshift(arr[i])
+        } else {
+          newArr.push(arr[i])
+        }
+      }
+
+      newArr.sort((a, b) => {
+        if(a.dueDate && b.dueDate) {
+          new Date(a.dueDate) - new Date(b.dueDate)
+        }
+      });
+      state.projects = newArr;
     }
 
     if (payload == 'priority') {
       let arr = JSON.parse(JSON.stringify(state.projects))
-      arr.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
-      state.projects = arr;
+      let newArr = []
+
+      for(let i=0; i<arr.length; i++) {
+        if(arr[i].priorityId) {
+          newArr.unshift(arr[i])
+        } else {
+          newArr.push(arr[i])
+        }
+      }
+
+      newArr.sort((a, b) => {
+          if(a.priority && b.priority) {
+            return a.priority.text.localeCompare(b.priority.text)
+          } 
+      });
+      state.projects = newArr;
     }
 
   },
@@ -121,7 +164,7 @@ export const actions = {
     });
     ctx.commit('createProject', res.data);
     ctx.commit('setSingleProject', res.data);
-    
+
   },
 
   async setFavProjects(ctx) {
