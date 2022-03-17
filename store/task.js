@@ -62,14 +62,15 @@ export const mutations = {
 
   setSingleTask(state, currentTask) {
     state.selectedTask = currentTask;
-  }
+  },
+
 };
 
 export const actions = {
   // fetch all tasks
   async fetchTasks(ctx, payload) {
-    const res = await this.$axios.$get('/task/project/' + payload, {
-      headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
+    const res = await this.$axios.$get('/task/project/' + payload.id, {
+      headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}`, 'Filter': payload ? payload.filter : 'all' }
     });
     if (res.statusCode == 200) {
       ctx.commit('fetchTasks', res.data);
@@ -116,7 +117,8 @@ export const actions = {
       });
     }
     
-    ctx.dispatch("fetchTasks", ctx.rootState.project.selectedProject.id)
+    ctx.dispatch("fetchTasks", {id: ctx.rootState.project.selectedProject.id, filter: 'all' })
 
-  }
+  },
+
 };

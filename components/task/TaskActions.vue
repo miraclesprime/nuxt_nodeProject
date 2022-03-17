@@ -17,36 +17,10 @@
       <ul class="actions" id="ta-action-right-actions">
         <li class="action" id="ta-action1">
           <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="changeViewName"></sorting-comp>
-          <!-- <span id="ta-action1-text" class="mr-025">Viewing</span>
-          <div id="ta-action1-ddwrap" class="shape-rounded bg-dark bg-hover-gray1 width-105 height-105 d-flex justify-center align-center">
-            <bib-button pop="eye-open" icon-variant="white" size="sm">
-              <template v-slot:menu>
-                <div id="ta-action1-dd" class="list">
-                  <span id="ta-action1-dd1" class="list__item orange">Incomplete</span>
-                  <span id="ta-action1-dd2" class="list__item purple">Completed</span>
-                  <span id="ta-action1-dd3" class="list__item dark">All</span>
-                </div>
-              </template>
-            </bib-button>
-          </div> -->
+         
         </li>
         <li class="action" id="ta-action2">
           <sorting-comp label="Sorted by" :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy"></sorting-comp>
-          <!-- <span id="ta-action2-text" class="mr-025">Sorted by</span>
-          <div id="ta-action2-ddwrap" class="shape-rounded bg-dark bg-hover-gray1 width-105 height-105 d-flex justify-center align-center">
-            <bib-button pop="swap-vertical" icon-variant="white" size="sm">
-              <template v-slot:menu>
-                <div id="ta-action2-dd" class="list">
-                  <span id="ta-action2-dd1" class="list__item primary" @click="sortBy('name')">Name</span>
-                  <span id="ta-action2-dd3" class="list__item secondary" @click="sortBy('owner')">Owner</span>
-                  <span id="ta-action2-dd4" class="list__item warning" @click="sortBy('status')">Status</span>
-                  <span id="ta-action2-dd4" class="list__item danger" @click="sortBy('startDate')">Start Date</span>
-                  <span id="ta-action2-dd6" class="list__item success" @click="sortBy('dueDate')">Due Date</span>
-                  <span id="ta-action2-dd7" class="list__item dark" @click="sortBy('priority')">Priority</span>
-                </div>
-              </template>
-            </bib-button>
-          </div> -->
         </li>
         <li class="action" id="ta-action3">
           <span id="ta-action3-text" class="mr-025">Filter by</span>
@@ -185,10 +159,15 @@ export default {
       }
     },
 
-    sortBy(value) {
-      this.$store.dispatch('section/sortSections', value)
-      this.sortName = value;
+    // sortBy(value) {
+    //   this.$store.dispatch('section/sortSections', value)
+    //   this.sortName = value;
+    // },
+
+    sortBy($event) {
+      this.$emit("sort", $event)
     },
+
     changeViewName($event){
       // console.log($event)
       this.$emit("filterView", $event)
