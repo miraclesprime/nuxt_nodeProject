@@ -1,10 +1,13 @@
 <template>
   <span :id="'user-info-wrapper-'+user.id" class="user-info-wrapper d-flex align-center">
-    <template v-if="user">
-      <!-- <bib-avatar :text="user.firstName[0]" size="1.5rem"></bib-avatar> -->
-      <span :id="'user-info-'+user.id" class="user-name text-dark pl-025 pr-025">{{user.firstName + user.lastName}} </span>
+    <template v-if="avatar">
+      <bib-avatar :src="avatar" size="1.5rem"></bib-avatar>
     </template>
-    <bib-spinner v-else :scale="1.5"></bib-spinner>
+    <template v-else>
+      <bib-avatar :text="user.firstName[0]" size="1.5rem"></bib-avatar>
+    </template>
+      <span :id="'user-info-'+user.id" class="user-name text-dark pl-025 pr-025">{{user.firstName + user.lastName}} </span>
+    <!-- <bib-spinner v-else :scale="1.5"></bib-spinner> -->
   </span>
 </template>
 <script>
@@ -13,7 +16,8 @@ export default {
   // name: 'UserInfo',
 
   props: {
-    user: { type: Object, required: true }
+    user: { type: Object, required: true },
+    avatar: { type: String }
     // id: { type: String, required: true },
   },
   data() {

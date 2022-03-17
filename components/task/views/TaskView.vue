@@ -13,7 +13,6 @@
       <!-- <bib-input type="text" ref="newsectionbibinput" v-model="newSectionName" name="sectionname" size="sm" placeholder="Enter section name"></bib-input> -->
     </section>
     <template v-if="gridType === 'list'">
-
         <bib-table
           v-for="(item, index) in sections" 
           :key="`${listKey(index)}` + sortName ? sortName : ''"
@@ -28,16 +27,11 @@
         <template #cell(title)="data">
           <div class="d-flex gap-05 align-center">
             <bib-icon icon="check-circle" :scale="1.5" :variant="data.value.status.text === 'Done' ? 'success' : 'secondary-sub1'" class="cursor-pointer" @click="handleTaskTable_status(data)"></bib-icon>
-            <span class="text-dark" @click="taskSelected(data.value)">{{ data.value.title }}</span>
+            <span class="text-dark cursor-pointer" @click="taskSelected(data.value)">{{ data.value.title }}</span>
           </div>
         </template>
         <template #cell(owner)="data">
-          <div class="d-flex gap-05 align-center">
-            <bib-avatar class="mt-auto mb-auto" shape="circle" src="https://i.pravatar.cc/300" size="1.5rem"></bib-avatar>
-            <span class="text-dark">
-              <user-info :user="data.value.user"></user-info>
-            </span>
-          </div>
+          <user-info :user="data.value.user" avatar="https://i.pravatar.cc/32"></user-info>
         </template>
         <template #cell(status)="data">
           <div class="d-flex gap-05 align-center">
@@ -62,13 +56,19 @@
           </div>
         </template>
       </bib-table>
+      <div class="bg-white w-100 p-025 border-bottom-gray4 border-top-white">
+        <div class="d-flex align-center p-025 cursor-pointer bg-hover-gray2 shape-rounded w-fit gap-05" @click="addTask(sec_index)">
+          <bib-icon icon="add" variant="success" :scale="1.4"></bib-icon>
+          <span class="text-dark"> New Task </span>
+        </div>
+      </div>
     </template>
     <template v-else>
       <div class="d-flex of-scroll-x" id='tv-grid-wrap'>
         <task-grid-section v-for="(item, index) in sections" :key="listKey(index)" :headless="true" :label="item.title" :taskFields="tableFields" :taskSections="taskWithSection(item.id)" :open="true" groupName="1" />
       </div>
     </template>
-    <span id="projects-0" class="d-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
+    <span v-show="sections.length == 0" id="projects-0" class="d-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
       <bib-icon icon="warning"></bib-icon> No records found
     </span>
     <task-sidebar @open-sidebar="toggleSidebar()"></task-sidebar>
@@ -127,23 +127,23 @@ export default {
         }
       }
 
-      if(this.sortName == 'name') {
+      if (this.sortName == 'name') {
         arr.sort((a, b) => a.title.localeCompare(b.title));
       }
       if (this.sortName == 'owner') {
         arr.sort((a, b) => a.user.firstName.localeCompare(b.user.firstName));
       }
       if (this.sortName == 'status') {
-          arr.sort((a, b) => a.status.text.localeCompare(b.status.text));
+        arr.sort((a, b) => a.status.text.localeCompare(b.status.text));
       }
       if (this.sortName == 'startDate') {
-          arr.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        arr.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
       }
       if (this.sortName == 'dueDate') {
-          arr.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+        arr.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
       }
       if (this.sortName == 'priority') {
-          arr.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
+        arr.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
       }
 
       return arr;
@@ -201,20 +201,19 @@ export default {
 
     taskSelected($event) {
       this.$store.dispatch('task/setSingleTask', $event)
+      this.toggleSidebar($event)
     },
 
     filterView($event) {
-      
-      if($event == 'complete') {
-        this.$store.dispatch('task/fetchTasks', {id: this.$route.params.id, filter: 'complete'})
-      } 
-      if($event == 'incomplete'){
-        this.$store.dispatch('task/fetchTasks', {id: this.$route.params.id, filter: 'incomplete'})
+      if ($event == 'complete') {
+        this.$store.dispatch('task/fetchTasks', { id: this.$route.params.id, filter: 'complete' })
       }
-      if($event == 'all') {
-        this.$store.dispatch('task/fetchTasks', {id: this.$route.params.id, filter: 'all'})
+      if ($event == 'incomplete') {
+        this.$store.dispatch('task/fetchTasks', { id: this.$route.params.id, filter: 'incomplete' })
       }
-      
+      if ($event == 'all') {
+        this.$store.dispatch('task/fetchTasks', { id: this.$route.params.id, filter: 'all' })
+      }
     },
 
     sortBy($event) {

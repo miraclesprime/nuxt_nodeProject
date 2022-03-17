@@ -70,6 +70,7 @@
         </div>
         <div class="col-4" id='ts-col-2'>
           <bib-input type="date" v-model="Object.keys(activeItem).length ? activeItem.dueDate : form.dueDate" placeholder="Enter date/range" label="Due date"></bib-input>
+          
         </div>
       </div>
     </div>

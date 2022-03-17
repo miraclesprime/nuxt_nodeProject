@@ -40,7 +40,7 @@
               </bib-button>
             </div>
             <div class="task-bottom" id='tg-card-bottom'>
-              <user-info :user="item.user"></user-info>
+              <user-info :user="item.user" avatar="https://i.pravatar.cc/32"></user-info>
               <span id='tg-bottom-duedate' v-format-date="item.dueDate"></span>
             </div>
           </div>
