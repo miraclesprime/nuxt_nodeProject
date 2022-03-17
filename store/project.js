@@ -121,11 +121,7 @@ export const actions = {
     });
     ctx.commit('createProject', res.data);
     ctx.commit('setSingleProject', res.data);
-    // if (window.history.pushState) {
-    //   const newURL = new URL(window.location.href);
-    //   newURL.search = `?project=${res.data.title}`;
-    //   window.history.pushState({ path: newURL.href }, '', newURL.href);
-    // }
+    
   },
 
   async setFavProjects(ctx) {

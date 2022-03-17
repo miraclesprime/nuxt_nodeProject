@@ -142,7 +142,7 @@ export default {
   },
   mounted() {
     this.$store.dispatch("section/fetchProjectSections", this.$route.params.id);
-    this.$store.dispatch("task/fetchTasks", this.$route.params.id);
+    this.$store.dispatch("task/fetchTasks", {id: this.$route.params.id, filter: 'all'});
   },
 
   methods: {
