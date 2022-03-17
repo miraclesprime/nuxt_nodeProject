@@ -4,7 +4,7 @@
     <loading :loading="loading"></loading>
     <section v-show="newSection" id="tv-new-section-input-container">
       <div id="tv-new-section-input-wrapper" class="d-flex align-center p-05 bg-light">
-        <input id="tv-new-section-input" type="text" class="new-section-input" ref="newsectioninput" v-model="newSectionName" v-on:blur="clickOutside" placeholder="Enter section name">
+        <input id="tv-new-section-input" type="text" class="new-section-input" ref="newsectioninput" v-model="newSectionName" v-on:blur="clickOutside" v-on:keyup.enter="clickOutside" placeholder="Enter section name">
         <div v-show="sectionLoading" class="d-flex align-center">
           <bib-spinner :scale="2"></bib-spinner> <span class="text-secondary">Creating section ...</span>
         </div>
@@ -195,7 +195,7 @@ export default {
       this.newSection = true
       // console.log(this.$refs.newsectioninput.clientWidth, this.$refs.newsectioninput.clientHeight)
       var inputdisplay = setTimeout(() => {
-        console.log(this.$refs.newsectioninput.clientHeight)
+        // console.log(this.$refs.newsectioninput.clientHeight)
         this.$refs.newsectioninput.focus()
       }, 500)
     },
