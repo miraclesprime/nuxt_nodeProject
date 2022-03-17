@@ -65,8 +65,8 @@
       </div>
       <div class="row" id='ts-row'>
         <div class="col-8" id='ts-col-1'>
-          <bib-input type="text" v-model="Object.keys(activeItem).length ? activeItem.title : form.name" placeholder="Enter task name..." :variant="error == 'invalid'?'alert':''" label="Task name"></bib-input>
-          <!-- <small v-show="error == 'invalid'" class="text-danger font-xs " style="display:block; margin-top: -0.25rem;">Task name is required</small> -->
+          <bib-input type="text" v-model="Object.keys(activeItem).length ? activeItem.title : form.name" placeholder="Enter task name..."  label="Task name"></bib-input>
+          <small v-show="error == 'invalid'" class="text-danger font-xs " style="display:block; margin-top: -0.25rem;">Task name is required</small>
         </div>
         <div class="col-4" id='ts-col-2'>
           <bib-input type="date" v-model="Object.keys(activeItem).length ? activeItem.dueDate : form.dueDate" placeholder="Enter date/range" label="Due date"></bib-input>

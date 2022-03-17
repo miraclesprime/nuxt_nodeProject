@@ -30,7 +30,7 @@ export const mutations = {
   createSection(state, payload) {
     let ns = payload
     ns.tasks = []
-    state.sections.unshift(ns)
+    state.projectSections.unshift(ns)
   },
 
   setSections(state, payload) {
@@ -41,80 +41,6 @@ export const mutations = {
     state.sortType = payload
   },
 
-  sortSections(state, payload) {
-    if (payload == 'name') {
-
-      let arr = JSON.parse(JSON.stringify(state.sections))
-      state.sections = [];
-      arr.sort((a, b) => a.title.localeCompare(b.title));
-
-      for (let i = 0; i < arr.length; i++) {
-        arr[i].tasks.sort((a, b) => a.title.localeCompare(b.title));
-      }
-      state.sections = arr;
-
-    }
-    if (payload == 'owner') {
-
-      let arr = JSON.parse(JSON.stringify(state.sections))
-      state.sections = [];
-      arr.sort((a, b) => a.title.localeCompare(b.title));
-
-      for (let i = 0; i < arr.length; i++) {
-        arr[i].tasks.sort((a, b) => a.user.firstName.localeCompare(b.user.firstName));
-      }
-      state.sections = arr;
-
-    }
-    if (payload == 'status') {
-
-      let arr = JSON.parse(JSON.stringify(state.sections))
-      state.sections = [];
-      arr.sort((a, b) => a.title.localeCompare(b.title));
-
-      for (let i = 0; i < arr.length; i++) {
-        arr[i].tasks.sort((a, b) => a.status.text.localeCompare(b.status.text));
-      }
-      state.sections = arr;
-
-    }
-    if (payload == 'startDate') {
-
-      let arr = JSON.parse(JSON.stringify(state.sections))
-      state.sections = [];
-      arr.sort((a, b) => a.title.localeCompare(b.title));
-
-      for (let i = 0; i < arr.length; i++) {
-        arr[i].tasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-      }
-      state.sections = arr;
-
-    }
-    if (payload == 'dueDate') {
-
-      let arr = JSON.parse(JSON.stringify(state.sections))
-      state.sections = [];
-      arr.sort((a, b) => a.title.localeCompare(b.title));
-
-      for (let i = 0; i < arr.length; i++) {
-        arr[i].tasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
-      }
-      state.sections = arr;
-
-    }
-    if (payload == 'priority') {
-
-      let arr = JSON.parse(JSON.stringify(state.sections))
-      state.sections = [];
-      arr.sort((a, b) => a.title.localeCompare(b.title));
-
-      for (let i = 0; i < arr.length; i++) {
-        arr[i].tasks.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
-      }
-      state.sections = arr;
-
-    }
-  },
 
   addTaskToSection(state, payload) {
     state.sections.forEach((s) => {
@@ -168,7 +94,7 @@ export const actions = {
     ctx.commit('createSection', res.data)
   },
 
-  sortSections(ctx, payload) {
-    ctx.commit('sortSections', payload)
-  }  
+  // sortSections(ctx, payload) {
+  //   ctx.commit('sortSections', payload)
+  // }  
 };

@@ -13,7 +13,7 @@
             <bib-input type="text" label="Project" :value="project.title" disabled></bib-input>
           </div>
           <div class="col-4">
-            <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="activeItem.sectionId" :variant="alert=='invalid'?'alert':''" placeholder="Please select ..."></bib-input>
+            <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="activeItem.sectionId" placeholder="Please select ..."></bib-input>
           </div>
         </div>
         <div class="row" id='sidebar-row-2'>
@@ -32,13 +32,11 @@
             <bib-input type="textarea" v-model.trim="activeItem.description" placeholder="Enter task description..." label="Description"></bib-input>
           </div>
         </div>
-        <!-- <div v-show="alert == 'invalid'" class="shape-rounded d-flex align-center border-danger p-05 my-1">
-          <bib-icon icon="warning" variant="danger-sub2" class="mr-025"></bib-icon> <span class="text-danger">{{alert}}</span>
-        </div> -->
+        
         <bib-button v-if="!activeTask.id" label="Create Task" variant="primary" v-on:click="createTask"></bib-button>
       </div>
       <task-group title="Subtasks"></task-group>
-      <div class="task-details w-100" id='sidebar-details'>
+      <!-- <div class="task-details w-100" id='sidebar-details'>
         <a href="#" id='sidebar-link' class="title" @click="isContentExpanded = !isContentExpanded">
           <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 48 48">
             <title id='sidebar-icon'>arrowhead-right</title>
@@ -64,7 +62,7 @@
             <bib-input type="text" v-model="form.progress" placeholder="Select your progress" label="Progress"></bib-input>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
     <div class="task-team" id='sidebar-team'>
       <div class="container" id='sidebar-container'>
@@ -90,7 +88,7 @@
   </div>
 </template>
 <script>
-import { TEAMMATES } from "config/constants";
+import { TEAMMATES, DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 import { mapGetters } from 'vuex';
 
 export default {
@@ -104,25 +102,12 @@ export default {
       selectItems: [
         { label: 'Please Choose One', value: "orange" }
       ],
-      statusValues: [
-        { label: 'Not Started', value: '1' },
-        { label: 'In-Progress', value: '2' },
-        { label: 'Waiting', value: '3' },
-        { label: 'Delayed', value: '4' },
-        { label: 'Done', value: '5' },
-      ],
-      priorityValues: [
-        { label: 'Low', value: '3' },
-        { label: 'Medium', value: '2' },
-        { label: 'High', value: '1' },
-      ],
+      statusValues: STATUS,
+      priorityValues: PRIORITY,
       projects: [
         // {label: 'Project 1', value: "p1"}
       ],
-      department: [
-        { label: 'IT', value: "it" },
-        { label: 'Marketing', value: "marketing" }
-      ],
+      department: DEPARTMENT,
       // description: "",
       isContentExpanded: false,
       form: {
@@ -155,19 +140,8 @@ export default {
     ...mapGetters({
       // activeItem: 'task/getSelectedTask',
       project: "project/getSingleProject",
-      sections: "section/getAllSections",
+      sections: "section/getProjectSections",
     }),
-
-    alert() {
-      if (this.activeItem.sectionId) {
-        return "valid"
-      } else {
-        return "invalid"
-      }
-    },
-    /*activeItem(){
-      return this.activeTask
-    },*/
 
     sectionOpts() {
       let sec = [{ label: "Select section" }]
@@ -194,15 +168,9 @@ export default {
   methods: {
     createTask() {
       console.log('create task')
-      if (this.alert == 'valid') {
-        // this.invalid = false
+      
         this.$emit('create-task', this.newTaskForm)
-      } 
-      /*if (this.newTaskForm.sectionId) {
-        this.$emit('create-task', newTaskForm)
-      } else {
-        this.alert = "Please fill required fields"
-      }*/
+      
     }
   }
 };
