@@ -25,16 +25,25 @@
             <figure v-if="item.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
             <div class="task-top" id='tg-card-top'>
               <div class="d-flex" id='tg-card-inside-wrap'>
-                <custom-check-box :id="'tg-' + item.key" />
-                <span class="ml-05" id='tg-title'>{{ item.description }}</span>
+                <!-- <custom-check-box :id="'tg-' + item.key" /> -->
+                <bib-icon icon="check-circle" :scale="1.5" :variant="item.status.text === 'Done' ? 'success' : 'secondary-sub1'" class="cursor-pointer" @click="handleTaskStatus(item)"></bib-icon>
+                <span class="ml-05" id='tg-title'>{{ item.title }}</span>
               </div>
               <bib-button pop="elipsis" icon="elipsis" icon-variant="secondary">
                 <template v-slot:menu>
                   <div class="list" id='tg-list'>
-                    <span class="list__item success" id='tg-fav' @click="addToFavorites">Add to favorites</span>
-                    <span class="list__item " id='tg-copy-link'>Copy Task Link</span>
+                    <span class="list__item" v-on:click="openSidebar(item)">Details</span>
+                    <hr>
+                    <span class="list__item"><bib-icon icon="check-circle" class="mr-05"></bib-icon> Mark Completed</span>
+                    <span class="list__item" id='tg-fav' @click="addToFavorites"><bib-icon icon="heart-like" class="mr-05"></bib-icon> Add to favorites</span>
+                    <span class="list__item"><bib-icon icon="upload" class="mr-05"></bib-icon> Attach file...</span>
+                    <span class="list__item"><bib-icon icon="user-add" class="mr-05"></bib-icon> Assign to...</span>
+                    <span class="list__item"><bib-icon icon="notification" class="mr-05"></bib-icon> Set as reminder</span>
+                    <span class="list__item " id='tg-copy-link'><bib-icon icon="duplicate" class="mr-05"></bib-icon> Copy </span>
+                    <span class="list__item"><bib-icon icon="transfer" class="mr-05"></bib-icon> Move to</span>
+                    <span class="list__item " id='tg-view-task'><bib-icon icon="warning" class="mr-05"></bib-icon> Report</span>
+                    <hr>
                     <span class="list__item danger" id='tg-delete-task'>Delete Task</span>
-                    <span class="list__item primary" id='tg-view-task' @click="openSidebar(item)">View Task Details</span>
                   </div>
                 </template>
               </bib-button>
@@ -112,7 +121,7 @@ export default {
       let added = this.sections[addedIndex]
 
       // this.sections = applyDrag(this.sections, dropResult);
-      let dnd = await this.$axios.$put("/task/dragdrop", { removedIndex, addedIndex, source:payload, target: added }, {
+      let dnd = await this.$axios.$put("/task/dragdrop", { removedIndex, addedIndex, source: payload, target: added }, {
         headers: {
           "Authorization": `Bearer ${this.token}`,
           "Content-Type": "application/json"
@@ -218,8 +227,8 @@ export default {
 
 .task-grid {
   margin: 8px 4px 8px;
-  background: #fff;
-  border: 1px solid $gray4;
+  /*border: 1px solid $gray4;*/
+  background: var(--bib-gray2);
   border-radius: 4px;
   cursor: pointer;
 
