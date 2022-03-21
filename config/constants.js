@@ -169,8 +169,8 @@ export const PROJECT_SORT = [
   { label: 'Priority', key: 'priority' },
   { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },
-  { label: 'Tag', key: 'tag' },
-  { label: 'Department', key: 'department' },
+  // { label: 'Tag', key: 'tag' },
+  // { label: 'Department', key: 'department' },
 ]
 
 export const TASK_SORT = [

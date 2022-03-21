@@ -69,7 +69,6 @@
           <small v-show="error == 'invalid'" class="text-danger font-xs " style="display:block; margin-top: -0.25rem;">Task name is required</small>
         </div>
         <div class="col-4" id='ts-col-2'>
-          {{activeItem.dueDate}}
           <bib-input type="date" v-model="Object.keys(activeItem).length ? activeItem.dueDate : form.dueDate" placeholder="Enter date/range" label="Due date"></bib-input>
           
         </div>

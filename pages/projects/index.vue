@@ -24,8 +24,10 @@
             <user-info :user="data.value.user"></user-info>
           </template>
           <template #cell(status)="data">
-            <div class="justify-between text-dark" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
-              <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" v-format-status="data.value.statusId ? data.value.statusId : ''">{{ data.value.status ? data.value.status.text : "" }}</span>
+            <div class="d-flex gap-05 align-center">
+              <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' +             projectStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
+              </div>
+                <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" class="text-dark">{{ projectStatusLabel(data.value.status ? data.value.status.text : "") }}</span>
             </div>
           </template>
           <template #cell(createdAt)="data">
@@ -39,10 +41,11 @@
             </div>
           </template>
           <template #cell(priority)="data">
-            <div class="justify-between text-dark" id="projects">
-              <span id="project-text" v-format-priority="data.value.priorityId ? data.value.priorityId : ''">
-                {{ data.value.priority ? data.value.priority.text : ''}}
-              </span>
+            <div class="d-flex gap-05 align-center">
+              <bib-icon icon="urgent-solid" :scale="1.1" :variant="projectPriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
+                <span id="project-text" :class="'text-' + projectPriorityVariable(data.value.priority ? data.value.priority.text : '')">
+                  {{ capitalizeFirstLetter(data.value.priority ? data.value.priority.text : '') }}
+                </span>
             </div>
           </template>
         </bib-table>
@@ -100,7 +103,54 @@ export default {
       this.$router.push("/projects/" + project.id)
     },
 
-  }
+  // methods for bib-table
+
+    projectStatusLabel(status) {
+      switch (status) {
+        case 'Delayed':
+          return 'Delayed'
+        case 'In-Progress':
+          return 'In-Progress'
+        case 'Done':
+          return 'Done'
+        case 'Waiting':
+          return 'Waiting'
+        case 'Not Started':
+          return 'Not Started'
+      }
+    },
+    projectStatusVariable(status) {
+      switch (status) {
+        case 'Delayed':
+          return 'danger'
+        case 'In-Progress':
+          return 'primary'
+        case 'Done':
+          return 'success'
+        case 'Waiting':
+          return 'warning'
+        case 'Not Started':
+          return 'secondary'
+      }
+    },
+    projectPriorityVariable(priority) {
+      switch (priority) {
+        case 'high':
+          return 'danger'
+        case 'medium':
+          return 'orange'
+        case 'low':
+          return 'success'
+        case 'none':
+          return 'secondary'
+      }
+    },
+    capitalizeFirstLetter(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1)
+    },
+  },
+
+
 }
 
 </script>
