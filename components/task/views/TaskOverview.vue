@@ -1,7 +1,7 @@
 <template>
   <div id="task-overview-wrapper" class="row">
     <div id="task-overview-inner" class="col-6 my-2 mx-auto">
-
+      
       <div id="to-row1" class="row my-1">
         <div id="to-row1-col1" class="col-4">
           <div class="bg-gray3 shape-rounded text-center p-05">
@@ -23,7 +23,7 @@
       </div>
       <div id="to-row2" class="row">
         <div id="to-row2-col1" class="col-8">
-          <bib-input type="text" label="Project name" placeholder="Project name"></bib-input>
+          <bib-input type="text" label="Project name" placeholder="Project name" v-model="form.title"></bib-input>
         </div>
         <div id="to-row2-col2" class="col-4">
           <bib-input type="date" label="Due date" v-model="form.dueDate" placeholder=""></bib-input>
@@ -31,7 +31,9 @@
       </div>
       <div id="to-row3" class="row">
         <div id="to-row3-col1" class="col-6">
-          <bib-input type="select" label="Owner" :options="owner" placeholder="Owner"></bib-input>
+          <!-- <bib-input type="text" label="Owner" placeholder="Owner" v-model="form.owner"></bib-input> -->
+          <label>Owner</label>
+          <user-info style="margin-top: 10px" :user="project.user" avatar="https://i.pravatar.cc/32"></user-info>
         </div>
         <div id="to-row3-col2" class="col-6">
           <bib-input type="select" label="Department" :options="department" placeholder="Department"></bib-input>
@@ -39,10 +41,10 @@
       </div>
       <div id="to-row4" class="row">
         <div id="to-row4-col1" class="col-6">
-          <bib-input type="select" label="Priority" :options="priority" placeholder="Please select..."></bib-input>
+          <bib-input type="select" label="Priority" v-model.number="project.priorityId" :options="priority" placeholder="Please select..."></bib-input>
         </div>
         <div id="to-row4-col2" class="col-6">
-          <bib-input type="select" label="Status" :options="status" placeholder="Please select..."></bib-input>
+          <bib-input type="select" label="Status" v-model.number="project.statusId" :options="status" placeholder="Please select..."></bib-input>
         </div>
       </div>
       <div id="to-row5" class="row">
@@ -71,6 +73,7 @@ import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 export default {
   props: {
     gridType: String,
+    project: Object
   },
   data() {
     return {
@@ -85,7 +88,11 @@ export default {
       status: STATUS,
       priority: PRIORITY,
       form: {
-        dueDate: "",
+        title: this.project.title,
+        dueDate: this.project.dueDate,
+        owner: this.project.userId,
+        priorityId: this.project.priorityId,
+        statusId: this.project.statusId,
         time: "",
         budget: 0,
         progress: 0

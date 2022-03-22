@@ -6,7 +6,7 @@
     <template v-else>
       <bib-avatar :text="user.firstName[0]" size="1.5rem"></bib-avatar>
     </template>
-      <span :id="'user-info-'+user.id" class="user-name text-dark pl-025 pr-025">{{user.firstName + user.lastName}} </span>
+      <span :id="'user-info-'+user.id" class="user-name text-dark pl-025 pr-025">{{user.firstName + " " +  user.lastName}} </span>
     <!-- <bib-spinner v-else :scale="1.5"></bib-spinner> -->
   </span>
 </template>

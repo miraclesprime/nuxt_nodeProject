@@ -45,7 +45,7 @@
       <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="TABS" />
     </div>
     <div id="project-id-tab-content" class="project-id-tab-content position-relative ">
-      <task-overview v-if="activeTab.value == TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="projectTasks" :gridType="gridType" />
+      <task-overview v-if="activeTab.value == TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="projectTasks" :gridType="gridType" :project="activeProject" />
       <task-view v-if="activeTab.value == TAB_TITLES.tasks" :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType" />
       <task-conversations v-if="activeTab.value == TAB_TITLES.conversations" :fields="TABLE_FIELDS" :tasks="projectTasks" />
       <!-- <task-timeline-view v-if="activeTab.value == TAB_TITLES.timeline" :fields="TABLE_FIELDS" :tasks="tasks" />
@@ -68,6 +68,7 @@ export default {
       TAB_TITLES,
       TABLE_FIELDS,
       gridType: "list",
+      activeProject: {}
     }
   },
 
@@ -122,6 +123,7 @@ export default {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       }).then((res) => {
         if (res) {
+          this.activeProject = res.data;
           this.$store.dispatch('project/setSingleProject', res.data)
         }
       }).catch(err => {
