@@ -13,13 +13,7 @@
       <!-- <bib-input type="text" ref="newsectionbibinput" v-model="newSectionName" name="sectionname" size="sm" placeholder="Enter section name"></bib-input> -->
     </section>
     <template v-if="gridType === 'list'">
-        <bib-table
-          v-for="(item, index) in sections" 
-          :key="`${listKey(index)}` + sortName ? sortName : ''"
-          :fields="tableFields"
-          :sections="taskWithSection(item.id)"
-          :headless="index == 0 ? false : true"
-          :collapseObj="{
+      <bib-table v-for="(item, index) in sections" :key="'tasklist-' + item.id + sortName ? sortName : ''" :fields="tableFields" :sections="taskWithSection(item.id)" :headless="index == 0 ? false : true" :collapseObj="{
             collapsed: false,
             label: `${item.title}`,
             variant: 'black',
@@ -56,19 +50,19 @@
           </div>
         </template>
       </bib-table>
-      <div class="bg-white w-100 p-025 border-bottom-gray4 border-top-white">
+      <!-- <div class="bg-white w-100 p-025 border-bottom-gray4 border-top-white">
         <div class="d-flex align-center p-025 cursor-pointer bg-hover-gray2 shape-rounded w-fit gap-05" @click="addTask(sec_index)">
           <bib-icon icon="add" variant="success" :scale="1.4"></bib-icon>
           <span class="text-dark"> New Task </span>
         </div>
-      </div>
+      </div> -->
     </template>
     <template v-else>
       <div class="d-flex of-scroll-x" id='tv-grid-wrap'>
-        <task-grid-section v-for="(item, index) in sections" :key="listKey(index)" :headless="true" :label="item.title" :taskFields="tableFields" :taskSections="taskWithSection(item.id)" :open="true" groupName="1" />
+        <task-grid-section v-for="(item, index) in sections" :key="'grid-'+key+item.title+item.id" :headless="true" :label="item.title" :taskFields="tableFields" :taskSections="taskWithSection(item.id)" :open="true" groupName="1" v-on:update-key="updateKey" />
       </div>
     </template>
-    <span v-show="sections.length == 0" id="projects-0" class="d-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
+    <span id="projects-0" v-show="sections.length == 0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
       <bib-icon icon="warning"></bib-icon> No records found
     </span>
     <task-sidebar @open-sidebar="toggleSidebar()"></task-sidebar>
@@ -95,7 +89,7 @@ export default {
       sortName: "",
       // loading: true,
       filterTask: [],
-      a: ""
+      key: 0,
     };
   },
   computed: {
@@ -115,8 +109,9 @@ export default {
   },
 
   methods: {
-    listKey(index) {
-      return 'key-' + Math.random().toString().slice(-3) + index
+    updateKey($event){
+      // console.log($event)
+      this.key += $event
     },
     taskWithSection(sectionId) {
       var arr = []
@@ -266,6 +261,7 @@ export default {
       return str.charAt(0).toUpperCase() + str.slice(1)
     },
     handleTaskTable_status(item) {
+      console.log(item)
       this.$store.dispatch('task/updateTaskStatus', item)
     },
   },

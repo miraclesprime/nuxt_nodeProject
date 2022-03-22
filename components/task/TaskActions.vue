@@ -17,7 +17,6 @@
       <ul class="actions" id="ta-action-right-actions">
         <li class="action" id="ta-action1">
           <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="changeViewName"></sorting-comp>
-         
         </li>
         <li class="action" id="ta-action2">
           <sorting-comp label="Sorted by" :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy"></sorting-comp>

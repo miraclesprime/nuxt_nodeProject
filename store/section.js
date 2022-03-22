@@ -69,8 +69,8 @@ export const actions = {
     ctx.commit('fetchSections', d);
   },
 
-  async fetchProjectSections(ctx, payload) {
-    const res = await this.$axios.$get('/section/project/' + payload, {
+  async fetchProjectSections(ctx, projectId) {
+    const res = await this.$axios.$get('/section/project/' + projectId, {
       headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
     });
 
