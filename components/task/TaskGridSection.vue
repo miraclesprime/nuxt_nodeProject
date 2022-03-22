@@ -20,28 +20,44 @@
           </Draggable>
         </Container> -->
       <Container @drop="onDrop" :get-child-payload="getChildPayload">
-        <Draggable v-for="(item, index) in sections" :key="item.name + '-' + index">
-          <div class="task-grid draggable-item" id='tg-card'>
+        <Draggable v-for="(item, index) in sections" :key="item.title + key+'-' + item.id">
+          <div class="task-grid draggable-item" :id="'tg-card-'+item.id">
             <figure v-if="item.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
             <div class="task-top" id='tg-card-top'>
               <div class="d-flex" id='tg-card-inside-wrap'>
                 <!-- <custom-check-box :id="'tg-' + item.key" /> -->
                 <bib-icon icon="check-circle" :scale="1.5" :variant="item.status.text === 'Done' ? 'success' : 'secondary-sub1'" class="cursor-pointer" @click="handleTaskStatus(item)"></bib-icon>
-                <span class="ml-05" id='tg-title'>{{ item.title }}</span>
+                <span class="ml-05" id='tg-title'>{{ item.title }} ({{item.order}})</span>
               </div>
               <bib-button pop="elipsis" icon="elipsis" icon-variant="secondary">
                 <template v-slot:menu>
                   <div class="list" id='tg-list'>
                     <span class="list__item" v-on:click="openSidebar(item)">Details</span>
                     <hr>
-                    <span class="list__item"><bib-icon icon="check-circle" class="mr-05"></bib-icon> Mark Completed</span>
-                    <span class="list__item" id='tg-fav' @click="addToFavorites"><bib-icon icon="heart-like" class="mr-05"></bib-icon> Add to favorites</span>
-                    <span class="list__item"><bib-icon icon="upload" class="mr-05"></bib-icon> Attach file...</span>
-                    <span class="list__item"><bib-icon icon="user-add" class="mr-05"></bib-icon> Assign to...</span>
-                    <span class="list__item"><bib-icon icon="notification" class="mr-05"></bib-icon> Set as reminder</span>
-                    <span class="list__item " id='tg-copy-link'><bib-icon icon="duplicate" class="mr-05"></bib-icon> Copy </span>
-                    <span class="list__item"><bib-icon icon="transfer" class="mr-05"></bib-icon> Move to</span>
-                    <span class="list__item " id='tg-view-task'><bib-icon icon="warning" class="mr-05"></bib-icon> Report</span>
+                    <span class="list__item">
+                      <bib-icon icon="check-circle" class="mr-05"></bib-icon> Mark Completed
+                    </span>
+                    <span class="list__item" id='tg-fav' @click="addToFavorites">
+                      <bib-icon icon="heart-like" class="mr-05"></bib-icon> Add to favorites
+                    </span>
+                    <span class="list__item">
+                      <bib-icon icon="upload" class="mr-05"></bib-icon> Attach file...
+                    </span>
+                    <span class="list__item">
+                      <bib-icon icon="user-add" class="mr-05"></bib-icon> Assign to...
+                    </span>
+                    <span class="list__item">
+                      <bib-icon icon="notification" class="mr-05"></bib-icon> Set as reminder
+                    </span>
+                    <span class="list__item " id='tg-copy-link'>
+                      <bib-icon icon="duplicate" class="mr-05"></bib-icon> Copy
+                    </span>
+                    <span class="list__item">
+                      <bib-icon icon="transfer" class="mr-05"></bib-icon> Move to
+                    </span>
+                    <span class="list__item " id='tg-view-task'>
+                      <bib-icon icon="warning" class="mr-05"></bib-icon> Report
+                    </span>
                     <hr>
                     <span class="list__item danger" id='tg-delete-task'>Delete Task</span>
                   </div>
@@ -78,6 +94,8 @@ export default {
       ],*/
       sections: this.taskSections,
       flag: false,
+      ordered: [],
+      key: 0,
     };
   },
   props: {
@@ -108,45 +126,67 @@ export default {
   },
   computed: {
     ...mapGetters({
-      token: "token/getToken"
-    })
+      token: "token/getToken",
+      project: "project/getSingleProject",
+    }),
+    /*sections () {
+      let sorted = this.taskSections.sort((a, b)=>{
+        return a.order - b.order
+      })
+      return sorted
+    }*/
   },
   methods: {
+    swap(sourceObj, sourceKey, targetObj, targetKey) {
+      var temp = sourceObj[sourceKey];
+      sourceObj[sourceKey] = targetObj[targetKey];
+      targetObj[targetKey] = temp;
+    },
+    getChildPayload(index) {
+      // console.log(index)
+      return JSON.parse(JSON.stringify(this.sections));
+    },
     async onDrop(dropResult) {
       // this.dragItems = dropResult
       // console.log(dropResult)
-      const { removedIndex, addedIndex, payload } = dropResult
-      // console.log(this.sections[addedIndex])
+      const { removedIndex, addedIndex, payload, droppedElement } = dropResult
 
-      let added = this.sections[addedIndex]
+      // console.info(dropResult);
+      var ordered = []
 
-      // this.sections = applyDrag(this.sections, dropResult);
-      let dnd = await this.$axios.$put("/task/dragdrop", { removedIndex, addedIndex, source: payload, target: added }, {
+      if (removedIndex - addedIndex >= 1 || removedIndex - addedIndex <= -1) {
+        // ordered = JSON.parse(JSON.stringify(payload))
+        ordered = payload.map(a => {return {...a}})
+        ordered.splice(removedIndex, 1)
+        ordered.splice(addedIndex, 0, payload[removedIndex])
+
+        ordered.forEach((item, index) => {
+          item.order = index
+        })
+      }
+
+      // console.log(ordered)
+
+      let dnd = await this.$axios.$put("/task/dragdrop", { sectionId: payload[removedIndex].sectionId, data: ordered }, {
         headers: {
           "Authorization": `Bearer ${this.token}`,
           "Content-Type": "application/json"
         }
       })
-      console.log(dnd)
 
-      /*if (removedIndex === null && addedIndex === null) return arr
-
-      const result = [...arr]
-      let itemToAdd = payload
-
-      if (removedIndex !== null) {
-        itemToAdd = result.splice(removedIndex, 1)[0]
+      // console.log(dnd)
+      if (dnd.statusCode == 200) {
+        this.$store.dispatch("section/fetchProjectSections", this.$route.params.id)
+        this.$store.dispatch('task/fetchTasks', { id: this.$route.params.id, filter: 'all' }).then(()=>{
+          this.$emit("update-key", 1)
+          this.key += 1
+        })
+      } else {
+        console.warn(dnd.message)
       }
 
-      if (addedIndex !== null) {
-        result.splice(addedIndex, 0, itemToAdd)
-      }
-      this.sections = result*/
     },
-    getChildPayload(index) {
-      // console.log(index)
-      return this.sections[index];
-    },
+
     shouldAcceptDrop(sourceContainerOptions, payload) {
       return true;
     },

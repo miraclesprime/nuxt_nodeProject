@@ -13,7 +13,7 @@
       <!-- <bib-input type="text" ref="newsectionbibinput" v-model="newSectionName" name="sectionname" size="sm" placeholder="Enter section name"></bib-input> -->
     </section>
     <template v-if="gridType === 'list'">
-      <bib-table v-for="(item, index) in sections" :key="listKey(index) + 'list' + sortName ? sortName : ''" :fields="tableFields" :sections="taskWithSection(item.id)" :headless="index == 0 ? false : true" :collapseObj="{
+      <bib-table v-for="(item, index) in sections" :key="'tasklist-' + item.id + sortName ? sortName : ''" :fields="tableFields" :sections="taskWithSection(item.id)" :headless="index == 0 ? false : true" :collapseObj="{
             collapsed: false,
             label: `${item.title}`,
             variant: 'black',
@@ -59,7 +59,7 @@
     </template>
     <template v-else>
       <div class="d-flex of-scroll-x" id='tv-grid-wrap'>
-        <task-grid-section v-for="(item, index) in sections" :key="listKey(index)+'grid'" :headless="true" :label="item.title" :taskFields="tableFields" :taskSections="taskWithSection(item.id)" :open="true" groupName="1" />
+        <task-grid-section v-for="(item, index) in sections" :key="'grid-'+key+item.title+item.id" :headless="true" :label="item.title" :taskFields="tableFields" :taskSections="taskWithSection(item.id)" :open="true" groupName="1" v-on:update-key="updateKey" />
       </div>
     </template>
     <span id="projects-0" v-show="sections.length == 0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
@@ -89,7 +89,7 @@ export default {
       sortName: "",
       // loading: true,
       filterTask: [],
-      a: ""
+      key: 0,
     };
   },
   computed: {
@@ -109,8 +109,9 @@ export default {
   },
 
   methods: {
-    listKey(index) {
-      return 'key-' + Math.random().toString().slice(-3) + index
+    updateKey($event){
+      // console.log($event)
+      this.key += $event
     },
     taskWithSection(sectionId) {
       var arr = []
