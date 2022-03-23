@@ -13,8 +13,10 @@
     </div>
     <div class="task-section__body" id="tgs-task-section-body">
       <Container @drop="onDrop" :get-child-payload="getChildPayload">
+
         <Draggable v-for="item in sections" :key="item.title + key+'-' + item.id">
           <div class="task-grid draggable-item " :class="overdue(item)" :id="'tg-card-'+item.id">
+
             <figure v-if="item.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
             <div class="task-top" id='tg-card-top'>
               <div class="d-flex" id='tg-card-inside-wrap'>
@@ -115,7 +117,6 @@ export default {
       token: "token/getToken",
       project: "project/getSingleProject",
     }),
-
   },
   methods: {
     overdue(item) {

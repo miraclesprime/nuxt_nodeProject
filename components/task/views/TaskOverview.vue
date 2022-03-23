@@ -1,12 +1,11 @@
 <template>
   <div id="task-overview-wrapper" class="row">
     <div id="task-overview-inner" class="col-6 my-2 mx-auto">
-      
       <div id="to-row1" class="row my-1">
         <div id="to-row1-col1" class="col-4">
           <div class="bg-gray3 shape-rounded text-center p-05 h-100">
             <p class="text-left text-secondary">Progress</p>
-            <progress-circle variant="success" value="40" ></progress-circle>
+            <progress-circle variant="success" value="40"></progress-circle>
           </div>
         </div>
         <div id="to-row1-col2" class="col-4">
@@ -16,7 +15,7 @@
               <progress-bar label="Past due" background='danger' value='3' class="my-025"></progress-bar>
               <progress-bar label="Due soon" background='warning' value='5' class="my-025"></progress-bar>
               <progress-bar label="Completed" background='success' value='20' class="my-025"></progress-bar>
-              <progress-bar label="In progress"  value='50' class="my-025"></progress-bar>
+              <progress-bar label="In progress" value='50' class="my-025"></progress-bar>
             </div>
           </div>
         </div>
@@ -31,7 +30,8 @@
           <bib-input type="text" label="Project name" placeholder="Project name" v-model="project.title"></bib-input>
         </div>
         <div id="to-row2-col2" class="col-4">
-          <bib-input type="date" label="Due date" v-model="project.dueDate" placeholder=""></bib-input>
+
+          <bib-input type="date" label="Due date" v-model="activeProject.dueDate" placeholder=""></bib-input>
         </div>
       </div>
       <div id="to-row3" class="row">
@@ -39,8 +39,7 @@
           <!-- <bib-input type="text" label="Owner" placeholder="Owner" v-model="form.owner"></bib-input> -->
           <label class="text-gray6">Owner</label>
           <div class="shape-rounded border-gray4 my-05 p-05">
-             {{project.userId}}
-            <!-- <user-info :user="project.user" avatar="https://i.pravatar.cc/32"></user-info> -->
+            <user-info :user="project.user ? project.user : ''" avatar="https://i.pravatar.cc/32"></user-info>
           </div>
         </div>
         <div id="to-row3-col2" class="col-6">
@@ -80,12 +79,14 @@ import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 
 export default {
   props: {
-    gridType: String
+    gridType: String,
+    project: Object,
   },
   data() {
     return {
       flag: false,
-      project: {},
+      activeProject: {},
+      // project: {},
       tasks: [],
       owner: [{ label: "Please choose one", value: null },
         { label: "Bruno", value: "1" },
@@ -103,6 +104,20 @@ export default {
     };
   },
 
+  watch: {
+    project() {
+      this.activeProject = {
+        title: this.project ? this.project.title : "",
+        dueDate: this.project ? this.project.dueDate : "",
+        owner: this.project ? this.project.userId : "",
+        priorityId: this.project ? this.project.priorityId : "",
+        statusId: this.project ? this.project.statusId : "",
+        time: "",
+        budget: 0,
+        progress: 0
+      }
+    }
+  },
 
   computed: {
     ...mapGetters({
@@ -111,15 +126,7 @@ export default {
   },
 
   mounted() {
-     this.$axios.$get(`project/${this.$route.params.id}`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-      }).then((res) => {
-        if (res) {
-          this.project = res.data;
-        }
-      }).catch(err => {
-        console.log("There was some issue in project API " + err);
-      })
+    
   },
 
   methods: {
@@ -138,6 +145,11 @@ export default {
       if (priority === "Top") return "text-orange";
       return "text-green";
     },
+    async updateProject() {
+      let proj = this.$axios.$put("/project", { id: this.project.id, data: this.activeProject }, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      })
+    }
 
   },
 };
