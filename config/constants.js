@@ -151,9 +151,9 @@ export const TABS = [{
 ];
 
 export const DEFAULT_TAB = {
-  key: "tasks",
-  value: "tasks",
-  title: "Tasks"
+  key: "overview",
+  value: "overview",
+  title: "Overview"
 };
 
 export const VIEW_FILTER = [
@@ -171,6 +171,13 @@ export const PROJECT_SORT = [
   { label: 'Due Date', key: 'dueDate' },
   // { label: 'Tag', key: 'tag' },
   // { label: 'Department', key: 'department' },
+]
+
+export const PROJECT_TEAM_FIELDS = [
+  { label: 'Name', key: 'name' },
+  { label: 'Location', key: 'location' },
+  { label: 'Position', key: 'position' },
+  { label: 'Added/Modified', key: 'createdAt' } 
 ]
 
 export const TASK_SORT = [

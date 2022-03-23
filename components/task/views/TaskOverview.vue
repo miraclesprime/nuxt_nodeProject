@@ -28,10 +28,10 @@
       </div>
       <div id="to-row2" class="row">
         <div id="to-row2-col1" class="col-8">
-          <bib-input type="text" label="Project name" placeholder="Project name" v-model="form.title"></bib-input>
+          <bib-input type="text" label="Project name" placeholder="Project name" v-model="activeProject.title"></bib-input>
         </div>
         <div id="to-row2-col2" class="col-4">
-          <bib-input type="date" label="Due date" v-model="form.dueDate" placeholder=""></bib-input>
+          <bib-input type="date" label="Due date" v-model="activeProject.dueDate" placeholder=""></bib-input>
         </div>
       </div>
       <div id="to-row3" class="row">
@@ -39,7 +39,7 @@
           <!-- <bib-input type="text" label="Owner" placeholder="Owner" v-model="form.owner"></bib-input> -->
           <label class="text-gray6">Owner</label>
           <div class="shape-rounded border-gray4 my-05 p-05">
-            <user-info :user="project.user" avatar="https://i.pravatar.cc/32"></user-info>
+            <user-info :user="project ? project.user : ''" avatar="https://i.pravatar.cc/32"></user-info>
           </div>
         </div>
         <div id="to-row3-col2" class="col-6">
@@ -48,21 +48,21 @@
       </div>
       <div id="to-row4" class="row">
         <div id="to-row4-col1" class="col-6">
-          <bib-input type="select" label="Priority" v-model.number="project.priorityId" :options="priority" placeholder="Please select..."></bib-input>
+          <bib-input type="select" label="Priority" v-model.number="activeProject.priorityId" :options="priority" placeholder="Please select..."></bib-input>
         </div>
         <div id="to-row4-col2" class="col-6">
-          <bib-input type="select" label="Status" v-model.number="project.statusId" :options="status" placeholder="Please select..."></bib-input>
+          <bib-input type="select" label="Status" v-model.number="activeProject.statusId" :options="status" placeholder="Please select..."></bib-input>
         </div>
       </div>
       <div id="to-row5" class="row">
         <div id="to-row5-col1" class="col-4">
-          <bib-input type="time" v-model="form.time" placeholder="Select your time" label="Time"></bib-input>
+          <bib-input type="time" v-model="activeProject.time" placeholder="Select your time" label="Time"></bib-input>
         </div>
         <div id="to-row5-col2" class="col-4">
-          <bib-input type="number" v-model="form.budget" placeholder="Set your Budget" label="Budget"></bib-input>
+          <bib-input type="number" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget"></bib-input>
         </div>
         <div id="to-row5-col3" class="col-4">
-          <bib-input type="text" v-model="form.progress" placeholder="Select your progress" label="Progress"></bib-input>
+          <bib-input type="text" v-model="activeProject.progress" placeholder="Select your progress" label="Progress"></bib-input>
         </div>
       </div>
       <div id="to-row6" class="row">
@@ -79,12 +79,12 @@ import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 
 export default {
   props: {
-    gridType: String,
-    project: Object
+    gridType: String
   },
   data() {
     return {
       flag: false,
+      project: {},
       tasks: [],
       owner: [{ label: "Please choose one", value: null },
         { label: "Bruno", value: "1" },
@@ -94,17 +94,23 @@ export default {
       department: DEPARTMENT,
       status: STATUS,
       priority: PRIORITY,
-      form: {
-        title: this.project.title,
-        dueDate: this.project.dueDate,
-        owner: this.project.userId,
-        priorityId: this.project.priorityId,
-        statusId: this.project.statusId,
-        time: "",
-        budget: 0,
-        progress: 0
-      }
+      activeProject: {}
     };
+  },
+
+  watch: {
+    form() {
+        this.activeProject = {
+          title: this.project ? this.project.title : "",
+          dueDate: this.project ? this.project.dueDate : "",
+          owner: this.project ? this.project.userId : "",
+          priorityId: this.project ? this.project.priorityId : "",
+          statusId: this.project ? this.project.statusId : "",
+          time: "",
+          budget: 0,
+          progress: 0
+        }
+      }
   },
 
   computed: {
@@ -114,13 +120,17 @@ export default {
   },
 
   mounted() {
-    this.$axios.$get("task/project/1", {
-      headers: {
-        "Authorization": "Bearer " + this.token
-      }
-    }).then(r => {
-      this.tasks = r
-    }).catch(e => console.log(e))
+     this.$axios.$get(`project/${this.$route.params.id}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      }).then((res) => {
+        if (res) {
+          this.project = res.data;
+          console.log(this.project)
+          console.log(res.data)
+        }
+      }).catch(err => {
+        console.log("There was some issue in project API " + err);
+      })
   },
 
   methods: {
