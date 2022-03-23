@@ -4,20 +4,25 @@
       
       <div id="to-row1" class="row my-1">
         <div id="to-row1-col1" class="col-4">
-          <div class="bg-gray3 shape-rounded text-center p-05">
+          <div class="bg-gray3 shape-rounded text-center p-05 h-100">
             <p class="text-left text-secondary">Progress</p>
-            <bib-spinner variant="success" ></bib-spinner>
+            <progress-circle variant="success" value="40" ></progress-circle>
           </div>
         </div>
         <div id="to-row1-col2" class="col-4">
-          <div class="bg-gray3 shape-rounded text-center p-05">
+          <div class="bg-gray3 shape-rounded text-center p-05 h-100">
             <p class="text-left text-secondary">Tasks</p>
-            <bib-spinner variant="warning"></bib-spinner>
+            <div class="p-1">
+              <progress-bar label="Past due" background='danger' value='3' class="my-025"></progress-bar>
+              <progress-bar label="Due soon" background='warning' value='5' class="my-025"></progress-bar>
+              <progress-bar label="Completed" background='success' value='20' class="my-025"></progress-bar>
+              <progress-bar label="In progress"  value='50' class="my-025"></progress-bar>
+            </div>
           </div>
         </div>
         <div id="to-row1-col3" class="col-4">
-          <div class="bg-gray3 shape-rounded text-center">
-            <bib-spinner variant="primary"></bib-spinner>
+          <div class="bg-gray3 shape-rounded text-center p-05 h-100">
+            <!-- <bib-spinner variant="primary"></bib-spinner> -->
           </div>
         </div>
       </div>
@@ -32,8 +37,10 @@
       <div id="to-row3" class="row">
         <div id="to-row3-col1" class="col-6">
           <!-- <bib-input type="text" label="Owner" placeholder="Owner" v-model="form.owner"></bib-input> -->
-          <label>Owner</label>
-          <user-info style="margin-top: 10px" :user="project.user" avatar="https://i.pravatar.cc/32"></user-info>
+          <label class="text-gray6">Owner</label>
+          <div class="shape-rounded border-gray4 my-05 p-05">
+            <user-info :user="project.user" avatar="https://i.pravatar.cc/32"></user-info>
+          </div>
         </div>
         <div id="to-row3-col2" class="col-6">
           <bib-input type="select" label="Department" :options="department" placeholder="Department"></bib-input>
