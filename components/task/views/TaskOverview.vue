@@ -4,36 +4,44 @@
       
       <div id="to-row1" class="row my-1">
         <div id="to-row1-col1" class="col-4">
-          <div class="bg-gray3 shape-rounded text-center p-05">
+          <div class="bg-gray3 shape-rounded text-center p-05 h-100">
             <p class="text-left text-secondary">Progress</p>
-            <bib-spinner variant="success" ></bib-spinner>
+            <progress-circle variant="success" value="40" ></progress-circle>
           </div>
         </div>
         <div id="to-row1-col2" class="col-4">
-          <div class="bg-gray3 shape-rounded text-center p-05">
+          <div class="bg-gray3 shape-rounded text-center p-05 h-100">
             <p class="text-left text-secondary">Tasks</p>
-            <bib-spinner variant="warning"></bib-spinner>
+            <div class="p-1">
+              <progress-bar label="Past due" background='danger' value='3' class="my-025"></progress-bar>
+              <progress-bar label="Due soon" background='warning' value='5' class="my-025"></progress-bar>
+              <progress-bar label="Completed" background='success' value='20' class="my-025"></progress-bar>
+              <progress-bar label="In progress"  value='50' class="my-025"></progress-bar>
+            </div>
           </div>
         </div>
         <div id="to-row1-col3" class="col-4">
-          <div class="bg-gray3 shape-rounded text-center">
-            <bib-spinner variant="primary"></bib-spinner>
+          <div class="bg-gray3 shape-rounded text-center p-05 h-100">
+            <!-- <bib-spinner variant="primary"></bib-spinner> -->
           </div>
         </div>
       </div>
       <div id="to-row2" class="row">
         <div id="to-row2-col1" class="col-8">
-          <bib-input type="text" label="Project name" placeholder="Project name" v-model="activeProject.title"></bib-input>
+          <bib-input type="text" label="Project name" placeholder="Project name" v-model="project.title"></bib-input>
         </div>
         <div id="to-row2-col2" class="col-4">
-          <bib-input type="date" label="Due date" v-model="activeProject.dueDate" placeholder=""></bib-input>
+          <bib-input type="date" label="Due date" v-model="project.dueDate" placeholder=""></bib-input>
         </div>
       </div>
       <div id="to-row3" class="row">
         <div id="to-row3-col1" class="col-6">
           <!-- <bib-input type="text" label="Owner" placeholder="Owner" v-model="form.owner"></bib-input> -->
-          <label>Owner</label>
-          <!-- <user-info style="margin-top: 10px" :user="project ? project.user : ''" avatar="https://i.pravatar.cc/32"></user-info> -->
+          <label class="text-gray6">Owner</label>
+          <div class="shape-rounded border-gray4 my-05 p-05">
+             {{project.userId}}
+            <!-- <user-info :user="project.user" avatar="https://i.pravatar.cc/32"></user-info> -->
+          </div>
         </div>
         <div id="to-row3-col2" class="col-6">
           <bib-input type="select" label="Department" :options="department" placeholder="Department"></bib-input>
@@ -41,21 +49,21 @@
       </div>
       <div id="to-row4" class="row">
         <div id="to-row4-col1" class="col-6">
-          <bib-input type="select" label="Priority" v-model.number="activeProject.priorityId" :options="priority" placeholder="Please select..."></bib-input>
+          <bib-input type="select" label="Priority" v-model.number="project.priorityId" :options="priority" placeholder="Please select..."></bib-input>
         </div>
         <div id="to-row4-col2" class="col-6">
-          <bib-input type="select" label="Status" v-model.number="activeProject.statusId" :options="status" placeholder="Please select..."></bib-input>
+          <bib-input type="select" label="Status" v-model.number="project.statusId" :options="status" placeholder="Please select..."></bib-input>
         </div>
       </div>
       <div id="to-row5" class="row">
         <div id="to-row5-col1" class="col-4">
-          <bib-input type="time" v-model="activeProject.time" placeholder="Select your time" label="Time"></bib-input>
+          <bib-input type="time" v-model="form.time" placeholder="Select your time" label="Time"></bib-input>
         </div>
         <div id="to-row5-col2" class="col-4">
-          <bib-input type="number" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget"></bib-input>
+          <bib-input type="number" v-model="form.budget" placeholder="Set your Budget" label="Budget"></bib-input>
         </div>
         <div id="to-row5-col3" class="col-4">
-          <bib-input type="text" v-model="activeProject.progress" placeholder="Select your progress" label="Progress"></bib-input>
+          <bib-input type="text" v-model="form.progress" placeholder="Select your progress" label="Progress"></bib-input>
         </div>
       </div>
       <div id="to-row6" class="row">
@@ -87,24 +95,14 @@ export default {
       department: DEPARTMENT,
       status: STATUS,
       priority: PRIORITY,
-      activeProject: {}
+      form: {
+        time: "",
+        budget: 0,
+        progress: 100
+      }
     };
   },
 
-  watch: {
-    form() {
-        this.activeProject = {
-          title: this.project ? this.project.title : "",
-          dueDate: this.project ? this.project.dueDate : "",
-          owner: this.project ? this.project.userId : "",
-          priorityId: this.project ? this.project.priorityId : "",
-          statusId: this.project ? this.project.statusId : "",
-          time: "",
-          budget: 0,
-          progress: 0
-        }
-      }
-  },
 
   computed: {
     ...mapGetters({
@@ -118,8 +116,6 @@ export default {
       }).then((res) => {
         if (res) {
           this.project = res.data;
-          console.log(this.project)
-          console.log(res.data)
         }
       }).catch(err => {
         console.log("There was some issue in project API " + err);

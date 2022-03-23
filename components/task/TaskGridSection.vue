@@ -14,15 +14,15 @@
     <div class="task-section__body" id="tgs-task-section-body">
       <Container @drop="onDrop" :get-child-payload="getChildPayload">
         <Draggable v-for="item in sections" :key="item.title + key+'-' + item.id">
-          <div class="task-grid draggable-item" :id="'tg-card-'+item.id">
+          <div class="task-grid draggable-item " :class="overdue(item)" :id="'tg-card-'+item.id">
             <figure v-if="item.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
             <div class="task-top" id='tg-card-top'>
               <div class="d-flex" id='tg-card-inside-wrap'>
                 <!-- <custom-check-box :id="'tg-' + item.key" /> -->
                 <bib-icon icon="check-circle" :scale="1.5" :variant="item.status.text === 'Done' ? 'success' : 'secondary-sub1'" class="cursor-pointer" @click="handleTaskStatus(item)"></bib-icon>
-                <span class="ml-05" id='tg-title'>{{ item.title }} ({{item.order}})</span>
+                <span class="ml-05" id='tg-title'>{{ item.title }} </span>
               </div>
-              <bib-button pop="elipsis" icon="elipsis" icon-variant="secondary">
+              <bib-button pop="elipsis" icon="elipsis" :icon-variant="overdue(item) == 'bg-danger'? 'white' :'secondary'">
                 <template v-slot:menu>
                   <div class="list" id='tg-list'>
                     <span class="list__item" v-on:click="openSidebar(item)">Details</span>
@@ -115,8 +115,13 @@ export default {
       token: "token/getToken",
       project: "project/getSingleProject",
     }),
+
   },
   methods: {
+    overdue(item) {
+      console.log(new Date(item.dueDate), new Date);
+      return new Date(item.dueDate) < new Date() ? 'bg-danger' : 'bg-gray2';
+    },
     swap(sourceObj, sourceKey, targetObj, targetKey) {
       var temp = sourceObj[sourceKey];
       sourceObj[sourceKey] = targetObj[targetKey];
@@ -134,7 +139,7 @@ export default {
 
       if (removedIndex - addedIndex >= 1 || removedIndex - addedIndex <= -1) {
         // ordered = JSON.parse(JSON.stringify(payload))
-        ordered = payload.map(a => {return {...a}})
+        ordered = payload.map(a => { return { ...a } })
         ordered.splice(removedIndex, 1)
         ordered.splice(addedIndex, 0, payload[removedIndex])
 
@@ -155,7 +160,7 @@ export default {
       // console.log(dnd)
       if (dnd.statusCode == 200) {
         this.$store.dispatch("section/fetchProjectSections", this.$route.params.id)
-        this.$store.dispatch('task/fetchTasks', { id: this.$route.params.id, filter: 'all' }).then(()=>{
+        this.$store.dispatch('task/fetchTasks', { id: this.$route.params.id, filter: 'all' }).then(() => {
           this.$emit("update-key", 1)
           this.key += 1
         })
@@ -245,10 +250,18 @@ export default {
 
 .task-grid {
   margin: 8px 4px 8px;
-  /*border: 1px solid $gray4;*/
-  background: var(--bib-gray2);
+  /*background: var(--bib-gray2);*/
   border-radius: 4px;
   cursor: pointer;
+
+  &.bg-danger {
+    background-color: var(--bib-danger);
+    color: #fff;
+
+    .user-name {
+      color: #fff
+    }
+  }
 
   .task-image {
     aspect-ratio: 16 / 9;
@@ -279,6 +292,12 @@ export default {
     &:hover .user-name {
       visibility: visible;
       opacity: 1;
+    }
+  }
+
+  .bg-danger {
+    .user-name {
+      color: #fff
     }
   }
 
