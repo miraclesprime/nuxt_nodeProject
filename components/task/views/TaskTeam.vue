@@ -1,19 +1,19 @@
 <template>
   <div id="task-team-wrapper" class="task-group w-100">
-    <section-title />
+    <project-team-action />
 
     <custom-table
-      :fields="taskFields"
-      :taskSections="taskSections"
+      :fields="tableFields"
+      :taskSections="tableRowData"
       class="bg-white p-0"
-      :groupName="groupName"
+      hide-no-column
     >
       <template #cell(key)="data">
         {{ data.value.key }}
       </template>
 
       <template #cell(name)="data">
-        <custom-check-box :id="'team-' + groupName + '-' + data.value.key" />
+        <custom-check-box :id="'team-' + data.value.key" />
         <span id="tt-name" class="ml-05">{{ data.value.name }}</span>
       </template>
 
@@ -35,76 +35,20 @@
 </template>
 
 <script>
+import {PROJECT_TEAM_FIELDS} from '../../../config/constants';
+
 export default {
-  props: {
-    groupName: {
-      type: String,
-      default() {
-        return "123";
-      },
-    },
-  },
   data: function () {
     return {
-      taskSections: [
+      tableRowData: [
         {
-          key: 1,
-          name: "Persons Name",
-          location: "Location",
-          position: "Position",
-          options: "Added/Modified",
-        },
-        {
-          key: 2,
-          name: "Persons Name",
-          location: "Location",
-          position: "Position",
-          options: "Added/Modified",
-        },
-        {
-          key: 3,
-          name: "Persons Name",
-          location: "Location",
-          position: "Position",
-          options: "Added/Modified",
-        },
-        {
-          key: 4,
-          name: "Persons Name",
-          location: "Location",
-          position: "Position",
-          options: "Added/Modified",
-        },
-        {
-          key: 5,
           name: "Persons Name",
           location: "Location",
           position: "Position",
           options: "Added/Modified",
         },
       ],
-      taskFields: [
-        {
-          key: "key",
-          label: "#",
-        },
-        {
-          key: "name",
-          label: "Task name",
-        },
-        {
-          key: "location",
-          label: "Location",
-        },
-        {
-          key: "position",
-          label: "Position",
-        },
-        {
-          key: "options",
-          label: "Add/Modified",
-        },
-      ],
+      tableFields: PROJECT_TEAM_FIELDS,
       flag: false,
     };
   },

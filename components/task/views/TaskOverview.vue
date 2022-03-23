@@ -1,37 +1,49 @@
 <template>
   <div id="task-overview-wrapper" class="row">
     <div id="task-overview-inner" class="col-6 my-2 mx-auto">
-
       <div id="to-row1" class="row my-1">
         <div id="to-row1-col1" class="col-4">
-          <div class="bg-gray3 shape-rounded text-center p-05">
+          <div class="bg-gray3 shape-rounded text-center p-05 h-100">
             <p class="text-left text-secondary">Progress</p>
-            <bib-spinner variant="success" ></bib-spinner>
+            <!-- <progress-circle variant="success" value="40"></progress-circle> -->
           </div>
         </div>
         <div id="to-row1-col2" class="col-4">
-          <div class="bg-gray3 shape-rounded text-center p-05">
+          <div class="bg-gray3 shape-rounded text-center p-05 h-100">
             <p class="text-left text-secondary">Tasks</p>
-            <bib-spinner variant="warning"></bib-spinner>
+            <div class="p-1">
+              <!-- <progress-bar label="Past due" background='danger' value='3' class="my-025"></progress-bar>
+              <progress-bar label="Due soon" background='warning' value='5' class="my-025"></progress-bar>
+              <progress-bar label="Completed" background='success' value='20' class="my-025"></progress-bar>
+              <progress-bar label="In progress" value='50' class="my-025"></progress-bar> -->
+            </div>
           </div>
         </div>
         <div id="to-row1-col3" class="col-4">
-          <div class="bg-gray3 shape-rounded text-center">
-            <bib-spinner variant="primary"></bib-spinner>
+          <div class="bg-gray3 shape-rounded text-center p-05 h-100">
+            <!-- <bib-spinner variant="primary"></bib-spinner> -->
           </div>
         </div>
       </div>
       <div id="to-row2" class="row">
         <div id="to-row2-col1" class="col-8">
-          <bib-input type="text" label="Project name" placeholder="Project name"></bib-input>
+          <bib-input type="text" label="Project name" placeholder="Project name" v-model="activeProject.title" v-on:blur="updateProject"></bib-input>
         </div>
         <div id="to-row2-col2" class="col-4">
-          <bib-input type="date" label="Due date" v-model="form.dueDate" placeholder=""></bib-input>
+          <!-- <pre>{{activeProject.dueDate}}
+          {{dateInput(activeProject.dueDate)}} -->
+          </pre>
+          <bib-input type="date" label="Due date" v-model="activeProject.dueDate" v-on:blur="updateProject()"></bib-input>
         </div>
       </div>
       <div id="to-row3" class="row">
         <div id="to-row3-col1" class="col-6">
-          <bib-input type="select" label="Owner" :options="owner" placeholder="Owner"></bib-input>
+          <!-- <bib-input type="text" label="Owner" placeholder="Owner" v-model="form.owner"></bib-input> -->
+          <label class="text-gray6">Owner</label>
+          <div class="shape-rounded border-gray4 my-05 p-05">
+            {{project.user ? project.user.firstName : ''}} {{project.user ? project.user.lastName : ''}}
+            <!-- <user-info :user="project.user ? project.user : ''" avatar="https://i.pravatar.cc/32"></user-info> -->
+          </div>
         </div>
         <div id="to-row3-col2" class="col-6">
           <bib-input type="select" label="Department" :options="department" placeholder="Department"></bib-input>
@@ -39,42 +51,44 @@
       </div>
       <div id="to-row4" class="row">
         <div id="to-row4-col1" class="col-6">
-          <bib-input type="select" label="Priority" :options="priority" placeholder="Please select..."></bib-input>
+          <bib-input type="select" label="Priority" v-model.number="activeProject.priorityId" :options="priority" placeholder="Please select..." v-on:change.native="updateProject"></bib-input>
         </div>
         <div id="to-row4-col2" class="col-6">
-          <bib-input type="select" label="Status" :options="status" placeholder="Please select..."></bib-input>
+          <bib-input type="select" label="Status" v-model.number="activeProject.statusId" :options="status" placeholder="Please select..." v-on:change.native="updateProject"></bib-input>
         </div>
       </div>
       <div id="to-row5" class="row">
         <div id="to-row5-col1" class="col-4">
-          <bib-input type="time" v-model="form.time" placeholder="Select your time" label="Time"></bib-input>
+          <bib-input type="time" v-model="activeProject.time" placeholder="Select your time" label="Time"></bib-input>
         </div>
         <div id="to-row5-col2" class="col-4">
-          <bib-input type="number" v-model="form.budget" placeholder="Set your Budget" label="Budget"></bib-input>
+          <bib-input type="number" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget" v-on:blur="updateProject"></bib-input>
         </div>
         <div id="to-row5-col3" class="col-4">
-          <bib-input type="text" v-model="form.progress" placeholder="Select your progress" label="Progress"></bib-input>
+          <bib-input type="text" v-model="activeProject.progress" placeholder="Select your progress" label="Progress"></bib-input>
         </div>
       </div>
       <div id="to-row6" class="row">
         <div id="to-row6-col1" class="col-12">
-          <bib-input type="textarea" label="Project brief" placeholder="Project brief"></bib-input>
+          <bib-input type="textarea" label="Project brief" v-model="activeProject.description" placeholder="Project brief" v-on:blur="updateProject"></bib-input>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
+import _ from 'lodash'
 import { mapGetters } from 'vuex'
 import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 
 export default {
   props: {
-    gridType: String,
+    project: Object,
   },
   data() {
     return {
       flag: false,
+      // project: {},
       tasks: [],
       owner: [{ label: "Please choose one", value: null },
         { label: "Bruno", value: "1" },
@@ -84,32 +98,44 @@ export default {
       department: DEPARTMENT,
       status: STATUS,
       priority: PRIORITY,
-      form: {
-        dueDate: "",
-        time: "",
-        budget: 0,
-        progress: 0
-      }
+      activeProject: {},
     };
+  },
+
+  watch: {
+    project() {
+      this.activeProject = {
+        title: this.project ? this.project.title : "",
+        dueDate: this.project ? this.dateInput(this.project.dueDate) : "",
+        // owner: this.project ? this.project.userId : "",
+        priorityId: this.project ? this.project.priorityId : "",
+        statusId: this.project ? this.project.statusId : "",
+        // time: "",
+        budget: this.project ? this.project.budget : 0,
+        // progress: 0
+        description: this.project ? this.project.description : "",
+      }
+    }
   },
 
   computed: {
     ...mapGetters({
       token: 'token/getToken',
-    })
-  },
-
-  mounted() {
-    this.$axios.$get("task/project/1", {
-      headers: {
-        "Authorization": "Bearer " + this.token
-      }
-    }).then(r => {
-      this.tasks = r
-    }).catch(e => console.log(e))
+    }),
   },
 
   methods: {
+    dateInput(date) {
+      let nd
+      if (!date) {
+        nd = new Date()
+      } else {
+        nd = new Date(date)
+      }
+      let mm = (nd.getMonth() + 1) < 10 ? '0' + (nd.getMonth() + 1) : nd.getMonth() + 1
+      let dd = (nd.getDate()) < 10 ? '0' + (nd.getDate()) : nd.getDate()
+      return `${nd.getFullYear()}-${mm}-${dd}`
+    },
     toggleSidebar() {
       this.flag = !this.flag;
       this.$root.$emit("open-sidebar", this.flag);
@@ -125,6 +151,16 @@ export default {
       if (priority === "Top") return "text-orange";
       return "text-green";
     },
+    async updateProject() {
+      console.log('from debounce function')
+      let proj = this.$axios.$put("/project", { id: this.project.id, data: this.activeProject }, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      })
+    },
+    debounceUpdate: _.debounce(function() {
+      console.log('Debounce clicked!')
+      this.updateProject
+    }, 2000)
 
   },
 };

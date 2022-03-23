@@ -59,7 +59,7 @@
     </template>
     <template v-else>
       <div class="d-flex of-scroll-x" id='tv-grid-wrap'>
-        <task-grid-section v-for="(item, index) in sections" :key="'grid-'+key+item.title+item.id" :headless="true" :label="item.title" :taskFields="tableFields" :taskSections="taskWithSection(item.id)" :open="true" groupName="1" v-on:update-key="updateKey" />
+        <task-grid-section v-for="item in sections" :key="'grid-'+key+item.title+item.id" :headless="true" :label="item.title" :taskFields="tableFields" :taskSections="taskWithSection(item.id)" :open="true" groupName="1" v-on:update-key="updateKey" />
       </div>
     </template>
     <span id="projects-0" v-show="sections.length == 0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
