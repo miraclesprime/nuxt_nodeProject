@@ -5,7 +5,7 @@
         <div id="to-row1-col1" class="col-4">
           <div class="bg-gray3 shape-rounded text-center p-05 h-100">
             <p class="text-left text-secondary">Progress</p>
-            <progress-circle variant="success" radius="55" :progress="progress" class="mx-auto mt-1"></progress-circle>
+            <progress-circle variant="success" :radius="55" :progress="progress" class="mx-auto mt-1"></progress-circle>
           </div>
         </div>
         <div id="to-row1-col2" class="col-4">
@@ -131,7 +131,7 @@ export default {
         let over = this.tasks.filter(t =>
           new Date(t.dueDate) < new Date()
         )
-        return over.length
+        return Math.round(over.length)
       }
     },
     taskDuesoon() {
@@ -142,7 +142,7 @@ export default {
           let dd = new Date(t.dueDate).getDate();
           return (dd + 7) < new Date().getDate()
         })
-        return due.length
+        return Math.round(due.length)
       }
     },
     taskInprogress() {
@@ -150,7 +150,7 @@ export default {
         return 0
       } else {
         let prog = this.tasks.filter(t => t.statusId == 2)
-        return prog.length
+        return Math.round(prog.length)
       }
     },
     taskComplete(){
@@ -158,7 +158,7 @@ export default {
         return 0
       } else {
         let done = this.tasks.filter(t => t.statusId == 5)
-        return done.length
+        return Math.round(done.length)
       }
     },
     progress() {
@@ -166,7 +166,7 @@ export default {
         return 0
       } else {
         let done = this.tasks.filter(t => t.statusId == 5)
-        return ((done.length / this.totalTasks) * 100).toFixed(0)
+        return Math.round((done.length / this.totalTasks) * 100)
       }
     },
   },
