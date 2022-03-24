@@ -21,7 +21,7 @@
         <template #cell(title)="data">
           <div class="d-flex gap-05 align-center">
             <bib-icon icon="check-circle" :scale="1.5" :variant="data.value.status.text === 'Done' ? 'success' : 'secondary-sub1'" class="cursor-pointer" @click="handleTaskTable_status(data)"></bib-icon>
-            <span class="text-dark cursor-pointer" @click="taskSelected(data.value)">{{ data.value.title }}</span>
+            <span class="text-dark cursor-pointer" style="min-width: 100px; display: inline-block; min-height: 15px;" @click="taskSelected(data.value)">{{ data.value.title }}</span>
           </div>
         </template>
         <template #cell(owner)="data">
@@ -65,7 +65,7 @@
     <span id="projects-0" v-show="sections.length == 0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
       <bib-icon icon="warning"></bib-icon> No records found
     </span>
-    <task-sidebar @open-sidebar="toggleSidebar()"></task-sidebar>
+    <task-sidebar :activeTask="activeTask" @open-sidebar="toggleSidebar()"></task-sidebar>
   </div>
 </template>
 <script>
@@ -81,6 +81,7 @@ export default {
   data() {
     return {
       tableFields: TASK_FIELDS,
+      activeTask: {},
       headless: null,
       flag: false,
       newSection: false,
@@ -196,6 +197,7 @@ export default {
 
     taskSelected($event) {
       this.$store.dispatch('task/setSingleTask', $event)
+      this.activeTask = $event;
       this.toggleSidebar($event)
     },
 

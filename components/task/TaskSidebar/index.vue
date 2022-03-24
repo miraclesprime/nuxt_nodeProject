@@ -65,11 +65,11 @@
       </div>
       <div class="row" id='ts-row'>
         <div class="col-8" id='ts-col-1'>
-          <bib-input type="text" v-model="Object.keys(activeItem).length ? activeItem.title : form.name" placeholder="Enter task name..."  label="Task name"></bib-input>
+          <bib-input type="text" v-model="form.title" placeholder="Enter task name..."  label="Task name" v-on:keyup.native="debounceUpdate()"></bib-input>
           <small v-show="error == 'invalid'" class="text-danger font-xs " style="display:block; margin-top: -0.25rem;">Task name is required</small>
         </div>
         <div class="col-4" id='ts-col-2'>
-          <bib-input type="date" v-model="Object.keys(activeItem).length ? activeItem.dueDate : form.dueDate" placeholder="Enter date/range" label="Due date"></bib-input>
+          <bib-input type="date" v-model="form.dueDate" placeholder="Enter date/range" label="Due date" v-on:change.native="debounceUpdate()"></bib-input>
           
         </div>
       </div>
@@ -79,7 +79,7 @@
     </div>
     <div class="of-scroll-y position-relative" id="ts-of-scroll-y">
       <loading :loading="loading"></loading>
-      <sidebar-overview v-if="activeSidebarTab == 'Overview'" :fields="taskFields" :activeTask="activeItem" v-on:create-task="createTask" />
+      <sidebar-overview v-if="activeSidebarTab == 'Overview'" :fields="taskFields" :activeTask="activeTask" v-on:create-task="createTask" v-on:update-task="updateTask" />
       <div class="container pt-1" id='ts-subtask-container' v-if="activeSidebarTab == 'Subtasks'">
         <task-group />
       </div>
@@ -100,10 +100,7 @@ export default {
   data: function() {
     return {
       loading: false,
-      form: {
-        name: "",
-        dueDate: "2021/11/7",
-      },
+      form: {},
       sidebarTabs: [
         { title: "Overview", value: "Overview" },
         { title: "Subtasks", value: "Subtasks" },
@@ -145,17 +142,40 @@ export default {
   computed: {
     ...mapGetters({
       tasks: "task/tasksForListView",
-      activeItem: 'task/getSelectedTask',
+      // activeItem: 'task/getSelectedTask',
     }),
     error() {
-      if (this.form.name || this.activeItem.title) {
+      if (this.form.title) {
         return "valid"
       } else {
         return "invalid"
       }
     }
   },
+
+  watch: {
+    activeTask() {
+      this.form = {
+        id: this.activeTask ? this.activeTask.id : '',
+        title: this.activeTask ? this.activeTask.title : "",
+        dueDate: this.activeTask ? this.dateInput(this.activeTask.dueDate) : this.dateInput(new Date()),
+      }
+    }
+  },
+
   methods: {
+    dateInput(date) {
+      let nd
+      if (!date) {
+        nd = new Date()
+      } else {
+        nd = new Date(date)
+      }
+      let mm = (nd.getMonth() + 1) < 10 ? '0' + (nd.getMonth() + 1) : nd.getMonth() + 1
+      let dd = (nd.getDate()) < 10 ? '0' + (nd.getDate()) : nd.getDate()
+      return `${nd.getFullYear()}-${mm}-${dd}`
+    },
+
     hideSidebar() {
       this.$emit("open-sidebar", false)
       this.$root.$emit("open-sidebar", false);
@@ -178,7 +198,7 @@ export default {
         this.$store.dispatch("task/createTask", {
           "sectionId": $event.sectionId,
           "projectId": $event.projectId,
-          "title": this.form.name,
+          "title": this.form.title,
           "description": $event.description,
           "dueDate": this.form.dueDate,
           "priorityId": $event.priorityId,
@@ -191,7 +211,26 @@ export default {
           this.loading = false
         })
       }
-    }
+    },
+
+    async updateTask($event) {
+      let task = await this.$axios.$put("/task", { id: this.form.id, data: {
+        ...$event, 
+        dueDate: this.form.dueDate, 
+        title: this.form.title
+        } 
+      }, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      })
+    },
+
+    debounceUpdate: _.debounce(function() {
+      if(this.activeTask.id) {
+        console.log('Debounce clicked!')
+        this.updateTask()
+      }
+      
+    }, 2000)
   },
 };
 

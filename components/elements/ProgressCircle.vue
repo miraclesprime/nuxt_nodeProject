@@ -2,7 +2,7 @@
   <div id="cont" data-pct="100">
     <svg id="svg" :width="size" :height="size" viewPort="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
       <circle r="47" cx="50" cy="50" fill="#fff" stroke-dasharray="565.48" stroke-dashoffset="0"></circle>
-      <circle id="bar" r="47" cx="50" cy="50" :fill="transparent" stroke-dasharray="565.48" stroke-dashoffset="0"></circle>
+      <circle id="bar" r="47" cx="50" cy="50" fill="transparent" stroke-dasharray="565.48" stroke-dashoffset="0"></circle>
     </svg>
   </div>
 </template>
@@ -11,10 +11,9 @@ export default {
   name: "ProgressBar",
   props: {
     value: {
-      type: Number,
-      default () {
-        return 0;
-      },
+      // type: Number,
+      require: true,
+      default: 0,
     },
     suffix: "",
     prefix: "",
