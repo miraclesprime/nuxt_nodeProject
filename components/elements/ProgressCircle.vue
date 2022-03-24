@@ -1,20 +1,17 @@
 <template>
-  <div id="cont" data-pct="100">
-    <svg id="svg" :width="size" :height="size" viewPort="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
-      <circle r="47" cx="50" cy="50" fill="#fff" stroke-dasharray="565.48" stroke-dashoffset="0"></circle>
-      <circle id="bar" r="47" cx="50" cy="50" fill="transparent" stroke-dasharray="565.48" stroke-dashoffset="0"></circle>
+  <div id="cont" :style="{height: radius * 2, width: radius * 2}" class="position-relative" >
+    <svg :height="radius * 2" :width="radius * 2">
+      <circle fill="transparent" stroke="white" :stroke-width="stroke" :r="normalizedRadius" :cx="radius" :cy="radius" />
+      <circle fill="transparent" :stroke-dasharray="circumference + ' ' + circumference" :style="{ 'stroke-dashoffset': strokeDashoffset, stroke: 'var(--bib-'+variant+')' }" :stroke-width="stroke" :r="normalizedRadius" :cx="radius" :cy="radius" />
     </svg>
+    <output :class="'text-'+variant" :style="{'font-size': (radius/2)-5+'px'}">{{progress}}%</output>
   </div>
 </template>
 <script>
 export default {
-  name: "ProgressBar",
+  name: "ProgressCircle",
   props: {
-    value: {
-      // type: Number,
-      require: true,
-      default: 0,
-    },
+    
     suffix: "",
     prefix: "",
     variant: {
@@ -23,76 +20,41 @@ export default {
         return 'gray5';
       },
     },
-    size: {
-      type: Number,
-      default(){
-        return 100
-      }
-    }
+    background: { type: String, default: 'transparent'},
+    radius: {type:Number, default(){return 50}},
+    progress: {type:Number, required: true},
+    stroke: {type:Number, default(){ return 6 }},
   },
-  computed:{
-    pct(){
-      return ((100 - val) / 100) * c;
-    }
+  data() {
+    return {
+      
+    };
   },
-  methods: {
-    progress() {
-      var val = parseInt($(this).val());
-      var $circle = $('#svg #bar');
-
-      if (isNaN(val)) {
-        val = 100;
-      } else {
-        var r = $circle.attr('r');
-        var c = Math.PI * (r * 2);
-
-        if (val < 0) { val = 0; }
-        if (val > 100) { val = 100; }
-
-        var pct = ((100 - val) / 100) * c;
-
-        $circle.css({ strokeDashoffset: pct });
-
-        $('#cont').attr('data-pct', val);
-      }
-
-    }
-  }
+  computed: {
+    normalizedRadius() { return this.radius - this.stroke * 2; },
+    circumference() { return this.normalizedRadius * 2 * Math.PI; },
+    strokeDashoffset() { return this.circumference - this.progress / 100 * this.circumference; }
+  },
 };
 
 </script>
 <style lang="scss" scoped>
-#svg circle {
-  stroke-dashoffset: 0;
-  transition: stroke-dashoffset 1s linear;
-  stroke: #666;
-  stroke-width: 6px;
+circle {
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.5s ease-out;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
 }
-
-#svg #bar {
-  stroke: #FF9F1E;
-}
-
 #cont {
-  display: block;
-  height: 100px;
-  width: 100px;
   border-radius: 100%;
   position: relative;
 }
-
-#cont:after {
+output {
   position: absolute;
-  display: block;
-  height: 80%;
-  width: 80%;
   left: 50%;
   top: 50%;
-  content: attr(data-pct)"%";
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -55%);
   border-radius: 100%;
-  line-height: 80px;
-  font-size: 2em;
 }
 
 </style>
