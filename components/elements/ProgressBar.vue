@@ -5,7 +5,7 @@
       <span id="pb-text" :class="'text-'+background"> {{prefix}}{{value}}{{suffix}} </span>
     </div>
     <div id="pb-progress" class="progress">
-      <div id="pb-progress-bar" class="progress__mask" :class="'bg-'+background" :style="{ width: value + '%' }">
+      <div id="pb-progress-bar" class="progress__mask" :class="'bg-'+background" :style="{ width: percent + '%' }">
       </div>
     </div>
   </div>
@@ -20,7 +20,7 @@ export default {
       required: true,
       default: 0,
     },
-    total: { required: true, default: 100},
+    total: { required: true, default: 0},
     suffix: "",
     prefix: "",
     background: {
@@ -30,6 +30,15 @@ export default {
       },
     },
   },
+  computed: {
+    percent(){
+      if (this.total == 0) {
+        return 0
+      } else {
+        return (this.value/this.total) * 100
+      }
+    }
+  }
 };
 
 </script>
