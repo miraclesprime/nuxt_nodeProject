@@ -131,7 +131,7 @@ export default {
         let over = this.tasks.filter(t =>
           new Date(t.dueDate) < new Date()
         )
-        return Number(over.length)
+        return Math.round(over.length)
       }
     },
     taskDuesoon() {
@@ -142,7 +142,7 @@ export default {
           let dd = new Date(t.dueDate).getDate();
           return (dd + 7) < new Date().getDate()
         })
-        return due.length
+        return Math.round(due.length)
       }
     },
     taskInprogress() {
@@ -150,7 +150,7 @@ export default {
         return 0
       } else {
         let prog = this.tasks.filter(t => t.statusId == 2)
-        return prog.length
+        return Math.round(prog.length)
       }
     },
     taskComplete(){
@@ -158,7 +158,7 @@ export default {
         return 0
       } else {
         let done = this.tasks.filter(t => t.statusId == 5)
-        return done.length
+        return Math.round(done.length)
       }
     },
     progress() {
@@ -166,7 +166,7 @@ export default {
         return 0
       } else {
         let done = this.tasks.filter(t => t.statusId == 5)
-        return ((done.length / this.totalTasks) * 100).toFixed(0)
+        return Math.round((done.length / this.totalTasks) * 100)
       }
     },
   },
