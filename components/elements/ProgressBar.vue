@@ -20,6 +20,7 @@ export default {
       required: true,
       default: 0,
     },
+    total: { required: true, default: 100},
     suffix: "",
     prefix: "",
     background: {
@@ -42,6 +43,7 @@ export default {
     min-width: 6px;
     height: 100%;
     border-radius: 1em;
+    transition: width 0.5s ease-out;
   }
 }
 

@@ -5,16 +5,16 @@
         <div id="to-row1-col1" class="col-4">
           <div class="bg-gray3 shape-rounded text-center p-05 h-100">
             <p class="text-left text-secondary">Progress</p>
-            <progress-circle variant="success" value="40" class="mx-auto mt-1"></progress-circle>
+            <progress-circle variant="success" radius="55" :progress="progress" class="mx-auto mt-1"></progress-circle>
           </div>
         </div>
         <div id="to-row1-col2" class="col-4">
           <div class="bg-gray3 shape-rounded text-center p-05 h-100">
             <p class="text-left text-secondary">Tasks</p>
             <div class="p-1">
-              <progress-bar label="Past due" background='danger' :value="taskOverdue" class="my-025"></progress-bar>
-              <progress-bar label="Due soon" background='warning' :value="taskDuesoon" class="my-025"></progress-bar>
-              <progress-bar label="Completed" background='success' :value="taskComplete" class="my-025"></progress-bar>
+              <progress-bar label="Past due" background='danger' :value="taskOverdue" :total="totalTasks" class="my-025"></progress-bar>
+              <progress-bar label="Due soon" background='warning' :value="taskDuesoon" :total="totalTasks" class="my-025"></progress-bar>
+              <progress-bar label="Completed" background='success' :value="taskComplete" :total="totalTasks" class="my-025"></progress-bar>
               <progress-bar label="In progress" :value="taskInprogress" class="my-025"></progress-bar>
             </div>
           </div>
@@ -90,7 +90,7 @@ export default {
   data() {
     return {
       flag: false,
-      totalTasks: this.tasks.length,
+      totalTasks: this.tasks.length || 0,
       owner: [{ label: "Please choose one", value: null },
         { label: "Bruno", value: "1" },
         { label: "Ramon", value: "2" },
@@ -113,7 +113,7 @@ export default {
         priorityId: this.project ? this.project.priorityId : "",
         statusId: this.project ? this.project.statusId : "",
         // time: "",
-        budget: this.project ? this.project.budget : 0,
+        budget: this.project.bugdet ? this.project.budget : 0,
         // progress: 0
         description: this.project ? this.project.description : "",
       }
@@ -131,7 +131,7 @@ export default {
         let over = this.tasks.filter(t =>
           new Date(t.dueDate) < new Date()
         )
-        return ((over.length / this.totalTasks) * 100).toFixed(0)
+        return over.length
       }
     },
     taskDuesoon() {
@@ -142,7 +142,7 @@ export default {
           let dd = new Date(t.dueDate).getDate();
           return (dd + 7) < new Date().getDate()
         })
-        return ((due.length / this.totalTasks) * 100).toFixed(0)
+        return due.length
       }
     },
     taskInprogress() {
@@ -150,17 +150,25 @@ export default {
         return 0
       } else {
         let prog = this.tasks.filter(t => t.statusId == 2)
-        return ((prog.length / this.totalTasks) * 100).toFixed(0)
+        return prog.length
       }
     },
-    taskComplete() {
+    taskComplete(){
+      if (!this.totalTasks) {
+        return 0
+      } else {
+        let done = this.tasks.filter(t => t.statusId == 5)
+        return done.length
+      }
+    },
+    progress() {
       if (!this.totalTasks) {
         return 0
       } else {
         let done = this.tasks.filter(t => t.statusId == 5)
         return ((done.length / this.totalTasks) * 100).toFixed(0)
       }
-    }
+    },
   },
 
   methods: {
