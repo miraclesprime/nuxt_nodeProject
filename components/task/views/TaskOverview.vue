@@ -15,7 +15,7 @@
               <progress-bar label="Past due" background='danger' :value="taskOverdue" :total="totalTasks" class="my-025"></progress-bar>
               <progress-bar label="Due soon" background='warning' :value="taskDuesoon" :total="totalTasks" class="my-025"></progress-bar>
               <progress-bar label="Completed" background='success' :value="taskComplete" :total="totalTasks" class="my-025"></progress-bar>
-              <progress-bar label="In progress" :value="taskInprogress" class="my-025"></progress-bar>
+              <progress-bar label="In progress" :value="taskInprogress" :total="totalTasks" class="my-025"></progress-bar>
             </div>
           </div>
         </div>
