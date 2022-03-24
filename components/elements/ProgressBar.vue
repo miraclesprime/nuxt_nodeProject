@@ -16,10 +16,9 @@ export default {
   props: {
     label: "",
     value: {
-      type: Number,
-      default () {
-        return 0;
-      },
+      // type: Number,
+      required: true,
+      default: 0,
     },
     suffix: "",
     prefix: "",
