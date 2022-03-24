@@ -24,7 +24,7 @@
           </template>
         </bib-button>
         <div id="project-team-members" class="d-flex gap-05 flex-wrap">
-          <email-chip :email="user ? user.sube : 'bruno@biztree.com'" text="B" v-bind:close="true"></email-chip>
+          <email-chip :email="user ? user.sube : 'bruno@biztree.com'" v-bind:close="true"></email-chip>
         </div>
         <div id="cpm-jumbotron-wrapper" class="d-flex p-075 bg-light shape-rounded mt-1">
           <div id="cpm-jumbotron" class="width-2 height-2">
@@ -102,6 +102,10 @@ export default {
       }
     },
   },
+
+  mounted() {
+    this.projectlead = `${this.user.sube}`
+  }
 };
 
 </script>
