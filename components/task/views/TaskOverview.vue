@@ -73,7 +73,7 @@
           <bib-input type="textarea" label="Project brief" v-model="activeProject.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate()"></bib-input>
         </div>
       </div>
-      <!-- <loading :loading="loading"></loading> -->
+      <loading :loading="loading2"></loading>
     </div>
   </div>
 </template>
@@ -101,6 +101,7 @@ export default {
       priority: PRIORITY,
       activeProject: {},
       loading: false,
+      loading2: false,
       time: null,
       project: {}
     };
@@ -222,16 +223,18 @@ export default {
     debounceUpdate: _.debounce(function() {
       console.log('Debounce clicked!')
       this.updateProject()
-    }, 2000)
+    }, 1500)
 
   },
 
   mounted() {
+    this.loading2 = true
     this.$axios.$get(`project/${this.$route.params.id}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       }).then((res) => {
         if (res) {
           this.project = res.data;
+          this.loading2 = false
         }
       }).catch(err => {
         console.log("There was some issue in project API " + err);

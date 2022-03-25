@@ -300,8 +300,7 @@ export default {
         console.log('Debounce clicked!')
         this.updateTask()
       }
-
-    }, 2000)
+    }, 1500)
   },
 };
 

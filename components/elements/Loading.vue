@@ -25,7 +25,7 @@ export default {
   right: 0;
   bottom: 0;
   left: 0;
-  background-color: var(--bib-light);
+  background-color: rgba(250,250,250, 0.75);
   z-index: 29;
 }
 
