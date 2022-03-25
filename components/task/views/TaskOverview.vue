@@ -30,10 +30,10 @@
       </div>
       <div id="to-row2" class="row">
         <div id="to-row2-col1" class="col-8">
-          <bib-input type="text" label="Project name" placeholder="Project name" v-model="project.title" v-on:keyup.native="debounceUpdate()"></bib-input>
+          <bib-input type="text" label="Project name" placeholder="Project name" v-model="activeProject.title" v-on:keyup.native="debounceUpdate()"></bib-input>
         </div>
         <div id="to-row2-col2" class="col-4">
-          <bib-input type="date" label="Due date" v-model="project.dueDate" v-on:keyup.native="debounceUpdate()"></bib-input>
+          <bib-input type="date" label="Due date" v-model="dateInput" v-on:change.native="debounceUpdate()"></bib-input>
         </div>
       </div>
       <div id="to-row3" class="row">
@@ -51,29 +51,29 @@
       </div>
       <div id="to-row4" class="row">
         <div id="to-row4-col1" class="col-6">
-          <bib-input type="select" label="Priority" v-model.number="project.priorityId" :options="priority" placeholder="Please select..." v-on:change.native="debounceUpdate()"></bib-input>
+          <bib-input type="select" label="Priority" v-model.number="activeProject.priorityId" :options="priority" placeholder="Please select..." v-on:change.native="debounceUpdate()"></bib-input>
         </div>
         <div id="to-row4-col2" class="col-6">
-          <bib-input type="select" label="Status" v-model.number="project.statusId" :options="status" placeholder="Please select..." v-on:change.native="debounceUpdate()"></bib-input>
+          <bib-input type="select" label="Status" v-model.number="activeProject.statusId" :options="status" placeholder="Please select..." v-on:change.native="debounceUpdate()"></bib-input>
         </div>
       </div>
       <div id="to-row5" class="row">
         <div id="to-row5-col1" class="col-4">
-          <bib-input type="time" v-model="project.time" placeholder="Select your time" label="Time" disabled></bib-input>
+          <bib-input type="time" v-model="time" placeholder="Select your time" label="Time" disabled></bib-input>
         </div>
         <div id="to-row5-col2" class="col-4">
-          <bib-input type="number" icon-left="currency-dollar" v-model="project.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="debounceUpdate()"></bib-input>
+          <bib-input type="number" icon-left="currency-dollar" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="debounceUpdate()"></bib-input>
         </div>
         <div id="to-row5-col3" class="col-4">
-          <bib-input type="text" v-model="project.progress" placeholder="Select your progress" label="Progress" disabled></bib-input>
+          <bib-input type="text" v-model="progress" placeholder="Select your progress" label="Progress" disabled></bib-input>
         </div>
       </div>
       <div id="to-row6" class="row">
         <div id="to-row6-col1" class="col-12">
-          <bib-input type="textarea" label="Project brief" v-model="project.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate()"></bib-input>
+          <bib-input type="textarea" label="Project brief" v-model="activeProject.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate()"></bib-input>
         </div>
       </div>
-      <!-- <loading :loading="loading"></loading> -->
+      <loading :loading="loading2"></loading>
     </div>
   </div>
 </template>
@@ -85,7 +85,7 @@ import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 export default {
   props: {
     tasks: Array,
-    project: Object,
+    // project: Object,
   },
   data() {
     return {
@@ -100,22 +100,29 @@ export default {
       status: STATUS,
       priority: PRIORITY,
       activeProject: {},
-      loading: false
+      loading: false,
+      loading2: false,
+      time: null,
+      project: {}
     };
   },
 
   watch: {
     project() {
-      this.activeProject = {
-        title: this.project ? this.project.title : "",
-        dueDate: this.project ? this.dateInput(this.project.dueDate) : "",
-        // owner: this.project ? this.project.userId : "",
-        priorityId: this.project ? this.project.priorityId : "",
-        statusId: this.project ? this.project.statusId : "",
-        // time: "",
-        budget: this.project.bugdet ? this.project.budget : 0,
-        // progress: 0
-        description: this.project ? this.project.description : "",
+      if(Object.keys(this.project).length) {
+        this.activeProject = JSON.parse(JSON.stringify(this.project));
+      } else {
+        this.activeProject = {
+          title: "",
+          dueDate: "",
+          // owner: this.project ? this.project.userId : "",
+          priorityId: 2,
+          statusId: 2,
+          // time: "",
+          budget: 0,
+          // progress: 0
+          description: "",
+        }
       }
     }
   },
@@ -123,7 +130,9 @@ export default {
   computed: {
     ...mapGetters({
       token: 'token/getToken',
+      // project: 'project/getSingleProject'
     }),
+    
     taskOverdue() {
       if (!this.totalTasks) {
         return 0
@@ -169,20 +178,25 @@ export default {
         return Math.round((done.length / this.totalTasks) * 100)
       }
     },
+    dateInput: {
+      get: function() {
+        let nd
+        if (!this.activeProject.dueDate) {
+          nd = new Date()
+        } else {
+          nd = new Date(this.activeProject.dueDate)
+        }
+        let mm = (nd.getMonth() + 1) < 10 ? '0' + (nd.getMonth() + 1) : nd.getMonth() + 1
+        let dd = (nd.getDate()) < 10 ? '0' + (nd.getDate()) : nd.getDate()
+        return `${nd.getFullYear()}-${mm}-${dd}`
+      },
+      set: function(newValue) {
+        this.activeProject.dueDate = new Date(newValue)
+      }
+    },
   },
 
   methods: {
-    dateInput(date) {
-      let nd
-      if (!date) {
-        nd = new Date()
-      } else {
-        nd = new Date(date)
-      }
-      let mm = (nd.getMonth() + 1) < 10 ? '0' + (nd.getMonth() + 1) : nd.getMonth() + 1
-      let dd = (nd.getDate()) < 10 ? '0' + (nd.getDate()) : nd.getDate()
-      return `${nd.getFullYear()}-${mm}-${dd}`
-    },
     toggleSidebar() {
       this.flag = !this.flag;
       this.$root.$emit("open-sidebar", this.flag);
@@ -209,9 +223,23 @@ export default {
     debounceUpdate: _.debounce(function() {
       console.log('Debounce clicked!')
       this.updateProject()
-    }, 2000)
+    }, 1500)
 
   },
+
+  mounted() {
+    this.loading2 = true
+    this.$axios.$get(`project/${this.$route.params.id}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      }).then((res) => {
+        if (res) {
+          this.project = res.data;
+          this.loading2 = false
+        }
+      }).catch(err => {
+        console.log("There was some issue in project API " + err);
+      })
+  }
 };
 
 </script>

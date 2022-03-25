@@ -13,7 +13,7 @@
       <!-- <bib-input type="text" ref="newsectionbibinput" v-model="newSectionName" name="sectionname" size="sm" placeholder="Enter section name"></bib-input> -->
     </section>
     <template v-if="gridType === 'list'">
-      <bib-table v-for="(item, index) in sections" :key="'tasklist-' + item.id + sortName ? sortName : ''" :fields="tableFields" :sections="taskWithSection(item.id)" :headless="index == 0 ? false : true" :collapseObj="{
+      <bib-table v-for="(item, index) in sections" :key="`tasklist-${key}${item.id}${sortName ? sortName : ''}`" :fields="tableFields" :sections="taskWithSection(item.id)" :headless="index == 0 ? false : true" :collapseObj="{
             collapsed: false,
             label: `${item.title}`,
             variant: 'black',
@@ -59,13 +59,13 @@
     </template>
     <template v-else>
       <div class="d-flex of-scroll-x" id='tv-grid-wrap'>
-        <task-grid-section v-for="item in sections" :key="'grid-'+key+item.title+item.id" :headless="true" :label="item.title" :taskFields="tableFields" :taskSections="taskWithSection(item.id)" :open="true" groupName="1" v-on:update-key="updateKey" />
+        <task-grid-section v-for="item in sections" :key="`grid-${key}${item.title}${item.id}`" :headless="true" :label="item.title" :taskFields="tableFields" :taskSections="taskWithSection(item.id)" :open="true" groupName="1" v-on:update-key="updateKey" />
       </div>
     </template>
     <span id="projects-0" v-show="sections.length == 0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
       <bib-icon icon="warning"></bib-icon> No records found
     </span>
-    <task-sidebar :activeTask="activeTask" @open-sidebar="toggleSidebar()"></task-sidebar>
+    <task-sidebar :activeTask="activeTask" @open-sidebar="toggleSidebar()" v-on:update-key="updateKey"></task-sidebar>
   </div>
 </template>
 <script>
@@ -96,7 +96,7 @@ export default {
   computed: {
     ...mapGetters({
       token: "token/getToken",
-      vuexSections: "section/getAllSections",
+      // vuexSections: "section/getAllSections",
       user: "user/getUser",
       project: "project/getSingleProject"
     }),
@@ -110,8 +110,8 @@ export default {
   },
 
   methods: {
-    updateKey($event){
-      // console.log($event)
+    updateKey($event) {
+      console.log($event)
       this.key += $event
     },
     taskWithSection(sectionId) {
@@ -218,7 +218,7 @@ export default {
     },
 
     // methods for bib-table
-    taskCheckIcon(data){
+    taskCheckIcon(data) {
       return data.status == 5 ? 'success' : 'secondary-sub1'
     },
 
@@ -235,7 +235,7 @@ export default {
         case 'Not Started':
           return 'Not Started'
         default:
-        return ''
+          return ''
       }
     },
     taskStatusVariable(status) {
@@ -251,7 +251,7 @@ export default {
         case 'Not Started':
           return 'secondary'
         default:
-        return ''
+          return ''
       }
     },
     taskPriorityVariable(priority) {
@@ -265,7 +265,7 @@ export default {
         case 'none':
           return 'secondary'
         default:
-        return ""
+          return ""
       }
     },
     capitalizeFirstLetter(str) {
