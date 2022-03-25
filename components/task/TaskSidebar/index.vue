@@ -63,7 +63,7 @@
           </div>
         </div>
       </div>
-      <div class="row" id='ts-row'>
+      <div class="row position-relative" id='ts-row'>
         <div class="col-8" id='ts-col-1'>
           <bib-input type="text" v-model="form.title" placeholder="Enter task name..." label="Task name" v-on:keyup.native="debounceUpdate()"></bib-input>
           <small v-show="error == 'invalid'" class="text-danger font-xs d-block" style="margin-top: -0.25rem;">Task name is required</small>
@@ -71,7 +71,11 @@
         <div class="col-4" id='ts-col-2'>
           <bib-input type="date" v-model="dateInput" placeholder="Enter date/range" label="Due date" v-on:change.native="debounceUpdate()"></bib-input>
         </div>
+        <loading :loading="loading"></loading>
       </div>
+      <!-- <div class="d-flex align-center gap-1 justify-center text-secondary font-sm" v-show="loading">
+        <bib-spinner variant="primary" :scale="2"></bib-spinner> Saving changes...
+      </div> -->
     </div>
     <div class="menu" id='ts-menu'>
       <bib-tabs :value="activeSidebarTab" @change="sidebarTabChange" :tabs="sidebarTabs"></bib-tabs>
@@ -194,16 +198,21 @@ export default {
       });
       return sec
     },
-    dateInput() {
-      let nd
-      if (!this.form.dueDate) {
-        nd = new Date()
-      } else {
-        nd = new Date(this.form.dueDate)
+    dateInput: {
+      get: function() {
+        let nd
+        if (!this.form.dueDate) {
+          nd = new Date()
+        } else {
+          nd = new Date(this.form.dueDate)
+        }
+        let mm = (nd.getMonth() + 1) < 10 ? '0' + (nd.getMonth() + 1) : nd.getMonth() + 1
+        let dd = (nd.getDate()) < 10 ? '0' + (nd.getDate()) : nd.getDate()
+        return `${nd.getFullYear()}-${mm}-${dd}`
+      },
+      set: function(newValue) {
+        this.form.dueDate = new Date(newValue)
       }
-      let mm = (nd.getMonth() + 1) < 10 ? '0' + (nd.getMonth() + 1) : nd.getMonth() + 1
-      let dd = (nd.getDate()) < 10 ? '0' + (nd.getDate()) : nd.getDate()
-      return `${nd.getFullYear()}-${mm}-${dd}`
     },
     error() {
       if (this.form.title) {
@@ -222,7 +231,7 @@ export default {
         this.form = {
           id: '',
           title: "",
-          dueDate: this.dateInput,
+          dueDate: "",
 
           sectionId: '',
           projectId: this.project.id,
@@ -237,17 +246,6 @@ export default {
   },
 
   methods: {
-    /*dateInput(date) {
-      let nd
-      if (!date) {
-        nd = new Date()
-      } else {
-        nd = new Date(date)
-      }
-      let mm = (nd.getMonth() + 1) < 10 ? '0' + (nd.getMonth() + 1) : nd.getMonth() + 1
-      let dd = (nd.getDate()) < 10 ? '0' + (nd.getDate()) : nd.getDate()
-      return `${nd.getFullYear()}-${mm}-${dd}`
-    },*/
 
     hideSidebar() {
       this.$emit("open-sidebar", false)
@@ -287,14 +285,14 @@ export default {
     },
 
     async updateTask($event) {
-      let task = await this.$axios.$put("/task", {
-        id: this.form.id,
-        data: {
-          ...this.form
-        }
-      }, {
+      this.loading = true
+      let task = await this.$axios.$put("/task", { id: this.form.id, data: { ...this.form } }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       })
+      if (task.statusCode == 200) {
+        this.$store.dispatch("task/fetchTasks", { id: this.project.id }).then(() => this.loading = false)
+      }
+      this.$emit("update-key", 1)
     },
 
     debounceUpdate: _.debounce(function() {
