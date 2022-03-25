@@ -1,43 +1,8 @@
 <template>
   <div id="sidebar-overview-wrapper">
-    <div class="container" id='sidebar-wrapper'>
-      <div class="task-info w-100" id='sidebar-inner-wrap'>
-        <!-- <pre>{{activeTask}}</pre> -->
-        <!-- <pre>{{activeItem}}</pre> -->
-        <div class="row" id='sidebar-row-1'>
-          <div class="col-4" id='sidebar-col-1'>
-            <bib-input type="select" :options="selectItems" placeholder="Please select..." label="Assignee *"></bib-input>
-          </div>
-          <div class="col-4" id='sidebar-col-2'>
-            <!-- <bib-input type="select" :options="projects" placeholder="Please select..." label="Project"></bib-input> -->
-            <bib-input type="text" label="Project" :value="project.title" disabled></bib-input>
-          </div>
-          <div class="col-4">
-            <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="activeItem.sectionId" placeholder="Please select ..." v-on:change.native="debounceUpdate()"></bib-input>
-          </div>
-        </div>
-        <div class="row" id='sidebar-row-2'>
-          <div class="col-4" id='sidebar-col-3'>
-            <bib-input type="select" label="Department" :options="department" placeholder="Please select..."></bib-input>
-          </div>
-          <div class="col-4" id='sidebar-col-4'>
-            <bib-input type="select" label="Priority" v-model.number="activeItem.priorityId" :options="priorityValues" placeholder="Please select..." v-on:change.native="debounceUpdate()"></bib-input>
-          </div>
-          <div class="col-4" id='sidebar-col-5'>
-            <bib-input type="select" label="Status" v-model.number="activeItem.statusId" :options="statusValues" placeholder="Please select..." v-on:change.native="debounceUpdate()"></bib-input>
-          </div>
-        </div>
-        <div class="row" id='sidebar-row-3'>
-          <div class="col-12" id='sidebar-col-6'>
-            <bib-input type="textarea" v-model.trim="activeItem.description" placeholder="Enter task description..." label="Description" v-on:keyup.native="debounceUpdate()"></bib-input>
-          </div>
-        </div>
-        
-        <bib-button v-if="!activeTask.id" label="Create Task" variant="primary" v-on:click="createTask"></bib-button>
-      </div>
-      <task-group title="Subtasks"></task-group>
-    </div>
-
+    <!-- <div class="container" id='sidebar-wrapper'>
+    </div> -->
+    <task-group title="Subtasks"></task-group>
     <div class="task-team" id='sidebar-team'>
       <div class="container" id='sidebar-container'>
         <div class="team-list w-100" id='sidebar-team-heading'>
@@ -62,30 +27,19 @@
   </div>
 </template>
 <script>
-import { TEAMMATES, DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
+import { TEAMMATES } from '~/config/constants.js'
 import { mapGetters } from 'vuex';
 
 export default {
-  props: {
+  /*props: {
     activeTask: Object,
-  },
+  },*/
   data() {
     return {
-      activeItem: {},
       // loading: true,
-      selectItems: [
-        { label: 'Please Choose One', value: "orange" }
-      ],
-      statusValues: STATUS,
-      priorityValues: PRIORITY,
-      projects: [
-        // {label: 'Project 1', value: "p1"}
-      ],
-      department: DEPARTMENT,
-      // description: "",
+      
       isContentExpanded: false,
       form: {
-        time: "08:45:25",
         profile: "",
       },
       teammates: TEAMMATES,
@@ -93,70 +47,17 @@ export default {
     };
   },
 
-  watch: {
-    activeTask() {
-      // this.activeItem = this.activeTask;
-      if (Object.keys(this.activeTask).length) {
-        this.activeItem = JSON.parse(JSON.stringify(this.activeTask));
-      } else {
-        this.activeItem = {
-          sectionId: '',
-          projectId: this.project.id,
-          statusId: 1,
-          priorityId: 2,
-          description: '',
-          budget: 0,
-        }
-      }
-    },
-  },
   computed: {
     ...mapGetters({
-      // activeItem: 'task/getSelectedTask',
+      currentTask: 'task/getSelectedTask',
       project: "project/getSingleProject",
-      sections: "section/getProjectSections",
+      // sections: "section/getProjectSections",
     }),
 
-    sectionOpts() {
-      let sec = [{ label: "Select section" }]
-      this.sections.forEach((s) => {
-        sec.push({ label: s.title, value: s.id })
-      });
-      return sec
-    },
-
-    newTaskForm() {
-      return {
-        sectionId: this.activeItem.sectionId,
-        projectId: this.project.id,
-        title: "",
-        description: this.activeItem.description,
-        dueDate: "",
-        priorityId: this.activeItem.priorityId,
-        budget: 0,
-        statusId: this.activeItem.statusId
-      }
-    }
   },
 
   methods: {
-    createTask() {
-      console.log('create task')
-      this.$emit('create-task', this.newTaskForm)
-    },
 
-    updateTask() {
-      console.log('update task')
-      this.$emit('update-task', this.newTaskForm)
-    },
-
-    debounceUpdate: _.debounce(function() {
-      if(this.activeItem.id) {
-        console.log('Debounce clicked!')
-        this.updateTask()        
-      }
-
-    }, 2000)
 
   }
 };
