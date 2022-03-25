@@ -30,10 +30,10 @@
       </div>
       <div id="to-row2" class="row">
         <div id="to-row2-col1" class="col-8">
-          <bib-input type="text" label="Project name" placeholder="Project name" v-model="activeProject.title" v-on:keyup.native="debounceUpdate()"></bib-input>
+          <bib-input type="text" label="Project name" placeholder="Project name" v-model="project.title" v-on:keyup.native="debounceUpdate()"></bib-input>
         </div>
         <div id="to-row2-col2" class="col-4">
-          <bib-input type="date" label="Due date" v-model="activeProject.dueDate" v-on:keyup.native="debounceUpdate()"></bib-input>
+          <bib-input type="date" label="Due date" v-model="project.dueDate" v-on:keyup.native="debounceUpdate()"></bib-input>
         </div>
       </div>
       <div id="to-row3" class="row">
@@ -51,26 +51,26 @@
       </div>
       <div id="to-row4" class="row">
         <div id="to-row4-col1" class="col-6">
-          <bib-input type="select" label="Priority" v-model.number="activeProject.priorityId" :options="priority" placeholder="Please select..." v-on:change.native="debounceUpdate()"></bib-input>
+          <bib-input type="select" label="Priority" v-model.number="project.priorityId" :options="priority" placeholder="Please select..." v-on:change.native="debounceUpdate()"></bib-input>
         </div>
         <div id="to-row4-col2" class="col-6">
-          <bib-input type="select" label="Status" v-model.number="activeProject.statusId" :options="status" placeholder="Please select..." v-on:change.native="debounceUpdate()"></bib-input>
+          <bib-input type="select" label="Status" v-model.number="project.statusId" :options="status" placeholder="Please select..." v-on:change.native="debounceUpdate()"></bib-input>
         </div>
       </div>
       <div id="to-row5" class="row">
         <div id="to-row5-col1" class="col-4">
-          <bib-input type="time" v-model="activeProject.time" placeholder="Select your time" label="Time" disabled></bib-input>
+          <bib-input type="time" v-model="project.time" placeholder="Select your time" label="Time" disabled></bib-input>
         </div>
         <div id="to-row5-col2" class="col-4">
-          <bib-input type="number" icon-left="currency-dollar" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="debounceUpdate()"></bib-input>
+          <bib-input type="number" icon-left="currency-dollar" v-model="project.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="debounceUpdate()"></bib-input>
         </div>
         <div id="to-row5-col3" class="col-4">
-          <bib-input type="text" v-model="activeProject.progress" placeholder="Select your progress" label="Progress" disabled></bib-input>
+          <bib-input type="text" v-model="project.progress" placeholder="Select your progress" label="Progress" disabled></bib-input>
         </div>
       </div>
       <div id="to-row6" class="row">
         <div id="to-row6-col1" class="col-12">
-          <bib-input type="textarea" label="Project brief" v-model="activeProject.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate()"></bib-input>
+          <bib-input type="textarea" label="Project brief" v-model="project.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate()"></bib-input>
         </div>
       </div>
       <!-- <loading :loading="loading"></loading> -->
