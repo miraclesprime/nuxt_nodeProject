@@ -70,7 +70,7 @@ export const actions = {
   // fetch all tasks
   async fetchTasks(ctx, payload) {
     const res = await this.$axios.$get('/task/project/' + payload.id, {
-      headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}`, 'Filter': payload ? payload.filter : 'all' }
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload ? payload.filter : 'all' }
     });
     if (res.statusCode == 200) {
       ctx.commit('fetchTasks', res.data);
