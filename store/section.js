@@ -71,7 +71,7 @@ export const actions = {
 
   async fetchProjectSections(ctx, projectId) {
     const res = await this.$axios.$get('/section/project/' + projectId, {
-      headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
 
     if (res.statusCode == 200) {
