@@ -20,8 +20,8 @@
           }" hide-no-column class="border-gray4 bg-white">
         <template #cell(title)="data">
           <div class="d-flex gap-05 align-center">
-            <bib-icon icon="check-circle" :scale="1.5" :variant="data.value.status.text === 'Done' ? 'success' : 'secondary-sub1'" class="cursor-pointer" @click="handleTaskTable_status(data)"></bib-icon>
-            <span class="text-dark cursor-pointer" style="min-width: 100px; display: inline-block; min-height: 15px;" @click="taskSelected(data.value)">{{ data.value.title }}</span>
+            <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data)" class="cursor-pointer" @click="handleTaskTable_status(data)"></bib-icon>
+            <span class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block; min-height: 30px;" @click="taskSelected(data.value)">{{ data.value.title }}</span>
           </div>
         </template>
         <template #cell(owner)="data">
@@ -218,6 +218,9 @@ export default {
     },
 
     // methods for bib-table
+    taskCheckIcon(data){
+      return data.status == 5 ? 'success' : 'secondary-sub1'
+    },
 
     taskStatusLabel(status) {
       switch (status) {
@@ -231,6 +234,8 @@ export default {
           return 'Waiting'
         case 'Not Started':
           return 'Not Started'
+        default:
+        return ''
       }
     },
     taskStatusVariable(status) {
@@ -245,6 +250,8 @@ export default {
           return 'warning'
         case 'Not Started':
           return 'secondary'
+        default:
+        return ''
       }
     },
     taskPriorityVariable(priority) {
@@ -257,6 +264,8 @@ export default {
           return 'success'
         case 'none':
           return 'secondary'
+        default:
+        return ""
       }
     },
     capitalizeFirstLetter(str) {
