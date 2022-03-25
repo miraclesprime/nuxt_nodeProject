@@ -158,7 +158,7 @@ export default {
         this.$store.dispatch('project/setSingleProject', proj.data)
       }
       const sec = await this.$axios.$get(`section/project/${this.$route.params.id}`, {
-        headers: { 'Authorization': `Bearer ${this.token}` }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       })
       if (sec) {
         // console.log(sec)
