@@ -65,12 +65,11 @@
       </div>
       <div class="row" id='ts-row'>
         <div class="col-8" id='ts-col-1'>
-          <bib-input type="text" v-model="form.title" placeholder="Enter task name..."  label="Task name" v-on:keyup.native="debounceUpdate()"></bib-input>
-          <small v-show="error == 'invalid'" class="text-danger font-xs " style="display:block; margin-top: -0.25rem;">Task name is required</small>
+          <bib-input type="text" v-model="form.title" placeholder="Enter task name..." label="Task name" v-on:keyup.native="debounceUpdate()"></bib-input>
+          <small v-show="error == 'invalid'" class="text-danger font-xs d-block" style="margin-top: -0.25rem;">Task name is required</small>
         </div>
         <div class="col-4" id='ts-col-2'>
-          <bib-input type="date" v-model="form.dueDate" placeholder="Enter date/range" label="Due date" v-on:change.native="debounceUpdate()"></bib-input>
-          
+          <bib-input type="date" v-model="dateInput" placeholder="Enter date/range" label="Due date" v-on:change.native="debounceUpdate()"></bib-input>
         </div>
       </div>
     </div>
@@ -78,8 +77,42 @@
       <bib-tabs :value="activeSidebarTab" @change="sidebarTabChange" :tabs="sidebarTabs"></bib-tabs>
     </div>
     <div class="of-scroll-y position-relative" id="ts-of-scroll-y">
-      <loading :loading="loading"></loading>
-      <sidebar-overview v-if="activeSidebarTab == 'Overview'" :fields="taskFields" :activeTask="activeTask" v-on:create-task="createTask" v-on:update-task="updateTask" />
+      <template v-if="activeSidebarTab == 'Overview'">
+        <div class="task-info pt-05" id='sidebar-inner-wrap'>
+          <div class="row" id='sidebar-row-1'>
+            <div class="col-4" id='sidebar-col-1'>
+              <bib-input type="select" :options="selectItems" placeholder="Please select..." label="Assignee *"></bib-input>
+            </div>
+            <div class="col-4" id='sidebar-col-2'>
+              <bib-input type="text" label="Project" :value="project.title" disabled></bib-input>
+            </div>
+            <div class="col-4">
+              <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="form.sectionId" placeholder="Please select ..." v-on:change.native="debounceUpdate()"></bib-input>
+            </div>
+          </div>
+          <div class="row" id='sidebar-row-2'>
+            <div class="col-4" id='sidebar-col-3'>
+              <bib-input type="select" label="Department" :options="department" placeholder="Please select..."></bib-input>
+            </div>
+            <div class="col-4" id='sidebar-col-4'>
+              <bib-input type="select" label="Priority" v-model.number="form.priorityId" :options="priorityValues" placeholder="Please select..." v-on:change.native="debounceUpdate()"></bib-input>
+            </div>
+            <div class="col-4" id='sidebar-col-5'>
+              <bib-input type="select" label="Status" v-model.number="form.statusId" :options="statusValues" placeholder="Please select..." v-on:change.native="debounceUpdate()"></bib-input>
+            </div>
+          </div>
+          <div class="row" id='sidebar-row-3'>
+            <div class="col-12" id='sidebar-col-6'>
+              <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter task description..." label="Description" v-on:keyup.native="debounceUpdate()"></bib-input>
+            </div>
+          </div>
+          <div class="p-1" id="sidebar-btn-wrapper">
+            <bib-button v-show="!currentTask.id" label="Create Task" variant="primary" v-on:click="createTask"></bib-button>
+          </div>
+          <loading :loading="loading"></loading>
+        </div>
+      </template>
+      <sidebar-overview v-if="activeSidebarTab == 'Overview'" :fields="taskFields" :activeTask="form" v-on:create-task="createTask" v-on:update-task="updateTask" />
       <div class="container pt-1" id='ts-subtask-container' v-if="activeSidebarTab == 'Subtasks'">
         <task-group />
       </div>
@@ -91,6 +124,7 @@
   </article>
 </template>
 <script>
+import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 import { mapGetters } from "vuex";
 
 export default {
@@ -100,6 +134,7 @@ export default {
   data: function() {
     return {
       loading: false,
+      // activeItem: {},
       form: {},
       sidebarTabs: [
         { title: "Overview", value: "Overview" },
@@ -135,6 +170,12 @@ export default {
           label: "Due Date",
         },
       ],
+      selectItems: [
+        { label: 'Please Choose One', value: "orange" }
+      ],
+      statusValues: STATUS,
+      priorityValues: PRIORITY,
+      department: DEPARTMENT,
       // error: false
     };
   },
@@ -142,8 +183,28 @@ export default {
   computed: {
     ...mapGetters({
       tasks: "task/tasksForListView",
-      // activeItem: 'task/getSelectedTask',
+      project: "project/getSingleProject",
+      sections: "section/getProjectSections",
+      currentTask: 'task/getSelectedTask',
     }),
+    sectionOpts() {
+      let sec = [{ label: "Select section" }]
+      this.sections.forEach((s) => {
+        sec.push({ label: s.title, value: s.id })
+      });
+      return sec
+    },
+    dateInput() {
+      let nd
+      if (!this.form.dueDate) {
+        nd = new Date()
+      } else {
+        nd = new Date(this.form.dueDate)
+      }
+      let mm = (nd.getMonth() + 1) < 10 ? '0' + (nd.getMonth() + 1) : nd.getMonth() + 1
+      let dd = (nd.getDate()) < 10 ? '0' + (nd.getDate()) : nd.getDate()
+      return `${nd.getFullYear()}-${mm}-${dd}`
+    },
     error() {
       if (this.form.title) {
         return "valid"
@@ -154,17 +215,29 @@ export default {
   },
 
   watch: {
-    activeTask() {
-      this.form = {
-        id: this.activeTask ? this.activeTask.id : '',
-        title: this.activeTask ? this.activeTask.title : "",
-        dueDate: this.activeTask ? this.dateInput(this.activeTask.dueDate) : this.dateInput(new Date()),
+    currentTask() {
+      if (Object.keys(this.currentTask).length) {
+        this.form = JSON.parse(JSON.stringify(this.currentTask));
+      } else {
+        this.form = {
+          id: '',
+          title: "",
+          dueDate: this.dateInput,
+
+          sectionId: '',
+          projectId: this.project.id,
+          statusId: 1,
+          priorityId: 2,
+          description: '',
+          budget: 0,
+
+        }
       }
     }
   },
 
   methods: {
-    dateInput(date) {
+    /*dateInput(date) {
       let nd
       if (!date) {
         nd = new Date()
@@ -174,7 +247,7 @@ export default {
       let mm = (nd.getMonth() + 1) < 10 ? '0' + (nd.getMonth() + 1) : nd.getMonth() + 1
       let dd = (nd.getDate()) < 10 ? '0' + (nd.getDate()) : nd.getDate()
       return `${nd.getFullYear()}-${mm}-${dd}`
-    },
+    },*/
 
     hideSidebar() {
       this.$emit("open-sidebar", false)
@@ -196,14 +269,14 @@ export default {
       if (this.error == "valid") {
         this.loading = true
         this.$store.dispatch("task/createTask", {
-          "sectionId": $event.sectionId,
-          "projectId": $event.projectId,
+          "sectionId": this.form.sectionId,
+          "projectId": this.form.projectId,
           "title": this.form.title,
-          "description": $event.description,
+          "description": this.form.description,
           "dueDate": this.form.dueDate,
-          "priorityId": $event.priorityId,
+          "priorityId": this.form.priorityId,
           "budget": 0,
-          "statusId": $event.statusId
+          "statusId": this.form.statusId,
         }).then(() => {
           this.loading = false
           this.hideSidebar()
@@ -214,22 +287,22 @@ export default {
     },
 
     async updateTask($event) {
-      let task = await this.$axios.$put("/task", { id: this.form.id, data: {
-        ...$event, 
-        dueDate: this.form.dueDate, 
-        title: this.form.title
-        } 
+      let task = await this.$axios.$put("/task", {
+        id: this.form.id,
+        data: {
+          ...this.form
+        }
       }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       })
     },
 
     debounceUpdate: _.debounce(function() {
-      if(this.activeTask.id) {
+      if (this.form.id) {
         console.log('Debounce clicked!')
         this.updateTask()
       }
-      
+
     }, 2000)
   },
 };
