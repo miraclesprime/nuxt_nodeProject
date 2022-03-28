@@ -18,7 +18,7 @@
           </template>
         </bib-button>
         <div id="project-team-members" class="d-flex" >
-          <email-chip v-if="Object.keys(owner).length > 0" :email="owner.email ? owner.email : owner.sube" v-bind:close="true" v-on:remove-email="removeOwner"></email-chip>
+          <email-chip v-if="Object.keys(owner).length > 0" :email="owner.email ? owner.email : owner.sube" :text="(owner.email ? owner.email[0] : '') || (owner.sube ? owner.sube[0] : '') "  v-bind:close="true" v-on:remove-email="removeOwner"></email-chip>
           <small v-else class="text-danger">Project owner is required</small>
         </div>
         <!-- <bib-input label="Enter email" placeholder="Enter email"></bib-input> -->
@@ -75,7 +75,7 @@ export default {
     }
   },
   mounted() {
-    console.log(this.user)
+    // console.log(this.user)
     if (this.user) {
       this.owner = JSON.parse(JSON.stringify(this.user))
     }

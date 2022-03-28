@@ -25,9 +25,9 @@
           </div>
         </div>
       </div>
-      <div class="d-flex align-center gap-1 justify-center text-secondary font-sm" v-show="loading">
+      <!-- <div class="d-flex align-center gap-1 justify-center text-secondary font-sm" v-show="loading">
         <bib-spinner variant="primary" :scale="2"></bib-spinner> Saving changes...
-      </div>
+      </div> -->
       <div id="to-row2" class="row">
         <div id="to-row2-col1" class="col-8">
           <bib-input type="text" label="Project name" placeholder="Project name" v-model="activeProject.title" v-on:keyup.native="debounceUpdate()"></bib-input>
@@ -38,12 +38,25 @@
       </div>
       <div id="to-row3" class="row">
         <div id="to-row3-col1" class="col-6">
-          <!-- <bib-input type="text" label="Owner" placeholder="Owner" v-model="form.owner"></bib-input> -->
-          <label class="text-gray6">Owner</label>
+          <label class="text-gray6">Assign a project lead</label>
+          <bib-button dropdown1="add" label="Type name or email" v-model="owner" v-on:input="dropdownInputKeydown" :footer="{icon: 'add', label: 'Invite via email', event: 'footer-action'}" @footer-action="inviteViaEmail" class="mt-05 mb-05">
+            <template v-slot:menu>
+              <ul id="cpm-fields" class="border-gray1" style="border-radius: 0 !important; border: 1px solid var(--bib-gray1);">
+                <li :id="'cpm-field-'+index" v-for="(tm, index) in filterUser" v-on:click="dd1ItemClick(tm)">
+                  <bib-avatar size="1.5rem"></bib-avatar>
+                  <span id="cpm-person-name" class="ml-05"> {{tm.label}} <span class="ml-075">{{tm.email}}</span></span>
+                </li>
+              </ul>
+            </template>
+          </bib-button>
+          <div id="project-team-members" class="d-flex">
+            <email-chip v-if="activeProject.user" :email="activeProject.user.email" :text="activeProject.user.email[0]" ></email-chip>
+            <small v-else class="text-danger">Project owner is required</small>
+          </div>
+          <!-- <label class="text-gray6">Owner</label>
           <div class="shape-rounded border-gray4 my-05 p-05">
             {{project.user ? project.user.firstName : ''}} {{project.user ? project.user.lastName : ''}}
-            <!-- <user-info :user="project.user ? project.user : ''" avatar="https://i.pravatar.cc/32"></user-info> -->
-          </div>
+          </div> -->
         </div>
         <div id="to-row3-col2" class="col-6">
           <bib-input type="select" label="Department" :options="department" placeholder="Department"></bib-input>
@@ -65,7 +78,9 @@
           <bib-input type="number" icon-left="currency-dollar" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="debounceUpdate()"></bib-input>
         </div>
         <div id="to-row5-col3" class="col-4">
-          <bib-input type="text" v-model="progress" placeholder="Select your progress" label="Progress" disabled></bib-input>
+          <label class="text-gray6">Progress</label>
+          <div class="shape-rounded border-gray4 my-05 p-05">{{progress}}%</div>
+          <!-- <bib-input type="text" :value="progress + '%'" placeholder="Select your progress" label="Progress" disabled></bib-input> -->
         </div>
       </div>
       <div id="to-row6" class="row">
@@ -73,7 +88,7 @@
           <bib-input type="textarea" label="Project brief" v-model="activeProject.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate()"></bib-input>
         </div>
       </div>
-      <loading :loading="loading2"></loading>
+      <loading :loading="loading"></loading>
     </div>
   </div>
 </template>
@@ -91,11 +106,8 @@ export default {
     return {
       flag: false,
       totalTasks: this.tasks.length || 0,
-      owner: [{ label: "Please choose one", value: null },
-        { label: "Bruno", value: "1" },
-        { label: "Ramon", value: "2" },
-        // { label: "Rajeev", value: "3" },
-      ],
+      owner: {},
+      filterKey: "",
       department: DEPARTMENT,
       status: STATUS,
       priority: PRIORITY,
@@ -107,32 +119,48 @@ export default {
     };
   },
 
+  mounted() {
+    this.loading2 = true
+    this.$axios.$get(`project/${this.$route.params.id}`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+    }).then((res) => {
+      if (res) {
+        this.project = res.data;
+        this.loading2 = false
+      }
+    }).catch(err => {
+      console.log("There was some issue in project API " + err);
+    })
+  },
+
   watch: {
     project() {
-      if(Object.keys(this.project).length) {
+      if (Object.keys(this.project).length) {
         this.activeProject = JSON.parse(JSON.stringify(this.project));
       } else {
         this.activeProject = {
           title: "",
           dueDate: "",
-          // owner: this.project ? this.project.userId : "",
-          priorityId: 2,
-          statusId: 2,
+          priorityId: "",
+          statusId: "",
           // time: "",
           budget: 0,
           // progress: 0
+          user: {},
+          userId: "",
           description: "",
         }
       }
-    }
+    },
   },
 
   computed: {
     ...mapGetters({
       token: 'token/getToken',
+      teammate: 'user/getTeamMembers',
       // project: 'project/getSingleProject'
     }),
-    
+
     taskOverdue() {
       if (!this.totalTasks) {
         return 0
@@ -162,7 +190,7 @@ export default {
         return Math.round(prog.length)
       }
     },
-    taskComplete(){
+    taskComplete() {
       if (!this.totalTasks) {
         return 0
       } else {
@@ -177,6 +205,13 @@ export default {
         let done = this.tasks.filter(t => t.statusId == 5)
         return Math.round((done.length / this.totalTasks) * 100)
       }
+    },
+    filterUser() {
+      return this.teammate.filter((u) => {
+        if (u.email.indexOf(this.filterKey) >= 0) {
+          return u
+        }
+      })
     },
     dateInput: {
       get: function() {
@@ -202,6 +237,21 @@ export default {
       this.$root.$emit("open-sidebar", this.flag);
     },
 
+    dropdownInputKeydown($event) {
+      console.log('dropdown input keydown', $event)
+      this.filterKey = $event
+    },
+    dd1ItemClick(tm) {
+      console.log(tm)
+      // this.owner = `${tm.label} - ${tm.email}`
+      this.activeProject.user = tm
+      this.activeProject.userId = tm.id
+      this.debounceUpdate()
+    },
+    inviteViaEmail() {
+      console.log('inviteViaEmail')
+    },
+
     statusClass(status) {
       if (status === "Past Due") return "text-red";
       if (status === "In-progress") return "text-blue";
@@ -218,6 +268,11 @@ export default {
       let proj = await this.$axios.$put("/project", { id: this.project.id, data: this.activeProject }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       })
+      console.log(proj.data)
+      if (proj.statusCode == 200) {
+        this.project = proj.data
+        this.$store.dispatch("project/setSingleProject", proj.data)
+      }
       this.loading = false
     },
     debounceUpdate: _.debounce(function() {
@@ -227,19 +282,6 @@ export default {
 
   },
 
-  mounted() {
-    this.loading2 = true
-    this.$axios.$get(`project/${this.$route.params.id}`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-      }).then((res) => {
-        if (res) {
-          this.project = res.data;
-          this.loading2 = false
-        }
-      }).catch(err => {
-        console.log("There was some issue in project API " + err);
-      })
-  }
 };
 
 </script>
