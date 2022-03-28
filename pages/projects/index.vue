@@ -13,7 +13,7 @@
     <div id="projects-list-wrapper" class="projects-list-wrapper of-scroll-y position-relative" >
       <loading :loading="loading"></loading>
       <template v-if="projects.length">
-        <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="projects" :key="'sort-'+ sortName ? sortName : 'sName' + 'view-' + viewName ? viewName : 'vName' + Math.random().split(-3) " :hide-no-column="true">
+        <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="projects" :key="'sort-'+ sortName ? sortName : 'sName' + 'view-' + viewName ? viewName : 'vName' + Math.random().split(-3) " :hide-no-column="true" @item-clicked="handleItemClick_Table">
           <template #cell(title)="data">
             <div class="d-flex align-center text-dark" :id="'projects-' + data.value.title" @click="goToProjectId(data.value)">
               <bib-icon icon="briefcase" variant="gray5" :scale="1.1" class="mr-025"></bib-icon>
@@ -62,11 +62,8 @@
 // import { TABLE_FIELDS, TABS, DEFAULT_TAB, TAB_TITLES } from "config/constants";
 import { PROJECT_FIELDS } from '../../dummy/project';
 import { mapGetters } from 'vuex';
-import ProjectActions from '../../components/project/ProjectActions.vue';
-import UserInfo from '../../components/elements/UserInfo.vue';
 
 export default {
-  components: { ProjectActions, UserInfo },
   data() {
     return {
       sortName: '',
@@ -148,6 +145,14 @@ export default {
     capitalizeFirstLetter(str) {
       return str.charAt(0).toUpperCase() + str.slice(1)
     },
+
+    handleItemClick_Table(item) {
+      console.log('table item clicked:', item)
+    },
+
+    handleAction_Table(data) {
+      console.log(data)
+    }
   },
 
 
