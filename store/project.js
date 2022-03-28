@@ -19,8 +19,8 @@ export const getters = {
   // get favorite projects
   getFavProjects(state) {
     let fav = []
-    state.favProjects.map(f=>{
-      fav.push({label: f.projects.title, icon: "folder-solid", id: f.projects.id })
+    state.favProjects.map(f => {
+      fav.push({ label: f.projects.title, icon: "folder-solid", id: f.projects.id })
     })
     return fav
   }
@@ -66,8 +66,8 @@ export const mutations = {
       let arr = JSON.parse(JSON.stringify(state.projects))
       let newArr = []
 
-      for(let i=0; i<arr.length; i++) {
-        if(arr[i].statusId) {
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].statusId) {
           newArr.unshift(arr[i])
         } else {
           newArr.push(arr[i])
@@ -75,9 +75,9 @@ export const mutations = {
       }
 
       newArr.sort((a, b) => {
-          if(a.status && b.status) {
-            return a.status.text.localeCompare(b.status.text)
-          } 
+        if (a.status && b.status) {
+          return a.status.text.localeCompare(b.status.text)
+        }
       });
       state.projects = newArr;
 
@@ -95,8 +95,8 @@ export const mutations = {
       let arr = JSON.parse(JSON.stringify(state.projects))
       let newArr = []
 
-      for(let i=0; i<arr.length; i++) {
-        if(arr[i].dueDate) {
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].dueDate) {
           newArr.unshift(arr[i])
         } else {
           newArr.push(arr[i])
@@ -104,7 +104,7 @@ export const mutations = {
       }
 
       newArr.sort((a, b) => {
-        if(a.dueDate && b.dueDate) {
+        if (a.dueDate && b.dueDate) {
           new Date(a.dueDate) - new Date(b.dueDate)
         }
       });
@@ -115,8 +115,8 @@ export const mutations = {
       let arr = JSON.parse(JSON.stringify(state.projects))
       let newArr = []
 
-      for(let i=0; i<arr.length; i++) {
-        if(arr[i].priorityId) {
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].priorityId) {
           newArr.unshift(arr[i])
         } else {
           newArr.push(arr[i])
@@ -124,9 +124,9 @@ export const mutations = {
       }
 
       newArr.sort((a, b) => {
-          if(a.priority && b.priority) {
-            return a.priority.text.localeCompare(b.priority.text)
-          } 
+        if (a.priority && b.priority) {
+          return a.priority.text.localeCompare(b.priority.text)
+        }
       });
       state.projects = newArr;
     }
@@ -153,8 +153,9 @@ export const actions = {
   // create project 
   async createProject(ctx, payload) {
     const res = await this.$axios.$post('/project', {
+      userId: payload.userId,
       statusId: null,
-      title: payload,
+      title: payload.title,
       description: null,
       dueDate: null,
       priority: null,
@@ -162,9 +163,11 @@ export const actions = {
     }, {
       headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
     });
-    ctx.commit('createProject', res.data);
-    ctx.commit('setSingleProject', res.data);
-
+    console.log(res.data)
+    if (res.statusCode == 200) {
+      ctx.commit('createProject', res.data);
+      // ctx.commit('setSingleProject', res.data);
+    }
   },
 
   async setFavProjects(ctx) {
