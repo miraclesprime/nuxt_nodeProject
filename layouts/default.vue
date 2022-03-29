@@ -74,6 +74,7 @@
       </template>
     </bib-app-wrapper>
     <create-project-modal ref="projectModals"></create-project-modal>
+    <add-teammember-modal ref="teammemberModal"></add-teammember-modal>
     <!-- <create-task-modals @create-task="
         (task) => {
           createTask(task);
@@ -162,6 +163,9 @@ export default {
     this.$root.$on("create-project-modal", ()=>{
       this.$refs.projectModals.showCreateProjectModal = true;
     })
+    this.$root.$on("add-teammember-modal", ()=>{
+      this.$refs.teammemberModal.showTeamCreateModal = true
+    })
   },
   mounted() {
     if (process.client) {
@@ -171,8 +175,8 @@ export default {
       // // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0cTJWb2xlalJlak5tR1FCIiwic3ViZSI6Imh0YW5nQGJpenRyZWUuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiQURNSU4iLCJzdWJjIjoiQ2FuYWRhIiwiaWF0IjoxNjQ0ODM4ODkxNzEwLCJleHAiOjE2NTI2MTQ4OTE3MTAsImp0aSI6IjlhMmJkMTRlLTU3NmUtNDNmOS05YjNjLTk4MzVmYTFkNjc2YSJ9.J31bf_Z-pPe1IFrUihvSH0W6XQ3cCnMJOcs-_6kPoPI"
 
 
-      // this.$cookies.set('b_ssojwt', cookie);
-      // this.$store.dispatch('token/setToken', cookie);
+      /*this.$cookies.set('b_ssojwt', cookie);
+      this.$store.dispatch('token/setToken', cookie);*/
 
       if (this.$cookies.get('b_ssojwt')) {
         let jwt = this.$cookies.get('b_ssojwt');

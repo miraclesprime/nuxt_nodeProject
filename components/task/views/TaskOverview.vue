@@ -39,10 +39,10 @@
       <div id="to-row3" class="row">
         <div id="to-row3-col1" class="col-6">
           <label class="text-gray6">Assign a project lead</label>
-          <bib-button dropdown1="add" label="Type name or email" v-model="owner" v-on:input="dropdownInputKeydown" :footer="{icon: 'add', label: 'Invite via email', event: 'footer-action'}" @footer-action="inviteViaEmail" class="mt-05 mb-05">
+          <bib-button id="po-owner-dd1" dropdown1="add" label="Type name or email" v-model="owner" v-on:input="dropdownInputKeydown" :footer="{icon: 'add', label: 'Invite via email', event: 'footer-action'}" @footer-action="inviteViaEmail" class="mt-05 mb-05">
             <template v-slot:menu>
               <ul id="cpm-fields" class="border-gray1" style="border-radius: 0 !important; border: 1px solid var(--bib-gray1);">
-                <li :id="'cpm-field-'+index" v-for="(tm, index) in filterUser" v-on:click="dd1ItemClick(tm)">
+                <li :id="'cpm-field-'+index" v-for="(tm, index) in filterUser" :key="'cpm-items'+index" v-on:click="dd1ItemClick(tm)">
                   <bib-avatar size="1.5rem"></bib-avatar>
                   <span id="cpm-person-name" class="ml-05"> {{tm.label}} <span class="ml-075">{{tm.email}}</span></span>
                 </li>
