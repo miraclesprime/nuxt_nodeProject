@@ -201,7 +201,8 @@ export default {
             id: user.sub,
             email: user.sube,
             firstName: firstName,
-            lastName: lastName
+            lastName: lastName,
+            companyId: user.subb
           }).then((value) => {
             console.log('user created!!')
             this.$store.dispatch("project/setFavProjects")
