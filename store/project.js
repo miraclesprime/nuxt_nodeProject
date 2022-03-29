@@ -49,19 +49,35 @@ export const mutations = {
 
   sortProjects(state, payload) {
 
-    if (payload == 'name') {
+    // sort By Project Name
+    if (payload.key == 'name' && payload.order == 'asc') {
       let arr = JSON.parse(JSON.stringify(state.projects));
       arr.sort((a, b) => a.title.localeCompare(b.title));
       state.projects = arr;
     }
 
-    if (payload == 'owner') {
+    if(payload.key == 'name' && payload.order == 'desc') {
+      let arr = JSON.parse(JSON.stringify(state.projects));
+      arr.sort((a, b) => b.title.localeCompare(a.title));
+      state.projects = arr;
+    }
+
+    // Sort By Project Owner Name
+    if (payload.key == 'owner' && payload.order == 'asc') {
       let arr = JSON.parse(JSON.stringify(state.projects))
       arr.sort((a, b) => a.user.firstName.localeCompare(b.user.firstName));
       state.projects = arr;
     }
 
-    if (payload == 'status') {
+    if (payload.key == 'owner' && payload.order == 'desc') {
+      let arr = JSON.parse(JSON.stringify(state.projects))
+      arr.sort((a, b) => b.user.firstName.localeCompare(a.user.firstName));
+      state.projects = arr;
+    }
+
+
+    // Sort By Status
+    if (payload.key == 'status' && payload.order == 'asc') {
 
       let arr = JSON.parse(JSON.stringify(state.projects))
       let newArr = []
@@ -82,7 +98,31 @@ export const mutations = {
       state.projects = newArr;
 
     }
-    if (payload == 'startDate') {
+
+    if (payload.key == 'status' && payload.order == 'desc') {
+
+      let arr = JSON.parse(JSON.stringify(state.projects))
+      let newArr = []
+
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].statusId) {
+          newArr.unshift(arr[i])
+        } else {
+          newArr.push(arr[i])
+        }
+      }
+
+      newArr.sort((a, b) => {
+        if (a.status && b.status) {
+          return b.status.text.localeCompare(a.status.text)
+        }
+      });
+      state.projects = newArr;
+
+    }
+
+    // Sort By Start Date
+    if (payload.key == 'startDate' && payload.order == 'asc') {
 
       let arr = JSON.parse(JSON.stringify(state.projects))
       arr.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
@@ -90,7 +130,16 @@ export const mutations = {
 
     }
 
-    if (payload == 'dueDate') {
+    if (payload.key == 'startDate' && payload.order == 'desc') {
+
+      let arr = JSON.parse(JSON.stringify(state.projects))
+      arr.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      state.projects = arr;
+
+    }
+
+    // Sort By Due Date
+    if (payload.key == 'dueDate' && payload.order == 'asc') {
 
       let arr = JSON.parse(JSON.stringify(state.projects))
       let newArr = []
@@ -111,7 +160,29 @@ export const mutations = {
       state.projects = newArr;
     }
 
-    if (payload == 'priority') {
+    if (payload.key == 'dueDate' && payload.order == 'desc') {
+
+      let arr = JSON.parse(JSON.stringify(state.projects))
+      let newArr = []
+
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].dueDate) {
+          newArr.unshift(arr[i])
+        } else {
+          newArr.push(arr[i])
+        }
+      }
+
+      newArr.sort((a, b) => {
+        if (a.dueDate && b.dueDate) {
+          new Date(b.dueDate) - new Date(a.dueDate)
+        }
+      });
+      state.projects = newArr;
+    }
+
+    // Sort By Priority
+    if (payload.key == 'priority' && payload.order == 'asc') {
       let arr = JSON.parse(JSON.stringify(state.projects))
       let newArr = []
 
@@ -126,6 +197,26 @@ export const mutations = {
       newArr.sort((a, b) => {
         if (a.priority && b.priority) {
           return a.priority.text.localeCompare(b.priority.text)
+        }
+      });
+      state.projects = newArr;
+    }
+
+    if (payload.key == 'priority' && payload.order == 'desc') {
+      let arr = JSON.parse(JSON.stringify(state.projects))
+      let newArr = []
+
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].priorityId) {
+          newArr.unshift(arr[i])
+        } else {
+          newArr.push(arr[i])
+        }
+      }
+
+      newArr.sort((a, b) => {
+        if (a.priority && b.priority) {
+          return b.priority.text.localeCompare(a.priority.text)
         }
       });
       state.projects = newArr;

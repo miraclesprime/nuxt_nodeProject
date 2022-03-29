@@ -2,6 +2,9 @@ export const PROJECT_FIELDS = [
     {
         key: "key",
         label: "#",
+        header_icon: {
+            isActive: false
+        }
     },
     {
         key: "title",
@@ -10,7 +13,7 @@ export const PROJECT_FIELDS = [
         header_icon: {
             icon: 'swap-vertical',
             event: 'file-title-sort',
-            isActive: true
+            isActive: false
         }
     },
     {
@@ -18,7 +21,8 @@ export const PROJECT_FIELDS = [
         label: "Owner",
         header_icon: {
             icon: 'swap-vertical',
-            event: 'file-owner-sort'
+            event: 'file-owner-sort',
+            isActive: false
         }
     },
     {
@@ -27,6 +31,7 @@ export const PROJECT_FIELDS = [
         header_icon: {
             icon: 'swap-vertical',
             event: 'file-status-sort',
+            isActive: false
         }
     },
     {
@@ -35,6 +40,7 @@ export const PROJECT_FIELDS = [
         header_icon: {
             icon: 'swap-vertical',
             event: 'file-startDate-sort',
+            isActive: false
         }
     },
     {
@@ -43,6 +49,7 @@ export const PROJECT_FIELDS = [
         header_icon: {
             icon: 'swap-vertical',
             event: 'file-dueDate-sort',
+            isActive: false
         }
     },
     {
@@ -51,15 +58,12 @@ export const PROJECT_FIELDS = [
         header_icon: {
             icon: 'swap-vertical',
             event: 'file-priority-sort',
+            isActive: false
         }
     },
     {
         key: "tag",
-        label: "Tags",
-        header_icon: {
-            icon: 'swap-vertical',
-            event: 'file-tag-sort'
-        },
+        label: "Tags"
     },
     {
         key: "",
