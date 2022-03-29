@@ -158,17 +158,12 @@ export default {
       }
     },
 
-    // sortBy(value) {
-    //   this.$store.dispatch('section/sortSections', value)
-    //   this.sortName = value;
-    // },
 
     sortBy($event) {
       this.$emit("sort", $event)
     },
 
     changeViewName($event){
-      // console.log($event)
       this.$emit("filterView", $event)
     }
 
