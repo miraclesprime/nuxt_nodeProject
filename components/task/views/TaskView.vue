@@ -125,23 +125,59 @@ export default {
         }
       }
 
-      if (this.sortName == 'name') {
+      // Sort By Title
+      if (this.sortName == 'name' && this.orderBy == 'asc') {
         arr.sort((a, b) => a.title.localeCompare(b.title));
       }
-      if (this.sortName == 'owner') {
+
+      if(this.sortName == 'name' && this.orderBy == 'desc') {
+        arr.sort((a, b) => b.title.localeCompare(a.title));
+      }
+
+      // Sort By owner
+      if (this.sortName == 'owner' && this.orderBy == 'asc') {
         arr.sort((a, b) => a.user.firstName.localeCompare(b.user.firstName));
       }
-      if (this.sortName == 'status') {
+
+      if (this.sortName == 'owner' && this.orderBy == 'desc') {
+        arr.sort((a, b) => b.user.firstName.localeCompare(a.user.firstName));
+      }
+
+      // sort By Status
+      if (this.sortName == 'status' && this.orderBy == 'asc') {
         arr.sort((a, b) => a.status.text.localeCompare(b.status.text));
       }
-      if (this.sortName == 'startDate') {
+
+      if (this.sortName == 'status' && this.orderBy == 'desc') {
+        arr.sort((a, b) => b.status.text.localeCompare(a.status.text));
+      }
+
+      // sort By Start Date
+
+      if (this.sortName == 'startDate' && this.orderBy == 'asc') {
         arr.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
       }
-      if (this.sortName == 'dueDate') {
+
+      if (this.sortName == 'startDate' && this.orderBy == 'asc') {
+        arr.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      }
+
+      // sort By DueDate
+      if (this.sortName == 'dueDate' && this.orderBy == 'asc') {
         arr.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
       }
-      if (this.sortName == 'priority') {
+
+      if (this.sortName == 'dueDate' && this.orderBy == 'desc') {
+        arr.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate));
+      }
+
+      // Sort By Priotity
+      if (this.sortName == 'priority' && this.orderBy == 'asc') {
         arr.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
+      }
+
+      if (this.sortName == 'priority' && this.orderBy == 'desc') {
+        arr.sort((a, b) => b.priority.text.localeCompare(a.priority.text));
       }
 
       return arr;
@@ -285,8 +321,7 @@ export default {
       } else {
         this.orderBy = 'asc'
       }
-      this.$store.dispatch('project/sortProjects', {key: 'name', order: this.orderBy} )
-      this.sortName = 'title';
+      this.sortName = 'name';
       this.checkActive()
     },
 
@@ -297,8 +332,7 @@ export default {
       } else {
         this.orderBy = 'asc'
       }
-      this.$store.dispatch('project/sortProjects', {key: 'owner', order: this.orderBy} )
-      this.sortName = 'userId';
+      this.sortName = 'owner';
       this.checkActive()
     },
 
@@ -309,7 +343,6 @@ export default {
       } else {
         this.orderBy = 'asc'
       }
-      this.$store.dispatch('project/sortProjects', {key: 'status', order: this.orderBy} )
       this.sortName = 'status';
       this.checkActive()
     },
@@ -321,8 +354,7 @@ export default {
       } else {
         this.orderBy = 'asc'
       }
-      this.$store.dispatch('project/sortProjects', {key: 'startDate', order: this.orderBy} )
-      this.sortName = 'createdAt';
+      this.sortName = 'startDate';
       this.checkActive()
     },
 
@@ -333,7 +365,6 @@ export default {
       } else {
         this.orderBy = 'asc'
       }
-      this.$store.dispatch('project/sortProjects', {key: 'dueDate', order: this.orderBy} )
       this.sortName = 'dueDate';
       this.checkActive()
     },
@@ -345,7 +376,6 @@ export default {
       } else {
         this.orderBy = 'asc'
       }
-      this.$store.dispatch('project/sortProjects', {key: 'priority', order: this.orderBy} )
       this.sortName = 'priority';
       this.checkActive()
     },
