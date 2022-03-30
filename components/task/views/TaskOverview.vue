@@ -50,7 +50,7 @@
             </template>
           </bib-button>
           <div id="project-team-members" class="d-flex">
-            <email-chip v-if="activeProject.user" :email="activeProject.user.email" :text="activeProject.user.email[0]" ></email-chip>
+            <email-chip v-if="activeProject.user" :email="activeProject.user.email" :text="activeProject.user.email[0]"></email-chip>
             <small v-else class="text-danger">Project owner is required</small>
           </div>
           <!-- <label class="text-gray6">Owner</label>
@@ -72,7 +72,9 @@
       </div>
       <div id="to-row5" class="row">
         <div id="to-row5-col1" class="col-4">
-          <bib-input type="time" v-model="time" placeholder="Select your time" label="Time" disabled></bib-input>
+          <label class="text-gray6">Time</label>
+          <div class="shape-rounded border-gray4 my-05 p-05">Hours {{time}}</div>
+          <!-- <bib-input type="time" v-model="time" placeholder="Select your time" label="Time"></bib-input> -->
         </div>
         <div id="to-row5-col2" class="col-4">
           <bib-input type="number" icon-left="currency-dollar" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="debounceUpdate()"></bib-input>
@@ -114,7 +116,7 @@ export default {
       activeProject: {},
       loading: false,
       loading2: false,
-      time: null,
+      // time: null,
       project: {}
     };
   },
@@ -228,6 +230,18 @@ export default {
       },
       set: function(newValue) {
         this.activeProject.dueDate = new Date(newValue)
+      }
+    },
+    time() {
+      if (this.activeProject.dueDate) {
+        let diff = new Date(this.activeProject.dueDate) - new Date();
+        let diffDays = Math.floor(diff / 864e5); // days
+        let diffHrs = Math.floor((diff % 864e5) / 36e5); // hours
+        let diffMins = Math.round(((diff % 864e5) % 36e5) / 6e4); // minutes
+        let totalHrs = (diffDays * 24) + diffHrs
+        return `${totalHrs}:${diffMins}`
+      } else {
+        return "00:00"
       }
     },
   },
