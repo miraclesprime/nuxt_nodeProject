@@ -50,7 +50,7 @@
             </template>
           </bib-button>
           <div id="project-team-members" class="d-flex">
-            <email-chip v-if="activeProject.user" :email="activeProject.user.email" :text="activeProject.user.email[0]" ></email-chip>
+            <email-chip v-if="activeProject.user" :email="activeProject.user.email" :text="activeProject.user.email[0]"></email-chip>
             <small v-else class="text-danger">Project owner is required</small>
           </div>
           <!-- <label class="text-gray6">Owner</label>
@@ -232,11 +232,17 @@ export default {
         this.activeProject.dueDate = new Date(newValue)
       }
     },
-    time(){
-      let diff = new Date(this.dateInput) - new Date()
-      var diffHrs = Math.floor((diff % 864e5) / 36e5); // hours
-      var diffMins = Math.round(((diff % 864e5) % 36e5) / 6e4); // minutes
-      return `${diffHrs}:${diffMins}`
+    time() {
+      if (this.activeProject.dueDate) {
+        let diff = new Date(this.activeProject.dueDate) - new Date();
+        let diffDays = Math.floor(diff / 864e5); // days
+        let diffHrs = Math.floor((diff % 864e5) / 36e5); // hours
+        let diffMins = Math.round(((diff % 864e5) % 36e5) / 6e4); // minutes
+        let totalHrs = (diffDays * 24) + diffHrs
+        return `${totalHrs}:${diffMins}`
+      } else {
+        return "00:00"
+      }
     },
   },
 
