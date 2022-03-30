@@ -17,7 +17,8 @@
             collapsed: false,
             label: `${item.title}`,
             variant: 'black',
-          }" hide-no-column class="border-gray4 bg-white">
+          }" hide-no-column class="border-gray4 bg-white"
+          @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
         <template #cell(title)="data">
           <div class="d-flex gap-05 align-center">
             <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data)" class="cursor-pointer" @click="handleTaskTable_status(data)"></bib-icon>
@@ -91,6 +92,7 @@ export default {
       // loading: true,
       filterTask: [],
       key: 0,
+      orderBy: ''
     };
   },
   computed: {
@@ -274,6 +276,90 @@ export default {
     handleTaskTable_status(item) {
       console.log(item)
       this.$store.dispatch('task/updateTaskStatus', item)
+    },
+
+    sortTitle() {
+      
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('project/sortProjects', {key: 'name', order: this.orderBy} )
+      this.sortName = 'title';
+      this.checkActive()
+    },
+
+    sortOwner() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('project/sortProjects', {key: 'owner', order: this.orderBy} )
+      this.sortName = 'userId';
+      this.checkActive()
+    },
+
+    sortByStatus() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('project/sortProjects', {key: 'status', order: this.orderBy} )
+      this.sortName = 'status';
+      this.checkActive()
+    },
+
+    sortByStartDate() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('project/sortProjects', {key: 'startDate', order: this.orderBy} )
+      this.sortName = 'createdAt';
+      this.checkActive()
+    },
+
+    sortByDueDate() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('project/sortProjects', {key: 'dueDate', order: this.orderBy} )
+      this.sortName = 'dueDate';
+      this.checkActive()
+    },
+
+    sortByPriority() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('project/sortProjects', {key: 'priority', order: this.orderBy} )
+      this.sortName = 'priority';
+      this.checkActive()
+    },
+
+    checkActive() {
+      for(let i=0; i<this.tableFields.length; i++) {
+          if(this.tableFields[i].header_icon) {
+            this.tableFields[i].header_icon.isActive = false
+          }
+
+          if(this.tableFields[i].header_icon && this.tableFields[i].key == this.sortName) {
+            this.tableFields[i].header_icon.isActive = true
+          } 
+      }
     },
   },
 
