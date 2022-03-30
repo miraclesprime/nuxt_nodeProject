@@ -42,31 +42,61 @@ export const TASK_FIELDS = [{
     key: "title",
     label: "Task name",
     width: "32%",
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-title-sort',
+      isActive: false
+    }
   },
   {
     key: "status",
     label: "Status",
     width: "10%",
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-status-sort',
+      isActive: false
+    }
   },
   {
     key: "priority",
     label: "Priority",
     width: "8%",
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-priority-sort',
+      isActive: false
+    }
   },
   {
     key: "owner",
     label: "Owner",
     width: "20%",
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-owner-sort',
+      isActive: false
+    }
   },
   {
     key: "startDate",
     label: "Start Date",
     width: "10%",
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-startDate-sort',
+      isActive: false
+    }
   },
   {
     key: "dueDate",
     label: "Due Date",
     width: "10%",
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-dueDate-sort',
+      isActive: false
+    }
   },
 ]
 

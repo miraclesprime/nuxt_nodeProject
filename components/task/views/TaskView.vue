@@ -17,7 +17,8 @@
             collapsed: false,
             label: `${item.title}`,
             variant: 'black',
-          }" hide-no-column class="border-gray4 bg-white">
+          }" hide-no-column class="border-gray4 bg-white"
+          @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
         <template #cell(title)="data">
           <div class="d-flex gap-05 align-center">
             <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data)" class="cursor-pointer" @click="handleTaskTable_status(data)"></bib-icon>
@@ -91,6 +92,7 @@ export default {
       // loading: true,
       filterTask: [],
       key: 0,
+      orderBy: ''
     };
   },
   computed: {
@@ -123,23 +125,59 @@ export default {
         }
       }
 
-      if (this.sortName == 'name') {
+      // Sort By Title
+      if (this.sortName == 'name' && this.orderBy == 'asc') {
         arr.sort((a, b) => a.title.localeCompare(b.title));
       }
-      if (this.sortName == 'owner') {
+
+      if(this.sortName == 'name' && this.orderBy == 'desc') {
+        arr.sort((a, b) => b.title.localeCompare(a.title));
+      }
+
+      // Sort By owner
+      if (this.sortName == 'owner' && this.orderBy == 'asc') {
         arr.sort((a, b) => a.user.firstName.localeCompare(b.user.firstName));
       }
-      if (this.sortName == 'status') {
+
+      if (this.sortName == 'owner' && this.orderBy == 'desc') {
+        arr.sort((a, b) => b.user.firstName.localeCompare(a.user.firstName));
+      }
+
+      // sort By Status
+      if (this.sortName == 'status' && this.orderBy == 'asc') {
         arr.sort((a, b) => a.status.text.localeCompare(b.status.text));
       }
-      if (this.sortName == 'startDate') {
+
+      if (this.sortName == 'status' && this.orderBy == 'desc') {
+        arr.sort((a, b) => b.status.text.localeCompare(a.status.text));
+      }
+
+      // sort By Start Date
+
+      if (this.sortName == 'startDate' && this.orderBy == 'asc') {
         arr.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
       }
-      if (this.sortName == 'dueDate') {
+
+      if (this.sortName == 'startDate' && this.orderBy == 'asc') {
+        arr.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      }
+
+      // sort By DueDate
+      if (this.sortName == 'dueDate' && this.orderBy == 'asc') {
         arr.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
       }
-      if (this.sortName == 'priority') {
+
+      if (this.sortName == 'dueDate' && this.orderBy == 'desc') {
+        arr.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate));
+      }
+
+      // Sort By Priotity
+      if (this.sortName == 'priority' && this.orderBy == 'asc') {
         arr.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
+      }
+
+      if (this.sortName == 'priority' && this.orderBy == 'desc') {
+        arr.sort((a, b) => b.priority.text.localeCompare(a.priority.text));
       }
 
       return arr;
@@ -274,6 +312,84 @@ export default {
     handleTaskTable_status(item) {
       console.log(item)
       this.$store.dispatch('task/updateTaskStatus', item)
+    },
+
+    sortTitle() {
+      
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.sortName = 'name';
+      this.checkActive()
+    },
+
+    sortOwner() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.sortName = 'owner';
+      this.checkActive()
+    },
+
+    sortByStatus() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.sortName = 'status';
+      this.checkActive()
+    },
+
+    sortByStartDate() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.sortName = 'startDate';
+      this.checkActive()
+    },
+
+    sortByDueDate() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.sortName = 'dueDate';
+      this.checkActive()
+    },
+
+    sortByPriority() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.sortName = 'priority';
+      this.checkActive()
+    },
+
+    checkActive() {
+      for(let i=0; i<this.tableFields.length; i++) {
+          if(this.tableFields[i].header_icon) {
+            this.tableFields[i].header_icon.isActive = false
+          }
+
+          if(this.tableFields[i].header_icon && this.tableFields[i].key == this.sortName) {
+            this.tableFields[i].header_icon.isActive = true
+          } 
+      }
     },
   },
 
