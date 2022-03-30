@@ -72,7 +72,9 @@
       </div>
       <div id="to-row5" class="row">
         <div id="to-row5-col1" class="col-4">
-          <bib-input type="time" v-model="time" placeholder="Select your time" label="Time" disabled></bib-input>
+          <label class="text-gray6">Time</label>
+          <div class="shape-rounded border-gray4 my-05 p-05">Hours {{time}}</div>
+          <!-- <bib-input type="time" v-model="time" placeholder="Select your time" label="Time"></bib-input> -->
         </div>
         <div id="to-row5-col2" class="col-4">
           <bib-input type="number" icon-left="currency-dollar" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="debounceUpdate()"></bib-input>
@@ -114,7 +116,7 @@ export default {
       activeProject: {},
       loading: false,
       loading2: false,
-      time: null,
+      // time: null,
       project: {}
     };
   },
@@ -229,6 +231,12 @@ export default {
       set: function(newValue) {
         this.activeProject.dueDate = new Date(newValue)
       }
+    },
+    time(){
+      let diff = new Date(this.dateInput) - new Date()
+      var diffHrs = Math.floor((diff % 864e5) / 36e5); // hours
+      var diffMins = Math.round(((diff % 864e5) % 36e5) / 6e4); // minutes
+      return `${diffHrs}:${diffMins}`
     },
   },
 
