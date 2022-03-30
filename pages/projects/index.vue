@@ -9,11 +9,11 @@
       <span class="font-lg font-w-700  mr-1" id="projects-title-head">Projects</span>
     </nav>
     <!-- </div> -->
-    <project-actions @sortValue='sortName=$event' @viewValue='viewName=$event' v-on:loading="loading = $event" />
+    <project-actions @sortValue='sortName=$event' @viewValue='viewName=$event' v-on:loading="loading = $event" v-bind:sort="sortName" />
     <div id="projects-list-wrapper" class="projects-list-wrapper of-scroll-y position-relative" >
       <loading :loading="loading"></loading>
       <template v-if="projects.length">
-        <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="projects" :key="'sort-'+ sortName ? sortName : 'sName' + 'view-' + viewName ? viewName : 'vName' + Math.random().split(-3) " :hide-no-column="true" @item-clicked="handleItemClick_Table">
+        <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="projects" :key="'sort-'+ sortName ? sortName : 'sName' + 'view-' + viewName ? viewName : 'vName' + Math.random().split(-3) " :hide-no-column="true" @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
           <template #cell(title)="data">
             <div class="d-flex align-center text-dark" :id="'projects-' + data.value.title" @click="goToProjectId(data.value)">
               <bib-icon icon="briefcase" variant="gray5" :scale="1.1" class="mr-025"></bib-icon>
@@ -76,9 +76,7 @@ export default {
         priority: null,
         status: null,
       },
-      /*project: {
-        title: "Project One"
-      },*/
+      orderBy: ''
     }
   },
   mounted() {
@@ -91,6 +89,18 @@ export default {
   },
 
   methods: {
+    checkActive() {
+      for(let i=0; i<this.tableFields.length; i++) {
+          if(this.tableFields[i].header_icon) {
+            this.tableFields[i].header_icon.isActive = false
+          }
+
+          if(this.tableFields[i].header_icon && this.tableFields[i].key == this.sortName) {
+            this.tableFields[i].header_icon.isActive = true
+          } 
+      }
+    },
+
     tabChange(value) {
       this.activeTab = value;
     },
@@ -146,12 +156,76 @@ export default {
       return str.charAt(0).toUpperCase() + str.slice(1)
     },
 
-    handleItemClick_Table(item) {
-      console.log('table item clicked:', item)
+    sortTitle() {
+      
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('project/sortProjects', {key: 'name', order: this.orderBy} )
+      this.sortName = 'title';
+      this.checkActive()
     },
 
-    handleAction_Table(data) {
-      console.log(data)
+    sortOwner() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('project/sortProjects', {key: 'owner', order: this.orderBy} )
+      this.sortName = 'userId';
+      this.checkActive()
+    },
+
+    sortByStatus() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('project/sortProjects', {key: 'status', order: this.orderBy} )
+      this.sortName = 'status';
+      this.checkActive()
+    },
+
+    sortByStartDate() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('project/sortProjects', {key: 'startDate', order: this.orderBy} )
+      this.sortName = 'createdAt';
+      this.checkActive()
+    },
+
+    sortByDueDate() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('project/sortProjects', {key: 'dueDate', order: this.orderBy} )
+      this.sortName = 'dueDate';
+      this.checkActive()
+    },
+
+    sortByPriority() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('project/sortProjects', {key: 'priority', order: this.orderBy} )
+      this.sortName = 'priority';
+      this.checkActive()
     }
   },
 

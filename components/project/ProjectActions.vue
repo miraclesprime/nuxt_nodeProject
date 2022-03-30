@@ -72,6 +72,7 @@ export default {
       selectInfo: null,
       selectedView: 'All',
       selectedSort: null,
+      orderBy: '',
       viewing: VIEW_FILTER,
       sorting: PROJECT_SORT
     };
@@ -137,7 +138,12 @@ export default {
     },
 
     sortBy($event) {
-      this.$store.dispatch('project/sortProjects', $event)
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('project/sortProjects', {key: $event, order: this.orderBy})
       this.selectedSort = $event;
       this.$emit('sortValue', $event)
     }

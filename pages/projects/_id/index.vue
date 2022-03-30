@@ -10,7 +10,7 @@
       <span id="project-id-badge-status" class="badge-status">{{project.status ? project.status.text : ''}}</span>
       <div class="ml-auto d-flex gap-05 align-center" id="project-id-button-wraps">
         <bib-avatar></bib-avatar>
-        <bib-button label="invite" variant="light" pill></bib-button>
+        <bib-button label="invite" variant="light" pill v-on:click="$nuxt.$emit('add-teammember-modal')"></bib-button>
         <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark">
           <bib-icon icon="bookmark" class="m-auto"></bib-icon>
         </div>
