@@ -313,14 +313,17 @@ export const actions = {
   async addMember(ctx, payload) {
     
     let data;
-    data = payload.team.filter((el1) => {
-      if(ctx.getters.getProjectMembers.some((el2) => el2.id != el1.id )) {
-        return el1;
-      }
-    })
+    if(ctx.getters.getProjectMembers.length < 1) {
+      data = payload.team;
+    } else {
+      data = payload.team.filter((el1) => {
+        if(ctx.getters.getProjectMembers.some((el2) => el2.id != el1.id )) {
+          return el1;
+        }
+      })
+    }
 
     console.log(data)
-
 
     await this.$axios.post("/project/add-member",  {projectId: payload.projectId, team: data}, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
