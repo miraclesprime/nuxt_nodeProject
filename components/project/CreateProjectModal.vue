@@ -77,9 +77,9 @@ export default {
   },
   mounted() {
     // console.log(this.user)
-    if (this.user) {
+    /*if (this.user) {
       this.owner = JSON.parse(JSON.stringify(this.user))
-    }
+    }*/
   },
   methods: {
     dropdownInputChange($event) {
