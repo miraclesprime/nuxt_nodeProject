@@ -319,8 +319,7 @@ export const actions = {
       }
     })
 
-    console.log(data)
-
+    // console.log(data)
 
     await this.$axios.post("/project/add-member",  {projectId: payload.projectId, team: data}, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
