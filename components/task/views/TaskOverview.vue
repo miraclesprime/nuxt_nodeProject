@@ -38,11 +38,10 @@
       </div>
       <div id="to-row3" class="row">
         <div id="to-row3-col1" class="col-6">
-          <label class="text-gray6">Assign a project lead</label>
+          <bib-input type="select" :options="filterUser" v-model="activeProject.userId" placeholder="Please select..." label="Assign a project lead" v-on:change.native="debounceUpdate()"></bib-input>
 
-          <!-- <bib-select-org :optionsOrg="assignee" :selectedOrg="activeProject.user" @item-event="handleSelectOwner" ></bib-select-org> -->
-
-          <bib-button test_id="po-owner-dd1" dropdown1="add" label="Type name or email" v-model="owner" v-on:input-keydown="dropdownInputKeydown" :footer="{icon: 'add', label: 'Invite via email', event: 'footer-action'}" @footer-action="inviteViaEmail" class="mt-05 mb-05">
+          <!-- <label class="text-gray6">Assign a project lead</label> -->
+          <!-- <bib-button test_id="po-owner-dd1" dropdown1="add" label="Type name or email" v-model="owner" v-on:input-keydown="dropdownInputKeydown" :footer="{icon: 'add', label: 'Invite via email', event: 'footer-action'}" @footer-action="inviteViaEmail" class="mt-05 mb-05">
             <template v-slot:menu>
               <ul id="cpm-fields" class="border-gray1" style="border-radius: 0 !important; border: 1px solid var(--bib-gray1);">
                 <li :id="'cpm-field-'+index" v-for="(tm, index) in filterUser" :key="'cpm-items'+index" v-on:click="dd1ItemClick(tm)">
@@ -51,11 +50,11 @@
                 </li>
               </ul>
             </template>
-          </bib-button>
-          <div id="project-team-members" class="d-flex">
+          </bib-button> -->
+          <!-- <div id="project-team-members" class="d-flex">
             <email-chip v-if="activeProject.user" :email="activeProject.user.email" :text="activeProject.user.email[0]"></email-chip>
             <small v-else class="text-danger">Project owner is required</small>
-          </div>
+          </div> -->
           
         </div>
         <div id="to-row3-col2" class="col-6">
@@ -216,11 +215,14 @@ export default {
       }
     },
     filterUser() {
-      return this.companyUsers.filter((u) => {
+      return this.companyUsers.map((u)=>{
+        return {value: u.id, id: u.id, label: u.firstName +' '+u.lastName, email: u.email}
+      })
+      /*return this.companyUsers.filter((u) => {
         if (u.email.indexOf(this.filterKey) >= 0) {
           return u
         }
-      })
+      })*/
     },
     dateInput: {
       get: function() {
@@ -267,7 +269,7 @@ export default {
       // this.owner = `${tm.label} - ${tm.email}`
       this.activeProject.user = tm
       this.activeProject.userId = tm.id
-      this.debounceUpdate()
+      // this.debounceUpdate()
     },
     inviteViaEmail() {
       console.log('inviteViaEmail')
