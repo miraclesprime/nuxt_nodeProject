@@ -38,8 +38,10 @@
       </div>
       <div id="to-row3" class="row">
         <div id="to-row3-col1" class="col-6">
-          <label class="text-gray6">Assign a project lead</label>
-          <bib-button test_id="po-owner-dd1" dropdown1="add" label="Type name or email" v-model="owner" v-on:input-keydown="dropdownInputKeydown" :footer="{icon: 'add', label: 'Invite via email', event: 'footer-action'}" @footer-action="inviteViaEmail" class="mt-05 mb-05">
+          <bib-input type="select" :options="filterUser" v-model="activeProject.userId" placeholder="Please select..." label="Assign a project lead" v-on:change.native="debounceUpdate()"></bib-input>
+
+          <!-- <label class="text-gray6">Assign a project lead</label> -->
+          <!-- <bib-button test_id="po-owner-dd1" dropdown1="add" label="Type name or email" v-model="owner" v-on:input-keydown="dropdownInputKeydown" :footer="{icon: 'add', label: 'Invite via email', event: 'footer-action'}" @footer-action="inviteViaEmail" class="mt-05 mb-05">
             <template v-slot:menu>
               <ul id="cpm-fields" class="border-gray1" style="border-radius: 0 !important; border: 1px solid var(--bib-gray1);">
                 <li :id="'cpm-field-'+index" v-for="(tm, index) in filterUser" :key="'cpm-items'+index" v-on:click="dd1ItemClick(tm)">
@@ -48,15 +50,12 @@
                 </li>
               </ul>
             </template>
-          </bib-button>
-          <div id="project-team-members" class="d-flex">
+          </bib-button> -->
+          <!-- <div id="project-team-members" class="d-flex">
             <email-chip v-if="activeProject.user" :email="activeProject.user.email" :text="activeProject.user.email[0]"></email-chip>
             <small v-else class="text-danger">Project owner is required</small>
-          </div>
-          <!-- <label class="text-gray6">Owner</label>
-          <div class="shape-rounded border-gray4 my-05 p-05">
-            {{project.user ? project.user.firstName : ''}} {{project.user ? project.user.lastName : ''}}
           </div> -->
+          
         </div>
         <div id="to-row3-col2" class="col-6">
           <bib-input type="select" label="Department" :options="department" placeholder="Department"></bib-input>
@@ -163,6 +162,12 @@ export default {
       // project: 'project/getSingleProject'
       companyUsers: "company/getCompanyMembers"
     }),
+    assignee(){
+      let items = this.companyUsers.map(u => {
+        return {id: u.id, label: u.firstName +' '+ u.lastName, event: "item-event", img:""}
+      })
+      return {items: items}
+    },
 
     taskOverdue() {
       if (!this.totalTasks) {
@@ -210,11 +215,14 @@ export default {
       }
     },
     filterUser() {
-      return this.companyUsers.filter((u) => {
+      return this.companyUsers.map((u)=>{
+        return {value: u.id, id: u.id, label: u.firstName +' '+u.lastName, email: u.email}
+      })
+      /*return this.companyUsers.filter((u) => {
         if (u.email.indexOf(this.filterKey) >= 0) {
           return u
         }
-      })
+      })*/
     },
     dateInput: {
       get: function() {
@@ -261,7 +269,7 @@ export default {
       // this.owner = `${tm.label} - ${tm.email}`
       this.activeProject.user = tm
       this.activeProject.userId = tm.id
-      this.debounceUpdate()
+      // this.debounceUpdate()
     },
     inviteViaEmail() {
       console.log('inviteViaEmail')
@@ -300,3 +308,10 @@ export default {
 };
 
 </script>
+<style lang="scss" scoped >
+.input--select { margin-left: 0; margin-right: 0; border-color: var(--bib-gray4);}
+.input--select--collapsed { margin: 0.5em 0 !important; border-color: var(--bib-gray4); }
+::v-deep {
+  .input--select.input--select--collapsed { margin: 0.5em 0 !important; border-color: var(--bib-gray4); }
+}
+</style>

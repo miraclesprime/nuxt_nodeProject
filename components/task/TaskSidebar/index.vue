@@ -85,7 +85,9 @@
         <div class="task-info pt-05" id='sidebar-inner-wrap'>
           <div class="row" id='sidebar-row-1'>
             <div class="col-4" id='sidebar-col-1'>
-              <bib-input type="select" :options="selectItems" placeholder="Please select..." label="Assignee *"></bib-input>
+              <!-- <label class="text-gray5">Assignee</label> -->
+              <!-- <bib-select-org :optionsOrg="assignee" @item-event="handleSelectOwner" class="mx-auto my-05" ></bib-select-org> -->
+              <bib-input type="select" :options="orgUsers" v-model="form.userId" placeholder="Please select..." label="Assignee *" v-on:change.native="debounceUpdate()"></bib-input>
             </div>
             <div class="col-4" id='sidebar-col-2'>
               <bib-input type="text" label="Project" :value="project.title" disabled></bib-input>
@@ -177,6 +179,7 @@ export default {
       selectItems: [
         { label: 'Please Choose One', value: "orange" }
       ],
+      assignee: "",
       statusValues: STATUS,
       priorityValues: PRIORITY,
       department: DEPARTMENT,
@@ -186,11 +189,17 @@ export default {
 
   computed: {
     ...mapGetters({
+      companyUsers: "company/getCompanyMembers",
       tasks: "task/tasksForListView",
       project: "project/getSingleProject",
       sections: "section/getProjectSections",
       currentTask: 'task/getSelectedTask',
     }),
+    orgUsers(){
+      return this.companyUsers.map(u => {
+        return {label: u.firstName +' '+ u.lastName, value: u.id}
+      })
+    },
     sectionOpts() {
       let sec = [{ label: "Select section" }]
       this.sections.forEach((s) => {
@@ -232,7 +241,7 @@ export default {
           id: '',
           title: "",
           dueDate: "",
-
+          userId: "",
           sectionId: '',
           projectId: this.project.id,
           statusId: 1,
