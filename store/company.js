@@ -36,13 +36,13 @@ export const mutations = {
 export const actions = {
   async fetchCompanies(ctx) {
     const res = await this.$axios.$get('/company', {
-      headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
+      headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` }
     });
     ctx.commit('fetchCompanies', res.data);
   },
   async fetchCompanyMembers(ctx, companyId) {
     const res = await this.$axios.$get("/company/"+ companyId +"/members/", {
-      headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
+      headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` }
     })
     if (res.statusCode == 200) {
       // console.log(res.data)
@@ -54,7 +54,7 @@ export const actions = {
   },
   /*async fetchSingleCompany(ctx, payload) {
     const res = await this.$axios.$get("/company/" + payload, {
-      headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
+      headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` }
     })
     if (res.statusCode == 200) {
       ctx.commit("fetchSingleCompany", res.data)

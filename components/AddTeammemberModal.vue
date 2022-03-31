@@ -68,14 +68,11 @@ export default {
       return arr
     }*/
   },
-  mounted() {
+  /*mounted() {
     // console.log(this.user)
-    if (this.user) {
-      // this.assignee = JSON.parse(JSON.stringify(this.user))
-      this.$store.dispatch("company/fetchCompanyMembers", this.user.subb)
-      
-    }
-  },
+    let user = JSON.parse(localStorage.getItem("user"))
+    this.$store.dispatch("company/fetchCompanyMembers", user.subb)
+  },*/
   methods: {
 
     teamInputChange() {
@@ -126,7 +123,7 @@ export default {
         this.loading = false
         return false
       } else {
-        this.$store.dispatch('project/addMember', {projectId: this.project.id, team: this.team}).then(() => {
+        this.$store.dispatch('project/addMember', { projectId: this.project.id, team: this.team }).then(() => {
           this.$nuxt.$emit('update-key', 1)
           this.showTeamCreateModal = false
           this.loading = false;
@@ -136,7 +133,7 @@ export default {
           this.showTeamCreateModal = false
           this.team = []
           console.log(err)
-          
+
         })
       }
 

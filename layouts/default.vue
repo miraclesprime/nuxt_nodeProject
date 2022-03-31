@@ -37,7 +37,7 @@
       <template #navigation>
         <div v-show="!collapseNavigation">
           <bib-button label="Create" variant="success" size="lg" pill class="w-75"></bib-button>
-          <bib-button dropdown="" label="" class="w-75" style="transform: translateY(-28px); z-index:9;" >
+          <bib-button dropdown="" label="" class="w-75" style="transform: translateY(-28px); z-index:9;">
             <template v-slot:menu>
               <ul>
                 <li v-for="item in appHeaderActions.button.items" :key="item.label" class="d-flex align-center" @click="createAction(item)">
@@ -160,10 +160,10 @@ export default {
     this.$root.$on("open-sidebar", (flag) => {
       this.openSidebar = flag;
     });
-    this.$root.$on("create-project-modal", ()=>{
+    this.$root.$on("create-project-modal", () => {
       this.$refs.projectModals.showCreateProjectModal = true;
     })
-    this.$root.$on("add-teammember-modal", ()=>{
+    this.$root.$on("add-teammember-modal", () => {
       this.$refs.teammemberModal.showTeamCreateModal = true
     })
   },
@@ -172,10 +172,10 @@ export default {
 
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY0Njk3MjYzNzcxNSwiZXhwIjoxNjU0NzQ4NjM3NzE1LCJqdGkiOiIyMDFjZGExYy02MDVjLTQ4ZDMtODhiMi1lODhjMDFhZGQ3YWUifQ.aw6BfQV6G5iDlWXNvMiV9AgxaMGjPVyF2LRgteMo5OU"
 
-      let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0cTJWb2xlalJlak5tR1FCIiwic3ViZSI6Imh0YW5nQGJpenRyZWUuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiQURNSU4iLCJzdWJjIjoiQ2FuYWRhIiwiZW52IjoiZGV2IiwiaWF0IjoxNjQ4NTUwMTI1ODY0LCJleHAiOjE2NTYzMjYxMjU4NjQsImp0aSI6ImM1MDYyM2I4LTM3NGMtNDhjMi04MzNiLTJmZjk3ZTA2MGIxZSJ9.sVGhB1aKeLurq_S1t1aWT86TDi-4fXhqBic90i3xTVA"
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0cTJWb2xlalJlak5tR1FCIiwic3ViZSI6Imh0YW5nQGJpenRyZWUuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiQURNSU4iLCJzdWJjIjoiQ2FuYWRhIiwiZW52IjoiZGV2IiwiaWF0IjoxNjQ4NTUwMTI1ODY0LCJleHAiOjE2NTYzMjYxMjU4NjQsImp0aSI6ImM1MDYyM2I4LTM3NGMtNDhjMi04MzNiLTJmZjk3ZTA2MGIxZSJ9.sVGhB1aKeLurq_S1t1aWT86TDi-4fXhqBic90i3xTVA"
 
-      this.$cookies.set('b_ssojwt', cookie);
-      this.$store.dispatch('token/setToken', cookie);
+      /*this.$cookies.set('b_ssojwt', cookie);
+      this.$store.dispatch('token/setToken', cookie);*/
 
       if (this.$cookies.get('b_ssojwt')) {
         let jwt = this.$cookies.get('b_ssojwt');
@@ -192,11 +192,11 @@ export default {
         localStorage.setItem('user', JSON.stringify(user))
         this.$store.dispatch('user/setUser', user)
 
-      this.$axios.get(`${process.env.USER_API_URL}/${user.sub}`, {
-        headers: {
-          'Authorization': `Bearer ${jwt}`
-        }
-      }).then((res) => {
+        this.$axios.get(`${process.env.USER_API_URL}/${user.sub}`, {
+          headers: {
+            'Authorization': `Bearer ${jwt}`
+          }
+        }).then((res) => {
           let firstName = res.data[0].FirstName;
           let lastName = res.data[0].LastName;
 
@@ -214,12 +214,14 @@ export default {
             console.log('there was some issue!!!')
           })
 
-      }).catch((err) => {
-        console.log(err);
-      })
+        }).catch((err) => {
+          console.log(err);
+        })
 
         this.$store.dispatch('token/setToken', jwt);
         localStorage.setItem('accessToken', jwt);
+
+        this.$store.dispatch("company/fetchCompanyMembers", user.subb)
 
       } else {
         window.location.href = process.env.AUTH_REDIRECT_URL + process.env.VUE_APP_URL;
