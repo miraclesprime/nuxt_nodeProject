@@ -204,10 +204,11 @@ export const PROJECT_SORT = [
 ]
 
 export const PROJECT_TEAM_FIELDS = [
+  { label: '#', key: ''},
   { label: 'Name', key: 'name' },
-  { label: 'Location', key: 'location' },
-  { label: 'Position', key: 'position' },
-  { label: 'Added/Modified', key: 'createdAt' } 
+  // { label: 'Location', key: 'location' },
+  // { label: 'Position', key: 'position' },
+  // { label: 'Added/Modified', key: 'createdAt' } 
 ]
 
 export const TASK_SORT = [

@@ -2,6 +2,7 @@ export const state = () => ({
   projects: [],
   selectedProject: {},
   favProjects: [],
+  projectMembers: []
 });
 
 export const getters = {
@@ -14,6 +15,10 @@ export const getters = {
   // get single project detail
   getSingleProject(state) {
     return state.selectedProject;
+  },
+
+  getProjectMembers(state) {
+    return state.projectMembers;
   },
 
   // get favorite projects
@@ -45,6 +50,14 @@ export const mutations = {
   },
   SETFAVPROJECTS(state, payload) {
     state.favProjects = payload
+  },
+
+  fetchTeamMember(state, payload) {
+    state.projectMembers = payload;
+  },
+
+  addMember(state, payload) {
+    state.projectMembers.push(...payload)
   },
 
   sortProjects(state, payload) {
@@ -276,6 +289,51 @@ export const actions = {
     } catch (e) {
       console.log(e);
     }
+  },
+
+  async fetchTeamMember(ctx, payload) {
+    
+    await this.$axios.get(`/project/${payload.projectId}/members`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      })
+      .then((res) => {
+        let team = res.data.data.members;
+        let data = team.map((el) => {
+          return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName };
+        });
+        ctx.commit('fetchTeamMember', data)
+      })
+      .catch((err) => {
+        console.log("Error!!");
+      });
+  },
+
+  async addMember(ctx, payload) {
+    
+    let data;
+    data = payload.team.filter((el1) => {
+      if(ctx.getters.getProjectMembers.some((el2) => el2.id != el1.id )) {
+        return el1;
+      }
+    })
+
+    console.log(data)
+
+
+    await this.$axios.post("/project/add-member",  {projectId: payload.projectId, team: data}, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+    }).then((res) => {
+      let team = res.data.data.members;
+      let data = team.map((el) => {
+        return { name: el.user.firstName + " " + el.user.lastName };
+      });
+      ctx.commit('addMember', data);
+    }).catch((err) => {
+      console.log('Error!!')
+    })
+
   },
 
   sortProjects(ctx, payload) {
