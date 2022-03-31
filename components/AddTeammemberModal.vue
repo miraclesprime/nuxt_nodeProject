@@ -24,7 +24,7 @@
       </template>
       <template v-slot:footer>
         <div class=" d-flex justify-end" id="create-team-model-footer">
-          <bib-button @click.native="createProject" variant="success" size="lg" id="create-team-btn" pill label="Done"></bib-button>
+          <bib-button @click.native="addTeamMember" variant="success" size="lg" id="create-team-btn" pill label="Done"></bib-button>
         </div>
       </template>
     </bib-modal-wrapper>
@@ -73,9 +73,11 @@ export default {
     if (this.user) {
       // this.assignee = JSON.parse(JSON.stringify(this.user))
       this.$store.dispatch("company/fetchCompanyMembers", this.user.subb)
+      
     }
   },
   methods: {
+
     teamInputChange() {
       console.log('team input change')
     },
@@ -117,27 +119,25 @@ export default {
       }
       this.team.push(m[0])
     },*/
-    createProject() {
+    addTeamMember() {
       this.loading = true
-      console.log(this.project, this.task, this.team)
-
-      /*if (this.project.title && ownerId) {
-        this.$store.dispatch('project/createProject', { userId: ownerId, title: this.project.title }).then(()=>{
-          this.loading = false
-          this.showTeamCreateModal = false
-        })
-      } else {
-        this.loading = false
-        this.error = true
-      }*/
 
       if (this.team.length == 0) {
         this.loading = false
         return false
       } else {
-        setTimeout(() => {
+        this.$store.dispatch('project/addMember', {projectId: this.project.id, team: this.team}).then(() => {
+          this.$nuxt.$emit('update-key', 1)
           this.showTeamCreateModal = false
-        }, 2500)
+          this.loading = false;
+          this.team = []
+        }).catch((err) => {
+          this.loading = false;
+          this.showTeamCreateModal = false
+          this.team = []
+          console.log(err)
+          
+        })
       }
 
     },
