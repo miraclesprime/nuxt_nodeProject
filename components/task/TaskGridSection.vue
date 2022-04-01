@@ -1,6 +1,6 @@
 <template>
   <div class="task-grid-section" id="task-grid-section-wrapper">
-    <div class="w-100 d-flex justify-between" id="tgs-inner-wrap" style="margin-bottom: 10px">
+    <div v-if="label" class="w-100 d-flex justify-between" id="tgs-inner-wrap" style="margin-bottom: 10px">
       <div class="title text-gray" id="tgs-label">{{ label }}</div>
       <div class="d-flex section-options" id="tgs-section-options">
         <div class="mr-1" id="tgs-add-icon">
