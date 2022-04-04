@@ -195,14 +195,17 @@ export default {
       sections: "section/getProjectSections",
       currentTask: 'task/getSelectedTask',
     }),
-    orgUsers(){
+    orgUsers() {
       return this.companyUsers.map(u => {
-        return {label: u.firstName +' '+ u.lastName, value: u.id}
+        return { label: u.firstName + ' ' + u.lastName, value: u.id }
       })
     },
     sectionOpts() {
       let sec = [{ label: "Select section" }]
       this.sections.forEach((s) => {
+        if (s.title.includes("_section")) {
+          return false
+        }
         sec.push({ label: s.title, value: s.id })
       });
       return sec
@@ -242,7 +245,7 @@ export default {
           title: "",
           dueDate: "",
           userId: "",
-          sectionId: '',
+          sectionId: "_section" + this.project.id,
           projectId: this.project.id,
           statusId: 1,
           priorityId: 2,
@@ -276,7 +279,7 @@ export default {
       if (this.error == "valid") {
         this.loading = true
         this.$store.dispatch("task/createTask", {
-          "sectionId": this.form.sectionId,
+          "sectionId": this.form.sectionId || "_section" + this.form.projectId,
           "projectId": this.form.projectId,
           "title": this.form.title,
           "description": this.form.description,
@@ -285,6 +288,7 @@ export default {
           "budget": 0,
           "statusId": this.form.statusId,
         }).then(() => {
+          this.$emit("update-key", 1)
           this.loading = false
           this.hideSidebar()
         }).catch(e => console.warn(e)).then(() => {

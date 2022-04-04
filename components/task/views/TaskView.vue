@@ -4,7 +4,8 @@
     <loading :loading="loading"></loading>
     <section v-show="newSection" id="tv-new-section-input-container">
       <div id="tv-new-section-input-wrapper" class="d-flex align-center p-05 bg-light">
-        <input id="tv-new-section-input" type="text" class="new-section-input" ref="newsectioninput" v-model="newSectionName" v-on:blur="clickOutside" v-on:keyup.enter="createSectionOnEnter" placeholder="Enter section name">
+        <input id="tv-new-section-input" type="text" class="new-section-input" ref="newsectioninput" v-model.trim="newSectionName" v-on:blur="clickOutside" v-on:keyup.enter="createSectionOnEnter" placeholder="Enter section name">
+        <small v-if="sectionError" class="text-danger ml-05">invalid input</small>
         <div v-show="sectionLoading" class="d-flex align-center">
           <bib-spinner :scale="2"></bib-spinner> <span class="text-secondary">Creating section ...</span>
         </div>
@@ -13,12 +14,7 @@
       <!-- <bib-input type="text" ref="newsectionbibinput" v-model="newSectionName" name="sectionname" size="sm" placeholder="Enter section name"></bib-input> -->
     </section>
     <template v-if="gridType === 'list'">
-      <bib-table v-for="(item, index) in sections" :key="`tasklist-${key}${item.id}${sortName ? sortName : ''}`" :fields="tableFields" :sections="taskWithSection(item.id)" :headless="index == 0 ? false : true" :collapseObj="{
-            collapsed: false,
-            label: `${item.title}`,
-            variant: 'black',
-          }" hide-no-column class="border-gray4 bg-white"
-          @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
+      <bib-table v-for="(item, index) in sections" :key="`tasklist-${key}${item.id}${sortName ? sortName : ''}`" :fields="tableFields" :sections="taskWithSection(item.id)" :headless="index > 0" :collapseObj="showSectionTitle(item)" hide-no-column class="border-gray4 bg-white" @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
         <template #cell(title)="data">
           <div class="d-flex gap-05 align-center">
             <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data)" class="cursor-pointer" @click="handleTaskTable_status(data)"></bib-icon>
@@ -60,7 +56,7 @@
     </template>
     <template v-else>
       <div class="d-flex of-scroll-x" id='tv-grid-wrap'>
-        <task-grid-section v-for="item in sections" :key="`grid-${key}${item.title}${item.id}`" :headless="true" :label="item.title" :taskFields="tableFields" :taskSections="taskWithSection(item.id)" :open="true" groupName="1" v-on:update-key="updateKey" />
+        <task-grid-section v-for="item in sections" :key="`grid-${key}${item.title}${item.id}`" :headless="true" :label="showSectionTitleBoard(item)" :taskFields="tableFields" :taskSections="taskWithSection(item.id)" :open="true" groupName="1" v-on:update-key="updateKey" />
       </div>
     </template>
     <span id="projects-0" v-show="sections.length == 0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
@@ -87,6 +83,7 @@ export default {
       flag: false,
       newSection: false,
       newSectionName: "",
+      // sectionError: false,
       sectionLoading: false,
       sortName: "",
       // loading: true,
@@ -102,6 +99,13 @@ export default {
       user: "user/getUser",
       project: "project/getSingleProject"
     }),
+    sectionError() {
+      if (this.newSectionName.indexOf("_") == 0) {
+        return true
+      } else {
+        return false
+      }
+    },
     loading() {
       if (this.sections != null) {
         return false
@@ -115,6 +119,24 @@ export default {
     updateKey($event) {
       console.log($event)
       this.key += $event
+    },
+    showSectionTitle(section) {
+      if (section.title.includes("_section")) {
+        return false
+      } else {
+        return {
+          collapsed: false,
+          label: section.title,
+          variant: 'black',
+        }
+      }
+    },
+    showSectionTitleBoard(section){
+      if (section.title.includes("_section")) {
+        return ''
+      } else {
+        return section.title
+      }
     },
     taskWithSection(sectionId) {
       var arr = []
@@ -130,7 +152,7 @@ export default {
         arr.sort((a, b) => a.title.localeCompare(b.title));
       }
 
-      if(this.sortName == 'name' && this.orderBy == 'desc') {
+      if (this.sortName == 'name' && this.orderBy == 'desc') {
         arr.sort((a, b) => b.title.localeCompare(a.title));
       }
 
@@ -207,13 +229,20 @@ export default {
       console.log(this.$refs.newsectioninput.clientWidth, this.$refs.newsectioninput.clientHeight)
     },*/
     clickOutside() {
-      this.newSectionName = ""
-      this.newSection = false
+      if (this.newSectionName) {
+        this.createSectionOnEnter
+      } else {
+        this.newSectionName = ""
+        this.newSection = false
+      }
     },
     async createSectionOnEnter($event) {
       // console.log("blur ", $event.target)
       let newvalue = this.newSectionName;
-      if (newvalue.trim()) {
+      if (newvalue) {
+        if (this.sectionError) {
+          return false
+        }
         this.processing = true
         this.$refs.newsectioninput.setAttribute("disabled", true)
         this.sectionLoading = true
@@ -315,8 +344,8 @@ export default {
     },
 
     sortTitle() {
-      
-      if(this.orderBy == 'asc') {
+
+      if (this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
         this.orderBy = 'asc'
@@ -327,7 +356,7 @@ export default {
 
     sortOwner() {
 
-      if(this.orderBy == 'asc') {
+      if (this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
         this.orderBy = 'asc'
@@ -338,7 +367,7 @@ export default {
 
     sortByStatus() {
 
-      if(this.orderBy == 'asc') {
+      if (this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
         this.orderBy = 'asc'
@@ -349,7 +378,7 @@ export default {
 
     sortByStartDate() {
 
-      if(this.orderBy == 'asc') {
+      if (this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
         this.orderBy = 'asc'
@@ -360,7 +389,7 @@ export default {
 
     sortByDueDate() {
 
-      if(this.orderBy == 'asc') {
+      if (this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
         this.orderBy = 'asc'
@@ -371,7 +400,7 @@ export default {
 
     sortByPriority() {
 
-      if(this.orderBy == 'asc') {
+      if (this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
         this.orderBy = 'asc'
@@ -381,14 +410,14 @@ export default {
     },
 
     checkActive() {
-      for(let i=0; i<this.tableFields.length; i++) {
-          if(this.tableFields[i].header_icon) {
-            this.tableFields[i].header_icon.isActive = false
-          }
+      for (let i = 0; i < this.tableFields.length; i++) {
+        if (this.tableFields[i].header_icon) {
+          this.tableFields[i].header_icon.isActive = false
+        }
 
-          if(this.tableFields[i].header_icon && this.tableFields[i].key == this.sortName) {
-            this.tableFields[i].header_icon.isActive = true
-          } 
+        if (this.tableFields[i].header_icon && this.tableFields[i].key == this.sortName) {
+          this.tableFields[i].header_icon.isActive = true
+        }
       }
     },
   },

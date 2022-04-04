@@ -224,3 +224,7 @@ ul {
 .page-leave-to {
   opacity: 0;
 }*/
+
+.text-truncate {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
