@@ -12,6 +12,11 @@
             </span>
           </div>
         </template>
+        <template #cell_action="data">
+          <div class="cursor-pointer shape-circle" v-on:click="deleteMember(data.value)">
+            <bib-icon icon="trash" variant="danger"></bib-icon>
+          </div>
+        </template>
       </bib-table>
     </template>
     <template v-if="norecord">
@@ -66,6 +71,23 @@ export default {
         this.key += $event
       })
     })
+  },
+  methods: {
+    async deleteMember(member) {
+      // console.log(member)
+      this.loading = true
+      let confirmDelete = window.confirm("Are you sure want to delete " + member.name + "!")
+      if (confirmDelete) {
+        await this.$store.dispatch("project/deleteMember", { projectId: this.$route.params.id, memberId: member.id })
+          .then((res) => {
+            // console.log(res)
+            this.key += 1
+            alert(res)
+          })
+          .catch(e => console.log(e))
+        this.loading = false
+      }
+    },
   }
 };
 
