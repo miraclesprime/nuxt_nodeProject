@@ -69,7 +69,7 @@ export const mutations = {
       state.projects = arr;
     }
 
-    if(payload.key == 'name' && payload.order == 'desc') {
+    if (payload.key == 'name' && payload.order == 'desc') {
       let arr = JSON.parse(JSON.stringify(state.projects));
       arr.sort((a, b) => b.title.localeCompare(a.title));
       state.projects = arr;
@@ -292,7 +292,7 @@ export const actions = {
   },
 
   async fetchTeamMember(ctx, payload) {
-    
+
     await this.$axios.get(`/project/${payload.projectId}/members`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -311,13 +311,13 @@ export const actions = {
   },
 
   async addMember(ctx, payload) {
-    
+
     let data;
-    if(ctx.getters.getProjectMembers.length < 1) {
+    if (ctx.getters.getProjectMembers.length < 1) {
       data = payload.team;
     } else {
       data = payload.team.filter((el1) => {
-        if(ctx.getters.getProjectMembers.some((el2) => el2.id != el1.id )) {
+        if (ctx.getters.getProjectMembers.some((el2) => el2.id != el1.id)) {
           return el1;
         }
       })
@@ -325,7 +325,7 @@ export const actions = {
 
     // console.log(data)
 
-    await this.$axios.post("/project/add-member",  {projectId: payload.projectId, team: data}, {
+    await this.$axios.post("/project/add-member", { projectId: payload.projectId, team: data }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     }).then((res) => {
       let team = res.data.data.members;
@@ -342,5 +342,28 @@ export const actions = {
   sortProjects(ctx, payload) {
     ctx.commit('sortProjects', payload)
   },
+
+  async deleteMember(ctx, payload) {
+
+    try {
+      let m = await this.$axios.delete("/project/remove-member", {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+          "projectid": payload.projectId,
+          "memberid": payload.memberId
+        }
+      })
+      // console.log(m)
+      if (m.data.statusCode == 200) {
+        ctx.dispatch("fetchTeamMember", { projectId: payload.projectId })
+        return m.data.message
+      } else {
+        return m.data.message
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
 }
