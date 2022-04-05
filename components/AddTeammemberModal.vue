@@ -18,7 +18,8 @@
           <template v-for="t in team">
             <email-chip :email="t.email" :name="t.label" :text="t.email[0]" class="mt-05" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
           </template>
-          <small v-show="team.length == 0" class="text-danger">Select at least 1 team member</small>
+          <small v-show="team.length == 0" class="text-danger">Select at least 1 team member.</small>
+          <p v-if="message" v-text="message" class="font-sm mt-025 text-orange"></p>
         </div>
         <loading :loading="loading"></loading>
       </template>
@@ -44,6 +45,7 @@ export default {
       filterKey: "",
       error: false,
       loading: false,
+      message: "",
     };
   },
 
@@ -52,6 +54,7 @@ export default {
       user: "user/getUser",
       companyUsers: "company/getCompanyMembers",
       project: "project/getSingleProject",
+      projectMembers: "project/getProjectMembers",
       // teammate: 'user/getTeamMembers',
       task: "task/getSelectedTask",
     }),
@@ -62,11 +65,6 @@ export default {
         }
       })
     },
-    /*memberOptions(){
-      let arr = [{label:"Select member"}]
-      this.companyUsers.map(t=>arr.push({label:`${t.firstName} ${t.lastName}`, value:t.id, id: t.id}))
-      return arr
-    }*/
   },
   /*mounted() {
     // console.log(this.user)
@@ -84,12 +82,19 @@ export default {
     },
     teamItemClick(tm) {
       // console.log(tm)
-      let m = this.companyUsers.filter(t => t.id == tm.id)
-      // console.log(m[0])
-      if (this.team.some(el => el.id == m[0].id)) {
-        return false
+      let existing = this.projectMembers.filter(ex => ex.id == tm.id)
+      console.log(existing)
+      if (existing.length == 0) {
+        this.message = ""
+        let m = this.companyUsers.filter(t => t.id == tm.id)
+        // console.log(m[0])
+        if (this.team.some(el => el.id == m[0].id)) {
+          return false
+        }
+        this.team.push(m[0])
+      } else {
+        this.message = "User already exists"
       }
-      this.team.push(m[0])
     },
     // dropdownFooterAction(){},
     inviteViaEmail() {
