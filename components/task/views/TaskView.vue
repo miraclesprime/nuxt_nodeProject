@@ -55,9 +55,8 @@
       </div> -->
     </template>
     <template v-else>
-      <div class="d-flex of-scroll-x" id='tv-grid-wrap'>
-        <task-grid-section v-for="item in sections" :key="`grid-${key}${item.title}${item.id}`" :headless="true" :label="showSectionTitleBoard(item)" :taskFields="tableFields" :taskSections="taskWithSection(item.id)" :open="true" groupName="1" v-on:update-key="updateKey" />
-      </div>
+      <task-grid-section :sections="sections" :tasks="tasks" v-on:update-key="updateKey">
+      </task-grid-section>
     </template>
     <span id="projects-0" v-show="sections.length == 0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
       <bib-icon icon="warning"></bib-icon> No records found
@@ -66,6 +65,7 @@
   </div>
 </template>
 <script>
+import { Container, Draggable } from "vue-smooth-dnd";
 import { TASK_FIELDS } from "config/constants";
 import { mapGetters } from 'vuex';
 
@@ -122,7 +122,7 @@ export default {
     },
     showSectionTitle(section) {
       if (section.title.includes("_section")) {
-        return false
+        return null
       } else {
         return {
           collapsed: false,
@@ -131,7 +131,7 @@ export default {
         }
       }
     },
-    showSectionTitleBoard(section){
+    showSectionTitleBoard(section) {
       if (section.title.includes("_section")) {
         return ''
       } else {
