@@ -106,7 +106,7 @@ export default {
   data() {
     return {
       flag: false,
-      totalTasks: this.tasks.length || 0,
+      // totalTasks: this.tasks.length || 1,
       owner: {},
       filterKey: "",
       department: DEPARTMENT,
@@ -114,20 +114,20 @@ export default {
       priority: PRIORITY,
       activeProject: {},
       loading: false,
-      loading2: false,
+      // loading2: false,
       // time: null,
       project: {}
     };
   },
 
   mounted() {
-    this.loading2 = true
+    this.loading = true
     this.$axios.$get(`project/${this.$route.params.id}`, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     }).then((res) => {
       if (res) {
         this.project = res.data;
-        this.loading2 = false
+        this.loading = false
       }
     }).catch(err => {
       console.log("There was some issue in project API " + err);
@@ -160,7 +160,8 @@ export default {
       token: 'token/getToken',
       teammate: 'user/getTeamMembers',
       // project: 'project/getSingleProject'
-      companyUsers: "company/getCompanyMembers"
+      companyUsers: "company/getCompanyMembers",
+      totalTasks: "task/tasksForListView"
     }),
     assignee(){
       let items = this.companyUsers.map(u => {
@@ -170,20 +171,20 @@ export default {
     },
 
     taskOverdue() {
-      if (!this.totalTasks) {
+      if (this.totalTasks.length < 1) {
         return 0
       } else {
-        let over = this.tasks.filter(t =>
+        let over = this.totalTasks.filter(t =>
           new Date(t.dueDate) < new Date()
         )
         return Math.round(over.length)
       }
     },
     taskDuesoon() {
-      if (!this.totalTasks) {
+      if (this.totalTasks.length < 1) {
         return 0
       } else {
-        let due = this.tasks.filter(t => {
+        let due = this.totalTasks.filter(t => {
           let dd = new Date(t.dueDate).getDate();
           return (dd + 7) < new Date().getDate()
         })
@@ -191,27 +192,28 @@ export default {
       }
     },
     taskInprogress() {
-      if (!this.totalTasks) {
+      if (this.totalTasks.length < 1) {
         return 0
       } else {
-        let prog = this.tasks.filter(t => t.statusId == 2)
+        let prog = this.totalTasks.filter(t => t.statusId == 2)
         return Math.round(prog.length)
       }
     },
     taskComplete() {
-      if (!this.totalTasks) {
+      if (this.totalTasks.length < 1) {
         return 0
       } else {
-        let done = this.tasks.filter(t => t.statusId == 5)
+        let done = this.totalTasks.filter(t => t.statusId == 5)
         return Math.round(done.length)
       }
     },
     progress() {
-      if (!this.totalTasks) {
+      if (this.totalTasks.length < 1) {
         return 0
       } else {
-        let done = this.tasks.filter(t => t.statusId == 5)
-        return Math.round((done.length / this.totalTasks) * 100)
+        let done = this.totalTasks.filter(t => t.statusId == 5)
+        // console.log(done.length, this.totalTasks.length)
+        return Math.round((done.length / this.totalTasks.length) * 100)
       }
     },
     filterUser() {
