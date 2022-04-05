@@ -30,7 +30,7 @@
       </div> -->
       <div id="to-row2" class="row">
         <div id="to-row2-col1" class="col-8">
-          <bib-input type="text" label="Project name" placeholder="Project name" v-model="activeProject.title" v-on:keyup.native="debounceUpdate()"></bib-input>
+          <bib-input type="text" label="Project name" placeholder="Project name" v-model="activeProject.title" v-on:keyup.native="debounceUpdate()" disabled></bib-input>
         </div>
         <div id="to-row2-col2" class="col-4">
           <bib-input type="date" label="Due date" v-model="dateInput" v-on:change.native="debounceUpdate()"></bib-input>
@@ -38,7 +38,7 @@
       </div>
       <div id="to-row3" class="row">
         <div id="to-row3-col1" class="col-6">
-          <bib-input type="select" :options="filterUser" v-model="activeProject.userId" placeholder="Please select..." label="Assign a project lead" v-on:change.native="debounceUpdate()"></bib-input>
+          <bib-input type="select" :options="filterUser" v-model="activeProject.userId" placeholder="Please select..." label="Assign a project lead" v-on:change.native="debounceUpdate()" disabled></bib-input>
 
           <!-- <label class="text-gray6">Assign a project lead</label> -->
           <!-- <bib-button test_id="po-owner-dd1" dropdown1="add" label="Type name or email" v-model="owner" v-on:input-keydown="dropdownInputKeydown" :footer="{icon: 'add', label: 'Invite via email', event: 'footer-action'}" @footer-action="inviteViaEmail" class="mt-05 mb-05">
@@ -58,15 +58,15 @@
           
         </div>
         <div id="to-row3-col2" class="col-6">
-          <bib-input type="select" label="Department" :options="department" placeholder="Department"></bib-input>
+          <bib-input type="select" label="Department" :options="department" placeholder="Department" disabled></bib-input>
         </div>
       </div>
       <div id="to-row4" class="row">
         <div id="to-row4-col1" class="col-6">
-          <bib-input type="select" label="Priority" v-model.number="activeProject.priorityId" :options="priority" placeholder="Please select..." v-on:change.native="debounceUpdate()"></bib-input>
+          <bib-input type="select" label="Priority" v-model.number="activeProject.priorityId" :options="priority" placeholder="Please select..." v-on:change.native="debounceUpdate()" disabled></bib-input>
         </div>
         <div id="to-row4-col2" class="col-6">
-          <bib-input type="select" label="Status" v-model.number="activeProject.statusId" :options="status" placeholder="Please select..." v-on:change.native="debounceUpdate()"></bib-input>
+          <bib-input type="select" label="Status" v-model.number="activeProject.statusId" :options="status" placeholder="Please select..." v-on:change.native="debounceUpdate()" disabled></bib-input>
         </div>
       </div>
       <div id="to-row5" class="row">
