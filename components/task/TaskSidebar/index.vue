@@ -4,7 +4,7 @@
       <!-- <div class="side-panel__header__file__info" id='ts-header-file-info'>
         <div id='ts-secondary-text' class="p-05 of-hidden text-of-elipsis h-fit text-wrap text-secondary"></div>
       </div> -->
-      <div class="d-flex justify-between side-panel__header__actions mb-1" id='ts-side-panel'>
+      <div class="d-flex justify-between side-panel__header__actions mb-05" id='ts-side-panel'>
         <div class="d-flex align-center gap-05" id="ts-icon-close-Wrapper">
           <div id='ts-icon-7' class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" @click="hideSidebar()">
             <bib-icon icon="page-last" class="m-auto"></bib-icon>
@@ -63,7 +63,7 @@
           </div>
         </div>
       </div>
-      <div class="row position-relative" id='ts-row'>
+      <div class="row position-relative mx-0 mb-1" id='ts-row'>
         <div class="col-8" id='ts-col-1'>
           <bib-input type="text" v-model="form.title" placeholder="Enter task name..." label="Task name" v-on:keyup.native="debounceUpdate()"></bib-input>
           <small v-show="error == 'invalid'" class="text-danger font-xs d-block" style="margin-top: -0.25rem;">Task name is required</small>
@@ -82,8 +82,8 @@
     </div>
     <div class="of-scroll-y position-relative" id="ts-of-scroll-y">
       <template v-if="activeSidebarTab == 'Overview'">
-        <div class="task-info pt-05" id='sidebar-inner-wrap'>
-          <div class="row" id='sidebar-row-1'>
+        <div class="task-info pt-1" id='sidebar-inner-wrap'>
+          <div class="row mx-0" id='sidebar-row-1'>
             <div class="col-4" id='sidebar-col-1'>
               <!-- <label class="text-gray5">Assignee</label> -->
               <!-- <bib-select-org :optionsOrg="assignee" @item-event="handleSelectOwner" class="mx-auto my-05" ></bib-select-org> -->
@@ -96,7 +96,7 @@
               <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="form.sectionId" placeholder="Please select ..." v-on:change.native="debounceUpdate()"></bib-input>
             </div>
           </div>
-          <div class="row" id='sidebar-row-2'>
+          <div class="row mx-0" id='sidebar-row-2'>
             <div class="col-4" id='sidebar-col-3'>
               <bib-input type="select" label="Department" :options="department" placeholder="Please select..."></bib-input>
             </div>
@@ -107,12 +107,12 @@
               <bib-input type="select" label="Status" v-model.number="form.statusId" :options="statusValues" placeholder="Please select..." v-on:change.native="debounceUpdate()"></bib-input>
             </div>
           </div>
-          <div class="row" id='sidebar-row-3'>
+          <div class="row mx-0" id='sidebar-row-3'>
             <div class="col-12" id='sidebar-col-6'>
               <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter task description..." label="Description" v-on:keyup.native="debounceUpdate()"></bib-input>
             </div>
           </div>
-          <div class="p-1" id="sidebar-btn-wrapper">
+          <div class="py-05 px-105" id="sidebar-btn-wrapper">
             <bib-button v-show="!currentTask.id" label="Create Task" variant="primary" v-on:click="createTask"></bib-button>
           </div>
           <loading :loading="loading"></loading>
