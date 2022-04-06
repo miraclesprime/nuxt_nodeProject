@@ -85,7 +85,7 @@ export const actions = {
   // create Task
   async createTask(ctx, payload) {
     const res = await this.$axios.$post('/task', payload, {
-      headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
     ctx.commit('createTask', res.data);
     ctx.commit("section/addTaskToSection", res.data, { root: true });
@@ -101,7 +101,7 @@ export const actions = {
         }
       }, 
       {
-        headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
     }
 
@@ -113,7 +113,7 @@ export const actions = {
         }
       }, 
       {
-        headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
     }
     

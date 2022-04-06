@@ -278,7 +278,7 @@ export const actions = {
     try {
       const fav = await this.$axios.$get("/project/user/favorites", {
         headers: {
-          "Authorization": `Bearer ${ctx.rootState.token.token}`
+          "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
         }
       })
       if (fav.statusCode == 200) {

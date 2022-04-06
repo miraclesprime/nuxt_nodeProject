@@ -36,7 +36,7 @@ export const state = () => ({
     async setTeamMembers(ctx) {
       const members = await this.$axios.$get(`${process.env.ORG_API_URL}/${ctx.rootState.user.user.subb}/users`, {
         headers: {
-          "Authorization": `Bearer ${ctx.rootState.token.token}`
+          "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
         }
       })
       ctx.commit("setTeamMembers", members)
