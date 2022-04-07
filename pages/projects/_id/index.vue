@@ -14,7 +14,7 @@
         <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark">
           <bib-icon icon="bookmark" class="m-auto"></bib-icon>
         </div>
-        <div id="project-id-horizontal-dots-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center">
+        <div id="project-id-horizontal-dots-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center">
           <bib-button pop="horizontal-dots" id="project-id-horizontal-dots">
             <template v-slot:menu>
               <div class="list" id="project-id-list">
@@ -80,33 +80,6 @@ export default {
       projectTasks: "task/tasksForListView",
       taskFields: "task/tableFields",
     }),
-    /*taskWithSection() {
-      var s = []
-      for (var i = 0; i < this.projectSections.length; ++i) {
-        var arr = []; // Array to contain match elements
-        s.push(this.projectSections[i])
-        for (var j = 0; j < this.projectTasks.length; ++j) {
-          if (this.projectTasks[j].sectionId == this.projectSections[i].id) { 
-            arr.push(this.projectTasks[j]);
-          }
-        }
-        s[i].tasks = arr
-      }
-
-      return s;
-    },*/
-    /*taskNoSection() {
-      var arr = []; // Array to contain match elements
-      for (var i = 0; i < this.projectTasks.length; ++i) {
-        for (var j = 0; j < this.projectSections.length; ++j) {
-          if (this.projectTasks[i].sectionId != this.projectSections[j].id) { // If element is in both the arrays
-            arr.push(this.projectTasks[i]); // Push to arr array
-          }
-        }
-      }
-
-      return arr; // Return the arr elements
-    }*/
   },
 
   created() {
@@ -130,15 +103,6 @@ export default {
         console.log("There was some issue in project API " + err);
       })
 
-      /*this.$axios.$get(`section/project/${this.$route.params.id}`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-      }).then((res) => {
-        if (res) {
-          this.$store.dispatch("section/setSections", res.data)
-        }
-      }).catch(err => {
-        console.log("There was some issue in sections API " + err)
-      })*/
     }
 
   },

@@ -30,15 +30,15 @@
           <!-- <div class="p-025 cursor-pointer" id='ts-icon-6'>
             <bib-icon icon="horizontal-dots" variant="gray5" :scale="1.25"></bib-icon>
           </div> -->
-          <div id="ts-list-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center">
+          <div id="ts-list-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center">
             <bib-button pop="horizontal-dots">
               <template v-slot:menu>
                 <div class="list" id="ts-list">
                   <span class="list__item" id="ts-list-item-1">
                     <bib-icon icon="check-circle" variant="gray5" class="mr-075"></bib-icon> Mark Completed
                   </span>
-                  <span class="list__item" id="ts-list-item-2">
-                    <bib-icon icon="heart-like" variant="gray5" class="mr-075"></bib-icon> Add to favorites
+                  <span class="list__item" id="ts-list-item-2" @click="setFavorite">
+                    <bib-icon :icon="isFavorite.icon" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
                   </span>
                   <span class="list__item" id="ts-list-item-3">
                     <bib-icon icon="upload" variant="gray5" class="mr-075"></bib-icon> Attach file...
@@ -85,10 +85,8 @@
         <div class="task-info pt-1" id='sidebar-inner-wrap'>
           <div class="row mx-0" id='sidebar-row-1'>
             <div class="col-4" id='sidebar-col-1'>
-
               <!-- <label class="text-gray5 mb-025">Assignee</label> -->
               <!-- <bib-select :options="orgUsers" :value="form.userId" ></bib-select> -->
-
               <bib-input type="select" :options="orgUsers" v-model="form.userId" placeholder="Please select..." label="Assignee *" v-on:change.native="debounceUpdate()"></bib-input>
             </div>
             <div class="col-4" id='sidebar-col-2'>
@@ -193,10 +191,11 @@ export default {
       project: "project/getSingleProject",
       sections: "section/getProjectSections",
       currentTask: 'task/getSelectedTask',
+      favTasks: "task/getFavTasks",
     }),
     orgUsers() {
       return this.companyUsers.map(u => {
-        return { label: u.firstName + ' ' + u.lastName, value: u.id, img:"https://i.pravatar.cc/150?u="+u.id }
+        return { label: u.firstName + ' ' + u.lastName, value: u.id, img: "https://i.pravatar.cc/150?u=" + u.id }
       })
     },
     sectionOpts() {
@@ -223,6 +222,14 @@ export default {
       },
       set: function(newValue) {
         this.form.dueDate = new Date(newValue)
+      }
+    },
+    isFavorite() {
+      let fav = this.favTasks.some(t => t.task.id == this.currentTask.id)
+      if (fav) {
+        return { icon: "heart-like-solid", variant: "orange", text: "Remove favorite", status: true }
+      } else {
+        return { icon: "heart-like", variant: "gray5", text: "Add to favorites", status: false }
       }
     },
     error() {
@@ -253,7 +260,8 @@ export default {
 
         }
       }
-    }
+    },
+
   },
 
   methods: {
@@ -312,7 +320,19 @@ export default {
         console.log('Debounce clicked!')
         this.updateTask()
       }
-    }, 1500)
+    }, 1500),
+    setFavorite() {
+      console.info(this.isFavorite.status)
+      if (this.isFavorite.status) {
+        this.$store.dispatch("task/removeFromFavorite", { id: this.currentTask.id })
+          .then(msg => alert(msg))
+          .catch(e => console.log(e))
+      } else {
+        this.$store.dispatch("task/addToFavorite", { id: this.currentTask.id })
+          .then(msg => alert(msg))
+          .catch(e => console.log(e))
+      }
+    },
   },
 };
 

@@ -210,6 +210,7 @@ export default {
             console.log('user created!!')
             this.$store.dispatch("project/setFavProjects")
             this.$store.dispatch("user/setTeamMembers")
+            this.$store.dispatch("task/getFavTasks")
           }).catch((err) => {
             console.log('there was some issue!!!')
           })
@@ -232,7 +233,7 @@ export default {
   computed: {
     ...mapGetters({
       favProjects: 'project/getFavProjects',
-      teammate: 'user/getTeamMembers'
+      teammate: 'user/getTeamMembers',
     })
   },
 
