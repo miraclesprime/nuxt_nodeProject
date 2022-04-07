@@ -85,8 +85,10 @@
         <div class="task-info pt-1" id='sidebar-inner-wrap'>
           <div class="row mx-0" id='sidebar-row-1'>
             <div class="col-4" id='sidebar-col-1'>
-              <!-- <label class="text-gray5">Assignee</label> -->
-              <!-- <bib-select-org :optionsOrg="assignee" @item-event="handleSelectOwner" class="mx-auto my-05" ></bib-select-org> -->
+
+              <!-- <label class="text-gray5 mb-025">Assignee</label> -->
+              <!-- <bib-select :options="orgUsers" :value="form.userId" ></bib-select> -->
+
               <bib-input type="select" :options="orgUsers" v-model="form.userId" placeholder="Please select..." label="Assignee *" v-on:change.native="debounceUpdate()"></bib-input>
             </div>
             <div class="col-4" id='sidebar-col-2'>
@@ -176,9 +178,6 @@ export default {
           label: "Due Date",
         },
       ],
-      selectItems: [
-        { label: 'Please Choose One', value: "orange" }
-      ],
       assignee: "",
       statusValues: STATUS,
       priorityValues: PRIORITY,
@@ -197,7 +196,7 @@ export default {
     }),
     orgUsers() {
       return this.companyUsers.map(u => {
-        return { label: u.firstName + ' ' + u.lastName, value: u.id }
+        return { label: u.firstName + ' ' + u.lastName, value: u.id, img:"https://i.pravatar.cc/150?u="+u.id }
       })
     },
     sectionOpts() {

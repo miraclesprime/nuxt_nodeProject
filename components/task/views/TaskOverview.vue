@@ -1,5 +1,5 @@
 <template>
-<no-ssr>
+<client-only>
   <div id="task-overview-wrapper" class="row">
     <div id="task-overview-inner" class="col-6 my-2 mx-auto position-relative">
       <div id="to-row1" class="row my-1">
@@ -91,7 +91,7 @@
       <loading :loading="loading"></loading>
     </div>
   </div>
-  </no-ssr>
+  </client-only>
 </template>
 
 <script>
