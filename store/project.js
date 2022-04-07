@@ -364,6 +364,52 @@ export const actions = {
     } catch (e) {
       console.log(e);
     }
+  },
+
+
+  async addToFavorite(ctx, payload) {
+    
+    try {
+
+      let fav = await this.$axios.post(`/project/${payload.id}/favorite`, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+        }
+      })
+
+      if(fav.data.statusCode == 200) {
+        console.log('Added To Favorites')
+      } else {
+        console.log(fav.data.message)
+      }
+
+    } catch(e) {
+      console.log(e);
+    }
+  },
+
+
+  async removeFromFavorite(ctx, payload) {
+    
+    try {
+
+      let fav = await this.$axios.delete(`/project/${payload.id}/favorite`, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+        }
+      })
+
+      if(fav.data.statusCode == 200) {
+        console.log('Removed From Favorites')
+      } else {
+        console.log(fav.data.message)
+      }
+
+    } catch(e) {
+      console.log(e);
+    }
   }
 
 }
