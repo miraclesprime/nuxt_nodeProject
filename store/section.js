@@ -55,7 +55,7 @@ export const mutations = {
 export const actions = {
   async fetchSections(ctx) {
     const res = await this.$axios.$get('/section', {
-      headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
 
     let d = res.data;
@@ -89,7 +89,7 @@ export const actions = {
 
   async createSection(ctx, payload) {
     const res = await this.$axios.$post('/section', payload, {
-      headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
     ctx.commit('createSection', res.data)
   },

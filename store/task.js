@@ -3,17 +3,7 @@
 export const state = () => ({
   tasks: [],
   selectedTask: {},
-  taskInfo: {
-    section: "",
-    title: "",
-    priority: "",
-    progress: "",
-    status: "",
-    assignee: "",
-    budget: "",
-    description: "",
-    dueDate: "2021-02-11",
-  },
+  favTasks: [],
 });
 
 export const getters = {
@@ -28,6 +18,9 @@ export const getters = {
   getSelectedTask(state) {
     return state.selectedTask;
   },
+  getFavTasks(state){
+    return state.favTasks
+  }
 };
 
 export const mutations = {
@@ -40,6 +33,10 @@ export const mutations = {
       return t.task
     });
     state.tasks = arr;
+  },
+
+  getFavTasks(state, payload){
+    state.favTasks = payload
   },
 
   add(state, task) {
@@ -82,10 +79,19 @@ export const actions = {
     ctx.commit('setSingleTask', payload)
   },
 
+  async getFavTasks(ctx){
+    const res = await this.$axios.get("/task/user/favorites", {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+    })
+    if (res.data.statusCode == 200) {
+      ctx.commit("getFavTasks", res.data.data)
+    }
+  },
+
   // create Task
   async createTask(ctx, payload) {
     const res = await this.$axios.$post('/task', payload, {
-      headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
     ctx.commit('createTask', res.data);
     ctx.commit("section/addTaskToSection", res.data, { root: true });
@@ -101,7 +107,7 @@ export const actions = {
         }
       }, 
       {
-        headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
     }
 
@@ -113,12 +119,51 @@ export const actions = {
         }
       }, 
       {
-        headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
     }
     
     ctx.dispatch("fetchTasks", {id: ctx.rootState.project.selectedProject.id, filter: 'all' })
 
+  },
+
+  async addToFavorite(ctx, payload) {
+    // console.log(payload)
+    try {
+      let fav = await this.$axios.post(`/task/${payload.id}/favorite`, {}, {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+        }
+      })
+      // console.log(fav)
+      if(fav.data.statusCode == 200) {
+        // console.log('Added To Favorites')
+        ctx.dispatch("getFavTasks")
+        return fav.data.message
+      } else {
+        return fav.data.message
+      }
+    } catch(e) {
+      console.log(e);
+    }
+  },
+
+  async removeFromFavorite(ctx, payload) {
+    try {
+      let fav = await this.$axios.delete(`/task/${payload.id}/favorite`, {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+        }
+      })
+      if(fav.data.statusCode == 200) {
+        ctx.dispatch("getFavTasks")
+        return fav.data.message
+      } else {
+        return fav.data.message
+      }
+    } catch(e) {
+      console.log(e);
+    }
   },
 
 };

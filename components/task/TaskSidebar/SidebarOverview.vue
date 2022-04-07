@@ -1,7 +1,9 @@
 <template>
-  <div id="sidebar-overview-wrapper">
-    <!-- <div class="container" id='sidebar-wrapper'>
-    </div> -->
+  <div id="sidebar-overview-wrapper" class="py-05 px-105">
+    <div class="d-flex justify-between sub-title pb-05">
+      <p class="text-gray6 ">Subtasks </p>
+      <sorting-comp :items="sortingItems" icon="swap-vertical"></sorting-comp>
+    </div>
     <task-group title="Subtasks"></task-group>
     <div class="task-team" id='sidebar-team'>
       <div class="container" id='sidebar-container'>
@@ -37,6 +39,12 @@ export default {
   data() {
     return {
       // loading: true,
+      sortingItems: [
+        { label: "Due Date", value:"dueDate" },
+        { label: "Assignee", value:"assignee" },
+        { label: "Priority", value:"priority" },
+        { label: "Status", value:"status" },
+      ],
       
       isContentExpanded: false,
       form: {
@@ -64,6 +72,7 @@ export default {
 
 </script>
 <style lang="scss" scoped>
+.sub-title { font-size: 14px; border-bottom: 1px solid var(--bib-gray4);}
 .task-info {
   padding: 1rem 0;
   font-size: $sidebar-size;
@@ -72,6 +81,9 @@ export default {
 
 .task-team {
   padding: 1rem 0;
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+  margin-bottom: -0.5rem;
   background-color: $gray3;
   border-top: 1px solid $gray4;
 }
@@ -82,7 +94,7 @@ export default {
 
   a {
     text-decoration: underline;
-    color: var(--primary);
+    color: var(--bib-primary);
   }
 }
 
@@ -91,11 +103,11 @@ export default {
   border-radius: 50%;
 
   &:not(.active) {
-    margin-right: -4px;
+    margin-right: -5px;
   }
 
   &.active {
-    margin: 0 13px 0 8px;
+    margin: 0 12px 0 8px;
   }
 
   &:hover {

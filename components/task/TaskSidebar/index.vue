@@ -4,7 +4,7 @@
       <!-- <div class="side-panel__header__file__info" id='ts-header-file-info'>
         <div id='ts-secondary-text' class="p-05 of-hidden text-of-elipsis h-fit text-wrap text-secondary"></div>
       </div> -->
-      <div class="d-flex justify-between side-panel__header__actions mb-1" id='ts-side-panel'>
+      <div class="d-flex justify-between side-panel__header__actions mb-05" id='ts-side-panel'>
         <div class="d-flex align-center gap-05" id="ts-icon-close-Wrapper">
           <div id='ts-icon-7' class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" @click="hideSidebar()">
             <bib-icon icon="page-last" class="m-auto"></bib-icon>
@@ -30,15 +30,15 @@
           <!-- <div class="p-025 cursor-pointer" id='ts-icon-6'>
             <bib-icon icon="horizontal-dots" variant="gray5" :scale="1.25"></bib-icon>
           </div> -->
-          <div id="ts-list-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center">
+          <div id="ts-list-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center">
             <bib-button pop="horizontal-dots">
               <template v-slot:menu>
                 <div class="list" id="ts-list">
                   <span class="list__item" id="ts-list-item-1">
                     <bib-icon icon="check-circle" variant="gray5" class="mr-075"></bib-icon> Mark Completed
                   </span>
-                  <span class="list__item" id="ts-list-item-2">
-                    <bib-icon icon="heart-like" variant="gray5" class="mr-075"></bib-icon> Add to favorites
+                  <span class="list__item" id="ts-list-item-2" @click="setFavorite">
+                    <bib-icon :icon="isFavorite.icon" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
                   </span>
                   <span class="list__item" id="ts-list-item-3">
                     <bib-icon icon="upload" variant="gray5" class="mr-075"></bib-icon> Attach file...
@@ -63,7 +63,7 @@
           </div>
         </div>
       </div>
-      <div class="row position-relative" id='ts-row'>
+      <div class="row position-relative mx-0 mb-1" id='ts-row'>
         <div class="col-8" id='ts-col-1'>
           <bib-input type="text" v-model="form.title" placeholder="Enter task name..." label="Task name" v-on:keyup.native="debounceUpdate()"></bib-input>
           <small v-show="error == 'invalid'" class="text-danger font-xs d-block" style="margin-top: -0.25rem;">Task name is required</small>
@@ -82,11 +82,11 @@
     </div>
     <div class="of-scroll-y position-relative" id="ts-of-scroll-y">
       <template v-if="activeSidebarTab == 'Overview'">
-        <div class="task-info pt-05" id='sidebar-inner-wrap'>
-          <div class="row" id='sidebar-row-1'>
+        <div class="task-info pt-1" id='sidebar-inner-wrap'>
+          <div class="row mx-0" id='sidebar-row-1'>
             <div class="col-4" id='sidebar-col-1'>
-              <!-- <label class="text-gray5">Assignee</label> -->
-              <!-- <bib-select-org :optionsOrg="assignee" @item-event="handleSelectOwner" class="mx-auto my-05" ></bib-select-org> -->
+              <!-- <label class="text-gray5 mb-025">Assignee</label> -->
+              <!-- <bib-select :options="orgUsers" :value="form.userId" ></bib-select> -->
               <bib-input type="select" :options="orgUsers" v-model="form.userId" placeholder="Please select..." label="Assignee *" v-on:change.native="debounceUpdate()"></bib-input>
             </div>
             <div class="col-4" id='sidebar-col-2'>
@@ -96,7 +96,7 @@
               <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="form.sectionId" placeholder="Please select ..." v-on:change.native="debounceUpdate()"></bib-input>
             </div>
           </div>
-          <div class="row" id='sidebar-row-2'>
+          <div class="row mx-0" id='sidebar-row-2'>
             <div class="col-4" id='sidebar-col-3'>
               <bib-input type="select" label="Department" :options="department" placeholder="Please select..."></bib-input>
             </div>
@@ -107,12 +107,12 @@
               <bib-input type="select" label="Status" v-model.number="form.statusId" :options="statusValues" placeholder="Please select..." v-on:change.native="debounceUpdate()"></bib-input>
             </div>
           </div>
-          <div class="row" id='sidebar-row-3'>
+          <div class="row mx-0" id='sidebar-row-3'>
             <div class="col-12" id='sidebar-col-6'>
               <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter task description..." label="Description" v-on:keyup.native="debounceUpdate()"></bib-input>
             </div>
           </div>
-          <div class="p-1" id="sidebar-btn-wrapper">
+          <div class="py-05 px-105" id="sidebar-btn-wrapper">
             <bib-button v-show="!currentTask.id" label="Create Task" variant="primary" v-on:click="createTask"></bib-button>
           </div>
           <loading :loading="loading"></loading>
@@ -176,9 +176,6 @@ export default {
           label: "Due Date",
         },
       ],
-      selectItems: [
-        { label: 'Please Choose One', value: "orange" }
-      ],
       assignee: "",
       statusValues: STATUS,
       priorityValues: PRIORITY,
@@ -194,10 +191,11 @@ export default {
       project: "project/getSingleProject",
       sections: "section/getProjectSections",
       currentTask: 'task/getSelectedTask',
+      favTasks: "task/getFavTasks",
     }),
     orgUsers() {
       return this.companyUsers.map(u => {
-        return { label: u.firstName + ' ' + u.lastName, value: u.id }
+        return { label: u.firstName + ' ' + u.lastName, value: u.id, img: "https://i.pravatar.cc/150?u=" + u.id }
       })
     },
     sectionOpts() {
@@ -224,6 +222,14 @@ export default {
       },
       set: function(newValue) {
         this.form.dueDate = new Date(newValue)
+      }
+    },
+    isFavorite() {
+      let fav = this.favTasks.some(t => t.task.id == this.currentTask.id)
+      if (fav) {
+        return { icon: "heart-like-solid", variant: "orange", text: "Remove favorite", status: true }
+      } else {
+        return { icon: "heart-like", variant: "gray5", text: "Add to favorites", status: false }
       }
     },
     error() {
@@ -254,7 +260,8 @@ export default {
 
         }
       }
-    }
+    },
+
   },
 
   methods: {
@@ -313,7 +320,19 @@ export default {
         console.log('Debounce clicked!')
         this.updateTask()
       }
-    }, 1500)
+    }, 1500),
+    setFavorite() {
+      console.info(this.isFavorite.status)
+      if (this.isFavorite.status) {
+        this.$store.dispatch("task/removeFromFavorite", { id: this.currentTask.id })
+          .then(msg => alert(msg))
+          .catch(e => console.log(e))
+      } else {
+        this.$store.dispatch("task/addToFavorite", { id: this.currentTask.id })
+          .then(msg => alert(msg))
+          .catch(e => console.log(e))
+      }
+    },
   },
 };
 

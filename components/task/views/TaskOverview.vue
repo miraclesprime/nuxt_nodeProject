@@ -1,4 +1,5 @@
 <template>
+<client-only>
   <div id="task-overview-wrapper" class="row">
     <div id="task-overview-inner" class="col-6 my-2 mx-auto position-relative">
       <div id="to-row1" class="row my-1">
@@ -90,7 +91,9 @@
       <loading :loading="loading"></loading>
     </div>
   </div>
+  </client-only>
 </template>
+
 <script>
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
@@ -119,17 +122,20 @@ export default {
   },
 
   mounted() {
-    this.loading = true
-    this.$axios.$get(`project/${this.$route.params.id}`, {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-    }).then((res) => {
-      if (res) {
-        this.project = res.data;
-        this.loading = false
-      }
-    }).catch(err => {
-      console.log("There was some issue in project API " + err);
-    })
+    if(process.client) {
+      this.$store.dispatch('task/fetchTasks', {id: this.$route.params.id, filter: 'all'})
+      this.loading = true
+      this.$axios.$get(`project/${this.$route.params.id}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      }).then((res) => {
+        if (res) {
+          this.project = res.data;
+          this.loading = false
+        }
+      }).catch(err => {
+        console.log("There was some issue in project API " + err);
+      })
+    }
   },
 
   watch: {
