@@ -286,7 +286,7 @@ export default {
 
     // methods for bib-table
     taskCheckIcon(data) {
-      return data.status == 5 ? 'success' : 'secondary-sub1'
+      return data.value.statusId == 5 ? 'success' : 'secondary-sub1'
     },
 
     taskStatusLabel(status) {
