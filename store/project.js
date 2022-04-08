@@ -371,7 +371,7 @@ export const actions = {
     
     try {
 
-      let fav = await this.$axios.post(`/project/${payload.id}/favorite`, {
+      let fav = await this.$axios.post(`/project/${payload.id}/favorite`, {}, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
@@ -379,9 +379,10 @@ export const actions = {
       })
 
       if(fav.data.statusCode == 200) {
-        console.log('Added To Favorites')
+        ctx.dispatch("setFavProjects")
+        return fav.data.message
       } else {
-        console.log(fav.data.message)
+        return fav.data.message
       }
 
     } catch(e) {
@@ -402,9 +403,10 @@ export const actions = {
       })
 
       if(fav.data.statusCode == 200) {
-        console.log('Removed From Favorites')
+        ctx.dispatch("setFavProjects")
+        return fav.data.message
       } else {
-        console.log(fav.data.message)
+        return fav.data.message
       }
 
     } catch(e) {

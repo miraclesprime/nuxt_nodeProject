@@ -18,10 +18,10 @@
           <bib-button pop="horizontal-dots" id="project-id-horizontal-dots">
             <template v-slot:menu>
               <div class="list" id="project-id-list">
-                <span class="list__item" id="project-id-list-item1">Show project details</span>
-                <hr id="project-id-hr">
-                <span class="list__item" id="project-id-list-item2">
-                  <bib-icon icon="heart-like" class="mr-075"></bib-icon> Add to favorites
+                <!-- <span class="list__item" id="project-id-list-item1">Show project details</span> -->
+                <!-- <hr id="project-id-hr"> -->
+                <span class="list__item" id="project-id-list-item2" @click="setFavorite">
+                  <bib-icon :icon="isFavorite.icon" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
                 </span>
                 <span class="list__item" id="project-id-list-item3">
                   <bib-icon icon="user-add" class="mr-075"></bib-icon> Share with
@@ -45,7 +45,7 @@
       <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="TABS" />
     </div>
     <div id="project-id-tab-content" class="project-id-tab-content position-relative ">
-      <task-overview v-if="activeTab.value == TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="projectTasks"  :currentProject="project" />
+      <task-overview v-if="activeTab.value == TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="projectTasks" :currentProject="project" />
       <task-view v-if="activeTab.value == TAB_TITLES.tasks" :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType" />
       <task-conversations v-if="activeTab.value == TAB_TITLES.conversations" :fields="TABLE_FIELDS" :tasks="projectTasks" />
       <!-- <task-timeline-view v-if="activeTab.value == TAB_TITLES.timeline" :fields="TABLE_FIELDS" :tasks="tasks" />
@@ -55,7 +55,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import { mapGetters } from 'vuex'
 import { TABLE_FIELDS, TABS, DEFAULT_TAB, TAB_TITLES } from "config/constants";
@@ -79,7 +78,16 @@ export default {
       projectSections: 'section/getProjectSections',
       projectTasks: "task/tasksForListView",
       taskFields: "task/tableFields",
+      favProjects: "project/getFavProjects",
     }),
+    isFavorite() {
+      let fav = this.favProjects.some(t => t.id == this.project.id)
+      if (fav) {
+        return { icon: "heart-like-solid", variant: "orange", text: "Remove favorite", status: true }
+      } else {
+        return { icon: "heart-like", variant: "gray5", text: "Add to favorites", status: false }
+      }
+    },
   },
 
   created() {
@@ -92,7 +100,7 @@ export default {
     });
 
     if (process.client) {
-      
+
       this.$axios.$get(`project/${this.$route.params.id}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       }).then((res) => {
@@ -108,11 +116,11 @@ export default {
   },
   mounted() {
     this.$store.dispatch("section/fetchProjectSections", this.$route.params.id);
-    this.$store.dispatch("task/fetchTasks", {id: this.$route.params.id, filter: 'all'});
+    this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' });
   },
 
   methods: {
-    
+
     async fetchProject() {
       const proj = await this.$axios.$get(`project/${this.$route.params.id}`, {
         headers: { 'Authorization': `Bearer ${this.token}` }
@@ -131,6 +139,17 @@ export default {
     },
     tabChange(value) {
       this.activeTab = value;
+    },
+    setFavorite() {
+      if (this.isFavorite.status) {
+        this.$store.dispatch("project/removeFromFavorite", { id: this.$route.params.id })
+          .then(msg => alert(msg))
+          .catch(e => console.log(e))
+      } else {
+        this.$store.dispatch("project/addToFavorite", { id: this.$route.params.id })
+          .then(msg => alert(msg))
+          .catch(e => console.log(e))
+      }
     },
   }
 }
