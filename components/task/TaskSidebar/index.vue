@@ -322,7 +322,7 @@ export default {
       }
     }, 1500),
     setFavorite() {
-      console.info(this.isFavorite.status)
+      // console.info(this.isFavorite.status)
       if (this.isFavorite.status) {
         this.$store.dispatch("task/removeFromFavorite", { id: this.currentTask.id })
           .then(msg => alert(msg))

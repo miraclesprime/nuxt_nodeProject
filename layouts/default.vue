@@ -163,7 +163,7 @@ export default {
     this.$root.$on("create-project-modal", () => {
       this.$refs.projectModals.showCreateProjectModal = true;
     })
-    this.$root.$on("add-teammember-modal", () => {
+    this.$nuxt.$on("add-teammember-modal", () => {
       this.$refs.teammemberModal.showTeamCreateModal = true
     })
   },
