@@ -239,3 +239,22 @@ export const PRIORITY = [
   { label: 'Medium', value: '2' },
   { label: 'High', value: '1' },
 ]
+
+export const PROJECT_FAVORITES = [
+  { label: '#', key: ''},
+  { label: 'Project name', key: 'title' },
+  { label: 'Department', key: 'department' },
+  { label: 'Status', key: 'status' },
+  { label: 'Priority', key: 'priority' },
+  { label: 'Owner', key: 'owner' },
+  { label: 'Due Date', key: 'dueDate' }
+]
+
+export const TASK_FAVORITES = [
+  { label: '#', key: ''},
+  { label: 'Task name', key: 'title' },
+  { label: 'Status', key: 'status' },
+  { label: 'Priority', key: 'priority' },
+  { label: 'Owner', key: 'owner' },
+  { label: 'Due Date', key: 'dueDate' }
+]
