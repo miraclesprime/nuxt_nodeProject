@@ -1,5 +1,5 @@
 <template>
-  <Container class="d-flex of-scroll-x" orientation="horizontal" @drop="onSectionDrop" :get-child-payload="getSectionPayload">
+  <Container class="d-flex of-scroll-x" orientation="horizontal" @drop="onSectionDrop" :get-child-payload="getSectionPayload" >
     <Draggable v-for="section in sections" :key="`grid-${key}${section.title}${section.id}`">
       <div class="task-grid-section draggable-item" id="task-grid-section-wrapper">
         <div class="w-100 d-flex justify-between" id="tgs-inner-wrap" style="margin-bottom: 10px">
@@ -26,7 +26,7 @@
           </div>
         </div>
         <div class="task-section__body" id="tgs-task-section-body">
-          <Container @drop="onTaskDrop" :get-child-payload="()=>getTaskPayload(section.id)">
+          <Container group-name="1" @drop="onTaskDrop" @drop-ready="onDropReady" :get-child-payload="()=>getTaskPayload(section.id)" :should-accept-drop="shouldAcceptDrop">
             <Draggable v-for="task in taskWithSection(section.id)" :key="task.title + key + '-' + task.id">
               <div class="task-grid draggable-item " :class="overdue(task)" :id="'tg-card-'+task.id">
                 <figure v-if="task.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
@@ -251,12 +251,12 @@ export default {
     },
     async onTaskDrop(dropResult) {
 
-      const { removedIndex, addedIndex, payload } = dropResult
+      const { removedIndex, addedIndex, payload, element } = dropResult
 
       // console.info(dropResult);
       var ordered = []
 
-      if (removedIndex - addedIndex >= 1 || removedIndex - addedIndex <= -1) {
+      /*if (removedIndex - addedIndex >= 1 || removedIndex - addedIndex <= -1) {
         // ordered = JSON.parse(JSON.stringify(payload))
         ordered = payload.map(a => { return { ...a } })
         ordered.splice(removedIndex, 1)
@@ -265,11 +265,11 @@ export default {
         ordered.forEach((item, index) => {
           item.order = index
         })
-      }
+      }*/
 
       // console.log(ordered)
 
-      let dnd = await this.$axios.$put("/task/dragdrop", { sectionId: payload[removedIndex].sectionId, data: ordered }, {
+      /*let dnd = await this.$axios.$put("/task/dragdrop", { sectionId: payload[removedIndex].sectionId, data: ordered }, {
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
           "Content-Type": "application/json"
@@ -285,8 +285,20 @@ export default {
         })
       } else {
         console.warn(dnd.message)
-      }
+      }*/
 
+    },
+
+    log(...params) {
+      console.log(...params)
+    },
+    onDropReady(dropResult) {
+      const { removedIndex, addedIndex, payload, element } = dropResult;
+      console.log(dropResult)
+    },
+    shouldAcceptDrop(sourceContainerOptions, payload) {
+      console.log(sourceContainerOptions, payload)
+      return true;
     },
 
     openSidebar($event) {

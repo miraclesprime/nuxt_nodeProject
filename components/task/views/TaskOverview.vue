@@ -2,6 +2,11 @@
 <client-only>
   <div id="task-overview-wrapper" class="row">
     <div id="task-overview-inner" class="col-6 my-2 mx-auto position-relative">
+      <div id="task-overview-alert" class="shape-rounded font-sm bg-danger d-flex py-05 px-1 text-white align-center">
+        <bib-icon icon="warning" variant="white" class="mr-05"></bib-icon>
+        You have two tasks past due! "<a href="#" class="text-white">View task</a>" or "<a href="#" class="text-white">Remind me later</a>".
+        <a href="#" class="ml-auto text-white">Snooze</a>
+      </div>
       <div id="to-row1" class="row my-1">
         <div id="to-row1-col1" class="col-4">
           <div class="bg-gray3 shape-rounded text-center p-05 h-100">
@@ -317,7 +322,7 @@ export default {
 
 </script>
 <style lang="scss" scoped>
-.input--select {
+/*.input--select {
   margin-left: 0;
   margin-right: 0;
   border-color: var(--bib-gray4);
@@ -326,6 +331,10 @@ export default {
 .input--select--collapsed {
   margin: 0.5em 0 !important;
   border-color: var(--bib-gray4);
+}*/
+
+#task-overview-alert {
+  a { text-decoration: underline;}
 }
 
 ::v-deep {

@@ -30,7 +30,7 @@
                   <bib-icon icon="pencil" class="mr-075"></bib-icon> Rename
                 </span>
                 <div class="mt-1" id="project-id-div"></div>
-                <span class="list__item" id="project-id-list-item5">
+                <span class="list__item" id="project-id-list-item5" @click="reportModal = !reportModal">
                   <bib-icon icon="warning" class="mr-075"></bib-icon> Report
                 </span>
                 <hr id="project-id-hr2">
@@ -53,6 +53,18 @@
       <task-team v-if="activeTab.value == TAB_TITLES.team" :fields="TABLE_FIELDS" :tasks="projectTasks" />
       <task-files v-if="activeTab.value == TAB_TITLES.files" :fields="TABLE_FIELDS" :tasks="projectTasks" />
     </div>
+    <!-- report modal -->
+    <bib-modal-wrapper v-if="reportModal" title="Report" size="sm" @close="reportModal = false">
+      <template slot="content">
+        <bib-input type="textarea" v-model.trim="reportText" placeholder="enter text"></bib-input>
+      </template>
+      <template slot="footer">
+        <div class="text-center d-flex justify-between">
+          <bib-button label="Cancel" variant="light" pill v-on:click="reportModal = false"></bib-button>
+          <bib-button label="Send" variant="success" pill v-on:click="submitReport"></bib-button>
+        </div>
+      </template>
+    </bib-modal-wrapper>
   </div>
 </template>
 <script>
@@ -68,6 +80,8 @@ export default {
       TAB_TITLES,
       TABLE_FIELDS,
       gridType: "list",
+      reportModal: false,
+      reportText: ""
     }
   },
 
@@ -150,6 +164,16 @@ export default {
           .then(msg => alert(msg))
           .catch(e => console.log(e))
       }
+    },
+    async submitReport() {
+      // this.reportModal = !this.reportModal
+      /*const emai = await this.$axios.post(process.env.EMAIl_API_URL, {
+        from: "noreply@biztree.com",
+        to: "receiver@receiving.com",
+        subject: "email subject",
+        html: "<p>html string</p> "
+      })
+      console.log(emai)*/
     },
   }
 }
