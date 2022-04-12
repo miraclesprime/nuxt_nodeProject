@@ -28,6 +28,10 @@ export const getters = {
       fav.push({ label: f.projects.title, icon: "folder-solid", id: f.projects.id })
     })
     return fav
+  },
+
+  getFavoriteProjects(state) {
+    return state.favProjects;
   }
 
 };
