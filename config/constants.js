@@ -220,6 +220,14 @@ export const TASK_SORT = [
   { label: 'Due Date', key: 'dueDate' },
 ]
 
+export const FAVORITE_SORT = [
+  { label: 'Name', key: 'name' },
+  { label: 'Status', key: 'status' },
+  { label: 'Priority', key: 'priority' },
+  { label: 'Owner', key: 'owner' },
+  { label: 'Due Date', key: 'dueDate' },
+]
+
 export const DEPARTMENT = [
   { label: 'Choose department', value: null },
   { label: 'IT', value: "it" },
@@ -238,4 +246,117 @@ export const PRIORITY = [
   { label: 'Low', value: '3' },
   { label: 'Medium', value: '2' },
   { label: 'High', value: '1' },
+]
+
+export const PROJECT_FAVORITES = [
+  { 
+    label: '#', 
+    key: ''
+  },
+  { 
+    label: 'Project name', 
+    key: 'title',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-title-sort',
+      isActive: false
+    }
+  },
+  { 
+    label: 'Department', 
+    key: 'department', 
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-department-sort',
+      isActive: false
+    }
+  },
+  { 
+    label: 'Status', 
+    key: 'status', 
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-status-sort',
+      isActive: false
+    }
+  },
+  { 
+    label: 'Priority', 
+    key: 'priority', 
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-priority-sort',
+      isActive: false
+    }
+  },
+  { 
+    label: 'Owner', 
+    key: 'owner',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-owner-sort',
+      isActive: false
+    }
+  },
+  { 
+    label: 'Due Date', 
+    key: 'dueDate', 
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-dueDate-sort',
+      isActive: false
+    }
+  }
+]
+
+export const TASK_FAVORITES = [
+  { 
+    label: '#', 
+    key: ''
+  },
+  { 
+    label: 'Task name', 
+    key: 'title', 
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-title-sort',
+      isActive: false
+    }
+  },
+  { 
+    label: 'Status', 
+    key: 'status', 
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-status-sort',
+      isActive: false
+    }
+  },
+  { 
+    label: 'Priority', 
+    key: 'priority', 
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-priority-sort',
+      isActive: false
+    }
+  },
+  { 
+    label: 'Owner', 
+    key: 'owner', 
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-owner-sort',
+      isActive: false
+    }
+  },
+  { 
+    label: 'Due Date', 
+    key: 'dueDate', 
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-dueDate-sort',
+      isActive: false
+    }
+  }
 ]

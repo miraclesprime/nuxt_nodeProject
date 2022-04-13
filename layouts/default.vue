@@ -104,7 +104,7 @@ export default {
         { label: "Home", icon: "home", key: "dashboard-route" },
         { label: "Inbox", icon: "mail-new" },
         { label: "My tasks", icon: "check-circle" },
-        { label: "Favorites", icon: "heart-like" },
+        { label: "Favorites", icon: "heart-like", key: 'favorites' },
       ],
       navItems2: [
         { label: "Tasks", icon: "check-all", key: "task-route" },
@@ -170,12 +170,12 @@ export default {
   mounted() {
     if (process.client) {
 
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY0Njk3MjYzNzcxNSwiZXhwIjoxNjU0NzQ4NjM3NzE1LCJqdGkiOiIyMDFjZGExYy02MDVjLTQ4ZDMtODhiMi1lODhjMDFhZGQ3YWUifQ.aw6BfQV6G5iDlWXNvMiV9AgxaMGjPVyF2LRgteMo5OU"
+      let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY0Njk3MjYzNzcxNSwiZXhwIjoxNjU0NzQ4NjM3NzE1LCJqdGkiOiIyMDFjZGExYy02MDVjLTQ4ZDMtODhiMi1lODhjMDFhZGQ3YWUifQ.aw6BfQV6G5iDlWXNvMiV9AgxaMGjPVyF2LRgteMo5OU"
 
-      // // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0cTJWb2xlalJlak5tR1FCIiwic3ViZSI6Imh0YW5nQGJpenRyZWUuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiQURNSU4iLCJzdWJjIjoiQ2FuYWRhIiwiZW52IjoiZGV2IiwiaWF0IjoxNjQ4NTUwMTI1ODY0LCJleHAiOjE2NTYzMjYxMjU4NjQsImp0aSI6ImM1MDYyM2I4LTM3NGMtNDhjMi04MzNiLTJmZjk3ZTA2MGIxZSJ9.sVGhB1aKeLurq_S1t1aWT86TDi-4fXhqBic90i3xTVA"
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0cTJWb2xlalJlak5tR1FCIiwic3ViZSI6Imh0YW5nQGJpenRyZWUuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiQURNSU4iLCJzdWJjIjoiQ2FuYWRhIiwiZW52IjoiZGV2IiwiaWF0IjoxNjQ4NTUwMTI1ODY0LCJleHAiOjE2NTYzMjYxMjU4NjQsImp0aSI6ImM1MDYyM2I4LTM3NGMtNDhjMi04MzNiLTJmZjk3ZTA2MGIxZSJ9.sVGhB1aKeLurq_S1t1aWT86TDi-4fXhqBic90i3xTVA"
 
-      // this.$cookies.set('b_ssojwt', cookie);
-      // this.$store.dispatch('token/setToken', cookie);
+      this.$cookies.set('b_ssojwt', cookie);
+      this.$store.dispatch('token/setToken', cookie);
 
       if (this.$cookies.get('b_ssojwt')) {
         let jwt = this.$cookies.get('b_ssojwt');
@@ -285,6 +285,9 @@ export default {
       }
       if ($event.key == 'project-route') {
         this.$router.push('/projects')
+      }
+      if($event.key == 'favorites') {
+        this.$router.push('/favorites')
       }
       if ($event.key == 'task-route') {
         this.$router.push('/tasks')

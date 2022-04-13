@@ -14,12 +14,31 @@
             </ul>
           </template>
         </bib-button>
-        <div id="project-team-members" class="pt-025" style="min-height:10rem;">
+        <div id="project-team-members" class="py-025">
           <template v-for="t in team">
             <email-chip :email="t.email" :name="t.label" :text="t.email[0]" class="mt-05" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
           </template>
           <small v-show="team.length == 0" class="text-danger">Select at least 1 team member.</small>
           <p v-if="message" v-text="message" class="font-sm mt-025 text-orange"></p>
+        </div>
+        <div class="pt-2">
+          <strong>Use link to invite</strong>
+          <div class="d-flex align-end mt-1">
+            <div class="flex-grow-1">
+              <bib-input type="text" label="Url" size="sm" :value="projectUrl" disabled></bib-input>
+            </div>
+            <div class="mb-05 pl-05">
+              <bib-button variant="primary" label="Copy link" pill @click="copyUrl"></bib-button>
+            </div>
+          </div>
+          <!-- <div class="row">
+            <div class="col-6">
+              <bib-input type="select" label="Who can open this link?" :options="[{label:'Anyone',value:'any'}]"></bib-input>
+            </div>
+            <div class="col-6">
+              <bib-input type="select" label="Rights" :options="[{label:'Viewer',value:'viewer'}, {label:'Editor',value:'editor'}]"></bib-input>
+            </div>
+          </div> -->
         </div>
         <loading :loading="loading"></loading>
       </template>
@@ -29,6 +48,12 @@
         </div>
       </template>
     </bib-modal-wrapper>
+    <bib-popup-notification-wrapper>
+      <template #wrapper>
+        <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
+        </bib-popup-notification>
+      </template>
+    </bib-popup-notification-wrapper>
   </div>
 </template>
 <script>
@@ -46,6 +71,7 @@ export default {
       error: false,
       loading: false,
       message: "",
+      popupMessages: [],
     };
   },
 
@@ -65,6 +91,9 @@ export default {
         }
       })
     },
+    projectUrl() {
+      return process.env.VUE_APP_URL + "/project/" + this.project.id
+    }
   },
   /*mounted() {
     // console.log(this.user)
@@ -141,6 +170,16 @@ export default {
 
         })
       }
+
+    },
+    copyUrl() {
+      // let th = this
+      navigator.clipboard.writeText(this.projectUrl).then(() => {
+        // console.log('success')
+        this.popupMessages.push({ text: "Copied successfully", variant: "success" })
+      }, () => {
+        alert("failed to copy")
+      });
 
     },
   },

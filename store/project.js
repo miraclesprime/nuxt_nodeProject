@@ -28,6 +28,10 @@ export const getters = {
       fav.push({ label: f.projects.title, icon: "folder-solid", id: f.projects.id })
     })
     return fav
+  },
+
+  getFavoriteProjects(state) {
+    return state.favProjects;
   }
 
 };
@@ -389,7 +393,6 @@ export const actions = {
       console.log(e);
     }
   },
-
 
   async removeFromFavorite(ctx, payload) {
     
