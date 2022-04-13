@@ -1,5 +1,5 @@
 <template>
-    <nav :id="id+'-title-wrapper'" class="d-flex align-center gap-05 py-05 px-025">
+    <nav :id="id+'-title-wrapper'" class="d-flex align-center gap-05 py-075 px-025">
         <nuxt-link to="/" class="d-flex">
             <bib-icon icon="arrowhead-left" :scale="1.5" variant="gray5"></bib-icon>
         </nuxt-link>
