@@ -25,7 +25,7 @@
           </template>
           <template #cell(status)="data">
             <div class="d-flex gap-05 align-center">
-              <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' +             projectStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
+              <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-'+ projectStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
               </div>
                 <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" class="text-dark text-truncate">{{ projectStatusLabel(data.value.status ? data.value.status.text : "") }}</span>
             </div>
@@ -58,8 +58,8 @@
     </div>
   </div>
 </template>
+
 <script>
-// import { TABLE_FIELDS, TABS, DEFAULT_TAB, TAB_TITLES } from "config/constants";
 import { PROJECT_FIELDS } from '../../dummy/project';
 import { mapGetters } from 'vuex';
 
