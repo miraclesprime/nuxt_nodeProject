@@ -2,10 +2,10 @@
   <div id="project-id-wrapper" class="project-id-wrapper of-scroll-y">
     <nav id="project-id-nav" class="d-flex align-center gap-05 pt-05 pb-05">
       <nuxt-link to="/projects" class="d-flex">
-        <bib-icon icon="arrowhead-left" :scale="1.5"></bib-icon>
+        <bib-icon icon="arrowhead-left" :scale="1.5" variant="gray5"></bib-icon>
       </nuxt-link>
       <bib-avatar></bib-avatar>
-      <span id="project-id-project-title" class="font-lg font-w-700  mr-1 ">{{project ? project.title : ''}}</span>
+      <span id="project-id-project-title" class=" font-w-700  mr-1 " style="font-size: 1.25rem;">{{project ? project.title : ''}}</span>
       <!-- <bib-page-title label="Page Title"></bib-page-title> -->
       <span id="project-id-badge-status" class="badge-status">{{project.status ? project.status.text : ''}}</span>
       <div class="ml-auto d-flex gap-05 align-center" id="project-id-button-wraps">
@@ -26,7 +26,7 @@
                 <span class="list__item" id="project-id-list-item3">
                   <bib-icon icon="user-add" class="mr-075"></bib-icon> Share with
                 </span>
-                <span class="list__item" id="project-id-list-item4">
+                <span class="list__item" id="project-id-list-item4" @click="renameModal = !renameModal">
                   <bib-icon icon="pencil" class="mr-075"></bib-icon> Rename
                 </span>
                 <div class="mt-1" id="project-id-div"></div>
@@ -53,10 +53,26 @@
       <task-team v-if="activeTab.value == TAB_TITLES.team" :fields="TABLE_FIELDS" :tasks="projectTasks" />
       <task-files v-if="activeTab.value == TAB_TITLES.files" :fields="TABLE_FIELDS" :tasks="projectTasks" />
     </div>
+    <!-- rename modal -->
+    <bib-modal-wrapper v-if="renameModal" title="Rename project" @close="renameModal = false">
+      <template slot="content">
+        <div>
+          <bib-input type="text" v-model.trim="projectName" placeholder="Enter name..."></bib-input>
+          <loading :loading="loading"></loading>
+        </div>
+      </template>
+      <template slot="footer">
+        <div class="d-flex justify-between">
+          <bib-button label="Cancel" variant="light" pill @click="renameModal = false"></bib-button>
+          <bib-button label="Rename" variant="success" pill v-on:click="renameProject"></bib-button>
+        </div>
+      </template>
+    </bib-modal-wrapper>
     <!-- report modal -->
     <bib-modal-wrapper v-if="reportModal" title="Report" size="sm" @close="reportModal = false">
       <template slot="content">
         <bib-input type="textarea" v-model.trim="reportText" placeholder="enter text"></bib-input>
+          <loading :loading="loading"></loading>
       </template>
       <template slot="footer">
         <div class="text-center d-flex justify-between">
@@ -65,6 +81,7 @@
         </div>
       </template>
     </bib-modal-wrapper>
+    
   </div>
 </template>
 <script>
@@ -80,8 +97,11 @@ export default {
       TAB_TITLES,
       TABLE_FIELDS,
       gridType: "list",
+      renameModal: false,
+      projectTitle: "",
       reportModal: false,
-      reportText: ""
+      reportText: "",
+      loading: false,
     }
   },
 
@@ -94,6 +114,14 @@ export default {
       taskFields: "task/tableFields",
       favProjects: "project/getFavProjects",
     }),
+    projectName: {
+      get() {
+        return this.project.title
+      },
+      set(value) {
+        this.projectTitle = value
+      }
+    },
     isFavorite() {
       let fav = this.favProjects.some(t => t.id == this.project.id)
       if (fav) {
@@ -164,6 +192,24 @@ export default {
           .then(msg => alert(msg))
           .catch(e => console.log(e))
       }
+    },
+    async renameProject() {
+      this.loading = true
+      const proj = await this.$axios.put("/project", {
+        id: this.project.id,
+        data: {
+          title: this.projectTitle
+        }
+      }, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      })
+      // console.log(proj)
+      if (proj.data.statusCode == 200) {
+        this.$store.dispatch("project/setSingleProject", proj.data.data)
+        // this.$store.dispatch("project/fetchProjects")
+        this.renameModal = false
+      } 
+      this.loading = false
     },
     async submitReport() {
       // this.reportModal = !this.reportModal

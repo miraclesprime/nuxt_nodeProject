@@ -1,5 +1,5 @@
 <template>
-  <div id="favorite-action-wrapper" class="favorite-actions ml-05">
+  <div id="favorite-action-wrapper" class="favorite-actions ">
     
     <div id="fa-add-project-wrapper" class="action-left">
     </div>

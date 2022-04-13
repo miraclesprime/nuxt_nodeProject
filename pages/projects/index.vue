@@ -1,13 +1,13 @@
 <template>
   <div id="projects-wrapper" class="projects-wrapper" >
     <!-- <div id="project-name" class="project-heading p-05 text-secondary font-sm"> -->
-    <nav id="projects-nav-wrapper" class="d-flex align-center gap-05 pt-05 pb-05">
+    <!-- <nav id="projects-nav-wrapper" class="d-flex align-center gap-05 pt-05 pb-05">
       <nuxt-link to="/" class="d-flex">
         <bib-icon icon="arrowhead-left" :scale="1.5"></bib-icon>
       </nuxt-link>
-      <!-- <bib-icon icon="arrowhead-left" class="p-05 project-top-icon" :scale="2"></bib-icon> -->
       <span class="font-lg font-w-700  mr-1" id="projects-title-head">Projects</span>
-    </nav>
+    </nav> -->
+    <page-title title="Projects"></page-title>
     <!-- </div> -->
     <project-actions @sortValue='sortName=$event' @viewValue='viewName=$event' v-on:loading="loading = $event" v-bind:sort="sortName" />
     <div id="projects-list-wrapper" class="projects-list-wrapper of-scroll-y position-relative" >

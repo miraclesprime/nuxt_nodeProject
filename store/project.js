@@ -394,7 +394,6 @@ export const actions = {
     }
   },
 
-
   async removeFromFavorite(ctx, payload) {
     
     try {

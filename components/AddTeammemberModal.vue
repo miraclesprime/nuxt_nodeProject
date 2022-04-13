@@ -31,14 +31,14 @@
               <bib-button variant="primary" label="Copy link" pill @click="copyUrl"></bib-button>
             </div>
           </div>
-          <div class="row">
+          <!-- <div class="row">
             <div class="col-6">
               <bib-input type="select" label="Who can open this link?" :options="[{label:'Anyone',value:'any'}]"></bib-input>
             </div>
             <div class="col-6">
               <bib-input type="select" label="Rights" :options="[{label:'Viewer',value:'viewer'}, {label:'Editor',value:'editor'}]"></bib-input>
             </div>
-          </div>
+          </div> -->
         </div>
         <loading :loading="loading"></loading>
       </template>
