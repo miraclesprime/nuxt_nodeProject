@@ -1,6 +1,6 @@
 <template>
   <div id="project-id-wrapper" class="project-id-wrapper of-scroll-y">
-    <nav id="project-id-nav" class="d-flex align-center gap-05 pt-05 pb-05">
+    <nav id="project-id-nav" class="d-flex align-center gap-05 py-075 px-025">
       <nuxt-link to="/projects" class="d-flex">
         <bib-icon icon="arrowhead-left" :scale="1.5" variant="gray5"></bib-icon>
       </nuxt-link>
@@ -45,7 +45,7 @@
       <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="TABS" />
     </div>
     <div id="project-id-tab-content" class="project-id-tab-content position-relative ">
-      <task-overview v-if="activeTab.value == TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="projectTasks" :currentProject="project" />
+      <project-overview v-if="activeTab.value == TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="projectTasks" :currentProject="project" />
       <task-view v-if="activeTab.value == TAB_TITLES.tasks" :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType" />
       <task-conversations v-if="activeTab.value == TAB_TITLES.conversations" :fields="TABLE_FIELDS" :tasks="projectTasks" />
       <!-- <task-timeline-view v-if="activeTab.value == TAB_TITLES.timeline" :fields="TABLE_FIELDS" :tasks="tasks" />
@@ -71,7 +71,8 @@
     <!-- report modal -->
     <bib-modal-wrapper v-if="reportModal" title="Report" size="sm" @close="reportModal = false">
       <template slot="content">
-        <bib-input type="textarea" v-model.trim="reportText" placeholder="enter text"></bib-input>
+        <bib-input type="text" label="Subject" v-model.trim="reportSubj" placeholder="enter subject" ></bib-input>
+        <bib-input type="textarea" label="Message" v-model.trim="reportText" placeholder="enter text"></bib-input>
           <loading :loading="loading"></loading>
       </template>
       <template slot="footer">
@@ -101,6 +102,7 @@ export default {
       projectTitle: "",
       reportModal: false,
       reportText: "",
+      reportSubj: "",
       loading: false,
     }
   },
@@ -231,6 +233,7 @@ export default {
   flex-direction: column;
   height: 100%;
 }
+#project-id-nav { border-bottom: 1px solid var(--bib-light);}
 
 .shape-circle {
   .menu {
