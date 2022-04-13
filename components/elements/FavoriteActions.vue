@@ -7,18 +7,10 @@
     <div class="action-right" id="fa-action-right">
       <ul class="actions" id="pa-actions-list">
         <li class="action" id="pa-action-item1">
-          <sorting-comp label="Viewing" :items=[] icon="eye-open" ></sorting-comp>
+          <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="viewProjects($event)"></sorting-comp>
         </li>
-        <!-- <li class="action" id="pa-action-item2">
-          <span id="pa-action-item2-text" class="mr-025">Filter By:</span>
-          <div class="shape-rounded bg-dark width-105 height-105 d-flex justify-center align-center">
-            <bib-button pop="filter-horizontal" icon-variant="white" size="sm">
-              
-            </bib-button>
-          </div>
-        </li> -->
         <li class="action" id="pa-action-item3">
-          <sorting-comp label="Sorted by" :items=[] icon="swap-vertical" ></sorting-comp>
+          <sorting-comp label="Sorted by" :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy($event)"></sorting-comp>
         </li>
       </ul>
     </div>
@@ -27,14 +19,38 @@
 </template>
 
 <script>
+import { VIEW_FILTER, FAVORITE_SORT } from '../../config/constants';
 
 export default {
   
   data() {
     return {
-
+      viewing: VIEW_FILTER,
+      sorting: FAVORITE_SORT
     };
   },
+
+  methods: {
+    viewProjects($event) {
+      // this.$emit("loading", true)
+      // this.$store.dispatch('project/fetchProjects', $event).then(() => { this.$emit("loading", false) })
+      // this.selectedView = $event;
+      // this.$emit('viewValue', $event)
+      console.log($event);
+    },
+
+    sortBy($event) {
+      // if(this.orderBy == 'asc') {
+      //   this.orderBy = 'desc'
+      // } else {
+      //   this.orderBy = 'asc'
+      // }
+      // this.$store.dispatch('project/sortProjects', {key: $event, order: this.orderBy})
+      // this.selectedSort = $event;
+      // this.$emit('sortValue', $event)
+      console.log($event)
+    }
+  }
   
 };
 

@@ -3,7 +3,7 @@
     <page-title title="Favorites"></page-title>
     <favorite-actions />
     <div id="favorite-scroll-wrap" class="of-scroll-y position-relative">
-      <bib-table :fields="projectTableFields" class="border-gray4 bg-white" :sections="favoriteProjects" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Favorite Projects'}">
+      <bib-table :fields="projectTableFields" class="border-gray4 bg-white" :sections="favoriteProjects" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Favorite Projects'}" >
         <template #cell(title)="data">
           <div class="d-flex align-center text-dark cursor-pointer" :id="'projects-' + data.value.projects.title">
             <bib-icon icon="briefcase" variant="gray5" :scale="1.1" class="mr-025"></bib-icon>
@@ -84,8 +84,8 @@ export default {
 
   computed: {
     ...mapGetters({
-      favoriteProjects: 'project/getFavoriteProjects',
-      favoriteTasks: 'task/getFavTasks'
+      favoriteProjects: 'favorite/getFavProjects',
+      favoriteTasks: 'favorite/getFavTasks'
     })
   },
 
@@ -133,6 +133,12 @@ export default {
     capitalizeFirstLetter(str) {
       return str.charAt(0).toUpperCase() + str.slice(1)
     },
+
+  },
+
+  mounted() {
+    this.$store.dispatch('favorite/fetchFavTasks');
+    this.$store.dispatch('favorite/fetchFavProjects');
   }
 }
 
