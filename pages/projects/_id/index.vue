@@ -208,7 +208,6 @@ export default {
       // console.log(proj)
       if (proj.data.statusCode == 200) {
         this.$store.dispatch("project/setSingleProject", proj.data.data)
-        // this.$store.dispatch("project/fetchProjects")
         this.renameModal = false
       } 
       this.loading = false
