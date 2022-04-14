@@ -87,7 +87,7 @@
             <div class="col-4" id='sidebar-col-1'>
               <!-- <label class="text-gray5 mb-025">Assignee</label> -->
               <!-- <bib-select :options="orgUsers" :value="form.userId" ></bib-select> -->
-              <bib-input type="select" :options="orgUsers" v-model="form.userId" placeholder="Please select..." label="Assignee *" v-on:change.native="debounceUpdate()"></bib-input>
+              <bib-input type="select" :options="orgUsers" v-model="form.userId" placeholder="Please select..." label="Assignee" v-on:change.native="debounceUpdate()"></bib-input>
             </div>
             <div class="col-4" id='sidebar-col-2'>
               <bib-input type="text" label="Project" :value="project.title" disabled></bib-input>
