@@ -215,16 +215,10 @@ ul {
   border-radius: 0.15rem;
 }
 
-/*.page-enter-active,
-.page-leave-active {
-  transition: opacity 0.5s;
-}
-
-.page-enter,
-.page-leave-to {
-  opacity: 0;
-}*/
-
 .text-truncate {
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+@media screen and (max-width: 1600px) {
+  .side-panel { max-width: $sidebar-width - 160px; width: 35rem; }
 }

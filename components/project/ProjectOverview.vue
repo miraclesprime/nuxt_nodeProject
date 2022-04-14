@@ -322,7 +322,11 @@ export default {
 
 </script>
 <style lang="scss" scoped>
-.overview-wrapper { width: 488px; }
+.overview-wrapper { width: $overview-width;  }
+
+@media screen and (max-width:1600px){
+  .overview-wrapper { max-width: $overview-width - 160px; width: 60%; }
+}
 
 #proj-overview-alert {
   a { text-decoration: underline;}
