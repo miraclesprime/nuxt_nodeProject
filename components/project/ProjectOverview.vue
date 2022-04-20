@@ -1,6 +1,6 @@
 <template>
 <client-only>
-  <div id="proj-overview-wrapper" class="row">
+  <div id="proj-overview-wrapper" class="row ">
     <div id="proj-overview-inner" class="overview-wrapper my-2 mx-auto position-relative">
       <div id="proj-overview-alert" class="shape-rounded font-sm bg-danger d-flex py-05 px-1 text-white align-center">
         <bib-icon icon="warning" variant="white" class="mr-05"></bib-icon>

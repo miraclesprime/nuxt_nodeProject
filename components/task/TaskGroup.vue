@@ -2,18 +2,35 @@
   <div class="task-group w-100" id="task-group-main-wrapper">
     <section-title></section-title>
     <table class="table ">
-      <thead>
+      <!-- <thead>
         <tr>
           <th v-for="field in taskFields" :key="field.key">{{field.label}}</th>
         </tr>
-      </thead>
+      </thead> -->
       <tbody>
         <tr v-for="sub in taskSections" :key="sub.key">
-          <td>{{sub.key}}</td>
-          <td>{{sub.name}}</td>
-          <td>{{sub.assignee.firstName}}</td>
+          <!-- <td>{{sub.key}}</td> -->
+          <td>
+            <div class="d-flex gap-05 align-center">
+              <bib-icon icon="check-circle" :variant="sub.isDone ? 'success' : 'gray4'"></bib-icon> {{sub.name}}
+            </div>
+          </td>
+          <td>
+            <user-info :user="sub.assignee" avatar="https://i.pravatar.cc/32"></user-info>
+          </td>
           <td>{{sub.dueDate}}</td>
-          <td><bib-icon :icon="sub.options"></bib-icon></td>
+          <td>
+            <!-- <bib-popup :pop="sub.options" icon-variant="gray5" size="sm" >
+              <template v-slot:menu>
+                <div class="list">
+                  <span class="list__item">View</span>
+                  <span class="list__item">Edit</span>
+                  <span class="list__item danger">Delete</span>
+                </div>
+              </template>
+            </bib-popup> -->
+            <bib-icon :icon="sub.options" variant="gray5"></bib-icon>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -45,6 +62,8 @@
 </template>
 <script>
 export default {
+  name: "TaskGroup",
+
   props: {
     groupName: {
       type: String,
@@ -57,23 +76,26 @@ export default {
     return {
       taskSections: [{
           key: 1,
-          name: "Remind me what itme it is",
+          name: "Remind me what time it is",
           assignee: { firstName: "Bruno", lastName: "Goulet" },
-          dueDate: "Jan-22",
+          dueDate: "22 Jan 2022",
+          isDone: false,
           options: "elipsis",
         },
         {
           key: 2,
           name: "Turn the music up",
           assignee: { firstName: "Elon", lastName: "Musk" },
-          dueDate: "Jan-22",
+          dueDate: "28 Feb 2022",
+          isDone: false,
           options: "elipsis",
         },
         {
           key: 3,
           name: "Live longer and prosper",
           assignee: { firstName: "Johny", lastName: "Boy" },
-          dueDate: "Jan-22",
+          dueDate: "02 Mar 2022",
+          isDone: true,
           options: "elipsis",
         },
       ],
@@ -108,12 +130,39 @@ export default {
 .task-group {
   margin-bottom: 3rem;
 }
-.table { width: 100%; border: 1px solid transparent; border-collapse: collapse;
+
+.table {
+  width: 100%;
+  border: 1px solid transparent;
+  border-collapse: collapse;
+
   thead {
-    th, td { text-align: left; font-weight: bold; padding: 0.2rem; border-top: 1px solid var(--bib-light); color: var(--bib-text-light); }
+
+    th,
+    td {
+      text-align: left;
+      font-weight: bold;
+      padding: 0.2rem;
+      border-top: 1px solid var(--bib-light);
+      color: var(--bib-text-light);
+
+      &:not(:first-child) {
+        border-left: 1px solid var(--bib-light);
+      }
+    }
   }
+
   tbody {
-    td { padding: 0.2rem; border-top: 1px solid var(--bib-light); border-bottom: 1px solid var(--bib-light); color: var(--bib-dark-sub1); }
+    td {
+      padding: 0.2rem;
+      border-top: 1px solid var(--bib-light);
+      border-bottom: 1px solid var(--bib-light);
+      color: var(--bib-dark-sub1);
+
+      &:not(:first-child) {
+        border-left: 1px solid var(--bib-light);
+      }
+    }
   }
 }
 

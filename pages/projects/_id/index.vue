@@ -1,5 +1,5 @@
 <template>
-  <div id="project-id-wrapper" class="project-id-wrapper of-scroll-y">
+  <div id="project-id-wrapper" class="project-id-wrapper ">
     <nav id="project-id-nav" class="d-flex align-center gap-05 py-075 px-025">
       <nuxt-link to="/projects" class="d-flex">
         <bib-icon icon="arrowhead-left" :scale="1.5" variant="gray5"></bib-icon>
@@ -44,7 +44,7 @@
     <div class="menu " id='project-idmenu-content'>
       <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="TABS" />
     </div>
-    <div id="project-id-tab-content" class="project-id-tab-content position-relative ">
+    <div id="project-id-tab-content" class="project-id-tab-content position-relative of-scroll-y">
       <project-overview v-if="activeTab.value == TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="projectTasks" :currentProject="project" />
       <task-view v-if="activeTab.value == TAB_TITLES.tasks" :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType" />
       <task-conversations v-if="activeTab.value == TAB_TITLES.conversations" :fields="TABLE_FIELDS" :tasks="projectTasks" />
@@ -97,7 +97,7 @@ export default {
       TABS,
       TAB_TITLES,
       TABLE_FIELDS,
-      gridType: "list",
+      gridType: "grid",
       renameModal: false,
       projectTitle: "",
       reportModal: false,

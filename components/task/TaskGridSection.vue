@@ -1,7 +1,7 @@
 <template>
-  <Container class="d-flex of-scroll-x" orientation="horizontal" @drop="onSectionDrop" :get-child-payload="getSectionPayload" >
-    <Draggable v-for="section in sections" :key="`grid-${key}${section.title}${section.id}`">
-      <div class="task-grid-section draggable-item" id="task-grid-section-wrapper">
+  <div>
+    <draggable v-model="localdata" class="d-flex of-scroll-x">
+      <div class="task-grid-section " id="task-grid-section-wrapper" v-for="section in localdata" :key="`grid-${key}${section.title}${section.id}`">
         <div class="w-100 d-flex justify-between" id="tgs-inner-wrap" style="margin-bottom: 10px">
           <div class="title text-gray" id="tgs-label" v-show="!section.title.includes('_section')">{{ section.title }}</div>
           <div class="d-flex align-center ml-auto section-options" id="tgs-section-options">
@@ -26,102 +26,239 @@
           </div>
         </div>
         <div class="task-section__body" id="tgs-task-section-body">
-          <Container group-name="1" @drop="onTaskDrop" @drop-ready="onDropReady" :get-child-payload="()=>getTaskPayload(section.id)" :should-accept-drop="shouldAcceptDrop">
-            <Draggable v-for="task in taskWithSection(section.id)" :key="task.title + key + '-' + task.id">
-              <div class="task-grid draggable-item " :class="overdue(task)" :id="'tg-card-'+task.id">
-                <figure v-if="task.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
-                <div class="task-top" id='tg-card-top'>
-                  <div class="d-flex" id='tg-card-inside-wrap'>
-                    <bib-icon icon="check-circle" :scale="1.5" :variant="task.status.text === 'Done' ? 'success' : 'secondary-sub1'" class="cursor-pointer" @click="handleTaskStatus(task)"></bib-icon>
-                    <span class="ml-05" id='tg-title'>{{ task.title }} </span>
-                  </div>
-                  <bib-button pop="elipsis" icon="elipsis" :icon-variant="overdue(task) == 'bg-danger'? 'white' :'secondary'">
-                    <template v-slot:menu>
-                      <div class="list" id='tg-list'>
-                        <span class="list__item" v-on:click="openSidebar(task)">Details</span>
-                        <hr>
-                        <span class="list__item">
-                          <bib-icon icon="check-circle" class="mr-05"></bib-icon> Mark Completed
-                        </span>
-                        <span class="list__item" id='tg-fav' @click="addToFavorites">
-                          <bib-icon icon="heart-like" class="mr-05"></bib-icon> Add to favorites
-                        </span>
-                        <span class="list__item">
-                          <bib-icon icon="upload" class="mr-05"></bib-icon> Attach file...
-                        </span>
-                        <span class="list__item">
-                          <bib-icon icon="user-add" class="mr-05"></bib-icon> Assign to...
-                        </span>
-                        <span class="list__item">
-                          <bib-icon icon="notification" class="mr-05"></bib-icon> Set as reminder
-                        </span>
-                        <span class="list__item " id='tg-copy-link'>
-                          <bib-icon icon="duplicate" class="mr-05"></bib-icon> Copy
-                        </span>
-                        <span class="list__item">
-                          <bib-icon icon="transfer" class="mr-05"></bib-icon> Move to
-                        </span>
-                        <span class="list__item " id='tg-view-task'>
-                          <bib-icon icon="warning" class="mr-05"></bib-icon> Report
-                        </span>
-                        <hr>
-                        <span class="list__item danger" id='tg-delete-task'>Delete Task</span>
-                      </div>
-                    </template>
-                  </bib-button>
+          <draggable :list="section.tasks" group="task" :move="checkMove">
+            <div class="task-grid " v-for="task in section.tasks" :key="task.title + key + '-' + task.id" :class="overdue(task)" :id="'tg-card-'+task.id" v-on:click="openSidebar(task)">
+              {{task.order}} - {{key}}
+              <!-- <figure v-if="task.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure> -->
+              <div class="task-top" id='tg-card-top'>
+                <div class="d-flex" id='tg-card-inside-wrap'>
+                  <bib-icon icon="check-circle" :scale="1.5" :variant="task.status.text === 'Done' ? 'success' : 'secondary-sub1'" class="cursor-pointer" @click="handleTaskStatus(task)"></bib-icon>
+                  <span class="ml-05" id='tg-title'>{{ task.title }} </span>
                 </div>
-                <div class="task-bottom" id='tg-card-bottom'>
-                  <user-info :user="task.user" avatar="https://i.pravatar.cc/32"></user-info>
-                  <span id='tg-bottom-duedate' v-format-date="task.dueDate"></span>
-                </div>
+                <bib-button pop="elipsis" icon="elipsis" :icon-variant="overdue(task) == 'bg-danger'? 'white' :'secondary'">
+                  <template v-slot:menu>
+                    <div class="list" id='tg-list'>
+                      <!-- <span class="list__item" v-on:click="openSidebar(task)">Details</span>
+                      <hr> -->
+                      <span class="list__item">
+                        <bib-icon icon="check-circle" class="mr-05"></bib-icon> Mark Completed
+                      </span>
+                      <span class="list__item" id='tg-fav' @click="addToFavorites">
+                        <bib-icon icon="heart-like" class="mr-05"></bib-icon> Add to favorites
+                      </span>
+                      <span class="list__item">
+                        <bib-icon icon="upload" class="mr-05"></bib-icon> Attach file...
+                      </span>
+                      <span class="list__item">
+                        <bib-icon icon="user-add" class="mr-05"></bib-icon> Assign to...
+                      </span>
+                      <span class="list__item">
+                        <bib-icon icon="notification" class="mr-05"></bib-icon> Set as reminder
+                      </span>
+                      <span class="list__item " id='tg-copy-link'>
+                        <bib-icon icon="duplicate" class="mr-05"></bib-icon> Copy
+                      </span>
+                      <span class="list__item">
+                        <bib-icon icon="transfer" class="mr-05"></bib-icon> Move to
+                      </span>
+                      <span class="list__item " id='tg-view-task'>
+                        <bib-icon icon="warning" class="mr-05"></bib-icon> Report
+                      </span>
+                      <hr>
+                      <span class="list__item danger" id='tg-delete-task'>Delete Task</span>
+                    </div>
+                  </template>
+                </bib-button>
               </div>
-            </Draggable>
-          </Container>
+              <div class="task-bottom" id='tg-card-bottom'>
+                <user-info :user="task.user" avatar="https://i.pravatar.cc/32"></user-info>
+                <span id='tg-bottom-duedate' v-format-date="task.dueDate"></span>
+              </div>
+            </div>
+          </draggable>
         </div>
       </div>
-    </Draggable>
-  </Container>
+    </draggable>
+    <loading :loading="loading"></loading>
+  </div>
 </template>
 <script>
-import { Container, Draggable } from "vue-smooth-dnd";
+// import { Container, Draggable } from "vue-smooth-dnd";
+import draggable from 'vuedraggable'
 import { mapGetters } from 'vuex';
 
 export default {
   components: {
-    Container,
-    Draggable,
+    /*Container,
+    Draggable,*/
+    draggable
   },
   data() {
     return {
       // sections: this.taskSections,
+      localdata: [],
       flag: false,
       ordered: [],
       key: 0,
+      loading: false,
     };
   },
-  props: {
-    sections: { type: Array, required: true },
+  /*props: {
+    sections: { type: Array },
     tasks: { type: Array },
-    /*label: {
-      type: String,
-      default () {
-        return "Section";
-      },
-    },*/
-    /*taskSections: {
-      type: Array,
-      default () {
-        return [];
-      },
-    },*/
+  },*/
+  created(){
+    this.$nuxt.$on("update-key", () => {
+      console.log('updated-key fired!')
+      this.$store.dispatch("section/fetchProjectSections", this.project.id).then(()=>{
+        this.key += 1;
+      })
+    })
+  },
+  mounted() {
+    // console.info('mounted', this.project)
+    this.$store.dispatch("section/fetchProjectSections", this.project.id)
+    this.key += parseInt(Math.random().toString().slice(-2))
+
+    this.taskByOrder();
+    /*this.localdata = JSON.parse(JSON.stringify(this.sections))
+
+    let sorted = this.localdata.map(s => {
+      let t = s.tasks.sort((a, b) => a.order - b.order)
+      s.tasks = t
+      return s
+    })
+    console.log("sorted =>", sorted)
+    this.localdata = sorted
+    this.key += 1*/
+  },
+  watch: {
+    localdata: function(newValue, oldValue) {
+
+      this.ordered = newValue
+
+      this.ordered.forEach(function(element, index) {
+        element.order = index
+      });
+
+      this.sectionDragDrop();
+
+    }
   },
   computed: {
     ...mapGetters({
       token: "token/getToken",
       project: "project/getSingleProject",
+      sections: "section/getProjectSections",
     }),
+    templateKey(){
+
+    },
+    /*myList: {
+      get: function() {
+        this.data = JSON.parse(JSON.stringify(this.sections))
+        // return JSON.parse(JSON.stringify(this.sections))
+      },
+      set: function(newValue) {
+        this.data = newValue
+      }
+    }*/
   },
   methods: {
+    taskByOrder() {
+      this.localdata = JSON.parse(JSON.stringify(this.sections))
+
+      let sorted = this.localdata.map(s => {
+        let t = s.tasks.sort((a, b) => a.order - b.order)
+        s.tasks = t
+        return s
+      })
+      // console.log("sorted =>", sorted)
+      this.localdata = sorted
+      this.key += 1
+    },
+    checkMove(e) {
+      // console.info(e.relatedContext.list)
+      let tasks = []
+
+      setTimeout(function() {
+        e.relatedContext.list.forEach((element, index) => {
+          element['order'] = index
+          tasks.push(element)
+          // console.log(element.order, element.title)
+        })
+      }, 1000)
+
+      /*console.log(e.draggedContext.element )
+      console.log(e.relatedContext.element)*/
+
+      setTimeout(() => {
+        // console.log("ordered tasks =>", tasks)
+        /*for (let i = 0; i < tasks.length; i++) {
+          console.log(tasks[i].order, tasks[i].title, tasks[i].id)
+        }*/
+        this.taskDragDrop(tasks, e.relatedContext.element.sectionId)
+        // debounceUpdate(tasks)
+      }, 1500)
+
+    },
+    async sectionDragDrop() {
+      this.loading = true
+      let sectionDnD = await this.$axios.$put("/section/dragdrop", { projectId: this.project.id, data: this.ordered }, {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+          "Content-Type": "application/json"
+        }
+      })
+
+      // console.log(sectionDnD)
+      if (sectionDnD.statusCode == 200) {
+        // console.info(sectionDnD.message)
+        this.$store.dispatch("section/fetchProjectSections", this.$route.params.id).then(() => {
+          this.$emit("update-key", 1)
+          this.key += 1
+        })
+        /*this.$store.dispatch('task/fetchTasks', { id: this.$route.params.id, filter: 'all' }).then(() => {
+          this.$emit("update-key", 1)
+          this.key += 1
+        })*/
+      } else {
+        console.warn(sectionDnD.message)
+      }
+
+      this.loading = false
+
+    },
+    async taskDragDrop(newData, sectionId) {
+      let taskDnD;
+      if (sectionId) {
+        taskDnD = await this.$axios.$put("/section/crossSectionDragDrop", { data: newData, sectionId: sectionId }, {
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+            "Content-Type": "application/json"
+          }
+        })
+      } else {
+        taskDnD = await this.$axios.$put("/task/dragdrop", { data: newData }, {
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+            "Content-Type": "application/json"
+          }
+        })
+      }
+
+      // console.log(taskDnD)
+      if (taskDnD.statusCode == 200) {
+        console.info(taskDnD.message)
+
+        this.$store.dispatch("section/fetchProjectSections", this.$route.params.id).then(() => {
+          this.taskByOrder();
+        })
+
+      } else {
+        console.warn(taskDnD.message)
+      }
+    },
     taskWithSection(sectionId) {
       var arr = []
 
@@ -188,6 +325,10 @@ export default {
 
       return arr;
     },
+    debounceUpdate: _.debounce(function(data) {
+      // console.log('Debounce called!')
+      this.taskDragDrop(...args)
+    }, 1200),
     overdue(item) {
       // console.log(new Date(item.dueDate), new Date);
       return new Date(item.dueDate) < new Date() ? 'bg-danger' : 'bg-gray2';
@@ -216,8 +357,6 @@ export default {
           item.order = index
         })
       }
-
-      // console.log(ordered)
 
       let dnd = await this.$axios.$put("/section/dragdrop", { projectId: payload[removedIndex].projectId, data: ordered }, {
         headers: {
@@ -289,17 +428,17 @@ export default {
 
     },
 
-    log(...params) {
-      console.log(...params)
-    },
-    onDropReady(dropResult) {
+    /*log(evt) {
+      window.console.log(evt);
+    },*/
+    /*onDropReady(dropResult) {
       const { removedIndex, addedIndex, payload, element } = dropResult;
       console.log(dropResult)
     },
     shouldAcceptDrop(sourceContainerOptions, payload) {
       console.log(sourceContainerOptions, payload)
       return true;
-    },
+    },*/
 
     openSidebar($event) {
       // this.flag = !this.flag;
@@ -320,9 +459,9 @@ export default {
 }
 
 .task-grid-section {
-  /*width: 18%;*/
-  min-width: 240px;
-  min-height: 80vh;
+  flex: 0 0 16rem;
+  /*min-width: 240px;
+  min-height: 80vh;*/
   padding: 10px;
   cursor: grab;
   user-select: none;
