@@ -296,6 +296,7 @@ export default {
           "statusId": this.form.statusId,
         }).then(() => {
           this.$emit("update-key", 1)
+          this.$nuxt.$emit("update-key", 1)
           this.loading = false
           this.hideSidebar()
         }).catch(e => console.warn(e)).then(() => {
@@ -313,6 +314,7 @@ export default {
         this.$store.dispatch("task/fetchTasks", { id: this.project.id }).then(() => this.loading = false)
       }
       this.$emit("update-key", 1)
+      this.$nuxt.$emit("update-key", 1)
     },
 
     debounceUpdate: _.debounce(function() {

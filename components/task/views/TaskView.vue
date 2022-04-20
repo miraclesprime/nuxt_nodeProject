@@ -117,7 +117,7 @@ export default {
 
   methods: {
     updateKey($event) {
-      console.log($event)
+      // console.log($event)
       this.key += $event
     },
     showSectionTitle(section) {

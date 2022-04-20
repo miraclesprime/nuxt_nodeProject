@@ -1,7 +1,7 @@
 <template>
-  <div >
+  <div>
     <draggable v-model="localdata" class="d-flex of-scroll-x">
-      <div class="task-grid-section "  id="task-grid-section-wrapper" v-for="section in localdata" :key="`grid-${key}${section.title}${section.id}`">
+      <div class="task-grid-section " id="task-grid-section-wrapper" v-for="section in localdata" :key="`grid-${key}${section.title}${section.id}`">
         <div class="w-100 d-flex justify-between" id="tgs-inner-wrap" style="margin-bottom: 10px">
           <div class="title text-gray" id="tgs-label" v-show="!section.title.includes('_section')">{{ section.title }}</div>
           <div class="d-flex align-center ml-auto section-options" id="tgs-section-options">
@@ -28,7 +28,8 @@
         <div class="task-section__body" id="tgs-task-section-body">
           <draggable :list="section.tasks" group="task" :move="checkMove">
             <div class="task-grid " v-for="task in section.tasks" :key="task.title + key + '-' + task.id" :class="overdue(task)" :id="'tg-card-'+task.id" v-on:click="openSidebar(task)">
-              <figure v-if="task.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
+              {{task.order}} - {{key}}
+              <!-- <figure v-if="task.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure> -->
               <div class="task-top" id='tg-card-top'>
                 <div class="d-flex" id='tg-card-inside-wrap'>
                   <bib-icon icon="check-circle" :scale="1.5" :variant="task.status.text === 'Done' ? 'success' : 'secondary-sub1'" class="cursor-pointer" @click="handleTaskStatus(task)"></bib-icon>
@@ -103,28 +104,44 @@ export default {
     };
   },
   /*props: {
-    sections: { type: Array, required: true },
+    sections: { type: Array },
     tasks: { type: Array },
   },*/
-  mounted (){
+  created(){
+    this.$nuxt.$on("update-key", () => {
+      console.log('updated-key fired!')
+      this.$store.dispatch("section/fetchProjectSections", this.project.id).then(()=>{
+        this.key += 1;
+      })
+    })
+  },
+  mounted() {
     // console.info('mounted', this.project)
-    this.key += Math.random().toString().slice(-2)
-    this.localdata = JSON.parse(JSON.stringify(this.sections))
-    // this.$store.dispatch("section/fetchProjectSections", this.project.id)
+    this.$store.dispatch("section/fetchProjectSections", this.project.id)
+    this.key += parseInt(Math.random().toString().slice(-2))
+
+    this.taskByOrder();
+    /*this.localdata = JSON.parse(JSON.stringify(this.sections))
+
+    let sorted = this.localdata.map(s => {
+      let t = s.tasks.sort((a, b) => a.order - b.order)
+      s.tasks = t
+      return s
+    })
+    console.log("sorted =>", sorted)
+    this.localdata = sorted
+    this.key += 1*/
   },
   watch: {
-    localdata: function(newValue, oldValue){
-      // if section drag-drop performed
-      /*console.log("new watch value", newValue)
-      console.log(oldValue); */
+    localdata: function(newValue, oldValue) {
 
       this.ordered = newValue
 
-      this.ordered.forEach( function(element, index) {
+      this.ordered.forEach(function(element, index) {
         element.order = index
       });
 
-      this.sectionDragDrop;
+      this.sectionDragDrop();
 
     }
   },
@@ -134,6 +151,9 @@ export default {
       project: "project/getSingleProject",
       sections: "section/getProjectSections",
     }),
+    templateKey(){
+
+    },
     /*myList: {
       get: function() {
         this.data = JSON.parse(JSON.stringify(this.sections))
@@ -145,13 +165,44 @@ export default {
     }*/
   },
   methods: {
-    checkMove(e) {
-      // console.info(e)
-      
-      console.log(e.draggedContext.element, e.draggedContext.index)
-      console.log(e.relatedContext.element, e.relatedContext.index)
+    taskByOrder() {
+      this.localdata = JSON.parse(JSON.stringify(this.sections))
+
+      let sorted = this.localdata.map(s => {
+        let t = s.tasks.sort((a, b) => a.order - b.order)
+        s.tasks = t
+        return s
+      })
+      // console.log("sorted =>", sorted)
+      this.localdata = sorted
+      this.key += 1
     },
-    async sectionDragDrop(){
+    checkMove(e) {
+      // console.info(e.relatedContext.list)
+      let tasks = []
+
+      setTimeout(function() {
+        e.relatedContext.list.forEach((element, index) => {
+          element['order'] = index
+          tasks.push(element)
+          // console.log(element.order, element.title)
+        })
+      }, 1000)
+
+      /*console.log(e.draggedContext.element )
+      console.log(e.relatedContext.element)*/
+
+      setTimeout(() => {
+        // console.log("ordered tasks =>", tasks)
+        /*for (let i = 0; i < tasks.length; i++) {
+          console.log(tasks[i].order, tasks[i].title, tasks[i].id)
+        }*/
+        this.taskDragDrop(tasks, e.relatedContext.element.sectionId)
+        // debounceUpdate(tasks)
+      }, 1500)
+
+    },
+    async sectionDragDrop() {
       this.loading = true
       let sectionDnD = await this.$axios.$put("/section/dragdrop", { projectId: this.project.id, data: this.ordered }, {
         headers: {
@@ -160,19 +211,53 @@ export default {
         }
       })
 
-      console.log(sectionDnD)
+      // console.log(sectionDnD)
       if (sectionDnD.statusCode == 200) {
-        this.$store.dispatch("section/fetchProjectSections", this.$route.params.id)
-        this.$store.dispatch('task/fetchTasks', { id: this.$route.params.id, filter: 'all' }).then(() => {
+        // console.info(sectionDnD.message)
+        this.$store.dispatch("section/fetchProjectSections", this.$route.params.id).then(() => {
           this.$emit("update-key", 1)
           this.key += 1
         })
+        /*this.$store.dispatch('task/fetchTasks', { id: this.$route.params.id, filter: 'all' }).then(() => {
+          this.$emit("update-key", 1)
+          this.key += 1
+        })*/
       } else {
         console.warn(sectionDnD.message)
       }
 
       this.loading = false
 
+    },
+    async taskDragDrop(newData, sectionId) {
+      let taskDnD;
+      if (sectionId) {
+        taskDnD = await this.$axios.$put("/section/crossSectionDragDrop", { data: newData, sectionId: sectionId }, {
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+            "Content-Type": "application/json"
+          }
+        })
+      } else {
+        taskDnD = await this.$axios.$put("/task/dragdrop", { data: newData }, {
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+            "Content-Type": "application/json"
+          }
+        })
+      }
+
+      // console.log(taskDnD)
+      if (taskDnD.statusCode == 200) {
+        console.info(taskDnD.message)
+
+        this.$store.dispatch("section/fetchProjectSections", this.$route.params.id).then(() => {
+          this.taskByOrder();
+        })
+
+      } else {
+        console.warn(taskDnD.message)
+      }
     },
     taskWithSection(sectionId) {
       var arr = []
@@ -240,6 +325,10 @@ export default {
 
       return arr;
     },
+    debounceUpdate: _.debounce(function(data) {
+      // console.log('Debounce called!')
+      this.taskDragDrop(...args)
+    }, 1200),
     overdue(item) {
       // console.log(new Date(item.dueDate), new Date);
       return new Date(item.dueDate) < new Date() ? 'bg-danger' : 'bg-gray2';
@@ -370,9 +459,9 @@ export default {
 }
 
 .task-grid-section {
-  /*width: 18%;*/
-  min-width: 240px;
-  min-height: 80vh;
+  flex: 0 0 16rem;
+  /*min-width: 240px;
+  min-height: 80vh;*/
   padding: 10px;
   cursor: grab;
   user-select: none;

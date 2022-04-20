@@ -24,6 +24,11 @@ export const mutations = {
   },
 
   fetchProjectSections(state, payload){
+    /*let sorted = payload.map((el) => {
+      console.log(el)
+      return el.tasks.sort(function(a,b) {return a.order - b.order})
+    })*/
+    // console.log("sorted sections mutation",sorted)
     state.projectSections = payload
   },
 
