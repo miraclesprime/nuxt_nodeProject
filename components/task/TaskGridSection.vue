@@ -1,23 +1,23 @@
 <template>
   <div>
-    <draggable v-model="localdata" class="d-flex of-scroll-x">
-      <div class="task-grid-section " id="task-grid-section-wrapper" v-for="section in localdata" :key="`grid-${key}${section.title}${section.id}`">
-        <div class="w-100 d-flex justify-between" id="tgs-inner-wrap" style="margin-bottom: 10px">
-          <div class="title text-gray" id="tgs-label" v-show="!section.title.includes('_section')">{{ section.title }}</div>
-          <div class="d-flex align-center ml-auto section-options" id="tgs-section-options">
+    <draggable v-model="localdata" class="d-flex of-scroll-x" :move="moveSection" handle=".section-drag-handle">
+      <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${key}${section.title}${section.id}`">
+        <div class="w-100 d-flex justify-between section-drag-handle" :id="'tgs-inner-wrap-'+section.id" style="margin-bottom: 10px">
+          <div class="title text-gray" :id="'tgs-label-'+section.id" v-show="!section.title.includes('_section')">{{ section.title }}</div>
+          <div class="d-flex align-center ml-auto section-options" :id="'tgs-section-options-'+section.id">
             <bib-icon icon="add" class="mx-05"></bib-icon>
             <bib-button pop="elipsis">
               <template v-slot:menu>
-                <div class="list">
-                  <span class="list__item">
-                    <div class="d-flex align-center">
+                <div :id="'tgs-list'+section.id" class="list">
+                  <span class="list__item" :id="'tgs-list-1'+section.id">
+                    <div class="d-flex align-center" :id="'tgs-list-flex-1'+section.id">
                       <bib-icon icon="add"></bib-icon>
-                      <span class="ml-05">Add task</span>
+                      <span class="ml-05" :id="'tgs-list-span'+section.id">Add task</span>
                     </div>
-                  </span><span class="list__item">
-                    <div class="d-flex align-center">
+                  </span><span class="list__item" :id="'tgs-list-2'+section.id">
+                    <div class="d-flex align-center" :id="'tgs-list-flex-2'+section.id">
                       <bib-icon icon="pencil"></bib-icon>
-                      <span class="ml-05">Rename</span>
+                      <span class="ml-05" :id="'tgs-list-span'+section.id">Rename</span>
                     </div>
                   </span>
                 </div>
@@ -25,54 +25,53 @@
             </bib-button>
           </div>
         </div>
-        <div class="task-section__body" id="tgs-task-section-body">
-          <draggable :list="section.tasks" group="task" :move="checkMove">
+        <div class="task-section__body" :id="'tgs-task-section-body-'+section.id">
+          <draggable :list="section.tasks" group="task" :move="moveTask">
             <div class="task-grid " v-for="task in section.tasks" :key="task.title + key + '-' + task.id" :class="overdue(task)" :id="'tg-card-'+task.id" v-on:click="openSidebar(task)">
-              {{task.order}} - {{key}}
-              <!-- <figure v-if="task.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure> -->
-              <div class="task-top" id='tg-card-top'>
-                <div class="d-flex" id='tg-card-inside-wrap'>
+              <figure v-if="task.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
+              <div class="task-top" :id="'tg-card-top'+task.id">
+                <div class="d-flex" :id="'tg-card-inside-wrap'+task.id">
                   <bib-icon icon="check-circle" :scale="1.5" :variant="task.status.text === 'Done' ? 'success' : 'secondary-sub1'" class="cursor-pointer" @click="handleTaskStatus(task)"></bib-icon>
-                  <span class="ml-05" id='tg-title'>{{ task.title }} </span>
+                  <span class="ml-05" :id="'tg-title'+task.id">{{ task.title }} </span>
                 </div>
                 <bib-button pop="elipsis" icon="elipsis" :icon-variant="overdue(task) == 'bg-danger'? 'white' :'secondary'">
                   <template v-slot:menu>
-                    <div class="list" id='tg-list'>
+                    <div class="list" :id="'tg-list'+task.id">
                       <!-- <span class="list__item" v-on:click="openSidebar(task)">Details</span>
                       <hr> -->
-                      <span class="list__item">
+                      <span class="list__item" :id="'tg-comp'+task.id">
                         <bib-icon icon="check-circle" class="mr-05"></bib-icon> Mark Completed
                       </span>
-                      <span class="list__item" id='tg-fav' @click="addToFavorites">
+                      <span class="list__item" :id="'tg-fav'+task.id" @click="addToFavorites">
                         <bib-icon icon="heart-like" class="mr-05"></bib-icon> Add to favorites
                       </span>
-                      <span class="list__item">
+                      <span class="list__item" :id="'tg-attach'+task.id">
                         <bib-icon icon="upload" class="mr-05"></bib-icon> Attach file...
                       </span>
-                      <span class="list__item">
+                      <span class="list__item" :id="'tg-assign'+task.id">
                         <bib-icon icon="user-add" class="mr-05"></bib-icon> Assign to...
                       </span>
-                      <span class="list__item">
+                      <span class="list__item" :id="'tg-reminder'+task.id">
                         <bib-icon icon="notification" class="mr-05"></bib-icon> Set as reminder
                       </span>
-                      <span class="list__item " id='tg-copy-link'>
+                      <span class="list__item " :id="'tg-copy-link'+task.id">
                         <bib-icon icon="duplicate" class="mr-05"></bib-icon> Copy
                       </span>
-                      <span class="list__item">
+                      <span class="list__item" :id="'tg-move'+task.id">
                         <bib-icon icon="transfer" class="mr-05"></bib-icon> Move to
                       </span>
-                      <span class="list__item " id='tg-view-task'>
+                      <span class="list__item " :id="'tg-view-task'+task.id">
                         <bib-icon icon="warning" class="mr-05"></bib-icon> Report
                       </span>
                       <hr>
-                      <span class="list__item danger" id='tg-delete-task'>Delete Task</span>
+                      <span class="list__item danger" :id="'tg-delete-task'+task.id">Delete Task</span>
                     </div>
                   </template>
                 </bib-button>
               </div>
-              <div class="task-bottom" id='tg-card-bottom'>
+              <div class="task-bottom" :id="'tg-card-bottom'+task.id">
                 <user-info :user="task.user" avatar="https://i.pravatar.cc/32"></user-info>
-                <span id='tg-bottom-duedate' v-format-date="task.dueDate"></span>
+                <span :id="'tg-bottom-duedate'+task.id" v-format-date="task.dueDate"></span>
               </div>
             </div>
           </draggable>
@@ -107,12 +106,26 @@ export default {
     sections: { type: Array },
     tasks: { type: Array },
   },*/
-  created(){
+  created() {
     this.$nuxt.$on("update-key", () => {
-      console.log('updated-key fired!')
-      this.$store.dispatch("section/fetchProjectSections", this.project.id).then(()=>{
-        this.key += 1;
-      })
+      console.log('updated-key received')
+      this.$store.dispatch("section/fetchProjectSections", this.project.id)
+        .then(() => {
+          // this.taskByOrder();
+          // console.log(this.sections)
+
+          this.localdata = JSON.parse(JSON.stringify(this.sections))
+
+          let sorted = this.localdata.map(s => {
+            let t = s.tasks.sort((a, b) => a.order - b.order)
+            s.tasks = t
+            return s
+          })
+          // console.log("sorted =>", sorted)
+          this.localdata = sorted
+          this.key += 1
+        })
+        .catch(e => console.log(e))
     })
   },
   mounted() {
@@ -121,18 +134,9 @@ export default {
     this.key += parseInt(Math.random().toString().slice(-2))
 
     this.taskByOrder();
-    /*this.localdata = JSON.parse(JSON.stringify(this.sections))
 
-    let sorted = this.localdata.map(s => {
-      let t = s.tasks.sort((a, b) => a.order - b.order)
-      s.tasks = t
-      return s
-    })
-    console.log("sorted =>", sorted)
-    this.localdata = sorted
-    this.key += 1*/
   },
-  watch: {
+  /*watch: {
     localdata: function(newValue, oldValue) {
 
       this.ordered = newValue
@@ -144,14 +148,14 @@ export default {
       this.sectionDragDrop();
 
     }
-  },
+  },*/
   computed: {
     ...mapGetters({
       token: "token/getToken",
       project: "project/getSingleProject",
       sections: "section/getProjectSections",
     }),
-    templateKey(){
+    templateKey() {
 
     },
     /*myList: {
@@ -176,8 +180,9 @@ export default {
       // console.log("sorted =>", sorted)
       this.localdata = sorted
       this.key += 1
+      this.$nuxt.$emit("update-key", this.key)
     },
-    checkMove(e) {
+    moveTask(e) {
       // console.info(e.relatedContext.list)
       let tasks = []
 
@@ -202,6 +207,23 @@ export default {
       }, 1500)
 
     },
+    moveSection(e) {
+
+      let ordered=[]
+
+      setTimeout(() => {
+        this.localdata.forEach(function(element, index) {
+          element.order = index
+          ordered.push(element)
+        });
+      }, 800)
+
+      setTimeout( () => {
+        this.ordered = [...ordered]
+        this.sectionDragDrop()
+      }, 1200)
+
+    },
     async sectionDragDrop() {
       this.loading = true
       let sectionDnD = await this.$axios.$put("/section/dragdrop", { projectId: this.project.id, data: this.ordered }, {
@@ -215,21 +237,17 @@ export default {
       if (sectionDnD.statusCode == 200) {
         // console.info(sectionDnD.message)
         this.$store.dispatch("section/fetchProjectSections", this.$route.params.id).then(() => {
-          this.$emit("update-key", 1)
           this.key += 1
+          this.$nuxt.$emit("update-key", this.key)
         })
-        /*this.$store.dispatch('task/fetchTasks', { id: this.$route.params.id, filter: 'all' }).then(() => {
-          this.$emit("update-key", 1)
-          this.key += 1
-        })*/
       } else {
         console.warn(sectionDnD.message)
       }
 
       this.loading = false
-
     },
     async taskDragDrop(newData, sectionId) {
+      this.loading = true
       let taskDnD;
       if (sectionId) {
         taskDnD = await this.$axios.$put("/section/crossSectionDragDrop", { data: newData, sectionId: sectionId }, {
@@ -258,6 +276,7 @@ export default {
       } else {
         console.warn(taskDnD.message)
       }
+      this.loading = false
     },
     taskWithSection(sectionId) {
       var arr = []
@@ -463,8 +482,11 @@ export default {
   /*min-width: 240px;
   min-height: 80vh;*/
   padding: 10px;
-  cursor: grab;
   user-select: none;
+
+  .section-drag-handle {
+    cursor: grab;
+  }
 
   &:not(:first-child) {
     border-left: 1px solid $gray4;
