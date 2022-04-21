@@ -115,9 +115,16 @@ export default {
     },
   },
 
+  mounted() {
+    this.$store.dispatch("section/fetchProjectSections", this.$route.params.id)
+    this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
+  },
+
   methods: {
     updateKey($event) {
       // console.log($event)
+      this.$store.dispatch("section/fetchProjectSections", this.$route.params.id)
+      this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
       this.key += $event
     },
     showSectionTitle(section) {

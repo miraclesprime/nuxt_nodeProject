@@ -112,7 +112,7 @@ export default {
     teamItemClick(tm) {
       // console.log(tm)
       let existing = this.projectMembers.filter(ex => ex.id == tm.id)
-      console.log(existing)
+      // console.log(existing)
       if (existing.length == 0) {
         this.message = ""
         let m = this.companyUsers.filter(t => t.id == tm.id)

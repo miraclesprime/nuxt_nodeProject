@@ -48,13 +48,13 @@
             </template>
           </bib-button>
         </div>
-        <bib-app-navigation :items="navItems1" @click='goToRoute($event)' class="mb-1"></bib-app-navigation>
-        <bib-app-navigation :items="navItems2" @click='goToRoute($event)'></bib-app-navigation>
+        <bib-app-navigation :items="navItems1" @click="goToRoute($event)" class="mb-1"></bib-app-navigation>
+        <bib-app-navigation :items="navItems2" @click="goToRoute($event)" ></bib-app-navigation>
         <bib-detail-collapse v-show="!collapseNavigation" label="Favorite Projects" variant="white" open class="mt-1">
           <template v-slot:content>
-            <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light" id="layout-add-icon">
+            <!-- <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light" id="layout-add-icon">
               <bib-icon icon="add" variant="success" :scale="1.5" class="p-025 ml-025"></bib-icon> <span id=" layout-icon-text" class="p-025">Create a project</span>
-            </div>
+            </div> -->
             <bib-app-navigation :items="favProjects" @click="goToProject($event)"></bib-app-navigation>
           </template>
         </bib-detail-collapse>
@@ -108,7 +108,7 @@ export default {
       ],
       navItems2: [
         { label: "Tasks", icon: "check-all", key: "task-route" },
-        { label: "Projects", icon: "briefcase", key: 'project-route', selected: true },
+        { label: "Projects", icon: "briefcase", key: 'project-route' },
         { label: "Goals", icon: "flag-racing" },
         { label: "Dream", icon: "star" },
       ],
@@ -174,6 +174,8 @@ export default {
 
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0cTJWb2xlalJlak5tR1FCIiwic3ViZSI6Imh0YW5nQGJpenRyZWUuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiQURNSU4iLCJzdWJjIjoiQ2FuYWRhIiwiZW52IjoiZGV2IiwiaWF0IjoxNjQ4NTUwMTI1ODY0LCJleHAiOjE2NTYzMjYxMjU4NjQsImp0aSI6ImM1MDYyM2I4LTM3NGMtNDhjMi04MzNiLTJmZjk3ZTA2MGIxZSJ9.sVGhB1aKeLurq_S1t1aWT86TDi-4fXhqBic90i3xTVA"
 
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2NTA0NjA0NDgyOTMsImV4cCI6MTY1ODIzNjQ0ODI5MywianRpIjoiMmYzNDE1MTUtNzBjMy00YjYyLWI3MmMtNmIxNDczODgzODU4In0.pnG0ierfColobVCVAQaOq8StqquRKYx-KeFVO6RkUKI"
+
       /*this.$cookies.set('b_ssojwt', cookie);
       this.$store.dispatch('token/setToken', cookie);*/
 
@@ -238,6 +240,14 @@ export default {
   },
 
   methods: {
+
+    isRouteActive(id) {
+      if (this.$route.path.includes(id)) {
+        return true
+      } else {
+        return false
+      }
+    },
 
     rightClkFileSection(event) {
       console.log('click outside event')

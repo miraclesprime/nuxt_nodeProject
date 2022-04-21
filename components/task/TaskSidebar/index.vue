@@ -319,7 +319,7 @@ export default {
 
     debounceUpdate: _.debounce(function() {
       if (this.form.id) {
-        console.log('Debounce clicked!')
+        // console.log('Debounce clicked!')
         this.updateTask()
       }
     }, 1500),
