@@ -109,7 +109,7 @@ export default {
   created() {
     this.$nuxt.$on("update-key", () => {
       console.log('updated-key received')
-      this.$store.dispatch("section/fetchProjectSections", this.project.id)
+      this.$store.dispatch("section/fetchProjectSections", {projectId:this.project.id})
         .then(() => {
           // this.taskByOrder();
           // console.log(this.sections)
@@ -130,25 +130,12 @@ export default {
   },
   mounted() {
     // console.info('mounted', this.project)
-    this.$store.dispatch("section/fetchProjectSections", this.project.id)
+    this.$store.dispatch("section/fetchProjectSections", {projectId:this.project.id})
     this.key += parseInt(Math.random().toString().slice(-2))
 
     this.taskByOrder();
 
   },
-  /*watch: {
-    localdata: function(newValue, oldValue) {
-
-      this.ordered = newValue
-
-      this.ordered.forEach(function(element, index) {
-        element.order = index
-      });
-
-      this.sectionDragDrop();
-
-    }
-  },*/
   computed: {
     ...mapGetters({
       token: "token/getToken",
@@ -158,15 +145,6 @@ export default {
     templateKey() {
 
     },
-    /*myList: {
-      get: function() {
-        this.data = JSON.parse(JSON.stringify(this.sections))
-        // return JSON.parse(JSON.stringify(this.sections))
-      },
-      set: function(newValue) {
-        this.data = newValue
-      }
-    }*/
   },
   methods: {
     taskByOrder() {
@@ -194,14 +172,7 @@ export default {
         })
       }, 1000)
 
-      /*console.log(e.draggedContext.element )
-      console.log(e.relatedContext.element)*/
-
       setTimeout(() => {
-        // console.log("ordered tasks =>", tasks)
-        /*for (let i = 0; i < tasks.length; i++) {
-          console.log(tasks[i].order, tasks[i].title, tasks[i].id)
-        }*/
         this.taskDragDrop(tasks, e.relatedContext.element.sectionId)
         // debounceUpdate(tasks)
       }, 1500)
@@ -236,7 +207,7 @@ export default {
       // console.log(sectionDnD)
       if (sectionDnD.statusCode == 200) {
         // console.info(sectionDnD.message)
-        this.$store.dispatch("section/fetchProjectSections", this.$route.params.id).then(() => {
+        this.$store.dispatch("section/fetchProjectSections", {projectId:this.$route.params.id}).then(() => {
           this.key += 1
           this.$nuxt.$emit("update-key", this.key)
         })
@@ -269,7 +240,7 @@ export default {
       if (taskDnD.statusCode == 200) {
         console.info(taskDnD.message)
 
-        this.$store.dispatch("section/fetchProjectSections", this.$route.params.id).then(() => {
+        this.$store.dispatch("section/fetchProjectSections", {projectId:this.$route.params.id}).then(() => {
           this.taskByOrder();
         })
 
@@ -350,119 +321,11 @@ export default {
     }, 1200),
     overdue(item) {
       // console.log(new Date(item.dueDate), new Date);
-      return new Date(item.dueDate) < new Date() ? 'bg-danger' : 'bg-gray2';
+      return (new Date(item.dueDate) < new Date() && item.statusId != 5) ? 'bg-danger' : 'bg-gray2';
     },
-    swap(sourceObj, sourceKey, targetObj, targetKey) {
-      var temp = sourceObj[sourceKey];
-      sourceObj[sourceKey] = targetObj[targetKey];
-      targetObj[targetKey] = temp;
-    },
-    getSectionPayload(index) {
-      return JSON.parse(JSON.stringify(this.sections));
-    },
-    async onSectionDrop(dropResult) {
-      const { removedIndex, addedIndex, payload } = dropResult
-      console.info(dropResult);
-
-      var ordered = []
-
-      if (removedIndex - addedIndex >= 1 || removedIndex - addedIndex <= -1) {
-        // ordered = JSON.parse(JSON.stringify(payload))
-        ordered = payload.map(a => { return { ...a } })
-        ordered.splice(removedIndex, 1)
-        ordered.splice(addedIndex, 0, payload[removedIndex])
-
-        ordered.forEach((item, index) => {
-          item.order = index
-        })
-      }
-
-      let dnd = await this.$axios.$put("/section/dragdrop", { projectId: payload[removedIndex].projectId, data: ordered }, {
-        headers: {
-          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-          "Content-Type": "application/json"
-        }
-      })
-
-      // console.log(dnd)
-      if (dnd.statusCode == 200) {
-        this.$store.dispatch("section/fetchProjectSections", this.$route.params.id)
-        this.$store.dispatch('task/fetchTasks', { id: this.$route.params.id, filter: 'all' }).then(() => {
-          this.$emit("update-key", 1)
-          this.key += 1
-        })
-      } else {
-        console.warn(dnd.message)
-      }
-
-    },
-    getTaskPayload(sectionId) {
-      let propTasks = JSON.parse(JSON.stringify(this.tasks))
-      var tasks = []
-
-      for (var j = 0; j < propTasks.length; ++j) {
-        if (propTasks[j].sectionId == sectionId) {
-          tasks.push(propTasks[j]);
-        }
-      }
-      return tasks;
-    },
-    async onTaskDrop(dropResult) {
-
-      const { removedIndex, addedIndex, payload, element } = dropResult
-
-      // console.info(dropResult);
-      var ordered = []
-
-      /*if (removedIndex - addedIndex >= 1 || removedIndex - addedIndex <= -1) {
-        // ordered = JSON.parse(JSON.stringify(payload))
-        ordered = payload.map(a => { return { ...a } })
-        ordered.splice(removedIndex, 1)
-        ordered.splice(addedIndex, 0, payload[removedIndex])
-
-        ordered.forEach((item, index) => {
-          item.order = index
-        })
-      }*/
-
-      // console.log(ordered)
-
-      /*let dnd = await this.$axios.$put("/task/dragdrop", { sectionId: payload[removedIndex].sectionId, data: ordered }, {
-        headers: {
-          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-          "Content-Type": "application/json"
-        }
-      })
-
-      // console.log(dnd)
-      if (dnd.statusCode == 200) {
-        this.$store.dispatch("section/fetchProjectSections", this.$route.params.id)
-        this.$store.dispatch('task/fetchTasks', { id: this.$route.params.id, filter: 'all' }).then(() => {
-          this.$emit("update-key", 1)
-          this.key += 1
-        })
-      } else {
-        console.warn(dnd.message)
-      }*/
-
-    },
-
-    /*log(evt) {
-      window.console.log(evt);
-    },*/
-    /*onDropReady(dropResult) {
-      const { removedIndex, addedIndex, payload, element } = dropResult;
-      console.log(dropResult)
-    },
-    shouldAcceptDrop(sourceContainerOptions, payload) {
-      console.log(sourceContainerOptions, payload)
-      return true;
-    },*/
 
     openSidebar($event) {
-      // this.flag = !this.flag;
       this.$nuxt.$emit("open-sidebar", true);
-      // this.$nuxt.$emit("set-active-task", task);
       this.$store.dispatch('task/setSingleTask', $event)
     },
     addToFavorites() {

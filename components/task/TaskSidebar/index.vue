@@ -85,8 +85,8 @@
         <div class="task-info pt-1" id='sidebar-inner-wrap'>
           <div class="row mx-0" id='sidebar-row-1'>
             <div class="col-4" id='sidebar-col-1'>
-              <!-- <label class="text-gray5 mb-025">Assignee</label> -->
-              <!-- <bib-select :options="orgUsers" :value="form.userId" ></bib-select> -->
+              <!-- <label class="text-gray5 ">Assignee</label>
+              <bib-select :options="orgUsers" v-model="form.userId" class="mt-025" ></bib-select> -->
               <bib-input type="select" :options="orgUsers" v-model="form.userId" placeholder="Please select..." label="Assignee" v-on:change.native="debounceUpdate()"></bib-input>
             </div>
             <div class="col-4" id='sidebar-col-2'>
@@ -295,8 +295,8 @@ export default {
           "budget": 0,
           "statusId": this.form.statusId,
         }).then(() => {
-          this.$emit("update-key", 1)
-          this.$nuxt.$emit("update-key", 1)
+          this.$emit("update-key")
+          this.$nuxt.$emit("update-key")
           this.loading = false
           this.hideSidebar()
         }).catch(e => console.warn(e)).then(() => {
@@ -313,8 +313,8 @@ export default {
       if (task.statusCode == 200) {
         this.$store.dispatch("task/fetchTasks", { id: this.project.id }).then(() => this.loading = false)
       }
-      this.$emit("update-key", 1)
-      this.$nuxt.$emit("update-key", 1)
+      this.$emit("update-key")
+      this.$nuxt.$emit("update-key")
     },
 
     debounceUpdate: _.debounce(function() {

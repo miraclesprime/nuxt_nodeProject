@@ -1,175 +1,139 @@
 <template>
-  <bib-detail-collapse :label="label" :open="open" :class="labelClass">
-    <template v-slot:content>
-      <bib-table
-        :fields="taskFields"
-        :sections="taskSections"
-        :headless="headless"
-        :groupName="groupName"
-        class="bg-white p-0 task-table"
-        @item-clicked="itemClicked()"
-      >
-        <template #cell(key)="data">
-          <div class="task-key" id="tls-task-key">
-            {{ data.value.key }}
-          </div>
-        </template>
-
-        <template #cell(name)="data">
-          <custom-check-box :id="groupName + '-' + data.value.key" />
-          <span class="ml-05" id="tls-name">{{ data.value.name }}</span>
-        </template>
-
-        <template #cell(status)="data">
-          <span :class="statusClass(data.value.status)" id="tls-status">
-            {{ data.value.status }}
-          </span>
-          <span :class="statusClass(data.value.status)" id="tls-progress">
-            {{ data.value.progress }}</span
-          >
-        </template>
-        <template #cell(priority)="data">
-          <span :class="priorityClass(data.value.priority)" id="tls-priority">
-            {{ data.value.priority }}
-          </span>
-        </template>
-        <template #cell(assignee)="data">
-          <bib-avatar size="25px"></bib-avatar>
-          <span class="assignee-name ml-05" id="tls-assignee">
-            {{ data.value.assignee }}
-          </span>
-        </template>
-        <template #cell(dueDate)="data">
-          {{ data.value.dueDate }}
-        </template>
-      </bib-table>
-    </template>
-  </bib-detail-collapse>
+  <div>
+    <bib-table v-for="(item, index) in sections" :key="`tasklist-${key}${item.id}${sortName ? sortName : ''}`" :fields="tableFields" :sections="item.tasks" :headless="index > 0" :collapseObj="showSectionTitle(item)" hide-no-column class="border-gray4 bg-white" @file-title-sort="$emit('sort-task','name')" @file-status-sort="$emit('sort-task','status')" @file-priority-sort="$emit('sort-task','priority')" @file-owner-sort="$emit('sort-task','owner')" @file-startDate-sort="$emit('sort-task','startDate')" @file-dueDate-sort="$emit('sort-task','dueDate')"  >
+      <template #cell(title)="data">
+        <div class="d-flex gap-05 align-center">
+          <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data)" class="cursor-pointer" @click="handleTaskTable_status(data)"></bib-icon>
+          <span class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block;  line-height:1.25;" @click="openSidebar(data.value)">{{ data.value.title }}</span>
+        </div>
+      </template>
+      <template #cell(owner)="data">
+        <user-info :user="data.value.user" avatar="https://i.pravatar.cc/32"></user-info>
+      </template>
+      <template #cell(status)="data">
+        <div class="d-flex gap-05 align-center">
+          <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + taskStatusVariable(data.value.status ? data.value.status.text : '')"></div>
+          <span class="text-dark">{{ taskStatusLabel(data.value.status ? data.value.status.text : '') }}</span>
+        </div>
+      </template>
+      <template #cell(startDate)="data">
+          <span class="text-dark d-inline-flex" style="line-height: normal;" v-format-date="data.value.createdAt"></span>
+      </template>
+      <template #cell(dueDate)="data">
+          <span class="text-dark d-inline-flex" style="line-height: normal;" v-format-date="data.value.dueDate"></span>
+      </template>
+      <template #cell(priority)="data">
+        <div class="d-flex gap-05 align-center">
+          <bib-icon icon="urgent-solid" :scale="1.1" :variant="taskPriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
+          <span :class="'text-' + taskPriorityVariable(data.value.priority ? data.value.priority.text : '')">{{ capitalizeFirstLetter(data.value.priority ? data.value.priority.text : '') }}</span>
+        </div>
+      </template>
+    </bib-table>
+  </div>
 </template>
-
 <script>
+import { TASK_FIELDS } from "config/constants";
+import { mapGetters } from 'vuex';
 export default {
   props: {
-    label: {
-      type: String,
-      default() {
-        return "Task Section";
-      },
-    },
-    open: {
-      type: Boolean,
-      default() {
-        return false;
-      },
-    },
-    headless: {
-      type: Boolean,
-      default() {
-        return false;
-      },
-    },
-    taskSections: {
-      type: Array,
-      default() {
-        return [];
-      },
-    },
-    taskFields: {
-      type: Array,
-      default() {
-        return [];
-      },
-    },
-    groupName: {
-      type: String,
-      default() {
-        return "1";
-      },
-    },
-    labelClass: {
-      type: String,
-      default() {
-        return "text-dark";
-      },
-    },
+    project: { type: Object, required: true},
+    sections: { type: Array, required: true},
   },
   data() {
     return {
+      tableFields: TASK_FIELDS,
+      key: 0,
+      sortName: "",
       flag: false,
     };
   },
+  
   methods: {
-    activeTab(e) {},
-
-    statusClass(status) {
-      if (status === "Past Due") return "text-red";
-      if (status === "In-progress") return "text-blue";
+    openSidebar($event) {
+      this.$nuxt.$emit("open-sidebar", true);
+      this.$store.dispatch('task/setSingleTask', $event)
     },
-
-    priorityClass(priority) {
-      if (priority === "Urgent") return "text-red";
-      if (priority === "Top") return "text-orange";
-      return "text-green";
+    /*updateKey($event) {
+      // console.log($event)
+      this.$store.dispatch("section/fetchProjectSections", {projectId:this.$route.params.id})
+      // this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
+      this.key += $event
+    },*/
+    showSectionTitle(section) {
+      if (section.title.includes("_section")) {
+        return null
+      } else {
+        return {
+          collapsed: false,
+          label: section.title,
+          variant: 'black',
+        }
+      }
     },
-
     itemClicked() {
       this.flag = !this.flag;
       this.$root.$emit("open-sidebar", this.flag);
     },
+    taskCheckIcon(data) {
+      return data.value.statusId == 5 ? 'success' : 'secondary-sub1'
+    },
+
+    taskStatusLabel(status) {
+      switch (status) {
+        case 'Delayed':
+          return 'Delayed'
+        case 'In-Progress':
+          return 'In-Progress'
+        case 'Done':
+          return 'Done'
+        case 'Waiting':
+          return 'Waiting'
+        case 'Not Started':
+          return 'Not Started'
+        default:
+          return ''
+      }
+    },
+    taskStatusVariable(status) {
+      switch (status) {
+        case 'Delayed':
+          return 'danger'
+        case 'In-Progress':
+          return 'primary'
+        case 'Done':
+          return 'success'
+        case 'Waiting':
+          return 'warning'
+        case 'Not Started':
+          return 'secondary'
+        default:
+          return ''
+      }
+    },
+    taskPriorityVariable(priority) {
+      switch (priority) {
+        case 'high':
+          return 'danger'
+        case 'medium':
+          return 'orange'
+        case 'low':
+          return 'success'
+        case 'none':
+          return 'secondary'
+        default:
+          return ""
+      }
+    },
+    capitalizeFirstLetter(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1)
+    },
+    handleTaskTable_status(item) {
+      console.log(item)
+      this.$store.dispatch('task/updateTaskStatus', item)
+    },
   },
 };
+
 </script>
-
 <style lang="scss" scoped>
-::v-deep {
-  .detail-collapse__content {
-    padding: 0;
-  }
-
-  .table {
-    tr:first-child td {
-      border-top: none;
-    }
-
-    tr:nth-child(2) td {
-      border-top: 1px solid $gray3;
-    }
-  }
-
-  .detail-collapse__header {
-    border-top: none !important;
-  }
-
-  .border-top-gray4 {
-    border-top: 1px solid $gray4;
-  }
-
-  td {
-    display: flex;
-    align-items: center;
-    color: $dark !important;
-    font-weight: 600;
-  }
-  td:first-child {
-    width: 4%;
-    justify-content: center;
-  }
-  td:nth-child(2) {
-    width: 28%;
-  }
-  td:nth-child(3) {
-    width: 19%;
-    justify-content: space-between;
-  }
-  td:nth-child(4),
-  td:nth-child(5) {
-    width: 17%;
-  }
-  td:nth-child(6) {
-    width: 15%;
-  }
-  tr {
-    display: flex;
-  }
-}
 </style>

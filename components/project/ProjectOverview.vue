@@ -44,8 +44,9 @@
       </div>
       <div id="proj-row3" class="row">
         <div id="proj-row3-col1" class="col-6">
-          <bib-input type="select" :options="filterUser" v-model="activeProject.userId" placeholder="Please select..." label="Assign a project lead" v-on:change.native="debounceUpdate()" disabled></bib-input>
-          <!-- <label class="text-gray6">Assign a project lead</label> -->
+          <bib-input type="select" :options="filterUser" v-model="activeProject.userId" placeholder="Please select..." label="Owner" v-on:change.native="debounceUpdate()" disabled ></bib-input>
+          <!-- <label class="text-gray6">Owner</label> -->
+          <!-- <bib-select :options="filterUser" v-model="activeProject.userId" class="mt-025"></bib-select> -->
           <!-- <bib-button test_id="po-owner-dd1" dropdown1="add" label="Type name or email" v-model="owner" v-on:input-keydown="dropdownInputKeydown" :footer="{icon: 'add', label: 'Invite via email', event: 'footer-action'}" @footer-action="inviteViaEmail" class="mt-05 mb-05">
             <template v-slot:menu>
               <ul id="cpm-fields" class="border-gray1" style="border-radius: 0 !important; border: 1px solid var(--bib-gray1);">
@@ -122,12 +123,15 @@ export default {
       loading: false,
       // loading2: false,
       // time: null,
-      project: {}
+      project: {},
+      // user: JSON.parse(localStorage.getItem("user"))
     };
   },
 
   mounted() {
     if(process.client) {
+      let user = JSON.parse(localStorage.getItem("user"))
+      this.$store.dispatch("company/fetchCompanyMembers", user.subb)
       this.$store.dispatch('task/fetchTasks', {id: this.$route.params.id, filter: 'all'})
       this.loading = true
       this.$axios.$get(`project/${this.$route.params.id}`, {
@@ -172,12 +176,12 @@ export default {
       companyUsers: "company/getCompanyMembers",
       totalTasks: "task/tasksForListView"
     }),
-    assignee() {
+    /*assignee() {
       let items = this.companyUsers.map(u => {
         return { id: u.id, label: u.firstName + ' ' + u.lastName, event: "item-event", img: "" }
       })
       return { items: items }
-    },
+    },*/
 
     taskOverdue() {
       if (this.totalTasks.length < 1) {
@@ -229,7 +233,7 @@ export default {
     },
     filterUser() {
       return this.companyUsers.map((u) => {
-        return { value: u.id, id: u.id, label: u.firstName + ' ' + u.lastName, email: u.email }
+        return { value: u.id, id: u.id, label: u.firstName + ' ' + u.lastName, email: u.email, img: "https://i.pravatar.cc/150?u=" + u.id }
       })
       /*return this.companyUsers.filter((u) => {
         if (u.email.indexOf(this.filterKey) >= 0) {

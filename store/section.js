@@ -74,13 +74,14 @@ export const actions = {
     ctx.commit('fetchSections', d);
   },
 
-  async fetchProjectSections(ctx, projectId) {
-    const res = await this.$axios.$get('/section/project/' + projectId, {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+  async fetchProjectSections(ctx, payload) {
+    const res = await this.$axios.$get('/section/project/' + payload.projectId, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
     });
 
     if (res.statusCode == 200) {
       ctx.commit('fetchProjectSections', res.data);
+      return res.data
     }
   },
 
