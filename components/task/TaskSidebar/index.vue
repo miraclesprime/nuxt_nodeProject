@@ -295,8 +295,8 @@ export default {
           "budget": 0,
           "statusId": this.form.statusId,
         }).then(() => {
-          this.$emit("update-key", 1)
-          this.$nuxt.$emit("update-key", 1)
+          this.$emit("update-key")
+          this.$nuxt.$emit("update-key")
           this.loading = false
           this.hideSidebar()
         }).catch(e => console.warn(e)).then(() => {
@@ -313,8 +313,8 @@ export default {
       if (task.statusCode == 200) {
         this.$store.dispatch("task/fetchTasks", { id: this.project.id }).then(() => this.loading = false)
       }
-      this.$emit("update-key", 1)
-      this.$nuxt.$emit("update-key", 1)
+      this.$emit("update-key")
+      this.$nuxt.$emit("update-key")
     },
 
     debounceUpdate: _.debounce(function() {
