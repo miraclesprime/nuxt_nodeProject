@@ -35,5 +35,5 @@ export default {
 
 </script>
 <style lang="css" scoped>
-.user-name { max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+.user-name { max-width: 10rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
 </style>

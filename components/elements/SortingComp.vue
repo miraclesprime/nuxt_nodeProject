@@ -1,6 +1,6 @@
 <template>
   <div id="sc-wrapper" class="d-flex align-center">
-    <small >{{label}}: <span id="sc-text" v-show="selectedView" class="ml-025 mr-025 text-dark">{{ selectedView }} </span></small>
+    <small class="pr-025">{{label}}<span id="sc-text" v-show="selectedView" class="ml-025 text-dark">: {{ selectedView }} </span></small>
     <div id="sc-dd-wrap" class="shape-rounded bg-dark bg-hover-gray1 width-105 height-105 d-flex justify-center align-center">
       <bib-button :pop="icon" icon-variant="white" size="sm">
         <template v-slot:menu>
