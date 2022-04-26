@@ -21,7 +21,7 @@
         <li class="action" id="ta-action2">
           <sorting-comp label="Sorted by" :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy"></sorting-comp>
         </li>
-        <li class="action" id="ta-action3">
+        <!-- <li class="action" id="ta-action3">
           <span id="ta-action3-text" class="mr-025">Filter by</span>
           <bib-button pop="filter-horizontal" class="bg-dark bg-hover-gray1" icon-variant="white" size="sm">
             <template v-slot:menu>
@@ -29,15 +29,15 @@
                 <span id="ta-action3-dd1" class="list__item">Enter keyword</span>
                 <hr>
                 <span id="ta-action3-dd2" class="list__item filter">
-                  <!-- <bib-checkbox value="projectName" label="Name" name="project-name"></bib-checkbox> -->
+                  
                   <bib-input type="text" label="Name" name="name" placeholder="Enter name" size="sm"></bib-input>
                 </span>
                 <span id="ta-action3-dd3" class="list__item filter">
-                  <!-- <bib-checkbox value="projectName" label="Name" name="project-name"></bib-checkbox> -->
+                  
                   <bib-input type="text" label="Project" name="project" placeholder="Enter project name" size="sm"></bib-input>
                 </span>
                 <span id="ta-action3-dd4" class="list__item filter">
-                  <!-- <bib-checkbox value="projectName" label="Name" name="project-name"></bib-checkbox> -->
+                  
                   <bib-input type="text" label="Owner" name="owner" placeholder="Enter owner name" size="sm"></bib-input>
                 </span>
                 <span id="ta-action3-dd5" class="list__item filter">
@@ -54,7 +54,7 @@
               </div>
             </template>
           </bib-button>
-        </li>
+        </li> -->
         <!-- <li class="action" id="ta-action4">
           <bib-icon icon="group" />
           <span id="ta-action4-text">Group</span>
@@ -95,6 +95,7 @@ export default {
     gridType: {
       type: String,
       default: "list",
+      sortDir: {default: "asc"}
     }
   },
   data() {

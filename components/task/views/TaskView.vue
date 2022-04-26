@@ -1,7 +1,6 @@
 <template>
-  <div id="task-view-wrapper" class="position-relative">
-    <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:create-section="createSectionInline" v-on:filterView="filterView" v-on:sort="sortBy"></task-actions>
-    <loading :loading="loading"></loading>
+  <div id="task-view-wrapper" class="task-view-wrapper position-relative">
+    <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:create-section="createSectionInline" v-on:filterView="filterView" v-on:sort="taskSort($event)" ></task-actions>
     <section v-show="newSection" id="tv-new-section-input-container">
       <div id="tv-new-section-input-wrapper" class="d-flex align-center p-05 bg-light">
         <input id="tv-new-section-input" type="text" class="new-section-input" ref="newsectioninput" v-model.trim="newSectionName" v-on:blur="clickOutside" v-on:keyup.enter="createSectionOnEnter" placeholder="Enter section name">
@@ -14,7 +13,8 @@
       <!-- <bib-input type="text" ref="newsectionbibinput" v-model="newSectionName" name="sectionname" size="sm" placeholder="Enter section name"></bib-input> -->
     </section>
     <template v-if="gridType === 'list'">
-      <bib-table v-for="(item, index) in sections" :key="`tasklist-${key}${item.id}${sortName ? sortName : ''}`" :fields="tableFields" :sections="taskWithSection(item.id)" :headless="index > 0" :collapseObj="showSectionTitle(item)" hide-no-column class="border-gray4 bg-white" @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
+      <task-list-section :project="project" :sections="localdata" :key="key"></task-list-section>
+      <!-- <bib-table v-for="(item, index) in sections" :key="`tasklist-${key}${item.id}${sortName ? sortName : ''}`" :fields="tableFields" :sections="taskWithSection(item.id)" :headless="index > 0" :collapseObj="showSectionTitle(item)" hide-no-column class="border-gray4 bg-white" @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
         <template #cell(title)="data">
           <div class="d-flex gap-05 align-center">
             <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data)" class="cursor-pointer" @click="handleTaskTable_status(data)"></bib-icon>
@@ -46,7 +46,7 @@
             <span :class="'text-' + taskPriorityVariable(data.value.priority ? data.value.priority.text : '')">{{ capitalizeFirstLetter(data.value.priority ? data.value.priority.text : '') }}</span>
           </div>
         </template>
-      </bib-table>
+      </bib-table> -->
       <!-- <div class="bg-white w-100 p-025 border-bottom-gray4 border-top-white">
         <div class="d-flex align-center p-025 cursor-pointer bg-hover-gray2 shape-rounded w-fit gap-05" @click="addTask(sec_index)">
           <bib-icon icon="add" variant="success" :scale="1.4"></bib-icon>
@@ -55,10 +55,11 @@
       </div> -->
     </template>
     <template v-else>
-      <task-grid-section :sections="sections" :tasks="tasks" v-on:update-key="updateKey">
+      <task-grid-section :sections="sections" v-on:update-key="updateKey">
       </task-grid-section>
     </template>
-    <span id="projects-0" v-show="sections.length == 0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
+    <loading :loading="loading"></loading>
+    <span id="projects-0" v-show="nodata" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
       <bib-icon icon="warning"></bib-icon> No records found
     </span>
     <task-sidebar :activeTask="activeTask" @open-sidebar="toggleSidebar()" v-on:update-key="updateKey"></task-sidebar>
@@ -72,8 +73,8 @@ import { mapGetters } from 'vuex';
 export default {
   props: {
     gridType: String,
-    sections: Array,
-    tasks: Array,
+    // sections: Array,
+    // tasks: Array,
   },
   data() {
     return {
@@ -85,11 +86,13 @@ export default {
       newSectionName: "",
       // sectionError: false,
       sectionLoading: false,
+      localdata: [],
       sortName: "",
-      // loading: true,
-      filterTask: [],
+      loading: false,
+      nodata: false,
+      // filterTask: [],
       key: 0,
-      orderBy: ''
+      orderBy: "asc",
     };
   },
   computed: {
@@ -97,8 +100,22 @@ export default {
       token: "token/getToken",
       // vuexSections: "section/getAllSections",
       user: "user/getUser",
-      project: "project/getSingleProject"
+      project: "project/getSingleProject",
+      sections: "section/getProjectSections",
     }),
+
+    /*localSection() {
+      let section = JSON.parse(JSON.stringify(this.sections))
+      let sorted = this.localdata.map(s => {
+        let t = s.tasks.sort((a, b) => a.order - b.order)
+        s.tasks = t
+        return s
+      })
+      // console.log("sorted =>", sorted)
+      this.localdata = sorted
+      return
+    },*/
+
     sectionError() {
       if (this.newSectionName.indexOf("_") == 0) {
         return true
@@ -106,25 +123,153 @@ export default {
         return false
       }
     },
-    loading() {
-      if (this.sections != null) {
+    /*loading() {
+      if (this.localdata != null) {
         return false
       } else {
         return true
       }
-    },
+    },*/
   },
 
   mounted() {
-    this.$store.dispatch("section/fetchProjectSections", this.$route.params.id)
-    this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
+    console.log('mounted + key', this.key)
+    this.loading = true
+    this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id }).then((res) => {
+      console.log("project sections => ", res.length)
+      /*if (res.length == 0) {
+        this.nodata = true
+      } else {*/
+
+      this.localdata = JSON.parse(JSON.stringify(this.sections))
+
+      let sorted = this.localdata.map(s => {
+        let t = s.tasks.sort((a, b) => a.order - b.order)
+        s.tasks = t
+        return s
+      })
+      // console.log("sorted =>", sorted)
+      this.localdata = sorted
+      this.key += 1
+      // }
+    }).catch(e => console.log(e))
+    this.loading = false
   },
 
   methods: {
+    taskByOrder() {
+      this.localdata = JSON.parse(JSON.stringify(this.sections))
+
+      let sorted = this.localdata.map(s => {
+        let t = s.tasks.sort((a, b) => a.order - b.order)
+        s.tasks = t
+        return s
+      })
+      // console.log("sorted =>", sorted)
+      this.localdata = sorted
+      this.key += 1
+      // this.$nuxt.$emit("update-key", this.key)
+    },
+    taskSort($event) {
+      // sort by title
+      if ($event == "name") {
+        // var orderBy = "asc"
+        if (this.orderBy == "asc") {
+          this.orderBy = "desc"
+          this.localdata.forEach(function(sec, index) {
+            sec["tasks"] = sec.tasks.sort((a, b) => a.title.localeCompare(b.title))
+          })
+        } else {
+          this.orderBy = "asc"
+          this.localdata.forEach(function(sec, index) {
+            sec["tasks"] = sec.tasks.sort((a, b) => b.title.localeCompare(a.title))
+          })
+        }
+        this.key += 1
+        console.log(this.key, this.orderBy)
+      }
+      // Sort By owner
+      if ($event == "owner") {
+        if (this.orderBy == "asc") {
+          this.orderBy = "desc"
+          this.localdata.forEach(function(sec, index) {
+            sec["tasks"] = sec.tasks.sort((a, b) => a.user.firstName.localeCompare(b.user.firstName));
+          })
+        } else {
+          this.orderBy = "asc"
+          this.localdata.forEach(function(sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => b.user.firstName.localeCompare(a.user.firstName));
+          })
+        }
+        this.key += 1
+        console.log(this.key, this.orderBy)
+      }
+      // sort By Status
+      if ($event == "status") {
+        if (this.orderBy == "asc") {
+          this.orderBy = "desc"
+          this.localdata.forEach(function(sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => a.status.text.localeCompare(b.status.text));
+          })
+        } else {
+          this.orderBy = "asc"
+          this.localdata.forEach(function(sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => b.status.text.localeCompare(a.status.text));
+          })
+        }
+        this.key += 1
+        console.log(this.key, this.orderBy)
+      }
+      // Sort By Priotity
+      if ($event == "priority") {
+        if (this.orderBy == "asc") {
+          this.orderBy = "desc"
+          this.localdata.forEach(function(sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
+          })
+        } else {
+          this.orderBy = "asc"
+          this.localdata.forEach(function(sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => b.priority.text.localeCompare(a.priority.text));
+          })
+        }
+      }
+      // sort By Start Date
+      if ($event == "startDate") {
+        if (this.orderBy == "asc") {
+          this.orderBy = "desc"
+          this.localdata.forEach(function(sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+          })
+        } else {
+          this.orderBy = "asc"
+          this.localdata.forEach(function(sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          })
+
+        }
+      }
+
+      // sort By DueDate
+      if ($event == "dueDate") {
+        if (this.orderBy == "asc") {
+          this.orderBy = "desc"
+          this.localdata.forEach(function(sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+          })
+        } else {
+          this.orderBy = "asc"
+          this.localdata.forEach(function(sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate));
+          })
+        }
+      }
+
+    },
     updateKey($event) {
       // console.log($event)
-      this.$store.dispatch("section/fetchProjectSections", this.$route.params.id)
-      this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
+      this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id })
+      // this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
       this.key += $event
     },
     showSectionTitle(section) {
@@ -144,72 +289,6 @@ export default {
       } else {
         return section.title
       }
-    },
-    taskWithSection(sectionId) {
-      var arr = []
-
-      for (var j = 0; j < this.tasks.length; ++j) {
-        if (this.tasks[j].sectionId == sectionId) {
-          arr.push(this.tasks[j]);
-        }
-      }
-
-      // Sort By Title
-      if (this.sortName == 'name' && this.orderBy == 'asc') {
-        arr.sort((a, b) => a.title.localeCompare(b.title));
-      }
-
-      if (this.sortName == 'name' && this.orderBy == 'desc') {
-        arr.sort((a, b) => b.title.localeCompare(a.title));
-      }
-
-      // Sort By owner
-      if (this.sortName == 'owner' && this.orderBy == 'asc') {
-        arr.sort((a, b) => a.user.firstName.localeCompare(b.user.firstName));
-      }
-
-      if (this.sortName == 'owner' && this.orderBy == 'desc') {
-        arr.sort((a, b) => b.user.firstName.localeCompare(a.user.firstName));
-      }
-
-      // sort By Status
-      if (this.sortName == 'status' && this.orderBy == 'asc') {
-        arr.sort((a, b) => a.status.text.localeCompare(b.status.text));
-      }
-
-      if (this.sortName == 'status' && this.orderBy == 'desc') {
-        arr.sort((a, b) => b.status.text.localeCompare(a.status.text));
-      }
-
-      // sort By Start Date
-
-      if (this.sortName == 'startDate' && this.orderBy == 'asc') {
-        arr.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-      }
-
-      if (this.sortName == 'startDate' && this.orderBy == 'asc') {
-        arr.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      }
-
-      // sort By DueDate
-      if (this.sortName == 'dueDate' && this.orderBy == 'asc') {
-        arr.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
-      }
-
-      if (this.sortName == 'dueDate' && this.orderBy == 'desc') {
-        arr.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate));
-      }
-
-      // Sort By Priotity
-      if (this.sortName == 'priority' && this.orderBy == 'asc') {
-        arr.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
-      }
-
-      if (this.sortName == 'priority' && this.orderBy == 'desc') {
-        arr.sort((a, b) => b.priority.text.localeCompare(a.priority.text));
-      }
-
-      return arr;
     },
 
     toggleSidebar($event) {
@@ -276,20 +355,28 @@ export default {
     },
 
     filterView($event) {
+      this.loading = true
       if ($event == 'complete') {
-        this.$store.dispatch('task/fetchTasks', { id: this.$route.params.id, filter: 'complete' })
+        this.$store.dispatch('section/fetchProjectSections', { projectId: this.$route.params.id, filter: 'complete' }).then(() => {
+          this.taskByOrder()
+        }).catch(e => console.log(e))
       }
       if ($event == 'incomplete') {
-        this.$store.dispatch('task/fetchTasks', { id: this.$route.params.id, filter: 'incomplete' })
+        this.$store.dispatch('section/fetchProjectSections', { projectId: this.$route.params.id, filter: 'incomplete' }).then(() => {
+          this.taskByOrder()
+        }).catch(e => console.log(e))
       }
       if ($event == 'all') {
-        this.$store.dispatch('task/fetchTasks', { id: this.$route.params.id, filter: 'all' })
+        this.$store.dispatch('section/fetchProjectSections', { projectId: this.$route.params.id, filter: 'all' }).then(() => {
+          this.taskByOrder()
+        }).catch(e => console.log(e))
       }
+      this.loading = false
     },
 
-    sortBy($event) {
+    /*sortBy($event) {
       this.sortName = $event;
-    },
+    },*/
 
     // methods for bib-table
     taskCheckIcon(data) {
@@ -351,7 +438,6 @@ export default {
     },
 
     sortTitle() {
-
       if (this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
@@ -362,7 +448,6 @@ export default {
     },
 
     sortOwner() {
-
       if (this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
@@ -373,7 +458,6 @@ export default {
     },
 
     sortByStatus() {
-
       if (this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
@@ -384,7 +468,6 @@ export default {
     },
 
     sortByStartDate() {
-
       if (this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
@@ -395,7 +478,6 @@ export default {
     },
 
     sortByDueDate() {
-
       if (this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
@@ -406,7 +488,6 @@ export default {
     },
 
     sortByPriority() {
-
       if (this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
@@ -433,6 +514,10 @@ export default {
 
 </script>
 <style lang="scss" scoped>
+.task-view-wrapper {
+  min-height: 5rem;
+}
+
 .new-section-input {
   min-height: 2rem;
   padding: 0 0.5rem;
