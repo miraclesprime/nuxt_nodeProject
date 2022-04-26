@@ -13,7 +13,7 @@
       <!-- <bib-input type="text" ref="newsectionbibinput" v-model="newSectionName" name="sectionname" size="sm" placeholder="Enter section name"></bib-input> -->
     </section>
     <template v-if="gridType === 'list'">
-      <task-list-section :project="project" :sections="localdata" :key="key"></task-list-section>
+      <task-list-section :project="project" :sections="localdata" :key="key" v-on:sort-task="taskSort($event)"></task-list-section>
       <!-- <bib-table v-for="(item, index) in sections" :key="`tasklist-${key}${item.id}${sortName ? sortName : ''}`" :fields="tableFields" :sections="taskWithSection(item.id)" :headless="index > 0" :collapseObj="showSectionTitle(item)" hide-no-column class="border-gray4 bg-white" @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
         <template #cell(title)="data">
           <div class="d-flex gap-05 align-center">
@@ -62,7 +62,7 @@
     <span id="projects-0" v-show="nodata" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
       <bib-icon icon="warning"></bib-icon> No records found
     </span>
-    <task-sidebar :activeTask="activeTask" @open-sidebar="toggleSidebar()" v-on:update-key="updateKey"></task-sidebar>
+  <task-sidebar :activeTask="activeTask" @open-sidebar="toggleSidebar()" v-on:update-key="updateKey"></task-sidebar>
   </div>
 </template>
 <script>
@@ -266,11 +266,11 @@ export default {
       }
 
     },
-    updateKey($event) {
+    updateKey() {
       // console.log($event)
-      this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id })
-      // this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
-      this.key += $event
+      this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' }).then(()=>{
+        this.taskByOrder()
+      })
     },
     showSectionTitle(section) {
       if (section.title.includes("_section")) {
@@ -372,69 +372,6 @@ export default {
         }).catch(e => console.log(e))
       }
       this.loading = false
-    },
-
-    /*sortBy($event) {
-      this.sortName = $event;
-    },*/
-
-    // methods for bib-table
-    taskCheckIcon(data) {
-      return data.value.statusId == 5 ? 'success' : 'secondary-sub1'
-    },
-
-    taskStatusLabel(status) {
-      switch (status) {
-        case 'Delayed':
-          return 'Delayed'
-        case 'In-Progress':
-          return 'In-Progress'
-        case 'Done':
-          return 'Done'
-        case 'Waiting':
-          return 'Waiting'
-        case 'Not Started':
-          return 'Not Started'
-        default:
-          return ''
-      }
-    },
-    taskStatusVariable(status) {
-      switch (status) {
-        case 'Delayed':
-          return 'danger'
-        case 'In-Progress':
-          return 'primary'
-        case 'Done':
-          return 'success'
-        case 'Waiting':
-          return 'warning'
-        case 'Not Started':
-          return 'secondary'
-        default:
-          return ''
-      }
-    },
-    taskPriorityVariable(priority) {
-      switch (priority) {
-        case 'high':
-          return 'danger'
-        case 'medium':
-          return 'orange'
-        case 'low':
-          return 'success'
-        case 'none':
-          return 'secondary'
-        default:
-          return ""
-      }
-    },
-    capitalizeFirstLetter(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1)
-    },
-    handleTaskTable_status(item) {
-      console.log(item)
-      this.$store.dispatch('task/updateTaskStatus', item)
     },
 
     sortTitle() {
