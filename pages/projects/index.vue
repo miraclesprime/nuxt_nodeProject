@@ -21,7 +21,7 @@
             </div>
           </template>
           <template #cell(userId)="data">
-            <user-info :user="data.value.user"></user-info>
+            <user-info :user="data.value.user" avatar="https://i.pravatar.cc/100"></user-info>
           </template>
           <template #cell(status)="data">
             <div class="d-flex gap-05 align-center">
