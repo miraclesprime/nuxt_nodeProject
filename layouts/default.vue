@@ -176,8 +176,8 @@ export default {
 
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2NTA0NjA0NDgyOTMsImV4cCI6MTY1ODIzNjQ0ODI5MywianRpIjoiMmYzNDE1MTUtNzBjMy00YjYyLWI3MmMtNmIxNDczODgzODU4In0.pnG0ierfColobVCVAQaOq8StqquRKYx-KeFVO6RkUKI"
 
-      // this.$cookies.set('b_ssojwt', cookie);
-      // this.$store.dispatch('token/setToken', cookie);
+      /*this.$cookies.set('b_ssojwt', cookie);
+      this.$store.dispatch('token/setToken', cookie);*/
 
       if (this.$cookies.get('b_ssojwt')) {
         let jwt = this.$cookies.get('b_ssojwt');

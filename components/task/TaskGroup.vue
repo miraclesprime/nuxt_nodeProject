@@ -16,7 +16,7 @@
             </div>
           </td>
           <td>
-            <user-info :user="sub.assignee" avatar="https://i.pravatar.cc/32"></user-info>
+            <!-- <user-info :user="sub.assignee" ></user-info> -->
           </td>
           <td>{{sub.dueDate}}</td>
           <td>
