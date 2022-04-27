@@ -1,44 +1,57 @@
-
 export const state = () => ({
-    user: null,
-    teamMembers: []
-  });
-  
-  export const mutations = {
-    setUser(state, payload) {
-        state.user = payload;
-    },
+  user: null,
+  user2: null,
+  teamMembers: []
+});
 
-    setTeamMembers(state, payload) {
-       state.teamMembers = payload;
-    }
-  };
-  
-  export const getters = {
-    getUser(state) {
-        return state.user;
-    },
+export const getters = {
+  getUser(state) {
+    return state.user;
+  },
 
-    getTeamMembers(state) {
-      let members = []
-      state.teamMembers.map(t=>{
-        members.push({label: t.FirstName + ' ' + t.LastName, email: t.Email, icon: "user", id: t.Id, status: t.Status, role: t.Role })
-      })
-      return members
-    }
-  };
-  
-  export const actions = {
-    async setUser(ctx, payload){
-        await ctx.commit('setUser', payload);
-    },
+  getUser2(state) {
+    return state.user2;
+  },
 
-    async setTeamMembers(ctx) {
-      const members = await this.$axios.$get(`${process.env.ORG_API_URL}/${ctx.rootState.user.user.subb}/users`, {
-        headers: {
-          "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
-        }
-      })
-      ctx.commit("setTeamMembers", members)
-    }
-  };
+  getTeamMembers(state) {
+    let members = []
+    state.teamMembers.map(t => {
+      members.push({ label: t.FirstName + ' ' + t.LastName, email: t.Email, icon: "user", id: t.Id, status: t.Status, role: t.Role, avatar: t.Photo })
+    })
+    return members
+  }
+};
+
+export const mutations = {
+  setUser(state, payload) {
+    state.user = payload;
+  },
+
+  setUser2(state, payload) {
+    state.user2 = payload;
+  },
+
+  setTeamMembers(state, payload) {
+    state.teamMembers = payload;
+  }
+};
+
+
+export const actions = {
+  async setUser(ctx, payload) {
+    await ctx.commit('setUser', payload);
+  },
+
+  async setUser2(ctx, payload) {
+    await ctx.commit('setUser2', payload);
+  },
+
+  async setTeamMembers(ctx) {
+    const members = await this.$axios.$get(`${process.env.ORG_API_URL}/${ctx.rootState.user.user.subb}/users`, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
+      }
+    })
+    ctx.commit("setTeamMembers", members)
+  }
+};

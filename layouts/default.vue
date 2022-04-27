@@ -7,7 +7,7 @@
         }
       ">
       <template #topbar>
-        <bib-header>
+        <bib-header :avatarLink="user2 ? user2.Photo : ''">
           <template #avatar_menu>
             <bib-button pop="arrowhead-right" :scale="1.3">
               <template v-slot:menu>
@@ -202,6 +202,8 @@ export default {
           let firstName = res.data[0].FirstName;
           let lastName = res.data[0].LastName;
 
+          this.$store.dispatch("user/setUser2", res.data[0])
+
           this.$axios.$post("/user/create", {
             id: user.sub,
             email: user.sube,
@@ -209,7 +211,7 @@ export default {
             lastName: lastName,
             companyId: user.subb
           }).then((value) => {
-            console.log('user created!!')
+            // console.log('user created!!')
             this.$store.dispatch("project/setFavProjects")
             this.$store.dispatch("user/setTeamMembers")
             this.$store.dispatch("task/getFavTasks")
@@ -236,6 +238,7 @@ export default {
     ...mapGetters({
       favProjects: 'project/getFavProjects',
       teammate: 'user/getTeamMembers',
+      user2: 'user/getUser2',
     })
   },
 
