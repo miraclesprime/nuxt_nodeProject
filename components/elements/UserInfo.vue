@@ -16,7 +16,7 @@ export default {
   // name: 'UserInfo',
 
   props: {
-    user: { type: Object, required: true },
+    user: { type: Object, required: true, default: { firstName: '', lastName: ''} },
     avatar: { type: String }
     // id: { type: String, required: true },
   },
