@@ -144,7 +144,7 @@ export default {
     });
 
     if (process.client) {
-
+      console.log(this.$route.params.id)
       this.$axios.$get(`project/${this.$route.params.id}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       }).then((res) => {
@@ -159,6 +159,7 @@ export default {
 
   },
   mounted() {
+      console.log(this.$route.params.id)
     this.$store.dispatch("section/fetchProjectSections", this.$route.params.id);
     this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' });
   },

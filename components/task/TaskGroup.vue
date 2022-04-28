@@ -16,7 +16,7 @@
             </div>
           </td>
           <td>
-            <!-- <user-info :user="sub.assignee" ></user-info> -->
+            <user-info :user="sub.assignee" ></user-info>
           </td>
           <td>{{sub.dueDate}}</td>
           <td>
@@ -58,7 +58,6 @@
       </template>
     </bib-table> -->
   </div>
-  <!-- </div> -->
 </template>
 <script>
 export default {

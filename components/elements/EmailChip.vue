@@ -1,7 +1,10 @@
 <template>
   <div id="email-chip-wrapper" class="d-inline-flex align-center py-025 px-05 bg-light shape-rounded">
-    <template v-if="avatar || text">
-      <bib-avatar :src="avatar" :text="text.toUpperCase()" size="1.5rem" class="mr-025"></bib-avatar>
+    <template v-if="avatar">
+      <bib-avatar :src="avatar" size="1.25rem" class="mr-025"></bib-avatar>
+    </template>
+    <template v-else>
+      <bib-avatar :text="email[0].toUpperCase()" size="1.25rem" class="mr-025"></bib-avatar>
     </template>
     <strong v-if="name" class="px-025 font-sm">{{name}}</strong>
     <span id="email" class="px-025 font-sm">{{email}}</span>
