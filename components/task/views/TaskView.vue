@@ -1,6 +1,6 @@
 <template>
   <div id="task-view-wrapper" class="task-view-wrapper position-relative">
-    <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:create-section="createSectionInline" v-on:filterView="filterView" v-on:sort="taskSort($event)" ></task-actions>
+    <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:create-section="createSectionInline" v-on:filterView="filterView" v-on:sort="taskSort($event)"></task-actions>
     <section v-show="newSection" id="tv-new-section-input-container">
       <div id="tv-new-section-input-wrapper" class="d-flex align-center p-05 bg-light">
         <input id="tv-new-section-input" type="text" class="new-section-input" ref="newsectioninput" v-model.trim="newSectionName" v-on:blur="clickOutside" v-on:keyup.enter="createSectionOnEnter" placeholder="Enter section name">
@@ -62,15 +62,33 @@
     <span id="projects-0" v-show="nodata" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
       <bib-icon icon="warning"></bib-icon> No records found
     </span>
-  <task-sidebar :activeTask="activeTask" @open-sidebar="toggleSidebar()" v-on:update-key="updateKey"></task-sidebar>
+    <!-- task sidebar -->
+    <task-sidebar :activeTask="activeTask" @open-sidebar="toggleSidebar()" v-on:update-key="updateKey"></task-sidebar>
+    <!-- rename modal -->
+    <bib-modal-wrapper v-if="renameModal" title="Rename section" @close="renameModal = false">
+      <template slot="content">
+        <div>
+          <bib-input type="text" v-model.trim="sectionTitle" placeholder="Enter name..."></bib-input>
+          <loading :loading="loading"></loading>
+        </div>
+      </template>
+      <template slot="footer">
+        <div class="d-flex justify-between">
+          <bib-button label="Cancel" variant="light" pill @click="renameModal = false"></bib-button>
+          <bib-button label="Rename" variant="success" pill v-on:click="renameSection"></bib-button>
+        </div>
+      </template>
+    </bib-modal-wrapper>
   </div>
 </template>
 <script>
+
 import { Container, Draggable } from "vue-smooth-dnd";
 import { TASK_FIELDS } from "config/constants";
 import { mapGetters } from 'vuex';
 
 export default {
+  
   props: {
     gridType: String,
     // sections: Array,
@@ -93,6 +111,9 @@ export default {
       // filterTask: [],
       key: 0,
       orderBy: "asc",
+      renameModal: false,
+      sectionId: null,
+      sectionTitle: ""
     };
   },
   computed: {
@@ -131,11 +152,17 @@ export default {
       }
     },*/
   },
+  created(){
+    this.$nuxt.$on("section-rename", ($event)=>{
+      this.renameModal = true
+      this.sectionId = $event.id
+      this.sectionTitle = $event.title
+    })
+  },
 
   mounted() {
-    console.log('mounted + key', this.key)
     this.loading = true
-    this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id }).then((res) => {
+    this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' }).then((res) => {
       console.log("project sections => ", res.length)
       /*if (res.length == 0) {
         this.nodata = true
@@ -268,7 +295,7 @@ export default {
     },
     updateKey() {
       // console.log($event)
-      this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' }).then(()=>{
+      this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' }).then(() => {
         this.taskByOrder()
       })
     },
@@ -346,6 +373,10 @@ export default {
         this.newSection = false
         console.log('No section added')
       }
+    },
+
+    renameSection(sectionId){
+      console.log(sectionId)
     },
 
     taskSelected($event) {

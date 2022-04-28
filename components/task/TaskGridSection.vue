@@ -9,12 +9,12 @@
             <bib-button pop="elipsis">
               <template v-slot:menu>
                 <div :id="'tgs-list'+section.id" class="list">
-                  <span class="list__item" :id="'tgs-list-1'+section.id">
+                  <span class="list__item" :id="'tgs-list-1'+section.id" >
                     <div class="d-flex align-center" :id="'tgs-list-flex-1'+section.id">
                       <bib-icon icon="add"></bib-icon>
                       <span class="ml-05" :id="'tgs-list-span'+section.id">Add task</span>
                     </div>
-                  </span><span class="list__item" :id="'tgs-list-2'+section.id">
+                  </span><span class="list__item" :id="'tgs-list-2'+section.id" v-on:click="$nuxt.$emit('section-rename',{id: section.id, title: section.title })">
                     <div class="d-flex align-center" :id="'tgs-list-flex-2'+section.id">
                       <bib-icon icon="pencil"></bib-icon>
                       <span class="ml-05" :id="'tgs-list-span'+section.id">Rename</span>

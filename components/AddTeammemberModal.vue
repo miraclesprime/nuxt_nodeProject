@@ -8,7 +8,7 @@
           <template v-slot:menu>
             <ul id="atm-fields" class="border-gray1" style="border-radius: 0 !important; border: 1px solid var(--bib-gray1);">
               <li :id="'atm-field-'+index" v-for="(tm, index) in filterTeam" :key="'atm-items'+index" v-on:click="teamItemClick(tm)">
-                <bib-avatar size="1.5rem"></bib-avatar>
+                <bib-avatar :src="tm.avatar" size="1.5rem"></bib-avatar>
                 <span :id="'atm-person-name'+index" class="ml-05"> {{tm.label}} <span class="ml-075">{{tm.email}}</span></span>
               </li>
             </ul>
@@ -16,7 +16,7 @@
         </bib-button>
         <div id="project-team-members" class="py-025">
           <template v-for="t in team">
-            <email-chip :email="t.email" :name="t.label" :text="t.email[0]" class="mt-05" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
+            <email-chip :email="t.email" :name="t.label" :avatar="t.avatar" class="mt-05" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
           </template>
           <small v-show="team.length == 0" class="text-danger">Select at least 1 team member.</small>
           <p v-if="message" v-text="message" class="font-sm mt-025 text-orange"></p>
@@ -78,14 +78,18 @@ export default {
   computed: {
     ...mapGetters({
       user: "user/getUser",
-      companyUsers: "company/getCompanyMembers",
       project: "project/getSingleProject",
       projectMembers: "project/getProjectMembers",
-      // teammate: 'user/getTeamMembers',
+      teamMembers: "user/getTeamMembers",
       task: "task/getSelectedTask",
     }),
     filterTeam() {
-      return this.companyUsers.filter((u) => {
+      /*return this.companyUsers.filter((u) => {
+        if (u.email.indexOf(this.filterKey) >= 0) {
+          return u
+        }
+      })*/
+      return this.teamMembers.filter((u) => {
         if (u.email.indexOf(this.filterKey) >= 0) {
           return u
         }
@@ -95,11 +99,6 @@ export default {
       return process.env.VUE_APP_URL + "/project/" + this.project.id
     }
   },
-  /*mounted() {
-    // console.log(this.user)
-    let user = JSON.parse(localStorage.getItem("user"))
-    this.$store.dispatch("company/fetchCompanyMembers", user.subb)
-  },*/
   methods: {
 
     teamInputChange() {
@@ -115,7 +114,7 @@ export default {
       // console.log(existing)
       if (existing.length == 0) {
         this.message = ""
-        let m = this.companyUsers.filter(t => t.id == tm.id)
+        let m = this.teamMembers.filter(t => t.id == tm.id)
         // console.log(m[0])
         if (this.team.some(el => el.id == m[0].id)) {
           return false

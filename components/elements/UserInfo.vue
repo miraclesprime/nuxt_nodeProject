@@ -12,7 +12,7 @@
     <template v-else>
       <span :id="'user-info-'+user.id" class="user-name text-dark pl-025 pr-025">{{ user.firstName + '' + user.lastName }} </span>
     </template>
-    <!-- <bib-spinner v-else :scale="1.5"></bib-spinner> -->
+    <!-- <bib-spinner :scale="1.5"></bib-spinner> -->
   </span>
 </template>
 <script>
