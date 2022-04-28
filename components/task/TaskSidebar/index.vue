@@ -132,6 +132,7 @@
 <script>
 import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 import { mapGetters } from "vuex";
+import _ from 'lodash';
 
 export default {
   props: {

@@ -4,7 +4,7 @@
     <div v-if="user" class="d-flex justify-center align-center flex-d-column">
       <!-- <email-chip :email="user.sube" :text="user.sube[0]"></email-chip> -->
 
-      <user-info :user="name" :avatar="avatar"></user-info>
+      <user-info :userId="user.sub" ></user-info>
     </div>
   </div>
 </template>
