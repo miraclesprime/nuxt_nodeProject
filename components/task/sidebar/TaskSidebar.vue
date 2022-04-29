@@ -290,12 +290,14 @@ export default {
         this.$store.dispatch("task/createTask", {
           "sectionId": this.form.sectionId || "_section" + this.form.projectId,
           "projectId": this.form.projectId,
+          // "projectId": null,
           "title": this.form.title,
           "description": this.form.description,
           "dueDate": this.form.dueDate,
           "priorityId": this.form.priorityId,
           "budget": 0,
           "statusId": this.form.statusId,
+          "userId": null,
         }).then(() => {
           this.$emit("update-key")
           this.$nuxt.$emit("update-key")
@@ -324,7 +326,7 @@ export default {
         // console.log('Debounce clicked!')
         this.updateTask()
       }
-    }, 1500),
+    }, 1000),
     setFavorite() {
       // console.info(this.isFavorite.status)
       if (this.isFavorite.status) {

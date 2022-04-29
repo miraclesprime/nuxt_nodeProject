@@ -2,11 +2,11 @@
 <client-only>
   <div id="proj-overview-wrapper" class="row ">
     <div id="proj-overview-inner" class="overview-wrapper my-2 mx-auto position-relative">
-      <div id="proj-overview-alert" class="shape-rounded font-sm bg-danger d-flex py-05 px-1 text-white align-center">
+      <!-- <div id="proj-overview-alert" class="shape-rounded font-sm bg-danger d-flex py-05 px-1 text-white align-center">
         <bib-icon icon="warning" variant="white" class="mr-05"></bib-icon>
         You have two tasks past due! "<a href="#" class="text-white">View task</a>" or "<a href="#" class="text-white">Remind me later</a>".
         <a href="#" class="ml-auto text-white">Snooze</a>
-      </div>
+      </div> -->
       <div id="proj-row1" class="row my-1">
         <div id="proj-row1-col1" class="col-4">
           <div id="proj-progress-wrap1" class="bg-gray3 shape-rounded text-center p-05 h-100">
@@ -36,7 +36,7 @@
       </div> -->
       <div id="proj-row2" class="row">
         <div id="proj-row2-col1" class="col-8">
-          <bib-input type="text" label="Project name" placeholder="Project name" v-model="activeProject.title" v-on:keyup.native="debounceUpdate()" disabled></bib-input>
+          <bib-input type="text" label="Project name" placeholder="Project name" v-model="activeProject.title" v-on:keyup.native="debounceUpdate()" ></bib-input>
         </div>
         <div id="proj-row2-col2" class="col-4">
           <bib-input type="date" label="Due date" v-model="dateInput" v-on:change.native="debounceUpdate()"></bib-input>
@@ -44,7 +44,7 @@
       </div>
       <div id="proj-row3" class="row">
         <div id="proj-row3-col1" class="col-6">
-          <bib-input type="select" :options="filterUser" v-model="activeProject.userId" placeholder="Please select..." label="Owner" v-on:change.native="debounceUpdate()" disabled ></bib-input>
+          <bib-input type="select" :options="filterUser" v-model="activeProject.userId" placeholder="Please select..." label="Owner" v-on:change.native="debounceUpdate()" ></bib-input>
           <!-- <label class="text-gray6">Owner</label> -->
           <!-- <bib-select :options="filterUser" v-model="activeProject.userId" class="mt-025"></bib-select> -->
           <!-- <bib-button test_id="po-owner-dd1" dropdown1="add" label="Type name or email" v-model="owner" v-on:input-keydown="dropdownInputKeydown" :footer="{icon: 'add', label: 'Invite via email', event: 'footer-action'}" @footer-action="inviteViaEmail" class="mt-05 mb-05">
@@ -63,15 +63,15 @@
           </div> -->
         </div>
         <div id="proj-row3-col2" class="col-6">
-          <bib-input type="select" label="Department" :options="department" placeholder="Department" disabled></bib-input>
+          <bib-input type="select" label="Department" :options="department" placeholder="Department" ></bib-input>
         </div>
       </div>
       <div id="proj-row4" class="row">
         <div id="proj-row4-col1" class="col-6">
-          <bib-input type="select" label="Priority" v-model.number="activeProject.priorityId" :options="priority" placeholder="Please select..." v-on:change.native="debounceUpdate()" disabled></bib-input>
+          <bib-input type="select" label="Priority" v-model.number="activeProject.priorityId" :options="priority" placeholder="Please select..." v-on:change.native="debounceUpdate()" ></bib-input>
         </div>
         <div id="proj-row4-col2" class="col-6">
-          <bib-input type="select" label="Status" v-model.number="activeProject.statusId" :options="status" placeholder="Please select..." v-on:change.native="debounceUpdate()" disabled></bib-input>
+          <bib-input type="select" label="Status" v-model.number="activeProject.statusId" :options="status" placeholder="Please select..." v-on:change.native="debounceUpdate()" ></bib-input>
         </div>
       </div>
       <div id="proj-row5" class="row">
@@ -128,29 +128,11 @@ export default {
     };
   },
 
-  mounted() {
-    if(process.client) {
-      let user = JSON.parse(localStorage.getItem("user"))
-      this.$store.dispatch("company/fetchCompanyMembers", user.subb)
-      this.$store.dispatch('task/fetchTasks', {id: this.$route.params.id, filter: 'all'})
-      this.loading = true
-      this.$axios.$get(`project/${this.$route.params.id}`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-      }).then((res) => {
-        if (res) {
-          this.project = res.data;
-          this.loading = false
-        }
-      }).catch(err => {
-        console.log("There was some issue in project API " + err);
-      })
-    }
-  },
-
   watch: {
     project() {
       if (Object.keys(this.project).length) {
         this.activeProject = JSON.parse(JSON.stringify(this.project));
+        this.owner = this.teamMembers.filter(tm=> tm.id == this.activeProject.userId)
       } else {
         this.activeProject = {
           title: "",
@@ -171,9 +153,8 @@ export default {
   computed: {
     ...mapGetters({
       token: 'token/getToken',
-      teammate: 'user/getTeamMembers',
       // project: 'project/getSingleProject'
-      companyUsers: "company/getCompanyMembers",
+      teamMembers: "user/getTeamMembers",
       totalTasks: "task/tasksForListView"
     }),
     /*assignee() {
@@ -232,14 +213,9 @@ export default {
       }
     },
     filterUser() {
-      return this.companyUsers.map((u) => {
-        return { value: u.id, id: u.id, label: u.firstName + ' ' + u.lastName, email: u.email, img: "https://i.pravatar.cc/150?u=" + u.id }
+      return this.teamMembers.map((u) => {
+        return { value: u.id, id: u.id, label: u.firstName + ' ' + u.lastName, firstName: u.firstName, lastName: u.lastName, email: u.email, avatar: u.avatar }
       })
-      /*return this.companyUsers.filter((u) => {
-        if (u.email.indexOf(this.filterKey) >= 0) {
-          return u
-        }
-      })*/
     },
     dateInput: {
       get: function() {
@@ -269,6 +245,24 @@ export default {
         return "00:00"
       }
     },
+  },
+
+  mounted() {
+    if(process.client) {
+      this.loading = true
+      let user = JSON.parse(localStorage.getItem("user"))
+      this.$store.dispatch('task/fetchTasks', {id: this.$route.params.id, filter: 'all'})
+      this.$axios.$get(`project/${this.$route.params.id}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      }).then((res) => {
+        if (res) {
+          this.project = res.data;
+          this.loading = false
+        }
+      }).catch(err => {
+        console.log(err);
+      })
+    }
   },
 
   methods: {
@@ -305,7 +299,7 @@ export default {
     async updateProject() {
       // console.log('from debounce function')
       this.loading = true
-      let proj = await this.$axios.$put("/project", { id: this.project.id, data: this.activeProject }, {
+      let proj = await this.$axios.$put("/project", { id: this.project.id, user: this.owner[0], data: this.activeProject }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       })
       console.log(proj.data)
@@ -316,9 +310,10 @@ export default {
       this.loading = false
     },
     debounceUpdate: _.debounce(function() {
-      console.log('Debounce clicked!')
+      console.log('Debounce clicked!', this.activeProject.userId)
+      this.owner = this.teamMembers.filter(tm=> tm.id == this.activeProject.userId)
       this.updateProject()
-    }, 1500)
+    }, 1000)
 
   },
 
