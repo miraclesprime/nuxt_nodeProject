@@ -9,7 +9,7 @@
             <bib-button pop="elipsis">
               <template v-slot:menu>
                 <div :id="'tgs-list'+section.id" class="list">
-                  <span class="list__item" :id="'tgs-list-1'+section.id" >
+                  <span class="list__item" :id="'tgs-list-1'+section.id" v-on:click="$nuxt.$emit('open-sidebar', true);" >
                     <div class="d-flex align-center" :id="'tgs-list-flex-1'+section.id">
                       <bib-icon icon="add"></bib-icon>
                       <span class="ml-05" :id="'tgs-list-span'+section.id">Add task</span>
@@ -318,7 +318,7 @@ export default {
     debounceUpdate: _.debounce(function(data) {
       // console.log('Debounce called!')
       this.taskDragDrop(...args)
-    }, 1200),
+    }, 1000),
     overdue(item) {
       // console.log(new Date(item.dueDate), new Date);
       return (new Date(item.dueDate) < new Date() && item.statusId != 5) ? 'bg-danger' : 'bg-gray2';
@@ -342,8 +342,8 @@ export default {
 
 .task-grid-section {
   flex: 0 0 16rem;
-  /*min-width: 240px;
-  min-height: 80vh;*/
+  /*min-width: 240px;*/
+  min-height: 80vh;
   padding: 10px;
   user-select: none;
 

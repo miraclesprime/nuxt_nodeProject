@@ -271,7 +271,7 @@ export const actions = {
     }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
-    // console.log(res.data)
+  // console.log(res.data)
     if (res.statusCode == 200) {
       ctx.commit('createProject', res.data);
       // ctx.commit('setSingleProject', res.data);
