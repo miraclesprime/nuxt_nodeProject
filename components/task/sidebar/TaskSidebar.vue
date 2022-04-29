@@ -120,20 +120,22 @@
       </template>
       <sidebar-overview v-if="activeSidebarTab == 'Overview'" :fields="taskFields" :activeTask="form" v-on:create-task="createTask" v-on:update-task="updateTask" />
       <div class="container pt-1" id='ts-subtask-container' v-if="activeSidebarTab == 'Subtasks'">
-        <task-group />
+        <task-group></task-group>
       </div>
-      <sidebar-team v-if="activeSidebarTab == 'Team'" />
-      <sidebar-conversation v-if="activeSidebarTab == 'Conversations'" />
-      <sidebar-files v-if="activeSidebarTab == 'Files'" />
-      <sidebar-history v-if="activeSidebarTab == 'History'" />
+      <sidebar-team v-if="activeSidebarTab == 'Team'"></sidebar-team>
+      <sidebar-conversation v-if="activeSidebarTab == 'Conversations'"></sidebar-conversation>
+      <sidebar-files v-if="activeSidebarTab == 'Files'"></sidebar-files>
+      <sidebar-history v-if="activeSidebarTab == 'History'"></sidebar-history>
     </div>
   </article>
 </template>
 <script>
+import _ from 'lodash';
 import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 import { mapGetters } from "vuex";
 
 export default {
+  name: "TaskSidebar",
   props: {
     activeTask: Object,
   },
@@ -195,7 +197,7 @@ export default {
     }),
     orgUsers() {
       return this.companyUsers.map(u => {
-        return { label: u.firstName + ' ' + u.lastName, value: u.id, img: "https://i.pravatar.cc/150?u=" + u.id }
+        return { label: u.firstName + ' ' + u.lastName, value: u.id }
       })
     },
     sectionOpts() {

@@ -1,4 +1,6 @@
-
+html, body {
+  font-family: $font-family;
+}
 .sidebar select,
 .sidebar input {
   font-size: 14px;

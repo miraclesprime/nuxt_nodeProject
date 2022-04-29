@@ -16,7 +16,7 @@ export const getters = {
   getTeamMembers(state) {
     let members = []
     state.teamMembers.map(t => {
-      members.push({ label: t.FirstName + ' ' + t.LastName, email: t.Email, icon: "user", id: t.Id, status: t.Status, role: t.Role, avatar: t.Photo })
+      members.push({ label: t.FirstName + ' ' + t.LastName, firstName: t.FirstName, lastName: t.LastName, email: t.Email, icon: "user", id: t.Id, status: t.Status, role: t.Role, avatar: t.Photo })
     })
     return members
   }

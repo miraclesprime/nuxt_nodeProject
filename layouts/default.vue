@@ -110,7 +110,7 @@ export default {
         { label: "Tasks", icon: "check-all", key: "task-route" },
         { label: "Projects", icon: "briefcase", key: 'project-route' },
         { label: "Goals", icon: "flag-racing" },
-        { label: "Dream", icon: "star" },
+        { label: "Dream", icon: "star", avatar: "https://i.pravatar.cc/150" },
       ],
       /*favProjects: [
         { label: "Project one", icon: "folder-solid" },

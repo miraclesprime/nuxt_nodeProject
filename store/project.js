@@ -261,20 +261,23 @@ export const actions = {
   // create project 
   async createProject(ctx, payload) {
     const res = await this.$axios.$post('/project', {
-      userId: payload.userId,
-      statusId: null,
+      user: payload.user,
       title: payload.title,
+      statusId: null,
       description: null,
       dueDate: null,
       priority: null,
       budget: null,
     }, {
-      headers: { 'Authorization': `Bearer ${ctx.rootState.token.token}` }
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
-    console.log(res.data)
+    // console.log(res.data)
     if (res.statusCode == 200) {
       ctx.commit('createProject', res.data);
       // ctx.commit('setSingleProject', res.data);
+      return res
+    } else {
+      return res
     }
   },
 
