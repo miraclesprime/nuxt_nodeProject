@@ -210,7 +210,11 @@ export default {
             firstName: firstName,
             lastName: lastName,
             companyId: user.subb
-          }).then((value) => {
+          },{
+            headers: {
+              'Authorization': `Bearer ${jwt}`
+            }
+          } ).then((value) => {
             // console.log('user created!!')
             this.$store.dispatch("project/setFavProjects")
             this.$store.dispatch("user/setTeamMembers")
