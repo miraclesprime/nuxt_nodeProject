@@ -160,7 +160,7 @@ export default {
   },
   mounted() {
       console.log(this.$route.params.id)
-    this.$store.dispatch("section/fetchProjectSections", this.$route.params.id);
+    this.$store.dispatch("section/fetchProjectSections", {projectId: this.$route.params.id, filter: 'all'});
     this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' });
   },
 

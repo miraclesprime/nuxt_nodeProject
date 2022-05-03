@@ -189,7 +189,7 @@ export default {
 
   computed: {
     ...mapGetters({
-      companyUsers: "company/getCompanyMembers",
+      teamMembers: "user/getTeamMembers",
       tasks: "task/tasksForListView",
       project: "project/getSingleProject",
       sections: "section/getProjectSections",
@@ -197,9 +197,10 @@ export default {
       favTasks: "task/getFavTasks",
     }),
     orgUsers() {
-      return this.companyUsers.map(u => {
+      let data = this.teamMembers.map(u => {
         return { label: u.firstName + ' ' + u.lastName, value: u.id }
       })
+      return [ {label: 'Please select...', value: null }, ...data ]
     },
     sectionOpts() {
       let sec = [{ label: "Select section" }]
@@ -288,6 +289,14 @@ export default {
       // console.table($event);
       if (this.error == "valid") {
         this.loading = true
+
+        let user;
+        if(!this.form.userId || this.form.userId != "") {
+          user = this.teamMembers.filter(u => u.id == this.form.userId )
+        } else {
+          user = null
+        }
+
         this.$store.dispatch("task/createTask", {
           "sectionId": this.form.sectionId || "_section" + this.form.projectId,
           "projectId": this.form.projectId,
@@ -298,7 +307,7 @@ export default {
           "priorityId": this.form.priorityId,
           "budget": 0,
           "statusId": this.form.statusId,
-          "userId": null,
+          user
         }).then(() => {
           this.$emit("update-key")
           this.$nuxt.$emit("update-key")
@@ -312,7 +321,15 @@ export default {
 
     async updateTask($event) {
       this.loading = true
-      let task = await this.$axios.$put("/task", { id: this.form.id, data: { ...this.form } }, {
+
+      let user;
+        if(!this.form.userId || this.form.userId != "") {
+          user = this.teamMembers.filter(u => u.id == this.form.userId )
+        } else {
+          user = null
+        }
+
+      let task = await this.$axios.$put("/task", { id: this.form.id, data: { ...this.form }, user }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       })
       if (task.statusCode == 200) {
