@@ -90,7 +90,7 @@
               <bib-input type="select" :options="orgUsers" v-model="form.userId" placeholder="Please select..." label="Assignee" v-on:change.native="debounceUpdate()"></bib-input>
             </div>
             <div class="col-4" id='sidebar-col-2'>
-              <bib-input type="text" label="Project" :value="project.title" disabled></bib-input>
+              <bib-input type="select" label="Project" :options="companyProjects" :value="project.id" disabled></bib-input>
             </div>
             <div class="col-4">
               <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="form.sectionId" placeholder="Please select ..." v-on:change.native="debounceUpdate()"></bib-input>
@@ -192,6 +192,7 @@ export default {
       teamMembers: "user/getTeamMembers",
       tasks: "task/tasksForListView",
       project: "project/getSingleProject",
+      projects: "project/getAllProjects",
       sections: "section/getProjectSections",
       currentTask: 'task/getSelectedTask',
       favTasks: "task/getFavTasks",
@@ -199,6 +200,12 @@ export default {
     orgUsers() {
       let data = this.teamMembers.map(u => {
         return { label: u.firstName + ' ' + u.lastName, value: u.id }
+      })
+      return [ {label: 'Please select...', value: null }, ...data ]
+    },
+    companyProjects() {
+      let data = this.projects.map(p => {
+        return { label: p.title, value: p.id }
       })
       return [ {label: 'Please select...', value: null }, ...data ]
     },
