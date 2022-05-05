@@ -11,8 +11,8 @@
       <div class="ml-auto d-flex gap-05 align-center" id="project-id-button-wraps">
         <bib-avatar></bib-avatar>
         <bib-button label="invite" variant="light" pill v-on:click="$nuxt.$emit('add-teammember-modal')"></bib-button>
-        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark">
-          <bib-icon icon="bookmark" class="m-auto"></bib-icon>
+        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark" @click="setFavorite">
+          <bib-icon class="m-auto" :icon="isFavorite.icon" :variant="isFavorite.variant"></bib-icon>
         </div>
         <div id="project-id-horizontal-dots-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center">
           <bib-button pop="horizontal-dots" id="project-id-horizontal-dots">
@@ -127,9 +127,9 @@ export default {
     isFavorite() {
       let fav = this.favProjects.some(t => t.id == this.project.id)
       if (fav) {
-        return { icon: "heart-like-solid", variant: "orange", text: "Remove favorite", status: true }
+        return { icon: "bookmark-solid", variant: "orange", text: "Remove favorite", status: true }
       } else {
-        return { icon: "heart-like", variant: "gray5", text: "Add to favorites", status: false }
+        return { icon: "bookmark", variant: "gray5", text: "Add to favorites", status: false }
       }
     },
   },
@@ -160,7 +160,7 @@ export default {
   },
   mounted() {
       console.log(this.$route.params.id)
-    this.$store.dispatch("section/fetchProjectSections", this.$route.params.id);
+    this.$store.dispatch("section/fetchProjectSections", {projectId: this.$route.params.id, filter: 'all'});
     this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' });
   },
 

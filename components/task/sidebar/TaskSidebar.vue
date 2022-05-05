@@ -90,7 +90,7 @@
               <bib-input type="select" :options="orgUsers" v-model="form.userId" placeholder="Please select..." label="Assignee" v-on:change.native="debounceUpdate()"></bib-input>
             </div>
             <div class="col-4" id='sidebar-col-2'>
-              <bib-input type="text" label="Project" :value="project.title" disabled></bib-input>
+              <bib-input type="select" label="Project" :options="companyProjects" :value="project.id" disabled></bib-input>
             </div>
             <div class="col-4">
               <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="form.sectionId" placeholder="Please select ..." v-on:change.native="debounceUpdate()"></bib-input>
@@ -129,10 +129,11 @@
     </div>
   </article>
 </template>
+
 <script>
-import _ from 'lodash';
 import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 import { mapGetters } from "vuex";
+import _ from 'lodash';
 
 export default {
   name: "TaskSidebar",
@@ -188,17 +189,25 @@ export default {
 
   computed: {
     ...mapGetters({
-      companyUsers: "company/getCompanyMembers",
+      teamMembers: "user/getTeamMembers",
       tasks: "task/tasksForListView",
       project: "project/getSingleProject",
+      projects: "project/getAllProjects",
       sections: "section/getProjectSections",
       currentTask: 'task/getSelectedTask',
       favTasks: "task/getFavTasks",
     }),
     orgUsers() {
-      return this.companyUsers.map(u => {
+      let data = this.teamMembers.map(u => {
         return { label: u.firstName + ' ' + u.lastName, value: u.id }
       })
+      return [ {label: 'Please select...', value: null }, ...data ]
+    },
+    companyProjects() {
+      let data = this.projects.map(p => {
+        return { label: p.title, value: p.id }
+      })
+      return [ {label: 'Please select...', value: null }, ...data ]
     },
     sectionOpts() {
       let sec = [{ label: "Select section" }]
@@ -287,6 +296,14 @@ export default {
       // console.table($event);
       if (this.error == "valid") {
         this.loading = true
+
+        let user;
+        if(!this.form.userId || this.form.userId != "") {
+          user = this.teamMembers.filter(u => u.id == this.form.userId )
+        } else {
+          user = null
+        }
+
         this.$store.dispatch("task/createTask", {
           "sectionId": this.form.sectionId || "_section" + this.form.projectId,
           "projectId": this.form.projectId,
@@ -297,7 +314,7 @@ export default {
           "priorityId": this.form.priorityId,
           "budget": 0,
           "statusId": this.form.statusId,
-          "userId": null,
+          user
         }).then(() => {
           this.$emit("update-key")
           this.$nuxt.$emit("update-key")
@@ -311,7 +328,15 @@ export default {
 
     async updateTask($event) {
       this.loading = true
-      let task = await this.$axios.$put("/task", { id: this.form.id, data: { ...this.form } }, {
+
+      let user;
+        if(!this.form.userId || this.form.userId != "") {
+          user = this.teamMembers.filter(u => u.id == this.form.userId )
+        } else {
+          user = null
+        }
+
+      let task = await this.$axios.$put("/task", { id: this.form.id, data: { ...this.form }, user }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       })
       if (task.statusCode == 200) {
