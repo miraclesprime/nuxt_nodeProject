@@ -90,7 +90,7 @@
               <bib-input type="select" :options="orgUsers" v-model="form.userId" placeholder="Please select..." label="Assignee" v-on:change.native="debounceUpdate()"></bib-input>
             </div>
             <div class="col-4" id='sidebar-col-2'>
-              <bib-input type="select" label="Project" :options="companyProjects" :value="project.id" disabled></bib-input>
+              <bib-input type="select" label="Project" :options="companyProjects" :value="project.id"></bib-input>
             </div>
             <div class="col-4">
               <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="form.sectionId" placeholder="Please select ..." v-on:change.native="debounceUpdate()"></bib-input>
