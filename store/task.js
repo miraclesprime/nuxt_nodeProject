@@ -18,7 +18,7 @@ export const getters = {
   getSelectedTask(state) {
     return state.selectedTask;
   },
-  getFavTasks(state){
+  getFavTasks(state) {
     return state.favTasks
   }
 };
@@ -29,13 +29,13 @@ export const mutations = {
   },
 
   fetchTasks(state, payload) {
-    let arr = payload.map(t=>{
+    let arr = payload.map(t => {
       return t.task
     });
     state.tasks = arr;
   },
 
-  getFavTasks(state, payload){
+  getFavTasks(state, payload) {
     state.favTasks = payload
   },
 
@@ -79,7 +79,7 @@ export const actions = {
     ctx.commit('setSingleTask', payload)
   },
 
-  async getFavTasks(ctx){
+  async getFavTasks(ctx) {
     const res = await this.$axios.get("/task/user/favorites", {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
@@ -93,37 +93,39 @@ export const actions = {
     const res = await this.$axios.$post('/task', payload, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
-    ctx.commit('createTask', res.data);
-    ctx.commit("section/addTaskToSection", res.data, { root: true });
+    // console.log("create task response =>", res)
+
+    if (res.statusCode == 200) {
+      ctx.commit('createTask', res.data);
+      ctx.commit("section/addTaskToSection", res.data, { root: true });
+    }
+    return res.data
   },
 
   async updateTaskStatus(ctx, payload) {
-
-    if(payload.value.statusId !== 5) {
+    if (payload.value.statusId !== 5) {
       const res = await this.$axios.$put('/task', {
         id: payload.value.id,
         data: {
           statusId: 5
         }
-      }, 
-      {
+      }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
     }
 
-    if(payload.value.statusId == 5) {
+    if (payload.value.statusId == 5) {
       const res = await this.$axios.$put('/task', {
         id: payload.value.id,
         data: {
           statusId: 2
         }
-      }, 
-      {
+      }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
     }
-    
-    ctx.dispatch("fetchTasks", {id: ctx.rootState.project.selectedProject.id, filter: 'all' })
+
+    ctx.dispatch("fetchTasks", { id: ctx.rootState.project.selectedProject.id, filter: 'all' })
 
   },
 
@@ -136,14 +138,14 @@ export const actions = {
         }
       })
       // console.log(fav)
-      if(fav.data.statusCode == 200) {
+      if (fav.data.statusCode == 200) {
         // console.log('Added To Favorites')
         ctx.dispatch("getFavTasks")
         return fav.data.message
       } else {
         return fav.data.message
       }
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
   },
@@ -155,13 +157,13 @@ export const actions = {
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
         }
       })
-      if(fav.data.statusCode == 200) {
+      if (fav.data.statusCode == 200) {
         ctx.dispatch("getFavTasks")
         return fav.data.message
       } else {
         return fav.data.message
       }
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
   },

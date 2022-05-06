@@ -4,7 +4,7 @@
       <template #cell(title)="data">
         <div class="d-flex gap-05 align-center">
           <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data)" class="cursor-pointer" @click="handleTaskTable_status(data)"></bib-icon>
-          <span class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block;  line-height:1.25;" @click="openSidebar(data.value)">{{ data.value.title }}</span>
+          <span class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block;  line-height:1.25;" @click="openSidebar(data.value, item.projectId)">{{ data.value.title }}</span>
         </div>
       </template>
       <template #cell(owner)="data">
@@ -49,9 +49,9 @@ export default {
   },
   
   methods: {
-    openSidebar($event) {
+    openSidebar(task, projectId) {
       this.$nuxt.$emit("open-sidebar", true);
-      this.$store.dispatch('task/setSingleTask', $event)
+      this.$store.dispatch('task/setSingleTask', {...task, projectId: projectId})
     },
     /*updateKey($event) {
       // console.log($event)
