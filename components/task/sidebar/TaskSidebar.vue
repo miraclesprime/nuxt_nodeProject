@@ -80,9 +80,9 @@
     <div class="menu" id='ts-menu'>
       <bib-tabs :value="activeSidebarTab" @change="sidebarTabChange" :tabs="sidebarTabs"></bib-tabs>
     </div>
-    <div class="of-scroll-y position-relative" id="ts-of-scroll-y">
+    <div class="of-scroll-y " id="ts-of-scroll-y">
       <template v-if="activeSidebarTab == 'Overview'">
-        <div class="task-info pt-1" id='sidebar-inner-wrap'>
+        <div class="task-info position-relative pt-1" id='sidebar-inner-wrap'>
           <div class="row mx-0" id='sidebar-row-1'>
             <div class="col-4" id='sidebar-col-1'>
               <!-- <label class="text-gray5 ">Assignee</label>
@@ -90,10 +90,10 @@
               <bib-input type="select" :options="orgUsers" v-model="form.userId" placeholder="Please select..." label="Assignee" v-on:change.native="debounceUpdate()"></bib-input>
             </div>
             <div class="col-4" id='sidebar-col-2'>
-              <bib-input type="select" label="Project" :options="companyProjects" :value="project.id" disabled></bib-input>
+              <bib-input type="select" label="Project" :options="companyProjects" v-model.number="form.projectId" v-on:change.native="changeProject"></bib-input>
             </div>
             <div class="col-4">
-              <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="form.sectionId" placeholder="Please select ..." v-on:change.native="debounceUpdate()"></bib-input>
+              <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="form.sectionId" placeholder="Please select ..." v-on:change.native="debounceUpdate()" :disabled="!form.projectId"></bib-input>
             </div>
           </div>
           <div class="row mx-0" id='sidebar-row-2'>
@@ -129,7 +129,6 @@
     </div>
   </article>
 </template>
-
 <script>
 import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 import { mapGetters } from "vuex";
@@ -201,16 +200,16 @@ export default {
       let data = this.teamMembers.map(u => {
         return { label: u.firstName + ' ' + u.lastName, value: u.id }
       })
-      return [ {label: 'Please select...', value: null }, ...data ]
+      return [{ label: 'Please select...', value: null }, ...data]
     },
     companyProjects() {
       let data = this.projects.map(p => {
         return { label: p.title, value: p.id }
       })
-      return [ {label: 'Please select...', value: null }, ...data ]
+      return [{ label: 'Please select...', value: null }, ...data]
     },
     sectionOpts() {
-      let sec = [{ label: "Select section" }]
+      let sec = [{ label: "Select section", value:"_section"+this.form.projectId }]
       this.sections.forEach((s) => {
         if (s.title.includes("_section")) {
           return false
@@ -275,6 +274,10 @@ export default {
 
   },
 
+  mounted() {
+    this.$store.dispatch("project/fetchProjects")
+  },
+
   methods: {
 
     hideSidebar() {
@@ -292,22 +295,50 @@ export default {
       return `${year}-${month}-${day}`
 
     },
+    changeProject() {
+      if (!this.form.projectId || this.form.projectId == "") {
+        this.form.projectId = null
+        this.form.sectionId = null
+        if (this.form.id) {
+          this.updateTask(this.form.projectId)
+          return false
+        }
+        return false
+      }
+      this.loading = true
+      this.form.sectionId = "_section"+this.form.projectId
+      this.$store.dispatch("section/fetchProjectSections", { projectId: this.form.projectId, filter: 'all' }).then((sections) => {
+        // console.log(sections)
+        if (!this.form.id || this.form.id == "") {
+          this.loading = false
+          return false
+        }
+        let sec = sections.find(s => s.title.includes("_section"))
+        // console.warn(sec);
+        if (!sec) {
+          this.form.sectionId = null
+        } else {
+          this.form.sectionId = sec.id
+        }
+        this.updateTask(this.form.projectId)
+
+      })
+    },
     createTask($event) {
       // console.table($event);
       if (this.error == "valid") {
         this.loading = true
 
         let user;
-        if(!this.form.userId || this.form.userId != "") {
-          user = this.teamMembers.filter(u => u.id == this.form.userId )
+        if (!this.form.userId || this.form.userId != "") {
+          user = this.teamMembers.filter(u => u.id == this.form.userId)
         } else {
           user = null
         }
 
         this.$store.dispatch("task/createTask", {
-          "sectionId": this.form.sectionId || "_section" + this.form.projectId,
+          "sectionId": this.form.sectionId,
           "projectId": this.form.projectId,
-          // "projectId": null,
           "title": this.form.title,
           "description": this.form.description,
           "dueDate": this.form.dueDate,
@@ -326,19 +357,20 @@ export default {
       }
     },
 
-    async updateTask($event) {
+    async updateTask(projectId) {
       this.loading = true
 
       let user;
-        if(!this.form.userId || this.form.userId != "") {
-          user = this.teamMembers.filter(u => u.id == this.form.userId )
-        } else {
-          user = null
-        }
+      if (!this.form.userId || this.form.userId != "") {
+        user = this.teamMembers.filter(u => u.id == this.form.userId)
+      } else {
+        user = null
+      }
 
-      let task = await this.$axios.$put("/task", { id: this.form.id, data: { ...this.form }, user }, {
+      let task = await this.$axios.$put("/task", { id: this.form.id, data: { ...this.form }, user, projectId: projectId ? projectId : null }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       })
+      console.info(task)
       if (task.statusCode == 200) {
         this.$store.dispatch("task/fetchTasks", { id: this.project.id }).then(() => this.loading = false)
       }
