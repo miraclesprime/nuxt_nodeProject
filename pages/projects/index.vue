@@ -21,7 +21,7 @@
             </div>
           </template>
           <template #cell(userId)="data">
-            <user-info :userId="data.value.userId" ></user-info>
+            <user-info :userId="data.value.userId" :key="newkey" ></user-info>
           </template>
           <template #cell(status)="data">
             <div class="d-flex gap-05 align-center">
@@ -31,14 +31,14 @@
             </div>
           </template>
           <template #cell(createdAt)="data">
-            <span :id="'projects-' + data.value.createdAt + '-text'" class="text-dark text-truncate" v-format-date="data.value.createdAt"></span>
-            <!-- <div class="justify-between text-dark" :id="'projects-' + data.value.createdAt">
-            </div> -->
+            <format-date :datetime="data.value.createdAt" :key="newkey"></format-date>
+            <!-- <span :id="'projects-' + data.value.createdAt + '-text'" class="text-dark text-truncate" v-format-date="data.value.createdAt"></span> -->
+            
           </template>
           <template #cell(dueDate)="data">
-            <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span>
-            <!-- <div class="justify-between text-dark" :id="'projects-' + data.value.dueDate">
-            </div> -->
+            <!-- <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span> -->
+            <format-date :datetime="data.value.dueDate" :key="newkey"></format-date>
+            
           </template>
           <template #cell(priority)="data">
             <div class="d-flex gap-05 align-center">
@@ -76,11 +76,16 @@ export default {
         priority: null,
         status: null,
       },
-      orderBy: ''
+      orderBy: '',
+      newkey: "",
     }
   },
   mounted() {
-    this.$store.dispatch('project/fetchProjects').then(() => { this.loading = false })
+    this.$store.dispatch('project/fetchProjects').then(() => { 
+      this.newkey = parseInt( Math.random().toString().slice(-3) )
+      this.loading = false 
+    })
+    
   },
   computed: {
     ...mapGetters({
