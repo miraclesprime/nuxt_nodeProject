@@ -20,7 +20,7 @@
       </bib-table>
     </template>
     <template v-if="norecord">
-      <span id="projects-0" class="d-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
+      <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
         <bib-icon icon="warning"></bib-icon> No records found
       </span>
     </template>

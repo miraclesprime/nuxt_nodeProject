@@ -302,7 +302,7 @@ export default {
       let proj = await this.$axios.$put("/project", { id: this.project.id, user: this.owner[0], data: this.activeProject }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       })
-      console.log(proj.data)
+      // console.log(proj.data)
       if (proj.statusCode == 200) {
         this.project = proj.data
         this.$store.dispatch("project/setSingleProject", proj.data)

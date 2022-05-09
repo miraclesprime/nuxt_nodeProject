@@ -1,5 +1,5 @@
 <template>
-  <span :id="'user-info-wrapper-'+user.id" class="user-info-wrapper d-flex align-center">
+  <span :id="'user-info-wrapper-'+ userId" class="user-info-wrapper d-flex align-center">
     <template v-if="pic">
       <bib-avatar :src="pic" size="1.25rem"></bib-avatar>
     </template>
