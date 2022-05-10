@@ -43,13 +43,12 @@
   </div>
 </template>
 <script>
-
 import { Container, Draggable } from "vue-smooth-dnd";
 import { TASK_FIELDS } from "config/constants";
 import { mapGetters } from 'vuex';
 
 export default {
-  
+
   props: {
     gridType: String,
     // sections: Array,
@@ -113,8 +112,8 @@ export default {
       }
     },
   },
-  created(){
-    this.$nuxt.$on("section-rename", ($event)=>{
+  created() {
+    this.$nuxt.$on("section-rename", ($event) => {
       this.renameModal = true
       this.sectionId = $event.id
       this.sectionTitle = $event.title
@@ -138,7 +137,7 @@ export default {
       })
       // console.log("sorted =>", sorted)
       this.localdata = sorted
-      this.key += 1      
+      this.key += 1
       this.loading = false
     }).catch(e => console.log(e))
   },
@@ -336,8 +335,21 @@ export default {
       }
     },
 
-    renameSection(sectionId){
-      console.log(sectionId)
+    async renameSection() {
+      this.loading = true
+      const sec = await this.$store.dispatch("section/renameSection", {
+        projectId: Number(this.$route.params.id),
+        id: this.sectionId,
+        data: {
+          title: this.sectionTitle
+        }
+      })
+      console.log("rename section output",sec)
+      if (sec.statusCode = 200) {
+        this.renameModal = false
+        this.updateKey()
+      }
+      this.loading = false
     },
 
     taskSelected($event) {
