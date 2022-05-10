@@ -1,15 +1,17 @@
 <template>
-  <div id="task-page-wrapper">
-    <page-title title="Tasks"></page-title>
-    <div class="position-relative of-scroll-y">
+  <div id="my-tasks-page-wrapper">
+    <page-title title="My Tasks"></page-title>
     <task-actions />
-    <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Department', variant: 'secondary'}" class="border-gray4 bg-white">
+    <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Due Soon', variant: 'secondary'}" class="border-gray4 bg-white">
       <template #cell(title)="data">
         <div class="d-flex gap-05">
           <span class="text-dark">{{ data.value.title }}</span>
         </div>
       </template>
-      
+
+      <!-- <template #cell(projectId)="data">
+          {{data.value.project.project.title}}
+       </template> -->
       <template #cell(owner)="data">
           <user-info :user="data.value.user"></user-info>
         </template>
@@ -19,6 +21,11 @@
             </div>
             <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" class="text-dark text-truncate">{{ favoriteStatusLabel(data.value.status ? data.value.status.text : "") }}</span>
           </div>
+        </template>
+        <template #cell(createdAt)="data">
+          <span :id="'projects-' + data.value.createdAt + '-text'" class="text-dark text-truncate" v-format-date="data.value.createdAt"></span>
+          <!-- <div class="justify-between text-dark" :id="'projects-' + data.value.dueDate">
+            </div> -->
         </template>
         <template #cell(dueDate)="data">
           <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span>
@@ -34,34 +41,21 @@
           </div>
         </template>
     </bib-table>
-    </div>
-    
+
   </div>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import { TASK_FAVORITES as TaskFields } from '../../config/constants'
+import { USER_TASKS } from "../../config/constants";
 
 export default {
-  name: 'Tasks',
-  data() {
-    return {
-      title: "Tasks",
-      taskFields: TaskFields,
-      tasks: [],
-      gridType: "list",
-      sections: [],
-    }
-  },
-  computed: {
-    ...mapGetters({
-      token: "token/getToken",
-      user: "user/getUser"
-    }),
-  },
-
-  methods: {
+   data() {
+       return {
+            taskFields: USER_TASKS,
+            tasks: []
+       }
+   },
+   methods: {
     favoriteStatusLabel(status) {
       switch (status) {
         case 'Delayed':
@@ -107,10 +101,9 @@ export default {
     },
   },
 
-  created() {
+   created() {
     if (process.client) {
-      let compid = JSON.parse(localStorage.getItem("user")).subb;
-      this.$axios.$get("company/" + compid + "/tasks", {
+      this.$axios.$get("user/tasks", {
         headers: { 'Authorization': "Bearer " + localStorage.getItem("accessToken") }
       }).then(res => {
         this.tasks = res.data;
@@ -118,7 +111,8 @@ export default {
     }
   },
 }
-
 </script>
-<style lang="scss" scoped>
+
+<style>
+
 </style>

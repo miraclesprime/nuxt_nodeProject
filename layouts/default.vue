@@ -87,12 +87,7 @@ export default {
   data() {
     return {
       openSidebar: false,
-      /*appHeaderButton: {
-        label: this.$i18n.t("create"),
-        event: "button-click",
-        variant: "success",
-        icon: "add",
-      },*/
+      
       appItems: [{
           img: "Layers",
           color: "primary",
@@ -107,7 +102,7 @@ export default {
       navItems1: [
         { label: "Home", icon: "home", key: "dashboard-route" },
         { label: "Inbox", icon: "mail-new" },
-        { label: "My tasks", icon: "check-circle" },
+        { label: "My tasks", icon: "check-circle", key: 'mytasks' },
         { label: "Favorites", icon: "heart-like", key: 'favorites' },
       ],
       navItems2: [
@@ -312,6 +307,9 @@ export default {
       }
       if ($event.key == 'task-route') {
         this.$router.push('/tasks')
+      }
+      if ($event.key == 'mytasks') {
+        this.$router.push('/mytasks')
       }
     },
 

@@ -8,7 +8,7 @@
         </div>
       </template>
       <template #cell(owner)="data">
-        <user-info :userId="data.value.userId" ></user-info>
+        <user-info v-if="data.value.userId" :userId="data.value.userId" ></user-info>
       </template>
       <template #cell(status)="data">
         <div class="d-flex gap-05 align-center">
