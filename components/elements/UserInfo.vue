@@ -1,17 +1,14 @@
 <template>
   <span :id="'user-info-wrapper-'+ userId" class="user-info-wrapper d-flex align-center">
-    <template v-if="pic">
+    <template >
       <bib-avatar :src="pic" size="1.25rem"></bib-avatar>
     </template>
-    <template v-else>
-      <bib-avatar :src="avatar" size="1.25rem"></bib-avatar>
-    </template>
-    <template v-if="userName">
+    <template >
       <span :id="'user-info-'+userId" class="user-name text-dark pl-025 pr-025">{{userName}}</span>
     </template>
-    <template v-else>
-      <span :id="'user-info-'+user.id" class="user-name text-dark pl-025 pr-025">{{ user.firstName + '' + user.lastName }} </span>
-    </template>
+    <!-- <template v-else>
+      <span :id="'user-info-'+userId" class="user-name text-dark pl-025 pr-025">{{ user.firstName + '' + user.lastName }} </span>
+    </template> -->
     <!-- <bib-spinner :scale="1.5"></bib-spinner> -->
   </span>
 </template>
@@ -22,14 +19,6 @@ export default {
 
   props: {
     userId: String,
-    user: {
-      type: Object,
-      default: function() {
-        return { firstName: '', lastName: '' }
-      }
-    },
-    avatar: String
-    // id: { type: String, required: true },
   },
   data() {
     return {
@@ -37,13 +26,6 @@ export default {
       userName: null,
     }
   },
-  /*computed: {
-    uName() {
-      if (this.user) {
-        return `${user.firstName} ${user.lastName}`
-      }
-    }
-  },*/
   created() {
     if (this.userId) {
       this.$axios.get(`${process.env.USER_API_URL}/${this.userId}`, {
