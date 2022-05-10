@@ -1,4 +1,3 @@
-// import { mapTasks } from "services/task";
 
 export const state = () => ({
   tasks: [],
