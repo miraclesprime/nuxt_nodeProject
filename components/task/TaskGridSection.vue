@@ -71,7 +71,7 @@
               </div>
               <div class="task-bottom" :id="'tg-card-bottom'+task.id">
                 <user-info v-if="task.userId" :userId="task.userId"></user-info>
-                <format-date :datetime="task.dueDate" class="ml-auto"></format-date>
+                <format-date v-if="task.dueDate" :datetime="task.dueDate" class="ml-auto"></format-date>
                 <!-- <span :id="'tg-bottom-duedate'+task.id" v-format-date="task.dueDate"></span> -->
               </div>
             </div>
@@ -141,7 +141,7 @@ export default {
     ...mapGetters({
       token: "token/getToken",
       project: "project/getSingleProject",
-      sections: "section/getProjectSections",
+      // sections: "section/getProjectSections",
     }),
     templateKey() {
 

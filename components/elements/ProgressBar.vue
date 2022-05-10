@@ -44,7 +44,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .progress {
-  height: 6px;
+  height: 8px;
   margin-top: 3px;
   overflow: hidden;
 

@@ -9,13 +9,13 @@
       </div> -->
       <div id="proj-row1" class="row my-1">
         <div id="proj-row1-col1" class="col-4">
-          <div id="proj-progress-wrap1" class="bg-gray3 shape-rounded text-center p-05 h-100">
+          <div id="proj-progress-wrap1" class="bg-secondary-sub3 shape-rounded text-center p-05 h-100">
             <p id="proj-progress-title1" class="text-left text-secondary">Progress</p>
             <progress-circle variant="success" :radius="55" :progress="progress" class="mx-auto mt-1"></progress-circle>
           </div>
         </div>
         <div id="proj-row1-col2" class="col-4">
-          <div id="proj-progress-wrap2" class="bg-gray3 shape-rounded text-center p-05 h-100">
+          <div id="proj-progress-wrap2" class="bg-secondary-sub3 shape-rounded text-center p-05 h-100">
             <p id="proj-progress-title2" class="text-left text-secondary">Tasks</p>
             <div id="proj-progress-in" class="p-1">
               <progress-bar label="Past due" background='danger' :value="taskOverdue" :total="totalTasks.length" class="my-025"></progress-bar>
@@ -26,7 +26,7 @@
           </div>
         </div>
         <div id="proj-row1-col3" class="col-4">
-          <div id="proj-progress-wrap3" class="bg-gray3 shape-rounded text-center p-05 h-100">
+          <div id="proj-progress-wrap3" class="bg-secondary-sub3 shape-rounded text-center p-05 h-100">
             <!-- <bib-spinner variant="primary"></bib-spinner> -->
           </div>
         </div>

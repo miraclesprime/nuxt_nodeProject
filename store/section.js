@@ -100,7 +100,14 @@ export const actions = {
     ctx.commit('createSection', res.data)
   },
 
-  // sortSections(ctx, payload) {
-  //   ctx.commit('sortSections', payload)
-  // }  
+  async renameSection(ctx, payload){
+
+    const res = await this.$axios.$put("/section", payload, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+    })
+    // console.log("rename section vuex", res)
+    
+    return res
+  }
+
 };
