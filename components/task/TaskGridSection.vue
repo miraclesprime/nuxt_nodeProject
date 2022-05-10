@@ -1,7 +1,7 @@
 <template>
   <div>
-    <draggable v-model="localdata" class="d-flex of-scroll-x" :move="moveSection" handle=".section-drag-handle">
-      <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${key}${section.title}${section.id}`">
+    <draggable v-model="sections" class="d-flex of-scroll-x" :move="moveSection" handle=".section-drag-handle">
+      <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in sections" :key="`grid-${key}${section.title}${section.id}`">
         <div class="w-100 d-flex justify-between section-drag-handle" :id="'tgs-inner-wrap-'+section.id" style="margin-bottom: 10px">
           <div class="title text-gray" :id="'tgs-label-'+section.id" >{{ section.title.includes('_section') ? 'Untitled section' : section.title }}</div>
           <div class="d-flex align-center ml-auto section-options" :id="'tgs-section-options-'+section.id">
@@ -70,8 +70,9 @@
                 </bib-button>
               </div>
               <div class="task-bottom" :id="'tg-card-bottom'+task.id">
-                <user-info v-if="userId" :userId="userId"></user-info>
-                <span :id="'tg-bottom-duedate'+task.id" v-format-date="task.dueDate"></span>
+                <user-info v-if="task.userId" :userId="task.userId"></user-info>
+                <format-date :datetime="task.dueDate" class="ml-auto"></format-date>
+                <!-- <span :id="'tg-bottom-duedate'+task.id" v-format-date="task.dueDate"></span> -->
               </div>
             </div>
           </draggable>
@@ -102,11 +103,11 @@ export default {
       loading: false,
     };
   },
-  /*props: {
-    sections: { type: Array },
-    tasks: { type: Array },
-  },*/
-  created() {
+  props: {
+    sections: { type: Array, required: true },
+    // tasks: { type: Array },
+  },
+  /*created() {
     this.$nuxt.$on("update-key", () => {
       console.log('updated-key received')
       this.$store.dispatch("section/fetchProjectSections", {projectId:this.project.id})
@@ -127,13 +128,13 @@ export default {
         })
         .catch(e => console.log(e))
     })
-  },
+  },*/
   mounted() {
     // console.info('mounted', this.project)
     this.$store.dispatch("section/fetchProjectSections", {projectId:this.project.id})
     this.key += parseInt(Math.random().toString().slice(-2))
 
-    this.taskByOrder();
+    // this.taskByOrder();
 
   },
   computed: {

@@ -16,7 +16,7 @@
       <task-list-section :project="project" :sections="localdata" :key="key" v-on:sort-task="taskSort($event)"></task-list-section>
     </template>
     <template v-else>
-      <task-grid-section :sections="sections" v-on:update-key="updateKey">
+      <task-grid-section :sections="localdata" v-on:update-key="updateKey">
       </task-grid-section>
     </template>
     <loading :loading="loading"></loading>
