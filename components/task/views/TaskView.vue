@@ -14,45 +14,6 @@
     </section>
     <template v-if="gridType === 'list'">
       <task-list-section :project="project" :sections="localdata" :key="key" v-on:sort-task="taskSort($event)"></task-list-section>
-      <!-- <bib-table v-for="(item, index) in sections" :key="`tasklist-${key}${item.id}${sortName ? sortName : ''}`" :fields="tableFields" :sections="taskWithSection(item.id)" :headless="index > 0" :collapseObj="showSectionTitle(item)" hide-no-column class="border-gray4 bg-white" @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
-        <template #cell(title)="data">
-          <div class="d-flex gap-05 align-center">
-            <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data)" class="cursor-pointer" @click="handleTaskTable_status(data)"></bib-icon>
-            <span class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block; min-height: 30px;" @click="taskSelected(data.value)">{{ data.value.title }}</span>
-          </div>
-        </template>
-        <template #cell(owner)="data">
-          <user-info :user="data.value.user" avatar="https://i.pravatar.cc/32"></user-info>
-        </template>
-        <template #cell(status)="data">
-          <div class="d-flex gap-05 align-center">
-            <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + taskStatusVariable(data.value.status ? data.value.status.text : '')"></div>
-            <span class="text-dark">{{ taskStatusLabel(data.value.status ? data.value.status.text : '') }}</span>
-          </div>
-        </template>
-        <template #cell(startDate)="data">
-          <div class="d-flex gap-05">
-            <span class="text-dark" v-format-date="data.value.createdAt"></span>
-          </div>
-        </template>
-        <template #cell(dueDate)="data">
-          <div class="d-flex gap-05">
-            <span class="text-dark" v-format-date="data.value.dueDate"></span>
-          </div>
-        </template>
-        <template #cell(priority)="data">
-          <div class="d-flex gap-05 align-center">
-            <bib-icon icon="urgent-solid" :scale="1.1" :variant="taskPriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
-            <span :class="'text-' + taskPriorityVariable(data.value.priority ? data.value.priority.text : '')">{{ capitalizeFirstLetter(data.value.priority ? data.value.priority.text : '') }}</span>
-          </div>
-        </template>
-      </bib-table> -->
-      <!-- <div class="bg-white w-100 p-025 border-bottom-gray4 border-top-white">
-        <div class="d-flex align-center p-025 cursor-pointer bg-hover-gray2 shape-rounded w-fit gap-05" @click="addTask(sec_index)">
-          <bib-icon icon="add" variant="success" :scale="1.4"></bib-icon>
-          <span class="text-dark"> New Task </span>
-        </div>
-      </div> -->
     </template>
     <template v-else>
       <task-grid-section :sections="sections" v-on:update-key="updateKey">
@@ -64,7 +25,7 @@
     </span>
     <!-- task sidebar -->
     <task-sidebar :activeTask="activeTask" @open-sidebar="toggleSidebar()" v-on:update-key="updateKey"></task-sidebar>
-    <!-- rename modal -->
+    <!-- section rename modal -->
     <bib-modal-wrapper v-if="renameModal" title="Rename section" @close="renameModal = false">
       <template slot="content">
         <div>
@@ -164,9 +125,9 @@ export default {
     this.loading = true
     this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' }).then((res) => {
       console.log("project sections => ", res.length)
-      /*if (res.length == 0) {
+      if (res.length < 1) {
         this.nodata = true
-      } else {*/
+      }
 
       this.localdata = JSON.parse(JSON.stringify(this.sections))
 
@@ -177,10 +138,9 @@ export default {
       })
       // console.log("sorted =>", sorted)
       this.localdata = sorted
-      this.key += 1
-      // }
+      this.key += 1      
+      this.loading = false
     }).catch(e => console.log(e))
-    this.loading = false
   },
 
   methods: {

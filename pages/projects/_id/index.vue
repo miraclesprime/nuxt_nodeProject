@@ -45,15 +45,15 @@
       <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="TABS" />
     </div>
     <div id="project-id-tab-content" class="project-id-tab-content position-relative of-scroll-y">
-      <project-overview v-if="activeTab.value == TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="projectTasks" :currentProject="project" />
-      <task-view v-if="activeTab.value == TAB_TITLES.tasks" :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType" />
-      <task-conversations v-if="activeTab.value == TAB_TITLES.conversations" :fields="TABLE_FIELDS" :tasks="projectTasks" />
+      <project-overview v-if="activeTab.value == TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="projectTasks" :currentProject="project" ></project-overview>
+      <task-view v-if="activeTab.value == TAB_TITLES.tasks" :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType" ></task-view>
+      <task-conversations v-if="activeTab.value == TAB_TITLES.conversations" :fields="TABLE_FIELDS" :tasks="projectTasks" ></task-conversations>
       <!-- <task-timeline-view v-if="activeTab.value == TAB_TITLES.timeline" :fields="TABLE_FIELDS" :tasks="tasks" />
       <task-calendar-view v-if="activeTab.value == TAB_TITLES.calendar" :fields="TABLE_FIELDS" :tasks="tasks" /> -->
-      <task-team v-if="activeTab.value == TAB_TITLES.team" :fields="TABLE_FIELDS" :tasks="projectTasks" />
-      <task-files v-if="activeTab.value == TAB_TITLES.files" :fields="TABLE_FIELDS" :tasks="projectTasks" />
+      <task-team v-if="activeTab.value == TAB_TITLES.team" :fields="TABLE_FIELDS" :tasks="projectTasks" ></task-team>
+      <task-files v-if="activeTab.value == TAB_TITLES.files" :fields="TABLE_FIELDS" :tasks="projectTasks" ></task-files>
     </div>
-    <!-- rename modal -->
+    <!-- project rename modal -->
     <bib-modal-wrapper v-if="renameModal" title="Rename project" @close="renameModal = false">
       <template slot="content">
         <div>
@@ -202,7 +202,8 @@ export default {
         id: this.project.id,
         data: {
           title: this.projectTitle
-        }
+        },
+        user: this.project.user
       }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       })
