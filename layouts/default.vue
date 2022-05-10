@@ -87,12 +87,7 @@ export default {
   data() {
     return {
       openSidebar: false,
-      /*appHeaderButton: {
-        label: this.$i18n.t("create"),
-        event: "button-click",
-        variant: "success",
-        icon: "add",
-      },*/
+      
       appItems: [{
           img: "Layers",
           color: "primary",
