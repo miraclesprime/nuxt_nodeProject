@@ -360,3 +360,101 @@ export const TASK_FAVORITES = [
     }
   }
 ]
+
+
+export const USER_TASKS = [
+  { 
+    label: '#', 
+    key: ''
+  },
+  { 
+    label: 'Task name', 
+    key: 'title', 
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-title-sort',
+      isActive: false
+    }
+  },
+  {
+    label: 'Project', 
+    key: 'project', 
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-project-sort',
+      isActive: false
+    }
+  },
+  { 
+    label: 'Owner', 
+    key: 'owner', 
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-owner-sort',
+      isActive: false
+    }
+  },
+  { 
+    label: 'Status', 
+    key: 'status', 
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-status-sort',
+      isActive: false
+    }
+  },
+  { 
+    label: 'Start Date', 
+    key: 'createdAt', 
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-startDate-sort',
+      isActive: false
+    }
+  },
+  { 
+    label: 'Due Date', 
+    key: 'dueDate', 
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-dueDate-sort',
+      isActive: false
+    }
+  },
+  { 
+    label: 'Priority', 
+    key: 'priority', 
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-priority-sort',
+      isActive: false
+    }
+  },
+  { 
+    label: 'Tag', 
+    key: 'tag', 
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-tag-sort',
+      isActive: false
+    }
+  },
+  { 
+    label: 'Team', 
+    key: 'team', 
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-team-sort',
+      isActive: false
+    }
+  },
+  { 
+    label: 'Department', 
+    key: 'department', 
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'file-department-sort',
+      isActive: false
+    }
+  },
+]
