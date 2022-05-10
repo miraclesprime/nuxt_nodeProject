@@ -68,7 +68,7 @@ export default {
       localdata: [],
       sortName: "",
       loading: false,
-      nodata: false,
+      // nodata: false,
       // filterTask: [],
       key: 0,
       orderBy: "asc",
@@ -105,13 +105,13 @@ export default {
         return false
       }
     },
-    /*loading() {
-      if (this.localdata != null) {
+    nodata() {
+      if (this.sections.length > 0) {
         return false
       } else {
         return true
       }
-    },*/
+    },
   },
   created(){
     this.$nuxt.$on("section-rename", ($event)=>{
@@ -124,10 +124,10 @@ export default {
   mounted() {
     this.loading = true
     this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' }).then((res) => {
-      console.log("project sections => ", res.length)
-      if (res.length < 1) {
+      // console.log("project sections => ", res.length)
+      /*if (res.length < 1) {
         this.nodata = true
-      }
+      }*/
 
       this.localdata = JSON.parse(JSON.stringify(this.sections))
 
@@ -327,6 +327,7 @@ export default {
           this.sectionLoading = false
           this.newSection = false
           this.$refs.newsectioninput.removeAttribute("disabled")
+          this.updateKey()
         }).catch(e => console.log(e))
 
       } else {

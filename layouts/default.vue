@@ -1,11 +1,9 @@
 <template>
   <div id="layout-wrapper">
-    <bib-app-wrapper class="test" :navigationCollapsed="collapseNavigation" :select="appHeaderActions.select" @collapseNavigation="
-        () => {
+    <bib-app-wrapper class="test" :navigationCollapsed="collapseNavigation" :select="appHeaderActions.select" @collapseNavigation="() => {
           resizeCalendar()
           collapseNavigation = !collapseNavigation;
-        }
-      ">
+        }" >
       <template #topbar>
         <bib-header :avatarLink="user2 ? user2.Photo : ''">
           <template #avatar_menu>
@@ -49,7 +47,7 @@
           </bib-button>
         </div>
         <bib-app-navigation :items="navItems1" @click="goToRoute($event)" class="mb-1"></bib-app-navigation>
-        <bib-app-navigation :items="navItems2" @click="goToRoute($event)" ></bib-app-navigation>
+        <bib-app-navigation :items="navItems2" @click="goToRoute($event)"></bib-app-navigation>
         <bib-detail-collapse v-show="!collapseNavigation" label="Favorite Projects" variant="white" open class="mt-1">
           <template v-slot:content>
             <!-- <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light" id="layout-add-icon">
@@ -89,6 +87,12 @@ export default {
   data() {
     return {
       openSidebar: false,
+      /*appHeaderButton: {
+        label: this.$i18n.t("create"),
+        event: "button-click",
+        variant: "success",
+        icon: "add",
+      },*/
       appItems: [{
           img: "Layers",
           color: "primary",
@@ -210,11 +214,11 @@ export default {
             firstName: firstName,
             lastName: lastName,
             companyId: user.subb
-          },{
+          }, {
             headers: {
               'Authorization': `Bearer ${jwt}`
             }
-          } ).then((value) => {
+          }).then((value) => {
             // console.log('user created!!')
             this.$store.dispatch("project/setFavProjects")
             this.$store.dispatch("user/setTeamMembers")
@@ -303,7 +307,7 @@ export default {
       if ($event.key == 'project-route') {
         this.$router.push('/projects')
       }
-      if($event.key == 'favorites') {
+      if ($event.key == 'favorites') {
         this.$router.push('/favorites')
       }
       if ($event.key == 'task-route') {
@@ -330,8 +334,8 @@ export default {
 <style lang="scss">
 html {
   font-family: $font-family;
-  font-size: 16px;
-  word-spacing: 1px;
+  /*font-size: 16px;
+  word-spacing: 1px;*/
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   -moz-osx-font-smoothing: grayscale;
@@ -346,7 +350,7 @@ html {
   margin: 0;
 }
 
-.button--green {
+/*.button--green {
   display: inline-block;
   border-radius: 4px;
   border: 1px solid #3b8070;
@@ -373,7 +377,7 @@ html {
 .button--grey:hover {
   color: #fff;
   background-color: #35495e;
-}
+}*/
 
 .main {
   /*display: grid;
