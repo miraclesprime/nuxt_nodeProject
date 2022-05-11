@@ -1,17 +1,16 @@
 <template>
-  <div id="task-page-wrapper">
+  <div id="task-page-wrapper" class="task-page-wrapper">
     <page-title title="Tasks"></page-title>
-    <div class="position-relative of-scroll-y">
     <task-actions />
-    <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Department', variant: 'secondary'}" class="border-gray4 bg-white">
-      <template #cell(title)="data">
-        <div class="d-flex gap-05">
-          <span class="text-dark">{{ data.value.title }}</span>
-        </div>
-      </template>
-      
-      <template #cell(owner)="data">
-          <user-info :user="data.value.user"></user-info>
+    <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
+      <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Department', variant: 'secondary'}" class="border-gray4 bg-white">
+        <template #cell(title)="data">
+          <div class="d-flex gap-05">
+            <span class="text-dark">{{ data.value.title }}</span>
+          </div>
+        </template>
+        <template #cell(owner)="data">
+          <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
         </template>
         <template #cell(status)="data">
           <div class="d-flex gap-05 align-center">
@@ -22,8 +21,6 @@
         </template>
         <template #cell(dueDate)="data">
           <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span>
-          <!-- <div class="justify-between text-dark" :id="'projects-' + data.value.dueDate">
-            </div> -->
         </template>
         <template #cell(priority)="data">
           <div class="d-flex gap-05 align-center">
@@ -33,12 +30,10 @@
             </span>
           </div>
         </template>
-    </bib-table>
+      </bib-table>
     </div>
-    
   </div>
 </template>
-
 <script>
 import { mapGetters } from "vuex";
 import { TASK_FAVORITES as TaskFields } from '../../config/constants'
@@ -121,4 +116,5 @@ export default {
 
 </script>
 <style lang="scss" scoped>
+.task-page-wrapper { display: grid; grid-template-rows: auto auto calc(100vh - 150px); grid-template-columns: 1fr;}
 </style>

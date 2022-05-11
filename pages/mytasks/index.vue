@@ -1,19 +1,19 @@
 <template>
-  <div id="my-tasks-page-wrapper">
+  <div id="my-tasks-page-wrapper" class="mytask-page-wrapper">
     <page-title title="My Tasks"></page-title>
     <task-actions />
-    <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Due Soon', variant: 'secondary'}" class="border-gray4 bg-white">
-      <template #cell(title)="data">
-        <div class="d-flex gap-05">
-          <span class="text-dark">{{ data.value.title }}</span>
-        </div>
-      </template>
-
-      <!-- <template #cell(projectId)="data">
-          {{data.value.project.project.title}}
-       </template> -->
-      <template #cell(owner)="data">
-          <user-info :user="data.value.user"></user-info>
+    <div id="mytask-table-wrapper" class="mytask-table-wrapper position-relative of-scroll-y">
+      <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Due Soon', variant: 'secondary'}" class="border-gray4 bg-white">
+        <template #cell(title)="data">
+          <div class="d-flex gap-05">
+            <span class="text-dark">{{ data.value.title }}</span>
+          </div>
+        </template>
+        <template #cell(projectId)="data">
+           <project-info :projectId="data.value.project[0] ? data.value.project[0].projectId : null"></project-info>
+       </template>
+        <template #cell(owner)="data">
+          <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
         </template>
         <template #cell(status)="data">
           <div class="d-flex gap-05 align-center">
@@ -40,22 +40,21 @@
             </span>
           </div>
         </template>
-    </bib-table>
-
+      </bib-table>
+    </div>
   </div>
 </template>
-
 <script>
 import { USER_TASKS } from "../../config/constants";
 
 export default {
-   data() {
-       return {
-            taskFields: USER_TASKS,
-            tasks: []
-       }
-   },
-   methods: {
+  data() {
+    return {
+      taskFields: USER_TASKS,
+      tasks: []
+    }
+  },
+  methods: {
     favoriteStatusLabel(status) {
       switch (status) {
         case 'Delayed':
@@ -101,7 +100,7 @@ export default {
     },
   },
 
-   created() {
+  created() {
     if (process.client) {
       this.$axios.$get("user/tasks", {
         headers: { 'Authorization': "Bearer " + localStorage.getItem("accessToken") }
@@ -111,8 +110,13 @@ export default {
     }
   },
 }
-</script>
 
-<style>
+</script>
+<style lang="scss" scoped>
+.mytask-page-wrapper {
+  display: grid;
+  grid-template-rows: auto auto calc(100vh - 150px);
+  grid-template-columns: 1fr;
+}
 
 </style>

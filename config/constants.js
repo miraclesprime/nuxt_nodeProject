@@ -378,7 +378,7 @@ export const USER_TASKS = [
   },
   {
     label: 'Project', 
-    key: 'project', 
+    key: 'projectId', 
     header_icon: {
       icon: 'swap-vertical',
       event: 'file-project-sort',
