@@ -255,6 +255,7 @@ export default {
     currentTask() {
       if (Object.keys(this.currentTask).length) {
         this.form = JSON.parse(JSON.stringify(this.currentTask));
+        this.form.projectId = this.project.id
       } else {
         this.form = {
           id: '',
