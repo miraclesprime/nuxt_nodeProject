@@ -9,9 +9,9 @@
             <span class="text-dark">{{ data.value.title }}</span>
           </div>
         </template>
-        <!-- <template #cell(projectId)="data">
-          {{data.value.project.project.title}}
-       </template> -->
+        <template #cell(projectId)="data">
+           <project-info :projectId="data.value.project[0] ? data.value.project[0].projectId : null"></project-info>
+       </template>
         <template #cell(owner)="data">
           <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
         </template>
