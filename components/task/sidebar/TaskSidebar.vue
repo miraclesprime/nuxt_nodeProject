@@ -371,7 +371,7 @@ export default {
       let task = await this.$axios.$put("/task", { id: this.form.id, data: { ...this.form }, user, projectId: projectId ? projectId : null }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       })
-      console.info(task)
+      // console.info(task)
       if (task.statusCode == 200) {
         this.$store.dispatch("task/fetchTasks", { id: this.project.id }).then(() => this.loading = false)
       }
