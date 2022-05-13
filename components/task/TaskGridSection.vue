@@ -26,7 +26,7 @@
           </div>
         </div>
         <div class="task-section__body" :id="'tgs-task-section-body-'+section.id">
-          <draggable :list="section.tasks" group="task" :move="debounceUpdate" @start="taskDragStart" @end="taskDragEnd" class="section-draggable" :class="{highlight: drag}">
+          <draggable :list="section.tasks" group="task" :move="debounceUpdateTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable" :class="{highlight: drag}" :data-section="section.id">
             <!-- <transition-group type="transition" :name="!drag ? 'flip-list' : null"> -->
             <div class="task-grid " v-for="task in section.tasks" :key="task.title + key + '-' + task.id" :class="[overdue(task), currentTask.id == task.id ? 'active' : '']" :id="'tg-card-'+task.id" v-on:click="openSidebar(task)">
               <figure v-if="task.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
@@ -85,6 +85,12 @@
       <div class="task-grid-section " id="task-grid-section-blank-3"></div>
     </draggable>
     <loading :loading="loading"></loading>
+    <bib-popup-notification-wrapper>
+      <template #wrapper>
+        <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
+        </bib-popup-notification>
+      </template>
+    </bib-popup-notification-wrapper>
   </div>
 </template>
 <script>
@@ -107,6 +113,7 @@ export default {
       key: 0,
       loading: false,
       drag: false,
+      popupMessages: [],
     };
   },
   props: {
@@ -163,13 +170,7 @@ export default {
     taskDragEnd(e) {
       this.drag = false
       // console.log('drag end', e)
-    },/*
-    taskDragSort(e){
-      console.log("drag sort", e)
     },
-    taskDragFilter(e){
-      console.log('drag filter', e)
-    },*/
     taskByOrder() {
       this.localdata = JSON.parse(JSON.stringify(this.sections))
 
@@ -183,8 +184,8 @@ export default {
       this.key += 1
       this.$nuxt.$emit("update-key", this.key)
     },
-    moveTask(e) {
-      // console.info(e.relatedContext.list)
+    /*moveTask(e) {
+      console.info(e.relatedContext)
       let tasks = []
 
       setTimeout(function() {
@@ -192,16 +193,14 @@ export default {
           element['order'] = index
           tasks.push(element)
           // console.log(element.order, element.title)
-          // debounceUpdate(tasks, e.relatedContext.element.sectionId)
         })
       }, 1000)
 
       setTimeout(() => {
         this.taskDragDrop(tasks, e.relatedContext.element.sectionId)
-        // debounceUpdate(tasks)
       }, 1500)
 
-    },
+    },*/
     moveSection(e) {
       let ordered = []
 
@@ -236,6 +235,7 @@ export default {
         })
       } else {
         console.warn(sectionDnD.message)
+        this.popupMessages.push({ text: sectionDnD.message, variant: "warning" })
       }
 
       this.loading = false
@@ -261,14 +261,14 @@ export default {
 
       // console.log(taskDnD)
       if (taskDnD.statusCode == 200) {
-        console.info(taskDnD.message)
-
+        // console.info(taskDnD.message)
         this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id }).then(() => {
           this.taskByOrder();
+          this.popupMessages.push({ text: taskDnD.message, variant: "success" })
         })
-
       } else {
         console.warn(taskDnD.message)
+        this.popupMessages.push({ text: taskDnD.message, variant: "warning" })
       }
       this.loading = false
     },
@@ -338,9 +338,9 @@ export default {
 
       return arr;
     },
-    debounceUpdate: _.debounce(function(e) {
+    debounceUpdateTask: _.debounce(function(e) {
       let tasks = []
-      // console.log(e.relatedContext)
+      // console.log(e.to.dataset)
 
       e.relatedContext.list.forEach((element, index) => {
         element['order'] = index
@@ -350,9 +350,9 @@ export default {
 
       // console.log(tasks)
 
-      this.taskDragDrop(tasks, e.relatedContext.element.sectionId)
+      this.taskDragDrop(tasks, e.to.dataset.section)
 
-    }, 1500),
+    }, 800),
     overdue(item) {
       // console.log(new Date(item.dueDate), new Date);
       return (new Date(item.dueDate) < new Date() && item.statusId != 5) ? 'bg-danger' : '';
