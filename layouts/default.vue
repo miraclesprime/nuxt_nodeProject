@@ -3,7 +3,7 @@
     <bib-app-wrapper class="test" :navigationCollapsed="collapseNavigation" :select="appHeaderActions.select" @collapseNavigation="() => {
           resizeCalendar()
           collapseNavigation = !collapseNavigation;
-        }" >
+        }">
       <template #topbar>
         <bib-header :avatarLink="user2 ? user2.Photo : ''">
           <template #avatar_menu>
@@ -46,9 +46,13 @@
             </template>
           </bib-button>
         </div>
-        <bib-app-navigation :items="navItems1" @click="goToRoute($event)" class="mb-1"></bib-app-navigation>
+        <bib-app-navigation :items="navItems1" @click="goToRoute($event)"></bib-app-navigation>
+        <!-- separator -->
+        <div class="bg-dark-sub1 mt-05 mb-05" style="height: 1px"></div>
         <bib-app-navigation :items="navItems2" @click="goToRoute($event)"></bib-app-navigation>
-        <bib-detail-collapse v-show="!collapseNavigation" label="Favorite Projects" variant="white" open class="mt-1">
+        <!-- separator -->
+        <div class="bg-dark-sub1 mt-05 mb-05" style="height: 1px"></div>
+        <bib-detail-collapse v-show="!collapseNavigation" label="Favorite Projects" variant="white" open>
           <template v-slot:content>
             <!-- <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light" id="layout-add-icon">
               <bib-icon icon="add" variant="success" :scale="1.5" class="p-025 ml-025"></bib-icon> <span id=" layout-icon-text" class="p-025">Create a project</span>
@@ -56,7 +60,9 @@
             <bib-app-navigation :items="favProjects" @click="goToProject($event)"></bib-app-navigation>
           </template>
         </bib-detail-collapse>
-        <bib-detail-collapse v-show="!collapseNavigation" label="People" variant="white" open class="mt-1">
+        <!-- separator -->
+        <div class="bg-dark-sub1 mt-05 mb-05" style="height: 1px"></div>
+        <bib-detail-collapse v-show="!collapseNavigation" label="People" variant="white" open>
           <template v-slot:content>
             <!-- <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light">
               <bib-icon icon="add" variant="success" :scale="2" class="p-025 ml-025"></bib-icon> <span class="p-025">Add a team mate</span>
@@ -87,7 +93,7 @@ export default {
   data() {
     return {
       openSidebar: false,
-      
+
       appItems: [{
           img: "Layers",
           color: "primary",
