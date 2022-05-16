@@ -26,7 +26,7 @@
           </div>
         </div>
         <div class="task-section__body" :id="'tgs-task-section-body-'+section.id">
-          <draggable :list="section.tasks" group="task" :move="debounceUpdateTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable" :class="{highlight: drag}" :data-section="section.id">
+          <draggable :list="section.tasks" group="task" :move="taskMove" @start="taskDragStart" @end="taskDragEnd" class="section-draggable" :class="{highlight: drag}" :data-section="section.id">
             <!-- <transition-group type="transition" :name="!drag ? 'flip-list' : null"> -->
             <div class="task-grid " v-for="task in section.tasks" :key="task.title + key + '-' + task.id" :class="[overdue(task), currentTask.id == task.id ? 'active' : '']" :id="'tg-card-'+task.id" v-on:click="openSidebar(task)">
               <figure v-if="task.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
@@ -113,6 +113,8 @@ export default {
       key: 0,
       loading: false,
       drag: false,
+      taskDnDlist: [],
+      taskDnDsectionId: "",
       popupMessages: [],
     };
   },
@@ -167,9 +169,39 @@ export default {
       this.drag = true
       // console.log('drag start', e)
     },
-    taskDragEnd(e) {
+    async taskDragEnd(e) {
       this.drag = false
       // console.log('drag end', e)
+      this.loading = true
+
+      let taskDnD;
+      if (this.taskDnDsectionId) {
+        taskDnD = await this.$axios.$put("/section/crossSectionDragDrop", { data: this.taskDnDlist, sectionId: this.taskDnDsectionId }, {
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+            "Content-Type": "application/json"
+          }
+        })
+      } else {
+        taskDnD = await this.$axios.$put("/task/dragdrop", { data: this.taskDnDlist }, {
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+            "Content-Type": "application/json"
+          }
+        })
+      }
+
+      // console.log(taskDnD)
+      if (taskDnD.statusCode == 200) {
+        this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id }).then(() => {
+          this.taskByOrder();
+          this.popupMessages.push({ text: taskDnD.message, variant: "success" })
+        })
+      } else {
+        console.warn(taskDnD.message)
+        this.popupMessages.push({ text: taskDnD.message, variant: "warning" })
+      }
+      this.loading = false
     },
     taskByOrder() {
       this.localdata = JSON.parse(JSON.stringify(this.sections))
@@ -184,23 +216,6 @@ export default {
       this.key += 1
       this.$nuxt.$emit("update-key", this.key)
     },
-    /*moveTask(e) {
-      console.info(e.relatedContext)
-      let tasks = []
-
-      setTimeout(function() {
-        e.relatedContext.list.forEach((element, index) => {
-          element['order'] = index
-          tasks.push(element)
-          // console.log(element.order, element.title)
-        })
-      }, 1000)
-
-      setTimeout(() => {
-        this.taskDragDrop(tasks, e.relatedContext.element.sectionId)
-      }, 1500)
-
-    },*/
     moveSection(e) {
       let ordered = []
 
@@ -240,37 +255,23 @@ export default {
 
       this.loading = false
     },
-    async taskDragDrop(newData, sectionId) {
-      this.loading = true
-      let taskDnD;
-      if (sectionId) {
-        taskDnD = await this.$axios.$put("/section/crossSectionDragDrop", { data: newData, sectionId: sectionId }, {
-          headers: {
-            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-            "Content-Type": "application/json"
-          }
-        })
-      } else {
-        taskDnD = await this.$axios.$put("/task/dragdrop", { data: newData }, {
-          headers: {
-            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-            "Content-Type": "application/json"
-          }
-        })
-      }
+    taskMove(e) {
 
-      // console.log(taskDnD)
-      if (taskDnD.statusCode == 200) {
-        // console.info(taskDnD.message)
-        this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id }).then(() => {
-          this.taskByOrder();
-          this.popupMessages.push({ text: taskDnD.message, variant: "success" })
-        })
-      } else {
-        console.warn(taskDnD.message)
-        this.popupMessages.push({ text: taskDnD.message, variant: "warning" })
-      }
-      this.loading = false
+      let tasks = []
+      // console.log(e.to.dataset)
+
+      e.relatedContext.list.forEach((element, index) => {
+        element['order'] = index
+        tasks.push(element)
+        // console.log(element.order, element.title)
+      })
+
+      this.taskDnDsectionId = e.to.dataset.section
+
+      this.taskDnDlist = tasks
+
+      console.log(tasks)
+
     },
     taskWithSection(sectionId) {
       var arr = []
@@ -350,7 +351,7 @@ export default {
 
       // console.log(tasks)
 
-      this.taskDragDrop(tasks, e.to.dataset.section)
+      // this.taskDragDrop(tasks, e.to.dataset.section)
 
     }, 800),
     overdue(item) {

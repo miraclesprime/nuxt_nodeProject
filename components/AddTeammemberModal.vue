@@ -21,7 +21,7 @@
           <small v-show="team.length == 0" class="text-danger">Select at least 1 team member.</small>
           <p v-if="message" v-text="message" class="font-sm mt-025 text-orange"></p>
         </div>
-        <div class="pt-2">
+        <!-- <div class="pt-2">
           <strong>Use link to invite</strong>
           <div class="d-flex align-end mt-1">
             <div class="flex-grow-1">
@@ -31,15 +31,7 @@
               <bib-button variant="primary" label="Copy link" pill @click="copyUrl"></bib-button>
             </div>
           </div>
-          <!-- <div class="row">
-            <div class="col-6">
-              <bib-input type="select" label="Who can open this link?" :options="[{label:'Anyone',value:'any'}]"></bib-input>
-            </div>
-            <div class="col-6">
-              <bib-input type="select" label="Rights" :options="[{label:'Viewer',value:'viewer'}, {label:'Editor',value:'editor'}]"></bib-input>
-            </div>
-          </div> -->
-        </div>
+        </div> -->
         <loading :loading="loading"></loading>
       </template>
       <template v-slot:footer>
@@ -172,12 +164,13 @@ export default {
 
     },
     copyUrl() {
-      // let th = this
+
       navigator.clipboard.writeText(this.projectUrl).then(() => {
         // console.log('success')
         this.popupMessages.push({ text: "Copied successfully", variant: "success" })
       }, () => {
-        alert("failed to copy")
+        this.popupMessages.push({ text: "Failed to copy", variant: "danger" })
+        console.log("failed to copy")
       });
 
     },
