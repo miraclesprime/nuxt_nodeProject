@@ -26,7 +26,7 @@
           </div>
         </div>
         <div class="task-section__body" :id="'tgs-task-section-body-'+section.id">
-          <draggable :list="section.tasks" group="task" :move="taskMove" @start="taskDragStart" @end="taskDragEnd" class="section-draggable" :class="{highlight: drag}" :data-section="section.id">
+          <draggable :list="section.tasks" group="task" :move="debounceMoveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable" :class="{highlight: drag}" :data-section="section.id">
             <!-- <transition-group type="transition" :name="!drag ? 'flip-list' : null"> -->
             <div class="task-grid " v-for="task in section.tasks" :key="task.title + key + '-' + task.id" :class="[overdue(task), currentTask.id == task.id ? 'active' : '']" :id="'tg-card-'+task.id" v-on:click="openSidebar(task)">
               <figure v-if="task.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
@@ -169,11 +169,12 @@ export default {
       this.drag = true
       // console.log('drag start', e)
     },
-    async taskDragEnd(e) {
+    taskDragEnd: _.debounce(async function() {
       this.drag = false
       // console.log('drag end', e)
       this.loading = true
 
+      // console.log(this.taskDnDlist, this.taskDnDsectionId)
       let taskDnD;
       if (this.taskDnDsectionId) {
         taskDnD = await this.$axios.$put("/section/crossSectionDragDrop", { data: this.taskDnDlist, sectionId: this.taskDnDsectionId }, {
@@ -202,7 +203,8 @@ export default {
         this.popupMessages.push({ text: taskDnD.message, variant: "warning" })
       }
       this.loading = false
-    },
+    }, 600),
+
     taskByOrder() {
       this.localdata = JSON.parse(JSON.stringify(this.sections))
 
@@ -255,24 +257,43 @@ export default {
 
       this.loading = false
     },
-    taskMove(e) {
 
+    debounceMoveTask: _.debounce(function(e) {
       let tasks = []
-      // console.log(e.to.dataset)
+      // console.log(e.to.dataset, e.relatedContext.list)
 
       e.relatedContext.list.forEach((element, index) => {
         element['order'] = index
         tasks.push(element)
-        // console.log(element.order, element.title)
+        // console.table(element.order, element.title)
       })
 
-      this.taskDnDsectionId = e.to.dataset.section
-
+      // console.log(tasks, e.to.dataset.section)
       this.taskDnDlist = tasks
+      this.taskDnDsectionId = +e.to.dataset.section
 
-      console.log(tasks)
+    }, 400),
 
-    },
+    /*taskMove(e) {
+
+      let tasks = []
+      console.log(e.relatedContext.list)
+
+      setTimeout((e) => {
+        e.relatedContext.list.forEach((element, index) => {
+          element['order'] = index
+          tasks.push(element)
+          console.log(element.order, element.title)
+        })
+      }, 300)
+
+      setTimeout(() => {
+        console.log(tasks)
+        this.taskDnDlist = tasks
+        this.taskDnDsectionId = e.to.dataset.section
+      }, 600)
+
+    },*/
     taskWithSection(sectionId) {
       var arr = []
 
@@ -339,21 +360,7 @@ export default {
 
       return arr;
     },
-    debounceUpdateTask: _.debounce(function(e) {
-      let tasks = []
-      // console.log(e.to.dataset)
 
-      e.relatedContext.list.forEach((element, index) => {
-        element['order'] = index
-        tasks.push(element)
-        // console.log(element.order, element.title)
-      })
-
-      // console.log(tasks)
-
-      // this.taskDragDrop(tasks, e.to.dataset.section)
-
-    }, 800),
     overdue(item) {
       // console.log(new Date(item.dueDate), new Date);
       return (new Date(item.dueDate) < new Date() && item.statusId != 5) ? 'bg-danger' : '';
