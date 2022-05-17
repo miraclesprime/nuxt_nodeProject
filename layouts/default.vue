@@ -79,6 +79,7 @@
     </bib-app-wrapper>
     <create-project-modal ref="projectModals"></create-project-modal>
     <add-teammember-modal ref="teammemberModal"></add-teammember-modal>
+    <add-member-to-task ref="taskTeamModal"></add-member-to-task>
     <!-- <create-task-modals @create-task="
         (task) => {
           createTask(task);
@@ -88,8 +89,10 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
+import AddMemberToTask from '../components/task/AddMemberToTask.vue';
 
 export default {
+  components: { AddMemberToTask },
   data() {
     return {
       openSidebar: false,
@@ -170,6 +173,9 @@ export default {
     })
     this.$nuxt.$on("add-teammember-modal", () => {
       this.$refs.teammemberModal.showTeamCreateModal = true
+    })
+    this.$nuxt.$on("add-member-to-task", () => {
+      this.$refs.taskTeamModal.showTaskTeamModal = true
     })
   },
   mounted() {

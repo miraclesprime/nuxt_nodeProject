@@ -1,10 +1,10 @@
 <template>
   <div id="create-team-modal-wrapper">
-    <bib-modal-wrapper @close="showTeamCreateModal = false" v-show="showTeamCreateModal" title="Assign people to project/task " id="create-team" @keypress.native="bindEnter($event, 'create-team-btn')">
+    <bib-modal-wrapper @close="showTaskTeamModal = false" v-show="showTaskTeamModal" title="Assign people to task " id="create-team" @keypress.native="bindEnter($event, 'create-team-task-btn')">
       <template v-slot:content>
-        <label id="create-team-modal-heading" class="text-gray6">Participants</label>
+        <label id="create-team-task-modal-heading" class="text-gray6">Participants</label>
         <!-- <bib-input type="select" :options="memberOptions" v-model="member" v-on:change.native="selectTeam"></bib-input> -->
-        <bib-button test_id="create-team-dd1" dropdown1="add" label="Type name or email" v-model="member" v-on:input-change="teamInputChange" v-on:input-keydown="teamInputKeydown" class="mt-05 mb-05">
+        <bib-button test_id="create-team-task-dd1" dropdown1="add" label="Type name or email" v-model="member" v-on:input-change="teamInputChange" v-on:input-keydown="teamInputKeydown" class="mt-05 mb-05">
           <template v-slot:menu>
             <ul id="atm-fields" class="border-gray1" style="border-radius: 0 !important; border: 1px solid var(--bib-gray1);">
               <li :id="'atm-field-'+index" v-for="(tm, index) in filterTeam" :key="'atm-items'+index" v-on:click="teamItemClick(tm)">
@@ -14,7 +14,7 @@
             </ul>
           </template>
         </bib-button>
-        <div id="project-team-members" class="py-025">
+        <div id="task-team-members" class="py-025">
           <template v-for="t in team">
             <email-chip :key="t.id" :email="t.email" :name="t.label" :avatar="t.avatar" class="mt-05" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
           </template>
@@ -25,7 +25,7 @@
           <strong>Use link to invite</strong>
           <div class="d-flex align-end mt-1">
             <div class="flex-grow-1">
-              <bib-input type="text" label="Url" size="sm" :value="projectUrl" disabled></bib-input>
+              <bib-input type="text" label="Url" size="sm" :value="taskUrl" disabled></bib-input>
             </div>
             <div class="mb-05 pl-05">
               <bib-button variant="primary" label="Copy link" pill @click="copyUrl"></bib-button>
@@ -35,8 +35,8 @@
         <loading :loading="loading"></loading>
       </template>
       <template v-slot:footer>
-        <div class=" d-flex justify-end" id="create-team-model-footer">
-          <bib-button @click.native="addTeamMember" variant="success" size="lg" id="create-team-btn" pill label="Done"></bib-button>
+        <div class=" d-flex justify-end" id="create-team-task-model-footer">
+          <bib-button @click.native="addTeamMember" variant="success" size="lg" id="create-team-task-btn" pill label="Done"></bib-button>
         </div>
       </template>
     </bib-modal-wrapper>
@@ -52,10 +52,10 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  name: "AddTeammemberModal",
+  name: "AddMemberToTask",
   data() {
     return {
-      showTeamCreateModal: false,
+      showTaskTeamModal: false,
       // assignee: {},
       member: "",
       team: [],
@@ -87,8 +87,8 @@ export default {
         }
       })
     },
-    projectUrl() {
-      return process.env.VUE_APP_URL + "/project/" + this.project.id
+    taskUrl() {
+      return process.env.VUE_APP_URL + "/task/" + this.task.id
     }
   },
   methods: {
@@ -148,14 +148,14 @@ export default {
         this.loading = false
         return false
       } else {
-        this.$store.dispatch('project/addMember', { projectId: this.project.id, team: this.team }).then(() => {
+        this.$store.dispatch('project/addMember', { taskId: this.task.id, team: this.team }).then(() => {
           this.$nuxt.$emit('update-key', 1)
-          this.showTeamCreateModal = false
+          this.showTaskTeamModal = false
           this.loading = false;
           this.team = []
         }).catch((err) => {
           this.loading = false;
-          this.showTeamCreateModal = false
+          this.showTaskTeamModal = false
           this.team = []
           console.log(err)
 
@@ -165,7 +165,7 @@ export default {
     },
     copyUrl() {
 
-      navigator.clipboard.writeText(this.projectUrl).then(() => {
+      navigator.clipboard.writeText(this.taskUrl).then(() => {
         // console.log('success')
         this.popupMessages.push({ text: "Copied successfully", variant: "success" })
       }, () => {
