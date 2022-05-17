@@ -3,7 +3,7 @@
     <bib-app-wrapper class="test" :navigationCollapsed="collapseNavigation" :select="appHeaderActions.select" @collapseNavigation="() => {
           resizeCalendar()
           collapseNavigation = !collapseNavigation;
-        }">
+        }" :button="appCreateButton" @createbtn-click="createBtnClick">
       <template #topbar>
         <bib-header :avatarLink="user2 ? user2.Photo : ''">
           <template #avatar_menu>
@@ -33,7 +33,17 @@
         <bib-app-switcher :menuItems="appItems"></bib-app-switcher>
       </template>
       <template #navigation>
-        <div v-show="!collapseNavigation">
+        <bib-button v-show="!collapseNavigation" dropdown="" label="" class="height-3 create-dropdown " >
+          <template v-slot:menu>
+            <ul>
+              <li v-for="item in appHeaderActions.button.items" :key="item.label" class="d-flex align-center" @click="createAction(item)">
+                <bib-icon :variant="item.iconVariant" :icon="item.icon" :scale="1.1"></bib-icon>
+                <span class="ml-05">{{item.label}}</span>
+              </li>
+            </ul>
+          </template>
+        </bib-button>
+        <!-- <div v-show="!collapseNavigation">
           <bib-button label="Create" variant="success" size="lg" pill class="w-75"></bib-button>
           <bib-button dropdown="" label="" class="w-75" style="transform: translateY(-28px); z-index:9;">
             <template v-slot:menu>
@@ -45,7 +55,7 @@
               </ul>
             </template>
           </bib-button>
-        </div>
+        </div> -->
         <bib-app-navigation :items="navItems1" @click="goToRoute($event)"></bib-app-navigation>
         <!-- separator -->
         <div class="bg-dark-sub1 mt-05 mb-05" style="height: 1px"></div>
@@ -96,7 +106,12 @@ export default {
   data() {
     return {
       openSidebar: false,
-
+      appCreateButton: {
+        label: "Create",
+        event: "createbtn-click",
+        variant: "success",
+        icon: "add",
+      },
       appItems: [{
           img: "Layers",
           color: "primary",
@@ -130,10 +145,6 @@ export default {
       collapseNavigation: false,
       appHeaderActions: {
         button: {
-          label: "Create",
-          event: "button-click",
-          variant: "success",
-          icon: "add",
           items: [
             { label: "New Task", icon: "check-circle", iconVariant: "success", key: "new-task" },
             { label: "New Project", icon: "briefcase", key: "new-project" },
@@ -143,14 +154,14 @@ export default {
         },
         select: {
           items: [{
-              label: "Organization Name",
+              label: "Biztree",
               event: "item-click",
-              img: "https://i.pravatar.cc/300",
+              img: "https://i.pravatar.cc/100",
             },
             {
               label: "Organization Name",
               event: "item-click",
-              img: "https://i.pravatar.cc/300",
+              img: "https://i.pravatar.cc/100",
             },
           ],
           footer: {
@@ -158,6 +169,10 @@ export default {
             icon: "plus",
             event: "add-organization",
           },
+          selectedOrg: {
+            label: "Biztree",
+            img: "https://i.pravatar.cc/100"
+          }
         },
       },
       userProfileUrl: process.env.USER_PROFILE_URL,
@@ -258,7 +273,10 @@ export default {
   },
 
   methods: {
-
+    createBtnClick(e) {
+      console.log('create', e)
+      this.collapseNavigation = false
+    },
     isRouteActive(id) {
       if (this.$route.path.includes(id)) {
         return true
@@ -360,35 +378,6 @@ html {
   margin: 0;
 }
 
-/*.button--green {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #3b8070;
-  color: #3b8070;
-  text-decoration: none;
-  padding: 10px 30px;
-}
-
-.button--green:hover {
-  color: #fff;
-  background-color: #3b8070;
-}
-
-.button--grey {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #35495e;
-  color: #35495e;
-  text-decoration: none;
-  padding: 10px 30px;
-  margin-left: 15px;
-}
-
-.button--grey:hover {
-  color: #fff;
-  background-color: #35495e;
-}*/
-
 .main {
   /*display: grid;
   grid-template-rows: 2.5rem 2.5rem 2.5rem 100%;*/
@@ -404,7 +393,24 @@ html {
   }
 }
 
+  .app-wrapper{
+    &__navigation { position: relative;
+      .create-dropdown { position: absolute; top: 4rem; left:0; right: 0; z-index:9;
+        &.button { position: absolute; }
+        
+      }
+    }
+  }
 ::v-deep {
+  
+  .button--drop.create-dropdown { 
+    .menu {
+      details {
+        .wrapper { top: 2.5rem; }
+      }
+    }
+  }
+    
   .panel-wrapper.side-panel {
     position: fixed;
     right: 0;
@@ -412,7 +418,7 @@ html {
     border-left: 1px solid $gray4;
   }
 
-  .align-start.d-flex.flex-d-column {
+  /*.align-start.d-flex.flex-d-column {
     padding-left: 0 !important;
   }
 
@@ -428,7 +434,7 @@ html {
     .nav-item {
       padding: 0;
     }
-  }
+  }*/
 }
 
 </style>
