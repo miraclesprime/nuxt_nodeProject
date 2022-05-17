@@ -1,6 +1,10 @@
 <template>
   <div :class="adClass" :id="adClass">
-    <section-title title="Add Team Member" />
+    <!-- <section-title title="Add Team Member"  /> -->
+    <div class="d-flex gap-05 cursor-pointer text-secondary text-hover-dark" id="pta-add-teammate-button" v-on:click="$nuxt.$emit('add-member-to-task')">
+        <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon>
+            <span >New Teammate</span>
+      </div>
 
     <div class="team-list w-100" id="sidebar-team-team-list">
       <div

@@ -92,6 +92,7 @@
     </bib-popup-notification-wrapper>
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
 import { TABLE_FIELDS, TABS, DEFAULT_TAB, TAB_TITLES } from "config/constants";
