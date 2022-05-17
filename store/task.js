@@ -3,6 +3,7 @@ export const state = () => ({
   tasks: [],
   selectedTask: {},
   favTasks: [],
+  taskMembers: []
 });
 
 export const getters = {
@@ -17,9 +18,14 @@ export const getters = {
   getSelectedTask(state) {
     return state.selectedTask;
   },
+
   getFavTasks(state) {
     return state.favTasks
-  }
+  },
+
+  getTaskMembers(state) {
+    return state.taskMembers;
+  },
 };
 
 export const mutations = {
@@ -58,6 +64,10 @@ export const mutations = {
 
   setSingleTask(state, currentTask) {
     state.selectedTask = currentTask;
+  },
+
+  fetchTeamMember(state, payload) {
+    state.taskMembers = payload;
   },
 
 };
@@ -161,6 +171,76 @@ export const actions = {
         return fav.data.message
       } else {
         return fav.data.message
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  },
+
+
+  async fetchTeamMember(ctx, payload) {
+
+    await this.$axios.get(`/task/${payload.taskId}/members`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      })
+      .then((res) => {
+        let team = res.data.data.members;
+        let data = team.map((el) => {
+          return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName };
+        });
+        ctx.commit('fetchTeamMember', data)
+      })
+      .catch((err) => {
+        console.log("Error!!");
+      });
+  },
+
+  async addMember(ctx, payload) {
+
+    let data;
+    if (ctx.getters.getTaskMembers.length < 1) {
+      data = payload.team;
+    } else {
+      data = payload.team.filter((el1) => {
+        if (ctx.getters.getTaskMembers.some((el2) => el2.id != el1.id)) {
+          return el1;
+        }
+      })
+    }
+
+    await this.$axios.post(`/task/${payload.taskId}/member`, { users: data }, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+    }).then((res) => {
+      let team = res.data.data.members;
+      let data = team.map((el) => {
+        return { name: el.user.firstName + " " + el.user.lastName };
+      });
+      ctx.commit('addMember', data);
+    }).catch((err) => {
+      console.log('Error!!')
+    })
+
+  },
+
+
+  async deleteMember(ctx, payload) {
+
+    try {
+      let m = await this.$axios.delete(`/task/${payload.taskId}/member`, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+          "userId": payload.memberId
+        }
+      })
+      console.log("selected task", ctx.state.selectedTask.id)
+      if (m.data.statusCode == 200) {
+        ctx.dispatch("fetchTeamMember", { taskId: ctx.state.selectedTask.id })
+        return m.data.message
+      } else {
+        return m.data.message
       }
     } catch (e) {
       console.log(e);

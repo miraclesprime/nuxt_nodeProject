@@ -14,7 +14,7 @@
           </div>
         </div>
         <div class="d-flex gap-05 align-center" id="ts-icon-attachment-wrapper">
-          <bib-button variant="light" pill label="invite" v-on:click="$nuxt.$emit('add-teammember-modal')"></bib-button>
+          <bib-button variant="light" pill label="invite" v-on:click="$nuxt.$emit('add-member-to-task')"></bib-button>
           <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex" id='ts-icon-2'>
             <bib-icon icon="attachment" variant="gray5" class="m-auto"></bib-icon>
           </div>
