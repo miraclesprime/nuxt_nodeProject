@@ -203,7 +203,7 @@ export default {
         this.popupMessages.push({ text: taskDnD.message, variant: "warning" })
       }
       this.loading = false
-    }, 600),
+    }, 900),
 
     taskByOrder() {
       this.localdata = JSON.parse(JSON.stringify(this.sections))
@@ -272,7 +272,7 @@ export default {
       this.taskDnDlist = tasks
       this.taskDnDsectionId = +e.to.dataset.section
 
-    }, 400),
+    }, 500),
 
     /*taskMove(e) {
 
