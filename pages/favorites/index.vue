@@ -38,7 +38,7 @@
       <bib-table :fields="taskTableFields" class="border-gray4 bg-white" :sections="favoriteTasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Favorite Tasks'}">
         <template #cell(title)="data">
           <div class="d-flex gap-05 align-center" :id="'projects-' + data.value.task.title">
-            <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data)" ></bib-icon>
+            <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data.value.task.statusId)" ></bib-icon>
             <!-- <bib-icon icon="briefcase" variant="gray5" :scale="1.1" class="mr-025"></bib-icon> -->
             <span :id="'projects-' + data.value.task.title + '-text'" class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block;  line-height:1.25;">{{data.value.task.title}}</span>
           </div>
@@ -137,8 +137,9 @@ export default {
       }
     },
 
-    taskCheckIcon(data) {
-      return data.value.statusId == 5 ? 'success' : 'secondary-sub1'
+    taskCheckIcon(statusId) {
+      console.log(statusId)
+      return statusId == 5 ? 'success' : 'secondary-sub1'
     },
   }
 }
