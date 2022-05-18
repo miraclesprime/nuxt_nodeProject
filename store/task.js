@@ -70,6 +70,10 @@ export const mutations = {
     state.taskMembers = payload;
   },
 
+  addMember(state, payload) {
+    state.taskMembers = payload
+  },
+
 };
 
 export const actions = {
@@ -180,13 +184,14 @@ export const actions = {
 
   async fetchTeamMember(ctx, payload) {
 
-    await this.$axios.get(`/task/${payload.taskId}/members`, {
+    await this.$axios.get(`/task/${payload.id}/members`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       })
       .then((res) => {
         let team = res.data.data.members;
+        console.log(team)
         let data = team.map((el) => {
           return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName };
         });
@@ -210,16 +215,16 @@ export const actions = {
       })
     }
 
-    await this.$axios.post(`/task/${payload.taskId}/member`, { users: data }, {
+    await this.$axios.post(`/task/${ctx.state.selectedTask.id}/members`, { users: data }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     }).then((res) => {
       let team = res.data.data.members;
       let data = team.map((el) => {
-        return { name: el.user.firstName + " " + el.user.lastName };
+        return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName };
       });
       ctx.commit('addMember', data);
     }).catch((err) => {
-      console.log('Error!!')
+      console.log('Error!!', err)
     })
 
   },
@@ -228,16 +233,16 @@ export const actions = {
   async deleteMember(ctx, payload) {
 
     try {
-      let m = await this.$axios.delete(`/task/${payload.taskId}/member`, {
+      let m = await this.$axios.delete(`/task/${ctx.state.selectedTask.id}/members`, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
           "userId": payload.memberId
         }
       })
-      console.log("selected task", ctx.state.selectedTask.id)
+
       if (m.data.statusCode == 200) {
-        ctx.dispatch("fetchTeamMember", { taskId: ctx.state.selectedTask.id })
+        ctx.dispatch("fetchTeamMember", { id: ctx.state.selectedTask.id })
         return m.data.message
       } else {
         return m.data.message

@@ -6,7 +6,7 @@
             <span >New Teammate</span>
       </div>
 
-    <div class="team-list w-100" id="sidebar-team-team-list">
+    <div class="team-list w-100" style="margin-top: 10px;" id="sidebar-team-team-list">
       <div
         :id="'teammate-' + index"
         class="teammate"
@@ -16,12 +16,12 @@
         <bib-avatar :src="'https://i.pravatar.cc/' + index * 100" size="25px">
         </bib-avatar>
 
-        <span class="teammate-name"
-            :id="item.name"
-          >{{ item.name }}
-          <template v-if="item.role !== 'developer'">
-            ( {{ item.role }} )
-          </template>
+        <span class="teammate-name" :id="item.name">{{ item.name }} 
+          <template>
+          <span class="cursor-pointer shape-circle" v-on:click="deleteMember(item)">
+            <bib-icon icon="trash" variant="danger"></bib-icon>
+          </span>
+        </template>
         </span>
       </div>
     </div>
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { TEAMMATES } from "config/constants";
+import {mapGetters} from 'vuex'
 
 export default {
   props: {
@@ -38,11 +38,35 @@ export default {
       default: "container pt-1",
     },
   },
-  data: function () {
-    return {
-      teammates: TEAMMATES,
-    };
+
+  computed: {
+    ...mapGetters({
+      teammates: 'task/getTaskMembers',
+      task: 'task/getSelectedTask'
+    })
   },
+
+  methods: {
+    async deleteMember(member) {
+      
+      this.loading = true
+      let confirmDelete = window.confirm("Are you sure want to delete " + member.name + "!")
+      if (confirmDelete) {
+        await this.$store.dispatch("task/deleteMember", { memberId: member.id })
+          .then((res) => {
+            // console.log(res)
+            this.key += 1
+            alert(res)
+          })
+          .catch(e => console.log(e))
+        this.loading = false
+      }
+    },
+  },
+
+  mounted() {
+    this.$store.dispatch('task/fetchTeamMember', {id: this.task.id})
+  }
 };
 </script>
 
