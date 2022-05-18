@@ -196,6 +196,12 @@ ul {
   color: $blue;
 }
 
+.text {
+  &-uppercase { text-transform: uppercase;}
+  &-lowercase { text-transform: lowercase;}
+  &-capitalize { text-transform: capitalize;}
+}
+
 .side-panel .wrapper select {
   line-height: 2;
 }

@@ -31,6 +31,7 @@
           </div>
         </template>
       </bib-table>
+      <loading :loading="loading"></loading>
     </div>
   </div>
 </template>
@@ -47,6 +48,7 @@ export default {
       tasks: [],
       gridType: "list",
       sections: [],
+      loading: false,
     }
   },
   computed: {
@@ -104,11 +106,13 @@ export default {
 
   created() {
     if (process.client) {
+      this.loading = true
       let compid = JSON.parse(localStorage.getItem("user")).subb;
       this.$axios.$get("company/" + compid + "/tasks", {
         headers: { 'Authorization': "Bearer " + localStorage.getItem("accessToken") }
       }).then(res => {
         this.tasks = res.data;
+        this.loading = false
       });
     }
   },
