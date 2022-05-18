@@ -41,6 +41,7 @@
           </div>
         </template>
       </bib-table>
+      <loading :loading="loading"></loading>
     </div>
   </div>
 </template>
@@ -51,7 +52,8 @@ export default {
   data() {
     return {
       taskFields: USER_TASKS,
-      tasks: []
+      tasks: [],
+      loading: false,
     }
   },
   methods: {
@@ -102,10 +104,12 @@ export default {
 
   created() {
     if (process.client) {
+      this.loading = true
       this.$axios.$get("user/tasks", {
         headers: { 'Authorization': "Bearer " + localStorage.getItem("accessToken") }
       }).then(res => {
         this.tasks = res.data;
+        this.loading = false
       });
     }
   },
