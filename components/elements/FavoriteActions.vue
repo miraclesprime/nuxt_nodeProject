@@ -10,7 +10,7 @@
           <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="$emit('change-viewing', $event)"></sorting-comp>
         </li>
         <li class="action" id="pa-action-item3">
-          <sorting-comp label="Sorted by" :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy($event)"></sorting-comp>
+          <sorting-comp label="Sorted by" :items="sorting" icon="swap-vertical" v-on:change-sort="$emit('change-sorting',$event)"></sorting-comp>
         </li>
       </ul>
     </div>

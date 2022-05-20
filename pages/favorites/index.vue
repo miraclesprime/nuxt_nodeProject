@@ -1,7 +1,7 @@
 <template>
   <div id="favorite_wrapper">
     <page-title title="Favorites"></page-title>
-    <favorite-actions v-on:change-viewing="projectView"></favorite-actions>
+    <favorite-actions v-on:change-viewing="changeView" v-on:change-sorting="changeSort"></favorite-actions>
     <div id="favorite-scroll-wrap" class="of-scroll-y position-relative">
       <bib-table :fields="projectTableFields" class="border-gray4 bg-white" :sections="sortedProject" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Favorite Projects'}" :key="'fproj'+key">
         <template #cell(title)="data">
@@ -31,7 +31,8 @@
           <user-info :userId="data.value.userId"></user-info>
         </template>
         <template #cell(dueDate)="data">
-          <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span>
+          <!-- <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span> -->
+          <format-date :datetime="data.value.dueDate"></format-date>
         </template>
       </bib-table>
       <!-- task table -->
@@ -54,9 +55,7 @@
           </div>
         </template>
         <template #cell(dueDate)="data">
-          <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span>
-          <!-- <div class="justify-between text-dark" :id="'projects-' + data.value.dueDate">
-            </div> -->
+          <format-date :datetime="data.value.dueDate"></format-date>
         </template>
         <template #cell(priority)="data">
           <div class="d-flex gap-05 align-center">
@@ -85,7 +84,8 @@ export default {
       key: 0,
       loading: false,
       view: 'all',
-      sortName: 'order',
+      sortName: '',
+      orderBy: 'asc',
     }
   },
 
@@ -98,7 +98,7 @@ export default {
 
 
   mounted() {
-    // this.loading = true
+    this.loading = true
 
     this.$store.dispatch('favorite/fetchFavProjects').then(() => {
       this.fetchProjects()
@@ -112,28 +112,26 @@ export default {
 
   methods: {
     async fetchProjects() {
-      this.loading = true
-      // this.$store.dispatch('favorite/fetchFavProjects').then(() => {
-      // console.log(fp)
+      // this.loading = true
+      
       let favProj = await JSON.parse(JSON.stringify(this.favoriteProjects))
 
       // let favProj = fp.map(p => p.projects)
-      let sorted = await favProj.sort((a, b) => b.title.toUpperCase() - a.title.toUpperCase())
+      let sorted = await favProj.sort((a, b) => a.title.localeCompare(b.title))
 
-      console.log("sorted =>", sorted)
+      // console.log("sorted =>", sorted)
       this.sortedProject = sorted
       this.key += 1
       this.loading = false
       // })
     },
     async fetchTasks() {
-      this.loading = true
-      // this.$store.dispatch('favorite/fetchFavTasks').then(() => {
-      // console.log(ft)
+      // this.loading = true
+      
       let favTask = await JSON.parse(JSON.stringify(this.favoriteTasks))
 
       // let favTask = ft.map(s => s.task)
-      let sorted = await favTask.sort((a, b) => a.order - b.order)
+      let sorted = await favTask.sort((a, b) => a.title.localeCompare(b.title))
 
       // console.log("sorted =>", sorted)
       this.sortedTask = sorted
@@ -185,7 +183,7 @@ export default {
     taskCheckIcon(data) {
       return data.value.statusId == 5 ? 'success' : 'secondary-sub1'
     },
-    projectView($event) {
+    changeView($event) {
       // console.log($event)
       if ($event == 'complete') {
         this.fetchProjects().then(() => {
@@ -212,7 +210,100 @@ export default {
         this.fetchProjects()
         this.fetchTasks()
       }
-    }
+    },
+    changeSort($event) {
+      // sort by title
+      if ($event == "name") {
+        // var orderBy = "asc"
+        if (this.orderBy == "asc") {
+          this.orderBy = "desc"
+          this.sortedTask.sort((a, b) => a.title.localeCompare(b.title))
+          this.sortedProject.sort((a, b) => a.title.localeCompare(b.title))
+        } else {
+          this.orderBy = "asc"
+          this.sortedTask.sort((a, b) => b.title.localeCompare(a.title))
+          this.sortedProject.sort((a, b) => b.title.localeCompare(a.title))
+        }
+        this.key += 1
+        // console.log(this.key, this.orderBy)
+      }
+      // Sort By owner
+      if ($event == "owner") {
+        if (this.orderBy == "asc") {
+          this.orderBy = "desc"
+          this.sortedTask.sort((a, b) => a.user.firstName.localeCompare(b.user.firstName));
+          this.sortedProject.sort((a, b) => a.user.firstName.localeCompare(b.user.firstName));
+        } else {
+          this.orderBy = "asc"
+          this.sortedTask.sort((a, b) => b.user.firstName.localeCompare(a.user.firstName));
+          this.sortedProject.sort((a, b) => b.user.firstName.localeCompare(a.user.firstName));
+        }
+        this.key += 1
+        // console.log(this.key, this.orderBy)
+      }
+      // sort By Status
+      if ($event == "status") {
+        if (this.orderBy == "asc") {
+          this.orderBy = "desc"
+          this.sortedTask.sort((a, b) => a.status.text.localeCompare(b.status.text));
+          this.sortedProject.sort((a, b) => a.status.text.localeCompare(b.status.text));
+        } else {
+          this.orderBy = "asc"
+          this.sortedTask.sort((a, b) => b.status.text.localeCompare(a.status.text));
+          this.sortedProject.sort((a, b) => b.status.text.localeCompare(a.status.text));
+        }
+        this.key += 1
+        // console.log(this.key, this.orderBy)
+      }
+      // Sort By Priotity
+      if ($event == "priority") {
+        if (this.orderBy == "asc") {
+          this.orderBy = "desc"
+          this.sortedTask.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
+          this.sortedProject.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
+        } else {
+          this.orderBy = "asc"
+          this.sortedTask.sort((a, b) => b.priority.text.localeCompare(a.priority.text));
+          this.sortedProject.sort((a, b) => b.priority.text.localeCompare(a.priority.text));
+        }
+      }
+
+      // sort By DueDate
+      if ($event == "dueDate") {
+        if (this.orderBy == "asc") {
+          this.orderBy = "desc"
+          this.sortedTask.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+          this.sortedProject.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+        } else {
+          this.orderBy = "asc"
+          this.sortedTask.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate));
+          this.sortedProject.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate));
+        }
+      }
+
+    },
+    projectCheckActive() {
+      for (let i = 0; i < this.projectTableFields.length; i++) {
+        if (this.projectTableFields[i].header_icon) {
+          this.projectTableFields[i].header_icon.isActive = false
+        }
+
+        if (this.projectTableFields[i].header_icon && this.projectTableFields[i].key == this.sortName) {
+          this.projectTableFields[i].header_icon.isActive = true
+        }
+      }
+    },
+    taskCheckActive() {
+      for (let i = 0; i < this.taskTableFields.length; i++) {
+        if (this.taskTableFields[i].header_icon) {
+          this.taskTableFields[i].header_icon.isActive = false
+        }
+
+        if (this.taskTableFields[i].header_icon && this.taskTableFields[i].key == this.sortName) {
+          this.taskTableFields[i].header_icon.isActive = true
+        }
+      }
+    },
   }
 }
 
