@@ -1,42 +1,68 @@
 <template>
-  <div :class="adClass" :id="adClass">
-    <!-- <section-title title="Add Team Member"  /> -->
+  <div class="p-1">
     <div class="d-flex gap-05 cursor-pointer text-secondary text-hover-dark" id="pta-add-teammate-button" v-on:click="$nuxt.$emit('add-member-to-task')">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon>
             <span >New Teammate</span>
       </div>
 
-    <div class="team-list w-100" style="margin-top: 10px;" id="sidebar-team-team-list">
-      <div
-        :id="'teammate-' + index"
-        class="teammate"
-        v-for="(item, index) in teammates"
-        :key="'teammate-' + index"
-      >
-        <bib-avatar :src="'https://i.pravatar.cc/' + index * 100" size="25px">
-        </bib-avatar>
+    <template v-if="teammates.length">
 
-        <span class="teammate-name" :id="item.name">{{ item.name }} 
-          <template>
-          <span class="cursor-pointer shape-circle" v-on:click="deleteMember(item)">
-            <bib-icon icon="trash" variant="danger"></bib-icon>
-          </span>
-        </template>
+    <bib-table 
+        :id="'teammate-' + index"
+        class="border-gray4 bg-white mt-05"
+        :sections="teammates" 
+        headless="true"
+        :key="'teammate-' + teammates ? teammates[0].name : 100"
+        :fields="tableFields"
+        hide-no-column
+    >
+      
+      <template #cell(name)="data">
+        <user-info v-if="data.value.id" :userId="data.value.id" ></user-info>
+      </template>
+      
+      <template #cell(delete)="data">
+        <span class="cursor-pointer shape-circle" v-on:click="deleteMember(data.value)">
+          <bib-icon icon="trash" variant="danger"></bib-icon>
         </span>
-      </div>
-    </div>
+      </template>
+
+    </bib-table>
+
+    </template>
+
+    <template v-if="norecord">
+      <span id="taskTeam-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
+        <bib-icon icon="warning"></bib-icon> No records found
+      </span>
+    </template>
+    <loading :loading="loading"></loading>
   </div>
 </template>
 
 <script>
 import {mapGetters} from 'vuex'
+import {TaskTeamFields} from '../../../config/constants';
 
 export default {
-  props: {
-    adClass: {
-      type: String,
-      default: "container pt-1",
-    },
+
+  data() {
+    return {
+      norecord: false,
+      tableFields: TaskTeamFields
+    }
+  },
+
+  watch: {
+    teammates() {
+      if (this.teammates.length == 0) {
+        this.loading = false
+        this.norecord = true
+      } else {
+        this.norecord = false
+        this.loading = false
+      }
+    }
   },
 
   computed: {

@@ -3,7 +3,8 @@ export const state = () => ({
   tasks: [],
   selectedTask: {},
   favTasks: [],
-  taskMembers: []
+  taskMembers: [],
+  teamKey: 1
 });
 
 export const getters = {
@@ -26,6 +27,10 @@ export const getters = {
   getTaskMembers(state) {
     return state.taskMembers;
   },
+
+  getKey(state) {
+    return state.teamKey;
+  }
 };
 
 export const mutations = {
@@ -74,6 +79,9 @@ export const mutations = {
     state.taskMembers = payload
   },
 
+  setKey(state) {
+    state.teamKey += 1;
+  }
 };
 
 export const actions = {
@@ -252,4 +260,7 @@ export const actions = {
     }
   },
 
+  setKey(ctx) {
+    ctx.commit('setKey');
+  }
 };

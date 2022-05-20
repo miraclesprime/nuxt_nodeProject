@@ -458,3 +458,19 @@ export const USER_TASKS = [
     }
   },
 ]
+
+export const TaskTeamFields = [
+  {
+    label: '#',
+    key: ''
+  },
+  {
+    label: 'name',
+    key: 'name',
+  },
+  {
+    label: 'delete',
+    key: 'delete',
+    width: '10%'
+  }
+] 

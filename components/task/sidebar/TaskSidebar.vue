@@ -121,7 +121,7 @@
       <div class="container pt-1" id='ts-subtask-container' v-if="activeSidebarTab == 'Subtasks'">
         <task-group></task-group>
       </div>
-      <sidebar-team v-if="activeSidebarTab == 'Team'"></sidebar-team>
+      <sidebar-team  v-if="activeSidebarTab == 'Team'"></sidebar-team>
       <sidebar-conversation v-if="activeSidebarTab == 'Conversations'"></sidebar-conversation>
       <sidebar-files v-if="activeSidebarTab == 'Files'"></sidebar-files>
       <sidebar-history v-if="activeSidebarTab == 'History'"></sidebar-history>
@@ -137,6 +137,7 @@ export default {
   name: "TaskSidebar",
   props: {
     activeTask: Object,
+    // teamKey: Number
   },
   data: function() {
     return {
@@ -276,6 +277,7 @@ export default {
 
   mounted() {
     this.$store.dispatch("project/fetchProjects")
+    this.activeSidebarTab = 'Overview'
   },
 
   methods: {
