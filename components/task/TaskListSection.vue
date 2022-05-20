@@ -31,6 +31,7 @@
     </bib-table>
   </div>
 </template>
+
 <script>
 import { TASK_FIELDS } from "config/constants";
 import { mapGetters } from 'vuex';
@@ -52,6 +53,7 @@ export default {
     openSidebar(task, projectId) {
       this.$nuxt.$emit("open-sidebar", true);
       this.$store.dispatch('task/setSingleTask', {...task, projectId: projectId})
+      this.$store.dispatch('task/fetchTeamMember', { id: task.id } )
     },
     /*updateKey($event) {
       // console.log($event)
