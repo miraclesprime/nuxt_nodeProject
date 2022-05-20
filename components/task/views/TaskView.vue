@@ -24,7 +24,7 @@
       <bib-icon icon="warning"></bib-icon> No records found
     </span>
     <!-- task sidebar -->
-    <task-sidebar :activeTask="activeTask" @open-sidebar="toggleSidebar()" v-on:update-key="updateKey"></task-sidebar>
+    <task-sidebar  :activeTask="activeTask" @open-sidebar="toggleSidebar()" v-on:update-key="updateKey"></task-sidebar>
     <!-- section rename modal -->
     <bib-modal-wrapper v-if="renameModal" title="Rename section" @close="renameModal = false">
       <template slot="content">
@@ -73,7 +73,8 @@ export default {
       orderBy: "asc",
       renameModal: false,
       sectionId: null,
-      sectionTitle: ""
+      sectionTitle: "",
+      // teamKey: 100
     };
   },
   computed: {
@@ -81,6 +82,7 @@ export default {
       token: "token/getToken",
       // vuexSections: "section/getAllSections",
       user: "user/getUser",
+      task: "task/getSelectedTask",
       project: "project/getSingleProject",
       sections: "section/getProjectSections",
     }),
@@ -352,11 +354,12 @@ export default {
       this.loading = false
     },
 
-    taskSelected($event) {
-      this.$store.dispatch('task/setSingleTask', $event)
-      this.activeTask = $event;
-      this.toggleSidebar($event)
-    },
+    // taskSelected($event) {
+    //   this.$store.dispatch('task/setSingleTask', $event)
+    //   this.activeTask = $event;
+    //   this.toggleSidebar($event)
+    //   this.teamKey += 1;
+    // },
 
     filterView($event) {
       this.loading = true
