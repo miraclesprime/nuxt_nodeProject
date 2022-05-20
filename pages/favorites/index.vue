@@ -31,15 +31,14 @@
           <user-info :userId="data.value.userId"></user-info>
         </template>
         <template #cell(dueDate)="data">
-          <!-- <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span> -->
           <format-date :datetime="data.value.dueDate"></format-date>
         </template>
       </bib-table>
       <!-- task table -->
       <bib-table :fields="taskTableFields" class="border-gray4 bg-white" :sections="sortedTask" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Favorite Tasks'}" :key="'ftasks'+key">
         <template #cell(title)="data">
-          <div class="d-flex gap-05 align-center" :id="'projects-' + data.value.task.title">
-            <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data.value.task.statusId)" ></bib-icon>
+          <div class="d-flex gap-05 align-center" :id="'projects-' + data.value.title">
+            <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data.value.statusId)" ></bib-icon>
             <!-- <bib-icon icon="briefcase" variant="gray5" :scale="1.1" class="mr-025"></bib-icon> -->
             <span :id="'projects-' + data.value.title + '-text'" class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block;  line-height:1.25;">{{data.value.title}}</span>
           </div>
