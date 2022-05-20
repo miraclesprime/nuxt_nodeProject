@@ -7,7 +7,7 @@
     <div class="action-right" id="fa-action-right">
       <ul class="actions" id="pa-actions-list">
         <li class="action" id="pa-action-item1">
-          <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="viewProjects($event)"></sorting-comp>
+          <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="$emit('change-viewing', $event)"></sorting-comp>
         </li>
         <li class="action" id="pa-action-item3">
           <sorting-comp label="Sorted by" :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy($event)"></sorting-comp>
@@ -31,13 +31,10 @@ export default {
   },
 
   methods: {
-    viewProjects($event) {
-      // this.$emit("loading", true)
-      // this.$store.dispatch('project/fetchProjects', $event).then(() => { this.$emit("loading", false) })
-      // this.selectedView = $event;
-      // this.$emit('viewValue', $event)
-      console.log($event);
-    },
+    /*viewProjects($event) {
+      // console.log($event);
+      this.$emit('change-viewing', $event)
+    },*/
 
     sortBy($event) {
       // if(this.orderBy == 'asc') {

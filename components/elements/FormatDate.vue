@@ -6,7 +6,7 @@ export default {
 
   name: 'FormatDate',
   props: {
-    datetime: { type: String, required: true }
+    datetime: { type: String }
   },
   data() {
     return {
