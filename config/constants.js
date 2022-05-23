@@ -264,16 +264,17 @@ export const PROJECT_FAVORITES = [
   },
   { 
     label: 'Department', 
-    key: 'department', 
-    header_icon: {
+    key: 'department',
+    /*header_icon: {
       icon: 'swap-vertical',
       event: 'file-department-sort',
       isActive: false
-    }
+    }*/
   },
   { 
     label: 'Status', 
     key: 'status', 
+    width : '12%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'file-status-sort',
@@ -283,6 +284,7 @@ export const PROJECT_FAVORITES = [
   { 
     label: 'Priority', 
     key: 'priority', 
+    width : '12%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'file-priority-sort',
@@ -292,6 +294,7 @@ export const PROJECT_FAVORITES = [
   { 
     label: 'Owner', 
     key: 'owner',
+    width : '20%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'file-owner-sort',
@@ -300,7 +303,8 @@ export const PROJECT_FAVORITES = [
   },
   { 
     label: 'Due Date', 
-    key: 'dueDate', 
+    key: 'dueDate',
+    width: '10%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'file-dueDate-sort',
@@ -326,6 +330,7 @@ export const TASK_FAVORITES = [
   { 
     label: 'Status', 
     key: 'status', 
+    width : '12%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'file-status-sort',
@@ -335,6 +340,7 @@ export const TASK_FAVORITES = [
   { 
     label: 'Priority', 
     key: 'priority', 
+    width : '12%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'file-priority-sort',
@@ -344,6 +350,7 @@ export const TASK_FAVORITES = [
   { 
     label: 'Owner', 
     key: 'owner', 
+    width : '20%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'file-owner-sort',
@@ -353,6 +360,7 @@ export const TASK_FAVORITES = [
   { 
     label: 'Due Date', 
     key: 'dueDate', 
+    width : '10%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'file-dueDate-sort',
