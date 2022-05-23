@@ -56,10 +56,10 @@
             </template>
           </bib-button>
         </div> -->
-        <bib-app-navigation :items="navItems1" @click="goToRoute($event)"></bib-app-navigation>
+        <bib-app-navigation :items="navItems1" @click="goToRoute($event, navItems1)"></bib-app-navigation>
         <!-- separator -->
         <div class="bg-dark-sub1 mt-05 mb-05" style="height: 1px"></div>
-        <bib-app-navigation :items="navItems2" @click="goToRoute($event)"></bib-app-navigation>
+        <bib-app-navigation :items="navItems2" @click="goToRoute($event, navItems2)"></bib-app-navigation>
         <!-- separator -->
         <div class="bg-dark-sub1 mt-05 mb-05" style="height: 1px"></div>
         <bib-detail-collapse v-show="!collapseNavigation" label="Favorite Projects" variant="white" open>
@@ -124,16 +124,16 @@ export default {
         { img: "CommentForum", color: "purple", text: "Chat", href: process.env.VITE_BIB_CHAT_APP_URL },
       ],
       navItems1: [
-        { label: "Home", icon: "home", key: "dashboard-route" },
-        { label: "Inbox", icon: "mail-new" },
-        { label: "My tasks", icon: "check-circle", key: 'mytasks' },
-        { label: "Favorites", icon: "heart-like", key: 'favorites' },
+        { label: "Home", icon: "home", key: "dashboard-route", selected: false },
+        { label: "Inbox", icon: "mail-new", selected: false },
+        { label: "My tasks", icon: "check-circle", key: 'mytasks', selected: false },
+        { label: "Favorites", icon: "heart-like", key: 'favorites', selected: false },
       ],
       navItems2: [
-        { label: "Tasks", icon: "check-all", key: "task-route" },
-        { label: "Projects", icon: "briefcase", key: 'project-route' },
-        { label: "Goals", icon: "flag-racing" },
-        { label: "Dream", icon: "star", avatar: "https://i.pravatar.cc/150" },
+        { label: "Tasks", icon: "check-all", key: "task-route", selected: false },
+        { label: "Projects", icon: "briefcase", key: 'project-route', selected: false },
+        { label: "Goals", icon: "flag-racing", selected: false },
+        { label: "Dream", icon: "star", avatar: "https://i.pravatar.cc/150", selected: false },
       ],
       /*favProjects: [
         { label: "Project one", icon: "folder-solid" },
@@ -194,7 +194,28 @@ export default {
     })
   },
   mounted() {
+
     if (process.client) {
+
+      if(this.$router.history.current.fullPath == '/dashboard') {
+        this.navItems1[0].selected = true;
+      }
+
+      if(this.$router.history.current.fullPath == '/mytasks') {
+        this.navItems1[2].selected = true;
+      }
+
+      if(this.$router.history.current.fullPath == '/favorites') {
+        this.navItems1[3].selected = true;
+      }
+
+      if(this.$router.history.current.fullPath == '/tasks') {
+        this.navItems2[0].selected = true;
+      }
+
+      if(this.$router.history.current.fullPath == '/projects') {
+        this.navItems2[1].selected = true;
+      }
 
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY0Njk3MjYzNzcxNSwiZXhwIjoxNjU0NzQ4NjM3NzE1LCJqdGkiOiIyMDFjZGExYy02MDVjLTQ4ZDMtODhiMi1lODhjMDFhZGQ3YWUifQ.aw6BfQV6G5iDlWXNvMiV9AgxaMGjPVyF2LRgteMo5OU"
 
@@ -325,7 +346,23 @@ export default {
 
 
     goToRoute($event) {
-      console.log($event.key)
+      
+      for(let i = 0; i<this.navItems1.length; i++) {
+          if(this.navItems1[i].key == $event.key) {
+            this.navItems1[i].selected = true;
+          } else {
+            this.navItems1[i].selected = false;
+          }
+      }
+
+      for(let i = 0; i<this.navItems2.length; i++) {
+          if(this.navItems2[i].key == $event.key) {
+            this.navItems2[i].selected = true;
+          } else {
+            this.navItems2[i].selected = false;
+          }
+      }
+
       if ($event.key == 'dashboard-route') {
         this.$router.push('/dashboard')
       }

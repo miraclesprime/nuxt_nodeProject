@@ -1,4 +1,5 @@
 <template>
+<client-only>
   <div id="favorite_wrapper">
     <page-title title="Favorites"></page-title>
     <favorite-actions v-on:change-viewing="changeView" v-on:change-sorting="changeSort"></favorite-actions>
@@ -68,7 +69,9 @@
       <loading :loading="loading"></loading>
     </div>
   </div>
+</client-only>
 </template>
+
 <script>
 import { PROJECT_FAVORITES, TASK_FAVORITES } from '../../config/constants'
 import { mapGetters } from 'vuex';
