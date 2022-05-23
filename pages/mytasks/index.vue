@@ -1,4 +1,5 @@
 <template>
+<client-only>
   <div id="my-tasks-page-wrapper" class="mytask-page-wrapper">
     <page-title title="My Tasks"></page-title>
     <task-actions />
@@ -44,7 +45,9 @@
       <loading :loading="loading"></loading>
     </div>
   </div>
+</client-only>
 </template>
+
 <script>
 import { USER_TASKS } from "../../config/constants";
 

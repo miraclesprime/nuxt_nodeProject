@@ -1,4 +1,5 @@
 <template>
+<client-only>
   <div id="task-page-wrapper" class="task-page-wrapper">
     <page-title title="Tasks"></page-title>
     <task-actions />
@@ -34,7 +35,9 @@
       <loading :loading="loading"></loading>
     </div>
   </div>
+</client-only>
 </template>
+
 <script>
 import { mapGetters } from "vuex";
 import { TASK_FAVORITES as TaskFields } from '../../config/constants'
