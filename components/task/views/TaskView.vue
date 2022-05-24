@@ -24,7 +24,7 @@
       <bib-icon icon="warning"></bib-icon> No records found
     </span>
     <!-- task sidebar -->
-    <task-sidebar  :activeTask="activeTask" @open-sidebar="toggleSidebar()" v-on:update-key="updateKey"></task-sidebar>
+    <!-- <task-sidebar  :activeTask="activeTask" @open-sidebar="toggleSidebar()" v-on:update-key="updateKey"></task-sidebar> -->
     <!-- section rename modal -->
     <bib-modal-wrapper v-if="renameModal" title="Rename section" @close="renameModal = false">
       <template slot="content">
@@ -286,8 +286,8 @@ export default {
         this.$store.dispatch("task/setSingleTask", {})
       }
       this.flag = !this.flag;
-      this.$emit("open-sidebar", this.flag);
-      this.$nuxt.$emit("open-sidebar", this.flag);
+      /*this.$emit("open-sidebar", this.flag);
+      this.$nuxt.$emit("open-sidebar", this.flag);*/
     },
 
     createSectionInline() {

@@ -6,8 +6,8 @@
     <div id="mytask-table-wrapper" class="mytask-table-wrapper position-relative of-scroll-y">
       <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Due Soon', variant: 'secondary'}" class="border-gray4 bg-white">
         <template #cell(title)="data">
-          <div class="d-flex gap-05">
-            <span class="text-dark">{{ data.value.title }}</span>
+          <div class="gap-05 align-center">
+            <span class="text-dark text-left cursor-pointer" @click="openSidebar(data.value)">{{ data.value.title }}</span>
           </div>
         </template>
         <template #cell(projectId)="data">
@@ -102,6 +102,11 @@ export default {
     },
     capitalizeFirstLetter(str) {
       return str.charAt(0).toUpperCase() + str.slice(1)
+    },
+    openSidebar(task) {
+      this.$nuxt.$emit("open-sidebar", true);
+      /*this.$store.dispatch('task/setSingleTask', {...task, projectId: projectId})
+      this.$store.dispatch('task/fetchTeamMember', { id: task.id } )*/
     },
   },
 
