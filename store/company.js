@@ -1,7 +1,7 @@
 export const state = () => ({
   companies: [],
   companyMembers: [],
-  // company: {},
+  companyTasks: []
 });
 
 export const getters = {
@@ -11,10 +11,10 @@ export const getters = {
   },
   getCompanyMembers(state){
     return state.companyMembers
+  },
+  getCompanyTasks(state) {
+    return state.companyTasks;
   }
-  /*getSingleCompany(state) {
-    return state.company
-  }*/
 
 };
 
@@ -25,11 +25,11 @@ export const mutations = {
   },
 
   fetchCompanyMembers(state, payload) {
-    state.companyMembers = payload
+    state.companyMembers = payload;
+  },
+  setCompanyTasks(state, payload) {
+    state.companyTasks = payload;
   }
-  /*fetchSingleCompany(state, payload) {
-    state.company = payload
-  }*/
 
 };
 
@@ -52,14 +52,14 @@ export const actions = {
       console.log(res);
     }
   },
-  /*async fetchSingleCompany(ctx, payload) {
-    const res = await this.$axios.$get("/company/" + payload, {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` }
-    })
-    if (res.statusCode == 200) {
-      ctx.commit("fetchSingleCompany", res.data)
-    } else {
-      console.log(res);
+  async setCompanyTasks(ctx, payload) {
+    const res = await this.$axios.$get(`company/${payload.companyId}/tasks`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
+    });
+
+    if (res.data) {
+      ctx.commit('setCompanyTasks', res.data);
+      return res.data
     }
-  }*/
+  }
 };

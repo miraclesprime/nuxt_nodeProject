@@ -2,9 +2,9 @@
 <client-only>
   <div id="my-tasks-page-wrapper" class="mytask-page-wrapper">
     <page-title title="My Tasks"></page-title>
-    <task-actions />
+    <user-tasks-actions v-on:filterView="filterView" />
     <div id="mytask-table-wrapper" class="mytask-table-wrapper position-relative of-scroll-y">
-      <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Due Soon', variant: 'secondary'}" class="border-gray4 bg-white">
+      <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Due Soon', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName">
         <template #cell(title)="data">
           <div class="d-flex gap-05">
             <span class="text-dark">{{ data.value.title }}</span>
@@ -50,15 +50,23 @@
 
 <script>
 import { USER_TASKS } from "../../config/constants";
+import {mapGetters} from 'vuex';
 
 export default {
   data() {
     return {
       taskFields: USER_TASKS,
-      tasks: [],
       loading: false,
+      viewName: null
     }
   },
+
+  computed: {
+    ...mapGetters({
+      tasks: 'user/getUserTasks'
+    })
+  },
+
   methods: {
     favoriteStatusLabel(status) {
       switch (status) {
@@ -103,17 +111,37 @@ export default {
     capitalizeFirstLetter(str) {
       return str.charAt(0).toUpperCase() + str.slice(1)
     },
+
+    filterView($event) {
+      this.loading = true
+      if ($event == 'complete') {
+        this.$store.dispatch('user/setUserTasks', { filter: 'complete' }).then((res) => {
+          this.loading = false
+        }).catch(e => console.log(e))
+        this.viewName = 'complete'
+      }
+      if ($event == 'incomplete') {
+        this.$store.dispatch('user/setUserTasks', { filter: 'incomplete' }).then((res) => {
+          this.loading = false
+        }).catch(e => console.log(e))
+          this.viewName = 'incomplete'
+      }
+      if ($event == 'all') {
+        this.$store.dispatch('user/setUserTasks', { filter: 'all' }).then((res) => {
+          this.loading = false
+        }).catch(e => console.log(e))
+        this.viewName = 'all'
+      }
+      this.loading = false
+    },
   },
 
   created() {
     if (process.client) {
       this.loading = true
-      this.$axios.$get("user/tasks", {
-        headers: { 'Authorization': "Bearer " + localStorage.getItem("accessToken") }
-      }).then(res => {
-        this.tasks = res.data;
-        this.loading = false
-      });
+      this.$store.dispatch('user/setUserTasks' , { filter: 'all' }).then((res) => {
+        this.loading = false;
+      })
     }
   },
 }

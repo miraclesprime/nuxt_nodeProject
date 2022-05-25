@@ -2,7 +2,7 @@
 <client-only>
   <div id="task-page-wrapper" class="task-page-wrapper">
     <page-title title="Tasks"></page-title>
-    <task-actions />
+    <company-tasks-actions v-on:filterView="filterView" />
     <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
       <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Department', variant: 'secondary'}" class="border-gray4 bg-white">
         <template #cell(title)="data">
@@ -48,16 +48,15 @@ export default {
     return {
       title: "Tasks",
       taskFields: TaskFields,
-      tasks: [],
       gridType: "list",
-      sections: [],
       loading: false,
     }
   },
   computed: {
     ...mapGetters({
       token: "token/getToken",
-      user: "user/getUser"
+      user: "user/getUser",
+      tasks: "company/getCompanyTasks"
     }),
   },
 
@@ -105,18 +104,39 @@ export default {
     capitalizeFirstLetter(str) {
       return str.charAt(0).toUpperCase() + str.slice(1)
     },
+
+    filterView($event) {
+      this.loading = true
+      let compid = JSON.parse(localStorage.getItem("user")).subb;
+      if ($event == 'complete') {
+        this.$store.dispatch('company/setCompanyTasks', { companyId : compid, filter: 'complete'}).then((res) => {
+          this.loading = false
+        }).catch(e => console.log(e))
+        this.viewName = 'complete'
+      }
+      if ($event == 'incomplete') {
+        this.$store.dispatch('company/setCompanyTasks', { companyId : compid, filter: 'incomplete'}).then((res) => {
+          this.loading = false
+        }).catch(e => console.log(e))
+          this.viewName = 'incomplete'
+      }
+      if ($event == 'all') {
+        this.$store.dispatch('company/setCompanyTasks', { companyId : compid, filter: 'all'}).then((res) => {
+          this.loading = false
+        }).catch(e => console.log(e))
+        this.viewName = 'all'
+      }
+      this.loading = false
+    },
   },
 
   created() {
     if (process.client) {
       this.loading = true
       let compid = JSON.parse(localStorage.getItem("user")).subb;
-      this.$axios.$get("company/" + compid + "/tasks", {
-        headers: { 'Authorization': "Bearer " + localStorage.getItem("accessToken") }
-      }).then(res => {
-        this.tasks = res.data;
-        this.loading = false
-      });
+      this.$store.dispatch('company/setCompanyTasks', { companyId : compid, filter: 'all'}).then((res) => {
+        this.loading = false;
+      })
     }
   },
 }
