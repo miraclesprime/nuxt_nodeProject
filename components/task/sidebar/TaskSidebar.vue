@@ -85,8 +85,8 @@
         <div class="task-info position-relative pt-1" id='sidebar-inner-wrap'>
           <div class="row mx-0" id='sidebar-row-1'>
             <div class="col-4" id='sidebar-col-1'>
-              <!-- <bib-select label="Assignee" test_id="task_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="debounceUpdate()" ></bib-select> -->
-              <bib-input type="select" :options="orgUsers" v-model="form.userId" placeholder="Please select..." label="Assignee" v-on:change.native="debounceUpdate()"></bib-input>
+              <bib-select label="Assignee" test_id="task_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="debounceUpdate()" ></bib-select>
+              <!-- <bib-input type="select" :options="orgUsers" v-model="form.userId" placeholder="Please select..." label="Assignee" v-on:change.native="debounceUpdate()"></bib-input> -->
             </div>
             <div class="col-4" id='sidebar-col-2'>
               <bib-input type="select" label="Project" :options="companyProjects" v-model.number="form.projectId" v-on:change.native="changeProject"></bib-input>
