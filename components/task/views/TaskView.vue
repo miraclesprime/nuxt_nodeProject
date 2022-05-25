@@ -24,7 +24,7 @@
       <bib-icon icon="warning"></bib-icon> No records found
     </span>
     <!-- task sidebar -->
-    <task-sidebar  :activeTask="activeTask" @open-sidebar="toggleSidebar()" v-on:update-key="updateKey"></task-sidebar>
+    <!-- <task-sidebar  :activeTask="activeTask" @open-sidebar="toggleSidebar()" v-on:update-key="updateKey"></task-sidebar> -->
     <!-- section rename modal -->
     <bib-modal-wrapper v-if="renameModal" title="Rename section" @close="renameModal = false">
       <template slot="content">
@@ -51,8 +51,6 @@ export default {
 
   props: {
     gridType: String,
-    // sections: Array,
-    // tasks: Array,
   },
   data() {
     return {
@@ -62,42 +60,25 @@ export default {
       flag: false,
       newSection: false,
       newSectionName: "",
-      // sectionError: false,
       sectionLoading: false,
       localdata: [],
       sortName: "",
       loading: false,
-      // nodata: false,
-      // filterTask: [],
       key: 0,
       orderBy: "asc",
       renameModal: false,
       sectionId: null,
       sectionTitle: "",
-      // teamKey: 100
     };
   },
   computed: {
     ...mapGetters({
       token: "token/getToken",
-      // vuexSections: "section/getAllSections",
       user: "user/getUser",
       task: "task/getSelectedTask",
       project: "project/getSingleProject",
       sections: "section/getProjectSections",
     }),
-
-    /*localSection() {
-      let section = JSON.parse(JSON.stringify(this.sections))
-      let sorted = this.localdata.map(s => {
-        let t = s.tasks.sort((a, b) => a.order - b.order)
-        s.tasks = t
-        return s
-      })
-      // console.log("sorted =>", sorted)
-      this.localdata = sorted
-      return
-    },*/
 
     sectionError() {
       if (this.newSectionName.indexOf("_") == 0) {
@@ -286,8 +267,8 @@ export default {
         this.$store.dispatch("task/setSingleTask", {})
       }
       this.flag = !this.flag;
-      this.$emit("open-sidebar", this.flag);
-      this.$nuxt.$emit("open-sidebar", this.flag);
+      /*this.$emit("open-sidebar", this.flag);
+      this.$nuxt.$emit("open-sidebar", this.flag);*/
     },
 
     createSectionInline() {

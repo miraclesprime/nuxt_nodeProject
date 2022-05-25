@@ -1,7 +1,8 @@
 export const state = () => ({
   user: null,
   user2: null,
-  teamMembers: []
+  teamMembers: [],
+  userTasks: []
 });
 
 export const getters = {
@@ -19,6 +20,10 @@ export const getters = {
       members.push({ label: t.FirstName + ' ' + t.LastName, firstName: t.FirstName, lastName: t.LastName, email: t.Email, icon: "user", id: t.Id, status: t.Status, role: t.Role, avatar: t.Photo })
     })
     return members
+  },
+
+  getUserTasks(state) {
+    return state.userTasks;
   }
 };
 
@@ -33,6 +38,10 @@ export const mutations = {
 
   setTeamMembers(state, payload) {
     state.teamMembers = payload;
+  },
+
+  setUserTasks(state, payload) {
+    state.userTasks = payload
   }
 };
 
@@ -53,5 +62,16 @@ export const actions = {
       }
     })
     ctx.commit("setTeamMembers", members)
+  },
+
+  async setUserTasks(ctx, payload) {
+    const res = await this.$axios.$get('user/tasks', {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
+    });
+
+    if (res.data) {
+      ctx.commit('setUserTasks', res.data);
+      return res.data
+    }
   }
 };

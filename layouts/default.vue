@@ -33,7 +33,7 @@
         <bib-app-switcher :menuItems="appItems"></bib-app-switcher>
       </template>
       <template #navigation>
-        <bib-button v-show="!collapseNavigation" dropdown="" label="" class="height-3 create-dropdown " >
+        <bib-button v-show="!collapseNavigation" dropdown="" label="" class="height-3 create-dropdown ">
           <template v-slot:menu>
             <ul>
               <li v-for="item in appHeaderActions.button.items" :key="item.label" class="d-flex align-center" @click="createAction(item)">
@@ -84,9 +84,11 @@
       <template #content>
         <div class="main" id='main-content' :class="openSidebar ? 'open-sidebar' : ''">
           <Nuxt />
+          <task-sidebar @open-sidebar="toggleSidebar()"></task-sidebar>
         </div>
       </template>
     </bib-app-wrapper>
+    <!-- task sidebar -->
     <create-project-modal ref="projectModals"></create-project-modal>
     <add-teammember-modal ref="teammemberModal"></add-teammember-modal>
     <add-member-to-task ref="taskTeamModal"></add-member-to-task>
@@ -106,6 +108,7 @@ export default {
   data() {
     return {
       openSidebar: false,
+      flag: false,
       appCreateButton: {
         label: "Create",
         event: "createbtn-click",
@@ -180,9 +183,21 @@ export default {
     }
   },
   created() {
-    this.$root.$on("open-sidebar", (flag) => {
-      this.openSidebar = flag;
+    this.$root.$on("open-sidebar", (payload) => {
+      // console.log(payload.project)
+      this.openSidebar = true;
+      // this.toggleSidebar
+      if (!payload.id) {
+        this.$store.dispatch("task/setSingleTask", {})
+      } else {
+        this.$store.dispatch("section/fetchProjectSections", { projectId: payload.project[0].projectId, filter: 'all' })
+        this.$store.dispatch("task/setSingleTask", { ...payload, projectId: payload.project[0].projectId })
+      }
     });
+    this.$root.$on('close-sidebar', () => {
+      this.openSidebar = false
+      this.$store.dispatch("task/setSingleTask", {})
+    })
     this.$root.$on("create-project-modal", () => {
       this.$refs.projectModals.showCreateProjectModal = true;
     })
@@ -197,23 +212,23 @@ export default {
 
     if (process.client) {
 
-      if(this.$router.history.current.fullPath == '/dashboard') {
+      if (this.$router.history.current.fullPath == '/dashboard') {
         this.navItems1[0].selected = true;
       }
 
-      if(this.$router.history.current.fullPath == '/mytasks') {
+      if (this.$router.history.current.fullPath == '/mytasks') {
         this.navItems1[2].selected = true;
       }
 
-      if(this.$router.history.current.fullPath == '/favorites') {
+      if (this.$router.history.current.fullPath == '/favorites') {
         this.navItems1[3].selected = true;
       }
 
-      if(this.$router.history.current.fullPath == '/tasks') {
+      if (this.$router.history.current.fullPath == '/tasks') {
         this.navItems2[0].selected = true;
       }
 
-      if(this.$router.history.current.fullPath == '/projects') {
+      if (this.$router.history.current.fullPath == '/projects') {
         this.navItems2[1].selected = true;
       }
 
@@ -290,6 +305,7 @@ export default {
       favProjects: 'project/getFavProjects',
       teammate: 'user/getTeamMembers',
       user2: 'user/getUser2',
+      // activeTask: "task/getSelectedTask",
     })
   },
 
@@ -313,6 +329,17 @@ export default {
 
     /*createProject(data) {
       this.$store.dispatch('project/createProject', data.name);
+    },*/
+
+    /*toggleSidebar($event) {
+      // console.log($event)
+      // in case of create task 
+      if (!$event) {
+        this.$store.dispatch("task/setSingleTask", {})
+      } else {
+        this.$store.dispatch("task/setSingleTask", task)
+      }
+
     },*/
 
     createAction($event) {
@@ -346,21 +373,21 @@ export default {
 
 
     goToRoute($event) {
-      
-      for(let i = 0; i<this.navItems1.length; i++) {
-          if(this.navItems1[i].key == $event.key) {
-            this.navItems1[i].selected = true;
-          } else {
-            this.navItems1[i].selected = false;
-          }
+
+      for (let i = 0; i < this.navItems1.length; i++) {
+        if (this.navItems1[i].key == $event.key) {
+          this.navItems1[i].selected = true;
+        } else {
+          this.navItems1[i].selected = false;
+        }
       }
 
-      for(let i = 0; i<this.navItems2.length; i++) {
-          if(this.navItems2[i].key == $event.key) {
-            this.navItems2[i].selected = true;
-          } else {
-            this.navItems2[i].selected = false;
-          }
+      for (let i = 0; i < this.navItems2.length; i++) {
+        if (this.navItems2[i].key == $event.key) {
+          this.navItems2[i].selected = true;
+        } else {
+          this.navItems2[i].selected = false;
+        }
       }
 
       if ($event.key == 'dashboard-route') {
@@ -430,24 +457,37 @@ html {
   }
 }
 
-  .app-wrapper{
-    &__navigation { position: relative;
-      .create-dropdown { position: absolute; top: 4rem; left:0; right: 0; z-index:9;
-        &.button { position: absolute; }
-        
+.app-wrapper {
+  &__navigation {
+    position: relative;
+
+    .create-dropdown {
+      position: absolute;
+      top: 4rem;
+      left: 0;
+      right: 0;
+      z-index: 9;
+
+      &.button {
+        position: absolute;
       }
+
     }
   }
+}
+
 ::v-deep {
-  
-  .button--drop.create-dropdown { 
+
+  .button--drop.create-dropdown {
     .menu {
       details {
-        .wrapper { top: 2.5rem; }
+        .wrapper {
+          top: 2.5rem;
+        }
       }
     }
   }
-    
+
   .panel-wrapper.side-panel {
     position: fixed;
     right: 0;

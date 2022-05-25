@@ -32,7 +32,7 @@
     </template>
 
     <template v-if="norecord">
-      <span id="taskTeam-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
+      <span id="taskTeam-0" class="d-inline-flex gap-1 align-center my-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
         <bib-icon icon="warning"></bib-icon> No records found
       </span>
     </template>
@@ -49,7 +49,8 @@ export default {
   data() {
     return {
       norecord: false,
-      tableFields: TaskTeamFields
+      tableFields: TaskTeamFields,
+      loading: false,
     }
   },
 

@@ -41,7 +41,7 @@
           <div class="d-flex gap-05 align-center" :id="'projects-' + data.value.title">
             <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data.value.statusId)"></bib-icon>
             <!-- <bib-icon icon="briefcase" variant="gray5" :scale="1.1" class="mr-025"></bib-icon> -->
-            <span :id="'projects-' + data.value.title + '-text'" class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block;  line-height:1.25;">{{data.value.title}}</span>
+            <span :id="'projects-' + data.value.title + '-text'" class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block;  line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{data.value.title}}</span>
           </div>
         </template>
         <template #cell(owner)="data">
@@ -369,6 +369,11 @@ export default {
           this.taskTableFields[i].header_icon.isActive = true
         }
       }
+    },
+    openSidebar(task) {
+      this.$nuxt.$emit("open-sidebar", task);
+      /*this.$store.dispatch('task/setSingleTask', {...task, projectId: projectId})
+      this.$store.dispatch('task/fetchTeamMember', { id: task.id } )*/
     },
   }
 }

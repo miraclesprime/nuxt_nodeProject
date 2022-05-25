@@ -1,13 +1,10 @@
 <template>
   <div id="task-actions-wrapper" class="task-actions p-025 ">
     <div class="action-left d-flex " id="ta-action-left">
-  
       <div class="d-flex gap-05 cursor-pointer text-secondary text-hover-dark" id="ta-add-task-button" v-on:click="showCreateTaskModal">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-task-text" class="">New Task</span>
       </div>
-      <div class="d-flex gap-05 ml-1 cursor-pointer text-secondary text-hover-dark" id="ta-add-section-button" v-on:click="createSectionInline('true')">
-        <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-section-text" class="">New Section</span>
-      </div>
+      
     </div>
     <div class="action-right d-flex gap-05" id="ta-action-right">
       <ul class="actions" id="ta-action-right-actions">
@@ -57,30 +54,9 @@ export default {
       this.$emit("create-task", false) //event will be captured by parent only
       this.$nuxt.$emit("create-task", false) //event will be available to all
     },
-    showCreateSectionModal() {
-      this.$refs.modals.showCreateSectionModal = true;
-    },
-    createSectionInline($event) {
-      this.$emit("create-section", $event)
-      this.$nuxt.$emit("create-section", $event)
-    },
     async createTask(task) {
       console.log(task);
     },
-    async createSection(section) {
-      if (section.name != "") {
-        try {
-          await this.$axios.$post("/section", {
-            title: section.name,
-          });
-          this.$refs.modals.showCreateSectionModal = false;
-          this.$emit("change-data");
-        } catch (err) {
-          console.log(err);
-        }
-      }
-    },
-
 
     sortBy($event) {
       this.$emit("sort", $event)
