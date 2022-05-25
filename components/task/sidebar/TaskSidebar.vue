@@ -6,7 +6,7 @@
       </div> -->
       <div class="d-flex justify-between side-panel__header__actions mb-05" id='ts-side-panel'>
         <div class="d-flex align-center gap-05" id="ts-icon-close-Wrapper">
-          <div id='ts-icon-7' class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" @click="hideSidebar()">
+          <div id='ts-icon-7' class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" @click="$nuxt.$emit('close-sidebar')">
             <bib-icon icon="page-last" class="m-auto"></bib-icon>
           </div>
           <div class="d-flex cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2" id='ts-icon-external-wrapper'>
@@ -282,10 +282,10 @@ export default {
 
   methods: {
 
-    hideSidebar() {
+    /*hideSidebar() {
       this.$emit("open-sidebar", false)
       this.$root.$emit("open-sidebar", false);
-    },
+    },*/
     sidebarTabChange(tab) {
       this.activeSidebarTab = tab.value;
     },
@@ -352,7 +352,8 @@ export default {
           this.$emit("update-key")
           this.$nuxt.$emit("update-key")
           this.loading = false
-          this.hideSidebar()
+          // this.hideSidebar()
+          this.$nuxt.$emit('close-sidebar')
         }).catch(e => console.warn(e)).then(() => {
           this.loading = false
         })

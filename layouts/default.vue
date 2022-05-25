@@ -84,7 +84,7 @@
       <template #content>
         <div class="main" id='main-content' :class="openSidebar ? 'open-sidebar' : ''">
           <Nuxt />
-          <task-sidebar :activeTask="activeTask" @open-sidebar="toggleSidebar()"></task-sidebar>
+          <task-sidebar @open-sidebar="toggleSidebar()"></task-sidebar>
         </div>
       </template>
     </bib-app-wrapper>
@@ -183,11 +183,21 @@ export default {
     }
   },
   created() {
-    this.$root.$on("open-sidebar", (flag) => {
-      console.log(flag)
-      this.openSidebar = flag;
-      this.toggleSidebar
+    this.$root.$on("open-sidebar", (payload) => {
+      // console.log(payload.project)
+      this.openSidebar = true;
+      // this.toggleSidebar
+      if (!payload.id) {
+        this.$store.dispatch("task/setSingleTask", {})
+      } else {
+        this.$store.dispatch("section/fetchProjectSections", { projectId: payload.project[0].projectId, filter: 'all' })
+        this.$store.dispatch("task/setSingleTask", { ...payload, projectId: payload.project[0].projectId })
+      }
     });
+    this.$root.$on('close-sidebar', () => {
+      this.openSidebar = false
+      this.$store.dispatch("task/setSingleTask", {})
+    })
     this.$root.$on("create-project-modal", () => {
       this.$refs.projectModals.showCreateProjectModal = true;
     })
@@ -295,7 +305,7 @@ export default {
       favProjects: 'project/getFavProjects',
       teammate: 'user/getTeamMembers',
       user2: 'user/getUser2',
-      activeTask: "task/getSelectedTask",
+      // activeTask: "task/getSelectedTask",
     })
   },
 
@@ -321,15 +331,16 @@ export default {
       this.$store.dispatch('project/createProject', data.name);
     },*/
 
-    toggleSidebar($event) {
+    /*toggleSidebar($event) {
       // console.log($event)
       // in case of create task 
       if (!$event) {
         this.$store.dispatch("task/setSingleTask", {})
+      } else {
+        this.$store.dispatch("task/setSingleTask", task)
       }
-      this.flag = !this.flag;
 
-    },
+    },*/
 
     createAction($event) {
       // console.log($event.key)

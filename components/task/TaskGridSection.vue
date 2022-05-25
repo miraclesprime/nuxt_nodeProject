@@ -28,7 +28,7 @@
         <div class="task-section__body" :id="'tgs-task-section-body-'+section.id">
           <draggable :list="section.tasks" group="task" :move="debounceMoveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable" :class="{highlight: drag}" :data-section="section.id">
             <!-- <transition-group type="transition" :name="!drag ? 'flip-list' : null"> -->
-            <div class="task-grid " v-for="task in section.tasks" :key="task.title + key + '-' + task.id" :class="[overdue(task), currentTask.id == task.id ? 'active' : '']" :id="'tg-card-'+task.id" v-on:click="openSidebar(task)">
+            <div class="task-grid " v-for="task in section.tasks" :key="task.title + key + '-' + task.id" :class="[overdue(task), currentTask.id == task.id ? 'active' : '']" :id="'tg-card-'+task.id" v-on:click="openSidebar(task, section.projectId)">
               <figure v-if="task.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
               <div class="task-top" :id="'tg-card-top'+task.id">
                 <div class="d-flex" :id="'tg-card-inside-wrap'+task.id">
@@ -38,8 +38,7 @@
                 <bib-button pop="elipsis" icon="elipsis" :icon-variant="overdue(task) == 'bg-danger'? 'white' :'secondary'">
                   <template v-slot:menu>
                     <div class="list" :id="'tg-list'+task.id">
-                      <!-- <span class="list__item" v-on:click="openSidebar(task)">Details</span>
-                      <hr> -->
+                      
                       <span class="list__item" :id="'tg-comp'+task.id">
                         <bib-icon icon="check-circle" class="mr-05"></bib-icon> Mark Completed
                       </span>
@@ -366,10 +365,15 @@ export default {
       return (new Date(item.dueDate) < new Date() && item.statusId != 5) ? 'bg-danger' : '';
     },
 
-    openSidebar($event) {
-      this.$nuxt.$emit("open-sidebar", true);
-      this.$store.dispatch('task/setSingleTask', $event)
-      // console.log(event.target)
+    openSidebar(task, projectId) {
+      let project = [{
+        projectId: projectId,
+        project: {
+          id: projectId
+        }
+      }]
+      this.$nuxt.$emit("open-sidebar", { ...task, project: project });
+      
       let el = event.target.offsetParent
       let scrollAmt = event.target.offsetLeft - event.target.offsetWidth;
 
