@@ -42,6 +42,63 @@ export const mutations = {
 
   setUserTasks(state, payload) {
     state.userTasks = payload
+  },
+
+  sortUserTasks(state, payload) {
+
+    // sort By Title
+    if(payload.sName == 'name' && payload.order == 'asc') {
+      state.userTasks.sort((a,b) => a.title.localeCompare(b.title))
+    }
+
+    if(payload.sName == 'name' && payload.order == 'desc') {
+      state.userTasks.sort((a,b) => b.title.localeCompare(a.title))
+    }
+
+    // sort By Project
+    if(payload.sName == 'projectId' && payload.order == 'asc') {
+      state.userTasks.sort((a,b) => a.project[0].project.title.localeCompare(b.project[0].project.title))
+    }
+
+    if(payload.sName == 'projectId' && payload.order == 'desc') {
+      state.userTasks.sort((a,b) => b.project[0].project.title.localeCompare(a.project[0].project.title))
+    }
+
+    // sort By Status
+    if(payload.sName == 'status' && payload.order == 'asc') {
+      state.userTasks.sort((a,b) => a.status.text.localeCompare(b.status.text))
+    }
+
+    if(payload.sName == 'status' && payload.order == 'desc') {
+      state.userTasks.sort((a,b) => b.status.text.localeCompare(a.status.text))
+    }
+
+    // sort by create date
+    if(payload.sName == 'createdAt' && payload.order == 'asc') {
+      state.userTasks.sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt))
+    }
+
+    if(payload.sName == 'createdAt' && payload.order == 'desc') {
+      state.userTasks.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
+    }
+
+    // sort by due date
+    if(payload.sName == 'dueDate' && payload.order == 'asc') {
+      state.userTasks.sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate))
+    }
+
+    if(payload.sName == 'dueDate' && payload.order == 'desc') {
+      state.userTasks.sort((a,b) => new Date(b.dueDate) - new Date(a.dueDate))
+    }
+
+    // sort by priority
+    if(payload.sName == 'priority' && payload.order == 'asc') {
+      state.userTasks.sort((a,b) => a.priority.text.localeCompare(b.priority.text))
+    }
+
+    if(payload.sName == 'priority' && payload.order == 'desc') {
+      state.userTasks.sort((a,b) => b.priority.text.localeCompare(a.priority.text))
+    }
   }
 };
 
@@ -73,5 +130,9 @@ export const actions = {
       ctx.commit('setUserTasks', res.data);
       return res.data
     }
+  },
+
+  sortUserTasks(ctx, payload) {
+    ctx.commit('sortUserTasks', payload)
   }
 };

@@ -2,12 +2,21 @@
   <client-only>
     <div id="task-page-wrapper" class="task-page-wrapper">
       <page-title title="Tasks"></page-title>
-      <company-tasks-actions v-on:filterView="filterView" />
+      <company-tasks-actions v-on:filterView="filterView" v-on:sort="sortBy" />
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
-        <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Department', variant: 'secondary'}" class="border-gray4 bg-white">
+        <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Department', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key">
           <template #cell(title)="data">
             <div class="d-flex gap-05">
-              <span class="text-dark text-left cursor-pointer" @click="openSidebar(data.value)">{{ data.value.title }}</span>
+              <span class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block;  line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{ data.value.title }}</span>
+            </div>
+          </template>
+          <template #cell(owner)="data">
+            <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
+          </template>
+          <template #cell(status)="data">
+            <div class="d-flex gap-05 align-center">
+              <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
+              </div>
             </div>
           </template>
           <template #cell(owner)="data">
@@ -47,8 +56,10 @@ export default {
     return {
       title: "Tasks",
       taskFields: TaskFields,
-      gridType: "list",
       loading: false,
+      viewName: null,
+      orderBy: 'desc',
+      key: 100
     }
   },
   computed: {
@@ -106,7 +117,7 @@ export default {
 
     openSidebar(task) {
       this.$nuxt.$emit("open-sidebar", true);
-      
+
     },
 
     filterView($event) {
@@ -133,6 +144,18 @@ export default {
       this.loading = false
 
     },
+
+    sortBy($event) {
+
+      if (this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+
+      this.$store.dispatch('company/sortCompanyTasks', { sName: $event, order: this.orderBy })
+      this.key += 1
+    }
   },
 
   created() {

@@ -27,10 +27,58 @@ export const mutations = {
   fetchCompanyMembers(state, payload) {
     state.companyMembers = payload;
   },
+  
   setCompanyTasks(state, payload) {
     state.companyTasks = payload;
-  }
+  },
 
+  sortCompanyTasks(state, payload) {
+
+    // sort By Title
+    if(payload.sName == 'name' && payload.order == 'asc') {
+      state.companyTasks.sort((a,b) => a.title.localeCompare(b.title))
+    }
+
+    if(payload.sName == 'name' && payload.order == 'desc') {
+      state.companyTasks.sort((a,b) => b.title.localeCompare(a.title))
+    }
+
+    // sort By Status
+    if(payload.sName == 'status' && payload.order == 'asc') {
+      state.companyTasks.sort((a,b) => a.status.text.localeCompare(b.status.text))
+    }
+
+    if(payload.sName == 'status' && payload.order == 'desc') {
+      state.companyTasks.sort((a,b) => b.status.text.localeCompare(a.status.text))
+    }
+
+    // sort by owner
+    if(payload.sName == 'owner' && payload.order == 'asc') {
+      state.companyTasks.sort((a,b) => a.user.firstName.localeCompare(b.user.firstName))
+    }
+
+    if(payload.sName == 'owner' && payload.order == 'desc') {
+      state.companyTasks.sort((a,b) => b.user.firstName.localeCompare(a.user.firstName))
+    }
+
+    // sort by due date
+    if(payload.sName == 'dueDate' && payload.order == 'asc') {
+      state.companyTasks.sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate))
+    }
+
+    if(payload.sName == 'dueDate' && payload.order == 'desc') {
+      state.companyTasks.sort((a,b) => new Date(b.dueDate) - new Date(a.dueDate))
+    }
+
+    // sort by priority
+    if(payload.sName == 'priority' && payload.order == 'asc') {
+      state.companyTasks.sort((a,b) => a.priority.text.localeCompare(b.priority.text))
+    }
+
+    if(payload.sName == 'priority' && payload.order == 'desc') {
+      state.companyTasks.sort((a,b) => b.priority.text.localeCompare(a.priority.text))
+    }
+  }
 };
 
 export const actions = {
@@ -61,5 +109,9 @@ export const actions = {
       ctx.commit('setCompanyTasks', res.data);
       return res.data
     }
+  },
+
+  sortCompanyTasks(ctx, payload) {
+    ctx.commit('sortCompanyTasks', payload)
   }
 };
