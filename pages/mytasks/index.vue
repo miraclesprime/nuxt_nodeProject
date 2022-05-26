@@ -2,9 +2,9 @@
 <client-only>
   <div id="my-tasks-page-wrapper" class="mytask-page-wrapper">
     <page-title title="My Tasks"></page-title>
-    <user-tasks-actions v-on:filterView="filterView" />
+    <user-tasks-actions v-on:filterView="filterView" v-on:sort="sortBy" />
     <div id="mytask-table-wrapper" class="mytask-table-wrapper position-relative of-scroll-y">
-      <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Due Soon', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName">
+      <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Due Soon', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key">
         <template #cell(title)="data">
           <div class="d-flex gap-05">
             <span class="text-dark">{{ data.value.title }}</span>
@@ -57,7 +57,9 @@ export default {
     return {
       taskFields: USER_TASKS,
       loading: false,
-      viewName: null
+      viewName: null,
+      orderBy: 'desc',
+      key: 100
     }
   },
 
@@ -134,6 +136,18 @@ export default {
       }
       this.loading = false
     },
+
+    sortBy($event) {
+
+      if(this.orderBy == 'asc') {
+          this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+
+      this.$store.dispatch('user/sortUserTasks', {sName: $event, order: this.orderBy})
+      this.key += 1 
+    }
   },
 
   created() {

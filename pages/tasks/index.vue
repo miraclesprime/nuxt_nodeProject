@@ -2,9 +2,9 @@
 <client-only>
   <div id="task-page-wrapper" class="task-page-wrapper">
     <page-title title="Tasks"></page-title>
-    <company-tasks-actions v-on:filterView="filterView" />
+    <company-tasks-actions v-on:filterView="filterView" v-on:sort="sortBy" />
     <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
-      <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Department', variant: 'secondary'}" class="border-gray4 bg-white">
+      <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Department', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key">
         <template #cell(title)="data">
           <div class="d-flex gap-05">
             <span class="text-dark">{{ data.value.title }}</span>
@@ -48,8 +48,10 @@ export default {
     return {
       title: "Tasks",
       taskFields: TaskFields,
-      gridType: "list",
       loading: false,
+      viewName: null,
+      orderBy: 'desc',
+      key: 100
     }
   },
   computed: {
@@ -128,6 +130,18 @@ export default {
       }
       this.loading = false
     },
+
+    sortBy($event) {
+
+      if(this.orderBy == 'asc') {
+          this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+
+      this.$store.dispatch('company/sortCompanyTasks', {sName: $event, order: this.orderBy})
+      this.key += 1 
+    }
   },
 
   created() {
