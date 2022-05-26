@@ -184,14 +184,18 @@ export default {
   },
   created() {
     this.$root.$on("open-sidebar", (payload) => {
-      // console.log(payload.project)
+      console.log(payload.project)
       this.openSidebar = true;
       // this.toggleSidebar
       if (!payload.id) {
         this.$store.dispatch("task/setSingleTask", {})
       } else {
-        this.$store.dispatch("section/fetchProjectSections", { projectId: payload.project[0].projectId, filter: 'all' })
-        this.$store.dispatch("task/setSingleTask", { ...payload, projectId: payload.project[0].projectId })
+        if (payload.project.length > 0) {
+          this.$store.dispatch("section/fetchProjectSections", { projectId: payload.project[0].projectId, filter: 'all' })
+          this.$store.dispatch("project/setSingleProject", payload.project[0].project)
+          // this.$store.dispatch("task/setSingleTask", { ...payload, projectId: payload.project[0].projectId })
+        } 
+        this.$store.dispatch("task/setSingleTask", payload)
       }
     });
     this.$root.$on('close-sidebar', () => {
