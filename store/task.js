@@ -199,7 +199,7 @@ export const actions = {
       })
       .then((res) => {
         let team = res.data.data.members;
-        console.log(team)
+        // console.log(team)
         let data = team.map((el) => {
           return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName };
         });

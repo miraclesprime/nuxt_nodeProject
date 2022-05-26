@@ -17,27 +17,35 @@
           <div class="d-flex gap-05 align-center">
             <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
             </div>
-            <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" class="text-dark text-truncate">{{ favoriteStatusLabel(data.value.status ? data.value.status.text : "") }}</span>
-          </div>
-        </template>
-        <template #cell(dueDate)="data">
-          <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span>
-        </template>
-        <template #cell(priority)="data">
-          <div class="d-flex gap-05 align-center">
-            <bib-icon icon="urgent-solid" :scale="1.1" :variant="favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
-            <span id="project-text" :class="'text-' + favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')">
-              {{ capitalizeFirstLetter(data.value.priority ? data.value.priority.text : '') }}
-            </span>
-          </div>
-        </template>
-      </bib-table>
-      <loading :loading="loading"></loading>
+            </div>
+          </template>
+          <template #cell(owner)="data">
+            <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
+          </template>
+          <template #cell(status)="data">
+            <div class="d-flex gap-05 align-center">
+              <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
+              </div>
+              <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" class="text-dark text-truncate">{{ favoriteStatusLabel(data.value.status ? data.value.status.text : "") }}</span>
+            </div>
+          </template>
+          <template #cell(dueDate)="data">
+            <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span>
+          </template>
+          <template #cell(priority)="data">
+            <div class="d-flex gap-05 align-center">
+              <bib-icon icon="urgent-solid" :scale="1.1" :variant="favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
+              <span id="project-text" :class="'text-' + favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')">
+                {{ capitalizeFirstLetter(data.value.priority ? data.value.priority.text : '') }}
+              </span>
+            </div>
+          </template>
+        </bib-table>
+        <loading :loading="loading"></loading>
+      </div>
     </div>
-  </div>
-</client-only>
+  </client-only>
 </template>
-
 <script>
 import { mapGetters } from "vuex";
 import { TASK_FAVORITES as TaskFields } from '../../config/constants'
@@ -107,28 +115,34 @@ export default {
       return str.charAt(0).toUpperCase() + str.slice(1)
     },
 
+    openSidebar(task) {
+      this.$nuxt.$emit("open-sidebar", true);
+      
+    },
+
     filterView($event) {
       this.loading = true
       let compid = JSON.parse(localStorage.getItem("user")).subb;
       if ($event == 'complete') {
-        this.$store.dispatch('company/setCompanyTasks', { companyId : compid, filter: 'complete'}).then((res) => {
+        this.$store.dispatch('company/setCompanyTasks', { companyId: compid, filter: 'complete' }).then((res) => {
           this.loading = false
         }).catch(e => console.log(e))
         this.viewName = 'complete'
       }
       if ($event == 'incomplete') {
-        this.$store.dispatch('company/setCompanyTasks', { companyId : compid, filter: 'incomplete'}).then((res) => {
+        this.$store.dispatch('company/setCompanyTasks', { companyId: compid, filter: 'incomplete' }).then((res) => {
           this.loading = false
         }).catch(e => console.log(e))
-          this.viewName = 'incomplete'
+        this.viewName = 'incomplete'
       }
       if ($event == 'all') {
-        this.$store.dispatch('company/setCompanyTasks', { companyId : compid, filter: 'all'}).then((res) => {
+        this.$store.dispatch('company/setCompanyTasks', { companyId: compid, filter: 'all' }).then((res) => {
           this.loading = false
         }).catch(e => console.log(e))
         this.viewName = 'all'
       }
       this.loading = false
+
     },
 
     sortBy($event) {
@@ -148,7 +162,7 @@ export default {
     if (process.client) {
       this.loading = true
       let compid = JSON.parse(localStorage.getItem("user")).subb;
-      this.$store.dispatch('company/setCompanyTasks', { companyId : compid, filter: 'all'}).then((res) => {
+      this.$store.dispatch('company/setCompanyTasks', { companyId: compid, filter: 'all' }).then((res) => {
         this.loading = false;
       })
     }
@@ -157,5 +171,10 @@ export default {
 
 </script>
 <style lang="scss" scoped>
-.task-page-wrapper { display: grid; grid-template-rows: auto auto calc(100vh - 150px); grid-template-columns: 1fr;}
+.task-page-wrapper {
+  display: grid;
+  grid-template-rows: auto auto calc(100vh - 150px);
+  grid-template-columns: 1fr;
+}
+
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="position-relative">
-    <bib-table v-for="(item, index) in sections" :key="`tasklist-${key}${item.id}${sortName ? sortName : ''}`" :fields="tableFields" :sections="item.tasks" :headless="index > 0" :collapseObj="showSectionTitle(item)" hide-no-column class="border-gray4 bg-white" @file-title-sort="$emit('sort-task','name')" @file-status-sort="$emit('sort-task','status')" @file-priority-sort="$emit('sort-task','priority')" @file-owner-sort="$emit('sort-task','owner')" @file-startDate-sort="$emit('sort-task','startDate')" @file-dueDate-sort="$emit('sort-task','dueDate')"  >
+    <bib-table v-for="(item, index) in sections" :key="`tasklist-${key}${item.id}${sortName ? sortName : ''}`" :fields="tableFields" :sections="item.tasks" :headless="index > 0" :collapseObj="showSectionTitle(item)" hide-no-column class="border-gray4 bg-white" @file-title-sort="$emit('sort-task','name')" @file-status-sort="$emit('sort-task','status')" @file-priority-sort="$emit('sort-task','priority')" @file-owner-sort="$emit('sort-task','owner')" @file-startDate-sort="$emit('sort-task','startDate')" @file-dueDate-sort="$emit('sort-task','dueDate')">
       <template #cell(title)="data">
         <div class="d-flex gap-05 align-center">
           <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data)" class="cursor-pointer" @click="handleTaskTable_status(data)"></bib-icon>
@@ -8,7 +8,7 @@
         </div>
       </template>
       <template #cell(owner)="data">
-        <user-info v-if="data.value.userId" :userId="data.value.userId" ></user-info>
+        <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
       </template>
       <template #cell(status)="data">
         <div class="d-flex gap-05 align-center">
@@ -17,10 +17,10 @@
         </div>
       </template>
       <template #cell(startDate)="data">
-          <span class="text-dark d-inline-flex" style="line-height: normal;" v-format-date="data.value.createdAt"></span>
+        <span class="text-dark d-inline-flex" style="line-height: normal;" v-format-date="data.value.createdAt"></span>
       </template>
       <template #cell(dueDate)="data">
-          <span class="text-dark d-inline-flex" style="line-height: normal;" v-format-date="data.value.dueDate"></span>
+        <span class="text-dark d-inline-flex" style="line-height: normal;" v-format-date="data.value.dueDate"></span>
       </template>
       <template #cell(priority)="data">
         <div class="d-flex gap-05 align-center">
@@ -31,14 +31,13 @@
     </bib-table>
   </div>
 </template>
-
 <script>
 import { TASK_FIELDS } from "config/constants";
 import { mapGetters } from 'vuex';
 export default {
   props: {
-    project: { type: Object, required: true},
-    sections: { type: Array, required: true},
+    project: { type: Object, required: true },
+    sections: { type: Array, required: true },
   },
   data() {
     return {
@@ -48,12 +47,18 @@ export default {
       flag: false,
     };
   },
-  
+
   methods: {
     openSidebar(task, projectId) {
-      this.$nuxt.$emit("open-sidebar", true);
-      this.$store.dispatch('task/setSingleTask', {...task, projectId: projectId})
-      this.$store.dispatch('task/fetchTeamMember', { id: task.id } )
+      let project = [{
+        projectId: projectId,
+        project: {
+          id: projectId
+        }
+      }]
+      this.$nuxt.$emit("open-sidebar", { ...task, project: project });
+      /*this.$store.dispatch('task/setSingleTask', {...task, projectId: projectId})
+      this.$store.dispatch('task/fetchTeamMember', { id: task.id } )*/
     },
     /*updateKey($event) {
       // console.log($event)

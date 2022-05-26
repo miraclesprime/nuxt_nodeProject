@@ -20,37 +20,48 @@
           <div class="d-flex gap-05 align-center">
             <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
             </div>
-            <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" class="text-dark text-truncate">{{ favoriteStatusLabel(data.value.status ? data.value.status.text : "") }}</span>
           </div>
-        </template>
-        <template #cell(createdAt)="data">
-          <span :id="'projects-' + data.value.createdAt + '-text'" class="text-dark text-truncate" v-format-date="data.value.createdAt"></span>
-          <!-- <div class="justify-between text-dark" :id="'projects-' + data.value.dueDate">
+          </template>
+          <template #cell(projectId)="data">
+            <project-info :projectId="data.value.project[0] ? data.value.project[0].projectId : null"></project-info>
+          </template>
+          <template #cell(owner)="data">
+            <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
+          </template>
+          <template #cell(status)="data">
+            <div class="d-flex gap-05 align-center">
+              <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
+              </div>
+              <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" class="text-dark text-truncate">{{ favoriteStatusLabel(data.value.status ? data.value.status.text : "") }}</span>
+            </div>
+          </template>
+          <template #cell(createdAt)="data">
+            <span :id="'projects-' + data.value.createdAt + '-text'" class="text-dark text-truncate" v-format-date="data.value.createdAt"></span>
+            <!-- <div class="justify-between text-dark" :id="'projects-' + data.value.dueDate">
             </div> -->
-        </template>
-        <template #cell(dueDate)="data">
-          <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span>
-          <!-- <div class="justify-between text-dark" :id="'projects-' + data.value.dueDate">
+          </template>
+          <template #cell(dueDate)="data">
+            <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span>
+            <!-- <div class="justify-between text-dark" :id="'projects-' + data.value.dueDate">
             </div> -->
-        </template>
-        <template #cell(priority)="data">
-          <div class="d-flex gap-05 align-center">
-            <bib-icon icon="urgent-solid" :scale="1.1" :variant="favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
-            <span id="project-text" :class="'text-' + favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')">
-              {{ capitalizeFirstLetter(data.value.priority ? data.value.priority.text : '') }}
-            </span>
-          </div>
-        </template>
-      </bib-table>
-      <loading :loading="loading"></loading>
+          </template>
+          <template #cell(priority)="data">
+            <div class="d-flex gap-05 align-center">
+              <bib-icon icon="urgent-solid" :scale="1.1" :variant="favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
+              <span id="project-text" :class="'text-' + favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')">
+                {{ capitalizeFirstLetter(data.value.priority ? data.value.priority.text : '') }}
+              </span>
+            </div>
+          </template>
+        </bib-table>
+        <loading :loading="loading"></loading>
+      </div>
     </div>
-  </div>
-</client-only>
+  </client-only>
 </template>
-
 <script>
 import { USER_TASKS } from "../../config/constants";
-import {mapGetters} from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
   data() {
@@ -114,6 +125,11 @@ export default {
       return str.charAt(0).toUpperCase() + str.slice(1)
     },
 
+    openSidebar(task) {
+      this.$nuxt.$emit("open-sidebar", true);
+      
+    },
+
     filterView($event) {
       this.loading = true
       if ($event == 'complete') {
@@ -126,7 +142,7 @@ export default {
         this.$store.dispatch('user/setUserTasks', { filter: 'incomplete' }).then((res) => {
           this.loading = false
         }).catch(e => console.log(e))
-          this.viewName = 'incomplete'
+        this.viewName = 'incomplete'
       }
       if ($event == 'all') {
         this.$store.dispatch('user/setUserTasks', { filter: 'all' }).then((res) => {
@@ -135,6 +151,7 @@ export default {
         this.viewName = 'all'
       }
       this.loading = false
+
     },
 
     sortBy($event) {
@@ -153,7 +170,7 @@ export default {
   created() {
     if (process.client) {
       this.loading = true
-      this.$store.dispatch('user/setUserTasks' , { filter: 'all' }).then((res) => {
+      this.$store.dispatch('user/setUserTasks', { filter: 'all' }).then((res) => {
         this.loading = false;
       })
     }
