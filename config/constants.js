@@ -394,15 +394,6 @@ export const USER_TASKS = [
     }
   },
   { 
-    label: 'Owner', 
-    key: 'owner', 
-    header_icon: {
-      icon: 'swap-vertical',
-      event: 'file-owner-sort',
-      isActive: false
-    }
-  },
-  { 
     label: 'Status', 
     key: 'status', 
     header_icon: {
@@ -465,6 +456,23 @@ export const USER_TASKS = [
       isActive: false
     }
   },
+]
+
+export const USER_TASK_SORT = [
+  { label: 'Name', key: 'name' },
+  { label: 'Project', key: 'projectId' },
+  { label: 'Priority', key: 'priority' },
+  { label: 'Status', key: 'status' },
+  { label: 'Start Date', key: 'createdAt' },
+  { label: 'Due Date', key: 'dueDate' },
+]
+
+export const COMPANY_TASK_SORT = [
+  { label: 'Name', key: 'name' },
+  { label: 'Status', key: 'status' },
+  { label: 'Priority', key: 'priority' },
+  { label: 'Owner', key: 'owner' },
+  { label: 'Due Date', key: 'dueDate' },
 ]
 
 export const TaskTeamFields = [

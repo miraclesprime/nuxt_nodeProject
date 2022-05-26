@@ -29,7 +29,8 @@
 </template>
 
 <script>
-import { VIEW_FILTER, TASK_SORT } from 'config/constants.js'
+import { VIEW_FILTER, USER_TASK_SORT } from 'config/constants.js'
+
 export default {
   props: {
     gridType: {
@@ -43,7 +44,7 @@ export default {
       selectInfo: null,
       sortName: '',
       viewing: VIEW_FILTER,
-      sorting: TASK_SORT
+      sorting: USER_TASK_SORT
     };
   },
   methods: {

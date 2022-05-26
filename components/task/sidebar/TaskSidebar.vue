@@ -377,7 +377,7 @@ export default {
       if (task.statusCode == 200) {
         this.$store.dispatch("task/fetchTasks", { id: this.project.id }).then(() => this.loading = false)
       }
-      this.$emit("update-key")
+      // this.$emit("update-key")
       this.$nuxt.$emit("update-key")
     },
 

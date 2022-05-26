@@ -13,10 +13,10 @@
       <!-- <bib-input type="text" ref="newsectionbibinput" v-model="newSectionName" name="sectionname" size="sm" placeholder="Enter section name"></bib-input> -->
     </section>
     <template v-if="gridType === 'list'">
-      <task-list-section :project="project" :sections="localdata"  :key="key" v-on:sort-task="taskSort($event)"></task-list-section>
+      <task-list-section :project="project" :sections="localdata" :templateKey="templateKey" v-on:sort-task="taskSort($event)"></task-list-section>
     </template>
     <template v-else>
-      <task-grid-section :sections="localdata" :activeTask="activeTask" v-on:update-key="updateKey">
+      <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" v-on:update-key="updateKey">
       </task-grid-section>
     </template>
     <loading :loading="loading"></loading>
@@ -64,7 +64,7 @@ export default {
       localdata: [],
       sortName: "",
       loading: false,
-      key: 0,
+      templateKey: 0,
       orderBy: "asc",
       renameModal: false,
       sectionId: null,
@@ -101,6 +101,11 @@ export default {
       this.sectionId = $event.id
       this.sectionTitle = $event.title
     })
+
+    this.$nuxt.$on("update-key", () => {
+      console.log('update key event capture')
+      this.updateKey()
+    })
   },
 
   mounted() {
@@ -120,7 +125,7 @@ export default {
       })
       // console.log("sorted =>", sorted)
       this.localdata = sorted
-      this.key += 1
+      this.templateKey += 1
       this.loading = false
     }).catch(e => console.log(e))
   },
@@ -136,7 +141,7 @@ export default {
       })
       // console.log("sorted =>", sorted)
       this.localdata = sorted
-      this.key += 1
+      this.templateKey += 1
       // this.$nuxt.$emit("update-key", this.key)
     },
     taskSort($event) {
@@ -154,8 +159,8 @@ export default {
             sec["tasks"] = sec.tasks.sort((a, b) => b.title.localeCompare(a.title))
           })
         }
-        this.key += 1
-        console.log(this.key, this.orderBy)
+        this.templateKey += 1
+        // console.log(this.key, this.orderBy)
       }
       // Sort By owner
       if ($event == "owner") {
@@ -170,8 +175,8 @@ export default {
             sec["tasks"] = sec.tasks.sort((a, b) => b.user.firstName.localeCompare(a.user.firstName));
           })
         }
-        this.key += 1
-        console.log(this.key, this.orderBy)
+        this.templateKey += 1
+        // console.log(this.key, this.orderBy)
       }
       // sort By Status
       if ($event == "status") {
@@ -186,8 +191,8 @@ export default {
             sec["tasks"] = sec.tasks.sort((a, b) => b.status.text.localeCompare(a.status.text));
           })
         }
-        this.key += 1
-        console.log(this.key, this.orderBy)
+        this.templateKey += 1
+        // console.log(this.key, this.orderBy)
       }
       // Sort By Priotity
       if ($event == "priority") {
@@ -264,7 +269,8 @@ export default {
       // console.log($event)
       // in case of create task 
       if (!$event) {
-        this.$store.dispatch("task/setSingleTask", {})
+        // this.$store.dispatch("task/setSingleTask", {})
+        this.$nuxt.$emit("open-sidebar", $event)
       }
       this.flag = !this.flag;
       /*this.$emit("open-sidebar", this.flag);
@@ -327,7 +333,7 @@ export default {
           title: this.sectionTitle
         }
       })
-      console.log("rename section output",sec)
+      console.log("rename section output", sec)
       if (sec.statusCode = 200) {
         this.renameModal = false
         this.updateKey()
