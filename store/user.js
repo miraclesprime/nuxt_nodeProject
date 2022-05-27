@@ -57,11 +57,49 @@ export const mutations = {
 
     // sort By Project
     if(payload.sName == 'projectId' && payload.order == 'asc') {
-      state.userTasks.sort((a,b) => a.project[0].project.title.localeCompare(b.project[0].project.title))
+
+      let arr = JSON.parse(JSON.stringify(state.userTasks))
+      let newArr = []
+
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].project[0]) {
+          newArr.unshift(arr[i])
+        } else {
+          newArr.push(arr[i])
+        }
+      }
+
+      newArr.sort((a, b) => {
+        if (a.project[0] && b.project[0]) {
+          return a.project[0].project.title.localeCompare(b.project[0].project.title)
+        }
+      });
+      state.userTasks = newArr;
+
+      // state.userTasks.sort((a,b) => a.project[0].project.title.localeCompare(b.project[0].project.title))
     }
 
     if(payload.sName == 'projectId' && payload.order == 'desc') {
-      state.userTasks.sort((a,b) => b.project[0].project.title.localeCompare(a.project[0].project.title))
+      
+      let arr = JSON.parse(JSON.stringify(state.userTasks))
+      let newArr = []
+
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].project[0]) {
+          newArr.unshift(arr[i])
+        } else {
+          newArr.push(arr[i])
+        }
+      }
+
+      newArr.sort((a, b) => {
+        if (a.project[0] && b.project[0]) {
+          return b.project[0].project.title.localeCompare(a.project[0].project.title)
+        }
+      });
+      state.userTasks = newArr;
+      
+      // state.userTasks.sort((a,b) => b.project[0].project.title.localeCompare(a.project[0].project.title))
     }
 
     // sort By Status
