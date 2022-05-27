@@ -103,7 +103,7 @@ export default {
     })
 
     this.$nuxt.$on("update-key", () => {
-      console.log('update key event capture')
+      // console.log('update key event capture')
       this.updateKey()
     })
   },

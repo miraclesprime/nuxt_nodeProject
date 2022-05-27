@@ -1,7 +1,7 @@
 <template>
-  <div class="of-scroll-x position-relative">
-    <draggable v-model="sections" class="d-flex " :move="moveSection" handle=".section-drag-handle">
-      <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in sections" :key="`grid-${templateKey}${section.title}${section.id}`">
+  <div class="of-scroll-x position-relative" style="min-height: 20rem;">
+    <draggable v-model="localdata" class="d-flex " :move="moveSection" v-on:end="sectionDragEnd" handle=".section-drag-handle">
+      <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${templateKey}${section.title}${section.id}`">
         <div class="w-100 d-flex justify-between section-drag-handle" :id="'tgs-inner-wrap-'+section.id" style="margin-bottom: 10px">
           <div class="title text-gray" :id="'tgs-label-'+section.id">{{ section.title.includes('_section') ? 'Untitled section' : section.title }}</div>
           <div class="d-flex align-center ml-auto section-options" :id="'tgs-section-options-'+section.id">
@@ -38,7 +38,6 @@
                 <bib-button pop="elipsis" icon="elipsis" :icon-variant="overdue(task) == 'bg-danger'? 'white' :'secondary'">
                   <template v-slot:menu>
                     <div class="list" :id="'tg-list'+task.id">
-                      
                       <span class="list__item" :id="'tg-comp'+task.id">
                         <bib-icon icon="check-circle" class="mr-05"></bib-icon> Mark Completed
                       </span>
@@ -123,6 +122,7 @@ export default {
     // activeTask: { type: Object },
     // tasks: { type: Array },
   },
+
   /*created() {
     this.$nuxt.$on("update-key", () => {
       console.log('updated-key received')
@@ -146,10 +146,15 @@ export default {
     })
   },*/
   mounted() {
+    this.loading = true
     // console.info('mounted', this.project)
-    this.$store.dispatch("section/fetchProjectSections", { projectId: this.project.id })
-    let key = parseInt(Math.random().toString().slice(-2))
-    this.$nuxt.$emit("update-key", key)
+    this.$store.dispatch("section/fetchProjectSections", { projectId: this.project.id }).then((sections) => {
+      let key = parseInt(Math.random().toString().slice(-2))
+      // console.log(sections)
+      this.localdata = sections
+      this.$emit("update-key")
+      this.loading = false
+    }).catch(e => console.log(e))
 
     // this.taskByOrder();
 
@@ -192,16 +197,18 @@ export default {
 
       // console.log(taskDnD)
       if (taskDnD.statusCode == 200) {
-        this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id }).then(() => {
+        this.$emit("update-key")
+        this.popupMessages.push({ text: taskDnD.message, variant: "success" })
+        /*this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id }).then(() => {
           this.taskByOrder();
           this.popupMessages.push({ text: taskDnD.message, variant: "success" })
-        })
+        })*/
       } else {
         console.warn(taskDnD.message)
         this.popupMessages.push({ text: taskDnD.message, variant: "warning" })
       }
       this.loading = false
-    }, 900),
+    }, 800),
 
     taskByOrder() {
       this.localdata = JSON.parse(JSON.stringify(this.sections))
@@ -224,15 +231,17 @@ export default {
           element.order = index
           ordered.push(element)
         });
-      }, 800)
+      }, 500)
 
-      setTimeout(() => {
+      this.ordered = [...ordered]
+      /*setTimeout(() => {
         this.ordered = [...ordered]
-        this.sectionDragDrop()
-      }, 1200)
+        // this.sectionDrop()
+      }, 1200)*/
 
     },
-    async sectionDragDrop() {
+    sectionDragEnd: _.debounce(async function() {
+
       this.loading = true
       let sectionDnD = await this.$axios.$put("/section/dragdrop", { projectId: this.project.id, data: this.ordered }, {
         headers: {
@@ -245,8 +254,8 @@ export default {
       if (sectionDnD.statusCode == 200) {
         // console.info(sectionDnD.message)
         this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id }).then(() => {
-          // this.key += 1
           this.$nuxt.$emit("update-key")
+          this.popupMessages.push({ text: sectionDnD.message, variant: "success" })
         })
       } else {
         console.warn(sectionDnD.message)
@@ -254,7 +263,8 @@ export default {
       }
 
       this.loading = false
-    },
+
+    }, 800),
 
     debounceMoveTask: _.debounce(function(e) {
       let tasks = []
@@ -272,7 +282,7 @@ export default {
 
     }, 500),
 
-    
+
     taskWithSection(sectionId) {
       var arr = []
 
@@ -353,7 +363,7 @@ export default {
         }
       }]
       this.$nuxt.$emit("open-sidebar", { ...task, project: project });
-      
+
       let el = event.target.offsetParent
       let scrollAmt = event.target.offsetLeft - event.target.offsetWidth;
 

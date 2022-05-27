@@ -184,7 +184,7 @@ export default {
   },
   created() {
     this.$root.$on("open-sidebar", (payload) => {
-      console.log(payload.project)
+      // console.log(payload.project)
       this.openSidebar = true;
       // this.toggleSidebar
       if (!payload.id) {
@@ -194,8 +194,9 @@ export default {
           this.$store.dispatch("section/fetchProjectSections", { projectId: payload.project[0].projectId, filter: 'all' })
           this.$store.dispatch("project/setSingleProject", payload.project[0].project)
           // this.$store.dispatch("task/setSingleTask", { ...payload, projectId: payload.project[0].projectId })
-        } 
+        }
         this.$store.dispatch("task/setSingleTask", payload)
+        this.$store.dispatch('task/fetchTeamMember', { id: payload.id })
       }
     });
     this.$root.$on('close-sidebar', () => {
