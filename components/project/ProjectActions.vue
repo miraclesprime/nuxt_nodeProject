@@ -10,13 +10,13 @@
         <li class="action" id="pa-action-item1">
           <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="viewProjects($event)"></sorting-comp>
         </li>
-        <li class="action" id="pa-action-item2">
+        <!-- <li class="action" id="pa-action-item2">
           <span id="pa-action-item2-text" class="mr-025">Filter By:</span>
           <div class="shape-rounded bg-dark width-105 height-105 d-flex justify-center align-center">
             <bib-button pop="filter-horizontal" icon-variant="white" size="sm">
             </bib-button>
           </div>
-        </li>
+        </li> -->
         <li class="action" id="pa-action-item3">
           <sorting-comp label="Sorted by" :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy($event)"></sorting-comp>
         </li>

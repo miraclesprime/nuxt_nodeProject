@@ -1,26 +1,27 @@
 <template>
-<client-only>
-  <div id="my-tasks-page-wrapper" class="mytask-page-wrapper">
-    <page-title title="My Tasks"></page-title>
-    <user-tasks-actions v-on:filterView="filterView" v-on:sort="sortBy" />
-    <div id="mytask-table-wrapper" class="mytask-table-wrapper position-relative of-scroll-y">
-      <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Due Soon', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key">
-        <template #cell(title)="data">
-          <div class="d-flex gap-05">
-            <span class="text-dark">{{ data.value.title }}</span>
-          </div>
-        </template>
-        <template #cell(projectId)="data">
-           <project-info :projectId="data.value.project[0] ? data.value.project[0].projectId : null"></project-info>
-       </template>
-        <template #cell(owner)="data">
-          <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
-        </template>
-        <template #cell(status)="data">
-          <div class="d-flex gap-05 align-center">
-            <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
+  <client-only>
+    <div id="my-tasks-page-wrapper" class="mytask-page-wrapper">
+      <page-title title="My Tasks"></page-title>
+      <user-tasks-actions v-on:filterView="filterView" v-on:sort="sortBy" />
+      <template v-if="tasks.length">
+      <div id="mytask-table-wrapper" class="mytask-table-wrapper position-relative of-scroll-y">
+        <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Due Soon', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key">
+          <template #cell(title)="data">
+            <div class="d-flex gap-05">
+              <span class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block;  line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{ data.value.title }}</span>
             </div>
-          </div>
+          </template>
+          <template #cell(projectId)="data">
+            <project-info :projectId="data.value.project[0] ? data.value.project[0].projectId : null"></project-info>
+          </template>
+          <template #cell(owner)="data">
+            <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
+          </template>
+          <template #cell(status)="data">
+            <div class="d-flex gap-05 align-center">
+              <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
+              </div>
+            </div>
           </template>
           <template #cell(projectId)="data">
             <project-info :projectId="data.value.project[0] ? data.value.project[0].projectId : null"></project-info>
@@ -56,9 +57,18 @@
         </bib-table>
         <loading :loading="loading"></loading>
       </div>
+      </template>
+      <template v-else>
+        <div>
+          <span id="projects-0" class="d-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
+            <bib-icon icon="warning"></bib-icon> No records found
+          </span>
+        </div>
+        </template>
     </div>
   </client-only>
 </template>
+
 <script>
 import { USER_TASKS } from "../../config/constants";
 import { mapGetters } from 'vuex';
@@ -126,8 +136,15 @@ export default {
     },
 
     openSidebar(task) {
-      this.$nuxt.$emit("open-sidebar", true);
-      
+      // console.log(task)
+      /*let project = [{
+        projectId: task.project[0].projectId,
+        project: {
+          id: task.project[0].projectId
+        }
+      }]*/
+      this.$nuxt.$emit("open-sidebar", task);
+
     },
 
     filterView($event) {
@@ -156,14 +173,14 @@ export default {
 
     sortBy($event) {
 
-      if(this.orderBy == 'asc') {
-          this.orderBy = 'desc'
+      if (this.orderBy == 'asc') {
+        this.orderBy = 'desc'
       } else {
         this.orderBy = 'asc'
       }
 
-      this.$store.dispatch('user/sortUserTasks', {sName: $event, order: this.orderBy})
-      this.key += 1 
+      this.$store.dispatch('user/sortUserTasks', { sName: $event, order: this.orderBy })
+      this.key += 1
     }
   },
 
@@ -178,6 +195,7 @@ export default {
 }
 
 </script>
+
 <style lang="scss" scoped>
 .mytask-page-wrapper {
   display: grid;

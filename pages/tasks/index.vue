@@ -1,22 +1,23 @@
 <template>
-<client-only>
-  <div id="task-page-wrapper" class="task-page-wrapper">
-    <page-title title="Tasks"></page-title>
-    <company-tasks-actions v-on:filterView="filterView" v-on:sort="sortBy" />
-    <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
-      <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Department', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key">
-        <template #cell(title)="data">
-          <div class="d-flex gap-05">
-            <span class="text-dark">{{ data.value.title }}</span>
-          </div>
-        </template>
-        <template #cell(owner)="data">
-          <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
-        </template>
-        <template #cell(status)="data">
-          <div class="d-flex gap-05 align-center">
-            <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
+  <client-only>
+    <div id="task-page-wrapper" class="task-page-wrapper">
+      <page-title title="Tasks"></page-title>
+      <company-tasks-actions v-on:filterView="filterView" v-on:sort="sortBy" />
+      <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
+        <template v-if="tasks.length">
+        <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Department', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key">
+          <template #cell(title)="data">
+            <div class="d-flex gap-05">
+              <span class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block;  line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{ data.value.title }}</span>
             </div>
+          </template>
+          <template #cell(owner)="data">
+            <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
+          </template>
+          <template #cell(status)="data">
+            <div class="d-flex gap-05 align-center">
+              <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
+              </div>
             </div>
           </template>
           <template #cell(owner)="data">
@@ -41,6 +42,14 @@
             </div>
           </template>
         </bib-table>
+        </template>
+        <template v-else>
+        <div>
+          <span id="projects-0" class="d-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
+            <bib-icon icon="warning"></bib-icon> No records found
+          </span>
+        </div>
+        </template>
         <loading :loading="loading"></loading>
       </div>
     </div>
@@ -117,7 +126,7 @@ export default {
 
     openSidebar(task) {
       this.$nuxt.$emit("open-sidebar", true);
-      
+
     },
 
     filterView($event) {
@@ -147,14 +156,14 @@ export default {
 
     sortBy($event) {
 
-      if(this.orderBy == 'asc') {
-          this.orderBy = 'desc'
+      if (this.orderBy == 'asc') {
+        this.orderBy = 'desc'
       } else {
         this.orderBy = 'asc'
       }
 
-      this.$store.dispatch('company/sortCompanyTasks', {sName: $event, order: this.orderBy})
-      this.key += 1 
+      this.$store.dispatch('company/sortCompanyTasks', { sName: $event, order: this.orderBy })
+      this.key += 1
     }
   },
 

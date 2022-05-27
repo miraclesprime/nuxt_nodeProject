@@ -1,7 +1,7 @@
 <template>
   <div class="of-scroll-x position-relative">
     <draggable v-model="sections" class="d-flex " :move="moveSection" handle=".section-drag-handle">
-      <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in sections" :key="`grid-${key}${section.title}${section.id}`">
+      <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in sections" :key="`grid-${templateKey}${section.title}${section.id}`">
         <div class="w-100 d-flex justify-between section-drag-handle" :id="'tgs-inner-wrap-'+section.id" style="margin-bottom: 10px">
           <div class="title text-gray" :id="'tgs-label-'+section.id">{{ section.title.includes('_section') ? 'Untitled section' : section.title }}</div>
           <div class="d-flex align-center ml-auto section-options" :id="'tgs-section-options-'+section.id">
@@ -28,7 +28,7 @@
         <div class="task-section__body" :id="'tgs-task-section-body-'+section.id">
           <draggable :list="section.tasks" group="task" :move="debounceMoveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable" :class="{highlight: drag}" :data-section="section.id">
             <!-- <transition-group type="transition" :name="!drag ? 'flip-list' : null"> -->
-            <div class="task-grid " v-for="task in section.tasks" :key="task.title + key + '-' + task.id" :class="[overdue(task), currentTask.id == task.id ? 'active' : '']" :id="'tg-card-'+task.id" v-on:click="openSidebar(task, section.projectId)">
+            <div class="task-grid " v-for="task in section.tasks" :key="task.title + templateKey + '-' + task.id" :class="[overdue(task), currentTask.id == task.id ? 'active' : '']" :id="'tg-card-'+task.id" v-on:click="openSidebar(task, section.projectId)">
               <figure v-if="task.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
               <div class="task-top" :id="'tg-card-top'+task.id">
                 <div class="d-flex" :id="'tg-card-inside-wrap'+task.id">
@@ -109,7 +109,7 @@ export default {
       localdata: [],
       flag: false,
       ordered: [],
-      key: 0,
+      // key: 0,
       loading: false,
       drag: false,
       taskDnDlist: [],
@@ -119,6 +119,7 @@ export default {
   },
   props: {
     sections: { type: Array, required: true },
+    templateKey: { default: 0 },
     // activeTask: { type: Object },
     // tasks: { type: Array },
   },
@@ -147,7 +148,8 @@ export default {
   mounted() {
     // console.info('mounted', this.project)
     this.$store.dispatch("section/fetchProjectSections", { projectId: this.project.id })
-    this.key += parseInt(Math.random().toString().slice(-2))
+    let key = parseInt(Math.random().toString().slice(-2))
+    this.$nuxt.$emit("update-key", key)
 
     // this.taskByOrder();
 
@@ -159,9 +161,6 @@ export default {
       currentTask: 'task/getSelectedTask',
       // sections: "section/getProjectSections",
     }),
-    templateKey() {
-
-    },
   },
   methods: {
     taskDragStart(e) {
@@ -214,8 +213,8 @@ export default {
       })
       // console.log("sorted =>", sorted)
       this.localdata = sorted
-      this.key += 1
-      this.$nuxt.$emit("update-key", this.key)
+      // this.key += 1
+      this.$nuxt.$emit("update-key")
     },
     moveSection(e) {
       let ordered = []
@@ -246,8 +245,8 @@ export default {
       if (sectionDnD.statusCode == 200) {
         // console.info(sectionDnD.message)
         this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id }).then(() => {
-          this.key += 1
-          this.$nuxt.$emit("update-key", this.key)
+          // this.key += 1
+          this.$nuxt.$emit("update-key")
         })
       } else {
         console.warn(sectionDnD.message)
@@ -273,26 +272,7 @@ export default {
 
     }, 500),
 
-    /*taskMove(e) {
-
-      let tasks = []
-      console.log(e.relatedContext.list)
-
-      setTimeout((e) => {
-        e.relatedContext.list.forEach((element, index) => {
-          element['order'] = index
-          tasks.push(element)
-          console.log(element.order, element.title)
-        })
-      }, 300)
-
-      setTimeout(() => {
-        console.log(tasks)
-        this.taskDnDlist = tasks
-        this.taskDnDsectionId = e.to.dataset.section
-      }, 600)
-
-    },*/
+    
     taskWithSection(sectionId) {
       var arr = []
 
