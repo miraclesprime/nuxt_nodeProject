@@ -111,7 +111,7 @@ export default {
     },
     goToProjectId(project) {
       // console.log(project)
-      // this.$store.dispatch('project/setSingleProject', project)
+      this.$store.dispatch('project/setSingleProject', project)
       this.$router.push("/projects/" + project.id)
     },
 

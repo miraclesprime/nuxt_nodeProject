@@ -1,6 +1,6 @@
 <template>
   <div class="of-scroll-x position-relative" style="min-height: 20rem;">
-    <draggable v-model="localdata" class="d-flex " :move="moveSection" v-on:end="sectionDragEnd" handle=".section-drag-handle">
+    <draggable :list="localdata" class="d-flex " :move="moveSection" v-on:end="sectionDragEnd" handle=".section-drag-handle">
       <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${templateKey}${section.title}${section.id}`">
         <div class="w-100 d-flex justify-between section-drag-handle" :id="'tgs-inner-wrap-'+section.id" style="margin-bottom: 10px">
           <div class="title text-gray" :id="'tgs-label-'+section.id">{{ section.title.includes('_section') ? 'Untitled section' : section.title }}</div>
@@ -92,14 +92,11 @@
   </div>
 </template>
 <script>
-// import { Container, Draggable } from "vue-smooth-dnd";
 import draggable from 'vuedraggable'
 import { mapGetters } from 'vuex';
 
 export default {
   components: {
-    /*Container,
-    Draggable,*/
     draggable
   },
   data() {
@@ -108,7 +105,6 @@ export default {
       localdata: [],
       flag: false,
       ordered: [],
-      // key: 0,
       loading: false,
       drag: false,
       taskDnDlist: [],
@@ -123,28 +119,13 @@ export default {
     // tasks: { type: Array },
   },
 
-  /*created() {
-    this.$nuxt.$on("update-key", () => {
-      console.log('updated-key received')
-      this.$store.dispatch("section/fetchProjectSections", {projectId:this.project.id})
-        .then(() => {
-          // this.taskByOrder();
-          // console.log(this.sections)
+  watch: {
+    sections(newVal) {
+      // console.info(newVal)
+      this.localdata = newVal
+    }
+  },
 
-          this.localdata = JSON.parse(JSON.stringify(this.sections))
-
-          let sorted = this.localdata.map(s => {
-            let t = s.tasks.sort((a, b) => a.order - b.order)
-            s.tasks = t
-            return s
-          })
-          // console.log("sorted =>", sorted)
-          this.localdata = sorted
-          this.key += 1
-        })
-        .catch(e => console.log(e))
-    })
-  },*/
   mounted() {
     this.loading = true
     // console.info('mounted', this.project)
@@ -155,8 +136,6 @@ export default {
       this.$emit("update-key")
       this.loading = false
     }).catch(e => console.log(e))
-
-    // this.taskByOrder();
 
   },
   computed: {
@@ -172,6 +151,23 @@ export default {
       this.drag = true
       // console.log('drag start', e)
     },
+
+    debounceMoveTask: _.debounce(function(e) {
+      let tasks = []
+      // console.log(e.to.dataset, e.relatedContext.list)
+
+      e.relatedContext.list.forEach((element, index) => {
+        element['order'] = index
+        tasks.push(element)
+        // console.table(element.order, element.title)
+      })
+
+      // console.log(tasks, e.to.dataset.section)
+      this.taskDnDlist = tasks
+      this.taskDnDsectionId = +e.to.dataset.section
+
+    }, 600),
+    
     taskDragEnd: _.debounce(async function() {
       this.drag = false
       // console.log('drag end', e)
@@ -199,18 +195,14 @@ export default {
       if (taskDnD.statusCode == 200) {
         this.$emit("update-key")
         this.popupMessages.push({ text: taskDnD.message, variant: "success" })
-        /*this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id }).then(() => {
-          this.taskByOrder();
-          this.popupMessages.push({ text: taskDnD.message, variant: "success" })
-        })*/
       } else {
         console.warn(taskDnD.message)
         this.popupMessages.push({ text: taskDnD.message, variant: "warning" })
       }
       this.loading = false
-    }, 800),
+    }, 1200),
 
-    taskByOrder() {
+    /*taskByOrder() {
       this.localdata = JSON.parse(JSON.stringify(this.sections))
 
       let sorted = this.localdata.map(s => {
@@ -222,26 +214,24 @@ export default {
       this.localdata = sorted
       // this.key += 1
       this.$nuxt.$emit("update-key")
-    },
-    moveSection(e) {
+    },*/
+
+    moveSection: _.debounce(function(e) {
+
+      // console.log(e.relatedContext.list)
+
       let ordered = []
+      e.relatedContext.list.forEach(function(element, index) {
+        element["order"] = index
+        ordered.push(element)
+      });
 
-      setTimeout(() => {
-        this.localdata.forEach(function(element, index) {
-          element.order = index
-          ordered.push(element)
-        });
-      }, 500)
+      this.ordered = ordered
 
-      this.ordered = [...ordered]
-      /*setTimeout(() => {
-        this.ordered = [...ordered]
-        // this.sectionDrop()
-      }, 1200)*/
+    }, 800),
 
-    },
     sectionDragEnd: _.debounce(async function() {
-
+      console.log(this.ordered)
       this.loading = true
       let sectionDnD = await this.$axios.$put("/section/dragdrop", { projectId: this.project.id, data: this.ordered }, {
         headers: {
@@ -254,6 +244,7 @@ export default {
       if (sectionDnD.statusCode == 200) {
         // console.info(sectionDnD.message)
         this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id }).then(() => {
+          this.$emit("update-key")
           this.$nuxt.$emit("update-key")
           this.popupMessages.push({ text: sectionDnD.message, variant: "success" })
         })
@@ -264,26 +255,9 @@ export default {
 
       this.loading = false
 
-    }, 800),
+    }, 1200),
 
-    debounceMoveTask: _.debounce(function(e) {
-      let tasks = []
-      // console.log(e.to.dataset, e.relatedContext.list)
-
-      e.relatedContext.list.forEach((element, index) => {
-        element['order'] = index
-        tasks.push(element)
-        // console.table(element.order, element.title)
-      })
-
-      // console.log(tasks, e.to.dataset.section)
-      this.taskDnDlist = tasks
-      this.taskDnDsectionId = +e.to.dataset.section
-
-    }, 500),
-
-
-    taskWithSection(sectionId) {
+    /*taskWithSection(sectionId) {
       var arr = []
 
       for (var j = 0; j < this.tasks.length; ++j) {
@@ -348,7 +322,7 @@ export default {
       }
 
       return arr;
-    },
+    },*/
 
     overdue(item) {
       // console.log(new Date(item.dueDate), new Date);

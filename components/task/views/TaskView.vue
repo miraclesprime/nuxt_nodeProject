@@ -241,7 +241,7 @@ export default {
 
     },
     updateKey() {
-      // console.log($event)
+      console.log("update-key event received", this.templateKey)
       this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' }).then(() => {
         this.taskByOrder()
       })
