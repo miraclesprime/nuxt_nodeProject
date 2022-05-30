@@ -42,15 +42,15 @@
     </bib-modal-wrapper>
   </div>
 </template>
+
 <script>
-import { Container, Draggable } from "vue-smooth-dnd";
 import { TASK_FIELDS } from "config/constants";
 import { mapGetters } from 'vuex';
 
 export default {
 
   props: {
-    gridType: String,
+    gridType: String, // project ID page 
   },
   data() {
     return {

@@ -2,7 +2,8 @@
   <client-only>
     <div id="my-tasks-page-wrapper" class="mytask-page-wrapper">
       <page-title title="My Tasks"></page-title>
-      <user-tasks-actions v-on:filterView="filterView" v-on:sort="sortBy" />
+      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" />
+      <template v-if="gridType == 'list'">
       <template v-if="tasks.length">
       <div id="mytask-table-wrapper" class="mytask-table-wrapper position-relative of-scroll-y">
         <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Due Soon', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key">
@@ -65,6 +66,34 @@
           </span>
         </div>
         </template>
+      </template>
+
+      <template v-else>
+        <div class="task-grid-section">
+            <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
+              <div class="title text-gray">Due Soon</div>
+
+              <div class="d-flex section-options">
+                <div class="mr-1">
+                  <bib-icon icon="add" variant="success" :scale="1.2" />
+                </div>
+
+                <div>
+                  <bib-icon icon="elipsis" :scale="1.2" />
+                </div>
+              </div>
+            </div>
+
+            <div class="task-section__body">
+                <div
+                  v-for="(item, index) in tasks"
+                  :key="item.name + '-' + index"
+                >
+                  <task-grid :task="item" />
+                </div>
+            </div>
+          </div>
+      </template>
     </div>
   </client-only>
 </template>
@@ -78,6 +107,7 @@ export default {
     return {
       taskFields: USER_TASKS,
       loading: false,
+      gridType: 'list',
       viewName: null,
       orderBy: 'desc',
       key: 100
@@ -186,6 +216,9 @@ export default {
 
   created() {
     if (process.client) {
+      this.$nuxt.$on('change-grid-type', ($event) => {
+        this.gridType = $event;
+      })
       this.loading = true
       this.$store.dispatch('user/setUserTasks', { filter: 'all' }).then((res) => {
         this.loading = false;
@@ -203,4 +236,37 @@ export default {
   grid-template-columns: 1fr;
 }
 
+
+.task-grid-section {
+  width: 16%;
+  min-width: 230px;
+  min-height: 100vh;
+  padding: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  &:not(:first-child) {
+    border-left: 1px solid $gray4;
+  }
+  &:last-child {
+    border-right: 1px solid $gray4;
+  }
+  &:hover {
+    &,
+    & + .task-grid-section {
+      border-left-color: $gray5;
+    }
+    .section-options {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+  &:last-child:hover {
+    border-right-color: $gray5;
+  }
+}
+.section-options {
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.3s;
+}
 </style>
