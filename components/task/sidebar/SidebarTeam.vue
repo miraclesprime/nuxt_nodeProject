@@ -11,7 +11,7 @@
         :id="'teammate-' + index"
         class="border-gray4 bg-white mt-05"
         :sections="teammates" 
-        headless="true"
+        headless
         :key="'teammate-' + teammates ? teammates[0].name : 100"
         :fields="tableFields"
         hide-no-column
@@ -48,6 +48,7 @@ export default {
 
   data() {
     return {
+      index: 0,
       norecord: false,
       tableFields: TaskTeamFields,
       loading: false,

@@ -7,7 +7,9 @@
       <bib-avatar></bib-avatar>
       <span id="project-id-project-title" class=" font-w-700  mr-1 " style="font-size: 1.25rem;">{{project ? project.title : ''}}</span>
       <!-- <bib-page-title label="Page Title"></bib-page-title> -->
-      <span id="project-id-badge-status" class="badge-status">{{project.status ? project.status.text : ''}}</span>
+      <template v-if="project.status">
+        <span id="project-id-badge-status" class="badge-status">{{project.status.text}}</span>
+      </template>
       <div class="ml-auto d-flex gap-05 align-center position-relative" id="project-id-button-wraps">
         <bib-avatar></bib-avatar>
         <bib-button label="invite" variant="light" pill v-on:click="$nuxt.$emit('add-teammember-modal')"></bib-button>
@@ -92,7 +94,6 @@
     </bib-popup-notification-wrapper>
   </div>
 </template>
-
 <script>
 import { mapGetters } from 'vuex'
 import { TABLE_FIELDS, TABS, DEFAULT_TAB, TAB_TITLES } from "config/constants";
@@ -162,7 +163,7 @@ export default {
           this.$store.dispatch('project/setSingleProject', res.data)
         }
       }).catch(err => {
-        console.log("There was some issue in project API " + err);
+        console.log("There was an issue in project API", err);
       })
 
     }
