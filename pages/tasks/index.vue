@@ -2,8 +2,9 @@
   <client-only>
     <div id="task-page-wrapper" class="task-page-wrapper">
       <page-title title="Tasks"></page-title>
-      <company-tasks-actions v-on:filterView="filterView" v-on:sort="sortBy" />
+      <company-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" />
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
+      <template v-if="gridType == 'list'">
         <template v-if="tasks.length">
         <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Department', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key">
           <template #cell(title)="data">
@@ -42,21 +43,52 @@
             </div>
           </template>
         </bib-table>
+          </template>
+          <template v-else>
+          <div>
+            <span id="projects-0" class="d-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
+              <bib-icon icon="warning"></bib-icon> No records found
+            </span>
+          </div>
+          </template>
         </template>
+        
         <template v-else>
-        <div>
-          <span id="projects-0" class="d-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
-            <bib-icon icon="warning"></bib-icon> No records found
-          </span>
-        </div>
+          <div class="task-grid-section">
+            <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
+              <div class="title text-gray">Department</div>
+
+              <div class="d-flex section-options">
+                <div class="mr-1">
+                  <bib-icon icon="add" variant="success" :scale="1.2" />
+                </div>
+
+                <div>
+                  <bib-icon icon="elipsis" :scale="1.2" />
+                </div>
+              </div>
+            </div>
+
+            <div class="task-section__body">
+                <div
+                  v-for="(item, index) in tasks"
+                  :key="item.name + '-' + index"
+                >
+                  <task-grid :task="item" />
+                </div>
+            </div>
+          </div>
         </template>
+        
         <loading :loading="loading"></loading>
       </div>
     </div>
   </client-only>
 </template>
+
 <script>
 import { mapGetters } from "vuex";
+import { Container, Draggable } from "vue-smooth-dnd";
 import { TASK_FAVORITES as TaskFields } from '../../config/constants'
 
 export default {
@@ -64,6 +96,7 @@ export default {
   data() {
     return {
       title: "Tasks",
+      gridType: "list",
       taskFields: TaskFields,
       loading: false,
       viewName: null,
@@ -169,6 +202,9 @@ export default {
 
   created() {
     if (process.client) {
+      this.$nuxt.$on('change-grid-type', ($event) => {
+        this.gridType = $event;
+      })
       this.loading = true
       let compid = JSON.parse(localStorage.getItem("user")).subb;
       this.$store.dispatch('company/setCompanyTasks', { companyId: compid, filter: 'all' }).then((res) => {
@@ -186,4 +222,37 @@ export default {
   grid-template-columns: 1fr;
 }
 
+
+.task-grid-section {
+  width: 16%;
+  min-width: 230px;
+  min-height: 100vh;
+  padding: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  &:not(:first-child) {
+    border-left: 1px solid $gray4;
+  }
+  &:last-child {
+    border-right: 1px solid $gray4;
+  }
+  &:hover {
+    &,
+    & + .task-grid-section {
+      border-left-color: $gray5;
+    }
+    .section-options {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+  &:last-child:hover {
+    border-right-color: $gray5;
+  }
+}
+.section-options {
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.3s;
+}
 </style>
