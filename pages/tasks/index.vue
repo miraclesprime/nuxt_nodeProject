@@ -6,7 +6,8 @@
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
       <template v-if="gridType == 'list'">
         <template v-if="tasks.length">
-        <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Department', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key">
+        <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Department', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key"
+        @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus"  @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
           <template #cell(title)="data">
             <div class="d-flex gap-05">
               <span class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block;  line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{ data.value.title }}</span>
@@ -88,7 +89,6 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { Container, Draggable } from "vue-smooth-dnd";
 import { TASK_FAVORITES as TaskFields } from '../../config/constants'
 
 export default {
@@ -187,6 +187,7 @@ export default {
 
     },
 
+    // Sort By Action List
     sortBy($event) {
 
       if (this.orderBy == 'asc') {
@@ -196,6 +197,67 @@ export default {
       }
 
       this.$store.dispatch('company/sortCompanyTasks', { sName: $event, order: this.orderBy })
+      this.key += 1
+    },
+
+    // Sort By Head Actions
+    sortTitle() {
+      
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+
+      this.$store.dispatch('company/sortCompanyTasks', { sName: 'name', order: this.orderBy })
+      this.key += 1
+    },
+
+    sortOwner() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      
+      this.$store.dispatch('company/sortCompanyTasks', { sName: 'owner', order: this.orderBy })
+      this.key += 1
+    },
+
+    sortByStatus() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      
+      this.$store.dispatch('company/sortCompanyTasks', { sName: 'status', order: this.orderBy })
+      this.key += 1
+    },
+
+    sortByDueDate() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      
+      this.$store.dispatch('company/sortCompanyTasks', { sName: 'dueDate', order: this.orderBy })
+      this.key += 1
+    },
+
+    sortByPriority() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      
+      this.$store.dispatch('company/sortCompanyTasks', { sName: 'priority', order: this.orderBy })
       this.key += 1
     }
   },
