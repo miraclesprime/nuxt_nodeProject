@@ -193,7 +193,7 @@ export default {
         if (payload.project.length > 0) {
           this.$store.dispatch("section/fetchProjectSections", { projectId: payload.project[0].projectId, filter: 'all' })
           // fetch single project data
-          this.$axios.$get(`project/${payload.project[0].project}`, {
+          this.$axios.$get(`project/${payload.project[0].projectId}`, {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
           }).then((res) => {
             if (res) {
@@ -202,6 +202,8 @@ export default {
           }).catch(err => console.log(err))
           // this.$store.dispatch("project/setSingleProject", payload.project[0].project)
           // this.$store.dispatch("task/setSingleTask", { ...payload, projectId: payload.project[0].projectId })
+        } else {
+          this.$store.dispatch('project/setSingleProject', {})
         }
         this.$store.dispatch("task/setSingleTask", payload)
         this.$store.dispatch('task/fetchTeamMember', { id: payload.id })
