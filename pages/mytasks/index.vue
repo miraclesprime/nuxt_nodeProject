@@ -6,7 +6,8 @@
       <template v-if="gridType == 'list'">
         <template v-if="tasks.length">
           <div id="mytask-table-wrapper" class="mytask-table-wrapper position-relative of-scroll-y">
-            <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Due Soon', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key">
+            <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Due Soon', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key"
+            @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
               <template #cell(title)="data">
                 <div class="d-flex gap-05">
                   <span class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block;  line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{ data.value.title }}</span>
@@ -249,6 +250,7 @@ export default {
 
     },
 
+    // Sort By Action List
     sortBy($event) {
 
       if (this.orderBy == 'asc') {
@@ -259,6 +261,79 @@ export default {
 
       this.$store.dispatch('user/sortUserTasks', { sName: $event, order: this.orderBy })
       this.key += 1
+    },
+
+    // Sort By Head Actions
+    sortTitle() {
+      
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+
+      this.$store.dispatch('user/sortUserTasks', { sName: 'name', order: this.orderBy })
+      this.key += 1;
+    },
+
+    sortProject() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      
+      this.$store.dispatch('user/sortUserTasks', { sName: 'projectId', order: this.orderBy })
+      this.key += 1;
+    },
+
+    sortByStatus() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      
+      this.$store.dispatch('user/sortUserTasks', { sName: 'status', order: this.orderBy })
+      this.key += 1;
+    },
+
+    sortByStartDate() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      
+      this.$store.dispatch('user/sortUserTasks', { sName: 'createdAt', order: this.orderBy })
+      this.key += 1;
+    },
+
+    sortByDueDate() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      
+      this.$store.dispatch('user/sortUserTasks', { sName: 'dueDate', order: this.orderBy })
+      this.key += 1;
+    },
+
+    sortByPriority() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      
+      this.$store.dispatch('user/sortUserTasks', { sName: 'priority', order: this.orderBy })
+      this.key += 1;
     }
   },
 

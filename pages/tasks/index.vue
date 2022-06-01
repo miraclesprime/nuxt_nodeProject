@@ -4,45 +4,36 @@
       <page-title title="Tasks"></page-title>
       <company-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" />
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
-        <template v-if="gridType == 'list'">
-          <template v-if="tasks.length">
-            <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Department', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key">
-              <template #cell(title)="data">
-                <div class="d-flex gap-05">
-                  <span class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block;  line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{ data.value.title }}</span>
-                </div>
-              </template>
-              <template #cell(owner)="data">
-                <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
-              </template>
-              <template #cell(status)="data">
-                <div class="d-flex gap-05 align-center">
-                  <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
-                  </div>
-                </div>
-              </template>
-              <template #cell(owner)="data">
-                <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
-              </template>
-              <template #cell(status)="data">
-                <div class="d-flex gap-05 align-center">
-                  <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
-                  </div>
-                  <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" class="text-dark text-truncate">{{ favoriteStatusLabel(data.value.status ? data.value.status.text : "") }}</span>
-                </div>
-              </template>
-              <template #cell(dueDate)="data">
-                <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span>
-              </template>
-              <template #cell(priority)="data">
-                <div class="d-flex gap-05 align-center">
-                  <bib-icon icon="urgent-solid" :scale="1.1" :variant="favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
-                  <span id="project-text" :class="'text-' + favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')">
-                    {{ capitalizeFirstLetter(data.value.priority ? data.value.priority.text : '') }}
-                  </span>
-                </div>
-              </template>
-            </bib-table>
+      <template v-if="gridType == 'list'">
+        <template v-if="tasks.length">
+        <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Department', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key"
+        @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus"  @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
+          <template #cell(title)="data">
+            <div class="d-flex gap-05">
+              <span class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block;  line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{ data.value.title }}</span>
+            </div>
+          </template>
+          <template #cell(owner)="data">
+            <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
+          </template>
+          <template #cell(status)="data">
+            <div class="d-flex gap-05 align-center">
+              <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
+              </div>
+            </div>
+          </template>
+          <template #cell(owner)="data">
+            <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
+          </template>
+          <template #cell(status)="data">
+            <div class="d-flex gap-05 align-center">
+              <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
+              </div>
+              <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" class="text-dark text-truncate">{{ favoriteStatusLabel(data.value.status ? data.value.status.text : "") }}</span>
+            </div>
+          </template>
+          <template #cell(dueDate)="data">
+            <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span>
           </template>
           <template v-else>
             <div>
@@ -81,7 +72,6 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
-import { Container, Draggable } from "vue-smooth-dnd";
 import { TASK_FAVORITES as TaskFields } from '../../config/constants'
 
 export default {
@@ -180,6 +170,7 @@ export default {
 
     },
 
+    // Sort By Action List
     sortBy($event) {
 
       if (this.orderBy == 'asc') {
@@ -189,6 +180,67 @@ export default {
       }
 
       this.$store.dispatch('company/sortCompanyTasks', { sName: $event, order: this.orderBy })
+      this.key += 1
+    },
+
+    // Sort By Head Actions
+    sortTitle() {
+      
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+
+      this.$store.dispatch('company/sortCompanyTasks', { sName: 'name', order: this.orderBy })
+      this.key += 1
+    },
+
+    sortOwner() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      
+      this.$store.dispatch('company/sortCompanyTasks', { sName: 'owner', order: this.orderBy })
+      this.key += 1
+    },
+
+    sortByStatus() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      
+      this.$store.dispatch('company/sortCompanyTasks', { sName: 'status', order: this.orderBy })
+      this.key += 1
+    },
+
+    sortByDueDate() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      
+      this.$store.dispatch('company/sortCompanyTasks', { sName: 'dueDate', order: this.orderBy })
+      this.key += 1
+    },
+
+    sortByPriority() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      
+      this.$store.dispatch('company/sortCompanyTasks', { sName: 'priority', order: this.orderBy })
       this.key += 1
     }
   },
