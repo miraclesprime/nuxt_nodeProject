@@ -13,7 +13,7 @@
       <!-- <bib-input type="text" ref="newsectionbibinput" v-model="newSectionName" name="sectionname" size="sm" placeholder="Enter section name"></bib-input> -->
     </section>
     <template v-if="gridType === 'list'">
-      <task-list-section :project="project" :sections="localdata" :templateKey="templateKey" v-on:sort-task="taskSort($event)"></task-list-section>
+      <task-list-section :project="project" :sections="localdata" :templateKey="templateKey" v-on:sort-task="taskSort($event)" v-on:update-key="updateKey"></task-list-section>
     </template>
     <template v-else>
       <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" v-on:update-key="updateKey">
@@ -241,7 +241,7 @@ export default {
 
     },
     updateKey() {
-      console.log("update-key event received", this.templateKey)
+      // console.log("update-key event received", this.templateKey)
       this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' }).then(() => {
         this.taskByOrder()
       })

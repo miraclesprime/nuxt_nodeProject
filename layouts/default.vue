@@ -125,6 +125,24 @@ export default {
         { img: "Signature", color: "orange", text: "eSign", href: process.env.VITE_BIB_ESIGN_APP_URL },
         { img: "Tick", color: "primary", text: "Project", active: true, href: process.env.VUE_APP_URL },
         { img: "CommentForum", color: "purple", text: "Chat", href: process.env.VITE_BIB_CHAT_APP_URL },
+        {
+          img: "pencil",
+          color: "primary-sub1",
+          text: "Editor",
+          href: "http://dev.editor.business-in-a-box.com"
+        },
+        {
+          img: "video",
+          color: "warning",
+          text: "Video",
+          href: "https://dev-video-conf.business-in-a-box.com"
+        },
+        {
+          img: "data-storage-single",
+          color: "primary",
+          text: "Drive",
+          href: ""
+        },
       ],
       navItems1: [
         { label: "Home", icon: "home", key: "dashboard-route", selected: false },
