@@ -35,6 +35,8 @@
           <template #cell(dueDate)="data">
             <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span>
           </template>
+          </bib-table>
+        </template>
           <template v-else>
             <div>
               <span id="projects-0" class="d-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
@@ -42,7 +44,7 @@
               </span>
             </div>
           </template>
-        </template>
+      </template>
         <template v-else>
           <div class="d-flex">
             <div class="task-grid-section">
