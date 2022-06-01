@@ -3,7 +3,7 @@
     <bib-table v-for="(item, index) in sections" :key="`tasklist-${templateKey}${item.id}${sortName ? sortName : ''}`" :fields="tableFields" :sections="item.tasks" :headless="index > 0" :collapseObj="showSectionTitle(item)" hide-no-column class="border-gray4 bg-white" @file-title-sort="$emit('sort-task','name')" @file-status-sort="$emit('sort-task','status')" @file-priority-sort="$emit('sort-task','priority')" @file-owner-sort="$emit('sort-task','owner')" @file-startDate-sort="$emit('sort-task','startDate')" @file-dueDate-sort="$emit('sort-task','dueDate')">
       <template #cell(title)="data">
         <div class="d-flex gap-05 align-center">
-          <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data)" class="cursor-pointer" @click="handleTaskTable_status(data)"></bib-icon>
+          <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data)" class="cursor-pointer" @click="handleTaskTable_status(data.value)"></bib-icon>
           <span class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block;  line-height:1.25;" @click="openSidebar(data.value, item.projectId)">{{ data.value.title }}</span>
         </div>
       </template>
@@ -29,6 +29,7 @@
         </div>
       </template>
     </bib-table>
+    <loading :loading="loading"></loading>
   </div>
 </template>
 <script>
@@ -46,6 +47,7 @@ export default {
       // key: 0,
       sortName: "",
       flag: false,
+      loading: false,
     };
   },
 
@@ -136,8 +138,14 @@ export default {
       return str.charAt(0).toUpperCase() + str.slice(1)
     },
     handleTaskTable_status(item) {
-      console.log(item)
+      // console.log(item)
+      this.loading = true
       this.$store.dispatch('task/updateTaskStatus', item)
+        .then(() => {
+          this.$emit("update-key")
+        })
+        .catch(e => console.log(e))
+        .then(() => this.loading = false)
     },
   },
 };

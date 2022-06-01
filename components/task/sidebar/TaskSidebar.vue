@@ -34,8 +34,8 @@
             <bib-button pop="horizontal-dots">
               <template v-slot:menu>
                 <div class="list" id="ts-list">
-                  <span class="list__item" id="ts-list-item-1">
-                    <bib-icon icon="check-circle" variant="gray5" class="mr-075"></bib-icon> Mark Completed
+                  <span class="list__item" id="ts-list-item-1" @click="markComplete">
+                    <bib-icon :icon="isComplete.icon" :variant="isComplete.variant" class="mr-075"></bib-icon> {{isComplete.text}}
                   </span>
                   <span class="list__item" id="ts-list-item-2" @click="setFavorite">
                     <bib-icon :icon="isFavorite.icon" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
@@ -85,7 +85,7 @@
         <div class="task-info position-relative pt-1" id='sidebar-inner-wrap'>
           <div class="row mx-0" id='sidebar-row-1'>
             <div class="col-4" id='sidebar-col-1'>
-              <bib-select label="Assignee" test_id="task_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="debounceUpdate()" ></bib-select>
+              <bib-select label="Assignee" test_id="task_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="debounceUpdate()"></bib-select>
               <!-- <bib-input type="select" :options="orgUsers" v-model="form.userId" placeholder="Please select..." label="Assignee" v-on:change.native="debounceUpdate()"></bib-input> -->
             </div>
             <div class="col-4" id='sidebar-col-2'>
@@ -121,7 +121,7 @@
       <div class="container pt-1" id='ts-subtask-container' v-if="activeSidebarTab == 'Subtasks'">
         <task-group></task-group>
       </div>
-      <sidebar-team  v-if="activeSidebarTab == 'Team'"></sidebar-team>
+      <sidebar-team v-if="activeSidebarTab == 'Team'"></sidebar-team>
       <sidebar-conversation v-if="activeSidebarTab == 'Conversations'"></sidebar-conversation>
       <sidebar-files v-if="activeSidebarTab == 'Files'"></sidebar-files>
       <sidebar-history v-if="activeSidebarTab == 'History'"></sidebar-history>
@@ -209,7 +209,7 @@ export default {
       return [{ label: 'Please select...', value: null }, ...data]
     },
     sectionOpts() {
-      let sec = [{ label: "Select section", value:"_section"+this.form.projectId }]
+      let sec = [{ label: "Select section", value: "_section" + this.form.projectId }]
       this.sections.forEach((s) => {
         if (s.title.includes("_section")) {
           return false
@@ -240,6 +240,13 @@ export default {
         return { icon: "heart-like-solid", variant: "orange", text: "Remove favorite", status: true }
       } else {
         return { icon: "heart-like", variant: "gray5", text: "Add to favorites", status: false }
+      }
+    },
+    isComplete() {
+      if (this.currentTask.statusId == 5) {
+        return { icon: "check-circle", variant: "success", text: "Completed" }
+      } else {
+        return { icon: "check-circle", variant: "gray5", text: "Mark Completed" }
       }
     },
     error() {
@@ -308,7 +315,7 @@ export default {
         return false
       }
       this.loading = true
-      this.form.sectionId = "_section"+this.form.projectId
+      this.form.sectionId = "_section" + this.form.projectId
       this.$store.dispatch("section/fetchProjectSections", { projectId: this.form.projectId, filter: 'all' }).then((sections) => {
         // console.log(sections)
         if (!this.form.id || this.form.id == "") {
@@ -398,6 +405,20 @@ export default {
           .then(msg => alert(msg))
           .catch(e => console.log(e))
       }
+    },
+    markComplete() {
+      // console.log(this.currentTask)
+      this.loading = true
+      this.$store.dispatch('task/updateTaskStatus', this.currentTask)
+        .then((d) => {
+          console.log(d)
+          this.loading = false
+          this.$nuxt.$emit("update-key")
+          this.$store.dispatch("task/setSingleTask", d)
+        }).catch(e => {
+          console.log(e)
+          this.loading = false
+        })
     },
   },
 };

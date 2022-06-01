@@ -125,6 +125,24 @@ export default {
         { img: "Signature", color: "orange", text: "eSign", href: process.env.VITE_BIB_ESIGN_APP_URL },
         { img: "Tick", color: "primary", text: "Project", active: true, href: process.env.VUE_APP_URL },
         { img: "CommentForum", color: "purple", text: "Chat", href: process.env.VITE_BIB_CHAT_APP_URL },
+        {
+          img: "pencil",
+          color: "primary-sub1",
+          text: "Editor",
+          href: "http://dev.editor.business-in-a-box.com"
+        },
+        {
+          img: "video",
+          color: "warning",
+          text: "Video",
+          href: "https://dev-video-conf.business-in-a-box.com"
+        },
+        {
+          img: "data-storage-single",
+          color: "primary",
+          text: "Drive",
+          href: ""
+        },
       ],
       navItems1: [
         { label: "Home", icon: "home", key: "dashboard-route", selected: false },
@@ -193,7 +211,7 @@ export default {
         if (payload.project.length > 0) {
           this.$store.dispatch("section/fetchProjectSections", { projectId: payload.project[0].projectId, filter: 'all' })
           // fetch single project data
-          this.$axios.$get(`project/${payload.project[0].project}`, {
+          this.$axios.$get(`project/${payload.project[0].projectId}`, {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
           }).then((res) => {
             if (res) {
@@ -202,6 +220,8 @@ export default {
           }).catch(err => console.log(err))
           // this.$store.dispatch("project/setSingleProject", payload.project[0].project)
           // this.$store.dispatch("task/setSingleTask", { ...payload, projectId: payload.project[0].projectId })
+        } else {
+          this.$store.dispatch('project/setSingleProject', {})
         }
         this.$store.dispatch("task/setSingleTask", payload)
         this.$store.dispatch('task/fetchTeamMember', { id: payload.id })

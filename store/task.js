@@ -1,4 +1,3 @@
-
 export const state = () => ({
   tasks: [],
   selectedTask: {},
@@ -124,29 +123,22 @@ export const actions = {
   },
 
   async updateTaskStatus(ctx, payload) {
-    if (payload.value.statusId !== 5) {
-      const res = await this.$axios.$put('/task', {
-        id: payload.value.id,
-        data: {
-          statusId: 5
-        }
-      }, {
+    console.log('update task payload', payload)
+    if (payload.statusId !== 5) {
+      const res = await this.$axios.$put('/task', { id: payload.id, projectId: ctx.rootState.project.selectedProject.id, data: { statusId: 5 } }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
+      ctx.dispatch("fetchTasks", { id: ctx.rootState.project.selectedProject.id, filter: 'all' })
+      return res.data
     }
 
-    if (payload.value.statusId == 5) {
-      const res = await this.$axios.$put('/task', {
-        id: payload.value.id,
-        data: {
-          statusId: 2
-        }
-      }, {
+    if (payload.statusId == 5) {
+      const res = await this.$axios.$put('/task', { id: payload.id, projectId: ctx.rootState.project.selectedProject.id, data: { statusId: 2 } }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
+      ctx.dispatch("fetchTasks", { id: ctx.rootState.project.selectedProject.id, filter: 'all' })
+      return res.data
     }
-
-    ctx.dispatch("fetchTasks", { id: ctx.rootState.project.selectedProject.id, filter: 'all' })
 
   },
 

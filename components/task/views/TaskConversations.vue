@@ -2,7 +2,7 @@
   <div class="container pt-1 row" id="task-conv-container">
     <div class="row col-7 position-relative" id="task-conv-row">
       <div class="col-4" id="task-conv-col1">
-        <sidebar-team adClass="" />
+        <!-- <sidebar-team adClass="" /> -->
       </div>
 
       <div class="divider" id="task-conv-divider" style="left: 33.8%" />

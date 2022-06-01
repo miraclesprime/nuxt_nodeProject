@@ -6,7 +6,8 @@
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
       <template v-if="gridType == 'list'">
         <template v-if="tasks.length">
-        <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Department', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key">
+        <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Department', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key"
+        @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus"  @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
           <template #cell(title)="data">
             <div class="d-flex gap-05">
               <span class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block;  line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{ data.value.title }}</span>
@@ -34,61 +35,43 @@
           <template #cell(dueDate)="data">
             <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span>
           </template>
-          <template #cell(priority)="data">
-            <div class="d-flex gap-05 align-center">
-              <bib-icon icon="urgent-solid" :scale="1.1" :variant="favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
-              <span id="project-text" :class="'text-' + favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')">
-                {{ capitalizeFirstLetter(data.value.priority ? data.value.priority.text : '') }}
+          <template v-else>
+            <div>
+              <span id="projects-0" class="d-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
+                <bib-icon icon="warning"></bib-icon> No records found
               </span>
             </div>
           </template>
-        </bib-table>
-          </template>
-          <template v-else>
-          <div>
-            <span id="projects-0" class="d-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
-              <bib-icon icon="warning"></bib-icon> No records found
-            </span>
-          </div>
-          </template>
         </template>
-        
         <template v-else>
-          <div class="task-grid-section">
-            <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
-              <div class="title text-gray">Department</div>
-
-              <div class="d-flex section-options">
-                <div class="mr-1">
-                  <bib-icon icon="add" variant="success" :scale="1.2" />
+          <div class="d-flex">
+            <div class="task-grid-section">
+              <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
+                <div class="title text-gray">Department</div>
+                <div class="d-flex section-options">
+                  <div class="mr-1">
+                    <bib-icon icon="add" variant="success" :scale="1.2" />
+                  </div>
+                  <div>
+                    <bib-icon icon="elipsis" :scale="1.2" />
+                  </div>
                 </div>
-
-                <div>
-                  <bib-icon icon="elipsis" :scale="1.2" />
+              </div>
+              <div class="task-section__body">
+                <div v-for="(item, index) in tasks" :key="item.name + '-' + index">
+                  <task-grid :task="item" />
                 </div>
               </div>
             </div>
-
-            <div class="task-section__body">
-                <div
-                  v-for="(item, index) in tasks"
-                  :key="item.name + '-' + index"
-                >
-                  <task-grid :task="item" />
-                </div>
-            </div>
           </div>
         </template>
-        
         <loading :loading="loading"></loading>
       </div>
     </div>
   </client-only>
 </template>
-
 <script>
 import { mapGetters } from "vuex";
-import { Container, Draggable } from "vue-smooth-dnd";
 import { TASK_FAVORITES as TaskFields } from '../../config/constants'
 
 export default {
@@ -187,6 +170,7 @@ export default {
 
     },
 
+    // Sort By Action List
     sortBy($event) {
 
       if (this.orderBy == 'asc') {
@@ -196,6 +180,67 @@ export default {
       }
 
       this.$store.dispatch('company/sortCompanyTasks', { sName: $event, order: this.orderBy })
+      this.key += 1
+    },
+
+    // Sort By Head Actions
+    sortTitle() {
+      
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+
+      this.$store.dispatch('company/sortCompanyTasks', { sName: 'name', order: this.orderBy })
+      this.key += 1
+    },
+
+    sortOwner() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      
+      this.$store.dispatch('company/sortCompanyTasks', { sName: 'owner', order: this.orderBy })
+      this.key += 1
+    },
+
+    sortByStatus() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      
+      this.$store.dispatch('company/sortCompanyTasks', { sName: 'status', order: this.orderBy })
+      this.key += 1
+    },
+
+    sortByDueDate() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      
+      this.$store.dispatch('company/sortCompanyTasks', { sName: 'dueDate', order: this.orderBy })
+      this.key += 1
+    },
+
+    sortByPriority() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      
+      this.$store.dispatch('company/sortCompanyTasks', { sName: 'priority', order: this.orderBy })
       this.key += 1
     }
   },
@@ -224,35 +269,22 @@ export default {
 
 
 .task-grid-section {
-  width: 16%;
-  min-width: 230px;
-  min-height: 100vh;
+  flex: 0 0 16rem;
   padding: 10px;
   font-size: 15px;
-  font-weight: 600;
+  user-select: none;
+  border-right: 1px solid $gray4;
+
   &:not(:first-child) {
-    border-left: 1px solid $gray4;
-  }
-  &:last-child {
     border-right: 1px solid $gray4;
   }
-  &:hover {
-    &,
-    & + .task-grid-section {
-      border-left-color: $gray5;
-    }
-    .section-options {
-      visibility: visible;
-      opacity: 1;
-    }
-  }
-  &:last-child:hover {
-    border-right-color: $gray5;
-  }
+  .title { font-weight: bold; }
 }
+
 .section-options {
   visibility: hidden;
   opacity: 0;
   transition: all 0.3s;
 }
+
 </style>
