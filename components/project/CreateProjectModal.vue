@@ -88,7 +88,7 @@ export default {
       // console.log('dropdownInputChange', e.target)
     },
     dropdownInputKeydown($event) {
-      console.log('dropdown input keydown', $event)
+      // console.log('dropdown input keydown', $event)
       this.filterKey = $event
     },
     dd1ItemClick(tm) {
@@ -123,9 +123,9 @@ export default {
           if (res.statusCode == 200) {
             this.showCreateProjectModal = false
           }
-          alert(res.message)
+          console.log(res.message)
         }).catch(e => {
-          alert(e.message)
+          console.log(e.message)
           this.loading = false
         })
       } else {
@@ -141,7 +141,7 @@ export default {
       this.$emit(modal, payload, e);
     },*/
     removeEmail($event) {
-      alert($event)
+      // alert($event)
       if ($event) {
 
       }
