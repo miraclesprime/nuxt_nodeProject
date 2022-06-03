@@ -81,7 +81,6 @@
   .folder-name,
   .file-name {
     padding: 10px 14px;
-    font-size: $sidebar-size;
   }
 
   .folder-name {

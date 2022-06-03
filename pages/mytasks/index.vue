@@ -9,8 +9,8 @@
             <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Due Soon', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key"
             @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
               <template #cell(title)="data">
-                <div class="d-flex gap-05">
-                  <span class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block;  line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{ data.value.title }}</span>
+                <div :id="'cell'+data.value.id" class="text-dark text-left cursor-pointer" @click="$nuxt.$emit('open-sidebar', data.value)" >
+                  {{ data.value.title }}
                 </div>
               </template>
               <template #cell(projectId)="data">
@@ -215,15 +215,7 @@ export default {
     },
 
     openSidebar(task) {
-      // console.log(task)
-      /*let project = [{
-        projectId: task.project[0].projectId,
-        project: {
-          id: task.project[0].projectId
-        }
-      }]*/
       this.$nuxt.$emit("open-sidebar", task);
-
     },
 
     filterView($event) {

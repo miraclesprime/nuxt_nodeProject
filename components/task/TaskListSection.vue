@@ -4,7 +4,7 @@
       <template #cell(title)="data">
         <div class="d-flex gap-05 align-center">
           <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data)" class="cursor-pointer" @click="handleTaskTable_status(data.value)"></bib-icon>
-          <span class="text-dark text-left cursor-pointer" style="min-width: 450px; display: inline-block;  line-height:1.25;" @click="openSidebar(data.value, item.projectId)">{{ data.value.title }}</span>
+          <span class="text-dark text-left cursor-pointer flex-grow-1" style="  line-height:1.25;" @click="openSidebar(data.value, item.projectId)">{{ data.value.title }}</span>
         </div>
       </template>
       <template #cell(owner)="data">

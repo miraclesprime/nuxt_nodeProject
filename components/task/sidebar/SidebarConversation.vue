@@ -130,7 +130,6 @@ export default {
   .title {
     width: 100%;
     padding: 8px 0;
-    font-size: $sidebar-size;
     border-bottom: 1px solid $gray6;
   }
 }
@@ -141,7 +140,7 @@ export default {
 }
 
 .sender-name {
-  font-size: $sidebar-size;
+  
 }
 
 .mail-sender {
@@ -158,7 +157,6 @@ export default {
 
   .sending-time {
     margin-left: 10px;
-    font-size: $sidebar-size;
   }
 
   .mail-actions {

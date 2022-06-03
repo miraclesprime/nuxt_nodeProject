@@ -9,9 +9,7 @@
         <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Department', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key"
         @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus"  @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
           <template #cell(title)="data">
-            <div class="d-flex gap-05">
-              <span class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block;  line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{ data.value.title }}</span>
-            </div>
+              <span class="text-dark text-left cursor-pointer d-block" style=" line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{ data.value.title }}</span>
           </template>
           <template #cell(owner)="data">
             <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>

@@ -109,7 +109,6 @@ export default {
 }
 
 .teammate-name {
-  font-size: $sidebar-size;
-  font-weight: 400;
+  /*font-weight: 400;*/
 }
 </style>

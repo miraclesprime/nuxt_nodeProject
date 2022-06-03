@@ -38,7 +38,6 @@
   .folder-name,
   .file-name {
     padding: 10px 0;
-    font-size: $sidebar-size;
   }
 
   .folder-name {
