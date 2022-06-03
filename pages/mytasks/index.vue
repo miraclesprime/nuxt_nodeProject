@@ -6,10 +6,9 @@
       <template v-if="gridType == 'list'">
         <template v-if="tasks.length">
           <div id="mytask-table-wrapper" class="mytask-table-wrapper position-relative of-scroll-y">
-            <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Due Soon', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key"
-            @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
+            <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Due Soon', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key" @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
               <template #cell(title)="data">
-                <div :id="'cell'+data.value.id" class="text-dark text-left cursor-pointer" @click="$nuxt.$emit('open-sidebar', data.value)" >
+                <div :id="'cell'+data.value.id" class="text-dark text-left cursor-pointer" @click="$nuxt.$emit('open-sidebar', data.value)">
                   {{ data.value.title }}
                 </div>
               </template>
@@ -50,7 +49,7 @@
               </template>
               <template #cell(priority)="data">
                 <div class="d-flex gap-05 align-center">
-                  <bib-icon icon="urgent-solid" :scale="1.1" :variant="favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
+                  <bib-icon icon="urgent-solid" :scale="1" :variant="favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
                   <span id="project-text" :class="'text-' + favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')">
                     {{ capitalizeFirstLetter(data.value.priority ? data.value.priority.text : '') }}
                   </span>
@@ -258,8 +257,8 @@ export default {
 
     // Sort By Head Actions
     sortTitle() {
-      
-      if(this.orderBy == 'asc') {
+
+      if (this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
         this.orderBy = 'asc'
@@ -271,67 +270,67 @@ export default {
 
     sortProject() {
 
-      if(this.orderBy == 'asc') {
+      if (this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
         this.orderBy = 'asc'
       }
-      
+
       this.$store.dispatch('user/sortUserTasks', { sName: 'projectId', order: this.orderBy })
       this.key += 1;
     },
 
     sortByStatus() {
 
-      if(this.orderBy == 'asc') {
+      if (this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
         this.orderBy = 'asc'
       }
-      
+
       this.$store.dispatch('user/sortUserTasks', { sName: 'status', order: this.orderBy })
       this.key += 1;
     },
 
     sortByStartDate() {
 
-      if(this.orderBy == 'asc') {
+      if (this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
         this.orderBy = 'asc'
       }
-      
+
       this.$store.dispatch('user/sortUserTasks', { sName: 'createdAt', order: this.orderBy })
       this.key += 1;
     },
 
     sortByDueDate() {
 
-      if(this.orderBy == 'asc') {
+      if (this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
         this.orderBy = 'asc'
       }
-      
+
       this.$store.dispatch('user/sortUserTasks', { sName: 'dueDate', order: this.orderBy })
       this.key += 1;
     },
 
     sortByPriority() {
 
-      if(this.orderBy == 'asc') {
+      if (this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
         this.orderBy = 'asc'
       }
-      
+
       this.$store.dispatch('user/sortUserTasks', { sName: 'priority', order: this.orderBy })
       this.key += 1;
     },
 
-    
+
     toggleSidebar($event) {
-      
+
       // in case of create task 
       if (!$event) {
         this.$nuxt.$emit("open-sidebar", $event)
@@ -344,6 +343,10 @@ export default {
     if (process.client) {
       this.$nuxt.$on('change-grid-type', ($event) => {
         this.gridType = $event;
+      })
+      this.$nuxt.$on("update-key", () => {
+        // console.log('updated key event received')
+        this.$store.dispatch('user/setUserTasks', { filter: 'all' }).then(() => { this.key += 1 })
       })
       this.loading = true
       this.$store.dispatch('user/setUserTasks', { filter: 'all' }).then((res) => {
@@ -367,12 +370,10 @@ export default {
   user-select: none;
   border-right: 1px solid $gray4;
 
-  
-  .title { font-weight: bold; }
-}
 
-.section-options {
-  
+  .title {
+    font-weight: bold;
+  }
 }
 
 .task-grid {

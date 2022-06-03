@@ -36,7 +36,7 @@
         <bib-button v-show="!collapseNavigation" dropdown="" label="" class="height-3 create-dropdown ">
           <template v-slot:menu>
             <ul>
-              <li v-for="item in appHeaderActions.button.items" :key="item.label" class="d-flex align-center" @click="createAction(item)">
+              <li v-for="item in appHeaderActions.button.items" :key="item.label" class="d-flex align-center cursor-pointer" @click.stop="createAction(item)">
                 <bib-icon :variant="item.iconVariant" :icon="item.icon" :scale="1.1"></bib-icon>
                 <span class="ml-05">{{item.label}}</span>
               </li>
@@ -207,7 +207,7 @@ export default {
         this.$store.dispatch("task/setSingleTask", {})
       } else {
         if (payload.project.length > 0) {
-          console.log(payload.project[0])
+          // console.log(payload.project[0])
           this.$store.dispatch("section/fetchProjectSections", { projectId: payload.project[0].projectId, filter: 'all' })
           // fetch single project data
           this.$axios.$get(`project/${payload.project[0].projectId}`, {
