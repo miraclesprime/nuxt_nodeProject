@@ -2,7 +2,7 @@
   <client-only>
     <div id="my-tasks-page-wrapper" class="mytask-page-wrapper">
       <page-title title="My Tasks"></page-title>
-      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" />
+      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:create-task="toggleSidebar($event)" />
       <template v-if="gridType == 'list'">
         <template v-if="tasks.length">
           <div id="mytask-table-wrapper" class="mytask-table-wrapper position-relative of-scroll-y">
@@ -159,6 +159,7 @@ export default {
       gridType: 'list',
       viewName: null,
       orderBy: 'desc',
+      flag: false,
       key: 100
     }
   },
@@ -334,7 +335,17 @@ export default {
       
       this.$store.dispatch('user/sortUserTasks', { sName: 'priority', order: this.orderBy })
       this.key += 1;
-    }
+    },
+
+    
+    toggleSidebar($event) {
+      
+      // in case of create task 
+      if (!$event) {
+        this.$nuxt.$emit("open-sidebar", $event)
+      }
+      this.flag = !this.flag;
+    },
   },
 
   created() {
