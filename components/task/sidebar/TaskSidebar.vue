@@ -290,9 +290,9 @@ export default {
   methods: {
 
     closeSidebar(event) {
-      console.log(event.originalTarget.classList, event.target.classList)
+      // console.log(event.originalTarget.classList, event.target.classList)
       if (event.target.classList.contains("cursor-pointer") || event.target.classList.contains("task-grid")) {
-        console.info('class found')
+        // console.info('class found')
         return false
       }
 
@@ -320,8 +320,10 @@ export default {
         return false
       }
       this.loading = true
-      this.form.sectionId = "_section" + this.form.projectId
-      console.log(this.form, this.form.projectId)
+      if (this.form.projectId && (!this.form.sectionId || this.form.sectionId == "")) {
+        this.form.sectionId = "_section" + this.form.projectId
+      }
+      // console.log(this.form, this.form.projectId)
       this.$store.dispatch("section/fetchProjectSections", { projectId: this.form.projectId, filter: 'all' }).then((sections) => {
         // console.log(sections)
         if (!this.form.id || this.form.id == "") {
@@ -388,10 +390,14 @@ export default {
       })
       // console.info(task)
       if (task.statusCode == 200) {
-        this.$store.dispatch("task/fetchTasks", { id: this.project.id }).then(() => this.loading = false)
+        // this.$store.dispatch("task/fetchTasks", { id: this.project.id }).then(() => this.loading = false)
+        // this.loading = false
+        this.$nuxt.$emit("update-key")
+
       }
-      // this.$emit("update-key")
-      this.$nuxt.$emit("update-key")
+      console.log("update task =>", task)
+      this.loading = false
+
     },
 
     debounceUpdate: _.debounce(function() {
@@ -417,7 +423,7 @@ export default {
       this.loading = true
       this.$store.dispatch('task/updateTaskStatus', this.currentTask)
         .then((d) => {
-          console.log(d)
+          // console.log(d)
           this.loading = false
           this.$nuxt.$emit("update-key")
           this.$store.dispatch("task/setSingleTask", d)
