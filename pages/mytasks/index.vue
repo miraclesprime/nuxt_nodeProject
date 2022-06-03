@@ -376,8 +376,6 @@ export default {
   }
 }
 
-.section-options {}
-
 .task-grid {
   margin: 8px 4px 8px;
   background: var(--bib-light);

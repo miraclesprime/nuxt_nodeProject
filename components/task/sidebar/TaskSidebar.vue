@@ -353,6 +353,15 @@ export default {
           user = null
         }
 
+        if (this.form.projectId && (!this.form.sectionId || this.form.sectionId == "")) {
+          this.form.sectionId = "_section" + this.form.projectId
+        }
+
+        if (!this.form.projectId || this.form.projectId == "") {
+          this.form.projectId = null
+          this.form.sectionId = null
+        }
+
         this.$store.dispatch("task/createTask", {
           "sectionId": this.form.sectionId,
           "projectId": this.form.projectId,

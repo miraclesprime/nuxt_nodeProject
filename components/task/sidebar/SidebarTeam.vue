@@ -84,7 +84,7 @@ export default {
           .then((res) => {
             // console.log(res)
             this.key += 1
-            alert(res)
+            console.log(res)
           })
           .catch(e => console.log(e))
         this.loading = false
