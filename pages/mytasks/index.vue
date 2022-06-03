@@ -2,15 +2,15 @@
   <client-only>
     <div id="my-tasks-page-wrapper" class="mytask-page-wrapper">
       <page-title title="My Tasks"></page-title>
-      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" />
+      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:create-task="toggleSidebar($event)" />
       <template v-if="gridType == 'list'">
         <template v-if="tasks.length">
           <div id="mytask-table-wrapper" class="mytask-table-wrapper position-relative of-scroll-y">
             <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Due Soon', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key"
             @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
               <template #cell(title)="data">
-                <div class="d-flex gap-05">
-                  <span class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block;  line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{ data.value.title }}</span>
+                <div :id="'cell'+data.value.id" class="text-dark text-left cursor-pointer" @click="$nuxt.$emit('open-sidebar', data.value)" >
+                  {{ data.value.title }}
                 </div>
               </template>
               <template #cell(projectId)="data">
@@ -159,6 +159,7 @@ export default {
       gridType: 'list',
       viewName: null,
       orderBy: 'desc',
+      flag: false,
       key: 100
     }
   },
@@ -215,15 +216,7 @@ export default {
     },
 
     openSidebar(task) {
-      // console.log(task)
-      /*let project = [{
-        projectId: task.project[0].projectId,
-        project: {
-          id: task.project[0].projectId
-        }
-      }]*/
       this.$nuxt.$emit("open-sidebar", task);
-
     },
 
     filterView($event) {
@@ -334,7 +327,17 @@ export default {
       
       this.$store.dispatch('user/sortUserTasks', { sName: 'priority', order: this.orderBy })
       this.key += 1;
-    }
+    },
+
+    
+    toggleSidebar($event) {
+      
+      // in case of create task 
+      if (!$event) {
+        this.$nuxt.$emit("open-sidebar", $event)
+      }
+      this.flag = !this.flag;
+    },
   },
 
   created() {

@@ -73,12 +73,13 @@ export default {
   modules: [],
   styleResources: {
     scss: [
-      "../bib-shared/css/colors.scss",
+      /*"../bib-shared/css/colors.scss",
       "../bib-shared/css/variables.scss",
       "../bib-shared/css/mixins.scss",
       "../bib-shared/css/utilities.scss",
-      "../bib-shared/css/basic.scss",
+      "../bib-shared/css/basic.scss",*/
       "~/assets/variable.scss",
+      "../bib-shared/css/global.scss",
     ],
   },
   // router: {

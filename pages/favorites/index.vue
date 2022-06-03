@@ -40,8 +40,7 @@
         <template #cell(title)="data">
           <div class="d-flex gap-05 align-center" :id="'projects-' + data.value.title">
             <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data.value.statusId)"></bib-icon>
-            <!-- <bib-icon icon="briefcase" variant="gray5" :scale="1.1" class="mr-025"></bib-icon> -->
-            <span :id="'projects-' + data.value.title + '-text'" class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block;  line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{data.value.title}}</span>
+            <span :id="'projects-' + data.value.title + '-text'" class="text-dark text-left cursor-pointer flex-grow-1" style="  line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{data.value.title}}</span>
           </div>
         </template>
         <template #cell(owner)="data">

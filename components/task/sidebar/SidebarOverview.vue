@@ -75,7 +75,6 @@ export default {
 .sub-title { font-size: 14px; border-bottom: 1px solid var(--bib-gray4);}
 .task-info {
   padding: 1rem 0;
-  font-size: $sidebar-size;
   position: relative;
 }
 
@@ -135,7 +134,6 @@ export default {
 
   .row {
     margin-top: 10px;
-    font-size: $sidebar-size;
   }
 }
 

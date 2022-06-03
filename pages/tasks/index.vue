@@ -2,16 +2,14 @@
   <client-only>
     <div id="task-page-wrapper" class="task-page-wrapper">
       <page-title title="Tasks"></page-title>
-      <company-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" />
+      <company-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:create-task="toggleSidebar($event)" />
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
       <template v-if="gridType == 'list'">
         <template v-if="tasks.length">
         <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Department', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key"
         @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus"  @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
           <template #cell(title)="data">
-            <div class="d-flex gap-05">
-              <span class="text-dark text-left cursor-pointer" style="min-width: 100px; display: inline-block;  line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{ data.value.title }}</span>
-            </div>
+              <span class="text-dark text-left cursor-pointer d-block" style=" line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{ data.value.title }}</span>
           </template>
           <template #cell(owner)="data">
             <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
@@ -84,6 +82,7 @@ export default {
       gridType: "list",
       taskFields: TaskFields,
       loading: false,
+      flag: false,
       viewName: null,
       orderBy: 'desc',
       key: 100
@@ -244,7 +243,16 @@ export default {
       
       this.$store.dispatch('company/sortCompanyTasks', { sName: 'priority', order: this.orderBy })
       this.key += 1
-    }
+    },
+
+    
+    toggleSidebar($event) {
+      // in case of create task 
+      if (!$event) {
+        this.$nuxt.$emit("open-sidebar", $event)
+      }
+      this.flag = !this.flag;
+    },
   },
 
   created() {

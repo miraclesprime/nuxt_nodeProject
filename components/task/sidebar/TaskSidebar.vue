@@ -1,5 +1,5 @@
 <template>
-  <article id="side-panel" class="side-panel">
+  <article id="side-panel" class="side-panel" v-click-outside="closeSidebar">
     <div class="side-panel__header" id='ts-header'>
       <!-- <div class="side-panel__header__file__info" id='ts-header-file-info'>
         <div id='ts-secondary-text' class="p-05 of-hidden text-of-elipsis h-fit text-wrap text-secondary"></div>
@@ -289,10 +289,15 @@ export default {
 
   methods: {
 
-    /*hideSidebar() {
-      this.$emit("open-sidebar", false)
-      this.$root.$emit("open-sidebar", false);
-    },*/
+    closeSidebar(event) {
+      console.log(event.originalTarget.classList, event.target.classList)
+      if (event.target.classList.contains("cursor-pointer") || event.target.classList.contains("task-grid")) {
+        console.info('class found')
+        return false
+      }
+
+      this.$nuxt.$emit("close-sidebar");
+    },
     sidebarTabChange(tab) {
       this.activeSidebarTab = tab.value;
     },
@@ -316,6 +321,7 @@ export default {
       }
       this.loading = true
       this.form.sectionId = "_section" + this.form.projectId
+      console.log(this.form, this.form.projectId)
       this.$store.dispatch("section/fetchProjectSections", { projectId: this.form.projectId, filter: 'all' }).then((sections) => {
         // console.log(sections)
         if (!this.form.id || this.form.id == "") {
@@ -435,7 +441,7 @@ export default {
   padding: 0 1rem;
 
   .input {
-    font-size: $sidebar-size;
+    /*font-size: $sidebar-size;*/
     color: #ccc;
   }
 }

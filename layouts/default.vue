@@ -169,8 +169,6 @@ export default {
           items: [
             { label: "New Task", icon: "check-circle", iconVariant: "success", key: "new-task" },
             { label: "New Project", icon: "briefcase", key: "new-project" },
-            { label: "New File", icon: "file", key: "new-file" },
-            { label: "New Folder", icon: "folder", key: "new-folder" },
           ]
         },
         select: {
@@ -209,6 +207,7 @@ export default {
         this.$store.dispatch("task/setSingleTask", {})
       } else {
         if (payload.project.length > 0) {
+          console.log(payload.project[0])
           this.$store.dispatch("section/fetchProjectSections", { projectId: payload.project[0].projectId, filter: 'all' })
           // fetch single project data
           this.$axios.$get(`project/${payload.project[0].projectId}`, {
@@ -380,16 +379,11 @@ export default {
       switch ($event.key) {
         case "new-task":
           console.log($event.key)
+          this.$nuxt.$emit("open-sidebar", $event)
           break;
         case "new-project":
           console.log($event.key)
           this.$refs.projectModals.showCreateProjectModal = true;
-          break;
-        case "new-file":
-          console.log($event.key)
-          break;
-        case "new-folder":
-          console.log($event.key)
           break;
         default:
           console.log('default')
