@@ -321,6 +321,7 @@ export default {
       }
       this.loading = true
       this.form.sectionId = "_section" + this.form.projectId
+      console.log(this.form, this.form.projectId)
       this.$store.dispatch("section/fetchProjectSections", { projectId: this.form.projectId, filter: 'all' }).then((sections) => {
         // console.log(sections)
         if (!this.form.id || this.form.id == "") {
