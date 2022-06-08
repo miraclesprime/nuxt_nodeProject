@@ -26,8 +26,8 @@
           </div>
         </div>
         <div class="task-section__body" :id="'tgs-task-section-body-'+section.id">
-          <draggable :list="section.tasks" group="task" :move="debounceMoveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable" :class="{highlight: drag}" :data-section="section.id">
-            <!-- <transition-group type="transition" :name="!drag ? 'flip-list' : null"> -->
+          <draggable :list="section.tasks" :group="{name: 'task'}" :move="debounceMoveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable" :class="{highlight: highlight == section.id}" :data-section="section.id">
+            <!-- <transition-group > -->
             <div class="task-grid " v-for="task in section.tasks" :key="task.title + templateKey + '-' + task.id" :class="[overdue(task), currentTask.id == task.id ? 'active' : '']" :id="'tg-card-'+task.id" v-on:click="openSidebar(task, section.projectId)">
               <figure v-if="task.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
               <div class="task-top" :id="'tg-card-top'+task.id">
@@ -107,8 +107,9 @@ export default {
       ordered: [],
       loading: false,
       drag: false,
+      highlight: null,
       taskDnDlist: [],
-      taskDnDsectionId: "",
+      taskDnDsectionId: null,
       popupMessages: [],
     };
   },
@@ -119,12 +120,6 @@ export default {
     // tasks: { type: Array },
   },
 
-  watch: {
-    sections(newVal) {
-      // console.info(newVal)
-      this.localdata = newVal
-    }
-  },
 
   mounted() {
     this.loading = true
@@ -137,6 +132,12 @@ export default {
       this.loading = false
     }).catch(e => console.log(e))
 
+  },
+  watch: {
+    sections(newVal) {
+      // console.info(newVal)
+      this.localdata = newVal
+    }
   },
   computed: {
     ...mapGetters({
@@ -152,9 +153,68 @@ export default {
       // console.log('drag start', e)
     },
 
-    debounceMoveTask: _.debounce(function(e) {
+    moveTask(e) {
+      console.log(e)
+      // console.log("related context list =>", list, list.length)
+
+      let taskList = new Promise((resolve, reject) => {
+        let tasks = []
+        /*e.relatedContext.list.forEach((element, index) => {
+          element['order'] = index
+          tasks.push(element)
+          console.table(element.order, element.title)
+        })*/
+        /*_.forEach(list, (element, index) => {
+          element['order'] = index
+          tasks.push(element)
+          // console.log("iteration", element.title)
+        });*/
+        setTimeout(function() {
+          let list = e.relatedContext.list;
+          for (var i = 0; i < list.length; i++) {
+            list[i].order = i
+            tasks.push(list[i])
+            console.log("iteration =>", [list[i].title, list[i].order])
+          }
+        }, 300)
+        setTimeout(function() {
+          resolve(tasks)
+        }, 400)
+
+      });
+
+      taskList.then((l) => {
+        // console.log(l)
+        this.taskDnDlist = l;
+        this.taskDnDsectionId = +e.to.dataset.section
+        this.highlight = +e.to.dataset.section
+      })
+
+      /*let tasks = []
+
+      e.relatedContext.list.forEach((element, index) => {
+        element['order'] = index
+        tasks.push(element)
+        // console.table(element.order, element.title)
+      })
+
+      // console.log(tasks, e.to.dataset.section)
+      setTimeout(() => {
+        this.taskDnDlist = tasks
+        this.taskDnDsectionId = +e.to.dataset.section
+        this.highlight = +e.to.dataset.section
+        console.log("task move", this.taskDnDlist, this.taskDnDsectionId)
+      }, 300)*/
+
+    },
+
+    debounceMoveTask: _.debounce(async function(e) {
+      // console.info('move', e.draggedContext.element)
+      console.log("move ", e)
+      // console.info("move list", e.relatedContext.list);
+      // console.log("task move=>", this.taskDnDlist, this.taskDnDsectionId)
+
       let tasks = []
-      // console.log(e.to.dataset, e.relatedContext.list)
 
       e.relatedContext.list.forEach((element, index) => {
         element['order'] = index
@@ -165,15 +225,17 @@ export default {
       // console.log(tasks, e.to.dataset.section)
       this.taskDnDlist = tasks
       this.taskDnDsectionId = +e.to.dataset.section
+      this.highlight = +e.to.dataset.section
 
     }, 600),
-    
-    taskDragEnd: _.debounce(async function() {
-      this.drag = false
-      // console.log('drag end', e)
-      this.loading = true
 
-      // console.log(this.taskDnDlist, this.taskDnDsectionId)
+    taskDragEnd: _.debounce(async function(e) {
+      // this.drag = false
+      // console.log('drag end', e)
+      this.highlight = null
+      // this.loading = true
+
+      console.log("task drag end=>", this.taskDnDlist, this.taskDnDsectionId)
       let taskDnD;
       if (this.taskDnDsectionId) {
         taskDnD = await this.$axios.$put("/section/crossSectionDragDrop", { data: this.taskDnDlist, sectionId: this.taskDnDsectionId }, {
@@ -193,14 +255,18 @@ export default {
 
       // console.log(taskDnD)
       if (taskDnD.statusCode == 200) {
+        console.info(taskDnD.message)
         this.$emit("update-key")
-        this.popupMessages.push({ text: taskDnD.message, variant: "success" })
+        this.taskDnDlist = []
+        this.taskDnDsectionId = null
+
+        // this.popupMessages.push({ text: taskDnD.message, variant: "success" })
       } else {
         console.warn(taskDnD.message)
-        this.popupMessages.push({ text: taskDnD.message, variant: "warning" })
+        // this.popupMessages.push({ text: taskDnD.message, variant: "warning" })
       }
-      this.loading = false
-    }, 1200),
+      // this.loading = false
+    }, 1000),
 
     /*taskByOrder() {
       this.localdata = JSON.parse(JSON.stringify(this.sections))
@@ -233,7 +299,7 @@ export default {
     sectionDragEnd: _.debounce(async function() {
       console.log(this.ordered)
       this.loading = true
-      let sectionDnD = await this.$axios.$put("/section/dragdrop", { projectId: this.project.id, data: this.ordered }, {
+      /*let sectionDnD = await this.$axios.$put("/section/dragdrop", { projectId: this.project.id, data: this.ordered }, {
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
           "Content-Type": "application/json"
@@ -246,12 +312,12 @@ export default {
         this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id }).then(() => {
           this.$emit("update-key")
           this.$nuxt.$emit("update-key")
-          this.popupMessages.push({ text: sectionDnD.message, variant: "success" })
+          // this.popupMessages.push({ text: sectionDnD.message, variant: "success" })
         })
       } else {
         console.warn(sectionDnD.message)
-        this.popupMessages.push({ text: sectionDnD.message, variant: "warning" })
-      }
+        // this.popupMessages.push({ text: sectionDnD.message, variant: "warning" })
+      }*/
 
       this.loading = false
 
@@ -352,6 +418,42 @@ export default {
       console.log('favorites')
     }
   },
+  /*
+  beforeUpdate(){
+    console.info("before update")
+  },
+  */
+  /*async updated() {
+    console.log('updated lifecycle',this.taskDnDsectionId, this.taskDnDlist)
+    if (this.taskDnDlist.length > 0) {
+      let taskDnD;
+      if (this.taskDnDsectionId) {
+        taskDnD = await this.$axios.$put("/section/crossSectionDragDrop", { data: this.taskDnDlist, sectionId: this.taskDnDsectionId }, {
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+            "Content-Type": "application/json"
+          }
+        })
+      } else {
+        taskDnD = await this.$axios.$put("/task/dragdrop", { data: this.taskDnDlist }, {
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+            "Content-Type": "application/json"
+          }
+        })
+      }
+
+      // console.log(taskDnD)
+      if (taskDnD.statusCode == 200) {
+        this.$emit("update-key")
+        // this.popupMessages.push({ text: taskDnD.message, variant: "success" })
+      } else {
+        console.warn(taskDnD.message)
+        // this.popupMessages.push({ text: taskDnD.message, variant: "warning" })
+      }
+      this.taskDnDlist = []
+    }
+  }*/
 };
 
 </script>
@@ -362,10 +464,12 @@ export default {
 
 .section-draggable {
   min-height: calc(100vh - 260px);
+  border-radius: 3px;
 }
 
 .highlight {
-  outline: 3px lightblue dashed;
+  outline: 2px skyblue dashed;
+  background-color: azure;
 }
 
 .task-grid-section {

@@ -404,7 +404,7 @@ export default {
         this.$nuxt.$emit("update-key")
 
       }
-      console.log("update task =>", task)
+      // console.log("update task =>", task)
       this.loading = false
 
     },
