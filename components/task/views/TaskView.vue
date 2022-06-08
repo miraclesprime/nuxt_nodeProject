@@ -16,7 +16,7 @@
       <task-list-section :project="project" :sections="localdata" :templateKey="templateKey" v-on:sort-task="taskSort($event)" v-on:update-key="updateKey"></task-list-section>
     </template>
     <template v-else>
-      <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" v-on:update-key="updateKey">
+      <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)">
       </task-grid-section>
     </template>
     <loading :loading="loading"></loading>

@@ -153,8 +153,8 @@ export default {
       navItems2: [
         { label: "Tasks", icon: "check-all", key: "task-route", selected: false },
         { label: "Projects", icon: "briefcase", key: 'project-route', selected: false },
-        { label: "Goals", icon: "flag-racing", selected: false },
-        { label: "Dream", icon: "star", avatar: "https://i.pravatar.cc/150", selected: false },
+        { label: "Goals", icon: "flag-racing", key: 'goals', selected: false },
+        { label: "Dream", icon: "star", key: 'dreams', avatar: "https://i.pravatar.cc/150", selected: false },
       ],
       /*favProjects: [
         { label: "Project one", icon: "folder-solid" },
@@ -262,6 +262,14 @@ export default {
 
       if (this.$router.history.current.fullPath == '/projects') {
         this.navItems2[1].selected = true;
+      }
+
+      if(this.$router.history.current.fullPath == '/goals') {
+        this.navItems2[2].selected = true;
+      }
+
+      if(this.$router.history.current.fullPath == '/dreams') {
+        this.navItems2[3].selected = true;
       }
 
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY0Njk3MjYzNzcxNSwiZXhwIjoxNjU0NzQ4NjM3NzE1LCJqdGkiOiIyMDFjZGExYy02MDVjLTQ4ZDMtODhiMi1lODhjMDFhZGQ3YWUifQ.aw6BfQV6G5iDlWXNvMiV9AgxaMGjPVyF2LRgteMo5OU"
@@ -431,6 +439,14 @@ export default {
       }
       if ($event.key == 'mytasks') {
         this.$router.push('/mytasks')
+      }
+
+      if ($event.key == 'goals') {
+        this.$router.push('/goals')
+      }
+
+      if ($event.key == 'dreams') {
+        this.$router.push('/dreams')
       }
     },
 

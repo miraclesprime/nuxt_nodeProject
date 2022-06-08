@@ -1,6 +1,8 @@
-html, body {
+html,
+body {
   font-family: $font-family;
 }
+
 .sidebar select,
 .sidebar input {
   font-size: 14px;
@@ -197,9 +199,17 @@ ul {
 }
 
 .text {
-  &-uppercase { text-transform: uppercase;}
-  &-lowercase { text-transform: lowercase;}
-  &-capitalize { text-transform: capitalize;}
+  &-uppercase {
+    text-transform: uppercase;
+  }
+
+  &-lowercase {
+    text-transform: lowercase;
+  }
+
+  &-capitalize {
+    text-transform: capitalize;
+  }
 }
 
 .side-panel .wrapper select {
@@ -224,9 +234,88 @@ ul {
 }
 
 .text-truncate {
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.task-grid-section {
+  flex: 0 0 18rem;
+  padding: 10px;
+  user-select: none;
+
+  .section-drag-handle {
+    cursor: grab;
+  }
+
+  &:not(:first-child) {
+    border-left: 1px solid $gray4;
+  }
+
+  &:last-child {
+    border-right: 1px solid $gray4;
+  }
+
+  .title {
+    font-weight: bold;
+  }
+
+
+}
+
+.task-grid {
+  margin: 8px 4px 8px;
+  background: var(--bib-light);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &.bg-danger {
+    background-color: var(--bib-danger);
+    color: #fff;
+
+    .user-name {
+      color: #fff
+    }
+  }
+
+  &.active {
+    background-color: var(--bib-gray4);
+    border-color: var(--bib-gray6);
+  }
+
+  .task-image {
+    aspect-ratio: 16 / 9;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+  }
+
+  .task-top,
+  .task-bottom {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+  }
+
+  .task-top {
+    margin-bottom: 1rem;
+  }
+
+  .task-bottom {
+    align-items: center;
+
+    span {
+      font-size: 13px;
+    }
+  }
+
+
 }
 
 @media screen and (max-width: 1600px) {
-  .side-panel { max-width: $sidebar-width - 160px; width: 35rem; }
+  .side-panel {
+    max-width: $sidebar-width - 160px;
+    width: 35rem;
+  }
 }

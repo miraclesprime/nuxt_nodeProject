@@ -2,14 +2,16 @@
   <div class="of-scroll-x position-relative" style="min-height: 20rem;">
     <draggable :list="localdata" class="d-flex " :move="moveSection" v-on:end="sectionDragEnd" handle=".section-drag-handle">
       <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${templateKey}${section.title}${section.id}`">
-        <div class="w-100 d-flex justify-between section-drag-handle" :id="'tgs-inner-wrap-'+section.id" style="margin-bottom: 10px">
-          <div class="title text-gray" :id="'tgs-label-'+section.id">{{ section.title.includes('_section') ? 'Untitled section' : section.title }}</div>
-          <div class="d-flex align-center ml-auto section-options" :id="'tgs-section-options-'+section.id">
-            <bib-icon icon="add" class="mx-05"></bib-icon>
-            <bib-button pop="elipsis">
+        <div class="w-100 d-flex " :id="'tgs-inner-wrap-'+section.id" style="margin-bottom: 10px">
+          <div class="title text-gray section-drag-handle flex-grow-1" :id="'tgs-label-'+section.id">{{ section.title.includes('_section') ? 'Untitled section' : section.title }}</div>
+          <div class="d-flex align-center section-options" :id="'tgs-section-options-'+section.id">
+            <div class="cursor-pointer mx-05 d-flex align-center" v-on:click.stop="showCreateTaskModal(section.id)">
+              <bib-icon icon="add" variant="gray5" :scale="1.25"></bib-icon>
+            </div>
+            <bib-popup pop="elipsis" icon-variant="gray5" :scale="1.1">
               <template v-slot:menu>
                 <div :id="'tgs-list'+section.id" class="list">
-                  <span class="list__item" :id="'tgs-list-1'+section.id" v-on:click="$nuxt.$emit('open-sidebar', true);">
+                  <span class="list__item" :id="'tgs-list-1'+section.id" v-on:click.stop="showCreateTaskModal(section.id)">
                     <div class="d-flex align-center" :id="'tgs-list-flex-1'+section.id">
                       <bib-icon icon="add"></bib-icon>
                       <span class="ml-05" :id="'tgs-list-span'+section.id">Add task</span>
@@ -22,12 +24,12 @@
                   </span>
                 </div>
               </template>
-            </bib-button>
+            </bib-popup>
           </div>
         </div>
         <div class="task-section__body" :id="'tgs-task-section-body-'+section.id">
-          <draggable :list="section.tasks" group="task" :move="debounceMoveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable" :class="{highlight: drag}" :data-section="section.id">
-            <!-- <transition-group type="transition" :name="!drag ? 'flip-list' : null"> -->
+          <draggable :list="section.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable" :class="{highlight: highlight == section.id}" :data-section="section.id">
+            <!-- <transition-group > -->
             <div class="task-grid " v-for="task in section.tasks" :key="task.title + templateKey + '-' + task.id" :class="[overdue(task), currentTask.id == task.id ? 'active' : '']" :id="'tg-card-'+task.id" v-on:click="openSidebar(task, section.projectId)">
               <figure v-if="task.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
               <div class="task-top" :id="'tg-card-top'+task.id">
@@ -41,7 +43,7 @@
                       <span class="list__item" :id="'tg-comp'+task.id">
                         <bib-icon icon="check-circle" class="mr-05"></bib-icon> Mark Completed
                       </span>
-                      <span class="list__item" :id="'tg-fav'+task.id" @click="addToFavorites">
+                      <span class="list__item" :id="'tg-fav'+task.id" v-on:click.stop="addToFavorites">
                         <bib-icon icon="heart-like" class="mr-05"></bib-icon> Add to favorites
                       </span>
                       <span class="list__item" :id="'tg-attach'+task.id">
@@ -107,8 +109,9 @@ export default {
       ordered: [],
       loading: false,
       drag: false,
+      highlight: null,
       taskDnDlist: [],
-      taskDnDsectionId: "",
+      taskDnDsectionId: null,
       popupMessages: [],
     };
   },
@@ -119,12 +122,6 @@ export default {
     // tasks: { type: Array },
   },
 
-  watch: {
-    sections(newVal) {
-      // console.info(newVal)
-      this.localdata = newVal
-    }
-  },
 
   mounted() {
     this.loading = true
@@ -138,6 +135,12 @@ export default {
     }).catch(e => console.log(e))
 
   },
+  watch: {
+    sections(newVal) {
+      // console.info(newVal)
+      this.localdata = newVal
+    }
+  },
   computed: {
     ...mapGetters({
       token: "token/getToken",
@@ -147,14 +150,34 @@ export default {
     }),
   },
   methods: {
+    showCreateTaskModal(sectionId) {
+      this.$emit("create-task", false) //event will be captured by parent only
+      this.$nuxt.$emit("create-task", false) //event will be available to all
+    },
     taskDragStart(e) {
       this.drag = true
       // console.log('drag start', e)
     },
 
-    debounceMoveTask: _.debounce(function(e) {
+    moveTask(e) {
+      // console.log("move =>",e)
+      // console.log("move to section =>",e.to.dataset.section)
+      // console.log("related context list =>", list, list.length)
+
+      // this.taskDnDlist = tasks
+      this.taskDnDsectionId = +e.to.dataset.section
+      this.highlight = +e.to.dataset.section
+
+    },
+
+    /*debounceMoveTask: _.debounce(function(e) {
+      // console.info('move', e.draggedContext.element)
+      console.log("move ", e)
+      console.log("move to section =>",e.to.dataset.section)
+      // console.info("move list", e.relatedContext.list);
+      // console.log("task move=>", this.taskDnDlist, this.taskDnDsectionId)
+
       let tasks = []
-      // console.log(e.to.dataset, e.relatedContext.list)
 
       e.relatedContext.list.forEach((element, index) => {
         element['order'] = index
@@ -165,18 +188,32 @@ export default {
       // console.log(tasks, e.to.dataset.section)
       this.taskDnDlist = tasks
       this.taskDnDsectionId = +e.to.dataset.section
+      this.highlight = +e.to.dataset.section
 
-    }, 600),
-    
-    taskDragEnd: _.debounce(async function() {
-      this.drag = false
-      // console.log('drag end', e)
+    }, 400),*/
+
+    taskDragEnd: _.debounce(async function(e) {
+      // this.drag = false
+      // console.log('move end =>', e)
+      this.highlight = null
       this.loading = true
 
-      // console.log(this.taskDnDlist, this.taskDnDsectionId)
+      // console.log("move end =>", e.to.dataset.section)
+
+      let tasklist = this.localdata.filter((t) => t.id == e.to.dataset.section )
+
+      // console.log(tasklist[0].tasks)
+
+      tasklist[0].tasks.forEach((e,i)=>{
+        e.order = i
+      })
+
+      // console.log(tasklist[0].tasks)
+
+
       let taskDnD;
       if (this.taskDnDsectionId) {
-        taskDnD = await this.$axios.$put("/section/crossSectionDragDrop", { data: this.taskDnDlist, sectionId: this.taskDnDsectionId }, {
+        taskDnD = await this.$axios.$put("/section/crossSectionDragDrop", { data: tasklist[0].tasks, sectionId: this.taskDnDsectionId }, {
           headers: {
             "Authorization": "Bearer " + localStorage.getItem("accessToken"),
             "Content-Type": "application/json"
@@ -191,16 +228,16 @@ export default {
         })
       }
 
-      // console.log(taskDnD)
+      console.log(taskDnD.message)
       if (taskDnD.statusCode == 200) {
+        // console.info(taskDnD.message)
         this.$emit("update-key")
-        this.popupMessages.push({ text: taskDnD.message, variant: "success" })
+        // this.taskDnDsectionId = null
       } else {
         console.warn(taskDnD.message)
-        this.popupMessages.push({ text: taskDnD.message, variant: "warning" })
       }
       this.loading = false
-    }, 1200),
+    }, 600),
 
     /*taskByOrder() {
       this.localdata = JSON.parse(JSON.stringify(this.sections))
@@ -216,9 +253,16 @@ export default {
       this.$nuxt.$emit("update-key")
     },*/
 
-    moveSection: _.debounce(function(e) {
+    moveSection(e){
 
-      // console.log(e.relatedContext.list)
+      console.log("move section =>",e.relatedContext.list)
+      this.highlight = +e.to.dataset.section
+
+    },
+
+    /*moveSection: _.debounce(function(e) {
+
+      console.log("move section =>",e.relatedContext.list)
 
       let ordered = []
       e.relatedContext.list.forEach(function(element, index) {
@@ -228,34 +272,40 @@ export default {
 
       this.ordered = ordered
 
-    }, 800),
+    }, 400),*/
 
-    sectionDragEnd: _.debounce(async function() {
-      console.log(this.ordered)
+    sectionDragEnd: _.debounce(async function(e) {
+
       this.loading = true
-      let sectionDnD = await this.$axios.$put("/section/dragdrop", { projectId: this.project.id, data: this.ordered }, {
+      this.localdata.forEach((el,i)=>{
+        el.order = i
+      })
+
+      console.log("ordered sections =>",this.localdata)
+
+      let sectionDnD = await this.$axios.$put("/section/dragdrop", { projectId: this.project.id, data: this.localdata }, {
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
           "Content-Type": "application/json"
         }
       })
 
-      // console.log(sectionDnD)
+      console.log(sectionDnD.message)
+
       if (sectionDnD.statusCode == 200) {
         // console.info(sectionDnD.message)
         this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id }).then(() => {
-          this.$emit("update-key")
+          // this.$emit("update-key")
           this.$nuxt.$emit("update-key")
-          this.popupMessages.push({ text: sectionDnD.message, variant: "success" })
+
         })
-      } else {
+      } /*else {
         console.warn(sectionDnD.message)
-        this.popupMessages.push({ text: sectionDnD.message, variant: "warning" })
-      }
+      }*/
 
       this.loading = false
 
-    }, 1200),
+    }, 600),
 
     /*taskWithSection(sectionId) {
       var arr = []
@@ -352,6 +402,14 @@ export default {
       console.log('favorites')
     }
   },
+  /*
+  beforeUpdate(){
+    console.info("before update")
+  },
+  */
+  /*async updated() {
+    console.log('updated lifecycle',this.taskDnDsectionId, this.taskDnDlist)
+  }*/
 };
 
 </script>
@@ -362,101 +420,12 @@ export default {
 
 .section-draggable {
   min-height: calc(100vh - 260px);
+  border-radius: 3px;
 }
 
 .highlight {
-  outline: 3px lightblue dashed;
-}
-
-.task-grid-section {
-  flex: 0 0 16rem;
-  /*min-height: calc(100vh - 200px);*/
-  padding: 10px;
-  user-select: none;
-
-  .section-drag-handle {
-    cursor: grab;
-  }
-
-  &:not(:first-child) {
-    border-left: 1px solid $gray4;
-  }
-
-  &:last-child {
-    border-right: 1px solid $gray4;
-  }
-
-  .title {
-    font-weight: bold;
-  }
-
-  &:hover {
-
-    &,
-    &+.task-grid-section {
-      border-left-color: $gray5;
-    }
-
-  }
-
-  &:last-child:hover {
-    border-right-color: $gray5;
-  }
-}
-
-
-.task-top,
-.task-bottom {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px;
-}
-
-.task-top {
-  margin-bottom: 1rem;
-}
-
-.task-bottom {
-  align-items: center;
-}
-
-.task-grid {
-  margin: 8px 4px 8px;
-  background: var(--bib-light);
-  border: 1px solid transparent;
-  border-radius: 4px;
-  cursor: pointer;
-
-  &.bg-danger {
-    background-color: var(--bib-danger);
-    color: #fff;
-
-    .user-name {
-      color: #fff
-    }
-  }
-
-  &.active {
-    background-color: var(--bib-gray4);
-    border-color: var(--bib-gray6);
-  }
-
-  .task-image {
-    aspect-ratio: 16 / 9;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-  }
-
-  span {
-    font-size: 15px;
-    font-weight: 500;
-  }
-
-  .task-bottom span {
-    font-size: 13px;
-  }
-
+  outline: 2px skyblue dashed;
+  background-color: azure;
 }
 
 .flip-list-move {

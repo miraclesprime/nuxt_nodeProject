@@ -1,5 +1,5 @@
 <template>
-  <span :id="'date-' + Math.random().toString().slice(-3)" class="text-dark text-truncate">{{output}}</span>
+  <span :id="'date-' + Math.random().toString().slice(-3)" class="date-info text-truncate">{{output}}</span>
 </template>
 <script>
 export default {

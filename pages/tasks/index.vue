@@ -278,23 +278,6 @@ export default {
   grid-template-columns: 1fr;
 }
 
-
-.task-grid-section {
-  flex: 0 0 16rem;
-  padding: 10px;
-  font-size: 15px;
-  user-select: none;
-  border-right: 1px solid $gray4;
-
-  &:not(:first-child) {
-    border-right: 1px solid $gray4;
-  }
-
-  .title {
-    font-weight: bold;
-  }
-}
-
 .section-options {
   visibility: hidden;
   opacity: 0;
