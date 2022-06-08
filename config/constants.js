@@ -192,6 +192,18 @@ export const VIEW_FILTER = [
   { label: 'All', key: 'all', selected: true }
 ]
 
+export const GOAL_VIEW_FILTER = [
+  { label: 'Incompleted Goals', key: 'incomplete', },
+  { label: 'Completed Goals', key: 'complete' },
+  { label: 'All Goals', key: 'all', selected: true }
+]
+
+export const DREAM_VIEW_FILTER = [
+  { label: 'Incompleted Dreams', key: 'incomplete', },
+  { label: 'Completed Dreams', key: 'complete' },
+  { label: 'All Dreams', key: 'all', selected: true }
+]
+
 export const PROJECT_SORT = [
   { label: 'Name', key: 'name' },
   { label: 'Owner', key: 'owner' },
@@ -464,6 +476,22 @@ export const USER_TASK_SORT = [
   { label: 'Priority', key: 'priority' },
   { label: 'Status', key: 'status' },
   { label: 'Start Date', key: 'createdAt' },
+  { label: 'Due Date', key: 'dueDate' },
+]
+
+export const GOAL_SORT = [
+  { label: 'Name', key: 'name' },
+  { label: 'Priority', key: 'priority' },
+  { label: 'Status', key: 'status' },
+  { label: 'Owner', key: 'owner' },
+  { label: 'Due Date', key: 'dueDate' },
+]
+
+export const DREAM_SORT = [
+  { label: 'Name', key: 'name' },
+  { label: 'Priority', key: 'priority' },
+  { label: 'Status', key: 'status' },
+  { label: 'Owner', key: 'owner' },
   { label: 'Due Date', key: 'dueDate' },
 ]
 
