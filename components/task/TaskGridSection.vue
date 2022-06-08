@@ -5,13 +5,13 @@
         <div class="w-100 d-flex " :id="'tgs-inner-wrap-'+section.id" style="margin-bottom: 10px">
           <div class="title text-gray section-drag-handle flex-grow-1" :id="'tgs-label-'+section.id">{{ section.title.includes('_section') ? 'Untitled section' : section.title }}</div>
           <div class="d-flex align-center section-options" :id="'tgs-section-options-'+section.id">
-            <div class="cursor-pointer mx-05 d-flex align-center" v-on:click="showCreateTaskModal(section.id)">
+            <div class="cursor-pointer mx-05 d-flex align-center" v-on:click.stop="showCreateTaskModal(section.id)">
               <bib-icon icon="add" variant="gray5" :scale="1.25"></bib-icon>
             </div>
             <bib-popup pop="elipsis" icon-variant="gray5" :scale="1.1">
               <template v-slot:menu>
                 <div :id="'tgs-list'+section.id" class="list">
-                  <span class="list__item" :id="'tgs-list-1'+section.id" v-on:click="showCreateTaskModal(section.id)">
+                  <span class="list__item" :id="'tgs-list-1'+section.id" v-on:click.stop="showCreateTaskModal(section.id)">
                     <div class="d-flex align-center" :id="'tgs-list-flex-1'+section.id">
                       <bib-icon icon="add"></bib-icon>
                       <span class="ml-05" :id="'tgs-list-span'+section.id">Add task</span>
@@ -43,7 +43,7 @@
                       <span class="list__item" :id="'tg-comp'+task.id">
                         <bib-icon icon="check-circle" class="mr-05"></bib-icon> Mark Completed
                       </span>
-                      <span class="list__item" :id="'tg-fav'+task.id" @click="addToFavorites">
+                      <span class="list__item" :id="'tg-fav'+task.id" v-on:click.stop="addToFavorites">
                         <bib-icon icon="heart-like" class="mr-05"></bib-icon> Add to favorites
                       </span>
                       <span class="list__item" :id="'tg-attach'+task.id">
@@ -164,15 +164,6 @@ export default {
       // console.log("move to section =>",e.to.dataset.section)
       // console.log("related context list =>", list, list.length)
 
-      /*let tasks = []
-
-      e.relatedContext.list.forEach((element, index) => {
-        element['order'] = index
-        tasks.push(element)
-        console.info(element.order, element.title)
-      })*/
-
-      // console.log(tasks, e.to.dataset.section)
       // this.taskDnDlist = tasks
       this.taskDnDsectionId = +e.to.dataset.section
       this.highlight = +e.to.dataset.section
@@ -262,9 +253,16 @@ export default {
       this.$nuxt.$emit("update-key")
     },*/
 
-    moveSection: _.debounce(function(e) {
+    moveSection(e){
 
-      // console.log(e.relatedContext.list)
+      console.log("move section =>",e.relatedContext.list)
+      this.highlight = +e.to.dataset.section
+
+    },
+
+    /*moveSection: _.debounce(function(e) {
+
+      console.log("move section =>",e.relatedContext.list)
 
       let ordered = []
       e.relatedContext.list.forEach(function(element, index) {
@@ -274,34 +272,40 @@ export default {
 
       this.ordered = ordered
 
-    }, 800),
+    }, 400),*/
 
-    sectionDragEnd: _.debounce(async function() {
-      // console.log(this.ordered)
+    sectionDragEnd: _.debounce(async function(e) {
+
       this.loading = true
-      /*let sectionDnD = await this.$axios.$put("/section/dragdrop", { projectId: this.project.id, data: this.ordered }, {
+      this.localdata.forEach((el,i)=>{
+        el.order = i
+      })
+
+      console.log("ordered sections =>",this.localdata)
+
+      let sectionDnD = await this.$axios.$put("/section/dragdrop", { projectId: this.project.id, data: this.localdata }, {
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
           "Content-Type": "application/json"
         }
       })
 
-      // console.log(sectionDnD)
+      console.log(sectionDnD.message)
+
       if (sectionDnD.statusCode == 200) {
         // console.info(sectionDnD.message)
         this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id }).then(() => {
-          this.$emit("update-key")
+          // this.$emit("update-key")
           this.$nuxt.$emit("update-key")
-          // this.popupMessages.push({ text: sectionDnD.message, variant: "success" })
+
         })
-      } else {
+      } /*else {
         console.warn(sectionDnD.message)
-        // this.popupMessages.push({ text: sectionDnD.message, variant: "warning" })
       }*/
 
       this.loading = false
 
-    }, 1200),
+    }, 600),
 
     /*taskWithSection(sectionId) {
       var arr = []
