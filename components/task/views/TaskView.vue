@@ -16,7 +16,7 @@
       <task-list-section :project="project" :sections="localdata" :templateKey="templateKey" v-on:sort-task="taskSort($event)" v-on:update-key="updateKey"></task-list-section>
     </template>
     <template v-else>
-      <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)">
+      <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="setFavorite">
       </task-grid-section>
     </template>
     <loading :loading="loading"></loading>
@@ -42,7 +42,6 @@
     </bib-modal-wrapper>
   </div>
 </template>
-
 <script>
 import { TASK_FIELDS } from "config/constants";
 import { mapGetters } from 'vuex';
@@ -76,9 +75,19 @@ export default {
       token: "token/getToken",
       user: "user/getUser",
       task: "task/getSelectedTask",
+      favTasks: "task/getFavTasks",
       project: "project/getSingleProject",
       sections: "section/getProjectSections",
     }),
+
+    /*isFavorite() {
+      let fav = this.favTasks.some(t => t.task.id == this.currentTask.id)
+      if (fav) {
+        return { icon: "bookmark-solid", variant: "orange", text: "Remove favorite", status: true }
+      } else {
+        return { icon: "bookmark", variant: "gray5", text: "Add to favorites", status: false }
+      }
+    },*/
 
     sectionError() {
       if (this.newSectionName.indexOf("_") == 0) {
@@ -310,7 +319,8 @@ export default {
 
         this.$store.dispatch("section/createSection", {
           "projectId": this.project.id,
-          "title": newvalue.trim()
+          "title": newvalue.trim(),
+          "isDeleted": false,
         }).then(() => {
           this.sectionLoading = false
           this.newSection = false
@@ -437,6 +447,28 @@ export default {
         if (this.tableFields[i].header_icon && this.tableFields[i].key == this.sortName) {
           this.tableFields[i].header_icon.isActive = true
         }
+      }
+    },
+
+    setFavorite($event) {
+      // console.info("to be fav task", $event)
+      let isFav = this.favTasks.some((f) => f.taskId == $event.id)
+      // console.log(isFav)
+
+      if (isFav) {
+        this.$store.dispatch("task/removeFromFavorite", { id: $event.id })
+          .then(msg => {
+            console.log(msg)
+            this.updateKey()
+          })
+          .catch(e => console.log(e))
+      } else {
+        this.$store.dispatch("task/addToFavorite", { id: $event.id })
+          .then(msg => {
+            console.log(msg)
+            this.updateKey()
+          })
+          .catch(e => console.log(e))
       }
     },
   },

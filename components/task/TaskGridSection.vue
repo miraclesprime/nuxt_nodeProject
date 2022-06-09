@@ -43,8 +43,8 @@
                       <span class="list__item" :id="'tg-comp'+task.id">
                         <bib-icon icon="check-circle" class="mr-05"></bib-icon> Mark Completed
                       </span>
-                      <span class="list__item" :id="'tg-fav'+task.id" v-on:click.stop="addToFavorites">
-                        <bib-icon icon="heart-like" class="mr-05"></bib-icon> Add to favorites
+                      <span class="list__item" :id="'tg-fav'+task.id" data-fav="isFavorite(task).status" v-on:click.stop="addToFavorites(task)">
+                        <bib-icon :icon="isFavorite(task).icon" :variant="isFavorite(task).variant" class="mr-05"></bib-icon> {{isFavorite(task).text}}
                       </span>
                       <span class="list__item" :id="'tg-attach'+task.id">
                         <bib-icon icon="upload" class="mr-05"></bib-icon> Attach file...
@@ -122,6 +122,23 @@ export default {
     // tasks: { type: Array },
   },
 
+  computed: {
+    ...mapGetters({
+      token: "token/getToken",
+      project: "project/getSingleProject",
+      currentTask: 'task/getSelectedTask',
+      // sections: "section/getProjectSections",
+      favTasks: "task/getFavTasks",
+    }),
+    
+  },
+
+  watch: {
+    sections(newVal) {
+      // console.info(newVal)
+      this.localdata = newVal
+    }
+  },
 
   mounted() {
     this.loading = true
@@ -135,21 +152,16 @@ export default {
     }).catch(e => console.log(e))
 
   },
-  watch: {
-    sections(newVal) {
-      // console.info(newVal)
-      this.localdata = newVal
-    }
-  },
-  computed: {
-    ...mapGetters({
-      token: "token/getToken",
-      project: "project/getSingleProject",
-      currentTask: 'task/getSelectedTask',
-      // sections: "section/getProjectSections",
-    }),
-  },
+
   methods: {
+    isFavorite(task) {
+      let fav = this.favTasks.some(t  => t.task.id == task.id)
+      if (fav) {
+        return { icon: "bookmark-solid", variant: "orange", text: "Remove favorite", status: true }
+      } else {
+        return { icon: "bookmark", variant: "gray5", text: "Add to favorites", status: false }
+      }
+    },
     showCreateTaskModal(sectionId) {
       this.$emit("create-task", false) //event will be captured by parent only
       this.$nuxt.$emit("create-task", false) //event will be available to all
@@ -398,18 +410,11 @@ export default {
       });
 
     },
-    addToFavorites() {
-      console.log('favorites')
+    addToFavorites(task) {
+      // console.log('to be favorites task', task.id)
+      this.$emit("set-favorite", task)
     }
   },
-  /*
-  beforeUpdate(){
-    console.info("before update")
-  },
-  */
-  /*async updated() {
-    console.log('updated lifecycle',this.taskDnDsectionId, this.taskDnDlist)
-  }*/
 };
 
 </script>

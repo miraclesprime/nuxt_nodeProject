@@ -237,9 +237,9 @@ export default {
     isFavorite() {
       let fav = this.favTasks.some(t => t.task.id == this.currentTask.id)
       if (fav) {
-        return { icon: "heart-like-solid", variant: "orange", text: "Remove favorite", status: true }
+        return { icon: "bookmark-solid", variant: "orange", text: "Remove favorite", status: true }
       } else {
-        return { icon: "heart-like", variant: "gray5", text: "Add to favorites", status: false }
+        return { icon: "bookmark", variant: "gray5", text: "Add to favorites", status: false }
       }
     },
     isComplete() {
