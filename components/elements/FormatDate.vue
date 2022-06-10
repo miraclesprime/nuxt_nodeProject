@@ -15,6 +15,9 @@ export default {
   },
   computed: {
     output() {
+      if (!this.datetime) {
+        return ""
+      }
       let d = new Date(this.datetime)
       let m = d.getMonth()
       return `${d.getDate()} ${this.months[m]} ${d.getFullYear()}`
