@@ -1,76 +1,75 @@
 <template>
-<client-only>
-  <div id="favorite_wrapper">
-    <page-title title="Favorites"></page-title>
-    <favorite-actions v-on:change-viewing="changeView" v-on:change-sorting="changeSort"></favorite-actions>
-    <div id="favorite-scroll-wrap" class="of-scroll-y position-relative">
-      <bib-table :key="'fproj'+key" :fields="projectTableFields" class="border-gray4 bg-white" :sections="sortedProject" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Favorite Projects'}" @file-title-sort="sortProject('name')" @file-status-sort="sortProject('status')" @file-priority-sort="sortProject('priority')" @file-owner-sort="sortProject('owner')" @file-dueDate-sort="sortProject('dueDate')">
-        <template #cell(title)="data">
-          <div class="d-flex gap-05 align-center text-dark " :id="'projects-' + data.value.title">
-            <bib-icon icon="briefcase" variant="gray5" :scale="1.1"></bib-icon>
-            <nuxt-link :to="'/projects/'+data.value.id" class="text-dark">{{data.value.title}}</nuxt-link>
-          </div>
-        </template>
-        <template #cell(department)="data">
-          Department
-        </template>
-        <template #cell(status)="data">
-          <div class="d-flex gap-05 align-center">
-            <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')"></div>
-            <span class="text-dark ">{{ favoriteStatusLabel(data.value.status ? data.value.status.text : '') }}</span>
-          </div>
-        </template>
-        <template #cell(priority)="data">
-          <div class="d-flex gap-05 align-center">
-            <bib-icon icon="urgent-solid" :scale="1.1" :variant="favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
-            <span id="project-text" :class="'text-' + favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')" class="text-capitalize">
-              {{ data.value.priority ? data.value.priority.text : '' }}
-            </span>
-          </div>
-        </template>
-        <template #cell(owner)="data">
-          <user-info :userId="data.value.userId"></user-info>
-        </template>
-        <template #cell(dueDate)="data">
-          <format-date :datetime="data.value.dueDate"></format-date>
-        </template>
-      </bib-table>
-      <!-- task table -->
-      <bib-table :key="'ftasks'+key" :fields="taskTableFields" class="border-gray4 bg-white" :sections="sortedTask" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Favorite Tasks'}" @file-title-sort="sortTask('name')" @file-status-sort="sortTask('status')" @file-priority-sort="sortTask('priority')" @file-owner-sort="sortTask('owner')" @file-dueDate-sort="sortTask('dueDate')">
-        <template #cell(title)="data">
-          <div class="d-flex gap-05 align-center" :id="'projects-' + data.value.title">
-            <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data.value.statusId)"></bib-icon>
-            <span :id="'projects-' + data.value.title + '-text'" class="text-dark text-left cursor-pointer flex-grow-1" style="  line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{data.value.title}}</span>
-          </div>
-        </template>
-        <template #cell(owner)="data">
-          <user-info :userId="data.value.userId"></user-info>
-        </template>
-        <template #cell(status)="data">
-          <div class="d-flex gap-05 align-center">
-            <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
+  <client-only>
+    <div id="favorite_wrapper">
+      <page-title title="Favorites"></page-title>
+      <favorite-actions v-on:change-viewing="changeView" v-on:change-sorting="changeSort"></favorite-actions>
+      <div id="favorite-scroll-wrap" class="of-scroll-y position-relative">
+        <bib-table :key="'fproj'+key" :fields="projectTableFields" class="border-gray4 bg-white" :sections="sortedProject" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Favorite Projects'}" @file-title-sort="sortProject('name')" @file-status-sort="sortProject('status')" @file-priority-sort="sortProject('priority')" @file-owner-sort="sortProject('owner')" @file-dueDate-sort="sortProject('dueDate')">
+          <template #cell(title)="data">
+            <div class="d-flex gap-05 align-center text-dark " :id="'projects-' + data.value.title">
+              <bib-icon icon="briefcase" variant="gray5" :scale="1.1"></bib-icon>
+              <nuxt-link :to="'/projects/'+data.value.id" class="text-dark">{{data.value.title}}</nuxt-link>
             </div>
-            <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" class="text-dark text-truncate">{{ favoriteStatusLabel(data.value.status ? data.value.status.text : "") }}</span>
-          </div>
-        </template>
-        <template #cell(dueDate)="data">
-          <format-date :datetime="data.value.dueDate"></format-date>
-        </template>
-        <template #cell(priority)="data">
-          <div class="d-flex gap-05 align-center">
-            <bib-icon icon="urgent-solid" :scale="1.1" :variant="favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
-            <span id="project-text" :class="'text-' + favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')" class="text-capitalize">
-              {{ data.value.priority ? data.value.priority.text : '' }}
-            </span>
-          </div>
-        </template>
-      </bib-table>
-      <loading :loading="loading"></loading>
+          </template>
+          <template #cell(department)="data">
+            Department
+          </template>
+          <template #cell(status)="data">
+            <div class="d-flex gap-05 align-center">
+              <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')"></div>
+              <span class="text-dark ">{{ favoriteStatusLabel(data.value.status ? data.value.status.text : '') }}</span>
+            </div>
+          </template>
+          <template #cell(priority)="data">
+            <div class="d-flex gap-05 align-center">
+              <bib-icon icon="urgent-solid" :scale="1.1" :variant="favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
+              <span id="project-text" :class="'text-' + favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')" class="text-capitalize">
+                {{ data.value.priority ? data.value.priority.text : '' }}
+              </span>
+            </div>
+          </template>
+          <template #cell(owner)="data">
+            <user-info :userId="data.value.userId"></user-info>
+          </template>
+          <template #cell(dueDate)="data">
+            <format-date :datetime="data.value.dueDate"></format-date>
+          </template>
+        </bib-table>
+        <!-- task table -->
+        <bib-table :key="'ftasks'+key" :fields="taskTableFields" class="border-gray4 bg-white" :sections="sortedTask" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Favorite Tasks'}" @file-title-sort="sortTask('name')" @file-status-sort="sortTask('status')" @file-priority-sort="sortTask('priority')" @file-owner-sort="sortTask('owner')" @file-dueDate-sort="sortTask('dueDate')">
+          <template #cell(title)="data">
+            <div class="d-flex gap-05 align-center" :id="'projects-' + data.value.title">
+              <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data.value.statusId)"></bib-icon>
+              <span :id="'projects-' + data.value.title + '-text'" class="text-dark text-left cursor-pointer flex-grow-1" style="  line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{data.value.title}}</span>
+            </div>
+          </template>
+          <template #cell(owner)="data">
+            <user-info :userId="data.value.userId"></user-info>
+          </template>
+          <template #cell(status)="data">
+            <div class="d-flex gap-05 align-center">
+              <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
+              </div>
+              <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" class="text-dark text-truncate">{{ favoriteStatusLabel(data.value.status ? data.value.status.text : "") }}</span>
+            </div>
+          </template>
+          <template #cell(dueDate)="data">
+            <format-date :datetime="data.value.dueDate"></format-date>
+          </template>
+          <template #cell(priority)="data">
+            <div class="d-flex gap-05 align-center">
+              <bib-icon icon="urgent-solid" :scale="1.1" :variant="favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
+              <span id="project-text" :class="'text-' + favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')" class="text-capitalize">
+                {{ data.value.priority ? data.value.priority.text : '' }}
+              </span>
+            </div>
+          </template>
+        </bib-table>
+        <loading :loading="loading"></loading>
+      </div>
     </div>
-  </div>
-</client-only>
+  </client-only>
 </template>
-
 <script>
 import { PROJECT_FAVORITES, TASK_FAVORITES } from '../../config/constants'
 import { mapGetters } from 'vuex';
@@ -93,8 +92,8 @@ export default {
 
   computed: {
     ...mapGetters({
-      favoriteProjects: 'favorite/getFavProjects',
-      favoriteTasks: 'favorite/getFavTasks'
+      favoriteProjects: 'project/getFavoriteProjects',
+      favoriteTasks: 'task/getFavTasks'
     })
   },
 
@@ -102,11 +101,11 @@ export default {
   mounted() {
     this.loading = true
 
-    this.$store.dispatch('favorite/fetchFavProjects').then(() => {
+    this.$store.dispatch('project/setFavProjects').then(() => {
       this.fetchProjects()
     })
 
-    this.$store.dispatch('favorite/fetchFavTasks').then(() => {
+    this.$store.dispatch('task/getFavTasks').then(() => {
       this.fetchTasks()
     })
 
@@ -119,10 +118,12 @@ export default {
       let favProj = await JSON.parse(JSON.stringify(this.favoriteProjects))
 
       // let favProj = fp.map(p => p.projects)
-      let sorted = await favProj.sort((a, b) => a.title.localeCompare(b.title))
+      let sorted = await favProj.sort((a, b) => a.projects.title.localeCompare(b.projects.title))
 
-      // console.log("sorted =>", sorted)
-      this.sortedProject = sorted
+      console.log("sorted fav project =>", sorted)
+      let sortedArray = []
+      sorted.forEach(p => { sortedArray.push(p.projects) })
+      this.sortedProject = sortedArray
       this.key += 1
       this.loading = false
       // })
@@ -133,10 +134,12 @@ export default {
       let favTask = await JSON.parse(JSON.stringify(this.favoriteTasks))
 
       // let favTask = ft.map(s => s.task)
-      let sorted = await favTask.sort((a, b) => a.title.localeCompare(b.title))
+      let sorted = await favTask.sort((a, b) => a.task.title.localeCompare(b.task.title))
 
-      // console.log("sorted =>", sorted)
-      this.sortedTask = sorted
+      console.log("sorted fav task =>", sorted)
+      let sortedArray = []
+      sorted.forEach(t => { sortedArray.push(t.task) })
+      this.sortedTask = sortedArray
       this.key += 1
       this.loading = false
       // })
@@ -228,21 +231,54 @@ export default {
           this.key += 1
           break;
         case 'status':
+          let sArr = []
+
+          for (let i = 0; i < this.sortedProject.length; i++) {
+            if (this.sortedProject[i].statusId) {
+              sArr.unshift(this.sortedProject[i])
+            } else {
+              sArr.push(this.sortedProject[i])
+            }
+          }
+
+          this.sortedProject = sArr;
+
           if (this.projOrder == "asc") {
-            this.sortedProject.sort((a, b) => a.status.text.localeCompare(b.status.text));
+            this.sortedProject.sort((a, b) => {
+              if (a.status && b.status) { return a.status.text.localeCompare(b.status.text) }
+            });
             this.projOrder = "desc"
           } else {
-            this.sortedProject.sort((a, b) => b.status.text.localeCompare(a.status.text));
+            this.sortedProject.sort((a, b) => {
+              if (a.status && b.status) { return b.status.text.localeCompare(a.status.text) }
+            });
             this.projOrder = "asc"
           }
+
           this.key += 1
           break;
         case 'priority':
+          let pArr = []
+
+          for (let i = 0; i < this.sortedProject.length; i++) {
+            if (this.sortedProject[i].priorityId) {
+              pArr.unshift(this.sortedProject[i])
+            } else {
+              pArr.push(this.sortedProject[i])
+            }
+          }
+
+          this.sortedProject = pArr;
+          
           if (this.projOrder == "asc") {
-            this.sortedProject.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
+            this.sortedProject.sort((a, b) => {
+              if (a.priority && b.priority) { return a.priority.text.localeCompare(b.priority.text) }
+            });
             this.projOrder = "desc"
           } else {
-            this.sortedProject.sort((a, b) => b.priority.text.localeCompare(a.priority.text));
+            this.sortedProject.sort((a, b) => {
+              if (a.priority && b.priority) { return b.priority.text.localeCompare(a.priority.text) }
+            });
             this.projOrder = "asc"
           }
           this.key += 1
