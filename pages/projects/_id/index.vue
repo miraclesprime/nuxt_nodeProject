@@ -44,17 +44,17 @@
         <loading :loading="favLoading"></loading>
       </div>
     </nav>
-    <div class="menu " id='project-idmenu-content'>
-      <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="TABS" />
+    <div class="menu " id='project-id-menu-content'>
+      <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="PROJECT_TABS" />
     </div>
     <div id="project-id-tab-content" class="project-id-tab-content position-relative of-scroll-y">
-      <project-overview v-if="activeTab.value == TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="projectTasks" :currentProject="project"></project-overview>
-      <task-view v-if="activeTab.value == TAB_TITLES.tasks" :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType"></task-view>
-      <task-conversations v-if="activeTab.value == TAB_TITLES.conversations" :fields="TABLE_FIELDS" :tasks="projectTasks"></task-conversations>
-      <!-- <task-timeline-view v-if="activeTab.value == TAB_TITLES.timeline" :fields="TABLE_FIELDS" :tasks="tasks" />
-      <task-calendar-view v-if="activeTab.value == TAB_TITLES.calendar" :fields="TABLE_FIELDS" :tasks="tasks" /> -->
-      <task-team v-if="activeTab.value == TAB_TITLES.team" :fields="TABLE_FIELDS" :tasks="projectTasks"></task-team>
-      <task-files v-if="activeTab.value == TAB_TITLES.files" :fields="TABLE_FIELDS" :tasks="projectTasks"></task-files>
+      <project-overview v-if="activeTab.value == PROJECT_TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="projectTasks" :currentProject="project"></project-overview>
+      <task-view v-if="activeTab.value == PROJECT_TAB_TITLES.tasks" :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType"></task-view>
+      <task-conversations v-if="activeTab.value == PROJECT_TAB_TITLES.conversations" :fields="TABLE_FIELDS" :tasks="projectTasks"></task-conversations>
+      <!-- <task-timeline-view v-if="activeTab.value == PROJECT_TAB_TITLES.timeline" :fields="TABLE_FIELDS" :tasks="tasks" />
+      <task-calendar-view v-if="activeTab.value == PROJECT_TAB_TITLES.calendar" :fields="TABLE_FIELDS" :tasks="tasks" /> -->
+      <task-team v-if="activeTab.value == PROJECT_TAB_TITLES.team" :fields="TABLE_FIELDS" :tasks="projectTasks"></task-team>
+      <task-files v-if="activeTab.value == PROJECT_TAB_TITLES.files" :fields="TABLE_FIELDS" :tasks="projectTasks"></task-files>
     </div>
     <!-- project rename modal -->
     <bib-modal-wrapper v-if="renameModal" title="Rename project" @close="renameModal = false">
@@ -96,15 +96,15 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import { TABLE_FIELDS, TABS, DEFAULT_TAB, TAB_TITLES } from "config/constants";
+import { TABLE_FIELDS, PROJECT_TABS, PROJECT_DEFAULT_TAB, PROJECT_TAB_TITLES } from "config/constants";
 
 export default {
   name: 'ProjectId',
   data() {
     return {
-      activeTab: DEFAULT_TAB,
-      TABS,
-      TAB_TITLES,
+      activeTab: PROJECT_DEFAULT_TAB,
+      PROJECT_TABS,
+      PROJECT_TAB_TITLES,
       TABLE_FIELDS,
       gridType: "list",
       renameModal: false,
