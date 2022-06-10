@@ -24,16 +24,6 @@ export const TABLE_FIELDS = [{
   }
 ];
 
-export const TAB_TITLES = {
-  overview: "overview",
-  tasks: "tasks",
-  timeline: "timeline",
-  calendar: "calendar",
-  team: "team",
-  conversations: "conversations",
-  files: "files"
-};
-
 export const TASK_FIELDS = [{
     key: "",
     label: "#"
@@ -143,7 +133,9 @@ export const TEAMMATES = [{
   }
 ];
 
-export const TABS = [{
+// project index page constants -----
+
+export const PROJECT_TABS = [{
     key: "overview",
     value: "overview",
     title: "Overview"
@@ -180,10 +172,124 @@ export const TABS = [{
   }
 ];
 
-export const DEFAULT_TAB = {
+export const PROJECT_DEFAULT_TAB = {
   key: "tasks",
   value: "tasks",
   title: "Tasks"
+};
+
+export const PROJECT_TAB_TITLES = {
+  overview: "overview",
+  tasks: "tasks",
+  timeline: "timeline",
+  calendar: "calendar",
+  team: "team",
+  conversations: "conversations",
+  files: "files"
+};
+
+// dream index page constants -----
+
+export const DREAM_TABS = [{
+  key: "overview",
+  value: "overview",
+  title: "Overview"
+},
+{
+  key: "goals",
+  value: "goals",
+  title: "Goals"
+},
+{
+  key: "projects",
+  value: "projects",
+  title: "Projects"
+},
+{
+  key: "tasks",
+  value: "tasks",
+  title: "Tasks"
+},
+{
+  key: "team",
+  value: "team",
+  title: "Team"
+},
+{
+  key: "conversations",
+  value: "conversations",
+  title: "Conversations"
+},
+{
+  key: "files",
+  value: "files",
+  title: "Files"
+}
+];
+
+export const DREAM_DEFAULT_TAB = {
+  key: "overview",
+  value: "overview",
+  title: "Overview"
+};
+
+export const DREAM_TAB_TITLES = {
+  overview: "overview",
+  goals: "goals",
+  projects: "projects",
+  tasks: "tasks",
+  team: "team",
+  conversations: "conversations",
+  files: "files"
+};
+
+// goal index page constants -----
+
+export const GOAL_TABS = [{
+  key: "overview",
+  value: "overview",
+  title: "Overview"
+},
+{
+  key: "projects",
+  value: "projects",
+  title: "Projects"
+},
+{
+  key: "tasks",
+  value: "tasks",
+  title: "Tasks"
+},
+{
+  key: "team",
+  value: "team",
+  title: "Team"
+},
+{
+  key: "conversations",
+  value: "conversations",
+  title: "Conversations"
+},
+{
+  key: "files",
+  value: "files",
+  title: "Files"
+}
+];
+
+export const GOAL_DEFAULT_TAB = {
+  key: "overview",
+  value: "overview",
+  title: "Overview"
+};
+
+export const GOAL_TAB_TITLES = {
+  overview: "overview",
+  projects: "projects",
+  tasks: "tasks",
+  team: "team",
+  conversations: "conversations",
+  files: "files"
 };
 
 export const VIEW_FILTER = [
