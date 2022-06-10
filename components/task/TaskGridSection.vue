@@ -65,7 +65,7 @@
                         <bib-icon icon="warning" class="mr-05"></bib-icon> Report
                       </span>
                       <hr>
-                      <span class="list__item danger" :id="'tg-delete-task'+task.id">Delete Task</span>
+                      <span class="list__item danger" :id="'tg-delete-task'+task.id" @click="$emit('delete-task', task)">Delete Task</span>
                     </div>
                   </template>
                 </bib-button>

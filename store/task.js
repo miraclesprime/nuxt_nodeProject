@@ -122,6 +122,19 @@ export const actions = {
     return res.data
   },
 
+  async deleteTask(ctx, payload){
+    // console.log(payload)
+    const res = await this.$axios.$delete("/task", {id: payload.id}, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, "Content-Type": "application/json" }
+    })
+    return res
+    /*if (res.statusCode == 200) {
+      return res
+    } else {
+      return res
+    }*/
+  },
+
   async updateTaskStatus(ctx, payload) {
     // console.log('update task payload', payload)
     if (payload.statusId !== 5) {

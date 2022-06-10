@@ -120,7 +120,7 @@ export default {
       // let favProj = fp.map(p => p.projects)
       let sorted = await favProj.sort((a, b) => a.projects.title.localeCompare(b.projects.title))
 
-      console.log("sorted fav project =>", sorted)
+      // console.log("sorted fav project =>", sorted)
       let sortedArray = []
       sorted.forEach(p => { sortedArray.push(p.projects) })
       this.sortedProject = sortedArray
@@ -136,7 +136,7 @@ export default {
       // let favTask = ft.map(s => s.task)
       let sorted = await favTask.sort((a, b) => a.task.title.localeCompare(b.task.title))
 
-      console.log("sorted fav task =>", sorted)
+      // console.log("sorted fav task =>", sorted)
       let sortedArray = []
       sorted.forEach(t => { sortedArray.push(t.task) })
       this.sortedTask = sortedArray

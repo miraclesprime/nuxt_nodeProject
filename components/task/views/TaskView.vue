@@ -16,7 +16,7 @@
       <task-list-section :project="project" :sections="localdata" :templateKey="templateKey" v-on:sort-task="taskSort($event)" v-on:update-key="updateKey"></task-list-section>
     </template>
     <template v-else>
-      <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="setFavorite" v-on:mark-complete="markComplete">
+      <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="setFavorite" v-on:mark-complete="markComplete" v-on:delete-task="deleteTask">
       </task-grid-section>
     </template>
     <loading :loading="loading"></loading>
@@ -456,6 +456,7 @@ export default {
 
     setFavorite($event) {
       // console.info("to be fav task", $event)
+      this.loading = true
       let isFav = this.favTasks.some((f) => f.taskId == $event.id)
       // console.log(isFav)
 
@@ -465,16 +466,24 @@ export default {
             console.log(msg)
             this.popupMessages.push({ text: msg, variant: "success" })
             this.updateKey()
+            this.loading = false
           })
-          .catch(e => console.log(e))
+          .catch(e => {
+            this.loading = false
+            console.log(e)
+          })
       } else {
         this.$store.dispatch("task/addToFavorite", { id: $event.id })
           .then(msg => {
             console.log(msg)
             this.popupMessages.push({ text: msg, variant: "success" })
             this.updateKey()
+            this.loading = false
           })
-          .catch(e => console.log(e))
+          .catch(e => {
+            this.loading = false
+            console.log(e)
+          })
       }
     },
     markComplete($event) {
@@ -492,6 +501,11 @@ export default {
           this.popupMessages.push({ text: e.message, variant: "warning" })
           this.loading = false
         })
+    },
+    deleteTask(task) {
+      this.$store.dispatch("task/deleteTask", task).then(t => {
+        console.log(t)
+      }).catch(e => console.log(e))
     },
   },
 
