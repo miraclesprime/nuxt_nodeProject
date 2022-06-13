@@ -284,6 +284,16 @@ export const actions = {
     }
   },
 
+  async deleteProject(ctx, payload) {
+    console.log(payload)
+    const res = await this.$axios.$delete("/project", {
+      headers: { "Authorization": `Bearer ${localStorage.getItem('accessToken')}` },
+      data: { id: payload.id }
+    })
+    return res
+    
+  },
+
   async setFavProjects(ctx) {
     try {
       const fav = await this.$axios.$get("/project/user/favorites", {

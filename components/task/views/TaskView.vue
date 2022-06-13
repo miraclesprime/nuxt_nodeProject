@@ -16,7 +16,7 @@
       <task-list-section :project="project" :sections="localdata" :templateKey="templateKey" v-on:sort-task="taskSort($event)" v-on:update-key="updateKey"></task-list-section>
     </template>
     <template v-else>
-      <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="setFavorite">
+      <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="setFavorite" v-on:mark-complete="markComplete" v-on:delete-task="deleteTask">
       </task-grid-section>
     </template>
     <loading :loading="loading"></loading>
@@ -40,6 +40,12 @@
         </div>
       </template>
     </bib-modal-wrapper>
+    <bib-popup-notification-wrapper>
+      <template #wrapper>
+        <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
+        </bib-popup-notification>
+      </template>
+    </bib-popup-notification-wrapper>
   </div>
 </template>
 <script>
@@ -68,6 +74,7 @@ export default {
       renameModal: false,
       sectionId: null,
       sectionTitle: "",
+      popupMessages: [],
     };
   },
   computed: {
@@ -452,6 +459,7 @@ export default {
 
     setFavorite($event) {
       // console.info("to be fav task", $event)
+      this.loading = true
       let isFav = this.favTasks.some((f) => f.taskId == $event.id)
       // console.log(isFav)
 
@@ -459,17 +467,61 @@ export default {
         this.$store.dispatch("task/removeFromFavorite", { id: $event.id })
           .then(msg => {
             console.log(msg)
+            this.popupMessages.push({ text: msg, variant: "success" })
             this.updateKey()
+            this.loading = false
           })
-          .catch(e => console.log(e))
+          .catch(e => {
+            this.loading = false
+            console.log(e)
+          })
       } else {
         this.$store.dispatch("task/addToFavorite", { id: $event.id })
           .then(msg => {
             console.log(msg)
+            this.popupMessages.push({ text: msg, variant: "success" })
             this.updateKey()
+            this.loading = false
           })
-          .catch(e => console.log(e))
+          .catch(e => {
+            this.loading = false
+            console.log(e)
+          })
       }
+    },
+    markComplete($event) {
+      // console.log(this.currentTask)
+      this.loading = true
+      this.$store.dispatch('task/updateTaskStatus', $event)
+        .then((d) => {
+          // console.log(d)
+          this.loading = false
+          this.popupMessages.push({ text: d.message, variant: "success" })
+          this.$nuxt.$emit("update-key")
+          this.$store.dispatch("task/setSingleTask", d)
+        }).catch(e => {
+          console.log(e)
+          this.popupMessages.push({ text: e.message, variant: "warning" })
+          this.loading = false
+        })
+    },
+    deleteTask(task) {
+      this.loading = true
+      this.$store.dispatch("task/deleteTask", task).then(t => {
+
+        if (t.statusCode == 200) {
+          this.popupMessages.push({ text: t.message, variant: "success" })
+          this.updateKey()
+        } else {
+          this.popupMessages.push({ text: t.message, variant: "warning" })
+          console.warn(t.message);
+        }
+        this.loading = false
+      }).catch(e => {
+        this.loading = false
+        this.popupMessages.push({ text: e, variant: "danger" })
+        console.log(e)
+      })
     },
   },
 

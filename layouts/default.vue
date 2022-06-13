@@ -538,23 +538,6 @@ html {
     border-left: 1px solid $gray4;
   }
 
-  /*.align-start.d-flex.flex-d-column {
-    padding-left: 0 !important;
-  }
-
-  .app-wrapper__collapser {
-    justify-content: center;
-  }
-
-  .app-wrapper__collapser--collapsed {
-    right: 0 !important;
-  }
-
-  .app-wrapper__navigation--collapsed {
-    .nav-item {
-      padding: 0;
-    }
-  }*/
 }
 
 </style>

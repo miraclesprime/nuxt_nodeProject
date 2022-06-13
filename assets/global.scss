@@ -313,6 +313,19 @@ ul {
 
 }
 
+/*.list {
+  .list__item {
+    &.success {
+      color: var(--bib-success);
+
+      &:hover {
+        background-color: var(--bib-success);
+        color: var(--bib-light);
+      }
+    }
+  }
+}*/
+
 @media screen and (max-width: 1600px) {
   .side-panel {
     max-width: $sidebar-width - 160px;

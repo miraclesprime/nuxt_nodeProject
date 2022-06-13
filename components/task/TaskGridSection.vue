@@ -34,14 +34,14 @@
               <figure v-if="task.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
               <div class="task-top" :id="'tg-card-top'+task.id">
                 <div class="d-flex" :id="'tg-card-inside-wrap'+task.id">
-                  <bib-icon icon="check-circle" :scale="1.5" :variant="task.status.text === 'Done' ? 'success' : 'secondary-sub1'" class="cursor-pointer" @click="handleTaskStatus(task)"></bib-icon>
+                  <bib-icon icon="check-circle" :scale="1.5" :variant="task.statusId == 5 ? 'success' : 'secondary-sub1'" class="cursor-pointer" @click="markComplete(task)"></bib-icon>
                   <span class="ml-05" :id="'tg-title'+task.id">{{ task.title }} </span>
                 </div>
                 <bib-button pop="elipsis" icon="elipsis" :icon-variant="overdue(task) == 'bg-danger'? 'white' :'secondary'">
                   <template v-slot:menu>
                     <div class="list" :id="'tg-list'+task.id">
-                      <span class="list__item" :id="'tg-comp'+task.id">
-                        <bib-icon icon="check-circle" class="mr-05"></bib-icon> Mark Completed
+                      <span class="list__item success" :id="'tg-comp'+task.id" v-on:click="markComplete(task)">
+                        <bib-icon icon="check-circle" :variant="task.statusId == 5 ? 'success' : 'secondary-sub1'" class="mr-05"></bib-icon> {{task.statusId != 5 ? "Mark" : ""}} Completed
                       </span>
                       <span class="list__item" :id="'tg-fav'+task.id" data-fav="isFavorite(task).status" v-on:click.stop="addToFavorites(task)">
                         <bib-icon :icon="isFavorite(task).icon" :variant="isFavorite(task).variant" class="mr-05"></bib-icon> {{isFavorite(task).text}}
@@ -65,7 +65,7 @@
                         <bib-icon icon="warning" class="mr-05"></bib-icon> Report
                       </span>
                       <hr>
-                      <span class="list__item danger" :id="'tg-delete-task'+task.id">Delete Task</span>
+                      <span class="list__item danger" :id="'tg-delete-task'+task.id" @click="$emit('delete-task', task)">Delete Task</span>
                     </div>
                   </template>
                 </bib-button>
@@ -413,7 +413,13 @@ export default {
     addToFavorites(task) {
       // console.log('to be favorites task', task.id)
       this.$emit("set-favorite", task)
-    }
+    },/*
+    taskCheckIcon(task) {
+      return task.statusId == 5 ? 'success' : 'secondary-sub1'
+    },*/
+    markComplete(task){
+      this.$emit("mark-complete", task)
+    },
   },
 };
 
