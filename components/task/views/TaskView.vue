@@ -41,7 +41,10 @@
       </template>
     </bib-modal-wrapper>
     <bib-popup-notification-wrapper>
-      <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant"></bib-popup-notification>
+      <template #wrapper>
+        <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
+        </bib-popup-notification>
+      </template>
     </bib-popup-notification-wrapper>
   </div>
 </template>
@@ -503,9 +506,22 @@ export default {
         })
     },
     deleteTask(task) {
+      this.loading = true
       this.$store.dispatch("task/deleteTask", task).then(t => {
-        console.log(t)
-      }).catch(e => console.log(e))
+
+        if (t.statusCode == 200) {
+          this.popupMessages.push({ text: t.message, variant: "success" })
+          this.updateKey()
+        } else {
+          this.popupMessages.push({ text: t.message, variant: "warning" })
+          console.warn(t.message);
+        }
+        this.loading = false
+      }).catch(e => {
+        this.loading = false
+        this.popupMessages.push({ text: e, variant: "danger" })
+        console.log(e)
+      })
     },
   },
 

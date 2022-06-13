@@ -36,7 +36,7 @@
                   <bib-icon icon="warning" class="mr-075"></bib-icon> Report
                 </span>
                 <hr id="project-id-hr2">
-                <span class="list__item danger" id="project-id-list-item6">Delete </span>
+                <span class="list__item danger" id="project-id-list-item6" @click="deleteProject(project)">Delete </span>
               </div>
             </template>
           </bib-button>
@@ -176,12 +176,7 @@ export default {
   },
 
   methods: {
-    openPopupNotification(msg, variant) {
-      this.popupMessages.push({
-        text: msg,
-        variant: variant
-      })
-    },
+    
     async fetchProject() {
       const proj = await this.$axios.$get(`project/${this.$route.params.id}`, {
         headers: { 'Authorization': `Bearer ${this.token}` }
@@ -206,7 +201,8 @@ export default {
       if (this.isFavorite.status) {
         this.$store.dispatch("project/removeFromFavorite", { id: this.$route.params.id })
           .then(msg => {
-            this.openPopupNotification(msg, 'orange')
+            this.popupMessages.push({ text: msg, variant: "orange" })
+
             // alert(msg)
           })
           .catch(e => console.log(e))
@@ -214,7 +210,8 @@ export default {
       } else {
         this.$store.dispatch("project/addToFavorite", { id: this.$route.params.id })
           .then(msg => {
-            this.openPopupNotification(msg, 'success')
+            this.popupMessages.push({ text: msg, variant: "success"})
+
             // alert(msg)
           })
           .catch(e => console.log(e))
@@ -239,6 +236,24 @@ export default {
         this.renameModal = false
       }
       this.loading = false
+    },
+    deleteProject(project) {
+      this.loading = true
+      this.$store.dispatch("project/deleteProject", project).then(p => {
+
+        if (p.statusCode == 200) {
+          // this.popupMessages.push({ text: p.message, variant: "success" })
+          this.$router.push('/projects')
+        } else {
+          this.popupMessages.push({ text: p.message, variant: "warning" })
+          console.warn(p.message);
+        }
+        this.loading = false
+      }).catch(e => {
+        this.loading = false
+        this.popupMessages.push({ text: e, variant: "danger" })
+        console.log(e)
+      })
     },
     async submitReport() {
       // this.reportModal = !this.reportModal

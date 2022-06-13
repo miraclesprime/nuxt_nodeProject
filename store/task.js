@@ -122,17 +122,14 @@ export const actions = {
     return res.data
   },
 
-  async deleteTask(ctx, payload){
+  async deleteTask(ctx, payload) {
     // console.log(payload)
-    const res = await this.$axios.$delete("/task", {id: payload.id}, {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, "Content-Type": "application/json" }
+    const res = await this.$axios.$delete("/task", {
+      headers: { "Authorization": `Bearer ${localStorage.getItem('accessToken')}` },
+      data: { id: payload.id }
     })
     return res
-    /*if (res.statusCode == 200) {
-      return res
-    } else {
-      return res
-    }*/
+    
   },
 
   async updateTaskStatus(ctx, payload) {

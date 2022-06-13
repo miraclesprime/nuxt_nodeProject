@@ -56,7 +56,7 @@
                     <bib-icon icon="warning" variant="gray5" class="mr-075"></bib-icon> Report
                   </span>
                   <hr>
-                  <span class="list__item danger" id="ts-list-item-8">Delete</span>
+                  <span class="list__item danger" id="ts-list-item-8" @click="deleteTask(currentTask)">Delete</span>
                 </div>
               </template>
             </bib-button>
@@ -440,6 +440,26 @@ export default {
           console.log(e)
           this.loading = false
         })
+    },
+    deleteTask(task) {
+      this.loading = true
+      this.$store.dispatch("task/deleteTask", task).then(t => {
+
+        if (t.statusCode == 200) {
+          // this.popupMessages.push({ text: t.message, variant: "success" })
+          this.$nuxt.$emit("update-key")
+          this.$nuxt.$emit("close-sidebar");
+
+        } else {
+          // this.popupMessages.push({ text: t.message, variant: "warning" })
+          console.warn(t.message);
+        }
+        this.loading = false
+      }).catch(e => {
+        // this.popupMessages.push({ text: e, variant: "danger" })
+        this.loading = false
+        console.log(e)
+      })
     },
   },
 };
