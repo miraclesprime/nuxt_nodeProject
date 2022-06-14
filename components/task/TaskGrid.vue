@@ -9,7 +9,7 @@
         >
       </div> -->
       <div class="d-flex" :id="'task-card-inside-wrap'+task.id">
-        <bib-icon icon="check-circle" :scale="1.5" :variant="task.status.text === 'Done' ? 'success' : 'secondary-sub1'" class="cursor-pointer" @click="handleTaskStatus(task)"></bib-icon>
+        <bib-icon icon="check-circle" :scale="1.5" :variant="task.status ? task.status.text === 'Done' ? 'success' : 'secondary-sub1': ''" class="cursor-pointer" @click="handleTaskStatus(task)"></bib-icon>
         <span class="ml-05" :id="'task-title'+task.id">{{ task.title }} </span>
       </div>
       <bib-button pop="elipsis" icon="elipsis" style="margin-top: 2px" size="xl">
