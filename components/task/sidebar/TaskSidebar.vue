@@ -80,7 +80,7 @@
     <div class="menu" id='ts-menu'>
       <bib-tabs :value="activeSidebarTab" @change="sidebarTabChange" :tabs="sidebarTabs"></bib-tabs>
     </div>
-    <div class="of-scroll-y " id="ts-of-scroll-y">
+    <div class="of-scroll-y d-grid" id="ts-of-scroll-y" style="grid-template-columns: none; align-items: start" >
       <template v-if="activeSidebarTab == 'Overview'">
         <div class="task-info position-relative pt-1" id='sidebar-inner-wrap'>
           <div class="row mx-0" id='sidebar-row-1'>
@@ -468,8 +468,7 @@ export default {
 <style lang="scss" scoped>
 .side-panel {
   display: grid;
-  grid-auto-flow: row;
-  align-content: start;
+  grid-template-rows: 1fr auto minmax(1rem, 6fr);
 }
 
 .row {

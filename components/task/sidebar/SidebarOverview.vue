@@ -1,15 +1,15 @@
 <template>
-  <div id="sidebar-overview-wrapper" class="py-05 px-105">
+  <div id="sidebar-overview-wrapper" class="sidebar-overview-wrapper py-05 px-105">
     <div class="d-flex justify-between sub-title pb-05">
       <p class="text-gray6 ">Subtasks </p>
       <sorting-comp :items="sortingItems" icon="swap-vertical"></sorting-comp>
     </div>
     <task-group title="Subtasks"></task-group>
-    <div class="task-team" id='sidebar-team'>
-      <div class="container" id='sidebar-container'>
-        <div class="team-list w-100" id='sidebar-team-heading'>
+    <div class="task-team" id="sidebar-team">
+      <div class="container" id="sidebar-container">
+        <div class="team-list w-100" id="sidebar-team-heading">
           Team
-          <div class="teammate active" id='sidebar-team-active'>
+          <div class="teammate active" id="sidebar-team-active">
             <bib-avatar size="25px"></bib-avatar>
           </div>
           <template v-for="(item, index) in teammates">
@@ -72,6 +72,7 @@ export default {
 
 </script>
 <style lang="scss" scoped>
+.sidebar-overview-wrapper { align-self: end; display: grid; grid-template-columns: 1fr; grid-auto-flow: row; }
 .sub-title { font-size: 14px; border-bottom: 1px solid var(--bib-gray4);}
 .task-info {
   padding: 1rem 0;
@@ -79,10 +80,12 @@ export default {
 }
 
 .task-team {
+  align-self: end;
   padding: 1rem 0;
   margin-left: -1.5rem;
   margin-right: -1.5rem;
   margin-bottom: -0.5rem;
+  margin-top: auto;
   background-color: $gray3;
   border-top: 1px solid $gray4;
 }

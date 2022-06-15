@@ -21,6 +21,9 @@
                       <bib-icon icon="pencil"></bib-icon>
                       <span class="ml-05" :id="'tgs-list-span'+section.id">Rename</span>
                     </div>
+                  </span><hr>
+                  <span class="list__item danger" :id="'tgs-list-3'+section.id" v-on:click="$nuxt.$emit('section-delete',{id: section.id })">
+                    Delete
                   </span>
                 </div>
               </template>

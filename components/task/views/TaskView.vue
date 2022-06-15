@@ -118,6 +118,10 @@ export default {
       this.sectionTitle = $event.title
     })
 
+    this.$nuxt.$on("section-delete", ($event) => {
+      this.deleteSection($event)
+    })
+
     this.$nuxt.$on("update-key", () => {
       // console.log('update key event capture')
       this.updateKey()
@@ -514,6 +518,25 @@ export default {
           this.updateKey()
         } else {
           this.popupMessages.push({ text: t.message, variant: "warning" })
+          console.warn(t.message);
+        }
+        this.loading = false
+      }).catch(e => {
+        this.loading = false
+        this.popupMessages.push({ text: e, variant: "danger" })
+        console.log(e)
+      })
+    },
+    deleteSection(section) {
+      this.loading = true;
+
+      this.$store.dispatch("section/deleteSection", section).then(s => {
+
+        if (s.statusCode == 200) {
+          this.popupMessages.push({ text: s.message, variant: "success" })
+          this.updateKey()
+        } else {
+          this.popupMessages.push({ text: s.message, variant: "warning" })
           console.warn(t.message);
         }
         this.loading = false
