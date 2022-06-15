@@ -2,7 +2,7 @@
   <client-only>
     <div id="task-page-wrapper" class="task-page-wrapper">
       <page-title title="Tasks"></page-title>
-      <company-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:create-task="toggleSidebar($event)" />
+      <company-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:create-task="toggleSidebar($event)"></company-tasks-actions>
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
         <template v-if="gridType == 'list'">
           <template v-if="tasks.length">
@@ -54,14 +54,20 @@
                 </div>
               </div>
               <div class="task-section__body">
-                <div v-for="(item, index) in tasks" :key="item.name + '-' + index">
-                  <task-grid :task="item" />
+                <div v-for="(item, index) in tasks" :key="item.name + '-' + key">
+                  <task-grid :task="item" v-on:update-key="updateKey" />
                 </div>
               </div>
             </div>
           </div>
         </template>
         <loading :loading="loading"></loading>
+        <bib-popup-notification-wrapper>
+          <template #wrapper>
+            <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
+            </bib-popup-notification>
+          </template>
+        </bib-popup-notification-wrapper>
       </div>
     </div>
   </client-only>
@@ -81,7 +87,8 @@ export default {
       flag: false,
       viewName: null,
       orderBy: 'desc',
-      key: 100
+      key: 100,
+      popupMessages: [],
     }
   },
   computed: {
@@ -92,7 +99,33 @@ export default {
     }),
   },
 
+  created() {
+    if (process.client) {
+      this.$nuxt.$on('change-grid-type', ($event) => {
+        this.gridType = $event;
+      })
+      this.$nuxt.$on("update-key", () => {
+        // console.log('updated key event received')
+        let user = JSON.parse(localStorage.getItem("user"))
+        this.$store.dispatch('company/setCompanyTasks', { companyId: user.subb }).then(() => { this.key += 1 })
+      })
+      this.loading = true
+      let compid = JSON.parse(localStorage.getItem("user")).subb;
+      this.$store.dispatch('company/setCompanyTasks', { companyId: compid, filter: 'all' }).then((res) => {
+        this.loading = false;
+      })
+    }
+  },
+
   methods: {
+    updateKey($event) {
+      console.log("update-key event received", $event)
+      this.popupMessages.push({ text: $event, variant: "success" })
+      let compid = JSON.parse(localStorage.getItem("user")).subb;
+      this.$store.dispatch("company/setCompanyTasks", { companyId: compid, filter: "all" }).then(() => {
+        this.key += 1
+      })
+    },
     favoriteStatusLabel(status) {
       switch (status) {
         case 'Delayed':
@@ -251,23 +284,6 @@ export default {
     },
   },
 
-  created() {
-    if (process.client) {
-      this.$nuxt.$on('change-grid-type', ($event) => {
-        this.gridType = $event;
-      })
-      this.$nuxt.$on("update-key", () => {
-        // console.log('updated key event received')
-        let user = JSON.parse( localStorage.getItem("user"))
-        this.$store.dispatch('company/setCompanyTasks', { companyId: user.subb }).then(() => { this.key += 1 })
-      })
-      this.loading = true
-      let compid = JSON.parse(localStorage.getItem("user")).subb;
-      this.$store.dispatch('company/setCompanyTasks', { companyId: compid, filter: 'all' }).then((res) => {
-        this.loading = false;
-      })
-    }
-  },
 }
 
 </script>

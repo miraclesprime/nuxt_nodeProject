@@ -286,15 +286,15 @@ export default {
     },
 
     toggleSidebar($event) {
-      // console.log($event)
+      // console.log("taskview => ",$event)
       // in case of create task 
-      if (!$event) {
+      /*if (!$event) {
         // this.$store.dispatch("task/setSingleTask", {})
         this.$nuxt.$emit("open-sidebar", $event)
-      }
+      }*/
       this.flag = !this.flag;
-      /*this.$emit("open-sidebar", this.flag);
-      this.$nuxt.$emit("open-sidebar", this.flag);*/
+      this.$emit("open-sidebar", $event);
+      this.$nuxt.$emit("open-sidebar", $event);
     },
 
     createSectionInline() {
@@ -310,12 +310,13 @@ export default {
       console.log(this.$refs.newsectioninput.clientWidth, this.$refs.newsectioninput.clientHeight)
     },*/
     clickOutside() {
-      if (this.newSectionName) {
-        this.createSectionOnEnter
-      } else {
-        this.newSectionName = ""
-        this.newSection = false
-      }
+
+      /*if (this.newSectionName) {
+        this.createSectionOnEnter()
+      } else {*/
+      this.newSectionName = ""
+      this.newSection = false
+      /*}*/
     },
     async createSectionOnEnter($event) {
       // console.log("blur ", $event.target)
@@ -333,9 +334,11 @@ export default {
           "title": newvalue.trim(),
           "isDeleted": false,
         }).then(() => {
+          this.newSectionName = ""
           this.sectionLoading = false
           this.newSection = false
           this.$refs.newsectioninput.removeAttribute("disabled")
+          this.popupMessages.push({ text: "Section created", variant: "success" })
           this.updateKey()
         }).catch(e => console.log(e))
 
@@ -354,9 +357,10 @@ export default {
           title: this.sectionTitle
         }
       })
-      console.log("rename section output", sec)
+      // console.log("rename section output", sec)
       if (sec.statusCode = 200) {
         this.renameModal = false
+        this.popupMessages.push({ text: "Section renamed", variant: "success" })
         this.updateKey()
       }
       this.loading = false

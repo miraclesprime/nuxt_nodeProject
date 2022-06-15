@@ -136,7 +136,8 @@ import _ from 'lodash';
 export default {
   name: "TaskSidebar",
   props: {
-    activeTask: Object,
+    // activeTask: Object,
+    sectionIdActive: Number,
     // teamKey: Number
   },
   data: function() {
@@ -275,7 +276,9 @@ export default {
           priorityId: 2,
           description: '',
           budget: 0,
-
+        }
+        if (this.sectionIdActive) {
+          this.form.sectionId = this.sectionIdActive
         }
       }
     },

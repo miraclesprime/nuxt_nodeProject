@@ -169,7 +169,29 @@ export default {
     })
   },
 
+  created() {
+    if (process.client) {
+      this.$nuxt.$on('change-grid-type', ($event) => {
+        this.gridType = $event;
+      })
+      this.$nuxt.$on("update-key", () => {
+        // console.log('updated key event received')
+        this.$store.dispatch('user/setUserTasks', { filter: 'all' }).then(() => { this.key += 1 })
+      })
+      this.loading = true
+      this.$store.dispatch('user/setUserTasks', { filter: 'all' }).then((res) => {
+        this.loading = false;
+      })
+    }
+  },
+
   methods: {
+    /*updateKey() {
+      // console.log("update-key event received", this.templateKey)
+      this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' }).then(() => {
+        this.taskByOrder()
+      })
+    },*/
     favoriteStatusLabel(status) {
       switch (status) {
         case 'Delayed':
@@ -339,21 +361,7 @@ export default {
     },
   },
 
-  created() {
-    if (process.client) {
-      this.$nuxt.$on('change-grid-type', ($event) => {
-        this.gridType = $event;
-      })
-      this.$nuxt.$on("update-key", () => {
-        // console.log('updated key event received')
-        this.$store.dispatch('user/setUserTasks', { filter: 'all' }).then(() => { this.key += 1 })
-      })
-      this.loading = true
-      this.$store.dispatch('user/setUserTasks', { filter: 'all' }).then((res) => {
-        this.loading = false;
-      })
-    }
-  },
+  
 }
 
 </script>

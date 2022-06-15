@@ -23,7 +23,7 @@
                     </div>
                   </span><hr>
                   <span class="list__item danger" :id="'tgs-list-3'+section.id" v-on:click="$nuxt.$emit('section-delete',{id: section.id })">
-                    Delete
+                    Delete section
                   </span>
                 </div>
               </template>
@@ -166,8 +166,8 @@ export default {
       }
     },
     showCreateTaskModal(sectionId) {
-      this.$emit("create-task", false) //event will be captured by parent only
-      this.$nuxt.$emit("create-task", false) //event will be available to all
+      this.$emit("create-task", sectionId) //event will be captured by parent only
+      this.$nuxt.$emit("create-task", sectionId) //event will be available to all
     },
     taskDragStart(e) {
       this.drag = true
