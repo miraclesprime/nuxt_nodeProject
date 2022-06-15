@@ -15,11 +15,11 @@
       <bib-button pop="elipsis" icon="elipsis" style="margin-top: 2px" size="xl">
         <template v-slot:menu>
           <div class="list" :id="'task-list'+task.id">
-            <span class="list__item" :id="'task-comp'+task.id">
-              <bib-icon icon="check-circle" class="mr-05"></bib-icon> Mark Completed
+            <span class="list__item" :id="'task-comp'+task.id" v-on:click="markComplete(task)">
+              <bib-icon icon="check-circle" :variant="task.statusId == 5 ? 'success' : 'secondary-sub1'" class="mr-05"></bib-icon> {{task.statusId != 5 ? "Mark" : ""}} Completed
             </span>
-            <span class="list__item" :id="'task-fav'+task.id" @click="addToFavorites">
-              <bib-icon icon="heart-like" class="mr-05"></bib-icon> Add to favorites
+            <span class="list__item" :id="'tg-fav'+task.id" data-fav="isFavorite(task).status" v-on:click.stop="addToFavorites(task)">
+                <bib-icon :icon="isFavorite(task).icon" :variant="isFavorite(task).variant" class="mr-05"></bib-icon> {{isFavorite(task).text}}
             </span>
             <span class="list__item" :id="'task-attach'+task.id">
               <bib-icon icon="upload" class="mr-05"></bib-icon> Attach file...
@@ -40,7 +40,7 @@
               <bib-icon icon="warning" class="mr-05"></bib-icon> Report
             </span>
             <hr>
-            <span class="list__item danger" :id="'task-delete-task'+task.id">Delete Task</span>
+            <span class="list__item danger" :id="'task-delete-task'+task.id" @click="deleteTask(task)">Delete Task</span>
           </div>
         </template>
       </bib-button>
@@ -52,7 +52,10 @@
     </div>
   </div>
 </template>
+
 <script>
+import {mapGetters} from 'vuex'
+
 export default {
   props: {
     task: Object,
@@ -62,12 +65,25 @@ export default {
       flag: false,
     };
   },
+  computed: {
+    ...mapGetters({
+      favTasks: "task/getFavTasks",
+    })
+  },
   methods: {
     /*openSidebar(key) {
       this.flag = !this.flag;
       this.$root.$emit("open-sidebar", this.flag);
       this.$root.$emit("set-active-task", this.task);
     },*/
+    isFavorite(task) {
+      let fav = this.favTasks.some(t  => t.task.id == task.id)
+      if (fav) {
+        return { icon: "bookmark-solid", variant: "orange", text: "Remove favorite", status: true }
+      } else {
+        return { icon: "bookmark", variant: "gray5", text: "Add to favorites", status: false }
+      }
+    },
     openSidebar(task) {
       
       // console.log(task)
@@ -83,7 +99,72 @@ export default {
       });
 
     },
-    addToFavorites() {}
+    addToFavorites($event) {
+      // console.info("to be fav task", $event)
+      this.loading = true
+      let isFav = this.favTasks.some((f) => f.taskId == $event.id)
+      // console.log(isFav)
+
+      if (isFav) {
+        this.$store.dispatch("task/removeFromFavorite", { id: $event.id })
+          .then(msg => {
+            console.log(msg)
+            this.popupMessages.push({ text: msg, variant: "success" })
+            this.updateKey()
+            this.loading = false
+          })
+          .catch(e => {
+            this.loading = false
+            console.log(e)
+          })
+      } else {
+        this.$store.dispatch("task/addToFavorite", { id: $event.id })
+          .then(msg => {
+            console.log(msg)
+            this.popupMessages.push({ text: msg, variant: "success" })
+            this.updateKey()
+            this.loading = false
+          })
+          .catch(e => {
+            this.loading = false
+            console.log(e)
+          })
+      }
+    },
+    markComplete($event) {
+      // console.log(this.currentTask)
+      this.loading = true
+      this.$store.dispatch('task/updateTaskStatus', $event)
+        .then((d) => {
+          // console.log(d)
+          this.loading = false
+          this.popupMessages.push({ text: d.message, variant: "success" })
+          this.$nuxt.$emit("update-key")
+          this.$store.dispatch("task/setSingleTask", d)
+        }).catch(e => {
+          console.log(e)
+          this.popupMessages.push({ text: e.message, variant: "warning" })
+          this.loading = false
+        })
+    },
+    deleteTask(task) {
+      this.loading = true
+      this.$store.dispatch("task/deleteTask", task).then(t => {
+
+        if (t.statusCode == 200) {
+          this.popupMessages.push({ text: t.message, variant: "success" })
+          this.updateKey()
+        } else {
+          this.popupMessages.push({ text: t.message, variant: "warning" })
+          console.warn(t.message);
+        }
+        this.loading = false
+      }).catch(e => {
+        this.loading = false
+        this.popupMessages.push({ text: e, variant: "danger" })
+        console.log(e)
+      })
+    },
   },
 };
 
