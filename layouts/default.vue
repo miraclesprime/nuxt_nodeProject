@@ -84,7 +84,7 @@
       <template #content>
         <div class="main" id='main-content' :class="openSidebar ? 'open-sidebar' : ''">
           <Nuxt />
-          <task-sidebar @open-sidebar="toggleSidebar()"></task-sidebar>
+          <task-sidebar @open-sidebar="toggleSidebar()" :sectionIdActive="sectionPreselect"></task-sidebar>
         </div>
       </template>
     </bib-app-wrapper>
@@ -196,14 +196,20 @@ export default {
       },
       userProfileUrl: process.env.USER_PROFILE_URL,
       logoutUrl: process.env.LOGOUT_URL,
+      sectionPreselect: null,
     }
   },
   created() {
     this.$root.$on("open-sidebar", (payload) => {
-      // console.log(payload.project)
+      // console.log("openSidebar => ", typeof(payload), payload)
       this.openSidebar = true;
       // this.toggleSidebar
+
       if (!payload.id) {
+        console.info(payload, typeof payload);
+        if (typeof(payload) == "number") {
+          this.sectionPreselect = payload
+        }
         this.$store.dispatch("task/setSingleTask", {})
       } else {
         if (payload.project.length > 0) {
@@ -264,11 +270,11 @@ export default {
         this.navItems2[1].selected = true;
       }
 
-      if(this.$router.history.current.fullPath == '/goals') {
+      if (this.$router.history.current.fullPath == '/goals') {
         this.navItems2[2].selected = true;
       }
 
-      if(this.$router.history.current.fullPath == '/dreams') {
+      if (this.$router.history.current.fullPath == '/dreams') {
         this.navItems2[3].selected = true;
       }
 

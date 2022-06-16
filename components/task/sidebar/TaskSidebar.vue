@@ -80,7 +80,7 @@
     <div class="menu" id='ts-menu'>
       <bib-tabs :value="activeSidebarTab" @change="sidebarTabChange" :tabs="sidebarTabs"></bib-tabs>
     </div>
-    <div class="of-scroll-y " id="ts-of-scroll-y">
+    <div class="of-scroll-y d-grid" id="ts-of-scroll-y" style="grid-template-columns: none; align-items: start">
       <template v-if="activeSidebarTab == 'Overview'">
         <div class="task-info position-relative pt-1" id='sidebar-inner-wrap'>
           <div class="row mx-0" id='sidebar-row-1'>
@@ -136,7 +136,8 @@ import _ from 'lodash';
 export default {
   name: "TaskSidebar",
   props: {
-    activeTask: Object,
+    // activeTask: Object,
+    sectionIdActive: Number,
     // teamKey: Number
   },
   data: function() {
@@ -275,7 +276,9 @@ export default {
           priorityId: 2,
           description: '',
           budget: 0,
-
+        }
+        if (this.sectionIdActive) {
+          this.form.sectionId = this.sectionIdActive
         }
       }
     },
@@ -412,6 +415,14 @@ export default {
     debounceUpdate: _.debounce(function() {
       if (this.form.id) {
         // console.log('Debounce clicked!')
+        if (this.form.priorityId == "") {
+          this.form.priority = null
+          this.form.priorityId = null
+        }
+        if (this.form.statusId == "") {
+          this.form.status = null
+          this.form.statusId = null
+        }
         this.updateTask()
       }
     }, 1000),
@@ -468,8 +479,7 @@ export default {
 <style lang="scss" scoped>
 .side-panel {
   display: grid;
-  grid-auto-flow: row;
-  align-content: start;
+  grid-template-rows: 1fr auto minmax(1rem, 6fr);
 }
 
 .row {

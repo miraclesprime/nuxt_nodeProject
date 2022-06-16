@@ -9,17 +9,17 @@
         >
       </div> -->
       <div class="d-flex" :id="'task-card-inside-wrap'+task.id">
-        <bib-icon icon="check-circle" :scale="1.5" :variant="task.status.text === 'Done' ? 'success' : 'secondary-sub1'" class="cursor-pointer" @click="handleTaskStatus(task)"></bib-icon>
+        <bib-icon icon="check-circle" :scale="1.5" :variant="task.status ? task.status.text === 'Done' ? 'success' : 'secondary-sub1': ''" class="cursor-pointer" @click="markComplete(task)"></bib-icon>
         <span class="ml-05" :id="'task-title'+task.id">{{ task.title }} </span>
       </div>
       <bib-button pop="elipsis" icon="elipsis" style="margin-top: 2px" size="xl">
         <template v-slot:menu>
           <div class="list" :id="'task-list'+task.id">
-            <span class="list__item" :id="'task-comp'+task.id">
-              <bib-icon icon="check-circle" class="mr-05"></bib-icon> Mark Completed
+            <span class="list__item" :id="'task-comp'+task.id" v-on:click="markComplete(task)">
+              <bib-icon icon="check-circle" :variant="task.statusId == 5 ? 'success' : 'secondary-sub1'" class="mr-05"></bib-icon> {{task.statusId != 5 ? "Mark" : ""}} Completed
             </span>
-            <span class="list__item" :id="'task-fav'+task.id" @click="addToFavorites">
-              <bib-icon icon="heart-like" class="mr-05"></bib-icon> Add to favorites
+            <span class="list__item" :id="'tg-fav'+task.id" data-fav="isFavorite.status" v-on:click.stop="addToFavorites(task)">
+              <bib-icon :icon="isFavorite.icon" :variant="isFavorite.variant" class="mr-05"></bib-icon> {{isFavorite.text}}
             </span>
             <span class="list__item" :id="'task-attach'+task.id">
               <bib-icon icon="upload" class="mr-05"></bib-icon> Attach file...
@@ -40,19 +40,20 @@
               <bib-icon icon="warning" class="mr-05"></bib-icon> Report
             </span>
             <hr>
-            <span class="list__item danger" :id="'task-delete-task'+task.id">Delete Task</span>
+            <span class="list__item danger" :id="'task-delete-task'+task.id" @click="deleteTask(task)">Delete Task</span>
           </div>
         </template>
       </bib-button>
     </div>
     <div class="task-bottom" :id="'tg-bottom'+ task.id">
-      <!-- <bib-avatar size="25px"></bib-avatar> -->
-      <user-info :userId="task.userId"></user-info>
-      <span :id="'tg-bottom-duedate'+ task.id" v-format-date="task.dueDate"></span>
+      <user-info v-if="task.userId" :userId="task.userId"></user-info>
+      <format-date v-if="task.dueDate" :datetime="task.dueDate" class="ml-auto"></format-date>
     </div>
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   props: {
     task: Object,
@@ -62,16 +63,37 @@ export default {
       flag: false,
     };
   },
+  computed: {
+    ...mapGetters({
+      favTasks: "task/getFavTasks",
+    }),
+    isFavorite() {
+      let fav = this.favTasks.some(t => t.task.id == this.task.id)
+      if (fav) {
+        return { icon: "bookmark-solid", variant: "orange", text: "Remove favorite", status: true }
+      } else {
+        return { icon: "bookmark", variant: "gray5", text: "Add to favorites", status: false }
+      }
+    },
+  },
   methods: {
     /*openSidebar(key) {
       this.flag = !this.flag;
       this.$root.$emit("open-sidebar", this.flag);
       this.$root.$emit("set-active-task", this.task);
     },*/
+    /*isFavorite(task) {
+      let fav = this.favTasks.some(t => t.task.id == task.id)
+      if (fav) {
+        return { icon: "bookmark-solid", variant: "orange", text: "Remove favorite", status: true }
+      } else {
+        return { icon: "bookmark", variant: "gray5", text: "Add to favorites", status: false }
+      }
+    },*/
     openSidebar(task) {
-      
+
       // console.log(task)
-      this.$nuxt.$emit("open-sidebar", {...task} );
+      this.$nuxt.$emit("open-sidebar", { ...task });
 
       let el = event.target.offsetParent
       let scrollAmt = event.target.offsetLeft - event.target.offsetWidth;
@@ -83,55 +105,57 @@ export default {
       });
 
     },
-    addToFavorites() {}
+    addToFavorites($event) {
+      // console.info("to be fav task", $event)
+      let isFav = this.favTasks.some((f) => f.taskId == $event.id)
+      // console.log(isFav)
+
+      if (isFav) {
+        this.$store.dispatch("task/removeFromFavorite", { id: $event.id })
+          .then(msg => {
+            // console.log(msg)
+            this.$emit("update-key", msg)
+          })
+          .catch(e => {
+            console.log(e)
+          })
+      } else {
+        this.$store.dispatch("task/addToFavorite", { id: $event.id })
+          .then(msg => {
+            // console.log(msg)
+            this.$emit("update-key", msg)
+          })
+          .catch(e => {
+            console.log(e)
+          })
+      }
+    },
+    markComplete($event) {
+      // console.log(this.currentTask)
+      this.$store.dispatch('task/updateTaskStatus', $event)
+        .then((d) => {
+          console.log(d)
+          this.$nuxt.$emit("update-key")
+          this.$store.dispatch("task/setSingleTask", d)
+        }).catch(e => {
+          console.log(e)
+        })
+    },
+    deleteTask(task) {
+      this.$store.dispatch("task/deleteTask", task).then(t => {
+        if (t.statusCode == 200) {
+          this.$emit("update-key", t.message)
+        } else {
+          console.warn(t.message);
+        }
+      }).catch(e => {
+        console.log(e)
+      })
+    },
   },
 };
 
 </script>
 <style scoped lang="scss">
-.task-top,
-.task-bottom {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px;
-}
-
-.task-top {
-  margin-bottom: 1rem;
-}
-
-.task-bottom {
-  align-items: center;
-}
-
-.task-grid {
-  margin: 8px 4px 8px;
-  background: var(--bib-light);
-  border: 1px solid transparent;
-  border-radius: 4px;
-  cursor: pointer;
-
-  span {
-    font-size: 15px;
-    font-weight: 500;
-  }
-
-  .task-bottom span {
-    font-size: 13px;
-  }
-}
-
-::v-deep {
-  .custom-control-label {
-    &::before {
-      width: 1.4rem;
-      height: 1.4rem;
-    }
-  }
-
-  .custom-checkbox {
-    height: 22px;
-  }
-}
 
 </style>

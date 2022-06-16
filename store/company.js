@@ -9,7 +9,7 @@ export const getters = {
   getAllCompanies(state) {
     return state.companies;
   },
-  getCompanyMembers(state){
+  getCompanyMembers(state) {
     return state.companyMembers
   },
   getCompanyTasks(state) {
@@ -27,7 +27,7 @@ export const mutations = {
   fetchCompanyMembers(state, payload) {
     state.companyMembers = payload;
   },
-  
+
   setCompanyTasks(state, payload) {
     state.companyTasks = payload;
   },
@@ -35,25 +35,46 @@ export const mutations = {
   sortCompanyTasks(state, payload) {
 
     // sort By Title
-    if(payload.sName == 'name' && payload.order == 'asc') {
-      state.companyTasks.sort((a,b) => a.title.localeCompare(b.title))
+    if (payload.sName == 'name' && payload.order == 'asc') {
+      state.companyTasks.sort((a, b) => a.title.localeCompare(b.title))
     }
 
-    if(payload.sName == 'name' && payload.order == 'desc') {
-      state.companyTasks.sort((a,b) => b.title.localeCompare(a.title))
+    if (payload.sName == 'name' && payload.order == 'desc') {
+      state.companyTasks.sort((a, b) => b.title.localeCompare(a.title))
     }
 
     // sort By Status
-    if(payload.sName == 'status' && payload.order == 'asc') {
-      state.companyTasks.sort((a,b) => a.status.text.localeCompare(b.status.text))
-    }
+    if (payload.sName == "status") {
+      let arr = JSON.parse(JSON.stringify(state.companyTasks))
+      let newArr = []
 
-    if(payload.sName == 'status' && payload.order == 'desc') {
-      state.companyTasks.sort((a,b) => b.status.text.localeCompare(a.status.text))
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].status) {
+          newArr.unshift(arr[i])
+        } else {
+          newArr.push(arr[i])
+        }
+      }
+
+      if (payload.order == "asc") {
+        newArr.sort((a, b) => {
+          if (a.status && b.status) {
+            return a.status.text.localeCompare(b.status.text);
+          }
+        })
+      } else {
+        newArr.sort((a, b) => {
+          if (a.status && b.status) {
+            return b.status.text.localeCompare(a.status.text);
+          }
+        })
+      }
+
+      state.companyTasks = newArr;
     }
 
     // sort by owner
-    if(payload.sName == 'owner' && payload.order == 'asc') {
+    if (payload.sName == 'owner' && payload.order == 'asc') {
 
       let arr = JSON.parse(JSON.stringify(state.companyTasks))
       let newArr = []
@@ -76,7 +97,7 @@ export const mutations = {
       // state.companyTasks.sort((a,b) => a.user.firstName.localeCompare(b.user.firstName))
     }
 
-    if(payload.sName == 'owner' && payload.order == 'desc') {
+    if (payload.sName == 'owner' && payload.order == 'desc') {
 
       let arr = JSON.parse(JSON.stringify(state.companyTasks))
       let newArr = []
@@ -100,21 +121,40 @@ export const mutations = {
     }
 
     // sort by due date
-    if(payload.sName == 'dueDate' && payload.order == 'asc') {
-      state.companyTasks.sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate))
+    if (payload.sName == 'dueDate' && payload.order == 'asc') {
+      state.companyTasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
     }
 
-    if(payload.sName == 'dueDate' && payload.order == 'desc') {
-      state.companyTasks.sort((a,b) => new Date(b.dueDate) - new Date(a.dueDate))
+    if (payload.sName == 'dueDate' && payload.order == 'desc') {
+      state.companyTasks.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate))
     }
 
     // sort by priority
-    if(payload.sName == 'priority' && payload.order == 'asc') {
-      state.companyTasks.sort((a,b) => a.priority.text.localeCompare(b.priority.text))
-    }
+    if (payload.sName == "priority") {
+      let arr = JSON.parse(JSON.stringify(state.companyTasks))
+      let newArr = []
 
-    if(payload.sName == 'priority' && payload.order == 'desc') {
-      state.companyTasks.sort((a,b) => b.priority.text.localeCompare(a.priority.text))
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].priority) {
+          newArr.unshift(arr[i])
+        } else {
+          newArr.push(arr[i])
+        }
+      }
+      if (payload.order == "asc") {
+        newArr.sort((a, b) => {
+          if (a.priority && b.priority) {
+            return a.priority.text.localeCompare(b.priority.text);
+          }
+        });
+      } else {
+        newArr.sort((a, b) => {
+          if (a.priority && b.priority) {
+            return b.priority.text.localeCompare(a.priority.text);
+          }
+        });
+      }
+      state.companyTasks = newArr;
     }
   }
 };
@@ -127,12 +167,12 @@ export const actions = {
     ctx.commit('fetchCompanies', res.data);
   },
   async fetchCompanyMembers(ctx, companyId) {
-    const res = await this.$axios.$get("/company/"+ companyId +"/members/", {
+    const res = await this.$axios.$get("/company/" + companyId + "/members/", {
       headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` }
     })
     if (res.statusCode == 200) {
       // console.log(res.data)
-      let cu = res.data.map(u=> u.user )
+      let cu = res.data.map(u => u.user)
       ctx.commit("fetchCompanyMembers", cu)
     } else {
       console.log(res);

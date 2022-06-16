@@ -108,6 +108,16 @@ export const actions = {
     // console.log("rename section vuex", res)
     
     return res
-  }
+  },
+
+  async deleteSection(ctx, payload){
+   const res = await this.$axios.$delete("/section", {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` },
+      data: { id: payload.id }
+    })
+    // console.log("rename section vuex", res)
+    
+    return res 
+  },
 
 };

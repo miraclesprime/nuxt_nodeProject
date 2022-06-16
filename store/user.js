@@ -103,13 +103,41 @@ export const mutations = {
     }
 
     // sort By Status
-    if(payload.sName == 'status' && payload.order == 'asc') {
+    if (payload.sName == "status") {
+      let arr = JSON.parse(JSON.stringify(state.userTasks))
+      let newArr = []
+
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].status) {
+          newArr.unshift(arr[i])
+        } else {
+          newArr.push(arr[i])
+        }
+      }
+
+      if (payload.order == "asc") {
+        newArr.sort((a, b) => {
+          if (a.status && b.status) {
+            return a.status.text.localeCompare(b.status.text);
+          }
+        })
+      } else {
+        newArr.sort((a, b) => {
+          if (a.status && b.status) {
+            return b.status.text.localeCompare(a.status.text);
+          }
+        })
+      }
+
+      state.userTasks = newArr;
+    }
+    /*if(payload.sName == 'status' && payload.order == 'asc') {
       state.userTasks.sort((a,b) => a.status.text.localeCompare(b.status.text))
     }
 
     if(payload.sName == 'status' && payload.order == 'desc') {
       state.userTasks.sort((a,b) => b.status.text.localeCompare(a.status.text))
-    }
+    }*/
 
     // sort by create date
     if(payload.sName == 'createdAt' && payload.order == 'asc') {
@@ -130,13 +158,39 @@ export const mutations = {
     }
 
     // sort by priority
-    if(payload.sName == 'priority' && payload.order == 'asc') {
+    if (payload.sName == "priority") {
+      let arr = JSON.parse(JSON.stringify(state.userTasks))
+      let newArr = []
+
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].priority) {
+          newArr.unshift(arr[i])
+        } else {
+          newArr.push(arr[i])
+        }
+      }
+      if (payload.order == "asc") {
+        newArr.sort((a, b) => {
+          if (a.priority && b.priority) {
+            return a.priority.text.localeCompare(b.priority.text);
+          }
+        });
+      } else {
+        newArr.sort((a, b) => {
+          if (a.priority && b.priority) {
+            return b.priority.text.localeCompare(a.priority.text);
+          }
+        });
+      }
+      state.userTasks = newArr;
+    }
+    /*if(payload.sName == 'priority' && payload.order == 'asc') {
       state.userTasks.sort((a,b) => a.priority.text.localeCompare(b.priority.text))
     }
 
     if(payload.sName == 'priority' && payload.order == 'desc') {
       state.userTasks.sort((a,b) => b.priority.text.localeCompare(a.priority.text))
-    }
+    }*/
   }
 };
 
