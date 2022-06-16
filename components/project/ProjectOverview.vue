@@ -1,92 +1,89 @@
 <template>
-<client-only>
-  <div id="proj-overview-wrapper" class="row ">
-    <div id="proj-overview-inner" class="overview-wrapper my-2 mx-auto position-relative">
-      <!-- <div id="proj-overview-alert" class="shape-rounded font-sm bg-danger d-flex py-05 px-1 text-white align-center">
+  <client-only>
+    <div id="proj-overview-wrapper" class="row ">
+      <div id="proj-overview-inner" class="overview-wrapper my-2 mx-auto position-relative">
+        <!-- <div id="proj-overview-alert" class="shape-rounded font-sm bg-danger d-flex py-05 px-1 text-white align-center">
         <bib-icon icon="warning" variant="white" class="mr-05"></bib-icon>
         You have two tasks past due! "<a href="#" class="text-white">View task</a>" or "<a href="#" class="text-white">Remind me later</a>".
         <a href="#" class="ml-auto text-white">Snooze</a>
       </div> -->
-      <div id="proj-row1" class="row my-1">
-        <div id="proj-row1-col1" class="col-4">
-          <div id="proj-progress-wrap1" class="bg-secondary-sub3 shape-rounded text-center p-05 h-100">
-            <p id="proj-progress-title1" class="text-left text-secondary">Progress</p>
-            <progress-circle variant="success" :radius="55" :progress="progress" class="mx-auto mt-1"></progress-circle>
+        <div id="proj-row1" class="row my-1">
+          <div id="proj-row1-col1" class="col-4">
+            <div id="proj-progress-wrap1" class="bg-secondary-sub3 shape-rounded text-center p-05 h-100">
+              <p id="proj-progress-title1" class="text-left text-secondary">Progress</p>
+              <progress-circle variant="success" :radius="55" :progress="progress" class="mx-auto mt-1"></progress-circle>
+            </div>
           </div>
-        </div>
-        <div id="proj-row1-col2" class="col-4">
-          <div id="proj-progress-wrap2" class="bg-secondary-sub3 shape-rounded text-center p-05 h-100">
-            <p id="proj-progress-title2" class="text-left text-secondary">Tasks</p>
-            <div id="proj-progress-in" class="p-1">
-              <progress-bar label="Past due" background='danger' :value="taskOverdue" :total="totalTasks.length" class="my-025"></progress-bar>
-              <progress-bar label="Due soon" background='warning' :value="taskDuesoon" :total="totalTasks.length" class="my-025"></progress-bar>
-              <progress-bar label="Completed" background='success' :value="taskComplete" :total="totalTasks.length" class="my-025"></progress-bar>
-              <progress-bar label="In progress" :value="taskInprogress" :total="totalTasks.length" class="my-025"></progress-bar>
+          <div id="proj-row1-col2" class="col-4">
+            <div id="proj-progress-wrap2" class="bg-secondary-sub3 shape-rounded text-center p-05 h-100">
+              <p id="proj-progress-title2" class="text-left text-secondary">Tasks</p>
+              <div id="proj-progress-in" class="p-1">
+                <progress-bar label="Past due" background='danger' :value="taskOverdue" :total="totalTasks.length" class="my-025"></progress-bar>
+                <progress-bar label="Due soon" background='warning' :value="taskDuesoon" :total="totalTasks.length" class="my-025"></progress-bar>
+                <progress-bar label="Completed" background='success' :value="taskComplete" :total="totalTasks.length" class="my-025"></progress-bar>
+                <progress-bar label="In progress" :value="taskInprogress" :total="totalTasks.length" class="my-025"></progress-bar>
+              </div>
+            </div>
+          </div>
+          <div id="proj-row1-col3" class="col-4">
+            <div id="proj-progress-wrap3" class="bg-secondary-sub3 shape-rounded text-center p-05 h-100">
+              <!-- <bib-spinner variant="primary"></bib-spinner> -->
             </div>
           </div>
         </div>
-        <div id="proj-row1-col3" class="col-4">
-          <div id="proj-progress-wrap3" class="bg-secondary-sub3 shape-rounded text-center p-05 h-100">
-            <!-- <bib-spinner variant="primary"></bib-spinner> -->
-          </div>
-        </div>
-      </div>
-      <!-- <div class="d-flex align-center gap-1 justify-center text-secondary font-sm" v-show="loading">
+        <!-- <div class="d-flex align-center gap-1 justify-center text-secondary font-sm" v-show="loading">
         <bib-spinner variant="primary" :scale="2"></bib-spinner> Saving changes...
       </div> -->
-      <div id="proj-row2" class="row">
-        <div id="proj-row2-col1" class="col-8">
-          <bib-input type="text" label="Project name" placeholder="Project name" v-model="activeProject.title" v-on:keyup.native="debounceUpdate()" ></bib-input>
+        <div id="proj-row2" class="row">
+          <div id="proj-row2-col1" class="col-8">
+            <bib-input type="text" label="Project name" placeholder="Project name" v-model="activeProject.title" v-on:keyup.native="debounceUpdate()"></bib-input>
+          </div>
+          <div id="proj-row2-col2" class="col-4">
+            <bib-input type="date" label="Due date" v-model="dateInput" v-on:change.native="debounceUpdate()"></bib-input>
+          </div>
         </div>
-        <div id="proj-row2-col2" class="col-4">
-          <bib-input type="date" label="Due date" v-model="dateInput" v-on:change.native="debounceUpdate()"></bib-input>
+        <div id="proj-row3" class="row">
+          <div id="proj-row3-col1" class="col-6">
+            <!-- <bib-input type="select" :options="filterUser" v-model="activeProject.userId" placeholder="Please select..." label="Owner" v-on:change.native="debounceUpdate()" ></bib-input> -->
+            <bib-select label="Owner" test_id="po-owner-dd1" :options="filterUser" v-model="activeProject.userId" v-on:change="debounceUpdate()"></bib-select>
+          </div>
+          <div id="proj-row3-col2" class="col-6">
+            <bib-input type="select" label="Department" :options="department" placeholder="Department"></bib-input>
+          </div>
         </div>
+        <div id="proj-row4" class="row">
+          <div id="proj-row4-col1" class="col-6">
+            <bib-input type="select" label="Priority" v-model.number="activeProject.priorityId" :options="priority" placeholder="Please select..." v-on:change.native="debounceUpdate()"></bib-input>
+          </div>
+          <div id="proj-row4-col2" class="col-6">
+            <bib-input type="select" label="Status" v-model.number="activeProject.statusId" :options="status" placeholder="Please select..." v-on:change.native="debounceUpdate()"></bib-input>
+          </div>
+        </div>
+        <div id="proj-row5" class="row">
+          <div id="proj-row5-col1" class="col-4">
+            <label class="text-gray6">Time</label>
+            <div class="shape-rounded border-gray4 my-05 p-05">Hours {{time}}</div>
+            <!-- <bib-input type="time" v-model="time" placeholder="Select your time" label="Time"></bib-input> -->
+          </div>
+          <div id="proj-row5-col2" class="col-4">
+            <bib-input type="number" icon-left="currency-dollar" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="debounceUpdate()"></bib-input>
+          </div>
+          <div id="proj-row5-col3" class="col-4">
+            <label class="text-gray6">Progress</label>
+            <div class="shape-rounded border-gray4 my-05 p-05">{{progress}}%</div>
+            <!-- <bib-input type="text" :value="progress + '%'" placeholder="Select your progress" label="Progress" disabled></bib-input> -->
+          </div>
+        </div>
+        <div id="proj-row6" class="row">
+          <div id="proj-row6-col1" class="col-12">
+            <bib-input type="textarea" label="Project brief" v-model="activeProject.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate()"></bib-input>
+          </div>
+        </div>
+        <loading :loading="loading"></loading>
       </div>
-      <div id="proj-row3" class="row">
-        <div id="proj-row3-col1" class="col-6">
-          <!-- <bib-input type="select" :options="filterUser" v-model="activeProject.userId" placeholder="Please select..." label="Owner" v-on:change.native="debounceUpdate()" ></bib-input> -->
-
-          <bib-select label="Owner" test_id="po-owner-dd1" :options="filterUser" v-model="activeProject.userId" v-on:change="debounceUpdate()" ></bib-select>
-          
-        </div>
-        <div id="proj-row3-col2" class="col-6">
-          <bib-input type="select" label="Department" :options="department" placeholder="Department" ></bib-input>
-        </div>
-      </div>
-      <div id="proj-row4" class="row">
-        <div id="proj-row4-col1" class="col-6">
-          <bib-input type="select" label="Priority" v-model.number="activeProject.priorityId" :options="priority" placeholder="Please select..." v-on:change.native="debounceUpdate()" ></bib-input>
-        </div>
-        <div id="proj-row4-col2" class="col-6">
-          <bib-input type="select" label="Status" v-model.number="activeProject.statusId" :options="status" placeholder="Please select..." v-on:change.native="debounceUpdate()" ></bib-input>
-        </div>
-      </div>
-      <div id="proj-row5" class="row">
-        <div id="proj-row5-col1" class="col-4">
-          <label class="text-gray6">Time</label>
-          <div class="shape-rounded border-gray4 my-05 p-05">Hours {{time}}</div>
-          <!-- <bib-input type="time" v-model="time" placeholder="Select your time" label="Time"></bib-input> -->
-        </div>
-        <div id="proj-row5-col2" class="col-4">
-          <bib-input type="number" icon-left="currency-dollar" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="debounceUpdate()"></bib-input>
-        </div>
-        <div id="proj-row5-col3" class="col-4">
-          <label class="text-gray6">Progress</label>
-          <div class="shape-rounded border-gray4 my-05 p-05">{{progress}}%</div>
-          <!-- <bib-input type="text" :value="progress + '%'" placeholder="Select your progress" label="Progress" disabled></bib-input> -->
-        </div>
-      </div>
-      <div id="proj-row6" class="row">
-        <div id="proj-row6-col1" class="col-12">
-          <bib-input type="textarea" label="Project brief" v-model="activeProject.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate()"></bib-input>
-        </div>
-      </div>
-      <loading :loading="loading"></loading>
     </div>
-  </div>
   </client-only>
 </template>
-
 <script>
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
@@ -119,13 +116,14 @@ export default {
     project() {
       if (Object.keys(this.project).length) {
         this.activeProject = JSON.parse(JSON.stringify(this.project));
-        this.owner = this.teamMembers.filter(tm=> tm.id == this.activeProject.userId)
+        this.owner = this.teamMembers.filter(tm => tm.id == this.activeProject.userId)
+
       } else {
         this.activeProject = {
           title: "",
           dueDate: "",
-          priorityId: "",
-          statusId: "",
+          priorityId: null,
+          statusId: null,
           // time: "",
           budget: 0,
           // progress: 0
@@ -133,6 +131,7 @@ export default {
           userId: "",
           description: "",
         }
+
       }
     },
   },
@@ -235,10 +234,10 @@ export default {
   },
 
   mounted() {
-    if(process.client) {
+    if (process.client) {
       this.loading = true
       let user = JSON.parse(localStorage.getItem("user"))
-      this.$store.dispatch('task/fetchTasks', {id: this.$route.params.id, filter: 'all'})
+      this.$store.dispatch('task/fetchTasks', { id: this.$route.params.id, filter: 'all' })
       this.$axios.$get(`project/${this.$route.params.id}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       }).then((res) => {
@@ -297,8 +296,16 @@ export default {
       this.loading = false
     },
     debounceUpdate: _.debounce(function() {
-      console.log('Debounce clicked!', this.activeProject.userId)
-      this.owner = this.teamMembers.filter(tm=> tm.id == this.activeProject.userId)
+      // console.log('Debounce clicked!', this.activeProject.userId)
+      this.owner = this.teamMembers.filter(tm => tm.id == this.activeProject.userId)
+      if (this.activeProject.priorityId == "") {
+        this.activeProject.priority = null
+        this.activeProject.priorityId = null
+      }
+      if (this.activeProject.statusId == "") {
+        this.activeProject.status = null
+        this.activeProject.statusId = null
+      }
       this.updateProject()
     }, 1000)
 
@@ -308,14 +315,21 @@ export default {
 
 </script>
 <style lang="scss" scoped>
-.overview-wrapper { width: $overview-width;  }
+.overview-wrapper {
+  width: $overview-width;
+}
 
-@media screen and (max-width:1600px){
-  .overview-wrapper { max-width: $overview-width - 160px; width: 60%; }
+@media screen and (max-width:1600px) {
+  .overview-wrapper {
+    max-width: $overview-width - 160px;
+    width: 60%;
+  }
 }
 
 #proj-overview-alert {
-  a { text-decoration: underline;}
+  a {
+    text-decoration: underline;
+  }
 }
 
 ::v-deep {

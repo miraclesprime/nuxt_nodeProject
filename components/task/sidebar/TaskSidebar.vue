@@ -80,7 +80,7 @@
     <div class="menu" id='ts-menu'>
       <bib-tabs :value="activeSidebarTab" @change="sidebarTabChange" :tabs="sidebarTabs"></bib-tabs>
     </div>
-    <div class="of-scroll-y d-grid" id="ts-of-scroll-y" style="grid-template-columns: none; align-items: start" >
+    <div class="of-scroll-y d-grid" id="ts-of-scroll-y" style="grid-template-columns: none; align-items: start">
       <template v-if="activeSidebarTab == 'Overview'">
         <div class="task-info position-relative pt-1" id='sidebar-inner-wrap'>
           <div class="row mx-0" id='sidebar-row-1'>
@@ -415,6 +415,14 @@ export default {
     debounceUpdate: _.debounce(function() {
       if (this.form.id) {
         // console.log('Debounce clicked!')
+        if (this.form.priorityId == "") {
+          this.form.priority = null
+          this.form.priorityId = null
+        }
+        if (this.form.statusId == "") {
+          this.form.status = null
+          this.form.statusId = null
+        }
         this.updateTask()
       }
     }, 1000),

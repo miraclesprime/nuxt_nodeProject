@@ -360,7 +360,7 @@ export const STATUS = [
   { label: 'Done', value: '5' },
 ]
 export const PRIORITY = [
-  { label: 'Select', },
+  { label: 'Select' },
   { label: 'Low', value: '3' },
   { label: 'Medium', value: '2' },
   { label: 'High', value: '1' },

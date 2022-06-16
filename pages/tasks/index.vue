@@ -33,7 +33,7 @@
           </template>
           <template v-else>
             <div>
-              <span id="projects-0" class="d-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
+              <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
                 <bib-icon icon="warning"></bib-icon> No records found
               </span>
             </div>
@@ -54,7 +54,7 @@
                 </div>
               </div>
               <div class="task-section__body">
-                <div v-for="(item, index) in tasks" :key="item.name + '-' + key">
+                <div v-for="(item, index) in tasks" :key="index + '-' + key" >
                   <task-grid :task="item" v-on:update-key="updateKey" />
                 </div>
               </div>
@@ -85,7 +85,7 @@ export default {
       taskFields: TaskFields,
       loading: false,
       flag: false,
-      viewName: null,
+      viewName: "all",
       orderBy: 'desc',
       key: 100,
       popupMessages: [],
@@ -119,7 +119,7 @@ export default {
 
   methods: {
     updateKey($event) {
-      console.log("update-key event received", $event)
+      // console.log("update-key event received", $event)
       this.popupMessages.push({ text: $event, variant: "success" })
       let compid = JSON.parse(localStorage.getItem("user")).subb;
       this.$store.dispatch("company/setCompanyTasks", { companyId: compid, filter: "all" }).then(() => {
