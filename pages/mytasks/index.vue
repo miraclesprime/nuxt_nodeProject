@@ -19,23 +19,7 @@
                 <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
               </template>
               <template #cell(status)="data">
-                <div class="d-flex gap-05 align-center">
-                  <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
-                  </div>
-                </div>
-              </template>
-              <template #cell(projectId)="data">
-                <project-info :projectId="data.value.project[0] ? data.value.project[0].projectId : null"></project-info>
-              </template>
-              <template #cell(owner)="data">
-                <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
-              </template>
-              <template #cell(status)="data">
-                <div class="d-flex gap-05 align-center">
-                  <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
-                  </div>
-                  <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" class="text-dark text-truncate">{{ favoriteStatusLabel(data.value.status ? data.value.status.text : "") }}</span>
-                </div>
+                <status-comp :status="data.value.status"></status-comp>
               </template>
               <template #cell(createdAt)="data">
                 <span :id="'projects-' + data.value.createdAt + '-text'" class="text-dark text-truncate" v-format-date="data.value.createdAt"></span>
@@ -48,12 +32,13 @@
             </div> -->
               </template>
               <template #cell(priority)="data">
-                <div class="d-flex gap-05 align-center">
+                <priority-comp :priority="data.value.priority"></priority-comp>
+                <!-- <div class="d-flex gap-05 align-center">
                   <bib-icon icon="urgent-solid" :scale="1" :variant="favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
                   <span id="project-text" :class="'text-' + favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')">
                     {{ capitalizeFirstLetter(data.value.priority ? data.value.priority.text : '') }}
                   </span>
-                </div>
+                </div> -->
               </template>
             </bib-table>
             <loading :loading="loading"></loading>
@@ -205,49 +190,6 @@ export default {
       this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' }).then(() => {
         this.taskByOrder()
       })
-    },
-    favoriteStatusLabel(status) {
-      switch (status) {
-        case 'Delayed':
-          return 'Delayed'
-        case 'In-Progress':
-          return 'In-Progress'
-        case 'Done':
-          return 'Done'
-        case 'Waiting':
-          return 'Waiting'
-        case 'Not Started':
-          return 'Not Started'
-      }
-    },
-    favoriteStatusVariable(status) {
-      switch (status) {
-        case 'Delayed':
-          return 'danger'
-        case 'In-Progress':
-          return 'primary'
-        case 'Done':
-          return 'success'
-        case 'Waiting':
-          return 'warning'
-        case 'Not Started':
-          return 'secondary'
-      }
-    },
-    favoritePriorityVariable(priority) {
-      switch (priority) {
-        case 'high':
-          return 'danger'
-        case 'medium':
-          return 'orange'
-        case 'low':
-          return 'success'
-        case 'none':
-          return 'secondary'
-      }
-    },
-    capitalizeFirstLetter(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1)
     },
 
     openSidebar(task) {

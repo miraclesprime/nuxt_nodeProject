@@ -15,18 +15,20 @@
             Department
           </template>
           <template #cell(status)="data">
-            <div class="d-flex gap-05 align-center">
+            <status-comp :status="data.value.status"></status-comp>
+            <!-- <div class="d-flex gap-05 align-center">
               <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')"></div>
               <span class="text-dark ">{{ favoriteStatusLabel(data.value.status ? data.value.status.text : '') }}</span>
-            </div>
+            </div> -->
           </template>
           <template #cell(priority)="data">
-            <div class="d-flex gap-05 align-center">
+            <priority-comp :priority="data.value.priority"></priority-comp>
+            <!-- <div class="d-flex gap-05 align-center">
               <bib-icon icon="urgent-solid" :scale="1.1" :variant="favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
               <span id="project-text" :class="'text-' + favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')" class="text-capitalize">
                 {{ data.value.priority ? data.value.priority.text : '' }}
               </span>
-            </div>
+            </div> -->
           </template>
           <template #cell(owner)="data">
             <user-info :userId="data.value.userId"></user-info>
@@ -47,22 +49,24 @@
             <user-info :userId="data.value.userId"></user-info>
           </template>
           <template #cell(status)="data">
-            <div class="d-flex gap-05 align-center">
+            <status-comp :status="data.value.status"></status-comp>
+            <!-- <div class="d-flex gap-05 align-center">
               <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
               </div>
               <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" class="text-dark text-truncate">{{ favoriteStatusLabel(data.value.status ? data.value.status.text : "") }}</span>
-            </div>
+            </div> -->
           </template>
           <template #cell(dueDate)="data">
             <format-date :datetime="data.value.dueDate"></format-date>
           </template>
           <template #cell(priority)="data">
-            <div class="d-flex gap-05 align-center">
+            <priority-comp :priority="data.value.priority"></priority-comp>
+            <!-- <div class="d-flex gap-05 align-center">
               <bib-icon icon="urgent-solid" :scale="1.1" :variant="favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
               <span id="project-text" :class="'text-' + favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')" class="text-capitalize">
                 {{ data.value.priority ? data.value.priority.text : '' }}
               </span>
-            </div>
+            </div> -->
           </template>
         </bib-table>
         <loading :loading="loading"></loading>

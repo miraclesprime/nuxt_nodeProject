@@ -24,11 +24,12 @@
             <user-info :userId="data.value.userId" :key="newkey" ></user-info>
           </template>
           <template #cell(status)="data">
-            <div class="d-flex gap-05 align-center">
+            <status-comp :status="data.value.status"></status-comp>
+            <!-- <div class="d-flex gap-05 align-center">
               <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-'+ projectStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
               </div>
                 <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" class="text-dark text-truncate">{{ projectStatusLabel(data.value.status ? data.value.status.text : "") }}</span>
-            </div>
+            </div> -->
           </template>
           <template #cell(createdAt)="data">
             <format-date :datetime="data.value.createdAt" :key="newkey"></format-date>
@@ -41,12 +42,13 @@
             
           </template>
           <template #cell(priority)="data">
-            <div class="d-flex gap-05 align-center">
+            <priority-comp :priority="data.value.priority"></priority-comp>
+            <!-- <div class="d-flex gap-05 align-center">
               <bib-icon icon="urgent-solid" :scale="1.1" :variant="projectPriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
                 <span id="project-text" :class="'text-' + projectPriorityVariable(data.value.priority ? data.value.priority.text : '')">
                   {{ capitalizeFirstLetter(data.value.priority ? data.value.priority.text : '') }}
                 </span>
-            </div>
+            </div> -->
           </template>
         </bib-table>
       </template>
@@ -113,52 +115,6 @@ export default {
       // console.log(project)
       this.$store.dispatch('project/setSingleProject', project)
       this.$router.push("/projects/" + project.id)
-    },
-
-  // methods for bib-table
-
-    projectStatusLabel(status) {
-      switch (status) {
-        case 'Delayed':
-          return 'Delayed'
-        case 'In-Progress':
-          return 'In-Progress'
-        case 'Done':
-          return 'Done'
-        case 'Waiting':
-          return 'Waiting'
-        case 'Not Started':
-          return 'Not Started'
-      }
-    },
-    projectStatusVariable(status) {
-      switch (status) {
-        case 'Delayed':
-          return 'danger'
-        case 'In-Progress':
-          return 'primary'
-        case 'Done':
-          return 'success'
-        case 'Waiting':
-          return 'warning'
-        case 'Not Started':
-          return 'secondary'
-      }
-    },
-    projectPriorityVariable(priority) {
-      switch (priority) {
-        case 'high':
-          return 'danger'
-        case 'medium':
-          return 'orange'
-        case 'low':
-          return 'success'
-        case 'none':
-          return 'secondary'
-      }
-    },
-    capitalizeFirstLetter(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1)
     },
 
     sortTitle() {
