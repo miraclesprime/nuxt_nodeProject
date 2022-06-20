@@ -500,7 +500,8 @@ export const USER_TASKS = [
       icon: 'swap-vertical',
       event: 'file-title-sort',
       isActive: false
-    }
+    },
+    width: "25%",
   },
   {
     label: 'Project', 
@@ -509,7 +510,8 @@ export const USER_TASKS = [
       icon: 'swap-vertical',
       event: 'file-project-sort',
       isActive: false
-    }
+    },
+    width: "15%",
   },
   { 
     label: 'Status', 

@@ -12,18 +12,11 @@
               </template>
               <template #cell(status)="data">
                 <status-comp :status="data.value.status"></status-comp>
-                <!-- <div class="d-flex gap-05 align-center">
-                  <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
-                  </div>
-                  <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" class="text-dark text-truncate">{{ favoriteStatusLabel(data.value.status ? data.value.status.text : "") }}</span>
-                </div> -->
+                
               </template>
               <template #cell(priority)="data">
                 <priority-comp :priority="data.value.priority"></priority-comp>
-                <!-- <div class="d-flex gap-05 align-center">
-                  <bib-icon icon="urgent-solid" :scale="1" :variant="favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
-                  <span :id="'projects-' + data.value.priorityId ? data.value.priorityId : '' + '-text'" class=" text-truncate text-capitalize" :class="'text-'+favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')">{{ data.value.priority ? data.value.priority.text : "" }}</span>
-                </div> -->
+                
               </template>
               <template #cell(owner)="data">
                 <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>

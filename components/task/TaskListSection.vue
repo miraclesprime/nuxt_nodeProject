@@ -12,10 +12,7 @@
       </template>
       <template #cell(status)="data">
         <status-comp :status="data.value.status"></status-comp>
-        <!-- <div class="d-flex gap-05 align-center">
-          <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + taskStatusVariable(data.value.status ? data.value.status.text : '')"></div>
-          <span class="text-dark">{{ taskStatusLabel(data.value.status ? data.value.status.text : '') }}</span>
-        </div> -->
+        
       </template>
       <template #cell(startDate)="data">
         <span class="text-dark d-inline-flex" style="line-height: normal;" v-format-date="data.value.createdAt"></span>
@@ -25,10 +22,7 @@
       </template>
       <template #cell(priority)="data">
         <priority-comp :priority="data.value.priority"></priority-comp>
-        <!-- <div class="d-flex gap-05 align-center">
-          <bib-icon icon="urgent-solid" :scale="1.1" :variant="taskPriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
-          <span :class="'text-' + taskPriorityVariable(data.value.priority ? data.value.priority.text : '')">{{ capitalizeFirstLetter(data.value.priority ? data.value.priority.text : '') }}</span>
-        </div> -->
+        
       </template>
     </bib-table>
     <loading :loading="loading"></loading>
