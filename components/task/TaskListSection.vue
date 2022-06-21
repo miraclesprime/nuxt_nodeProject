@@ -11,10 +11,8 @@
         <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
       </template>
       <template #cell(status)="data">
-        <div class="d-flex gap-05 align-center">
-          <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + taskStatusVariable(data.value.status ? data.value.status.text : '')"></div>
-          <span class="text-dark">{{ taskStatusLabel(data.value.status ? data.value.status.text : '') }}</span>
-        </div>
+        <status-comp :status="data.value.status"></status-comp>
+        
       </template>
       <template #cell(startDate)="data">
         <span class="text-dark d-inline-flex" style="line-height: normal;" v-format-date="data.value.createdAt"></span>
@@ -23,10 +21,8 @@
         <span class="text-dark d-inline-flex" style="line-height: normal;" v-format-date="data.value.dueDate"></span>
       </template>
       <template #cell(priority)="data">
-        <div class="d-flex gap-05 align-center">
-          <bib-icon icon="urgent-solid" :scale="1.1" :variant="taskPriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
-          <span :class="'text-' + taskPriorityVariable(data.value.priority ? data.value.priority.text : '')">{{ capitalizeFirstLetter(data.value.priority ? data.value.priority.text : '') }}</span>
-        </div>
+        <priority-comp :priority="data.value.priority"></priority-comp>
+        
       </template>
     </bib-table>
     <loading :loading="loading"></loading>
@@ -88,55 +84,6 @@ export default {
       return data.value.statusId == 5 ? 'success' : 'secondary-sub1'
     },
 
-    taskStatusLabel(status) {
-      switch (status) {
-        case 'Delayed':
-          return 'Delayed'
-        case 'In-Progress':
-          return 'In-Progress'
-        case 'Done':
-          return 'Done'
-        case 'Waiting':
-          return 'Waiting'
-        case 'Not Started':
-          return 'Not Started'
-        default:
-          return ''
-      }
-    },
-    taskStatusVariable(status) {
-      switch (status) {
-        case 'Delayed':
-          return 'danger'
-        case 'In-Progress':
-          return 'primary'
-        case 'Done':
-          return 'success'
-        case 'Waiting':
-          return 'warning'
-        case 'Not Started':
-          return 'secondary'
-        default:
-          return ''
-      }
-    },
-    taskPriorityVariable(priority) {
-      switch (priority) {
-        case 'high':
-          return 'danger'
-        case 'medium':
-          return 'orange'
-        case 'low':
-          return 'success'
-        case 'none':
-          return 'secondary'
-        default:
-          return ""
-      }
-    },
-    capitalizeFirstLetter(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1)
-    },
     handleTaskTable_status(item) {
       // console.log(item)
       this.loading = true

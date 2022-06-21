@@ -11,17 +11,12 @@
                 <span class="text-dark text-left cursor-pointer d-block" style=" line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{ data.value.title }}</span>
               </template>
               <template #cell(status)="data">
-                <div class="d-flex gap-05 align-center">
-                  <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
-                  </div>
-                  <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" class="text-dark text-truncate">{{ favoriteStatusLabel(data.value.status ? data.value.status.text : "") }}</span>
-                </div>
+                <status-comp :status="data.value.status"></status-comp>
+                
               </template>
               <template #cell(priority)="data">
-                <div class="d-flex gap-05 align-center">
-                  <bib-icon icon="urgent-solid" :scale="1" :variant="favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
-                  <span :id="'projects-' + data.value.priorityId ? data.value.priorityId : '' + '-text'" class=" text-truncate text-capitalize" :class="'text-'+favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')">{{ data.value.priority ? data.value.priority.text : "" }}</span>
-                </div>
+                <priority-comp :priority="data.value.priority"></priority-comp>
+                
               </template>
               <template #cell(owner)="data">
                 <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
@@ -125,49 +120,6 @@ export default {
       this.$store.dispatch("company/setCompanyTasks", { companyId: compid, filter: "all" }).then(() => {
         this.key += 1
       })
-    },
-    favoriteStatusLabel(status) {
-      switch (status) {
-        case 'Delayed':
-          return 'Delayed'
-        case 'In-Progress':
-          return 'In-Progress'
-        case 'Done':
-          return 'Done'
-        case 'Waiting':
-          return 'Waiting'
-        case 'Not Started':
-          return 'Not Started'
-      }
-    },
-    favoriteStatusVariable(status) {
-      switch (status) {
-        case 'Delayed':
-          return 'danger'
-        case 'In-Progress':
-          return 'primary'
-        case 'Done':
-          return 'success'
-        case 'Waiting':
-          return 'warning'
-        case 'Not Started':
-          return 'secondary'
-      }
-    },
-    favoritePriorityVariable(priority) {
-      switch (priority) {
-        case 'high':
-          return 'danger'
-        case 'medium':
-          return 'orange'
-        case 'low':
-          return 'success'
-        case 'none':
-          return 'secondary'
-      }
-    },
-    capitalizeFirstLetter(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1)
     },
 
     openSidebar(task) {

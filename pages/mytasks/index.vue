@@ -5,8 +5,9 @@
       <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:create-task="toggleSidebar($event)" />
       <div id="mytask-table-wrapper" class="mytask-table-wrapper position-relative of-scroll-y">
         <template v-if="gridType == 'list'">
+          
           <template v-if="tasks.length">
-            <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Due Soon', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key" @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
+            <bib-table v-for="(item, index) in localdata" :key="index + viewName + '-' + key" :fields="taskFields" :sections="item.tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: item.title}" :headless="index > 0" class="border-gray4 bg-white"  @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
               <template #cell(title)="data">
                 <div :id="'cell'+data.value.id" class="text-dark text-left cursor-pointer" @click="$nuxt.$emit('open-sidebar', data.value)">
                   {{ data.value.title }}
@@ -19,56 +20,29 @@
                 <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
               </template>
               <template #cell(status)="data">
-                <div class="d-flex gap-05 align-center">
-                  <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
-                  </div>
-                </div>
-              </template>
-              <template #cell(projectId)="data">
-                <project-info :projectId="data.value.project[0] ? data.value.project[0].projectId : null"></project-info>
-              </template>
-              <template #cell(owner)="data">
-                <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
-              </template>
-              <template #cell(status)="data">
-                <div class="d-flex gap-05 align-center">
-                  <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
-                  </div>
-                  <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" class="text-dark text-truncate">{{ favoriteStatusLabel(data.value.status ? data.value.status.text : "") }}</span>
-                </div>
+                <status-comp :status="data.value.status"></status-comp>
               </template>
               <template #cell(createdAt)="data">
                 <span :id="'projects-' + data.value.createdAt + '-text'" class="text-dark text-truncate" v-format-date="data.value.createdAt"></span>
-                <!-- <div class="justify-between text-dark" :id="'projects-' + data.value.dueDate">
-            </div> -->
               </template>
               <template #cell(dueDate)="data">
                 <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span>
-                <!-- <div class="justify-between text-dark" :id="'projects-' + data.value.dueDate">
-            </div> -->
               </template>
               <template #cell(priority)="data">
-                <div class="d-flex gap-05 align-center">
-                  <bib-icon icon="urgent-solid" :scale="1" :variant="favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
-                  <span id="project-text" :class="'text-' + favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')">
-                    {{ capitalizeFirstLetter(data.value.priority ? data.value.priority.text : '') }}
-                  </span>
-                </div>
+                <priority-comp :priority="data.value.priority"></priority-comp>
               </template>
             </bib-table>
             <loading :loading="loading"></loading>
           </template>
-          <template v-else>
-            <div>
-              <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
-                <bib-icon icon="warning"></bib-icon> No records found
-              </span>
-            </div>
-          </template>
+          <div v-else>
+            <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
+              <bib-icon icon="warning"></bib-icon> No records found
+            </span>
+          </div>
         </template>
         <template v-else>
           <div class=" d-flex">
-            <div class="task-grid-section">
+            <!-- <div class="task-grid-section">
               <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
                 <div class="title text-dark">Past Due</div>
                 <div class="d-flex section-options">
@@ -82,73 +56,39 @@
               </div>
               <div class="task-section__body">
                 <div v-for="(item, index) in tasks" :key="item.name + '-' + index">
-                  <task-grid :task="item" v-on:update-key="updateKey" ></task-grid>
+                  <task-grid :task="item" v-on:update-key="updateKey"></task-grid>
                 </div>
               </div>
-            </div>
-            <div class="task-grid-section">
+            </div> -->
+            
+            
+            <div class="task-grid-section" v-for="(section, index) in localdata" :key="index + viewName + '-' + key">
               <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
-                <div class="title text-dark">Due Today</div>
+                <div class="title text-dark">{{section.title}}</div>
                 <div class="d-flex section-options">
-                  <div class="mr-1">
-                    <bib-icon icon="add" variant="success" :scale="1.2" />
-                  </div>
-                  <div>
-                    <bib-icon icon="elipsis" :scale="1.2" />
-                  </div>
-                </div>
-              </div>
-              <div class="task-section__body">
-                <!-- <div v-for="(item, index) in tasks" :key="item.name + '-' + index">
-                <task-grid :task="item" />
-              </div> -->
-              </div>
-            </div>
-            <div class="task-grid-section">
-              <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
-                <div class="title text-dark ">This Week</div>
-                <div class="d-flex section-options">
-                  <div class="mr-1">
-                    <bib-icon icon="add" variant="success" :scale="1.2" />
-                  </div>
-                  <div>
-                    <bib-icon icon="elipsis" :scale="1.2" />
-                  </div>
-                </div>
-              </div>
-              <div class="task-section__body">
-                <!-- <div v-for="(item, index) in tasks" :key="item.name + '-' + index">
-                <task-grid :task="item" />
-              </div> -->
-              </div>
-            </div>
-            <div class="task-grid-section">
-              <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
-                <div class="title text-dark">This Month</div>
-                <div class="d-flex section-options">
-                  <div class="mr-1">
+                  <!-- <div class="mr-1">
                     <bib-icon icon="add" variant="success" :scale="1.2"></bib-icon>
                   </div>
                   <div>
                     <bib-icon icon="elipsis" :scale="1.2" />
-                  </div>
+                  </div> -->
                 </div>
               </div>
               <div class="task-section__body">
-                <!-- <div v-for="(item, index) in tasks" :key="item.name + '-' + index">
-                <task-grid :task="item" />
-              </div> -->
+                <div v-for="(task, index) in section.tasks" :key="task.name + '-' + index + key">
+                <task-grid :task="task" />
+              </div>
               </div>
             </div>
           </div>
         </template>
       </div>
       <bib-popup-notification-wrapper>
-          <template #wrapper>
-            <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
-            </bib-popup-notification>
-          </template>
-        </bib-popup-notification-wrapper>
+        <template #wrapper>
+          <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
+          </bib-popup-notification>
+        </template>
+      </bib-popup-notification-wrapper>
     </div>
   </client-only>
 </template>
@@ -173,7 +113,33 @@ export default {
   computed: {
     ...mapGetters({
       tasks: 'user/getUserTasks'
-    })
+    }),
+    localdata() {
+      let arr = [
+        { title: "Past Due", id: 101, tasks: [] },
+        { title: "Due Today", id: 102, tasks: [] },
+        { title: "This Week", id: 103, tasks: [] },
+        { title: "This Month", id: 104, tasks: [] },
+      ]
+      this.tasks.map((t => {
+        // console.log(new Date(t.dueDate))
+        // console.info(new Date(t.dueDate).getDate() === new Date().getDate(), t.title);
+        if (new Date(t.dueDate).getDate() < new Date().getDate()) {
+          arr[0].tasks.push(t)
+        }
+        if (new Date(t.dueDate).getDate() == new Date().getDate()) {
+          arr[1].tasks.push(t)
+        }
+        if (new Date(t.dueDate) > new Date() && new Date(t.dueDate).getDate() < new Date().getDate()+7) {
+          arr[2].tasks.push(t)
+        }
+        if (new Date(t.dueDate).getDate() > new Date().getDate()+7 && new Date(t.dueDate).getDate() < new Date().getDate()+30) {
+          arr[3].tasks.push(t)
+        }
+        // return new Date(t.dueDate) < new Date()
+      }))
+      return arr
+    }
   },
 
   created() {
@@ -199,55 +165,6 @@ export default {
       this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' }).then(() => {
         this.key += 1
       })
-    },
-    updateKey() {
-      // console.log("update-key event received", this.templateKey)
-      this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' }).then(() => {
-        this.taskByOrder()
-      })
-    },
-    favoriteStatusLabel(status) {
-      switch (status) {
-        case 'Delayed':
-          return 'Delayed'
-        case 'In-Progress':
-          return 'In-Progress'
-        case 'Done':
-          return 'Done'
-        case 'Waiting':
-          return 'Waiting'
-        case 'Not Started':
-          return 'Not Started'
-      }
-    },
-    favoriteStatusVariable(status) {
-      switch (status) {
-        case 'Delayed':
-          return 'danger'
-        case 'In-Progress':
-          return 'primary'
-        case 'Done':
-          return 'success'
-        case 'Waiting':
-          return 'warning'
-        case 'Not Started':
-          return 'secondary'
-      }
-    },
-    favoritePriorityVariable(priority) {
-      switch (priority) {
-        case 'high':
-          return 'danger'
-        case 'medium':
-          return 'orange'
-        case 'low':
-          return 'success'
-        case 'none':
-          return 'secondary'
-      }
-    },
-    capitalizeFirstLetter(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1)
     },
 
     openSidebar(task) {

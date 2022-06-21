@@ -15,18 +15,20 @@
             Department
           </template>
           <template #cell(status)="data">
-            <div class="d-flex gap-05 align-center">
+            <status-comp :status="data.value.status"></status-comp>
+            <!-- <div class="d-flex gap-05 align-center">
               <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')"></div>
               <span class="text-dark ">{{ favoriteStatusLabel(data.value.status ? data.value.status.text : '') }}</span>
-            </div>
+            </div> -->
           </template>
           <template #cell(priority)="data">
-            <div class="d-flex gap-05 align-center">
+            <priority-comp :priority="data.value.priority"></priority-comp>
+            <!-- <div class="d-flex gap-05 align-center">
               <bib-icon icon="urgent-solid" :scale="1.1" :variant="favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
               <span id="project-text" :class="'text-' + favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')" class="text-capitalize">
                 {{ data.value.priority ? data.value.priority.text : '' }}
               </span>
-            </div>
+            </div> -->
           </template>
           <template #cell(owner)="data">
             <user-info :userId="data.value.userId"></user-info>
@@ -35,6 +37,7 @@
             <format-date :datetime="data.value.dueDate"></format-date>
           </template>
         </bib-table>
+        
         <!-- task table -->
         <bib-table :key="'ftasks'+key" :fields="taskTableFields" class="border-gray4 bg-white" :sections="sortedTask" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Favorite Tasks'}" @file-title-sort="sortTask('name')" @file-status-sort="sortTask('status')" @file-priority-sort="sortTask('priority')" @file-owner-sort="sortTask('owner')" @file-dueDate-sort="sortTask('dueDate')">
           <template #cell(title)="data">
@@ -47,24 +50,30 @@
             <user-info :userId="data.value.userId"></user-info>
           </template>
           <template #cell(status)="data">
-            <div class="d-flex gap-05 align-center">
+            <status-comp :status="data.value.status"></status-comp>
+            <!-- <div class="d-flex gap-05 align-center">
               <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
               </div>
               <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" class="text-dark text-truncate">{{ favoriteStatusLabel(data.value.status ? data.value.status.text : "") }}</span>
-            </div>
+            </div> -->
           </template>
           <template #cell(dueDate)="data">
             <format-date :datetime="data.value.dueDate"></format-date>
           </template>
           <template #cell(priority)="data">
-            <div class="d-flex gap-05 align-center">
+            <priority-comp :priority="data.value.priority"></priority-comp>
+            <!-- <div class="d-flex gap-05 align-center">
               <bib-icon icon="urgent-solid" :scale="1.1" :variant="favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
               <span id="project-text" :class="'text-' + favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')" class="text-capitalize">
                 {{ data.value.priority ? data.value.priority.text : '' }}
               </span>
-            </div>
+            </div> -->
           </template>
         </bib-table>
+        <ul>
+          <li v-for="item in sortedTaskUtil" :key="item.id">{{ item.title }}</li>
+        </ul>
+
         <loading :loading="loading"></loading>
       </div>
     </div>
@@ -73,6 +82,7 @@
 <script>
 import { PROJECT_FAVORITES, TASK_FAVORITES } from '../../config/constants'
 import { mapGetters } from 'vuex';
+// import { sortTaskUtil } from '~/utils/taskSort.js'
 
 export default {
   data() {
@@ -87,6 +97,7 @@ export default {
       sortName: '',
       projOrder: 'asc',
       taskOrder: 'asc',
+      sortedTaskUtil: [],
     }
   },
 
@@ -112,6 +123,7 @@ export default {
   },
 
   methods: {
+    
     async fetchProjects() {
       // this.loading = true
 
@@ -143,46 +155,6 @@ export default {
       this.key += 1
       this.loading = false
       // })
-    },
-    favoriteStatusLabel(status) {
-      switch (status) {
-        case 'Delayed':
-          return 'Delayed'
-        case 'In-Progress':
-          return 'In-Progress'
-        case 'Done':
-          return 'Done'
-        case 'Waiting':
-          return 'Waiting'
-        case 'Not Started':
-          return 'Not Started'
-      }
-    },
-    favoriteStatusVariable(status) {
-      switch (status) {
-        case 'Delayed':
-          return 'danger'
-        case 'In-Progress':
-          return 'primary'
-        case 'Done':
-          return 'success'
-        case 'Waiting':
-          return 'warning'
-        case 'Not Started':
-          return 'secondary'
-      }
-    },
-    favoritePriorityVariable(priority) {
-      switch (priority) {
-        case 'high':
-          return 'danger'
-        case 'medium':
-          return 'orange'
-        case 'low':
-          return 'success'
-        case 'none':
-          return 'secondary'
-      }
     },
 
     taskCheckIcon(statusId) {
