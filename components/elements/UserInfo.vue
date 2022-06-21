@@ -12,7 +12,10 @@
     <!-- <bib-spinner :scale="1.5"></bib-spinner> -->
   </span>
 </template>
+
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
 
   name: 'UserInfo',
@@ -26,16 +29,33 @@ export default {
       userName: null,
     }
   },
+  
+  computed: {
+    ...mapGetters({
+        members: 'user/getTeamMembers'
+    })
+  },
+
   created() {
     if (this.userId) {
-      this.$axios.get(`${process.env.USER_API_URL}/${this.userId}`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-      }).then((res) => {
-        this.userName = res.data[0].FirstName + ' ' + res.data[0].LastName;
-        this.pic = res.data[0].Photo
-      }).catch(e => this.userName = e)
+      // this.$axios.get(`${process.env.USER_API_URL}/${this.userId}`, {
+      //   headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      // }).then((res) => {
+      //   this.userName = res.data[0].FirstName + ' ' + res.data[0].LastName;
+      //   this.pic = res.data[0].Photo
+      // }).catch(e => this.userName = e)
+      this.members.filter((el) => {
+          if(el.id === this.userId) {
+             this.userName = el.firstName + ' ' + el.lastName;
+             this.pic = el.avatar
+          }
+      });
     }
-  }
+  },
+  
+  // mounted() {
+  //   console.log(this.members)
+  // }
 }
 
 </script>
