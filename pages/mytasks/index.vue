@@ -7,7 +7,7 @@
         <template v-if="gridType == 'list'">
           
           <template v-if="tasks.length">
-            <bib-table v-for="(item, index) in localdata" :fields="taskFields" :sections="item.tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: item.title}" :headless="index > 0" class="border-gray4 bg-white" :key="index + viewName + '-' + key" @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
+            <bib-table v-for="(item, index) in localdata" :key="index + viewName + '-' + key" :fields="taskFields" :sections="item.tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: item.title}" :headless="index > 0" class="border-gray4 bg-white"  @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
               <template #cell(title)="data">
                 <div :id="'cell'+data.value.id" class="text-dark text-left cursor-pointer" @click="$nuxt.$emit('open-sidebar', data.value)">
                   {{ data.value.title }}
@@ -42,7 +42,7 @@
         </template>
         <template v-else>
           <div class=" d-flex">
-            <div class="task-grid-section">
+            <!-- <div class="task-grid-section">
               <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
                 <div class="title text-dark">Past Due</div>
                 <div class="d-flex section-options">
@@ -59,59 +59,25 @@
                   <task-grid :task="item" v-on:update-key="updateKey"></task-grid>
                 </div>
               </div>
-            </div>
-            <div class="task-grid-section">
+            </div> -->
+            
+            
+            <div class="task-grid-section" v-for="(section, index) in localdata" :key="index + viewName + '-' + key">
               <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
-                <div class="title text-dark">Due Today</div>
+                <div class="title text-dark">{{section.title}}</div>
                 <div class="d-flex section-options">
-                  <div class="mr-1">
-                    <bib-icon icon="add" variant="success" :scale="1.2" />
-                  </div>
-                  <div>
-                    <bib-icon icon="elipsis" :scale="1.2" />
-                  </div>
-                </div>
-              </div>
-              <div class="task-section__body">
-                <!-- <div v-for="(item, index) in tasks" :key="item.name + '-' + index">
-                <task-grid :task="item" />
-              </div> -->
-              </div>
-            </div>
-            <div class="task-grid-section">
-              <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
-                <div class="title text-dark ">This Week</div>
-                <div class="d-flex section-options">
-                  <div class="mr-1">
-                    <bib-icon icon="add" variant="success" :scale="1.2" />
-                  </div>
-                  <div>
-                    <bib-icon icon="elipsis" :scale="1.2" />
-                  </div>
-                </div>
-              </div>
-              <div class="task-section__body">
-                <!-- <div v-for="(item, index) in tasks" :key="item.name + '-' + index">
-                <task-grid :task="item" />
-              </div> -->
-              </div>
-            </div>
-            <div class="task-grid-section">
-              <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
-                <div class="title text-dark">This Month</div>
-                <div class="d-flex section-options">
-                  <div class="mr-1">
+                  <!-- <div class="mr-1">
                     <bib-icon icon="add" variant="success" :scale="1.2"></bib-icon>
                   </div>
                   <div>
                     <bib-icon icon="elipsis" :scale="1.2" />
-                  </div>
+                  </div> -->
                 </div>
               </div>
               <div class="task-section__body">
-                <!-- <div v-for="(item, index) in tasks" :key="item.name + '-' + index">
-                <task-grid :task="item" />
-              </div> -->
+                <div v-for="(task, index) in section.tasks" :key="task.name + '-' + index + key">
+                <task-grid :task="task" />
+              </div>
               </div>
             </div>
           </div>
@@ -158,7 +124,7 @@ export default {
       this.tasks.map((t => {
         // console.log(new Date(t.dueDate))
         // console.info(new Date(t.dueDate).getDate() === new Date().getDate(), t.title);
-        if (new Date(t.dueDate) < new Date()) {
+        if (new Date(t.dueDate).getDate() < new Date().getDate()) {
           arr[0].tasks.push(t)
         }
         if (new Date(t.dueDate).getDate() == new Date().getDate()) {
