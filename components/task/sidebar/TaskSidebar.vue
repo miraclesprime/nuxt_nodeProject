@@ -370,7 +370,7 @@ export default {
           "projectId": this.form.projectId,
           "title": this.form.title,
           "description": this.form.description,
-          "dueDate": this.form.dueDate,
+          "dueDate": this.form.dueDate || new Date(),
           "priorityId": this.form.priorityId,
           "budget": 0,
           "statusId": this.form.statusId,
