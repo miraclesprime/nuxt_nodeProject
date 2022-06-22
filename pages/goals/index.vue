@@ -3,7 +3,7 @@
     
     <page-title title="Goals"></page-title>
     
-    <goal-actions  />
+    <goal-actions v-on:goal-create-modal="openCreateGoalModal"></goal-actions>
     <div id="goals-list-wrapper" class="projects-list-wrapper of-scroll-y position-relative" >
       <!-- <loading :loading="loading"></loading> -->
       <template v-if="goals.length">
@@ -15,6 +15,7 @@
         </span>
       </template>
     </div>
+    <create-goal-modal ref="createGoalModal"></create-goal-modal>
   </div>
 </template>
 
@@ -54,6 +55,9 @@ export default {
 //   },
 
   methods: {
+    openCreateGoalModal(){
+      this.$refs.createGoalModal.showCreateGoalModal = true
+    },
     // checkActive() {
     //   for(let i=0; i<this.tableFields.length; i++) {
     //       if(this.tableFields[i].header_icon) {
