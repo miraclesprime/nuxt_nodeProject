@@ -78,6 +78,8 @@ export default {
       goalName: "",
       description: "",
       owner: {},
+      startDate: "",
+      dueDate: "",
       department: "",
       project: {},
       filterKey: "",
@@ -149,13 +151,24 @@ export default {
     createGoal() {
       this.loading = true
       // console.log(ownerId)
-      if (this.goalName && this.owner.id) {
-        this.$store.dispatch('project/createProject', { user: this.owner, title: this.goalName }).then((res) => {
+      let payload = {
+        title: this.goalName, 
+        companyId: JSON.parse(localStorage.getItem('user')).subb,
+        userId: Object.keys(this.owner).length ? this.owner.id : null,
+        description: this.description ? this.description : null,
+        department: this.department ? this.department : null,
+        createdAt: this.startDate ? this.startDate : null,
+        dueDate: this.dueDate ? this.dueDate : null,
+        projectId: Object.keys(this.project).length ? this.project.id : null,
+        user: Object.keys(this.owner).length ? this.owner : null
+      }
+      if (this.goalName && Object.keys(this.owner).length) {
+        this.$store.dispatch('goals/createGoal', payload).then((res) => {
           // console.log(res)
           this.loading = false
-          if (res.statusCode == 200) {
             this.showCreateGoalModal = false
-          }
+          // if (res.statusCode == 200) {
+          // }
           console.log(res.message)
         }).catch(e => {
           console.log(e.message)
