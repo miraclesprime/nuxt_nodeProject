@@ -31,7 +31,7 @@ export const state = () => ({
   
   export const actions = {
     // fetch all SubTasks
-    async fetchTasks(ctx, payload) {
+    async fetchSubtasks(ctx, payload) {
       const res = await this.$axios.$get('/subtask/task/' + payload.id, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
@@ -46,7 +46,7 @@ export const state = () => ({
     },
   
     // create Task
-    async createTask(ctx, payload) {
+    async createSubtask(ctx, payload) {
       const res = await this.$axios.$post('/subtask', payload, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });

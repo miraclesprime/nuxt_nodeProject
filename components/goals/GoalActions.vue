@@ -1,7 +1,7 @@
 <template>
   <div id="goal-action-wrapper" class="task-actions ml-05">
     <div id="ga-add-goal-wrapper" class="action-left">
-      <div class="d-flex gap-05 cursor-pointer text-secondary text-hover-dark" id="pa-add-goal-button">
+      <div class="d-flex gap-05 cursor-pointer text-secondary text-hover-dark" id="pa-add-goal-button" v-on:click="openCreateGoalModal">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-task-text">New Goal</span>
       </div>
     </div>
@@ -42,7 +42,10 @@ export default {
   },
   
   methods: {
-    
+    openCreateGoalModal(){
+      this.$emit('goal-create-modal', true)
+    }
+    ,
     viewGoals($event) {
     //   this.$emit("loading", true)
     //   this.$store.dispatch('project/fetchProjects', $event).then(() => { this.$emit("loading", false) })
