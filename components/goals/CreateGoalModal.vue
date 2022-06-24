@@ -77,6 +77,8 @@ export default {
       showCreateGoalModal: false,
       goalName: "",
       description: "",
+      startDate: "",
+      dueDate: "",
       owner: {},
       department: "",
       project: {},

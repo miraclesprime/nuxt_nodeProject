@@ -3,7 +3,7 @@ export const state = () => ({
   selectedTask: {},
   favTasks: [],
   taskMembers: [],
-  teamKey: 1
+  teamKey: 1,
 });
 
 export const getters = {
@@ -29,7 +29,9 @@ export const getters = {
 
   getKey(state) {
     return state.teamKey;
-  }
+  },
+
+  
 };
 
 export const mutations = {
@@ -80,7 +82,9 @@ export const mutations = {
 
   setKey(state) {
     state.teamKey += 1;
-  }
+  },
+
+  
 };
 
 export const actions = {
@@ -239,9 +243,7 @@ export const actions = {
 
   },
 
-
   async deleteMember(ctx, payload) {
-
     try {
       let m = await this.$axios.delete(`/task/${ctx.state.selectedTask.id}/members`, {
         headers: {
@@ -261,6 +263,38 @@ export const actions = {
       console.log(e);
     }
   },
+
+  /*async createSubtask(ctx, payload){
+    // console.log(payload)
+    try {
+      let s = await this.$axios.post("/subtask", payload, {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+          // "Content-Type": "application/json",
+        }
+      })
+      if (s.statusCode == 200) {
+        ctx.commit("setSubtask", s.data)
+      }
+      return s.data
+    } catch(e) {
+      console.log(e);
+      return e
+    }
+  },
+
+  async fetchSubtasks(ctx, payload){ 
+    try {
+      let s = await this.$axios.get("subtask/task/"+payload.id)
+      if (s.statusCode == 200) {
+        ctx.commit("setSubtask", s.data)
+      } 
+      return s
+    } catch(e) {
+      console.log(e);
+      return e
+    }
+  },*/
 
   setKey(ctx) {
     ctx.commit('setKey');

@@ -1,9 +1,6 @@
 <template>
   <div id="sidebar-overview-wrapper" class="sidebar-overview-wrapper py-05 px-105">
-    <div class="d-flex justify-between sub-title pb-05">
-      <p class="text-gray6 ">Subtasks </p>
-      <sorting-comp :items="sortingItems" icon="swap-vertical"></sorting-comp>
-    </div>
+    
     <task-group title="Subtasks"></task-group>
     <div class="task-team" id="sidebar-team">
       <div class="container" id="sidebar-container">
@@ -39,12 +36,6 @@ export default {
   data() {
     return {
       // loading: true,
-      sortingItems: [
-        { label: "Due Date", value:"dueDate" },
-        { label: "Assignee", value:"assignee" },
-        { label: "Priority", value:"priority" },
-        { label: "Status", value:"status" },
-      ],
       
       isContentExpanded: false,
       form: {
@@ -73,7 +64,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .sidebar-overview-wrapper { align-self: end; display: grid; grid-template-columns: 1fr; grid-auto-flow: row; }
-.sub-title { font-size: 14px; border-bottom: 1px solid var(--bib-gray4);}
 .task-info {
   padding: 1rem 0;
   position: relative;
