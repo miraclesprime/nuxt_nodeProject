@@ -10,7 +10,7 @@
         <bib-icon icon="close" variant="secondary" :scale="1.2" />
         <span>Cancel</span>
       </div>
-      <div v-else class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded text-gray6 text-hover-dark bg-hover-light cursor-pointer" @click="newSubtask = true">
+      <div v-else class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded text-gray6 text-hover-dark bg-hover-light cursor-pointer" @click="openCreateSubtask">
         <bib-icon icon="add" variant="success" :scale="1.2" />
         <span>Add Subtask</span>
       </div>
@@ -19,7 +19,7 @@
       <thead v-if="newSubtask">
         <tr>
           <td>
-            <bib-input type="text" size="sm" icon-left="check-circle" v-model="title" placeholder="Start typing..."></bib-input>
+            <bib-input ref="subtaskNameInput" type="text" size="sm" icon-left="check-circle" v-model="title" placeholder="Start typing..."></bib-input>
             <!-- <input type="text" v-model="title" placeholder="Start typing..."> -->
           </td>
           <td>
@@ -66,6 +66,9 @@
         </tr>
       </tbody>
     </table>
+    <span id="subtask-0" v-show="subTasks.length == 0" class="d-inline-flex gap-1 align-center m-05 bg-warning-sub3 border-warning shape-rounded py-025 px-1">
+      <bib-icon icon="warning"></bib-icon> No subtasks found
+    </span>
     <!-- <bib-table
       :fields="taskFields"
       :sections="taskSections"
@@ -131,9 +134,6 @@ export default {
       teamMembers: "user/getTeamMembers",
       currentTask: "task/getSelectedTask",
       subTasks: "subtask/getSubTasks",
-
-      // project: "project/getSingleProject",
-      // sections: "section/getProjectSections",
     }),
 
     orgUsers() {
@@ -149,22 +149,22 @@ export default {
         this.loading = true
         this.$store.dispatch("subtask/fetchSubtasks", this.currentTask)
           .then(() => {
-            console.log('subtask fetched')
-
+            // console.log('subtask fetched')
             this.loading = false
           })
       }
     }
   },
-  mounted() {
-    console.log("mounted subtask");
-    /*this.$store.dispatch("subtask/fetchSubtasks", this.currentTask)
-      .then(st => {
-        this.taskSections = st.data
-      })
-      .catch(e => console.log(e))*/
-  },
   methods: {
+    openCreateSubtask(){
+      this.newSubtask = true
+      this.$nextTick(()=>{
+        this.$refs.subtaskNameInput.$el.focus()
+      })
+      /*setTimeout( () => {
+        this.$refs.subtaskNameInput.$el.focus()
+      }, 300)*/
+    },
     changeAssignee() {
       this.user = this.teamMembers.filter(t => t.id == this.assignee)
     },
@@ -187,7 +187,7 @@ export default {
       }
       this.$store.dispatch("subtask/createSubtask", subData)
         .then(t => {
-          console.log(t)
+          // console.log(t)
           this.newSubtask = false
           this.title = ""
           this.assignee = ""

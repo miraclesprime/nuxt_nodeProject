@@ -270,7 +270,7 @@ export default {
 
     moveSection(e){
 
-      console.log("move section =>",e.relatedContext.list)
+      // console.log("move section =>",e.relatedContext.list)
       this.highlight = +e.to.dataset.section
 
     },

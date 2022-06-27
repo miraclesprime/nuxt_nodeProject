@@ -1,8 +1,8 @@
 <template>
-  <div id="sidebar-overview-wrapper" class="sidebar-overview-wrapper py-05 px-105">
+  <div v-show="showOverview" id="sidebar-overview-wrapper" class="sidebar-overview-wrapper py-05 px-105">
     
     <task-group title="Subtasks"></task-group>
-    <div class="task-team" id="sidebar-team">
+    <div  class="task-team" id="sidebar-team">
       <div class="container" id="sidebar-container">
         <div class="team-list w-100" id="sidebar-team-heading">
           Team
@@ -36,6 +36,7 @@ export default {
   data() {
     return {
       // loading: true,
+      showOverview: true,
       
       isContentExpanded: false,
       form: {
@@ -54,11 +55,15 @@ export default {
     }),
 
   },
-
-  methods: {
-
-
-  }
+  watch:{
+    currentTask(newVal){
+      if (Object.keys(this.currentTask).length) {
+        this.showOverview = true
+      } else {
+        this.showOverview = false
+      }
+    }
+  },
 };
 
 </script>
