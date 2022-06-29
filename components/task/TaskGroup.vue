@@ -7,38 +7,40 @@
     <!-- <section-title></section-title> -->
     <div id="subtask-title-wrapper" class="section-title w-100 py-025">
       <div v-if="newSubtask" class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded text-gray6 text-hover-dark bg-hover-light cursor-pointer" @click="newSubtask = false">
-        <bib-icon icon="close" variant="secondary" :scale="1.2" />
+        <bib-icon icon="close" variant="secondary" :scale="1.2"></bib-icon>
         <span>Cancel</span>
       </div>
       <div v-else class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded text-gray6 text-hover-dark bg-hover-light cursor-pointer" @click="openCreateSubtask">
-        <bib-icon icon="add" variant="success" :scale="1.2" />
+        <bib-icon icon="add" variant="success" :scale="1.2"></bib-icon>
         <span>Add Subtask</span>
       </div>
     </div>
     <table class="table ">
-      <thead v-if="newSubtask">
-        <tr>
-          <td>
-            <bib-input ref="subtaskNameInput" type="text" size="sm" icon-left="check-circle" v-model="title" placeholder="Start typing..."></bib-input>
-            <!-- <input type="text" v-model="title" placeholder="Start typing..."> -->
-          </td>
-          <td>
-            <bib-select size="sm" :options="orgUsers" v-model="assignee" v-on:change="changeAssignee"></bib-select>
-            <!-- <bib-input type="text" size="sm" avatar-left="" v-model="assignee" placeholder="Assign to..."></bib-input> -->
-            <!-- <input type="text" v-model="assignee" placeholder="Assign to..."> -->
-          </td>
-          <td>
-            <bib-input type="date" size="sm" v-model="date" placeholder="Set date..."></bib-input>
-            <!-- <input type="text" v-model="date" placeholder="Set date..."> -->
-          </td>
-          <td>
-            <div class="d-flex gap-05">
-              <bib-icon icon="trash" variant="gray5" v-on:click="newSubtask = false"></bib-icon>
-              <bib-icon icon="tick" variant="success" v-on:click="createSubtask"></bib-icon>
-            </div>
-          </td>
-        </tr>
-      </thead>
+      <transition name="fade">
+        <thead v-if="newSubtask">
+          <tr>
+            <td>
+              <bib-input ref="subtaskNameInput" type="text" size="sm" icon-left="check-circle" v-model="title" placeholder="Start typing..."></bib-input>
+              <!-- <input type="text" v-model="title" placeholder="Start typing..."> -->
+            </td>
+            <td>
+              <bib-select size="sm" :options="orgUsers" v-model="assignee" v-on:change="changeAssignee"></bib-select>
+              <!-- <bib-input type="text" size="sm" avatar-left="" v-model="assignee" placeholder="Assign to..."></bib-input> -->
+              <!-- <input type="text" v-model="assignee" placeholder="Assign to..."> -->
+            </td>
+            <td>
+              <bib-input type="date" size="sm" v-model="date" placeholder="Set date..."></bib-input>
+              <!-- <input type="text" v-model="date" placeholder="Set date..."> -->
+            </td>
+            <td>
+              <div class="d-flex gap-05">
+                <bib-icon icon="trash" variant="gray5" v-on:click="newSubtask = false"></bib-icon>
+                <bib-icon icon="tick" variant="success" v-on:click="createSubtask"></bib-icon>
+              </div>
+            </td>
+          </tr>
+        </thead>
+      </transition>
       <tbody>
         <tr v-for="sub in subTasks" :key="sub.key">
           <!-- <td>{{sub.key}}</td> -->
@@ -156,9 +158,9 @@ export default {
     }
   },
   methods: {
-    openCreateSubtask(){
+    openCreateSubtask() {
       this.newSubtask = true
-      this.$nextTick(()=>{
+      this.$nextTick(() => {
         this.$refs.subtaskNameInput.$el.focus()
       })
       /*setTimeout( () => {
@@ -255,6 +257,16 @@ export default {
       }
     }
   }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity .5s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 
 </style>

@@ -5,12 +5,16 @@
       <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:create-task="toggleSidebar($event)" />
       <div id="mytask-table-wrapper" class="mytask-table-wrapper position-relative of-scroll-y">
         <template v-if="gridType == 'list'">
-          <template v-if="tasks.length">
-            <bib-table v-for="(item, index) in localdata" :key="index + viewName + '-' + key" :fields="taskFields" :sections="item.tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: item.title}" :headless="index > 0" class="border-gray4 bg-white" @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
+          <template v-if="todos.length">
+            <bib-table v-for="(todo, index) in localdata" :key="index + viewName + '-' + key" :fields="taskFields" :sections="todo.tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: todo.title}" :headless="index > 0" class="border-gray4 bg-white" @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
               <template #cell(title)="data">
-                <div :id="'cell'+data.value.id" class="text-dark text-left cursor-pointer" @click="$nuxt.$emit('open-sidebar', data.value)">
-                  {{ data.value.title }}
+                <div class="d-flex gap-05 align-center">
+                  <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data)" class="cursor-pointer" @click="updateTaskStatus(data.value)"></bib-icon>
+                  <span class="text-dark text-left cursor-pointer flex-grow-1" style=" line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{ data.value.title }}</span>
                 </div>
+                <!-- <div :id="'cell'+data.value.id" class="text-dark text-left cursor-pointer" @click="$nuxt.$emit('open-sidebar', data.value)">
+                  {{ data.value.title }}
+                </div> -->
               </template>
               <template #cell(projectId)="data">
                 <project-info :projectId="data.value.project[0] ? data.value.project[0].projectId : null"></project-info>
@@ -41,48 +45,30 @@
         </template>
         <template v-else>
           <div class="h-100 of-scroll-x position-relative">
-            <!-- <div class="task-grid-section">
-              <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
-                <div class="title text-dark">Past Due</div>
-                <div class="d-flex section-options">
-                  <div class="mr-1">
-                    <bib-icon icon="add" variant="success" :scale="1.2" />
-                  </div>
-                  <div>
-                    <bib-icon icon="elipsis" :scale="1.2" />
-                  </div>
-                </div>
-              </div>
-              <div class="task-section__body">
-                <div v-for="(item, index) in tasks" :key="item.name + '-' + index">
-                  <task-grid :task="item" v-on:update-key="updateKey"></task-grid>
-                </div>
-              </div>
-            </div> -->
-            <draggable :list="localdata" class="d-flex h-100" :move="moveSection" v-on:end="sectionDragEnd" handle=".section-drag-handle">
-              <div class="task-grid-section" v-for="(section, index) in localdata" :key="index + viewName + '-' + key">
+            <draggable :list="localdata" class="d-flex h-100" :move="moveTodo" v-on:end="todoDragEnd" handle=".section-drag-handle">
+              <div class="task-grid-section" v-for="(todo, index) in localdata" :key="index + viewName + '-' + key">
                 <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
-                  <div class="title section-drag-handle text-dark">{{section.title}}</div>
-                  <div class="d-flex align-center section-options" :id="'tg-section-options-'+section.id">
-                    <div class="cursor-pointer mx-05 d-flex align-center" :id="'tg-section-addtask-'+section.id" v-on:click.stop="showCreateTaskModal(section.id)">
+                  <div class="title section-drag-handle text-dark flex-grow-1">{{todo.title}}</div>
+                  <div class="d-flex align-center section-options" :id="'tg-section-options-'+todo.id">
+                    <div class="cursor-pointer mx-05 d-flex align-center" :id="'tg-section-addtask-'+todo.id" v-on:click.stop="showCreateTaskModal(todo.id)">
                       <bib-icon icon="add" variant="gray5" :scale="1.25"></bib-icon>
                     </div>
                     <bib-popup pop="elipsis" icon-variant="gray5" :scale="1.1">
                       <template v-slot:menu>
-                        <div :id="'tgs-list'+section.id" class="list">
-                          <span class="list__item" :id="'tgs-list-1'+section.id" v-on:click.stop="showCreateTaskModal(section.id)">
-                            <div class="d-flex align-center" :id="'tgs-list-flex-1'+section.id">
+                        <div :id="'tgs-list'+todo.id" class="list">
+                          <span class="list__item" :id="'tgs-list-1'+todo.id" v-on:click.stop="showCreateTaskModal(todo.id)">
+                            <div class="d-flex align-center" :id="'tgs-list-flex-1'+todo.id">
                               <bib-icon icon="add"></bib-icon>
-                              <span class="ml-05" :id="'tgs-list-span'+section.id">Add task</span>
+                              <span class="ml-05" :id="'tgs-list-span'+todo.id">Add task</span>
                             </div>
-                          </span><span class="list__item" :id="'tgs-list-2'+section.id" v-on:click="$nuxt.$emit('section-rename',{id: section.id, title: section.title })">
-                            <div class="d-flex align-center" :id="'tgs-list-flex-2'+section.id">
+                          </span><span class="list__item" :id="'tgs-list-2'+todo.id" v-on:click="$nuxt.$emit('section-rename',{id: todo.id, title: todo.title })">
+                            <div class="d-flex align-center" :id="'tgs-list-flex-2'+todo.id">
                               <bib-icon icon="pencil"></bib-icon>
-                              <span class="ml-05" :id="'tgs-list-span'+section.id">Rename</span>
+                              <span class="ml-05" :id="'tgs-list-span'+todo.id">Rename</span>
                             </div>
                           </span>
                           <hr>
-                          <span class="list__item danger" :id="'tgs-list-3'+section.id" v-on:click="$nuxt.$emit('section-delete',{id: section.id })">
+                          <span class="list__item danger" :id="'tgs-list-3'+todo.id" v-on:click="$nuxt.$emit('section-delete',{id: todo.id })">
                             Delete section
                           </span>
                         </div>
@@ -90,12 +76,14 @@
                     </bib-popup>
                   </div>
                 </div>
-                <div class="task-section__body">
-                  <!-- <draggable :list="section.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable" :class="{highlight: highlight == section.id}" :data-section="section.id"> -->
-                    <div v-for="(task, index) in section.tasks" :key="task.name + '-' + index + key">
-                      <task-grid :task="task"></task-grid>
-                    </div>
-                  <!-- </draggable> -->
+                <div class="task-section__body h-100">
+                  <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
+                    <transition-group>
+                      <div class="task-grid " v-for="(task, index) in todo.tasks" :key="task.id + '-' + index + key">
+                        <task-grid :task="task" v-on:click="openSidebar(task)"></task-grid>
+                      </div>
+                    </transition-group>
+                  </draggable>
                 </div>
               </div>
             </draggable>
@@ -112,9 +100,10 @@
   </client-only>
 </template>
 <script>
+import _ from 'lodash'
+import draggable from 'vuedraggable'
 import { USER_TASKS } from "../../config/constants";
 import { mapGetters } from 'vuex';
-import draggable from 'vuedraggable'
 
 export default {
   components: {
@@ -123,6 +112,8 @@ export default {
   data() {
     return {
       taskFields: USER_TASKS,
+      mytasks: [],
+      localdata: [],
       loading: false,
       gridType: 'list',
       viewName: null,
@@ -131,38 +122,25 @@ export default {
       key: 100,
       popupMessages: [],
       highlight: null,
+      taskDnDsectionId: null,
+      taskDnDlist: [],
     }
   },
 
   computed: {
     ...mapGetters({
-      tasks: 'user/getUserTasks'
+      tasks: 'user/getUserTasks',
+      todos: "user/getUserTodos",
     }),
-    localdata() {
-      let arr = [
-        { title: "Recently assigned", id: 101, tasks: [] },
-        { title: "Do today", id: 102, tasks: [] },
-        { title: "Do next week", id: 103, tasks: [] },
-        { title: "Do later", id: 104, tasks: [] },
-      ]
-      this.tasks.map((t => {
-        // console.log(new Date(t.dueDate))
-        // console.info(new Date(t.dueDate).getDate() === new Date().getDate(), t.title);
-        if (new Date(t.dueDate).getDate() < new Date().getDate()) {
-          arr[0].tasks.push(t)
-        }
-        if (new Date(t.dueDate).getDate() == new Date().getDate()) {
-          arr[1].tasks.push(t)
-        }
-        if (new Date(t.dueDate) > new Date() && new Date(t.dueDate).getDate() < new Date().getDate() + 7) {
-          arr[2].tasks.push(t)
-        }
-        if (new Date(t.dueDate).getDate() > new Date().getDate() + 7 && new Date(t.dueDate).getDate() < new Date().getDate() + 30) {
-          arr[3].tasks.push(t)
-        }
-        // return new Date(t.dueDate) < new Date()
-      }))
-      return arr
+    /*localdata() {
+      return JSON.parse(JSON.stringify(this.todos))
+    }*/
+  },
+
+  watch: {
+    todos(newVal) {
+      // console.info(newVal)
+      this.localdata = JSON.parse(JSON.stringify(newVal))
     }
   },
 
@@ -173,66 +151,176 @@ export default {
       })
       this.$nuxt.$on("update-key", () => {
         // console.log('updated key event received')
-        this.$store.dispatch('user/setUserTasks', { filter: 'all' }).then(() => { this.key += 1 })
-      })
-      this.loading = true
-      this.$store.dispatch('user/setUserTasks', { filter: 'all' }).then((res) => {
-        this.loading = false;
+        this.$store.dispatch("user/fetchUserTodos").then(() => { this.key += 1 })
       })
     }
   },
 
+  mounted() {
+    this.loading = true
+    // this.$store.dispatch('user/setUserTasks', { filter: 'all' }).then((res) => {
+    this.$store.dispatch("user/fetchUserTodos").then((res) => {
+      // console.log(res)
+      if (res.statusCode == 200) {
+        this.key += 1
+
+      }
+      // let localSortedTask = localtask.sort((a, b) => { a.uOrder - b.uOrder })
+      // console.log(localSortedTaskortedTask)
+      /*let arr = []
+      localSortedTask.forEach((t, index) => {
+        let todoOrder = t.todo.uOrder
+        
+        if (!arr[todoOrder])  {
+          arr[todoOrder] = t.todo
+        } 
+
+        // console.log(t.title, todoOrder, 'tasks' in arr[todoOrder])
+
+        if ('tasks' in arr[todoOrder]) {
+          arr[todoOrder].tasks.push(t)
+        } else {
+          arr[todoOrder].tasks = []
+          arr[todoOrder].tasks.push(t)
+        }
+      })
+      // console.log(arr)
+      this.mytasks = arr*/
+      this.loading = false;
+    })
+  },
+
   methods: {
-    updateKey($event) {
+    /*updateKey($event) {
       // console.log("update-key event received", $event)
       this.popupMessages.push({ text: $event, variant: "success" })
       this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' }).then(() => {
         this.key += 1
       })
+    },*/
+    taskCheckIcon(data) {
+      return data.value.statusId == 5 ? 'success' : 'secondary-sub2'
     },
-    moveSection(e) {
+    updateTaskStatus(item) {
+      // console.log(item)
+      this.loading = true
+      this.$store.dispatch('task/updateTaskStatus', item)
+        .then(() => {
+          this.$nuxt.$emit("update-key")
+        })
+        .catch(e => console.log(e))
+        .then(() => this.loading = false)
+    },
+    taskDragStart(e) {
+      this.drag = true
+      // console.log('drag start', e)
+    },
+    moveTask(e) {
+      // this.taskDnDlist = tasks
+      this.taskDnDsectionId = +e.to.dataset.section
+      this.highlight = +e.to.dataset.section
+
+    },
+    taskDragEnd: _.debounce(async function(e) {
+      // this.drag = false
+      // console.log('move end =>', e)
+      this.highlight = null
+      this.loading = true
+
+      console.log("move end =>", e.to.dataset.section)
+
+      let tasklist = this.localdata.filter((t) => t.id == e.to.dataset.section)
+
+      // console.log(tasklist[0].tasks)
+
+      tasklist[0].tasks.forEach((e, i) => {
+        e.tOrder = i
+      })
+
+      console.log(tasklist[0].tasks)
+
+      /*let taskDnD;
+      if (this.taskDnDsectionId) {
+        taskDnD = await this.$axios.$put("/section/crossSectionDragDrop", { data: tasklist[0].tasks, sectionId: this.taskDnDsectionId }, {
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+            "Content-Type": "application/json"
+          }
+        })
+      } else {
+        taskDnD = await this.$axios.$put("/task/dragdrop", { data: this.taskDnDlist }, {
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+            "Content-Type": "application/json"
+          }
+        })
+      }
+
+      console.log(taskDnD.message)
+      if (taskDnD.statusCode == 200) {
+        this.$emit("update-key")
+      } else {
+        console.warn(taskDnD.message)
+      }*/
+      this.loading = false
+    }, 600),
+
+    moveTodo(e) {
       // console.log("move section =>",e.relatedContext.list)
       this.highlight = +e.to.dataset.section
     },
 
-    sectionDragEnd: _.debounce(async function(e) {
+    todoDragEnd: _.debounce(async function(e) {
 
       this.loading = true
       this.localdata.forEach((el, i) => {
-        el.order = i
+        el.uOrder = i
       })
 
-      console.log("ordered sections =>", this.localdata)
+      console.log("ordered todos =>", this.localdata)
 
-      /*let sectionDnD = await this.$axios.$put("/section/dragdrop", { projectId: this.project.id, data: this.localdata }, {
+      let todoDnD = await this.$axios.$put("/todo/dragdrop", { data: this.localdata }, {
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
           "Content-Type": "application/json"
         }
       })
 
-      console.log(sectionDnD.message)
+      // console.log(todoDnD)
 
-      if (sectionDnD.statusCode == 200) {
-        // console.info(sectionDnD.message)
-        this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id }).then(() => {
-          // this.$emit("update-key")
-          this.$nuxt.$emit("update-key")
+      if (todoDnD.statusCode == 200) {
+        console.info(todoDnD.message)
+        // this.$store.dispatch("user/fetchUserTodos")
+      }
 
-        })
-      } */
-
+      this.key += 1
       this.loading = false
 
-    }, 600),
+    }, 400),
 
     showCreateTaskModal(sectionId) {
       this.$emit("create-task", sectionId) //event will be captured by parent only
       this.$nuxt.$emit("create-task", sectionId) //event will be available to all
     },
 
-    openSidebar(task) {
+    /*openSidebar(task) {
       this.$nuxt.$emit("open-sidebar", task);
+    },*/
+
+    openSidebar(task) {
+
+      // console.log(task)
+      this.$nuxt.$emit("open-sidebar", { ...task });
+
+      let el = event.target.offsetParent
+      let scrollAmt = event.target.offsetLeft - event.target.offsetWidth;
+
+      el.scrollTo({
+        top: 0,
+        left: scrollAmt,
+        behavior: 'smooth'
+      });
+
     },
 
     filterView($event) {
@@ -345,9 +433,7 @@ export default {
       this.key += 1;
     },
 
-
     toggleSidebar($event) {
-
       // in case of create task 
       if (!$event) {
         this.$nuxt.$emit("open-sidebar", $event)
@@ -356,6 +442,9 @@ export default {
     },
   },
 
+  updated() {
+    console.log('updated event', this.key)
+  },
 
 }
 

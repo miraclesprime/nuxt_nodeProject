@@ -81,7 +81,7 @@ export default {
       this.$root.$emit("open-sidebar", this.flag);
     },
     taskCheckIcon(data) {
-      return data.value.statusId == 5 ? 'success' : 'secondary-sub1'
+      return data.value.statusId == 5 ? 'success' : 'secondary-sub2'
     },
 
     handleTaskTable_status(item) {
