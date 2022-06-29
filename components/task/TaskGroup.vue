@@ -7,38 +7,40 @@
     <!-- <section-title></section-title> -->
     <div id="subtask-title-wrapper" class="section-title w-100 py-025">
       <div v-if="newSubtask" class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded text-gray6 text-hover-dark bg-hover-light cursor-pointer" @click="newSubtask = false">
-        <bib-icon icon="close" variant="secondary" :scale="1.2" />
+        <bib-icon icon="close" variant="secondary" :scale="1.2"></bib-icon>
         <span>Cancel</span>
       </div>
-      <div v-else class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded text-gray6 text-hover-dark bg-hover-light cursor-pointer" @click="newSubtask = true">
-        <bib-icon icon="add" variant="success" :scale="1.2" />
+      <div v-else class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded text-gray6 text-hover-dark bg-hover-light cursor-pointer" @click="openCreateSubtask">
+        <bib-icon icon="add" variant="success" :scale="1.2"></bib-icon>
         <span>Add Subtask</span>
       </div>
     </div>
     <table class="table ">
-      <thead v-if="newSubtask">
-        <tr>
-          <td>
-            <bib-input type="text" size="sm" icon-left="check-circle" v-model="title" placeholder="Start typing..."></bib-input>
-            <!-- <input type="text" v-model="title" placeholder="Start typing..."> -->
-          </td>
-          <td>
-            <bib-select size="sm" :options="orgUsers" v-model="assignee" v-on:change="changeAssignee"></bib-select>
-            <!-- <bib-input type="text" size="sm" avatar-left="" v-model="assignee" placeholder="Assign to..."></bib-input> -->
-            <!-- <input type="text" v-model="assignee" placeholder="Assign to..."> -->
-          </td>
-          <td>
-            <bib-input type="date" size="sm" v-model="date" placeholder="Set date..."></bib-input>
-            <!-- <input type="text" v-model="date" placeholder="Set date..."> -->
-          </td>
-          <td>
-            <div class="d-flex gap-05">
-              <bib-icon icon="trash" variant="gray5" v-on:click="newSubtask = false"></bib-icon>
-              <bib-icon icon="tick" variant="success" v-on:click="createSubtask"></bib-icon>
-            </div>
-          </td>
-        </tr>
-      </thead>
+      <transition name="fade">
+        <thead v-if="newSubtask">
+          <tr>
+            <td>
+              <bib-input ref="subtaskNameInput" type="text" size="sm" icon-left="check-circle" v-model="title" placeholder="Start typing..."></bib-input>
+              <!-- <input type="text" v-model="title" placeholder="Start typing..."> -->
+            </td>
+            <td>
+              <bib-select size="sm" :options="orgUsers" v-model="assignee" v-on:change="changeAssignee"></bib-select>
+              <!-- <bib-input type="text" size="sm" avatar-left="" v-model="assignee" placeholder="Assign to..."></bib-input> -->
+              <!-- <input type="text" v-model="assignee" placeholder="Assign to..."> -->
+            </td>
+            <td>
+              <bib-input type="date" size="sm" v-model="date" placeholder="Set date..."></bib-input>
+              <!-- <input type="text" v-model="date" placeholder="Set date..."> -->
+            </td>
+            <td>
+              <div class="d-flex gap-05">
+                <bib-icon icon="trash" variant="gray5" v-on:click="newSubtask = false"></bib-icon>
+                <bib-icon icon="tick" variant="success" v-on:click="createSubtask"></bib-icon>
+              </div>
+            </td>
+          </tr>
+        </thead>
+      </transition>
       <tbody>
         <tr v-for="sub in subTasks" :key="sub.key">
           <!-- <td>{{sub.key}}</td> -->
@@ -66,6 +68,9 @@
         </tr>
       </tbody>
     </table>
+    <span id="subtask-0" v-show="subTasks.length == 0" class="d-inline-flex gap-1 align-center m-05 bg-warning-sub3 border-warning shape-rounded py-025 px-1">
+      <bib-icon icon="warning"></bib-icon> No subtasks found
+    </span>
     <!-- <bib-table
       :fields="taskFields"
       :sections="taskSections"
@@ -131,9 +136,6 @@ export default {
       teamMembers: "user/getTeamMembers",
       currentTask: "task/getSelectedTask",
       subTasks: "subtask/getSubTasks",
-
-      // project: "project/getSingleProject",
-      // sections: "section/getProjectSections",
     }),
 
     orgUsers() {
@@ -149,22 +151,22 @@ export default {
         this.loading = true
         this.$store.dispatch("subtask/fetchSubtasks", this.currentTask)
           .then(() => {
-            console.log('subtask fetched')
-
+            // console.log('subtask fetched')
             this.loading = false
           })
       }
     }
   },
-  mounted() {
-    console.log("mounted subtask");
-    /*this.$store.dispatch("subtask/fetchSubtasks", this.currentTask)
-      .then(st => {
-        this.taskSections = st.data
-      })
-      .catch(e => console.log(e))*/
-  },
   methods: {
+    openCreateSubtask() {
+      this.newSubtask = true
+      this.$nextTick(() => {
+        this.$refs.subtaskNameInput.$el.focus()
+      })
+      /*setTimeout( () => {
+        this.$refs.subtaskNameInput.$el.focus()
+      }, 300)*/
+    },
     changeAssignee() {
       this.user = this.teamMembers.filter(t => t.id == this.assignee)
     },
@@ -187,7 +189,7 @@ export default {
       }
       this.$store.dispatch("subtask/createSubtask", subData)
         .then(t => {
-          console.log(t)
+          // console.log(t)
           this.newSubtask = false
           this.title = ""
           this.assignee = ""
@@ -255,6 +257,16 @@ export default {
       }
     }
   }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity .5s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 
 </style>

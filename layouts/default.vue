@@ -110,7 +110,7 @@ export default {
       openSidebar: false,
       flag: false,
       appCreateButton: {
-        label: "Create",
+        label: this.$i18n.t("Create"),
         event: "createbtn-click",
         variant: "success",
         icon: "add",
@@ -512,7 +512,7 @@ html {
 
     .create-dropdown {
       position: absolute;
-      top: 4rem;
+      top: 1.5rem;
       left: 0;
       right: 0;
       z-index: 9;
@@ -520,6 +520,8 @@ html {
       &.button {
         position: absolute;
       }
+
+      .drop-wrapper { top: 2.5rem;}
 
     }
   }

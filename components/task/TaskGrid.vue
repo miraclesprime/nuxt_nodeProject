@@ -1,5 +1,5 @@
 <template>
-  <div class="task-grid" :id="'task-grid-wrapper'+ task.id" v-on:click="openSidebar(task)">
+  <div :id="'task-grid-wrapper'+ task.id" >
     <figure v-if="task.cover" :id="'task-card-image'+task.id" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
     <div class="task-top" :id="'tg-top-wrap'+ task.id">
       <!-- <div class="d-flex" :id="'tg-inside-wrap'+ task.id" @click="openSidebar()">
@@ -53,7 +53,6 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-
 export default {
   props: {
     task: Object,
@@ -77,20 +76,8 @@ export default {
     },
   },
   methods: {
-    /*openSidebar(key) {
-      this.flag = !this.flag;
-      this.$root.$emit("open-sidebar", this.flag);
-      this.$root.$emit("set-active-task", this.task);
-    },*/
-    /*isFavorite(task) {
-      let fav = this.favTasks.some(t => t.task.id == task.id)
-      if (fav) {
-        return { icon: "bookmark-solid", variant: "orange", text: "Remove favorite", status: true }
-      } else {
-        return { icon: "bookmark", variant: "gray5", text: "Add to favorites", status: false }
-      }
-    },*/
-    openSidebar(task) {
+    
+    /*openSidebar(task) {
 
       // console.log(task)
       this.$nuxt.$emit("open-sidebar", { ...task });
@@ -104,7 +91,7 @@ export default {
         behavior: 'smooth'
       });
 
-    },
+    },*/
     addToFavorites($event) {
       // console.info("to be fav task", $event)
       let isFav = this.favTasks.some((f) => f.taskId == $event.id)

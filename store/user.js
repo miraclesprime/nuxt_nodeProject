@@ -2,7 +2,8 @@ export const state = () => ({
   user: null,
   user2: null,
   teamMembers: [],
-  userTasks: []
+  userTasks: [],
+  userTodos: [],
 });
 
 export const getters = {
@@ -24,6 +25,10 @@ export const getters = {
 
   getUserTasks(state) {
     return state.userTasks;
+  },
+
+  getUserTodos(state) {
+    return state.userTodos
   }
 };
 
@@ -44,19 +49,23 @@ export const mutations = {
     state.userTasks = payload
   },
 
+  setUserTodos(state, payload) {
+    state.userTodos = payload.sort((a, b) => a.uOrder - b.uOrder)
+  },
+
   sortUserTasks(state, payload) {
 
     // sort By Title
-    if(payload.sName == 'name' && payload.order == 'asc') {
-      state.userTasks.sort((a,b) => a.title.localeCompare(b.title))
+    if (payload.sName == 'name' && payload.order == 'asc') {
+      state.userTasks.sort((a, b) => a.title.localeCompare(b.title))
     }
 
-    if(payload.sName == 'name' && payload.order == 'desc') {
-      state.userTasks.sort((a,b) => b.title.localeCompare(a.title))
+    if (payload.sName == 'name' && payload.order == 'desc') {
+      state.userTasks.sort((a, b) => b.title.localeCompare(a.title))
     }
 
     // sort By Project
-    if(payload.sName == 'projectId' && payload.order == 'asc') {
+    if (payload.sName == 'projectId' && payload.order == 'asc') {
 
       let arr = JSON.parse(JSON.stringify(state.userTasks))
       let newArr = []
@@ -79,8 +88,8 @@ export const mutations = {
       // state.userTasks.sort((a,b) => a.project[0].project.title.localeCompare(b.project[0].project.title))
     }
 
-    if(payload.sName == 'projectId' && payload.order == 'desc') {
-      
+    if (payload.sName == 'projectId' && payload.order == 'desc') {
+
       let arr = JSON.parse(JSON.stringify(state.userTasks))
       let newArr = []
 
@@ -98,7 +107,7 @@ export const mutations = {
         }
       });
       state.userTasks = newArr;
-      
+
       // state.userTasks.sort((a,b) => b.project[0].project.title.localeCompare(a.project[0].project.title))
     }
 
@@ -140,21 +149,21 @@ export const mutations = {
     }*/
 
     // sort by create date
-    if(payload.sName == 'createdAt' && payload.order == 'asc') {
-      state.userTasks.sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt))
+    if (payload.sName == 'createdAt' && payload.order == 'asc') {
+      state.userTasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
     }
 
-    if(payload.sName == 'createdAt' && payload.order == 'desc') {
-      state.userTasks.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
+    if (payload.sName == 'createdAt' && payload.order == 'desc') {
+      state.userTasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     }
 
     // sort by due date
-    if(payload.sName == 'dueDate' && payload.order == 'asc') {
-      state.userTasks.sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate))
+    if (payload.sName == 'dueDate' && payload.order == 'asc') {
+      state.userTasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
     }
 
-    if(payload.sName == 'dueDate' && payload.order == 'desc') {
-      state.userTasks.sort((a,b) => new Date(b.dueDate) - new Date(a.dueDate))
+    if (payload.sName == 'dueDate' && payload.order == 'desc') {
+      state.userTasks.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate))
     }
 
     // sort by priority
@@ -222,6 +231,17 @@ export const actions = {
       ctx.commit('setUserTasks', res.data);
       return res.data
     }
+  },
+  async fetchUserTodos(ctx, payload) {
+    const todos = await this.$axios.$get("todo/all", {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+    })
+    // console.log(todos)
+    if (todos.statusCode == 200) {
+      ctx.commit("setUserTodos", todos.data)
+      // return todos.data
+    }
+    return todos
   },
 
   sortUserTasks(ctx, payload) {
