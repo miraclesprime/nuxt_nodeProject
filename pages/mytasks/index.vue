@@ -77,8 +77,8 @@
                   </div>
                 </div>
                 <div class="task-section__body h-100">
-                  <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
-                    <transition-group>
+                  <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable h-100" >
+                    <transition-group tag="div" class="h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
                       <div class="task-grid " v-for="(task, index) in todo.tasks" :key="task.id + '-' + index + key">
                         <task-grid :task="task" v-on:click="openSidebar(task)"></task-grid>
                       </div>
@@ -165,27 +165,7 @@ export default {
         this.key += 1
 
       }
-      // let localSortedTask = localtask.sort((a, b) => { a.uOrder - b.uOrder })
-      // console.log(localSortedTaskortedTask)
-      /*let arr = []
-      localSortedTask.forEach((t, index) => {
-        let todoOrder = t.todo.uOrder
-        
-        if (!arr[todoOrder])  {
-          arr[todoOrder] = t.todo
-        } 
-
-        // console.log(t.title, todoOrder, 'tasks' in arr[todoOrder])
-
-        if ('tasks' in arr[todoOrder]) {
-          arr[todoOrder].tasks.push(t)
-        } else {
-          arr[todoOrder].tasks = []
-          arr[todoOrder].tasks.push(t)
-        }
-      })
-      // console.log(arr)
-      this.mytasks = arr*/
+      
       this.loading = false;
     })
   },
@@ -217,6 +197,7 @@ export default {
     },
     moveTask(e) {
       // this.taskDnDlist = tasks
+      console.log(e.to)
       this.taskDnDsectionId = +e.to.dataset.section
       this.highlight = +e.to.dataset.section
 
@@ -225,13 +206,12 @@ export default {
       // this.drag = false
       // console.log('move end =>', e)
       this.highlight = null
-      this.loading = true
 
-      console.log("move end =>", e.to.dataset.section)
+      console.log("move end (section id) =>", e.to.dataset.section)
 
       let tasklist = this.localdata.filter((t) => t.id == e.to.dataset.section)
 
-      // console.log(tasklist[0].tasks)
+      // console.log(tasklist)
 
       tasklist[0].tasks.forEach((e, i) => {
         e.tOrder = i
@@ -239,16 +219,16 @@ export default {
 
       console.log(tasklist[0].tasks)
 
-      /*let taskDnD;
+      let taskDnD;
       if (this.taskDnDsectionId) {
-        taskDnD = await this.$axios.$put("/section/crossSectionDragDrop", { data: tasklist[0].tasks, sectionId: this.taskDnDsectionId }, {
+        taskDnD = await this.$axios.$put("/todo/crossTodoDragDrop", { data: tasklist[0].tasks, todoId: this.taskDnDsectionId }, {
           headers: {
             "Authorization": "Bearer " + localStorage.getItem("accessToken"),
             "Content-Type": "application/json"
           }
         })
       } else {
-        taskDnD = await this.$axios.$put("/task/dragdrop", { data: this.taskDnDlist }, {
+        taskDnD = await this.$axios.$put("/task/todoTask-dd", { data: this.taskDnDlist }, {
           headers: {
             "Authorization": "Bearer " + localStorage.getItem("accessToken"),
             "Content-Type": "application/json"
@@ -258,12 +238,11 @@ export default {
 
       console.log(taskDnD.message)
       if (taskDnD.statusCode == 200) {
-        this.$emit("update-key")
+        // this.$emit("update-key")
       } else {
         console.warn(taskDnD.message)
-      }*/
-      this.loading = false
-    }, 600),
+      }
+    }, 400),
 
     moveTodo(e) {
       // console.log("move section =>",e.relatedContext.list)
@@ -440,10 +419,6 @@ export default {
       }
       this.flag = !this.flag;
     },
-  },
-
-  updated() {
-    console.log('updated event', this.key)
   },
 
 }
