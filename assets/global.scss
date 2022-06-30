@@ -270,6 +270,7 @@ ul {
   border: 1px solid transparent;
   border-radius: 4px;
   cursor: pointer;
+  transition: all 200ms ease;
 
   &.bg-danger {
     background-color: var(--bib-danger);

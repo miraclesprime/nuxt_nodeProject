@@ -2,100 +2,103 @@
   <client-only>
     <div id="my-tasks-page-wrapper" class="mytask-page-wrapper">
       <page-title title="My Tasks"></page-title>
-      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:create-task="toggleSidebar($event)" />
-      <div id="mytask-table-wrapper" class="mytask-table-wrapper position-relative of-scroll-y">
-        <template v-if="gridType == 'list'">
-          <template v-if="todos.length">
-            <bib-table v-for="(todo, index) in localdata" :key="index + viewName + '-' + key" :fields="taskFields" :sections="todo.tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: todo.title}" :headless="index > 0" class="border-gray4 bg-white" @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
-              <template #cell(title)="data">
-                <div class="d-flex gap-05 align-center">
-                  <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data)" class="cursor-pointer" @click="updateTaskStatus(data.value)"></bib-icon>
-                  <span class="text-dark text-left cursor-pointer flex-grow-1" style=" line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{ data.value.title }}</span>
-                </div>
-                <!-- <div :id="'cell'+data.value.id" class="text-dark text-left cursor-pointer" @click="$nuxt.$emit('open-sidebar', data.value)">
+      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="showNewTodo" />
+      <div>
+        <new-section-form ref="newsectionform" v-on:create-section="createTodo"></new-section-form>
+        <div id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y">
+          <template v-if="gridType == 'list'">
+            <template v-if="todos.length">
+              <bib-table v-for="(todo, index) in localdata" :key="index + viewName + '-' + key" :fields="taskFields" :sections="todo.tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: todo.title}" :headless="index > 0" class="border-gray4 bg-white" @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
+                <template #cell(title)="data">
+                  <div class="d-flex gap-05 align-center">
+                    <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data)" class="cursor-pointer" @click="updateTaskStatus(data.value)"></bib-icon>
+                    <span class="text-dark text-left cursor-pointer flex-grow-1" style=" line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{ data.value.title }}</span>
+                  </div>
+                  <!-- <div :id="'cell'+data.value.id" class="text-dark text-left cursor-pointer" @click="$nuxt.$emit('open-sidebar', data.value)">
                   {{ data.value.title }}
                 </div> -->
-              </template>
-              <template #cell(projectId)="data">
-                <project-info :projectId="data.value.project[0] ? data.value.project[0].projectId : null"></project-info>
-              </template>
-              <template #cell(owner)="data">
-                <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
-              </template>
-              <template #cell(status)="data">
-                <status-comp :status="data.value.status"></status-comp>
-              </template>
-              <template #cell(createdAt)="data">
-                <span :id="'projects-' + data.value.createdAt + '-text'" class="text-dark text-truncate" v-format-date="data.value.createdAt"></span>
-              </template>
-              <template #cell(dueDate)="data">
-                <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span>
-              </template>
-              <template #cell(priority)="data">
-                <priority-comp :priority="data.value.priority"></priority-comp>
-              </template>
-            </bib-table>
-            <loading :loading="loading"></loading>
+                </template>
+                <template #cell(projectId)="data">
+                  <project-info :projectId="data.value.project[0] ? data.value.project[0].projectId : null"></project-info>
+                </template>
+                <template #cell(owner)="data">
+                  <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
+                </template>
+                <template #cell(status)="data">
+                  <status-comp :status="data.value.status"></status-comp>
+                </template>
+                <template #cell(createdAt)="data">
+                  <span :id="'projects-' + data.value.createdAt + '-text'" class="text-dark text-truncate" v-format-date="data.value.createdAt"></span>
+                </template>
+                <template #cell(dueDate)="data">
+                  <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span>
+                </template>
+                <template #cell(priority)="data">
+                  <priority-comp :priority="data.value.priority"></priority-comp>
+                </template>
+              </bib-table>
+              <loading :loading="loading"></loading>
+            </template>
+            <div v-else>
+              <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
+                <bib-icon icon="warning"></bib-icon> No records found
+              </span>
+            </div>
           </template>
-          <div v-else>
-            <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
-              <bib-icon icon="warning"></bib-icon> No records found
-            </span>
-          </div>
-        </template>
-        <template v-else>
-          <div class="h-100 of-scroll-x position-relative">
-            <draggable :list="localdata" class="d-flex h-100" :move="moveTodo" v-on:end="todoDragEnd" handle=".section-drag-handle">
-              <div class="task-grid-section" v-for="(todo, index) in localdata" :key="index + viewName + '-' + key">
-                <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
-                  <div class="title section-drag-handle text-dark flex-grow-1">{{todo.title}}</div>
-                  <div class="d-flex align-center section-options" :id="'tg-section-options-'+todo.id">
-                    <div class="cursor-pointer mx-05 d-flex align-center" :id="'tg-section-addtask-'+todo.id" v-on:click.stop="showCreateTaskModal(todo.id)">
-                      <bib-icon icon="add" variant="gray5" :scale="1.25"></bib-icon>
+          <template v-else>
+            <div class="h-100 of-scroll-x position-relative">
+              <draggable :list="localdata" class="d-flex h-100" :move="moveTodo" v-on:end="todoDragEnd" handle=".section-drag-handle">
+                <div class="task-grid-section" v-for="(todo, index) in localdata" :key="index + viewName + '-' + key">
+                  <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
+                    <div class="title section-drag-handle text-dark flex-grow-1">{{todo.title}}</div>
+                    <div class="d-flex align-center section-options" :id="'tg-section-options-'+todo.id">
+                      <div class="cursor-pointer mx-05 d-flex align-center" :id="'tg-section-addtask-'+todo.id" v-on:click.stop="showCreateTaskModal(todo.id)">
+                        <bib-icon icon="add" variant="gray5" :scale="1.25"></bib-icon>
+                      </div>
+                      <bib-popup pop="elipsis" icon-variant="gray5" :scale="1.1">
+                        <template v-slot:menu>
+                          <div :id="'tgs-list'+todo.id" class="list">
+                            <span class="list__item" :id="'tgs-list-1'+todo.id" v-on:click.stop="showCreateTaskModal(todo.id)">
+                              <div class="d-flex align-center" :id="'tgs-list-flex-1'+todo.id">
+                                <bib-icon icon="add"></bib-icon>
+                                <span class="ml-05" :id="'tgs-list-span'+todo.id">Add task</span>
+                              </div>
+                            </span><span class="list__item" :id="'tgs-list-2'+todo.id" v-on:click="$nuxt.$emit('section-rename',{id: todo.id, title: todo.title })">
+                              <div class="d-flex align-center" :id="'tgs-list-flex-2'+todo.id">
+                                <bib-icon icon="pencil"></bib-icon>
+                                <span class="ml-05" :id="'tgs-list-span'+todo.id">Rename</span>
+                              </div>
+                            </span>
+                            <hr>
+                            <span class="list__item danger" :id="'tgs-list-3'+todo.id" v-on:click="$nuxt.$emit('section-delete',{id: todo.id })">
+                              Delete section
+                            </span>
+                          </div>
+                        </template>
+                      </bib-popup>
                     </div>
-                    <bib-popup pop="elipsis" icon-variant="gray5" :scale="1.1">
-                      <template v-slot:menu>
-                        <div :id="'tgs-list'+todo.id" class="list">
-                          <span class="list__item" :id="'tgs-list-1'+todo.id" v-on:click.stop="showCreateTaskModal(todo.id)">
-                            <div class="d-flex align-center" :id="'tgs-list-flex-1'+todo.id">
-                              <bib-icon icon="add"></bib-icon>
-                              <span class="ml-05" :id="'tgs-list-span'+todo.id">Add task</span>
-                            </div>
-                          </span><span class="list__item" :id="'tgs-list-2'+todo.id" v-on:click="$nuxt.$emit('section-rename',{id: todo.id, title: todo.title })">
-                            <div class="d-flex align-center" :id="'tgs-list-flex-2'+todo.id">
-                              <bib-icon icon="pencil"></bib-icon>
-                              <span class="ml-05" :id="'tgs-list-span'+todo.id">Rename</span>
-                            </div>
-                          </span>
-                          <hr>
-                          <span class="list__item danger" :id="'tgs-list-3'+todo.id" v-on:click="$nuxt.$emit('section-delete',{id: todo.id })">
-                            Delete section
-                          </span>
+                  </div>
+                  <div class="task-section__body h-100">
+                    <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable h-100">
+                      <transition-group tag="div" class="h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
+                        <div class="task-grid " v-for="(task, index) in todo.tasks" :key="task.id + '-' + index + key">
+                          <task-grid :task="task" v-on:click="openSidebar(task)"></task-grid>
                         </div>
-                      </template>
-                    </bib-popup>
+                      </transition-group>
+                    </draggable>
                   </div>
                 </div>
-                <div class="task-section__body h-100">
-                  <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
-                    <transition-group>
-                      <div class="task-grid " v-for="(task, index) in todo.tasks" :key="task.id + '-' + index + key">
-                        <task-grid :task="task" v-on:click="openSidebar(task)"></task-grid>
-                      </div>
-                    </transition-group>
-                  </draggable>
-                </div>
-              </div>
-            </draggable>
-          </div>
-        </template>
+              </draggable>
+            </div>
+          </template>
+        </div>
+        <bib-popup-notification-wrapper>
+          <template #wrapper>
+            <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
+            </bib-popup-notification>
+          </template>
+        </bib-popup-notification-wrapper>
       </div>
-      <bib-popup-notification-wrapper>
-        <template #wrapper>
-          <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
-          </bib-popup-notification>
-        </template>
-      </bib-popup-notification-wrapper>
     </div>
   </client-only>
 </template>
@@ -112,7 +115,6 @@ export default {
   data() {
     return {
       taskFields: USER_TASKS,
-      mytasks: [],
       localdata: [],
       loading: false,
       gridType: 'list',
@@ -163,41 +165,48 @@ export default {
       // console.log(res)
       if (res.statusCode == 200) {
         this.key += 1
-
       }
-      // let localSortedTask = localtask.sort((a, b) => { a.uOrder - b.uOrder })
-      // console.log(localSortedTaskortedTask)
-      /*let arr = []
-      localSortedTask.forEach((t, index) => {
-        let todoOrder = t.todo.uOrder
-        
-        if (!arr[todoOrder])  {
-          arr[todoOrder] = t.todo
-        } 
-
-        // console.log(t.title, todoOrder, 'tasks' in arr[todoOrder])
-
-        if ('tasks' in arr[todoOrder]) {
-          arr[todoOrder].tasks.push(t)
-        } else {
-          arr[todoOrder].tasks = []
-          arr[todoOrder].tasks.push(t)
-        }
-      })
-      // console.log(arr)
-      this.mytasks = arr*/
       this.loading = false;
     })
   },
 
   methods: {
-    /*updateKey($event) {
+    updateKey() {
       // console.log("update-key event received", $event)
-      this.popupMessages.push({ text: $event, variant: "success" })
-      this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' }).then(() => {
-        this.key += 1
+      this.loading = true
+      // this.popupMessages.push({ text: $event, variant: "success" })
+      this.$store.dispatch("user/fetchUserTodos").then((res) => {
+        // console.log(res)
+        if (res.statusCode == 200) {
+          this.key += 1
+        }
+        this.loading = false;
       })
-    },*/
+    },
+    showNewTodo() {
+      this.$refs.newsectionform.newSection = true
+    },
+
+    async createTodo($event) {
+      console.log('create-todo', $event)
+      this.$refs.newsectionform.sectionLoading = true
+      const todo = await this.$axios.$post("/todo", {
+        userId: JSON.parse(localStorage.getItem("user")).sub,
+        title: $event,
+      }, {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("accessToken")
+        }
+      })
+      // console.log(todo)
+      if (todo.statusCode == 200) {
+        this.updateKey()
+        this.$refs.newsectionform.newSection = false
+        // this.$store.dispatch("user/fetchUserTodos").then(() => { this.key += 1 })
+      }
+      this.$refs.newsectionform.sectionLoading = false
+    },
+
     taskCheckIcon(data) {
       return data.value.statusId == 5 ? 'success' : 'secondary-sub2'
     },
@@ -217,6 +226,7 @@ export default {
     },
     moveTask(e) {
       // this.taskDnDlist = tasks
+      console.log(e.to)
       this.taskDnDsectionId = +e.to.dataset.section
       this.highlight = +e.to.dataset.section
 
@@ -225,13 +235,12 @@ export default {
       // this.drag = false
       // console.log('move end =>', e)
       this.highlight = null
-      this.loading = true
 
-      console.log("move end =>", e.to.dataset.section)
+      console.log("move end (section id) =>", e.to.dataset.section)
 
       let tasklist = this.localdata.filter((t) => t.id == e.to.dataset.section)
 
-      // console.log(tasklist[0].tasks)
+      // console.log(tasklist)
 
       tasklist[0].tasks.forEach((e, i) => {
         e.tOrder = i
@@ -239,16 +248,16 @@ export default {
 
       console.log(tasklist[0].tasks)
 
-      /*let taskDnD;
+      let taskDnD;
       if (this.taskDnDsectionId) {
-        taskDnD = await this.$axios.$put("/section/crossSectionDragDrop", { data: tasklist[0].tasks, sectionId: this.taskDnDsectionId }, {
+        taskDnD = await this.$axios.$put("/todo/crossTodoDragDrop", { data: tasklist[0].tasks, todoId: this.taskDnDsectionId }, {
           headers: {
             "Authorization": "Bearer " + localStorage.getItem("accessToken"),
             "Content-Type": "application/json"
           }
         })
       } else {
-        taskDnD = await this.$axios.$put("/task/dragdrop", { data: this.taskDnDlist }, {
+        taskDnD = await this.$axios.$put("/task/todoTask-dd", { data: this.taskDnDlist }, {
           headers: {
             "Authorization": "Bearer " + localStorage.getItem("accessToken"),
             "Content-Type": "application/json"
@@ -258,12 +267,11 @@ export default {
 
       console.log(taskDnD.message)
       if (taskDnD.statusCode == 200) {
-        this.$emit("update-key")
+        // this.$emit("update-key")
       } else {
         console.warn(taskDnD.message)
-      }*/
-      this.loading = false
-    }, 600),
+      }
+    }, 400),
 
     moveTodo(e) {
       // console.log("move section =>",e.relatedContext.list)
@@ -440,10 +448,6 @@ export default {
       }
       this.flag = !this.flag;
     },
-  },
-
-  updated() {
-    console.log('updated event', this.key)
   },
 
 }
