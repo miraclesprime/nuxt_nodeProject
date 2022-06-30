@@ -1,10 +1,12 @@
 <template>
   <div id="task-actions-wrapper" class="task-actions p-025 ">
-    <div class="action-left d-flex " id="ta-action-left">
-      <div class="d-flex gap-05 cursor-pointer text-secondary text-hover-dark" id="ta-add-task-button" v-on:click.stop="showCreateTaskModal">
+    <div class="action-left d-flex gap-05" id="ta-action-left">
+      <div class="d-flex gap-05 py-025 px-05 shape-rounded cursor-pointer text-secondary text-hover-dark bg-hover-light" id="ta-add-task-button" v-on:click.stop="showCreateTaskModal">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-task-text" class="">New Task</span>
       </div>
-      
+      <div class="d-flex gap-05 py-025 px-05 shape-rounded cursor-pointer text-secondary text-hover-dark bg-hover-light" id="ta-add-section-button" v-on:click.stop="addSection">
+        <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-section-text" class="">New Section</span>
+      </div>
     </div>
     <div class="action-right d-flex gap-05" id="ta-action-right">
       <ul class="actions" id="ta-action-right-actions">
@@ -52,12 +54,16 @@ export default {
       this.$nuxt.$emit("change-grid-type", $event);
     },
     showCreateTaskModal() {
-      console.log('show create task modal')
+      // console.log('show create task modal')
       this.$emit("create-task", false) //event will be captured by parent only
       this.$nuxt.$emit("create-task", false) //event will be available to all
-    },
+    },/*
     async createTask(task) {
       console.log(task);
+    },*/
+
+    addSection(){
+      this.$emit("add-section")
     },
 
     sortBy($event) {
