@@ -63,14 +63,14 @@
                                 <bib-icon icon="add"></bib-icon>
                                 <span class="ml-05" :id="'tgs-list-span'+todo.id">Add task</span>
                               </div>
-                            </span><span class="list__item" :id="'tgs-list-2'+todo.id" v-on:click="$nuxt.$emit('section-rename',{id: todo.id, title: todo.title })">
+                            </span><span class="list__item" :id="'tgs-list-2'+todo.id" v-on:click="showRenameModal(todo)">
                               <div class="d-flex align-center" :id="'tgs-list-flex-2'+todo.id">
                                 <bib-icon icon="pencil"></bib-icon>
                                 <span class="ml-05" :id="'tgs-list-span'+todo.id">Rename</span>
                               </div>
                             </span>
                             <hr>
-                            <span class="list__item danger" :id="'tgs-list-3'+todo.id" v-on:click="$nuxt.$emit('section-delete',{id: todo.id })">
+                            <span class="list__item danger" :id="'tgs-list-3'+todo.id" v-on:click="deleteTodo(todo)">
                               Delete section
                             </span>
                           </div>
@@ -92,6 +92,20 @@
             </div>
           </template>
         </div>
+        <bib-modal-wrapper v-if="renameModal" title="Rename section" @close="renameModal = false">
+          <template slot="content">
+            <div>
+              <bib-input type="text" v-model.trim="todoTitle" placeholder="Enter name..."></bib-input>
+              <loading :loading="loading"></loading>
+            </div>
+          </template>
+          <template slot="footer">
+            <div class="d-flex justify-between">
+              <bib-button label="Cancel" variant="light" pill @click="renameModal = false"></bib-button>
+              <bib-button label="Rename" variant="success" pill v-on:click="renameTodo"></bib-button>
+            </div>
+          </template>
+        </bib-modal-wrapper>
         <bib-popup-notification-wrapper>
           <template #wrapper>
             <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
@@ -126,6 +140,8 @@ export default {
       highlight: null,
       taskDnDsectionId: null,
       taskDnDlist: [],
+      renameModal: false,
+      sectionTitle: "",
     }
   },
 
@@ -206,6 +222,29 @@ export default {
       }
       this.$refs.newsectionform.sectionLoading = false
     },
+    showRenameModal(todo){
+      this.todoTitle = todo.title
+      this.renameModal = true
+    },
+    async renameTodo() {
+      this.loading = true
+      const todo = await this.$store.dispatch("user/renameTodo", {
+        id: this.todoId,
+        data: {
+          title: this.todoTitle
+        }
+      })
+      // console.log("rename todotion output", todo)
+      if (todo.statusCode = 200) {
+        this.renameModal = false
+        this.popupMessages.push({ text: "Section renamed", variant: "success" })
+        this.updateKey()
+      }
+      this.loading = false
+    },
+    deleteTodo(todo){
+      console.log(todo.id)
+    },
 
     taskCheckIcon(data) {
       return data.value.statusId == 5 ? 'success' : 'secondary-sub2'
@@ -271,7 +310,7 @@ export default {
       } else {
         console.warn(taskDnD.message)
       }
-    }, 400),
+    }, 600),
 
     moveTodo(e) {
       // console.log("move section =>",e.relatedContext.list)
@@ -304,7 +343,7 @@ export default {
       this.key += 1
       this.loading = false
 
-    }, 400),
+    }, 600),
 
     showCreateTaskModal(sectionId) {
       this.$emit("create-task", sectionId) //event will be captured by parent only
