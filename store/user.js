@@ -3,7 +3,7 @@ export const state = () => ({
   user2: null,
   teamMembers: [],
   userTasks: [],
-  userTodos: [],
+  // userTodos: [],
 });
 
 export const getters = {
@@ -27,9 +27,9 @@ export const getters = {
     return state.userTasks;
   },
 
-  getUserTodos(state) {
+  /*getUserTodos(state) {
     return state.userTodos
-  }
+  }*/
 };
 
 export const mutations = {
@@ -49,9 +49,9 @@ export const mutations = {
     state.userTasks = payload
   },
 
-  setUserTodos(state, payload) {
+  /*setUserTodos(state, payload) {
     state.userTodos = payload.sort((a, b) => a.uOrder - b.uOrder)
-  },
+  },*/
 
   sortUserTasks(state, payload) {
 
@@ -232,7 +232,7 @@ export const actions = {
       return res.data
     }
   },
-  async fetchUserTodos(ctx, payload) {
+  /*async fetchUserTodos(ctx, payload) {
     const todos = await this.$axios.$get("todo/all", {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
@@ -242,7 +242,7 @@ export const actions = {
       // return todos.data
     }
     return todos
-  },
+  },*/
 
   sortUserTasks(ctx, payload) {
     ctx.commit('sortUserTasks', payload)

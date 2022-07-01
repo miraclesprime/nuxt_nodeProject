@@ -141,14 +141,15 @@ export default {
       taskDnDsectionId: null,
       taskDnDlist: [],
       renameModal: false,
-      sectionTitle: "",
+      todoId: null,
+      todoTitle: null,
     }
   },
 
   computed: {
     ...mapGetters({
       tasks: 'user/getUserTasks',
-      todos: "user/getUserTodos",
+      todos: "todo/getAllTodos",
     }),
     /*localdata() {
       return JSON.parse(JSON.stringify(this.todos))
@@ -169,7 +170,7 @@ export default {
       })
       this.$nuxt.$on("update-key", () => {
         // console.log('updated key event received')
-        this.$store.dispatch("user/fetchUserTodos").then(() => { this.key += 1 })
+        this.$store.dispatch("todo/fetchTodos").then(() => { this.key += 1 })
       })
     }
   },
@@ -177,7 +178,7 @@ export default {
   mounted() {
     this.loading = true
     // this.$store.dispatch('user/setUserTasks', { filter: 'all' }).then((res) => {
-    this.$store.dispatch("user/fetchUserTodos").then((res) => {
+    this.$store.dispatch("todo/fetchTodos").then((res) => {
       // console.log(res)
       if (res.statusCode == 200) {
         this.key += 1
@@ -191,7 +192,7 @@ export default {
       // console.log("update-key event received", $event)
       this.loading = true
       // this.popupMessages.push({ text: $event, variant: "success" })
-      this.$store.dispatch("user/fetchUserTodos").then((res) => {
+      this.$store.dispatch("todo/fetchTodos").then((res) => {
         // console.log(res)
         if (res.statusCode == 200) {
           this.key += 1
@@ -222,28 +223,35 @@ export default {
       }
       this.$refs.newsectionform.sectionLoading = false
     },
-    showRenameModal(todo){
+    showRenameModal(todo) {
       this.todoTitle = todo.title
+      this.todoId = todo.id
       this.renameModal = true
     },
     async renameTodo() {
       this.loading = true
-      const todo = await this.$store.dispatch("user/renameTodo", {
+      const res = await this.$store.dispatch("todo/renameTodo", {
         id: this.todoId,
         data: {
           title: this.todoTitle
         }
       })
-      // console.log("rename todotion output", todo)
-      if (todo.statusCode = 200) {
+      // console.log("rename todotion output", res)
+      if (res.statusCode = 200) {
         this.renameModal = false
         this.popupMessages.push({ text: "Section renamed", variant: "success" })
         this.updateKey()
       }
       this.loading = false
     },
-    deleteTodo(todo){
+    deleteTodo(todo) {
       console.log(todo.id)
+      this.$store.dispatch("todo/deleteTodo", todo)
+        .then((d) => {
+          this.popupMessages.push({ text: d.message, variant: "success" })
+          this.updateKey()
+        })
+        .catch(e => console.log(e))
     },
 
     taskCheckIcon(data) {

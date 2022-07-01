@@ -15,7 +15,7 @@ export const getters = {
 export const mutations = {
 
   fetchTodos(state, payload) {
-    state.sections = payload;
+    state.todos = payload.sort((a, b) => a.uOrder - b.uOrder)
   },
 
   createTodo(state, payload) {
@@ -29,20 +29,16 @@ export const mutations = {
 };
 
 export const actions = {
-  async fetchSections(ctx) {
+  async fetchTodos(ctx) {
     const res = await this.$axios.$get('/todo/all', {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
 
-    let d = res.data;
-
-    for (let i = 0; i < d.length; i++) {
-      d[i].tasks.sort((a, b) => {
-        return a.order - b.order;
-      })
+    if (res.statusCode == 200) {
+      ctx.commit('fetchTodos', res.data);
     }
 
-    ctx.commit('fetchTodos', d);
+    return res
   },
 
 
@@ -57,22 +53,22 @@ export const actions = {
     ctx.commit('createTodo', res.data)
   },
 
-  async renameTodo(ctx, payload){
+  async renameTodo(ctx, payload) {
 
     const res = await this.$axios.$put("/todo", payload, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
-    
+
     return res
   },
 
-  async deleteTodo(ctx, payload){
-   const res = await this.$axios.$delete("/todo", {
+  async deleteTodo(ctx, payload) {
+    const res = await this.$axios.$delete("/todo", {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` },
       data: { id: payload.id }
     })
-    
-    return res 
+
+    return res
   },
 
 };
