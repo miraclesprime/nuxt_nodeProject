@@ -119,12 +119,12 @@ export default {
           img: "Layers",
           color: "primary",
           text: "Templates",
-          href: process.env.VITE_BIB_TEMPLATES_APP_URL,
+          href: process.env.BIB_TEMPLATES_APP_URL,
         },
-        { img: "Files", color: "success-sub1", text: "Files", href: process.env.VITE_BIB_DRIVE_URL },
-        { img: "Signature", color: "orange", text: "eSign", href: process.env.VITE_BIB_ESIGN_APP_URL },
+        { img: "Files", color: "success-sub1", text: "Files", href: process.env.BIB_DRIVE_URL },
+        { img: "Signature", color: "orange", text: "eSign", href: process.env.BIB_ESIGN_APP_URL },
         { img: "Tick", color: "primary", text: "Project", active: true, href: process.env.VUE_APP_URL },
-        { img: "CommentForum", color: "purple", text: "Chat", href: process.env.VITE_BIB_CHAT_APP_URL },
+        { img: "CommentForum", color: "purple", text: "Chat", href: process.env.BIB_CHAT_APP_URL },
         {
           img: "pencil",
           color: "primary-sub1",
@@ -278,9 +278,9 @@ export default {
         this.navItems2[3].selected = true;
       }
 
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2NTA0NjA0NDgyOTMsImV4cCI6MTY1ODIzNjQ0ODI5MywianRpIjoiMmYzNDE1MTUtNzBjMy00YjYyLWI3MmMtNmIxNDczODgzODU4In0.pnG0ierfColobVCVAQaOq8StqquRKYx-KeFVO6RkUKI"
+      let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2NTA0NjA0NDgyOTMsImV4cCI6MTY1ODIzNjQ0ODI5MywianRpIjoiMmYzNDE1MTUtNzBjMy00YjYyLWI3MmMtNmIxNDczODgzODU4In0.pnG0ierfColobVCVAQaOq8StqquRKYx-KeFVO6RkUKI"
 
-      let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0cTJWb2xlalJlak5tR1FCIiwic3ViZSI6Imh0YW5nQGJpenRyZWUuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiQURNSU4iLCJzdWJjIjoiQ2FuYWRhIiwiZW52IjoiZGV2IiwiaWF0IjoxNjU2NTkyOTMxMjE1LCJleHAiOjE2NjQzNjg5MzEyMTUsImp0aSI6Ijk0YTViNDdiLWI3ODMtNGIxYS1hNGEyLWY2Y2I2OTcyNjkxMyJ9.Ua72OOl1EwTnYCAxaWOW8i-IvXV9WXDaolQbBWAK9eM"
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0cTJWb2xlalJlak5tR1FCIiwic3ViZSI6Imh0YW5nQGJpenRyZWUuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiQURNSU4iLCJzdWJjIjoiQ2FuYWRhIiwiZW52IjoiZGV2IiwiaWF0IjoxNjU2NTkyOTMxMjE1LCJleHAiOjE2NjQzNjg5MzEyMTUsImp0aSI6Ijk0YTViNDdiLWI3ODMtNGIxYS1hNGEyLWY2Y2I2OTcyNjkxMyJ9.Ua72OOl1EwTnYCAxaWOW8i-IvXV9WXDaolQbBWAK9eM"
 
       this.$cookies.set('b_ssojwt', cookie);
       this.$store.dispatch('token/setToken', cookie);
