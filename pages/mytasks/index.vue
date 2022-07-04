@@ -79,12 +79,10 @@
                     </div>
                   </div>
                   <div class="task-section__body h-100">
-                    <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable h-100">
-                      <transition-group tag="div" class="h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
-                        <div class="task-grid " v-for="(task, index) in todo.tasks" :key="task.id + '-' + index + key">
-                          <task-grid :task="task" v-on:click="openSidebar(task)"></task-grid>
-                        </div>
-                      </transition-group>
+                    <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
+                      <div class="task-grid " v-for="(task, index) in todo.tasks" :key="task.id + '-' + index + key">
+                        <task-grid :task="task" v-on:click="openSidebar(task)"></task-grid>
+                      </div>
                     </draggable>
                   </div>
                 </div>

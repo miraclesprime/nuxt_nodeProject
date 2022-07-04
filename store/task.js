@@ -31,7 +31,7 @@ export const getters = {
     return state.teamKey;
   },
 
-  
+
 };
 
 export const mutations = {
@@ -84,7 +84,7 @@ export const mutations = {
     state.teamKey += 1;
   },
 
-  
+
 };
 
 export const actions = {
@@ -126,6 +126,13 @@ export const actions = {
     return res.data
   },
 
+  async updateTask(ctx, payload) {
+    const res = await this.$axios.$put("/task", payload, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+    })
+    return res
+  },
+
   async deleteTask(ctx, payload) {
     // console.log(payload)
     const res = await this.$axios.$delete("/task", {
@@ -133,7 +140,7 @@ export const actions = {
       data: { id: payload.id }
     })
     return res
-    
+
   },
 
   async updateTaskStatus(ctx, payload) {
