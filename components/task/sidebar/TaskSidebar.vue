@@ -184,6 +184,7 @@ export default {
       priorityValues: PRIORITY,
       department: DEPARTMENT,
       // error: false
+      // companyProjects: [],
     };
   },
 
@@ -204,6 +205,7 @@ export default {
       return [{ label: 'Please select...', value: null }, ...data]
     },
     companyProjects() {
+      console.log("new project", this.project.id, this.project.title)
       let data = this.projects.map(p => {
         return { label: p.title, value: p.id }
       })
@@ -261,9 +263,14 @@ export default {
 
   watch: {
     currentTask() {
+      console.log(this.currentTask)
       if (Object.keys(this.currentTask).length) {
         this.form = JSON.parse(JSON.stringify(this.currentTask));
-        this.form.projectId = this.project.id
+        if (this.currentTask.project.length) {
+          this.form.projectId = this.currentTask.project[0].projectId
+        } else {
+          this.form.projectId = this.project.id
+        }
       } else {
         this.form = {
           id: '',
@@ -282,6 +289,16 @@ export default {
         }
       }
     },
+
+    /*project(newVal) {
+      console.log(newVal)
+
+      let data = this.projects.map(p => {
+        return { label: p.title, value: p.id }
+      })
+      // return [{ label: 'Please select...', value: null }, ...data]
+      this.companyProjects = data
+    },*/
 
   },
 
@@ -397,16 +414,21 @@ export default {
         user = null
       }
 
-      let task = await this.$axios.$put("/task", { id: this.form.id, data: { ...this.form }, user, projectId: projectId ? projectId : null }, {
+      this.$store.dispatch("task/updateTask", { id: this.form.id, data: { ...this.form }, user, projectId: this.form.projectId ? this.form.projectId : null })
+        .then((u) => {
+          console.log(u)
+          this.$nuxt.$emit("update-key")
+        })
+        .catch(e => console.log(e))
+      /*let task = await this.$axios.$put("/task", { id: this.form.id, data: { ...this.form }, user, projectId: projectId ? projectId : null }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-      })
+      })*/
       // console.info(task)
-      if (task.statusCode == 200) {
-        // this.$store.dispatch("task/fetchTasks", { id: this.project.id }).then(() => this.loading = false)
+      /*if (task.statusCode == 200) {
         // this.loading = false
         this.$nuxt.$emit("update-key")
 
-      }
+      }*/
       // console.log("update task =>", task)
       this.loading = false
 
