@@ -1,13 +1,35 @@
 <template>
-  <div id="dreams-wrapper" class="goals-wrapper" >
+  <div id="dreams-wrapper" class="dreams-wrapper" >
     
     <page-title title="Dreams"></page-title>
     
-    <dream-actions  />
+    <dream-actions v-on:dream-create-modal="openCreateDreamModal"  />
     <div id="dreams-list-wrapper" class="dreams-list-wrapper of-scroll-y position-relative" >
       <!-- <loading :loading="loading"></loading> -->
       <template v-if="dreams.length">
-        Bib-Table
+        <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="dreams" :hide-no-column="true">
+          <template #cell(title)="data">
+            <div class="d-flex align-center text-dark cursor-pointer" :id="'goals-' + data.value.title">
+              <bib-icon icon="briefcase" variant="gray5" :scale="1.1" class="mr-025"></bib-icon>
+              <span :id="'goals-' + data.value.title + '-text'">{{data.value.title}}</span>
+            </div>
+          </template>
+          <template #cell(department)="data">
+            <span>{{data.value.department}}</span>
+          </template>
+          <template #cell(status)="data">
+            <status-comp :status="data.value.status"></status-comp>
+          </template>
+          <template #cell(priority)="data">
+            <priority-comp :priority="data.value.priority"></priority-comp>
+          </template>
+          <template #cell(userId)="data">
+            <user-info :userId="data.value.userId" :key="newKey"></user-info>
+          </template>
+          <template #cell(dueDate)="data">
+            <format-date :datetime="data.value.dueDate" :key="newKey"></format-date>
+          </template>
+        </bib-table>
       </template>
       <template v-else>
         <span id="projects-0" class="d-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
@@ -15,12 +37,13 @@
         </span>
       </template>
     </div>
+    <create-dream-modal ref="createDreamModal"></create-dream-modal>
   </div>
 </template>
 
 <script>
 import { PROJECT_FIELDS } from '../../dummy/project';
-// import { mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
   data() {
@@ -28,7 +51,6 @@ export default {
       sortName: '',
       viewName: '',
       loading: true,
-      dreams: [],
       tableFields: PROJECT_FIELDS,
       gridType: "list",
       activeTask: {
@@ -37,45 +59,25 @@ export default {
         status: null,
       },
       orderBy: '',
-      newkey: "",
+      newkey: 0,
     }
   },
-//   mounted() {
-//     this.$store.dispatch('project/fetchProjects').then(() => { 
-//       this.newkey = parseInt( Math.random().toString().slice(-3) )
-//       this.loading = false 
-//     })
+
+  computed: {
+    ...mapGetters({
+      dreams: "dream/getDreams"
+    })
+  },
+
+  mounted() {
+    this.$store.dispatch('dream/fetchDreams').then(() => { 
+      this.newkey = Math.floor(Math.random() * 1000) + 1;
+      this.loading = false 
+    })
     
-//   },
-//   computed: {
-//     ...mapGetters({
-//       projects: 'project/getAllProjects'
-//     })
-//   },
+  },
 
   methods: {
-    // checkActive() {
-    //   for(let i=0; i<this.tableFields.length; i++) {
-    //       if(this.tableFields[i].header_icon) {
-    //         this.tableFields[i].header_icon.isActive = false
-    //       }
-
-    //       if(this.tableFields[i].header_icon && this.tableFields[i].key == this.sortName) {
-    //         this.tableFields[i].header_icon.isActive = true
-    //       } 
-    //   }
-    // },
-
-    // tabChange(value) {
-    //   this.activeTab = value;
-    // },
-    // goToProjectId(project) {
-    //   // console.log(project)
-    //   this.$store.dispatch('project/setSingleProject', project)
-    //   this.$router.push("/projects/" + project.id)
-    // },
-
-  // methods for bib-table
 
     projectStatusLabel(status) {
       switch (status) {
@@ -191,9 +193,12 @@ export default {
       this.$store.dispatch('project/sortProjects', {key: 'priority', order: this.orderBy} )
       this.sortName = 'priority';
       this.checkActive()
-    }
-  },
+    },
 
+    openCreateDreamModal(){
+      this.$refs.createDreamModal.showCreateDreamModal = true
+    },
+  },
 
 }
 
