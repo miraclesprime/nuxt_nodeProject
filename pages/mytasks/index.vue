@@ -52,14 +52,14 @@
                   <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
                     <div class="title section-drag-handle text-dark flex-grow-1">{{todo.title}}</div>
                     <div class="d-flex align-center section-options" :id="'tg-section-options-'+todo.id">
-                      <div class="cursor-pointer mx-05 d-flex align-center" :id="'tg-section-addtask-'+todo.id" v-on:click.stop="showCreateTaskModal(todo.id)">
+                      <div class="cursor-pointer mx-05 d-flex align-center" :id="'tg-section-addtask-'+todo.id" v-on:click.stop="$nuxt.$emit('open-sidebar', todo.id)">
                         <bib-icon icon="add" variant="gray5" :scale="1.25"></bib-icon>
                       </div>
                       <bib-popup pop="elipsis" icon-variant="gray5" :scale="1.1">
                         <template v-slot:menu>
                           <div :id="'tgs-list'+todo.id" class="list">
-                            <span class="list__item" :id="'tgs-list-1'+todo.id" v-on:click.stop="showCreateTaskModal(todo.id)">
-                              <div class="d-flex align-center" :id="'tgs-list-flex-1'+todo.id">
+                            <span class="list__item" :id="'tgs-list-1'+todo.id" v-on:click.stop="$nuxt.$emit('open-sidebar', todo.id)">
+                              <div class="d-flex align-center" :id="'tgs-list-flex-1'+todo.id" >
                                 <bib-icon icon="add"></bib-icon>
                                 <span class="ml-05" :id="'tgs-list-span'+todo.id">Add task</span>
                               </div>
@@ -80,12 +80,12 @@
                   </div>
                   <div class="task-section__body h-100">
                     <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
-                      <div class="task-grid " v-for="(task, index) in todo.tasks" :key="task.id + '-' + index + key">
-                        <task-grid :task="task" v-on:click="openSidebar(task)"></task-grid>
-                      </div>
+                        <task-grid :task="task" v-for="(task, index) in todo.tasks" :key="task.id + '-' + index + key" ></task-grid>
                     </draggable>
                   </div>
                 </div>
+                <div class="task-grid-section"></div>
+                <div class="task-grid-section"></div>
               </draggable>
             </div>
           </template>
@@ -186,6 +186,20 @@ export default {
   },
 
   methods: {
+    /*openSidebar(task) {
+      // console.log(task)
+      this.$nuxt.$emit("open-sidebar", task);
+
+      let el = event.target.offsetParent
+      let scrollAmt = event.target.offsetLeft - event.target.offsetWidth;
+
+      el.scrollTo({
+        top: 0,
+        left: scrollAmt,
+        behavior: 'smooth'
+      });
+
+    },*/
     updateKey() {
       // console.log("update-key event received", $event)
       this.loading = true
@@ -351,30 +365,9 @@ export default {
 
     }, 600),
 
-    showCreateTaskModal(sectionId) {
-      this.$emit("create-task", sectionId) //event will be captured by parent only
-      this.$nuxt.$emit("create-task", sectionId) //event will be available to all
-    },
-
     /*openSidebar(task) {
       this.$nuxt.$emit("open-sidebar", task);
     },*/
-
-    openSidebar(task) {
-
-      // console.log(task)
-      this.$nuxt.$emit("open-sidebar", { ...task });
-
-      let el = event.target.offsetParent
-      let scrollAmt = event.target.offsetLeft - event.target.offsetWidth;
-
-      el.scrollTo({
-        top: 0,
-        left: scrollAmt,
-        behavior: 'smooth'
-      });
-
-    },
 
     filterView($event) {
       this.loading = true
