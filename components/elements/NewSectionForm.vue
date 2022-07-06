@@ -1,7 +1,7 @@
 <template>
-  <section v-show="newSection" id="mytask-new-section-container">
-    <div id="mytask-new-section-input-wrapper" class="d-flex align-center p-05 bg-light">
-      <input id="mytask-new-section-input" type="text" class="new-section-input" ref="newsectioninput" v-model.trim="newSectionName" v-click-outside="onClickOutside" v-on:keyup.enter="$emit('create-section', newSectionName)" placeholder="Enter section name">
+  <section v-show="newSection" id="new-section-container">
+    <div id="new-section-input-wrapper" class="d-flex align-center p-05 bg-light">
+      <input id="new-section-input" type="text" class="new-section-input" ref="newsectioninput" v-model.trim="newSectionName" v-click-outside="onClickOutside" v-on:keyup.enter="$emit('create-section', newSectionName)" placeholder="Enter section name">
       <small v-if="sectionError" class="text-danger ml-05">invalid input</small>
       <div v-show="sectionLoading" class="d-flex align-center">
         <bib-spinner :scale="2"></bib-spinner> <span class="text-secondary">Creating section ...</span>
@@ -36,17 +36,7 @@ export default {
     }
   },
   methods: {
-    showNewTodo() {
-      this.newSection = true
-      this.$nextTick(() => {
-        console.log('nextTick', this.$refs.newsectioninput)
-        this.$refs.newsectioninput.focus()
-      })
-      /*setTimeout(() => {
-        console.log(this.$refs.newsectioninput)
-        this.$refs.newsectioninput.focus()
-      }, 500)*/
-    },
+    
     onClickOutside() {
       if (!this.newSectionName) {
         this.newSectionName = null
