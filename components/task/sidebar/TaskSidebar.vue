@@ -338,7 +338,7 @@ export default {
           return false
         }
         return false
-      }
+      } 
       this.loading = true
       if (this.form.projectId && (!this.form.sectionId || this.form.sectionId == "")) {
         this.form.sectionId = "_section" + this.form.projectId
@@ -353,7 +353,8 @@ export default {
         let sec = sections.find(s => s.title.includes("_section"))
         // console.warn(sec);
         if (!sec) {
-          this.form.sectionId = null
+          // this.form.sectionId = null
+          this.form.sectionId = "_section" + this.form.projectId
         } else {
           this.form.sectionId = sec.id
         }
@@ -413,19 +414,6 @@ export default {
       } else {
         user = null
       }
-
-      /*let taskData = {
-        id: this.form.id,
-        title: this.form.title,
-        dueDate: this.form.dueDate,
-        userId: this.form.userId,
-        sectionId: this.form.sectionId,
-        projectId: this.form.project.id,
-        statusId: this.form.statusId,
-        priorityId: this.form.priorityId,
-        description: this.form.description,
-        budget: this.form.bud,
-      }*/
 
       this.$store.dispatch("task/updateTask", { id: this.form.id, data: { ...this.form }, user, projectId: this.form.projectId ? this.form.projectId : null })
         .then((u) => {

@@ -1,7 +1,8 @@
 <template>
   <div id="task-view-wrapper" class="task-view-wrapper position-relative">
-    <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:create-section="createSectionInline" v-on:filterView="filterView" v-on:sort="taskSort($event)"></task-actions>
-    <section v-show="newSection" id="tv-new-section-input-container">
+    <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:show-newsection="showNewsection" v-on:filterView="filterView" v-on:sort="taskSort($event)"></task-actions>
+    <new-section-form ref="newsectioncomp" v-on:create-section="createSection"></new-section-form>
+    <!-- <section v-show="newSection" id="tv-new-section-input-container">
       <div id="tv-new-section-input-wrapper" class="d-flex align-center p-05 bg-light">
         <input id="tv-new-section-input" type="text" class="new-section-input" ref="newsectioninput" v-model.trim="newSectionName" v-on:blur="clickOutside" v-on:keyup.enter="createSectionOnEnter" placeholder="Enter section name">
         <small v-if="sectionError" class="text-danger ml-05">invalid input</small>
@@ -10,8 +11,7 @@
         </div>
         <bib-icon icon="close" class="ml-auto" v-on:click="clickOutside"></bib-icon>
       </div>
-      <!-- <bib-input type="text" ref="newsectionbibinput" v-model="newSectionName" name="sectionname" size="sm" placeholder="Enter section name"></bib-input> -->
-    </section>
+    </section> -->
     <template v-if="gridType === 'list'">
       <task-list-section :project="project" :sections="localdata" :templateKey="templateKey" v-on:sort-task="taskSort($event)" v-on:update-key="updateKey"></task-list-section>
     </template>
@@ -148,6 +148,7 @@ export default {
       this.templateKey += 1
       this.loading = false
     }).catch(e => console.log(e))
+
   },
 
   methods: {
@@ -297,29 +298,25 @@ export default {
       this.$nuxt.$emit("open-sidebar", $event);
     },
 
-    createSectionInline() {
-      this.newSection = true
-      // console.log(this.$refs.newsectioninput.clientWidth, this.$refs.newsectioninput.clientHeight)
-      var inputdisplay = setTimeout(() => {
-        // console.log(this.$refs.newsectioninput.clientHeight)
-        this.$refs.newsectioninput.focus()
-      }, 500)
+    showNewsection() {
+
+      this.$nextTick(() => {
+        console.log("refs", this.$refs.newsectioncomp)
+        this.$refs.newsectioncomp.newSection = true
+      })
     },
+
     /*onFocus(event) {
       console.log('focus', event)
       console.log(this.$refs.newsectioninput.clientWidth, this.$refs.newsectioninput.clientHeight)
     },*/
-    clickOutside() {
 
-      /*if (this.newSectionName) {
-        this.createSectionOnEnter()
-      } else {*/
+    /*clickOutside() {
       this.newSectionName = ""
       this.newSection = false
-      /*}*/
-    },
-    async createSectionOnEnter($event) {
-      // console.log("blur ", $event.target)
+    },*/
+
+    /*async createSectionOnEnter($event) {
       let newvalue = this.newSectionName;
       if (newvalue) {
         if (this.sectionError) {
@@ -346,6 +343,22 @@ export default {
         this.newSection = false
         console.log('No section added')
       }
+    },*/
+
+    async createSection($event) {
+      console.log('create-section', $event)
+      this.$refs.newsectioncomp.sectionLoading = true
+      this.$store.dispatch("section/createSection", {
+        "projectId": this.project.id,
+        "title": $event,
+        "isDeleted": false,
+      }).then(() => {
+        this.updateKey()
+        this.$refs.newsectioncomp.newSection = false
+      })
+      // console.log(newsection)
+
+      this.$refs.newsectioncomp.sectionLoading = false
     },
 
     async renameSection() {
