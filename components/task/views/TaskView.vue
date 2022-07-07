@@ -1,7 +1,7 @@
 <template>
   <div id="task-view-wrapper" class="task-view-wrapper position-relative">
     <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:show-newsection="showNewsection" v-on:filterView="filterView" v-on:sort="taskSort($event)"></task-actions>
-    <new-section-form ref="newsectioncomp" v-on:create-section="createSection"></new-section-form>
+    <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createSection"></new-section-form>
     <!-- <section v-show="newSection" id="tv-new-section-input-container">
       <div id="tv-new-section-input-wrapper" class="d-flex align-center p-05 bg-light">
         <input id="tv-new-section-input" type="text" class="new-section-input" ref="newsectioninput" v-model.trim="newSectionName" v-on:blur="clickOutside" v-on:keyup.enter="createSectionOnEnter" placeholder="Enter section name">
@@ -66,6 +66,7 @@ export default {
       newSection: false,
       newSectionName: "",
       sectionLoading: false,
+      sectionError: "",
       localdata: [],
       sortName: "",
       loading: false,
@@ -96,13 +97,13 @@ export default {
       }
     },*/
 
-    sectionError() {
+    /*sectionError() {
       if (this.newSectionName.indexOf("_") == 0) {
         return true
       } else {
         return false
       }
-    },
+    },*/
     nodata() {
       if (this.sections.length > 0) {
         return false
@@ -299,22 +300,10 @@ export default {
     },
 
     showNewsection() {
-
       this.$nextTick(() => {
-        console.log("refs", this.$refs.newsectioncomp)
-        this.$refs.newsectioncomp.newSection = true
+        this.newSection = true
       })
     },
-
-    /*onFocus(event) {
-      console.log('focus', event)
-      console.log(this.$refs.newsectioninput.clientWidth, this.$refs.newsectioninput.clientHeight)
-    },*/
-
-    /*clickOutside() {
-      this.newSectionName = ""
-      this.newSection = false
-    },*/
 
     /*async createSectionOnEnter($event) {
       let newvalue = this.newSectionName;
@@ -346,19 +335,22 @@ export default {
     },*/
 
     async createSection($event) {
-      console.log('create-section', $event)
-      this.$refs.newsectioncomp.sectionLoading = true
-      this.$store.dispatch("section/createSection", {
+      this.sectionLoading = true
+      const res = await this.$store.dispatch("section/createSection", {
         "projectId": this.project.id,
         "title": $event,
         "isDeleted": false,
-      }).then(() => {
-        this.updateKey()
-        this.$refs.newsectioncomp.newSection = false
       })
-      // console.log(newsection)
+      if (res.statusCode == 200) {
+        this.updateKey()
+        this.newSection = false
+        this.sectionLoading = false
+        this.popupMessages.push({ text: "Section created", variant: "success" })
+      } else {
+        this.sectionError = res.message
+        this.sectionLoading = false
+      }
 
-      this.$refs.newsectioncomp.sectionLoading = false
     },
 
     async renameSection() {

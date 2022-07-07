@@ -4,7 +4,7 @@
       <page-title title="My Tasks"></page-title>
       <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="showNewTodo" />
       <div>
-        <new-section-form ref="newsectionform" v-on:create-section="createTodo"></new-section-form>
+        <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form>
         <div id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y">
           <template v-if="gridType == 'list'">
             <template v-if="todos.length">
@@ -59,7 +59,7 @@
                         <template v-slot:menu>
                           <div :id="'tgs-list'+todo.id" class="list">
                             <span class="list__item" :id="'tgs-list-1'+todo.id" v-on:click.stop="$nuxt.$emit('open-sidebar', todo.id)">
-                              <div class="d-flex align-center" :id="'tgs-list-flex-1'+todo.id" >
+                              <div class="d-flex align-center" :id="'tgs-list-flex-1'+todo.id">
                                 <bib-icon icon="add"></bib-icon>
                                 <span class="ml-05" :id="'tgs-list-span'+todo.id">Add task</span>
                               </div>
@@ -80,7 +80,7 @@
                   </div>
                   <div class="task-section__body h-100">
                     <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
-                        <task-grid :task="task" v-for="(task, index) in todo.tasks" :key="task.id + '-' + index + key" ></task-grid>
+                      <task-grid :task="task" v-for="(task, index) in todo.tasks" :key="task.id + '-' + index + key"></task-grid>
                     </draggable>
                   </div>
                 </div>
@@ -134,6 +134,9 @@ export default {
       orderBy: 'desc',
       flag: false,
       key: 100,
+      newSection: false,
+      sectionLoading: false,
+      sectionError: "",
       popupMessages: [],
       highlight: null,
       taskDnDsectionId: null,
@@ -213,27 +216,26 @@ export default {
       })
     },
     showNewTodo() {
-      this.$refs.newsectionform.newSection = true
+      // this.$refs.newsectionform.newSection = true
+      this.newSection = true
     },
 
     async createTodo($event) {
       console.log('create-todo', $event)
-      this.$refs.newsectionform.sectionLoading = true
-      const todo = await this.$axios.$post("/todo", {
+      this.sectionLoading = true
+      const todo = await this.$store.dispatch("todo/createTodo", {
         userId: JSON.parse(localStorage.getItem("user")).sub,
         title: $event,
-      }, {
-        headers: {
-          "Authorization": "Bearer " + localStorage.getItem("accessToken")
-        }
       })
       // console.log(todo)
       if (todo.statusCode == 200) {
         this.updateKey()
-        this.$refs.newsectionform.newSection = false
-        // this.$store.dispatch("user/fetchUserTodos").then(() => { this.key += 1 })
+        this.newSection = false
+        this.sectionLoading = false
+      } else {
+        this.sectionError = todo.message
+        this.sectionLoading = false
       }
-      this.$refs.newsectionform.sectionLoading = false
     },
     showRenameModal(todo) {
       this.todoTitle = todo.title

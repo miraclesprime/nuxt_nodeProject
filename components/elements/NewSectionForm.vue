@@ -1,9 +1,9 @@
 <template>
-  <section v-show="newSection" id="new-section-container">
+  <section v-show="showNewsection" id="new-section-container">
     <div id="new-section-input-wrapper" class="d-flex align-center p-05 bg-light">
-      <input id="new-section-input" type="text" class="new-section-input" ref="newsectioninput" v-model.trim="newSectionName" v-click-outside="onClickOutside" v-on:keyup.enter="$emit('create-section', newSectionName)" placeholder="Enter section name">
-      <small v-if="sectionError" class="text-danger ml-05">invalid input</small>
-      <div v-show="sectionLoading" class="d-flex align-center">
+      <input id="new-section-input" type="text" class="new-section-input" ref="newsectioninput" v-model.trim="newSectionName" v-on:blur="onClickOutside" v-on:keyup.enter="$emit('create-section', newSectionName)" placeholder="Enter section name">
+      <small v-if="showError" class="text-danger ml-05">{{showError}}</small>
+      <div v-show="showLoading" class="d-flex align-center">
         <bib-spinner :scale="2"></bib-spinner> <span class="text-secondary">Creating section ...</span>
       </div>
       <bib-icon icon="close" class="ml-auto"></bib-icon>
@@ -14,17 +14,20 @@
 export default {
 
   name: 'NewSectionForm',
-
+  props: {
+    showNewsection: Boolean,
+    showLoading: Boolean,
+    showError: {type: String, default: ""},
+  },
   data() {
     return {
-      newSection: false,
       newSectionName: null,
-      sectionLoading: false,
-      sectionError: false,
+      // sectionLoading: false,
+      // sectionError: false,
     }
   },
   watch: {
-    newSection(newVal) {
+    showNewsection(newVal) {
       if (newVal) {
         this.$nextTick(() => {
           // console.log('nextTick', this.$refs.newsectioninput)
@@ -36,13 +39,13 @@ export default {
     }
   },
   methods: {
-    
     onClickOutside() {
       if (!this.newSectionName) {
         this.newSectionName = null
-        this.newSection = false
+        // this.newSection = false
+        this.$emit("toggle-newsection", false)
       } else {
-      	this.$emit("create-section", this.newSectionName)
+        this.$emit("create-section", this.newSectionName)
       }
     },
   }

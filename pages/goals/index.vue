@@ -59,7 +59,7 @@ export default {
         status: null,
       },
       orderBy: '',
-      newkey: 0,
+      newkey: '',
     }
   },
   mounted() {

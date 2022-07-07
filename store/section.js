@@ -98,6 +98,7 @@ export const actions = {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
     ctx.commit('createSection', res.data)
+    return res
   },
 
   async renameSection(ctx, payload){

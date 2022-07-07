@@ -62,7 +62,7 @@ export default {
     },
     createSectionInline($event) {
       this.$emit("show-newsection", $event)
-      this.$nuxt.$emit("show-newsection", $event)
+      // this.$nuxt.$emit("show-newsection", $event)
     },
     async createTask(task) {
       console.log(task);

@@ -80,8 +80,6 @@ export default {
       startDate: "",
       dueDate: "",
       owner: {},
-      startDate: "",
-      dueDate: "",
       department: "",
       project: {},
       filterKey: "",
