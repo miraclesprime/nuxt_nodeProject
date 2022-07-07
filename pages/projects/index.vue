@@ -1,14 +1,8 @@
 <template>
   <div id="projects-wrapper" class="projects-wrapper" >
-    <!-- <div id="project-name" class="project-heading p-05 text-secondary font-sm"> -->
-    <!-- <nav id="projects-nav-wrapper" class="d-flex align-center gap-05 pt-05 pb-05">
-      <nuxt-link to="/" class="d-flex">
-        <bib-icon icon="arrowhead-left" :scale="1.5"></bib-icon>
-      </nuxt-link>
-      <span class="font-lg font-w-700  mr-1" id="projects-title-head">Projects</span>
-    </nav> -->
+    
     <page-title title="Projects"></page-title>
-    <!-- </div> -->
+    
     <project-actions @sortValue='sortName=$event' @viewValue='viewName=$event' v-on:loading="loading = $event" v-bind:sort="sortName" />
     <div id="projects-list-wrapper" class="projects-list-wrapper of-scroll-y position-relative" >
       <loading :loading="loading"></loading>
@@ -25,30 +19,15 @@
           </template>
           <template #cell(status)="data">
             <status-comp :status="data.value.status"></status-comp>
-            <!-- <div class="d-flex gap-05 align-center">
-              <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-'+ projectStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
-              </div>
-                <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" class="text-dark text-truncate">{{ projectStatusLabel(data.value.status ? data.value.status.text : "") }}</span>
-            </div> -->
           </template>
           <template #cell(createdAt)="data">
             <format-date :datetime="data.value.createdAt" :key="newkey"></format-date>
-            <!-- <span :id="'projects-' + data.value.createdAt + '-text'" class="text-dark text-truncate" v-format-date="data.value.createdAt"></span> -->
-            
           </template>
           <template #cell(dueDate)="data">
-            <!-- <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span> -->
             <format-date :datetime="data.value.dueDate" :key="newkey"></format-date>
-            
           </template>
           <template #cell(priority)="data">
             <priority-comp :priority="data.value.priority"></priority-comp>
-            <!-- <div class="d-flex gap-05 align-center">
-              <bib-icon icon="urgent-solid" :scale="1.1" :variant="projectPriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
-                <span id="project-text" :class="'text-' + projectPriorityVariable(data.value.priority ? data.value.priority.text : '')">
-                  {{ capitalizeFirstLetter(data.value.priority ? data.value.priority.text : '') }}
-                </span>
-            </div> -->
           </template>
         </bib-table>
       </template>

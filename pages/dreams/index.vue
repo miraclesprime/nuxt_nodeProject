@@ -7,9 +7,9 @@
     <div id="dreams-list-wrapper" class="dreams-list-wrapper of-scroll-y position-relative" >
       <!-- <loading :loading="loading"></loading> -->
       <template v-if="dreams.length">
-        <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="dreams" :hide-no-column="true">
+        <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="dreams" :hide-no-column="true" @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus" @file-department-sort="sortByDepartment" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
           <template #cell(title)="data">
-            <div class="d-flex align-center text-dark cursor-pointer" :id="'goals-' + data.value.title">
+            <div class="d-flex align-center text-dark cursor-pointer" :id="'goals-' + data.value.title" @click="goToDreamId(data.value)">
               <bib-icon icon="briefcase" variant="gray5" :scale="1.1" class="mr-025"></bib-icon>
               <span :id="'goals-' + data.value.title + '-text'">{{data.value.title}}</span>
             </div>
@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { PROJECT_FIELDS } from '../../dummy/project';
+import { DREAM_FIELDS } from '../../dummy/dream';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -51,7 +51,7 @@ export default {
       sortName: '',
       viewName: '',
       loading: true,
-      tableFields: PROJECT_FIELDS,
+      tableFields: DREAM_FIELDS,
       gridType: "list",
       activeTask: {
         assignee: null,
@@ -79,48 +79,25 @@ export default {
 
   methods: {
 
-    projectStatusLabel(status) {
-      switch (status) {
-        case 'Delayed':
-          return 'Delayed'
-        case 'In-Progress':
-          return 'In-Progress'
-        case 'Done':
-          return 'Done'
-        case 'Waiting':
-          return 'Waiting'
-        case 'Not Started':
-          return 'Not Started'
-      }
+    openCreateDreamModal(){
+      this.$refs.createDreamModal.showCreateDreamModal = true
     },
-    projectStatusVariable(status) {
-      switch (status) {
-        case 'Delayed':
-          return 'danger'
-        case 'In-Progress':
-          return 'primary'
-        case 'Done':
-          return 'success'
-        case 'Waiting':
-          return 'warning'
-        case 'Not Started':
-          return 'secondary'
-      }
+
+    goToDreamId(dream) {
+      this.$store.dispatch('dream/setSingleDream', dream)
+      this.$router.push("/dreams/" + dream.id)
     },
-    projectPriorityVariable(priority) {
-      switch (priority) {
-        case 'high':
-          return 'danger'
-        case 'medium':
-          return 'orange'
-        case 'low':
-          return 'success'
-        case 'none':
-          return 'secondary'
+
+    checkActive() {
+      for(let i=0; i<this.tableFields.length; i++) {
+          if(this.tableFields[i].header_icon) {
+            this.tableFields[i].header_icon.isActive = false
+          }
+
+          if(this.tableFields[i].header_icon && this.tableFields[i].key == this.sortName) {
+            this.tableFields[i].header_icon.isActive = true
+          } 
       }
-    },
-    capitalizeFirstLetter(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1)
     },
 
     sortTitle() {
@@ -130,7 +107,7 @@ export default {
       } else {
         this.orderBy = 'asc'
       }
-      this.$store.dispatch('project/sortProjects', {key: 'name', order: this.orderBy} )
+      this.$store.dispatch('dream/sortDreams', {key: 'name', order: this.orderBy} )
       this.sortName = 'title';
       this.checkActive()
     },
@@ -142,7 +119,7 @@ export default {
       } else {
         this.orderBy = 'asc'
       }
-      this.$store.dispatch('project/sortProjects', {key: 'owner', order: this.orderBy} )
+      this.$store.dispatch('dream/sortDreams', {key: 'owner', order: this.orderBy} )
       this.sortName = 'userId';
       this.checkActive()
     },
@@ -154,20 +131,20 @@ export default {
       } else {
         this.orderBy = 'asc'
       }
-      this.$store.dispatch('project/sortProjects', {key: 'status', order: this.orderBy} )
+      this.$store.dispatch('dream/sortDreams', {key: 'status', order: this.orderBy} )
       this.sortName = 'status';
       this.checkActive()
     },
 
-    sortByStartDate() {
+    sortByDepartment() {
 
       if(this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
         this.orderBy = 'asc'
       }
-      this.$store.dispatch('project/sortProjects', {key: 'startDate', order: this.orderBy} )
-      this.sortName = 'createdAt';
+      this.$store.dispatch('dream/sortDreams', {key: 'department', order: this.orderBy} )
+      this.sortName = 'department';
       this.checkActive()
     },
 
@@ -178,7 +155,7 @@ export default {
       } else {
         this.orderBy = 'asc'
       }
-      this.$store.dispatch('project/sortProjects', {key: 'dueDate', order: this.orderBy} )
+      this.$store.dispatch('dream/sortDreams', {key: 'dueDate', order: this.orderBy} )
       this.sortName = 'dueDate';
       this.checkActive()
     },
@@ -190,14 +167,10 @@ export default {
       } else {
         this.orderBy = 'asc'
       }
-      this.$store.dispatch('project/sortProjects', {key: 'priority', order: this.orderBy} )
+      this.$store.dispatch('dream/sortDreams', {key: 'priority', order: this.orderBy} )
       this.sortName = 'priority';
       this.checkActive()
-    },
-
-    openCreateDreamModal(){
-      this.$refs.createDreamModal.showCreateDreamModal = true
-    },
+    }
   },
 
 }
