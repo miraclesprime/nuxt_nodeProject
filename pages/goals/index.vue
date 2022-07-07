@@ -7,9 +7,9 @@
     <div id="goals-list-wrapper" class="projects-list-wrapper of-scroll-y position-relative" >
       <!-- <loading :loading="loading"></loading> -->
       <template v-if="goals.length">
-        <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="goals" :hide-no-column="true">
+        <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="goals" :hide-no-column="true" @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus" @file-department-sort="sortByDepartment" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
           <template #cell(title)="data">
-            <div class="d-flex align-center text-dark cursor-pointer" :id="'goals-' + data.value.title">
+            <div class="d-flex align-center text-dark cursor-pointer" :id="'goals-' + data.value.title" @click="goToGoalId(data.value)">
               <bib-icon icon="briefcase" variant="gray5" :scale="1.1" class="mr-025"></bib-icon>
               <span :id="'goals-' + data.value.title + '-text'">{{data.value.title}}</span>
             </div>
@@ -79,6 +79,25 @@ export default {
     openCreateGoalModal(){
       this.$refs.createGoalModal.showCreateGoalModal = true
     },
+
+    goToGoalId(goal) {
+      this.$store.dispatch('goals/setSingleGoal', goal)
+      this.$router.push("/goals/" + goal.id)
+    },
+
+    checkActive() {
+      for(let i=0; i<this.tableFields.length; i++) {
+          if(this.tableFields[i].header_icon) {
+            this.tableFields[i].header_icon.isActive = false
+          }
+
+          if(this.tableFields[i].header_icon && this.tableFields[i].key == this.sortName) {
+            this.tableFields[i].header_icon.isActive = true
+          } 
+      }
+    },
+
+    
   }
 
 }

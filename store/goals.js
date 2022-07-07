@@ -27,6 +27,10 @@ export const state = () => ({
     setSingleGoal(state, currentGoal) {
       state.selectedGoal = currentGoal;
     },
+
+    sortGoals(state, payload) {
+    
+    }
   };
   
   export const actions = {
@@ -57,6 +61,10 @@ export const state = () => ({
         ctx.commit('createGoal', res.data);
       }
       return res.data
+    },
+
+    sortGoals(ctx, payload) {
+      ctx.commit('sortGoals', payload)
     },
     
   };

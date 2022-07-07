@@ -24,9 +24,13 @@ export const state = () => ({
       state.dreams.push(payload);
     },
   
-    setSingleGoal(state, currentDream) {
+    setSingleDream(state, currentDream) {
       state.selectedDream = currentDream;
     },
+
+    sortDreams(state, payload) {
+    
+    }
   };
   
   export const actions = {
@@ -57,6 +61,10 @@ export const state = () => ({
         ctx.commit('createDream', res.data);
       }
       return res.data
+    },
+
+    sortDreams(ctx, payload) {
+      ctx.commit('sortDreams', payload)
     },
     
   };

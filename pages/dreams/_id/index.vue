@@ -61,11 +61,11 @@
 
 <script>
 import { TABLE_FIELDS, DREAM_TABS, DREAM_DEFAULT_TAB, DREAM_TAB_TITLES } from "config/constants";
+import { mapGetters } from 'vuex';
 
 export default {
     data() {
         return {
-            dream: null,
             activeTab: DREAM_DEFAULT_TAB,
             DREAM_TABS,
             DREAM_TAB_TITLES,
@@ -83,6 +83,10 @@ export default {
                 return { icon: "bookmark", variant: "gray5", text: "Add to favorites", status: false }
             }
         },
+
+        ...mapGetters({
+          dream: "dream/getSelectedDream"
+        })
     },
 
     methods: {

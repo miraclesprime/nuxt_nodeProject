@@ -60,11 +60,11 @@
 
 <script>
 import {TABLE_FIELDS, GOAL_TABS, GOAL_DEFAULT_TAB, GOAL_TAB_TITLES } from "config/constants";
+import { mapGetters } from 'vuex'; 
 
 export default {
     data() {
         return {
-            goal: null,
             activeTab: GOAL_DEFAULT_TAB,
             GOAL_TABS,
             GOAL_TAB_TITLES,
@@ -82,6 +82,10 @@ export default {
                 return { icon: "bookmark", variant: "gray5", text: "Add to favorites", status: false }
             }
         },
+
+        ...mapGetters({
+          goal: 'goals/getSelectedGoal'
+        })
     },
 
     methods: {

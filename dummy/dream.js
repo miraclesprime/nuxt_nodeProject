@@ -1,4 +1,4 @@
-export const GOAL_FIELDS = [
+export const DREAM_FIELDS = [
     {
         key: "key",
         label: "#",
@@ -8,7 +8,7 @@ export const GOAL_FIELDS = [
     },
     {
         key: "title",
-        label: "Goal Name",
+        label: "Dream Name",
         width: '30%',
         header_icon: {
             icon: 'swap-vertical',
