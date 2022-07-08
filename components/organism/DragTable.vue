@@ -242,9 +242,7 @@ export default {
       cursor: default;
       background-color: $light;
       border-color: $gray4;
-      td {
-        border-left: $gray4 1px solid;
-      }
+      
     }
     &:active {
       cursor: default;
