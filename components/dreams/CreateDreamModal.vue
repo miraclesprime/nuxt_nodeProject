@@ -16,6 +16,7 @@
             <bib-input type="date" v-model="dueDate" placeholder="Due Date" label="Due Date" class="mb-05"></bib-input>
           </div>
         </div>
+        <small class="text-danger " style="margin-top:-0.75rem; margin-bottom:0.75rem; display: block">{{dateError.text}}</small>
         <bib-input label="Set for Department" v-model="department" placeholder="Type or select department name" class="mb-05"></bib-input>
         <div class="mb-05">
           <label id="cd-modal-project-label" class="text-gray6" style="margin-bottom: -0.25rem;">Set for Project </label>
@@ -113,6 +114,20 @@ export default {
         }
       })
     },
+    dateError() {
+      let d1, d2
+      if (this.startDate && this.dueDate) {
+        d1 = new Date(this.startDate)
+        d2 = new Date(this.dueDate)
+        if (this.startDate > this.dueDate) {
+          return { type: false, text: "Due date cannot be set before Start date"}
+        } else {
+          return { type: true, text: ""}
+        }
+      } else {
+        return {type: false, text: "No date selected"}
+      }
+    }
   },
   mounted() {
     // console.log(this.user)
@@ -165,7 +180,7 @@ export default {
         projectId: Object.keys(this.project).length ? this.project.id : null,
         user: Object.keys(this.owner).length ? this.owner : null
       }
-      if (this.dreamName && Object.keys(this.owner).length) {
+      if (this.dreamName && Object.keys(this.owner).length && this.dateError.type) {
         this.$store.dispatch('dream/createDream', payload).then((res) => {
           // console.log(res)
           this.loading = false

@@ -16,6 +16,7 @@
             <bib-input type="date" v-model="dueDate" placeholder="Due Date" label="Due Date" class="mb-05"></bib-input>
           </div>
         </div>
+        <small class="text-danger " style="margin-top:-0.75rem; margin-bottom:0.75rem; display: block">{{dateError.text}}</small>
         <bib-input label="Set for Department" v-model="department" placeholder="Type or select department name" class="mb-05"></bib-input>
         <div class="mb-05">
           <label id="cg-modal-project-label" class="text-gray6" style="margin-bottom: -0.25rem;">Set for Project </label>
@@ -83,6 +84,7 @@ export default {
       department: "",
       project: {},
       filterKey: "",
+      // dateError: "",
       error: false,
       errorMsg: "",
       loading: false,
@@ -110,6 +112,29 @@ export default {
         }
       })
     },
+    dateError() {
+      let d1, d2
+      if (this.startDate && this.dueDate) {
+        d1 = new Date(this.startDate)
+        d2 = new Date(this.dueDate)
+        if (this.startDate > this.dueDate) {
+          return { type: false, text: "Due date cannot be set before Start date"}
+        } else {
+          return { type: true, text: ""}
+        }
+        /*if (this.startDate < this.dueDate) {
+          this.dateError = "Correct "
+          this.loading = false
+          // return false
+        }
+        if (this.startDate === this.dueDate) {
+          this.dateError = "Same date"
+          this.loading = false
+        }*/
+      } else {
+        return {type: false, text: "No date selected"}
+      }
+    }
   },
   mounted() {
     // console.log(this.user)
@@ -118,7 +143,7 @@ export default {
     }*/
   },
   methods: {
-    
+
     dd2ItemClick(proj) {
       console.log(proj)
       // this.owner = `${proj.label} - ${proj.email}`
@@ -136,7 +161,7 @@ export default {
     inviteViaEmail() {
       console.log('inviteViaEmail')
     },
-    removeProject(){
+    removeProject() {
       this.project = {}
     },
     removeOwner() {
@@ -152,7 +177,7 @@ export default {
       this.loading = true
       // console.log(ownerId)
       let payload = {
-        title: this.goalName, 
+        title: this.goalName,
         companyId: JSON.parse(localStorage.getItem('user')).subb,
         userId: Object.keys(this.owner).length ? this.owner.id : null,
         description: this.description ? this.description : null,
@@ -162,11 +187,12 @@ export default {
         projectId: Object.keys(this.project).length ? this.project.id : null,
         user: Object.keys(this.owner).length ? this.owner : null
       }
-      if (this.goalName && Object.keys(this.owner).length) {
+
+      if (this.goalName && Object.keys(this.owner).length && this.dateError.type) {
         this.$store.dispatch('goals/createGoal', payload).then((res) => {
           // console.log(res)
           this.loading = false
-            this.showCreateGoalModal = false
+          this.showCreateGoalModal = false
           // if (res.statusCode == 200) {
           // }
           console.log(res.message)
@@ -177,11 +203,11 @@ export default {
       } else {
         this.loading = false
         console.error("required fields");
-        
+
       }
       // this.$emit("create-goal")
     },
-    
+
   },
 
 };
