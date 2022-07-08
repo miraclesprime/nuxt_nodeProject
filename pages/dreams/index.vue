@@ -1,13 +1,35 @@
 <template>
-  <div id="dreams-wrapper" class="goals-wrapper" >
+  <div id="dreams-wrapper" class="dreams-wrapper" >
     
     <page-title title="Dreams"></page-title>
     
-    <dream-actions  />
+    <dream-actions @sortValue='sortName=$event' v-on:dream-create-modal="openCreateDreamModal"  />
     <div id="dreams-list-wrapper" class="dreams-list-wrapper of-scroll-y position-relative" >
       <!-- <loading :loading="loading"></loading> -->
       <template v-if="dreams.length">
-        Bib-Table
+        <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="dreams" :hide-no-column="true" @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus" @file-department-sort="sortByDepartment" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
+          <template #cell(title)="data">
+            <div class="d-flex align-center text-dark cursor-pointer" :id="'goals-' + data.value.title" @click="goToDreamId(data.value)">
+              <bib-icon icon="briefcase" variant="gray5" :scale="1.1" class="mr-025"></bib-icon>
+              <span :id="'goals-' + data.value.title + '-text'">{{data.value.title}}</span>
+            </div>
+          </template>
+          <template #cell(department)="data">
+            <span>{{data.value.department}}</span>
+          </template>
+          <template #cell(status)="data">
+            <status-comp :status="data.value.status"></status-comp>
+          </template>
+          <template #cell(priority)="data">
+            <priority-comp :priority="data.value.priority"></priority-comp>
+          </template>
+          <template #cell(userId)="data">
+            <user-info :userId="data.value.userId" :key="newKey"></user-info>
+          </template>
+          <template #cell(dueDate)="data">
+            <format-date :datetime="data.value.dueDate" :key="newKey"></format-date>
+          </template>
+        </bib-table>
       </template>
       <template v-else>
         <span id="projects-0" class="d-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
@@ -15,12 +37,13 @@
         </span>
       </template>
     </div>
+    <create-dream-modal ref="createDreamModal"></create-dream-modal>
   </div>
 </template>
 
 <script>
-import { PROJECT_FIELDS } from '../../dummy/project';
-// import { mapGetters } from 'vuex';
+import { DREAM_FIELDS } from '../../dummy/dream';
+import { mapGetters } from 'vuex';
 
 export default {
   data() {
@@ -28,8 +51,7 @@ export default {
       sortName: '',
       viewName: '',
       loading: true,
-      dreams: [],
-      tableFields: PROJECT_FIELDS,
+      tableFields: DREAM_FIELDS,
       gridType: "list",
       activeTask: {
         assignee: null,
@@ -37,88 +59,45 @@ export default {
         status: null,
       },
       orderBy: '',
-      newkey: "",
+      newkey: 0,
     }
   },
-//   mounted() {
-//     this.$store.dispatch('project/fetchProjects').then(() => { 
-//       this.newkey = parseInt( Math.random().toString().slice(-3) )
-//       this.loading = false 
-//     })
+
+  computed: {
+    ...mapGetters({
+      dreams: "dream/getDreams"
+    })
+  },
+
+  mounted() {
+    this.$store.dispatch('dream/fetchDreams').then(() => { 
+      this.newkey = Math.floor(Math.random() * 1000) + 1;
+      this.loading = false 
+    })
     
-//   },
-//   computed: {
-//     ...mapGetters({
-//       projects: 'project/getAllProjects'
-//     })
-//   },
+  },
 
   methods: {
-    // checkActive() {
-    //   for(let i=0; i<this.tableFields.length; i++) {
-    //       if(this.tableFields[i].header_icon) {
-    //         this.tableFields[i].header_icon.isActive = false
-    //       }
 
-    //       if(this.tableFields[i].header_icon && this.tableFields[i].key == this.sortName) {
-    //         this.tableFields[i].header_icon.isActive = true
-    //       } 
-    //   }
-    // },
-
-    // tabChange(value) {
-    //   this.activeTab = value;
-    // },
-    // goToProjectId(project) {
-    //   // console.log(project)
-    //   this.$store.dispatch('project/setSingleProject', project)
-    //   this.$router.push("/projects/" + project.id)
-    // },
-
-  // methods for bib-table
-
-    projectStatusLabel(status) {
-      switch (status) {
-        case 'Delayed':
-          return 'Delayed'
-        case 'In-Progress':
-          return 'In-Progress'
-        case 'Done':
-          return 'Done'
-        case 'Waiting':
-          return 'Waiting'
-        case 'Not Started':
-          return 'Not Started'
-      }
+    openCreateDreamModal(){
+      this.$refs.createDreamModal.showCreateDreamModal = true
     },
-    projectStatusVariable(status) {
-      switch (status) {
-        case 'Delayed':
-          return 'danger'
-        case 'In-Progress':
-          return 'primary'
-        case 'Done':
-          return 'success'
-        case 'Waiting':
-          return 'warning'
-        case 'Not Started':
-          return 'secondary'
-      }
+
+    goToDreamId(dream) {
+      this.$store.dispatch('dream/setSingleDream', dream)
+      this.$router.push("/dreams/" + dream.id)
     },
-    projectPriorityVariable(priority) {
-      switch (priority) {
-        case 'high':
-          return 'danger'
-        case 'medium':
-          return 'orange'
-        case 'low':
-          return 'success'
-        case 'none':
-          return 'secondary'
+
+    checkActive() {
+      for(let i=0; i<this.tableFields.length; i++) {
+          if(this.tableFields[i].header_icon) {
+            this.tableFields[i].header_icon.isActive = false
+          }
+
+          if(this.tableFields[i].header_icon && this.tableFields[i].key == this.sortName) {
+            this.tableFields[i].header_icon.isActive = true
+          } 
       }
-    },
-    capitalizeFirstLetter(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1)
     },
 
     sortTitle() {
@@ -128,7 +107,7 @@ export default {
       } else {
         this.orderBy = 'asc'
       }
-      this.$store.dispatch('project/sortProjects', {key: 'name', order: this.orderBy} )
+      this.$store.dispatch('dream/sortDreams', {key: 'name', order: this.orderBy} )
       this.sortName = 'title';
       this.checkActive()
     },
@@ -140,7 +119,7 @@ export default {
       } else {
         this.orderBy = 'asc'
       }
-      this.$store.dispatch('project/sortProjects', {key: 'owner', order: this.orderBy} )
+      this.$store.dispatch('dream/sortDreams', {key: 'owner', order: this.orderBy} )
       this.sortName = 'userId';
       this.checkActive()
     },
@@ -152,20 +131,20 @@ export default {
       } else {
         this.orderBy = 'asc'
       }
-      this.$store.dispatch('project/sortProjects', {key: 'status', order: this.orderBy} )
+      this.$store.dispatch('dream/sortDreams', {key: 'status', order: this.orderBy} )
       this.sortName = 'status';
       this.checkActive()
     },
 
-    sortByStartDate() {
+    sortByDepartment() {
 
       if(this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
         this.orderBy = 'asc'
       }
-      this.$store.dispatch('project/sortProjects', {key: 'startDate', order: this.orderBy} )
-      this.sortName = 'createdAt';
+      this.$store.dispatch('dream/sortDreams', {key: 'department', order: this.orderBy} )
+      this.sortName = 'department';
       this.checkActive()
     },
 
@@ -176,7 +155,7 @@ export default {
       } else {
         this.orderBy = 'asc'
       }
-      this.$store.dispatch('project/sortProjects', {key: 'dueDate', order: this.orderBy} )
+      this.$store.dispatch('dream/sortDreams', {key: 'dueDate', order: this.orderBy} )
       this.sortName = 'dueDate';
       this.checkActive()
     },
@@ -188,12 +167,11 @@ export default {
       } else {
         this.orderBy = 'asc'
       }
-      this.$store.dispatch('project/sortProjects', {key: 'priority', order: this.orderBy} )
+      this.$store.dispatch('dream/sortDreams', {key: 'priority', order: this.orderBy} )
       this.sortName = 'priority';
       this.checkActive()
     }
   },
-
 
 }
 

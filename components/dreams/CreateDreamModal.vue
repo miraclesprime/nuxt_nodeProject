@@ -1,11 +1,11 @@
 <template>
-  <div id="cg-modal-wrapper">
-    <bib-modal-wrapper @close="showCreateGoalModal = false" v-show="showCreateGoalModal" title="Set a Goal" id="create-goal" @keypress.native="bindEnter($event, 'create-goal-btn')">
+  <div id="cd-modal-wrapper">
+    <bib-modal-wrapper @close="showCreateDreamModal = false" v-show="showCreateDreamModal" title="Set a Dream" id="create-dream" @keypress.native="bindEnter($event, 'create-dream-btn')">
       <template v-slot:content>
         <div class="mb-075">
-          <label class="text-gray6">Goal name<span class="text-danger">*</span></label>
-          <bib-input v-model.trim="goalName" placeholder="Goal"></bib-input>
-          <small class="text-danger " style="margin-top:-0.25rem; display:block;">{{goalName ? '' : 'Goal name is required'}}</small>
+          <label class="text-gray6">Dream name<span class="text-danger">*</span></label>
+          <bib-input v-model.trim="dreamName" placeholder="Dream"></bib-input>
+          <small class="text-danger " style="margin-top:-0.25rem; display:block;">{{dreamName ? '' : 'Dream name is required'}}</small>
         </div>
         <bib-input type="textarea" v-model="description" placeholder="Description" label="Description" class="mb-05"></bib-input>
         <div class="row">
@@ -19,72 +19,74 @@
         <small class="text-danger " style="margin-top:-0.75rem; margin-bottom:0.75rem; display: block">{{dateError.text}}</small>
         <bib-input label="Set for Department" v-model="department" placeholder="Type or select department name" class="mb-05"></bib-input>
         <div class="mb-05">
-          <label id="cg-modal-project-label" class="text-gray6" style="margin-bottom: -0.25rem;">Set for Project </label>
+          <label id="cd-modal-project-label" class="text-gray6" style="margin-bottom: -0.25rem;">Set for Project </label>
           <!-- <bib-input v-model="project" placeholder="Type or select project name" class="mb-05"></bib-input> -->
-          <bib-button test_id="cg-project-dd1" dropdown1="add" label="Type or select project" v-model="project" v-on:input-keydown="dropdownInputKeydown" class="mt-05 mb-05">
+          <bib-button test_id="cd-project-dd1" dropdown1="add" label="Type or select project" v-model="project" v-on:input-keydown="dropdownInputKeydown" class="mt-05 mb-05">
             <template v-slot:menu>
-              <ul id="cg-project-fields" class="border-gray1" style="border-radius: 0 !important; border: 1px solid var(--bib-gray1);">
-                <li :id="'cg-project-field-'+index" v-for="(proj, index) in filterProject" :key="'cg-project-item-'+index" v-on:click="dd2ItemClick(proj)">
+              <ul id="cd-project-fields" class="border-gray1" style="border-radius: 0 !important; border: 1px solid var(--bib-gray1);">
+                <li :id="'cd-project-field-'+index" v-for="(proj, index) in filterProject" :key="'cd-project-item-'+index" v-on:click="dd2ItemClick(proj)">
                   <!-- <bib-avatar :src="proj.avatar" size="1.25rem"></bib-avatar> -->
-                  <span :id="'cg-project-name'+index" class="ml-05"> {{proj.title}} </span>
+                  <span :id="'cd-project-name'+index" class="ml-05"> {{proj.title}} </span>
                 </li>
               </ul>
             </template>
           </bib-button>
-          <div id="cg-project-owner" class="d-flex pt-025">
+          <div id="cd-project-owner" class="d-flex pt-025">
             <email-chip v-if="Object.keys(project).length > 0" :name="project.title" :email="project.user.email" v-bind:close="true" v-on:remove-email="removeProject"></email-chip>
-            <!-- <small v-else class="text-danger" style="margin-top: -0.25rem;">Goal owner is required</small> -->
+            <!-- <small v-else class="text-danger" style="margin-top: -0.25rem;">Dream owner is required</small> -->
           </div>
         </div>
         <div class="mb-05">
-          <label id="cg-modal-owner-label" class="text-gray6" style="margin-bottom: -0.25rem;">Assign a goal owner </label>
-          <bib-button test_id="create-goal-dd1" dropdown1="add" label="Type name or email" v-model="owner" v-on:input-keydown="dropdownInputKeydown" :footer="{icon: 'add', label: 'Invite via email', event: 'footer-action'}" @footer-action="inviteViaEmail" class="mt-05 mb-05">
+          <label id="cd-modal-owner-label" class="text-gray6" style="margin-bottom: -0.25rem;">Assign a dreamer </label>
+          <bib-button test_id="create-dream-dd1" dropdown1="add" label="Type name or email" v-model="owner" v-on:input-keydown="dropdownInputKeydown" :footer="{icon: 'add', label: 'Invite via email', event: 'footer-action'}" @footer-action="inviteViaEmail" class="mt-05 mb-05">
             <template v-slot:menu>
-              <ul id="cg-owner-fields" class="border-gray1" style="border-radius: 0 !important; border: 1px solid var(--bib-gray1);">
-                <li :id="'cg-owner-field-'+index" v-for="(tm, index) in filterUser" :key="'cg-owner-item-'+index" v-on:click="dd1ItemClick(tm)">
+              <ul id="cd-owner-fields" class="border-gray1" style="border-radius: 0 !important; border: 1px solid var(--bib-gray1);">
+                <li :id="'cd-owner-field-'+index" v-for="(tm, index) in filterUser" :key="'cd-owner-item-'+index" v-on:click="dd1ItemClick(tm)">
                   <bib-avatar :src="tm.avatar" size="1.25rem"></bib-avatar>
-                  <span :id="'cg-owner-person-name'+index" class="ml-05"> {{tm.label}} <span class="ml-075">{{tm.email}}</span></span>
+                  <span :id="'cd-owner-person-name'+index" class="ml-05"> {{tm.label}} <span class="ml-075">{{tm.email}}</span></span>
                 </li>
               </ul>
             </template>
           </bib-button>
-          <div id="cg-team-members" class="d-flex pt-025">
+          <div id="cd-team-members" class="d-flex pt-025">
             <email-chip v-if="Object.keys(owner).length > 0" :name="owner.label" :email="owner.email ? owner.email : owner.sube" :avatar="owner.avatar" v-bind:close="true" v-on:remove-email="removeOwner"></email-chip>
-            <!-- <small v-else class="text-danger" style="margin-top: -0.25rem;">Goal owner is required</small> -->
+            <!-- <small v-else class="text-danger" style="margin-top: -0.25rem;">Dream owner is required</small> -->
           </div>
         </div>
         <loading :loading="loading"></loading>
       </template>
       <template v-slot:footer>
-        <div class="m-auto pt-1 d-flex justify-between" id="cg-model-footer">
+        <div class="m-auto pt-1 d-flex justify-between" id="cd-model-footer">
           <bib-button @click.native="
               () => {
-                showCreateGoalModal = false;
+                showCreateDreamModal = false;
               }
             " variant="light" size="lg" pill label="Cancel"></bib-button>
-          <bib-button @click.native="createGoal()" variant="success" size="lg" id="create-goal-btn" pill label="Create"></bib-button>
+          <bib-button @click.native="createDream()" variant="success" size="lg" id="create-dream-btn" pill label="Create"></bib-button>
         </div>
       </template>
     </bib-modal-wrapper>
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
 
 export default {
-  name: "CreateGoalModal",
+  name: "CreateDreamModal",
   data() {
     return {
-      showCreateGoalModal: false,
-      goalName: "",
+      showCreateDreamModal: false,
+      dreamName: "",
       description: "",
       startDate: "",
       dueDate: "",
       owner: {},
+      startDate: "",
+      dueDate: "",
       department: "",
       project: {},
       filterKey: "",
-      // dateError: "",
       error: false,
       errorMsg: "",
       loading: false,
@@ -122,15 +124,6 @@ export default {
         } else {
           return { type: true, text: ""}
         }
-        /*if (this.startDate < this.dueDate) {
-          this.dateError = "Correct "
-          this.loading = false
-          // return false
-        }
-        if (this.startDate === this.dueDate) {
-          this.dateError = "Same date"
-          this.loading = false
-        }*/
       } else {
         return {type: false, text: "No date selected"}
       }
@@ -143,7 +136,7 @@ export default {
     }*/
   },
   methods: {
-
+    
     dd2ItemClick(proj) {
       console.log(proj)
       // this.owner = `${proj.label} - ${proj.email}`
@@ -161,7 +154,7 @@ export default {
     inviteViaEmail() {
       console.log('inviteViaEmail')
     },
-    removeProject() {
+    removeProject(){
       this.project = {}
     },
     removeOwner() {
@@ -173,11 +166,11 @@ export default {
         return false;
       }
     },
-    createGoal() {
+    createDream() {
       this.loading = true
-      // console.log(ownerId)
+      console.log(this.owner)
       let payload = {
-        title: this.goalName,
+        title: this.dreamName, 
         companyId: JSON.parse(localStorage.getItem('user')).subb,
         userId: Object.keys(this.owner).length ? this.owner.id : null,
         description: this.description ? this.description : null,
@@ -187,12 +180,11 @@ export default {
         projectId: Object.keys(this.project).length ? this.project.id : null,
         user: Object.keys(this.owner).length ? this.owner : null
       }
-
-      if (this.goalName && Object.keys(this.owner).length && this.dateError.type) {
-        this.$store.dispatch('goals/createGoal', payload).then((res) => {
+      if (this.dreamName && Object.keys(this.owner).length && this.dateError.type) {
+        this.$store.dispatch('dream/createDream', payload).then((res) => {
           // console.log(res)
           this.loading = false
-          this.showCreateGoalModal = false
+            this.showCreateDreamModal = false
           // if (res.statusCode == 200) {
           // }
           console.log(res.message)
@@ -203,11 +195,11 @@ export default {
       } else {
         this.loading = false
         console.error("required fields");
-
+        
       }
-      // this.$emit("create-goal")
+      // this.$emit("create-dream")
     },
-
+    
   },
 
 };

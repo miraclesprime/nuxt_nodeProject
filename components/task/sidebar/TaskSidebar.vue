@@ -263,7 +263,7 @@ export default {
 
   watch: {
     currentTask() {
-      console.log(this.currentTask)
+      // console.log(this.currentTask)
       if (Object.keys(this.currentTask).length) {
         this.form = JSON.parse(JSON.stringify(this.currentTask));
         if (this.currentTask.project.length) {
@@ -310,7 +310,7 @@ export default {
   methods: {
 
     closeSidebar(event) {
-      // console.log(event.originalTarget.classList, event.target.classList)
+      // console.log('click-outside',  event.originalTarget.classList, event.target.classList)
       if (event.target.classList.contains("cursor-pointer") || event.target.classList.contains("task-grid")) {
         // console.info('class found')
         return false
@@ -338,7 +338,7 @@ export default {
           return false
         }
         return false
-      }
+      } 
       this.loading = true
       if (this.form.projectId && (!this.form.sectionId || this.form.sectionId == "")) {
         this.form.sectionId = "_section" + this.form.projectId
@@ -353,7 +353,8 @@ export default {
         let sec = sections.find(s => s.title.includes("_section"))
         // console.warn(sec);
         if (!sec) {
-          this.form.sectionId = null
+          // this.form.sectionId = null
+          this.form.sectionId = "_section" + this.form.projectId
         } else {
           this.form.sectionId = sec.id
         }
@@ -420,15 +421,7 @@ export default {
           this.$nuxt.$emit("update-key")
         })
         .catch(e => console.log(e))
-      /*let task = await this.$axios.$put("/task", { id: this.form.id, data: { ...this.form }, user, projectId: projectId ? projectId : null }, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-      })*/
-      // console.info(task)
-      /*if (task.statusCode == 200) {
-        // this.loading = false
-        this.$nuxt.$emit("update-key")
 
-      }*/
       // console.log("update task =>", task)
       this.loading = false
 

@@ -2,7 +2,7 @@
   <div id="dream-action-wrapper" class="task-actions ml-05">
     <div id="da-add-project-wrapper" class="action-left">
       <div class="d-flex gap-05 cursor-pointer text-secondary text-hover-dark" id="da-add-dream-button">
-        <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-task-text">New Dream</span>
+        <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-task-text" v-on:click="openCreateDreamModal">New Dream</span>
       </div>
     </div>
     <div class="action-right" id="da-action-right">
@@ -51,14 +51,18 @@ export default {
     },
 
     sortBy($event) {
-    //   if(this.orderBy == 'asc') {
-    //     this.orderBy = 'desc'
-    //   } else {
-    //     this.orderBy = 'asc'
-    //   }
-    //   this.$store.dispatch('project/sortProjects', {key: $event, order: this.orderBy})
-    //   this.selectedSort = $event;
-    //   this.$emit('sortValue', $event)
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('dream/sortDreams', {key: $event, order: this.orderBy})
+      this.selectedSort = $event;
+      this.$emit('sortValue', $event)
+    },
+
+    openCreateDreamModal(){
+      this.$emit('dream-create-modal', true)
     }
   },
 };

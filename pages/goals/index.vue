@@ -3,13 +3,13 @@
     
     <page-title title="Goals"></page-title>
     
-    <goal-actions v-on:goal-create-modal="openCreateGoalModal"></goal-actions>
+    <goal-actions @sortValue='sortName=$event' v-on:goal-create-modal="openCreateGoalModal"></goal-actions>
     <div id="goals-list-wrapper" class="projects-list-wrapper of-scroll-y position-relative" >
       <!-- <loading :loading="loading"></loading> -->
       <template v-if="goals.length">
-        <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="goals" :hide-no-column="true">
+        <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="goals" :hide-no-column="true" @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus" @file-department-sort="sortByDepartment" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
           <template #cell(title)="data">
-            <div class="d-flex align-center text-dark cursor-pointer" :id="'goals-' + data.value.title">
+            <div class="d-flex align-center text-dark cursor-pointer" :id="'goals-' + data.value.title" @click="goToGoalId(data.value)">
               <bib-icon icon="briefcase" variant="gray5" :scale="1.1" class="mr-025"></bib-icon>
               <span :id="'goals-' + data.value.title + '-text'">{{data.value.title}}</span>
             </div>
@@ -59,7 +59,7 @@ export default {
         status: null,
       },
       orderBy: '',
-      newkey: 0,
+      newkey: '',
     }
   },
   mounted() {
@@ -79,6 +79,96 @@ export default {
     openCreateGoalModal(){
       this.$refs.createGoalModal.showCreateGoalModal = true
     },
+
+    goToGoalId(goal) {
+      this.$store.dispatch('goals/setSingleGoal', goal)
+      this.$router.push("/goals/" + goal.id)
+    },
+
+    checkActive() {
+      for(let i=0; i<this.tableFields.length; i++) {
+          if(this.tableFields[i].header_icon) {
+            this.tableFields[i].header_icon.isActive = false
+          }
+
+          if(this.tableFields[i].header_icon && this.tableFields[i].key == this.sortName) {
+            this.tableFields[i].header_icon.isActive = true
+          } 
+      }
+    },
+
+    sortTitle() {
+      
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('goals/sortDreams', {key: 'name', order: this.orderBy} )
+      this.sortName = 'title';
+      this.checkActive()
+    },
+
+    sortOwner() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('goals/sortDreams', {key: 'owner', order: this.orderBy} )
+      this.sortName = 'userId';
+      this.checkActive()
+    },
+
+    sortByStatus() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('goals/sortDreams', {key: 'status', order: this.orderBy} )
+      this.sortName = 'status';
+      this.checkActive()
+    },
+
+    sortByDepartment() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('goals/sortDreams', {key: 'department', order: this.orderBy} )
+      this.sortName = 'department';
+      this.checkActive()
+    },
+
+    sortByDueDate() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('goals/sortDreams', {key: 'dueDate', order: this.orderBy} )
+      this.sortName = 'dueDate';
+      this.checkActive()
+    },
+
+    sortByPriority() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('goals/sortDreams', {key: 'priority', order: this.orderBy} )
+      this.sortName = 'priority';
+      this.checkActive()
+    }
+    
   }
 
 }

@@ -61,8 +61,8 @@ export default {
       this.$refs.modals.showCreateSectionModal = true;
     },
     createSectionInline($event) {
-      this.$emit("create-section", $event)
-      this.$nuxt.$emit("create-section", $event)
+      this.$emit("show-newsection", $event)
+      // this.$nuxt.$emit("show-newsection", $event)
     },
     async createTask(task) {
       console.log(task);

@@ -1,5 +1,5 @@
 <template>
-  <div :id="'task-grid-wrapper'+ task.id" >
+  <div :id="'task-grid-wrapper'+ task.id" class="task-grid" v-on:click="openSidebar()">
     <figure v-if="task.cover" :id="'task-card-image'+task.id" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
     <div class="task-top" :id="'tg-top-wrap'+ task.id">
       <!-- <div class="d-flex" :id="'tg-inside-wrap'+ task.id" @click="openSidebar()">
@@ -77,10 +77,9 @@ export default {
   },
   methods: {
     
-    /*openSidebar(task) {
-
+    openSidebar() {
       // console.log(task)
-      this.$nuxt.$emit("open-sidebar", { ...task });
+      this.$nuxt.$emit("open-sidebar", this.task);
 
       let el = event.target.offsetParent
       let scrollAmt = event.target.offsetLeft - event.target.offsetWidth;
@@ -91,7 +90,7 @@ export default {
         behavior: 'smooth'
       });
 
-    },*/
+    },
     addToFavorites($event) {
       // console.info("to be fav task", $event)
       let isFav = this.favTasks.some((f) => f.taskId == $event.id)
