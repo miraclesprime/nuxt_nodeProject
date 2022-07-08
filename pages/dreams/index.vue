@@ -3,7 +3,7 @@
     
     <page-title title="Dreams"></page-title>
     
-    <dream-actions v-on:dream-create-modal="openCreateDreamModal"  />
+    <dream-actions @sortValue='sortName=$event' v-on:dream-create-modal="openCreateDreamModal"  />
     <div id="dreams-list-wrapper" class="dreams-list-wrapper of-scroll-y position-relative" >
       <!-- <loading :loading="loading"></loading> -->
       <template v-if="dreams.length">

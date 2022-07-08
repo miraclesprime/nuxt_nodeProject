@@ -51,14 +51,14 @@ export default {
     },
 
     sortBy($event) {
-    //   if(this.orderBy == 'asc') {
-    //     this.orderBy = 'desc'
-    //   } else {
-    //     this.orderBy = 'asc'
-    //   }
-    //   this.$store.dispatch('project/sortProjects', {key: $event, order: this.orderBy})
-    //   this.selectedSort = $event;
-    //   this.$emit('sortValue', $event)
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('dream/sortDreams', {key: $event, order: this.orderBy})
+      this.selectedSort = $event;
+      this.$emit('sortValue', $event)
     },
 
     openCreateDreamModal(){

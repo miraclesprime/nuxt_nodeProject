@@ -3,7 +3,7 @@
     
     <page-title title="Goals"></page-title>
     
-    <goal-actions v-on:goal-create-modal="openCreateGoalModal"></goal-actions>
+    <goal-actions @sortValue='sortName=$event' v-on:goal-create-modal="openCreateGoalModal"></goal-actions>
     <div id="goals-list-wrapper" class="projects-list-wrapper of-scroll-y position-relative" >
       <!-- <loading :loading="loading"></loading> -->
       <template v-if="goals.length">
@@ -97,6 +97,77 @@ export default {
       }
     },
 
+    sortTitle() {
+      
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('goals/sortDreams', {key: 'name', order: this.orderBy} )
+      this.sortName = 'title';
+      this.checkActive()
+    },
+
+    sortOwner() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('goals/sortDreams', {key: 'owner', order: this.orderBy} )
+      this.sortName = 'userId';
+      this.checkActive()
+    },
+
+    sortByStatus() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('goals/sortDreams', {key: 'status', order: this.orderBy} )
+      this.sortName = 'status';
+      this.checkActive()
+    },
+
+    sortByDepartment() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('goals/sortDreams', {key: 'department', order: this.orderBy} )
+      this.sortName = 'department';
+      this.checkActive()
+    },
+
+    sortByDueDate() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('goals/sortDreams', {key: 'dueDate', order: this.orderBy} )
+      this.sortName = 'dueDate';
+      this.checkActive()
+    },
+
+    sortByPriority() {
+
+      if(this.orderBy == 'asc') {
+        this.orderBy = 'desc'
+      } else {
+        this.orderBy = 'asc'
+      }
+      this.$store.dispatch('goals/sortDreams', {key: 'priority', order: this.orderBy} )
+      this.sortName = 'priority';
+      this.checkActive()
+    }
     
   }
 
