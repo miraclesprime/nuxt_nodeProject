@@ -8,7 +8,7 @@
         <div id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y">
           <template v-if="gridType == 'list'">
             <template v-if="todos.length">
-              <bib-table v-for="(todo, index) in localdata" :key="index + viewName + '-' + key" :fields="taskFields" :sections="todo.tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: todo.title}" :headless="index > 0" class="border-gray4 bg-white" @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
+              <bib-table v-for="(todo, index) in localdata" :key="todo.id + '-' + viewName ? viewName : 'view' + '-' + sortName ? sortName : 'sort' + '-' + key" :fields="taskFields" :sections="todo.tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: todo.title}" :headless="index > 0" class="border-gray4 bg-white" @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
                 <template #cell(title)="data">
                   <div class="d-flex gap-05 align-center">
                     <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data)" class="cursor-pointer" @click="updateTaskStatus(data.value)"></bib-icon>
@@ -131,6 +131,7 @@ export default {
       loading: false,
       gridType: 'list',
       viewName: null,
+      sortName: null,
       orderBy: 'desc',
       flag: false,
       key: 100,
@@ -378,18 +379,21 @@ export default {
           this.loading = false
         }).catch(e => console.log(e))
         this.viewName = 'complete'
+        this.key += 1;
       }
       if ($event == 'incomplete') {
         this.$store.dispatch('user/setUserTasks', { filter: 'incomplete' }).then((res) => {
           this.loading = false
         }).catch(e => console.log(e))
         this.viewName = 'incomplete'
+        this.key += 1;
       }
       if ($event == 'all') {
         this.$store.dispatch('user/setUserTasks', { filter: 'all' }).then((res) => {
           this.loading = false
         }).catch(e => console.log(e))
         this.viewName = 'all'
+        this.key += 1;
       }
       this.loading = false
 
@@ -418,6 +422,7 @@ export default {
       }
 
       this.$store.dispatch('user/sortUserTasks', { sName: 'name', order: this.orderBy })
+      this.sortName = 'name';
       this.key += 1;
     },
 
@@ -430,6 +435,7 @@ export default {
       }
 
       this.$store.dispatch('user/sortUserTasks', { sName: 'projectId', order: this.orderBy })
+      this.sortName = 'projectId';
       this.key += 1;
     },
 
@@ -442,6 +448,7 @@ export default {
       }
 
       this.$store.dispatch('user/sortUserTasks', { sName: 'status', order: this.orderBy })
+      this.sortName = 'status';
       this.key += 1;
     },
 
@@ -454,6 +461,7 @@ export default {
       }
 
       this.$store.dispatch('user/sortUserTasks', { sName: 'createdAt', order: this.orderBy })
+      this.sortName = 'createdAt';
       this.key += 1;
     },
 
@@ -466,6 +474,7 @@ export default {
       }
 
       this.$store.dispatch('user/sortUserTasks', { sName: 'dueDate', order: this.orderBy })
+      this.sortName = 'dueDate';
       this.key += 1;
     },
 
@@ -478,6 +487,7 @@ export default {
       }
 
       this.$store.dispatch('user/sortUserTasks', { sName: 'priority', order: this.orderBy })
+      this.sortName = 'priority';
       this.key += 1;
     },
 
