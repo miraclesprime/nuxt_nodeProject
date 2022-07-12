@@ -24,14 +24,20 @@ export const mutations = {
 
   setTodos(state, payload) {
     state.todos = payload;
+  },
+
+  sortTodoTasks(state, payload) {
+
+      // sort By Title
+
   }
 
 };
 
 export const actions = {
-  async fetchTodos(ctx) {
+  async fetchTodos(ctx, payload) {
     const res = await this.$axios.$get('/todo/all', {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
     });
 
     if (res.statusCode == 200) {
@@ -71,5 +77,9 @@ export const actions = {
 
     return res
   },
+
+  sortTodoTasks(ctx, payload) {
+    ctx.commit('sortTodoTasks', payload)
+  }
 
 };

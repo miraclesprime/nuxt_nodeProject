@@ -8,7 +8,7 @@
         <div id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y">
           <template v-if="gridType == 'list'">
             <template v-if="todos.length">
-              <bib-table v-for="(todo, index) in localdata" :key="index + viewName + '-' + key" :fields="taskFields" :sections="todo.tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: todo.title}" :headless="index > 0" class="border-gray4 bg-white" @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
+              <bib-table v-for="(todo, index) in localdata" :key="todo.id + '-' + viewName ? viewName : 'view' + '-' + sortName ? sortName : 'sort' + '-' + key" :fields="taskFields" :sections="todo.tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: todo.title}" :headless="index > 0" class="border-gray4 bg-white" @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
                 <template #cell(title)="data">
                   <div class="d-flex gap-05 align-center">
                     <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data)" class="cursor-pointer" @click="updateTaskStatus(data.value)"></bib-icon>
@@ -19,7 +19,7 @@
                 </div> -->
                 </template>
                 <template #cell(projectId)="data">
-                  <project-info :projectId="data.value.project[0] ? data.value.project[0].projectId : null"></project-info>
+                  <project-info :projectId="data.value.project[0] ? data.value.project[0].projectId : null" :key="key"></project-info>
                 </template>
                 <template #cell(owner)="data">
                   <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
@@ -28,10 +28,10 @@
                   <status-comp :status="data.value.status"></status-comp>
                 </template>
                 <template #cell(createdAt)="data">
-                  <span :id="'projects-' + data.value.createdAt + '-text'" class="text-dark text-truncate" v-format-date="data.value.createdAt"></span>
+                  <format-date :datetime="data.value.createdAt" :key="key"></format-date>
                 </template>
                 <template #cell(dueDate)="data">
-                  <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span>
+                  <format-date :datetime="data.value.dueDate" :key="key"></format-date>
                 </template>
                 <template #cell(priority)="data">
                   <priority-comp :priority="data.value.priority"></priority-comp>
@@ -131,6 +131,7 @@ export default {
       loading: false,
       gridType: 'list',
       viewName: null,
+      sortName: null,
       orderBy: 'desc',
       flag: false,
       key: 100,
@@ -149,7 +150,7 @@ export default {
 
   computed: {
     ...mapGetters({
-      tasks: 'user/getUserTasks',
+      // tasks: 'user/getUserTasks',
       todos: "todo/getAllTodos",
     }),
     /*localdata() {
@@ -159,7 +160,7 @@ export default {
 
   watch: {
     todos(newVal) {
-      // console.info(newVal)
+      // console.log(newVal)
       this.localdata = JSON.parse(JSON.stringify(newVal))
     }
   },
@@ -179,7 +180,7 @@ export default {
   mounted() {
     this.loading = true
     // this.$store.dispatch('user/setUserTasks', { filter: 'all' }).then((res) => {
-    this.$store.dispatch("todo/fetchTodos").then((res) => {
+    this.$store.dispatch("todo/fetchTodos", {filter: 'all'}).then((res) => {
       // console.log(res)
       if (res.statusCode == 200) {
         this.key += 1
@@ -374,22 +375,25 @@ export default {
     filterView($event) {
       this.loading = true
       if ($event == 'complete') {
-        this.$store.dispatch('user/setUserTasks', { filter: 'complete' }).then((res) => {
+        this.$store.dispatch('todo/fetchTodos', { filter: 'complete' }).then((res) => {
           this.loading = false
         }).catch(e => console.log(e))
         this.viewName = 'complete'
+        this.key += 1;
       }
       if ($event == 'incomplete') {
-        this.$store.dispatch('user/setUserTasks', { filter: 'incomplete' }).then((res) => {
+        this.$store.dispatch('todo/fetchTodos', { filter: 'incomplete' }).then((res) => {
           this.loading = false
         }).catch(e => console.log(e))
         this.viewName = 'incomplete'
+        this.key += 1;
       }
       if ($event == 'all') {
-        this.$store.dispatch('user/setUserTasks', { filter: 'all' }).then((res) => {
+        this.$store.dispatch('todo/fetchTodos', { filter: 'all' }).then((res) => {
           this.loading = false
         }).catch(e => console.log(e))
         this.viewName = 'all'
+        this.key += 1;
       }
       this.loading = false
 
@@ -398,87 +402,130 @@ export default {
     // Sort By Action List
     sortBy($event) {
 
+    // sort by title
+      if ($event == 'name' && this.orderBy == 'asc') {
+        this.localdata.forEach(function(todo, index) {
+          todo["tasks"] = todo.tasks.sort((a, b) => a.title.localeCompare(b.title))
+        })
+      }
+  
+      if ($event == 'name' && this.orderBy == 'desc') {
+        this.localdata.forEach(function(todo, index) {
+          todo["tasks"] = todo.tasks.sort((a, b) => b.title.localeCompare(a.title))
+        })
+      }
+  
+      // sort By Project
+      if ($event == 'projectId' && this.orderBy == 'asc') {
+  
+        this.localdata.forEach(function(todo) {
+             todo["tasks"] = todo.tasks.sort((a, b) => {
+              if (a.project && b.project) {
+                return a.project[0].project.title.localeCompare(b.project[0].project.title)
+              }
+            });
+        })
+  
+      }
+  
+      if ($event == 'projectId' && this.orderBy == 'desc') {
+
+        this.localdata.forEach(function(todo) {
+             todo["tasks"] = todo.tasks.sort((a, b) => {
+              if (a.project && b.project) {
+                return b.project[0].project.title.localeCompare(a.project[0].project.title)
+              }
+            });
+        })
+  
+        }
+  
+      // sort By Status
+      if ($event == "status") {
+  
+        if (this.orderBy == "asc") {
+          this.localdata.forEach(function(todo) {
+            todo["tasks"] = todo.tasks.sort((a, b) => a.status.text.localeCompare(b.status.text));
+          })
+        } else {
+          this.localdata.forEach(function(todo) {
+            todo["tasks"] = todo.tasks.sort((a, b) => b.status.text.localeCompare(a.status.text));
+          })
+        }
+  
+      }
+  
+      // sort by create date
+      if ($event == 'createdAt') {
+        if (this.orderBy == "asc") {
+          this.localdata.forEach(function(todo) {
+            todo["tasks"] = todo.tasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+          })
+        } else {
+          this.localdata.forEach(function(todo) {
+            todo["tasks"] = todo.tasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          })
+        }
+      }
+  
+  
+      // sort by due date
+      if ($event == 'dueDate') {
+        if (this.orderBy == "asc") {
+          this.localdata.forEach(function(todo) {
+            todo["tasks"] = todo.tasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+          })
+        } else {
+          this.localdata.forEach(function(todo) {
+            todo["tasks"] = todo.tasks.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate));
+          })
+        }
+      }
+  
+  
+      // sort by priority
+      if ($event == "priority") {
+        if (this.orderBy == "asc") {
+          this.localdata.forEach(function(todo) {
+            todo["tasks"] = todo.tasks.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
+          })
+        } else {
+          this.localdata.forEach(function(todo) {
+            todo["tasks"] = todo.tasks.sort((a, b) => b.priority.text.localeCompare(a.priority.text));
+          })
+        }
+      }
+      
+      this.key += 1
       if (this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
         this.orderBy = 'asc'
       }
-
-      this.$store.dispatch('user/sortUserTasks', { sName: $event, order: this.orderBy })
-      this.key += 1
     },
 
-    // Sort By Head Actions
     sortTitle() {
-
-      if (this.orderBy == 'asc') {
-        this.orderBy = 'desc'
-      } else {
-        this.orderBy = 'asc'
-      }
-
-      this.$store.dispatch('user/sortUserTasks', { sName: 'name', order: this.orderBy })
-      this.key += 1;
+      this.sortName = 'name'
     },
 
     sortProject() {
-
-      if (this.orderBy == 'asc') {
-        this.orderBy = 'desc'
-      } else {
-        this.orderBy = 'asc'
-      }
-
-      this.$store.dispatch('user/sortUserTasks', { sName: 'projectId', order: this.orderBy })
-      this.key += 1;
+      this.sortName = 'projectId'
     },
-
-    sortByStatus() {
-
-      if (this.orderBy == 'asc') {
-        this.orderBy = 'desc'
-      } else {
-        this.orderBy = 'asc'
-      }
-
-      this.$store.dispatch('user/sortUserTasks', { sName: 'status', order: this.orderBy })
-      this.key += 1;
+    
+    sortByStatus(){
+      this.sortName = 'status'
     },
-
-    sortByStartDate() {
-
-      if (this.orderBy == 'asc') {
-        this.orderBy = 'desc'
-      } else {
-        this.orderBy = 'asc'
-      }
-
-      this.$store.dispatch('user/sortUserTasks', { sName: 'createdAt', order: this.orderBy })
-      this.key += 1;
+    
+    sortByStartDate(){
+      this.sortName = 'createdAt'
     },
-
+    
     sortByDueDate() {
-
-      if (this.orderBy == 'asc') {
-        this.orderBy = 'desc'
-      } else {
-        this.orderBy = 'asc'
-      }
-
-      this.$store.dispatch('user/sortUserTasks', { sName: 'dueDate', order: this.orderBy })
-      this.key += 1;
+      this.sortName = 'dueDate'
     },
-
+    
     sortByPriority() {
-
-      if (this.orderBy == 'asc') {
-        this.orderBy = 'desc'
-      } else {
-        this.orderBy = 'asc'
-      }
-
-      this.$store.dispatch('user/sortUserTasks', { sName: 'priority', order: this.orderBy })
-      this.key += 1;
+      this.sortName = 'priority'
     },
 
     toggleSidebar($event) {

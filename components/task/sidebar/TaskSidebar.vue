@@ -205,7 +205,7 @@ export default {
       return [{ label: 'Please select...', value: null }, ...data]
     },
     companyProjects() {
-      console.log("new project", this.project.id, this.project.title)
+      // console.log("new project", this.project.id, this.project.title)
       let data = this.projects.map(p => {
         return { label: p.title, value: p.id }
       })
