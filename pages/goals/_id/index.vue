@@ -5,7 +5,7 @@
         <bib-icon icon="arrowhead-left" :scale="1.5" variant="gray5"></bib-icon>
       </nuxt-link>
       <bib-avatar></bib-avatar>
-      <span id="goal-id-goal-title" class=" font-w-700  mr-1 " style="font-size: 1.25rem;">{{goal ? goal.title : 'Goal Title'}}</span>
+      <span id="goal-id-goal-title" class=" font-w-700  mr-1 " style="font-size: 1.25rem;">{{goal.title}}</span>
       <!-- <bib-page-title label="Page Title"></bib-page-title> -->
       <template> <!-- v-if="goal.status" -->
         <span id="goal-id-badge-status" class="badge-status"><!--{{goal.status.text}} --> Status</span>

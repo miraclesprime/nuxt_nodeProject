@@ -19,7 +19,7 @@
                 </div> -->
                 </template>
                 <template #cell(projectId)="data">
-                  <project-info :projectId="data.value.project[0] ? data.value.project[0].projectId : null"></project-info>
+                  <project-info :projectId="data.value.project[0] ? data.value.project[0].projectId : null" :key="key"></project-info>
                 </template>
                 <template #cell(owner)="data">
                   <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
@@ -418,42 +418,21 @@ export default {
       // sort By Project
       if ($event == 'projectId' && this.orderBy == 'asc') {
   
-        let arr = JSON.parse(JSON.stringify(this.localdata))
-        let newArr = []
-  
-        for (let i = 0; i < arr.length; i++) {
-          if (arr[i].project[0]) {
-            newArr.unshift(arr[i])
-          } else {
-            newArr.push(arr[i])
-          }
-        }
-  
-        newArr.sort((a, b) => {
-          if (a.project[0] && b.project[0]) {
-            return a.project[0].project.title.localeCompare(b.project[0].project.title)
-          }
-        });
-        this.localdata = newArr;
+        this.localdata.forEach(function(todo) {
+             todo["tasks"] = todo.tasks.sort((a, b) => {
+              if (a.project && b.project) {
+                return a.project[0].project.title.localeCompare(b.project[0].project.title)
+              }
+            });
+        })
   
       }
   
       if ($event == 'projectId' && this.orderBy == 'desc') {
 
-        // let arr = JSON.parse(JSON.stringify(state.userTasks))
-        // let newArr = []
-
-        // for (let i = 0; i < arr.length; i++) {
-        //   if (arr[i].project[0]) {
-        //     newArr.unshift(arr[i])
-        //   } else {
-        //     newArr.push(arr[i])
-        //   }
-        // }
-
         this.localdata.forEach(function(todo) {
              todo["tasks"] = todo.tasks.sort((a, b) => {
-              if (a.project[0] && b.project[0]) {
+              if (a.project && b.project) {
                 return b.project[0].project.title.localeCompare(a.project[0].project.title)
               }
             });
