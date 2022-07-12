@@ -47,7 +47,7 @@
   <div class="menu " id='goal-id-menu-content'>
       <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="GOAL_TABS" />
     </div>
-    <div id="goal-id-tab-content" class="goal-id-tab-content position-relative of-scroll-y">
+    <div id="goal-id-tab-content" class="goal-id-tab-content h-100 position-relative of-scroll-y">
       <goal-overview v-if="activeTab.value == GOAL_TAB_TITLES.overview" :fields="TABLE_FIELDS" ></goal-overview>
       <goal-projects v-if="activeTab.value == GOAL_TAB_TITLES.projects" :fields="TABLE_FIELDS" ></goal-projects>
       <goal-tasks v-if="activeTab.value == GOAL_TAB_TITLES.tasks" :fields="TABLE_FIELDS" ></goal-tasks>
