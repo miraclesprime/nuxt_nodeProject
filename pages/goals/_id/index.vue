@@ -68,7 +68,8 @@ export default {
             activeTab: GOAL_DEFAULT_TAB,
             GOAL_TABS,
             GOAL_TAB_TITLES,
-            TABLE_FIELDS
+            TABLE_FIELDS,
+            goal: {}
         }
     },
 
@@ -82,10 +83,22 @@ export default {
                 return { icon: "bookmark", variant: "gray5", text: "Add to favorites", status: false }
             }
         },
+    },
 
-        ...mapGetters({
-          goal: 'goals/getSelectedGoal'
+    mounted() {
+      if (process.client) {
+        this.loading = true
+        this.$axios.$get(`goal/${this.$route.params.id}`, {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+        }).then((res) => {
+          if (res) {
+            this.goal = res.data;
+            this.loading = false
+          }
+        }).catch(err => {
+          console.log(err);
         })
+      }
     },
 
     methods: {
