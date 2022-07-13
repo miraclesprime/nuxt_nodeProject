@@ -40,6 +40,8 @@ export default {
         
     },
 
+    openCreategoaskModal(){},
+
     viewGoals($event) {
     //   this.$emit("loading", true)
     //   this.$store.dispatch('project/fetchProjects', $event).then(() => { this.$emit("loading", false) })
