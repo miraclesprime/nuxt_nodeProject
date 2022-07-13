@@ -125,7 +125,285 @@ export const DUMMY_PROJECT = {
 
 }
 
-export const SECTION_TASKS = [{
+export const SECTION_TASKS = [
+ {
+    "id": 1,
+    "userId": "DKgl9av2NwnaG1vz",
+    "title": "Recently Assigned",
+    "uOrder": 0,
+    "isDefault": true,
+    "isDeleted": false,
+    "createdAt": "2022-06-27T09:26:23.000Z",
+    "updatedAt": "2022-06-27T09:26:23.000Z",
+    "tasks": [
+      {
+        "id": 3,
+        "userId": "DKgl9av2NwnaG1vz",
+        "companyId": "O3GWpmbk5ezJn4KR",
+        "sectionId": 2,
+        "statusId": 5,
+        "todoId": 1,
+        "priorityId": 1,
+        "departmentId": null,
+        "title": "Task three",
+        "order": 3,
+        "tOrder": 0,
+        "description": "",
+        "dueDate": "2022-06-27T09:28:52.000Z",
+        "budget": "0.00",
+        "isDeleted": false,
+        "isDone": false,
+        "createdAt": "2022-06-27T09:28:56.000Z",
+        "updatedAt": "2022-07-04T10:42:32.000Z",
+        "status": {
+          "id": 5,
+          "text": "Done"
+        },
+        "priority": {
+          "id": 1,
+          "text": "high"
+        },
+        "project": [
+          {
+            "id": 3,
+            "projectId": 2,
+            "taskId": 3,
+            "createdAt": "2022-06-27T09:28:57.000Z",
+            "updatedAt": "2022-06-27T09:28:57.000Z",
+            "project": {
+              "id": 2,
+              "userId": "O3GWpmbk5ezJn4KR",
+              "companyId": "O3GWpmbk5ezJn4KR",
+              "statusId": 5,
+              "priorityId": null,
+              "departmentId": null,
+              "title": "Project two",
+              "description": null,
+              "dueDate": null,
+              "budget": null,
+              "isDeleted": false,
+              "isDone": false,
+              "createdAt": "2022-06-27T09:28:16.000Z",
+              "updatedAt": "2022-07-07T07:42:45.000Z"
+            }
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "userId": "DKgl9av2NwnaG1vz",
+        "companyId": "O3GWpmbk5ezJn4KR",
+        "sectionId": 8,
+        "statusId": 2,
+        "todoId": 1,
+        "priorityId": 2,
+        "departmentId": null,
+        "title": "Normal task",
+        "order": 6,
+        "tOrder": 1,
+        "description": "",
+        "dueDate": "2022-07-08T00:00:00.000Z",
+        "budget": "0.00",
+        "isDeleted": false,
+        "isDone": false,
+        "createdAt": "2022-06-27T11:39:37.000Z",
+        "updatedAt": "2022-07-06T10:37:24.000Z",
+        "status": {
+          "id": 2,
+          "text": "In-Progress"
+        },
+        "priority": {
+          "id": 2,
+          "text": "medium"
+        },
+        "project": [
+          {
+            "id": 15,
+            "projectId": 4,
+            "taskId": 6,
+            "createdAt": "2022-07-06T07:48:30.000Z",
+            "updatedAt": "2022-07-06T10:37:24.000Z",
+            "project": {
+              "id": 4,
+              "userId": "9OjoQeZ63ZvepZVg",
+              "companyId": "O3GWpmbk5ezJn4KR",
+              "statusId": null,
+              "priorityId": null,
+              "departmentId": null,
+              "title": "My FIrst Project",
+              "description": null,
+              "dueDate": null,
+              "budget": null,
+              "isDeleted": false,
+              "isDone": false,
+              "createdAt": "2022-06-29T16:32:38.000Z",
+              "updatedAt": "2022-06-29T16:32:38.000Z"
+            }
+          }
+        ]
+      },
+      {
+        "id": 14,
+        "userId": "DKgl9av2NwnaG1vz",
+        "companyId": "O3GWpmbk5ezJn4KR",
+        "sectionId": 16,
+        "statusId": 1,
+        "todoId": 1,
+        "priorityId": 2,
+        "departmentId": null,
+        "title": "Next months task",
+        "order": 12,
+        "tOrder": 0,
+        "description": "",
+        "dueDate": "2022-08-10T00:00:00.000Z",
+        "budget": "0.00",
+        "isDeleted": false,
+        "isDone": false,
+        "createdAt": "2022-06-30T12:30:54.000Z",
+        "updatedAt": "2022-07-06T08:09:53.000Z",
+        "status": {
+          "id": 1,
+          "text": "Not Started"
+        },
+        "priority": {
+          "id": 2,
+          "text": "medium"
+        },
+        "project": [
+          {
+            "id": 17,
+            "projectId": 4,
+            "taskId": 14,
+            "createdAt": "2022-07-06T08:09:52.000Z",
+            "updatedAt": "2022-07-06T08:09:52.000Z",
+            "project": {
+              "id": 4,
+              "userId": "9OjoQeZ63ZvepZVg",
+              "companyId": "O3GWpmbk5ezJn4KR",
+              "statusId": null,
+              "priorityId": null,
+              "departmentId": null,
+              "title": "My FIrst Project",
+              "description": null,
+              "dueDate": null,
+              "budget": null,
+              "isDeleted": false,
+              "isDone": false,
+              "createdAt": "2022-06-29T16:32:38.000Z",
+              "updatedAt": "2022-06-29T16:32:38.000Z"
+            }
+          }
+        ]
+      },
+      {
+        "id": 21,
+        "userId": "DKgl9av2NwnaG1vz",
+        "companyId": "O3GWpmbk5ezJn4KR",
+        "sectionId": 6,
+        "statusId": 1,
+        "todoId": 1,
+        "priorityId": 2,
+        "departmentId": null,
+        "title": "Task no section",
+        "order": 1,
+        "tOrder": 17,
+        "description": "",
+        "dueDate": "2022-07-06T10:01:54.000Z",
+        "budget": "0.00",
+        "isDeleted": false,
+        "isDone": false,
+        "createdAt": "2022-07-06T10:01:58.000Z",
+        "updatedAt": "2022-07-06T10:01:58.000Z",
+        "status": {
+          "id": 1,
+          "text": "Not Started"
+        },
+        "priority": {
+          "id": 2,
+          "text": "medium"
+        },
+        "project": [
+          {
+            "id": 19,
+            "projectId": 3,
+            "taskId": 21,
+            "createdAt": "2022-07-06T10:01:59.000Z",
+            "updatedAt": "2022-07-06T10:01:59.000Z",
+            "project": {
+              "id": 3,
+              "userId": "DKgl9av2NwnaG1vz",
+              "companyId": "O3GWpmbk5ezJn4KR",
+              "statusId": 1,
+              "priorityId": 1,
+              "departmentId": null,
+              "title": "Ulta project",
+              "description": null,
+              "dueDate": "2022-08-31T00:00:00.000Z",
+              "budget": null,
+              "isDeleted": false,
+              "isDone": false,
+              "createdAt": "2022-06-29T07:34:07.000Z",
+              "updatedAt": "2022-07-07T11:15:35.000Z"
+            }
+          }
+        ]
+      },
+      {
+        "id": 24,
+        "userId": "DKgl9av2NwnaG1vz",
+        "companyId": "O3GWpmbk5ezJn4KR",
+        "sectionId": 18,
+        "statusId": 5,
+        "todoId": 1,
+        "priorityId": 2,
+        "departmentId": null,
+        "title": "Column 1 task",
+        "order": 20,
+        "tOrder": 20,
+        "description": "",
+        "dueDate": "2022-07-07T00:00:00.000Z",
+        "budget": "0.00",
+        "isDeleted": false,
+        "isDone": false,
+        "createdAt": "2022-07-06T10:07:03.000Z",
+        "updatedAt": "2022-07-06T10:33:38.000Z",
+        "status": {
+          "id": 5,
+          "text": "Done"
+        },
+        "priority": {
+          "id": 2,
+          "text": "medium"
+        },
+        "project": [
+          {
+            "id": 22,
+            "projectId": 6,
+            "taskId": 24,
+            "createdAt": "2022-07-06T10:07:04.000Z",
+            "updatedAt": "2022-07-06T10:33:38.000Z",
+            "project": {
+              "id": 6,
+              "userId": "DKgl9av2NwnaG1vz",
+              "companyId": "O3GWpmbk5ezJn4KR",
+              "statusId": 2,
+              "priorityId": null,
+              "departmentId": null,
+              "title": "Update task project",
+              "description": null,
+              "dueDate": null,
+              "budget": null,
+              "isDeleted": false,
+              "isDone": false,
+              "createdAt": "2022-07-06T10:05:44.000Z",
+              "updatedAt": "2022-07-06T10:35:07.000Z"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": 14,
     "projectId": 3,
     "title": "_section3",
