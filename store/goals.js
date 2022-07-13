@@ -212,7 +212,7 @@ export const state = () => ({
       const res = await this.$axios.$get(`/goal/company/${JSON.parse(localStorage.getItem('user')).subb}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
-      console.log(res)
+      
       if (res.statusCode == 200) {
         ctx.commit('fetchGoals', res.data);
       }
