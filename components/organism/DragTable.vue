@@ -1,10 +1,10 @@
 <template>
-  <!-- <draggable v-model="sections" tag="div" class="sortable-list" handle=".section-header" @end="$emit('section-dragend')"> -->
-    <table v-click-outside="unselectAll" class="table" :class="{ 'table__headless': headless }" cellspacing="0">
+  <draggable :list="localdata" tag="div" class="" @end="$emit('section-dragend', localdata)">
+    <table v-for="(section, index) in localdata" :key="section.id + templateKey" v-click-outside="unselectAll" class="table" :class="{ 'table__headless': index>=1 }">
       <thead>
         <tr class="table__hrow">
           <th width="3%">&nbsp;</th>
-          <th v-for="(field, key) in fields" @click="clickColumnHeader($event,key)" :key="key" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
+          <th v-for="(field, index) in fields" @click="clickColumnHeader($event,key)" :key="index + templateKey" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
             <div class="align-center">
               <span> {{ field.label }} </span>
               <template v-if="field.header_icon">
@@ -21,27 +21,41 @@
         </th> -->
         </tr>
       </thead>
-      <tr :style="{ width: '0rem' }" v-if="collapseObj">
+      <tr :style="{ width: '0rem' }" v-if="collapsible">
         <td :colspan="cols.length+1">
-          <div class="section-header d-flex align-center gap-05 " :class="'text-'+collapseObj.variant" >
-            <div class="drag-handle width-2 text-center"><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><rect fill="none" height="24" width="24" /><path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div> <span class="d-flex gap-05 align-center cursor-pointer" @click="isCollapsed = !isCollapsed"><bib-icon icon="arrow-down" :scale="0.5" :variant="collapseObj.variant" :style="{transform: iconRotate}"></bib-icon> {{collapseObj.label}}</span>
+          <div class="section-header d-flex align-center gap-05 " :class="'text-'+collapseObj.variant">
+            <div class="drag-handle width-2 text-center"><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
+                <rect fill="none" height="24" width="24" />
+                <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div> <span class="d-flex gap-05 align-center cursor-pointer" @click="isCollapsed = !isCollapsed">
+              <bib-icon icon="arrow-down" :scale="0.5" :variant="collapseObj.variant" :style="{transform: iconRotate}"></bib-icon> {{section.title}}
+            </span>
           </div>
         </td>
       </tr>
-      <draggable :list="localdata" tag="tbody" class="task-draggable " handle=".drag-handle" @start="" @end="$emit('task-dragend', sections)" :style="{ visibility: isCollapsed ? 'collapse': '' }">
-        <tr v-for="(item, keyI) in sections" :key="'item-' + keyI" class="table__irow">
+      <draggable :list="section[tasks]" tag="tbody" :group="{name: 'task'}" class="task-draggable " handle=".drag-handle" @start="" @end="$emit('task-dragend', sections)" :style="{ visibility: isCollapsed ? 'collapse': '' }">
+        <tr v-for="(task, index) in section[tasks]" :key="task.id + index + templateKey" class="table__irow">
           <td>
-            <div class="drag-handle width-2 "><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><rect fill="none" height="24" width="24" /><path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div>
+            <div class="drag-handle width-2 "><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
+                <rect fill="none" height="24" width="24" />
+                <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div>
           </td>
-          <td v-for="(col, key) in cols" :key="key">
-            <div v-if="$scopedSlots['cell(' + col + ')']">
-              <slot :name="'cell(' + col + ')'" v-bind:keyI="keyI" v-bind:value="sections[keyI]">
-              </slot>
+          <td v-for="(col, index) in cols" :key="index + templateKey">
+            <template v-if="col == 'user'">
+              <user-info :userId="cellValue(task, col)"></user-info>
+            </template>
+            <template v-if="col == 'status'">
+              <status-comp :status="cellValue(task, col)"></status-comp>
+            </template>
+            <template v-if="col == 'priority'">
+              <priority-comp :priority="cellValue(task, col)"></priority-comp>
+            </template>
+            <template v-if="col == 'createdAt' || col == 'dueDate'">
+              <format-date :datetime="cellValue(task, col)"></format-date>
+            </template>
+            <div v-if="col == 'title'">
+              {{cellValue(task, col)}}
             </div>
           </td>
-          <!-- <td v-if="$scopedSlots.cell_action">
-            <slot name="cell_action" v-bind:keyI="keyI" v-bind:value="sections[keyI]"></slot>
-          </td> -->
         </tr>
         <tr v-if="newTaskButton">
           <td colspan="2">
@@ -52,7 +66,7 @@
         </tr>
       </draggable>
     </table>
-  <!-- </draggable> -->
+  </draggable>
 </template>
 <script>
 /**
@@ -91,15 +105,24 @@ export default {
         return [];
       },
     },
+    tasks: {
+      type: String,
+      default () {
+        return "tasks"
+      },
+    },
+    collapsible: { type: Boolean, default: true },
     collapseObj: {
       type: Object,
       default () {
-        return null;
+        return {
+          variant: "dark"
+        };
       }
     },
     newTaskButton: {
       type: Object,
-      default(){
+      default () {
         return {
           label: "New Task",
           event: "new-task",
@@ -112,19 +135,31 @@ export default {
   data() {
     return {
       cols: [],
-      item: {},
+      // item: {},
+      templateKey: 11,
       isCollapsed: this.collapseObj ? this.collapseObj.collapsed : false,
     };
   },
   computed: {
     activeClass() { return keyI => this.sections[keyI].active ? 'active' : '' },
     iconRotate() { return this.isCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)' },
+    localdata() {
+      this.templateKey += 1
+      return JSON.parse(JSON.stringify(this.sections))
+    }
   },
   created() {
     this.cols = this.fields.map((field) => field.key);
     // this.cols.shift();
   },
   methods: {
+    cellValue(task, col) {
+      // console.log(col)
+      for (let key in task) {
+        // console.log(task[col])
+        return task[col]
+      }
+    },
     clickItem(key) {
       this.$emit('item-dblclicked', this.sections[key])
       this.unselectAll()
@@ -153,6 +188,8 @@ export default {
   height: max-content;
   margin: 0;
   border-collapse: collapse;
+  cellspacing: 0;
+  cellpadding: 0;
 
   tr {
     height: 2.5rem;
@@ -219,7 +256,7 @@ export default {
         border-right: none;
       }
 
-      color: $gray5;
+      color: $text;
 
       &:first-child {
         text-align: center;
@@ -236,19 +273,19 @@ export default {
 
     &:hover {
       cursor: default;
-      background-color: $light;
+      background-color: #f6f6f6;
       border-color: $gray4;
 
     }
 
     &:active {
       cursor: default;
-      background-color: $light;
+      background-color: #f6f6f6;
       outline: 1px solid $gray4;
     }
 
     &.active {
-      background-color: $light;
+      background-color: #f6f6f6;
       outline: 1px solid $gray4;
     }
   }
