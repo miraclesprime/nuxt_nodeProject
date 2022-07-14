@@ -4,7 +4,7 @@
       <div class="d-flex gap-05 cursor-pointer text-secondary text-hover-dark" id="goa-add-project-button" v-on:click.stop="openCreateProjectModal">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="goa-add-project-text" class="">New Project</span>
       </div>
-      <div class="d-flex gap-05 ml-1 cursor-pointer text-secondary text-hover-dark" id="goa-add-task-button" v-on:click="openCreategoaskModal">
+      <div class="d-flex gap-05 ml-1 cursor-pointer text-secondary text-hover-dark" id="goa-add-task-button" v-on:click="openCreateTaskModal">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="goa-add-task-text" class="">New Task</span>
       </div>
     </div>
@@ -33,12 +33,14 @@ export default {
   
   methods: {
     openCreateProjectModal(){
-      this.$emit('create-project-modal', true)
+      this.$nuxt.$emit('create-project-modal', true)
     },
 
     openCreateTaskModal() {
-        
+      this.$nuxt.$emit('create-task-modal', true)
     },
+
+    openCreategoaskModal(){},
 
     viewGoals($event) {
     //   this.$emit("loading", true)

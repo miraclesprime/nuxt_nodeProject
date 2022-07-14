@@ -3,7 +3,7 @@
     
     <page-title title="Goals"></page-title>
     
-    <goal-actions @sortValue='sortName=$event' v-on:goal-create-modal="openCreateGoalModal"></goal-actions>
+    <goal-actions @sortValue='sortName=$event' @viewValue='viewName=$event' v-on:goal-create-modal="openCreateGoalModal"></goal-actions>
     <div id="goals-list-wrapper" class="projects-list-wrapper of-scroll-y position-relative" >
       <!-- <loading :loading="loading"></loading> -->
       <template v-if="goals.length">

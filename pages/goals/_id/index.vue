@@ -8,7 +8,7 @@
       <span id="goal-id-goal-title" class=" font-w-700  mr-1 " style="font-size: 1.25rem;">{{goal.title}}</span>
       <!-- <bib-page-title label="Page Title"></bib-page-title> -->
       <template> <!-- v-if="goal.status" -->
-        <span id="goal-id-badge-status" class="badge-status"><!--{{goal.status.text}} --> Status</span>
+        <span id="goal-id-badge-status" class="badge-status" v-if="goal.status">{{ goal.status.text }}</span>
       </template>
       <div class="ml-auto d-flex gap-05 align-center position-relative" id="goal-id-button-wraps">
         <bib-avatar></bib-avatar>
@@ -47,7 +47,7 @@
   <div class="menu " id='goal-id-menu-content'>
       <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="GOAL_TABS" />
     </div>
-    <div id="goal-id-tab-content" class="goal-id-tab-content position-relative of-scroll-y">
+    <div id="goal-id-tab-content" class="goal-id-tab-content h-100 position-relative of-scroll-y">
       <goal-overview v-if="activeTab.value == GOAL_TAB_TITLES.overview" :fields="TABLE_FIELDS" ></goal-overview>
       <goal-projects v-if="activeTab.value == GOAL_TAB_TITLES.projects" :fields="TABLE_FIELDS" ></goal-projects>
       <goal-tasks v-if="activeTab.value == GOAL_TAB_TITLES.tasks" :fields="TABLE_FIELDS" ></goal-tasks>
@@ -60,7 +60,6 @@
 
 <script>
 import {TABLE_FIELDS, GOAL_TABS, GOAL_DEFAULT_TAB, GOAL_TAB_TITLES } from "config/constants";
-import { mapGetters } from 'vuex'; 
 
 export default {
     data() {
@@ -68,7 +67,8 @@ export default {
             activeTab: GOAL_DEFAULT_TAB,
             GOAL_TABS,
             GOAL_TAB_TITLES,
-            TABLE_FIELDS
+            TABLE_FIELDS,
+            goal: {}
         }
     },
 
@@ -82,10 +82,22 @@ export default {
                 return { icon: "bookmark", variant: "gray5", text: "Add to favorites", status: false }
             }
         },
+    },
 
-        ...mapGetters({
-          goal: 'goals/getSelectedGoal'
+    mounted() {
+      if (process.client) {
+        this.loading = true
+        this.$axios.$get(`goal/${this.$route.params.id}`, {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+        }).then((res) => {
+          if (res) {
+            this.goal = res.data;
+            this.loading = false
+          }
+        }).catch(err => {
+          console.log(err);
         })
+      }
     },
 
     methods: {
