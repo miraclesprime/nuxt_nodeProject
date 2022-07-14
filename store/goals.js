@@ -210,7 +210,7 @@ export const state = () => ({
     // fetch all Goals
     async fetchGoals(ctx, payload) {
       const res = await this.$axios.$get(`/goal/company/${JSON.parse(localStorage.getItem('user')).subb}`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, filter: payload ? payload : 'all' }
       });
       
       if (res.statusCode == 200) {

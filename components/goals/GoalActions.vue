@@ -47,10 +47,10 @@ export default {
     }
     ,
     viewGoals($event) {
-    //   this.$emit("loading", true)
-    //   this.$store.dispatch('project/fetchProjects', $event).then(() => { this.$emit("loading", false) })
-    //   this.selectedView = $event;
-    //   this.$emit('viewValue', $event)
+      this.$emit("loading", true)
+      this.$store.dispatch('goals/fetchGoals', $event).then(() => { this.$emit("loading", false) })
+      this.selectedView = $event;
+      this.$emit('viewValue', $event)
     },
 
     sortBy($event) {
