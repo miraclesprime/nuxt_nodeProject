@@ -378,7 +378,8 @@ export const PROJECT_FAVORITES = [
       icon: 'swap-vertical',
       event: 'file-title-sort',
       isActive: false
-    }
+    },
+    event: "task-click"
   },
   { 
     label: 'Department', 
@@ -432,10 +433,7 @@ export const PROJECT_FAVORITES = [
 ]
 
 export const TASK_FAVORITES = [
-  { 
-    label: '#', 
-    key: ''
-  },
+  
   { 
     label: 'Task name', 
     key: 'title', 
@@ -443,7 +441,8 @@ export const TASK_FAVORITES = [
       icon: 'swap-vertical',
       event: 'file-title-sort',
       isActive: false
-    }
+    },
+    event: "task-click",
   },
   { 
     label: 'Status', 
@@ -467,7 +466,7 @@ export const TASK_FAVORITES = [
   },
   { 
     label: 'Owner', 
-    key: 'owner', 
+    key: 'userId', 
     width : '20%',
     header_icon: {
       icon: 'swap-vertical',

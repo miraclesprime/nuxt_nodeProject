@@ -2,11 +2,12 @@
   <client-only>
     <div id="task-page-wrapper" class="task-page-wrapper">
       <page-title title="Tasks"></page-title>
-      <company-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:create-task="toggleSidebar($event)"></company-tasks-actions>
+      <company-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:new-task="toggleSidebar($event)"></company-tasks-actions>
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
         <template v-if="gridType == 'list'">
           <template v-if="tasks.length">
-            <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Department', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key" @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
+            <drag-table-simple :fields="taskFields" :tasks="tasks" :sectionTitle="'Department'" :drag="false" v-on:task-click="$nuxt.$emit('open-sidebar', $event)" v-on:new-task="toggleSidebar($event)"></drag-table-simple>
+            <!-- <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Department', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key" @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
               <template #cell(title)="data">
                 <span class="text-dark text-left cursor-pointer d-block" style=" line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{ data.value.title }}</span>
               </template>
@@ -24,7 +25,7 @@
               <template #cell(dueDate)="data">
                 <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span>
               </template>
-            </bib-table>
+            </bib-table> -->
           </template>
           <template v-else>
             <div>
@@ -228,6 +229,7 @@ export default {
 
 
     toggleSidebar($event) {
+      console.log($event)
       // in case of create task 
       if (!$event) {
         this.$nuxt.$emit("open-sidebar", $event)

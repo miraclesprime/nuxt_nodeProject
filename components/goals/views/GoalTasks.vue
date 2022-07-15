@@ -1,31 +1,8 @@
 <template>
   <div>
     <template v-if="viewtype == 'list'">
-      <draggable :list="localdata" tag="div" class="" @end="sectionDragend">
-        <drag-table v-for="(item, index) in localdata" :key="item.id" :fields="fields" :sections="item.tasks" :collapseObj="{'collapsed': false, 'label': item.title, 'variant': 'black'}" :headless="index > 0" v-on:new-task="newTask" v-on:section-dragend="sectionDragend" v-on:task-dragend="taskDragend">
-          <template #cell(title)="data">
-            <div class="d-flex gap-05 align-center">
-              <bib-icon icon="check-circle" :scale="1.25" variant="secondary" class="cursor-pointer"></bib-icon>
-              <span class="text-dark text-left cursor-pointer flex-grow-1" style="  line-height:1.25;">{{ data.value.title }}</span>
-            </div>
-          </template>
-          <template #cell(owner)="data">
-            <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
-          </template>
-          <template #cell(status)="data">
-            <status-comp :status="data.value.status"></status-comp>
-          </template>
-          <template #cell(startDate)="data">
-            <span class="text-dark d-inline-flex" style="line-height: normal;" v-format-date="data.value.createdAt"></span>
-          </template>
-          <template #cell(dueDate)="data">
-            <span class="text-dark d-inline-flex" style="line-height: normal;" v-format-date="data.value.dueDate"></span>
-          </template>
-          <template #cell(priority)="data">
-            <priority-comp :priority="data.value.priority"></priority-comp>
-          </template>
-        </drag-table>
-      </draggable>
+      <drag-table :fields="fields" :sections="localdata" :tasksKey="'tasks'" :collapsible="true" v-on:task-click="taskClicked" v-on:new-task="newTask" v-on:section-dragend="sectionDragend" v-on:task-dragend="taskDragend">
+      </drag-table>
     </template>
   </div>
 </template>
@@ -49,9 +26,10 @@ export default {
             event: "title-sort",
             isActive: false,
           },
+          event: "task-click",
         },
         {
-          key: "assignee",
+          key: "userId",
           label: "Assignee",
           width: "20%",
           header_icon: {
@@ -81,7 +59,7 @@ export default {
           },
         },
         {
-          key: "startDate",
+          key: "createdAt",
           label: "Start Date",
           width: "10%",
           header_icon: {
@@ -101,7 +79,8 @@ export default {
           },
         }
       ],
-      sections: SECTION_TASKS
+      sections: SECTION_TASKS,
+      // localdata: [],
     }
   },
   computed: {
@@ -109,16 +88,22 @@ export default {
       return JSON.parse(JSON.stringify(this.sections))
     }
   },
+  mounted() {
+    this.localdata = JSON.parse(JSON.stringify(this.sections))
+  },
   methods: {
+    taskClicked($event) {
+      console.info('task clicked ->', $event.title);
+    },
     rightClickRow($event) {
       console.log($event.row)
     },
     newTask($event) {
-      console.log($event)
+      console.log($event.id, $event.title)
       alert("new task in section")
     },
-    sectionDragend() {
-      console.log('section drag end')
+    sectionDragend($event) {
+      console.log('section drag end', $event)
     },
     taskDragend($event) {
       console.log('task drag end', $event)
