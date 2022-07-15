@@ -2,6 +2,7 @@
 export const state = () => ({
     goals: [],
     selectedGoal: {},
+    favGoals: []
   });
   
   export const getters = {
@@ -11,6 +12,14 @@ export const state = () => ({
   
     getSelectedGoal(state) {
       return state.selectedGoal;
+    },
+
+    getFavGoals(state) {
+      let fav = []
+      state.favGoals.map(f => {
+        fav.push({ label: f.goals.title, icon: "folder-solid", id: f.goals.id })
+      })
+      return fav
     },
   };
   
@@ -26,6 +35,10 @@ export const state = () => ({
   
     setSingleGoal(state, currentGoal) {
       state.selectedGoal = currentGoal;
+    },
+
+    setFavGoals(state, payload) {
+      state.favGoals = payload
     },
 
     sortGoals(state, payload) {
@@ -210,7 +223,7 @@ export const state = () => ({
     // fetch all Goals
     async fetchGoals(ctx, payload) {
       const res = await this.$axios.$get(`/goal/company/${JSON.parse(localStorage.getItem('user')).subb}`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, filter: payload ? payload : 'all' }
       });
       
       if (res.statusCode == 200) {
@@ -239,6 +252,69 @@ export const state = () => ({
     sortGoals(ctx, payload) {
       ctx.commit('sortGoals', payload)
     },
+
+    async setFavGoals(ctx) {
+      try {
+        const fav = await this.$axios.$get("/goal/user/favorites", {
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
+          }
+        })
+        if (fav.statusCode == 200) {
+          ctx.commit("setFavGoals", fav.data)
+        } else {
+          ctx.commit("setFavGoals", [])
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    },
+
+    async addToFavorite(ctx, payload) {
+    
+      try {
+  
+        let fav = await this.$axios.post(`/goal/${payload.id}/favorite`, {}, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+          }
+        })
+  
+        if(fav.data.statusCode == 200) {
+          ctx.dispatch("setFavGoals")
+          return fav.data.message
+        } else {
+          return fav.data.message
+        }
+  
+      } catch(e) {
+        console.log(e);
+      }
+    },
+  
+    async removeFromFavorite(ctx, payload) {
+      
+      try {
+  
+        let fav = await this.$axios.delete(`/goal/${payload.id}/favorite`, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+          }
+        })
+  
+        if(fav.data.statusCode == 200) {
+          ctx.dispatch("setFavGoals")
+          return fav.data.message
+        } else {
+          return fav.data.message
+        }
+  
+      } catch(e) {
+        console.log(e);
+      }
+    }
     
   };
   

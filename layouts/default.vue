@@ -323,6 +323,7 @@ export default {
           }).then((value) => {
             // console.log('user created!!')
             this.$store.dispatch("project/setFavProjects")
+            this.$store.dispatch("goals/setFavGoals")
             this.$store.dispatch("user/setTeamMembers")
             this.$store.dispatch("task/getFavTasks")
           }).catch((err) => {
