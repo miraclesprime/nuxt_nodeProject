@@ -1,5 +1,5 @@
 <template>
-  <draggable :list="localdata" tag="div" class="" @end="$emit('section-dragend', localdata)">
+  <draggable :list="localdata" tag="div" handle=".drag-handle" class="" @end="$emit('section-dragend', localdata)">
     <table v-for="(section, index) in localdata" :key="section.id + templateKey" v-click-outside="unselectAll" class="table" :class="{ 'table__headless': index>=1 }">
       <thead>
         <tr class="table__hrow">
@@ -32,39 +32,45 @@
           </div>
         </td>
       </tr>
-      <draggable :list="section[tasks]" tag="tbody" :group="{name: 'task'}" class="task-draggable " handle=".drag-handle" @start="" @end="$emit('task-dragend', sections)" :style="{ visibility: isCollapsed ? 'collapse': '' }">
-        <tr v-for="(task, index) in section[tasks]" :key="task.id + index + templateKey" class="table__irow">
+      <draggable :list="section[tasksKey]" tag="tbody" :data-section="section.id" :group="{name: 'task'}" class="task-draggable " handle=".drag-handle" @start="taskDragStart" :move="moveTask" @end="taskDragEnd" :style="{ visibility: isCollapsed ? 'collapse': '' }">
+        <tr v-for="(task, index) in section[tasksKey]" :key="task.id + index + templateKey" class="table__irow">
           <td>
             <div class="drag-handle width-2 "><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
                 <rect fill="none" height="24" width="24" />
                 <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div>
           </td>
-          <td v-for="(col, index) in cols" :key="index + templateKey">
-            <template v-if="col == 'user'">
-              <user-info :userId="cellValue(task, col)"></user-info>
+          <td v-for="(col, index) in cols" :key="task.id + index + templateKey">
+            <template v-if="col.key == 'userId'">
+              <user-info :userId="task[col.key]"></user-info>
             </template>
-            <template v-if="col == 'status'">
-              <status-comp :status="cellValue(task, col)"></status-comp>
+            <template v-if="col.key == 'status'">
+              <status-comp :status="task[col.key]"></status-comp>
             </template>
-            <template v-if="col == 'priority'">
-              <priority-comp :priority="cellValue(task, col)"></priority-comp>
+            <template v-if="col.key == 'priority'">
+              <priority-comp :priority="task[col.key]"></priority-comp>
             </template>
-            <template v-if="col == 'createdAt' || col == 'dueDate'">
-              <format-date :datetime="cellValue(task, col)"></format-date>
+            <template v-if="col.key == 'createdAt' || col.key == 'dueDate'">
+              <format-date :datetime="task[col.key]"></format-date>
             </template>
-            <div v-if="col == 'title'">
-              {{cellValue(task, col)}}
-            </div>
-          </td>
-        </tr>
-        <tr v-if="newTaskButton">
-          <td colspan="2">
-            <div class="d-inline-flex align-center gap-05 cursor-pointer font-md" :class="['text-'+newTaskButton.variant, 'text-hover-'+newTaskButton.hover]" v-on:click="$emit(newTaskButton.event, sections)">
-              <bib-icon icon="add" :variant="newTaskButton.variant" :scale="1.1" class=""></bib-icon> <span>{{newTaskButton.label}}</span>
+            <div v-if="col.key == 'title'" class="d-flex gap-05 align-center h-100">
+              <bib-icon icon="check-circle" :scale="1.25" :variant="taskCheckIcon(task)" class="cursor-pointer" @click="updateTaskStatus(task)"></bib-icon>
+              <span v-if="col.event" class="cursor-pointer flex-grow-1" style=" line-height:1.25;" v-on:click="$emit(col.event, task)">
+                {{task[col.key]}}
+              </span>
+              <span v-else class="flex-grow-1">
+                {{task[col.key]}}
+              </span>
             </div>
           </td>
         </tr>
       </draggable>
+      <tr v-if="newTaskButton">
+        <td colspan="2">
+          <div class="d-inline-flex align-center gap-05 cursor-pointer font-md" :class="['text-'+newTaskButton.variant, 'text-hover-'+newTaskButton.hover]" v-on:click.stop="$emit(newTaskButton.event, section)">
+            <bib-icon icon="add" variant="success" :scale="1.1" class=""></bib-icon> <span>{{newTaskButton.label}}</span>
+          </div>
+        </td>
+      </tr>
     </table>
   </draggable>
 </template>
@@ -87,12 +93,12 @@ export default {
     draggable
   },
   props: {
-    headless: {
+    /*headless: {
       type: Boolean,
       default () {
         return false;
       },
-    },
+    },*/
     fields: {
       type: Array,
       default () {
@@ -105,7 +111,7 @@ export default {
         return [];
       },
     },
-    tasks: {
+    tasksKey: {
       type: String,
       default () {
         return "tasks"
@@ -138,27 +144,38 @@ export default {
       // item: {},
       templateKey: 11,
       isCollapsed: this.collapseObj ? this.collapseObj.collapsed : false,
+      localdata: [],
+      taskMoveSection: null,
+      highlight: false,
     };
   },
   computed: {
     activeClass() { return keyI => this.sections[keyI].active ? 'active' : '' },
     iconRotate() { return this.isCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)' },
-    localdata() {
+    /*localdata() {
       this.templateKey += 1
       return JSON.parse(JSON.stringify(this.sections))
-    }
+    }*/
   },
   created() {
-    this.cols = this.fields.map((field) => field.key);
+    console.info('created lifecycle', this.cols.length)
+    this.cols = this.fields.map((field) => { return { key: field.key, event: field.event } })
     // this.cols.shift();
   },
+  mounted() {
+    console.info('mounted lifecycle', this.sections.length);
+    this.localdata = this.sections ? JSON.parse(JSON.stringify(this.sections)) : []
+  },
   methods: {
-    cellValue(task, col) {
-      // console.log(col)
-      for (let key in task) {
-        // console.log(task[col])
-        return task[col]
+    taskCheckIcon(task){
+      if (task.statusId == 5) {
+        return 'success'
+      } else {
+        return 'secondary'
       }
+    },
+    updateTaskStatus(task){
+      console.log(task.statusId)
     },
     clickItem(key) {
       this.$emit('item-dblclicked', this.sections[key])
@@ -170,6 +187,23 @@ export default {
       for (let row of rows) {
         row.classList.remove('active');
       }
+    },
+    taskDragStart(e) {
+      // console.warn(e.to.classList.add("highlight"));
+      this.highlight = true
+    },
+    taskDragEnd(e) {
+      // console.log(e)
+      this.highlight = false
+      let sectionData = this.localdata.filter(s => s.id == e.to.dataset.section)
+      this.$emit('task-dragend', sectionData[0].tasks)
+    },
+    moveTask(e) {
+      // console.log('dragged->' ,e.draggedContext)
+      // console.info('related->', e.relatedContext.component.$el)
+      // console.warn(e.to.dataset.section)
+      this.taskMoveSection = +e.to.dataset.section
+
     },
     /*rightClickItem(event, key) {
       event.preventDefault()
@@ -241,6 +275,12 @@ export default {
     user-select: none;
   }
 
+  .highlight {
+    .table__irow {
+      background-color: skyblue;
+    }
+  }
+
   &__irow {
     color: $gray6;
     font-weight: 400;
@@ -248,6 +288,7 @@ export default {
     font-size: $base-size;
     outline: 1px solid transparent;
     transition: background-color .3s linear, outline-color .3s linear;
+
 
     td {
       border: 1px solid $light;
@@ -263,19 +304,14 @@ export default {
       }
     }
 
-    /*&:nth-child(2) td {
-      border-top: none;
-    }
-
-    &:not(:last-child) td {
-      border-bottom: none;
-    }*/
-
     &:hover {
       cursor: default;
       background-color: #f6f6f6;
       border-color: $gray4;
 
+      .drag-handle {
+        opacity: 1;
+      }
     }
 
     &:active {
@@ -300,9 +336,11 @@ export default {
 
   .drag-handle {
     cursor: grab;
+    opacity: 0.125;
+    transition: all 300ms ease-in;
 
     svg {
-      fill: $gray4;
+      fill: $gray5;
     }
   }
 }

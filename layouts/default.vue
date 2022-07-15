@@ -366,11 +366,6 @@ export default {
       }
     },
 
-    rightClkFileSection(event) {
-      console.log('click outside event')
-      // this.$refs.projectModals.showCreateProjectModal = true;
-    },
-
     /*createProject(data) {
       this.$store.dispatch('project/createProject', data.name);
     },*/
