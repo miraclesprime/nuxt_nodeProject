@@ -60,6 +60,7 @@
 
 <script>
 import {TABLE_FIELDS, GOAL_TABS, GOAL_DEFAULT_TAB, GOAL_TAB_TITLES } from "config/constants";
+import { mapGetters } from 'vuex'
 
 export default {
     data() {
@@ -68,14 +69,19 @@ export default {
             GOAL_TABS,
             GOAL_TAB_TITLES,
             TABLE_FIELDS,
-            goal: {}
+            goal: {},
+            favLoading: false,
+            popupMessages: [],
         }
     },
 
     computed: {
+        ...mapGetters({
+          favGoals: "goals/getFavGoals",
+        }),
+
         isFavorite() {
-            // this.favProjects.some(t => t.id == this.project.id)
-            let fav = null
+            let fav = this.favGoals.some(t => t.id == this.goal.id)
             if (fav) {
                 return { icon: "bookmark-solid", variant: "orange", text: "Remove favorite", status: true }
             } else {
@@ -106,7 +112,26 @@ export default {
         },
 
         setFavorite() {
-            
+            this.favLoading = true
+            if (this.isFavorite.status) {
+              this.$store.dispatch("goals/removeFromFavorite", { id: this.$route.params.id })
+                .then(msg => {
+                  this.popupMessages.push({ text: msg, variant: "orange" })
+
+                  // alert(msg)
+                })
+                .catch(e => console.log(e))
+                .then(() => this.favLoading = false)
+            } else {
+              this.$store.dispatch("goals/addToFavorite", { id: this.$route.params.id })
+                .then(msg => {
+                  this.popupMessages.push({ text: msg, variant: "success"})
+
+                  // alert(msg)
+                })
+                .catch(e => console.log(e))
+                .then(() => this.favLoading = false)
+            }
         }
     }
 }
