@@ -70,6 +70,9 @@
           <template v-if="col.key == 'createdAt' || col.key == 'dueDate'">
             <format-date :datetime="task[col.key]"></format-date>
           </template>
+          <template v-if="col.key == 'project'">
+            <project-info v-if="task[col.key].length" :projectId="task[col.key][0].projectId"></project-info>
+          </template>
           <div v-if="col.key == 'title'" class="d-flex gap-05 align-center h-100">
             <bib-icon icon="check-circle" :scale="1.25" :variant="taskCheckIcon(task)" class="cursor-pointer" @click="updateTaskStatus(task)"></bib-icon>
             <span v-if="col.event" class="cursor-pointer flex-grow-1" style="  line-height:1.25;" v-on:click="$emit(col.event, task)">
@@ -183,14 +186,14 @@ export default {
     this.localdata = this.tasks ? JSON.parse(JSON.stringify(this.tasks)) : []
   },
   methods: {
-    taskCheckIcon(task){
+    taskCheckIcon(task) {
       if (task.statusId == 5) {
         return 'success'
       } else {
         return 'secondary'
       }
     },
-    updateTaskStatus(task){
+    updateTaskStatus(task) {
       console.log(task.statusId)
     },
     unselectAll() {

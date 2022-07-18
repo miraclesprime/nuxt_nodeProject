@@ -1,9 +1,8 @@
 <template>
-  <span :id="'project-info-'+ projectId" class="project-title text-dark text-truncate">{{projectTitle}}</span>
+  <span :id="'project-info-'+ projectId" class="project-title text-dark text-truncate">{{project.title}}</span>
 </template>
-
 <script>
-import {mapGetters} from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
 
@@ -14,14 +13,21 @@ export default {
   },
   data() {
     return {
-      projectTitle: null,
+      // projectTitle: null,
     }
   },
 
   computed: {
     ...mapGetters({
       projects: 'project/getAllProjects'
-    })
+    }),
+    project() {
+      if (this.projectId) {
+        return this.projects.find((el) => el.id == this.projectId)
+      } else {
+        return { title: ""}
+      }
+    }
   },
 
   /*created() {
@@ -37,13 +43,13 @@ export default {
 
   mounted() {
     // console.log("mounted project info,", this.projectId, this.projects.length)
-    if (this.projectId) {
+    /*if (this.projectId) {
       this.projects.filter((el) => {
-        if(el.id == this.projectId) {
+        if (el.id == this.projectId) {
           this.projectTitle = el.title;
         }
       })
-    } 
+    }*/
   }
 }
 

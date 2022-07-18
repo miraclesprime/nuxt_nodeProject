@@ -4,7 +4,7 @@
       <thead>
         <tr class="table__hrow">
           <th width="3%">&nbsp;</th>
-          <th v-for="(field, index) in fields" @click="clickColumnHeader($event,key)" :key="index + templateKey" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
+          <th v-for="(field, index) in fields" :key="index + templateKey" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
             <div class="align-center">
               <span> {{ field.label }} </span>
               <template v-if="field.header_icon">
@@ -14,11 +14,6 @@
               </template>
             </div>
           </th>
-          <!-- <th v-if="$scopedSlots.cell_action" class="cell_action_header">
-          <div class="d-flex justify-center align-center">
-            <bib-icon icon="horizontal-dots"></bib-icon>
-          </div>
-        </th> -->
         </tr>
       </thead>
       <tr :style="{ width: '0rem' }" v-if="collapsible">
@@ -51,6 +46,10 @@
             </template>
             <template v-if="col.key == 'createdAt' || col.key == 'dueDate'">
               <format-date :datetime="task[col.key]"></format-date>
+            </template>
+            <template v-if="col.key == 'project'">
+              <project-info v-if="task[col.key].length" :projectId="task[col.key][0].projectId"></project-info>
+              <!-- <project-info :projectId="task[col.key][0].projectId" ></project-info> -->
             </template>
             <div v-if="col.key == 'title'" class="d-flex gap-05 align-center h-100">
               <bib-icon icon="check-circle" :scale="1.25" :variant="taskCheckIcon(task)" class="cursor-pointer" @click="updateTaskStatus(task)"></bib-icon>
@@ -85,6 +84,8 @@
  * @vue-prop sections=[] {Array} - table data.
  * @vue-prop collapseObj=null {Object} - collapsible table settings.
  * @vue-prop newTaskbutton={Object} - add new row button
+ * @vue-emits ['section-dragend', 'task-dragend' ]
+ * @vue-dynamic-emits [ 'header_icon click event', 'title click event', 'newtask click event' ] 
  */
 import draggable from 'vuedraggable'
 export default {
@@ -158,12 +159,12 @@ export default {
     }*/
   },
   created() {
-    console.info('created lifecycle', this.cols.length)
+    // console.info('created lifecycle', this.cols.length)
     this.cols = this.fields.map((field) => { return { key: field.key, event: field.event } })
     // this.cols.shift();
   },
   mounted() {
-    console.info('mounted lifecycle', this.sections.length);
+    // console.info('mounted lifecycle', this.sections.length);
     this.localdata = this.sections ? JSON.parse(JSON.stringify(this.sections)) : []
   },
   methods: {
@@ -196,7 +197,7 @@ export default {
       // console.log(e)
       this.highlight = false
       let sectionData = this.localdata.filter(s => s.id == e.to.dataset.section)
-      this.$emit('task-dragend', sectionData[0].tasks)
+      this.$emit('task-dragend', { tasks: sectionData[0].tasks, sectionId:e.to.dataset.section})
     },
     moveTask(e) {
       // console.log('dragged->' ,e.draggedContext)
@@ -205,13 +206,7 @@ export default {
       this.taskMoveSection = +e.to.dataset.section
 
     },
-    /*rightClickItem(event, key) {
-      event.preventDefault()
-      this.$emit('item-right-clicked', { event: event, row: this.sections[key] })
-    },*/
-    clickColumnHeader(event, key) {
-      this.$emit('column-header-clicked', { event: event, column: this.cols[key] })
-    }
+    
   },
 };
 

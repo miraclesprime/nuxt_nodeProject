@@ -8,15 +8,13 @@
         <div id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y">
           <template v-if="gridType == 'list'">
             <template v-if="todos.length">
-              <bib-table v-for="(todo, index) in localdata" :key="todo.id + '-' + viewName ? viewName : 'view' + '-' + sortName ? sortName : 'sort' + '-' + key" :fields="taskFields" :sections="todo.tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: todo.title}" :headless="index > 0" class="border-gray4 bg-white" @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
+              <drag-table :key="key" :fields="taskFields" :sections="localdata" v-on:task-click="$nuxt.$emit('open-sidebar', $event)" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd"></drag-table>
+              <!-- <bib-table v-for="(todo, index) in localdata" :key="todo.id + '-' + viewName ? viewName : 'view' + '-' + sortName ? sortName : 'sort' + '-' + key" :fields="taskFields" :sections="todo.tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: todo.title}" :headless="index > 0" class="border-gray4 bg-white" @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
                 <template #cell(title)="data">
                   <div class="d-flex gap-05 align-center">
                     <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data)" class="cursor-pointer" @click="updateTaskStatus(data.value)"></bib-icon>
                     <span class="text-dark text-left cursor-pointer flex-grow-1" style=" line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{ data.value.title }}</span>
                   </div>
-                  <!-- <div :id="'cell'+data.value.id" class="text-dark text-left cursor-pointer" @click="$nuxt.$emit('open-sidebar', data.value)">
-                  {{ data.value.title }}
-                </div> -->
                 </template>
                 <template #cell(projectId)="data">
                   <project-info :projectId="data.value.project[0] ? data.value.project[0].projectId : null" :key="key"></project-info>
@@ -36,7 +34,7 @@
                 <template #cell(priority)="data">
                   <priority-comp :priority="data.value.priority"></priority-comp>
                 </template>
-              </bib-table>
+              </bib-table> -->
               <loading :loading="loading"></loading>
             </template>
             <div v-else>
@@ -180,7 +178,7 @@ export default {
   mounted() {
     this.loading = true
     // this.$store.dispatch('user/setUserTasks', { filter: 'all' }).then((res) => {
-    this.$store.dispatch("todo/fetchTodos", {filter: 'all'}).then((res) => {
+    this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
       // console.log(res)
       if (res.statusCode == 200) {
         this.key += 1
@@ -204,6 +202,7 @@ export default {
       });
 
     },*/
+
     updateKey() {
       // console.log("update-key event received", $event)
       this.loading = true
@@ -293,45 +292,46 @@ export default {
       this.highlight = +e.to.dataset.section
 
     },
-    taskDragEnd: _.debounce(async function(e) {
-      // this.drag = false
-      // console.log('move end =>', e)
+    taskDragEnd: _.debounce(async function(payload) {
+      // console.log('task move end =>', payload)
+
       this.highlight = null
 
-      console.log("move end (section id) =>", e.to.dataset.section)
-
-      let tasklist = this.localdata.filter((t) => t.id == e.to.dataset.section)
-
-      // console.log(tasklist)
-
-      tasklist[0].tasks.forEach((e, i) => {
+      payload.tasks.forEach((e, i) => {
         e.tOrder = i
       })
 
-      console.log(tasklist[0].tasks)
+      console.log(payload)
 
-      let taskDnD;
-      if (this.taskDnDsectionId) {
-        taskDnD = await this.$axios.$put("/todo/crossTodoDragDrop", { data: tasklist[0].tasks, todoId: this.taskDnDsectionId }, {
+      // let taskDnD;
+      let taskDnD = await this.$axios.$put("/todo/crossTodoDragDrop", { data: payload.tasks, todoId: payload.sectionId }, {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+          "Content-Type": "application/json"
+        }
+      })
+
+      /*if (this.taskDnDsectionId) {
+        taskDnD = await this.$axios.$put("/todo/crossTodoDragDrop", { data: tasks, todoId: tasks[0].sectionId }, {
           headers: {
             "Authorization": "Bearer " + localStorage.getItem("accessToken"),
             "Content-Type": "application/json"
           }
         })
-      } else {
-        taskDnD = await this.$axios.$put("/task/todoTask-dd", { data: this.taskDnDlist }, {
-          headers: {
-            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-            "Content-Type": "application/json"
-          }
-        })
-      }
+      }*/
+      /*else {
+             taskDnD = await this.$axios.$put("/task/todoTask-dd", { data: this.taskDnDlist }, {
+               headers: {
+                 "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+                 "Content-Type": "application/json"
+               }
+             })
+           }*/
 
       console.log(taskDnD.message)
-      if (taskDnD.statusCode == 200) {
-        // this.$emit("update-key")
-      } else {
-        console.warn(taskDnD.message)
+      if (taskDnD.statusCode != 200) {
+        // console.warn(taskDnD.message)
+        this.popupMessages.push({ msg: taskDnD.message, variant: 'danger' })
       }
     }, 600),
 
@@ -340,31 +340,27 @@ export default {
       this.highlight = +e.to.dataset.section
     },
 
-    todoDragEnd: _.debounce(async function(e) {
+    todoDragEnd: _.debounce(async function(todos) {
 
-      this.loading = true
-      this.localdata.forEach((el, i) => {
+      todos.forEach((el, i) => {
         el.uOrder = i
       })
 
-      console.log("ordered todos =>", this.localdata)
+      console.log("ordered todos=>", todos)
 
-      let todoDnD = await this.$axios.$put("/todo/dragdrop", { data: this.localdata }, {
+      let todoDnD = await this.$axios.$put("/todo/dragdrop", { data: todos }, {
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
           "Content-Type": "application/json"
         }
       })
 
-      // console.log(todoDnD)
+      console.log(todoDnD)
 
-      if (todoDnD.statusCode == 200) {
-        console.info(todoDnD.message)
-        // this.$store.dispatch("user/fetchUserTodos")
+      if (todoDnD.statusCode != 200) {
+        // console.info(todoDnD.message)
+        this.popupMessages.push({ msg: todoDnD.message, variant: 'danger' })
       }
-
-      this.key += 1
-      this.loading = false
 
     }, 600),
 
@@ -402,47 +398,47 @@ export default {
     // Sort By Action List
     sortBy($event) {
 
-    // sort by title
+      // sort by title
       if ($event == 'name' && this.orderBy == 'asc') {
         this.localdata.forEach(function(todo, index) {
           todo["tasks"] = todo.tasks.sort((a, b) => a.title.localeCompare(b.title))
         })
       }
-  
+
       if ($event == 'name' && this.orderBy == 'desc') {
         this.localdata.forEach(function(todo, index) {
           todo["tasks"] = todo.tasks.sort((a, b) => b.title.localeCompare(a.title))
         })
       }
-  
+
       // sort By Project
       if ($event == 'projectId' && this.orderBy == 'asc') {
-  
+
         this.localdata.forEach(function(todo) {
-             todo["tasks"] = todo.tasks.sort((a, b) => {
-              if (a.project && b.project) {
-                return a.project[0].project.title.localeCompare(b.project[0].project.title)
-              }
-            });
+          todo["tasks"] = todo.tasks.sort((a, b) => {
+            if (a.project && b.project) {
+              return a.project[0].project.title.localeCompare(b.project[0].project.title)
+            }
+          });
         })
-  
+
       }
-  
+
       if ($event == 'projectId' && this.orderBy == 'desc') {
 
         this.localdata.forEach(function(todo) {
-             todo["tasks"] = todo.tasks.sort((a, b) => {
-              if (a.project && b.project) {
-                return b.project[0].project.title.localeCompare(a.project[0].project.title)
-              }
-            });
+          todo["tasks"] = todo.tasks.sort((a, b) => {
+            if (a.project && b.project) {
+              return b.project[0].project.title.localeCompare(a.project[0].project.title)
+            }
+          });
         })
-  
-        }
-  
+
+      }
+
       // sort By Status
       if ($event == "status") {
-  
+
         if (this.orderBy == "asc") {
           this.localdata.forEach(function(todo) {
             todo["tasks"] = todo.tasks.sort((a, b) => a.status.text.localeCompare(b.status.text));
@@ -452,9 +448,9 @@ export default {
             todo["tasks"] = todo.tasks.sort((a, b) => b.status.text.localeCompare(a.status.text));
           })
         }
-  
+
       }
-  
+
       // sort by create date
       if ($event == 'createdAt') {
         if (this.orderBy == "asc") {
@@ -467,8 +463,8 @@ export default {
           })
         }
       }
-  
-  
+
+
       // sort by due date
       if ($event == 'dueDate') {
         if (this.orderBy == "asc") {
@@ -481,8 +477,8 @@ export default {
           })
         }
       }
-  
-  
+
+
       // sort by priority
       if ($event == "priority") {
         if (this.orderBy == "asc") {
@@ -495,7 +491,7 @@ export default {
           })
         }
       }
-      
+
       this.key += 1
       if (this.orderBy == 'asc') {
         this.orderBy = 'desc'
@@ -511,19 +507,19 @@ export default {
     sortProject() {
       this.sortName = 'projectId'
     },
-    
-    sortByStatus(){
+
+    sortByStatus() {
       this.sortName = 'status'
     },
-    
-    sortByStartDate(){
+
+    sortByStartDate() {
       this.sortName = 'createdAt'
     },
-    
+
     sortByDueDate() {
       this.sortName = 'dueDate'
     },
-    
+
     sortByPriority() {
       this.sortName = 'priority'
     },
