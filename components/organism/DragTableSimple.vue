@@ -2,12 +2,12 @@
   <table v-click-outside="unselectAll" class="table">
     <thead>
       <tr class="table__hrow">
-        <!-- <th width="3%">&nbsp;</th> -->
-        <th v-for="(field, index) in fields" @click="clickColumnHeader($event,key)" :key="index + templateKey" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
+        <th v-if="drag" width="3%">&nbsp;</th>
+        <th v-for="(field, index) in fields" :key="index + templateKey" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
           <div class="align-center">
             <span> {{ field.label }} </span>
             <template v-if="field.header_icon">
-              <div class="ml-05 shape-rounded bg-hover-black width-105 height-105 d-flex justify-center align-center cursor-pointer" :class="{'bg-black': field.header_icon.isActive }" @click="$emit(field.header_icon.event)">
+              <div class="ml-05 shape-rounded bg-hover-black width-105 height-105 d-flex justify-center align-center cursor-pointer" :class="{'bg-black': field.header_icon.isActive }" @click="$emit(field.header_icon.event, field.key)">
                 <bib-icon :icon="field.header_icon.icon" :scale="1.1" variant="gray5" hoverVariant="white"></bib-icon>
               </div>
             </template>
@@ -52,6 +52,9 @@
               {{task[col.key]}}
             </span>
           </div>
+          <template v-if="col.key == 'department'">
+              {{task[col.key]}}
+          </template>
         </td>
       </tr>
     </draggable>
@@ -82,6 +85,9 @@
               {{task[col.key]}}
             </span>
           </div>
+          <template v-if="col.key == 'department'">
+              {{task[col.key]}}
+          </template>
         </td>
       </tr>
     </tbody>
@@ -108,7 +114,7 @@
  */
 import draggable from 'vuedraggable'
 export default {
-  name: "DragTable",
+  name: "DragTableSimple",
   components: {
     draggable
   },
@@ -177,12 +183,12 @@ export default {
     }*/
   },
   created() {
-    console.info('created lifecycle', this.cols.length)
+    // console.info('created lifecycle', this.cols.length)
     this.cols = this.fields.map((field) => { return { key: field.key, event: field.event } })
     // this.cols.shift();
   },
   mounted() {
-    console.info('mounted lifecycle', this.tasks.length);
+    // console.info('mounted lifecycle', this.tasks.length);
     this.localdata = this.tasks ? JSON.parse(JSON.stringify(this.tasks)) : []
   },
   methods: {
@@ -219,9 +225,7 @@ export default {
       this.taskMoveSection = +e.to.dataset.section
 
     },
-    clickColumnHeader(event, key) {
-      this.$emit('column-header-clicked', { event: event, column: this.cols[key] })
-    },
+    
     newTaskEvent() {
       this.$emit(this.newTaskButton.event, false)
     }

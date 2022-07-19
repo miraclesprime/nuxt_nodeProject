@@ -1,16 +1,22 @@
 <template>
   <div id="favorite-action-wrapper" class="favorite-actions ">
     
-    <div id="fa-add-project-wrapper" class="action-left">
+    <div id="fa-add-project-wrapper" class="action-left d-flex gap-1">
+      <div class="d-flex gap-05 cursor-pointer text-secondary bg-hover-light shape-rounded py-025 px-05 text-hover-dark" id="fa-add-project-button" v-on:click="$nuxt.$emit('create-project-modal')">
+        <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="fa-add-prject-text" class="">New Project</span>
+      </div>
+      <div class="d-flex gap-05 cursor-pointer text-secondary bg-hover-light shape-rounded py-025 px-05 text-hover-dark" id="fa-add-task-button" v-on:click.stop="$nuxt.$emit('open-sidebar', false)">
+        <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="fa-add-task-text" class="">New Task</span>
+      </div>
     </div>
 
     <div class="action-right" id="fa-action-right">
-      <ul class="actions" id="pa-actions-list">
-        <li class="action" id="pa-action-item1">
+      <ul class="actions" id="fa-actions-list">
+        <li class="action" id="fa-action-item1">
           <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="$emit('change-viewing', $event)"></sorting-comp>
         </li>
-        <li class="action" id="pa-action-item3">
-          <sorting-comp label="Sorted by" :items="sorting" icon="swap-vertical" v-on:change-sort="$emit('change-sorting',$event)"></sorting-comp>
+        <li class="action" id="fa-action-item2">
+          <sorting-comp label="Sorted by" :items="sorting" icon="swap-vertical" v-on:change-sort="$emit('change-sorting', $event)"></sorting-comp>
         </li>
       </ul>
     </div>
@@ -57,7 +63,7 @@ export default {
 <style scoped lang="scss">
 .favorite-actions {
   display: flex;
-  padding: 8px 0;
+  padding: 0.25rem;
   border-bottom: 1px solid $gray4;
   align-items: center;
 }

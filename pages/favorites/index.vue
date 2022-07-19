@@ -4,7 +4,8 @@
       <page-title title="Favorites"></page-title>
       <favorite-actions v-on:change-viewing="changeView" v-on:change-sorting="changeSort"></favorite-actions>
       <div id="favorite-scroll-wrap" class="of-scroll-y position-relative">
-        <bib-table :key="'fproj'+key" :fields="projectTableFields" class="border-gray4 bg-white" :sections="sortedProject" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Favorite Projects'}" @file-title-sort="sortProject('name')" @file-status-sort="sortProject('status')" @file-priority-sort="sortProject('priority')" @file-owner-sort="sortProject('owner')" @file-dueDate-sort="sortProject('dueDate')">
+        <drag-table-simple :fields="projectTableFields" :tasks="sortedProject" :key="key" :sectionTitle="'Favorite Projects'" @project-click="projectRoute" :newTaskButton="{label: 'New Project', event: 'new-project', variant: 'secondary', hover: 'dark'}" v-on:new-project="newProject" v-on:table-sort="changeSort"></drag-table-simple>
+        <!-- <bib-table :key="'fproj'+key" :fields="projectTableFields" class="border-gray4 bg-white" :sections="sortedProject" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Favorite Projects'}" @file-title-sort="sortProject('name')" @file-status-sort="sortProject('status')" @file-priority-sort="sortProject('priority')" @file-owner-sort="sortProject('owner')" @file-dueDate-sort="sortProject('dueDate')">
           <template #cell(title)="data">
             <div class="d-flex gap-05 align-center text-dark " :id="'projects-' + data.value.title">
               <bib-icon icon="briefcase" variant="gray5" :scale="1.1"></bib-icon>
@@ -16,19 +17,11 @@
           </template>
           <template #cell(status)="data">
             <status-comp :status="data.value.status"></status-comp>
-            <!-- <div class="d-flex gap-05 align-center">
-              <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')"></div>
-              <span class="text-dark ">{{ favoriteStatusLabel(data.value.status ? data.value.status.text : '') }}</span>
-            </div> -->
+            
           </template>
           <template #cell(priority)="data">
             <priority-comp :priority="data.value.priority"></priority-comp>
-            <!-- <div class="d-flex gap-05 align-center">
-              <bib-icon icon="urgent-solid" :scale="1.1" :variant="favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
-              <span id="project-text" :class="'text-' + favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')" class="text-capitalize">
-                {{ data.value.priority ? data.value.priority.text : '' }}
-              </span>
-            </div> -->
+            
           </template>
           <template #cell(owner)="data">
             <user-info :userId="data.value.userId"></user-info>
@@ -36,10 +29,11 @@
           <template #cell(dueDate)="data">
             <format-date :datetime="data.value.dueDate"></format-date>
           </template>
-        </bib-table>
+        </bib-table> -->
         
         <!-- task table -->
-        <bib-table :key="'ftasks'+key" :fields="taskTableFields" class="border-gray4 bg-white" :sections="sortedTask" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Favorite Tasks'}" @file-title-sort="sortTask('name')" @file-status-sort="sortTask('status')" @file-priority-sort="sortTask('priority')" @file-owner-sort="sortTask('owner')" @file-dueDate-sort="sortTask('dueDate')">
+        <drag-table-simple :fields="taskTableFields" :tasks="sortedTask" :sectionTitle="'Favorite Tasks'" v-on:new-task="openSidebar" ></drag-table-simple>
+        <!-- <bib-table :key="'ftasks'+key" :fields="taskTableFields" class="border-gray4 bg-white" :sections="sortedTask" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Favorite Tasks'}" @file-title-sort="sortTask('name')" @file-status-sort="sortTask('status')" @file-priority-sort="sortTask('priority')" @file-owner-sort="sortTask('owner')" @file-dueDate-sort="sortTask('dueDate')">
           <template #cell(title)="data">
             <div class="d-flex gap-05 align-center" :id="'projects-' + data.value.title">
               <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data.value.statusId)"></bib-icon>
@@ -51,28 +45,19 @@
           </template>
           <template #cell(status)="data">
             <status-comp :status="data.value.status"></status-comp>
-            <!-- <div class="d-flex gap-05 align-center">
-              <div class="shape-circle max-width-005 max-height-005 min-width-005 min-height-005" :class="'bg-' + favoriteStatusVariable(data.value.status ? data.value.status.text : '')" :id="'projects-' + data.value.statusId ? data.value.statusId : ''">
-              </div>
-              <span :id="'projects-' + data.value.statusId ? data.value.statusId : '' + '-text'" class="text-dark text-truncate">{{ favoriteStatusLabel(data.value.status ? data.value.status.text : "") }}</span>
-            </div> -->
+            
           </template>
           <template #cell(dueDate)="data">
             <format-date :datetime="data.value.dueDate"></format-date>
           </template>
           <template #cell(priority)="data">
             <priority-comp :priority="data.value.priority"></priority-comp>
-            <!-- <div class="d-flex gap-05 align-center">
-              <bib-icon icon="urgent-solid" :scale="1.1" :variant="favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')"></bib-icon>
-              <span id="project-text" :class="'text-' + favoritePriorityVariable(data.value.priority ? data.value.priority.text : '')" class="text-capitalize">
-                {{ data.value.priority ? data.value.priority.text : '' }}
-              </span>
-            </div> -->
+            
           </template>
-        </bib-table>
-        <ul>
+        </bib-table> -->
+        <!-- <ul>
           <li v-for="item in sortedTaskUtil" :key="item.id">{{ item.title }}</li>
-        </ul>
+        </ul> -->
 
         <loading :loading="loading"></loading>
       </div>
@@ -97,7 +82,7 @@ export default {
       sortName: '',
       projOrder: 'asc',
       taskOrder: 'asc',
-      sortedTaskUtil: [],
+      // sortedTaskUtil: [],
     }
   },
 
@@ -157,6 +142,11 @@ export default {
       // })
     },
 
+    projectRoute(project){
+      // console.log(project)
+      this.$router.push('/projects/'+project.id)
+    },
+
     taskCheckIcon(statusId) {
       // console.log(statusId)
       return statusId == 5 ? 'success' : 'secondary-sub1'
@@ -189,8 +179,21 @@ export default {
         this.fetchTasks()
       }
     },
+    changeSort($event) {
+      // sort by title
+      if (this.projOrder == this.taskOrder) {
+        this.sortProject($event)
+        this.sortTask($event)
+      } else {
+        this.projOrder = 'asc'
+        this.taskOrder = 'asc'
+        this.sortProject($event)
+        this.sortTask($event)
+      }
+
+    },
     sortProject(field) {
-      // console.log(field, this.projOrder)
+      console.log(field, this.projOrder)
       switch (field) {
         case 'name':
           if (this.projOrder == "asc") {
@@ -255,7 +258,7 @@ export default {
           }
           this.key += 1
           break;
-        case 'owner':
+        case 'userId':
           if (this.projOrder == "asc") {
             this.sortedProject.sort((a, b) => a.user.firstName.localeCompare(b.user.firstName));
             this.projOrder = "desc"
@@ -342,19 +345,7 @@ export default {
           break;
       }
     },
-    changeSort($event) {
-      // sort by title
-      if (this.projOrder == this.taskOrder) {
-        this.sortProject($event)
-        this.sortTask($event)
-      } else {
-        this.projOrder = 'asc'
-        this.taskOrder = 'asc'
-        this.sortProject($event)
-        this.sortTask($event)
-      }
-
-    },
+    
     projectCheckActive() {
       for (let i = 0; i < this.projectTableFields.length; i++) {
         if (this.projectTableFields[i].header_icon) {
@@ -382,6 +373,10 @@ export default {
       /*this.$store.dispatch('task/setSingleTask', {...task, projectId: projectId})
       this.$store.dispatch('task/fetchTeamMember', { id: task.id } )*/
     },
+    newProject(){
+      console.log('new project')
+      this.$nuxt.$emit('create-project-modal')
+    }
   }
 }
 
