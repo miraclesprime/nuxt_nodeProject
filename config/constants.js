@@ -342,7 +342,7 @@ export const FAVORITE_SORT = [
   { label: 'Name', key: 'name' },
   { label: 'Status', key: 'status' },
   { label: 'Priority', key: 'priority' },
-  { label: 'Owner', key: 'owner' },
+  { label: 'Owner', key: 'user' },
   { label: 'Due Date', key: 'dueDate' },
 ]
 
@@ -367,26 +367,23 @@ export const PRIORITY = [
 ]
 
 export const PROJECT_FAVORITES = [
-  { 
-    label: '#', 
-    key: ''
-  },
+  
   { 
     label: 'Project name', 
     key: 'title',
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-title-sort',
+      event: 'table-sort',
       isActive: false
     },
-    event: "task-click"
+    event: "project-click"
   },
   { 
     label: 'Department', 
     key: 'department',
     /*header_icon: {
       icon: 'swap-vertical',
-      event: 'file-department-sort',
+      event: 'table-sort',
       isActive: false
     }*/
   },
@@ -396,7 +393,7 @@ export const PROJECT_FAVORITES = [
     width : '12%',
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-status-sort',
+      event: 'table-sort',
       isActive: false
     }
   },
@@ -406,17 +403,17 @@ export const PROJECT_FAVORITES = [
     width : '12%',
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-priority-sort',
+      event: 'table-sort',
       isActive: false
     }
   },
   { 
     label: 'Owner', 
-    key: 'owner',
+    key: 'userId',
     width : '20%',
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-owner-sort',
+      event: 'table-sort',
       isActive: false
     }
   },
@@ -426,7 +423,7 @@ export const PROJECT_FAVORITES = [
     width: '10%',
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-dueDate-sort',
+      event: 'table-sort',
       isActive: false
     }
   }

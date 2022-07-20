@@ -60,6 +60,9 @@
                 {{task[col.key]}}
               </span>
             </div>
+            <template v-if="col.key == 'department'">
+              {{task[col.key]}}
+          </template>
           </td>
         </tr>
       </draggable>

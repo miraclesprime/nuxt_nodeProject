@@ -1,10 +1,12 @@
 <template>
   <div class="text-center" id="dashboard-wrapper">
     <h2 class="pt-2 pb-1 text-secondary" id="dashboard-title">Welcome </h2>
-    <div v-if="user" class="d-flex justify-center align-center flex-d-column">
+    <div v-if="user2" class="d-flex justify-center align-center flex-d-column">
       <!-- <email-chip :email="user.sube" :text="user.sube[0]"></email-chip> -->
-
-      <user-info :userId="user.sub" ></user-info>
+      <!-- <user-info :userId="user.sub" ></user-info> -->
+      <bib-user-card :name="user2.FirstName +' '+ user2.LastName" :title="user2.JobTitle" :avatarLink="user2.Photo">
+        
+      </bib-user-card>
     </div>
   </div>
 </template>
@@ -27,7 +29,7 @@ export default {
 
   },
   watch: {
-    user2: function(newValue){
+    user2: function(newValue) {
       this.name.firstName = newValue.FirstName
       this.name.lastName = newValue.LastName
       this.avatar = newValue.Photo

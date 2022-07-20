@@ -159,7 +159,11 @@ export default {
   watch: {
     todos(newVal) {
       // console.log(newVal)
-      this.localdata = JSON.parse(JSON.stringify(newVal))
+      let todos = JSON.parse(JSON.stringify(newVal))
+      todos.forEach(function(todo) {
+        todo["tasks"] = todo.tasks.sort((a, b) => a.tOrder - b.tOrder);
+      })
+      this.localdata = todos
     }
   },
 
