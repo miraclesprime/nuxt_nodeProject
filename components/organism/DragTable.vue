@@ -4,11 +4,11 @@
       <thead>
         <tr class="table__hrow">
           <th width="3%">&nbsp;</th>
-          <th v-for="(field, index) in fields" :key="index + templateKey" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
+          <th v-for="(field, index) in fields" :key="field.key + index" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
             <div class="align-center">
               <span> {{ field.label }} </span>
               <template v-if="field.header_icon">
-                <div class="ml-05 shape-rounded bg-hover-black width-105 height-105 d-flex justify-center align-center cursor-pointer" :class="{'bg-black': field.header_icon.isActive }" @click="$emit(field.header_icon.event)">
+                <div class="ml-05 shape-rounded bg-hover-black width-105 height-105 d-flex justify-center align-center cursor-pointer" :class="{'bg-black': field.header_icon.isActive }" @click="$emit(field.header_icon.event, field.key)">
                   <bib-icon :icon="field.header_icon.icon" :scale="1.1" variant="gray5" hoverVariant="white"></bib-icon>
                 </div>
               </template>
@@ -22,19 +22,19 @@
             <div class="drag-handle width-2 text-center"><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
                 <rect fill="none" height="24" width="24" />
                 <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div> <span class="d-flex gap-05 align-center cursor-pointer" @click="isCollapsed = !isCollapsed">
-              <bib-icon icon="arrow-down" :scale="0.5" :variant="collapseObj.variant" :style="{transform: iconRotate}"></bib-icon> {{section.title}}
+              <bib-icon icon="arrow-down" :scale="0.5" :variant="collapseObj.variant" :style="{transform: iconRotate}"></bib-icon> {{section.title.includes('_section') ? 'Untitled section' : section.title}}
             </span>
           </div>
         </td>
       </tr>
       <draggable :list="section[tasksKey]" tag="tbody" :data-section="section.id" :group="{name: 'task'}" class="task-draggable " handle=".drag-handle" @start="taskDragStart" :move="moveTask" @end="taskDragEnd" :style="{ visibility: isCollapsed ? 'collapse': '' }">
-        <tr v-for="(task, index) in section[tasksKey]" :key="task.id + index + templateKey" class="table__irow">
+        <tr v-for="(task, index) in section[tasksKey]" :key="task.id + section.title + index + templateKey" class="table__irow">
           <td>
             <div class="drag-handle width-2 "><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
                 <rect fill="none" height="24" width="24" />
                 <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div>
           </td>
-          <td v-for="(col, index) in cols" :key="task.id + index + templateKey">
+          <td v-for="(col, index) in cols" :key="task.id + col + templateKey + index ">
             <template v-if="col.key == 'userId'">
               <user-info :userId="task[col.key]"></user-info>
             </template>
@@ -88,7 +88,7 @@
  * @vue-prop collapseObj=null {Object} - collapsible table settings.
  * @vue-prop newTaskbutton={Object} - add new row button
  * @vue-emits ['section-dragend', 'task-dragend' ]
- * @vue-dynamic-emits [ 'header_icon click event', 'title click event', 'newtask click event' ] 
+ * @vue-dynamic-emits [ 'header_icon click', 'title click', 'task_checkmark click' 'newtask button click' ] 
  */
 import draggable from 'vuedraggable'
 export default {
@@ -108,12 +108,14 @@ export default {
       default () {
         return [];
       },
+      required: true,
     },
     sections: {
       type: Array,
       default () {
         return [];
       },
+      required: true,
     },
     tasksKey: {
       type: String,
@@ -140,13 +142,14 @@ export default {
           hover: "dark",
         }
       }
-    }
+    },
+    templateKey: {type: Number, default: 11},
   },
   data() {
     return {
       cols: [],
       // item: {},
-      templateKey: 11,
+      // templateKey: 11,
       isCollapsed: this.collapseObj ? this.collapseObj.collapsed : false,
       localdata: [],
       taskMoveSection: null,

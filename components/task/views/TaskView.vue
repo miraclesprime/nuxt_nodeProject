@@ -13,7 +13,8 @@
       </div>
     </section> -->
     <template v-if="gridType === 'list'">
-      <task-list-section :project="project" :sections="localdata" :templateKey="templateKey" v-on:sort-task="taskSort($event)" v-on:update-key="updateKey"></task-list-section>
+      <drag-table :fields="tableFields" :sections="localdata" :key="templateKey" @task-click="openSidebar" @new-task="toggleSidebar($event)" ></drag-table>
+      <!-- <task-list-section :project="project" :sections="localdata" :templateKey="templateKey" v-on:sort-task="taskSort($event)" v-on:update-key="updateKey"></task-list-section> -->
     </template>
     <template v-else>
       <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="setFavorite" v-on:mark-complete="markComplete" v-on:delete-task="deleteTask">
@@ -289,14 +290,23 @@ export default {
 
     toggleSidebar($event) {
       // console.log("taskview => ",$event)
-      // in case of create task 
-      /*if (!$event) {
-        // this.$store.dispatch("task/setSingleTask", {})
-        this.$nuxt.$emit("open-sidebar", $event)
-      }*/
+      
       this.flag = !this.flag;
-      this.$emit("open-sidebar", $event);
-      this.$nuxt.$emit("open-sidebar", $event);
+      // this.$emit("open-sidebar", $event);
+      if ($event.id) {
+        this.$nuxt.$emit("open-sidebar", $event.id)
+      } else {
+        this.$nuxt.$emit("open-sidebar", $event);
+      }
+    },
+    openSidebar(task) {
+      let project = [{
+        projectId: this.project.id,
+        project: {
+          id: this.project.id
+        }
+      }]
+      this.$nuxt.$emit("open-sidebar", { ...task, project: project });
     },
 
     showNewsection() {

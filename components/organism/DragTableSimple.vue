@@ -3,7 +3,7 @@
     <thead>
       <tr class="table__hrow">
         <th v-if="drag" width="3%">&nbsp;</th>
-        <th v-for="(field, index) in fields" :key="index + templateKey" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
+        <th v-for="(field, index) in fields" :key="field.key + index" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
           <div class="align-center">
             <span> {{ field.label }} </span>
             <template v-if="field.header_icon">
@@ -31,7 +31,7 @@
               <rect fill="none" height="24" width="24" />
               <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div>
         </td>
-        <td v-for="(col, index) in cols" :key="task.id + index + templateKey">
+        <td v-for="(col, index) in cols" :key="task.id + col + index + templateKey">
           <template v-if="col.key == 'userId'">
             <user-info :userId="task[col.key]"></user-info>
           </template>
@@ -161,13 +161,15 @@ export default {
     drag: {
       type: Boolean,
       default: true,
-    }
+    },
+    templateKey: {type: Number, default: 11},
+
   },
   data() {
     return {
       cols: [],
       // item: {},
-      templateKey: 11,
+      // templateKey: 11,
       isCollapsed: this.collapseObj ? this.collapseObj.collapsed : false,
       localdata: [],
       taskMoveSection: null,
