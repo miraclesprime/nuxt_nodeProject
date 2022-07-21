@@ -36,16 +36,16 @@
           </td>
           <td v-for="(col, index) in cols" :key="task.id + col + templateKey + index ">
             <template v-if="col.key == 'userId'">
-              <user-info :userId="task[col.key]"></user-info>
+              <user-info :key="componentKey" :userId="task[col.key]"></user-info>
             </template>
             <template v-if="col.key == 'status'">
-              <status-comp :status="task[col.key]"></status-comp>
+              <status-comp :key="componentKey" :status="task[col.key]"></status-comp>
             </template>
             <template v-if="col.key == 'priority'">
-              <priority-comp :priority="task[col.key]"></priority-comp>
+              <priority-comp :key="componentKey" :priority="task[col.key]"></priority-comp>
             </template>
             <template v-if="col.key == 'createdAt' || col.key == 'dueDate'">
-              <format-date :datetime="task[col.key]"></format-date>
+              <format-date :key="componentKey" :datetime="task[col.key]"></format-date>
             </template>
             <template v-if="col.key == 'project'">
               <project-info v-if="task[col.key].length" :projectId="task[col.key][0].projectId"></project-info>
@@ -89,6 +89,7 @@
  * @vue-prop newTaskbutton={Object} - add new row button
  * @vue-emits ['section-dragend', 'task-dragend' ]
  * @vue-dynamic-emits [ 'header_icon click', 'title click', 'task_checkmark click' 'newtask button click' ] 
+ * @vue-prop componentKey=Number - key to update child components
  */
 import draggable from 'vuedraggable'
 export default {
@@ -143,13 +144,13 @@ export default {
         }
       }
     },
-    templateKey: {type: Number, default: 11},
+    componentKey: Number, default: 0,
   },
   data() {
     return {
       cols: [],
       // item: {},
-      // templateKey: 11,
+      templateKey: 11,
       isCollapsed: this.collapseObj ? this.collapseObj.collapsed : false,
       localdata: [],
       taskMoveSection: null,
@@ -172,6 +173,7 @@ export default {
   mounted() {
     // console.info('mounted lifecycle', this.sections.length);
     this.localdata = this.sections ? JSON.parse(JSON.stringify(this.sections)) : []
+    this.templateKey += 1
   },
   methods: {
     taskCheckIcon(task){

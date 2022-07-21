@@ -8,7 +8,7 @@
         <div id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y">
           <template v-if="gridType == 'list'">
             <template v-if="todos.length">
-              <drag-table :templateKey="key" :fields="taskFields" :sections="localdata" v-on:task-click="$nuxt.$emit('open-sidebar', $event)" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @sort="sortBy" ></drag-table>
+              <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" v-on:task-click="$nuxt.$emit('open-sidebar', $event)" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy"></drag-table>
               <!-- <bib-table v-for="(todo, index) in localdata" :key="todo.id + '-' + viewName ? viewName : 'view' + '-' + sortName ? sortName : 'sort' + '-' + key" :fields="taskFields" :sections="todo.tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: todo.title}" :headless="index > 0" class="border-gray4 bg-white" @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
                 <template #cell(title)="data">
                   <div class="d-flex gap-05 align-center">
@@ -376,32 +376,32 @@ export default {
       this.loading = true
       if ($event == 'complete') {
         this.$store.dispatch('todo/fetchTodos', { filter: 'complete' }).then((res) => {
+          this.viewName = 'complete'
+          this.key += 1;
           this.loading = false
         }).catch(e => console.log(e))
-        this.viewName = 'complete'
-        this.key += 1;
       }
       if ($event == 'incomplete') {
         this.$store.dispatch('todo/fetchTodos', { filter: 'incomplete' }).then((res) => {
+          this.viewName = 'incomplete'
+          this.key += 1;
           this.loading = false
         }).catch(e => console.log(e))
-        this.viewName = 'incomplete'
-        this.key += 1;
       }
       if ($event == 'all') {
         this.$store.dispatch('todo/fetchTodos', { filter: 'all' }).then((res) => {
+          this.viewName = 'all'
+          this.key += 1;
           this.loading = false
         }).catch(e => console.log(e))
-        this.viewName = 'all'
-        this.key += 1;
       }
-      this.loading = false
+
 
     },
 
     // Sort By Action List
     sortBy($event) {
-      console.log($event)
+      console.log($event, this.orderBy)
       // sort by title
       if ($event == 'title' && this.orderBy == 'asc') {
         this.localdata.forEach(function(todo, index) {
@@ -429,7 +429,6 @@ export default {
       }
 
       if ($event == 'project' && this.orderBy == 'desc') {
-
         this.localdata.forEach(function(todo) {
           todo["tasks"] = todo.tasks.sort((a, b) => {
             if (a.project && b.project) {
@@ -437,7 +436,6 @@ export default {
             }
           });
         })
-
       }
 
       // sort By Status
