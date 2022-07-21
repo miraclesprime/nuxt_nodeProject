@@ -2,13 +2,13 @@
   <client-only>
     <div id="my-tasks-page-wrapper" class="mytask-page-wrapper">
       <page-title title="My Tasks"></page-title>
-      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="showNewTodo" />
+      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="showNewTodo" />
       <div>
         <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form>
         <div id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y">
           <template v-if="gridType == 'list'">
             <template v-if="todos.length">
-              <drag-table :key="key" :fields="taskFields" :sections="localdata" v-on:task-click="$nuxt.$emit('open-sidebar', $event)" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd"></drag-table>
+              <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" v-on:task-click="$nuxt.$emit('open-sidebar', $event)" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy"></drag-table>
               <!-- <bib-table v-for="(todo, index) in localdata" :key="todo.id + '-' + viewName ? viewName : 'view' + '-' + sortName ? sortName : 'sort' + '-' + key" :fields="taskFields" :sections="todo.tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: todo.title}" :headless="index > 0" class="border-gray4 bg-white" @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
                 <template #cell(title)="data">
                   <div class="d-flex gap-05 align-center">
@@ -132,7 +132,7 @@ export default {
       sortName: null,
       orderBy: 'desc',
       flag: false,
-      key: 100,
+      key: 11,
       newSection: false,
       sectionLoading: false,
       sectionError: "",
@@ -376,47 +376,47 @@ export default {
       this.loading = true
       if ($event == 'complete') {
         this.$store.dispatch('todo/fetchTodos', { filter: 'complete' }).then((res) => {
+          this.viewName = 'complete'
+          this.key += 1;
           this.loading = false
         }).catch(e => console.log(e))
-        this.viewName = 'complete'
-        this.key += 1;
       }
       if ($event == 'incomplete') {
         this.$store.dispatch('todo/fetchTodos', { filter: 'incomplete' }).then((res) => {
+          this.viewName = 'incomplete'
+          this.key += 1;
           this.loading = false
         }).catch(e => console.log(e))
-        this.viewName = 'incomplete'
-        this.key += 1;
       }
       if ($event == 'all') {
         this.$store.dispatch('todo/fetchTodos', { filter: 'all' }).then((res) => {
+          this.viewName = 'all'
+          this.key += 1;
           this.loading = false
         }).catch(e => console.log(e))
-        this.viewName = 'all'
-        this.key += 1;
       }
-      this.loading = false
+
 
     },
 
     // Sort By Action List
     sortBy($event) {
-
+      console.log($event, this.orderBy)
       // sort by title
-      if ($event == 'name' && this.orderBy == 'asc') {
+      if ($event == 'title' && this.orderBy == 'asc') {
         this.localdata.forEach(function(todo, index) {
           todo["tasks"] = todo.tasks.sort((a, b) => a.title.localeCompare(b.title))
         })
       }
 
-      if ($event == 'name' && this.orderBy == 'desc') {
+      if ($event == 'title' && this.orderBy == 'desc') {
         this.localdata.forEach(function(todo, index) {
           todo["tasks"] = todo.tasks.sort((a, b) => b.title.localeCompare(a.title))
         })
       }
 
       // sort By Project
-      if ($event == 'projectId' && this.orderBy == 'asc') {
+      if ($event == 'project' && this.orderBy == 'asc') {
 
         this.localdata.forEach(function(todo) {
           todo["tasks"] = todo.tasks.sort((a, b) => {
@@ -428,8 +428,7 @@ export default {
 
       }
 
-      if ($event == 'projectId' && this.orderBy == 'desc') {
-
+      if ($event == 'project' && this.orderBy == 'desc') {
         this.localdata.forEach(function(todo) {
           todo["tasks"] = todo.tasks.sort((a, b) => {
             if (a.project && b.project) {
@@ -437,7 +436,6 @@ export default {
             }
           });
         })
-
       }
 
       // sort By Status
@@ -502,30 +500,6 @@ export default {
       } else {
         this.orderBy = 'asc'
       }
-    },
-
-    sortTitle() {
-      this.sortName = 'name'
-    },
-
-    sortProject() {
-      this.sortName = 'projectId'
-    },
-
-    sortByStatus() {
-      this.sortName = 'status'
-    },
-
-    sortByStartDate() {
-      this.sortName = 'createdAt'
-    },
-
-    sortByDueDate() {
-      this.sortName = 'dueDate'
-    },
-
-    sortByPriority() {
-      this.sortName = 'priority'
     },
 
     toggleSidebar($event) {

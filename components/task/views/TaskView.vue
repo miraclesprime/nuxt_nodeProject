@@ -13,7 +13,8 @@
       </div>
     </section> -->
     <template v-if="gridType === 'list'">
-      <task-list-section :project="project" :sections="localdata" :templateKey="templateKey" v-on:sort-task="taskSort($event)" v-on:update-key="updateKey"></task-list-section>
+      <drag-table :fields="tableFields" :sections="localdata" :key="templateKey" :componentKey="templateKey" @task-click="openSidebar" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd"></drag-table>
+      <!-- <task-list-section :project="project" :sections="localdata" :templateKey="templateKey" v-on:sort-task="taskSort($event)" v-on:update-key="updateKey"></task-list-section> -->
     </template>
     <template v-else>
       <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="setFavorite" v-on:mark-complete="markComplete" v-on:delete-task="deleteTask">
@@ -51,6 +52,7 @@
 <script>
 import { TASK_FIELDS } from "config/constants";
 import { mapGetters } from 'vuex';
+import _ from 'lodash'
 
 export default {
 
@@ -168,7 +170,8 @@ export default {
     },
     taskSort($event) {
       // sort by title
-      if ($event == "name") {
+      console.log('sort key->', $event, 'sort-order->', this.orderBy)
+      if ($event == "title") {
         // var orderBy = "asc"
         if (this.orderBy == "asc") {
           this.orderBy = "desc"
@@ -181,23 +184,37 @@ export default {
             sec["tasks"] = sec.tasks.sort((a, b) => b.title.localeCompare(a.title))
           })
         }
-        this.templateKey += 1
+        // this.templateKey += 1
         // console.log(this.key, this.orderBy)
       }
       // Sort By owner
-      if ($event == "owner") {
+      if ($event == "userId") {
         if (this.orderBy == "asc") {
           this.orderBy = "desc"
-          this.localdata.forEach(function(sec, index) {
+          /*this.localdata.forEach(function(sec, index) {
             sec["tasks"] = sec.tasks.sort((a, b) => a.user.firstName.localeCompare(b.user.firstName));
+          })*/
+          this.localdata.forEach(function(sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => {
+              if (a.user && b.user) {
+                return a.user.firstName.localeCompare(b.user.firstName)
+              }
+            });
           })
         } else {
           this.orderBy = "asc"
-          this.localdata.forEach(function(sec) {
+          /*this.localdata.forEach(function(sec) {
             sec["tasks"] = sec.tasks.sort((a, b) => b.user.firstName.localeCompare(a.user.firstName));
+          })*/
+          this.localdata.forEach(function(sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => {
+              if (a.user && b.user) {
+                return b.user.firstName.localeCompare(a.user.firstName)
+              }
+            });
           })
         }
-        this.templateKey += 1
+        // this.templateKey += 1
         // console.log(this.key, this.orderBy)
       }
       // sort By Status
@@ -213,11 +230,12 @@ export default {
             sec["tasks"] = sec.tasks.sort((a, b) => b.status.text.localeCompare(a.status.text));
           })
         }
-        this.templateKey += 1
+        // this.templateKey += 1
         // console.log(this.key, this.orderBy)
       }
       // Sort By Priotity
       if ($event == "priority") {
+        // console.log('sort priority',$event)
         if (this.orderBy == "asc") {
           this.orderBy = "desc"
           this.localdata.forEach(function(sec) {
@@ -229,9 +247,10 @@ export default {
             sec["tasks"] = sec.tasks.sort((a, b) => b.priority.text.localeCompare(a.priority.text));
           })
         }
+        // this.templateKey += 1
       }
       // sort By Start Date
-      if ($event == "startDate") {
+      if ($event == "createdAt") {
         if (this.orderBy == "asc") {
           this.orderBy = "desc"
           this.localdata.forEach(function(sec) {
@@ -244,6 +263,7 @@ export default {
           })
 
         }
+        // this.templateKey += 1
       }
 
       // sort By DueDate
@@ -259,7 +279,10 @@ export default {
             sec["tasks"] = sec.tasks.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate));
           })
         }
+        // this.templateKey += 1
       }
+
+      this.templateKey += 1
 
     },
     updateKey() {
@@ -268,7 +291,7 @@ export default {
         this.taskByOrder()
       })
     },
-    showSectionTitle(section) {
+    /*showSectionTitle(section) {
       if (section.title.includes("_section")) {
         return null
       } else {
@@ -285,18 +308,27 @@ export default {
       } else {
         return section.title
       }
-    },
+    },*/
 
     toggleSidebar($event) {
       // console.log("taskview => ",$event)
-      // in case of create task 
-      /*if (!$event) {
-        // this.$store.dispatch("task/setSingleTask", {})
-        this.$nuxt.$emit("open-sidebar", $event)
-      }*/
+
       this.flag = !this.flag;
-      this.$emit("open-sidebar", $event);
-      this.$nuxt.$emit("open-sidebar", $event);
+      // this.$emit("open-sidebar", $event);
+      if ($event.id) {
+        this.$nuxt.$emit("open-sidebar", $event.id)
+      } else {
+        this.$nuxt.$emit("open-sidebar", $event);
+      }
+    },
+    openSidebar(task) {
+      let project = [{
+        projectId: this.project.id,
+        project: {
+          id: this.project.id
+        }
+      }]
+      this.$nuxt.$emit("open-sidebar", { ...task, project: project });
     },
 
     showNewsection() {
@@ -398,66 +430,6 @@ export default {
       this.loading = false
     },
 
-    sortTitle() {
-      if (this.orderBy == 'asc') {
-        this.orderBy = 'desc'
-      } else {
-        this.orderBy = 'asc'
-      }
-      this.sortName = 'name';
-      this.checkActive()
-    },
-
-    sortOwner() {
-      if (this.orderBy == 'asc') {
-        this.orderBy = 'desc'
-      } else {
-        this.orderBy = 'asc'
-      }
-      this.sortName = 'owner';
-      this.checkActive()
-    },
-
-    sortByStatus() {
-      if (this.orderBy == 'asc') {
-        this.orderBy = 'desc'
-      } else {
-        this.orderBy = 'asc'
-      }
-      this.sortName = 'status';
-      this.checkActive()
-    },
-
-    sortByStartDate() {
-      if (this.orderBy == 'asc') {
-        this.orderBy = 'desc'
-      } else {
-        this.orderBy = 'asc'
-      }
-      this.sortName = 'startDate';
-      this.checkActive()
-    },
-
-    sortByDueDate() {
-      if (this.orderBy == 'asc') {
-        this.orderBy = 'desc'
-      } else {
-        this.orderBy = 'asc'
-      }
-      this.sortName = 'dueDate';
-      this.checkActive()
-    },
-
-    sortByPriority() {
-      if (this.orderBy == 'asc') {
-        this.orderBy = 'desc'
-      } else {
-        this.orderBy = 'asc'
-      }
-      this.sortName = 'priority';
-      this.checkActive()
-    },
-
     checkActive() {
       for (let i = 0; i < this.tableFields.length; i++) {
         if (this.tableFields[i].header_icon) {
@@ -502,6 +474,7 @@ export default {
           })
       }
     },
+
     markComplete($event) {
       // console.log(this.currentTask)
       this.loading = true
@@ -518,6 +491,7 @@ export default {
           this.loading = false
         })
     },
+
     deleteTask(task) {
       this.loading = true
       this.$store.dispatch("task/deleteTask", task).then(t => {
@@ -536,6 +510,7 @@ export default {
         console.log(e)
       })
     },
+
     deleteSection(section) {
       this.loading = true;
 
@@ -555,6 +530,82 @@ export default {
         console.log(e)
       })
     },
+
+    sectionDragEnd: _.debounce(async function(payload) {
+
+      this.loading = true
+
+      // console.log(payload)
+      let clone = _.cloneDeep(payload)
+      clone.forEach((el, i) => {
+        el.order = i
+      })
+
+      console.log("ordered sections =>", clone)
+
+      let sectionDnD = await this.$axios.$put("/section/dragdrop", { projectId: this.project.id, data: clone }, {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+          "Content-Type": "application/json"
+        }
+      })
+
+      console.log(sectionDnD.message)
+
+      if (sectionDnD.statusCode == 200) {
+        this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id }).then(() => {
+          this.$nuxt.$emit("update-key")
+        })
+      }
+
+      this.loading = false
+
+    }, 600),
+
+    taskDragEnd: _.debounce(async function(payload) {
+      console.log('move end =>', payload)
+      // this.highlight = null
+      this.loading = true
+      let tasks = _.cloneDeep(payload.tasks)
+
+      tasks.forEach((el, i) => {
+        el.order = i
+      })
+
+      console.log("sorted->", tasks)
+
+      let taskDnD = await this.$axios.$put("/section/crossSectionDragDrop", { data: tasks, sectionId: payload.sectionId }, {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+          "Content-Type": "application/json"
+        }
+      })
+
+      // let taskDnD;
+      /*if (this.taskDnDsectionId) {
+        taskDnD = await this.$axios.$put("/section/crossSectionDragDrop", { data: tasklist[0].tasks, sectionId: this.taskDnDsectionId }, {
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+            "Content-Type": "application/json"
+          }
+        })
+      } else {
+        taskDnD = await this.$axios.$put("/task/dragdrop", { data: this.taskDnDlist }, {
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+            "Content-Type": "application/json"
+          }
+        })
+      }*/
+
+      console.log(taskDnD.message)
+      if (taskDnD.statusCode == 200) {
+        this.$emit("update-key")
+      } else {
+        console.warn(taskDnD.message)
+      }
+      this.loading = false
+    }, 600),
   },
 
 };

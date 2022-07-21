@@ -3,7 +3,7 @@
     <thead>
       <tr class="table__hrow">
         <th v-if="drag" width="3%">&nbsp;</th>
-        <th v-for="(field, index) in fields" :key="index + templateKey" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
+        <th v-for="(field, index) in fields" :key="field.key + index" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
           <div class="align-center">
             <span> {{ field.label }} </span>
             <template v-if="field.header_icon">
@@ -31,7 +31,7 @@
               <rect fill="none" height="24" width="24" />
               <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div>
         </td>
-        <td v-for="(col, index) in cols" :key="task.id + index + templateKey">
+        <td v-for="(col, index) in cols" :key="task.id + col + index + templateKey">
           <template v-if="col.key == 'userId'">
             <user-info :userId="task[col.key]"></user-info>
           </template>
@@ -62,19 +62,19 @@
       <tr v-for="(task, index) in tasks" :key="task.id + templateKey + index" class="table__irow">
         <td v-for="(col, index) in cols" :key="task.id + index + templateKey">
           <template v-if="col.key == 'userId'">
-            <user-info :userId="task[col.key]"></user-info>
+            <user-info :key="componentKey" :userId="task[col.key]"></user-info>
           </template>
           <template v-if="col.key == 'status'">
-            <status-comp :status="task[col.key]"></status-comp>
+            <status-comp :key="componentKey" :status="task[col.key]"></status-comp>
           </template>
           <template v-if="col.key == 'priority'">
-            <priority-comp :priority="task[col.key]"></priority-comp>
+            <priority-comp :key="componentKey" :priority="task[col.key]"></priority-comp>
           </template>
           <template v-if="col.key == 'createdAt' || col.key == 'dueDate'">
-            <format-date :datetime="task[col.key]"></format-date>
+            <format-date :key="componentKey" :datetime="task[col.key]"></format-date>
           </template>
           <template v-if="col.key == 'project'">
-            <project-info v-if="task[col.key].length" :projectId="task[col.key][0].projectId"></project-info>
+            <project-info v-if="task[col.key].length" :key="componentKey" :projectId="task[col.key][0].projectId"></project-info>
           </template>
           <div v-if="col.key == 'title'" class="d-flex gap-05 align-center h-100">
             <bib-icon icon="check-circle" :scale="1.25" :variant="taskCheckIcon(task)" class="cursor-pointer" @click="updateTaskStatus(task)"></bib-icon>
@@ -111,6 +111,7 @@
  * @vue-prop tasks=[] {Array} - table data.
  * @vue-prop collapseObj=null {Object} - collapsible table settings.
  * @vue-prop newTaskbutton={Object} - add new row button
+ * @vue-prop componentKey=Number - key to update child components
  */
 import draggable from 'vuedraggable'
 export default {
@@ -161,7 +162,9 @@ export default {
     drag: {
       type: Boolean,
       default: true,
-    }
+    },
+    componentKey: {type: Number, default: 0},
+
   },
   data() {
     return {
