@@ -24,19 +24,17 @@ export const TABLE_FIELDS = [{
   }
 ];
 
-export const TASK_FIELDS = [{
-    key: "",
-    label: "#"
-  },
+export const TASK_FIELDS = [
   {
     key: "title",
     label: "Task name",
     width: "32%",
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-title-sort',
+      event: 'table-sort',
       isActive: false
-    }
+    },
+    event: "task-click",
   },
   {
     key: "status",
@@ -44,7 +42,7 @@ export const TASK_FIELDS = [{
     width: "10%",
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-status-sort',
+      event: 'table-sort',
       isActive: false
     }
   },
@@ -54,27 +52,27 @@ export const TASK_FIELDS = [{
     width: "8%",
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-priority-sort',
+      event: 'table-sort',
       isActive: false
     }
   },
   {
-    key: "owner",
+    key: "userId",
     label: "Owner",
     width: "20%",
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-owner-sort',
+      event: 'table-sort',
       isActive: false
     }
   },
   {
-    key: "startDate",
+    key: "createdAt",
     label: "Start Date",
     width: "10%",
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-startDate-sort',
+      event: 'table-sort',
       isActive: false
     }
   },
@@ -84,7 +82,7 @@ export const TASK_FIELDS = [{
     width: "10%",
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-dueDate-sort',
+      event: 'table-sort',
       isActive: false
     }
   },
@@ -330,11 +328,11 @@ export const PROJECT_TEAM_FIELDS = [
 ]
 
 export const TASK_SORT = [
-  { label: 'Name', key: 'name' },
-  { label: 'Owner', key: 'owner' },
+  { label: 'Name', key: 'title' },
+  { label: 'Owner', key: 'userId' },
   { label: 'Priority', key: 'priority' },
   { label: 'Status', key: 'status' },
-  { label: 'Start Date', key: 'startDate' },
+  { label: 'Start Date', key: 'createdAt' },
   { label: 'Due Date', key: 'dueDate' },
 ]
 
@@ -342,7 +340,7 @@ export const FAVORITE_SORT = [
   { label: 'Name', key: 'name' },
   { label: 'Status', key: 'status' },
   { label: 'Priority', key: 'priority' },
-  { label: 'Owner', key: 'owner' },
+  { label: 'Owner', key: 'user' },
   { label: 'Due Date', key: 'dueDate' },
 ]
 
@@ -367,26 +365,23 @@ export const PRIORITY = [
 ]
 
 export const PROJECT_FAVORITES = [
-  { 
-    label: '#', 
-    key: ''
-  },
+  
   { 
     label: 'Project name', 
     key: 'title',
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-title-sort',
+      event: 'table-sort',
       isActive: false
     },
-    event: "task-click"
+    event: "project-click"
   },
   { 
     label: 'Department', 
     key: 'department',
     /*header_icon: {
       icon: 'swap-vertical',
-      event: 'file-department-sort',
+      event: 'table-sort',
       isActive: false
     }*/
   },
@@ -396,7 +391,7 @@ export const PROJECT_FAVORITES = [
     width : '12%',
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-status-sort',
+      event: 'table-sort',
       isActive: false
     }
   },
@@ -406,17 +401,17 @@ export const PROJECT_FAVORITES = [
     width : '12%',
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-priority-sort',
+      event: 'table-sort',
       isActive: false
     }
   },
   { 
     label: 'Owner', 
-    key: 'owner',
+    key: 'userId',
     width : '20%',
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-owner-sort',
+      event: 'table-sort',
       isActive: false
     }
   },
@@ -426,7 +421,7 @@ export const PROJECT_FAVORITES = [
     width: '10%',
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-dueDate-sort',
+      event: 'table-sort',
       isActive: false
     }
   }
@@ -503,7 +498,7 @@ export const USER_TASKS = [
     key: 'title', 
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-title-sort',
+      event: 'table-sort',
       isActive: false
     },
     width: "25%",
@@ -514,7 +509,7 @@ export const USER_TASKS = [
     key: 'project', 
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-project-sort',
+      event: 'table-sort',
       isActive: false
     },
     width: "15%",
@@ -524,7 +519,7 @@ export const USER_TASKS = [
     key: 'status', 
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-status-sort',
+      event: 'table-sort',
       isActive: false
     }
   },
@@ -533,7 +528,7 @@ export const USER_TASKS = [
     key: 'createdAt', 
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-startDate-sort',
+      event: 'table-sort',
       isActive: false
     }
   },
@@ -542,7 +537,7 @@ export const USER_TASKS = [
     key: 'dueDate', 
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-dueDate-sort',
+      event: 'table-sort',
       isActive: false
     }
   },
@@ -551,42 +546,30 @@ export const USER_TASKS = [
     key: 'priority', 
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-priority-sort',
+      event: 'table-sort',
       isActive: false
     }
   },
   { 
     label: 'Tag', 
     key: 'tag', 
-    header_icon: {
-      icon: 'swap-vertical',
-      event: 'file-tag-sort',
-      isActive: false
-    }
+    
   },
   { 
     label: 'Team', 
     key: 'team', 
-    header_icon: {
-      icon: 'swap-vertical',
-      event: 'file-team-sort',
-      isActive: false
-    }
+    
   },
   { 
     label: 'Department', 
     key: 'department', 
-    header_icon: {
-      icon: 'swap-vertical',
-      event: 'file-department-sort',
-      isActive: false
-    }
+    
   },
 ]
 
 export const USER_TASK_SORT = [
-  { label: 'Name', key: 'name' },
-  { label: 'Project', key: 'projectId' },
+  { label: 'Name', key: 'title' },
+  { label: 'Project', key: 'project' },
   { label: 'Priority', key: 'priority' },
   { label: 'Status', key: 'status' },
   { label: 'Start Date', key: 'createdAt' },
