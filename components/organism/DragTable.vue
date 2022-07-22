@@ -87,7 +87,7 @@
  * @vue-prop sections=[] {Array} - table data.
  * @vue-prop collapseObj=null {Object} - collapsible table settings.
  * @vue-prop newTaskbutton={Object} - add new row button
- * @vue-emits ['section-dragend', 'task-dragend' ]
+ * @vue-emits ['task-checkmark-click', 'section-dragend', 'task-dragend' ]
  * @vue-dynamic-emits [ 'header_icon click', 'title click', 'task_checkmark click' 'newtask button click' ] 
  * @vue-prop componentKey=Number - key to update child components
  */
@@ -180,11 +180,12 @@ export default {
       if (task.statusId == 5) {
         return 'success'
       } else {
-        return 'secondary'
+        return 'gray5'
       }
     },
     updateTaskStatus(task){
       console.log(task.statusId)
+      this.$emit('task-checkmark-click', task)
     },
     clickItem(key) {
       this.$emit('item-dblclicked', this.sections[key])
