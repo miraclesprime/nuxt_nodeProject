@@ -2,30 +2,18 @@
   <div id="task-view-wrapper" class="task-view-wrapper position-relative">
     <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:show-newsection="showNewsection" v-on:filterView="filterView" v-on:sort="taskSort($event)"></task-actions>
     <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createSection"></new-section-form>
-    <!-- <section v-show="newSection" id="tv-new-section-input-container">
-      <div id="tv-new-section-input-wrapper" class="d-flex align-center p-05 bg-light">
-        <input id="tv-new-section-input" type="text" class="new-section-input" ref="newsectioninput" v-model.trim="newSectionName" v-on:blur="clickOutside" v-on:keyup.enter="createSectionOnEnter" placeholder="Enter section name">
-        <small v-if="sectionError" class="text-danger ml-05">invalid input</small>
-        <div v-show="sectionLoading" class="d-flex align-center">
-          <bib-spinner :scale="2"></bib-spinner> <span class="text-secondary">Creating section ...</span>
-        </div>
-        <bib-icon icon="close" class="ml-auto" v-on:click="clickOutside"></bib-icon>
-      </div>
-    </section> -->
     <template v-if="gridType === 'list'">
-      <drag-table :fields="tableFields" :sections="localdata" :key="templateKey" :componentKey="templateKey" @task-click="openSidebar" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd"></drag-table>
+      <drag-table :fields="tableFields" :sections="localdata" :key="templateKey" :componentKey="templateKey" @task-click="openSidebar" @task-checkmark-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd"></drag-table>
       <!-- <task-list-section :project="project" :sections="localdata" :templateKey="templateKey" v-on:sort-task="taskSort($event)" v-on:update-key="updateKey"></task-list-section> -->
     </template>
     <template v-else>
-      <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="setFavorite" v-on:mark-complete="markComplete" v-on:delete-task="deleteTask">
+      <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" @section-rename="renameSectionModal" @section-delete="deleteSection" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="setFavorite" v-on:mark-complete="markComplete" v-on:delete-task="deleteTask">
       </task-grid-section>
     </template>
     <loading :loading="loading"></loading>
     <span id="projects-0" v-show="nodata" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
       <bib-icon icon="warning"></bib-icon> No records found
     </span>
-    <!-- task sidebar -->
-    <!-- <task-sidebar  :activeTask="activeTask" @open-sidebar="toggleSidebar()" v-on:update-key="updateKey"></task-sidebar> -->
     <!-- section rename modal -->
     <bib-modal-wrapper v-if="renameModal" title="Rename section" @close="renameModal = false">
       <template slot="content">
@@ -41,6 +29,7 @@
         </div>
       </template>
     </bib-modal-wrapper>
+    <!-- popup-notification -->
     <bib-popup-notification-wrapper>
       <template #wrapper>
         <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
@@ -115,15 +104,6 @@ export default {
     },
   },
   created() {
-    this.$nuxt.$on("section-rename", ($event) => {
-      this.renameModal = true
-      this.sectionId = $event.id
-      this.sectionTitle = $event.title
-    })
-
-    this.$nuxt.$on("section-delete", ($event) => {
-      this.deleteSection($event)
-    })
 
     this.$nuxt.$on("update-key", () => {
       // console.log('update key event capture')
@@ -385,6 +365,13 @@ export default {
 
     },
 
+    renameSectionModal($event) {
+      console.log($event)
+      this.renameModal = true
+      this.sectionId = $event.id
+      this.sectionTitle = $event.title
+    },
+
     async renameSection() {
       this.loading = true
       const sec = await this.$store.dispatch("section/renameSection", {
@@ -475,15 +462,16 @@ export default {
       }
     },
 
-    markComplete($event) {
+    markComplete(task) {
       // console.log(this.currentTask)
       this.loading = true
-      this.$store.dispatch('task/updateTaskStatus', $event)
+      this.$store.dispatch('task/updateTaskStatus', task)
         .then((d) => {
           // console.log(d)
           this.loading = false
           this.popupMessages.push({ text: d.message, variant: "success" })
-          this.$nuxt.$emit("update-key")
+          // this.$nuxt.$emit("update-key")
+          this.updateKey()
           this.$store.dispatch("task/setSingleTask", d)
         }).catch(e => {
           console.log(e)
@@ -493,42 +481,51 @@ export default {
     },
 
     deleteTask(task) {
+      let del = confirm("Are you sure")
       this.loading = true
-      this.$store.dispatch("task/deleteTask", task).then(t => {
+      if (del) {
+        this.$store.dispatch("task/deleteTask", task).then(t => {
 
-        if (t.statusCode == 200) {
-          this.popupMessages.push({ text: t.message, variant: "success" })
-          this.updateKey()
-        } else {
-          this.popupMessages.push({ text: t.message, variant: "warning" })
-          console.warn(t.message);
-        }
+          if (t.statusCode == 200) {
+            this.popupMessages.push({ text: t.message, variant: "success" })
+            this.updateKey()
+          } else {
+            this.popupMessages.push({ text: t.message, variant: "warning" })
+            console.warn(t.message);
+          }
+          this.loading = false
+        }).catch(e => {
+          this.loading = false
+          this.popupMessages.push({ text: e, variant: "danger" })
+          console.log(e)
+        })
+      } else {
         this.loading = false
-      }).catch(e => {
-        this.loading = false
-        this.popupMessages.push({ text: e, variant: "danger" })
-        console.log(e)
-      })
+      }
     },
 
     deleteSection(section) {
       this.loading = true;
+      let del = confirm("Are you sure?")
+      if (del) {
+        this.$store.dispatch("section/deleteSection", section).then(s => {
 
-      this.$store.dispatch("section/deleteSection", section).then(s => {
-
-        if (s.statusCode == 200) {
-          this.popupMessages.push({ text: s.message, variant: "success" })
-          this.updateKey()
-        } else {
-          this.popupMessages.push({ text: s.message, variant: "warning" })
-          console.warn(t.message);
-        }
+          if (s.statusCode == 200) {
+            this.popupMessages.push({ text: s.message, variant: "success" })
+            this.updateKey()
+          } else {
+            this.popupMessages.push({ text: s.message, variant: "warning" })
+            console.warn(t.message);
+          }
+          this.loading = false
+        }).catch(e => {
+          this.loading = false
+          this.popupMessages.push({ text: e, variant: "danger" })
+          console.log(e)
+        })
+      } else {
         this.loading = false
-      }).catch(e => {
-        this.loading = false
-        this.popupMessages.push({ text: e, variant: "danger" })
-        console.log(e)
-      })
+      }
     },
 
     sectionDragEnd: _.debounce(async function(payload) {
@@ -580,23 +577,6 @@ export default {
           "Content-Type": "application/json"
         }
       })
-
-      // let taskDnD;
-      /*if (this.taskDnDsectionId) {
-        taskDnD = await this.$axios.$put("/section/crossSectionDragDrop", { data: tasklist[0].tasks, sectionId: this.taskDnDsectionId }, {
-          headers: {
-            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-            "Content-Type": "application/json"
-          }
-        })
-      } else {
-        taskDnD = await this.$axios.$put("/task/dragdrop", { data: this.taskDnDlist }, {
-          headers: {
-            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-            "Content-Type": "application/json"
-          }
-        })
-      }*/
 
       console.log(taskDnD.message)
       if (taskDnD.statusCode == 200) {
