@@ -490,6 +490,69 @@ export const TASK_FAVORITES = [
   }
 ]
 
+export const COMPANY_TASK_FIELDS = [
+  
+  { 
+    label: 'Task name', 
+    key: 'title', 
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    },
+    event: "task-click",
+  },
+  {
+    label: "Project",
+    key: "project",
+    header_icon: {
+      icon: "swap-vertical",
+      event: "table-sort",
+      isActive: false,
+    },
+  },
+  { 
+    label: 'Status', 
+    key: 'status', 
+    width : '12%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  },
+  { 
+    label: 'Priority', 
+    key: 'priority', 
+    width : '12%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  },
+  { 
+    label: 'Owner', 
+    key: 'userId', 
+    width : '15%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  },
+  { 
+    label: 'Due Date', 
+    key: 'dueDate', 
+    width : '10%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  }
+]
+
 
 export const USER_TASKS = [
   
@@ -593,10 +656,11 @@ export const DREAM_SORT = [
 ]
 
 export const COMPANY_TASK_SORT = [
-  { label: 'Name', key: 'name' },
+  { label: 'Name', key: 'title' },
+  { label: 'Project', key: 'projectId'},
   { label: 'Status', key: 'status' },
   { label: 'Priority', key: 'priority' },
-  { label: 'Owner', key: 'owner' },
+  { label: 'Owner', key: 'userId' },
   { label: 'Due Date', key: 'dueDate' },
 ]
 
