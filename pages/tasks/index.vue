@@ -159,41 +159,53 @@ export default {
     // Sort By Action List
     sortBy($event) {
 
-      console.log($event, this.orderBy)
+      // console.log(this.key)
 
       if($event == 'title') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'name', order: this.orderBy }).then(() => {
           this.key += 1
+        }).catch((err) => {
+          console.log(err)
         })
       }
 
       if($event == 'userId') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'owner', order: this.orderBy }).then(() => {
           this.key += 1
+        }).catch((err) => {
+          console.log(err)
         })
       }
 
       if($event == 'projectId') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'project', order: this.orderBy }).then(() => {
           this.key += 1
+        }).catch((err) => {
+          console.log(err)
         })
       }
 
       if($event == 'status') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'status', order: this.orderBy }).then(() => {
           this.key += 1
+        }).catch((err) => {
+          console.log(err)
         })
       }
 
       if($event == 'priority') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'priority', order: this.orderBy }).then(() => {
           this.key += 1
+        }).catch((err) => {
+          console.log(err)
         })
       }
 
       if($event == 'dueDate') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'dueDate', order: this.orderBy }).then(() => {
           this.key += 1
+        }).catch((err) => {
+          console.log(err)
         })
       }
 
@@ -202,6 +214,8 @@ export default {
       } else {
         this.orderBy = 'asc'
       }
+
+      this.key += 1
 
     },
 
