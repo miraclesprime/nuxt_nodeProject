@@ -1,6 +1,6 @@
 <template>
   <div class="of-scroll-x position-relative" style="min-height: 20rem;">
-    <draggable :list="localdata" class="d-flex " :move="moveSection" v-on:end="sectionDragEnd" handle=".section-drag-handle">
+    <draggable :list="localdata" class="d-flex " :move="moveSection" v-on:end="$emit('section-dragend', localdata)" handle=".section-drag-handle">
       <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${templateKey}${section.title}${section.id}`">
         <div class="w-100 d-flex " :id="'tgs-inner-wrap-'+section.id" style="margin-bottom: 10px">
           <div class="title text-gray section-drag-handle flex-grow-1" :id="'tgs-label-'+section.id">{{ section.title.includes('_section') ? 'Untitled section' : section.title }}</div>
@@ -16,13 +16,14 @@
                       <bib-icon icon="add"></bib-icon>
                       <span class="ml-05" :id="'tgs-list-span'+section.id">Add task</span>
                     </div>
-                  </span><span class="list__item" :id="'tgs-list-2'+section.id" v-on:click="$nuxt.$emit('section-rename',{id: section.id, title: section.title })">
+                  </span><span class="list__item" :id="'tgs-list-2'+section.id" v-on:click="$emit('section-rename',{id: section.id, title: section.title })">
                     <div class="d-flex align-center" :id="'tgs-list-flex-2'+section.id">
                       <bib-icon icon="pencil"></bib-icon>
                       <span class="ml-05" :id="'tgs-list-span'+section.id">Rename</span>
                     </div>
-                  </span><hr>
-                  <span class="list__item danger" :id="'tgs-list-3'+section.id" v-on:click="$nuxt.$emit('section-delete',{id: section.id })">
+                  </span>
+                  <hr>
+                  <span class="list__item list__item__danger" :id="'tgs-list-3'+section.id" v-on:click="$emit('section-delete',{id: section.id })">
                     Delete section
                   </span>
                 </div>
@@ -37,7 +38,7 @@
               <figure v-if="task.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
               <div class="task-top" :id="'tg-card-top'+task.id">
                 <div class="d-flex" :id="'tg-card-inside-wrap'+task.id">
-                  <bib-icon icon="check-circle" :scale="1.5" :variant="task.statusId == 5 ? 'success' : 'secondary-sub1'" class="cursor-pointer" @click="markComplete(task)"></bib-icon>
+                  <bib-icon icon="check-circle" :scale="1.25" :variant="task.statusId == 5 ? 'success' : 'secondary-sub1'" class="cursor-pointer" @click="markComplete(task)"></bib-icon>
                   <span class="ml-05" :id="'tg-title'+task.id">{{ task.title }} </span>
                 </div>
                 <bib-button pop="elipsis" icon="elipsis" :icon-variant="overdue(task) == 'bg-danger'? 'white' :'secondary'">
@@ -68,7 +69,7 @@
                         <bib-icon icon="warning" class="mr-05"></bib-icon> Report
                       </span>
                       <hr>
-                      <span class="list__item danger" :id="'tg-delete-task'+task.id" @click="$emit('delete-task', task)">Delete Task</span>
+                      <span class="list__item list__item__danger" :id="'tg-delete-task'+task.id" @click="$emit('delete-task', task)">Delete Task</span>
                     </div>
                   </template>
                 </bib-button>
@@ -88,15 +89,13 @@
       <div class="task-grid-section " id="task-grid-section-blank-3"></div>
     </draggable>
     <loading :loading="loading"></loading>
-    <bib-popup-notification-wrapper>
-      <template #wrapper>
-        <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
-        </bib-popup-notification>
-      </template>
-    </bib-popup-notification-wrapper>
   </div>
 </template>
 <script>
+/*
+  @vue-emits:['section-rename', 'section-delete', "create-task", 'delete-task', "set-favorite", "mark-complete", ],
+  @vue-nuxt-emits:[ "update-key", ],
+*/
 import draggable from 'vuedraggable'
 import { mapGetters } from 'vuex';
 
@@ -115,7 +114,7 @@ export default {
       highlight: null,
       taskDnDlist: [],
       taskDnDsectionId: null,
-      popupMessages: [],
+      // popupMessages: [],
     };
   },
   props: {
@@ -133,7 +132,7 @@ export default {
       // sections: "section/getProjectSections",
       favTasks: "task/getFavTasks",
     }),
-    
+
   },
 
   watch: {
@@ -145,20 +144,25 @@ export default {
 
   mounted() {
     this.loading = true
+    // this.localdata = _.cloneDeep(this.sections)
     // console.info('mounted', this.project)
-    this.$store.dispatch("section/fetchProjectSections", { projectId: this.project.id }).then((sections) => {
-      let key = parseInt(Math.random().toString().slice(-2))
-      // console.log(sections)
-      this.localdata = sections
-      this.$emit("update-key")
-      this.loading = false
-    }).catch(e => console.log(e))
+    this.$store.dispatch("section/fetchProjectSections", { projectId: this.project.id })
+      .then((sections) => {
+        // let key = parseInt(Math.random().toString().slice(-2))
+        this.localdata = sections
+        this.loading = false
+        this.$emit("update-key")
+      })
+      .catch(e => {
+        console.log(e)
+        this.loading = false
+      })
 
   },
 
   methods: {
     isFavorite(task) {
-      let fav = this.favTasks.some(t  => t.task.id == task.id)
+      let fav = this.favTasks.some(t => t.task.id == task.id)
       if (fav) {
         return { icon: "bookmark-solid", variant: "orange", text: "Remove favorite", status: true }
       } else {
@@ -175,9 +179,6 @@ export default {
     },
 
     moveTask(e) {
-      // console.log("move =>",e)
-      // console.log("move to section =>",e.to.dataset.section)
-      // console.log("related context list =>", list, list.length)
 
       // this.taskDnDlist = tasks
       this.taskDnDsectionId = +e.to.dataset.section
@@ -185,213 +186,23 @@ export default {
 
     },
 
-    /*debounceMoveTask: _.debounce(function(e) {
-      // console.info('move', e.draggedContext.element)
-      console.log("move ", e)
-      console.log("move to section =>",e.to.dataset.section)
-      // console.info("move list", e.relatedContext.list);
-      // console.log("task move=>", this.taskDnDlist, this.taskDnDsectionId)
+    taskDragEnd(e) {
+      // console.log(e)
+      this.highlight = false
+      let sectionData = this.localdata.filter(s => s.id == e.to.dataset.section)
+      this.$emit('task-dragend', { tasks: sectionData[0].tasks, sectionId: e.to.dataset.section })
+    },
 
-      let tasks = []
-
-      e.relatedContext.list.forEach((element, index) => {
-        element['order'] = index
-        tasks.push(element)
-        // console.table(element.order, element.title)
-      })
-
-      // console.log(tasks, e.to.dataset.section)
-      this.taskDnDlist = tasks
-      this.taskDnDsectionId = +e.to.dataset.section
-      this.highlight = +e.to.dataset.section
-
-    }, 400),*/
-
-    taskDragEnd: _.debounce(async function(e) {
-      // this.drag = false
-      // console.log('move end =>', e)
-      this.highlight = null
-      this.loading = true
-
-      // console.log("move end =>", e.to.dataset.section)
-
-      let tasklist = this.localdata.filter((t) => t.id == e.to.dataset.section )
-
-      // console.log(tasklist[0].tasks)
-
-      tasklist[0].tasks.forEach((e,i)=>{
-        e.order = i
-      })
-
-      // console.log(tasklist[0].tasks)
-
-
-      let taskDnD;
-      if (this.taskDnDsectionId) {
-        taskDnD = await this.$axios.$put("/section/crossSectionDragDrop", { data: tasklist[0].tasks, sectionId: this.taskDnDsectionId }, {
-          headers: {
-            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-            "Content-Type": "application/json"
-          }
-        })
-      } else {
-        taskDnD = await this.$axios.$put("/task/dragdrop", { data: this.taskDnDlist }, {
-          headers: {
-            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-            "Content-Type": "application/json"
-          }
-        })
-      }
-
-      console.log(taskDnD.message)
-      if (taskDnD.statusCode == 200) {
-        // console.info(taskDnD.message)
-        this.$emit("update-key")
-        // this.taskDnDsectionId = null
-      } else {
-        console.warn(taskDnD.message)
-      }
-      this.loading = false
-    }, 600),
-
-    /*taskByOrder() {
-      this.localdata = JSON.parse(JSON.stringify(this.sections))
-
-      let sorted = this.localdata.map(s => {
-        let t = s.tasks.sort((a, b) => a.order - b.order)
-        s.tasks = t
-        return s
-      })
-      // console.log("sorted =>", sorted)
-      this.localdata = sorted
-      // this.key += 1
-      this.$nuxt.$emit("update-key")
-    },*/
-
-    moveSection(e){
+    moveSection(e) {
 
       // console.log("move section =>",e.relatedContext.list)
       this.highlight = +e.to.dataset.section
 
     },
 
-    /*moveSection: _.debounce(function(e) {
-
-      console.log("move section =>",e.relatedContext.list)
-
-      let ordered = []
-      e.relatedContext.list.forEach(function(element, index) {
-        element["order"] = index
-        ordered.push(element)
-      });
-
-      this.ordered = ordered
-
-    }, 400),*/
-
-    sectionDragEnd: _.debounce(async function(e) {
-
-      this.loading = true
-      this.localdata.forEach((el,i)=>{
-        el.order = i
-      })
-
-      console.log("ordered sections =>",this.localdata)
-
-      let sectionDnD = await this.$axios.$put("/section/dragdrop", { projectId: this.project.id, data: this.localdata }, {
-        headers: {
-          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-          "Content-Type": "application/json"
-        }
-      })
-
-      console.log(sectionDnD.message)
-
-      if (sectionDnD.statusCode == 200) {
-        // console.info(sectionDnD.message)
-        this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id }).then(() => {
-          // this.$emit("update-key")
-          this.$nuxt.$emit("update-key")
-
-        })
-      } /*else {
-        console.warn(sectionDnD.message)
-      }*/
-
-      this.loading = false
-
-    }, 600),
-
-    /*taskWithSection(sectionId) {
-      var arr = []
-
-      for (var j = 0; j < this.tasks.length; ++j) {
-        if (this.tasks[j].sectionId == sectionId) {
-          arr.push(this.tasks[j]);
-        }
-      }
-
-      // Sort By Title
-      if (this.sortName == 'name' && this.orderBy == 'asc') {
-        arr.sort((a, b) => a.title.localeCompare(b.title));
-      }
-
-      if (this.sortName == 'name' && this.orderBy == 'desc') {
-        arr.sort((a, b) => b.title.localeCompare(a.title));
-      }
-
-      // Sort By owner
-      if (this.sortName == 'owner' && this.orderBy == 'asc') {
-        arr.sort((a, b) => a.user.firstName.localeCompare(b.user.firstName));
-      }
-
-      if (this.sortName == 'owner' && this.orderBy == 'desc') {
-        arr.sort((a, b) => b.user.firstName.localeCompare(a.user.firstName));
-      }
-
-      // sort By Status
-      if (this.sortName == 'status' && this.orderBy == 'asc') {
-        arr.sort((a, b) => a.status.text.localeCompare(b.status.text));
-      }
-
-      if (this.sortName == 'status' && this.orderBy == 'desc') {
-        arr.sort((a, b) => b.status.text.localeCompare(a.status.text));
-      }
-
-      // sort By Start Date
-
-      if (this.sortName == 'startDate' && this.orderBy == 'asc') {
-        arr.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-      }
-
-      if (this.sortName == 'startDate' && this.orderBy == 'asc') {
-        arr.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      }
-
-      // sort By DueDate
-      if (this.sortName == 'dueDate' && this.orderBy == 'asc') {
-        arr.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
-      }
-
-      if (this.sortName == 'dueDate' && this.orderBy == 'desc') {
-        arr.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate));
-      }
-
-      // Sort By Priotity
-      if (this.sortName == 'priority' && this.orderBy == 'asc') {
-        arr.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
-      }
-
-      if (this.sortName == 'priority' && this.orderBy == 'desc') {
-        arr.sort((a, b) => b.priority.text.localeCompare(a.priority.text));
-      }
-
-      return arr;
-    },*/
-
     overdue(item) {
       // console.log(new Date(item.dueDate), new Date);
-      return (new Date(item.dueDate) < new Date() && item.statusId != 5) ? 'bg-danger' : '';
+      return (new Date(item.dueDate) < new Date() && item.statusId != 5) ? 'bg-warning-sub3' : '';
     },
 
     openSidebar(task, projectId) {
@@ -416,11 +227,12 @@ export default {
     addToFavorites(task) {
       // console.log('to be favorites task', task.id)
       this.$emit("set-favorite", task)
-    },/*
-    taskCheckIcon(task) {
-      return task.statusId == 5 ? 'success' : 'secondary-sub1'
-    },*/
-    markComplete(task){
+    },
+    /*
+        taskCheckIcon(task) {
+          return task.statusId == 5 ? 'success' : 'secondary-sub1'
+        },*/
+    markComplete(task) {
       this.$emit("mark-complete", task)
     },
   },

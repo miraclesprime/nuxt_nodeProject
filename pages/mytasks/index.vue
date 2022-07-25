@@ -300,6 +300,7 @@ export default {
       // console.log('task move end =>', payload)
 
       this.highlight = null
+      console.log(payload.tasks)
 
       payload.tasks.forEach((e, i) => {
         e.tOrder = i
@@ -337,6 +338,14 @@ export default {
         // console.warn(taskDnD.message)
         this.popupMessages.push({ msg: taskDnD.message, variant: 'danger' })
       }
+
+      this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
+      // console.log(res)
+      if (res.statusCode == 200) {
+        this.key += 1
+      }
+      this.loading = false;
+    })
     }, 600),
 
     moveTodo(e) {
@@ -365,6 +374,14 @@ export default {
         // console.info(todoDnD.message)
         this.popupMessages.push({ msg: todoDnD.message, variant: 'danger' })
       }
+
+      this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
+      // console.log(res)
+      if (res.statusCode == 200) {
+        this.key += 1
+      }
+      this.loading = false;
+    })
 
     }, 600),
 

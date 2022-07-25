@@ -73,14 +73,14 @@ export const mutations = {
       state.companyTasks = newArr;
     }
 
-    // sort by owner
-    if (payload.sName == 'owner' && payload.order == 'asc') {
+    // sort by project
+    if (payload.sName == 'project' && payload.order == 'asc') {
 
       let arr = JSON.parse(JSON.stringify(state.companyTasks))
       let newArr = []
 
       for (let i = 0; i < arr.length; i++) {
-        if (arr[i].user) {
+        if (arr[i].project[0]) {
           newArr.unshift(arr[i])
         } else {
           newArr.push(arr[i])
@@ -88,8 +88,8 @@ export const mutations = {
       }
 
       newArr.sort((a, b) => {
-        if (a.user && b.user) {
-          return a.user.firstName - b.user.firstName;
+        if (a.project[0] && b.project[0]) {
+          return a.project[0].project.title.localeCompare(b.project[0].project.title);
         }
       });
       state.companyTasks = newArr;
@@ -97,13 +97,13 @@ export const mutations = {
       // state.companyTasks.sort((a,b) => a.user.firstName.localeCompare(b.user.firstName))
     }
 
-    if (payload.sName == 'owner' && payload.order == 'desc') {
+    if (payload.sName == 'project' && payload.order == 'desc') {
 
       let arr = JSON.parse(JSON.stringify(state.companyTasks))
       let newArr = []
 
       for (let i = 0; i < arr.length; i++) {
-        if (arr[i].user) {
+        if (arr[i].project[0]) {
           newArr.unshift(arr[i])
         } else {
           newArr.push(arr[i])
@@ -111,8 +111,8 @@ export const mutations = {
       }
 
       newArr.sort((a, b) => {
-        if (a.user && b.user) {
-          return b.user.firstName - a.user.firstName;
+        if (a.project[0] && b.project[0]) {
+          return b.project[0].project.title.localeCompare(a.project[0].project.title);
         }
       });
       state.companyTasks = newArr;
