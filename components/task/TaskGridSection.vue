@@ -1,6 +1,6 @@
 <template>
   <div class="of-scroll-x position-relative" style="min-height: 20rem;">
-    <draggable :list="localdata" class="d-flex " :move="moveSection" v-on:end="sectionDragEnd" handle=".section-drag-handle">
+    <draggable :list="localdata" class="d-flex " :move="moveSection" v-on:end="$emit('section-dragend', localdata)" handle=".section-drag-handle">
       <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${templateKey}${section.title}${section.id}`">
         <div class="w-100 d-flex " :id="'tgs-inner-wrap-'+section.id" style="margin-bottom: 10px">
           <div class="title text-gray section-drag-handle flex-grow-1" :id="'tgs-label-'+section.id">{{ section.title.includes('_section') ? 'Untitled section' : section.title }}</div>
@@ -21,7 +21,8 @@
                       <bib-icon icon="pencil"></bib-icon>
                       <span class="ml-05" :id="'tgs-list-span'+section.id">Rename</span>
                     </div>
-                  </span><hr>
+                  </span>
+                  <hr>
                   <span class="list__item list__item__danger" :id="'tgs-list-3'+section.id" v-on:click="$emit('section-delete',{id: section.id })">
                     Delete section
                   </span>
@@ -88,7 +89,6 @@
       <div class="task-grid-section " id="task-grid-section-blank-3"></div>
     </draggable>
     <loading :loading="loading"></loading>
-    
   </div>
 </template>
 <script>
@@ -132,7 +132,7 @@ export default {
       // sections: "section/getProjectSections",
       favTasks: "task/getFavTasks",
     }),
-    
+
   },
 
   watch: {
@@ -144,20 +144,25 @@ export default {
 
   mounted() {
     this.loading = true
+    // this.localdata = _.cloneDeep(this.sections)
     // console.info('mounted', this.project)
-    this.$store.dispatch("section/fetchProjectSections", { projectId: this.project.id }).then((sections) => {
-      let key = parseInt(Math.random().toString().slice(-2))
-      // console.log(sections)
-      this.localdata = sections
-      this.$emit("update-key")
-      this.loading = false
-    }).catch(e => console.log(e))
+    this.$store.dispatch("section/fetchProjectSections", { projectId: this.project.id })
+      .then((sections) => {
+        // let key = parseInt(Math.random().toString().slice(-2))
+        this.localdata = sections
+        this.loading = false
+        this.$emit("update-key")
+      })
+      .catch(e => {
+        console.log(e)
+        this.loading = false
+      })
 
   },
 
   methods: {
     isFavorite(task) {
-      let fav = this.favTasks.some(t  => t.task.id == task.id)
+      let fav = this.favTasks.some(t => t.task.id == task.id)
       if (fav) {
         return { icon: "bookmark-solid", variant: "orange", text: "Remove favorite", status: true }
       } else {
@@ -181,92 +186,19 @@ export default {
 
     },
 
-    taskDragEnd: _.debounce(async function(e) {
-      // this.drag = false
-      // console.log('move end =>', e)
-      this.highlight = null
-      this.loading = true
+    taskDragEnd(e) {
+      // console.log(e)
+      this.highlight = false
+      let sectionData = this.localdata.filter(s => s.id == e.to.dataset.section)
+      this.$emit('task-dragend', { tasks: sectionData[0].tasks, sectionId: e.to.dataset.section })
+    },
 
-      // console.log("move end =>", e.to.dataset.section)
-
-      let tasklist = this.localdata.filter((t) => t.id == e.to.dataset.section )
-
-      // console.log(tasklist[0].tasks)
-
-      tasklist[0].tasks.forEach((e,i)=>{
-        e.order = i
-      })
-
-      // console.log(tasklist[0].tasks)
-
-
-      let taskDnD;
-      if (this.taskDnDsectionId) {
-        taskDnD = await this.$axios.$put("/section/crossSectionDragDrop", { data: tasklist[0].tasks, sectionId: this.taskDnDsectionId }, {
-          headers: {
-            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-            "Content-Type": "application/json"
-          }
-        })
-      } else {
-        taskDnD = await this.$axios.$put("/task/dragdrop", { data: this.taskDnDlist }, {
-          headers: {
-            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-            "Content-Type": "application/json"
-          }
-        })
-      }
-
-      console.log(taskDnD.message)
-      if (taskDnD.statusCode == 200) {
-        // console.info(taskDnD.message)
-        this.$emit("update-key")
-        // this.taskDnDsectionId = null
-      } else {
-        console.warn(taskDnD.message)
-      }
-      this.loading = false
-    }, 600),
-
-    moveSection(e){
+    moveSection(e) {
 
       // console.log("move section =>",e.relatedContext.list)
       this.highlight = +e.to.dataset.section
 
     },
-
-    sectionDragEnd: _.debounce(async function(e) {
-
-      this.loading = true
-      this.localdata.forEach((el,i)=>{
-        el.order = i
-      })
-
-      console.log("ordered sections =>",this.localdata)
-
-      let sectionDnD = await this.$axios.$put("/section/dragdrop", { projectId: this.project.id, data: this.localdata }, {
-        headers: {
-          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-          "Content-Type": "application/json"
-        }
-      })
-
-      console.log(sectionDnD.message)
-
-      if (sectionDnD.statusCode == 200) {
-        // console.info(sectionDnD.message)
-        this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id }).then(() => {
-          // this.$emit("update-key")
-          this.$nuxt.$emit("update-key")
-
-        })
-      } /*else {
-        console.warn(sectionDnD.message)
-      }*/
-
-      this.loading = false
-
-    }, 600),
 
     overdue(item) {
       // console.log(new Date(item.dueDate), new Date);
@@ -295,11 +227,12 @@ export default {
     addToFavorites(task) {
       // console.log('to be favorites task', task.id)
       this.$emit("set-favorite", task)
-    },/*
-    taskCheckIcon(task) {
-      return task.statusId == 5 ? 'success' : 'secondary-sub1'
-    },*/
-    markComplete(task){
+    },
+    /*
+        taskCheckIcon(task) {
+          return task.statusId == 5 ? 'success' : 'secondary-sub1'
+        },*/
+    markComplete(task) {
       this.$emit("mark-complete", task)
     },
   },

@@ -7,7 +7,7 @@
       <!-- <task-list-section :project="project" :sections="localdata" :templateKey="templateKey" v-on:sort-task="taskSort($event)" v-on:update-key="updateKey"></task-list-section> -->
     </template>
     <template v-else>
-      <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" @section-rename="renameSectionModal" @section-delete="deleteSection" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="setFavorite" v-on:mark-complete="markComplete" v-on:delete-task="deleteTask">
+      <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" @section-rename="renameSectionModal" @section-delete="deleteSection" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="setFavorite" v-on:mark-complete="markComplete" v-on:delete-task="deleteTask" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd">
       </task-grid-section>
     </template>
     <loading :loading="loading"></loading>
@@ -560,7 +560,7 @@ export default {
     }, 600),
 
     taskDragEnd: _.debounce(async function(payload) {
-      console.log('move end =>', payload)
+      console.log('task dragend =>', payload)
       // this.highlight = null
       this.loading = true
       let tasks = _.cloneDeep(payload.tasks)
