@@ -82,7 +82,7 @@ export default {
     if (this.user) {
       // this.owner = JSON.parse(JSON.stringify(this.user))
       let u = this.teamMembers.filter(t => t.id == this.user.sub)
-      this.owner = u[0]
+      // this.owner = u[0]
     }
   },
   methods: {
