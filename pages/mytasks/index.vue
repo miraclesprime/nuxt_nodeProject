@@ -418,7 +418,7 @@ export default {
 
     // Sort By Action List
     sortBy($event) {
-      console.log($event, this.orderBy)
+      // console.log($event, this.orderBy)
       // sort by title
       if ($event == 'title' && this.orderBy == 'asc') {
         this.localdata.forEach(function(todo, index) {

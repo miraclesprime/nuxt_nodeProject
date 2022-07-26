@@ -25,24 +25,27 @@
       </td>
     </tr>
     <draggable v-if="drag" :list="tasks" tag="tbody" class="task-draggable " handle=".drag-handle" @start="taskDragStart" :move="moveTask" @end="taskDragEnd" :style="{ visibility: isCollapsed ? 'collapse': '' }">
-      <tr v-for="(task, index) in tasks" :key="task.id + templateKey + index" class="table__irow">
+      <tr v-for="(task, taskindex) in tasks" :key="task.title +'-'+ componentKey + taskindex" class="table__irow">
         <td>
           <div class="drag-handle width-2 "><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
               <rect fill="none" height="24" width="24" />
               <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div>
         </td>
-        <td v-for="(col, index) in cols" :key="task.id + col + index + templateKey">
+        <td v-for="(col, index) in cols" :key="task.title + col + index + componentKey">
           <template v-if="col.key == 'userId'">
-            <user-info :key="componentKey" :userId="task[col.key]"></user-info>
+            <user-info :key="task.title+col.key+componentKey" :userId="task[col.key]"></user-info>
           </template>
           <template v-if="col.key == 'status'">
-            <status-comp :key="componentKey" :status="task[col.key]"></status-comp>
+            <status-comp :key="task.title+col.key+componentKey" :status="task[col.key]"></status-comp>
           </template>
           <template v-if="col.key == 'priority'">
-            <priority-comp :key="componentKey" :priority="task[col.key]"></priority-comp>
+            <priority-comp :key="task.title+col.key+componentKey" :priority="task[col.key]"></priority-comp>
           </template>
           <template v-if="col.key == 'createdAt' || col.key == 'dueDate'">
-            <format-date :key="componentKey" :datetime="task[col.key]"></format-date>
+            <format-date :key="task.title+col.key+componentKey" :datetime="task[col.key]"></format-date>
+          </template>
+          <template v-if="col.key == 'project'">
+            <project-info v-if="task[col.key].length" :key="task.title+col.key+componentKey" :projectId="task[col.key][0].projectId"></project-info>
           </template>
           <div v-if="col.key == 'title'" class="h-100">
             <span v-if="col.event" class="cursor-pointer d-block" v-on:click="$emit(col.event, task)">
@@ -53,28 +56,28 @@
             </span>
           </div>
           <template v-if="col.key == 'department'">
-              {{task[col.key]}}
+            {{task[col.key]}}
           </template>
         </td>
       </tr>
     </draggable>
     <tbody v-else :style="{ visibility: isCollapsed ? 'collapse': '' }">
-      <tr v-for="(task, index) in tasks" :key="task.id + templateKey + index" class="table__irow">
-        <td v-for="(col, index) in cols" :key="task.id + index + templateKey">
+      <tr v-for="(task, taskindex) in tasks" :key="task.title + componentKey + taskindex" class="table__irow">
+        <td v-for="(col, index) in cols" :key="task.title + col + index + componentKey">
           <template v-if="col.key == 'userId'">
-            <user-info :key="componentKey" :userId="task[col.key]"></user-info>
+            <user-info :key="task.title+col.key+componentKey" :userId="task[col.key]"></user-info>
           </template>
           <template v-if="col.key == 'status'">
-            <status-comp :key="componentKey" :status="task[col.key]"></status-comp>
+            <status-comp :key="task.title+col.key+componentKey" :status="task[col.key]"></status-comp>
           </template>
           <template v-if="col.key == 'priority'">
-            <priority-comp :key="componentKey" :priority="task[col.key]"></priority-comp>
+            <priority-comp :key="task.title+col.key+componentKey" :priority="task[col.key]"></priority-comp>
           </template>
           <template v-if="col.key == 'createdAt' || col.key == 'dueDate'">
-            <format-date :key="componentKey" :datetime="task[col.key]"></format-date>
+            <format-date :key="task.title+col.key+componentKey" :datetime="task[col.key]"></format-date>
           </template>
           <template v-if="col.key == 'project'">
-            <project-info v-if="task[col.key].length" :key="componentKey" :projectId="task[col.key][0].projectId"></project-info>
+            <project-info v-if="task[col.key].length" :key="task.title+col.key+componentKey" :projectId="task[col.key][0].projectId"></project-info>
           </template>
           <div v-if="col.key == 'title'" class="d-flex gap-05 align-center h-100">
             <bib-icon icon="check-circle" :scale="1.25" :variant="taskCheckIcon(task)" class="cursor-pointer" @click="updateTaskStatus(task)"></bib-icon>
@@ -86,7 +89,7 @@
             </span>
           </div>
           <template v-if="col.key == 'department'">
-              {{task[col.key]}}
+            {{task[col.key]}}
           </template>
         </td>
       </tr>
@@ -165,14 +168,13 @@ export default {
       type: Boolean,
       default: true,
     },
-    componentKey: {type: Number, default: 0},
+    componentKey: { type: Number, default: 0 },
 
   },
   data() {
     return {
       cols: [],
       // item: {},
-      templateKey: 11,
       isCollapsed: this.collapseObj ? this.collapseObj.collapsed : false,
       localdata: [],
       taskMoveSection: null,
@@ -182,10 +184,7 @@ export default {
   computed: {
     activeClass() { return keyI => this.sections[keyI].active ? 'active' : '' },
     iconRotate() { return this.isCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)' },
-    /*localdata() {
-      this.templateKey += 1
-      return JSON.parse(JSON.stringify(this.sections))
-    }*/
+    
   },
   created() {
     // console.info('created lifecycle', this.cols.length)
@@ -204,7 +203,7 @@ export default {
         return 'gray5'
       }
     },
-    updateTaskStatus(task){
+    updateTaskStatus(task) {
       console.log(task.statusId)
       this.$emit('task-checkmark-click', task)
     },
@@ -231,7 +230,7 @@ export default {
       this.taskMoveSection = +e.to.dataset.section
 
     },
-    
+
     newTaskEvent() {
       this.$emit(this.newTaskButton.event, false)
     }
