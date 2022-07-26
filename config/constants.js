@@ -657,7 +657,7 @@ export const DREAM_SORT = [
 
 export const COMPANY_TASK_SORT = [
   { label: 'Name', key: 'title' },
-  { label: 'Project', key: 'projectId'},
+  { label: 'Project', key: 'project'},
   { label: 'Status', key: 'status' },
   { label: 'Priority', key: 'priority' },
   { label: 'Owner', key: 'userId' },

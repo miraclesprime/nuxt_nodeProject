@@ -159,7 +159,7 @@ export default {
     // Sort By Action List
     sortBy($event) {
 
-      // console.log(this.key)
+      console.log($event)
 
       if($event == 'title') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'name', order: this.orderBy }).then(() => {
@@ -170,14 +170,14 @@ export default {
       }
 
       if($event == 'userId') {
-        this.$store.dispatch('company/sortCompanyTasks', { sName: 'owner', order: this.orderBy }).then(() => {
+        this.$store.dispatch('company/sortCompanyTasks', { sName: 'userId', order: this.orderBy }).then(() => {
           this.key += 1
         }).catch((err) => {
           console.log(err)
         })
       }
 
-      if($event == 'projectId') {
+      if($event == 'project') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'project', order: this.orderBy }).then(() => {
           this.key += 1
         }).catch((err) => {
