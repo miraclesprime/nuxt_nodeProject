@@ -78,11 +78,14 @@ export default {
     },
   },
   mounted() {
-    // console.log(this.user)
     if (this.user) {
-      // this.owner = JSON.parse(JSON.stringify(this.user))
-      let u = this.teamMembers.filter(t => t.id == this.user.sub)
-      this.owner = u[0]
+      this.$axios.get(`${process.env.USER_API_URL}/${this.user.sub}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+          }
+        }).then((res) => {
+          this.owner = {id: res.data[0].Id, firstName: res.data[0].FirstName, lastName: res.data[0].LastName, avatar: res.data[0].Photo, email: res.data[0].Email};
+        })
     }
   },
   methods: {
