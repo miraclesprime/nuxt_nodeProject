@@ -4,7 +4,7 @@
       <page-title title="Favorites"></page-title>
       <favorite-actions v-on:change-viewing="changeView" v-on:change-sorting="changeSort"></favorite-actions>
       <div id="favorite-scroll-wrap" class="of-scroll-y position-relative">
-        <drag-table-simple :fields="projectTableFields" :tasks="sortedProject" :key="key" :sectionTitle="'Favorite Projects'" @project-click="projectRoute" :newTaskButton="{label: 'New Project', event: 'new-project', variant: 'secondary', hover: 'dark'}" v-on:new-project="newProject" v-on:table-sort="changeSort"></drag-table-simple>
+        <drag-table-simple :fields="projectTableFields" :tasks="sortedProject" :componentKey="key" :drag="false" :sectionTitle="'Favorite Projects'" @project-click="projectRoute" :newTaskButton="{label: 'New Project', event: 'new-project', variant: 'secondary', hover: 'dark'}" v-on:new-project="newProject" v-on:table-sort="sortProject"></drag-table-simple>
         <!-- <bib-table :key="'fproj'+key" :fields="projectTableFields" class="border-gray4 bg-white" :sections="sortedProject" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Favorite Projects'}" @file-title-sort="sortProject('name')" @file-status-sort="sortProject('status')" @file-priority-sort="sortProject('priority')" @file-owner-sort="sortProject('owner')" @file-dueDate-sort="sortProject('dueDate')">
           <template #cell(title)="data">
             <div class="d-flex gap-05 align-center text-dark " :id="'projects-' + data.value.title">
@@ -30,9 +30,8 @@
             <format-date :datetime="data.value.dueDate"></format-date>
           </template>
         </bib-table> -->
-        
         <!-- task table -->
-        <drag-table-simple :fields="taskTableFields" :tasks="sortedTask" :sectionTitle="'Favorite Tasks'" v-on:new-task="openSidebar" ></drag-table-simple>
+        <drag-table-simple :fields="taskTableFields" :componentKey="key+1" :tasks="sortedTask" :sectionTitle="'Favorite Tasks'" :drag="false" v-on:new-task="openSidebar" v-on:table-sort="sortTask"></drag-table-simple>
         <!-- <bib-table :key="'ftasks'+key" :fields="taskTableFields" class="border-gray4 bg-white" :sections="sortedTask" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Favorite Tasks'}" @file-title-sort="sortTask('name')" @file-status-sort="sortTask('status')" @file-priority-sort="sortTask('priority')" @file-owner-sort="sortTask('owner')" @file-dueDate-sort="sortTask('dueDate')">
           <template #cell(title)="data">
             <div class="d-flex gap-05 align-center" :id="'projects-' + data.value.title">
@@ -58,13 +57,13 @@
         <!-- <ul>
           <li v-for="item in sortedTaskUtil" :key="item.id">{{ item.title }}</li>
         </ul> -->
-
         <loading :loading="loading"></loading>
       </div>
     </div>
   </client-only>
 </template>
 <script>
+import _ from 'lodash'
 import { PROJECT_FAVORITES, TASK_FAVORITES } from '../../config/constants'
 import { mapGetters } from 'vuex';
 // import { sortTaskUtil } from '~/utils/taskSort.js'
@@ -89,13 +88,18 @@ export default {
   computed: {
     ...mapGetters({
       favoriteProjects: 'project/getFavoriteProjects',
-      favoriteTasks: 'task/getFavTasks'
+      favoriteTasks: 'task/getFavTasks',
     })
   },
 
 
   mounted() {
+    console.info("mounted favorites page");
     this.loading = true
+
+    let user = localStorage.getItem("user")
+
+    this.$store.dispatch("company/fetchCompanyMembers", user.subb)
 
     this.$store.dispatch('project/setFavProjects').then(() => {
       this.fetchProjects()
@@ -108,7 +112,7 @@ export default {
   },
 
   methods: {
-    
+
     async fetchProjects() {
       // this.loading = true
 
@@ -142,9 +146,9 @@ export default {
       // })
     },
 
-    projectRoute(project){
+    projectRoute(project) {
       // console.log(project)
-      this.$router.push('/projects/'+project.id)
+      this.$router.push('/projects/' + project.id)
     },
 
     taskCheckIcon(statusId) {
@@ -181,6 +185,7 @@ export default {
     },
     changeSort($event) {
       // sort by title
+      // console.log($event)
       if (this.projOrder == this.taskOrder) {
         this.sortProject($event)
         this.sortTask($event)
@@ -193,9 +198,9 @@ export default {
 
     },
     sortProject(field) {
-      console.log(field, this.projOrder)
+      // console.log(field, this.projOrder)
       switch (field) {
-        case 'name':
+        case 'title':
           if (this.projOrder == "asc") {
             this.sortedProject.sort((a, b) => a.title.localeCompare(b.title))
             this.projOrder = "desc"
@@ -244,7 +249,7 @@ export default {
           }
 
           this.sortedProject = pArr;
-          
+
           if (this.projOrder == "asc") {
             this.sortedProject.sort((a, b) => {
               if (a.priority && b.priority) { return a.priority.text.localeCompare(b.priority.text) }
@@ -259,21 +264,52 @@ export default {
           this.key += 1
           break;
         case 'userId':
+          let uArr = []
+
+          for (let i = 0; i < this.sortedProject.length; i++) {
+            if (this.sortedProject[i].userId) {
+              uArr.unshift(this.sortedProject[i])
+            } else {
+              uArr.push(this.sortedProject[i])
+            }
+          }
+
+          this.sortedProject = uArr;
+
           if (this.projOrder == "asc") {
-            this.sortedProject.sort((a, b) => a.user.firstName.localeCompare(b.user.firstName));
+            this.sortedProject.sort((a, b) => {
+              if (a.user && b.user) { return a.user.firstName.localeCompare(b.user.firstName) }
+            });
             this.projOrder = "desc"
           } else {
-            this.sortedProject.sort((a, b) => b.user.firstName.localeCompare(a.user.firstName));
+            this.sortedProject.sort((a, b) => {
+              if (a.user && b.user) { b.user.firstName.localeCompare(a.user.firstName) }
+            });
             this.projOrder = "asc"
           }
           this.key += 1
           break;
         case 'dueDate':
+          let dArr = []
+
+          for (let i = 0; i < this.sortedProject.length; i++) {
+            if (this.sortedProject[i].userId) {
+              dArr.unshift(this.sortedProject[i])
+            } else {
+              dArr.push(this.sortedProject[i])
+            }
+          }
+
+          this.sortedProject = dArr;
           if (this.projOrder == "asc") {
-            this.sortedProject.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+            this.sortedProject.sort((a, b) => {
+              if (a.dueDate && b.dueDate) { return new Date(a.dueDate) - new Date(b.dueDate) }
+            });
             this.projOrder = "desc"
           } else {
-            this.sortedProject.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate));
+            this.sortedProject.sort((a, b) => {
+              if (a.dueDate && b.dueDate) { return new Date(b.dueDate) - new Date(a.dueDate) }
+            });
             this.projOrder = "asc"
           }
           this.key += 1
@@ -283,10 +319,11 @@ export default {
           break;
       }
     },
-    sortTask(field) {
+    async sortTask(field) {
       // console.log(field, this.taskOrder)
+
       switch (field) {
-        case 'name':
+        case 'title':
           if (this.taskOrder == "asc") {
             this.sortedTask.sort((a, b) => a.title.localeCompare(b.title))
             this.taskOrder = "desc"
@@ -320,32 +357,64 @@ export default {
           }
           this.key += 1
           break;
-        case 'owner':
+        case 'userId':
           if (this.taskOrder == "asc") {
-            this.sortedTask.sort((a, b) => a.user.firstName.localeCompare(b.user.firstName));
+            this.sortedTask.sort((a, b) => {
+              if (a.user && b.user) { return a.user.firstName.localeCompare(b.user.firstName) }
+            });
             this.taskOrder = "desc"
           } else {
-            this.sortedTask.sort((a, b) => b.user.firstName.localeCompare(a.user.firstName));
+            this.sortedTask.sort((a, b) => {
+              if (a.user && b.user) { return b.user.firstName.localeCompare(a.user.firstName) }
+            });
             this.taskOrder = "asc"
           }
           this.key += 1
           break;
         case 'dueDate':
           if (this.taskOrder == "asc") {
-            this.sortedTask.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+            this.sortedTask.sort((a, b) => {
+              if (a.dueDate && b.dueDate) { return new Date(a.dueDate) - new Date(b.dueDate) }
+            });
             this.taskOrder = "desc"
           } else {
-            this.sortedTask.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate));
+            this.sortedTask.sort((a, b) => {
+              if (a.dueDate && b.dueDate) { return new Date(b.dueDate) - new Date(a.dueDate) }
+            });
             this.taskOrder = "asc"
           }
+          this.key += 1
+          break;
+        case "project":
+          // let favTask = await _.cloneDeep(this.favoriteTasks)
+          // let favTask = await JSON.parse(JSON.stringify(this.favoriteTasks))
+          let newArr = []
+
+          // console.log('favTask=>',favTask)
+
+          for (let i = 0; i < this.sortedTask.length; i++) {
+            if (this.sortedTask[i].project[0]) {
+              newArr.unshift(this.sortedTask[i])
+            } else {
+              newArr.push(this.sortedTask[i])
+            }
+          }
+
+          newArr.sort((a, b) => {
+            if (a.project[0] && b.project[0]) {
+              return a.project[0].project.title.localeCompare(b.project[0].project.title);
+            }
+          });
+          this.sortedTask = newArr;
           this.key += 1
           break;
         default:
           this.fetchTasks()
           break;
       }
+      this.key += 1
     },
-    
+
     projectCheckActive() {
       for (let i = 0; i < this.projectTableFields.length; i++) {
         if (this.projectTableFields[i].header_icon) {
@@ -373,7 +442,7 @@ export default {
       /*this.$store.dispatch('task/setSingleTask', {...task, projectId: projectId})
       this.$store.dispatch('task/fetchTeamMember', { id: task.id } )*/
     },
-    newProject(){
+    newProject() {
       console.log('new project')
       this.$nuxt.$emit('create-project-modal')
     }

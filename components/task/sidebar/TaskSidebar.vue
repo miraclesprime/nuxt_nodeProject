@@ -200,7 +200,7 @@ export default {
     }),
     orgUsers() {
       let data = this.teamMembers.map(u => {
-        return { label: u.firstName + ' ' + u.lastName, value: u.id }
+        return { label: u.firstName + ' ' + u.lastName, img: u.avatar, value: u.id }
       })
       return [{ label: 'Please select...', value: null }, ...data]
     },

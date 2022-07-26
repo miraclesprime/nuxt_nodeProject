@@ -79,9 +79,11 @@ export default {
   },
   mounted() {
     // console.log(this.user)
-    /*if (this.user) {
-      this.owner = JSON.parse(JSON.stringify(this.user))
-    }*/
+    if (this.user) {
+      // this.owner = JSON.parse(JSON.stringify(this.user))
+      let u = this.teamMembers.filter(t => t.id == this.user.sub)
+      this.owner = u[0]
+    }
   },
   methods: {
     dropdownInputChange($event) {

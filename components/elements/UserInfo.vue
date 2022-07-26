@@ -1,9 +1,9 @@
 <template>
   <span :id="'user-info-wrapper-'+ userId" class="user-info-wrapper d-flex align-center">
-    <template >
+    <template v-if="userName">
       <bib-avatar :src="pic" size="1.25rem"></bib-avatar>
     </template>
-    <template >
+    <template>
       <span :id="'user-info-'+userId" class="user-name text-dark pl-025 pr-025">{{userName}}</span>
     </template>
     <!-- <template v-else>
@@ -12,7 +12,6 @@
     <!-- <bib-spinner :scale="1.5"></bib-spinner> -->
   </span>
 </template>
-
 <script>
 import { mapGetters } from 'vuex';
 
@@ -29,11 +28,22 @@ export default {
       userName: null,
     }
   },
-  
+
   computed: {
     ...mapGetters({
-        members: 'user/getTeamMembers'
+      members: 'user/getTeamMembers'
     })
+  },
+
+  watch: {
+    userId(newValue) {
+      this.members.filter((el) => {
+        if (el.id === newValue) {
+          this.userName = el.firstName + ' ' + el.lastName;
+          this.pic = el.avatar
+        }
+      });
+    }
   },
 
   created() {
@@ -45,14 +55,14 @@ export default {
       //   this.pic = res.data[0].Photo
       // }).catch(e => this.userName = e)
       this.members.filter((el) => {
-          if(el.id === this.userId) {
-             this.userName = el.firstName + ' ' + el.lastName;
-             this.pic = el.avatar
-          }
+        if (el.id === this.userId) {
+          this.userName = el.firstName + ' ' + el.lastName;
+          this.pic = el.avatar
+        }
       });
     }
   },
-  
+
   // mounted() {
   //   console.log(this.members)
   // }

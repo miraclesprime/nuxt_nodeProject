@@ -337,10 +337,10 @@ export const TASK_SORT = [
 ]
 
 export const FAVORITE_SORT = [
-  { label: 'Name', key: 'name' },
+  { label: 'Name', key: 'title' },
   { label: 'Status', key: 'status' },
   { label: 'Priority', key: 'priority' },
-  { label: 'Owner', key: 'user' },
+  { label: 'Owner', key: 'userId' },
   { label: 'Due Date', key: 'dueDate' },
 ]
 
@@ -434,7 +434,7 @@ export const TASK_FAVORITES = [
     key: 'title', 
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-title-sort',
+      event: 'table-sort',
       isActive: false
     },
     event: "task-click",
@@ -444,7 +444,7 @@ export const TASK_FAVORITES = [
     key: "project",
     header_icon: {
       icon: "swap-vertical",
-      event: "file-project-sort",
+      event: "table-sort",
       isActive: false,
     },
   },
@@ -454,7 +454,7 @@ export const TASK_FAVORITES = [
     width : '12%',
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-status-sort',
+      event: 'table-sort',
       isActive: false
     }
   },
@@ -464,7 +464,7 @@ export const TASK_FAVORITES = [
     width : '12%',
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-priority-sort',
+      event: 'table-sort',
       isActive: false
     }
   },
@@ -474,7 +474,7 @@ export const TASK_FAVORITES = [
     width : '15%',
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-owner-sort',
+      event: 'table-sort',
       isActive: false
     }
   },
@@ -484,7 +484,7 @@ export const TASK_FAVORITES = [
     width : '10%',
     header_icon: {
       icon: 'swap-vertical',
-      event: 'file-dueDate-sort',
+      event: 'table-sort',
       isActive: false
     }
   }
