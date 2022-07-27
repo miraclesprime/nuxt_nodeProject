@@ -2,7 +2,9 @@ export const state = () => ({
   projects: [],
   selectedProject: {},
   favProjects: [],
-  projectMembers: []
+  projectMembers: [],
+  projectComments: [],
+  singleProjComment: {}
 });
 
 export const getters = {
@@ -15,6 +17,11 @@ export const getters = {
   // get single project detail
   getSingleProject(state) {
     return state.selectedProject;
+  },
+
+  // get project comments
+  getProjectComments(state) {
+    return state.projectComments;
   },
 
   getProjectMembers(state) {
@@ -52,6 +59,19 @@ export const mutations = {
   createProject(state, payload) {
     state.projects.push(payload)
   },
+
+  createProjectComment(state, payload) {
+    state.projectComments.push(payload)
+  },
+
+  fetchProjectComments(state, payload) {
+    state.projectComments = payload;
+  },
+
+  fetchSingleProjectDetail(state, payload) {
+    state.singleProjComment = payload
+  },
+
   SETFAVPROJECTS(state, payload) {
     state.favProjects = payload
   },
@@ -428,6 +448,113 @@ export const actions = {
 
     } catch(e) {
       console.log(e);
+    }
+  },
+
+
+  async fetchProjectComments(ctx, payload) {
+    try {
+
+      let fav = await this.$axios.get(`/project/${payload.id}/comments`, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+        }
+      })
+
+      if(res.data.statusCode == 200) {
+        ctx.dispatch("fetchProjectComments")
+        return res.data.data;
+      } else {
+        return res.data.data;
+      }
+
+    } catch(e) {
+      console.log(e);
+    }
+  },
+
+
+  async createProjectComment(ctx, payload) {
+
+    try {
+
+      const res = await this.$axios.$post(`/project/${payload.id}/comments`, {
+        comment: payload.comment 
+      }, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      });
+      if (res.statusCode == 200) {
+        ctx.commit('createProjectComment', res.data);
+        return res
+      } else {
+        return res
+      }
+
+    }catch(e) {
+      console.log(e)
+    }
+  },
+
+
+  async updateProjectComment(ctx, payload) {
+
+    try {
+
+      const res = await this.$axios.$put(`/project/${payload.projectId}/comments/${payload.commentId}`,{
+        comment: payload.comment
+      }, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      });
+      if (res.statusCode == 200) {
+        ctx.dispatch("fetchProjectComments", {id: payload.projectId})
+        return res
+      } else {
+        return res
+      }
+
+    }catch(e) {
+      console.log(e)
+    }
+  },
+
+
+  async deleteProjectComment(ctx, payload) {
+
+    try {
+
+      const res = await this.$axios.$delete(`/project/${payload.projectId}/comments/${payload.commentId}`,{
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      });
+      if (res.statusCode == 200) {
+        ctx.dispatch("fetchProjectComments", {id: payload.projectId})
+        return res
+      } else {
+        return res
+      }
+
+    }catch(e) {
+      console.log(e)
+    }
+  },
+
+
+  async fetchSingleProjectDetail(ctx, payload) {
+
+    try {
+
+      const res = await this.$axios.$get(`/project/${payload.projectId}/comments/${payload.commentId}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      });
+      if (res.statusCode == 200) {
+        ctx.dispatch("fetchSingleProjectDetail", res.data)
+        return res
+      } else {
+        return res
+      }
+
+    }catch(e) {
+      console.log(e)
     }
   }
 
