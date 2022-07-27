@@ -18,16 +18,17 @@
       </thead>
       <tr :style="{ width: '0rem' }" v-if="collapsible">
         <td :colspan="cols.length+1">
-          <div class="section-header d-flex align-center gap-05 " :class="'text-'+collapseObj.variant">
+          <div class="section-header d-flex align-center gap-05 text-dark">
             <div class="drag-handle width-2 text-center"><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
                 <rect fill="none" height="24" width="24" />
-                <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div> <span class="d-flex gap-05 align-center cursor-pointer" @click="isCollapsed = !isCollapsed">
-              <bib-icon icon="arrow-down" :scale="0.5" :variant="collapseObj.variant" :style="{transform: iconRotate}"></bib-icon> {{section.title.includes('_section') ? 'Untitled section' : section.title}}
-            </span>
+                <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div>
+            <div class="d-flex gap-05 align-center cursor-pointer" @click.self="collapseItem($event, 'tbody'+section.id)">
+              <bib-icon icon="arrow-down" :scale="0.5" variant="black" ></bib-icon> {{section.title.includes('_section') ? 'Untitled section' : section.title}}
+            </div>
           </div>
         </td>
       </tr>
-      <draggable :list="section[tasksKey]" tag="tbody" :data-section="section.id" :group="{name: 'task'}" class="task-draggable " handle=".drag-handle" @start="taskDragStart" :move="moveTask" @end="taskDragEnd" :style="{ visibility: isCollapsed ? 'collapse': '' }">
+      <draggable :list="section[tasksKey]" tag="tbody" :ref="'tbody'+section.id" :data-section="section.id" :group="{name: 'task'}" class="task-draggable " handle=".drag-handle" @start="taskDragStart" :move="moveTask" @end="taskDragEnd">
         <tr v-for="(task, index) in section[tasksKey]" :key="task.id + section.title + index + templateKey" class="table__irow">
           <td>
             <div class="drag-handle width-2 "><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
@@ -62,17 +63,17 @@
             </div>
             <template v-if="col.key == 'department'">
               {{task[col.key]}}
-          </template>
+            </template>
           </td>
         </tr>
       </draggable>
-      <tr v-if="newTaskButton">
+      <!-- <tr v-if="newTaskButton">
         <td colspan="2">
           <div class="d-inline-flex align-center gap-05 cursor-pointer font-md" :class="['text-'+newTaskButton.variant, 'text-hover-'+newTaskButton.hover]" v-on:click.stop="$emit(newTaskButton.event, section)">
             <bib-icon icon="add" variant="success" :scale="1.1" class=""></bib-icon> <span>{{newTaskButton.label}}</span>
           </div>
         </td>
-      </tr>
+      </tr> -->
     </table>
   </draggable>
 </template>
@@ -125,14 +126,14 @@ export default {
       },
     },
     collapsible: { type: Boolean, default: true },
-    collapseObj: {
+    /*collapseObj: {
       type: Object,
       default () {
         return {
           variant: "dark"
         };
       }
-    },
+    },*/
     newTaskButton: {
       type: Object,
       default () {
@@ -144,14 +145,15 @@ export default {
         }
       }
     },
-    componentKey: Number, default: 0,
+    componentKey: Number,
+    default: 0,
   },
   data() {
     return {
       cols: [],
       // item: {},
       templateKey: 11,
-      isCollapsed: this.collapseObj ? this.collapseObj.collapsed : false,
+      // isCollapsed: this.collapseObj ? this.collapseObj.collapsed : false,
       localdata: [],
       taskMoveSection: null,
       highlight: false,
@@ -159,11 +161,7 @@ export default {
   },
   computed: {
     activeClass() { return keyI => this.sections[keyI].active ? 'active' : '' },
-    iconRotate() { return this.isCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)' },
-    /*localdata() {
-      this.templateKey += 1
-      return JSON.parse(JSON.stringify(this.sections))
-    }*/
+    
   },
   created() {
     // console.info('created lifecycle', this.cols.length)
@@ -176,14 +174,27 @@ export default {
     this.templateKey += 1
   },
   methods: {
-    taskCheckIcon(task){
+    collapseItem(event, refId) {
+      // console.log(refId, event)
+      let elem = this.$refs[refId][0].$el
+      let tar = event.target
+
+      if (elem.style.visibility == 'collapse') {
+        elem.style.visibility = 'visible'
+        tar.firstChild.style.transform = 'rotate(0deg)'
+      } else {
+        elem.style.visibility = 'collapse'
+        tar.firstChild.style.transform = 'rotate(-90deg)'
+      }
+    },
+    taskCheckIcon(task) {
       if (task.statusId == 5) {
         return 'success'
       } else {
         return 'gray5'
       }
     },
-    updateTaskStatus(task){
+    updateTaskStatus(task) {
       console.log(task.statusId)
       this.$emit('task-checkmark-click', task)
     },
@@ -206,16 +217,15 @@ export default {
       // console.log(e)
       this.highlight = false
       let sectionData = this.localdata.filter(s => s.id == e.to.dataset.section)
-      this.$emit('task-dragend', { tasks: sectionData[0].tasks, sectionId:e.to.dataset.section})
+      this.$emit('task-dragend', { tasks: sectionData[0].tasks, sectionId: e.to.dataset.section })
     },
     moveTask(e) {
       // console.log('dragged->' ,e.draggedContext)
       // console.info('related->', e.relatedContext.component.$el)
       // console.warn(e.to.dataset.section)
       this.taskMoveSection = +e.to.dataset.section
-
     },
-    
+
   },
 };
 

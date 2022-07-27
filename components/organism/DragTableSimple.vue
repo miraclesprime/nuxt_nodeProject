@@ -80,8 +80,8 @@
             <project-info v-if="task[col.key].length" :key="task.title+col.key+componentKey" :projectId="task[col.key][0].projectId"></project-info>
           </template>
           <div v-if="col.key == 'title'" class="d-flex gap-05 align-center h-100">
-            <bib-icon icon="check-circle" :scale="1.25" :variant="taskCheckIcon(task)" class="cursor-pointer" @click="updateTaskStatus(task)"></bib-icon>
-            <span v-if="col.event" class="cursor-pointer flex-grow-1" style="  line-height:1.25;" v-on:click="$emit(col.event, task)">
+            <bib-icon icon="check-circle" :scale="1.25" :variant="taskCheckIcon(task)" class="cursor-pointer" @click.self="updateTaskStatus(task)"></bib-icon>
+            <span v-if="col.event" class="cursor-pointer flex-grow-1" style="  line-height:1.25;" >
               {{task[col.key]}}
             </span>
             <span v-else class="flex-grow-1">
@@ -94,13 +94,13 @@
         </td>
       </tr>
     </tbody>
-    <tr v-if="newTaskButton">
+    <!-- <tr v-if="newTaskButton">
       <td colspan="2">
         <div class="d-inline-flex align-center gap-05 cursor-pointer font-md" :class="['text-'+newTaskButton.variant, 'text-hover-'+newTaskButton.hover]" v-on:click.stop="newTaskEvent">
           <bib-icon icon="add" variant="success" :scale="1.1" class=""></bib-icon> <span>{{newTaskButton.label}}</span>
         </div>
       </td>
-    </tr>
+    </tr> -->
   </table>
 </template>
 <script>
