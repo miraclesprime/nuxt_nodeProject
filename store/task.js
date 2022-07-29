@@ -4,6 +4,8 @@ export const state = () => ({
   favTasks: [],
   taskMembers: [],
   teamKey: 1,
+  taskComments: [],
+  singleTaskComment: {}
 });
 
 export const getters = {
@@ -17,6 +19,11 @@ export const getters = {
 
   getSelectedTask(state) {
     return state.selectedTask;
+  },
+
+  // get task comments
+  getProjectComments(state) {
+    return state.taskComments;
   },
 
   getFavTasks(state) {
@@ -66,6 +73,19 @@ export const mutations = {
 
   createTask(state, payload) {
     state.tasks.push(payload);
+  },
+
+  
+  createTaskComment(state, payload) {
+    state.taskComments.push(payload)
+  },
+
+  fetchTaskComments(state, payload) {
+    state.taskComments = payload;
+  },
+
+  fetchSingleTaskDetail(state, payload) {
+    state.singleTaskComment = payload
   },
 
   setSingleTask(state, currentTask) {
@@ -271,39 +291,113 @@ export const actions = {
     }
   },
 
-  /*async createSubtask(ctx, payload){
-    // console.log(payload)
+  setKey(ctx) {
+    ctx.commit('setKey');
+  },
+
+  async fetchTaskComments(ctx, payload) {
     try {
-      let s = await this.$axios.post("/subtask", payload, {
+
+      let fav = await this.$axios.get(`/task/${payload.id}/comments`, {
         headers: {
+          "Content-Type": "application/json",
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-          // "Content-Type": "application/json",
         }
       })
-      if (s.statusCode == 200) {
-        ctx.commit("setSubtask", s.data)
+
+      if(res.data.statusCode == 200) {
+        ctx.dispatch("fetchTaskComments")
+        return res.data.data;
+      } else {
+        return res.data.data;
       }
-      return s.data
+
     } catch(e) {
       console.log(e);
-      return e
     }
   },
 
-  async fetchSubtasks(ctx, payload){ 
-    try {
-      let s = await this.$axios.get("subtask/task/"+payload.id)
-      if (s.statusCode == 200) {
-        ctx.commit("setSubtask", s.data)
-      } 
-      return s
-    } catch(e) {
-      console.log(e);
-      return e
-    }
-  },*/
 
-  setKey(ctx) {
-    ctx.commit('setKey');
+  async createTaskComment(ctx, payload) {
+
+    try {
+
+      const res = await this.$axios.$post(`/task/${payload.id}/comments`, {
+        comment: payload.comment 
+      }, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      });
+      if (res.statusCode == 200) {
+        ctx.commit('createTaskComment', res.data);
+        return res
+      } else {
+        return res
+      }
+
+    }catch(e) {
+      console.log(e)
+    }
+  },
+
+
+  async updateTaskComment(ctx, payload) {
+
+    try {
+
+      const res = await this.$axios.$put(`/task/${payload.projectId}/comments/${payload.commentId}`,{
+        comment: payload.comment
+      }, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      });
+      if (res.statusCode == 200) {
+        ctx.dispatch("fetchTaskComments", {id: payload.projectId})
+        return res
+      } else {
+        return res
+      }
+
+    }catch(e) {
+      console.log(e)
+    }
+  },
+
+
+  async deleteTaskComment(ctx, payload) {
+
+    try {
+
+      const res = await this.$axios.$delete(`/task/${payload.projectId}/comments/${payload.commentId}`,{
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      });
+      if (res.statusCode == 200) {
+        ctx.dispatch("fetchTaskComments", {id: payload.projectId})
+        return res
+      } else {
+        return res
+      }
+
+    }catch(e) {
+      console.log(e)
+    }
+  },
+
+
+  async fetchSingleTaskDetail(ctx, payload) {
+
+    try {
+
+      const res = await this.$axios.$get(`/project/${payload.projectId}/comments/${payload.commentId}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      });
+      if (res.statusCode == 200) {
+        ctx.dispatch("fetchSingleTaskDetail", res.data)
+        return res
+      } else {
+        return res
+      }
+
+    }catch(e) {
+      console.log(e)
+    }
   }
 };
