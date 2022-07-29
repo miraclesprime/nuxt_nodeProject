@@ -25,7 +25,7 @@
       </td>
     </tr>
     <draggable v-if="drag" :list="tasks" tag="tbody" class="task-draggable " handle=".drag-handle" @start="taskDragStart" :move="moveTask" @end="taskDragEnd" :style="{ visibility: isCollapsed ? 'collapse': '' }">
-      <tr v-for="(task, taskindex) in tasks" :key="task.title +'-'+ componentKey + taskindex" class="table__irow">
+      <tr v-for="(task, taskindex) in tasks" :key="task.title +'-'+ componentKey + taskindex" class="table__irow" @click="rowClick(task)" @click.right.prevent="rightClickItem($event, task)">
         <td>
           <div class="drag-handle width-2 "><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
               <rect fill="none" height="24" width="24" />
@@ -62,7 +62,7 @@
       </tr>
     </draggable>
     <tbody v-else :style="{ visibility: isCollapsed ? 'collapse': '' }">
-      <tr v-for="(task, taskindex) in tasks" :key="task.title + componentKey + taskindex" class="table__irow">
+      <tr v-for="(task, taskindex) in tasks" :key="task.title + componentKey + taskindex" class="table__irow" @click="rowClick(task)" @click.right.prevent="rightClickItem($event, task)">
         <td v-for="(col, index) in cols" :key="task.title + col + index + componentKey">
           <template v-if="col.key == 'userId'">
             <user-info :key="task.title+col.key+componentKey" :userId="task[col.key]"></user-info>
@@ -81,7 +81,7 @@
           </template>
           <div v-if="col.key == 'title'" class="d-flex gap-05 align-center h-100">
             <bib-icon icon="check-circle" :scale="1.25" :variant="taskCheckIcon(task)" class="cursor-pointer" @click.self="updateTaskStatus(task)"></bib-icon>
-            <span v-if="col.event" class="cursor-pointer flex-grow-1" style="  line-height:1.25;" >
+            <span v-if="col.event" class="cursor-pointer flex-grow-1" style=" line-height:1.25;">
               {{task[col.key]}}
             </span>
             <span v-else class="flex-grow-1">
@@ -179,12 +179,13 @@ export default {
       localdata: [],
       taskMoveSection: null,
       highlight: false,
+      // actionMenu: false,
     };
   },
   computed: {
     activeClass() { return keyI => this.sections[keyI].active ? 'active' : '' },
     iconRotate() { return this.isCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)' },
-    
+
   },
   created() {
     // console.info('created lifecycle', this.cols.length)
@@ -196,6 +197,20 @@ export default {
     this.localdata = this.tasks ? JSON.parse(JSON.stringify(this.tasks)) : []
   },
   methods: {
+    rowClick(task) {
+      this.$emit("row-click", task)
+    },
+    rightClickItem($event, task) {
+      this.$emit("close-context-menu")
+      setTimeout(() => {
+        this.$emit("row-context", { event: $event, task: task })
+      }, 200)
+      // this.actionMenu = true
+      // const targetEl = $event.target
+      // this.$refs.c_menu.style.left = $event.pageX + 'px'
+      // this.$refs.c_menu.style.top = $event.pageY + 'px'
+
+    },
     taskCheckIcon(task) {
       if (task.statusId == 5) {
         return 'success'
@@ -207,11 +222,21 @@ export default {
       console.log(task.statusId)
       this.$emit('task-checkmark-click', task)
     },
+    /*isFavorite(task) {
+      let fav = this.favTasks.some(t => t.task.id == task.id)
+      if (fav) {
+        return { icon: "bookmark-solid", variant: "orange", text: "Remove favorite", status: true }
+      } else {
+        return { icon: "bookmark", variant: "gray5", text: "Add to favorites", status: false }
+      }
+    },*/
     unselectAll() {
       let rows = document.getElementsByClassName('table__irow');
       for (let row of rows) {
         row.classList.remove('active');
       }
+      // console.log('clicked outside drag-table-simple component')
+      this.$emit("close-context-menu")
     },
     taskDragStart(e) {
       // console.warn(e.to.classList.add("highlight"));
