@@ -310,7 +310,7 @@ export default {
   methods: {
 
     closeSidebar(event) {
-      // console.log('click-outside',  event.originalTarget.classList, event.target.classList)
+      // console.log('click-outside task-sidebar',  event.originalTarget, event.target.classList)
       if (event.target.classList.contains("cursor-pointer") || event.target.classList.contains("task-grid")) {
         // console.info('class found')
         return false

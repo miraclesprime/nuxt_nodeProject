@@ -4,7 +4,7 @@
       <page-title title="Favorites"></page-title>
       <favorite-actions v-on:change-viewing="changeView" v-on:change-sorting="changeSort"></favorite-actions>
       <div id="favorite-scroll-wrap" class="of-scroll-y position-relative">
-        <drag-table-simple :fields="projectTableFields" :tasks="sortedProject" :componentKey="key" :drag="false" :sectionTitle="'Favorite Projects'" @project-click="projectRoute" :newTaskButton="{label: 'New Project', event: 'new-project', variant: 'secondary', hover: 'dark'}" v-on:new-project="newProject" v-on:table-sort="sortProject"></drag-table-simple>
+        <drag-table-simple :fields="projectTableFields" :tasks="sortedProject" :componentKey="key" :drag="false" :sectionTitle="'Favorite Projects'" @row-click="projectRoute" :newTaskButton="{label: 'New Project', event: 'new-project', variant: 'secondary', hover: 'dark'}" v-on:table-sort="sortProject" @row-context="projectRightClick"></drag-table-simple>
         <!-- <bib-table :key="'fproj'+key" :fields="projectTableFields" class="border-gray4 bg-white" :sections="sortedProject" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Favorite Projects'}" @file-title-sort="sortProject('name')" @file-status-sort="sortProject('status')" @file-priority-sort="sortProject('priority')" @file-owner-sort="sortProject('owner')" @file-dueDate-sort="sortProject('dueDate')">
           <template #cell(title)="data">
             <div class="d-flex gap-05 align-center text-dark " :id="'projects-' + data.value.title">
@@ -31,7 +31,7 @@
           </template>
         </bib-table> -->
         <!-- task table -->
-        <drag-table-simple :fields="taskTableFields" :componentKey="key+1" :tasks="sortedTask" :sectionTitle="'Favorite Tasks'" :drag="false" v-on:new-task="openSidebar" v-on:table-sort="sortTask"></drag-table-simple>
+        <drag-table-simple :fields="taskTableFields" :componentKey="key+1" :tasks="sortedTask" :sectionTitle="'Favorite Tasks'" :drag="false" v-on:new-task="openSidebar" v-on:table-sort="sortTask" @row-context="taskRightClick"></drag-table-simple>
         <!-- <bib-table :key="'ftasks'+key" :fields="taskTableFields" class="border-gray4 bg-white" :sections="sortedTask" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Favorite Tasks'}" @file-title-sort="sortTask('name')" @file-status-sort="sortTask('status')" @file-priority-sort="sortTask('priority')" @file-owner-sort="sortTask('owner')" @file-dueDate-sort="sortTask('dueDate')">
           <template #cell(title)="data">
             <div class="d-flex gap-05 align-center" :id="'projects-' + data.value.title">
@@ -58,13 +58,15 @@
           <li v-for="item in sortedTaskUtil" :key="item.id">{{ item.title }}</li>
         </ul> -->
         <loading :loading="loading"></loading>
+        <table-context-menu :items="projectContextItems" :show="projectContextMenu" :coordinates="contextCoords" @close-context="projectContextMenu = false" ref="proj_menu"></table-context-menu>
+        <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" @close-context="taskContextMenu = false" ref="task_menu"></table-context-menu>
       </div>
     </div>
   </client-only>
 </template>
 <script>
 import _ from 'lodash'
-import { PROJECT_FAVORITES, TASK_FAVORITES } from '../../config/constants'
+import { PROJECT_FAVORITES, TASK_FAVORITES, PROJECT_CONTEXT_MENU, TASK_CONTEXT_MENU } from '../../config/constants'
 import { mapGetters } from 'vuex';
 // import { sortTaskUtil } from '~/utils/taskSort.js'
 
@@ -82,6 +84,11 @@ export default {
       projOrder: 'asc',
       taskOrder: 'asc',
       // sortedTaskUtil: [],
+      projectContextItems: PROJECT_CONTEXT_MENU,
+      taskContextMenuItems: TASK_CONTEXT_MENU,
+      projectContextMenu: false,
+      taskContextMenu: false,
+      contextCoords: { },
     }
   },
 
@@ -149,6 +156,28 @@ export default {
     projectRoute(project) {
       // console.log(project)
       this.$router.push('/projects/' + project.id)
+    },
+
+    projectRightClick(payload) {
+      // console.log(payload, this.$refs.proj_menu.$el)
+      this.taskContextMenu = false
+      this.projectContextMenu = true
+      // console.info(this.$refs.proj_menu.$el)
+      const { event, task } = payload
+      this.contextCoords = { left: event.pageX+'px', top: event.pageY+'px' }
+
+      // this.$refs.proj_menu.$el.style.left = payload.event.pageX + 'px'
+      // this.$refs.proj_menu.$el.style.top = payload.event.pageY + 'px'
+    },
+
+    taskRightClick(payload) {
+      this.projectContextMenu = false
+      this.taskContextMenu = true
+      const { event, task } = payload
+      // console.info(this.$refs.task_menu.$el)
+      // this.$refs.task_menu.$el.style.left = payload.event.pageX + 'px'
+      // this.$refs.task_menu.$el.style.top = payload.event.pageY + 'px'
+      this.contextCoords = { left: event.pageX+'px', top: event.pageY+'px' }
     },
 
     taskCheckIcon(statusId) {
