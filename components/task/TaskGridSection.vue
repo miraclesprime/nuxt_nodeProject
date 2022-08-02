@@ -34,14 +34,14 @@
         <div class="task-section__body" :id="'tgs-task-section-body-'+section.id">
           <draggable :list="section.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable" :class="{highlight: highlight == section.id}" :data-section="section.id">
             <!-- <transition-group > -->
-            <div class="task-grid " v-for="task in section.tasks" :key="task.title + templateKey + '-' + task.id" :class="[overdue(task), currentTask.id == task.id ? 'active' : '']" :id="'tg-card-'+task.id" v-on:click="openSidebar(task, section.projectId)">
+            <div class="task-grid " v-for="task in section.tasks" :key="task.title + templateKey + '-' + task.id" :class="[overdue(task), currentTask.id == task.id ? 'active' : '']" :id="'tg-card-'+task.id" v-on:click.stop="openSidebar(task, section.projectId)">
               <figure v-if="task.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
               <div class="task-top" :id="'tg-card-top'+task.id">
                 <div class="d-flex" :id="'tg-card-inside-wrap'+task.id">
                   <bib-icon icon="check-circle" :scale="1.25" :variant="task.statusId == 5 ? 'success' : 'secondary-sub1'" class="cursor-pointer" @click="markComplete(task)"></bib-icon>
                   <span class="ml-05" :id="'tg-title'+task.id">{{ task.title }} </span>
                 </div>
-                <bib-button pop="elipsis" icon="elipsis" :icon-variant="overdue(task) == 'bg-danger'? 'white' :'secondary'">
+                <bib-button dropdown="elipsis" icon="elipsis" :icon-variant="overdue(task) == 'bg-danger'? 'white' :'secondary'">
                   <template v-slot:menu>
                     <div class="list" :id="'tg-list'+task.id">
                       <span class="list__item success" :id="'tg-comp'+task.id" v-on:click="markComplete(task)">

@@ -311,12 +311,21 @@ export default {
 
     closeSidebar(event) {
       // console.log('click-outside task-sidebar',  event.originalTarget, event.target.classList)
-      if (event.target.classList.contains("cursor-pointer") || event.target.classList.contains("task-grid")) {
-        // console.info('class found')
-        return false
-      }
+      const classlist = ["cursor-pointer", "task-grid", "table__irow"]
+      classlist.forEach(c => {
+        // console.info(c)
+        if (event.target.classList.contains(c)) {
+          // console.log('class found')
+          return
+        }
+      })
 
-      // console.warn("class not found", event.target)
+      /*if (event.target.classList.contains("cursor-pointer") || event.target.classList.contains("task-grid") || event.target.classList.contains("table__irow")) {
+        console.info('class found')
+        return false
+      }*/
+
+      console.warn("class not found", event.target)
       this.$nuxt.$emit("close-sidebar");
     },
     sidebarTabChange(tab) {
@@ -339,7 +348,7 @@ export default {
           return false
         }
         return false
-      } 
+      }
       this.loading = true
       if (this.form.projectId && (!this.form.sectionId || this.form.sectionId == "")) {
         this.form.sectionId = "_section" + this.form.projectId

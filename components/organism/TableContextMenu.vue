@@ -1,8 +1,8 @@
 <template>
   <div :id="'c_menu_'+id" class="table-context-menu" v-show="show" v-click-outside="onClickOutside" :style="position">
     <div class="list">
-      <span v-for="(item, index) in items" :key="item.label+index" class="list__item cursor-pointer" :class=" ['list__item__'+item.variant] " v-on:click="$emit(item.event)">
-        <bib-icon v-if="item.icon" :icon="item.icon" :variant="item.iconVariant" class="mr-05"></bib-icon> {{item.label}}
+      <span v-for="(item, index) in items" :key="item.label+index" class="list__item cursor-pointer" :class=" ['list__item__'+item.variant] " v-on:click="onItemClick(item)">
+        <bib-icon v-if="item.icon" :icon="item.icon" :variant="activeVariant(item)" class="mr-05"></bib-icon> {{item.label}}
       </span>
       <!-- <hr> -->
       <!-- <span class="list__item list__item__danger">Delete Task</span> -->
@@ -10,6 +10,8 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
 
   name: 'TableContextMenu',
@@ -19,14 +21,15 @@ export default {
       required: true,
       default () {
         return [
-          { label: 'Action one', event: 'action-one', variant: '', icon: '', iconVariant: '' },
-          { label: 'Action two', event: 'action-two', variant: '', icon: '', iconVariant: '' },
-          { label: 'Action three', event: 'action-three', variant: '', icon: '', iconVariant: '' },
+          { label: 'Action one', event: 'action-one', variant: '', icon: '', iconVariant: 'gray5' },
+          { label: 'Action two', event: 'action-two', variant: '', icon: '', iconVariant: 'gray5' },
+          { label: 'Action three', event: 'action-three', variant: '', icon: '', iconVariant: 'gray5' },
         ]
       }
     },
     show: { type: Boolean, default: false },
     coordinates: { type: Object, default () { return { left: '50%', top: '50%' } } },
+    activeItem: { type: Object },
   },
 
   data() {
@@ -50,11 +53,20 @@ export default {
 
   },
   computed: {
+    ...mapGetters({
+      favTasks: 'task/getFavTasks',
+      favProjects: 'project/getFavProjects'
+    }),
     position() {
       return this.coordinates
     },
+    
   },
   methods: {
+    onItemClick(item){
+      this.$emit('item-click', item.event)
+      this.$emit('close-context')
+    },
     onClickOutside() {
       // console.log('click outside context')
       this.$emit('close-context')
@@ -81,6 +93,22 @@ export default {
         } 
       });
     },
+    activeVariant(item){
+      if (this.activeItem) {
+        if (item.label.includes('Complete')) {
+          return this.activeItem.statusId == 5 ? 'success': 'gray5'
+        }
+        if (item.label.includes('Delete')) {
+          return 'danger'
+        }
+        if (item.label.includes('Favorites')) {
+          let fata = this.favTasks.some(ft=>ft.taskId == this.activeItem.id)
+          let fapo = this.favProjects.some(fp=>fp.id == this.activeItem.id)
+          // console.log(fata, fapo)
+          return fata ? 'orange': 'gray5'
+        }
+      }
+    }
   }
 }
 
