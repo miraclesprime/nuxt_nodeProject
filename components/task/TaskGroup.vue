@@ -17,7 +17,7 @@
     </div>
     <table class="table ">
       <transition name="fade">
-        <thead v-if="newSubtask">
+        <thead v-if="newSubtask || subTasks.length == 0">
           <tr>
             <td>
               <bib-input ref="subtaskNameInput" type="text" size="sm" icon-left="check-circle" v-model="title" placeholder="Start typing..."></bib-input>
@@ -68,9 +68,9 @@
         </tr>
       </tbody>
     </table>
-    <span id="subtask-0" v-show="subTasks.length == 0" class="d-inline-flex gap-1 align-center m-05 bg-warning-sub3 border-warning shape-rounded py-025 px-1">
+    <!-- <span id="subtask-0" v-show="subTasks.length == 0" class="d-inline-flex gap-1 align-center m-05 bg-warning-sub3 border-warning shape-rounded py-025 px-1">
       <bib-icon icon="warning"></bib-icon> No subtasks found
-    </span>
+    </span> -->
     <!-- <bib-table
       :fields="taskFields"
       :sections="taskSections"

@@ -25,7 +25,7 @@
       </td>
     </tr>
     <draggable v-if="drag" :list="tasks" tag="tbody" class="task-draggable " handle=".drag-handle" @start="taskDragStart" :move="moveTask" @end="taskDragEnd" :style="{ visibility: isCollapsed ? 'collapse': '' }">
-      <tr v-for="(task, taskindex) in tasks" :key="task.title +'-'+ componentKey + taskindex" class="table__irow" @click="rowClick(task)" @click.right.prevent="rightClickItem($event, task)">
+      <tr v-for="(task, taskindex) in tasks" :key="task.title +'-'+ componentKey + taskindex" class="table__irow" @click.stop="rowClick(task)" @click.right.prevent="rowRightClick($event, task)">
         <td>
           <div class="drag-handle width-2 "><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
               <rect fill="none" height="24" width="24" />
@@ -48,7 +48,7 @@
             <project-info v-if="task[col.key].length" :key="task.title+col.key+componentKey" :projectId="task[col.key][0].projectId"></project-info>
           </template>
           <div v-if="col.key == 'title'" class="h-100">
-            <span v-if="col.event" class="cursor-pointer d-block" v-on:click="$emit(col.event, task)">
+            <span v-if="col.event" class=" d-block" >
               {{task[col.key]}}
             </span>
             <span v-else>
@@ -62,7 +62,7 @@
       </tr>
     </draggable>
     <tbody v-else :style="{ visibility: isCollapsed ? 'collapse': '' }">
-      <tr v-for="(task, taskindex) in tasks" :key="task.title + componentKey + taskindex" class="table__irow" @click="rowClick(task)" @click.right.prevent="rightClickItem($event, task)">
+      <tr v-for="(task, taskindex) in tasks" :key="task.title + componentKey + taskindex" class="table__irow" @click.stop="rowClick(task)" @click.right.prevent="rowRightClick($event, task)">
         <td v-for="(col, index) in cols" :key="task.title + col + index + componentKey">
           <template v-if="col.key == 'userId'">
             <user-info :key="task.title+col.key+componentKey" :userId="task[col.key]"></user-info>
@@ -81,7 +81,7 @@
           </template>
           <div v-if="col.key == 'title'" class="d-flex gap-05 align-center h-100">
             <bib-icon icon="check-circle" :scale="1.25" :variant="taskCheckIcon(task)" class="cursor-pointer" @click.self="updateTaskStatus(task)"></bib-icon>
-            <span v-if="col.event" class="cursor-pointer flex-grow-1" style=" line-height:1.25;">
+            <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">
               {{task[col.key]}}
             </span>
             <span v-else class="flex-grow-1">
@@ -200,7 +200,7 @@ export default {
     rowClick(task) {
       this.$emit("row-click", task)
     },
-    rightClickItem($event, task) {
+    rowRightClick($event, task) {
       this.$emit("close-context-menu")
       setTimeout(() => {
         this.$emit("row-context", { event: $event, task: task })

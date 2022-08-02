@@ -501,13 +501,13 @@ export const PROJECT_CONTEXT_MENU = [
 export const TASK_CONTEXT_MENU = [
   { label: 'Mark Complete', event: 'done-task', variant: '', icon: 'check-circle', iconVariant:'gray5' },
   { label: 'Add to Favorites', event: 'fav-task', variant: '', icon: 'bookmark', iconVariant:'gray5' },
-  { label: 'Attach file...', event: 'add-fav', variant: '', icon: 'upload', iconVariant:'gray5' },
-  { label: 'Assign to...', event: 'add-fav', variant: '', icon: 'user-add', iconVariant:'gray5' },
-  { label: 'Set as reminder', event: 'add-fav', variant: '', icon: 'notification', iconVariant:'gray5' },
-  { label: 'Copy', event: 'add-fav', variant: '', icon: 'duplicate', iconVariant:'gray5' },
-  { label: 'Move', event: 'add-fav', variant: '', icon: 'transfer', iconVariant:'gray5' },
-  { label: 'Report', event: 'add-fav', variant: '', icon: 'warning', iconVariant:'gray5' },
-  { label: 'Delete', event: 'add-fav', variant: 'danger', icon: '', iconVariant:'' },
+  { label: 'Attach file...', event: 'attach-file', variant: '', icon: 'upload', iconVariant:'gray5' },
+  { label: 'Assign to...', event: 'assign-task', variant: '', icon: 'user-add', iconVariant:'gray5' },
+  { label: 'Set as reminder', event: 'set-reminder', variant: '', icon: 'notification', iconVariant:'gray5' },
+  { label: 'Copy', event: 'copy-task', variant: '', icon: 'duplicate', iconVariant:'gray5' },
+  { label: 'Move', event: 'move-task', variant: '', icon: 'transfer', iconVariant:'gray5' },
+  { label: 'Report', event: 'report-task', variant: '', icon: 'warning', iconVariant:'gray5' },
+  { label: 'Delete', event: 'delete-task', variant: 'danger', icon: '', iconVariant:'' },
 ]
 
 export const COMPANY_TASK_FIELDS = [

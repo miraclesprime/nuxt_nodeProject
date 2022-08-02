@@ -3,7 +3,10 @@
     <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:show-newsection="showNewsection" v-on:filterView="filterView" v-on:sort="taskSort($event)"></task-actions>
     <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createSection"></new-section-form>
     <template v-if="gridType === 'list'">
-      <drag-table :fields="tableFields" :sections="localdata" :key="templateKey" :componentKey="templateKey" @task-click="openSidebar" @task-checkmark-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd"></drag-table>
+      <!-- task list table -->
+      <drag-table :fields="tableFields" :sections="localdata" :key="templateKey" :componentKey="templateKey" @task-click="openSidebar" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-checkmark-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd"></drag-table>
+      <!-- table context menu -->
+      <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" ref="task_menu" @item-click="contextItemClick" ></table-context-menu>
       <!-- <task-list-section :project="project" :sections="localdata" :templateKey="templateKey" v-on:sort-task="taskSort($event)" v-on:update-key="updateKey"></task-list-section> -->
     </template>
     <template v-else>
@@ -39,7 +42,7 @@
   </div>
 </template>
 <script>
-import { TASK_FIELDS } from "config/constants";
+import { TASK_FIELDS, TASK_CONTEXT_MENU } from "config/constants";
 import { mapGetters } from 'vuex';
 import _ from 'lodash'
 
@@ -51,6 +54,9 @@ export default {
   data() {
     return {
       tableFields: TASK_FIELDS,
+      taskContextMenuItems: TASK_CONTEXT_MENU,
+      taskContextMenu: false,
+      contextCoords: {},
       activeTask: {},
       headless: null,
       flag: false,
@@ -147,6 +153,42 @@ export default {
       this.localdata = sorted
       this.templateKey += 1
       // this.$nuxt.$emit("update-key", this.key)
+    },
+    taskRightClick(payload) {
+      this.projectContextMenu = false
+      this.taskContextMenu = true
+      const { event, task } = payload
+
+      this.contextCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
+      this.activeTask = task
+      // console.log(task)
+      // this.$store.dispatch('task/setSingleTask', task)
+    },
+    closeContext() {
+      this.taskContextMenu = false
+      this.activeTask = {}
+      // this.$store.dispatch('task/setSingleTask', {})
+    },
+    contextItemClick(key){
+      console.log(key)
+      switch (key) {
+        case 'done-task':
+          // statements_1
+          this.markComplete(this.activeTask)
+          break;
+        case 'fav-task':
+          this.setFavorite(this.activeTask)
+          break;
+        case 'delete-task':
+          this.deleteTask(this.activeTask)
+          break;
+        case 'assign-task':
+          // statements_1
+          break;
+        default:
+          alert("no task assigned")
+          break;
+      }
     },
     taskSort($event) {
       // sort by title
@@ -317,35 +359,6 @@ export default {
       })
     },
 
-    /*async createSectionOnEnter($event) {
-      let newvalue = this.newSectionName;
-      if (newvalue) {
-        if (this.sectionError) {
-          return false
-        }
-        this.processing = true
-        this.$refs.newsectioninput.setAttribute("disabled", true)
-        this.sectionLoading = true
-
-        this.$store.dispatch("section/createSection", {
-          "projectId": this.project.id,
-          "title": newvalue.trim(),
-          "isDeleted": false,
-        }).then(() => {
-          this.newSectionName = ""
-          this.sectionLoading = false
-          this.newSection = false
-          this.$refs.newsectioninput.removeAttribute("disabled")
-          this.popupMessages.push({ text: "Section created", variant: "success" })
-          this.updateKey()
-        }).catch(e => console.log(e))
-
-      } else {
-        this.newSection = false
-        console.log('No section added')
-      }
-    },*/
-
     async createSection($event) {
       this.sectionLoading = true
       const res = await this.$store.dispatch("section/createSection", {
@@ -429,14 +442,14 @@ export default {
       }
     },
 
-    setFavorite($event) {
-      // console.info("to be fav task", $event)
+    setFavorite(task) {
+      // console.info("to be fav task", task)
       this.loading = true
-      let isFav = this.favTasks.some((f) => f.taskId == $event.id)
+      let isFav = this.favTasks.some((f) => f.taskId == task.id)
       // console.log(isFav)
 
       if (isFav) {
-        this.$store.dispatch("task/removeFromFavorite", { id: $event.id })
+        this.$store.dispatch("task/removeFromFavorite", { id: task.id })
           .then(msg => {
             console.log(msg)
             this.popupMessages.push({ text: msg, variant: "success" })
@@ -448,7 +461,7 @@ export default {
             console.log(e)
           })
       } else {
-        this.$store.dispatch("task/addToFavorite", { id: $event.id })
+        this.$store.dispatch("task/addToFavorite", { id: task.id })
           .then(msg => {
             console.log(msg)
             this.popupMessages.push({ text: msg, variant: "success" })
@@ -463,8 +476,14 @@ export default {
     },
 
     markComplete(task) {
-      // console.log(this.currentTask)
+      console.log(typeof task, this.task)
       this.loading = true
+      if (typeof task == "object" && Object.keys(task).length > 0) {
+        console.log(task)
+      } else {
+        // alert("no task selected")
+        task = this.activeTask
+      }
       this.$store.dispatch('task/updateTaskStatus', task)
         .then((d) => {
           // console.log(d)

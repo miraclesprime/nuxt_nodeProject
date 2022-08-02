@@ -23,13 +23,13 @@
                 <rect fill="none" height="24" width="24" />
                 <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div>
             <div class="d-flex gap-05 align-center cursor-pointer" @click.self="collapseItem($event, 'tbody'+section.id)">
-              <bib-icon icon="arrow-down" :scale="0.5" variant="black" ></bib-icon> {{section.title.includes('_section') ? 'Untitled section' : section.title}}
+              <bib-icon icon="arrow-down" :scale="0.5" variant="black"></bib-icon> {{section.title.includes('_section') ? 'Untitled section' : section.title}}
             </div>
           </div>
         </td>
       </tr>
       <draggable :list="section[tasksKey]" tag="tbody" :ref="'tbody'+section.id" :data-section="section.id" :group="{name: 'task'}" class="task-draggable " handle=".drag-handle" @start="taskDragStart" :move="moveTask" @end="taskDragEnd">
-        <tr v-for="(task, index) in section[tasksKey]" :key="task.id + section.title + index + templateKey" class="table__irow">
+        <tr v-for="(task, index) in section[tasksKey]" :key="task.id + section.title + index + templateKey" class="table__irow" @click.stop="rowClick($event, task)" @click.right.prevent="rowRightClick($event, task)">
           <td>
             <div class="drag-handle width-2 "><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
                 <rect fill="none" height="24" width="24" />
@@ -54,7 +54,7 @@
             </template>
             <div v-if="col.key == 'title'" class="d-flex gap-05 align-center h-100">
               <bib-icon icon="check-circle" :scale="1.25" :variant="taskCheckIcon(task)" class="cursor-pointer" @click="updateTaskStatus(task)"></bib-icon>
-              <span v-if="col.event" class="cursor-pointer flex-grow-1" style=" line-height:1.25;" v-on:click="$emit(col.event, task)">
+              <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">
                 {{task[col.key]}}
               </span>
               <span v-else class="flex-grow-1">
@@ -88,8 +88,8 @@
  * @vue-prop sections=[] {Array} - table data.
  * @vue-prop collapseObj=null {Object} - collapsible table settings.
  * @vue-prop newTaskbutton={Object} - add new row button
- * @vue-emits ['task-checkmark-click', 'section-dragend', 'task-dragend' ]
- * @vue-dynamic-emits [ 'header_icon click', 'title click', 'task_checkmark click' 'newtask button click' ] 
+ * @vue-emits ['row-click', 'row-rightclick', 'close-context-menu', 'task-checkmark-click', 'section-dragend', 'task-dragend' ]
+ * @vue-dynamic-emits [ 'header_icon click', 'task_checkmark click' 'newtask button click' ] 
  * @vue-prop componentKey=Number - key to update child components
  */
 import draggable from 'vuedraggable'
@@ -161,7 +161,7 @@ export default {
   },
   computed: {
     activeClass() { return keyI => this.sections[keyI].active ? 'active' : '' },
-    
+
   },
   created() {
     // console.info('created lifecycle', this.cols.length)
@@ -198,16 +198,33 @@ export default {
       console.log(task.statusId)
       this.$emit('task-checkmark-click', task)
     },
-    clickItem(key) {
-      this.$emit('item-dblclicked', this.sections[key])
+    rowClick($event, task) {
       this.unselectAll()
-      document.getElementById(key).classList.toggle('active')
+        .then(r => {
+          $event.currentTarget.classList.add("active")
+        })
+      // console.log($event.currentTarget)
+      this.$emit('row-click', task)
+      // document.getElementById(key).classList.toggle('active')
     },
-    unselectAll() {
-      let rows = document.getElementsByClassName('table__irow');
+    rowRightClick($event, task) {
+      this.$emit("close-context-menu")
+      this.unselectAll()
+        .then(r => {
+          $event.currentTarget.classList.add("active")
+        })
+      setTimeout(() => {
+        this.$emit("row-rightclick", { event: $event, task: task })
+      }, 200)
+
+    },
+    async unselectAll() {
+      let rows = document.querySelectorAll('.table__irow');
       for (let row of rows) {
         row.classList.remove('active');
       }
+
+      return "success"
     },
     taskDragStart(e) {
       // console.warn(e.to.classList.add("highlight"));
@@ -271,7 +288,7 @@ export default {
     }
 
     &__active {
-      border-bottom-color: $dark-sub1 !important;
+      border-color: $dark-sub1;
 
       span {
         color: $dark-sub1 !important;
@@ -331,12 +348,12 @@ export default {
     &:active {
       cursor: default;
       background-color: #f6f6f6;
-      outline: 1px solid $gray4;
+      outline: 1px solid $gray5;
     }
 
     &.active {
       background-color: #f6f6f6;
-      outline: 1px solid $gray4;
+      outline: 1px solid $gray5;
     }
   }
 
