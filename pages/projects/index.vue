@@ -7,7 +7,7 @@
     <div id="projects-list-wrapper" class="projects-list-wrapper of-scroll-y position-relative" >
       <loading :loading="loading"></loading>
       <template v-if="projects.length">
-        <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="projects" :key="'sort-'+ sortName ? sortName : 'sName' + 'view-' + viewName ? viewName : 'vName' + Math.random().split(-3) " :hide-no-column="true" @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
+        <!-- <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="projects" :key="'sort-'+ sortName ? sortName : 'sName' + 'view-' + viewName ? viewName : 'vName' + Math.random().split(-3) " :hide-no-column="true" @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
           <template #cell(title)="data">
             <div class="d-flex align-center text-dark cursor-pointer" :id="'projects-' + data.value.title" @click="goToProjectId(data.value)">
               <bib-icon icon="briefcase" variant="gray5" :scale="1.1" class="mr-025"></bib-icon>
@@ -29,7 +29,12 @@
           <template #cell(priority)="data">
             <priority-comp :priority="data.value.priority"></priority-comp>
           </template>
-        </bib-table>
+        </bib-table> -->
+
+        <drag-table-simple :fields="tableFields" :tasks="projects" :componentKey="templateKey" :drag="false" :sectionTitle="'Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick"></drag-table-simple>
+        
+        <!-- table context menu -->
+        <!-- <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" ref="task_menu" @item-click="contextItemClick" ></table-context-menu> -->
       </template>
       <template v-else>
         <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
@@ -50,6 +55,7 @@ export default {
       sortName: '',
       viewName: '',
       loading: true,
+      templateKey: 0,
       tableFields: PROJECT_FIELDS,
       gridType: "list",
       activeTask: {
@@ -63,6 +69,7 @@ export default {
   },
   mounted() {
     this.$store.dispatch('project/fetchProjects').then(() => { 
+      this.templateKey += 1;
       this.newkey = parseInt( Math.random().toString().slice(-3) )
       this.loading = false 
     })
@@ -166,6 +173,18 @@ export default {
       this.$store.dispatch('project/sortProjects', {key: 'priority', order: this.orderBy} )
       this.sortName = 'priority';
       this.checkActive()
+    },
+
+    projectRoute() {
+      console.log('project Route!')
+    },
+
+    projectRightClick() {
+      console.log('project right click')
+    },
+
+    sortProject() {
+      console.log('sort project')
     }
   },
 
