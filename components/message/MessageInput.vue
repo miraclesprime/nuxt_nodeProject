@@ -209,7 +209,7 @@ import { snipFileName } from '~/utils/file';
 // import { ChannelPlugin } from '~/plugins/editor-channel';
 import { ChatLink } from '~/plugins/editor-link';
 
-// import MentionList from '~/components/message-mention/MessageMentionList.vue';
+import MentionList from '~/components/message-mention/MessageMentionList.vue';
 // import ChannelList from '~/components/message-mention/MessageChannelList.vue';
 
 export default {
@@ -520,7 +520,7 @@ export default {
 .editor {
   display: flex;
 
-  .ProseMirror { width: 100%; }
+  .ProseMirror { flex-grow: 1; }
 
   ::v-deep p {
     margin: 8px 0 0 0;
