@@ -34,7 +34,7 @@
         <drag-table-simple :fields="tableFields" :tasks="projects" :componentKey="templateKey" :drag="false" :sectionTitle="'Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick"></drag-table-simple>
         
         <!-- table context menu -->
-        <!-- <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" ref="task_menu" @item-click="contextItemClick" ></table-context-menu> -->
+        <table-context-menu :items="projectContextItems" :show="projectContextMenu" :coordinates="contextCoords" :activeItem="activeProject" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
       </template>
       <template v-else>
         <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
@@ -47,6 +47,7 @@
 
 <script>
 import { PROJECT_FIELDS } from '../../dummy/project';
+import {PROJECT_CONTEXT_MENU} from '../../config/constants';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -54,6 +55,10 @@ export default {
     return {
       sortName: '',
       viewName: '',
+      projectContextItems: PROJECT_CONTEXT_MENU,
+      projectContextMenu: false,
+      contextCoords: { },
+      activeProject: {},
       loading: true,
       templateKey: 0,
       tableFields: PROJECT_FIELDS,
@@ -63,7 +68,7 @@ export default {
         priority: null,
         status: null,
       },
-      orderBy: '',
+      orderBy: 'asc',
       newkey: "",
     }
   },
@@ -103,89 +108,182 @@ export default {
       this.$router.push("/projects/" + project.id)
     },
 
-    sortTitle() {
-      
-      if(this.orderBy == 'asc') {
-        this.orderBy = 'desc'
-      } else {
-        this.orderBy = 'asc'
-      }
-      this.$store.dispatch('project/sortProjects', {key: 'name', order: this.orderBy} )
-      this.sortName = 'title';
-      this.checkActive()
-    },
-
-    sortOwner() {
-
-      if(this.orderBy == 'asc') {
-        this.orderBy = 'desc'
-      } else {
-        this.orderBy = 'asc'
-      }
-      this.$store.dispatch('project/sortProjects', {key: 'owner', order: this.orderBy} )
-      this.sortName = 'userId';
-      this.checkActive()
-    },
-
-    sortByStatus() {
-
-      if(this.orderBy == 'asc') {
-        this.orderBy = 'desc'
-      } else {
-        this.orderBy = 'asc'
-      }
-      this.$store.dispatch('project/sortProjects', {key: 'status', order: this.orderBy} )
-      this.sortName = 'status';
-      this.checkActive()
-    },
-
-    sortByStartDate() {
-
-      if(this.orderBy == 'asc') {
-        this.orderBy = 'desc'
-      } else {
-        this.orderBy = 'asc'
-      }
-      this.$store.dispatch('project/sortProjects', {key: 'startDate', order: this.orderBy} )
-      this.sortName = 'createdAt';
-      this.checkActive()
-    },
-
-    sortByDueDate() {
-
-      if(this.orderBy == 'asc') {
-        this.orderBy = 'desc'
-      } else {
-        this.orderBy = 'asc'
-      }
-      this.$store.dispatch('project/sortProjects', {key: 'dueDate', order: this.orderBy} )
-      this.sortName = 'dueDate';
-      this.checkActive()
-    },
-
-    sortByPriority() {
-
-      if(this.orderBy == 'asc') {
-        this.orderBy = 'desc'
-      } else {
-        this.orderBy = 'asc'
-      }
-      this.$store.dispatch('project/sortProjects', {key: 'priority', order: this.orderBy} )
-      this.sortName = 'priority';
-      this.checkActive()
-    },
 
     projectRoute() {
       console.log('project Route!')
     },
 
-    projectRightClick() {
-      console.log('project right click')
+    projectRightClick(payload) {
+      this.projectContextMenu = true;
+      const { event, task } = payload
+      this.contextCoords = { left: event.pageX+'px', top: event.pageY+'px' }
     },
 
-    sortProject() {
-      console.log('sort project')
-    }
+    sortProject($event) {
+      console.log($event, this.orderBy)
+      
+      if($event == 'title') {
+
+          if(this.orderBy == 'asc') {
+            this.$store.dispatch('project/sortProjects', {key: 'name', order: 'asc'} ).then((res) => {
+              this.orderBy = 'desc'
+              this.templateKey += 1;
+              this.sortName = 'title';
+              this.checkActive()
+            })
+          }
+
+          if(this.orderBy == 'desc') {
+            this.$store.dispatch('project/sortProjects', {key: 'name', order: 'desc'} ).then((res) => {
+              this.orderBy = 'asc'
+              this.templateKey += 1;
+              this.sortName = 'title';
+              this.checkActive()
+            })
+            
+          }
+      }
+
+      if($event == 'userId') {
+
+          if(this.orderBy == 'asc') {
+            this.$store.dispatch('project/sortProjects', {key: 'owner', order: 'asc'} ).then((res) => {
+              this.orderBy = 'desc'
+              this.templateKey += 1;
+              this.sortName = 'owner';
+              this.checkActive()
+            })
+          }
+
+          if(this.orderBy == 'desc') {
+            this.$store.dispatch('project/sortProjects', {key: 'owner', order: 'desc'} ).then((res) => {
+              this.orderBy = 'asc'
+              this.templateKey += 1;
+              this.sortName = 'owner';
+              this.checkActive()
+            })
+            
+          }
+      }
+
+      if($event == 'status') {
+
+          if(this.orderBy == 'asc') {
+            this.$store.dispatch('project/sortProjects', {key: 'status', order: 'asc'} ).then((res) => {
+              this.orderBy = 'desc'
+              this.templateKey += 1;
+              this.sortName = 'status';
+              this.checkActive()
+            })
+          }
+
+          if(this.orderBy == 'desc') {
+            this.$store.dispatch('project/sortProjects', {key: 'status', order: 'desc'} ).then((res) => {
+              this.orderBy = 'asc'
+              this.templateKey += 1;
+              this.sortName = 'status';
+              this.checkActive()
+            })
+            
+          }
+      }
+
+      if($event == 'priority') {
+
+          if(this.orderBy == 'asc') {
+            this.$store.dispatch('project/sortProjects', {key: 'priority', order: 'asc'} ).then((res) => {
+              this.orderBy = 'desc'
+              this.templateKey += 1;
+              this.sortName = 'priority';
+              this.checkActive()
+            })
+          }
+
+          if(this.orderBy == 'desc') {
+            this.$store.dispatch('project/sortProjects', {key: 'priority', order: 'desc'} ).then((res) => {
+              this.orderBy = 'asc'
+              this.templateKey += 1;
+              this.sortName = 'priority';
+              this.checkActive()
+            })
+            
+          }
+      }
+
+      if($event == 'createdAt') {
+
+          if(this.orderBy == 'asc') {
+            this.$store.dispatch('project/sortProjects', {key: 'owner', order: 'asc'} ).then((res) => {
+              this.orderBy = 'desc'
+              this.templateKey += 1;
+              this.sortName = 'start date';
+              this.checkActive()
+            })
+          }
+
+          if(this.orderBy == 'desc') {
+            this.$store.dispatch('project/sortProjects', {key: 'owner', order: 'desc'} ).then((res) => {
+              this.orderBy = 'asc'
+              this.templateKey += 1;
+              this.sortName = 'start date';
+              this.checkActive()
+            })
+            
+          }
+      }
+      
+      if($event == 'dueDate') {
+
+          if(this.orderBy == 'asc') {
+            this.$store.dispatch('project/sortProjects', {key: 'dueDate', order: 'asc'} ).then((res) => {
+              this.orderBy = 'desc'
+              this.templateKey += 1;
+              this.sortName = 'due date';
+              this.checkActive()
+            })
+          }
+
+          if(this.orderBy == 'desc') {
+            this.$store.dispatch('project/sortProjects', {key: 'dueDate', order: 'desc'} ).then((res) => {
+              this.orderBy = 'asc'
+              this.templateKey += 1;
+              this.sortName = 'due date';
+              this.checkActive()
+            })
+            
+          }
+      }
+
+      this.templateKey += 1;
+    },
+
+    closeContext() {
+      this.projectContextMenu = false
+      this.activeProject = {}
+      // this.$store.dispatch('task/setSingleTask', {})
+    },
+
+    contextItemClick(key){
+      console.log(key)
+      switch (key) {
+        case 'done-task':
+          // statements_1
+          this.markComplete(this.activeTask)
+          break;
+        case 'fav-task':
+          this.setFavorite(this.activeTask)
+          break;
+        case 'delete-task':
+          this.deleteTask(this.activeTask)
+          break;
+        case 'assign-task':
+          // statements_1
+          break;
+        default:
+          alert("no task assigned")
+          break;
+      }
+    },
   },
 
 
