@@ -325,7 +325,6 @@ export default {
         return false
       }*/
 
-      console.warn("class not found", event.target)
       this.$nuxt.$emit("close-sidebar");
     },
     sidebarTabChange(tab) {
