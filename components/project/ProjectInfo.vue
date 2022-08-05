@@ -1,5 +1,5 @@
 <template>
-  <span :id="'project-info-'+ projectId" class="project-title text-dark text-truncate">{{project.title}}</span>
+  <span :id="'project-info-'+ projectId" class="project-title text-dark text-truncate">{{project ? project.title : ''}}</span>
 </template>
 <script>
 import { mapGetters } from 'vuex';
