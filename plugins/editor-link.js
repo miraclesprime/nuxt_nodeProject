@@ -29,7 +29,7 @@ export const ChatLink = Link.extend({
     };
   },
   addProseMirrorPlugins() {
-    console.log(this);
+    // console.log(this);
 
     return [
       new Plugin({

@@ -202,7 +202,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { v4 as uuidV4 } from 'uuid';
 import { mapGetters } from 'vuex';
-// import tippy from 'tippy.js';
+import tippy from 'tippy.js';
 import VueTippy, { TippyComponent } from 'vue-tippy';
 import { VEmojiPicker } from 'v-emoji-picker';
 import { snipFileName } from '~/utils/file';
@@ -518,9 +518,9 @@ export default {
 }
 
 .editor {
-  display: flex;
+  /*display: flex;*/
 
-  .ProseMirror { flex-grow: 1; }
+  .ProseMirror { /*flex-grow: 1;*/ }
 
   ::v-deep p {
     margin: 8px 0 0 0;
