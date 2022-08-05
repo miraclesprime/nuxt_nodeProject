@@ -1,15 +1,15 @@
 <template>
   <div class="container pt-1 row" id="task-conv-container">
-    <div class="row col-7 position-relative" id="task-conv-row">
-      <div class="col-4" id="task-conv-col1">
-        <!-- <sidebar-team adClass="" /> -->
+    <div class="row w-100 position-relative" id="task-conv-row">
+      <div class="col-3" id="task-conv-col1">
+        <!-- <sidebar-team ></sidebar-team> -->
       </div>
 
-      <div class="divider" id="task-conv-divider" style="left: 33.8%" />
+      <!-- <div class="divider" id="task-conv-divider" style="left: 33.8%" /> -->
 
-      <div class="col-8 mt-2" id="task-conv-col2">
+      <div class="col-9 mt-2" id="task-conv-col2">
         <div class="task-team w-100" id="task-conv-task-team">
-          <div class="mail" v-for="item in [1, 2, 3]" :id="'mail' + item" :key="'mail' + item">
+          <!-- <div class="mail" v-for="item in [1, 2, 3]" :id="'mail' + item" :key="'mail' + item">
             <div class="title d-flex align-center" id="task-conv-title">
               <bib-icon icon="next" />
               Mmm 00, 000
@@ -54,7 +54,8 @@
                 cillum
               </p>
             </div>
-          </div>
+          </div> -->
+          <message-input @submit="onsubmit"></message-input>
         </div>
       </div>
     </div>
@@ -69,6 +70,11 @@ export default {
     return {
       teammates: TEAMMATES,
     };
+  },
+  methods: {
+    onsubmit(data){
+      console.log(data)
+    }
   },
 };
 </script>
