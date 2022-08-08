@@ -55,7 +55,7 @@
               </p>
             </div>
           </div> -->
-          <!-- <message-input @submit="onsubmit"></message-input> -->
+          <message-input @submit="onsubmit"></message-input>
         </div>
       </div>
     </div>
