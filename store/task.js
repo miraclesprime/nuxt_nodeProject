@@ -166,7 +166,7 @@ export const actions = {
   async updateTaskStatus(ctx, payload) {
     // console.log('update task payload', payload)
     if (payload.statusId !== 5) {
-      const res = await this.$axios.$put('/task', { id: payload.id, projectId: ctx.rootState.project.selectedProject.id, data: { statusId: 5 } }, {
+      const res = await this.$axios.$put('/task', { id: payload.id, projectId: ctx.rootState.project.selectedProject.id ? payload.project[0].projectId: null, data: { statusId: 5 } }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
       // ctx.dispatch("fetchTasks", { id: ctx.rootState.project.selectedProject.id, filter: 'all' })

@@ -41,6 +41,22 @@
           <bib-icon icon="warning"></bib-icon> No records found
         </span>
       </template>
+
+      <!-- project rename modal -->
+      <bib-modal-wrapper v-if="renameModal" title="Rename project" @close="renameModal = false">
+        <template slot="content">
+          <div>
+            <bib-input type="text" v-model.trim="renameProjectData.title" placeholder="Enter name..."></bib-input>
+            <loading :loading="loading"></loading>
+          </div>
+        </template>
+        <template slot="footer">
+          <div class="d-flex justify-between">
+            <bib-button label="Cancel" variant="light" pill @click="renameModal = false"></bib-button>
+            <bib-button label="Rename" variant="success" pill v-on:click="renameProject"></bib-button>
+          </div>
+        </template>
+      </bib-modal-wrapper>
     </div>
   </div>
 </template>
@@ -59,6 +75,9 @@ export default {
       projectContextMenu: false,
       contextCoords: { },
       activeProject: {},
+      renameProjectData: {},
+      renameModal: false,
+      projectName: "",
       loading: true,
       templateKey: 0,
       tableFields: PROJECT_FIELDS,
@@ -82,7 +101,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      projects: 'project/getAllProjects'
+      projects: 'project/getAllProjects',
+      favProjects: 'project/getFavProjects',
     })
   },
 
@@ -109,13 +129,16 @@ export default {
     },
 
 
-    projectRoute() {
-      console.log('project Route!')
+    projectRoute(project) {
+      // console.log(project)
+      this.$router.push('/projects/' + project.id)
     },
 
     projectRightClick(payload) {
       this.projectContextMenu = true;
       const { event, task } = payload
+      this.activeProject = task;
+      this.renameProjectData = JSON.parse(JSON.stringify(task));
       this.contextCoords = { left: event.pageX+'px', top: event.pageY+'px' }
     },
 
@@ -264,25 +287,117 @@ export default {
     },
 
     contextItemClick(key){
-      console.log(key)
       switch (key) {
-        case 'done-task':
+        case 'fav-project':
+          console.log('fav project')
+          this.setFavorite(this.activeProject)
+          break;
+        case 'rename-project':
+          console.log('rename project')
+          this.renameModal = true
+          break;
+        case 'delete-project':
+          console.log('delete project')
+          this.deleteTask(this.activeProject)
+          break;
+        case 'share-project':
+          console.log('share project')
           // statements_1
-          this.markComplete(this.activeTask)
           break;
-        case 'fav-task':
-          this.setFavorite(this.activeTask)
-          break;
-        case 'delete-task':
-          this.deleteTask(this.activeTask)
-          break;
-        case 'assign-task':
-          // statements_1
+        case 'report-project':
+          console.log('report project')
           break;
         default:
-          alert("no task assigned")
+          alert("no project assigned")
           break;
       }
+    },
+
+    setFavorite(project) {
+      // console.info("to be fav task", task)
+      this.loading = true
+      let isFav = this.favProjects.some((f) => f.id == project.id)
+      // console.log(isFav)
+
+      if (isFav) {
+        this.$store.dispatch("project/removeFromFavorite", { id: project.id })
+          .then(msg => {
+            console.log(msg)
+            // this.popupMessages.push({ text: msg, variant: "success" })
+            this.updateKey()
+            this.loading = false
+          })
+          .catch(e => {
+            this.loading = false
+            console.log(e)
+          })
+      } else {
+        this.$store.dispatch("project/addToFavorite", { id: project.id })
+          .then(msg => {
+            console.log(msg)
+            // this.popupMessages.push({ text: msg, variant: "success" })
+            this.updateKey()
+            this.loading = false
+          })
+          .catch(e => {
+            this.loading = false
+            console.log(e)
+          })
+      }
+    },
+
+    deleteTask(project) {
+      let del = confirm("Are you sure")
+      this.loading = true
+      if (del) {
+        this.$store.dispatch("project/deleteProject", project).then(t => {
+
+          if (t.statusCode == 200) {
+            // this.popupMessages.push({ text: t.message, variant: "success" })
+            this.updateKey()
+          } else {
+            // this.popupMessages.push({ text: t.message, variant: "warning" })
+            console.warn(t.message);
+          }
+          this.loading = false
+        }).catch(e => {
+          this.loading = false
+          // this.popupMessages.push({ text: e, variant: "danger" })
+          console.log(e)
+        })
+      } else {
+        this.loading = false
+      }
+    },
+
+    async renameProject() {
+      this.loading = true
+      const proj = await this.$axios.put("/project", {
+        id: this.renameProjectData.id,
+        data: {
+          title: this.renameProjectData.title
+        },
+        user: this.renameProjectData.user
+      }, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      })
+      // console.log(proj)
+      if (proj.data.statusCode == 200) {
+        this.$store.dispatch("project/setSingleProject", proj.data.data)
+        this.updateKey()
+        this.renameModal = false
+      }
+      this.renameProjectData = {}
+      this.loading = false
+    },
+
+    updateKey() {
+      // console.log("update-key event received", this.templateKey)
+      this.$store.dispatch("project/fetchProjects").then(() => {
+        // this.taskByOrder()
+        console.log('fetched again')
+        this.templateKey += 1;
+      })
     },
   },
 
