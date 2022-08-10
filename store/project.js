@@ -68,7 +68,7 @@ export const mutations = {
     state.projectComments = payload;
   },
 
-  fetchSingleProjectDetail(state, payload) {
+  fetchSingleProjectComment(state, payload) {
     state.singleProjComment = payload
   },
 
@@ -455,7 +455,7 @@ export const actions = {
   async fetchProjectComments(ctx, payload) {
     try {
 
-      let fav = await this.$axios.get(`/project/${payload.id}/comments`, {
+      let res = await this.$axios.get(`/project/${payload.id}/comments`, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
@@ -463,7 +463,7 @@ export const actions = {
       })
 
       if(res.data.statusCode == 200) {
-        ctx.dispatch("fetchProjectComments")
+        ctx.commit("fetchProjectComments", res.data.data)
         return res.data.data;
       } else {
         return res.data.data;

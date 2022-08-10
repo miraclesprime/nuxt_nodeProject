@@ -1,15 +1,15 @@
 <template>
-  <div class="container pt-1 row" id="task-conv-container">
-    <div class="row w-100 position-relative" id="task-conv-row">
-      <div class="col-3" id="task-conv-col1">
-        <!-- <sidebar-team ></sidebar-team> -->
+  <div class="row h-100">
+    <div class="col-3" id="task-conv-col1">
+      <project-team :team="projectMembers"></project-team>
+    </div>
+    <!-- <div class="divider" id="task-conv-divider" style="left: 33.8%" /> -->
+    <div class="col-9 border-left d-flex flex-d-column">
+      <div class="message-wrapper flex-grow-1 of-scroll-y">
+        <message-list :messages="comments" ></message-list>
       </div>
-
-      <!-- <div class="divider" id="task-conv-divider" style="left: 33.8%" /> -->
-
-      <div class="col-9 mt-2" id="task-conv-col2">
-        <div class="task-team w-100" id="task-conv-task-team">
-          <!-- <div class="mail" v-for="item in [1, 2, 3]" :id="'mail' + item" :key="'mail' + item">
+      <div class="task-message-input ">
+        <!-- <div class="mail" v-for="item in [1, 2, 3]" :id="'mail' + item" :key="'mail' + item">
             <div class="title d-flex align-center" id="task-conv-title">
               <bib-icon icon="next" />
               Mmm 00, 000
@@ -55,35 +55,61 @@
               </p>
             </div>
           </div> -->
-          <message></message>
-          <message-input @submit="onsubmit"></message-input>
-        </div>
+        <message-input :value="value" @input="onFileInput" @submit="onsubmit"></message-input>
       </div>
     </div>
   </div>
 </template>
-
 <script>
-import { TEAMMATES } from "config/constants";
+import { mapGetters } from 'vuex';
+
 
 export default {
-  data: function () {
+  data: function() {
     return {
-      teammates: TEAMMATES,
+      value: {
+        files: [
+          /*{ id: 156, name: 'thefile.png' },
+          { id: 282, name: 'anotherfile.jpg' },*/
+        ]
+      },
+      // comments: []
     };
   },
+  computed: {
+    ...mapGetters({
+      project: "project/getSingleProject",
+      projectMembers: "project/getProjectMembers",
+      comments: "project/getProjectComments",
+    })
+  },
+  mounted() {
+    this.$store.dispatch("project/fetchProjectComments", { id: this.project.id })
+    // this.$store.dispatch("project/fetchTeamMember", { id: this.project.id })
+  },
   methods: {
-    onsubmit(data){
-      console.log(data)
+    onFileInput(payload) {
+      // console.log(payload)
+      this.value.files = payload.files
+    },
+    onsubmit(data) {
+      // console.log(data)
+      this.$store.dispatch("project/createProjectComment", { id: this.project.id, comment: data.text })
+        .then(res => {
+          console.log(res)
+        })
+        .catch(e => console.log(e))
     }
   },
 };
-</script>
 
+</script>
 <style lang="scss" scoped>
-.container {
-  color: #999;
-}
+.container {}
+
+.task-message-input {}
+
+.border-left { border-left: 1px solid $gray4; }
 
 .team-list {
   display: flex;
@@ -131,9 +157,7 @@ export default {
   vertical-align: bottom;
 }
 
-.sender-name {
-  
-}
+.sender-name {}
 
 .mail-sender {
   display: flex;
@@ -149,7 +173,7 @@ export default {
 
   .sending-time {
     margin-left: 10px;
-    
+
   }
 
   .mail-actions {
@@ -182,4 +206,5 @@ export default {
     fill: $gray4 !important;
   }
 }
+
 </style>

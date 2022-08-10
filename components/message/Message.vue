@@ -3,33 +3,48 @@
     <div class="msg__date"></div>
     <div class="d-flex">
       <figure class="width-5">
-        <bib-avatar size="3rem"></bib-avatar>
+        <bib-avatar size="3rem" :src="userInfo.pic"></bib-avatar>
       </figure>
       <div class="flex-grow-1">
-        <div class="msg__owner">Vishwajeet <small class="ml-1">Monday, January 25, 2021 @ 14:50</small></div>
-        <div class="msg__content pb-05">
+        <div class="msg__owner">{{userInfo.name}} <small class="ml-1">{{msg.updatedAt}}</small>
+        </div>
+        <div class="msg__content pb-05" v-html="msg.comment">
           <p>Lorem ipsum dolor sit amet consectetur 🙂, <a href="https://dev.proj-mgmt.biztree.com/">ipsum</a> adipisicing elit. Sit eum praesentium animi error delectus reprehenderit neque odit? Nesciunt facere quod ab veniam eligendi architecto vitae?</p>
         </div>
-        <message-files :files="files"></message-files>
+        <!-- <message-files :files="files"></message-files> -->
       </div>
     </div>
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex';
 export default {
 
   name: 'Message',
+  props: { msg: Object },
 
   data() {
     return {
-    	files: [
-    		{ img: 'https://placeimg.com/200/300/tech' },
-    		{ img: 'https://placeimg.com/200/360/tech' },
-    		{ img: 'https://placehold.jp/2ba026/ffffff/180x180.jpg' },
-    		{ img: 'https://placehold.jp/24/1f42a2/ffffff/250x200.jpg?text=placeholder%20image'}
-    	]
+      // pic: '',
+      // userName: null,
+      files: [
+        { img: 'https://placeimg.com/200/300/tech' },
+        { img: 'https://placeimg.com/200/360/tech' },
+        { img: 'https://placehold.jp/2ba026/ffffff/180x180.jpg' },
+        { img: 'https://placehold.jp/24/1f42a2/ffffff/250x200.jpg?text=placeholder%20image' }
+      ]
     }
-  }
+  },
+  computed: {
+    ...mapGetters({
+      members: 'user/getTeamMembers'
+    }),
+    userInfo() {
+      let u = this.members.find((el) => el.id == this.msg.userId)
+      // console.log(u)
+      return { name: u.firstName + ' ' + u.lastName, pic: u.avatar }
+    }
+  },
 }
 
 </script>
@@ -94,8 +109,8 @@ export default {
         }
 
         .file-overlay {
-        	inset: 0;
-        	opacity: 1;
+          inset: 0;
+          opacity: 1;
         }
       }
     }

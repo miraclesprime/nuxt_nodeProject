@@ -153,8 +153,8 @@ export default {
       navItems2: [
         { label: "Tasks", icon: "check-all", key: "task-route", selected: false },
         { label: "Projects", icon: "briefcase", key: 'project-route', selected: false },
-        { label: "Goals", icon: "flag-racing", key: 'goals', selected: false },
-        { label: "Dream", icon: "star", key: 'dreams', selected: false },
+        // { label: "Goals", icon: "flag-racing", key: 'goals', selected: false },
+        // { label: "Dream", icon: "star", key: 'dreams', selected: false },
       ],
       /*favProjects: [
         { label: "Project one", icon: "folder-solid" },

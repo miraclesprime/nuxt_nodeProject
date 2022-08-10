@@ -47,7 +47,7 @@
     <div class="menu " id='project-id-menu-content'>
       <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="PROJECT_TABS" />
     </div>
-    <div id="project-id-tab-content" class="project-id-tab-content position-relative of-scroll-y">
+    <div id="project-id-tab-content" class="project-id-tab-content position-relative h-100 of-scroll-y">
       <project-overview v-if="activeTab.value == PROJECT_TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="projectTasks" :currentProject="project"></project-overview>
       <task-view v-if="activeTab.value == PROJECT_TAB_TITLES.tasks" :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType"></task-view>
       <task-conversations v-if="activeTab.value == PROJECT_TAB_TITLES.conversations" :fields="TABLE_FIELDS" :tasks="projectTasks"></task-conversations>
@@ -171,8 +171,9 @@ export default {
   },
   mounted() {
     // console.log(this.$route.params.id)
-    this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' });
-    this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' });
+    this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
+    this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
+    this.$store.dispatch("project/fetchTeamMember", { id: this.$route.params.id })
   },
 
   methods: {

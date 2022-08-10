@@ -2,63 +2,35 @@
   <div v-if="editor" class="wrapper">
     <div class="container">
       <div class="toolbar-top">
-        <div
-          class="toolbar-icon"
-          :class="{ 'is-active': editor.isActive('bold') }"
-          @click="editor.chain().focus().toggleBold().run()"
-        >
-          <fa :icon="faBold" ></fa>
+        <div class="toolbar-icon" :class="{ 'is-active': editor.isActive('bold') }" @click="editor.chain().focus().toggleBold().run()">
+          <fa :icon="faBold"></fa>
         </div>
-        <div
-          class="toolbar-icon"
-          :class="{ 'is-active': editor.isActive('italic') }"
-          @click="editor.chain().focus().toggleItalic().run()"
-        >
-          <fa :icon="faItalic" ></fa>
+        <div class="toolbar-icon" :class="{ 'is-active': editor.isActive('italic') }" @click="editor.chain().focus().toggleItalic().run()">
+          <fa :icon="faItalic"></fa>
         </div>
-        <div
-          class="toolbar-icon"
-          :class="{ 'is-active': editor.isActive('underline') }"
-          @click="editor.chain().focus().toggleUnderline().run()"
-        >
-          <fa :icon="faUnderline" ></fa>
+        <div class="toolbar-icon" :class="{ 'is-active': editor.isActive('underline') }" @click="editor.chain().focus().toggleUnderline().run()">
+          <fa :icon="faUnderline"></fa>
         </div>
-        <div
-          class="toolbar-icon"
-          :class="{ 'is-active': editor.isActive('strike') }"
-          @click="editor.chain().focus().toggleStrike().run()"
-        >
-          <fa :icon="faStrikethrough" ></fa>
+        <div class="toolbar-icon" :class="{ 'is-active': editor.isActive('strike') }" @click="editor.chain().focus().toggleStrike().run()">
+          <fa :icon="faStrikethrough"></fa>
         </div>
         <div class="toolbar-separator"></div>
-        <div
-          class="toolbar-icon"
-          :class="{ 'is-active': editor.isActive('link') }"
-          @click="toggleLink"
-        >
-          <fa :icon="faLink" ></fa>
+        <div class="toolbar-icon" :class="{ 'is-active': editor.isActive('link') }" @click="toggleLink">
+          <fa :icon="faLink"></fa>
         </div>
         <div class="toolbar-separator"></div>
-        <div
-          class="toolbar-icon"
-          :class="{ 'is-active': editor.isActive('bulletList') }"
-          @click="editor.chain().focus().toggleBulletList().run()"
-        >
-          <fa :icon="faListUl" ></fa>
+        <div class="toolbar-icon" :class="{ 'is-active': editor.isActive('bulletList') }" @click="editor.chain().focus().toggleBulletList().run()">
+          <fa :icon="faListUl"></fa>
         </div>
-        <div
-          class="toolbar-icon"
-          :class="{ 'is-active': editor.isActive('orderedList') }"
-          @click="editor.chain().focus().toggleOrderedList().run()"
-        >
-          <fa :icon="faListOl" ></fa>
+        <div class="toolbar-icon" :class="{ 'is-active': editor.isActive('orderedList') }" @click="editor.chain().focus().toggleOrderedList().run()">
+          <fa :icon="faListOl"></fa>
         </div>
         <div class="toolbar-separator"></div>
-        <!-- <mention-popup @select="mentionUser" ></mention-popup> -->
+        <mention-popup @select="mentionUser"></mention-popup>
       </div>
       <div class="editor-container">
         <div class="editor-wrapper">
-          <!-- <div v-if="value.files.length" class="files">
+          <div v-if="value.files.length" class="files">
             <div v-for="(file, idx) in value.files" :key="idx" class="file">
               <div class="file-thumbnail">
                 <fa :icon="faFile"></fa>
@@ -72,8 +44,7 @@
                 <fa :icon="faTimes"></fa>
               </button>
             </div>
-          </div> -->
-
+          </div>
           <!-- <div v-if="value.voices.length" class="voices">
             <div v-for="(voice, idx) in value.voices" :key="idx" class="voice">
               <div class="voice-thumbnail">
@@ -96,7 +67,6 @@
           </div>
         
       </div> -->
-
           <!-- <div v-if="value.videos.length" class="videos">
             <div v-for="(video, idx) in value.videos" :key="idx" class="video">
               <div class="video-thumbnail">
@@ -108,7 +78,6 @@
               </button>
             </div>
           </div> -->
-
           <!-- <div v-if="value.images.length" class="images">
             <div v-for="(image, idx) in value.images" :key="idx" class="image">
               <img :src="image.url" />
@@ -118,53 +87,34 @@
               </button>
             </div>
           </div> -->
-
           <editor-content :editor="editor" class="editor" />
         </div>
       </div>
       <div class="toolbar-bottom d-flex justify-between">
         <div class="d-flex">
           <div class="toolbar-icon" @click="onAttachmentClick">
-            <fa :icon="faPaperclip" ></fa>
-            <input
-              ref="file"
-              multiple
-              type="file"
-              class="attachment-input"
-              @change="onFilesSelect"
-            />
+            <fa :icon="faPaperclip"></fa>
+            <input ref="file" multiple type="file" class="attachment-input" @change="onFilesSelect" />
           </div>
-
-          <tippy
-            trigger="click"
-            interactive
-            :animate-fill="false"
-            :distance="60"
-            placement="top-start"
-          >
+          <tippy trigger="click" interactive :animate-fill="false" :distance="60" placement="top-start">
             <div slot="trigger" class="toolbar-icon">
-              <fa :icon="faGrin" ></fa>
+              <fa :icon="faGrin"></fa>
             </div>
-
-            <v-emoji-picker @select="selectEmoji" ></v-emoji-picker>
+            <v-emoji-picker @select="selectEmoji"></v-emoji-picker>
           </tippy>
           <!-- <audio-recorder @record="addVoice" />
           <video-recorder @record="addVideo" />
           <image-capturer @capture="addImage" /> -->
         </div>
-
         <button class="send-btn" type="button" @click="sendMessage">
-          <fa :icon="faPaperPlane" ></fa>
+          <fa :icon="faPaperPlane"></fa>
         </button>
       </div>
     </div>
-
     <div class="hint"><b>Shift + Enter</b> to send</div>
-
     <bib-modal-wrapper v-if="isLinkModalShown" title="Link URL" @close="isLinkModalShown = false">
       <template slot="content">
         <bib-input label="URL" v-model="linkUrl" />
-
         <div class="d-flex">
           <bib-button label="Cancel" variant="light" pill @click="closeAndResetLinkModal" />
           <bib-button label="Set Link" variant="success" class="ml-auto" pill @click="setLink" />
@@ -173,7 +123,6 @@
     </bib-modal-wrapper>
   </div>
 </template>
-
 <script>
 import { Editor, EditorContent, Extension, VueRenderer } from '@tiptap/vue-2';
 import StarterKit from '@tiptap/starter-kit';
@@ -232,6 +181,9 @@ export default {
 
   computed: {
     // ...mapGetters(['contacts', 'groupChats', 'getChannelById']),
+    ...mapGetters({
+      contacts: "user/getTeamMembers"
+    }),
   },
 
   data() {
@@ -292,7 +244,9 @@ export default {
             class: 'mention',
           },
           renderLabel: ({ node }) => {
-            const user = this.contacts[node.attrs.id];
+            // console.log(node)
+            // const user = this.contacts[node.attrs.id];
+            const user = this.contacts.find(c => c.id == node.attrs.id)
             return `@${user.firstName} ${user.lastName}`;
           },
           suggestion: {
@@ -442,12 +396,12 @@ export default {
       });
     },
     mentionUser(user) {
+      // console.log(user)
       const anchorPos = this.editor.state.selection.anchor;
       this.editor
         .chain()
         .focus()
-        .insertContentAt({ from: anchorPos, to: anchorPos }, [
-          {
+        .insertContentAt({ from: anchorPos, to: anchorPos }, [{
             type: 'mention',
             attrs: { id: user.id },
           },
@@ -471,8 +425,8 @@ export default {
     },
   },
 };
-</script>
 
+</script>
 <style lang="scss" scoped>
 .wrapper {
   /*display: flex;
@@ -520,7 +474,9 @@ export default {
 .editor {
   /*display: flex;*/
 
-  .ProseMirror { /*flex-grow: 1;*/ }
+  .ProseMirror {
+    /*flex-grow: 1;*/
+  }
 
   ::v-deep p {
     margin: 8px 0 0 0;
@@ -763,4 +719,5 @@ export default {
   height: 22px;
   background: #bcbcc3;
 }
+
 </style>
