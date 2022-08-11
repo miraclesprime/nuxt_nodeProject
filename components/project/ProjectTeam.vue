@@ -1,20 +1,19 @@
 <template>
-  <div class="p-025">
-    <div class="action-left">
+  <div class="py-05">
+    <div class="action-left pb-05">
       <div class="d-inline-flex gap-05 cursor-pointer text-secondary bg-hover-light text-hover-dark py-025 px-05 shape-rounded" v-on:click="$nuxt.$emit('add-teammember-modal')">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon>
         <span>New Teammate</span>
       </div>
     </div>
-    <div class="list my-025">
+    <div class="list team-list my-05">
       <span v-for="t in projectTeam" class="list__item ">
-        <bib-avatar :src="t.avatar" size="1.5rem" class="mr-05"></bib-avatar> {{t.firstName}} {{t.lastName}} <bib-button pop="elipsis" variant="gray3" class="ml-auto">
+        <bib-avatar :src="t.avatar" size="1.75rem" class="mr-05"></bib-avatar> {{t.firstName}} {{t.lastName}} <bib-button pop="elipsis" variant="gray3" class="ml-auto">
           <template v-slot:menu>
             <div class="list">
-              <span class="list__item">List item 1</span>
-              <span class="list__item">List item 2</span>
-              <span class="list__item">List item 3</span>
-              <span class="list__item">List item 4</span>
+              <span class="list__item">Edit Profile</span>
+              <span class="list__item" @click="deleteMember(t)">Remove from team</span>
+              <!-- <span class="list__item list__item__danger">Delete</span> -->
             </div>
           </template>
         </bib-button>
@@ -36,7 +35,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      members: 'user/getTeamMembers'
+      members: 'user/getTeamMembers',
+      project: 'project/getSingleProject',
     }),
     projectTeam() {
       let ud = []
@@ -50,15 +50,59 @@ export default {
       })
       return ud
     }
+  },
+  mounted() {
+    // this.$store.dispatch("project/fetchTeamMember", { projectId: this.project.id })
+  },
+  methods: {
+    async deleteMember(member) {
+      // console.log(member)
+      // this.loading = true
+      let confirmDelete = window.confirm("Are you sure want to delete " + member.name + "!")
+      if (confirmDelete) {
+        await this.$store.dispatch("project/deleteMember", { projectId: this.project.id, memberId: member.id })
+          .then((res) => {
+            // console.log(res)
+            // this.key += 1
+            // alert(res)
+          })
+          .catch(e => console.log(e))
+        // this.loading = false
+      }
+    },
   }
 }
 
 </script>
 <style lang="scss" scoped>
-.list {
-  border-top: 1px solid $gray2;
+.action-left {
+  border-bottom: 1px solid $gray2;
+}
 
-  &__item {}
+.team-list {
+
+  .list__item {
+    font-size: 1rem;
+    height: 2.5rem;
+
+    .list {
+      &__item {
+        font-size: $base-size;
+        height: 2rem;
+      }
+    }
+
+    .button--pop {
+      opacity: 0.01;
+    }
+
+    &:hover {
+      .button--pop {
+        opacity: 1;
+      }
+    }
+  }
+
 }
 
 </style>

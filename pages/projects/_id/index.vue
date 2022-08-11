@@ -173,7 +173,7 @@ export default {
     // console.log(this.$route.params.id)
     this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
     this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
-    this.$store.dispatch("project/fetchTeamMember", { id: this.$route.params.id })
+    this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id })
   },
 
   methods: {

@@ -1,12 +1,11 @@
 <template>
   <div class="msg">
-    <div class="msg__date"></div>
     <div class="d-flex">
-      <figure class="width-5">
+      <figure class="width-4 flex-shrink-0">
         <bib-avatar size="3rem" :src="userInfo.pic"></bib-avatar>
       </figure>
       <div class="flex-grow-1">
-        <div class="msg__owner">{{userInfo.name}} <small class="ml-1">{{msg.updatedAt}}</small>
+        <div class="msg__owner pb-025">{{userInfo.name}} <span class="ml-1 font-sm">{{displayDate}}</span>
         </div>
         <div class="msg__content pb-05" v-html="msg.comment">
           <p>Lorem ipsum dolor sit amet consectetur 🙂, <a href="https://dev.proj-mgmt.biztree.com/">ipsum</a> adipisicing elit. Sit eum praesentium animi error delectus reprehenderit neque odit? Nesciunt facere quod ab veniam eligendi architecto vitae?</p>
@@ -18,6 +17,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex';
+import * as dayjs from 'dayjs'
 export default {
 
   name: 'Message',
@@ -43,8 +43,15 @@ export default {
       let u = this.members.find((el) => el.id == this.msg.userId)
       // console.log(u)
       return { name: u.firstName + ' ' + u.lastName, pic: u.avatar }
+    },
+    displayDate() {
+      let d = new Date(this.msg.updatedAt)
+      let dd = dayjs(this.msg.updatedAt).format('dddd, D MMM, YYYY @ HH:mm')
+      // return d.toDateString()
+      return dd
     }
   },
+
 }
 
 </script>
@@ -56,10 +63,10 @@ export default {
 
   &__owner {
     color: $text;
-    font-weight: bold;
+    font-size: 1rem;
 
-    small {
-      font-size: $base-size;
+    span {
+      font-size: $font-size-xs;
       color: $gray5;
       font-weight: normal;
     }
@@ -68,6 +75,14 @@ export default {
   &__content {
     font-size: 1rem;
     color: $gray5;
+  }
+
+  .mention {
+    color: #a975ff;
+    background-color: rgba(169, 117, 255, .1);
+    border-radius: .3rem;
+    padding: .1rem .3rem;
+    cursor: pointer;
   }
 
   &__files {
