@@ -115,7 +115,6 @@ export default {
   computed: {
     ...mapGetters({
       favProjects: 'project/getFavoriteProjects',
-      favoriteTasks: 'task/getFavTasks',
       favTasks: 'task/getFavTasks'
     })
   },
@@ -160,7 +159,7 @@ export default {
     async fetchTasks() {
       // this.loading = true
 
-      let favTask = await JSON.parse(JSON.stringify(this.favoriteTasks))
+      let favTask = await JSON.parse(JSON.stringify(this.favTasks))
 
       // let favTask = ft.map(s => s.task)
       let sorted = await favTask.sort((a, b) => a.task.title.localeCompare(b.task.title))
@@ -438,8 +437,8 @@ export default {
           this.key += 1
           break;
         case "project":
-          // let favTask = await _.cloneDeep(this.favoriteTasks)
-          // let favTask = await JSON.parse(JSON.stringify(this.favoriteTasks))
+          // let favTask = await _.cloneDeep(this.favTasks)
+          // let favTask = await JSON.parse(JSON.stringify(this.favTasks))
           let newArr = []
 
           // console.log('favTask=>',favTask)

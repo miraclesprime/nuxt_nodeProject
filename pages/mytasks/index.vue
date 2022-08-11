@@ -8,7 +8,11 @@
         <div id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y">
           <template v-if="gridType == 'list'">
             <template v-if="todos.length">
-              <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" v-on:task-click="$nuxt.$emit('open-sidebar', $event)" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy"></drag-table>
+              <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" v-on:task-click="$nuxt.$emit('open-sidebar', $event)" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy"  @row-click="openSidebar" @row-rightclick="taskRightClick"></drag-table>
+
+              <!-- table context menu -->
+              <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
+
               <!-- <bib-table v-for="(todo, index) in localdata" :key="todo.id + '-' + viewName ? viewName : 'view' + '-' + sortName ? sortName : 'sort' + '-' + key" :fields="taskFields" :sections="todo.tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: todo.title}" :headless="index > 0" class="border-gray4 bg-white" @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
                 <template #cell(title)="data">
                   <div class="d-flex gap-05 align-center">
@@ -115,7 +119,7 @@
 <script>
 import _ from 'lodash'
 import draggable from 'vuedraggable'
-import { USER_TASKS } from "../../config/constants";
+import { USER_TASKS, TASK_CONTEXT_MENU } from "../../config/constants";
 import { mapGetters } from 'vuex';
 
 export default {
@@ -143,6 +147,10 @@ export default {
       renameModal: false,
       todoId: null,
       todoTitle: null,
+      taskContextMenu: false,
+      activeTask: {},
+      contextMenuItems: TASK_CONTEXT_MENU,
+      contextCoords: { },
     }
   },
 
@@ -150,6 +158,7 @@ export default {
     ...mapGetters({
       // tasks: 'user/getUserTasks',
       todos: "todo/getAllTodos",
+      favTasks: 'task/getFavTasks'
     }),
     /*localdata() {
       return JSON.parse(JSON.stringify(this.todos))
@@ -174,7 +183,7 @@ export default {
       })
       this.$nuxt.$on("update-key", () => {
         // console.log('updated key event received')
-        this.$store.dispatch("todo/fetchTodos").then(() => { this.key += 1 })
+        this.$store.dispatch("todo/fetchTodos", {filter: 'all'} ).then(() => { this.key += 1 })
       })
     }
   },
@@ -206,12 +215,138 @@ export default {
       });
 
     },*/
+    taskRightClick(payload) {
+      this.taskContextMenu = true;
+      const { event, task } = payload
+      this.activeTask = task;
+      this.contextCoords = { left: event.pageX+'px', top: event.pageY+'px' }
+    },
+
+    openSidebar(task) {
+      console.log(task)
+      // let project = [{
+      //   projectId: this.project.id,
+      //   project: {
+      //     id: this.project.id
+      //   }
+      // }]
+      this.$nuxt.$emit("open-sidebar", { ...task, project: task.project[0].projectId });
+    },
+    
+    closeContext() {
+      this.taskContextMenu = false
+      this.activeTask = {}
+    },
+
+    contextItemClick(key){
+      switch (key) {
+        case 'done-task':
+          // statements_1
+          this.taskMarkComplete(this.activeTask)
+          break;
+        case 'fav-task':
+          this.taskSetFavorite(this.activeTask)
+          break;
+        case 'delete-task':
+          this.deleteTask(this.activeTask)
+          break;
+        case 'assign-task':
+          // statements_1
+          break;
+        default:
+          alert("no task assigned")
+          break;
+      }
+    },
+
+    // task context menu methods ----------------------------------------
+
+    taskSetFavorite(task) {
+      // console.info("to be fav task", task)
+      this.loading = true
+      let isFav = this.favTasks.some((f) => f.taskId == task.id)
+      // console.log(isFav)
+
+      if (isFav) {
+        this.$store.dispatch("task/removeFromFavorite", { id: task.id })
+          .then(msg => {
+            console.log(msg)
+            // this.popupMessages.push({ text: msg, variant: "success" })
+            this.updateKey()
+            this.loading = false
+          })
+          .catch(e => {
+            this.loading = false
+            console.log(e)
+          })
+      } else {
+        this.$store.dispatch("task/addToFavorite", { id: task.id })
+          .then(msg => {
+            console.log(msg)
+            // this.popupMessages.push({ text: msg, variant: "success" })
+            this.updateKey()
+            this.loading = false
+          })
+          .catch(e => {
+            this.loading = false
+            console.log(e)
+          })
+      }
+    },
+
+    taskMarkComplete(task) {
+      // console.log(typeof task, this.activeTask)
+      this.loading = true
+      if (typeof task == "object" && Object.keys(task).length > 0) {
+        console.log(task)
+      } else {
+        // alert("no task selected")
+        task = this.activeTask
+      }
+      this.$store.dispatch('task/updateTaskStatus', task)
+        .then((d) => {
+          // console.log(d)
+          this.loading = false
+          // this.popupMessages.push({ text: d.message, variant: "success" })
+          // this.$nuxt.$emit("update-key")
+          this.updateKey()
+          this.$store.dispatch("task/setSingleTask", d)
+        }).catch(e => {
+          console.log(e)
+          // this.popupMessages.push({ text: e.message, variant: "warning" })
+          this.loading = false
+        })
+    },
+
+    deleteTask(task) {
+      let del = confirm("Are you sure")
+      this.loading = true
+      if (del) {
+        this.$store.dispatch("task/deleteTask", task).then(t => {
+
+          if (t.statusCode == 200) {
+            // this.popupMessages.push({ text: t.message, variant: "success" })
+            this.updateKey()
+          } else {
+            // this.popupMessages.push({ text: t.message, variant: "warning" })
+            console.warn(t.message);
+          }
+          this.loading = false
+        }).catch(e => {
+          this.loading = false
+          // this.popupMessages.push({ text: e, variant: "danger" })
+          console.log(e)
+        })
+      } else {
+        this.loading = false
+      }
+    },
 
     updateKey() {
       // console.log("update-key event received", $event)
       this.loading = true
       // this.popupMessages.push({ text: $event, variant: "success" })
-      this.$store.dispatch("todo/fetchTodos").then((res) => {
+      this.$store.dispatch("todo/fetchTodos", {filter: 'all'}).then((res) => {
         // console.log(res)
         if (res.statusCode == 200) {
           this.key += 1
@@ -263,7 +398,7 @@ export default {
       this.loading = false
     },
     deleteTodo(todo) {
-      console.log(todo.id)
+      // console.log(todo.id)
       this.$store.dispatch("todo/deleteTodo", todo)
         .then((d) => {
           this.popupMessages.push({ text: d.message, variant: "success" })
