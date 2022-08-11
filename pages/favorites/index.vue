@@ -58,12 +58,28 @@
           <li v-for="item in sortedTaskUtil" :key="item.id">{{ item.title }}</li>
         </ul> -->
         <loading :loading="loading"></loading>
-        <table-context-menu :items="projectContextItems" :show="projectContextMenu" :coordinates="contextCoords" @close-context="projectContextMenu = false" ref="proj_menu"></table-context-menu>
-        <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" @close-context="taskContextMenu = false" ref="task_menu"></table-context-menu>
+        <table-context-menu :items="projectContextItems" :show="projectContextMenu" :coordinates="contextCoords" @close-context="projectContextMenu = false" @item-click="projContextItemClick" ref="proj_menu"></table-context-menu>
+        <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" @close-context="taskContextMenu = false" @item-click="taskContextItemClick" ref="task_menu"></table-context-menu>
       </div>
+      <!-- project rename modal -->
+      <bib-modal-wrapper v-if="renameModal" title="Rename project" @close="renameModal = false">
+        <template slot="content">
+          <div>
+            <bib-input type="text" v-model.trim="renameProjectData.title" placeholder="Enter name..."></bib-input>
+            <loading :loading="loading"></loading>
+          </div>
+        </template>
+        <template slot="footer">
+          <div class="d-flex justify-between">
+            <bib-button label="Cancel" variant="light" pill @click="renameModal = false"></bib-button>
+            <bib-button label="Rename" variant="success" pill v-on:click="renameProject"></bib-button>
+          </div>
+        </template>
+      </bib-modal-wrapper>
     </div>
   </client-only>
 </template>
+
 <script>
 import _ from 'lodash'
 import { PROJECT_FAVORITES, TASK_FAVORITES, PROJECT_CONTEXT_MENU, TASK_CONTEXT_MENU } from '../../config/constants'
@@ -76,7 +92,11 @@ export default {
       projectTableFields: PROJECT_FAVORITES,
       taskTableFields: TASK_FAVORITES,
       sortedProject: [],
+      renameModal: false,
       sortedTask: [],
+      activeProject: {},
+      renameProjectData: {},
+      activeTask: {},
       key: 0,
       loading: false,
       view: 'all',
@@ -94,8 +114,8 @@ export default {
 
   computed: {
     ...mapGetters({
-      favoriteProjects: 'project/getFavoriteProjects',
-      favoriteTasks: 'task/getFavTasks',
+      favProjects: 'project/getFavoriteProjects',
+      favTasks: 'task/getFavTasks'
     })
   },
 
@@ -123,7 +143,7 @@ export default {
     async fetchProjects() {
       // this.loading = true
 
-      let favProj = await JSON.parse(JSON.stringify(this.favoriteProjects))
+      let favProj = await JSON.parse(JSON.stringify(this.favProjects))
 
       // let favProj = fp.map(p => p.projects)
       let sorted = await favProj.sort((a, b) => a.projects.title.localeCompare(b.projects.title))
@@ -139,7 +159,7 @@ export default {
     async fetchTasks() {
       // this.loading = true
 
-      let favTask = await JSON.parse(JSON.stringify(this.favoriteTasks))
+      let favTask = await JSON.parse(JSON.stringify(this.favTasks))
 
       // let favTask = ft.map(s => s.task)
       let sorted = await favTask.sort((a, b) => a.task.title.localeCompare(b.task.title))
@@ -164,8 +184,9 @@ export default {
       this.projectContextMenu = true
       // console.info(this.$refs.proj_menu.$el)
       const { event, task } = payload
+      this.activeProject = task;
+      this.renameProjectData = JSON.parse(JSON.stringify(task));
       this.contextCoords = { left: event.pageX+'px', top: event.pageY+'px' }
-
       // this.$refs.proj_menu.$el.style.left = payload.event.pageX + 'px'
       // this.$refs.proj_menu.$el.style.top = payload.event.pageY + 'px'
     },
@@ -174,6 +195,7 @@ export default {
       this.projectContextMenu = false
       this.taskContextMenu = true
       const { event, task } = payload
+      this.activeTask = task;
       // console.info(this.$refs.task_menu.$el)
       // this.$refs.task_menu.$el.style.left = payload.event.pageX + 'px'
       // this.$refs.task_menu.$el.style.top = payload.event.pageY + 'px'
@@ -415,8 +437,8 @@ export default {
           this.key += 1
           break;
         case "project":
-          // let favTask = await _.cloneDeep(this.favoriteTasks)
-          // let favTask = await JSON.parse(JSON.stringify(this.favoriteTasks))
+          // let favTask = await _.cloneDeep(this.favTasks)
+          // let favTask = await JSON.parse(JSON.stringify(this.favTasks))
           let newArr = []
 
           // console.log('favTask=>',favTask)
@@ -466,6 +488,232 @@ export default {
         }
       }
     },
+
+    projContextItemClick(key){
+      console.log(key)
+      switch (key) {
+        case 'fav-project':
+          console.log('fav project')
+          this.projSetFavorite(this.activeProject)
+          break;
+        case 'rename-project':
+          console.log('rename project')
+          this.renameModal = true
+          break;
+        case 'delete-project':
+          console.log('delete project')
+          this.projDeleteTask(this.activeProject)
+          break;
+        case 'share-project':
+          console.log('share project')
+          // statements_1
+          break;
+        case 'report-project':
+          console.log('report project')
+          break;
+        default:
+          alert("no project assigned")
+          break;
+      }
+    },
+
+    taskContextItemClick(key){
+      console.log(key)
+      switch (key) {
+        case 'done-task':
+          // statements_1
+          this.taskMarkComplete(this.activeTask)
+          break;
+        case 'fav-task':
+          this.taskSetFavorite(this.activeTask)
+          break;
+        case 'delete-task':
+          this.deleteTask(this.activeTask)
+          break;
+        case 'assign-task':
+          // statements_1
+          break;
+        default:
+          alert("no task assigned")
+          break;
+      }
+    },
+
+    // project context menu methods ------------------------
+
+    projSetFavorite(project) {
+      // console.info("to be fav task", task)
+      this.loading = true
+      let isFav = this.favProjects.some((f) => f.projects.id == project.id)
+
+      if (isFav) {
+        this.$store.dispatch("project/removeFromFavorite", { id: project.id })
+          .then(msg => {
+            console.log(msg)
+            // this.popupMessages.push({ text: msg, variant: "success" })
+            this.updateKey()
+            this.loading = false
+          })
+          .catch(e => {
+            this.loading = false
+            console.log(e)
+          })
+      } else {
+        this.$store.dispatch("project/addToFavorite", { id: project.id })
+          .then(msg => {
+            console.log(msg)
+            // this.popupMessages.push({ text: msg, variant: "success" })
+            this.updateKey()
+            this.loading = false
+          })
+          .catch(e => {
+            this.loading = false
+            console.log(e)
+          })
+      }
+    },
+
+    projDeleteTask(project) {
+      let del = confirm("Are you sure")
+      this.loading = true
+      if (del) {
+        this.$store.dispatch("project/deleteProject", project).then(t => {
+
+          if (t.statusCode == 200) {
+            // this.popupMessages.push({ text: t.message, variant: "success" })
+            this.updateKey()
+          } else {
+            // this.popupMessages.push({ text: t.message, variant: "warning" })
+            console.warn(t.message);
+          }
+          this.loading = false
+        }).catch(e => {
+          this.loading = false
+          // this.popupMessages.push({ text: e, variant: "danger" })
+          console.log(e)
+        })
+      } else {
+        this.loading = false
+      }
+    },
+
+    async renameProject() {
+      this.loading = true
+      const proj = await this.$axios.put("/project", {
+        id: this.renameProjectData.id,
+        data: {
+          title: this.renameProjectData.title
+        },
+        user: this.renameProjectData.user
+      }, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      })
+      // console.log(proj)
+      if (proj.data.statusCode == 200) {
+        this.$store.dispatch("project/setSingleProject", proj.data.data)
+        this.updateKey()
+        this.renameModal = false
+      }
+      this.renameProjectData = {}
+      this.loading = false
+    },
+
+    // task context menu methods ----------------------------------------
+
+    taskSetFavorite(task) {
+      // console.info("to be fav task", task)
+      this.loading = true
+      let isFav = this.favTasks.some((f) => f.taskId == task.id)
+      // console.log(isFav)
+
+      if (isFav) {
+        this.$store.dispatch("task/removeFromFavorite", { id: task.id })
+          .then(msg => {
+            console.log(msg)
+            // this.popupMessages.push({ text: msg, variant: "success" })
+            this.updateKey()
+            this.loading = false
+          })
+          .catch(e => {
+            this.loading = false
+            console.log(e)
+          })
+      } else {
+        this.$store.dispatch("task/addToFavorite", { id: task.id })
+          .then(msg => {
+            console.log(msg)
+            // this.popupMessages.push({ text: msg, variant: "success" })
+            this.updateKey()
+            this.loading = false
+          })
+          .catch(e => {
+            this.loading = false
+            console.log(e)
+          })
+      }
+    },
+
+    taskMarkComplete(task) {
+      console.log(typeof task, this.activeTask)
+      this.loading = true
+      if (typeof task == "object" && Object.keys(task).length > 0) {
+        console.log(task)
+      } else {
+        // alert("no task selected")
+        task = this.activeTask
+      }
+      this.$store.dispatch('task/updateTaskStatus', task)
+        .then((d) => {
+          // console.log(d)
+          this.loading = false
+          // this.popupMessages.push({ text: d.message, variant: "success" })
+          // this.$nuxt.$emit("update-key")
+          this.updateKey()
+          this.$store.dispatch("task/setSingleTask", d)
+        }).catch(e => {
+          console.log(e)
+          // this.popupMessages.push({ text: e.message, variant: "warning" })
+          this.loading = false
+        })
+    },
+
+    deleteTask(task) {
+      let del = confirm("Are you sure")
+      this.loading = true
+      if (del) {
+        this.$store.dispatch("task/deleteTask", task).then(t => {
+
+          if (t.statusCode == 200) {
+            // this.popupMessages.push({ text: t.message, variant: "success" })
+            this.updateKey()
+          } else {
+            // this.popupMessages.push({ text: t.message, variant: "warning" })
+            console.warn(t.message);
+          }
+          this.loading = false
+        }).catch(e => {
+          this.loading = false
+          // this.popupMessages.push({ text: e, variant: "danger" })
+          console.log(e)
+        })
+      } else {
+        this.loading = false
+      }
+    },
+
+    updateKey() {
+      // console.log("update-key event received", this.templateKey)
+      this.$store.dispatch('project/setFavProjects').then(() => {
+        this.fetchProjects()
+      })
+
+      this.$store.dispatch('task/getFavTasks').then(() => {
+        this.fetchTasks()
+      })
+    },
+
+    // task context menu methods ------------------------------------------
+
     openSidebar(task) {
       this.$nuxt.$emit("open-sidebar", task);
       /*this.$store.dispatch('task/setSingleTask', {...task, projectId: projectId})
