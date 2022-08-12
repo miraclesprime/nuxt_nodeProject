@@ -20,7 +20,6 @@
 <script>
 import { mapGetters } from 'vuex';
 
-
 export default {
   data: function() {
     return {

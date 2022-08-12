@@ -14,7 +14,7 @@
       />
       <div class="list">
         <div class="item" v-for="user in users" :key="user.id" @click="selectUser(user)">
-          <bib-avatar size="1.7rem" :src="user.photo" />
+          <bib-avatar size="1.7rem" :src="user.avatar" />
           <div class="name">{{ user.firstName }} {{ user.lastName }}</div>
         </div>
       </div>
@@ -26,10 +26,13 @@
 import { mapGetters } from 'vuex';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faAddressCard } from '@fortawesome/free-solid-svg-icons';
+import tippy from 'tippy.js';
+import VueTippy, { TippyComponent } from 'vue-tippy';
 
 export default {
   components: {
     fa: FontAwesomeIcon,
+    tippy: TippyComponent,
   },
   data() {
     return {
@@ -38,7 +41,9 @@ export default {
     };
   },
   computed: {
-    // ...mapGetters(['contacts']),
+    ...mapGetters({
+      contacts: "user/getTeamMembers"
+    }),
     users() {
       if (!this.filter) {
         return this.contacts;
@@ -62,18 +67,19 @@ export default {
 <style lang="scss" scoped>
 .container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   width: 450px;
   height: 220px;
   overflow: hidden;
-  border-radius: 7px;
+  border-radius: 0.25rem;
   background: #fff;
   box-shadow: 0 1px 7px rgba(0, 0, 0, 0.15);
   padding: 15px 15px 0 15px;
 
-  & > :first-child {
+  /*& > :first-child {
     flex: 0 1 auto;
-  }
+  }*/
+  .input {}
 }
 
 .list {

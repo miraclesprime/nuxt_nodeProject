@@ -31,7 +31,7 @@
           </template>
         </bib-table> -->
         <!-- task table -->
-        <drag-table-simple :fields="taskTableFields" :componentKey="key+1" :tasks="sortedTask" :sectionTitle="'Favorite Tasks'" :drag="false" v-on:new-task="openSidebar" v-on:table-sort="sortTask" @row-context="taskRightClick"></drag-table-simple>
+        <drag-table-simple :fields="taskTableFields" :componentKey="key+1" :tasks="sortedTask" :sectionTitle="'Favorite Tasks'" :drag="false" v-on:new-task="openSidebar" v-on:table-sort="sortTask" @row-click="openSidebar" @row-context="taskRightClick"></drag-table-simple>
         <!-- <bib-table :key="'ftasks'+key" :fields="taskTableFields" class="border-gray4 bg-white" :sections="sortedTask" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Favorite Tasks'}" @file-title-sort="sortTask('name')" @file-status-sort="sortTask('status')" @file-priority-sort="sortTask('priority')" @file-owner-sort="sortTask('owner')" @file-dueDate-sort="sortTask('dueDate')">
           <template #cell(title)="data">
             <div class="d-flex gap-05 align-center" :id="'projects-' + data.value.title">
@@ -115,7 +115,6 @@ export default {
   computed: {
     ...mapGetters({
       favProjects: 'project/getFavoriteProjects',
-      favoriteTasks: 'task/getFavTasks',
       favTasks: 'task/getFavTasks'
     })
   },
@@ -160,7 +159,7 @@ export default {
     async fetchTasks() {
       // this.loading = true
 
-      let favTask = await JSON.parse(JSON.stringify(this.favoriteTasks))
+      let favTask = await JSON.parse(JSON.stringify(this.favTasks))
 
       // let favTask = ft.map(s => s.task)
       let sorted = await favTask.sort((a, b) => a.task.title.localeCompare(b.task.title))
@@ -438,8 +437,8 @@ export default {
           this.key += 1
           break;
         case "project":
-          // let favTask = await _.cloneDeep(this.favoriteTasks)
-          // let favTask = await JSON.parse(JSON.stringify(this.favoriteTasks))
+          // let favTask = await _.cloneDeep(this.favTasks)
+          // let favTask = await JSON.parse(JSON.stringify(this.favTasks))
           let newArr = []
 
           // console.log('favTask=>',favTask)
