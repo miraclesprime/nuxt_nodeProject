@@ -483,6 +483,14 @@ export default {
   }
 }
 
+.mention {
+    color: #a975ff;
+    background-color: rgba(169, 117, 255, .1);
+    border-radius: .3rem;
+    padding: .1rem .3rem;
+    cursor: pointer;
+  }
+
 .send-btn {
   color: #fff;
   border: 0;

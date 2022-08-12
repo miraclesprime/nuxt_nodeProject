@@ -1,18 +1,15 @@
 <template>
   <div>
-    <bib-detail-collapse label="Today" open>
-      <template v-slot:content>
-        <!-- <div v-rowby="100">
-          <div class="pl-1 pr-1">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Architecto soluta repellendus recusandae possimus illum quod nostrum eum aliquid iusto nesciunt, atque commodi consectetur, dolore veniam excepturi delectus reiciendis, officiis ad.
-          </div>
-        </div> -->
-        <div v-for="msg in messages">
-          <message :msg="msg"></message>
-        </div>
-        <reaction-picker ref="reactionPicker" @select="onReactionSelect" />
-      </template>
-    </bib-detail-collapse>
+    <div class="d-flex align-center p-05 ">
+      <bib-icon icon="arrow-down" :scale="0.5"></bib-icon>
+      <div class="px-1 ">
+        Today
+      </div>
+    </div>
+    <div v-for="msg in messages">
+      <message :msg="msg"></message>
+    </div>
+    <reaction-picker ref="reactionPicker" @select="onReactionSelect" />
   </div>
 </template>
 <script>
@@ -34,7 +31,9 @@ export default {
     }
   },
   methods: {
+
     showEmojiPicker(e, message) {
+      console.log(e.target)
       const rect = this.$el.getBoundingClientRect();
       let left = e.pageX - rect.left;
       let top = e.pageY - rect.top;

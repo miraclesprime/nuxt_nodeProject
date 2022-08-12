@@ -260,10 +260,6 @@ export default {
       }
     },
 
-    openSidebar(task) {
-      this.$nuxt.$emit("open-sidebar", true);
-    },
-
     filterView($event) {
       this.loading = true
       let compid = JSON.parse(localStorage.getItem("user")).subb;

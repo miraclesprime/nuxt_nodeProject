@@ -1,5 +1,5 @@
 <template>
-  <div class="py-05">
+  <div class="py-05 position-relative">
     <div class="action-left pb-05">
       <div class="d-inline-flex gap-05 cursor-pointer text-secondary bg-hover-light text-hover-dark py-025 px-05 shape-rounded" v-on:click="$nuxt.$emit('add-teammember-modal')">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon>
@@ -7,7 +7,7 @@
       </div>
     </div>
     <div class="list team-list my-05">
-      <span v-for="t in projectTeam" class="list__item ">
+      <span v-for="(t, index) in projectTeam" :key="index + key" class="list__item ">
         <bib-avatar :src="t.avatar" size="1.75rem" class="mr-05"></bib-avatar> {{t.firstName}} {{t.lastName}} <bib-button pop="elipsis" variant="gray3" class="ml-auto">
           <template v-slot:menu>
             <div class="list">
@@ -19,6 +19,7 @@
         </bib-button>
       </span>
     </div>
+    <loading :loading="loading"></loading>
   </div>
 </template>
 <script>
@@ -30,6 +31,8 @@ export default {
 
   data() {
     return {
+      key: 11,
+      loading: false,
       // projectTeam: []
     }
   },
@@ -51,23 +54,28 @@ export default {
       return ud
     }
   },
+  created() {
+    this.$nuxt.$on("update-key", () => {
+      this.$store.dispatch("project/fetchTeamMember", { projectId: this.project.id })
+    })
+  },
   mounted() {
     // this.$store.dispatch("project/fetchTeamMember", { projectId: this.project.id })
   },
   methods: {
     async deleteMember(member) {
       // console.log(member)
-      // this.loading = true
+      this.loading = true
       let confirmDelete = window.confirm("Are you sure want to delete " + member.name + "!")
       if (confirmDelete) {
         await this.$store.dispatch("project/deleteMember", { projectId: this.project.id, memberId: member.id })
           .then((res) => {
             // console.log(res)
-            // this.key += 1
+            this.key += 1
             // alert(res)
           })
           .catch(e => console.log(e))
-        // this.loading = false
+        this.loading = false
       }
     },
   }
