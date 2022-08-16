@@ -59,7 +59,8 @@ export default {
   display: flex;
   align-items: center;
   cursor: pointer;
-  gap: 7px;
+  gap: 8px;
+  font-size: 1rem;
 }
 
 .arrow {
