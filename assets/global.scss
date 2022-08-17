@@ -342,6 +342,36 @@ ul {
   text-align: left;
 }
 
+.mention {
+  color: #a975ff;
+  background-color: rgba(169, 117, 255, .1);
+  border-radius: .3rem;
+  padding: .1rem .3rem;
+  cursor: pointer;
+}
+
+@keyframes placeHolderShimmer{
+    0%{
+        background-position: -880px 0
+    }
+    100%{
+        background-position: 880px 0
+    }
+}
+
+.animated-background {
+    animation-duration: 2.5s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: placeHolderShimmer;
+    animation-timing-function: linear;
+    background: $gray2;
+    background: linear-gradient(to right, #eeeeee 10%, #dddddd 18%, #eeeeee 33%);
+    background-size: 880px 220px;
+    height: 1rem;
+    position: relative;
+}
+
 @media screen and (max-width: 1600px) {
   .side-panel {
     max-width: $sidebar-width - 160px;

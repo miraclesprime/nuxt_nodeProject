@@ -5,14 +5,10 @@
     <div class="content">
       <div class="info">
         <span class="name"> {{ reply.user.firstName }} {{ reply.user.lastName }} </span>
-        <span class="time">
-          <!-- {{ makeDateString(reply.sendTime) }} @
-          {{ makeTimeString(reply.sendTime) }} -->
-        </span>
+        <span class="time">{{displayDate}}</span>
       </div>
 
-      <div>{{reply.comment}}</div>
-
+      <div class="reply-text" v-html="reply.comment">Your reply</div>
 
       <!-- <message-text
         :text="reply.text"
@@ -149,6 +145,7 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
 // import { groupBy } from 'lodash';
 // import { mapState } from 'vuex';
 // import { getAvatarPlaceholder } from '~/utils/avatar';
@@ -169,7 +166,12 @@ export default {
   },
   computed: {
     // ...mapState(['imagePreviewModal']),
-    
+    displayDate() {
+      let d = new Date(this.reply.updatedAt)
+      let dd = dayjs(this.reply.updatedAt).format('dddd, D MMM, YYYY @ HH:mm')
+      // return d.toDateString()
+      return dd
+    },
   },
   methods: {
     // getAvatarPlaceholder,
@@ -208,28 +210,30 @@ export default {
   flex-direction: row;
   align-items: flex-start;
   margin-top: 12px;
+  margin-bottom: 8px;
   padding-top: 12px;
   border-top: 1px solid rgba(29, 29, 32, 0.12);
   gap: 10px;
 }
 
 .name {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #1d1d20;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: $text;
 }
 
 .time {
   font-size: 0.8rem;
-  color: rgba(29, 29, 32, 0.48);
+  color: $gray5;
   margin-left: 10px;
 }
 
 .content {
   font-size: 0.85rem;
   line-height: 1.5;
-  color: #000;
+  color: $gray6;
 }
+.reply-text { color: $gray6; }
 
 .reactions-section {
   margin-top: 5px;

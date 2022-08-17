@@ -522,11 +522,9 @@ export const actions = {
     }
   },
 
-
   async fetchSingleProjectDetail(ctx, payload) {
 
     try {
-
       const res = await this.$axios.$get(`/project/${payload.projectId}/comments/${payload.commentId}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });

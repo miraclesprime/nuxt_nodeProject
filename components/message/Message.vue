@@ -26,8 +26,17 @@
         <!-- <div v-if="message.repliesCount > 0" class="replies-count">
           {{ message.repliesCount }} replies
         </div> -->
+        <div v-show="showPlaceholder" class="placeholder mb-1 d-flex gap-05">
+          <div class="left">
+            <div class="shape-circle width-205 height-205 animated-background"></div>
+          </div>
+          <div class="right">
+            <div class="animated-background width-4"></div>
+            <div class="animated-background width-5 mt-05"></div>
+          </div>
+        </div>
         <div v-if="replies.length > 0" class="replies-section">
-          <message-collapsible-section >
+          <message-collapsible-section>
             <template slot="title">Replies ({{ replies.length }})</template>
             <template slot="content">
               <div class="replies">
@@ -39,7 +48,7 @@
       </div>
     </div>
     <!-- <transition name="slide-fade"> -->
-    <div v-if="isActionBarShowing" class="actions-container">
+    <div v-if="isActionBarShowing" class="actions-container" @click.stop>
       <!-- <div class="action favorite" :class="{ favorited }" @click="changeFavorite">
           <bib-icon :icon="favorited ? 'bookmark-solid' : 'bookmark'" :scale="1"></bib-icon>
         </div> -->
@@ -52,7 +61,7 @@
             <fa :icon="faSmile" />
           </div>
         </template>
-        <div>
+        <div @click.stop>
           <v-emoji-picker @select="onReactionClick" />
         </div>
       </tippy>
@@ -66,31 +75,38 @@
           </div>
         </template>
         <div class="menu" :class="{ open: isMenuOpen }">
-          <div class="menu-item">
+          <!-- <div class="menu-item">
             <a @click="markAsUnread">Mark unread</a>
-          </div>
-          <div class="menu-item">
+          </div> -->
+          <!-- <div class="menu-item">
             <a @click="copyMessageLink">Copy link</a>
-          </div>
+          </div> -->
           <!-- <div class="menu-item">
               <a @click="showForwardModal">Share</a>
             </div> -->
-          <!-- <div v-if="author.id === user.id" class="menu-item">
+          <div v-if="msg.userId == user.Id" class="menu-item">
               <a @click="editMessage">Edit</a>
-            </div> -->
+            </div>
           <div class="menu-item-separator"></div>
-          <!-- <div v-if="canDeleteMessage" class="menu-item danger">
+          <div v-if="canDeleteMessage" class="menu-item danger">
               <a @click="
-                  $emit('delete-message', { chatId: message.chat, messageId: message._id });
+                  $emit('delete-message', { msgId: msg.id });
                   isMenuOpen = false;
                 ">
                 Delete
               </a>
-            </div> -->
+            </div>
         </div>
       </tippy>
     </div>
     <!-- </transition> -->
+    <bib-modal-wrapper v-if="replyModal" size="lg" title="Reply to..." @close="replyModal = false">
+      <template slot="content">
+        <div style="margin: -1rem -2rem -2rem; ">
+          <message-input :value="value" @input="onFileInput" @submit="onReplySubmit"></message-input>
+        </div>
+      </template>
+    </bib-modal-wrapper>
   </div>
 </template>
 <script>
@@ -112,7 +128,9 @@ import { faComment, faStar } from '@fortawesome/free-regular-svg-icons';
 export default {
 
   name: 'Message',
-  props: { msg: Object },
+  props: {
+    msg: Object,
+  },
   components: {
     fa: FontAwesomeIcon,
     tippy: TippyComponent,
@@ -125,6 +143,7 @@ export default {
       isMenuOpen: false,
       isShowingDeleteConfirmModal: false,
       isReactionPickerOpen: false,
+      replyModal: false,
       faFile,
       faThumbsUp,
       faSmile,
@@ -133,8 +152,13 @@ export default {
       faEllipsisH,
       faStar,
       fasStar,
-      // pic: '',
-      // userName: null,
+      showPlaceholder: true,
+      value: {
+        files: [
+          /*{ id: 156, name: 'thefile.png' },
+          { id: 282, name: 'anotherfile.jpg' },*/
+        ]
+      },
       files: [
         { img: 'https://placeimg.com/200/300/tech' },
         { img: 'https://placeimg.com/200/360/tech' },
@@ -142,12 +166,13 @@ export default {
         { img: 'https://placehold.jp/24/1f42a2/ffffff/250x200.jpg?text=placeholder%20image' }
       ],
       replies: [
-        { id: 254, user: { id:"DKgl9av2NwnaG1vz", photo: 'https://i.pravatar.cc/100', firstName: "Vishu", lastName: "M", }, updatedAt: "2022-08-14T06:54:37.000Z", comment:"this is reply text" },
+        /*{ id: 254, user: { id: "DKgl9av2NwnaG1vz", photo: 'https://i.pravatar.cc/100', firstName: "Vishu", lastName: "M", }, updatedAt: "2022-08-14T06:54:37.000Z", comment: "this is reply text" },*/
       ]
     }
   },
   computed: {
     ...mapGetters({
+      user: "user/getUser2",
       members: 'user/getTeamMembers'
     }),
     userInfo() {
@@ -189,34 +214,66 @@ export default {
       return chat.type === 'direct' ?
         `/directs/${chat.user.id}/messages/${this.message._id}` :
         `/channels/${chat.id}/messages/${this.message._id}`;
-    },
+    },*/
     canDeleteMessage() {
-      if (this.message.sender === this.user.id) {
+      if (this.msg.userId == this.user.Id) {
         return true;
-      }
-      const chat = this.chats[this.message.chat];
+      } 
+      return false
+      /*const chat = this.chats[this.msg.chat];
       return (
         chat?.type === 'group' &&
         chat.members.some(
           ({ access, user }) =>
           (access === 'admin' || access === 'moderator') && user.id === this.user.id
         )
-      );
-    },*/
-    
+      );*/
+    },
+
   },
   fetch() {
     console.log('fetch nuxt lifecycle hook')
-    this.$axios.get('/project/' + this.msg.id + "/replies", {
-      headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken")}
-    })
+    this.fetchReplies()
+    /*this.$axios.get('/project/' + this.msg.id + "/replies", {
+        headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
+      })
       .then(rep => {
         // console.log(rep.data)
         this.replies = rep.data.data
+        this.showPlaceholder = false
       })
-      .catch(e => console.warn(e))
+      .catch(e => console.warn(e))*/
   },
   methods: {
+    fetchReplies(){
+      this.$axios.get('/project/' + this.msg.id + "/replies", {
+        headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
+      })
+      .then(rep => {
+        // console.log(rep.data)
+        this.replies = rep.data.data
+        this.showPlaceholder = false
+      })
+      .catch(e => console.warn(e))
+    },
+    onFileInput(payload) {
+      // console.log(payload)
+      this.value.files = payload.files
+    },
+    onReplySubmit(data) {
+      console.log(data)
+      this.$axios.post('/project/' + this.msg.id + "/reply", { projectCommentId: this.msg.id, comment: data.text }, {
+        headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
+      })
+      .then(rep => {
+        // console.log(rep.data)
+        // this.replies.push(rep.data.data)
+        this.fetchReplies()
+        this.replyModal = false
+      })
+      .catch(e => console.warn(e))
+      
+    },
     onActionBarMouseLeave() {
       if (!(this.isMenuOpen || this.isReactionPickerOpen)) {
         this.isActionBarShowing = false;
@@ -242,7 +299,8 @@ export default {
       this.$emit('reaction-clicked', this.message._id, data);
     },
     replyMessage() {
-      this.$router.push(this.link);
+      console.log('reply message action')
+      this.replyModal = !this.replyModal
     },
     copyMessageLink() {
       navigator?.clipboard?.writeText?.(window.location.origin + this.link);
@@ -280,6 +338,7 @@ export default {
   &__owner {
     color: $text;
     font-size: 1rem;
+    font-weight: 500;
 
     span {
       font-size: $font-size-xs;
@@ -290,7 +349,7 @@ export default {
 
   &__content {
     font-size: 1rem;
-    color: $gray5;
+    color: $gray6;
   }
 
   .mention {
