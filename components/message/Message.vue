@@ -1,5 +1,5 @@
 <template>
-  <div class="msg position-relative" @mouseenter="isActionBarShowing = true" @mouseleave="onActionBarMouseLeave" v-click-outside="onActionBarClickOutside"> 
+  <div class="msg position-relative" @mouseenter="isActionBarShowing = true" @mouseleave="onActionBarMouseLeave" v-click-outside="onActionBarClickOutside">
     <div class="d-flex">
       <figure class="width-4 flex-shrink-0">
         <bib-avatar size="3rem" :src="userInfo.pic"></bib-avatar>
@@ -26,63 +26,71 @@
         <!-- <div v-if="message.repliesCount > 0" class="replies-count">
           {{ message.repliesCount }} replies
         </div> -->
+        <div v-if="replies.length > 0" class="replies-section">
+          <message-collapsible-section >
+            <template slot="title">Replies ({{ replies.length }})</template>
+            <template slot="content">
+              <div class="replies">
+                <message-reply v-for="reply in replies" :key="reply.id" :reply="reply" />
+              </div>
+            </template>
+          </message-collapsible-section>
+        </div>
       </div>
     </div>
-    <transition name="slide-fade">
-      <div v-if="isActionBarShowing" class="actions-container">
-        <div class="action favorite" :class="{ favorited }" @click="changeFavorite">
+    <!-- <transition name="slide-fade"> -->
+    <div v-if="isActionBarShowing" class="actions-container">
+      <!-- <div class="action favorite" :class="{ favorited }" @click="changeFavorite">
           <bib-icon :icon="favorited ? 'bookmark-solid' : 'bookmark'" :scale="1"></bib-icon>
-        </div>
-        <div class="action" :class="{ liked }" @click="$emit('reaction-clicked', message._id, '👍')">
+        </div> -->
+      <!-- <div class="action" :class="{ liked }" @click="$emit('reaction-clicked', message._id, '👍')">
           <fa :icon="faThumbsUp" />
-        </div>
-        <tippy :visible="isReactionPickerOpen" :animate-fill="false" :distance="6" interactive placement="bottom-end" trigger="manual" :onHide="() => defer(() => (isReactionPickerOpen = false))">
-          <template slot="trigger">
-            <div class="action" :class="{ active: isReactionPickerOpen }" @click="toggleReactionPicker">
-              <fa :icon="faSmile" />
-              <!-- <font-awesome-icon icon="fas fa-smile" /> -->
-            </div>
-          </template>
-          <div>
-            <v-emoji-picker @select="onReactionClick" />
+        </div> -->
+      <tippy :visible="isReactionPickerOpen" :animate-fill="false" :distance="6" interactive placement="bottom-end" trigger="manual" :onHide="() => defer(() => (isReactionPickerOpen = false))">
+        <template slot="trigger">
+          <div class="action" :class="{ active: isReactionPickerOpen }" @click="toggleReactionPicker">
+            <fa :icon="faSmile" />
           </div>
-        </tippy>
-        <div class="action" @click="replyMessage">
-          <fa :icon="faComment" />
-          <!-- <bib-icon icon="comment-blank"></bib-icon> -->
+        </template>
+        <div>
+          <v-emoji-picker @select="onReactionClick" />
         </div>
-        <tippy :visible="isMenuOpen" :animate-fill="false" :distance="6" interactive placement="bottom-end" trigger="manual" :onHide="() => defer(() => (isMenuOpen = false))">
-          <template slot="trigger">
-            <div class="action" :class="{ active: isMenuOpen }" @click="toggleMenu">
-              <fa :icon="faEllipsisH" />
-            </div>
-          </template>
-          <div class="menu" :class="{ open: isMenuOpen }">
-            <div class="menu-item">
-              <a @click="markAsUnread">Mark unread</a>
-            </div>
-            <div class="menu-item">
-              <a @click="copyMessageLink">Copy link</a>
-            </div>
-            <div class="menu-item">
+      </tippy>
+      <div class="action" @click="replyMessage">
+        <fa :icon="faComment" />
+      </div>
+      <tippy :visible="isMenuOpen" :animate-fill="false" :distance="6" interactive placement="bottom-end" trigger="manual" :onHide="() => defer(() => (isMenuOpen = false))">
+        <template slot="trigger">
+          <div class="action" :class="{ active: isMenuOpen }" @click="toggleMenu">
+            <fa :icon="faEllipsisH" />
+          </div>
+        </template>
+        <div class="menu" :class="{ open: isMenuOpen }">
+          <div class="menu-item">
+            <a @click="markAsUnread">Mark unread</a>
+          </div>
+          <div class="menu-item">
+            <a @click="copyMessageLink">Copy link</a>
+          </div>
+          <!-- <div class="menu-item">
               <a @click="showForwardModal">Share</a>
-            </div>
-            <!-- <div v-if="author.id === user.id" class="menu-item">
+            </div> -->
+          <!-- <div v-if="author.id === user.id" class="menu-item">
               <a @click="editMessage">Edit</a>
             </div> -->
-            <div class="menu-item-separator"></div>
-            <div v-if="canDeleteMessage" class="menu-item danger">
+          <div class="menu-item-separator"></div>
+          <!-- <div v-if="canDeleteMessage" class="menu-item danger">
               <a @click="
                   $emit('delete-message', { chatId: message.chat, messageId: message._id });
                   isMenuOpen = false;
                 ">
                 Delete
               </a>
-            </div>
-          </div>
-        </tippy>
-      </div>
-    </transition>
+            </div> -->
+        </div>
+      </tippy>
+    </div>
+    <!-- </transition> -->
   </div>
 </template>
 <script>
@@ -90,6 +98,7 @@ import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
 import tippy from 'tippy.js';
 import VueTippy, { TippyComponent } from 'vue-tippy';
+import { VEmojiPicker } from 'v-emoji-picker';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   faFile,
@@ -107,6 +116,7 @@ export default {
   components: {
     fa: FontAwesomeIcon,
     tippy: TippyComponent,
+    VEmojiPicker,
   },
 
   data() {
@@ -130,6 +140,9 @@ export default {
         { img: 'https://placeimg.com/200/360/tech' },
         { img: 'https://placehold.jp/2ba026/ffffff/180x180.jpg' },
         { img: 'https://placehold.jp/24/1f42a2/ffffff/250x200.jpg?text=placeholder%20image' }
+      ],
+      replies: [
+        { id: 254, user: { id:"DKgl9av2NwnaG1vz", photo: 'https://i.pravatar.cc/100', firstName: "Vishu", lastName: "M", }, updatedAt: "2022-08-14T06:54:37.000Z", comment:"this is reply text" },
       ]
     }
   },
@@ -165,7 +178,7 @@ export default {
     reactionItems() {
       return ['😂', '😍', '😬', '😒', '😐', '😣', '😏', '🙏', '🎉', '🎯'].map((reaction) => ({
         reaction,
-        selected: this.reactions.find((r) => r.reaction === reaction) ? .sent ? ? false,
+        selected: this.reactions.find((r) => r.reaction === reaction)?.sent??false,
       }));
     },
     favorited() {
@@ -183,13 +196,25 @@ export default {
       }
       const chat = this.chats[this.message.chat];
       return (
-        chat ? .type === 'group' &&
+        chat?.type === 'group' &&
         chat.members.some(
           ({ access, user }) =>
           (access === 'admin' || access === 'moderator') && user.id === this.user.id
         )
       );
     },*/
+    
+  },
+  fetch() {
+    console.log('fetch nuxt lifecycle hook')
+    this.$axios.get('/project/' + this.msg.id + "/replies", {
+      headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken")}
+    })
+      .then(rep => {
+        // console.log(rep.data)
+        this.replies = rep.data.data
+      })
+      .catch(e => console.warn(e))
   },
   methods: {
     onActionBarMouseLeave() {
@@ -328,7 +353,7 @@ export default {
   padding: 6px;
   background-color: #dcdcdf;
   border-radius: 8px;
-  top: -5px;
+  top: 5px;
   right: 5px;
   gap: 5px;
   display: flex;

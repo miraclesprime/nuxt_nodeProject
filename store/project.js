@@ -382,7 +382,6 @@ export const actions = {
   },
 
   async deleteMember(ctx, payload) {
-
     try {
       let m = await this.$axios.delete("/project/remove-member", {
         headers: {
@@ -404,11 +403,9 @@ export const actions = {
     }
   },
 
-
   async addToFavorite(ctx, payload) {
     
     try {
-
       let fav = await this.$axios.post(`/project/${payload.id}/favorite`, {}, {
         headers: {
           "Content-Type": "application/json",
@@ -429,9 +426,7 @@ export const actions = {
   },
 
   async removeFromFavorite(ctx, payload) {
-    
     try {
-
       let fav = await this.$axios.delete(`/project/${payload.id}/favorite`, {
         headers: {
           "Content-Type": "application/json",
@@ -445,16 +440,13 @@ export const actions = {
       } else {
         return fav.data.message
       }
-
     } catch(e) {
       console.log(e);
     }
   },
 
-
   async fetchProjectComments(ctx, payload) {
     try {
-
       let res = await this.$axios.get(`/project/${payload.id}/comments`, {
         headers: {
           "Content-Type": "application/json",
@@ -468,17 +460,14 @@ export const actions = {
       } else {
         return res.data.data;
       }
-
     } catch(e) {
       console.log(e);
     }
   },
 
-
   async createProjectComment(ctx, payload) {
 
     try {
-
       const res = await this.$axios.$post(`/project/${payload.id}/comments`, {
         comment: payload.comment 
       }, {
@@ -490,17 +479,14 @@ export const actions = {
       } else {
         return res
       }
-
     }catch(e) {
       console.log(e)
     }
   },
 
-
   async updateProjectComment(ctx, payload) {
 
     try {
-
       const res = await this.$axios.$put(`/project/${payload.projectId}/comments/${payload.commentId}`,{
         comment: payload.comment
       }, {
@@ -518,11 +504,9 @@ export const actions = {
     }
   },
 
-
   async deleteProjectComment(ctx, payload) {
 
     try {
-
       const res = await this.$axios.$delete(`/project/${payload.projectId}/comments/${payload.commentId}`,{
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });

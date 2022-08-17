@@ -336,6 +336,12 @@ ul {
   }
 }*/
 
+.tippy-tooltip {
+  padding: 1px;
+  background-color: $gray7;
+  text-align: left;
+}
+
 @media screen and (max-width: 1600px) {
   .side-panel {
     max-width: $sidebar-width - 160px;

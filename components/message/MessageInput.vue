@@ -429,12 +429,11 @@ export default {
 </script>
 <style lang="scss" scoped>
 .wrapper {
-  /*display: flex;
-  flex-direction: column;*/
   padding: 0 15px 5px 15px;
 }
 
 .container {
+  width: auto;
   border: 2px solid #bdbdc4;
   border-radius: 5px;
   overflow: hidden;
@@ -478,18 +477,27 @@ export default {
     /*flex-grow: 1;*/
   }
 
-  ::v-deep p {
-    margin: 8px 0 0 0;
+  ::v-deep {
+    p {
+      margin: 8px 0 0 0;
+    }
+    .mention { 
+      color: #a975ff;
+      background-color: rgba(169, 117, 255, .1);
+      border-radius: .3rem;
+      padding: .1rem .3rem;
+      cursor: pointer;
+    }
   }
 }
 
-.mention {
+/*.mention {
     color: #a975ff;
     background-color: rgba(169, 117, 255, .1);
     border-radius: .3rem;
     padding: .1rem .3rem;
     cursor: pointer;
-  }
+  }*/
 
 .send-btn {
   color: #fff;
