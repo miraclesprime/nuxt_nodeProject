@@ -30,7 +30,7 @@
       </div>
       <div class="editor-container">
         <div class="editor-wrapper">
-          <div v-if="value.files.length" class="files">
+          <div v-if="value.files.length > 0" class="files">
             <div v-for="(file, idx) in value.files" :key="idx" class="file">
               <div class="file-thumbnail">
                 <fa :icon="faFile"></fa>
@@ -159,10 +159,9 @@ import { snipFileName } from '~/utils/file';
 import { ChatLink } from '~/plugins/editor-link';
 
 import MentionList from '~/components/message-mention/MessageMentionList.vue';
-// import ChannelList from '~/components/message-mention/MessageChannelList.vue';
 
 export default {
-  name: "ChatBox",
+  name: "MessageInput",
   components: {
     EditorContent,
     fa: FontAwesomeIcon,
@@ -475,6 +474,7 @@ export default {
 
   .ProseMirror {
     /*flex-grow: 1;*/
+    font-size: 1rem;
   }
 
   ::v-deep {
@@ -490,14 +490,6 @@ export default {
     }
   }
 }
-
-/*.mention {
-    color: #a975ff;
-    background-color: rgba(169, 117, 255, .1);
-    border-radius: .3rem;
-    padding: .1rem .3rem;
-    cursor: pointer;
-  }*/
 
 .send-btn {
   color: #fff;
