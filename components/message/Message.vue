@@ -75,6 +75,9 @@
           </div>
         </template>
         <div class="menu" :class="{ open: isMenuOpen }">
+          <div class="menu-item">
+            <a @click="replyMessage">Reply</a>
+          </div>
           <!-- <div class="menu-item">
             <a @click="markAsUnread">Mark unread</a>
           </div> -->
@@ -89,12 +92,7 @@
             </div>
           <div class="menu-item-separator"></div>
           <div v-if="canDeleteMessage" class="menu-item danger">
-              <a @click="
-                  $emit('delete-message', { msgId: msg.id });
-                  isMenuOpen = false;
-                ">
-                Delete
-              </a>
+              <a @click="deleteMessage">Delete</a>
             </div>
         </div>
       </tippy>
@@ -310,6 +308,7 @@ export default {
       setTimeout(func, 0);
     },
     async changeFavorite() {
+      console.log('favorite clicked')
       /*if (this.favorited) {
         await this.removeFavorite({ type: 'message', id: this.message._id });
       } else {
@@ -322,7 +321,11 @@ export default {
       this.$emit('unread-message');
     },
     editMessage() {
-      this.$emit('edit-message');
+      this.$nuxt.$emit('edit-message', this.msg);
+      this.isMenuOpen = false;
+    },
+    deleteMessage(){
+      this.$emit('delete-message', { projectId: this.msg.projectId, commentId: this.msg.id });
       this.isMenuOpen = false;
     },
   }
