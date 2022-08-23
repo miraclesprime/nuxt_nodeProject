@@ -1,16 +1,16 @@
 <template>
   <div class="msg position-relative" @mouseenter="isActionBarShowing = true" @mouseleave="onActionBarMouseLeave" v-click-outside="onActionBarClickOutside">
-    <figure class="width-4 user-avatar cursor-pointer" @click="toggleUserCard">
+    <figure class="width-4 user-avatar cursor-pointer" :class="{active: userCardVisible}" @click="toggleUserCard">
       <bib-avatar size="3rem" :src="userInfo.pic"></bib-avatar>
     </figure>
-    <div class="user-card bg-white p-05" :style="{opacity: userCardVisible}">
+    <div class="user-card bg-white " :class="{active: userCardVisible}" >
       <div class="user-info">
-        <span class="user-name">{{userInfo.name}} </span><br>
-        <span class="user-job">{{userInfo.jobTitle}}</span>
+        <span class="d-inline-block user-name text-wrap of-hidden text-of-elipsis max-width-13">{{userInfo.name}} </span>
+        <span class="d-inline-block user-job text-wrap of-hidden text-of-elipsis max-width-13">{{userInfo.jobTitle}}</span>
       </div>
       <div class="user-btn d-flex justify-between ">
-        <button class="bg-gray3 btn min-width-6 py-05 px-2 cursor-pointer border-gray3" >Profile</button>
-        <button class="bg-gray3 btn min-width-6 py-05 px-2 cursor-pointer border-gray3" @click="$nuxt.$emit('remove-member', userInfo)" >Remove</button>
+        <button class="bg-gray3 bg-hover-gray4 btn min-width-6 py-05 px-2 cursor-pointer border-gray3 border-hover-gray4" >Profile</button>
+        <button class="bg-gray3 bg-hover-gray4 btn min-width-6 py-05 px-2 cursor-pointer border-gray3 border-hover-gray4" @click="$nuxt.$emit('remove-member', userInfo)" >Remove</button>
       </div>
       <div class="user-contact bg-gray3 p-05  font-sm">
         <p class="mb-05">Contact details</p>
@@ -18,7 +18,7 @@
           <span class="width-2 flex-shrink-0">
             <bib-icon icon="mail" :scale="1.25" variant="gray5"></bib-icon>
           </span>
-          <div class="flex-grow-1 text-gray5 ">Email<br><span class="text-primary d-inline-block of-hidden text-of-elipsis" style="max-width:14rem;">{{userInfo.email}}</span></div>
+          <div class="flex-grow-1 text-gray5 ">Email<br><span class="text-primary d-inline-block of-hidden text-of-elipsis max-width-13" >{{userInfo.email}}</span></div>
         </div>
       </div>
     </div>
@@ -43,7 +43,7 @@
     <!-- <div v-if="message.repliesCount > 0" class="replies-count">
           {{ message.repliesCount }} replies
         </div> -->
-    <div v-show="showPlaceholder" class="placeholder mb-1 d-flex gap-05">
+    <!-- <div v-show="showPlaceholder" class="placeholder mb-1 d-flex gap-05">
       <div class="left">
         <div class="shape-circle width-205 height-205 animated-background"></div>
       </div>
@@ -51,13 +51,13 @@
         <div class="animated-background width-4"></div>
         <div class="animated-background width-5 mt-05"></div>
       </div>
-    </div>
-    <div v-if="replies.length > 0" class="replies-section">
+    </div> -->
+    <div v-if="msg.replies.length > 0" class="replies-section">
       <message-collapsible-section>
-        <template slot="title">Replies ({{ replies.length }})</template>
+        <template slot="title">Replies ({{ msg.replies.length }})</template>
         <template slot="content">
           <div class="replies">
-            <message-reply v-for="reply in replies" :key="reply.id" :reply="reply" />
+            <message-reply v-for="reply in msg.replies" :key="reply.id" :reply="reply" />
           </div>
         </template>
       </message-collapsible-section>
@@ -166,7 +166,7 @@ export default {
       faStar,
       fasStar,
       showPlaceholder: true,
-      userCardVisible: 0,
+      userCardVisible: false,
       value: {
         files: [
           /*{ id: 156, name: 'thefile.png' },
@@ -246,17 +246,8 @@ export default {
 
   },
   fetch() {
-    console.log('fetch nuxt lifecycle hook')
-    this.fetchReplies()
-    /*this.$axios.get('/project/' + this.msg.id + "/replies", {
-        headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
-      })
-      .then(rep => {
-        // console.log(rep.data)
-        this.replies = rep.data.data
-        this.showPlaceholder = false
-      })
-      .catch(e => console.warn(e))*/
+    // console.log('fetch nuxt lifecycle hook')
+    // this.fetchReplies()
   },
   methods: {
     fetchReplies() {
@@ -299,7 +290,7 @@ export default {
       this.isActionBarShowing = false;
       this.isMenuOpen = false;
       this.isReactionPickerOpen = false;
-      this.userCardVisible = 0
+      this.userCardVisible = false
     },
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
@@ -346,7 +337,7 @@ export default {
       this.isMenuOpen = false;
     },
     toggleUserCard(){
-      this.userCardVisible == 0 ? this.userCardVisible = 1 : this.userCardVisible = 0
+      this.userCardVisible = !this.userCardVisible
     }
   }
 }
@@ -431,35 +422,60 @@ export default {
   }
 }
 
+/*@keyframes open {
+  from { width: 0; min-width:0; height: 0; min-height: 0; }
+  to { width: 18rem; min-width:18rem; height: auto; min-height: 10rem; }
+}
+@keyframes paddingAnimate {
+  from { padding: 0; }
+  to { padding: 0.75rem; }
+}*/
+
 .user-avatar {
   position: absolute;
   z-index: 7;
   left: 1rem;
   top: 1rem;
+  &.active {
+    z-index:10;
+  }
 }
 
 .user-card {
   position: absolute;
   z-index: 5;
   width: 18rem;
+  height: 0;
+  min-height:0;
+  padding: 0.75rem;
+  overflow: hidden;
   box-shadow: 0 2px 10px rgba(10, 10, 10, 0.25);
   border-radius: 0.75rem;
-  left: 0.5rem;
-  top: 0.5rem;
+  left: 0.25rem;
+  top: 0.25rem;
   font-size: 1rem;
-  opacity: 0;
   user-select: none;
-  transition: opacity 240ms ease-in;
+  pointer-events: none;
+  opacity: 0;
+  /*animation-name: open, paddingAnimate;
+  animation-duration: 400ms, 100ms;
+  animation-timing-function: linear, linear;
+  animation-direction: reverse, reverse;
+  animation-fill-mode: forwards, forwards;*/
+  /*animation: open 400ms reverse forwards, paddingAnimate 100ms reverse forwards;*/
+  transition: all 400ms ease;
 
   .user-info {
-    padding-left: 3.5rem;
+    padding-left: 3.75rem;
 
     .user-name {
       font-weight: 500;
+      line-height: 1.2;
     }
 
     .user-job {
-      color: $gray5
+      color: $gray6;
+      line-height: 1;
     }
   }
   .user-btn {
@@ -469,6 +485,17 @@ export default {
   .user-contact {
     margin-top: 1.5rem;
     border-radius: 0.6rem;
+  }
+  &.active {
+    opacity: 1;
+    z-index: 9;
+    pointer-events: all;
+    height: auto;
+    min-height: 10rem;
+
+    /*animation: open 400ms linear normal forwards, paddingAnimate 100ms normal linear forwards;*/
+    /*animation-name: open, paddingAnimate;
+    animation-direction: normal, normal;*/
   }
 }
 

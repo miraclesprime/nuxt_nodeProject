@@ -48,7 +48,8 @@ export default {
     
   },
   mounted() {
-    this.$store.dispatch("project/fetchProjectComments", { id: this.project.id })
+    this.fetchProjectComments()
+    // this.$store.dispatch("project/fetchProjectComments", { id: this.project.id })
     this.$store.dispatch("project/fetchTeamMember", { projectId: this.project.id })
   },
   methods: {
@@ -60,7 +61,7 @@ export default {
       this.value.files = payload.files
     },
     onsubmit(data) {
-      console.log(data, this.editMessage?.id)
+      // console.log(data, this.editMessage?.id)
 
       if (this.editMessage?.id) {
         this.$store.dispatch("project/updateProjectComment", { projectId: this.project.id, commentId: this.editMessage.id, comment: data.text })
