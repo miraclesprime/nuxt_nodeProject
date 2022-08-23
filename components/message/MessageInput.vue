@@ -417,7 +417,7 @@ export default {
   watch: {
     editingMessage(value) {
       if (value) {
-        this.editor.commands.setContent(value.text);
+        this.editor.commands.setContent(value.comment);
       } else {
         this.editor.commands.setContent('');
       }

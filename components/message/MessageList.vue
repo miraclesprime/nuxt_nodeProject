@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="position-relative">
     <div class="d-flex align-center p-05 ">
       <bib-icon icon="arrow-down" :scale="0.5"></bib-icon>
       <div class="px-1 ">
@@ -7,12 +7,14 @@
       </div>
     </div>
     <div v-for="msg in messages">
-      <message :msg="msg"></message>
+      <message :msg="msg" @delete-message="onDeleteMessage"></message>
     </div>
-    <reaction-picker ref="reactionPicker" @select="onReactionSelect" />
+    <reaction-picker ref="reactionPicker" @select="onReactionSelect" ></reaction-picker>
+    <loading :loading="msgLoading" ></loading>
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex';
 export default {
 
   name: 'MessageList',
@@ -22,6 +24,7 @@ export default {
 
   data() {
     return {
+      msgLoading: false,
       /*files: [
         { img: 'https://placeimg.com/200/300/tech' },
         { img: 'https://placeimg.com/200/360/tech' },
@@ -30,8 +33,12 @@ export default {
       ]*/
     }
   },
+  computed: {
+    ...mapGetters({
+      project: "project/getSingleProject",
+    })
+  },
   methods: {
-
     showEmojiPicker(e, message) {
       console.log(e.target)
       const rect = this.$el.getBoundingClientRect();
@@ -70,10 +77,19 @@ export default {
         });
       }
     },
-    async onDeleteMessage() {
-      await this.deleteMessage(this.deletingMessage);
-      this.deletingMessage = null;
+    async onDeleteMessage(payload) {
+      this.msgLoading = true
+      // let data = {projectId: this.project.id, commentId: payload.msgId }
+      const del = await this.$store.dispatch("project/deleteProjectComment", payload);
+      if (del.statusCode == 200) {
+        this.$emit("refresh-list")
+      }
+      this.msgLoading = false
+      console.log(del)
     },
+    /*editMessage(msg){
+      console.log(msg)
+    },*/
   }
 }
 

@@ -12,7 +12,7 @@
           <template v-slot:menu>
             <div class="list">
               <span class="list__item">Edit Profile</span>
-              <span class="list__item" @click="deleteMember(t)">Remove from team</span>
+              <span class="list__item" @click="removeMember(t)">Remove from team</span>
               <!-- <span class="list__item list__item__danger">Delete</span> -->
             </div>
           </template>
@@ -58,12 +58,15 @@ export default {
     this.$nuxt.$on("update-key", () => {
       this.$store.dispatch("project/fetchTeamMember", { projectId: this.project.id })
     })
+    this.$nuxt.$on("remove-member", (user) => {
+      this.removeMember(user)
+    })
   },
   mounted() {
     // this.$store.dispatch("project/fetchTeamMember", { projectId: this.project.id })
   },
   methods: {
-    async deleteMember(member) {
+    async removeMember(member) {
       // console.log(member)
       this.loading = true
       let confirmDelete = window.confirm("Are you sure want to delete " + member.name + "!")

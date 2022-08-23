@@ -8,10 +8,10 @@
       <div class="col-10 border-left d-flex flex-d-column">
         <!-- <project-conversation-action></project-conversation-action> -->
         <div class="message-wrapper flex-grow-1 of-scroll-y">
-          <message-list :messages="comments"></message-list>
+          <message-list :messages="comments" @refresh-list="fetchProjectComments"></message-list>
         </div>
         <div class="task-message-input ">
-          <message-input :value="value" @input="onFileInput" @submit="onsubmit"></message-input>
+          <message-input :value="value" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
         </div>
       </div>
     </div>
@@ -29,7 +29,8 @@ export default {
           { id: 282, name: 'anotherfile.jpg' },*/
         ]
       },
-      // comments: []
+      editMessage: {},
+      // comments: [],
     };
   },
   computed: {
@@ -39,23 +40,39 @@ export default {
       comments: "project/getProjectComments",
     })
   },
+  created() {
+    this.$nuxt.$on("edit-message", (msg) => {
+      // console.log(msg)
+      this.editMessage = msg
+    })
+    
+  },
   mounted() {
-    this.$store.dispatch("project/fetchProjectComments", { id: this.project.id })
+    this.fetchProjectComments()
+    // this.$store.dispatch("project/fetchProjectComments", { id: this.project.id })
     this.$store.dispatch("project/fetchTeamMember", { projectId: this.project.id })
   },
   methods: {
+    fetchProjectComments() {
+      this.$store.dispatch("project/fetchProjectComments", { id: this.project.id })
+    },
     onFileInput(payload) {
       // console.log(payload)
       this.value.files = payload.files
     },
     onsubmit(data) {
-      // console.log(data)
-      this.$store.dispatch("project/createProjectComment", { id: this.project.id, comment: data.text })
-        .then(res => {
-          console.log(res)
-        })
-        .catch(e => console.log(e))
-    }
+      // console.log(data, this.editMessage?.id)
+
+      if (this.editMessage?.id) {
+        this.$store.dispatch("project/updateProjectComment", { projectId: this.project.id, commentId: this.editMessage.id, comment: data.text })
+      } else {
+        this.$store.dispatch("project/createProjectComment", { id: this.project.id, comment: data.text })
+          .then(res => {
+            // console.log(res)
+          })
+          .catch(e => console.log(e))
+      }
+    },
   },
 };
 
