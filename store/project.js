@@ -363,18 +363,14 @@ export const actions = {
       })
     }
 
-    await this.$axios.post("/project/add-member", { projectId: payload.projectId, team: data }, {
+    const res = await this.$axios.post("/project/add-member", { projectId: payload.projectId, team: data }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-    }).then((res) => {
-      console.log(res)
-      let team = res.data.data.members;
-      let data = team.map((el) => {
-        return { name: el.user.firstName + " " + el.user.lastName };
-      });
-      ctx.commit('addMember', data);
-    }).catch((err) => {
-      console.log('Error!!')
     })
+    
+    if(res.data.statusCode == 200) {
+      ctx.commit('addMember', data);
+    }
+    
 
   },
 
