@@ -8,7 +8,14 @@
       <div class="col-10 border-left d-flex flex-d-column">
         <!-- <project-conversation-action></project-conversation-action> -->
         <div class="message-wrapper flex-grow-1 of-scroll-y">
-          <message-list :messages="comments" @refresh-list="fetchProjectComments"></message-list>
+          <template v-if="comments.length > 0">
+            <message-list :messages="comments" @refresh-list="fetchProjectComments"></message-list>
+          </template>
+          <template v-else>
+            <span class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
+              <bib-icon icon="warning"></bib-icon> No conversation found
+            </span>
+          </template>
         </div>
         <div class="task-message-input ">
           <message-input :value="value" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
@@ -45,7 +52,9 @@ export default {
       // console.log(msg)
       this.editMessage = msg
     })
-    
+    this.$nuxt.$on("refresh-list", () => {
+      this.fetchProjectComments()
+    })
   },
   mounted() {
     this.fetchProjectComments()

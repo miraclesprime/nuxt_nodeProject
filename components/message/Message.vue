@@ -3,14 +3,14 @@
     <figure class="width-4 user-avatar cursor-pointer" :class="{active: userCardVisible}" @click="toggleUserCard">
       <bib-avatar size="3rem" :src="userInfo.pic"></bib-avatar>
     </figure>
-    <div class="user-card bg-white " :class="{active: userCardVisible}" >
+    <div class="user-card bg-white " :class="{active: userCardVisible}">
       <div class="user-info">
         <span class="d-inline-block user-name text-wrap of-hidden text-of-elipsis max-width-13">{{userInfo.name}} </span>
         <span class="d-inline-block user-job text-wrap of-hidden text-of-elipsis max-width-13">{{userInfo.jobTitle}}</span>
       </div>
       <div class="user-btn d-flex justify-between ">
-        <button class="bg-gray3 bg-hover-gray4 btn min-width-6 py-05 px-2 cursor-pointer border-gray3 border-hover-gray4" >Profile</button>
-        <button class="bg-gray3 bg-hover-gray4 btn min-width-6 py-05 px-2 cursor-pointer border-gray3 border-hover-gray4" @click="$nuxt.$emit('remove-member', userInfo)" >Remove</button>
+        <button class="bg-gray3 bg-hover-gray4 btn min-width-6 py-05 px-2 cursor-pointer border-gray3 border-hover-gray4">Profile</button>
+        <button class="bg-gray3 bg-hover-gray4 btn min-width-6 py-05 px-2 cursor-pointer border-gray3 border-hover-gray4" @click="$nuxt.$emit('remove-member', userInfo)">Remove</button>
       </div>
       <div class="user-contact bg-gray3 p-05  font-sm">
         <p class="mb-05">Contact details</p>
@@ -18,7 +18,7 @@
           <span class="width-2 flex-shrink-0">
             <bib-icon icon="mail" :scale="1.25" variant="gray5"></bib-icon>
           </span>
-          <div class="flex-grow-1 text-gray5 ">Email<br><span class="text-primary d-inline-block of-hidden text-of-elipsis max-width-13" >{{userInfo.email}}</span></div>
+          <div class="flex-grow-1 text-gray5 ">Email<br><span class="text-primary d-inline-block of-hidden text-of-elipsis max-width-13">{{userInfo.email}}</span></div>
         </div>
       </div>
     </div>
@@ -28,21 +28,23 @@
       <p>Lorem ipsum dolor sit amet consectetur 🙂, <a href="https://dev.proj-mgmt.biztree.com/">ipsum</a> adipisicing elit. Sit eum praesentium animi error delectus reprehenderit neque odit? Nesciunt facere quod ab veniam eligendi architecto vitae?</p>
     </div>
     <!-- <message-files :files="files"></message-files> -->
-    <!-- <div v-if="reactions.length > 0" class="reactions-section">
-          <message-collapsible-section variant="sm">
-            <template slot="title"><b>Reactions</b> ({{ this.message.reactions.length }})</template>
-            <template slot="content">
-              <div class="reactions">
-                <div v-for="react in reactions" :key="react.reaction" class="reaction" :class="{ sent: react.sent }" @click.stop="$emit('reaction-clicked', message._id, react.reaction)">
-                  {{ react.reaction }} <span class="count">{{ react.entries.length }}</span>
-                </div>
-              </div>
-            </template>
-          </message-collapsible-section>
-        </div> -->
-    <!-- <div v-if="message.repliesCount > 0" class="replies-count">
-          {{ message.repliesCount }} replies
-        </div> -->
+    <div v-if="reactionsExist" class="reactions-section">
+      <div class="reactions">
+        <div v-for="react in reactionGroup" :key="react.reaction" class="reaction " :class=" ownReaction(react) " name="reaction1" @click.stop="deleteOwnReaction(react)">
+          {{ react.reaction }} <span class="count">{{react.count}}</span>
+        </div>
+      </div>
+      <!-- <message-collapsible-section >
+        <template slot="title">Reactions ({{ msg.reactions.length }})</template>
+        <template slot="content">
+          <div class="reactions">
+            <div v-for="react in msg.reactions" :key="react.reaction" class="reaction" :class="{ sent: react.sent }" @click.stop="$emit('reaction-clicked', msg.id, react.reaction)">
+              {{ react.reaction }} <span class="count">{{ react.entries.length }}</span>
+            </div>
+          </div>
+        </template>
+      </message-collapsible-section> -->
+    </div>
     <!-- <div v-show="showPlaceholder" class="placeholder mb-1 d-flex gap-05">
       <div class="left">
         <div class="shape-circle width-205 height-205 animated-background"></div>
@@ -52,7 +54,7 @@
         <div class="animated-background width-5 mt-05"></div>
       </div>
     </div> -->
-    <div v-if="msg.replies.length > 0" class="replies-section">
+    <div v-if="repliesExist" class="replies-section">
       <message-collapsible-section>
         <template slot="title">Replies ({{ msg.replies.length }})</template>
         <template slot="content">
@@ -65,11 +67,11 @@
     <!-- <transition name="slide-fade"> -->
     <div v-if="isActionBarShowing" class="actions-container" @click.stop>
       <!-- <div class="action favorite" :class="{ favorited }" @click="changeFavorite">
-          <bib-icon :icon="favorited ? 'bookmark-solid' : 'bookmark'" :scale="1"></bib-icon>
-        </div> -->
-      <!-- <div class="action" :class="{ liked }" @click="$emit('reaction-clicked', message._id, '👍')">
-          <fa :icon="faThumbsUp" />
-        </div> -->
+        <bib-icon :icon="favorited ? 'bookmark-solid' : 'bookmark'" :scale="1"></bib-icon>
+      </div> -->
+      <div class="action">
+        <fa :icon="faThumbsUp" />
+      </div>
       <tippy :visible="isReactionPickerOpen" :animate-fill="false" :distance="6" interactive placement="bottom-end" trigger="manual" :onHide="() => defer(() => (isReactionPickerOpen = false))">
         <template slot="trigger">
           <div class="action" :class="{ active: isReactionPickerOpen }" @click="toggleReactionPicker">
@@ -118,6 +120,7 @@
         <div style="margin: -1rem -2rem -2rem; ">
           <message-input :value="value" @input="onFileInput" @submit="onReplySubmit"></message-input>
         </div>
+        <loading :loading="replyLoading"></loading>
       </template>
     </bib-modal-wrapper>
   </div>
@@ -181,7 +184,9 @@ export default {
       ],
       replies: [
         /*{ id: 254, user: { id: "DKgl9av2NwnaG1vz", photo: 'https://i.pravatar.cc/100', firstName: "Vishu", lastName: "M", }, updatedAt: "2022-08-14T06:54:37.000Z", comment: "this is reply text" },*/
-      ]
+      ],
+      replyLoading: false,
+      reactions: []
     }
   },
   computed: {
@@ -200,7 +205,7 @@ export default {
       // return d.toDateString()
       return dd
     },
-    reactions() {
+    /*reactions() {
       return Object.entries(groupBy(this.message.reactions, (r) => r.reaction)).map(
         ([reaction, entries]) => {
           return {
@@ -210,6 +215,28 @@ export default {
           };
         }
       );
+    },*/
+    repliesExist() {
+      return this.msg.replies?.length ? true : false
+    },
+    reactionsExist() {
+      return this.msg.reactions?.length ? true : false
+    },
+    reactionGroup() {
+      let rg = []
+      this.reactions.map(r => {
+        let rindex = rg.findIndex((el) => el.reaction == r.reaction)
+        let relem = rg.find((el, index) => el.reaction == r.reaction)
+        // console.log(relem, rindex)
+        if (relem == undefined) {
+          rg.push({ reaction: r.reaction, count: 1, data: [{ id: r.id, user: r.user }] })
+        } else {
+          rg[rindex].count += 1
+          rg[rindex].data.push({ id: r.id, user: r.user })
+        }
+      })
+      console.log(rg)
+      return rg
     },
     /*liked() {
       return this.reactions.find((r) => r.sent && r.reaction === '👍');
@@ -249,8 +276,21 @@ export default {
     // console.log('fetch nuxt lifecycle hook')
     // this.fetchReplies()
   },
+  mounted() {
+    console.info("mounted");
+    // this.reactions = this.msg.reactions
+    this.reactions = _.cloneDeep(this.msg.reactions);
+    /*this.$axios.get('/project/' + this.msg.id + "/reactions", {
+        headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
+      })
+      .then(r => {
+        this.reactions = r
+      })
+      .catch(e => console.log(e))*/
+  },
+
   methods: {
-    fetchReplies() {
+    /*fetchReplies() {
       this.$axios.get('/project/' + this.msg.id + "/replies", {
           headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
         })
@@ -260,24 +300,56 @@ export default {
           this.showPlaceholder = false
         })
         .catch(e => console.warn(e))
+    },*/
+    fetchReactions() {
+      this.$axios.get('/project/' + this.msg.id + "/reactions", {
+          headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
+        })
+        .then(r => {
+          // console.log(r)
+          if (r.data.statusCode == 200) {
+            this.reactions = r.data.data
+          }
+        })
+        .catch(e => console.log(e))
+    },
+    ownReaction(reaction) {
+      console.log(reaction, this.user.Id)
+      return { sent: reaction.data.some(d => d.user.id == this.user.Id) }
+    },
+    deleteOwnReaction(reaction) {
+      let react = reaction.data.find(d => d.user.id == this.user.Id)
+      this.$axios.delete("/project/" + this.msg.id + "/reaction", {
+        headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") },
+        data: { reactionId: react.id },
+      })
+        .then(d => { 
+          console.log(d.data)
+          this.fetchReactions()
+        })
+        .catch(e => console.log(e))
     },
     onFileInput(payload) {
       // console.log(payload)
       this.value.files = payload.files
     },
     onReplySubmit(data) {
-      console.log(data)
+      // console.log(data)
+      this.replyLoading = true
       this.$axios.post('/project/' + this.msg.id + "/reply", { projectCommentId: this.msg.id, comment: data.text }, {
           headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
         })
         .then(rep => {
           // console.log(rep.data)
-          // this.replies.push(rep.data.data)
-          this.fetchReplies()
+          this.replyLoading = false
+          // this.fetchReplies()
+          this.$nuxt.$emit("refresh-list")
           this.replyModal = false
         })
-        .catch(e => console.warn(e))
-
+        .catch(e => {
+          this.replyLoading = false
+          console.warn(e)
+        })
     },
     onActionBarMouseLeave() {
       if (!(this.isMenuOpen || this.isReactionPickerOpen)) {
@@ -301,17 +373,29 @@ export default {
       this.isMenuOpen = false;
     },
     onReactionClick({ data }) {
+      // console.log(data)
       this.isReactionPickerOpen = false;
-      this.$emit('reaction-clicked', this.message._id, data);
+      // this.$emit('reaction-clicked', this.msg.id, data);
+      this.$axios.post("/project/" + this.msg.id + "/reaction", { reaction: data }, {
+          headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
+        })
+        .then(d => {
+          // console.log(d.data)
+          if (d.data.statusCode == 200) {
+            // this.reactions.push(d.data.data)
+            this.fetchReactions()
+          }
+        })
+        .catch(e => console.log(e))
     },
     replyMessage() {
       console.log('reply message action')
       this.replyModal = !this.replyModal
     },
-    copyMessageLink() {
+    /*copyMessageLink() {
       navigator?.clipboard?.writeText?.(window.location.origin + this.link);
       this.isMenuOpen = false;
-    },
+    },*/
     defer(func) {
       setTimeout(func, 0);
     },
@@ -336,7 +420,7 @@ export default {
       this.$emit('delete-message', { projectId: this.msg.projectId, commentId: this.msg.id });
       this.isMenuOpen = false;
     },
-    toggleUserCard(){
+    toggleUserCard() {
       this.userCardVisible = !this.userCardVisible
     }
   }
@@ -436,8 +520,9 @@ export default {
   z-index: 7;
   left: 1rem;
   top: 1rem;
+
   &.active {
-    z-index:10;
+    z-index: 10;
   }
 }
 
@@ -446,7 +531,7 @@ export default {
   z-index: 5;
   width: 18rem;
   height: 0;
-  min-height:0;
+  min-height: 0;
   padding: 0.75rem;
   overflow: hidden;
   box-shadow: 0 2px 10px rgba(10, 10, 10, 0.25);
@@ -478,14 +563,20 @@ export default {
       line-height: 1;
     }
   }
+
   .user-btn {
     margin-top: 1.5rem;
-    .btn { border-radius: 3rem; }
+
+    .btn {
+      border-radius: 3rem;
+    }
   }
+
   .user-contact {
     margin-top: 1.5rem;
     border-radius: 0.6rem;
   }
+
   &.active {
     opacity: 1;
     z-index: 9;
@@ -636,40 +727,30 @@ export default {
 }
 
 .reactions-section {
-  margin-top: 5px;
+  margin-bottom: 8px;
 
   .reactions {
     display: flex;
     gap: 5px;
-    padding-top: 10px;
   }
 
   .reaction {
-    font-size: 17px;
-    padding: 4px 8px;
+    font-size: 16px;
+    border: 1px solid $gray4;
     border-radius: 8px;
-    background-color: rgb(224, 224, 224);
+    padding: 2px 4px;
     cursor: pointer;
 
     &.sent {
-      background-color: rgb(239, 246, 255);
+      background-color: $warning-sub3;
+      border-color: $gray5;
     }
 
     .count {
-      font-size: 13px;
-      color: rgb(78, 78, 78);
-      vertical-align: middle;
+      font-size: 14px;
+      color: $gray6;
     }
   }
-}
-
-.replies-count {
-  padding: 8px 10px;
-  border-radius: 5px;
-  margin-top: 15px;
-  background-color: #fff;
-  border: 1px solid #acacac;
-  cursor: pointer;
 }
 
 .highlight {
