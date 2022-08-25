@@ -9,7 +9,7 @@
     <div v-for="msg in messages">
       <message :msg="msg" @delete-message="onDeleteMessage"></message>
     </div>
-    <reaction-picker ref="reactionPicker" @select="onReactionSelect" ></reaction-picker>
+    <!-- <reaction-picker ref="reactionPicker" @select="onReactionSelect" ></reaction-picker> -->
     <loading :loading="msgLoading" ></loading>
   </div>
 </template>
@@ -41,7 +41,7 @@ export default {
   methods: {
     showEmojiPicker(e, message) {
       console.log(e.target)
-      const rect = this.$el.getBoundingClientRect();
+      /*const rect = this.$el.getBoundingClientRect();
       let left = e.pageX - rect.left;
       let top = e.pageY - rect.top;
       if (top + 424 > window.innerHeight) {
@@ -50,18 +50,18 @@ export default {
       if (left < 327) {
         left += 347;
       }
-      this.$refs.reactionPicker.show({ message, top, left });
+      this.$refs.reactionPicker.show({ message, top, left });*/
     },
     async onReactionSelect(reaction, message) {
       this.$refs.reactionPicker.hide();
-      await this.addMessageReaction({
+      /*await this.addMessageReaction({
         chatId: this.chat.id,
         messageId: message._id,
         reaction: reaction.data,
-      });
+      });*/
     },
     async onReactionClick(messageId, reaction) {
-      const msg = this.chat.messages.find((m) => m._id === messageId);
+      /*const msg = this.chat.messages.find((m) => m._id === messageId);
       const react = msg.reactions.find((r) => r.reaction === reaction && r.sender === this.user.id);
       if (react) {
         await this.removeMessageReaction({
@@ -75,7 +75,7 @@ export default {
           messageId,
           reaction,
         });
-      }
+      }*/
     },
     async onDeleteMessage(payload) {
       this.msgLoading = true

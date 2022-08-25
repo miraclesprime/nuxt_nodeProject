@@ -366,6 +366,7 @@ export const actions = {
     await this.$axios.post("/project/add-member", { projectId: payload.projectId, team: data }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     }).then((res) => {
+      console.log(res)
       let team = res.data.data.members;
       let data = team.map((el) => {
         return { name: el.user.firstName + " " + el.user.lastName };
@@ -538,6 +539,6 @@ export const actions = {
     }catch(e) {
       console.log(e)
     }
-  }
+  },
 
 }
