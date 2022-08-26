@@ -7,7 +7,7 @@
       <!-- <div class="divider" id="task-conv-divider" style="left: 33.8%" /> -->
       <div class="col-10 border-left d-flex flex-d-column">
         <!-- <project-conversation-action></project-conversation-action> -->
-        <div class="message-wrapper flex-grow-1 of-scroll-y">
+        <div class="message-wrapper py-05 flex-grow-1 of-scroll-y">
           <template v-if="comments.length > 0">
             <message-list :messages="comments" @refresh-list="fetchProjectComments"></message-list>
           </template>

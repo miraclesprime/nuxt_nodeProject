@@ -1,20 +1,30 @@
 <template>
   <div class="position-relative">
-    <div class="d-flex align-center p-05 ">
-      <bib-icon icon="arrow-down" :scale="0.5"></bib-icon>
-      <div class="px-1 ">
-        Today
+    <template v-for="group in msgGroup">
+      <div v-show="group.data.length > 0" class="d-flex align-center p-05 ">
+        <bib-icon icon="arrow-down" :scale="0.5"></bib-icon>
+        <div class="px-1 font-w-500">
+          {{group.title}}
+        </div>
       </div>
-    </div>
-    <div v-for="msg in messages">
-      <message :msg="msg" @delete-message="onDeleteMessage"></message>
-    </div>
+      <!-- <div v-for="msg in messages">
+        <message :msg="msg" @delete-message="onDeleteMessage"></message>
+      </div> -->
+      <div v-for="msg in group.data">
+        <message :msg="msg" @delete-message="onDeleteMessage"></message>
+      </div>
+    </template>
     <!-- <reaction-picker ref="reactionPicker" @select="onReactionSelect" ></reaction-picker> -->
-    <loading :loading="msgLoading" ></loading>
+    <loading :loading="msgLoading"></loading>
   </div>
 </template>
 <script>
 import { mapGetters } from 'vuex';
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import calendar from 'dayjs/plugin/calendar'
+dayjs.extend(relativeTime)
+dayjs.extend(calendar)
 export default {
 
   name: 'MessageList',
@@ -36,22 +46,30 @@ export default {
   computed: {
     ...mapGetters({
       project: "project/getSingleProject",
-    })
+    }),
+    msgGroup() {
+      let msglist = [{ title: "Older", data: [] }, { title: "Yesterday", data: [] }, { title: "Today", data: [] }]
+      this.messages.map(m => {
+        let d = dayjs(m.updatedAt)
+        // console.info(d.fromNow('dd'))
+        let diff = d.diff(dayjs(), 'd')
+        switch (diff) {
+          case 0:
+            msglist[2].data.push(m)
+            break;
+          case 1:
+            msglist[1].data.push(m)
+            break;
+          default:
+            msglist[0].data.push(m)
+            break;
+        }
+      })
+      return msglist
+    }
   },
   methods: {
-    showEmojiPicker(e, message) {
-      console.log(e.target)
-      /*const rect = this.$el.getBoundingClientRect();
-      let left = e.pageX - rect.left;
-      let top = e.pageY - rect.top;
-      if (top + 424 > window.innerHeight) {
-        top -= 312;
-      }
-      if (left < 327) {
-        left += 347;
-      }
-      this.$refs.reactionPicker.show({ message, top, left });*/
-    },
+    
     async onReactionSelect(reaction, message) {
       this.$refs.reactionPicker.hide();
       /*await this.addMessageReaction({
@@ -60,23 +78,7 @@ export default {
         reaction: reaction.data,
       });*/
     },
-    async onReactionClick(messageId, reaction) {
-      /*const msg = this.chat.messages.find((m) => m._id === messageId);
-      const react = msg.reactions.find((r) => r.reaction === reaction && r.sender === this.user.id);
-      if (react) {
-        await this.removeMessageReaction({
-          chatId: this.chat.id,
-          messageId,
-          reaction,
-        });
-      } else {
-        await this.addMessageReaction({
-          chatId: this.chat.id,
-          messageId,
-          reaction,
-        });
-      }*/
-    },
+    
     async onDeleteMessage(payload) {
       this.msgLoading = true
       // let data = {projectId: this.project.id, commentId: payload.msgId }
