@@ -30,7 +30,7 @@
     <!-- <message-files :files="files"></message-files> -->
     <div v-if="reactionsExist" class="reactions-section">
       <div class="reactions">
-        <div v-for="react in reactionGroup" :key="react.reaction" class="reaction " :class=" ownReaction(react) " name="reaction1" @click.stop="deleteOwnReaction(react)">
+        <div v-for="react in reactionGroup" :key="reactionKey + react.reaction + msg.id" class="reaction " :class=" ownReaction(react) " name="reaction1" @click.stop="deleteOwnReaction(react)">
           {{ react.reaction }} <span class="count">{{react.count}}</span>
         </div>
       </div>
@@ -69,7 +69,7 @@
       <!-- <div class="action favorite" :class="{ favorited }" @click="changeFavorite">
         <bib-icon :icon="favorited ? 'bookmark-solid' : 'bookmark'" :scale="1"></bib-icon>
       </div> -->
-      <div class="action">
+      <div class="action" @click.stop="onLikeClick">
         <fa :icon="faThumbsUp" />
       </div>
       <tippy :visible="isReactionPickerOpen" :animate-fill="false" :distance="6" interactive placement="bottom-end" trigger="manual" :onHide="() => defer(() => (isReactionPickerOpen = false))">
@@ -186,7 +186,8 @@ export default {
         /*{ id: 254, user: { id: "DKgl9av2NwnaG1vz", photo: 'https://i.pravatar.cc/100', firstName: "Vishu", lastName: "M", }, updatedAt: "2022-08-14T06:54:37.000Z", comment: "this is reply text" },*/
       ],
       replyLoading: false,
-      reactions: []
+      reactions: [],
+      reactionKey: 1,
     }
   },
   computed: {
@@ -220,7 +221,12 @@ export default {
       return this.msg.replies?.length ? true : false
     },
     reactionsExist() {
-      return this.msg.reactions?.length ? true : false
+      if (this.msg.reactions?.length || this.reactionGroup.length) {
+        return true
+      } else {
+        return false
+      }
+      // return this.msg.reactions?.length ? true : false
     },
     reactionGroup() {
       let rg = []
@@ -235,7 +241,8 @@ export default {
           rg[rindex].data.push({ id: r.id, user: r.user })
         }
       })
-      console.log(rg)
+      // console.log(rg)
+      this.reactionKey += 1
       return rg
     },
     /*liked() {
@@ -309,12 +316,13 @@ export default {
           // console.log(r)
           if (r.data.statusCode == 200) {
             this.reactions = r.data.data
+            this.reactionKey += 1
           }
         })
         .catch(e => console.log(e))
     },
     ownReaction(reaction) {
-      console.log(reaction, this.user.Id)
+      // console.log(reaction, this.user.Id)
       return { sent: reaction.data.some(d => d.user.id == this.user.Id) }
     },
     deleteOwnReaction(reaction) {
@@ -388,6 +396,19 @@ export default {
         })
         .catch(e => console.log(e))
     },
+    onLikeClick(){
+      this.$axios.post("/project/" + this.msg.id + "/reaction", { reaction: "👍" }, {
+          headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
+        })
+        .then(d => {
+          // console.log(d.data)
+          if (d.data.statusCode == 200) {
+            // this.reactions.push(d.data.data)
+            this.fetchReactions()
+          }
+        })
+        .catch(e => console.log(e))
+    },
     replyMessage() {
       console.log('reply message action')
       this.replyModal = !this.replyModal
@@ -399,19 +420,19 @@ export default {
     defer(func) {
       setTimeout(func, 0);
     },
-    async changeFavorite() {
+    /*async changeFavorite() {
       console.log('favorite clicked')
-      /*if (this.favorited) {
+      if (this.favorited) {
         await this.removeFavorite({ type: 'message', id: this.message._id });
       } else {
         await this.addFavorite({ type: 'message', id: this.message._id });
-      }*/
-    },
-    async markAsUnread() {
+      }
+    },*/
+    /*async markAsUnread() {
       this.isMenuOpen = false;
       // await this.setMessageAsUnread(this.message._id);
       this.$emit('unread-message');
-    },
+    },*/
     editMessage() {
       this.$nuxt.$emit('edit-message', this.msg);
       this.isMenuOpen = false;
