@@ -12,7 +12,7 @@
           <template v-slot:menu>
             <div class="list">
               <span class="list__item">Edit Profile</span>
-              <span class="list__item" @click="removeMember(t)">Remove from team</span>
+              <span class="list__item list__item__danger" @click="removeMember(t)">Remove from team</span>
               <!-- <span class="list__item list__item__danger">Delete</span> -->
             </div>
           </template>

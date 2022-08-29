@@ -197,9 +197,11 @@ export default {
       members: 'user/getTeamMembers'
     }),
     userInfo() {
-      let u = this.members.find((el) => el.id == this.msg.userId)
-      // console.log(u)
-      return { id: u.id, name: u.firstName + ' ' + u.lastName, email: u.email, pic: u.avatar, jobTitle: "Title/Company Name" }
+      if (this.members.length) {
+        let u = this.members.find((el) => el.id == this.msg.userId)
+        // console.log(u)
+        return { id: u.id, name: u.firstName + ' ' + u.lastName, email: u.email, pic: u.avatar, jobTitle: "Title/Company Name" }
+      }
     },
     displayDate() {
       let d = new Date(this.msg.updatedAt)
@@ -232,7 +234,6 @@ export default {
     reactionGroup() {
       let rg = []
       if (this.reactions.length) {
-
         this.reactions.map(r => {
           let rindex = rg.findIndex((el) => el.reaction == r.reaction)
           let relem = rg.find((el, index) => el.reaction == r.reaction)
