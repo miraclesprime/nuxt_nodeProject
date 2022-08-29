@@ -8,14 +8,23 @@
       <div class="col-10 border-left d-flex flex-d-column">
         <!-- <project-conversation-action></project-conversation-action> -->
         <div class="message-wrapper py-05 flex-grow-1 of-scroll-y">
+          <div v-show="showPlaceholder" class="placeholder m-1 d-flex align-center gap-1">
+            <div class="left">
+              <div class="shape-circle width-3 height-3 animated-background"></div>
+            </div>
+            <div class="right">
+              <div class="animated-background width-4"></div>
+              <div class="animated-background width-10 mt-05"></div>
+            </div>
+          </div>
           <template v-if="comments.length > 0">
             <message-list :messages="comments" @refresh-list="fetchProjectComments"></message-list>
           </template>
-          <template v-else>
+          <!-- <template v-else>
             <span class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
               <bib-icon icon="warning"></bib-icon> No conversation found
             </span>
-          </template>
+          </template> -->
         </div>
         <div class="task-message-input ">
           <message-input :value="value" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
@@ -37,14 +46,15 @@ export default {
         ]
       },
       editMessage: {},
-      // comments: [],
+      comments: [],
+      showPlaceholder: false,
     };
   },
   computed: {
     ...mapGetters({
       project: "project/getSingleProject",
       projectMembers: "project/getProjectMembers",
-      comments: "project/getProjectComments",
+      // comments: "project/getProjectComments",
     })
   },
   created() {
@@ -62,8 +72,22 @@ export default {
     this.$store.dispatch("project/fetchTeamMember", { projectId: this.project.id })
   },
   methods: {
-    fetchProjectComments() {
-      this.$store.dispatch("project/fetchProjectComments", { id: this.project.id })
+    async fetchProjectComments() {
+      this.showPlaceholder = true
+      const comm = await this.$axios.get(`/project/${this.project.id}/comments`, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+        }
+      })
+
+      console.log(comm.data)
+
+      if (comm.data.statusCode == 200) {
+        this.comments = comm.data.data
+      }
+      this.showPlaceholder = false
+      // this.$store.dispatch("project/fetchProjectComments", { id: this.project.id })
     },
     onFileInput(payload) {
       // console.log(payload)

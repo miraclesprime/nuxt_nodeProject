@@ -323,27 +323,19 @@ ul {
 
 }
 
-/*.list {
-  .list__item {
-    &.success {
-      color: var(--bib-success);
-
-      &:hover {
-        background-color: var(--bib-success);
-        color: var(--bib-light);
-      }
-    }
-  }
-}*/
-
 .tippy-tooltip {
   padding: 1px;
   background-color: $gray7;
   text-align: left;
 }
 
+.msg__content {
+  a { color: $primary; text-decoration: underline; display: initial; }
+}
+
 .mention {
   color: #a975ff;
+  /*color: transparentize(purple, 0.33);*/
   background-color: rgba(169, 117, 255, .1);
   border-radius: .3rem;
   padding: .1rem .3rem;
