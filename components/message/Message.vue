@@ -24,6 +24,7 @@
     </div>
     <div class="msg__owner pb-025">{{userInfo.name}} <span class="ml-1 font-sm">{{displayDate}}</span>
     </div>
+    <!-- <p>{{msg.id}}</p> -->
     <div class="msg__content pb-05" v-html="msg.comment">
       <p>Lorem ipsum dolor sit amet consectetur 🙂, <a href="https://dev.proj-mgmt.biztree.com/">ipsum</a> adipisicing elit. Sit eum praesentium animi error delectus reprehenderit neque odit? Nesciunt facere quod ab veniam eligendi architecto vitae?</p>
     </div>
@@ -230,17 +231,20 @@ export default {
     },
     reactionGroup() {
       let rg = []
-      this.reactions.map(r => {
-        let rindex = rg.findIndex((el) => el.reaction == r.reaction)
-        let relem = rg.find((el, index) => el.reaction == r.reaction)
-        // console.log(relem, rindex)
-        if (relem == undefined) {
-          rg.push({ reaction: r.reaction, count: 1, data: [{ id: r.id, user: r.user }] })
-        } else {
-          rg[rindex].count += 1
-          rg[rindex].data.push({ id: r.id, user: r.user })
-        }
-      })
+      if (this.reactions.length) {
+
+        this.reactions.map(r => {
+          let rindex = rg.findIndex((el) => el.reaction == r.reaction)
+          let relem = rg.find((el, index) => el.reaction == r.reaction)
+          // console.log(relem, rindex)
+          if (relem == undefined) {
+            rg.push({ reaction: r.reaction, count: 1, data: [{ id: r.id, user: r.user }] })
+          } else {
+            rg[rindex].count += 1
+            rg[rindex].data.push({ id: r.id, user: r.user })
+          }
+        })
+      }
       // console.log(rg)
       this.reactionKey += 1
       return rg
@@ -280,11 +284,12 @@ export default {
 
   },
   fetch() {
-    // console.log('fetch nuxt lifecycle hook')
+    console.log('fetch ', this.msg.id)
     // this.fetchReplies()
   },
   mounted() {
-    console.info("mounted");
+    // this.reactions = []
+    console.info(this.msg.id, " msg reactions =>", this.msg.reactions, 'local reactions =>', this.reactions);
     // this.reactions = this.msg.reactions
     this.reactions = _.cloneDeep(this.msg.reactions);
     /*this.$axios.get('/project/' + this.msg.id + "/reactions", {
@@ -295,6 +300,9 @@ export default {
       })
       .catch(e => console.log(e))*/
   },
+  /*updated(){
+    console.log('updated', this.msg.reactions)
+  },*/
 
   methods: {
     /*fetchReplies() {
@@ -328,10 +336,10 @@ export default {
     deleteOwnReaction(reaction) {
       let react = reaction.data.find(d => d.user.id == this.user.Id)
       this.$axios.delete("/project/" + this.msg.id + "/reaction", {
-        headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") },
-        data: { reactionId: react.id },
-      })
-        .then(d => { 
+          headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") },
+          data: { reactionId: react.id },
+        })
+        .then(d => {
           console.log(d.data)
           this.fetchReactions()
         })
@@ -396,7 +404,7 @@ export default {
         })
         .catch(e => console.log(e))
     },
-    onLikeClick(){
+    onLikeClick() {
       this.$axios.post("/project/" + this.msg.id + "/reaction", { reaction: "👍" }, {
           headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
         })
@@ -470,14 +478,6 @@ export default {
   &__content {
     font-size: 1rem;
     color: $gray6;
-  }
-
-  .mention {
-    color: #a975ff;
-    background-color: rgba(169, 117, 255, .1);
-    border-radius: .3rem;
-    padding: .1rem .3rem;
-    cursor: pointer;
   }
 
   &__files {
