@@ -11,7 +11,7 @@
         <bib-avatar :src="t.avatar" size="1.75rem" class="mr-05"></bib-avatar> {{t.firstName}} {{t.lastName}} <bib-button pop="elipsis" variant="gray3" class="ml-auto">
           <template v-slot:menu>
             <div class="list">
-              <span class="list__item">Edit Profile</span>
+              <span v-show="t.id == user.sub" class="list__item" @click="gotoUserProfile">Edit Profile</span>
               <span class="list__item list__item__danger" @click="removeMember(t)">Remove from team</span>
               <!-- <span class="list__item list__item__danger">Delete</span> -->
             </div>
@@ -40,7 +40,9 @@ export default {
     ...mapGetters({
       members: 'user/getTeamMembers',
       project: 'project/getSingleProject',
+      user: "user/getUser",
     }),
+    
     projectTeam() {
       let ud = []
       this.members.filter(u => {
@@ -66,6 +68,13 @@ export default {
     // this.$store.dispatch("project/fetchTeamMember", { projectId: this.project.id })
   },
   methods: {
+    /*isLoggedUser(user){
+      return this.user.some(u=> u.sub == user.id)
+    },*/
+    gotoUserProfile(){
+      // this.$router.push(process.env.USER_PROFILE_URL)
+      window.location.href = process.env.USER_PROFILE_URL
+    },
     async removeMember(member) {
       // console.log(member)
       this.loading = true

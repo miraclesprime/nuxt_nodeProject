@@ -21,10 +21,10 @@
 <script>
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
+/*import relativeTime from 'dayjs/plugin/relativeTime'
 import calendar from 'dayjs/plugin/calendar'
 dayjs.extend(relativeTime)
-dayjs.extend(calendar)
+dayjs.extend(calendar)*/
 export default {
 
   name: 'MessageList',
@@ -51,13 +51,13 @@ export default {
       let msglist = [{ title: "Older", data: [] }, { title: "Yesterday", data: [] }, { title: "Today", data: [] }]
       this.messages.map(m => {
         let d = dayjs(m.updatedAt)
-        // console.info(d.fromNow('dd'))
         let diff = d.diff(dayjs(), 'd')
+        console.info(diff)
         switch (diff) {
           case 0:
             msglist[2].data.push(m)
             break;
-          case 1:
+          case -1:
             msglist[1].data.push(m)
             break;
           default:

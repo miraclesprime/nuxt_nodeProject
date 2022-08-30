@@ -285,12 +285,12 @@ export default {
 
   },
   fetch() {
-    console.log('fetch ', this.msg.id)
+    // console.log('fetch ', this.msg.id)
     // this.fetchReplies()
   },
   mounted() {
     // this.reactions = []
-    console.info(this.msg.id, " msg reactions =>", this.msg.reactions, 'local reactions =>', this.reactions);
+    // console.info(this.msg.id, " msg reactions =>", this.msg.reactions, 'local reactions =>', this.reactions);
     // this.reactions = this.msg.reactions
     this.reactions = _.cloneDeep(this.msg.reactions);
     /*this.$axios.get('/project/' + this.msg.id + "/reactions", {
@@ -539,18 +539,18 @@ export default {
 
 .user-avatar {
   position: absolute;
-  z-index: 7;
+  z-index: 2;
   left: 1rem;
   top: 1rem;
 
   &.active {
-    z-index: 10;
+    z-index: 5;
   }
 }
 
 .user-card {
   position: absolute;
-  z-index: 5;
+  z-index: 3;
   width: 18rem;
   height: 0;
   min-height: 0;
@@ -601,7 +601,7 @@ export default {
 
   &.active {
     opacity: 1;
-    z-index: 9;
+    z-index: 4;
     pointer-events: all;
     height: auto;
     min-height: 10rem;
