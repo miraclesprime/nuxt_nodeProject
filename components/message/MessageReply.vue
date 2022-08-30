@@ -233,7 +233,9 @@ export default {
   line-height: 1.5;
   color: $gray6;
 }
-.reply-text { color: $gray6; }
+.reply-text { color: $gray6;
+  a { color: $primary; text-decoration: underline; }
+ }
 
 .reactions-section {
   margin-top: 5px;

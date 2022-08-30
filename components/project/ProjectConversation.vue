@@ -8,23 +8,31 @@
       <div class="col-10 border-left d-flex flex-d-column">
         <!-- <project-conversation-action></project-conversation-action> -->
         <div class="message-wrapper py-05 flex-grow-1 of-scroll-y">
-          <div v-show="showPlaceholder" class="placeholder m-1 d-flex align-center gap-1">
-            <div class="left">
-              <div class="shape-circle width-3 height-3 animated-background"></div>
+          <template v-if="showPlaceholder">
+            <div class="d-flex align-center p-05 border-bottom-gray2">
+              <bib-icon icon="arrow-down" :scale="0.5"></bib-icon>
+              <div class="px-1 ">
+                <div class="animated-background width-6"></div>
+              </div>
             </div>
-            <div class="right">
-              <div class="animated-background width-4"></div>
-              <div class="animated-background width-10 mt-05"></div>
+            <div class="placeholder m-1 d-flex align-center gap-1">
+              <div class="left">
+                <div class="shape-circle width-3 height-3 animated-background"></div>
+              </div>
+              <div class="right">
+                <div class="animated-background width-4"></div>
+                <div class="animated-background width-10 mt-05"></div>
+              </div>
             </div>
-          </div>
-          <template v-if="comments.length > 0">
+          </template>
+          <template v-else-if="comments.length > 0">
             <message-list :messages="comments" @refresh-list="fetchProjectComments"></message-list>
           </template>
-          <!-- <template v-else>
+          <template v-else>
             <span class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
               <bib-icon icon="warning"></bib-icon> No conversation found
             </span>
-          </template> -->
+          </template>
         </div>
         <div class="task-message-input ">
           <message-input :value="value" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
@@ -81,7 +89,7 @@ export default {
         }
       })
 
-      console.log(comm.data)
+      // console.log(comm.data)
 
       if (comm.data.statusCode == 200) {
         this.comments = comm.data.data
@@ -102,6 +110,7 @@ export default {
         this.$store.dispatch("project/createProjectComment", { id: this.project.id, comment: data.text })
           .then(res => {
             // console.log(res)
+            this.fetchProjectComments()
           })
           .catch(e => console.log(e))
       }
