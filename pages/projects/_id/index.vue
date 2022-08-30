@@ -4,14 +4,16 @@
       <nuxt-link to="/projects" class="d-flex">
         <bib-icon icon="arrowhead-left" :scale="1.5" variant="gray5"></bib-icon>
       </nuxt-link>
-      <bib-avatar></bib-avatar>
+        <bib-avatar></bib-avatar>
       <span id="project-id-project-title" class=" font-w-700  mr-1 " style="font-size: 1.25rem;">{{project ? project.title : ''}}</span>
       <!-- <bib-page-title label="Page Title"></bib-page-title> -->
       <template v-if="project.status">
         <span id="project-id-badge-status" class="badge-status">{{project.status.text}}</span>
       </template>
       <div class="ml-auto d-flex gap-05 align-center position-relative" id="project-id-button-wraps">
-        <bib-avatar></bib-avatar>
+        <div class="team-avatar-list">
+          <bib-avatar v-for="(team, index) in teammates" :src="team.avatar" :style="{ left: -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar>
+        </div>
         <bib-button label="invite" variant="light" pill v-on:click="$nuxt.$emit('add-teammember-modal')"></bib-button>
         <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark" @click="setFavorite">
           <bib-icon class="m-auto" :icon="isFavorite.icon" :variant="isFavorite.variant"></bib-icon>
@@ -53,8 +55,8 @@
       <project-conversation v-if="activeTab.value == PROJECT_TAB_TITLES.conversations" :fields="TABLE_FIELDS" :tasks="projectTasks"></project-conversation>
       <!-- <task-timeline-view v-if="activeTab.value == PROJECT_TAB_TITLES.timeline" :fields="TABLE_FIELDS" :tasks="tasks" />
       <task-calendar-view v-if="activeTab.value == PROJECT_TAB_TITLES.calendar" :fields="TABLE_FIELDS" :tasks="tasks" /> -->
-      <task-team v-if="activeTab.value == PROJECT_TAB_TITLES.team" :fields="TABLE_FIELDS" :tasks="projectTasks"></task-team>
-      <task-files v-if="activeTab.value == PROJECT_TAB_TITLES.files" :fields="TABLE_FIELDS" :tasks="projectTasks"></task-files>
+      <task-team v-if="activeTab.value == PROJECT_TAB_TITLES.team"  ></task-team>
+      <project-files v-if="activeTab.value == PROJECT_TAB_TITLES.files"  ></project-files>
     </div>
     <!-- project rename modal -->
     <bib-modal-wrapper v-if="renameModal" title="Rename project" @close="renameModal = false">
@@ -121,7 +123,9 @@ export default {
   computed: {
     ...mapGetters({
       token: 'token/getToken',
+      allusers: "user/getTeamMembers",
       project: 'project/getSingleProject',
+      team: "project/getProjectMembers",
       projectSections: 'section/getProjectSections',
       projectTasks: "task/tasksForListView",
       taskFields: "task/tableFields",
@@ -143,6 +147,18 @@ export default {
         return { icon: "bookmark", variant: "gray5", text: "Add to favorites", status: false }
       }
     },
+    teammates(){
+      let tm = []
+      this.allusers.filter(u => {
+        // this.team.map(t => t.id == u.id)
+        this.team.forEach(t => {
+          if (t.id == u.id) {
+            tm.push(u)
+          }
+        })
+      })
+      return tm
+    }
   },
 
   created() {
@@ -256,16 +272,7 @@ export default {
         console.log(e)
       })
     },
-    async submitReport() {
-      // this.reportModal = !this.reportModal
-      /*const emai = await this.$axios.post(process.env.EMAIl_API_URL, {
-        from: "noreply@biztree.com",
-        to: "receiver@receiving.com",
-        subject: "email subject",
-        html: "<p>html string</p> "
-      })
-      console.log(emai)*/
-    },
+    
   }
 }
 
@@ -285,6 +292,13 @@ export default {
   .menu {
     margin-left: auto;
     margin-right: auto
+  }
+}
+
+.team-avatar-list {
+  position: relative;
+  .avatar:hover {
+    z-index: 11
   }
 }
 
