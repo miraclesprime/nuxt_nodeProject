@@ -34,6 +34,7 @@
         <div v-for="react in reactionGroup" :key="reactionKey + react.reaction + msg.id" class="reaction " :class=" ownReaction(react) " name="reaction1" @click.stop="deleteOwnReaction(react)">
           {{ react.reaction }} <span class="count">{{react.count}}</span>
         </div>
+        <bib-spinner v-if="reactionSpinner" :scale="2" variant="primary" ></bib-spinner>
       </div>
       <!-- <message-collapsible-section >
         <template slot="title">Reactions ({{ msg.reactions.length }})</template>
@@ -189,6 +190,7 @@ export default {
       replyLoading: false,
       reactions: [],
       reactionKey: 1,
+      reactionSpinner: false,
     }
   },
   computed: {
@@ -335,14 +337,16 @@ export default {
       return { sent: reaction.data.some(d => d.user.id == this.user.Id) }
     },
     deleteOwnReaction(reaction) {
+      this.reactionSpinner = true
       let react = reaction.data.find(d => d.user.id == this.user.Id)
       this.$axios.delete("/project/" + this.msg.id + "/reaction", {
           headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") },
           data: { reactionId: react.id },
         })
         .then(d => {
-          console.log(d.data)
+          // console.log(d.data)
           this.fetchReactions()
+          this.reactionSpinner = false
         })
         .catch(e => console.log(e))
     },
@@ -392,31 +396,47 @@ export default {
     onReactionClick({ data }) {
       // console.log(data)
       this.isReactionPickerOpen = false;
+      this.reactionSpinner = true
+      let duplicateReaction = this.reactions.some(r => r.userId == this.user.Id && r.reaction == data)
+      // console.warn(duplicateReaction)
       // this.$emit('reaction-clicked', this.msg.id, data);
-      this.$axios.post("/project/" + this.msg.id + "/reaction", { reaction: data }, {
-          headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
-        })
-        .then(d => {
-          // console.log(d.data)
-          if (d.data.statusCode == 200) {
-            // this.reactions.push(d.data.data)
-            this.fetchReactions()
-          }
-        })
-        .catch(e => console.log(e))
+      if (duplicateReaction) {
+        alert("Reaction already exists!")
+        this.reactionSpinner = false
+      } else {
+        this.$axios.post("/project/" + this.msg.id + "/reaction", { reaction: data }, {
+            headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
+          })
+          .then(d => {
+            // console.log(d.data)
+            if (d.data.statusCode == 200) {
+              this.fetchReactions()
+              this.reactionSpinner = false
+            }
+          })
+          .catch(e => console.log(e))
+      }
     },
     onLikeClick() {
-      this.$axios.post("/project/" + this.msg.id + "/reaction", { reaction: "👍" }, {
-          headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
-        })
-        .then(d => {
-          // console.log(d.data)
-          if (d.data.statusCode == 200) {
-            // this.reactions.push(d.data.data)
-            this.fetchReactions()
-          }
-        })
-        .catch(e => console.log(e))
+      this.reactionSpinner = true
+      let duplicateReaction = this.reactions.some(r => r.userId == this.user.Id && r.reaction == "👍")
+      if (duplicateReaction) {
+        alert("Reaction already exists!")
+        this.reactionSpinner = false
+      } else {
+        this.$axios.post("/project/" + this.msg.id + "/reaction", { reaction: "👍" }, {
+            headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
+          })
+          .then(d => {
+            // console.log(d.data)
+            if (d.data.statusCode == 200) {
+              // this.reactions.push(d.data.data)
+              this.fetchReactions()
+              this.reactionSpinner = false
+            }
+          })
+          .catch(e => console.log(e))
+      }
     },
     replyMessage() {
       console.log('reply message action')

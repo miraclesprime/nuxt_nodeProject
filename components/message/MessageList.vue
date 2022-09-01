@@ -52,7 +52,7 @@ export default {
       this.messages.map(m => {
         let d = dayjs(m.updatedAt)
         let diff = d.diff(dayjs(), 'd')
-        console.info(diff)
+        // console.info(diff)
         switch (diff) {
           case 0:
             msglist[2].data.push(m)
