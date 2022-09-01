@@ -11,8 +11,8 @@
         <span id="project-id-badge-status" class="badge-status">{{project.status.text}}</span>
       </template>
       <div class="ml-auto d-flex gap-05 align-center position-relative" id="project-id-button-wraps">
-        <div class="team-avatar-list">
-          <bib-avatar v-for="(team, index) in teammates" :src="team.avatar" :style="{ left: -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar>
+        <div class="team-avatar-list pr-05">
+          <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :style="{ left: -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
         </div>
         <bib-button label="invite" variant="light" pill v-on:click="$nuxt.$emit('add-teammember-modal')"></bib-button>
         <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark" @click="setFavorite">
@@ -148,15 +148,23 @@ export default {
       }
     },
     teammates(){
-      let tm = []
+      let tm = { main: [], extra: [] }
       this.allusers.filter(u => {
-        // this.team.map(t => t.id == u.id)
+        this.team.forEach((t, index) => {
+          if (t.id == u.id && index < 4) {
+            tm.main.push(u)
+          } else if(t.id == u.id) {
+            tm.extra.push(u)
+          }
+        })
+      })
+      /*this.allusers.filter(u => {
         this.team.forEach(t => {
           if (t.id == u.id) {
             tm.push(u)
           }
         })
-      })
+      })*/
       return tm
     }
   },
@@ -300,6 +308,7 @@ export default {
   .avatar:hover {
     z-index: 11
   }
+  .extra { margin-left: 0.75rem; color: $secondary; }
 }
 
 </style>
