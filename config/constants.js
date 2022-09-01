@@ -24,8 +24,7 @@ export const TABLE_FIELDS = [{
   }
 ];
 
-export const TASK_FIELDS = [
-  {
+export const TASK_FIELDS = [{
     key: "title",
     label: "Task name",
     width: "32%",
@@ -86,7 +85,62 @@ export const TASK_FIELDS = [
       isActive: false
     }
   },
-]
+];
+
+export const FILE_FIELDS = [{
+    key: "",
+    label: "#"
+  },{
+    key: "name",
+    label: "Name",
+    // width: "25%",
+    header_icon: {
+      icon: "swap-vertical",
+      event: "table-sort",
+      isActive: false,
+    }
+  },
+  {
+    key: "type",
+    label: "File type",
+    // width: "25%",
+    header_icon: {
+      icon: "swap-vertical",
+      event: "table-sort",
+      isActive: false,
+    }
+  },
+  {
+    key: "size",
+    label: "File size",
+    // width: "25%",
+    header_icon: {
+      icon: "swap-vertical",
+      event: "table-sort",
+      isActive: false,
+    }
+  },
+  {
+    key: "owner",
+    label: "Owner",
+    // width: "25%",
+    header_icon: {
+      icon: "swap-vertical",
+      event: "table-sort",
+      isActive: false,
+    }
+  },
+  {
+    key: "date",
+    label: "Upload date",
+    // width: "25%",
+    header_icon: {
+      icon: "swap-vertical",
+      event: "table-sort",
+      isActive: false,
+    }
+  }
+];
 
 export const TASKS = [{
     name: "Remind me what time it is",
@@ -189,40 +243,40 @@ export const PROJECT_TAB_TITLES = {
 // dream index page constants -----
 
 export const DREAM_TABS = [{
-  key: "overview",
-  value: "overview",
-  title: "Overview"
-},
-{
-  key: "goals",
-  value: "goals",
-  title: "Goals"
-},
-{
-  key: "projects",
-  value: "projects",
-  title: "Projects"
-},
-{
-  key: "tasks",
-  value: "tasks",
-  title: "Tasks"
-},
-{
-  key: "team",
-  value: "team",
-  title: "Team"
-},
-{
-  key: "conversations",
-  value: "conversations",
-  title: "Conversations"
-},
-{
-  key: "files",
-  value: "files",
-  title: "Files"
-}
+    key: "overview",
+    value: "overview",
+    title: "Overview"
+  },
+  {
+    key: "goals",
+    value: "goals",
+    title: "Goals"
+  },
+  {
+    key: "projects",
+    value: "projects",
+    title: "Projects"
+  },
+  {
+    key: "tasks",
+    value: "tasks",
+    title: "Tasks"
+  },
+  {
+    key: "team",
+    value: "team",
+    title: "Team"
+  },
+  {
+    key: "conversations",
+    value: "conversations",
+    title: "Conversations"
+  },
+  {
+    key: "files",
+    value: "files",
+    title: "Files"
+  }
 ];
 
 export const DREAM_DEFAULT_TAB = {
@@ -244,35 +298,35 @@ export const DREAM_TAB_TITLES = {
 // goal index page constants -----
 
 export const GOAL_TABS = [{
-  key: "overview",
-  value: "overview",
-  title: "Overview"
-},
-{
-  key: "projects",
-  value: "projects",
-  title: "Projects"
-},
-{
-  key: "tasks",
-  value: "tasks",
-  title: "Tasks"
-},
-{
-  key: "team",
-  value: "team",
-  title: "Team"
-},
-{
-  key: "conversations",
-  value: "conversations",
-  title: "Conversations"
-},
-{
-  key: "files",
-  value: "files",
-  title: "Files"
-}
+    key: "overview",
+    value: "overview",
+    title: "Overview"
+  },
+  {
+    key: "projects",
+    value: "projects",
+    title: "Projects"
+  },
+  {
+    key: "tasks",
+    value: "tasks",
+    title: "Tasks"
+  },
+  {
+    key: "team",
+    value: "team",
+    title: "Team"
+  },
+  {
+    key: "conversations",
+    value: "conversations",
+    title: "Conversations"
+  },
+  {
+    key: "files",
+    value: "files",
+    title: "Files"
+  }
 ];
 
 export const GOAL_DEFAULT_TAB = {
@@ -320,7 +374,7 @@ export const PROJECT_SORT = [
 ]
 
 export const PROJECT_TEAM_FIELDS = [
-  { label: '#', key: ''},
+  { label: '#', key: '' },
   { label: 'Name', key: 'name' },
   // { label: 'Location', key: 'location' },
   // { label: 'Position', key: 'position' },
@@ -365,9 +419,9 @@ export const PRIORITY = [
 ]
 
 export const PROJECT_FAVORITES = [
-  
-  { 
-    label: 'Project name', 
+
+  {
+    label: 'Project name',
     key: 'title',
     header_icon: {
       icon: 'swap-vertical',
@@ -376,8 +430,8 @@ export const PROJECT_FAVORITES = [
     },
     event: "project-click"
   },
-  { 
-    label: 'Department', 
+  {
+    label: 'Department',
     key: 'department',
     /*header_icon: {
       icon: 'swap-vertical',
@@ -385,38 +439,38 @@ export const PROJECT_FAVORITES = [
       isActive: false
     }*/
   },
-  { 
-    label: 'Status', 
-    key: 'status', 
-    width : '12%',
+  {
+    label: 'Status',
+    key: 'status',
+    width: '12%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
       isActive: false
     }
   },
-  { 
-    label: 'Priority', 
-    key: 'priority', 
-    width : '12%',
+  {
+    label: 'Priority',
+    key: 'priority',
+    width: '12%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
       isActive: false
     }
   },
-  { 
-    label: 'Owner', 
+  {
+    label: 'Owner',
     key: 'userId',
-    width : '20%',
+    width: '20%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
       isActive: false
     }
   },
-  { 
-    label: 'Due Date', 
+  {
+    label: 'Due Date',
     key: 'dueDate',
     width: '10%',
     header_icon: {
@@ -428,10 +482,10 @@ export const PROJECT_FAVORITES = [
 ]
 
 export const TASK_FAVORITES = [
-  
-  { 
-    label: 'Task name', 
-    key: 'title', 
+
+  {
+    label: 'Task name',
+    key: 'title',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -448,40 +502,40 @@ export const TASK_FAVORITES = [
       isActive: false,
     },
   },
-  { 
-    label: 'Status', 
-    key: 'status', 
-    width : '12%',
+  {
+    label: 'Status',
+    key: 'status',
+    width: '12%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
       isActive: false
     }
   },
-  { 
-    label: 'Priority', 
-    key: 'priority', 
-    width : '12%',
+  {
+    label: 'Priority',
+    key: 'priority',
+    width: '12%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
       isActive: false
     }
   },
-  { 
-    label: 'Owner', 
-    key: 'userId', 
-    width : '15%',
+  {
+    label: 'Owner',
+    key: 'userId',
+    width: '15%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
       isActive: false
     }
   },
-  { 
-    label: 'Due Date', 
-    key: 'dueDate', 
-    width : '10%',
+  {
+    label: 'Due Date',
+    key: 'dueDate',
+    width: '10%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -491,30 +545,30 @@ export const TASK_FAVORITES = [
 ]
 
 export const PROJECT_CONTEXT_MENU = [
-  { label: 'Add to Favorites', event: 'fav-project', variant: '', icon: 'bookmark', iconVariant:'gray5' },
-  { label: 'Share with', event: 'share-project', variant: '', icon: 'user-add', iconVariant:'gray5' },
-  { label: 'Rename', event: 'rename-project', variant: '', icon: 'pencil', iconVariant:'gray5' },
-  { label: 'Report', event: 'report-project', variant: '', icon: 'warning', iconVariant:'gray5' },
-  { label: 'Delete', event: 'delete-project', variant: 'danger', icon: '', iconVariant:'' },
+  { label: 'Add to Favorites', event: 'fav-project', variant: '', icon: 'bookmark', iconVariant: 'gray5' },
+  { label: 'Share with', event: 'share-project', variant: '', icon: 'user-add', iconVariant: 'gray5' },
+  { label: 'Rename', event: 'rename-project', variant: '', icon: 'pencil', iconVariant: 'gray5' },
+  { label: 'Report', event: 'report-project', variant: '', icon: 'warning', iconVariant: 'gray5' },
+  { label: 'Delete', event: 'delete-project', variant: 'danger', icon: '', iconVariant: '' },
 ]
 
 export const TASK_CONTEXT_MENU = [
-  { label: 'Mark Complete', event: 'done-task', variant: '', icon: 'check-circle', iconVariant:'gray5' },
-  { label: 'Add to Favorites', event: 'fav-task', variant: '', icon: 'bookmark', iconVariant:'gray5' },
-  { label: 'Attach file...', event: 'attach-file', variant: '', icon: 'upload', iconVariant:'gray5' },
-  { label: 'Assign to...', event: 'assign-task', variant: '', icon: 'user-add', iconVariant:'gray5' },
-  { label: 'Set as reminder', event: 'set-reminder', variant: '', icon: 'notification', iconVariant:'gray5' },
-  { label: 'Copy', event: 'copy-task', variant: '', icon: 'duplicate', iconVariant:'gray5' },
-  { label: 'Move', event: 'move-task', variant: '', icon: 'transfer', iconVariant:'gray5' },
-  { label: 'Report', event: 'report-task', variant: '', icon: 'warning', iconVariant:'gray5' },
-  { label: 'Delete', event: 'delete-task', variant: 'danger', icon: '', iconVariant:'' },
+  { label: 'Mark Complete', event: 'done-task', variant: '', icon: 'check-circle', iconVariant: 'gray5' },
+  { label: 'Add to Favorites', event: 'fav-task', variant: '', icon: 'bookmark', iconVariant: 'gray5' },
+  { label: 'Attach file...', event: 'attach-file', variant: '', icon: 'upload', iconVariant: 'gray5' },
+  { label: 'Assign to...', event: 'assign-task', variant: '', icon: 'user-add', iconVariant: 'gray5' },
+  { label: 'Set as reminder', event: 'set-reminder', variant: '', icon: 'notification', iconVariant: 'gray5' },
+  { label: 'Copy', event: 'copy-task', variant: '', icon: 'duplicate', iconVariant: 'gray5' },
+  { label: 'Move', event: 'move-task', variant: '', icon: 'transfer', iconVariant: 'gray5' },
+  { label: 'Report', event: 'report-task', variant: '', icon: 'warning', iconVariant: 'gray5' },
+  { label: 'Delete', event: 'delete-task', variant: 'danger', icon: '', iconVariant: '' },
 ]
 
 export const COMPANY_TASK_FIELDS = [
-  
-  { 
-    label: 'Task name', 
-    key: 'title', 
+
+  {
+    label: 'Task name',
+    key: 'title',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -531,40 +585,40 @@ export const COMPANY_TASK_FIELDS = [
       isActive: false,
     },
   },
-  { 
-    label: 'Status', 
-    key: 'status', 
-    width : '12%',
+  {
+    label: 'Status',
+    key: 'status',
+    width: '12%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
       isActive: false
     }
   },
-  { 
-    label: 'Priority', 
-    key: 'priority', 
-    width : '12%',
+  {
+    label: 'Priority',
+    key: 'priority',
+    width: '12%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
       isActive: false
     }
   },
-  { 
-    label: 'Owner', 
-    key: 'userId', 
-    width : '15%',
+  {
+    label: 'Owner',
+    key: 'userId',
+    width: '15%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
       isActive: false
     }
   },
-  { 
-    label: 'Due Date', 
-    key: 'dueDate', 
-    width : '10%',
+  {
+    label: 'Due Date',
+    key: 'dueDate',
+    width: '10%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -575,10 +629,10 @@ export const COMPANY_TASK_FIELDS = [
 
 
 export const USER_TASKS = [
-  
-  { 
-    label: 'Task name', 
-    key: 'title', 
+
+  {
+    label: 'Task name',
+    key: 'title',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -588,8 +642,8 @@ export const USER_TASKS = [
     event: "task-click",
   },
   {
-    label: 'Project', 
-    key: 'project', 
+    label: 'Project',
+    key: 'project',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -597,56 +651,56 @@ export const USER_TASKS = [
     },
     width: "15%",
   },
-  { 
-    label: 'Status', 
-    key: 'status', 
+  {
+    label: 'Status',
+    key: 'status',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
       isActive: false
     }
   },
-  { 
-    label: 'Start Date', 
-    key: 'createdAt', 
+  {
+    label: 'Start Date',
+    key: 'createdAt',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
       isActive: false
     }
   },
-  { 
-    label: 'Due Date', 
-    key: 'dueDate', 
+  {
+    label: 'Due Date',
+    key: 'dueDate',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
       isActive: false
     }
   },
-  { 
-    label: 'Priority', 
-    key: 'priority', 
+  {
+    label: 'Priority',
+    key: 'priority',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
       isActive: false
     }
   },
-  { 
-    label: 'Tag', 
-    key: 'tag', 
-    
+  {
+    label: 'Tag',
+    key: 'tag',
+
   },
-  { 
-    label: 'Team', 
-    key: 'team', 
-    
+  {
+    label: 'Team',
+    key: 'team',
+
   },
-  { 
-    label: 'Department', 
-    key: 'department', 
-    
+  {
+    label: 'Department',
+    key: 'department',
+
   },
 ]
 
@@ -677,15 +731,14 @@ export const DREAM_SORT = [
 
 export const COMPANY_TASK_SORT = [
   { label: 'Name', key: 'title' },
-  { label: 'Project', key: 'project'},
+  { label: 'Project', key: 'project' },
   { label: 'Status', key: 'status' },
   { label: 'Priority', key: 'priority' },
   { label: 'Owner', key: 'userId' },
   { label: 'Due Date', key: 'dueDate' },
 ]
 
-export const TaskTeamFields = [
-  {
+export const TaskTeamFields = [{
     label: '#',
     key: ''
   },
@@ -698,4 +751,4 @@ export const TaskTeamFields = [
     key: 'delete',
     width: '10%'
   }
-] 
+]

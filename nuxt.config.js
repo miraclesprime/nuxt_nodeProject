@@ -28,7 +28,9 @@ export default {
     "~/plugins/dateFormat.client.js",
     "~/plugins/statusFormat.client.js",
     "~/plugins/priorityFormat.client.js",
-    "~/plugins/userInfo.js"
+    "~/plugins/userInfo.js",
+    "~/../bib-shared/js/colors.js",
+    "~/../bib-shared/js/plugins.js",
     ],
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: [
