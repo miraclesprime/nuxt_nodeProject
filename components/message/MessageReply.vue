@@ -1,21 +1,27 @@
 <template>
-  <div class="reply">
-    <bib-avatar size="2.1875rem" ></bib-avatar>
-
+  <div class="reply position-relative" @mouseenter.stop="isActionBarShowing = true" @mouseleave="onActionBarMouseLeave">
+    <figure class=" flex-shrink-0 flex-grow-0">
+      <bib-avatar size="2.175rem"></bib-avatar>
+    </figure>
     <div class="content">
       <div class="info">
         <span class="name"> {{ reply.user.firstName }} {{ reply.user.lastName }} </span>
         <span class="time">{{displayDate}}</span>
       </div>
-
       <div class="reply-text" v-html="reply.comment">Your reply</div>
-
       <!-- <message-text
         :text="reply.text"
         @mention-click="openUserChat"
         @channel-mention-click="openChannel"
       /> -->
-
+      <div v-if="reactionsExist" class="reactions-section">
+        <div class="reactions">
+          <div v-for="react in reactionGroup" :key="reactionKey + react.reaction + reply.id" class="reaction " :class=" ownReaction(react) " @click.stop="deleteOwnReaction(react)">
+            {{ react.reaction }} <span class="count">{{react.count}}</span>
+          </div>
+          <bib-spinner v-if="reactionSpinner" :scale="2" variant="primary"></bib-spinner>
+        </div>
+      </div>
       <!-- <div v-if="reply.files.length" class="files-section">
         <message-collapsible-section>
           <template slot="title"><b>Files</b> ({{ reply.files.length }})</template>
@@ -96,23 +102,6 @@
           </template>
         </message-collapsible-section>
       </div> -->
-
-      <!-- <div v-if="reply.voices && reply.voices.length" class="voices">
-        <div v-for="voice in reply.voices" :key="voice" class="voice">
-          <audio controls>
-            <source :src="backendUrl(`files/serve/${voice}`)" />
-          </audio>
-        </div>
-      </div> -->
-
-      <!-- <div v-if="reply.videos && reply.videos.length" class="videos">
-        <div v-for="video in reply.videos" :key="video" class="video">
-          <video controls @click.stop>
-            <source :src="backendUrl(`files/serve/${video}`)" />
-          </video>
-        </div>
-      </div> -->
-
       <!-- <div v-if="reply.images && reply.images.length" class="images">
         <div v-for="image in reply.images" :key="image" class="image">
           <div class="image-overlay" @click="showImageModal(image)">
@@ -121,31 +110,49 @@
           <img :src="backendUrl(`files/serve/${image}`)" />
         </div>
       </div> -->
-
-      <!-- <div v-if="reactions.length > 0" class="reactions-section">
-        <message-collapsible-section variant="sm">
-          <template slot="title"> <b>Reactions</b> ({{ this.reply.reactions.length }}) </template>
-          <template slot="content">
-            <div class="reactions">
-              <div
-                v-for="react in reactions"
-                :key="react.reaction"
-                class="reaction"
-                :class="{ sent: react.sent }"
-                @click.stop="() => onReactionClick(react.reaction)"
-              >
-                {{ react.reaction }} <span class="count">{{ react.entries.length }}</span>
-              </div>
-            </div>
-          </template>
-        </message-collapsible-section>
-      </div> -->
+      
+    </div>
+    <div v-if="isActionBarShowing" class="actions-container" @click.stop>
+      <div class="action" @click.stop="onLikeClick">
+        <fa :icon="faThumbsUp" />
+      </div>
+      <tippy :visible="isReactionPickerOpen" :animate-fill="false" :distance="6" interactive placement="bottom-end" trigger="manual" :onHide="() => defer(() => (isReactionPickerOpen = false))">
+        <template slot="trigger">
+          <div class="action" :class="{ active: isReactionPickerOpen }" @click="toggleReactionPicker">
+            <fa :icon="faSmile" />
+          </div>
+        </template>
+        <div @click.stop>
+          <v-emoji-picker @select="onReactionClick" />
+        </div>
+      </tippy>
+      <div v-if="reply.userId == user.Id" class="action" @click="editReply">
+        <fa :icon="faPenToSquare"></fa>
+      </div>
+      <div v-if="canDeleteReply" class="action " @click="deleteReply">
+        <fa :icon="faTrash"></fa>
+      </div>
     </div>
   </div>
 </template>
-
 <script>
+import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
+import tippy from 'tippy.js';
+import VueTippy, { TippyComponent } from 'vue-tippy';
+import { VEmojiPicker } from 'v-emoji-picker';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import {
+  faFile,
+  faThumbsUp,
+  faSmile,
+  faShare,
+  faEllipsisH,
+  faStar as fasStar,
+  faPenToSquare,
+  faTrash,
+} from '@fortawesome/free-solid-svg-icons';
+import { faComment, faStar } from '@fortawesome/free-regular-svg-icons';
 // import { groupBy } from 'lodash';
 // import { mapState } from 'vuex';
 // import { getAvatarPlaceholder } from '~/utils/avatar';
@@ -153,6 +160,11 @@ import dayjs from 'dayjs'
 // import { backendUrl } from '~/utils/url';
 
 export default {
+  components: {
+    fa: FontAwesomeIcon,
+    tippy: TippyComponent,
+    VEmojiPicker,
+  },
   props: {
     reply: {
       type: Object,
@@ -161,19 +173,186 @@ export default {
   },
   data() {
     return {
+      faFile,
+      faThumbsUp,
+      faSmile,
+      faComment,
+      faShare,
+      faEllipsisH,
+      faStar,
+      fasStar,
+      faPenToSquare,
+      faTrash,
+      replyLoading: false,
+      reactions: [],
+      reactionKey: 1,
+      reactionSpinner: false,
       // isFileOverlayOpen: Object.fromEntries(this.reply.files.map((file) => [file._id, false])),
+      isActionBarShowing: false,
+      isReactionPickerOpen: false,
     };
   },
   computed: {
-    // ...mapState(['imagePreviewModal']),
+    ...mapGetters({
+      user: "user/getUser2",
+      members: 'user/getTeamMembers'
+    }),
+    userInfo() {
+      if (this.members.length) {
+        let u = this.members.find((el) => el.id == this.reply.userId)
+        // console.log(u)
+        return { id: u.id, name: u.firstName + ' ' + u.lastName, email: u.email, pic: u.avatar, jobTitle: "Title/Company Name" }
+      }
+    },
     displayDate() {
       let d = new Date(this.reply.updatedAt)
       let dd = dayjs(this.reply.updatedAt).format('dddd, D MMM, YYYY @ HH:mm')
       // return d.toDateString()
       return dd
     },
+    reactionsExist() {
+      if (this.reply.reactions?.length || this.reactionGroup.length) {
+        return true
+      } else {
+        return false
+      }
+      // return this.reply.reactions?.length ? true : false
+    },
+    reactionGroup() {
+      let rg = []
+      console.log("reply reactions=> ", this.reply.reactions)
+      if (this.reactions.length) {
+        this.reactions.map(r => {
+          let rindex = rg.findIndex((el) => el.reaction == r.reaction)
+          let relem = rg.find((el, index) => el.reaction == r.reaction)
+          // console.log(relem, rindex)
+          if (relem == undefined) {
+            rg.push({ reaction: r.reaction, count: 1, data: [{ id: r.id, user: r.user }] })
+          } else {
+            rg[rindex].count += 1
+            rg[rindex].data.push({ id: r.id, user: r.user })
+          }
+        })
+      }
+      // console.log(rg)
+      this.reactionKey += 1
+      return rg
+    },
+    canDeleteReply() {
+      if (this.reply.userId == this.user.Id) {
+        return true;
+      }
+      return false
+    },
+  },
+  fetch(){
+    // console.info("fetch");
+    this.reactions = _.cloneDeep(this.reply.reactions);
+    // this.fetchReactions()
+  },
+  mounted(){
+    // console.info("mounted");
+    // console.log(this.$fetchState)
   },
   methods: {
+    defer(func) {
+      setTimeout(func, 10);
+    },
+    onActionBarMouseLeave() {
+      if (!this.isReactionPickerOpen) {
+        this.isActionBarShowing = false;
+        // this.isMenuOpen = false;
+        this.isReactionPickerOpen = false;
+      }
+    },
+    fetchReactions() {
+      this.$axios.get('/project/replies/' + this.reply.id + "/reactions", {
+          headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
+        })
+        .then(r => {
+          // console.log(r)
+          if (r.data.statusCode == 200) {
+            this.reactions = r.data.data
+            this.reactionKey += 1
+          }
+        })
+        .catch(e => console.log(e))
+    },
+    ownReaction(reaction) {
+      // console.log(reaction, this.user.Id)
+      return { sent: reaction.data.some(d => d.user.id == this.user.Id) }
+    },
+    toggleReactionPicker() {
+      this.isReactionPickerOpen = !this.isReactionPickerOpen;
+      // this.isMenuOpen = false;
+    },
+    deleteOwnReaction(reaction) {
+      this.reactionSpinner = true
+      let react = reaction.data.find(d => d.user.id == this.user.Id)
+      this.$axios.delete("/project/replies/" + this.reply.id + "/reaction", {
+          headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") },
+          data: { reactionId: react.id },
+        })
+        .then(d => {
+          // console.log(d.data)
+          this.fetchReactions()
+          this.reactionSpinner = false
+        })
+        .catch(e => console.log(e))
+    },
+    onReactionClick({ data }) {
+      // console.log(data)
+      this.isReactionPickerOpen = false;
+      this.reactionSpinner = true
+      let duplicateReaction = this.reactions.some(r => r.userId == this.user.Id && r.reaction == data)
+      // console.warn(duplicateReaction)
+      // this.$emit('reaction-clicked', this.reply.id, data);
+      if (duplicateReaction) {
+        alert("Reaction already exists!")
+        this.reactionSpinner = false
+      } else {
+        this.$axios.post("/project/replies/" + this.reply.id + "/reaction", { reaction: data }, {
+            headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
+          })
+          .then(d => {
+            // console.log(d.data)
+            if (d.data.statusCode == 200) {
+              this.fetchReactions()
+              this.reactionSpinner = false
+            }
+          })
+          .catch(e => console.log(e))
+      }
+    },
+    onLikeClick() {
+      this.reactionSpinner = true
+      let duplicateReaction = this.reactions.some(r => r.userId == this.user.Id && r.reaction == "👍")
+      if (duplicateReaction) {
+        alert("Reaction already exists!")
+        this.reactionSpinner = false
+      } else {
+        this.$axios.post("/project/replies/" + this.reply.id + "/reaction", { reaction: "👍" }, {
+            headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
+          })
+          .then(d => {
+            // console.log(d.data)
+            if (d.data.statusCode == 200) {
+              // this.reactions.push(d.data.data)
+              this.fetchReactions()
+              this.reactionSpinner = false
+            }
+          })
+          .catch(e => console.log(e))
+      }
+    },
+    editReply() {
+      this.$nuxt.$emit('edit-reply', this.reply);
+      // this.isMenuOpen = false;
+    },
+    deleteReply() {
+      this.$emit('delete-reply', { projectId: this.reply.projectId, commentId: this.reply.id });
+      // this.isMenuOpen = false;
+    },
     // getAvatarPlaceholder,
     // makeDateString,
     // makeTimeString,
@@ -202,8 +381,8 @@ export default {
     },*/
   },
 };
-</script>
 
+</script>
 <style lang="scss" scoped>
 .reply {
   display: flex;
@@ -214,6 +393,12 @@ export default {
   padding-top: 12px;
   border-top: 1px solid rgba(29, 29, 32, 0.12);
   gap: 10px;
+  /*&:hover {
+    .actions-container {
+      top: 10px;
+      opacity: 1;
+    }
+  }*/
 }
 
 .name {
@@ -233,9 +418,72 @@ export default {
   line-height: 1.5;
   color: $gray6;
 }
-.reply-text { color: $gray6;
-  a { color: $primary; text-decoration: underline; }
- }
+
+.reply-text {
+  color: $gray6;
+
+  a {
+    color: $primary;
+    text-decoration: underline;
+  }
+}
+.actions-container {
+  position: absolute;
+  padding: 6px;
+  background-color: #dcdcdf;
+  border-radius: 8px;
+  top: 10px;
+  right: 5px;
+  gap: 5px;
+  display: flex;
+  /*opacity: 0;*/
+  transition: all 200ms ease;
+}
+
+.action {
+  width: 28px;
+  height: 28px;
+  font-size: 14px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f2f2f5;
+  color: #b1b1b4;
+  cursor: pointer;
+
+  &.active {
+    background: $dark;
+    color: white !important;
+  }
+
+  &.liked {
+    color: #2ba026 !important;
+  }
+
+  &.reaction-picker-open {
+    color: #ffa200;
+  }
+
+  &.favorite.favorited {
+    ::v-deep svg {
+      fill: #2ba026;
+    }
+  }
+
+  &:hover {
+    color: $dark;
+
+    ::v-deep svg {
+      fill: $dark;
+    }
+  }
+
+  ::v-deep svg {
+    width: 16px;
+    fill: #b1b1b4;
+  }
+}
 
 .reactions-section {
   margin-top: 5px;
@@ -247,20 +495,20 @@ export default {
   }
 
   .reaction {
-    font-size: 17px;
-    padding: 4px 8px;
+    font-size: 16px;
+    padding: 2px 4px;
     border-radius: 8px;
-    background-color: rgb(224, 224, 224);
+    border: 1px solid $gray4;
     cursor: pointer;
 
     &.sent {
-      background-color: rgb(239, 246, 255);
+      background-color: $warning-sub3;
+      border-color: $gray5;
     }
 
     .count {
-      font-size: 13px;
-      color: rgb(78, 78, 78);
-      vertical-align: middle;
+      font-size: 14px;
+      color: $gray6;
     }
   }
 }
@@ -403,4 +651,5 @@ export default {
     }
   }
 }
+
 </style>
