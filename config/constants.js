@@ -221,6 +221,11 @@ export const PROJECT_TABS = [{
     key: "files",
     value: "files",
     title: "Files"
+  },
+  {
+    key: "history",
+    value: "history",
+    title: "history",
   }
 ];
 
@@ -237,7 +242,8 @@ export const PROJECT_TAB_TITLES = {
   calendar: "calendar",
   team: "team",
   conversations: "conversations",
-  files: "files"
+  files: "files",
+  history: "history",
 };
 
 // dream index page constants -----

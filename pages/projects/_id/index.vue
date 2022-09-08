@@ -55,8 +55,9 @@
       <project-conversation v-if="activeTab.value == PROJECT_TAB_TITLES.conversations" :fields="TABLE_FIELDS" :tasks="projectTasks"></project-conversation>
       <!-- <task-timeline-view v-if="activeTab.value == PROJECT_TAB_TITLES.timeline" :fields="TABLE_FIELDS" :tasks="tasks" />
       <task-calendar-view v-if="activeTab.value == PROJECT_TAB_TITLES.calendar" :fields="TABLE_FIELDS" :tasks="tasks" /> -->
-      <task-team v-if="activeTab.value == PROJECT_TAB_TITLES.team"  ></task-team>
-      <project-files v-if="activeTab.value == PROJECT_TAB_TITLES.files"  ></project-files>
+      <task-team v-if="activeTab.value == PROJECT_TAB_TITLES.team" ></task-team>
+      <project-files v-if="activeTab.value == PROJECT_TAB_TITLES.files" ></project-files>
+      <project-history v-if="activeTab.value == PROJECT_TAB_TITLES.history" ></project-history>
     </div>
     <!-- project rename modal -->
     <bib-modal-wrapper v-if="renameModal" title="Rename project" @close="renameModal = false">

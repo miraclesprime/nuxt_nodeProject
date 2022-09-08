@@ -200,7 +200,8 @@ export const mutations = {
     if(payload.sName == 'priority' && payload.order == 'desc') {
       state.userTasks.sort((a,b) => b.priority.text.localeCompare(a.priority.text))
     }*/
-  }
+  },
+  
 };
 
 
@@ -246,5 +247,7 @@ export const actions = {
 
   sortUserTasks(ctx, payload) {
     ctx.commit('sortUserTasks', payload)
-  }
+  },
+
+  
 };
