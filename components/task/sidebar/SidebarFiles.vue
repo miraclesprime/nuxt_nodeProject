@@ -20,7 +20,7 @@
     </div>
     <div class="of-scroll-y h-100" id="task-files">
       <template v-if="displayType == 'list'">
-        <bib-table :fields="tableFields" :sections="dbFiles" :hide-no-column="true">
+        <bib-table :fields="tableFields" :sections="dbFiles" :hide-no-column="true" :key="fileKey">
           <template #cell(name)="data">
             <div class="d-flex align-center gap-05">
               <bib-avatar v-if="imageType(data.value)" shape="rounded" :src="data.value.url" size="1.5rem">
@@ -51,11 +51,21 @@
           <template #cell(date)="data">
             <format-date :datetime="data.value.updatedAt"></format-date>
           </template>
+          <template #cell_action="data">
+            <div class="d-flex">
+              <div class="shape-rounded width-105 height-105 d-flex justify-center align-center cursor-pointer bg-hover-gray4" @click="downloadFile(data.value)">
+                <bib-icon icon="align-bottom"></bib-icon>
+              </div>
+              <div class="shape-rounded width-105 height-105 d-flex justify-center align-center cursor-pointer bg-hover-gray4" @click="deleteFile(data.value)">
+                <bib-icon icon="trash" variant="danger"></bib-icon>
+              </div>
+            </div>
+          </template>
         </bib-table>
       </template>
       <template v-if="displayType == 'grid'">
         <div class="files d-flex flex-wrap gap-1 p-1">
-          <bib-file v-for="file in files" :key="file.key" :property="file"></bib-file>
+          <bib-file v-for="file in files" :key="file.key + fileKey" :property="file"></bib-file>
         </div>
       </template>
     </div>
@@ -89,7 +99,8 @@ export default {
       isFileFavorite: false,
       uploadModal: false,
       fileLoader: false,
-      dbFiles: []
+      dbFiles: [],
+      fileKey: 1
     }
   },
   computed: {
@@ -152,13 +163,15 @@ export default {
       })
       console.log(fi.data)
       if (fi.data.statusCode == 200) {
-        this.getFiles()
+        this.getFiles().then((res) => {
+          this.fileKey += 1;
+        })
       }
       this.fileLoader = false
       this.uploadModal = false
     },
 
-    getFiles() {
+    async getFiles() {
       let obj1 = { taskId: this.task.id }
       this.$axios.get("file/db/all", {
         headers: {
@@ -171,6 +184,53 @@ export default {
           this.dbFiles = f.data.data
         }
       })
+    },
+
+    downloadFile(file) {
+
+      this.$axios.get("file/" + file.key, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          }
+        }).then(f => {
+        
+          if (f.data.statusCode == 200) {
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = f.data.data;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(f.data.data);
+
+            this.getFiles().then((res) => {
+              this.fileKey += 1;
+            })
+          }
+        })
+        .catch(e => console.error(e))
+
+    },
+
+    deleteFile(file) {
+      let del = window.confirm("Are you sure want to delete?")
+      if (del) {
+        this.$axios.delete("file/" + file.key, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            }
+          }).then(f => {
+            // console.log(f.data)
+            if (f.data.statusCode == 200) {
+              alert(f.data.message);
+              _.delay(() => {
+                this.getFiles().then((res) => {
+                  this.fileKey += 1;
+                })
+              }, 2000);
+            }
+          })
+          .catch(e => console.error(e))
+      }
     },
 
   }
