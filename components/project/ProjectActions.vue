@@ -1,7 +1,7 @@
 <template>
-  <div id="project-action-wrapper" class="task-actions ml-05">
+  <div id="project-action-wrapper" class="task-actions py-025 ml-025">
     <div id="pa-add-project-wrapper" class="action-left">
-      <div class="d-flex gap-05 cursor-pointer text-secondary text-hover-dark" id="pa-add-project-button" v-on:click="showCreateTaskModal">
+      <div class="d-flex gap-05 shape-rounded py-025 px-05 cursor-pointer text-secondary text-hover-dark bg-hover-gray3" id="pa-add-project-button" v-on:click="showCreateTaskModal">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-task-text">New Project</span>
       </div>
     </div>
@@ -99,7 +99,7 @@ export default {
 <style scoped lang="scss">
 .task-actions {
   display: flex;
-  padding: 8px 0;
+  /*padding: 0.25em 0;*/
   border-bottom: 1px solid $gray4;
   align-items: center;
 }

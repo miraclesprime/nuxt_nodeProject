@@ -36,7 +36,7 @@ export const mutations = {
 
 export const actions = {
   async fetchTodos(ctx, payload) {
-    console.log(payload)
+    // console.log(payload)
     const res = await this.$axios.$get('/todo/all', {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter ? payload.filter : 'all' }
     });

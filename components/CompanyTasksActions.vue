@@ -1,7 +1,7 @@
 <template>
   <div id="task-actions-wrapper" class="task-actions p-025 ">
     <div class="action-left d-flex " id="ta-action-left">
-      <div class="d-flex gap-05 cursor-pointer text-secondary text-hover-dark" id="ta-add-task-button" v-on:click.stop="showCreateTaskModal">
+      <div class="d-flex gap-05 py-025 px-05 shape-rounded cursor-pointer bg-hover-gray3 text-secondary text-hover-dark" id="ta-add-task-button" v-on:click.stop="showCreateTaskModal">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-task-text" class="">New Task</span>
       </div>
       
