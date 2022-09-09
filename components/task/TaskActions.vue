@@ -2,10 +2,10 @@
   <div id="task-actions-wrapper" class="task-actions p-025 ">
     <div class="action-left d-flex " id="ta-action-left">
   
-      <div class="d-flex gap-05 cursor-pointer text-secondary text-hover-dark" id="ta-add-task-button" v-on:click.stop="showCreateTaskModal">
+      <div class="d-flex gap-05 shape-rounded py-025 px-05 cursor-pointer text-secondary text-hover-dark bg-hover-gray3" id="ta-add-task-button" v-on:click.stop="showCreateTaskModal">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-task-text" class="">New Task</span>
       </div>
-      <div class="d-flex gap-05 ml-1 cursor-pointer text-secondary text-hover-dark" id="ta-add-section-button" v-on:click="createSectionInline('true')">
+      <div class="d-flex gap-05 ml-1 shape-rounded py-025 px-05 cursor-pointer text-secondary text-hover-dark bg-hover-gray3" id="ta-add-section-button" v-on:click="createSectionInline('true')">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-section-text" class="">New Section</span>
       </div>
     </div>

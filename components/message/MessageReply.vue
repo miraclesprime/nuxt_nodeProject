@@ -1,11 +1,11 @@
 <template>
   <div class="reply position-relative" @mouseenter.stop="isActionBarShowing = true" @mouseleave="onActionBarMouseLeave">
     <figure class=" flex-shrink-0 flex-grow-0">
-      <bib-avatar size="2.175rem"></bib-avatar>
+      <bib-avatar size="2.175rem" :src="$userInfo(reply.userId).Photo"></bib-avatar>
     </figure>
     <div class="content">
       <div class="info">
-        <span class="name"> {{ reply.user.firstName }} {{ reply.user.lastName }} </span>
+        <span class="name"> {{ $userInfo(reply.userId).FirstName }} {{ $userInfo(reply.userId).LastName }} </span>
         <span class="time">{{displayDate}}</span>
       </div>
       <div class="reply-text" v-html="reply.comment">Your reply</div>
@@ -220,7 +220,7 @@ export default {
     },
     reactionGroup() {
       let rg = []
-      console.log("reply reactions=> ", this.reply.reactions)
+      // console.log("reply reactions=> ", this.reply.reactions)
       if (this.reactions.length) {
         this.reactions.map(r => {
           let rindex = rg.findIndex((el) => el.reaction == r.reaction)

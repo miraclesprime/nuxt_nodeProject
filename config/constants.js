@@ -87,58 +87,29 @@ export const TASK_FIELDS = [{
   },
 ];
 
-export const FILE_FIELDS = [{
+export const FILE_FIELDS = [
+  {
     key: "",
     label: "#"
   },{
     key: "name",
     label: "Name",
-    // width: "25%",
-    header_icon: {
-      icon: "swap-vertical",
-      event: "table-sort",
-      isActive: false,
-    }
   },
   {
     key: "type",
     label: "File type",
-    // width: "25%",
-    header_icon: {
-      icon: "swap-vertical",
-      event: "table-sort",
-      isActive: false,
-    }
   },
   {
     key: "size",
     label: "File size",
-    // width: "25%",
-    header_icon: {
-      icon: "swap-vertical",
-      event: "table-sort",
-      isActive: false,
-    }
   },
   {
     key: "owner",
     label: "Owner",
-    // width: "25%",
-    header_icon: {
-      icon: "swap-vertical",
-      event: "table-sort",
-      isActive: false,
-    }
   },
   {
     key: "date",
     label: "Upload date",
-    // width: "25%",
-    header_icon: {
-      icon: "swap-vertical",
-      event: "table-sort",
-      isActive: false,
-    }
   }
 ];
 
@@ -221,6 +192,11 @@ export const PROJECT_TABS = [{
     key: "files",
     value: "files",
     title: "Files"
+  },
+  {
+    key: "history",
+    value: "history",
+    title: "history",
   }
 ];
 
@@ -237,7 +213,8 @@ export const PROJECT_TAB_TITLES = {
   calendar: "calendar",
   team: "team",
   conversations: "conversations",
-  files: "files"
+  files: "files",
+  history: "history",
 };
 
 // dream index page constants -----

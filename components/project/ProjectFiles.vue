@@ -2,7 +2,7 @@
   <div id="project-files-wrapper" class="h-100">
     <div id="project-file-actions-wrapper" class="file-actions d-flex align-center p-025 ">
       <div class="action-left d-flex " id="file-action-left">
-        <div class="d-flex gap-05 cursor-pointer shape-rounded bg-hover-gray3 py-025 px-05 text-secondary text-hover-dark" id="file-upload-button" @click="uploadFileModal">
+        <div class="d-flex gap-05 cursor-pointer shape-rounded bg-hover-gray3 py-025 px-05 text-secondary text-hover-dark" id="file-upload-button" @click="uploadModal = true">
           <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="file-upload-text" class="">Upload File</span>
         </div>
         <!-- <div class="d-flex gap-05 ml-1 cursor-pointer text-secondary text-hover-dark" id="file-add-section-button" >
@@ -29,15 +29,15 @@
     </div>
     <div class="of-scroll-y h-100" id="project-files">
       <template v-if="displayType == 'list'">
-        <bib-table :fields="tableFields" :sections="files" :hide-no-column="true">
+        <bib-table :fields="tableFields" :sections="dbFiles" :key="tempKey" :hide-no-column="true">
           <template #cell(name)="data">
-            <div class="d-flex align-center gap-05">
-              <bib-avatar v-if="data.value.preview" shape="rounded" :src="data.value.preview" size="1.5rem">
+            <div class="d-flex align-center gap-05 ">
+              <bib-avatar v-if="imageType(data.value)" shape="rounded" :src="data.value.url" size="1.5rem">
               </bib-avatar>
-              <bib-icon v-else-if="data.value.extension == 'docx'" icon="word" :scale="1.25"></bib-icon>
-              <bib-icon v-else-if="data.value.extension == 'xlsx'" icon="excel" :scale="1.25"></bib-icon>
-              <bib-icon v-else-if="data.value.extension == 'pptx'" icon="powerpoint" :scale="1.25"></bib-icon>
-              <bib-icon v-else-if="data.value.extension == 'pdf'" icon="pdf" :scale="1.25"></bib-icon>
+              <bib-icon v-else-if="data.value.extension == '.docx'" icon="word" :scale="1.25"></bib-icon>
+              <bib-icon v-else-if="data.value.extension == '.xlsx'" icon="excel" :scale="1.25"></bib-icon>
+              <bib-icon v-else-if="data.value.extension == '.pptx'" icon="powerpoint" :scale="1.25"></bib-icon>
+              <bib-icon v-else-if="data.value.extension == '.pdf'" icon="pdf" :scale="1.25"></bib-icon>
               <bib-icon v-else icon="file-text-solid" variant="gray4" :scale="1.25"></bib-icon>
               <span class="text-gray1">
                 {{ data.value.name }}
@@ -46,10 +46,7 @@
           </template>
           <template #cell(type)="data">
             <div class=" text-gray1">
-              <span class="text-capitalize">
-                {{ data.value.type }}
-              </span>
-              ({{ data.value.extension.toLowerCase() }})
+              {{ data.value.extension }}
             </div>
           </template>
           <template #cell(size)="data">
@@ -58,22 +55,29 @@
             </div>
           </template>
           <template #cell(owner)="data">
-            <div class=" text-gray1">
-              {{ data.value.owner }}
-            </div>
+            <user-info :userId="data.value.userId"></user-info>
           </template>
           <template #cell(date)="data">
-            <div class=" text-gray1">
-              {{ data.value.updatedAt }}
+            <format-date :datetime="data.value.updatedAt"></format-date>
+          </template>
+          <template #cell_action="data">
+            <div class="d-flex">
+              <div class="shape-rounded width-105 height-105 d-flex justify-center align-center cursor-pointer bg-hover-gray4" @click="downloadFile(data.value)">
+                <bib-icon icon="align-bottom"></bib-icon>
+              </div>
+              <div class="shape-rounded width-105 height-105 d-flex justify-center align-center cursor-pointer bg-hover-gray4" @click="deleteFile(data.value)">
+                <bib-icon icon="trash" variant="danger"></bib-icon>
+              </div>
             </div>
           </template>
         </bib-table>
       </template>
       <template v-if="displayType == 'grid'">
         <div class="files d-flex flex-wrap gap-1 p-1">
-          <bib-file v-for="(file, index) in files" :key="'file'+index" :property="file"></bib-file>
+          <bib-file v-for="(file, index) in files" :key="file.key + tempKey" :property="file" @click.native="downloadFile(file)"></bib-file>
         </div>
       </template>
+      <loading :loading="loading"></loading>
       <!-- <div v-for="n in 15" class="file bg-secondary-sub3 border-hover-gray4 ">
         <img :src="'https://loremflickr.com/320/240?random='+n" alt="">
         <div class="d-flex align-center gap-05 p-05">
@@ -82,16 +86,11 @@
       </div> -->
     </div>
     <bib-modal-wrapper v-if="uploadModal" title="Select file(s)" @close="uploadModal = false">
-      <!-- <template slot="header">
-        <bib-icon variant="gray5" class="cursor-pointer" :scale="1.2" icon="comment-forum"></bib-icon>
-        <bib-icon variant="gray5" class="cursor-pointer ml-05" :scale="1.2" icon="attachment"></bib-icon>
-        <bib-icon variant="gray5" class="cursor-pointer ml-05" :scale="1.2" icon="share-arrow"></bib-icon>
-        <bib-icon variant="gray5" class="cursor-pointer ml-05" :scale="1.2" icon="trash"></bib-icon>
-      </template> -->
       <template slot="content">
         <div style="margin-left: -1rem; margin-right: -1rem;">
           <bib-input type="file" ref="files" @files-dropped="handleChangeFile" variant="accepted" iconLeft="upload" placeholder="Upload from device"></bib-input>
         </div>
+        <loading :loading="fileLoader"></loading>
       </template>
       <template slot="footer">
         <div class="d-flex">
@@ -103,6 +102,7 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import { FILE_FIELDS } from "~/config/constants"
 export default {
   name: "ProjectFiles",
@@ -110,8 +110,9 @@ export default {
     return {
       displayType: 'grid',
       tableFields: FILE_FIELDS,
-      files: [{
-          name: "File Name",
+      loading: false,
+      /*files: [{
+          name: "https://loremflickr.com/640/360?random=1",
           variant: "success",
           preview: "https://loremflickr.com/640/360?random=1",
           extension: "png",
@@ -121,63 +122,182 @@ export default {
           updatedAt: "2022-08-22T22:40:21",
         },
         {
-          name: "Long File Name for microsoft word document file",
+          name: "Long File Name for microsoft word file",
           // preview: "https://loremflickr.com/640/360?random=2",
           extension: "docx",
           type: "File",
           size: "534",
         },
         {
-          name: "Extraaa Long File Name for adobe pdf file",
+          name: "Long File Name for adobe pdf file",
           // preview: "https://loremflickr.com/640/360?random=2",
           extension: "pdf",
           type: "File",
           size: "534",
         },
         {
-          name: "Extraaa Long File Name for microsoft excel file",
+          name: "Long File Name for microsoft excel file",
           // preview: "https://loremflickr.com/640/360?random=2",
           extension: "xlsx",
           type: "File",
           size: "534",
         },
         {
-          name: "Extra Long File Name for microsoft powerpoint file",
+          name: "Extra Long File Name for microsoft powerpoint presentation file",
           // preview: "https://loremflickr.com/640/360?random=2",
           extension: "pptx",
           type: "File",
           size: "534",
         },
-      ],
+      ],*/
       isFileFavorite: false,
       uploadModal: false,
+      fileLoader: false,
+      dbFiles: [],
+      tempKey: 1,
     }
   },
+  computed: {
+    ...mapGetters({
+      project: "project/getSingleProject"
+    }),
+    files() {
+      let files = []
+      this.dbFiles.map((dbf) => {
+        files.push({
+          name: dbf.name,
+          key: dbf.key,
+          preview: dbf.url,
+          extension: dbf.extension,
+          type: dbf.type,
+          size: dbf.size,
+          owner: dbf.userId,
+          updatedAt: dbf.updatedAt,
+          createdAt: dbf.createdAt,
+        })
+      })
+      return files
+    }
+  },
+  mounted() {
+    console.log('mounted, project id->', this.project.id)
+    this.getFiles()
+    /*let obj1 = { projectId: this.project.id }
+    this.$axios.get("file/db/all", {
+      headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          'obj': JSON.stringify(obj1)
+        }
+    }).then(f=>{
+      console.log(f.data)
+      if (f.data.statusCode == 200) {
+        this.dbFiles = f.data.data
+      }
+    })*/
+  },
   methods: {
-    uploadFileModal() {
+    /*uploadFileModal() {
       this.uploadModal = true
+    },*/
+    imageType(data) {
+      // data.extension == '.png'
+      // console.log(data)
+      if (data.type.indexOf("image/") == 0) {
+        return true
+      } else { return false }
     },
     handleChangeFile(files, event) {
       // console.info(this.$refs.files.filesUploaded)
       // console.log(files, event.target.files)
-      // console.warn(this.$refs.files.$el);
     },
     async uploadFiles() {
+      this.fileLoader = true
       let myfiles = this.$refs.files.filesUploaded
 
       let formdata = new FormData()
       myfiles.forEach(file => {
         formdata.append('files', file)
       })
+      formdata.append('projectId', this.project.id)
+
       const fi = await this.$axios.post("/file/upload", formdata, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
         }
       })
-      console.log(fi)
-      if (fi.statusCode == 200) {
-        console.log(fi.data)
+      // console.log(fi.data)
+      if (fi.data.statusCode == 200) {
+        // console.log(fi.data)
+        _.delay(() => {
+          // console.log('delay->', fi.data);
+          this.getFiles()
+        }, 2000);
+      }
+      this.fileLoader = false
+      this.uploadModal = false
+    },
+    getFiles() {
+      this.loading = true
+      let obj1 = { projectId: this.project.id }
+      this.$axios.get("file/db/all", {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          'obj': JSON.stringify(obj1)
+        }
+      }).then(f => {
+        // console.log(f.data)
+        if (f.data.statusCode == 200) {
+          this.loading = false
+          this.dbFiles = f.data.data
+          this.tempKey += 1
+        }
+      }).catch(e => {
+        console.error(e)
+        this.loading = false
+      })
+    },
+    downloadFile(file) {
+      // console.log(file.key)
+      // let key = file.key.split('.')
+      this.$axios.get("file/" + file.key, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          }
+        }).then(f => {
+          console.log(f.data)
+          if (f.data.statusCode == 200) {
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = f.data.data;
+            // the filename you want
+            // a.download = 'todo-1.json';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(f.data.data);
+            alert('your file has downloaded!');
+          }
+        })
+        .catch(e => console.error(e))
+    },
+    deleteFile(file) {
+      let del = window.confirm("Are you sure want to delete?")
+      if (del) {
+        this.$axios.delete("file/" + file.key, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            }
+          }).then(f => {
+            console.log(f.data)
+            if (f.data.statusCode == 200) {
+              alert(f.data.message);
+              _.delay(() => {
+                // console.log('delay->', fi.data);
+                this.getFiles()
+              }, 2000);
+            }
+          })
+          .catch(e => console.error(e))
       }
     },
   }
