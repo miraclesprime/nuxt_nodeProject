@@ -6,7 +6,7 @@
       </figure>
       <div class="content">
         <div class="info">
-          <span class="name"> {{ $userInfo(hist.user.id).FirstName }} {{ $userInfo(hist.user.id).LastName }} </span>
+          <span class="name">{{ $userInfo(hist.user.id).FirstName }} {{ $userInfo(hist.user.id).LastName }}</span>
           <span class="time">{{displayDate}}</span>
         </div>
         <div class="history-text">changed date to 25-08-2022</div>
