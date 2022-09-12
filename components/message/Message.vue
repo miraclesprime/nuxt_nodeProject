@@ -3,6 +3,8 @@
     <figure class="width-4 user-avatar cursor-pointer" :class="{active: userCardVisible}" @click="toggleUserCard">
       <bib-avatar size="3rem" :src="userInfo.pic"></bib-avatar>
     </figure>
+
+    <!-- user info card on click -->
     <div class="user-card bg-white " :class="{active: userCardVisible}">
       <div class="user-info">
         <span class="d-inline-block user-name text-wrap of-hidden text-of-elipsis max-width-13">{{userInfo.name}} </span>
@@ -22,31 +24,40 @@
         </div>
       </div>
     </div>
+
+    <!-- user info -->
     <div class="msg__owner pb-025">{{userInfo.name}} <span class="ml-1 font-sm">{{displayDate}}</span>
     </div>
-    <!-- <p>{{msg.id}}</p> -->
+
+    <!-- message content -->
     <div class="msg__content pb-05" v-html="msg.comment">
       <p>Lorem ipsum dolor sit amet consectetur 🙂, <a href="https://dev.proj-mgmt.biztree.com/">ipsum</a> adipisicing elit. Sit eum praesentium animi error delectus reprehenderit neque odit? Nesciunt facere quod ab veniam eligendi architecto vitae?</p>
     </div>
-    <!-- <message-files :files="files"></message-files> -->
+
+    <!-- message reactions -->
     <div v-if="reactionsExist" class="reactions-section">
       <div class="reactions">
         <div v-for="react in reactionGroup" :key="reactionKey + react.reaction + msg.id" class="reaction " :class=" ownReaction(react) " name="reaction1" @click.stop="deleteOwnReaction(react)">
           {{ react.reaction }} <span class="count">{{react.count}}</span>
         </div>
-        <bib-spinner v-if="reactionSpinner" :scale="2" variant="primary" ></bib-spinner>
+        <bib-spinner v-if="reactionSpinner" :scale="2" variant="primary"></bib-spinner>
       </div>
-      <!-- <message-collapsible-section >
-        <template slot="title">Reactions ({{ msg.reactions.length }})</template>
+    </div>
+
+    <!-- message files -->
+    <div v-if="files.length > 0" class="msg-files pb-05">
+      <!-- <small>{{files.length}} files</small> -->
+      <message-collapsible-section>
+        <template slot="title">Files ({{ files.length }})</template>
         <template slot="content">
-          <div class="reactions">
-            <div v-for="react in msg.reactions" :key="react.reaction" class="reaction" :class="{ sent: react.sent }" @click.stop="$emit('reaction-clicked', msg.id, react.reaction)">
-              {{ react.reaction }} <span class="count">{{ react.entries.length }}</span>
-            </div>
+          <div class="d-flex align-start gap-1 mt-05 mb-075">
+            <!-- <bib-file v-for="file in files" :property="property"></bib-file> -->
+            <message-file v-for="file in files" :property="file"></message-file>
           </div>
         </template>
-      </message-collapsible-section> -->
+      </message-collapsible-section>
     </div>
+
     <!-- <div v-show="showPlaceholder" class="placeholder mb-1 d-flex gap-05">
       <div class="left">
         <div class="shape-circle width-205 height-205 animated-background"></div>
@@ -56,7 +67,9 @@
         <div class="animated-background width-5 mt-05"></div>
       </div>
     </div> -->
-    <div v-if="repliesExist" class="replies-section">
+
+    <!-- message replies -->
+    <div v-if="repliesExist" class="replies-section pb-05">
       <message-collapsible-section>
         <template slot="title">Replies ({{ msg.replies.length }})</template>
         <template slot="content">
@@ -66,7 +79,8 @@
         </template>
       </message-collapsible-section>
     </div>
-    <!-- <transition name="slide-fade"> -->
+
+    <!-- message action bar -->
     <div v-if="isActionBarShowing" class="actions-container" @click.stop>
       <!-- <div class="action favorite" :class="{ favorited }" @click="changeFavorite">
         <bib-icon :icon="favorited ? 'bookmark-solid' : 'bookmark'" :scale="1"></bib-icon>
@@ -109,6 +123,9 @@
           <div v-if="msg.userId == user.Id" class="menu-item">
             <a @click="editMessage">Edit</a>
           </div>
+          <div v-if="msg.userId == user.Id" class="menu-item">
+            <a @click="attachFile">Attach file</a>
+          </div>
           <div class="menu-item-separator"></div>
           <div v-if="canDeleteMessage" class="menu-item danger">
             <a @click="deleteMessage">Delete</a>
@@ -116,13 +133,30 @@
         </div>
       </tippy>
     </div>
-    <!-- </transition> -->
+
+    <!-- submit reply modal -->
     <bib-modal-wrapper v-if="replyModal" size="lg" title="Reply to..." @close="replyModal = false">
       <template slot="content">
         <div style="margin: -1rem -2rem -2rem; ">
           <message-input :value="value" @input="onFileInput" @submit="onReplySubmit"></message-input>
         </div>
         <loading :loading="replyLoading"></loading>
+      </template>
+    </bib-modal-wrapper>
+
+    <!-- file upload modal -->
+    <bib-modal-wrapper v-if="uploadModal" title="Select file(s)" @close="uploadModal = false">
+      <template slot="content">
+        <div style="margin-left: -1rem; margin-right: -1rem;">
+          <bib-input type="file" ref="files" @files-dropped="handleChangeFile" variant="accepted" iconLeft="upload" placeholder="Upload from device"></bib-input>
+        </div>
+        <loading :loading="fileLoader"></loading>
+      </template>
+      <template slot="footer">
+        <div class="d-flex">
+          <bib-button label="Cancel" variant="light" pill @click="uploadModal = false"></bib-button>
+          <bib-button label="Upload" variant="success" class="ml-auto" pill @click="uploadFiles"></bib-button>
+        </div>
       </template>
     </bib-modal-wrapper>
   </div>
@@ -179,10 +213,10 @@ export default {
         ]
       },
       files: [
-        { img: 'https://placeimg.com/200/300/tech' },
-        { img: 'https://placeimg.com/200/360/tech' },
-        { img: 'https://placehold.jp/2ba026/ffffff/180x180.jpg' },
-        { img: 'https://placehold.jp/24/1f42a2/ffffff/250x200.jpg?text=placeholder%20image' }
+        // { name: "File Name", type: "image/png", size: "2340", preview: 'https://placeimg.com/200/300/tech' },
+        /*{ name: "ImageFile Name", type: "image/png", size: "2340", preview: 'https://placeimg.com/200/360/tech' },
+        { name: "ImageFile Name", type: "image/png", size: "2340", preview: 'https://placehold.jp/2ba026/ffffff/180x180.jpg' },
+        { name: "ImageFile Name", type: "image/png", size: "2340", preview: 'https://placehold.jp/24/1f42a2/ffffff/250x200.jpg?text=placeholder%20image' }*/
       ],
       replies: [
         /*{ id: 254, user: { id: "DKgl9av2NwnaG1vz", photo: 'https://i.pravatar.cc/100', firstName: "Vishu", lastName: "M", }, updatedAt: "2022-08-14T06:54:37.000Z", comment: "this is reply text" },*/
@@ -191,6 +225,9 @@ export default {
       reactions: [],
       reactionKey: 1,
       reactionSpinner: false,
+      tempKey: 1,
+      uploadModal: false,
+      fileLoader: false,
     }
   },
   computed: {
@@ -286,15 +323,12 @@ export default {
     },
 
   },
-  fetch() {
-    // console.log('fetch ', this.msg.id)
-    // this.fetchReplies()
-  },
   mounted() {
     // this.reactions = []
     // console.info(this.msg.id, " msg reactions =>", this.msg.reactions, 'local reactions =>', this.reactions);
     // this.reactions = this.msg.reactions
     this.reactions = _.cloneDeep(this.msg.reactions);
+    this.getFiles()
     /*this.$axios.get('/project/' + this.msg.id + "/reactions", {
         headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
       })
@@ -472,7 +506,59 @@ export default {
     },
     toggleUserCard() {
       this.userCardVisible = !this.userCardVisible
-    }
+    },
+    attachFile() {
+      this.uploadModal = true
+      // this.$emit("upload-file", this.msg)
+    },
+    async uploadFiles() {
+      this.fileLoader = true
+      let myfiles = this.$refs.files.filesUploaded
+
+      let formdata = new FormData()
+      myfiles.forEach(file => {
+        formdata.append('files', file)
+      })
+      // formdata.append('projectId', this.project.id)
+      formdata.append('projCommentId', this.msg.id)
+
+      const fi = await this.$axios.post("/file/upload", formdata, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      })
+      // console.log(fi.data)
+      if (fi.data.statusCode == 200) {
+        // console.log(fi.data)
+        _.delay(() => {
+          console.log('delay->', fi.data);
+          // this.getFiles()
+        }, 2000);
+      }
+      this.fileLoader = false
+      this.uploadModal = false
+    },
+    getFiles() {
+      // this.loading = true
+      let obj1 = { projectCommentId: this.msg.id }
+      this.$axios.get("file/db/all", {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          'obj': JSON.stringify(obj1)
+        }
+      }).then(f => {
+        // console.log(f.data)
+        if (f.data.statusCode == 200) {
+          // this.loading = false
+          this.files = f.data.data
+          // this.tempKey += 1
+        }
+      }).catch(e => {
+        console.error(e)
+        // this.loading = false
+      })
+    },
   }
 }
 
@@ -795,9 +881,14 @@ export default {
   }
 }
 
+.msg-files {
+  color: $gray5;
+}
+
 .highlight {
   animation: highlight 3s ease 0.5s;
 }
+
 
 @keyframes highlight {
   from {

@@ -11,10 +11,11 @@
         <message :msg="msg" @delete-message="onDeleteMessage"></message>
       </div> -->
       <div v-for="msg in group.data">
-        <message :msg="msg" @delete-message="onDeleteMessage"></message>
+        <message :msg="msg" @delete-message="onDeleteMessage" @upload-file="uploadFileTrigger"></message>
       </div>
     </template>
     <!-- <reaction-picker ref="reactionPicker" @select="onReactionSelect" ></reaction-picker> -->
+    
     <loading :loading="msgLoading"></loading>
   </div>
 </template>
@@ -35,6 +36,7 @@ export default {
   data() {
     return {
       msgLoading: false,
+      
       /*files: [
         { img: 'https://placeimg.com/200/300/tech' },
         { img: 'https://placeimg.com/200/360/tech' },
@@ -68,8 +70,13 @@ export default {
       return msglist
     }
   },
+  /*created() {
+    this.$on("upload-file", (msg) => {
+      console.log(msg.id)
+    })
+  },*/
   methods: {
-    
+
     async onReactionSelect(reaction, message) {
       this.$refs.reactionPicker.hide();
       /*await this.addMessageReaction({
@@ -78,7 +85,7 @@ export default {
         reaction: reaction.data,
       });*/
     },
-    
+
     async onDeleteMessage(payload) {
       this.msgLoading = true
       // let data = {projectId: this.project.id, commentId: payload.msgId }
@@ -92,6 +99,16 @@ export default {
     /*editMessage(msg){
       console.log(msg)
     },*/
+    uploadFileTrigger(msg){
+      console.log(msg)
+      this.uploadModal = true
+      this.msg = msg
+    },
+    handleChangeFile(files, event) {
+      // console.info(this.$refs.files.filesUploaded)
+      // console.log(files, event.target.files)
+    },
+    
   }
 }
 
