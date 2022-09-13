@@ -501,7 +501,12 @@ export default {
       this.isMenuOpen = false;
     },
     deleteMessage() {
-      this.$emit('delete-message', { projectId: this.msg.projectId, commentId: this.msg.id });
+      console.log(this.msg)
+      this.$emit('delete-message', { 
+        taskId: this.msg.taskId ? this.msg.taskId : null, 
+        projectId: this.msg.projectId ? this.msg.projectId: null, 
+        commentId: this.msg.id 
+      });
       this.isMenuOpen = false;
     },
     toggleUserCard() {
