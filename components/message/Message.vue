@@ -52,7 +52,7 @@
         <template slot="content">
           <div class="d-flex align-start gap-1 mt-05 mb-075">
             <!-- <bib-file v-for="file in files" :property="property"></bib-file> -->
-            <message-file v-for="file in files" :property="file"></message-file>
+            <message-file v-for="file in files" :property="file" :key="tempKey"></message-file>
           </div>
         </template>
       </message-collapsible-section>
@@ -533,7 +533,7 @@ export default {
         // console.log(fi.data)
         _.delay(() => {
           console.log('delay->', fi.data);
-          // this.getFiles()
+          this.getFiles()
         }, 2000);
       }
       this.fileLoader = false
@@ -552,7 +552,7 @@ export default {
         if (f.data.statusCode == 200) {
           // this.loading = false
           this.files = f.data.data
-          // this.tempKey += 1
+          this.tempKey += 1
         }
       }).catch(e => {
         console.error(e)
