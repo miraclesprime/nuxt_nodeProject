@@ -9,11 +9,8 @@
         <span class="time">{{displayDate}}</span>
       </div>
       <div class="reply-text" v-html="reply.comment">Your reply</div>
-      <!-- <message-text
-        :text="reply.text"
-        @mention-click="openUserChat"
-        @channel-mention-click="openChannel"
-      /> -->
+
+      <!-- reactions -->
       <div v-if="reactionsExist" class="reactions-section">
         <div class="reactions">
           <div v-for="react in reactionGroup" :key="reactionKey + react.reaction + reply.id" class="reaction " :class=" ownReaction(react) " @click.stop="deleteOwnReaction(react)">
@@ -22,6 +19,21 @@
           <bib-spinner v-if="reactionSpinner" :scale="2" variant="primary"></bib-spinner>
         </div>
       </div>
+
+      <!-- message files -->
+    <div v-if="files.length > 0" class="msg-files pb-05">
+      <!-- <small>{{files.length}} files</small> -->
+      <message-collapsible-section>
+        <template slot="title">Files ({{ files.length }})</template>
+        <template slot="content">
+          <div class="d-flex align-start gap-1 mt-05 mb-075">
+            <!-- <bib-file v-for="file in files" :property="property"></bib-file> -->
+            <message-file v-for="file in files" :property="file" :key="file.key + tempKey"></message-file>
+          </div>
+        </template>
+      </message-collapsible-section>
+    </div>
+
       <!-- <div v-if="reply.files.length" class="files-section">
         <message-collapsible-section>
           <template slot="title"><b>Files</b> ({{ reply.files.length }})</template>
@@ -129,10 +141,29 @@
       <div v-if="reply.userId == user.Id" class="action" @click="editReply">
         <fa :icon="faPenToSquare"></fa>
       </div>
+      <div v-if="reply.userId == user.Id" class="action" @click="attachFile">
+        <fa :icon="faPaperclip"></fa>
+      </div>
       <div v-if="canDeleteReply" class="action " @click="deleteReply">
         <fa :icon="faTrash"></fa>
       </div>
     </div>
+
+    <!-- file upload modal -->
+    <bib-modal-wrapper v-if="uploadModal" title="Select file(s)" @close="uploadModal = false">
+      <template slot="content">
+        <div style="margin-left: -1rem; margin-right: -1rem;">
+          <bib-input type="file" ref="files" @files-dropped="handleChangeFile" variant="accepted" iconLeft="upload" placeholder="Upload from device"></bib-input>
+        </div>
+        <loading :loading="fileLoader"></loading>
+      </template>
+      <template slot="footer">
+        <div class="d-flex">
+          <bib-button label="Cancel" variant="light" pill @click="uploadModal = false"></bib-button>
+          <bib-button label="Upload" variant="success" class="ml-auto" pill @click="uploadFiles"></bib-button>
+        </div>
+      </template>
+    </bib-modal-wrapper>
   </div>
 </template>
 <script>
@@ -144,6 +175,7 @@ import { VEmojiPicker } from 'v-emoji-picker';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   faFile,
+  faPaperclip,
   faThumbsUp,
   faSmile,
   faShare,
@@ -174,6 +206,7 @@ export default {
   data() {
     return {
       faFile,
+      faPaperclip,
       faThumbsUp,
       faSmile,
       faComment,
@@ -190,6 +223,10 @@ export default {
       // isFileOverlayOpen: Object.fromEntries(this.reply.files.map((file) => [file._id, false])),
       isActionBarShowing: false,
       isReactionPickerOpen: false,
+      files: [],
+      fileLoader: false,
+      tempKey: 1,
+      uploadModal: false,
     };
   },
   computed: {
@@ -253,6 +290,7 @@ export default {
   mounted(){
     // console.info("mounted");
     // console.log(this.$fetchState)
+    this.getFiles()
   },
   methods: {
     defer(func) {
@@ -352,6 +390,58 @@ export default {
     deleteReply() {
       this.$emit('delete-reply', { projectId: this.reply.projectId, commentId: this.reply.id });
       // this.isMenuOpen = false;
+    },
+    attachFile() {
+      this.uploadModal = true
+      // this.$emit("upload-file", this.msg)
+    },
+    async uploadFiles() {
+      this.fileLoader = true
+      let myfiles = this.$refs.files.filesUploaded
+
+      let formdata = new FormData()
+      myfiles.forEach(file => {
+        formdata.append('files', file)
+      })
+      // formdata.append('projectId', this.project.id)
+      formdata.append('projReplyId', this.reply.id)
+
+      const fi = await this.$axios.post("/file/upload", formdata, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      })
+      // console.log(fi.data)
+      if (fi.data.statusCode == 200) {
+        // console.log(fi.data)
+        _.delay(() => {
+          console.log('delay->', fi.data);
+          this.getFiles()
+        }, 2000);
+      }
+      this.fileLoader = false
+      this.uploadModal = false
+    },
+    getFiles() {
+      // this.loading = true
+      let obj1 = { projectReplyId: this.reply.id }
+      this.$axios.get("file/db/all", {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          'obj': JSON.stringify(obj1)
+        }
+      }).then(f => {
+        // console.log(f.data)
+        if (f.data.statusCode == 200) {
+          // this.loading = false
+          this.files = f.data.data
+          this.tempKey += 1
+        }
+      }).catch(e => {
+        console.error(e)
+        // this.loading = false
+      })
     },
     // getAvatarPlaceholder,
     // makeDateString,

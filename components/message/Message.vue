@@ -52,7 +52,7 @@
         <template slot="content">
           <div class="d-flex align-start gap-1 mt-05 mb-075">
             <!-- <bib-file v-for="file in files" :property="property"></bib-file> -->
-            <message-file v-for="file in files" :property="file" :key="tempKey"></message-file>
+            <message-file v-for="file in files" :property="file" :key="file.key + tempKey"></message-file>
           </div>
         </template>
       </message-collapsible-section>
@@ -117,9 +117,6 @@
           <!-- <div class="menu-item">
             <a @click="copyMessageLink">Copy link</a>
           </div> -->
-          <!-- <div class="menu-item">
-              <a @click="showForwardModal">Share</a>
-            </div> -->
           <div v-if="msg.userId == user.Id" class="menu-item">
             <a @click="editMessage">Edit</a>
           </div>
