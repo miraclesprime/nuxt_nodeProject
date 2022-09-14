@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <figure class="position-relative file"><img :src="preview" class="shape-rounded d-inline-block w-100" :alt="property.name">
+  <div class="file d-flex">
+    <figure class="position-relative w-100"><img :src="preview" class="shape-rounded d-block w-100" :alt="property.name">
       <div class="file-overlay d-flex align-center justify-center cursor-pointer">
         <bib-icon icon="search" variant="gray1" :scale="2"></bib-icon>
       </div>
@@ -99,7 +99,9 @@ export default {
       if (this.property.type.indexOf('image/') == 0 && "url" in this.property) {
         return this.property.url
       } else {
-        return 'https://placeimg.com/300/300/tech'
+        // return 'https://placeimg.com/300/300/tech'
+        return "https://via.placeholder.com/200x100/f0f0f0/6f6f79?text="+this.property.extension
+
       }
     },
     fileDetail() {
@@ -150,6 +152,7 @@ export default {
   min-height: 6rem;
   font-size: 1rem;
   background-color: rgb(240, 240, 240);
+  flex: 0 1 12rem;
 
   .file-overlay {
     position: absolute;

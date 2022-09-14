@@ -52,7 +52,7 @@
         <template slot="content">
           <div class="d-flex align-start gap-1 mt-05 mb-075">
             <!-- <bib-file v-for="file in files" :property="property"></bib-file> -->
-            <message-file v-for="file in files" :property="file" :key="file.key + tempKey"></message-file>
+            <message-file v-for="file in files" :property="file" :key="tempKey + file.key"></message-file>
           </div>
         </template>
       </message-collapsible-section>
@@ -74,7 +74,7 @@
         <template slot="title">Replies ({{ msg.replies.length }})</template>
         <template slot="content">
           <div class="replies">
-            <message-reply v-for="reply in msg.replies" :key="reply.id" :reply="reply" />
+            <task-message-reply v-for="reply in msg.replies" :key="reply.id" :reply="reply" />
           </div>
         </template>
       </message-collapsible-section>
@@ -117,6 +117,9 @@
           <!-- <div class="menu-item">
             <a @click="copyMessageLink">Copy link</a>
           </div> -->
+          <!-- <div class="menu-item">
+              <a @click="showForwardModal">Share</a>
+            </div> -->
           <div v-if="msg.userId == user.Id" class="menu-item">
             <a @click="editMessage">Edit</a>
           </div>
@@ -158,6 +161,7 @@
     </bib-modal-wrapper>
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
@@ -326,7 +330,7 @@ export default {
     // this.reactions = this.msg.reactions
     this.reactions = _.cloneDeep(this.msg.reactions);
     this.getFiles()
-    /*this.$axios.get('/project/' + this.msg.id + "/reactions", {
+    /*this.$axios.get('/task/' + this.msg.id + "/reactions", {
         headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
       })
       .then(r => {
@@ -340,7 +344,7 @@ export default {
 
   methods: {
     /*fetchReplies() {
-      this.$axios.get('/project/' + this.msg.id + "/replies", {
+      this.$axios.get('/task/' + this.msg.id + "/replies", {
           headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
         })
         .then(rep => {
@@ -351,7 +355,7 @@ export default {
         .catch(e => console.warn(e))
     },*/
     fetchReactions() {
-      this.$axios.get('/project/' + this.msg.id + "/reactions", {
+      this.$axios.get('/task/' + this.msg.id + "/reactions", {
           headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
         })
         .then(r => {
@@ -370,7 +374,7 @@ export default {
     deleteOwnReaction(reaction) {
       this.reactionSpinner = true
       let react = reaction.data.find(d => d.user.id == this.user.Id)
-      this.$axios.delete("/project/" + this.msg.id + "/reaction", {
+      this.$axios.delete("/task/" + this.msg.id + "/reaction", {
           headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") },
           data: { reactionId: react.id },
         })
@@ -388,7 +392,7 @@ export default {
     onReplySubmit(data) {
       // console.log(data)
       this.replyLoading = true
-      this.$axios.post('/project/' + this.msg.id + "/reply", { projectCommentId: this.msg.id, comment: data.text }, {
+      this.$axios.post('/task/' + this.msg.id + "/reply", { taskCommentId: this.msg.id, comment: data.text }, {
           headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
         })
         .then(rep => {
@@ -435,7 +439,7 @@ export default {
         alert("Reaction already exists!")
         this.reactionSpinner = false
       } else {
-        this.$axios.post("/project/" + this.msg.id + "/reaction", { reaction: data }, {
+        this.$axios.post("/task/" + this.msg.id + "/reaction", { reaction: data }, {
             headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
           })
           .then(d => {
@@ -455,7 +459,7 @@ export default {
         alert("Reaction already exists!")
         this.reactionSpinner = false
       } else {
-        this.$axios.post("/project/" + this.msg.id + "/reaction", { reaction: "👍" }, {
+        this.$axios.post("/task/" + this.msg.id + "/reaction", { reaction: "👍" }, {
             headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
           })
           .then(d => {
@@ -501,7 +505,7 @@ export default {
       console.log(this.msg)
       this.$emit('delete-message', { 
         taskId: this.msg.taskId ? this.msg.taskId : null, 
-        projectId: this.msg.projectId ? this.msg.projectId: null, 
+        // projectId: this.msg.projectId ? this.msg.projectId: null, 
         commentId: this.msg.id 
       });
       this.isMenuOpen = false;
@@ -521,8 +525,8 @@ export default {
       myfiles.forEach(file => {
         formdata.append('files', file)
       })
-      // formdata.append('projectId', this.project.id)
-      formdata.append('projCommentId', this.msg.id)
+      // formdata.append('taskId', this.task.id)
+      formdata.append('taskCommentId', this.msg.id)
 
       const fi = await this.$axios.post("/file/upload", formdata, {
         headers: {
@@ -543,7 +547,7 @@ export default {
     },
     getFiles() {
       // this.loading = true
-      let obj1 = { projectCommentId: this.msg.id }
+      let obj1 = { taskCommentId: this.msg.id }
       this.$axios.get("file/db/all", {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
