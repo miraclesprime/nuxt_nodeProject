@@ -1,5 +1,4 @@
 <template>
-<client-only>
   <div class="container h-100">
     <div class="row w-100 h-100">
       <!-- <div class="col-2">
@@ -41,7 +40,6 @@
       </div>
     </div>
   </div>
-</client-only>
 </template>
 
 <script>

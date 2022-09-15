@@ -1,8 +1,7 @@
 <template>
-<client-only>
   <div class="position-relative">
     <template v-for="(group, index) in msgGroup">
-      <div v-show="group.data.length > 0" class="d-flex align-center p-05" :key="index">
+      <div v-show="group.data.length > 0" class="d-flex align-center p-05" :key="group.title + index">
         <bib-icon icon="arrow-down" :scale="0.5"></bib-icon>
         <div class="px-1 font-w-500">
           {{group.title}}
@@ -19,7 +18,6 @@
     
     <loading :loading="msgLoading"></loading>
   </div>
-</client-only>
 </template>
 
 <script>
@@ -31,7 +29,7 @@ dayjs.extend(relativeTime)
 dayjs.extend(calendar)*/
 export default {
 
-  name: 'MessageList',
+  name: 'TaskMessageList',
   props: {
     messages: { type: Array },
   },

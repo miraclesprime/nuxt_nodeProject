@@ -1,5 +1,4 @@
 <template>
-<client-only>
   <div id="layout-wrapper">
     <bib-app-wrapper class="test" :navigationCollapsed="collapseNavigation" :select="appHeaderActions.select" @collapseNavigation="() => {
           resizeCalendar()
@@ -99,7 +98,6 @@
         }
       " ref="modals"></create-task-modals> -->
   </div>
-</client-only>
 </template>
 
 <script>

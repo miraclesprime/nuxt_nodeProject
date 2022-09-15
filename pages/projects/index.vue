@@ -1,5 +1,4 @@
 <template>
-<client-only>
   <div id="projects-wrapper" class="projects-wrapper" >
     
     <page-title title="Projects"></page-title>
@@ -60,7 +59,6 @@
       </bib-modal-wrapper>
     </div>
   </div>
-</client-only>
 </template>
 
 <script>
