@@ -1,4 +1,5 @@
 <template>
+<client-only>
   <div class="msg position-relative" @mouseenter="isActionBarShowing = true" @mouseleave="onActionBarMouseLeave" v-click-outside="onActionBarClickOutside">
     <figure class="width-4 user-avatar cursor-pointer" :class="{active: userCardVisible}" @click="toggleUserCard">
       <bib-avatar size="3rem" :src="userInfo.pic"></bib-avatar>
@@ -160,6 +161,7 @@
       </template>
     </bib-modal-wrapper>
   </div>
+  </client-only>
 </template>
 
 <script>
