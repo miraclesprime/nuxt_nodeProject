@@ -1,5 +1,4 @@
 <template>
-<client-only>
   <article id="side-panel" class="side-panel" v-click-outside="closeSidebar">
     <div class="side-panel__header" id='ts-header'>
       <!-- <div class="side-panel__header__file__info" id='ts-header-file-info'>
@@ -128,7 +127,6 @@
       <sidebar-history v-if="activeSidebarTab == 'History'"></sidebar-history>
     </div>
   </article>
-</client-only>
 </template>
 
 <script>

@@ -1,5 +1,4 @@
 <template>
-<client-only>
   <div class="msg position-relative" @mouseenter="isActionBarShowing = true" @mouseleave="onActionBarMouseLeave" v-click-outside="onActionBarClickOutside">
     <figure class="width-4 user-avatar cursor-pointer" :class="{active: userCardVisible}" @click="toggleUserCard">
       <bib-avatar size="3rem" :src="userInfo.pic"></bib-avatar>
@@ -51,7 +50,7 @@
       <message-collapsible-section>
         <template slot="title">Files ({{ files.length }})</template>
         <template slot="content">
-          <div class="d-flex align-start gap-1 mt-05 mb-075">
+          <div class="d-flex align-start flex-wrap gap-1 mt-05 mb-075">
             <!-- <bib-file v-for="file in files" :property="property"></bib-file> -->
             <message-file v-for="file in files" :property="file" :key="file.key + tempKey"></message-file>
           </div>
@@ -158,7 +157,6 @@
       </template>
     </bib-modal-wrapper>
   </div>
-</client-only>
 </template>
 
 <script>

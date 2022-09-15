@@ -1,5 +1,4 @@
 <template>
-<client-only>
   <div id="task-files-wrapper" class="h-100">
     <div id="task-file-actions-wrapper" class="file-actions d-flex align-center p-025 ">
       <div class="action-left d-flex " id="file-action-left">
@@ -86,7 +85,6 @@
       </template>
     </bib-modal-wrapper>
   </div>
-</client-only>
 </template>
 
 <script>

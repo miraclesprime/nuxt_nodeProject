@@ -1,6 +1,6 @@
 <template>
   <div class="file d-flex">
-    <figure class="position-relative w-100"><img :src="preview" class="shape-rounded d-block w-100" :alt="property.name">
+    <figure class="position-relative w-100"><img :src="preview" class="shape-rounded d-block " >
       <div class="file-overlay d-flex align-center justify-center cursor-pointer">
         <bib-icon icon="search" variant="gray1" :scale="2"></bib-icon>
       </div>
@@ -148,11 +148,13 @@ export default {
 </script>
 <style lang="scss" scoped>
 .file {
-  min-width: 8rem;
-  min-height: 6rem;
+  min-height: 8rem;
   font-size: 1rem;
   background-color: rgb(240, 240, 240);
-  flex: 0 1 12rem;
+  flex: 0 1 14rem;
+  figure {
+    img { width:100%; object-fit: contain; aspect-ratio: 14 / 8; }
+  }
 
   .file-overlay {
     position: absolute;

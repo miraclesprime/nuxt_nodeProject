@@ -1,5 +1,4 @@
 <template>
-<client-only>
   <div class="reply position-relative" @mouseenter.stop="isActionBarShowing = true" @mouseleave="onActionBarMouseLeave">
     <figure class=" flex-shrink-0 flex-grow-0">
       <bib-avatar size="2.175rem" :src="$userInfo(reply.userId).Photo"></bib-avatar>
@@ -166,7 +165,6 @@
       </template>
     </bib-modal-wrapper>
   </div>
-</client-only>
 </template>
 
 <script>
