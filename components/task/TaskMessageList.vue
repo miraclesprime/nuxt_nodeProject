@@ -1,4 +1,5 @@
 <template>
+<client-only>
   <div class="position-relative">
     <template v-for="(group, index) in msgGroup">
       <div v-show="group.data.length > 0" class="d-flex align-center p-05" :key="index">
@@ -18,7 +19,9 @@
     
     <loading :loading="msgLoading"></loading>
   </div>
+</client-only>
 </template>
+
 <script>
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'

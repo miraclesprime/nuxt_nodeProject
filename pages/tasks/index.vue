@@ -72,6 +72,7 @@
     </div>
   </client-only>
 </template>
+
 <script>
 import { mapGetters } from "vuex";
 import { COMPANY_TASK_FIELDS as TaskFields, TASK_CONTEXT_MENU } from '../../config/constants'
