@@ -1,17 +1,16 @@
 <template>
-  <client-only>
-    <div class="container">
-      <div class="text">{{ text }}</div>
-      <div class="link">
-        <a :href="href" target="_blank">{{ href }}</a>
-      </div>
-      <div class="buttons-container">
-        <bib-button label="Edit" variant="primary--light" @click="$emit('edit')" />
-        <bib-button label="Remove" variant="danger" @click="$emit('remove')" />
-      </div>
+  <div class="container">
+    <div class="text">{{ text }}</div>
+    <div class="link">
+      <a :href="href" target="_blank">{{ href }}</a>
     </div>
-  </client-only>
+    <div class="buttons-container">
+      <bib-button label="Edit" variant="primary--light" @click="$emit('edit')" />
+      <bib-button label="Remove" variant="danger" @click="$emit('remove')" />
+    </div>
+  </div>
 </template>
+
 <script>
 export default {
   props: {
@@ -25,8 +24,8 @@ export default {
     },
   },
 };
-
 </script>
+
 <style lang="scss" scoped>
 .container {
   padding: 20px 20px;
@@ -64,5 +63,4 @@ export default {
   gap: 10px;
   justify-content: flex-end;
 }
-
 </style>

@@ -20,7 +20,7 @@
     </div>
     <div class="of-scroll-y h-100" id="task-files">
       <template v-if="displayType == 'list'">
-        <bib-table :fields="tableFields" :sections="files" :hide-no-column="true" :key="task.title + '' + fileKey">
+        <bib-table :fields="tableFields" :sections="dbFiles" :hide-no-column="true" :key="fileKey">
           <template #cell(name)="data">
             <div class="d-flex align-center gap-05">
               <bib-avatar v-if="imageType(data.value)" shape="rounded" :src="data.value.url" size="1.5rem">
@@ -68,7 +68,6 @@
           <bib-file v-for="file in files" :key="file.key + fileKey" :property="file"></bib-file>
         </div>
       </template>
-    <loading :loading="loading"></loading>
     </div>
     <bib-modal-wrapper v-if="uploadModal" title="Select file(s)" @close="uploadModal = false">
       <template slot="content">
@@ -92,12 +91,11 @@ import { mapGetters } from 'vuex'
 import { FILE_FIELDS } from "~/config/constants"
 
 export default {
-  name: "SidebarFiles",
+  name: "TaskFiles",
   data: function() {
     return {
       displayType: 'grid',
       tableFields: FILE_FIELDS,
-      loading: false,
       isFileFavorite: false,
       uploadModal: false,
       fileLoader: false,
@@ -126,12 +124,6 @@ export default {
         })
       })
       return files
-    }
-  },
-  watch: {
-    task(newValue, oldValue) {
-      console.log(newValue, oldValue)
-      this.getFiles()
     }
   },
   mounted() {
@@ -171,16 +163,15 @@ export default {
       })
       console.log(fi.data)
       if (fi.data.statusCode == 200) {
-        _.delay(() => {
-          this.getFiles()
-        }, 2000);
+        this.getFiles().then((res) => {
+          this.fileKey += 1;
+        })
       }
       this.fileLoader = false
       this.uploadModal = false
     },
 
-    getFiles() {
-      this.loading = true
+    async getFiles() {
       let obj1 = { taskId: this.task.id }
       this.$axios.get("file/db/all", {
         headers: {
@@ -190,13 +181,8 @@ export default {
       }).then(f => {
         // console.log(f.data)
         if (f.data.statusCode == 200) {
-          this.dbFiles = f.data.data;
-          this.loading = false
-          this.fileKey += 1;
+          this.dbFiles = f.data.data
         }
-      }).catch((err) => {
-        console.log(err);
-        this.loading = false
       })
     },
 
@@ -215,6 +201,10 @@ export default {
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(f.data.data);
+
+            this.getFiles().then((res) => {
+              this.fileKey += 1;
+            })
           }
         })
         .catch(e => console.error(e))
@@ -233,7 +223,9 @@ export default {
             if (f.data.statusCode == 200) {
               alert(f.data.message);
               _.delay(() => {
-                this.getFiles()
+                this.getFiles().then((res) => {
+                  this.fileKey += 1;
+                })
               }, 2000);
             }
           })

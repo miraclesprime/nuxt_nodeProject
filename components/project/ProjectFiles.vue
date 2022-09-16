@@ -74,7 +74,7 @@
       </template>
       <template v-if="displayType == 'grid'">
         <div class="files d-flex flex-wrap gap-1 p-1">
-          <bib-file v-for="file in files" :key="file.key + tempKey" :property="file" @click.native="downloadFile(file)"></bib-file>
+          <bib-file v-for="(file, index) in files" :key="file.key + tempKey" :property="file" @click.native="downloadFile(file)"></bib-file>
         </div>
       </template>
       <loading :loading="loading"></loading>
@@ -305,6 +305,7 @@ export default {
 }
 
 </script>
+
 <style scoped lang="scss">
 .file-actions {
   border-bottom: 1px solid $gray4;

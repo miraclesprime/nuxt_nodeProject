@@ -299,7 +299,7 @@ export const actions = {
   async fetchTaskComments(ctx, payload) {
     try {
 
-      let res = await this.$axios.get(`/task/${payload.id}/comments`, {
+      let fav = await this.$axios.get(`/task/${payload.id}/comments`, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
@@ -345,13 +345,13 @@ export const actions = {
 
     try {
 
-      const res = await this.$axios.$put(`/task/${payload.taskId}/comments/${payload.commentId}`,{
+      const res = await this.$axios.$put(`/task/${payload.projectId}/comments/${payload.commentId}`,{
         comment: payload.comment
       }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
       if (res.statusCode == 200) {
-        ctx.dispatch("fetchTaskComments", {id: payload.taskId})
+        ctx.dispatch("fetchTaskComments", {id: payload.projectId})
         return res
       } else {
         return res
@@ -367,11 +367,11 @@ export const actions = {
 
     try {
 
-      const res = await this.$axios.$delete(`/task/${payload.taskId}/comments/${payload.commentId}`,{
+      const res = await this.$axios.$delete(`/task/${payload.projectId}/comments/${payload.commentId}`,{
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
       if (res.statusCode == 200) {
-        ctx.dispatch("fetchTaskComments", {id: payload.taskId})
+        ctx.dispatch("fetchTaskComments", {id: payload.projectId})
         return res
       } else {
         return res

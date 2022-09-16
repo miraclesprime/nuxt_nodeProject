@@ -223,8 +223,14 @@ export default {
     },
 
     openSidebar(task) {
-      // console.log(task)
-      this.$nuxt.$emit("open-sidebar", task );
+      console.log(task)
+      // let project = [{
+      //   projectId: this.project.id,
+      //   project: {
+      //     id: this.project.id
+      //   }
+      // }]
+      this.$nuxt.$emit("open-sidebar", task);
     },
     
     closeContext() {

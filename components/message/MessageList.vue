@@ -1,7 +1,7 @@
 <template>
   <div class="position-relative">
-    <template v-for="(group, index) in msgGroup">
-      <div v-show="group.data.length > 0" class="d-flex align-center p-05 " :key="index">
+    <template v-for="group in msgGroup">
+      <div v-show="group.data.length > 0" class="d-flex align-center p-05 ">
         <bib-icon icon="arrow-down" :scale="0.5"></bib-icon>
         <div class="px-1 font-w-500">
           {{group.title}}
@@ -10,7 +10,7 @@
       <!-- <div v-for="msg in messages">
         <message :msg="msg" @delete-message="onDeleteMessage"></message>
       </div> -->
-      <div v-for="(msg, index) in group.data" :key="index">
+      <div v-for="msg in group.data">
         <message :msg="msg" @delete-message="onDeleteMessage" @upload-file="uploadFileTrigger"></message>
       </div>
     </template>
@@ -19,7 +19,6 @@
     <loading :loading="msgLoading"></loading>
   </div>
 </template>
-
 <script>
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
