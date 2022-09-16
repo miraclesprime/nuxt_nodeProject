@@ -75,7 +75,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .history {
-	display: flex;
+  display: flex;
   flex-direction: row;
   align-items: flex-start;
   margin-top: 12px;

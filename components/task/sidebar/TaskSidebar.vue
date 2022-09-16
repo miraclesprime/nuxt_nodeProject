@@ -128,7 +128,6 @@
     </div>
   </article>
 </template>
-
 <script>
 import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 import { mapGetters } from "vuex";

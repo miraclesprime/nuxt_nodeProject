@@ -72,7 +72,6 @@
     </div>
   </client-only>
 </template>
-
 <script>
 import { mapGetters } from "vuex";
 import { COMPANY_TASK_FIELDS as TaskFields, TASK_CONTEXT_MENU } from '../../config/constants'
@@ -134,8 +133,14 @@ export default {
     },
 
     openSidebar(task) {
-      // console.log(task)
-      this.$nuxt.$emit("open-sidebar", task );
+      // let project = [{
+      //   projectId: this.project.id,
+      //   project: {
+      //     id: this.project.id
+      //   }
+      // }]
+      console.log(task)
+      this.$nuxt.$emit("open-sidebar", task);
     },
 
     taskRightClick(payload) {

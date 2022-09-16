@@ -47,15 +47,15 @@
     <!-- message files -->
     <div v-if="files.length > 0" class="msg-files pb-05">
       <!-- <small>{{files.length}} files</small> -->
-      <message-collapsible-section>
+      <!-- <message-collapsible-section>
         <template slot="title">Files ({{ files.length }})</template>
         <template slot="content">
-          <div class="d-flex align-start flex-wrap gap-1 mt-05 mb-075">
-            <!-- <bib-file v-for="file in files" :property="property"></bib-file> -->
-            <message-file v-for="file in files" :property="file" :key="file.key + tempKey"></message-file>
+          <div class="d-flex align-start gap-1 mt-05 mb-075">
+            <bib-file v-for="file in files" :property="property"></bib-file>
+            <message-files v-for="file in files" :property="file" :key="file.key"></message-files>
           </div>
         </template>
-      </message-collapsible-section>
+      </message-collapsible-section> -->
     </div>
 
     <!-- <div v-show="showPlaceholder" class="placeholder mb-1 d-flex gap-05">
@@ -69,7 +69,7 @@
     </div> -->
 
     <!-- message replies -->
-    <div v-if="repliesExist" class="replies-section pb-05">
+    <!-- <div v-if="repliesExist" class="replies-section pb-05">
       <message-collapsible-section>
         <template slot="title">Replies ({{ msg.replies.length }})</template>
         <template slot="content">
@@ -78,7 +78,7 @@
           </div>
         </template>
       </message-collapsible-section>
-    </div>
+    </div> -->
 
     <!-- message action bar -->
     <div v-if="isActionBarShowing" class="actions-container" @click.stop>
@@ -98,9 +98,9 @@
           <v-emoji-picker @select="onReactionClick" />
         </div>
       </tippy>
-      <div class="action" @click="replyMessage">
+      <!-- <div class="action" @click="replyMessage">
         <fa :icon="faComment" />
-      </div>
+      </div> -->
       <tippy :visible="isMenuOpen" :animate-fill="false" :distance="6" interactive placement="bottom-end" trigger="manual" :onHide="() => defer(() => (isMenuOpen = false))">
         <template slot="trigger">
           <div class="action" :class="{ active: isMenuOpen }" @click="toggleMenu">
@@ -108,21 +108,24 @@
           </div>
         </template>
         <div class="menu" :class="{ open: isMenuOpen }">
-          <div class="menu-item">
+          <!-- <div class="menu-item">
             <a @click="replyMessage">Reply</a>
-          </div>
+          </div> -->
           <!-- <div class="menu-item">
             <a @click="markAsUnread">Mark unread</a>
           </div> -->
           <!-- <div class="menu-item">
             <a @click="copyMessageLink">Copy link</a>
           </div> -->
+          <!-- <div class="menu-item">
+              <a @click="showForwardModal">Share</a>
+            </div> -->
           <div v-if="msg.userId == user.Id" class="menu-item">
             <a @click="editMessage">Edit</a>
           </div>
-          <div v-if="msg.userId == user.Id" class="menu-item">
+          <!-- <div v-if="msg.userId == user.Id" class="menu-item">
             <a @click="attachFile">Attach file</a>
-          </div>
+          </div> -->
           <div class="menu-item-separator"></div>
           <div v-if="canDeleteMessage" class="menu-item danger">
             <a @click="deleteMessage">Delete</a>
@@ -158,7 +161,6 @@
     </bib-modal-wrapper>
   </div>
 </template>
-
 <script>
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
@@ -499,12 +501,7 @@ export default {
       this.isMenuOpen = false;
     },
     deleteMessage() {
-      console.log(this.msg)
-      this.$emit('delete-message', { 
-        taskId: this.msg.taskId ? this.msg.taskId : null, 
-        projectId: this.msg.projectId ? this.msg.projectId: null, 
-        commentId: this.msg.id 
-      });
+      this.$emit('delete-message', { projectId: this.msg.projectId, commentId: this.msg.id });
       this.isMenuOpen = false;
     },
     toggleUserCard() {
@@ -536,7 +533,7 @@ export default {
         // console.log(fi.data)
         _.delay(() => {
           console.log('delay->', fi.data);
-          this.getFiles()
+          // this.getFiles()
         }, 2000);
       }
       this.fileLoader = false
@@ -555,7 +552,7 @@ export default {
         if (f.data.statusCode == 200) {
           // this.loading = false
           this.files = f.data.data
-          this.tempKey += 1
+          // this.tempKey += 1
         }
       }).catch(e => {
         console.error(e)
