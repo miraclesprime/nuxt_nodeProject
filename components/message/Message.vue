@@ -47,15 +47,14 @@
     <!-- message files -->
     <div v-if="files.length > 0" class="msg-files pb-05">
       <!-- <small>{{files.length}} files</small> -->
-      <!-- <message-collapsible-section>
+      <message-collapsible-section>
         <template slot="title">Files ({{ files.length }})</template>
         <template slot="content">
           <div class="d-flex align-start gap-1 mt-05 mb-075">
-            <bib-file v-for="file in files" :property="property"></bib-file>
             <message-files v-for="file in files" :property="file" :key="file.key"></message-files>
           </div>
         </template>
-      </message-collapsible-section> -->
+      </message-collapsible-section>
     </div>
 
     <!-- <div v-show="showPlaceholder" class="placeholder mb-1 d-flex gap-05">
