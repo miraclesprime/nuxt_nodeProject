@@ -24,8 +24,8 @@
                 <!-- <span class="list__item">
                 <bib-icon icon="duplicate" :scale="1.1" variant="gray5" class="mr-075"></bib-icon> Copy
               </span> -->
-                <hr>
-                <span class="list__item list__item__danger">Delete</span>
+                <!-- <hr>
+                <span class="list__item list__item__danger">Delete</span> -->
               </div>
             </template>
           </bib-button>

@@ -311,11 +311,11 @@ export default {
 
     closeSidebar(event) {
       // console.log('click-outside task-sidebar',  event.originalTarget, event.target.classList)
-      const classlist = ["cursor-pointer", "task-grid", "table__irow"]
+      const classlist = ["cursor-pointer", "menu-item", "task-grid", "table__irow"]
       classlist.forEach(c => {
         // console.info(c)
         if (event.target.classList.contains(c)) {
-          // console.log('class found')
+          // console.log('class found', c)
           return
         }
       })

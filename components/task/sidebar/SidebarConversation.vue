@@ -1,42 +1,40 @@
 <template>
-  <client-only>
-    <div class="container pt-2 h-100" id="sc-container">
-      <div class="task-conversation w-100 d-flex flex-d-column" id="sc-task-team">
-        <div class="message-wrapper py-05 flex-grow-1 of-scroll-y">
-          <template v-if="showPlaceholder">
-            <div class="d-flex align-center p-05 border-bottom-gray2">
-              <bib-icon icon="arrow-down" :scale="0.5"></bib-icon>
-              <div class="px-1 ">
-                <div class="animated-background width-6"></div>
-              </div>
+  <div class="container h-100" id="sc-container">
+    <div class="task-conversation w-100 d-flex flex-d-column" id="sc-task-team">
+      <div class="message-wrapper py-05 flex-grow-1 of-scroll-y">
+        <template v-if="showPlaceholder">
+          <div class="d-flex align-center p-05 border-bottom-gray2">
+            <bib-icon icon="arrow-down" :scale="0.5"></bib-icon>
+            <div class="px-1 ">
+              <div class="animated-background width-6"></div>
             </div>
-            <div class="placeholder m-1 d-flex align-center gap-1">
-              <div class="left">
-                <div class="shape-circle width-3 height-3 animated-background"></div>
-              </div>
-              <div class="right">
-                <div class="animated-background width-4"></div>
-                <div class="animated-background width-10 mt-05"></div>
-              </div>
+          </div>
+          <div class="placeholder m-1 d-flex align-center gap-1">
+            <div class="left">
+              <div class="shape-circle width-3 height-3 animated-background"></div>
             </div>
-          </template>
-          <template v-else-if="comments.length > 0">
-            {{comments.length}} comment(s) found
-            <!-- <task-message-list :messages="comments" @refresh-list="fetchTaskComments"></task-message-list> -->
-          </template>
-          <template v-else>
-            <span class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
-              <bib-icon icon="warning"></bib-icon> No conversation found
-            </span>
-          </template>
-        </div>
-        <div class="task-message-input ">
-          <!-- <tip-tap  @input="inputContent"></tip-tap> -->
-          <message-input :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
-        </div>
+            <div class="right">
+              <div class="animated-background width-4"></div>
+              <div class="animated-background width-10 mt-05"></div>
+            </div>
+          </div>
+        </template>
+        <template v-else-if="comments.length > 0">
+          <!-- {{comments.length}} comment(s) found -->
+          <task-message-list :messages="comments" @refresh-list="fetchTaskComments"></task-message-list>
+        </template>
+        <template v-else>
+          <span class="d-inline-flex gap-1 align-center m-05 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
+            <bib-icon icon="warning"></bib-icon> No conversation found
+          </span>
+        </template>
+      </div>
+      <div class="task-message-input ">
+        <!-- <tip-tap  @input="inputContent"></tip-tap> -->
+        <message-input :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
       </div>
     </div>
-  </client-only>
+  </div>
 </template>
 <script>
 import { mapGetters } from 'vuex';
@@ -62,13 +60,22 @@ export default {
       // comments: "task/getTaskComments",
     })
   },
+  watch: {
+    task(newValue, oldValue) {
+      // console.log(newValue.id, newValue.title)
+      if (newValue.id != oldValue.id) {
+        // console.log(newValue.id, oldValue.id)
+        this.fetchTaskComments()
+      }
+    }
+  },
   mounted() {
     this.fetchTaskComments()
     // this.$store.dispatch("task/fetchTaskComments", { id: this.task.id })
     this.$store.dispatch("task/fetchTeamMember", { id: this.task.id })
   },
   methods: {
-    inputContent(data){
+    inputContent(data) {
       console.log(data);
     },
     async fetchTaskComments() {
