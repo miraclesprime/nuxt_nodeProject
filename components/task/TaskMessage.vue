@@ -1,11 +1,11 @@
 <template>
   <div class="msg position-relative" @mouseenter="isActionBarShowing = true" @mouseleave="onActionBarMouseLeave" v-click-outside="onActionBarClickOutside">
-    <figure class="width-4 user-avatar cursor-pointer" :class="{active: userCardVisible}" @click="toggleUserCard">
+    <figure class="width-4 user-avatar cursor-pointer" :class="{active: userCardVisible}" >
       <bib-avatar size="3rem" :src="userInfo.pic"></bib-avatar>
     </figure>
 
     <!-- user info card on click -->
-    <div class="user-card bg-white " :class="{active: userCardVisible}">
+    <!-- <div class="userA-card bg-white " :class="{active: userCardVisible}">
       <div class="user-info">
         <span class="d-inline-block user-name text-wrap of-hidden text-of-elipsis max-width-13">{{userInfo.name}} </span>
         <span class="d-inline-block user-job text-wrap of-hidden text-of-elipsis max-width-13">{{userInfo.jobTitle}}</span>
@@ -23,7 +23,7 @@
           <div class="flex-grow-1 text-gray5 ">Email<br><span class="text-primary d-inline-block of-hidden text-of-elipsis max-width-13">{{userInfo.email}}</span></div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- user info -->
     <div class="msg__owner pb-025">{{userInfo.name}} <span class="ml-1 font-sm">{{displayDate}}</span>
@@ -46,12 +46,11 @@
 
     <!-- message files -->
     <div v-if="files.length > 0" class="msg-files pb-05">
-      <!-- <small>{{files.length}} files</small> -->
       <message-collapsible-section>
         <template slot="title">Files ({{ files.length }})</template>
         <template slot="content">
-          <div class="d-flex align-start flex-wrap gap-1 mt-05 mb-075">
-            <message-files v-for="file in files" :property="file" :key="file.key"></message-files>
+          <div class="d-flex align-start gap-1 mt-05 mb-075">
+            <message-files v-for="file in files" :property="file" :key="tempKey + file.key"></message-files>
           </div>
         </template>
       </message-collapsible-section>
@@ -73,7 +72,7 @@
         <template slot="title">Replies ({{ msg.replies.length }})</template>
         <template slot="content">
           <div class="replies">
-            <message-reply v-for="reply in msg.replies" :key="reply.id" :reply="reply" />
+            <task-message-reply v-for="reply in msg.replies" :key="reply.id" :reply="reply" />
           </div>
         </template>
       </message-collapsible-section>
@@ -119,15 +118,15 @@
           <!-- <div class="menu-item">
               <a @click="showForwardModal">Share</a>
             </div> -->
-          <div v-if="msg.userId == user.Id" class="menu-item">
-            <a @click="editMessage">Edit</a>
+          <div v-if="msg.userId == user.Id" class="menu-item" >
+            <a @click.stop="editMessage">Edit</a>
           </div>
-          <div v-if="msg.userId == user.Id" class="menu-item">
-            <a @click="attachFile">Attach file</a>
+          <div v-if="msg.userId == user.Id" class="menu-item" >
+            <a @click.stop="attachFile">Attach file</a>
           </div>
           <div class="menu-item-separator"></div>
-          <div v-if="canDeleteMessage" class="menu-item danger">
-            <a @click="deleteMessage">Delete</a>
+          <div v-if="canDeleteMessage" class="menu-item danger" >
+            <a @click.stop="deleteMessage">Delete</a>
           </div>
         </div>
       </tippy>
@@ -137,7 +136,7 @@
     <bib-modal-wrapper v-if="replyModal" size="lg" title="Reply to..." @close="replyModal = false">
       <template slot="content">
         <div style="margin: -1rem -2rem -2rem; ">
-          <message-input key="projMsgInput" :value="value" @input="onFileInput" @submit="onReplySubmit"></message-input>
+          <message-input :value="value" @input="onFileInput" @submit="onReplySubmit"></message-input>
         </div>
         <loading :loading="replyLoading"></loading>
       </template>
@@ -160,6 +159,7 @@
     </bib-modal-wrapper>
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
@@ -178,7 +178,7 @@ import {
 import { faComment, faStar } from '@fortawesome/free-regular-svg-icons';
 export default {
 
-  name: 'Message',
+  name: 'TaskMessage',
   props: {
     msg: Object,
   },
@@ -328,7 +328,7 @@ export default {
     // this.reactions = this.msg.reactions
     this.reactions = _.cloneDeep(this.msg.reactions);
     this.getFiles()
-    /*this.$axios.get('/project/' + this.msg.id + "/reactions", {
+    /*this.$axios.get('/task/' + this.msg.id + "/reactions", {
         headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
       })
       .then(r => {
@@ -342,7 +342,7 @@ export default {
 
   methods: {
     /*fetchReplies() {
-      this.$axios.get('/project/' + this.msg.id + "/replies", {
+      this.$axios.get('/task/' + this.msg.id + "/replies", {
           headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
         })
         .then(rep => {
@@ -353,7 +353,7 @@ export default {
         .catch(e => console.warn(e))
     },*/
     fetchReactions() {
-      this.$axios.get('/project/' + this.msg.id + "/reactions", {
+      this.$axios.get('/task/' + this.msg.id + "/reactions", {
           headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
         })
         .then(r => {
@@ -372,7 +372,7 @@ export default {
     deleteOwnReaction(reaction) {
       this.reactionSpinner = true
       let react = reaction.data.find(d => d.user.id == this.user.Id)
-      this.$axios.delete("/project/" + this.msg.id + "/reaction", {
+      this.$axios.delete("/task/" + this.msg.id + "/reaction", {
           headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") },
           data: { reactionId: react.id },
         })
@@ -390,7 +390,7 @@ export default {
     onReplySubmit(data) {
       // console.log(data)
       this.replyLoading = true
-      this.$axios.post('/project/' + this.msg.id + "/reply", { projectCommentId: this.msg.id, comment: data.text }, {
+      this.$axios.post('/task/' + this.msg.id + "/reply", { taskCommentId: this.msg.id, comment: data.text }, {
           headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
         })
         .then(rep => {
@@ -437,7 +437,7 @@ export default {
         alert("Reaction already exists!")
         this.reactionSpinner = false
       } else {
-        this.$axios.post("/project/" + this.msg.id + "/reaction", { reaction: data }, {
+        this.$axios.post("/task/" + this.msg.id + "/reaction", { reaction: data }, {
             headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
           })
           .then(d => {
@@ -457,7 +457,7 @@ export default {
         alert("Reaction already exists!")
         this.reactionSpinner = false
       } else {
-        this.$axios.post("/project/" + this.msg.id + "/reaction", { reaction: "👍" }, {
+        this.$axios.post("/task/" + this.msg.id + "/reaction", { reaction: "👍" }, {
             headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
           })
           .then(d => {
@@ -471,10 +471,10 @@ export default {
           .catch(e => console.log(e))
       }
     },
-    replyMessage() {
+    /*replyMessage() {
       console.log('reply message action')
       this.replyModal = !this.replyModal
-    },
+    },*/
     /*copyMessageLink() {
       navigator?.clipboard?.writeText?.(window.location.origin + this.link);
       this.isMenuOpen = false;
@@ -500,18 +500,25 @@ export default {
       this.isMenuOpen = false;
     },
     deleteMessage() {
-      this.$emit('delete-message', { projectId: this.msg.projectId, commentId: this.msg.id });
+      // console.log(this.msg)
+      this.$emit('delete-message', { 
+        taskId: this.msg.taskId ? this.msg.taskId : null, 
+        // projectId: this.msg.projectId ? this.msg.projectId: null, 
+        commentId: this.msg.id 
+      });
       this.isMenuOpen = false;
     },
-    toggleUserCard() {
+    /*toggleUserCard() {
       this.userCardVisible = !this.userCardVisible
-    },
+    },*/
     attachFile() {
       this.uploadModal = true
+      this.isMenuOpen = false;
+
       // this.$emit("upload-file", this.msg)
     },
     handleChangeFile(){
-
+      // console.log(file)
     },
     async uploadFiles() {
       this.fileLoader = true
@@ -521,8 +528,8 @@ export default {
       myfiles.forEach(file => {
         formdata.append('files', file)
       })
-      // formdata.append('projectId', this.project.id)
-      formdata.append('projCommentId', this.msg.id)
+      // formdata.append('taskId', this.task.id)
+      formdata.append('taskCommentId', this.msg.id)
 
       const fi = await this.$axios.post("/file/upload", formdata, {
         headers: {
@@ -536,9 +543,11 @@ export default {
         _.delay(() => {
           // console.log('delay->', fi.data);
           this.getFiles()
-          _.delay(() => {
+          if (this.files.length < 1) {
+            _.delay(() => {
               this.getFiles()
             }, 3500)
+          }
         }, 2000);
       }
       this.fileLoader = false
@@ -546,7 +555,7 @@ export default {
     },
     getFiles() {
       // this.loading = true
-      let obj1 = { projectCommentId: this.msg.id }
+      let obj1 = { taskCommentId: this.msg.id }
       this.$axios.get("file/db/all", {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
@@ -557,7 +566,7 @@ export default {
         if (f.data.statusCode == 200) {
           // this.loading = false
           this.files = f.data.data
-          // this.tempKey += 1
+          this.tempKey += 1
         }
       }).catch(e => {
         console.error(e)

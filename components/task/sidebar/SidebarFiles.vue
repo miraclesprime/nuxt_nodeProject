@@ -20,7 +20,15 @@
     </div>
     <div class="of-scroll-y h-100" id="task-files">
       <template v-if="displayType == 'list'">
-        <bib-table :fields="tableFields" :sections="dbFiles" :hide-no-column="true" :key="fileKey">
+        <div v-if="showPlaceholder" class="placeholder m-1 d-flex align-center gap-1">
+          <div class="animated-background width-10"></div>
+          <div class="animated-background width-4 "></div>
+          <div class="animated-background width-5 "></div>
+          <div class="animated-background width-10 "></div>
+          <div class="animated-background width-5 "></div>
+          <div class="animated-background width-3 "></div>
+        </div>
+        <bib-table v-else :fields="tableFields" :sections="dbFiles" :hide-no-column="true" :key="fileKey">
           <template #cell(name)="data">
             <div class="d-flex align-center gap-05">
               <bib-avatar v-if="imageType(data.value)" shape="rounded" :src="data.value.url" size="1.5rem">
@@ -65,7 +73,13 @@
       </template>
       <template v-if="displayType == 'grid'">
         <div class="files d-flex flex-wrap gap-1 p-1">
-          <bib-file v-for="file in files" :key="file.key + fileKey" :property="file"></bib-file>
+          <div v-if="showPlaceholder" class="placeholder file of-hidden">
+            <div class="animated-background h-100" ></div>
+            <div class="animated-background h-100" ></div>
+          </div>
+          <template v-else>
+            <bib-file v-for="file in files" :key="file.key + fileKey" :property="file"></bib-file>
+          </template>
         </div>
       </template>
     </div>
@@ -85,7 +99,6 @@
     </bib-modal-wrapper>
   </div>
 </template>
-
 <script>
 import { mapGetters } from 'vuex'
 import { FILE_FIELDS } from "~/config/constants"
@@ -100,7 +113,8 @@ export default {
       uploadModal: false,
       fileLoader: false,
       dbFiles: [],
-      fileKey: 1
+      fileKey: 1,
+      showPlaceholder: false,
     }
   },
   computed: {
@@ -126,20 +140,28 @@ export default {
       return files
     }
   },
+  watch: {
+    task(newValue, oldValue) {
+      // console.log(newValue.id, newValue.title)
+      if (newValue.id != oldValue.id) {
+        // console.log(newValue.id, oldValue.id)
+        this.getFiles()
+      }
+    }
+  },
   mounted() {
-    console.log('mounted, task id->', this.task.id)
+    // console.log('mounted, task id->', this.task.id)
     this.getFiles()
   },
   methods: {
     imageType(data) {
-      
+
       if (data.type.indexOf("image/") == 0) {
         return true
       } else { return false }
     },
 
-    handleChangeFile(files, event) {
-    },
+    handleChangeFile(files, event) {},
 
     async uploadFiles() {
       this.fileLoader = true
@@ -151,7 +173,7 @@ export default {
       })
       formdata.append('taskId', this.task.id)
 
-      if(this.task.project[0]) {
+      if (this.task.project[0]) {
         formdata.append('projectId', this.task.project[0].projectId)
       }
 
@@ -161,29 +183,35 @@ export default {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
         }
       })
-      console.log(fi.data)
+      // console.log(fi.data)
       if (fi.data.statusCode == 200) {
-        this.getFiles().then((res) => {
-          this.fileKey += 1;
-        })
+        _.delay(() => {
+          // console.log('delay->', fi.data);
+          this.getFiles()
+        }, 2000);
+        
       }
       this.fileLoader = false
       this.uploadModal = false
     },
 
     async getFiles() {
+      this.showPlaceholder = true
       let obj1 = { taskId: this.task.id }
       this.$axios.get("file/db/all", {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-          'obj': JSON.stringify(obj1)
-        }
-      }).then(f => {
-        // console.log(f.data)
-        if (f.data.statusCode == 200) {
-          this.dbFiles = f.data.data
-        }
-      })
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            'obj': JSON.stringify(obj1)
+          }
+        }).then(f => {
+          // console.log(f.data)
+          if (f.data.statusCode == 200) {
+            this.dbFiles = f.data.data
+            this.showPlaceholder = false
+            this.fileKey += 1;
+          }
+        })
+        .catch(e => console.error(e))
     },
 
     downloadFile(file) {
@@ -193,7 +221,7 @@ export default {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           }
         }).then(f => {
-        
+
           if (f.data.statusCode == 200) {
             const a = document.createElement('a');
             a.style.display = 'none';
@@ -202,9 +230,6 @@ export default {
             a.click();
             window.URL.revokeObjectURL(f.data.data);
 
-            this.getFiles().then((res) => {
-              this.fileKey += 1;
-            })
           }
         })
         .catch(e => console.error(e))
@@ -269,13 +294,12 @@ export default {
 
 .files {
   .file {
-    flex: 0 0 18rem;
     border-radius: 0.5rem;
 
     img {
       object-fit: cover;
       width: 100%;
-      height: 12rem;
+      height: 9rem;
       border-top-left-radius: 0.5rem;
       border-top-right-radius: 0.5rem;
     }
