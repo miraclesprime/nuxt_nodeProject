@@ -1,9 +1,10 @@
 <template>
   <client-only>
-    <div class="file d-flex">
+    <div class="file d-flex ">
       <figure class="position-relative w-100"><img :src="preview" class="shape-rounded d-block" >
         <div class="file-overlay d-flex align-center justify-center cursor-pointer">
-          <bib-icon icon="bib-logo" variant="gray1" :scale="2"></bib-icon>
+          <!-- <bib-icon icon="search" variant="gray1" :scale="2"></bib-icon> -->
+          <fa :icon="faMagnifyingGlassPlus" class="width-2 height-2" ></fa>
         </div>
         <div class="shape-circle bg-gray4 width-2 height-2 d-flex justify-center align-center file-menu">
           <bib-button pop="elipsis" :scale="1">
@@ -36,6 +37,8 @@
   </client-only>
 </template>
 <script>
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
 export default {
 
   name: 'MessageFiles',
@@ -43,8 +46,13 @@ export default {
     property: { type: Object }
   },
 
+  components: {
+    fa: FontAwesomeIcon,
+  },
+
   data() {
     return {
+      faMagnifyingGlassPlus,
       /*property: {
         name: "ImageFile Name",
         // colorLabel: "secondary-sub2",

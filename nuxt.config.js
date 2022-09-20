@@ -28,6 +28,7 @@ export default {
     "~/plugins/dateFormat.client.js",
     "~/plugins/statusFormat.client.js",
     "~/plugins/priorityFormat.client.js",
+    // "~/plugins/chatLink.client.js",
     // "~/plugins/userInfo.js",
     "~/utils/userInfo.client.js",
     "~/../bib-shared/js/colors.js",

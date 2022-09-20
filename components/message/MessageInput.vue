@@ -1,4 +1,5 @@
 <template>
+  <client-only>
   <div v-if="editor" class="wrapper">
     <div class="container">
       <div class="toolbar-top">
@@ -116,20 +117,22 @@
       <template slot="content">
         <bib-input label="URL" v-model="linkUrl" />
         <div class="d-flex">
-          <bib-button label="Cancel" variant="light" pill @click="closeAndResetLinkModal" />
-          <bib-button label="Set Link" variant="success" class="ml-auto" pill @click="setLink" />
+          <bib-button label="Cancel" variant="light" pill @click="closeAndResetLinkModal" ></bib-button>
+          <bib-button label="Set Link" variant="success" class="ml-auto" pill @click="setLink" ></bib-button>
         </div>
       </template>
     </bib-modal-wrapper>
   </div>
+  </client-only>
 </template>
 <script>
 import { Editor, EditorContent, Extension, VueRenderer } from '@tiptap/vue-2';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { Mention } from '@tiptap/extension-mention';
+import Link from '@tiptap/extension-link'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   faGrin,
   faPaperPlane,
@@ -156,7 +159,7 @@ import VueTippy, { TippyComponent } from 'vue-tippy';
 import { VEmojiPicker } from 'v-emoji-picker';
 import { snipFileName } from '~/utils/file';
 // import { ChannelPlugin } from '~/plugins/editor-channel';
-import { ChatLink } from '~/plugins/editor-link';
+// import { ChatLink } from '~/plugins/editor-link';
 
 import MentionList from '~/components/message-mention/MessageMentionList.vue';
 
@@ -214,16 +217,22 @@ export default {
   },
 
   mounted() {
+    if (process.client) {
+
     this.editor = new Editor({
       content: '',
       extensions: [
         StarterKit,
-        ChatLink.configure({
+
+        /*ChatLink.configure({
           onEdit: (link) => {
             this.linkUrl = link.href;
             this.isLinkModalShown = true;
           },
           onRemove: () => this.editor.chain().focus().unsetLink().run(),
+        }),*/
+        Link.configure({
+          openOnClick: false,
         }),
         Underline,
         Placeholder.configure({ placeholder: this.placeholder }),
@@ -307,6 +316,7 @@ export default {
         }),
       ],
     });
+    }
   },
 
   beforeDestroy() {
@@ -356,17 +366,49 @@ export default {
         this.editor.chain().focus().unsetLink().run();
       } else {
         // show link modal
-        this.isLinkModalShown = true;
+        // this.isLinkModalShown = true;
+        this.setLink()
       }
     },
-    setLink() {
+    /*setLink() {
       this.editor.chain().focus().extendMarkRange('link').setLink({ href: this.linkUrl }).run();
       this.closeAndResetLinkModal();
-    },
+    },*/
     closeAndResetLinkModal() {
       this.isLinkModalShown = false;
       this.linkUrl = '';
     },
+
+    setLink() {
+      const previousUrl = this.editor.getAttributes('link').href
+      const url = window.prompt('URL', previousUrl)
+
+      // cancelled
+      if (url === null) {
+        return
+      }
+
+      // empty
+      if (url === '') {
+        this.editor
+          .chain()
+          .focus()
+          .extendMarkRange('link')
+          .unsetLink()
+          .run()
+
+        return
+      }
+
+      // update link
+      this.editor
+        .chain()
+        .focus()
+        .extendMarkRange('link')
+        .setLink({ href: url })
+        .run()
+    },
+
     addVoice(voice) {
       this.$emit('input', { ...this.value, voices: [...this.value.voices, voice] });
     },
