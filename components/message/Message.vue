@@ -50,7 +50,7 @@
       <message-collapsible-section>
         <template slot="title">Files ({{ files.length }})</template>
         <template slot="content">
-          <div class="d-flex align-start gap-1 mt-05 mb-075">
+          <div class="d-flex align-start flex-wrap gap-1 mt-05 mb-075">
             <message-files v-for="file in files" :property="file" :key="file.key"></message-files>
           </div>
         </template>
@@ -122,9 +122,9 @@
           <div v-if="msg.userId == user.Id" class="menu-item">
             <a @click="editMessage">Edit</a>
           </div>
-          <!-- <div v-if="msg.userId == user.Id" class="menu-item">
+          <div v-if="msg.userId == user.Id" class="menu-item">
             <a @click="attachFile">Attach file</a>
-          </div> -->
+          </div>
           <div class="menu-item-separator"></div>
           <div v-if="canDeleteMessage" class="menu-item danger">
             <a @click="deleteMessage">Delete</a>
@@ -137,7 +137,7 @@
     <bib-modal-wrapper v-if="replyModal" size="lg" title="Reply to..." @close="replyModal = false">
       <template slot="content">
         <div style="margin: -1rem -2rem -2rem; ">
-          <message-input :value="value" @input="onFileInput" @submit="onReplySubmit"></message-input>
+          <message-input key="projMsgInput" :value="value" @input="onFileInput" @submit="onReplySubmit"></message-input>
         </div>
         <loading :loading="replyLoading"></loading>
       </template>
