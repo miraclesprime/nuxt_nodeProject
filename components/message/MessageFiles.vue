@@ -2,7 +2,7 @@
   <client-only>
     <div class="file d-flex ">
       <figure class="position-relative w-100"><img :src="preview" class="shape-rounded d-block" >
-        <div class="file-overlay d-flex align-center justify-center cursor-pointer">
+        <div class="file-overlay d-flex align-center justify-center cursor-pointer" @click="$emit('file-click')">
           <!-- <bib-icon icon="search" variant="gray1" :scale="2"></bib-icon> -->
           <fa :icon="faMagnifyingGlassPlus" class="width-2 height-2" ></fa>
         </div>
@@ -15,7 +15,7 @@
                 <!-- <span class="list__item">
                 <bib-icon icon="upload" :scale="1.1" variant="gray5" class="mr-075"></bib-icon> Open
               </span> -->
-                <span class="list__item">
+                <span class="list__item" @click.stop="fileDetailModal = true">
                   <bib-icon icon="urgent" :scale="1.1" variant="gray5" class="mr-075"></bib-icon> Details
                 </span>
                 <span class="list__item" @click.stop="downloadFile">
@@ -33,6 +33,22 @@
       </figure>
       <!-- <figure class="position-relative"><img src="https://placeimg.com/200/360/tech" class="shape-rounded" alt="img1"></figure>
       <figure class="position-relative"><img src="https://placeimg.com/150/200/tech" class="shape-rounded" alt="img1"></figure> -->
+      <bib-modal-wrapper v-if="fileDetailModal" title="File Details" @close="fileDetailModal = false">
+      <template slot="content">
+        <table class="table">
+          <tr v-for="file in fileDetail">
+            <th class="text-right font-w-400">{{file.key}}:</th>
+            <td class="text-left text-gray6 pl-1">{{file.value}}</td>
+          </tr>
+        </table>
+      </template>
+      <template slot="footer">
+        <div class="d-flex justify-end">
+          <bib-button label="Close" variant="light" pill @click="fileDetailModal = false"></bib-button>
+          <!-- <bib-button label="Create" variant="success" class="ml-auto" pill></bib-button> -->
+        </div>
+      </template>
+    </bib-modal-wrapper>
     </div>
   </client-only>
 </template>
@@ -53,6 +69,8 @@ export default {
   data() {
     return {
       faMagnifyingGlassPlus,
+      fileDetailModal: false,
+      // preview: "",
       /*property: {
         name: "ImageFile Name",
         // colorLabel: "secondary-sub2",
@@ -66,9 +84,10 @@ export default {
     preview() {
       if (this.property.type.indexOf('image/') == 0 && "url" in this.property) {
         return this.property.url
+        // return this.previewFile()
       } else {
         // return 'https://placeimg.com/300/300/tech'
-        return "https://via.placeholder.com/200x100/f0f0f0/6f6f79?text="+this.property.extension
+        return "https://via.placeholder.com/200x160/f0f0f0/6f6f79?text="+this.property.extension
       }
     },
     fileDetail() {
@@ -164,13 +183,15 @@ export default {
 }
 
 table {
-  border: 1px solid $gray2;
+  /*border: 1px solid $gray2;*/
   border-collapse: collapse;
+  width: 100%;
+  font-size: $base-size;
 }
-
+table th,
 table td {
-  border: 1px solid $gray2;
-  font-size: 1rem;
+  /*border: 1px solid $gray2;*/
+  padding: 0.25rem;
 }
 
 </style>

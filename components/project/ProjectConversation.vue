@@ -102,19 +102,42 @@ export default {
       this.value.files = payload.files
     },
     onsubmit(data) {
-      // console.log(data, this.editMessage?.id)
 
       if (this.editMessage?.id) {
         this.$store.dispatch("project/updateProjectComment", { projectId: this.project.id, commentId: this.editMessage.id, comment: data.text })
       } else {
         this.$store.dispatch("project/createProjectComment", { id: this.project.id, comment: data.text })
           .then(res => {
-            // console.log(res)
+            console.log("comment submit->", res.data)
+            this.uploadFile(this.value.files, res.data)
+            this.value.files = []
+
             this.fetchProjectComments()
           })
           .catch(e => console.log(e))
       }
     },
+    async uploadFile(commentFiles, data){
+      let formdata = new FormData()
+      commentFiles.forEach(file => {
+        formdata.append('files', file)
+      })
+      // formdata.append('projectId', this.project.id)
+      formdata.append('projCommentId', data.id)
+
+      const fi = await this.$axios.post("/file/upload", formdata, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      })
+      // console.log(fi.data)
+      if (fi.data.statusCode == 200) {
+        console.log("file upload->", fi.data)
+        this.value.files = []
+        this.$nuxt.$emit("get-msg-files")
+      }
+    }
   },
 };
 

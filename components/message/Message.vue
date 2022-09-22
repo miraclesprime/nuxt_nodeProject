@@ -51,7 +51,7 @@
         <template slot="title">Files ({{ files.length }})</template>
         <template slot="content">
           <div class="d-flex align-start flex-wrap gap-1 mt-05 mb-075">
-            <message-files v-for="file in files" :property="file" :key="file.key"></message-files>
+            <message-files v-for="file in files" :property="file" :key="file.key" @file-click="previewDownload(file)" ></message-files>
           </div>
         </template>
       </message-collapsible-section>
@@ -134,14 +134,14 @@
     </div>
 
     <!-- submit reply modal -->
-    <bib-modal-wrapper v-if="replyModal" size="lg" title="Reply to..." @close="replyModal = false">
+    <!-- <bib-modal-wrapper v-if="replyModal" size="lg" title="Reply to..." @close="replyModal = false">
       <template slot="content">
         <div style="margin: -1rem -2rem -2rem; ">
           <message-input key="projMsgInput" :value="value" @input="onFileInput" @submit="onReplySubmit"></message-input>
         </div>
         <loading :loading="replyLoading"></loading>
       </template>
-    </bib-modal-wrapper>
+    </bib-modal-wrapper> -->
 
     <!-- file upload modal -->
     <bib-modal-wrapper v-if="uploadModal" title="Select file(s)" @close="uploadModal = false">
@@ -157,6 +157,19 @@
           <bib-button label="Upload" variant="success" class="ml-auto" pill @click="uploadFiles"></bib-button>
         </div>
       </template>
+    </bib-modal-wrapper>
+
+    <!-- file preview -->
+    <bib-modal-wrapper
+      v-if="filePreview"
+      title="File preview"
+      size="lg"
+      @close="filePreview = false"
+    >
+      <div slot="content" class="modal-content">
+        <!-- <img :src="backendUrl(`files/serve/${filePreview.key}`)" /> -->
+        <img :src="selectedFile.url" alt="">
+      </div>
     </bib-modal-wrapper>
   </div>
 </template>
@@ -205,22 +218,19 @@ export default {
       fasStar,
       showPlaceholder: true,
       userCardVisible: false,
-      value: {
-        files: [
-          /*{ id: 156, name: 'thefile.png' },
-          { id: 282, name: 'anotherfile.jpg' },*/
-        ]
-      },
+      
       files: [
         // { name: "File Name", type: "image/png", size: "2340", preview: 'https://placeimg.com/200/300/tech' },
         /*{ name: "ImageFile Name", type: "image/png", size: "2340", preview: 'https://placeimg.com/200/360/tech' },
         { name: "ImageFile Name", type: "image/png", size: "2340", preview: 'https://placehold.jp/2ba026/ffffff/180x180.jpg' },
         { name: "ImageFile Name", type: "image/png", size: "2340", preview: 'https://placehold.jp/24/1f42a2/ffffff/250x200.jpg?text=placeholder%20image' }*/
       ],
+      selectedFile: "",
+      filePreview: false,
       replies: [
         /*{ id: 254, user: { id: "DKgl9av2NwnaG1vz", photo: 'https://i.pravatar.cc/100', firstName: "Vishu", lastName: "M", }, updatedAt: "2022-08-14T06:54:37.000Z", comment: "this is reply text" },*/
       ],
-      replyLoading: false,
+      // replyLoading: false,
       reactions: [],
       reactionKey: 1,
       reactionSpinner: false,
@@ -322,6 +332,11 @@ export default {
     },
 
   },
+  created(){
+    this.$nuxt.$on("get-msg-files", () => {
+      this.getFiles()
+    })
+  },
   mounted() {
     // this.reactions = []
     // console.info(this.msg.id, " msg reactions =>", this.msg.reactions, 'local reactions =>', this.reactions);
@@ -383,11 +398,11 @@ export default {
         })
         .catch(e => console.log(e))
     },
-    onFileInput(payload) {
+    /*onFileInput(payload) {
       // console.log(payload)
       this.value.files = payload.files
-    },
-    onReplySubmit(data) {
+    },*/
+    /*onReplySubmit(data) {
       // console.log(data)
       this.replyLoading = true
       this.$axios.post('/project/' + this.msg.id + "/reply", { projectCommentId: this.msg.id, comment: data.text }, {
@@ -404,7 +419,7 @@ export default {
           this.replyLoading = false
           console.warn(e)
         })
-    },
+    },*/
     onActionBarMouseLeave() {
       if (!(this.isMenuOpen || this.isReactionPickerOpen)) {
         this.isActionBarShowing = false;
@@ -564,6 +579,10 @@ export default {
         // this.loading = false
       })
     },
+    previewDownload(file){
+      this.filePreview = true
+      this.selectedFile = file
+    }
   }
 }
 
