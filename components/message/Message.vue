@@ -452,7 +452,7 @@ export default {
         alert("Reaction already exists!")
         this.reactionSpinner = false
       } else {
-        this.$axios.post("/project/" + this.msg.id + "/reaction", { reaction: data }, {
+        this.$axios.post("/project/" + this.msg.id + "/reaction", { reaction: data, projectId: this.msg.projectId, text: "reaction added" }, {
             headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
           })
           .then(d => {
@@ -536,8 +536,9 @@ export default {
       myfiles.forEach(file => {
         formdata.append('files', file)
       })
-      // formdata.append('projectId', this.project.id)
+      formdata.append('projectId', this.project.id)
       formdata.append('projCommentId', this.msg.id)
+      formdata.append('text', "file uploaded to project comment")
 
       const fi = await this.$axios.post("/file/upload", formdata, {
         headers: {

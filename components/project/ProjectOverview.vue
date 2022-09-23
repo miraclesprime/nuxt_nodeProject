@@ -285,7 +285,7 @@ export default {
     async updateProject() {
       // console.log('from debounce function')
       this.loading = true
-      let proj = await this.$axios.$put("/project", { id: this.project.id, user: this.owner[0], data: this.activeProject }, {
+      let proj = await this.$axios.$put("/project", { id: this.project.id, user: this.owner[0], data: this.activeProject, text: "project updated" }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       })
       // console.log(proj.data)

@@ -220,6 +220,7 @@ export default {
         formdata.append('files', file)
       })
       formdata.append('projectId', this.project.id)
+      formdata.append('text', "file uploaded to project")
 
       const fi = await this.$axios.post("/file/upload", formdata, {
         headers: {
@@ -287,6 +288,8 @@ export default {
         this.$axios.delete("file/" + file.key, {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+              'projectid': this.project.id,
+              'text': "project file deleted"
             }
           }).then(f => {
             console.log(f.data)
