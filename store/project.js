@@ -306,10 +306,10 @@ export const actions = {
   },
 
   async deleteProject(ctx, payload) {
-    console.log(payload)
+    // console.log(payload)
     const res = await this.$axios.$delete("/project", {
       headers: { "Authorization": `Bearer ${localStorage.getItem('accessToken')}` },
-      data: { id: payload.id }
+      data: { id: payload.id, text: "project deleted " }
     })
     return res
     
@@ -364,7 +364,7 @@ export const actions = {
       })
     }
 
-    const res = await this.$axios.post("/project/add-member", { projectId: payload.projectId, team: data }, {
+    const res = await this.$axios.post("/project/add-member", { projectId: payload.projectId, team: data, text: "team member added" }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
     
@@ -386,7 +386,8 @@ export const actions = {
           "Content-Type": "application/json",
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
           "projectid": payload.projectId,
-          "memberid": payload.memberId
+          "memberid": payload.memberId,
+          "text": "team member removed"
         }
       })
       // console.log(m)
@@ -467,7 +468,8 @@ export const actions = {
 
     try {
       const res = await this.$axios.$post(`/project/${payload.id}/comments`, {
-        comment: payload.comment 
+        comment: payload.comment,
+        text: "commented on project" 
       }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
@@ -486,7 +488,8 @@ export const actions = {
 
     try {
       const res = await this.$axios.$put(`/project/${payload.projectId}/comments/${payload.commentId}`,{
-        comment: payload.comment
+        comment: payload.comment,
+        text: "updated comment"
       }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
@@ -506,7 +509,10 @@ export const actions = {
 
     try {
       const res = await this.$axios.$delete(`/project/${payload.projectId}/comments/${payload.commentId}`,{
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+        headers: { 
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          'text': "comment deleted"
+        }
       });
       if (res.statusCode == 200) {
         ctx.dispatch("fetchProjectComments", {id: payload.projectId})

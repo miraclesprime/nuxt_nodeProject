@@ -105,13 +105,22 @@ export default {
 
       if (this.editMessage?.id) {
         this.$store.dispatch("project/updateProjectComment", { projectId: this.project.id, commentId: this.editMessage.id, comment: data.text })
+        .then(res => {
+          if (this.value.files.length > 0) {
+            this.uploadFile(this.value.files, this.editMessage)
+            this.value.files = []
+          }
+          this.fetchProjectComments()
+        })
+        .catch(e => console.log(e))
       } else {
         this.$store.dispatch("project/createProjectComment", { id: this.project.id, comment: data.text })
           .then(res => {
-            console.log("comment submit->", res.data)
-            this.uploadFile(this.value.files, res.data)
-            this.value.files = []
-
+            // console.log("comment submit->", res.data)
+            if (this.value.files.length > 0) {
+              this.uploadFile(this.value.files, res.data)
+              this.value.files = []
+            }
             this.fetchProjectComments()
           })
           .catch(e => console.log(e))
@@ -122,8 +131,9 @@ export default {
       commentFiles.forEach(file => {
         formdata.append('files', file)
       })
-      // formdata.append('projectId', this.project.id)
+      formdata.append('projectId', this.project.id)
       formdata.append('projCommentId', data.id)
+      formdata.append('text', "comment file attached")
 
       const fi = await this.$axios.post("/file/upload", formdata, {
         headers: {
@@ -133,7 +143,7 @@ export default {
       })
       // console.log(fi.data)
       if (fi.data.statusCode == 200) {
-        console.log("file upload->", fi.data)
+        // console.log("file upload->", fi.data)
         this.value.files = []
         this.$nuxt.$emit("get-msg-files")
       }
