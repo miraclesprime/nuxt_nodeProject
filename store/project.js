@@ -291,6 +291,7 @@ export const actions = {
       dueDate: null,
       priority: null,
       budget: null,
+      text: "project created"
     }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
