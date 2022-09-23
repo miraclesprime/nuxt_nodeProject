@@ -1,9 +1,9 @@
 <template>
   <client-only>
     <div class="file d-flex ">
-      <figure class="position-relative w-100"><img :src="preview" class="shape-rounded d-block" >
+      <figure class="position-relative w-100">
+        <img :src="filePreview" class="shape-rounded d-block" >
         <div class="file-overlay d-flex align-center justify-center cursor-pointer" @click="$emit('file-click')">
-          <!-- <bib-icon icon="search" variant="gray1" :scale="2"></bib-icon> -->
           <fa :icon="faMagnifyingGlassPlus" class="width-2 height-2" ></fa>
         </div>
         <div class="shape-circle bg-gray4 width-2 height-2 d-flex justify-center align-center file-menu">
@@ -70,26 +70,11 @@ export default {
     return {
       faMagnifyingGlassPlus,
       fileDetailModal: false,
-      // preview: "",
-      /*property: {
-        name: "ImageFile Name",
-        // colorLabel: "secondary-sub2",
-        preview: "https://loremflickr.com/360/240",
-        type: "image/png",
-        size: "2340",
-      }*/
+      filePreview: "",
     }
   },
   computed: {
-    preview() {
-      if (this.property.type.indexOf('image/') == 0 && "url" in this.property) {
-        return this.property.url
-        // return this.previewFile()
-      } else {
-        // return 'https://placeimg.com/300/300/tech'
-        return "https://via.placeholder.com/200x160/f0f0f0/6f6f79?text="+this.property.extension
-      }
-    },
+    
     fileDetail() {
       let arr = []
       if (this.property.hasOwnProperty("id")) {
@@ -104,7 +89,25 @@ export default {
       return arr
     }
   },
+  mounted(){
+    this.previewFile()
+    
+  },
   methods: {
+    async previewFile(){
+      if (this.property.type.indexOf('image/') == 0 && "url" in this.property) {
+      let imgtype = this.property.type.split("/")[1]
+        const prev = await this.$axios.get("file/single/"+this.property.key, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          }
+        })
+        console.log(prev.data.data)
+        this.filePreview = `data:image/${imgtype};base64,${prev.data.data}`
+      } else {
+        this.filePreview = "https://via.placeholder.com/200x160/f0f0f0/6f6f79?text="+this.property.extension
+      }
+    },
 
     downloadFile() {
       this.$axios.get("file/" + this.property.key, {
@@ -139,7 +142,7 @@ export default {
   background-color: rgb(240, 240, 240);
   flex: 0 1 14rem;
   figure {
-    img { width:100%; object-fit: contain; aspect-ratio: 14 / 8; }
+    img { width:100%; object-fit: cover; aspect-ratio: 1.5 / 1; }
   }
 
   .file-overlay {
@@ -183,14 +186,12 @@ export default {
 }
 
 table {
-  /*border: 1px solid $gray2;*/
   border-collapse: collapse;
   width: 100%;
   font-size: $base-size;
 }
 table th,
 table td {
-  /*border: 1px solid $gray2;*/
   padding: 0.25rem;
 }
 

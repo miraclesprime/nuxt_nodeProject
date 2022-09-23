@@ -69,6 +69,7 @@ export default {
       }
     }
   },
+  
   mounted() {
     this.fetchTaskComments()
     // this.$store.dispatch("task/fetchTaskComments", { id: this.task.id })
@@ -108,11 +109,33 @@ export default {
         this.$store.dispatch("task/createTaskComment", { id: this.task.id, comment: data.text })
           .then(res => {
             // console.log(res)
+            this.uploadFile(this.value.files, res.data)
             this.fetchTaskComments()
           })
           .catch(e => console.log(e))
       }
     },
+    async uploadFile(commentFiles, data){
+      let formdata = new FormData()
+      commentFiles.forEach(file => {
+        formdata.append('files', file)
+      })
+      // formdata.append('projectId', this.project.id)
+      formdata.append('taskCommentId', data.id)
+
+      const fi = await this.$axios.post("/file/upload", formdata, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      })
+      // console.log(fi.data)
+      if (fi.data.statusCode == 200) {
+        console.log("file upload->", fi.data)
+        this.value.files = []
+        this.$nuxt.$emit("get-taskmsg-files")
+      }
+    }
   },
 };
 

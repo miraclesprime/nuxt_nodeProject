@@ -1,6 +1,6 @@
 <template>
   <client-only>
-  <div v-if="editor" class="wrapper">
+  <div v-if="editor" class="wrapper" @click.stop>
     <div class="container">
       <div class="toolbar-top">
         <div class="toolbar-icon" :class="{ 'is-active': editor.isActive('bold') }" @click="editor.chain().focus().toggleBold().run()">
@@ -91,17 +91,17 @@
           <editor-content :editor="editor" class="editor" />
         </div>
       </div>
-      <div class="toolbar-bottom d-flex justify-between">
+      <div class="toolbar-bottom d-flex justify-between" @click.stop>
         <div class="d-flex">
           <div class="toolbar-icon" @click="onAttachmentClick">
             <fa :icon="faPaperclip"></fa>
             <input ref="file" multiple type="file" class="attachment-input" @change="onFilesSelect" />
           </div>
-          <tippy trigger="click" interactive :animate-fill="false" :distance="60" placement="top-start">
+          <tippy arrow trigger="click" interactive :animate-fill="false" :distance="60" placement="top-start" >
             <div slot="trigger" class="toolbar-icon">
               <fa :icon="faGrin"></fa>
             </div>
-            <v-emoji-picker @select="selectEmoji"></v-emoji-picker>
+            <v-emoji-picker @select="selectEmoji" ></v-emoji-picker>
           </tippy>
           <!-- <audio-recorder @record="addVoice" />
           <video-recorder @record="addVideo" />

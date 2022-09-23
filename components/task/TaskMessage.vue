@@ -322,6 +322,14 @@ export default {
     },
 
   },
+  created(){
+    this.$nuxt.$on("get-taskmsg-files", () => {
+      _.delay(() => {
+          this.getFiles()
+        }, 2000)
+      // this.getFiles()
+    })
+  },
   mounted() {
     // this.reactions = []
     // console.info(this.msg.id, " msg reactions =>", this.msg.reactions, 'local reactions =>', this.reactions);
