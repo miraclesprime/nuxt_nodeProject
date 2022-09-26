@@ -351,7 +351,7 @@ export const actions = {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
       if (res.statusCode == 200) {
-        ctx.dispatch("fetchTaskComments", {id: payload.projectId})
+        ctx.dispatch("fetchTaskComments", {id: payload.taskId})
         return res
       } else {
         return res

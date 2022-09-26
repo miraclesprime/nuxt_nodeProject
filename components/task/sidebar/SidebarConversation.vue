@@ -57,6 +57,7 @@ export default {
     ...mapGetters({
       task: "task/getSelectedTask",
       taskMembers: "task/getTaskMembers",
+      project: "project/getSingleProject"
       // comments: "task/getTaskComments",
     })
   },
@@ -74,6 +75,10 @@ export default {
     this.fetchTaskComments()
     // this.$store.dispatch("task/fetchTaskComments", { id: this.task.id })
     this.$store.dispatch("task/fetchTeamMember", { id: this.task.id })
+    this.$nuxt.$on("edit-message", (msg) => {
+      // console.log(msg)
+      this.editMessage = msg
+    })
   },
   methods: {
     inputContent(data) {
@@ -105,6 +110,10 @@ export default {
 
       if (this.editMessage?.id) {
         this.$store.dispatch("task/updateTaskComment", { taskId: this.task.id, commentId: this.editMessage.id, comment: data.text })
+        .then(res => {
+          this.fetchTaskComments()
+        })
+        .catch(e => console.log(e))
       } else {
         this.$store.dispatch("task/createTaskComment", { id: this.task.id, comment: data.text })
           .then(res => {
@@ -122,6 +131,12 @@ export default {
       })
       // formdata.append('projectId', this.project.id)
       formdata.append('taskCommentId', data.id)
+      formdata.append('taskId', this.task.id)
+      formdata.append('text', 'File Upload in task comment')
+
+      if(Object.keys(this.project).length > 0) {
+        formdata.append('projectId', this.project.id)
+      }
 
       const fi = await this.$axios.post("/file/upload", formdata, {
         headers: {

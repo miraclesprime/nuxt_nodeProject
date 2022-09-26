@@ -232,7 +232,9 @@ export default {
   computed: {
     ...mapGetters({
       user: "user/getUser2",
-      members: 'user/getTeamMembers'
+      members: 'user/getTeamMembers',
+      project: 'project/getSingleProject',
+      task: 'task/getSelectedTask'
     }),
     userInfo() {
       if (this.members.length) {
@@ -537,7 +539,10 @@ export default {
         formdata.append('files', file)
       })
       // formdata.append('taskId', this.task.id)
+      formdata.append('projectId', this.project.id)
+      formdata.append('taskId', this.task.id)
       formdata.append('taskCommentId', this.msg.id)
+      formdata.append('text', 'File for task Comment');
 
       const fi = await this.$axios.post("/file/upload", formdata, {
         headers: {
