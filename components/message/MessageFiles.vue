@@ -102,7 +102,7 @@ export default {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           }
         })
-        console.log(prev.data.data)
+        // console.log(prev.data.data)
         this.filePreview = `data:image/${imgtype};base64,${prev.data.data}`
       } else {
         this.filePreview = "https://via.placeholder.com/200x160/f0f0f0/6f6f79?text="+this.property.extension

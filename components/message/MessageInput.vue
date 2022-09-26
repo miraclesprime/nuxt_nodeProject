@@ -348,6 +348,7 @@ export default {
       this.$emit('input', { ...this.value, files: [...this.value.files, ...newFiles] });
     },
     selectEmoji(emoji) {
+      // e.stopPropagation()
       const transaction = this.editor.state.tr.insertText(emoji.data);
       this.editor.view.dispatch(transaction);
     },
