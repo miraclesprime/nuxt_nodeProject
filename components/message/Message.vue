@@ -536,7 +536,7 @@ export default {
       myfiles.forEach(file => {
         formdata.append('files', file)
       })
-      formdata.append('projectId', this.project.id)
+      formdata.append('projectId', this.msg.projectId)
       formdata.append('projCommentId', this.msg.id)
       formdata.append('text', "file uploaded to project comment")
 

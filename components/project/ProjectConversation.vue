@@ -111,6 +111,8 @@ export default {
             this.value.files = []
           }
           this.fetchProjectComments()
+          this.editMessage = {}
+
         })
         .catch(e => console.log(e))
       } else {
