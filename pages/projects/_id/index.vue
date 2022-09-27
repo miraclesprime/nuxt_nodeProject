@@ -100,9 +100,15 @@
 <script>
 import { mapGetters } from 'vuex'
 import { TABLE_FIELDS, PROJECT_TABS, PROJECT_DEFAULT_TAB, PROJECT_TAB_TITLES } from "config/constants";
-
+import axios from 'axios';
 export default {
   name: 'ProjectId',
+  /*middleware({ store, redirect }) {
+      console.log(store.state.project.selectedProject.isDeleted)
+      if (store.state.project.selectedProject.isDeleted) {
+        return redirect('/projects/noproject')
+      }
+    },*/
   data() {
     return {
       activeTab: PROJECT_DEFAULT_TAB,
@@ -200,6 +206,31 @@ export default {
     this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
     this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id })
   },
+
+  /*beforeRouteEnter (to, from, next){
+    if (process.client) {
+
+    console.log(to.params)
+
+    const token = localStorage.getItem('accessToken')
+    
+    axios.get(`http://localhost:9000/project/${to.params.id}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      }).then((res) => {
+        console.log(res.data)
+          if (res.data.statusCode == 200) {
+            if (res.data.data.isDeleted) {
+              next("/projects/noproject")
+            } else {
+              next()
+            }
+          }
+      }).catch(err => {
+        alert( JSON.stringify(err) )
+        // console.log("There was an error in project", err);
+      })
+    }
+  },*/
 
   methods: {
     

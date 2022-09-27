@@ -77,7 +77,7 @@
             <!-- <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light">
               <bib-icon icon="add" variant="success" :scale="2" class="p-025 ml-025"></bib-icon> <span class="p-025">Add a team mate</span>
             </div> -->
-            <bib-app-navigation :items="teammate"></bib-app-navigation>
+            <bib-app-navigation :items="teammate" @click="goToUsertask($event, teammate)"></bib-app-navigation>
           </template>
         </bib-detail-collapse>
       </template>
@@ -282,7 +282,7 @@ export default {
 
        let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY1OTYwOTkyNzgyMywiZXhwIjoxNjY3Mzg1OTI3ODIzLCJqdGkiOiJhNWE4YmNhMi05MWQ1LTQ2NzctOGRiOC0yMmFiY2M5MzE1YjcifQ.C7fMRdSPr32rA2m4DMFFV_RQ-yYZp436n7yLjKvPq0U"
        
-      //  let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2NTcwODk0NjE5OTgsImV4cCI6MTY2NDg2NTQ2MTk5OCwianRpIjoiNjgxNTE2YWItMWM0NC00OWM1LWI4ZmUtNDE0NjA0NDNiMzU1In0.ptVLjXbVoTU-MfTST5tcpXlRcXh2_t_Cq_BG_1vlt3Q"
+       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2NTcwODk0NjE5OTgsImV4cCI6MTY2NDg2NTQ2MTk5OCwianRpIjoiNjgxNTE2YWItMWM0NC00OWM1LWI4ZmUtNDE0NjA0NDNiMzU1In0.ptVLjXbVoTU-MfTST5tcpXlRcXh2_t_Cq_BG_1vlt3Q"
 
       this.$cookies.set('b_ssojwt', cookie);
       this.$store.dispatch('token/setToken', cookie);
@@ -454,6 +454,16 @@ export default {
 
     goToProject($event) {
       this.$router.push("/projects/" + $event.id)
+    },
+
+    goToUsertask($event){
+      console.log($event.id, this.$route.path)
+      sessionStorage.setItem("usertaskadmin", $event.id)
+      if (this.$route.path == "/usertasks") {
+        // window.location.reload()
+        this.$router.push({ path: "/usertasks" })
+      }
+      this.$router.push({ path: "/usertasks", params: {id: $event.id }})
     },
 
     // Handle User logout
