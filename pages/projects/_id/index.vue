@@ -100,15 +100,23 @@
 <script>
 import { mapGetters } from 'vuex'
 import { TABLE_FIELDS, PROJECT_TABS, PROJECT_DEFAULT_TAB, PROJECT_TAB_TITLES } from "config/constants";
-import axios from 'axios';
+// import axios from 'axios';
 export default {
   name: 'ProjectId',
-  /*middleware({ store, redirect }) {
-      console.log(store.state.project.selectedProject.isDeleted)
-      if (store.state.project.selectedProject.isDeleted) {
-        return redirect('/projects/noproject')
+  /*middleware({ app, store, redirect, route }) {
+    // console.log(route)
+    const token = app.$cookies.get('b_ssojwt')
+    axios.get(`http://localhost:9000/project/${route.params.id}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    }).then(res => {
+      console.log(res.data)
+      if (res.data.statusCode == 200) {
+        // alert("found")
+      } else {
+        redirect("/notfound")
       }
-    },*/
+    })
+  },*/
   data() {
     return {
       activeTab: PROJECT_DEFAULT_TAB,
@@ -190,8 +198,18 @@ export default {
       this.$axios.$get(`project/${this.$route.params.id}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       }).then((res) => {
+        // console.log(res.data)
         if (res) {
-          this.$store.dispatch('project/setSingleProject', res.data)
+          if(!res.data || res.data.isDeleted){
+            this.$router.push("/notfound")
+          } else {
+            this.$store.dispatch('project/setSingleProject', res.data)
+            this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
+            this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
+            this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id })
+          }
+        } else {
+          this.$router.push("/notfound")
         }
       }).catch(err => {
         console.log("There was an issue in project API", err);
@@ -202,9 +220,9 @@ export default {
   },
   mounted() {
     // console.log(this.$route.params.id)
-    this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
+    /*this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
     this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
-    this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id })
+    this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id })*/
   },
 
   /*beforeRouteEnter (to, from, next){
@@ -229,6 +247,19 @@ export default {
         alert( JSON.stringify(err) )
         // console.log("There was an error in project", err);
       })
+    }
+  },*/
+
+  /*beforeRouteUpdate(to, from, next){
+    console.log(to, from)
+    next("/projects/noproject")
+  },*/
+
+  /*beforeResolve (to, from, next) {
+    if (this.$store.getters.isLoggedIn) {
+      next('/projects/noproject')
+    } else {
+      next();
     }
   },*/
 
