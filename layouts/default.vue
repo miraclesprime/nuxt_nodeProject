@@ -278,14 +278,14 @@ export default {
         this.navItems2[3].selected = true;
       }
 
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0cTJWb2xlalJlak5tR1FCIiwic3ViZSI6Imh0YW5nQGJpenRyZWUuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiQURNSU4iLCJzdWJjIjoiQ2FuYWRhIiwiZW52IjoiZGV2IiwiaWF0IjoxNjU2NTkyOTMxMjE1LCJleHAiOjE2NjQzNjg5MzEyMTUsImp0aSI6Ijk0YTViNDdiLWI3ODMtNGIxYS1hNGEyLWY2Y2I2OTcyNjkxMyJ9.Ua72OOl1EwTnYCAxaWOW8i-IvXV9WXDaolQbBWAK9eM"
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0cTJWb2xlalJlak5tR1FCIiwic3ViZSI6Imh0YW5nQGJpenRyZWUuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiQURNSU4iLCJzdWJjIjoiQ2FuYWRhIiwiZW52IjoiZGV2IiwiaWF0IjoxNjY0NDM5MTQ5MzMzLCJleHAiOjE2NzIyMTUxNDkzMzMsImp0aSI6ImMyNjk2ODg1LTljNmEtNDRmNC1iNGUwLWU3OTExOTdkMDVjZCJ9.Xl3plfortNGydLsizpULWXQInuvX5qW2_HakiRZMcYU"
 
-       let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY1OTYwOTkyNzgyMywiZXhwIjoxNjY3Mzg1OTI3ODIzLCJqdGkiOiJhNWE4YmNhMi05MWQ1LTQ2NzctOGRiOC0yMmFiY2M5MzE1YjcifQ.C7fMRdSPr32rA2m4DMFFV_RQ-yYZp436n7yLjKvPq0U"
+      //  let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY1OTYwOTkyNzgyMywiZXhwIjoxNjY3Mzg1OTI3ODIzLCJqdGkiOiJhNWE4YmNhMi05MWQ1LTQ2NzctOGRiOC0yMmFiY2M5MzE1YjcifQ.C7fMRdSPr32rA2m4DMFFV_RQ-yYZp436n7yLjKvPq0U"
        
-       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2NTcwODk0NjE5OTgsImV4cCI6MTY2NDg2NTQ2MTk5OCwianRpIjoiNjgxNTE2YWItMWM0NC00OWM1LWI4ZmUtNDE0NjA0NDNiMzU1In0.ptVLjXbVoTU-MfTST5tcpXlRcXh2_t_Cq_BG_1vlt3Q"
+      //  let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2NTcwODk0NjE5OTgsImV4cCI6MTY2NDg2NTQ2MTk5OCwianRpIjoiNjgxNTE2YWItMWM0NC00OWM1LWI4ZmUtNDE0NjA0NDNiMzU1In0.ptVLjXbVoTU-MfTST5tcpXlRcXh2_t_Cq_BG_1vlt3Q"
 
-      this.$cookies.set('b_ssojwt', cookie);
-      this.$store.dispatch('token/setToken', cookie);
+      // this.$cookies.set('b_ssojwt', cookie);
+      // this.$store.dispatch('token/setToken', cookie);
 
       if (this.$cookies.get('b_ssojwt')) {
         let jwt = this.$cookies.get('b_ssojwt');
@@ -457,13 +457,14 @@ export default {
     },
 
     goToUsertask($event){
-      console.log($event.id, this.$route.path)
-      sessionStorage.setItem("usertaskadmin", $event.id)
-      if (this.$route.path == "/usertasks") {
-        // window.location.reload()
-        this.$router.push({ path: "/usertasks" })
-      }
-      this.$router.push({ path: "/usertasks", params: {id: $event.id }})
+
+      // console.log($event.id, this.$route.path)
+      // sessionStorage.setItem("usertaskadmin", $event.id)
+      // if (this.$route.path == "/usertasks") {
+      //   // window.location.reload()
+      //   this.$router.push({ path: "/usertasks" })
+      // }
+      this.$router.push({ path: "/usertasks", query: {email: $event.email }})
     },
 
     // Handle User logout
@@ -481,8 +482,6 @@ export default {
 <style lang="scss">
 html {
   font-family: $font-family;
-  /*font-size: 16px;
-  word-spacing: 1px;*/
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   -moz-osx-font-smoothing: grayscale;

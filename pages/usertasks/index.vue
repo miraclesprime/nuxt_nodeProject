@@ -51,8 +51,10 @@
     </div>
   </client-only>
 </template>
+
 <script>
 import { mapGetters } from "vuex";
+import _ from 'lodash'
 import { COMPANY_TASK_FIELDS as TaskFields, TASK_CONTEXT_MENU } from '../../config/constants'
 
 export default {
@@ -79,6 +81,7 @@ export default {
   computed: {
     ...mapGetters({
       user: "user/getUser",
+      teamMembers: "user/getTeamMembers"
       // tasks: "company/getCompanyTasks",
       // favTasks: 'task/getFavTasks'
     }),
@@ -87,8 +90,8 @@ export default {
   created() {
     if (process.client) {
 
-      this.userfortask = sessionStorage.getItem("usertaskadmin")
-
+      // this.userfortask = sessionStorage.getItem("usertaskadmin")
+      
       this.$nuxt.$on('change-grid-type', ($event) => {
         this.gridType = $event;
       })
@@ -105,28 +108,61 @@ export default {
     }
   },
 
+  watch: {
+        '$route.query': {
+            immediate: true,
+            handler(newVal) {
+                this.userfortask = this.teamMembers.find((u) => {
+                  if(u.email == newVal.email) {
+                    return u;
+                  }
+                })
+                this.fetchUserTasks()
+            }
+        }
+    },
+
   mounted() {
-    this.fetchUserTasks()
+
+    if(process.client) {
+      _.delay(() => {
+          this.userfortask = this.teamMembers.find((u) => {
+            if(u.email == this.$route.query.email) {
+              return u;
+            }
+          })
+          this.fetchUserTasks()
+      }, 5000);
+    }
+    
   },
 
   methods: {
     async fetchUserTasks() {
-      this.loading = true
-      const res = await this.$axios.get("user/user-tasks", {
-        headers: { 
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-          // 'Filter': payload.filter || 'all',
-          'userid': this.userfortask
-           }
-      });
+      if (process.client) {
+        this.loading = true
+        const res = await this.$axios.get("user/user-tasks", {
+          headers: { 
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            // 'Filter': payload.filter || 'all',
+            'userid': this.userfortask ? this.userfortask.id : ""
+            }
+        });
 
-      if (res.data.statusCode == 200) {
-        console.log(res.data)
-        this.tasks = res.data.data
-      } else {
-        console.error(e);
-      }
+        // if(res.data.statusCode == 403) {
+        //     alert('403 error you are not allowed to see the tasks of other users because you are not admin. Please click on any other page link.')
+        //     this.tasks = res.data.data
+        //     return false;
+        // }
+
+        if (res.data.statusCode == 200) {
+          // console.log(res.data)
+          this.tasks = res.data.data
+        } else {
+          console.error(e);
+        }
       this.loading = false
+      }
     },
     updateKey($event) {
       // console.log("update-key event received", $event)
