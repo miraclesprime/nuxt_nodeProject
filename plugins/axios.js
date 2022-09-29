@@ -8,6 +8,10 @@ export default function ({ $axios, redirect }) {
       case 404:
         redirect("/error/404");
         return;
+
+      case 403:
+        redirect("/error/403");
+        return;
     }
   });
 }
