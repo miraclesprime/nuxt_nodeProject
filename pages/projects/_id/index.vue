@@ -1,9 +1,9 @@
 <template>
   <div id="project-id-wrapper" class="project-id-wrapper ">
     <nav id="project-id-nav" class="d-flex align-center gap-05 py-075 px-025 ">
-      <nuxt-link to="/projects" class="d-flex">
+      <button type="button" @click="$router.back()" class="d-flex cursor-pointer bg-white border-white">
         <bib-icon icon="arrowhead-left" :scale="1.5" variant="gray5"></bib-icon>
-      </nuxt-link>
+      </button>
         <bib-avatar></bib-avatar>
       <span id="project-id-project-title" class=" font-w-700  mr-1 " style="font-size: 1.25rem;">{{project ? project.title : ''}}</span>
       <!-- <bib-page-title label="Page Title"></bib-page-title> -->
@@ -100,7 +100,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { TABLE_FIELDS, PROJECT_TABS, PROJECT_DEFAULT_TAB, PROJECT_TAB_TITLES } from "config/constants";
-// import axios from 'axios';
+import axios from 'axios';
 export default {
   name: 'ProjectId',
   /*middleware({ app, store, redirect, route }) {
@@ -134,6 +134,46 @@ export default {
       popupMessages: [],
     }
   },
+
+  /*async validate({ params, query, store, redirect }) {
+    const res = await axios.get(`http://localhost:9000/project/${params.id}`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+    })
+      if (res) {
+        // console.log(res)
+        if(!res.data.data || res.data.data.isDeleted){
+          // this.$router.push("/notfound")
+          return redirect("/notfound")
+        } else {
+          store.dispatch('project/setSingleProject', res.data.data)
+
+          return true // if the params are valid
+        }
+      } else {
+        return redirect("/notfound")
+      }
+
+    // return false // will stop Nuxt to render the route and display the error page
+  },*/
+
+  /*async fetch({ app, params, query, store, redirect }) {
+    // await operations
+    const token = app.$cookies.get('b_ssojwt')
+    const res = await axios.get(`http://localhost:9000/project/${params.id}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+      if (res) {
+        // console.log(res)
+        if(!res.data.data || res.data.data.isDeleted){
+          redirect("/notfound")
+        } else {
+          store.dispatch('project/setSingleProject', res.data.data)
+          
+        }
+      } else {
+        redirect("/notfound")
+      }
+  },*/
 
   computed: {
     ...mapGetters({
@@ -173,13 +213,6 @@ export default {
           }
         })
       })
-      /*this.allusers.filter(u => {
-        this.team.forEach(t => {
-          if (t.id == u.id) {
-            tm.push(u)
-          }
-        })
-      })*/
       return tm
     }
   },
@@ -195,6 +228,7 @@ export default {
 
     if (process.client) {
       // console.log(this.$route.params.id)
+      // this.validating = true
       this.$axios.$get(`project/${this.$route.params.id}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       }).then((res) => {
@@ -207,12 +241,14 @@ export default {
             this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
             this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
             this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id })
+            this.validating = false
           }
         } else {
           this.$router.push("/notfound")
         }
       }).catch(err => {
         console.log("There was an issue in project API", err);
+        this.validating = false
       })
 
     }
@@ -220,9 +256,9 @@ export default {
   },
   mounted() {
     // console.log(this.$route.params.id)
-    /*this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
+    this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
     this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
-    this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id })*/
+    this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id })
   },
 
   /*beforeRouteEnter (to, from, next){
