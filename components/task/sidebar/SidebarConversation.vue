@@ -109,13 +109,13 @@ export default {
       // console.log(data, this.editMessage?.id)
 
       if (this.editMessage?.id) {
-        this.$store.dispatch("task/updateTaskComment", { taskId: this.task.id, commentId: this.editMessage.id, comment: data.text })
+        this.$store.dispatch("task/updateTaskComment", { taskId: this.task.id, commentId: this.editMessage.id, comment: data.text, text: "task comment updated" })
         .then(res => {
           this.fetchTaskComments()
         })
         .catch(e => console.log(e))
       } else {
-        this.$store.dispatch("task/createTaskComment", { id: this.task.id, comment: data.text })
+        this.$store.dispatch("task/createTaskComment", { id: this.task.id, comment: data.text, text: "task comment added" })
           .then(res => {
             // console.log(res)
             this.uploadFile(this.value.files, res.data)

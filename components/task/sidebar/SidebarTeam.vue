@@ -65,11 +65,10 @@ export default {
       this.$refs.taskTeamModal.showTaskTeamModal = true
     },
     async deleteMember(member) {
-
       this.loading = true
       let confirmDelete = window.confirm("Are you sure want to delete " + member.name + "!")
       if (confirmDelete) {
-        await this.$store.dispatch("task/deleteMember", { memberId: member.id })
+        await this.$store.dispatch("task/deleteMember", { memberId: member.id, text: "team member removed from task" })
           .then((res) => {
             // console.log(res)
             this.key += 1

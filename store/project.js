@@ -4,7 +4,8 @@ export const state = () => ({
   favProjects: [],
   projectMembers: [],
   projectComments: [],
-  singleProjComment: {}
+  singleProjComment: {},
+  projectHistory: [],
 });
 
 export const getters = {
@@ -39,6 +40,10 @@ export const getters = {
 
   getFavoriteProjects(state) {
     return state.favProjects;
+  },
+
+  getProjectHistory(state) {
+    return state.projectHistory;
   }
 
 };
@@ -111,7 +116,6 @@ export const mutations = {
       arr.sort((a, b) => b.user.firstName.localeCompare(a.user.firstName));
       state.projects = arr;
     }
-
 
     // Sort By Status
     if (payload.key == 'status' && payload.order == 'asc') {
@@ -260,6 +264,10 @@ export const mutations = {
     }
 
   },
+
+  SETPROJECTHISTORY(state, payload){
+    state.projectHistory = payload
+  }
 
 };
 
@@ -543,5 +551,24 @@ export const actions = {
       console.log(e)
     }
   },
+
+  async fetchHistory(ctx, payload) {
+    try {
+      const hist = await this.$axios.$get("/history/all", {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          'obj': JSON.stringify( {"projectId": payload.id} )
+        }
+
+      })
+      
+      if (hist.statusCode == 200) {
+        ctx.commit("SETPROJECTHISTORY", hist.data)
+      }
+      return hist.data
+    } catch(e) {
+      console.log(e);
+    }
+  }
 
 }

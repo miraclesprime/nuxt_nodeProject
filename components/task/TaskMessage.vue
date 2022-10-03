@@ -447,7 +447,7 @@ export default {
         alert("Reaction already exists!")
         this.reactionSpinner = false
       } else {
-        this.$axios.post("/task/" + this.msg.id + "/reaction", { reaction: data }, {
+        this.$axios.post("/task/" + this.msg.id + "/reaction", { reaction: data, taskId: this.task.id, text: "comment has reaction" }, {
             headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
           })
           .then(d => {
@@ -467,7 +467,7 @@ export default {
         alert("Reaction already exists!")
         this.reactionSpinner = false
       } else {
-        this.$axios.post("/task/" + this.msg.id + "/reaction", { reaction: "👍" }, {
+        this.$axios.post("/task/" + this.msg.id + "/reaction", { reaction: "👍", taskId: this.task.id, text: "comment has reaction" }, {
             headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
           })
           .then(d => {
@@ -514,7 +514,7 @@ export default {
       this.$emit('delete-message', { 
         taskId: this.msg.taskId ? this.msg.taskId : null, 
         // projectId: this.msg.projectId ? this.msg.projectId: null, 
-        commentId: this.msg.id 
+        commentId: this.msg.id
       });
       this.isMenuOpen = false;
     },
@@ -542,7 +542,7 @@ export default {
       formdata.append('projectId', this.project.id)
       formdata.append('taskId', this.task.id)
       formdata.append('taskCommentId', this.msg.id)
-      formdata.append('text', 'File for task Comment');
+      formdata.append('text', 'File added for task Comment');
 
       const fi = await this.$axios.post("/file/upload", formdata, {
         headers: {

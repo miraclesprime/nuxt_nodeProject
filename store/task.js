@@ -142,7 +142,7 @@ export const actions = {
     if (res.statusCode == 200) {
       ctx.commit('createTask', res.data);
       ctx.commit("section/addTaskToSection", res.data, { root: true });
-    }
+    } 
     return res.data
   },
 
@@ -157,15 +157,14 @@ export const actions = {
     // console.log(payload)
     const res = await this.$axios.$delete("/task", {
       headers: { "Authorization": `Bearer ${localStorage.getItem('accessToken')}` },
-      data: { id: payload.id }
+      data: { id: payload.id, text: "task deleted" },
     })
     return res
-
   },
 
   async updateTaskStatus(ctx, payload) {
     // console.log('update task payload', payload)
-    console.log(payload.project[0].projectId)
+    // console.log(payload.project[0].projectId)
     if (payload.statusId !== 5) {
       const res = await this.$axios.$put('/task', { id: payload.id, projectId: ctx.rootState.project.selectedProject.id || payload.project[0].projectId, data: { statusId: 5 } }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
@@ -257,7 +256,7 @@ export const actions = {
       })
     }
 
-    await this.$axios.post(`/task/${ctx.state.selectedTask.id}/members`, { users: data }, {
+    await this.$axios.post(`/task/${ctx.state.selectedTask.id}/members`, { users: data, text: payload.text }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     }).then((res) => {
       let team = res.data.data.members;
@@ -277,7 +276,8 @@ export const actions = {
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-          "userId": payload.memberId
+          "userId": payload.memberId,
+          "text": payload.text,
         }
       })
 
@@ -324,7 +324,8 @@ export const actions = {
     try {
 
       const res = await this.$axios.$post(`/task/${payload.id}/comments`, {
-        comment: payload.comment 
+        comment: payload.comment,
+        text: payload.text,
       }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
@@ -345,8 +346,9 @@ export const actions = {
 
     try {
 
-      const res = await this.$axios.$put(`/task/${payload.projectId}/comments/${payload.commentId}`,{
-        comment: payload.comment
+      const res = await this.$axios.$put(`/task/${payload.taskId}/comments/${payload.commentId}`,{
+        comment: payload.comment,
+        text: payload.text,
       }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
@@ -367,11 +369,14 @@ export const actions = {
 
     try {
 
-      const res = await this.$axios.$delete(`/task/${payload.projectId}/comments/${payload.commentId}`,{
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      const res = await this.$axios.$delete(`/task/${payload.taskId}/comments/${payload.commentId}`,{
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          "text": payload.text
+        }
       });
       if (res.statusCode == 200) {
-        ctx.dispatch("fetchTaskComments", {id: payload.projectId})
+        ctx.dispatch("fetchTaskComments", {id: payload.taskId})
         return res
       } else {
         return res
@@ -387,7 +392,7 @@ export const actions = {
 
     try {
 
-      const res = await this.$axios.$get(`/project/${payload.projectId}/comments/${payload.commentId}`, {
+      const res = await this.$axios.$get(`/project/${payload.taskId}/comments/${payload.commentId}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
       if (res.statusCode == 200) {
