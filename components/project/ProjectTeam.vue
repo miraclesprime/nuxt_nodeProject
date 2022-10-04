@@ -8,7 +8,7 @@
     </div>
     <div class="list team-list my-05">
       <span v-for="(t, index) in projectTeam" :key="index + key" class="list__item ">
-        <bib-avatar :src="t.avatar" size="1.75rem" class="mr-05"></bib-avatar> {{t.firstName}} {{t.lastName}} <bib-button pop="elipsis" variant="gray3" class="ml-auto">
+        <bib-avatar :src="t.pic" size="1.75rem" class="mr-05"></bib-avatar> {{t.firstName}} {{t.lastName}} <bib-button pop="elipsis" variant="gray3" class="ml-auto">
           <template v-slot:menu>
             <div class="list">
               <span v-show="t.id == user.sub" class="list__item" @click="gotoUserProfile">Edit Profile</span>
@@ -49,7 +49,8 @@ export default {
         this.team.forEach(t => {
           if (t.id == u.id) {
             // console.log(u)
-            ud.push(u)
+            // ud.push(u)
+            ud.push({ id: u.id, name: `${u.firstName} ${u.lastName}`, firstName: u.firstName, lastName: u.lastName, email: u.email, pic: u.avatar, jobTitle: "Title/Company Name" })
           }
         })
       })
@@ -80,7 +81,7 @@ export default {
       this.loading = true
       let confirmDelete = window.confirm("Are you sure want to delete " + member.name + "!")
       if (confirmDelete) {
-        await this.$store.dispatch("project/deleteMember", { projectId: this.project.id, memberId: member.id })
+        await this.$store.dispatch("project/deleteMember", { projectId: this.project.id, member })
           .then((res) => {
             // console.log(res)
             this.key += 1

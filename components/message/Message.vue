@@ -248,7 +248,7 @@ export default {
       if (this.members.length) {
         let u = this.members.find((el) => el.id == this.msg.userId)
         // console.log(u)
-        return { id: u.id, name: u.firstName + ' ' + u.lastName, email: u.email, pic: u.avatar, jobTitle: "Title/Company Name" }
+        return { id: u.id, name: `${u.firstName} ${u.lastName}`, firstName: u.firstName, lastName: u.lastName, email: u.email, pic: u.avatar, jobTitle: "Title/Company Name" }
       }
     },
     displayDate() {

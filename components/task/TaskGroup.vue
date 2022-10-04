@@ -63,7 +63,9 @@
                 </div>
               </template>
             </bib-popup> -->
-            <bib-icon icon="trash" variant="gray5"></bib-icon>
+          <span class="cursor-pointer shape-circle" @click="deleteSubtask(sub)">
+            <bib-icon icon="trash" variant="danger" ></bib-icon>
+          </span>
           </td>
         </tr>
       </tbody>
@@ -200,6 +202,14 @@ export default {
         .then(() => {
           this.loading = false
         })
+    },
+    async deleteSubtask(subtask) {
+      this.loading = true
+      const delsub = await this.$store.dispatch("subtask/deleteSubtask", subtask);
+      if (delsub.statusCode == 200) {
+        this.$store.dispatch("subtask/fetchSubtasks", this.currentTask)
+      }
+      this.loading = false
     },
   }
 };
