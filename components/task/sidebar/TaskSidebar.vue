@@ -401,14 +401,16 @@ export default {
           "priorityId": this.form.priorityId,
           "budget": 0,
           "statusId": this.form.statusId,
-          user
+          user,
+          "text": "task created",
         }).then(() => {
           this.$emit("update-key")
           this.$nuxt.$emit("update-key")
           this.loading = false
           // this.hideSidebar()
           this.$nuxt.$emit('close-sidebar')
-        }).catch(e => console.warn(e)).then(() => {
+        }).catch(e => {
+          console.warn(e)
           this.loading = false
         })
       }
@@ -424,7 +426,7 @@ export default {
         user = null
       }
 
-      this.$store.dispatch("task/updateTask", { id: this.form.id, data: { ...this.form }, user, projectId: this.form.projectId ? this.form.projectId : null })
+      this.$store.dispatch("task/updateTask", { id: this.form.id, data: { ...this.form }, user, projectId: this.form.projectId ? this.form.projectId : null, text: "task updated" })
         .then((u) => {
           console.log(u)
           this.$nuxt.$emit("update-key")

@@ -185,7 +185,8 @@ export default {
         dueDate: this.date,
         priorityId: 1,
         statusId: 1,
-        budget: 0
+        budget: 0,
+        text: "subtask created",
       }
       this.$store.dispatch("subtask/createSubtask", subData)
         .then(t => {

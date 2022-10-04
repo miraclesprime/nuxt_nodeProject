@@ -172,6 +172,7 @@ export default {
         formdata.append('files', file)
       })
       formdata.append('taskId', this.task.id)
+      formdata.append('text', 'File added for task');
 
       if (this.task.project[0]) {
         formdata.append('projectId', this.task.project[0].projectId)
@@ -242,6 +243,8 @@ export default {
         this.$axios.delete("file/" + file.key, {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+              "taskid": this.task.id,
+              "text": "File deleted from task"
             }
           }).then(f => {
             // console.log(f.data)

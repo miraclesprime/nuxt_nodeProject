@@ -91,7 +91,7 @@ export default {
     async onDeleteMessage(payload) {
       this.msgLoading = true
       // let data = {taskId: this.task.id, commentId: payload.msgId }
-      const del = await this.$store.dispatch("task/deleteTaskComment", payload);
+      const del = await this.$store.dispatch("task/deleteTaskComment", {...payload, text: "task comment deleted"});
       if (del.statusCode == 200) {
         this.$emit("refresh-list")
       }
