@@ -299,7 +299,7 @@ export const actions = {
       dueDate: null,
       priority: null,
       budget: null,
-      text: "project created"
+      text: `new project created - "${payload.title}"`,
     }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
@@ -317,7 +317,7 @@ export const actions = {
     // console.log(payload)
     const res = await this.$axios.$delete("/project", {
       headers: { "Authorization": `Bearer ${localStorage.getItem('accessToken')}` },
-      data: { id: payload.id, text: "project deleted " }
+      data: { id: payload.id, text: `project "${payload.title}" deleted` }
     })
     return res
     
@@ -372,14 +372,16 @@ export const actions = {
       })
     }
 
-    const res = await this.$axios.post("/project/add-member", { projectId: payload.projectId, team: data, text: "team member added" }, {
+    // console.log(data)
+    let names = data.map(n => `${n.firstName} ${n.lastName}`);
+
+    const res = await this.$axios.post("/project/add-member", { projectId: payload.projectId, team: data, text: `${names.join(', ')} added to project` }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
     
     if(res.data.statusCode == 200) {
       ctx.commit('addMember', data);
     }
-    
 
   },
 
@@ -388,14 +390,15 @@ export const actions = {
   },
 
   async deleteMember(ctx, payload) {
+    // console.log( `${payload.member.name}`)
     try {
       let m = await this.$axios.delete("/project/remove-member", {
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
           "projectid": payload.projectId,
-          "memberid": payload.memberId,
-          "text": "team member removed"
+          "memberid": payload.member.id,
+          "text": `${payload.member.name} removed from project`
         }
       })
       // console.log(m)

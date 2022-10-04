@@ -78,7 +78,7 @@ export default {
       this.loading = true
       let confirmDelete = window.confirm("Are you sure want to delete " + member.name + "!")
       if (confirmDelete) {
-        await this.$store.dispatch("project/deleteMember", { projectId: this.$route.params.id, memberId: member.id })
+        await this.$store.dispatch("project/deleteMember", { projectId: this.$route.params.id, member: member })
           .then((res) => {
             // console.log(res)
             this.key += 1
