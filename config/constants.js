@@ -196,7 +196,7 @@ export const PROJECT_TABS = [{
   {
     key: "history",
     value: "history",
-    title: "history",
+    title: "History",
   }
 ];
 

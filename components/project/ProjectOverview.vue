@@ -53,10 +53,10 @@
         </div>
         <div id="proj-row4" class="row">
           <div id="proj-row4-col1" class="col-6">
-            <bib-input type="select" label="Priority" v-model.number="activeProject.priorityId" :options="priority" placeholder="Please select..." v-on:change.native="debounceUpdate('Priority', activeProject.priority)"></bib-input>
+            <bib-input type="select" label="Priority" v-model.number="activeProject.priorityId" :options="priority" placeholder="Please select..." v-on:change.native="debounceUpdate('Priority', activeProject.priorityId)"></bib-input>
           </div>
           <div id="proj-row4-col2" class="col-6">
-            <bib-input type="select" label="Status" v-model.number="activeProject.statusId" :options="status" placeholder="Please select..." v-on:change.native="debounceUpdate('Status', activeProject.status)"></bib-input>
+            <bib-input type="select" label="Status" v-model.number="activeProject.statusId" :options="status" placeholder="Please select..." v-on:change.native="debounceUpdate('Status', activeProject.statusId)"></bib-input>
           </div>
         </div>
         <div id="proj-row5" class="row">
@@ -88,6 +88,7 @@
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
 import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
+import dayjs from 'dayjs'
 
 export default {
   props: {
@@ -210,9 +211,10 @@ export default {
         } else {
           nd = new Date(this.activeProject.dueDate)
         }
-        let mm = (nd.getMonth() + 1) < 10 ? '0' + (nd.getMonth() + 1) : nd.getMonth() + 1
+        /*let mm = (nd.getMonth() + 1) < 10 ? '0' + (nd.getMonth() + 1) : nd.getMonth() + 1
         let dd = (nd.getDate()) < 10 ? '0' + (nd.getDate()) : nd.getDate()
-        return `${nd.getFullYear()}-${mm}-${dd}`
+        return `${nd.getFullYear()}-${mm}-${dd}`*/
+        return dayjs(nd).format('YYYY-MM-DD')
       },
       set: function(newValue) {
         this.activeProject.dueDate = new Date(newValue)
@@ -281,25 +283,43 @@ export default {
       if (priority === "Top") return "text-orange";
       return "text-green";
     },
-    async updateProject() {
+    async updateProject(text) {
       // console.log('update project', this.activeProject)
       this.loading = true
-      /*let proj = await this.$axios.$put("/project", { id: this.project.id, user: this.owner[0], data: this.activeProject, text: "project updated" }, {
+      let proj = await this.$axios.$put("/project", { id: this.project.id, user: this.owner[0], data: this.activeProject, text: text || '' }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       })
       // console.log(proj.data)
       if (proj.statusCode == 200) {
         this.project = proj.data
         this.$store.dispatch("project/setSingleProject", proj.data)
-      }*/
+      }
       this.loading = false
     },
     debounceUpdate: _.debounce(function(name, value) {
-      console.log('Debounce ', name, value)
-      /*Object.entries(this.activeProject).forEach(([key, value]) => {
-        console.log(`${key}`)
-      })*/
+      // console.log('Debounce ', name, value)
+
+      let updatedvalue = value
+      if (name == 'Status') {
+        this.status.find(s => {
+          if(s.value == value){
+            updatedvalue = s.label
+          }
+        })
+      }
+      if (name == 'Priority') {
+        this.priority.find(p => {
+          if(p.value == value){
+            updatedvalue = p.label
+          }
+        })
+      }
+      if (name == "Due date") {
+        updatedvalue = dayjs(value).format('DD MMM, YYYY')
+      }
+
       this.owner = this.teamMembers.filter(tm => tm.id == this.activeProject.userId)
+
       if (this.activeProject.priorityId == "") {
         this.activeProject.priority = null
         this.activeProject.priorityId = null
@@ -308,8 +328,8 @@ export default {
         this.activeProject.status = null
         this.activeProject.statusId = null
       }
-      this.updateProject()
-    }, 1000)
+      this.updateProject(`changed ${name} to ${updatedvalue}`)
+    }, 1200)
 
   },
 

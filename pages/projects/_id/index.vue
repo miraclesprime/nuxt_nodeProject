@@ -38,7 +38,7 @@
                   <bib-icon icon="warning" class="mr-075"></bib-icon> Report
                 </span>
                 <hr id="project-id-hr2">
-                <span class="list__item danger" id="project-id-list-item6" @click="deleteProject(project)">Delete </span>
+                <span class="list__item list__item__danger" id="project-id-list-item6" @click="deleteProject(project)">Delete </span>
               </div>
             </template>
           </bib-button>
