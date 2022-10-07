@@ -478,9 +478,10 @@ export const actions = {
   async createProjectComment(ctx, payload) {
 
     try {
+      let trimComment = _.truncate(payload.comment.slice(3, -4), { length: 128 })
       const res = await this.$axios.$post(`/project/${payload.id}/comments`, {
         comment: payload.comment,
-        text: "commented on project" 
+        text: `new comment ${trimComment}`
       }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
@@ -498,9 +499,10 @@ export const actions = {
   async updateProjectComment(ctx, payload) {
 
     try {
+      let trimComment = _.truncate(payload.comment.slice(3, -4), { length: 128 })
       const res = await this.$axios.$put(`/project/${payload.projectId}/comments/${payload.commentId}`,{
         comment: payload.comment,
-        text: "updated comment"
+        text: `updated comment ${trimComment}`,
       }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
@@ -522,7 +524,7 @@ export const actions = {
       const res = await this.$axios.$delete(`/project/${payload.projectId}/comments/${payload.commentId}`,{
         headers: { 
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-          'text': "comment deleted"
+          'text': "deleted comment"
         }
       });
       if (res.statusCode == 200) {
