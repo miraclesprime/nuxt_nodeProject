@@ -88,13 +88,16 @@ export default {
 
     async onDeleteMessage(payload) {
       this.msgLoading = true
+      let del = window.confirm("Are you sure want to delete?")
       // let data = {projectId: this.project.id, commentId: payload.msgId }
-      const del = await this.$store.dispatch("project/deleteProjectComment", payload);
-      if (del.statusCode == 200) {
-        this.$emit("refresh-list")
+      if (del) {
+        const delmsg = await this.$store.dispatch("project/deleteProjectComment", payload);
+        // console.log(delmsg)
+        if (delmsg.statusCode == 200) {
+          this.$emit("refresh-list")
+        }
+        this.msgLoading = false
       }
-      this.msgLoading = false
-      console.log(del)
     },
     /*editMessage(msg){
       console.log(msg)

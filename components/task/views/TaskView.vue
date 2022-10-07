@@ -32,13 +32,6 @@
         </div>
       </template>
     </bib-modal-wrapper>
-    <!-- popup-notification -->
-    <bib-popup-notification-wrapper>
-      <template #wrapper>
-        <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
-        </bib-popup-notification>
-      </template>
-    </bib-popup-notification-wrapper>
   </div>
 </template>
 <script>
@@ -72,7 +65,6 @@ export default {
       renameModal: false,
       sectionId: null,
       sectionTitle: "",
-      popupMessages: [],
     };
   },
   computed: {
@@ -365,12 +357,12 @@ export default {
         "projectId": this.project.id,
         "title": $event,
         "isDeleted": false,
+        "text": `section '${$event}' created`,
       })
       if (res.statusCode == 200) {
         this.updateKey()
         this.newSection = false
         this.sectionLoading = false
-        this.popupMessages.push({ text: "Section created", variant: "success" })
       } else {
         this.sectionError = res.message
         this.sectionLoading = false
@@ -392,12 +384,12 @@ export default {
         id: this.sectionId,
         data: {
           title: this.sectionTitle
-        }
+        },
+        text: `section renamed to '${this.sectionTitle}'`,
       })
       // console.log("rename section output", sec)
       if (sec.statusCode = 200) {
         this.renameModal = false
-        this.popupMessages.push({ text: "Section renamed", variant: "success" })
         this.updateKey()
       }
       this.loading = false
@@ -452,7 +444,6 @@ export default {
         this.$store.dispatch("task/removeFromFavorite", { id: task.id })
           .then(msg => {
             console.log(msg)
-            this.popupMessages.push({ text: msg, variant: "success" })
             this.updateKey()
             this.loading = false
           })
@@ -464,7 +455,6 @@ export default {
         this.$store.dispatch("task/addToFavorite", { id: task.id })
           .then(msg => {
             console.log(msg)
-            this.popupMessages.push({ text: msg, variant: "success" })
             this.updateKey()
             this.loading = false
           })
@@ -488,13 +478,11 @@ export default {
         .then((d) => {
           // console.log(d)
           this.loading = false
-          this.popupMessages.push({ text: d.message, variant: "success" })
           // this.$nuxt.$emit("update-key")
           this.updateKey()
           this.$store.dispatch("task/setSingleTask", d)
         }).catch(e => {
           console.log(e)
-          this.popupMessages.push({ text: e.message, variant: "warning" })
           this.loading = false
         })
     },
@@ -506,16 +494,13 @@ export default {
         this.$store.dispatch("task/deleteTask", task).then(t => {
 
           if (t.statusCode == 200) {
-            this.popupMessages.push({ text: t.message, variant: "success" })
             this.updateKey()
           } else {
-            this.popupMessages.push({ text: t.message, variant: "warning" })
             console.warn(t.message);
           }
           this.loading = false
         }).catch(e => {
           this.loading = false
-          this.popupMessages.push({ text: e, variant: "danger" })
           console.log(e)
         })
       } else {
@@ -524,22 +509,20 @@ export default {
     },
 
     deleteSection(section) {
+      // let sec = this.sections.find(s => s.id == section.id)
+      // console.log('section->',section, sec.title)
       this.loading = true;
       let del = confirm("Are you sure?")
       if (del) {
         this.$store.dispatch("section/deleteSection", section).then(s => {
-
           if (s.statusCode == 200) {
-            this.popupMessages.push({ text: s.message, variant: "success" })
             this.updateKey()
           } else {
-            this.popupMessages.push({ text: s.message, variant: "warning" })
             console.warn(t.message);
           }
           this.loading = false
         }).catch(e => {
           this.loading = false
-          this.popupMessages.push({ text: e, variant: "danger" })
           console.log(e)
         })
       } else {

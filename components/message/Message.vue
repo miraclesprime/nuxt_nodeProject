@@ -452,7 +452,7 @@ export default {
         alert("Reaction already exists!")
         this.reactionSpinner = false
       } else {
-        this.$axios.post("/project/" + this.msg.id + "/reaction", { reaction: data, projectId: this.msg.projectId, text: "reaction added" }, {
+        this.$axios.post("/project/" + this.msg.id + "/reaction", { reaction: data, projectId: this.msg.projectId, text: `reacted ${data} to comment` }, {
             headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
           })
           .then(d => {
@@ -472,7 +472,7 @@ export default {
         alert("Reaction already exists!")
         this.reactionSpinner = false
       } else {
-        this.$axios.post("/project/" + this.msg.id + "/reaction", { reaction: "👍" }, {
+        this.$axios.post("/project/" + this.msg.id + "/reaction", { reaction: "👍", projectId: this.msg.projectId, text: "reacted 👍 to comment"  }, {
             headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
           })
           .then(d => {
