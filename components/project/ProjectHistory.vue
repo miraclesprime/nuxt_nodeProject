@@ -92,6 +92,10 @@ export default {
   padding-top: 12px;
   border-top: 1px solid rgba(29, 29, 32, 0.12);
   gap: 10px;
+  &:first-child {
+    border-top: 0 none;
+    padding-top: 0;
+  }
 }
 
 .name {
