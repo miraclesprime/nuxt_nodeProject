@@ -36,16 +36,16 @@
       </div> -->
         <div id="proj-row2" class="row">
           <div id="proj-row2-col1" class="col-8">
-            <bib-input type="text" label="Project name" placeholder="Project name" v-model="activeProject.title" v-on:keyup.native="debounceUpdate()"></bib-input>
+            <bib-input type="text" label="Project name" placeholder="Project name" v-model="activeProject.title" v-on:keyup.native="debounceUpdate('title', activeProject.title)"></bib-input>
           </div>
           <div id="proj-row2-col2" class="col-4">
-            <bib-input type="date" label="Due date" v-model="dateInput" v-on:change.native="debounceUpdate()"></bib-input>
+            <bib-input type="date" label="Due date" v-model="dateInput" v-on:change.native="debounceUpdate('Due date', dateInput)"></bib-input>
           </div>
         </div>
         <div id="proj-row3" class="row">
           <div id="proj-row3-col1" class="col-6">
-            <!-- <bib-input type="select" :options="filterUser" v-model="activeProject.userId" placeholder="Please select..." label="Owner" v-on:change.native="debounceUpdate()" ></bib-input> -->
-            <bib-select label="Owner" test_id="po-owner-dd1" :options="filterUser" v-model="activeProject.userId" v-on:change="debounceUpdate()"></bib-select>
+            <!-- <bib-input type="select" :options="filterUser" v-model="activeProject.userId" placeholder="Please select..." label="Owner" v-on:change.native="debounceUpdate($event)" ></bib-input> -->
+            <bib-select label="Owner" test_id="po-owner-dd1" :options="filterUser" v-model="activeProject.userId" v-on:change="debounceUpdate('User', activeProject.user)"></bib-select>
           </div>
           <div id="proj-row3-col2" class="col-6">
             <bib-input type="select" label="Department" :options="department" placeholder="Department"></bib-input>
@@ -53,10 +53,10 @@
         </div>
         <div id="proj-row4" class="row">
           <div id="proj-row4-col1" class="col-6">
-            <bib-input type="select" label="Priority" v-model.number="activeProject.priorityId" :options="priority" placeholder="Please select..." v-on:change.native="debounceUpdate()"></bib-input>
+            <bib-input type="select" label="Priority" v-model.number="activeProject.priorityId" :options="priority" placeholder="Please select..." v-on:change.native="debounceUpdate('Priority', activeProject.priorityId)"></bib-input>
           </div>
           <div id="proj-row4-col2" class="col-6">
-            <bib-input type="select" label="Status" v-model.number="activeProject.statusId" :options="status" placeholder="Please select..." v-on:change.native="debounceUpdate()"></bib-input>
+            <bib-input type="select" label="Status" v-model.number="activeProject.statusId" :options="status" placeholder="Please select..." v-on:change.native="debounceUpdate('Status', activeProject.statusId)"></bib-input>
           </div>
         </div>
         <div id="proj-row5" class="row">
@@ -66,7 +66,7 @@
             <!-- <bib-input type="time" v-model="time" placeholder="Select your time" label="Time"></bib-input> -->
           </div>
           <div id="proj-row5-col2" class="col-4">
-            <bib-input type="number" icon-left="currency-dollar" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="debounceUpdate()"></bib-input>
+            <bib-input type="number" icon-left="currency-dollar" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="debounceUpdate('Budget', activeProject.budget)"></bib-input>
           </div>
           <div id="proj-row5-col3" class="col-4">
             <label class="text-gray6">Progress</label>
@@ -76,7 +76,7 @@
         </div>
         <div id="proj-row6" class="row">
           <div id="proj-row6-col1" class="col-12">
-            <bib-input type="textarea" label="Project brief" v-model="activeProject.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate()"></bib-input>
+            <bib-input type="textarea" label="Project brief" v-model="activeProject.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate('Project brief', activeProject.description)"></bib-input>
           </div>
         </div>
         <loading :loading="loading"></loading>
@@ -88,6 +88,7 @@
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
 import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
+import dayjs from 'dayjs'
 
 export default {
   props: {
@@ -117,7 +118,6 @@ export default {
       if (Object.keys(this.project).length) {
         this.activeProject = JSON.parse(JSON.stringify(this.project));
         this.owner = this.teamMembers.filter(tm => tm.id == this.activeProject.userId)
-
       } else {
         this.activeProject = {
           title: "",
@@ -211,9 +211,10 @@ export default {
         } else {
           nd = new Date(this.activeProject.dueDate)
         }
-        let mm = (nd.getMonth() + 1) < 10 ? '0' + (nd.getMonth() + 1) : nd.getMonth() + 1
+        /*let mm = (nd.getMonth() + 1) < 10 ? '0' + (nd.getMonth() + 1) : nd.getMonth() + 1
         let dd = (nd.getDate()) < 10 ? '0' + (nd.getDate()) : nd.getDate()
-        return `${nd.getFullYear()}-${mm}-${dd}`
+        return `${nd.getFullYear()}-${mm}-${dd}`*/
+        return dayjs(nd).format('YYYY-MM-DD')
       },
       set: function(newValue) {
         this.activeProject.dueDate = new Date(newValue)
@@ -282,10 +283,10 @@ export default {
       if (priority === "Top") return "text-orange";
       return "text-green";
     },
-    async updateProject() {
-      // console.log('from debounce function')
+    async updateProject(text) {
+      // console.log('update project', this.activeProject)
       this.loading = true
-      let proj = await this.$axios.$put("/project", { id: this.project.id, user: this.owner[0], data: this.activeProject, text: "project updated" }, {
+      let proj = await this.$axios.$put("/project", { id: this.project.id, user: this.owner[0], data: this.activeProject, text: text || '' }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       })
       // console.log(proj.data)
@@ -295,9 +296,30 @@ export default {
       }
       this.loading = false
     },
-    debounceUpdate: _.debounce(function() {
-      // console.log('Debounce clicked!', this.activeProject.userId)
+    debounceUpdate: _.debounce(function(name, value) {
+      // console.log('Debounce ', name, value)
+
+      let updatedvalue = value
+      if (name == 'Status') {
+        this.status.find(s => {
+          if(s.value == value){
+            updatedvalue = s.label
+          }
+        })
+      }
+      if (name == 'Priority') {
+        this.priority.find(p => {
+          if(p.value == value){
+            updatedvalue = p.label
+          }
+        })
+      }
+      if (name == "Due date") {
+        updatedvalue = dayjs(value).format('DD MMM, YYYY')
+      }
+
       this.owner = this.teamMembers.filter(tm => tm.id == this.activeProject.userId)
+
       if (this.activeProject.priorityId == "") {
         this.activeProject.priority = null
         this.activeProject.priorityId = null
@@ -306,8 +328,8 @@ export default {
         this.activeProject.status = null
         this.activeProject.statusId = null
       }
-      this.updateProject()
-    }, 1000)
+      this.updateProject(`changed ${name} to ${updatedvalue}`)
+    }, 1200)
 
   },
 

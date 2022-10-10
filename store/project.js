@@ -4,7 +4,8 @@ export const state = () => ({
   favProjects: [],
   projectMembers: [],
   projectComments: [],
-  singleProjComment: {}
+  singleProjComment: {},
+  projectHistory: [],
 });
 
 export const getters = {
@@ -39,6 +40,10 @@ export const getters = {
 
   getFavoriteProjects(state) {
     return state.favProjects;
+  },
+
+  getProjectHistory(state) {
+    return state.projectHistory;
   }
 
 };
@@ -111,7 +116,6 @@ export const mutations = {
       arr.sort((a, b) => b.user.firstName.localeCompare(a.user.firstName));
       state.projects = arr;
     }
-
 
     // Sort By Status
     if (payload.key == 'status' && payload.order == 'asc') {
@@ -261,6 +265,10 @@ export const mutations = {
 
   },
 
+  SETPROJECTHISTORY(state, payload){
+    state.projectHistory = payload
+  }
+
 };
 
 export const actions = {
@@ -291,7 +299,7 @@ export const actions = {
       dueDate: null,
       priority: null,
       budget: null,
-      text: "project created"
+      text: `new project created - "${payload.title}"`,
     }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
@@ -309,7 +317,7 @@ export const actions = {
     // console.log(payload)
     const res = await this.$axios.$delete("/project", {
       headers: { "Authorization": `Bearer ${localStorage.getItem('accessToken')}` },
-      data: { id: payload.id, text: "project deleted " }
+      data: { id: payload.id, text: `project "${payload.title}" deleted` }
     })
     return res
     
@@ -364,14 +372,16 @@ export const actions = {
       })
     }
 
-    const res = await this.$axios.post("/project/add-member", { projectId: payload.projectId, team: data, text: "team member added" }, {
+    // console.log(data)
+    let names = data.map(n => `${n.firstName} ${n.lastName}`);
+
+    const res = await this.$axios.post("/project/add-member", { projectId: payload.projectId, team: data, text: `${names.join(', ')} added to project` }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
     
     if(res.data.statusCode == 200) {
       ctx.commit('addMember', data);
     }
-    
 
   },
 
@@ -380,14 +390,15 @@ export const actions = {
   },
 
   async deleteMember(ctx, payload) {
+    // console.log( `${payload.member.name}`)
     try {
       let m = await this.$axios.delete("/project/remove-member", {
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
           "projectid": payload.projectId,
-          "memberid": payload.memberId,
-          "text": "team member removed"
+          "memberid": payload.member.id,
+          "text": `${payload.member.name} removed from project`
         }
       })
       // console.log(m)
@@ -467,9 +478,10 @@ export const actions = {
   async createProjectComment(ctx, payload) {
 
     try {
+      let trimComment = _.truncate(payload.comment.slice(3, -4), { length: 128 })
       const res = await this.$axios.$post(`/project/${payload.id}/comments`, {
         comment: payload.comment,
-        text: "commented on project" 
+        text: `new comment ${trimComment}`
       }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
@@ -487,9 +499,10 @@ export const actions = {
   async updateProjectComment(ctx, payload) {
 
     try {
+      let trimComment = _.truncate(payload.comment.slice(3, -4), { length: 128 })
       const res = await this.$axios.$put(`/project/${payload.projectId}/comments/${payload.commentId}`,{
         comment: payload.comment,
-        text: "updated comment"
+        text: `updated comment ${trimComment}`,
       }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
@@ -511,7 +524,7 @@ export const actions = {
       const res = await this.$axios.$delete(`/project/${payload.projectId}/comments/${payload.commentId}`,{
         headers: { 
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-          'text': "comment deleted"
+          'text': "deleted comment"
         }
       });
       if (res.statusCode == 200) {
@@ -543,5 +556,24 @@ export const actions = {
       console.log(e)
     }
   },
+
+  async fetchHistory(ctx, payload) {
+    try {
+      const hist = await this.$axios.$get("/history/all", {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          'obj': JSON.stringify( {"projectId": payload.id} )
+        }
+
+      })
+      
+      if (hist.statusCode == 200) {
+        ctx.commit("SETPROJECTHISTORY", hist.data)
+      }
+      return hist.data
+    } catch(e) {
+      console.log(e);
+    }
+  }
 
 }

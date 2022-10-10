@@ -206,7 +206,7 @@ export default {
       // this.toggleSidebar
 
       if (!payload.id) {
-        console.info(payload, typeof payload);
+        // console.info(payload, typeof payload);
         if (typeof(payload) == "number") {
           this.sectionPreselect = payload
         }
@@ -280,9 +280,9 @@ export default {
 
       let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0cTJWb2xlalJlak5tR1FCIiwic3ViZSI6Imh0YW5nQGJpenRyZWUuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiQURNSU4iLCJzdWJjIjoiQ2FuYWRhIiwiZW52IjoiZGV2IiwiaWF0IjoxNjY0NDM5MTQ5MzMzLCJleHAiOjE2NzIyMTUxNDkzMzMsImp0aSI6ImMyNjk2ODg1LTljNmEtNDRmNC1iNGUwLWU3OTExOTdkMDVjZCJ9.Xl3plfortNGydLsizpULWXQInuvX5qW2_HakiRZMcYU"
 
-      //  let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY1OTYwOTkyNzgyMywiZXhwIjoxNjY3Mzg1OTI3ODIzLCJqdGkiOiJhNWE4YmNhMi05MWQ1LTQ2NzctOGRiOC0yMmFiY2M5MzE1YjcifQ.C7fMRdSPr32rA2m4DMFFV_RQ-yYZp436n7yLjKvPq0U"
+       let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY1OTYwOTkyNzgyMywiZXhwIjoxNjY3Mzg1OTI3ODIzLCJqdGkiOiJhNWE4YmNhMi05MWQ1LTQ2NzctOGRiOC0yMmFiY2M5MzE1YjcifQ.C7fMRdSPr32rA2m4DMFFV_RQ-yYZp436n7yLjKvPq0U"
        
-      //  let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2NTcwODk0NjE5OTgsImV4cCI6MTY2NDg2NTQ2MTk5OCwianRpIjoiNjgxNTE2YWItMWM0NC00OWM1LWI4ZmUtNDE0NjA0NDNiMzU1In0.ptVLjXbVoTU-MfTST5tcpXlRcXh2_t_Cq_BG_1vlt3Q"
+       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2NjQ4NjYxMzUyNTQsImV4cCI6MTY3MjY0MjEzNTI1NCwianRpIjoiODc1ZDRhZjYtYjk3NC00OTk0LWEwNTUtMTA0MTVkOGE1ZWNiIn0.vaIav6u9D_wbfwgXlcTH526L1OOwXqLFHWIf6VqMdz0"
 
       this.$cookies.set('b_ssojwt', cookie);
       this.$store.dispatch('token/setToken', cookie);
@@ -358,7 +358,7 @@ export default {
 
   methods: {
     createBtnClick(e) {
-      console.log('create', e)
+      // console.log('create', e)
       this.collapseNavigation = false
     },
     isRouteActive(id) {
@@ -388,11 +388,11 @@ export default {
       // console.log($event.key)
       switch ($event.key) {
         case "new-task":
-          console.log($event.key)
+          // console.log($event.key)
           this.$nuxt.$emit("open-sidebar", $event)
           break;
         case "new-project":
-          console.log($event.key)
+          // console.log($event.key)
           this.$refs.projectModals.showCreateProjectModal = true;
           break;
         default:

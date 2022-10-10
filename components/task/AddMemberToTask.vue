@@ -148,7 +148,7 @@ export default {
         this.loading = false
         return false
       } else {
-        this.$store.dispatch('task/addMember', { taskId: this.task.id, team: this.team }).then(() => {
+        this.$store.dispatch('task/addMember', { taskId: this.task.id, team: this.team, text: "team member added to task" }).then(() => {
           // this.$nuxt.$emit('update-key', 1)
           this.showTaskTeamModal = false
           this.loading = false;

@@ -23,7 +23,7 @@
                     </div>
                   </span>
                   <hr>
-                  <span class="list__item list__item__danger" :id="'tgs-list-3'+section.id" v-on:click="$emit('section-delete',{id: section.id })">
+                  <span class="list__item list__item__danger" :id="'tgs-list-3'+section.id" v-on:click="$emit('section-delete',{id: section.id, title: section.title, projectId: section.projectId })">
                     Delete section
                   </span>
                 </div>

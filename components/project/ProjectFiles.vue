@@ -214,13 +214,16 @@ export default {
     async uploadFiles() {
       this.fileLoader = true
       let myfiles = this.$refs.files.filesUploaded
+      let filelist = []
 
       let formdata = new FormData()
       myfiles.forEach(file => {
+        // console.info(file.name)
+        filelist.push(file.name)
         formdata.append('files', file)
       })
       formdata.append('projectId', this.project.id)
-      formdata.append('text', "file uploaded to project")
+      formdata.append('text', `file(s) [${filelist.join(", ")}] uploaded to project`)
 
       const fi = await this.$axios.post("/file/upload", formdata, {
         headers: {
@@ -283,13 +286,14 @@ export default {
         .catch(e => console.error(e))
     },
     deleteFile(file) {
-      let del = window.confirm("Are you sure want to delete?")
+      // console.info(file)
+      let del = window.confirm("Are you sure want to delete "+file.name+"?")
       if (del) {
         this.$axios.delete("file/" + file.key, {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
               'projectid': this.project.id,
-              'text': "project file deleted"
+              'text': `file ${file.name} deleted`
             }
           }).then(f => {
             console.log(f.data)

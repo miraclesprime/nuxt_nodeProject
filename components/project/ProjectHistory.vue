@@ -2,22 +2,23 @@
   <div class="position-relative p-1 of-scroll-y">
     <div v-for="hist in history" class="history">
       <figure class=" flex-shrink-0 flex-grow-0">
-        <bib-avatar size="2.175rem" :src="$userInfo(hist.user.id).Photo" ></bib-avatar>
+        <bib-avatar size="2.175rem" :src="$userInfo(hist.userId).Photo"></bib-avatar>
       </figure>
       <div class="content">
         <div class="info">
-          <span class="name">{{ $userInfo(hist.user.id).FirstName }} {{ $userInfo(hist.user.id).LastName }}</span>
-          <span class="time">{{displayDate}}</span>
+          <span class="name">{{ $userInfo(hist.userId).FirstName }} {{ $userInfo(hist.userId).LastName }}</span>
+          <!-- <span class="name">{{ hist.userId }} </span> -->
+          <span class="time">{{ displayDate(hist.updatedAt) }}</span>
         </div>
-        <div class="history-text">changed date to 25-08-2022</div>
+        <div class="history-text">{{ hist.text }}</div>
         <!-- {{$userInfo(hist.user.id)}} -->
       </div>
     </div>
   </div>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex';
-// import { userInfo } from '@/utils/userinfo'
+import { mapGetters } from 'vuex'
+import { userInfo } from '@/utils/userInfo.client'
 import dayjs from 'dayjs'
 export default {
 
@@ -27,36 +28,33 @@ export default {
     return {
 
       history: [{
-              updatedAt: '2022-09-02T05:48:02.000Z',
-              user: {
-                id: "DKgl9av2NwnaG1vz",
-                firstName: "Vishwajeet",
-                lastName: "Mandal",
-                email: "vishwajeet.mandal@qsstechnosoft.com"
-              },
-            },
-            {
-              updatedAt: '2022-09-02T05:48:02.000Z',
-              user: {
-                id: "k61YQdJ6J7ldOGpJ",
-                firstName: "Dhruv",
-                lastName: "Sharma",
-                email: "dhruv.sharma@qsstechnosoft.com"
-              },
-            }]
+          updatedAt: '2022-09-02T05:48:02.000Z',
+          user: {
+            id: "DKgl9av2NwnaG1vz",
+            firstName: "Vishwajeet",
+            lastName: "Mandal",
+            email: "vishwajeet.mandal@qsstechnosoft.com"
+          },
+        },
+        {
+          updatedAt: '2022-09-02T05:48:02.000Z',
+          user: {
+            id: "k61YQdJ6J7ldOGpJ",
+            firstName: "Dhruv",
+            lastName: "Sharma",
+            email: "dhruv.sharma@qsstechnosoft.com"
+          },
+        }
+      ]
     }
   },
   computed: {
     ...mapGetters({
       user: "user/getUser2",
-      members: 'user/getTeamMembers'
+      members: 'user/getTeamMembers',
+      project: "project/getSingleProject",
     }),
-    displayDate() {
-      let d = new Date(this.history.updatedAt)
-      let dd = dayjs(this.history.updatedAt).format('dddd, D MMM, YYYY @ HH:mm')
-      // return d.toDateString()
-      return dd
-    },
+    
     /*userInfo() {
       if (this.members.length) {
         let u = this.members.find((el) => el.id == this.msg.userId)
@@ -65,10 +63,21 @@ export default {
       }
     },*/
   },
+  mounted() {
+    this.$store.dispatch("project/fetchHistory", this.project)
+      .then(h => {
+        // console.log(h)
+        this.history = h
+      })
+      .catch(e => console.error(e))
+  },
   methods: {
-    /*...mapActions({
-      getUserInfo: "user/getUserInfo"
-    }),*/
+    displayDate(date) {
+      // let d = new Date(date)
+      let dd = dayjs(date).format('dddd, D MMM, YYYY @ HH:mm')
+      // return d.toDateString()
+      return dd
+    },
   }
 }
 
@@ -84,6 +93,7 @@ export default {
   border-top: 1px solid rgba(29, 29, 32, 0.12);
   gap: 10px;
 }
+
 .name {
   font-size: 0.9rem;
   font-weight: 500;
@@ -101,6 +111,7 @@ export default {
   line-height: 1.5;
   color: $gray6;
 }
+
 .history-text {
   color: $gray6;
 
@@ -109,4 +120,5 @@ export default {
     text-decoration: underline;
   }
 }
+
 </style>
