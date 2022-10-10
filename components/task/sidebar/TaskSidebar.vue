@@ -65,11 +65,11 @@
       </div>
       <div class="row position-relative mx-0 mb-1" id='ts-row'>
         <div class="col-8" id='ts-col-1'>
-          <bib-input type="text" v-model="form.title" placeholder="Enter task name..." label="Task name" v-on:keyup.native="debounceUpdate()"></bib-input>
+          <bib-input type="text" v-model="form.title" placeholder="Enter task name..." label="Task name" v-on:keyup.native="debounceUpdate('Title', form.title)"></bib-input>
           <small v-show="error == 'invalid'" class="text-danger font-xs d-block" style="margin-top: -0.25rem;">Task name is required</small>
         </div>
         <div class="col-4" id='ts-col-2'>
-          <bib-input type="date" v-model="dateInput" placeholder="Enter date/range" label="Due date" v-on:change.native="debounceUpdate()"></bib-input>
+          <bib-input type="date" v-model="dateInput" placeholder="Enter date/range" label="Due date" v-on:change.native="debounceUpdate('Due date', dateInput)"></bib-input>
         </div>
         <loading :loading="loading"></loading>
       </div>
@@ -85,14 +85,14 @@
         <div class="task-info position-relative pt-1" id='sidebar-inner-wrap'>
           <div class="row mx-0" id='sidebar-row-1'>
             <div class="col-4" id='sidebar-col-1'>
-              <bib-select label="Assignee" test_id="task_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="debounceUpdate()"></bib-select>
+              <bib-select label="Assignee" test_id="task_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="debounceUpdate('Assignee', form.userId)"></bib-select>
               <!-- <bib-input type="select" :options="orgUsers" v-model="form.userId" placeholder="Please select..." label="Assignee" v-on:change.native="debounceUpdate()"></bib-input> -->
             </div>
             <div class="col-4" id='sidebar-col-2'>
               <bib-input type="select" label="Project" :options="companyProjects" v-model.number="form.projectId" v-on:change.native="changeProject"></bib-input>
             </div>
             <div class="col-4">
-              <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="form.sectionId" placeholder="Please select ..." v-on:change.native="debounceUpdate()" :disabled="!form.projectId"></bib-input>
+              <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="form.sectionId" placeholder="Please select ..." v-on:change.native="debounceUpdate('Section', form.sectionId)" :disabled="!form.projectId"></bib-input>
             </div>
           </div>
           <div class="row mx-0" id='sidebar-row-2'>
@@ -100,15 +100,15 @@
               <bib-input type="select" label="Department" :options="department" placeholder="Please select..."></bib-input>
             </div>
             <div class="col-4" id='sidebar-col-4'>
-              <bib-input type="select" label="Priority" v-model.number="form.priorityId" :options="priorityValues" placeholder="Please select..." v-on:change.native="debounceUpdate()"></bib-input>
+              <bib-input type="select" label="Priority" v-model.number="form.priorityId" :options="priorityValues" placeholder="Please select..." v-on:change.native="debounceUpdate('Priority', form.priorityId)"></bib-input>
             </div>
             <div class="col-4" id='sidebar-col-5'>
-              <bib-input type="select" label="Status" v-model.number="form.statusId" :options="statusValues" placeholder="Please select..." v-on:change.native="debounceUpdate()"></bib-input>
+              <bib-input type="select" label="Status" v-model.number="form.statusId" :options="statusValues" placeholder="Please select..." v-on:change.native="debounceUpdate('Status', form.statusId)"></bib-input>
             </div>
           </div>
           <div class="row mx-0" id='sidebar-row-3'>
             <div class="col-12" id='sidebar-col-6'>
-              <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter task description..." label="Description" v-on:keyup.native="debounceUpdate()"></bib-input>
+              <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter task description..." label="Description" v-on:keyup.native="debounceUpdate('Description', form.description)"></bib-input>
             </div>
           </div>
           <div class="py-05 px-105" id="sidebar-btn-wrapper">
@@ -130,8 +130,10 @@
 </template>
 <script>
 import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
-import { mapGetters } from "vuex";
-import _ from 'lodash';
+import { mapGetters } from "vuex"
+import { userInfo } from '@/utils/userInfo.client'
+import dayjs from 'dayjs'
+import _ from 'lodash'
 
 export default {
   name: "TaskSidebar",
@@ -290,16 +292,6 @@ export default {
       }
     },
 
-    /*project(newVal) {
-      console.log(newVal)
-
-      let data = this.projects.map(p => {
-        return { label: p.title, value: p.id }
-      })
-      // return [{ label: 'Please select...', value: null }, ...data]
-      this.companyProjects = data
-    },*/
-
   },
 
   mounted() {
@@ -343,7 +335,7 @@ export default {
         this.form.projectId = null
         this.form.sectionId = null
         if (this.form.id) {
-          this.updateTask(this.form.projectId)
+          this.updateTask('removed from project', this.form.projectId)
           return false
         }
         return false
@@ -360,6 +352,7 @@ export default {
           return false
         }
         let sec = sections.find(s => s.title.includes("_section"))
+        let proj = this.companyProjects.find(p => p.value == this.form.projectId)
         // console.warn(sec);
         if (!sec) {
           // this.form.sectionId = null
@@ -367,7 +360,7 @@ export default {
         } else {
           this.form.sectionId = sec.id
         }
-        this.updateTask(this.form.projectId)
+        this.updateTask(`removed from project "${proj.label}"`, this.form.projectId)
 
       })
     },
@@ -402,7 +395,7 @@ export default {
           "budget": 0,
           "statusId": this.form.statusId,
           user,
-          "text": "task created",
+          "text": `task "${title}" created`,
         }).then(() => {
           this.$emit("update-key")
           this.$nuxt.$emit("update-key")
@@ -416,7 +409,7 @@ export default {
       }
     },
 
-    async updateTask(projectId) {
+    async updateTask(historyText, projectId) {
       this.loading = true
 
       let user;
@@ -426,21 +419,44 @@ export default {
         user = null
       }
 
-      this.$store.dispatch("task/updateTask", { id: this.form.id, data: { ...this.form }, user, projectId: this.form.projectId ? this.form.projectId : null, text: "task updated" })
+      this.$store.dispatch("task/updateTask", { id: this.form.id, data: { ...this.form }, user, projectId: this.form.projectId ? this.form.projectId : null, text: historyText })
         .then((u) => {
           console.log(u)
           this.$nuxt.$emit("update-key")
+          this.loading = false
         })
-        .catch(e => console.log(e))
-
-      // console.log("update task =>", task)
-      this.loading = false
+        .catch(e => {
+          console.log(e)
+          this.loading = false
+        })
 
     },
 
-    debounceUpdate: _.debounce(function() {
+    debounceUpdate: _.debounce(function(name, value) {
       if (this.form.id) {
-        // console.log('Debounce clicked!')
+        console.log('Debounce', name, value)
+        let updatedvalue = value
+        if (name == 'Assignee') {
+          let user = this.teamMembers.find(t => t.id == value)
+          updatedvalue = user.label
+        }
+        if (name == 'Status') {
+          this.statusValues.find(s => {
+            if (s.value == value) {
+              updatedvalue = s.label
+            }
+          })
+        }
+        if (name == 'Priority') {
+          this.priorityValues.find(p => {
+            if (p.value == value) {
+              updatedvalue = p.label
+            }
+          })
+        }
+        if (name == "Due date") {
+          updatedvalue = dayjs(value).format('DD MMM, YYYY')
+        }
         if (this.form.priorityId == "") {
           this.form.priority = null
           this.form.priorityId = null
@@ -449,7 +465,8 @@ export default {
           this.form.status = null
           this.form.statusId = null
         }
-        this.updateTask()
+        console.log(updatedvalue)
+        this.updateTask(`changed ${name} to "${updatedvalue}"`)
       }
     }, 1000),
     setFavorite() {
