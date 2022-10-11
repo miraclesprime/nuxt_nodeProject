@@ -5,7 +5,9 @@ export const state = () => ({
   taskMembers: [],
   teamKey: 1,
   taskComments: [],
-  singleTaskComment: {}
+  singleTaskComment: {},
+  taskHistory: [],
+
 });
 
 export const getters = {
@@ -38,6 +40,9 @@ export const getters = {
     return state.teamKey;
   },
 
+  getTaskHistory(state) {
+    return state.taskHistory;
+  }
 
 };
 
@@ -104,6 +109,9 @@ export const mutations = {
     state.teamKey += 1;
   },
 
+  SETTASKHISTORY(state, payload){
+    state.taskHistory = payload
+  }
 
 };
 
@@ -157,7 +165,7 @@ export const actions = {
     // console.log(payload)
     const res = await this.$axios.$delete("/task", {
       headers: { "Authorization": `Bearer ${localStorage.getItem('accessToken')}` },
-      data: { id: payload.id, text: "task deleted" },
+      data: { id: payload.id, text: `task "${payload.title}" deleted` },
     })
     return res
   },
@@ -222,9 +230,7 @@ export const actions = {
     }
   },
 
-
   async fetchTeamMember(ctx, payload) {
-
     await this.$axios.get(`/task/${payload.id}/members`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -244,7 +250,6 @@ export const actions = {
   },
 
   async addMember(ctx, payload) {
-
     let data;
     if (ctx.getters.getTaskMembers.length < 1) {
       data = payload.team;
@@ -255,7 +260,6 @@ export const actions = {
         }
       })
     }
-
     await this.$axios.post(`/task/${ctx.state.selectedTask.id}/members`, { users: data, text: payload.text }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     }).then((res) => {
@@ -298,7 +302,6 @@ export const actions = {
 
   async fetchTaskComments(ctx, payload) {
     try {
-
       let fav = await this.$axios.get(`/task/${payload.id}/comments`, {
         headers: {
           "Content-Type": "application/json",
@@ -318,11 +321,8 @@ export const actions = {
     }
   },
 
-
   async createTaskComment(ctx, payload) {
-
     try {
-
       const res = await this.$axios.$post(`/task/${payload.id}/comments`, {
         comment: payload.comment,
         text: payload.text,
@@ -341,11 +341,8 @@ export const actions = {
     }
   },
 
-
   async updateTaskComment(ctx, payload) {
-
     try {
-
       const res = await this.$axios.$put(`/task/${payload.taskId}/comments/${payload.commentId}`,{
         comment: payload.comment,
         text: payload.text,
@@ -364,11 +361,8 @@ export const actions = {
     }
   },
 
-
   async deleteTaskComment(ctx, payload) {
-
     try {
-
       const res = await this.$axios.$delete(`/task/${payload.taskId}/comments/${payload.commentId}`,{
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
@@ -387,11 +381,8 @@ export const actions = {
     }
   },
 
-
   async fetchSingleTaskDetail(ctx, payload) {
-
     try {
-
       const res = await this.$axios.$get(`/project/${payload.taskId}/comments/${payload.commentId}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
@@ -404,6 +395,25 @@ export const actions = {
 
     }catch(e) {
       console.log(e)
+    }
+  },
+
+  async fetchHistory(ctx, payload) {
+    try {
+      const hist = await this.$axios.$get("/history/all", {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          'obj': JSON.stringify( {"taskId": payload.id} )
+        }
+
+      })
+      
+      if (hist.statusCode == 200) {
+        ctx.commit("SETTASKHISTORY", hist.data)
+      }
+      return hist.data
+    } catch(e) {
+      console.log(e);
     }
   }
 };
