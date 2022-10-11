@@ -447,7 +447,7 @@ export default {
         alert("Reaction already exists!")
         this.reactionSpinner = false
       } else {
-        this.$axios.post("/task/" + this.msg.id + "/reaction", { reaction: data, taskId: this.task.id, text: "comment has reaction" }, {
+        this.$axios.post("/task/" + this.msg.id + "/reaction", { reaction: data, taskId: this.task.id, text: `reacted ${data} to comment` }, {
             headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
           })
           .then(d => {
@@ -467,7 +467,7 @@ export default {
         alert("Reaction already exists!")
         this.reactionSpinner = false
       } else {
-        this.$axios.post("/task/" + this.msg.id + "/reaction", { reaction: "👍", taskId: this.task.id, text: "comment has reaction" }, {
+        this.$axios.post("/task/" + this.msg.id + "/reaction", { reaction: "👍", taskId: this.task.id, text: "liked 👍 the comment" }, {
             headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
           })
           .then(d => {
@@ -533,16 +533,19 @@ export default {
     async uploadFiles() {
       this.fileLoader = true
       let myfiles = this.$refs.files.filesUploaded
+      let filelist = []
 
       let formdata = new FormData()
       myfiles.forEach(file => {
         formdata.append('files', file)
+        filelist.push(file.name)
       })
       // formdata.append('taskId', this.task.id)
       formdata.append('projectId', this.project.id)
       formdata.append('taskId', this.task.id)
       formdata.append('taskCommentId', this.msg.id)
-      formdata.append('text', 'File added for task Comment');
+      // formdata.append('text', 'File added for task Comment');
+      formdata.append('text', `uploaded file(s) "${filelist.join(", ")}" to comment`)
 
       const fi = await this.$axios.post("/file/upload", formdata, {
         headers: {

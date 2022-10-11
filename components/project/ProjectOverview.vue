@@ -45,7 +45,7 @@
         <div id="proj-row3" class="row">
           <div id="proj-row3-col1" class="col-6">
             <!-- <bib-input type="select" :options="filterUser" v-model="activeProject.userId" placeholder="Please select..." label="Owner" v-on:change.native="debounceUpdate($event)" ></bib-input> -->
-            <bib-select label="Owner" test_id="po-owner-dd1" :options="filterUser" v-model="activeProject.userId" v-on:change="debounceUpdate('User', activeProject.user)"></bib-select>
+            <bib-select label="Owner" test_id="po-owner-dd1" :options="filterUser" v-model="activeProject.userId" v-on:change="debounceUpdate('Owner', activeProject.userId)"></bib-select>
           </div>
           <div id="proj-row3-col2" class="col-6">
             <bib-input type="select" label="Department" :options="department" placeholder="Department"></bib-input>
@@ -300,6 +300,10 @@ export default {
       // console.log('Debounce ', name, value)
 
       let updatedvalue = value
+      if (name == "Owner") {
+        this.owner = this.teamMembers.filter(tm => tm.id == value)
+        updatedvalue = this.owner[0].label
+      }
       if (name == 'Status') {
         this.status.find(s => {
           if(s.value == value){
@@ -318,7 +322,6 @@ export default {
         updatedvalue = dayjs(value).format('DD MMM, YYYY')
       }
 
-      this.owner = this.teamMembers.filter(tm => tm.id == this.activeProject.userId)
 
       if (this.activeProject.priorityId == "") {
         this.activeProject.priority = null

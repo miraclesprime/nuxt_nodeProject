@@ -476,7 +476,6 @@ export const actions = {
   },
 
   async createProjectComment(ctx, payload) {
-
     try {
       let trimComment = _.truncate(payload.comment.slice(3, -4), { length: 128 })
       const res = await this.$axios.$post(`/project/${payload.id}/comments`, {

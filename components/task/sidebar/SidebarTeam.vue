@@ -5,7 +5,7 @@
       <span>New Teammate</span>
     </div>
     <template v-if="teammates.length">
-      <bib-table :id="'teammate-' + index" class="border-gray4 bg-white mt-05" :sections="teammates" headless :key="'teammate-' + teammates ? teammates[0].name : 100" :fields="tableFields" hide-no-column>
+      <bib-table :id="'teammate-' + index" class=" bg-white mt-1 border-top-light" :sections="teammates" headless :key="'teammate-' + teammates ? teammates[0].name : 100" :fields="tableFields" hide-no-column>
         <template #cell(name)="data">
           <user-info v-if="data.value.id" :userId="data.value.id"></user-info>
         </template>
@@ -68,7 +68,7 @@ export default {
       this.loading = true
       let confirmDelete = window.confirm("Are you sure want to delete " + member.name + "!")
       if (confirmDelete) {
-        await this.$store.dispatch("task/deleteMember", { memberId: member.id, text: "team member removed from task" })
+        await this.$store.dispatch("task/deleteMember", { memberId: member.id, text: `"${member.name}" removed from task` })
           .then((res) => {
             // console.log(res)
             this.key += 1
