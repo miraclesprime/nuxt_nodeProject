@@ -124,7 +124,7 @@ export default {
       // console.log(tm)
       // let rm = this.team.filter(t=>t.id == tm.id)
       let rm = this.team.map(t => t.id == tm.id)
-      console.log(rm.indexOf(true))
+      // console.log(rm.indexOf(true))
       this.team.splice(rm.indexOf(true), 1)
     },
     bindEnter(event, button) {
@@ -148,7 +148,9 @@ export default {
         this.loading = false
         return false
       } else {
-        this.$store.dispatch('task/addMember', { taskId: this.task.id, team: this.team, text: "team member added to task" }).then(() => {
+        let members = this.team.map(t => t.label)
+        // console.info(members.join(', '));
+        this.$store.dispatch('task/addMember', { taskId: this.task.id, team: this.team, text: `"${members.join(', ')}" added to task` }).then(() => {
           // this.$nuxt.$emit('update-key', 1)
           this.showTaskTeamModal = false
           this.loading = false;
@@ -164,7 +166,6 @@ export default {
 
     },
     copyUrl() {
-
       navigator.clipboard.writeText(this.taskUrl).then(() => {
         // console.log('success')
         this.popupMessages.push({ text: "Copied successfully", variant: "success" })
@@ -172,7 +173,6 @@ export default {
         this.popupMessages.push({ text: "Failed to copy", variant: "danger" })
         console.log("failed to copy")
       });
-
     },
   },
 

@@ -472,7 +472,7 @@ export default {
         alert("Reaction already exists!")
         this.reactionSpinner = false
       } else {
-        this.$axios.post("/project/" + this.msg.id + "/reaction", { reaction: "👍", projectId: this.msg.projectId, text: "reacted 👍 to comment"  }, {
+        this.$axios.post("/project/" + this.msg.id + "/reaction", { reaction: "👍", projectId: this.msg.projectId, text: "liked 👍 the comment" }, {
             headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
           })
           .then(d => {

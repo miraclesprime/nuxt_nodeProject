@@ -188,7 +188,7 @@ export default {
         priorityId: 1,
         statusId: 1,
         budget: 0,
-        text: "subtask created",
+        text: `added subtask "${title}"`,
       }
       this.$store.dispatch("subtask/createSubtask", subData)
         .then(t => {
@@ -205,7 +205,7 @@ export default {
     },
     async deleteSubtask(subtask) {
       this.loading = true
-      const delsub = await this.$store.dispatch("subtask/deleteSubtask", subtask);
+      const delsub = await this.$store.dispatch("subtask/deleteSubtask", {...subtask, text: `deleted subtask "${subtask.title}"`});
       if (delsub.statusCode == 200) {
         this.$store.dispatch("subtask/fetchSubtasks", this.currentTask)
       }
