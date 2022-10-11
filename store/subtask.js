@@ -62,7 +62,7 @@ export const actions = {
       const delsub = await this.$axios.$delete("/subtask/" + payload.id, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-          "text": "subtask deleted",
+          "text": payload.text,
           "taskid": payload.taskId,
         }
       })

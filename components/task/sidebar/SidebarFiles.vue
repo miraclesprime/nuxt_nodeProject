@@ -166,13 +166,16 @@ export default {
     async uploadFiles() {
       this.fileLoader = true
       let myfiles = this.$refs.files.filesUploaded
+      let filelist = []
 
       let formdata = new FormData()
       myfiles.forEach(file => {
         formdata.append('files', file)
+        filelist.push(file.name)
       })
       formdata.append('taskId', this.task.id)
-      formdata.append('text', 'File added for task');
+      // formdata.append('text', 'File added for task');
+      formdata.append('text', `uploaded file(s) "${filelist.join(", ")}" to task`)
 
       if (this.task.project[0]) {
         formdata.append('projectId', this.task.project[0].projectId)

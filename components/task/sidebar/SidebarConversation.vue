@@ -107,18 +107,21 @@ export default {
     },
     onsubmit(data) {
       // console.log(data, this.editMessage?.id)
+      let trimComment = _.truncate(data.text.slice(3, -4), { length: 128 })
 
       if (this.editMessage?.id) {
-        this.$store.dispatch("task/updateTaskComment", { taskId: this.task.id, commentId: this.editMessage.id, comment: data.text, text: "task comment updated" })
+        this.$store.dispatch("task/updateTaskComment", { taskId: this.task.id, commentId: this.editMessage.id, comment: data.text, text: `updated comment ${trimComment}` })
         .then(res => {
           this.fetchTaskComments()
         })
         .catch(e => console.log(e))
       } else {
-        this.$store.dispatch("task/createTaskComment", { id: this.task.id, comment: data.text, text: "task comment added" })
+        this.$store.dispatch("task/createTaskComment", { id: this.task.id, comment: data.text, text: `added comment ${trimComment}` })
           .then(res => {
             // console.log(res)
-            this.uploadFile(this.value.files, res.data)
+            if (this.value.files.length > 0) {
+              this.uploadFile(this.value.files, res.data)
+            }
             this.fetchTaskComments()
           })
           .catch(e => console.log(e))
@@ -126,13 +129,15 @@ export default {
     },
     async uploadFile(commentFiles, data){
       let formdata = new FormData()
+      let filelist = []
       commentFiles.forEach(file => {
         formdata.append('files', file)
+        filelist.push(file.name)
       })
       // formdata.append('projectId', this.project.id)
       formdata.append('taskCommentId', data.id)
       formdata.append('taskId', this.task.id)
-      formdata.append('text', 'File Upload in task comment')
+      formdata.append('text', `uploaded file(s) "${filelist.join(", ")}" to task comment`)
 
       if(Object.keys(this.project).length > 0) {
         formdata.append('projectId', this.project.id)
