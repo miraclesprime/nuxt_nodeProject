@@ -74,6 +74,12 @@
                   </template>
                 </bib-button>
               </div>
+              <div class="task-mid d-flex gap-05">
+                <status-badge :status="task.status"></status-badge>
+                <priority-badge :priority="task.priority"></priority-badge>
+
+                <!-- <span v-if="task.status" class="shape-rounded p-025">{{task.status.text}}</span> <span v-if="task.priority" class="shape-rounded p-025">{{task.priority.text}}</span> -->
+              </div>
               <div class="task-bottom" :id="'tg-card-bottom'+task.id">
                 <user-info v-if="task.userId" :userId="task.userId"></user-info>
                 <format-date v-if="task.dueDate" :datetime="task.dueDate" class="ml-auto"></format-date>
@@ -85,18 +91,18 @@
         </div>
       </div>
       <div class="task-grid-section " id="task-grid-section-blank-1">
-        <div class="section-title-wrapper d-flex align-center justify-center flex-d-column px-05 mb-075" :class="{'active': sectionInput}" >
-          <div class="title " id="tgs-new-section">
-            <span v-if="!sectionInput" class="text-secondary cursor-pointer" @click="sectionInput = true">Add section</span>
+        <div class="section-title-wrapper d-flex justify-center flex-d-column p-05 mb-075" :class="{'active': sectionInput}" >
+          <div class="title pb-05" id="tgs-new-section">
+            <span v-if="!sectionInput" class="text-secondary cursor-pointer d-inline-block pt-025" @click="sectionInput = true">Add section</span>
             <template v-else>
               <input type="text" class="new-section-input" placeholder="Enter text..." v-model.trim="newSectionName" @blur="sectionInput = false" @keyup.esc="sectionInput = false" @keyup.enter="$emit('create-section', newSectionName)">
             </template>
           </div>
-          <hr>
+          <span class="border-bottom-gray2 my-025"></span>
         </div>
       </div>
       <div class="task-grid-section " id="task-grid-section-blank-2"></div>
-      <div class="task-grid-section " id="task-grid-section-blank-3"></div>
+      <div class="task-grid-section " style="border-left-color: transparent;" id="task-grid-section-blank-3"></div>
     </draggable>
     <loading :loading="loading"></loading>
   </div>
@@ -218,6 +224,7 @@ export default {
     },
 
     openSidebar(task, projectId) {
+      console.log(event.target)
       let project = [{
         projectId: projectId,
         project: {
@@ -226,14 +233,14 @@ export default {
       }]
       this.$nuxt.$emit("open-sidebar", { ...task, project: project });
 
-      let el = event.target.offsetParent
+      /*let el = event.target.offsetParent
       let scrollAmt = event.target.offsetLeft - event.target.offsetWidth;
 
       el.scrollTo({
         top: 0,
         left: scrollAmt,
         behavior: 'smooth'
-      });
+      });*/
 
     },
     addToFavorites(task) {
@@ -271,12 +278,12 @@ export default {
 }
 
 .section-title-wrapper {
-  height: 50px;
+  min-height: 50px;
   border-radius: 0.35rem;
   border: 1px dashed transparent;
   &.active {
     background-color: white;
-    border-color: var(--bib-gray1);
+    border-color: var(--bib-gray4);
   }
 }
 
@@ -284,7 +291,7 @@ export default {
   min-height: 2rem;
   padding: 0 0.5rem;
   font-size: 1rem;
-  font-weight: bold;
+  font-weight: 600;
   border-radius: 0.25rem;
   border: 1px solid var(--bib-gray1);
 

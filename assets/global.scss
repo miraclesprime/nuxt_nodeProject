@@ -1,8 +1,21 @@
+@import '@/assets/variable.scss';
 html,
 body {
   font-family: $font-family;
 }
-
+.bg {
+  &-orange {
+    &-sub1 {
+      background-color: rgba($orange, 0.35);
+    }
+    &-sub2 {
+      background-color: rgba($orange, 0.25);
+    }
+    &-sub3 {
+      background-color: rgba($orange, 0.15);
+    }
+  }
+}
 .sidebar select,
 .sidebar input {
   font-size: 14px;
@@ -266,13 +279,14 @@ ul {
   }
 
   .title {
-    font-weight: bold;
+    font-weight: 600;
   }
 
 
 }
 
 .task-grid {
+  font-size: 14px;
   margin: 8px 4px 8px;
   background: var(--bib-light);
   border: 1px solid transparent;
@@ -309,7 +323,11 @@ ul {
   }
 
   .task-top {
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .task-mid {
+    padding: 4px 8px;
   }
 
   .task-bottom {
