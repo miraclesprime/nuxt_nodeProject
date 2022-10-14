@@ -1,7 +1,7 @@
 <template>
   <div :id="'priority-badge-'+compId" class="priority-badge d-flex gap-05 align-center px-05 shape-rounded" :class="priorityOutput.bg">
     <!-- <bib-icon v-if="priorityOutput.icon" icon="urgent-solid" :scale="1" :variant="priorityOutput.color"></bib-icon> -->
-    <span class="icon width-1 height-1 text-center font-xs" :class="'text-' + priorityOutput.color">!</span>
+    <span class="icon w-05 height-1 text-center font-xs" :class="'text-' + priorityOutput.color">!</span>
     <span v-if="priorityOutput.text && !iconOnly" :id="'priority-text'+compId" class="text-capitalize font-xs" :class="'text-' + priorityOutput.color">
       {{ priorityOutput.text }}
     </span>

@@ -270,13 +270,13 @@ ul {
     cursor: grab;
   }
 
-  &:not(:first-child) {
+  /*&:not(:first-child) {
     border-left: 1px solid $gray4;
   }
 
   &:last-child {
     border-right: 1px solid $gray4;
-  }
+  }*/
 
   .title {
     font-weight: 600;
@@ -287,10 +287,10 @@ ul {
 
 .task-grid {
   font-size: 14px;
-  margin: 8px 4px 8px;
+  margin: 0.75rem 0 ;
   background: var(--bib-light);
-  border: 1px solid transparent;
-  border-radius: 4px;
+  border: 1px solid var(--bib-gray4);
+  border-radius: 6px;
   cursor: pointer;
   transition: all 200ms ease;
 
@@ -304,8 +304,9 @@ ul {
   }
 
   &.active {
-    background-color: var(--bib-gray4);
-    border-color: var(--bib-gray6);
+    /*background-color: var(--bib-gray4);*/
+    border-color: $dark;
+    box-shadow: 0 0 0 4px $primary-sub3;
   }
 
   .task-image {
