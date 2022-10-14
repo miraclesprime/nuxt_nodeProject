@@ -1,5 +1,5 @@
 <template>
-  <div id="task-view-wrapper" class="task-view-wrapper position-relative">
+  <div id="task-view-wrapper" class="task-view-wrapper bg-light position-relative">
     <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:show-newsection="showNewsection" v-on:filterView="filterView" v-on:sort="taskSort($event)"></task-actions>
     <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createSection"></new-section-form>
     <template v-if="gridType === 'list'">
@@ -10,7 +10,17 @@
       <!-- <task-list-section :project="project" :sections="localdata" :templateKey="templateKey" v-on:sort-task="taskSort($event)" v-on:update-key="updateKey"></task-list-section> -->
     </template>
     <template v-else>
-      <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" @section-rename="renameSectionModal" @section-delete="deleteSection" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="setFavorite" v-on:mark-complete="markComplete" v-on:delete-task="deleteTask" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd">
+      <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" 
+        @create-section="createSection"
+        @section-rename="renameSectionModal" 
+        @section-delete="deleteSection" 
+        v-on:update-key="updateKey" 
+        v-on:create-task="toggleSidebar($event)" 
+        v-on:set-favorite="setFavorite" 
+        v-on:mark-complete="markComplete" 
+        v-on:delete-task="deleteTask" 
+        @section-dragend="sectionDragEnd" 
+        @task-dragend="taskDragEnd">
       </task-grid-section>
     </template>
     <loading :loading="loading"></loading>
