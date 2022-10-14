@@ -1,5 +1,5 @@
 <template>
-  <div id="task-actions-wrapper" class="task-actions p-025 ">
+  <div id="task-actions-wrapper" class="task-actions p-025 bg-white">
     <div class="action-left d-flex " id="ta-action-left">
   
       <div class="d-flex gap-05 shape-rounded py-025 px-05 cursor-pointer text-secondary text-hover-dark bg-hover-gray3" id="ta-add-task-button" v-on:click.stop="showCreateTaskModal">

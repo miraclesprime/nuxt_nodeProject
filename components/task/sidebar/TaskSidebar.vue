@@ -395,7 +395,7 @@ export default {
           "budget": 0,
           "statusId": this.form.statusId,
           user,
-          "text": `task "${title}" created`,
+          "text": `task "${this.form.title}" created`,
         }).then(() => {
           this.$emit("update-key")
           this.$nuxt.$emit("update-key")
