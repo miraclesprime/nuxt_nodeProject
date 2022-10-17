@@ -1,6 +1,6 @@
 <template>
-  <div id="task-files-wrapper" class="h-100">
-    <div id="task-file-actions-wrapper" class="file-actions d-flex align-center p-025 ">
+  <div id="task-files-wrapper" class="h-100 px-105 py-05">
+    <div id="task-file-actions-wrapper" class="file-actions d-flex align-center ">
       <div class="action-left d-flex " id="file-action-left">
         <div class="d-flex gap-05 cursor-pointer shape-rounded bg-hover-gray3 py-025 px-05 text-secondary text-hover-dark" id="file-upload-button" @click="uploadModal = true">
           <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="file-upload-text" class="">Upload File</span>

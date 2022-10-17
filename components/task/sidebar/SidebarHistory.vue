@@ -1,5 +1,5 @@
 <template>
-  <div id="sh-container" class="px-1 py-05 h-100 position-relative">
+  <div id="sh-container" class="px-105 py-05 h-100 position-relative">
     <template v-if="taskHistory.length > 0">
       <div v-for="hist in taskHistory" class="history">
         <figure class=" flex-shrink-0 flex-grow-0">

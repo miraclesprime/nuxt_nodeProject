@@ -63,42 +63,62 @@
           </div>
         </div>
       </div>
-      <div class="row position-relative mx-0 mb-1" id='ts-row'>
-        <div class="col-8" id='ts-col-1'>
-          <bib-input type="text" v-model="form.title" placeholder="Enter task name..." label="Task name" v-on:keyup.native="debounceUpdate('Title', form.title)"></bib-input>
-          <small v-show="error == 'invalid'" class="text-danger font-xs d-block" style="margin-top: -0.25rem;">Task name is required</small>
+      <div class="border-top-gray3 border-bottom-gray3 position-relative px-105 py-05 mb-1" id="ts-row">
+        <div class="d-flex align-center gap-05" id="ts-col-1">
+            <div class="width-2 height-2 d-inline-flex align-center justify-center">
+              <bib-icon icon="check-circle" variant="gray4" :scale="1.5"></bib-icon> 
+            </div>
+          <div class="flex-grow-1">
+            <span v-if="!editTitle" class="font-w-700" @click.stop="editTitle = true">{{form.title}}</span>
+            <bib-input v-else type="text" v-model="form.title" placeholder="Enter task name..." v-on:keyup.native="debounceUpdate('Title', form.title)" @blur="editTitle = false"></bib-input>
+            <!-- <small v-show="error == 'invalid'" class="text-danger font-xs d-block" style="margin-top: -0.25rem;">Task name is required</small> -->
+          </div>
+          <div>
+            <div class="team-avatar-list px-05">
+              <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :key="index" :style="{ 'left': -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
+            </div>
+          </div>
+            <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light">
+              <bib-icon icon="user-group-solid"></bib-icon>
+            </div>
         </div>
-        <div class="col-4" id='ts-col-2'>
-          <bib-input type="date" v-model="dateInput" placeholder="Enter date/range" label="Due date" v-on:change.native="debounceUpdate('Due date', dateInput)"></bib-input>
-        </div>
+        
         <loading :loading="loading"></loading>
       </div>
       <!-- <div class="d-flex align-center gap-1 justify-center text-secondary font-sm" v-show="loading">
         <bib-spinner variant="primary" :scale="2"></bib-spinner> Saving changes...
       </div> -->
     </div>
-    <div class="menu" id='ts-menu'>
+    <!-- <div class="menu" id='ts-menu'>
       <bib-tabs :value="activeSidebarTab" @change="sidebarTabChange" :tabs="sidebarTabs"></bib-tabs>
-    </div>
+    </div> -->
     <div class="of-scroll-y d-grid" id="ts-of-scroll-y" style="grid-template-columns: none; align-items: start">
-      <template v-if="activeSidebarTab == 'Overview'">
+      <!-- <template v-if="activeSidebarTab == 'Overview'"> -->
         <div class="task-info position-relative pt-1" id='sidebar-inner-wrap'>
           <div class="row mx-0" id='sidebar-row-1'>
             <div class="col-4" id='sidebar-col-1'>
               <bib-select label="Assignee" test_id="task_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="debounceUpdate('Assignee', form.userId)"></bib-select>
               <!-- <bib-input type="select" :options="orgUsers" v-model="form.userId" placeholder="Please select..." label="Assignee" v-on:change.native="debounceUpdate()"></bib-input> -->
             </div>
+            <div class="col-4" >
+              <bib-input type="date" v-model="startDateInput" icon-left="calendar" placeholder="Enter date/range" label="Start date" v-on:change.native="debounceUpdate('Start date', startDateInput)"></bib-input>
+            </div>
+            <div class="col-4" >
+              <bib-input type="date" v-model="dateInput" icon-left="calendar" placeholder="Enter date/range" label="Due date" v-on:change.native="debounceUpdate('Due date', dateInput)"></bib-input>
+            </div>
+          </div>
+          <div class="row mx-0" id='sidebar-row-2'>
             <div class="col-4" id='sidebar-col-2'>
               <bib-input type="select" label="Project" :options="companyProjects" v-model.number="form.projectId" v-on:change.native="changeProject"></bib-input>
             </div>
             <div class="col-4">
               <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="form.sectionId" placeholder="Please select ..." v-on:change.native="debounceUpdate('Section', form.sectionId)" :disabled="!form.projectId"></bib-input>
             </div>
-          </div>
-          <div class="row mx-0" id='sidebar-row-2'>
             <div class="col-4" id='sidebar-col-3'>
               <bib-input type="select" label="Department" :options="department" placeholder="Please select..."></bib-input>
             </div>
+          </div>
+          <div class="row mx-0" id='sidebar-row-3'>
             <div class="col-4" id='sidebar-col-4'>
               <bib-input type="select" label="Priority" v-model.number="form.priorityId" :options="priorityValues" placeholder="Please select..." v-on:change.native="debounceUpdate('Priority', form.priorityId)"></bib-input>
             </div>
@@ -106,7 +126,7 @@
               <bib-input type="select" label="Status" v-model.number="form.statusId" :options="statusValues" placeholder="Please select..." v-on:change.native="debounceUpdate('Status', form.statusId)"></bib-input>
             </div>
           </div>
-          <div class="row mx-0" id='sidebar-row-3'>
+          <div class="row mx-0" id='sidebar-row-4'>
             <div class="col-12" id='sidebar-col-6'>
               <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter task description..." label="Description" v-on:keyup.native="debounceUpdate('Description', form.description)"></bib-input>
             </div>
@@ -116,15 +136,16 @@
           </div>
           <loading :loading="loading"></loading>
         </div>
-      </template>
-      <sidebar-overview v-if="activeSidebarTab == 'Overview'" :fields="taskFields" :activeTask="form" v-on:create-task="createTask" v-on:update-task="updateTask" />
-      <div class="container pt-1" id='ts-subtask-container' v-if="activeSidebarTab == 'Subtasks'">
+      <!-- </template> -->
+      <!-- <sidebar-overview  :fields="taskFields" :activeTask="form" v-on:create-task="createTask" v-on:update-task="updateTask" /> -->
+      <task-group title="Subtasks"></task-group>
+      <!-- <div class="container pt-1" >
         <task-group></task-group>
-      </div>
-      <sidebar-team v-if="activeSidebarTab == 'Team'"></sidebar-team>
-      <sidebar-conversation v-if="activeSidebarTab == 'Conversations'"></sidebar-conversation>
-      <sidebar-files v-if="activeSidebarTab == 'Files'"></sidebar-files>
-      <sidebar-history v-if="activeSidebarTab == 'History'"></sidebar-history>
+      </div> -->
+      <sidebar-team ></sidebar-team>
+      <sidebar-conversation ></sidebar-conversation>
+      <sidebar-files ></sidebar-files>
+      <sidebar-history ></sidebar-history>
     </div>
   </article>
 </template>
@@ -146,6 +167,7 @@ export default {
     return {
       loading: false,
       // activeItem: {},
+      editTitle: false,
       form: {},
       sidebarTabs: [
         { title: "Overview", value: "Overview" },
@@ -194,6 +216,7 @@ export default {
     ...mapGetters({
       teamMembers: "user/getTeamMembers",
       tasks: "task/tasksForListView",
+      team: 'task/getTaskMembers',
       project: "project/getSingleProject",
       projects: "project/getAllProjects",
       sections: "section/getProjectSections",
@@ -222,6 +245,31 @@ export default {
         sec.push({ label: s.title, value: s.id })
       });
       return sec
+    },
+    teammates(){
+      let tm = { main: [], extra: [] }
+      this.teamMembers.filter(u => {
+        this.team.forEach((t, index) => {
+          if (t.id == u.id && index < 4) {
+            tm.main.push(u)
+          } else if(t.id == u.id) {
+            tm.extra.push(u)
+          }
+        })
+      })
+      return tm
+    },
+    startDateInput: {
+      get: function() {
+        if (!this.form.createdAt) {
+          return dayjs().format('YYYY-MM-DD')
+        } else {
+          return dayjs(this.form.createdAt).format('YYYY-MM-DD')
+        }
+      },
+      set: function(newValue) {
+        this.form.createdAt = new Date(newValue)
+      }
     },
     dateInput: {
       get: function() {
@@ -277,6 +325,7 @@ export default {
         this.form = {
           id: '',
           title: "",
+          createdAt: "",
           dueDate: "",
           userId: "",
           sectionId: "_section" + this.project.id,
@@ -390,6 +439,7 @@ export default {
           "projectId": this.form.projectId,
           "title": this.form.title,
           "description": this.form.description,
+          "createdAt": this.form.createdAt || new Date(),
           "dueDate": this.form.dueDate || new Date(),
           "priorityId": this.form.priorityId,
           "budget": 0,
@@ -434,7 +484,7 @@ export default {
 
     debounceUpdate: _.debounce(function(name, value) {
       if (this.form.id) {
-        console.log('Debounce', name, value)
+        // console.log('Debounce', name, value)
         let updatedvalue = value
         if (name == 'Assignee') {
           let user = this.teamMembers.find(t => t.id == value)
@@ -454,7 +504,7 @@ export default {
             }
           })
         }
-        if (name == "Due date") {
+        if (name == "Due date" || name == "Start date") {
           updatedvalue = dayjs(value).format('DD MMM, YYYY')
         }
         if (this.form.priorityId == "") {
@@ -465,7 +515,7 @@ export default {
           this.form.status = null
           this.form.statusId = null
         }
-        console.log(updatedvalue)
+        // console.log(updatedvalue)
         this.updateTask(`changed ${name} to "${updatedvalue}"`)
       }
     }, 1000),
@@ -540,6 +590,14 @@ export default {
 
 .container.pt-2::v-deep {
   padding-top: 2rem;
+}
+
+.team-avatar-list {
+  position: relative;
+  .avatar:hover {
+    z-index: 11
+  }
+  .extra { margin-left: 0.25rem; color: $secondary; vertical-align: middle; }
 }
 
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="p-1">
+  <div class="py-05 px-105">
     <div class="d-flex gap-05 cursor-pointer text-secondary text-hover-dark" id="pta-add-teammate-button" v-on:click="addTeamMember">
       <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon>
       <span>New Teammate</span>
