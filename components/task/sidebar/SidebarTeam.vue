@@ -1,8 +1,13 @@
 <template>
   <div class="py-05 px-105">
-    <div class="d-flex gap-05 cursor-pointer text-secondary text-hover-dark" id="pta-add-teammate-button" v-on:click="addTeamMember">
-      <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon>
-      <span>New Teammate</span>
+    <div class="d-flex justify-between sub-title pb-05 border-bottom-gray4 ">
+      <p class="text-gray5 font-md">Team </p>
+    </div>
+    <div class="section-title py-025">
+      <div class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded cursor-pointer bg-success-sub4 bg-hover-success-sub1 text-success text-hover-white" id="pta-add-teammate-button" v-on:click="addTeamMember">
+        <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon>
+        <span>New Teammate</span>
+      </div>
     </div>
     <template v-if="teammates.length">
       <bib-table :id="'teammate-' + index" class=" bg-white mt-1 border-top-light" :sections="teammates" headless :key="'teammate-' + teammates ? teammates[0].name : 100" :fields="tableFields" hide-no-column>
@@ -61,7 +66,7 @@ export default {
   },
 
   methods: {
-    addTeamMember(){
+    addTeamMember() {
       this.$refs.taskTeamModal.showTaskTeamModal = true
     },
     async deleteMember(member) {

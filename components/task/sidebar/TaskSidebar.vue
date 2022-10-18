@@ -65,8 +65,8 @@
       </div>
       <div class="border-top-gray3 border-bottom-gray3 position-relative px-105 py-05 mb-1" id="ts-row">
         <div class="d-flex align-center gap-05" id="ts-col-1">
-            <div class="width-2 height-2 d-inline-flex align-center justify-center">
-              <bib-icon icon="check-circle" variant="gray4" :scale="1.5"></bib-icon> 
+            <div class="width-2 height-2 d-inline-flex align-center justify-center cursor-pointer" @click="markComplete">
+              <bib-icon :icon="isComplete.icon" :variant="isComplete.variant" :scale="1.5"></bib-icon> 
             </div>
           <div class="flex-grow-1">
             <span v-if="!editTitle" class="font-w-700" @click.stop="editTitle = true">{{form.title}}</span>

@@ -1,5 +1,8 @@
 <template>
   <div id="sh-container" class="px-105 py-05 h-100 position-relative">
+    <div class="d-flex justify-between sub-title pb-05 border-bottom-gray4 ">
+      <p class="text-gray5 font-md ">History </p>
+    </div>
     <template v-if="taskHistory.length > 0">
       <div v-for="hist in taskHistory" class="history">
         <figure class=" flex-shrink-0 flex-grow-0">

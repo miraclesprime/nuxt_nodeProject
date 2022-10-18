@@ -1,16 +1,16 @@
 <template>
   <div class="task-group w-100 position-relative py-05 px-105" id="task-group-main-wrapper">
     <div id="task-group-title-wrapper" class="d-flex justify-between sub-title pb-05">
-      <p id="task-group-title" class="text-gray5 ">Subtasks </p>
+      <p id="task-group-title" class="text-gray5 font-md">Subtasks </p>
       <sorting-comp :items="sortingItems" icon="swap-vertical"></sorting-comp>
     </div>
     <!-- <section-title></section-title> -->
     <div id="subtask-title-wrapper" class="section-title w-100 py-025">
-      <div v-if="newSubtask" class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded text-gray6 text-hover-dark bg-hover-light cursor-pointer" @click="newSubtask = false">
+      <div v-if="newSubtask" class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded bg-success-sub4 bg-hover-success-sub1 text-success text-hover-white cursor-pointer" @click="newSubtask = false">
         <bib-icon icon="close" variant="secondary" :scale="1.2"></bib-icon>
         <span>Cancel</span>
       </div>
-      <div v-else class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded text-gray6 text-hover-dark bg-hover-light cursor-pointer" @click="openCreateSubtask">
+      <div v-else class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded bg-success-sub4 bg-hover-success-sub1 text-success text-hover-white cursor-pointer" @click="openCreateSubtask">
         <bib-icon icon="add" variant="success" :scale="1.2"></bib-icon>
         <span>Add Subtask</span>
       </div>

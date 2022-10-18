@@ -1,5 +1,8 @@
 <template>
   <div class="px-105 py-05 h-100" id="sc-container">
+    <div class="d-flex justify-between sub-title pb-05 border-bottom-gray4 ">
+      <p class="text-gray5 font-md ">Conversation </p>
+    </div>
     <div class="task-conversation w-100 " id="sc-task-team">
       <div class="message-wrapper ">
         <template v-if="showPlaceholder">

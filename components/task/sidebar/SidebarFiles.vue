@@ -1,12 +1,15 @@
 <template>
   <div id="task-files-wrapper" class="h-100 px-105 py-05">
-    <div id="task-file-actions-wrapper" class="file-actions d-flex align-center ">
-      <div class="action-left d-flex " id="file-action-left">
-        <div class="d-flex gap-05 cursor-pointer shape-rounded bg-hover-gray3 py-025 px-05 text-secondary text-hover-dark" id="file-upload-button" @click="uploadModal = true">
-          <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="file-upload-text" class="">Upload File</span>
-        </div>
+    <div class="d-flex justify-between sub-title pb-05 border-bottom-gray4 ">
+      <p class="text-gray5 font-md">Files </p>
+    </div>
+    <div id="task-file-actions-wrapper" class="file-actions d-flex align-center py-025">
+      <div class="d-inline-flex gap-05 cursor-pointer shape-rounded py-025 px-05 bg-success-sub4 bg-hover-success-sub1 text-success text-hover-white" id="file-upload-button" @click="uploadModal = true">
+        <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="file-upload-text" class="">Upload File</span>
       </div>
-      <div class="action-right d-flex gap-05" id="file-action-right">
+      <!-- <div class="action-left d-flex " id="file-action-left">
+      </div> -->
+      <!-- <div class="action-right d-flex gap-05" id="file-action-right">
         <ul class="actions" id="file-action-right-actions">
           <li class="action" id="files-action">
             <span class="mr-025" id="file-action5-text">View</span>
@@ -16,73 +19,19 @@
             </div>
           </li>
         </ul>
+      </div> -->
+    </div>
+    
+    <div id="task-files" class="files d-flex flex-wrap gap-1 py-05">
+      <div v-if="showPlaceholder" class="placeholder file of-hidden">
+        <div class="animated-background h-100" ></div>
+        <div class="animated-background h-100" ></div>
       </div>
-    </div>
-    <div class="of-scroll-y h-100" id="task-files">
-      <template v-if="displayType == 'list'">
-        <div v-if="showPlaceholder" class="placeholder m-1 d-flex align-center gap-1">
-          <div class="animated-background width-10"></div>
-          <div class="animated-background width-4 "></div>
-          <div class="animated-background width-5 "></div>
-          <div class="animated-background width-10 "></div>
-          <div class="animated-background width-5 "></div>
-          <div class="animated-background width-3 "></div>
-        </div>
-        <bib-table v-else :fields="tableFields" :sections="dbFiles" :hide-no-column="true" :key="fileKey">
-          <template #cell(name)="data">
-            <div class="d-flex align-center gap-05">
-              <bib-avatar v-if="imageType(data.value)" shape="rounded" :src="data.value.url" size="1.5rem">
-              </bib-avatar>
-              <bib-icon v-else-if="data.value.extension == '.docx'" icon="word" :scale="1.25"></bib-icon>
-              <bib-icon v-else-if="data.value.extension == '.xlsx'" icon="excel" :scale="1.25"></bib-icon>
-              <bib-icon v-else-if="data.value.extension == '.pptx'" icon="powerpoint" :scale="1.25"></bib-icon>
-              <bib-icon v-else-if="data.value.extension == '.pdf'" icon="pdf" :scale="1.25"></bib-icon>
-              <bib-icon v-else icon="file-text-solid" variant="gray4" :scale="1.25"></bib-icon>
-              <span class="text-gray1">
-                {{ data.value.name }}
-              </span>
-            </div>
-          </template>
-          <template #cell(type)="data">
-            <div class=" text-gray1">
-              {{ data.value.extension }}
-            </div>
-          </template>
-          <template #cell(size)="data">
-            <div class=" text-gray1">
-              {{ data.value.size }}
-            </div>
-          </template>
-          <template #cell(owner)="data">
-            <user-info :userId="data.value.userId"></user-info>
-          </template>
-          <template #cell(date)="data">
-            <format-date :datetime="data.value.updatedAt"></format-date>
-          </template>
-          <template #cell_action="data">
-            <div class="d-flex">
-              <div class="shape-rounded width-105 height-105 d-flex justify-center align-center cursor-pointer bg-hover-gray4" @click="downloadFile(data.value)">
-                <bib-icon icon="align-bottom"></bib-icon>
-              </div>
-              <div class="shape-rounded width-105 height-105 d-flex justify-center align-center cursor-pointer bg-hover-gray4" @click="deleteFile(data.value)">
-                <bib-icon icon="trash" variant="danger"></bib-icon>
-              </div>
-            </div>
-          </template>
-        </bib-table>
-      </template>
-      <template v-if="displayType == 'grid'">
-        <div class="files d-flex flex-wrap gap-1 p-1">
-          <div v-if="showPlaceholder" class="placeholder file of-hidden">
-            <div class="animated-background h-100" ></div>
-            <div class="animated-background h-100" ></div>
-          </div>
-          <template v-else>
-            <bib-file v-for="file in files" :key="file.key + fileKey" :property="file"></bib-file>
-          </template>
-        </div>
+      <template v-else>
+        <file-comp v-for="file in files" :key="file.key + fileKey" :property="file" @open-file=""></file-comp>
       </template>
     </div>
+    
     <bib-modal-wrapper v-if="uploadModal" title="Select file(s)" @close="uploadModal = false">
       <template slot="content">
         <div style="margin-left: -1rem; margin-right: -1rem;">
@@ -296,20 +245,6 @@ export default {
   display: flex;
   padding: 0 20px;
   align-items: center;
-}
-
-.files {
-  .file {
-    border-radius: 0.5rem;
-
-    img {
-      object-fit: cover;
-      width: 100%;
-      height: 9rem;
-      border-top-left-radius: 0.5rem;
-      border-top-right-radius: 0.5rem;
-    }
-  }
 }
 
 </style>
