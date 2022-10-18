@@ -34,21 +34,21 @@
       <!-- <figure class="position-relative"><img src="https://placeimg.com/200/360/tech" class="shape-rounded" alt="img1"></figure>
       <figure class="position-relative"><img src="https://placeimg.com/150/200/tech" class="shape-rounded" alt="img1"></figure> -->
       <bib-modal-wrapper v-if="fileDetailModal" title="File Details" @close="fileDetailModal = false">
-      <template slot="content">
-        <table class="table">
-          <tr v-for="file in fileDetail">
-            <th class="text-right font-w-400">{{file.key}}:</th>
-            <td class="text-left text-gray6 pl-1">{{file.value}}</td>
-          </tr>
-        </table>
-      </template>
-      <template slot="footer">
-        <div class="d-flex justify-end">
-          <bib-button label="Close" variant="light" pill @click="fileDetailModal = false"></bib-button>
-          <!-- <bib-button label="Create" variant="success" class="ml-auto" pill></bib-button> -->
-        </div>
-      </template>
-    </bib-modal-wrapper>
+        <template slot="content">
+          <table class="table">
+            <tr v-for="file in fileDetail">
+              <th class="text-right font-w-400">{{file.key}}:</th>
+              <td class="text-left text-gray6 pl-1">{{file.value}}</td>
+            </tr>
+          </table>
+        </template>
+        <template slot="footer">
+          <div class="d-flex justify-end">
+            <bib-button label="Close" variant="light" pill @click.stop="fileDetailModal = false"></bib-button>
+            <!-- <bib-button label="Create" variant="success" class="ml-auto" pill></bib-button> -->
+          </div>
+        </template>
+      </bib-modal-wrapper>
     </div>
   </client-only>
 </template>

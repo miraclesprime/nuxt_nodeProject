@@ -1,7 +1,10 @@
 <template>
-  <div class="container h-100" id="sc-container">
-    <div class="task-conversation w-100 d-flex flex-d-column" id="sc-task-team">
-      <div class="message-wrapper py-05 flex-grow-1 of-scroll-y">
+  <div class="px-105 py-05 h-100" id="sc-container">
+    <div class="d-flex justify-between sub-title pb-05 border-bottom-gray4 ">
+      <p class="text-gray5 font-md ">Conversation </p>
+    </div>
+    <div class="task-conversation w-100 " id="sc-task-team">
+      <div class="message-wrapper ">
         <template v-if="showPlaceholder">
           <div class="d-flex align-center p-05 border-bottom-gray2">
             <bib-icon icon="arrow-down" :scale="0.5"></bib-icon>

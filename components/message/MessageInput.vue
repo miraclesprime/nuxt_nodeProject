@@ -471,7 +471,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .wrapper {
-  padding: 0 15px 5px 15px;
+  padding: 0.5rem 0;
 }
 
 .container {
