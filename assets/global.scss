@@ -383,6 +383,10 @@ ul {
     position: relative;
 }
 
+.gap-025 {
+  gap: 0.25rem;
+}
+
 @media screen and (max-width: 1600px) {
   .side-panel {
     max-width: $sidebar-width - 160px;
