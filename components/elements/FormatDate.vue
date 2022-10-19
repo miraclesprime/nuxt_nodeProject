@@ -1,12 +1,13 @@
 <template>
-  <span :id="'date-' + Math.random().toString().slice(-3)" class="date-info text-truncate">{{output}}</span>
+  <span :id="'date-' + Math.random().toString().slice(-3)" class="date-info text-truncate" :class="'text-'+variant">{{output}}</span>
 </template>
 <script>
 export default {
 
   name: 'FormatDate',
   props: {
-    datetime: { type: String }
+    datetime: { type: String },
+    variant: String,
   },
   data() {
     return {

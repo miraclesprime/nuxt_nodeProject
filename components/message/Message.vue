@@ -592,7 +592,7 @@ export default {
 .msg {
   border-top: 1px solid $gray3;
   padding-top: 1rem;
-  padding-left: 5rem;
+  padding-left: 4rem;
   font-size: $font-size-lg;
 
   &__owner {
@@ -671,7 +671,7 @@ export default {
 .user-avatar {
   position: absolute;
   z-index: 2;
-  left: 1rem;
+  left: 0;
   top: 1rem;
 
   &.active {
