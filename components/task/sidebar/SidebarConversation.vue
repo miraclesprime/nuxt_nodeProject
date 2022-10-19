@@ -26,16 +26,15 @@
           <!-- {{comments.length}} comment(s) found -->
           <task-message-list :messages="comments" @refresh-list="fetchTaskComments"></task-message-list>
         </template>
-        <template v-else>
+        <!-- <template v-else>
           <span class="d-inline-flex gap-1 align-center m-05 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
             <bib-icon icon="warning"></bib-icon> No conversation found
           </span>
-        </template>
+        </template> -->
       </div>
-      <div class="task-message-input ">
-        <!-- <tip-tap  @input="inputContent"></tip-tap> -->
+      <!-- <div class="task-message-input ">
         <message-input :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -167,8 +166,6 @@ export default {
 .container {
   padding: 0 0.5rem;
 }
-
-.task-message-input {}
 
 .border-left {
   border-left: 1px solid $gray4;
