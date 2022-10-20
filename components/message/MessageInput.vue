@@ -28,6 +28,9 @@
         </div>
         <div class="toolbar-separator"></div>
         <mention-popup @select="mentionUser"></mention-popup>
+        <div class="toolbar-button d-inline-flex align-center ml-auto">
+          <button type="button" class="cursor-pointer text-secondary text-underline border-none bg-white text-hover-dark" @click.stop="cancelMessage">Cancel</button> 
+        </div>
       </div>
       <div class="editor-container">
         <div class="editor-wrapper">
@@ -92,7 +95,7 @@
         </div>
       </div>
       <div class="toolbar-bottom d-flex justify-between" @click.stop>
-        <div class="d-flex">
+        <div class="d-flex gap-025">
           <div class="toolbar-icon" @click="onAttachmentClick">
             <fa :icon="faPaperclip"></fa>
             <input ref="file" multiple type="file" class="attachment-input" @change="onFilesSelect" />
@@ -112,7 +115,7 @@
         </button>
       </div>
     </div>
-    <div class="hint"><b>Shift + Enter</b> to send</div>
+    <!-- <div class="hint"><b>Shift + Enter</b> to send</div> -->
     <bib-modal-wrapper v-if="isLinkModalShown" title="Link URL" @close="isLinkModalShown = false">
       <template slot="content">
         <bib-input label="URL" v-model="linkUrl" />
@@ -332,6 +335,9 @@ export default {
       this.$emit('submit', { text: this.editor.getHTML(), ...this.value });
       this.editor.commands.setContent('');
     },
+    cancelMessage(){
+      this.editor.commands.clearContent()
+    },
     onAttachmentClick() {
       this.$refs.file.click();
     },
@@ -471,16 +477,16 @@ export default {
 </script>
 <style lang="scss" scoped>
 .wrapper {
-  padding: 0.5rem 0;
+  /*padding: 0.5rem 0;*/
 }
 
 .container {
   width: auto;
-  border: 2px solid #bdbdc4;
-  border-radius: 5px;
+  border: 8px solid var(--bib-light);
+  border-radius: 6px;
   overflow: hidden;
   padding: 0;
-  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.1);
+  /*box-shadow: 0 2px 7px rgba(0, 0, 0, 0.1);*/
   display: flex;
   flex-direction: column;
 }
@@ -737,10 +743,10 @@ export default {
 
 .toolbar-top {
   display: flex;
+  gap: 0.25rem;
   font-size: 0.9rem;
-  color: #bcbcc3;
   padding: 6px 5px 5px;
-  background-color: #f7f7f9;
+  /*background-color: #f7f7f9;*/
 }
 
 ::v-deep .toolbar-icon {
@@ -750,6 +756,9 @@ export default {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  border-radius: 4px;
+  color: var(--bib-secondary);
+  background-color: var(--bib-light);
 
   &.is-active {
     color: rgb(34, 34, 34);
@@ -766,9 +775,9 @@ export default {
 
 .toolbar-separator {
   width: 1px;
-  margin: 3px 10px 0 10px;
+  margin: 2px 4px;
   height: 22px;
-  background: #bcbcc3;
+  background: var(--bib-light);
 }
 
 </style>

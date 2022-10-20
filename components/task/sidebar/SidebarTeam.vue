@@ -21,11 +21,7 @@
         </template>
       </bib-table>
     </template>
-    <template v-if="norecord">
-      <span id="taskTeam-0" class="d-inline-flex gap-1 align-center my-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
-        <bib-icon icon="warning"></bib-icon> No records found
-      </span>
-    </template>
+    
     <loading :loading="loading"></loading>
     <!-- <add-teammember-modal ref="teamMemberModal"></add-teammember-modal> -->
     <add-member-to-task ref="taskTeamModal"></add-member-to-task>
@@ -50,9 +46,9 @@ export default {
     teammates() {
       if (this.teammates.length == 0) {
         this.loading = false
-        this.norecord = true
+        // this.norecord = true
       } else {
-        this.norecord = false
+        // this.norecord = false
         this.loading = false
       }
     }

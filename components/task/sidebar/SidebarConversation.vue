@@ -26,16 +26,15 @@
           <!-- {{comments.length}} comment(s) found -->
           <task-message-list :messages="comments" @refresh-list="fetchTaskComments"></task-message-list>
         </template>
-        <template v-else>
+        <!-- <template v-else>
           <span class="d-inline-flex gap-1 align-center m-05 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
             <bib-icon icon="warning"></bib-icon> No conversation found
           </span>
-        </template>
+        </template> -->
       </div>
-      <div class="task-message-input ">
-        <!-- <tip-tap  @input="inputContent"></tip-tap> -->
+      <!-- <div class="task-message-input ">
         <message-input :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -51,10 +50,13 @@ export default {
           { id: 282, name: 'anotherfile.jpg' },*/
         ]
       },
-      editMessage: {},
+      // editMessage: {},
       comments: [],
       showPlaceholder: false,
     };
+  },
+  props: {
+    reload: { type: Number, default: 0 },
   },
   computed: {
     ...mapGetters({
@@ -71,22 +73,27 @@ export default {
         // console.log(newValue.id, oldValue.id)
         this.fetchTaskComments()
       }
-    }
+    },
+    reload(newValue, oldValue){
+      if (newValue != oldValue) {
+        this.fetchTaskComments()
+      }
+    },
   },
   
   mounted() {
-    this.fetchTaskComments()
+    // this.fetchTaskComments()
     // this.$store.dispatch("task/fetchTaskComments", { id: this.task.id })
     this.$store.dispatch("task/fetchTeamMember", { id: this.task.id })
-    this.$nuxt.$on("edit-message", (msg) => {
+    /*this.$nuxt.$on("edit-message", (msg) => {
       // console.log(msg)
       this.editMessage = msg
-    })
+    })*/
   },
   methods: {
-    inputContent(data) {
+    /*inputContent(data) {
       console.log(data);
-    },
+    },*/
     async fetchTaskComments() {
       this.showPlaceholder = true
       const comm = await this.$axios.get(`/task/${this.task.id}/comments`, {
@@ -104,11 +111,11 @@ export default {
       this.showPlaceholder = false
       // this.$store.dispatch("task/fetcTaskComments", { id: this.task.id })
     },
-    onFileInput(payload) {
+    /*onFileInput(payload) {
       // console.log(payload)
       this.value.files = payload.files
-    },
-    onsubmit(data) {
+    },*/
+    /*onsubmit(data) {
       // console.log(data, this.editMessage?.id)
       let trimComment = _.truncate(data.text.slice(3, -4), { length: 128 })
 
@@ -129,7 +136,7 @@ export default {
           })
           .catch(e => console.log(e))
       }
-    },
+    },*/
     async uploadFile(commentFiles, data){
       let formdata = new FormData()
       let filelist = []
@@ -167,8 +174,6 @@ export default {
 .container {
   padding: 0 0.5rem;
 }
-
-.task-message-input {}
 
 .border-left {
   border-left: 1px solid $gray4;
