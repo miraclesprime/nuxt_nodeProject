@@ -1,7 +1,7 @@
 <template>
   <client-only>
     <div id="task-page-wrapper" class="task-page-wrapper">
-      <page-title :title="'Tasks - ' + userfortask.label"></page-title>
+      <page-title title="Tasks"></page-title>
       <company-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:new-task="toggleSidebar($event)"></company-tasks-actions>
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
         <template v-if="gridType == 'list'">

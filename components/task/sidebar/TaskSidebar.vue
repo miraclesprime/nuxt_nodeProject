@@ -93,7 +93,7 @@
     </div> -->
     <div class="of-scroll-y d-grid" id="ts-of-scroll-y" style="grid-template-columns: none; align-items: start">
       <!-- <template v-if="activeSidebarTab == 'Overview'"> -->
-      <div class="task-info position-relative pt-1" id='sidebar-inner-wrap'>
+      <div class="task-info position-relative " id='sidebar-inner-wrap'>
         <div class="row mx-0" id='sidebar-row-1'>
           <div class="col-4" id='sidebar-col-1'>
             <bib-select label="Assignee" test_id="task_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="debounceUpdate('Assignee', form.userId)"></bib-select>
@@ -142,9 +142,9 @@
         <task-group></task-group>
       </div> -->
       <sidebar-team></sidebar-team>
-      <sidebar-conversation></sidebar-conversation>
+      <sidebar-conversation :reload="reloadComments"></sidebar-conversation>
       <sidebar-files></sidebar-files>
-      <sidebar-history></sidebar-history>
+      <!-- <sidebar-history></sidebar-history> -->
     </div>
     <div class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-105">
       <bib-avatar :src="userPhoto" size="2rem" class="flex-shrink-0" ></bib-avatar>
@@ -219,6 +219,7 @@ export default {
         ]
       },
       editMessage: {},
+      reloadComments: 1
     };
   },
 
@@ -592,7 +593,7 @@ export default {
       if (this.editMessage?.id) {
         this.$store.dispatch("task/updateTaskComment", { taskId: this.currentTask.id, commentId: this.editMessage.id, comment: data.text, text: `updated comment ${trimComment}` })
         .then(res => {
-          this.fetchTaskComments()
+          this.reloadComments += 1
         })
         .catch(e => console.log(e))
       } else {
@@ -602,7 +603,7 @@ export default {
             if (this.value.files.length > 0) {
               this.uploadFile(this.value.files, res.data)
             }
-            this.fetchTaskComments()
+            this.reloadComments += 1
           })
           .catch(e => console.log(e))
       }

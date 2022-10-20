@@ -50,10 +50,13 @@ export default {
           { id: 282, name: 'anotherfile.jpg' },*/
         ]
       },
-      editMessage: {},
+      // editMessage: {},
       comments: [],
       showPlaceholder: false,
     };
+  },
+  props: {
+    reload: { type: Number, default: 0 },
   },
   computed: {
     ...mapGetters({
@@ -70,22 +73,27 @@ export default {
         // console.log(newValue.id, oldValue.id)
         this.fetchTaskComments()
       }
-    }
+    },
+    reload(newValue, oldValue){
+      if (newValue != oldValue) {
+        this.fetchTaskComments()
+      }
+    },
   },
   
   mounted() {
-    this.fetchTaskComments()
+    // this.fetchTaskComments()
     // this.$store.dispatch("task/fetchTaskComments", { id: this.task.id })
     this.$store.dispatch("task/fetchTeamMember", { id: this.task.id })
-    this.$nuxt.$on("edit-message", (msg) => {
+    /*this.$nuxt.$on("edit-message", (msg) => {
       // console.log(msg)
       this.editMessage = msg
-    })
+    })*/
   },
   methods: {
-    inputContent(data) {
+    /*inputContent(data) {
       console.log(data);
-    },
+    },*/
     async fetchTaskComments() {
       this.showPlaceholder = true
       const comm = await this.$axios.get(`/task/${this.task.id}/comments`, {
@@ -103,11 +111,11 @@ export default {
       this.showPlaceholder = false
       // this.$store.dispatch("task/fetcTaskComments", { id: this.task.id })
     },
-    onFileInput(payload) {
+    /*onFileInput(payload) {
       // console.log(payload)
       this.value.files = payload.files
-    },
-    onsubmit(data) {
+    },*/
+    /*onsubmit(data) {
       // console.log(data, this.editMessage?.id)
       let trimComment = _.truncate(data.text.slice(3, -4), { length: 128 })
 
@@ -128,7 +136,7 @@ export default {
           })
           .catch(e => console.log(e))
       }
-    },
+    },*/
     async uploadFile(commentFiles, data){
       let formdata = new FormData()
       let filelist = []

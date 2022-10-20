@@ -26,7 +26,7 @@
     </div> -->
 
     <!-- user info -->
-    <div class="msg__owner pb-025">{{userInfo.name}} <span class="ml-1 font-sm">{{displayDate}}</span>
+    <div class="msg__owner ">{{userInfo.name}} <span class="ml-1 font-sm">{{displayDate}}</span>
     </div>
 
     <!-- message content -->
