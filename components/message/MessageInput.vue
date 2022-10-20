@@ -29,7 +29,7 @@
         <div class="toolbar-separator"></div>
         <mention-popup @select="mentionUser"></mention-popup>
         <div class="toolbar-button d-inline-flex align-center ml-auto">
-          <button type="button" class="cursor-pointer text-secondary text-underline" @click.stop="cancelMessage">Cancel</button> 
+          <button type="button" class="cursor-pointer text-secondary text-underline border-none bg-white text-hover-dark" @click.stop="cancelMessage">Cancel</button> 
         </div>
       </div>
       <div class="editor-container">
