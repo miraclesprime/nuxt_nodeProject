@@ -1,9 +1,9 @@
 <template>
   <div id="task-files-wrapper" class="h-100 px-105 py-05">
-    <div class="d-flex justify-between sub-title pb-05 border-bottom-gray4 ">
+    <div class="d-flex justify-between sub-title pb-05 border-bottom-gray2 ">
       <p class="text-gray5 font-md">Files </p>
     </div>
-    <div id="task-file-actions-wrapper" class="file-actions d-flex align-center py-025">
+    <div id="task-file-actions-wrapper" class="file-actions border-bottom-gray2 d-flex align-center py-025">
       <div class="d-inline-flex gap-05 cursor-pointer shape-rounded py-025 px-05 bg-success-sub4 bg-hover-success-sub1 text-success text-hover-white" id="file-upload-button" @click="uploadModal = true">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="file-upload-text" class="">Upload File</span>
       </div>
@@ -23,9 +23,9 @@
     </div>
     
     <div id="task-files" class="files d-flex flex-wrap gap-1 py-05">
-      <div v-if="showPlaceholder" class="placeholder file of-hidden">
-        <div class="animated-background h-100" ></div>
-        <div class="animated-background h-100" ></div>
+      <div v-if="showPlaceholder" class="placeholder d-inline-flex align-center gap-1 p-025 border-gray3 bg-white">
+        <div class="animated-background width-2 height-2 shape-circle" ></div>
+        <div class="animated-background  height-105" style="width:9rem;" ></div>
       </div>
       <template v-else>
         <file-comp v-for="file in files" :key="file.key + fileKey" :property="file" @open-file=""></file-comp>
@@ -92,9 +92,11 @@ export default {
   watch: {
     task(newValue, oldValue) {
       // console.log(newValue.id, newValue.title)
-      if (newValue.id != oldValue.id) {
+      if (newValue.id && newValue.id != oldValue.id) {
         // console.log(newValue.id, oldValue.id)
         this.getFiles()
+      } else {
+        this.dbFiles = []
       }
     }
   },
@@ -150,6 +152,12 @@ export default {
 
     async getFiles() {
       this.showPlaceholder = true
+      // console.info(Object.keys(this.task).length, !this.task)
+      if (Object.keys(this.task).length == 0) {
+        // console.log('no task selected')
+        this.dbFiles = []
+        return
+      }
       let obj1 = { taskId: this.task.id }
       this.$axios.get("file/db/all", {
           headers: {
@@ -219,7 +227,7 @@ export default {
 </script>
 <style scoped lang="scss">
 .file-actions {
-  border-bottom: 1px solid $gray4;
+  /*border-bottom: 1px solid $gray2;*/
 }
 
 .action-right {
