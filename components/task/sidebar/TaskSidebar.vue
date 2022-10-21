@@ -141,7 +141,7 @@
       <!-- <div class="container pt-1" >
         <task-group></task-group>
       </div> -->
-      <sidebar-team></sidebar-team>
+      <sidebar-team :team="teammates.all"></sidebar-team>
       <sidebar-conversation :reload="reloadComments"></sidebar-conversation>
       <sidebar-files></sidebar-files>
       <!-- <sidebar-history></sidebar-history> -->
@@ -259,18 +259,25 @@ export default {
       return sec
     },
     teammates() {
-      let tm = { main: [], extra: [] }
+      let tm = { main: [], extra: [], all: [] }
+      if (Object.keys(this.currentTask).length == 0) {
+        return tm
+      }
       this.teamMembers.filter(u => {
         this.team.forEach((t, index) => {
-          if (t.id == u.id && index < 4) {
-            tm.main.push(u)
-          } else if (t.id == u.id) {
-            tm.extra.push(u)
+          if (t.id == u.id) {
+            tm.all.push(u)
+            if (index < 4) {
+              tm.main.push(u)
+            } else {
+              tm.extra.push(u)
+            }
           }
         })
       })
       return tm
     },
+
     startDateInput: {
       get: function() {
         if (!this.form.createdAt) {
@@ -341,7 +348,7 @@ export default {
       } else {
         this.form = {
           id: '',
-          title: "",
+          title: "Enter title...",
           createdAt: "",
           dueDate: "",
           userId: "",
@@ -375,7 +382,9 @@ export default {
         if (event.target.classList.contains(c)) {
           // console.log('class found', c)
           return
-        }
+        } /*else {
+          console.warn("v-click-outside event", event.originalTarget)
+        }*/
       })
 
       /*if (event.target.classList.contains("cursor-pointer") || event.target.classList.contains("task-grid") || event.target.classList.contains("table__irow")) {

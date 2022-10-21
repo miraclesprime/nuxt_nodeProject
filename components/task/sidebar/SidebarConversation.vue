@@ -1,6 +1,6 @@
 <template>
   <div class="px-105 py-05 h-100" id="sc-container">
-    <div class="d-flex justify-between sub-title pb-05 border-bottom-gray4 ">
+    <div class="d-flex justify-between sub-title pb-05 border-bottom-gray2 ">
       <p class="text-gray5 font-md ">Conversation </p>
     </div>
     <div class="task-conversation w-100 " id="sc-task-team">
@@ -63,15 +63,16 @@ export default {
       task: "task/getSelectedTask",
       taskMembers: "task/getTaskMembers",
       project: "project/getSingleProject"
-      // comments: "task/getTaskComments",
     })
   },
   watch: {
     task(newValue, oldValue) {
       // console.log(newValue.id, newValue.title)
-      if (newValue.id != oldValue.id) {
+      if (newValue.id && newValue.id != oldValue.id) {
         // console.log(newValue.id, oldValue.id)
         this.fetchTaskComments()
+      } else {
+        this.comments = []
       }
     },
     reload(newValue, oldValue){
@@ -82,9 +83,9 @@ export default {
   },
   
   mounted() {
-    // this.fetchTaskComments()
+    this.fetchTaskComments()
     // this.$store.dispatch("task/fetchTaskComments", { id: this.task.id })
-    this.$store.dispatch("task/fetchTeamMember", { id: this.task.id })
+    // this.$store.dispatch("task/fetchTeamMember", { id: this.task.id })
     /*this.$nuxt.$on("edit-message", (msg) => {
       // console.log(msg)
       this.editMessage = msg
@@ -95,6 +96,11 @@ export default {
       console.log(data);
     },*/
     async fetchTaskComments() {
+      if (Object.keys(this.task).length == 0) {
+        console.log('no task selected')
+        this.comments = []
+        return
+      }
       this.showPlaceholder = true
       const comm = await this.$axios.get(`/task/${this.task.id}/comments`, {
         headers: {
