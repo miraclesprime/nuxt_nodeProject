@@ -1,8 +1,8 @@
 <template>
   <div class="task-group w-100 position-relative py-05 px-105" id="task-group-main-wrapper">
-    <div id="task-group-title-wrapper" class="d-flex justify-between sub-title pb-05">
+    <div id="task-group-title-wrapper" class="border-bottom-gray2 d-flex justify-between sub-title pb-05">
       <p id="task-group-title" class="text-gray5 font-md">Subtasks </p>
-      <sorting-comp :items="sortingItems" icon="swap-vertical"></sorting-comp>
+      <!-- <sorting-comp :items="sortingItems" icon="swap-vertical"></sorting-comp> -->
     </div>
     <!-- <section-title></section-title> -->
     <div id="subtask-title-wrapper" class="section-title w-100 py-025">
@@ -24,7 +24,7 @@
               <!-- <input type="text" v-model="title" placeholder="Start typing..."> -->
             </td>
             <td>
-              <bib-select size="sm" :options="orgUsers" v-model="assignee" v-on:change="changeAssignee"></bib-select>
+              <bib-select size="sm" :options="orgUsers" v-model="assignee" v-on:change.stop="changeAssignee" ></bib-select>
               <!-- <bib-input type="text" size="sm" avatar-left="" v-model="assignee" placeholder="Assign to..."></bib-input> -->
               <!-- <input type="text" v-model="assignee" placeholder="Assign to..."> -->
             </td>
@@ -222,7 +222,7 @@ export default {
 
 .sub-title {
   font-size: 1rem;
-  border-bottom: 1px solid var(--bib-gray4);
+  /*border-bottom: 1px solid var(--bib-gray4);*/
 }
 
 .table {

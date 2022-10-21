@@ -1,21 +1,21 @@
 <template>
   <div class="py-05 px-105">
-    <div class="d-flex justify-between sub-title pb-05 border-bottom-gray4 ">
+    <div class="d-flex justify-between sub-title pb-05 border-bottom-gray2 ">
       <p class="text-gray5 font-md">Team </p>
     </div>
     <div class="section-title py-025">
-      <div class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded cursor-pointer bg-success-sub4 bg-hover-success-sub1 text-success text-hover-white" id="pta-add-teammate-button" v-on:click="addTeamMember">
+      <div class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded cursor-pointer bg-success-sub4 bg-hover-success-sub1 text-success text-hover-white" id="pta-add-teammate-button" v-on:click="showAddTeamModal">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon>
         <span>New Teammate</span>
       </div>
     </div>
-    <template v-if="teammates.length">
-      <bib-table :id="'teammate-' + index" class=" bg-white mt-1 border-top-light" :sections="teammates" headless :key="'teammate-' + teammates ? teammates[0].name : 100" :fields="tableFields" hide-no-column>
+    <template v-if="team.length">
+      <bib-table :id="'teammate-' + index" class=" bg-white mt-1 border-top-light" :sections="team" headless :key="'teammate-' + team ? team[0].name : 100" :fields="tableFields" hide-no-column>
         <template #cell(name)="data">
           <user-info v-if="data.value.id" :userId="data.value.id"></user-info>
         </template>
         <template #cell(delete)="data">
-          <span class="cursor-pointer shape-circle" v-on:click="deleteMember(data.value)">
+          <span class="cursor-pointer shape-circle d-inline-flex align-center justify-center width-105 height-105 " v-on:click="deleteMember(data.value)">
             <bib-icon icon="trash" variant="danger"></bib-icon>
           </span>
         </template>
@@ -35,34 +35,52 @@ export default {
 
   data() {
     return {
+      // team: [],
       index: 0,
       norecord: false,
       tableFields: TaskTeamFields,
       loading: false,
     }
   },
+  props: {
+    team: { type: Array },
+  },
 
   watch: {
-    teammates() {
+    /*team() {
       if (this.teammates.length == 0) {
         this.loading = false
-        // this.norecord = true
+        this.team = this.teammates
       } else {
-        // this.norecord = false
+        this.team = []
         this.loading = false
       }
-    }
+    }*/
   },
 
   computed: {
     ...mapGetters({
-      teammates: 'task/getTaskMembers',
+      // teammates: 'task/getTaskMembers',
       task: 'task/getSelectedTask'
-    })
+    }),
+    /*team(){
+      if (Object.keys(this.task).length == 0) {
+        return []
+      }
+      if(this.teammates.length == 0) {
+        return []
+      } else {
+        return this.teammates
+      }
+    }*/
+  },
+
+  mounted() {
+    this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
   },
 
   methods: {
-    addTeamMember() {
+    showAddTeamModal() {
       this.$refs.taskTeamModal.showTaskTeamModal = true
     },
     async deleteMember(member) {
@@ -80,10 +98,7 @@ export default {
       }
     },
   },
-
-  mounted() {
-    this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
-  }
+  
 };
 
 </script>
