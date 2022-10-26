@@ -78,7 +78,7 @@
               <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :key="index" :style="{ 'left': -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
             </div>
           </div>
-          <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light">
+          <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light cursor-pointer" @click="showAddTeamModal">
             <bib-icon icon="user-group-solid"></bib-icon>
           </div>
         </div>
@@ -141,11 +141,13 @@
       <!-- <div class="container pt-1" >
         <task-group></task-group>
       </div> -->
-      <sidebar-team :team="teammates.all"></sidebar-team>
+      <!-- <sidebar-team :team="teammates.all"></sidebar-team> -->
       <sidebar-conversation :reload="reloadComments"></sidebar-conversation>
       <sidebar-files></sidebar-files>
       <!-- <sidebar-history></sidebar-history> -->
     </div>
+    <add-member-to-task ref="taskTeamModal"></add-member-to-task>
+
     <div class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-105">
       <bib-avatar :src="userPhoto" size="2rem" class="flex-shrink-0" ></bib-avatar>
       <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
@@ -367,13 +369,22 @@ export default {
 
   },
 
+  created(){
+    this.$nuxt.$on("edit-message", (msg) => {
+      // console.log(msg)
+      this.editMessage = msg
+    })
+  },
+
   mounted() {
     this.$store.dispatch("project/fetchProjects")
     this.activeSidebarTab = 'Overview'
   },
 
   methods: {
-
+    showAddTeamModal() {
+      this.$refs.taskTeamModal.showTaskTeamModal = true
+    },
     closeSidebar(event) {
       // console.log('click-outside task-sidebar',  event.originalTarget, event.target.classList)
       const classlist = ["cursor-pointer", "menu-item", "task-grid", "table__irow"]
