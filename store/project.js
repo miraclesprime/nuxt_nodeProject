@@ -317,7 +317,7 @@ export const actions = {
     // console.log(payload)
     const res = await this.$axios.$delete("/project", {
       headers: { "Authorization": `Bearer ${localStorage.getItem('accessToken')}` },
-      data: { id: payload.id, text: `project "${payload.title}" deleted` }
+      data: { id: payload.id, project: payload, text: `project "${payload.title}" deleted` }
     })
     return res
     
