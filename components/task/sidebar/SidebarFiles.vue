@@ -28,7 +28,7 @@
         <div class="animated-background  height-105" style="width:9rem;" ></div>
       </div>
       <template v-else>
-        <file-comp v-for="file in files" :key="file.key + fileKey" :property="file" @open-file=""></file-comp>
+        <file-comp v-for="file in files" :key="file.key + fileKey" :property="file"  @delete-file="deleteFile"></file-comp>
       </template>
     </div>
     
@@ -170,6 +170,7 @@ export default {
             this.dbFiles = f.data.data
             this.showPlaceholder = false
             this.fileKey += 1;
+            this.$nuxt.$emit("refresh-history")
           }
         })
         .catch(e => console.error(e))

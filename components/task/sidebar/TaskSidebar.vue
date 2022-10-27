@@ -34,7 +34,7 @@
             <bib-button pop="horizontal-dots">
               <template v-slot:menu>
                 <div class="list" id="ts-list">
-                  <span class="list__item" id="ts-list-item-1" @click="markComplete">
+                  <span class="list__item" id="ts-list-item-1" :class="['list__item__' + isComplete.variant]" @click="markComplete">
                     <bib-icon :icon="isComplete.icon" :variant="isComplete.variant" class="mr-075"></bib-icon> {{isComplete.text}}
                   </span>
                   <span class="list__item" id="ts-list-item-2" @click="setFavorite">
@@ -56,7 +56,7 @@
                     <bib-icon icon="warning" variant="gray5" class="mr-075"></bib-icon> Report
                   </span>
                   <hr>
-                  <span class="list__item danger" id="ts-list-item-8" @click="deleteTask(currentTask)">Delete</span>
+                  <span class="list__item list__item__danger" id="ts-list-item-8" @click="deleteTask(currentTask)">Delete</span>
                 </div>
               </template>
             </bib-button>
@@ -142,7 +142,7 @@
         <task-group></task-group>
       </div> -->
       <!-- <sidebar-team :team="teammates.all"></sidebar-team> -->
-      <sidebar-conversation :reload="reloadComments"></sidebar-conversation>
+      <sidebar-conversation :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
       <sidebar-files></sidebar-files>
       <!-- <sidebar-history></sidebar-history> -->
     </div>
@@ -221,7 +221,8 @@ export default {
         ]
       },
       editMessage: {},
-      reloadComments: 1
+      reloadComments: 1,
+      reloadHistory: 1,
     };
   },
 
@@ -408,14 +409,14 @@ export default {
     sidebarTabChange(tab) {
       this.activeSidebarTab = tab.value;
     },
-    formattedDate(d) {
+    /*formattedDate(d) {
       let date = new Date(d);
       let month = date.getMonth() + 1;
       let day = '0' + date.getDay();
       let year = date.getFullYear()
       return `${year}-${month}-${day}`
 
-    },
+    },*/
     changeProject() {
       if (!this.form.projectId || this.form.projectId == "") {
         this.form.projectId = null
@@ -510,6 +511,8 @@ export default {
         .then((u) => {
           console.log(u)
           this.$nuxt.$emit("update-key")
+          // this.$nuxt.$emit("refresh-history")
+          this.reloadHistory += 1
           this.loading = false
         })
         .catch(e => {
@@ -554,6 +557,8 @@ export default {
         }
         // console.log(updatedvalue)
         this.updateTask(`changed ${name} to "${updatedvalue}"`)
+        this.reloadComments += 1
+
       }
     }, 1000),
     setFavorite() {
@@ -577,6 +582,7 @@ export default {
           this.loading = false
           this.$nuxt.$emit("update-key")
           this.$store.dispatch("task/setSingleTask", d)
+          this.reloadComments += 1
         }).catch(e => {
           console.log(e)
           this.loading = false

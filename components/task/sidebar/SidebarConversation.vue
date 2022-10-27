@@ -5,14 +5,14 @@
         <p class="text-gray5 font-md ">Conversation </p>
       </div>
       <div class="task-conversation w-100 " id="sc-task-team">
-        <div class="message-wrapper ">
+        <div class="message-wrapper py-05 position-relative">
           <template v-if="showPlaceholder">
-            <div class="d-flex align-center p-05 border-bottom-gray2">
+            <!-- <div class="d-flex align-center p-05 border-bottom-gray2">
               <bib-icon icon="arrow-down" :scale="0.5"></bib-icon>
               <div class="px-1 ">
                 <div class="animated-background width-6"></div>
               </div>
-            </div>
+            </div> -->
             <div class="placeholder m-1 d-flex align-center gap-1">
               <div class="left">
                 <div class="shape-circle width-3 height-3 animated-background"></div>
@@ -23,27 +23,18 @@
               </div>
             </div>
           </template>
-          <template v-else-if="comments.length > 0">
-            <!-- {{comments.length}} comment(s) found -->
-            <div v-for="(msg, index) in comments" :key="index + msg.id">
-              <task-message :msg="msg" @delete-message="onDeleteMessage" @upload-file="uploadFileTrigger"></task-message>
+          <template v-else-if="sortedData.length > 0">
+            <div v-for="item in sortedData">
+              <task-message v-if="item.comment" :msg="item" @delete-message="onDeleteMessage" @upload-file="uploadFileTrigger"></task-message>
+              <task-history v-if="item.text" :history="item"></task-history>
             </div>
-            <!-- <task-message-list :messages="comments" @refresh-list="fetchTaskComments"></task-message-list> -->
           </template>
-          <!-- <template v-else>
+          <template v-else>
             <span class="d-inline-flex gap-1 align-center m-05 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
               <bib-icon icon="warning"></bib-icon> No conversation found
             </span>
-          </template> -->
-          <template v-if="sortedData.length > 0">
-            <div v-for="item in sortedData">
-              <task-message v-if="item.comment" :msg="item" @delete-message="onDeleteMessage" @upload-file="uploadFileTrigger"></task-message>
-              <div v-else class="d-flex flex-wrap my-05 ml-5">
-                {{item.userId}}<span class="ml-1 text-gray5 font-sm">{{displayDate(item.updatedAt)}}</span>
-                <p class="flex-grow-1 text-gray6">{{item.text}}</p>
-              </div>
-            </div>
           </template>
+          <loading :loading="msgLoading"></loading>
         </div>
         <!-- <div class="task-message-input ">
           <message-input :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
@@ -53,9 +44,9 @@
   </client-only>
 </template>
 <script>
-import dayjs from 'dayjs'
 import { mapGetters } from 'vuex';
-// dayjs.extend(relativeTime)
+import dayjs from 'dayjs'
+
 export default {
   data: function() {
     return {
@@ -69,10 +60,12 @@ export default {
       comments: [],
       history: [],
       showPlaceholder: false,
+      msgLoading: false,
     };
   },
   props: {
-    reload: { type: Number, default: 0 },
+    reloadComments: { type: Number, default: 0 },
+    reloadHistory: { type: Number, default: 0},
   },
   computed: {
     ...mapGetters({
@@ -101,34 +94,33 @@ export default {
         this.comments = []
       }
     },
-    reload(newValue, oldValue){
+    reloadComments(newValue, oldValue){
       if (newValue != oldValue) {
         this.fetchTaskComments()
+      }
+    },
+    reloadHistory(newValue, oldValue){
+      if (newValue != oldValue) {
+        this.fetchHistory()
       }
     },
   },
   
   mounted() {
-    this.fetchTaskComments()
-    this.fetchHistory()
-    // this.$store.dispatch("task/fetchTaskComments", { id: this.task.id })
-    // this.$store.dispatch("task/fetchTeamMember", { id: this.task.id })
-    /*this.$nuxt.$on("edit-message", (msg) => {
-      // console.log(msg)
-      this.editMessage = msg
-    })*/
+    // this.fetchTaskComments()
+    // this.fetchHistory()
+    this.$nuxt.$on("refresh-history", () => {
+      this.fetchHistory()
+    })
+    this.$nuxt.$on("refresh-comments", () => {
+      this.fetchTaskComments()
+    })
   },
   methods: {
     /*inputContent(data) {
       console.log(data);
     },*/
-    displayDate(date) {
-      // let d = new Date(date)
-      return dayjs(date).format('dddd, D MMM, YYYY @ HH:mm')
-      // let diff = d.diff(dayjs(), 'dd')
-
-      // return diff
-    },
+    
     async fetchTaskComments() {
       if (Object.keys(this.task).length == 0) {
         console.log('no task selected')
@@ -158,6 +150,7 @@ export default {
       const del = await this.$store.dispatch("task/deleteTaskComment", {...payload, text: "task comment deleted"});
       if (del.statusCode == 200) {
         // this.$emit("refresh-list")
+        this.fetchTaskComments()
       }
       this.msgLoading = false
       // console.log(del)
@@ -170,16 +163,16 @@ export default {
     },
 
     fetchHistory() {
-      this.loading = true
+      this.msgLoading = true
       this.$store.dispatch("task/fetchHistory", this.task)
         .then(h => {
           // console.log(h)
           this.history = h
-          this.loading = false
+          this.msgLoading = false
         })
         .catch(e => {
           console.error(e)
-          this.loading = false
+          this.msgLoading = false
 
         })
     },
@@ -210,7 +203,7 @@ export default {
           .catch(e => console.log(e))
       }
     },*/
-    async uploadFile(commentFiles, data){
+    /*async uploadFile(commentFiles, data){
       let formdata = new FormData()
       let filelist = []
       commentFiles.forEach(file => {
@@ -238,7 +231,7 @@ export default {
         this.value.files = []
         this.$nuxt.$emit("get-taskmsg-files")
       }
-    }
+    }*/
   },
 };
 

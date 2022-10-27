@@ -1,6 +1,6 @@
 <template>
   <div class="msg position-relative" @mouseenter="isActionBarShowing = true" @mouseleave="onActionBarMouseLeave" v-click-outside="onActionBarClickOutside">
-    <figure class="width-4 user-avatar cursor-pointer" :class="{active: userCardVisible}" >
+    <figure class="width-4 user-avatar " :class="{active: userCardVisible}" >
       <bib-avatar size="3rem" :src="userInfo.pic"></bib-avatar>
     </figure>
 
@@ -101,7 +101,7 @@
       </div> -->
       <tippy :visible="isMenuOpen" :animate-fill="false" :distance="6" interactive placement="bottom-end" trigger="manual" :onHide="() => defer(() => (isMenuOpen = false))">
         <template slot="trigger">
-          <div class="action" :class="{ active: isMenuOpen }" @click="toggleMenu">
+          <div v-if="msg.userId == user.Id" class="action" :class="{ active: isMenuOpen }" @click="toggleMenu">
             <fa :icon="faEllipsisH" />
           </div>
         </template>
@@ -118,14 +118,14 @@
           <!-- <div class="menu-item">
               <a @click="showForwardModal">Share</a>
             </div> -->
-          <div v-if="msg.userId == user.Id" class="menu-item" >
+          <div class="menu-item" >
             <a @click.stop="editMessage">Edit</a>
           </div>
-          <div v-if="msg.userId == user.Id" class="menu-item" >
+          <div class="menu-item" >
             <a @click.stop="attachFile">Attach file</a>
           </div>
           <div class="menu-item-separator"></div>
-          <div v-if="canDeleteMessage" class="menu-item danger" >
+          <div class="menu-item danger" >
             <a @click.stop="deleteMessage">Delete</a>
           </div>
         </div>
@@ -176,6 +176,10 @@ import {
   faStar as fasStar,
 } from '@fortawesome/free-solid-svg-icons';
 import { faComment, faStar } from '@fortawesome/free-regular-svg-icons';
+
+var relativeTime = require('dayjs/plugin/relativeTime')
+dayjs.extend(relativeTime)
+
 export default {
 
   name: 'TaskMessage',
@@ -244,10 +248,9 @@ export default {
       }
     },
     displayDate() {
-      let d = new Date(this.msg.updatedAt)
-      let dd = dayjs(this.msg.updatedAt).format('dddd, D MMM, YYYY @ HH:mm')
-      // return d.toDateString()
-      return dd
+      /*let d = new Date(this.msg.updatedAt)
+      let dd = dayjs(this.msg.updatedAt).format('dddd, D MMM, YYYY @ HH:mm')*/
+      return dayjs(this.msg.updatedAt).fromNow()
     },
     /*reactions() {
       return Object.entries(groupBy(this.message.reactions, (r) => r.reaction)).map(
@@ -308,20 +311,12 @@ export default {
         `/directs/${chat.user.id}/messages/${this.message._id}` :
         `/channels/${chat.id}/messages/${this.message._id}`;
     },*/
-    canDeleteMessage() {
+    /*canDeleteMessage() {
       if (this.msg.userId == this.user.Id) {
         return true;
       }
       return false
-      /*const chat = this.chats[this.msg.chat];
-      return (
-        chat?.type === 'group' &&
-        chat.members.some(
-          ({ access, user }) =>
-          (access === 'admin' || access === 'moderator') && user.id === this.user.id
-        )
-      );*/
-    },
+    },*/
 
   },
   created(){
@@ -595,8 +590,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 .msg {
-  border-top: 1px solid $gray3;
+  /*border-top: 1px solid $gray3;*/
   padding-top: 1rem;
+  padding-bottom: 0.5rem;
   padding-left: 5rem;
   font-size: $font-size-lg;
 
