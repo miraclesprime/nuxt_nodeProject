@@ -24,7 +24,7 @@
               <!-- <input type="text" v-model="title" placeholder="Start typing..."> -->
             </td>
             <td>
-              <bib-select size="sm" :options="orgUsers" v-model="assignee" v-on:change.stop="changeAssignee" ></bib-select>
+              <bib-select size="sm" :options="orgUsers" v-model="assignee" v-on:change="changeAssignee" ></bib-select>
               <!-- <bib-input type="text" size="sm" avatar-left="" v-model="assignee" placeholder="Assign to..."></bib-input> -->
               <!-- <input type="text" v-model="assignee" placeholder="Assign to..."> -->
             </td>
@@ -188,7 +188,7 @@ export default {
         priorityId: 1,
         statusId: 1,
         budget: 0,
-        text: `added subtask "${title}"`,
+        text: `added subtask "${this.title}"`,
       }
       this.$store.dispatch("subtask/createSubtask", subData)
         .then(t => {
@@ -197,6 +197,7 @@ export default {
           this.title = ""
           this.assignee = ""
           this.date = ""
+          this.$nuxt.$emit("refresh-history")
         })
         .catch(e => console.log(e))
         .then(() => {
@@ -208,6 +209,7 @@ export default {
       const delsub = await this.$store.dispatch("subtask/deleteSubtask", {...subtask, text: `deleted subtask "${subtask.title}"`});
       if (delsub.statusCode == 200) {
         this.$store.dispatch("subtask/fetchSubtasks", this.currentTask)
+        this.$nuxt.$emit("refresh-history")
       }
       this.loading = false
     },

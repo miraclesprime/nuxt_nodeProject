@@ -34,7 +34,7 @@
             <bib-button pop="horizontal-dots">
               <template v-slot:menu>
                 <div class="list" id="ts-list">
-                  <span class="list__item" id="ts-list-item-1" @click="markComplete">
+                  <span class="list__item" id="ts-list-item-1" :class="['list__item__' + isComplete.variant]" @click="markComplete">
                     <bib-icon :icon="isComplete.icon" :variant="isComplete.variant" class="mr-075"></bib-icon> {{isComplete.text}}
                   </span>
                   <span class="list__item" id="ts-list-item-2" @click="setFavorite">
@@ -56,7 +56,7 @@
                     <bib-icon icon="warning" variant="gray5" class="mr-075"></bib-icon> Report
                   </span>
                   <hr>
-                  <span class="list__item danger" id="ts-list-item-8" @click="deleteTask(currentTask)">Delete</span>
+                  <span class="list__item list__item__danger" id="ts-list-item-8" @click="deleteTask(currentTask)">Delete</span>
                 </div>
               </template>
             </bib-button>
@@ -78,7 +78,7 @@
               <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :key="index" :style="{ 'left': -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
             </div>
           </div>
-          <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light">
+          <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light cursor-pointer" @click="showAddTeamModal">
             <bib-icon icon="user-group-solid"></bib-icon>
           </div>
         </div>
@@ -141,11 +141,13 @@
       <!-- <div class="container pt-1" >
         <task-group></task-group>
       </div> -->
-      <sidebar-team :team="teammates.all"></sidebar-team>
-      <sidebar-conversation :reload="reloadComments"></sidebar-conversation>
+      <!-- <sidebar-team :team="teammates.all"></sidebar-team> -->
+      <sidebar-conversation :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
       <sidebar-files></sidebar-files>
       <!-- <sidebar-history></sidebar-history> -->
     </div>
+    <add-member-to-task ref="taskTeamModal"></add-member-to-task>
+
     <div class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-105">
       <bib-avatar :src="userPhoto" size="2rem" class="flex-shrink-0" ></bib-avatar>
       <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
@@ -219,7 +221,8 @@ export default {
         ]
       },
       editMessage: {},
-      reloadComments: 1
+      reloadComments: 1,
+      reloadHistory: 1,
     };
   },
 
@@ -367,13 +370,22 @@ export default {
 
   },
 
+  created(){
+    this.$nuxt.$on("edit-message", (msg) => {
+      // console.log(msg)
+      this.editMessage = msg
+    })
+  },
+
   mounted() {
     this.$store.dispatch("project/fetchProjects")
     this.activeSidebarTab = 'Overview'
   },
 
   methods: {
-
+    showAddTeamModal() {
+      this.$refs.taskTeamModal.showTaskTeamModal = true
+    },
     closeSidebar(event) {
       // console.log('click-outside task-sidebar',  event.originalTarget, event.target.classList)
       const classlist = ["cursor-pointer", "menu-item", "task-grid", "table__irow"]
@@ -397,14 +409,14 @@ export default {
     sidebarTabChange(tab) {
       this.activeSidebarTab = tab.value;
     },
-    formattedDate(d) {
+    /*formattedDate(d) {
       let date = new Date(d);
       let month = date.getMonth() + 1;
       let day = '0' + date.getDay();
       let year = date.getFullYear()
       return `${year}-${month}-${day}`
 
-    },
+    },*/
     changeProject() {
       if (!this.form.projectId || this.form.projectId == "") {
         this.form.projectId = null
@@ -499,6 +511,8 @@ export default {
         .then((u) => {
           console.log(u)
           this.$nuxt.$emit("update-key")
+          // this.$nuxt.$emit("refresh-history")
+          this.reloadHistory += 1
           this.loading = false
         })
         .catch(e => {
@@ -543,6 +557,8 @@ export default {
         }
         // console.log(updatedvalue)
         this.updateTask(`changed ${name} to "${updatedvalue}"`)
+        this.reloadComments += 1
+
       }
     }, 1000),
     setFavorite() {
@@ -566,6 +582,7 @@ export default {
           this.loading = false
           this.$nuxt.$emit("update-key")
           this.$store.dispatch("task/setSingleTask", d)
+          this.reloadComments += 1
         }).catch(e => {
           console.log(e)
           this.loading = false

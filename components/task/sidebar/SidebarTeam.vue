@@ -87,11 +87,12 @@ export default {
       this.loading = true
       let confirmDelete = window.confirm("Are you sure want to delete " + member.name + "!")
       if (confirmDelete) {
-        await this.$store.dispatch("task/deleteMember", { memberId: member.id, text: `"${member.name}" removed from task` })
+        await this.$store.dispatch("task/deleteMember", { memberId: member.id, text: `removed "${member.name}" from task` })
           .then((res) => {
             // console.log(res)
             this.key += 1
-            console.log(res)
+            this.$nuxt.$emit("refresh-history")
+            // console.log(res)
           })
           .catch(e => console.log(e))
         this.loading = false

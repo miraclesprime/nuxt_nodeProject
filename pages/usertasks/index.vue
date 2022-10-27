@@ -125,6 +125,11 @@ export default {
   mounted() {
 
     if(process.client) {
+
+      if(!this.$route.query.email) {
+        this.$router.push({ path: "/dashboard"})
+      }
+
       _.delay(() => {
           this.userfortask = this.teamMembers.find((u) => {
             if(u.email == this.$route.query.email) {

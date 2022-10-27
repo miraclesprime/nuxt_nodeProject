@@ -4,9 +4,9 @@ export default ({ store }, inject) => {
     const team = store.state.user.teamMembers
     if (team.length > 0 && userId) {
       let u = team.find((m) => m.Id == userId)
-      return u
+      return {...u, Name: `${u.FirstName} ${u.LastName}`}
     } else {
-      return { message: "no user found" }
+      return { Name: "no user found" }
     }
     // return { id: "adsfpoag", name: "Vishwajeet Mandal", email: "vishwajeet.mandal@qsstechnosoft.com", pic: "", jobTitle: "Senior Software Developer" }
   })

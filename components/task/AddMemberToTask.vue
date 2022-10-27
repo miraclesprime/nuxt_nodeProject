@@ -150,17 +150,17 @@ export default {
       } else {
         let members = this.team.map(t => t.label)
         // console.info(members.join(', '));
-        this.$store.dispatch('task/addMember', { taskId: this.task.id, team: this.team, text: `"${members.join(', ')}" added to task` }).then(() => {
+        this.$store.dispatch('task/addMember', { taskId: this.task.id, team: this.team, text: `added "${members.join(', ')}" to task` }).then(() => {
           // this.$nuxt.$emit('update-key', 1)
           this.showTaskTeamModal = false
           this.loading = false;
           this.team = []
+          this.$nuxt.$emit("refresh-history")
         }).catch((err) => {
           this.loading = false;
           this.showTaskTeamModal = false
           this.team = []
           console.log(err)
-
         })
       }
 
