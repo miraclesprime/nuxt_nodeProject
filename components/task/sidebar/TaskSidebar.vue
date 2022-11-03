@@ -63,14 +63,15 @@
           </div>
         </div>
       </div>
-      <div class="border-top-gray3 border-bottom-gray3 position-relative px-105 py-05 mb-1" id="ts-row">
+      <div class="border-top-gray3 border-bottom-gray3 position-relative px-105 py-025 mb-1" id="ts-row">
         <div class="d-flex align-center gap-05" id="ts-col-1">
           <div class="width-2 height-2 d-inline-flex align-center justify-center cursor-pointer" @click="markComplete">
             <bib-icon :icon="isComplete.icon" :variant="isComplete.variant" :scale="1.5"></bib-icon>
           </div>
           <div class="flex-grow-1">
-            <span v-if="!editTitle" class="font-w-700" @click.stop="editTitle = true">{{form.title}}</span>
-            <bib-input v-else type="text" v-model="form.title" placeholder="Enter task name..." v-on:keyup.native="debounceUpdate('Title', form.title)" @blur="editTitle = false"></bib-input>
+            <!-- <span v-if="!editTitle" class="font-w-700" @click.stop="editTitle = true">{{form.title}}</span> -->
+            <input type="text" class="task-title-input" ref="taskTitleInput" v-model="form.title" placeholder="Enter task name..." v-on:keyup="debounceUpdate('Title', form.title)" @blur="editTitle = false">
+            <!-- <bib-input v-else type="text" v-model="form.title" placeholder="Enter task name..." v-on:keyup.native="debounceUpdate('Title', form.title)" @blur="editTitle = false"></bib-input> -->
             <!-- <small v-show="error == 'invalid'" class="text-danger font-xs d-block" style="margin-top: -0.25rem;">Task name is required</small> -->
           </div>
           <div>
@@ -643,6 +644,18 @@ export default {
   display: grid;
   /*grid-template-rows: 1fr auto minmax(1rem, 6fr);*/
   grid-template-rows: 1fr auto 1fr;
+  .task-title-input {
+    width: 99%;
+    padding: 0.2rem 0.3rem;
+    font-size: $font-size-lg;
+    font-weight: 600;
+    border-width: 1px;
+    border-style: solid;
+    border-color: transparent;
+    border-radius: 0.25rem;
+    &:hover { border-color: $gray4;}
+    &:focus { outline: none; border-color: $dark; box-shadow: 0 0 2px $dark-sub4; }
+  }
 }
 
 .row {

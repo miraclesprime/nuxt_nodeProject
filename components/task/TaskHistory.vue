@@ -1,8 +1,10 @@
 <template>
-  <div class="d-inline-block my-025 ml-5 font-sm">
-    <span class="text-dark-sub1">{{$userInfo(history.userId).Name}}</span>
-    <span class="mx-05 text-gray6">{{history.text}}</span>
-    <span class="text-gray5 ">{{displayDate(history.updatedAt)}}</span>
+  <div class="d-inline-flex align-center flex-wrap my-025 task-history ">
+    <user-info :userId="history.userId" avatarSize="2rem"  weight="600"></user-info>
+    <!-- <bib-avatar :src="userInfo(history.userId).Photo"></bib-avatar>
+    <span class="text-dark-sub1">{{$userInfo(history.userId).Name}}</span> -->
+    <span class="mx-05 ">{{history.text}}</span>
+    <span class="text-gray6 ">{{displayDate(history.updatedAt)}}</span>
   </div>
 </template>
 <script>
@@ -32,4 +34,10 @@ export default {
 
 </script>
 <style lang="scss" scoped>
+.task-history { font-size: $base-size; color: $text; }
+::v-root {
+  .user-info-wrapper {
+    .user-name { font-weight: 600;}
+  }
+}
 </style>

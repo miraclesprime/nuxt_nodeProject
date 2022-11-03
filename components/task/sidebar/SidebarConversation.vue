@@ -29,11 +29,11 @@
               <task-history v-if="item.text" :history="item"></task-history>
             </div>
           </template>
-          <template v-else>
+          <!-- <template v-else>
             <span class="d-inline-flex gap-1 align-center m-05 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
               <bib-icon icon="warning"></bib-icon> No conversation found
             </span>
-          </template>
+          </template> -->
           <loading :loading="msgLoading"></loading>
         </div>
         <!-- <div class="task-message-input ">
@@ -92,6 +92,7 @@ export default {
         this.fetchHistory()
       } else {
         this.comments = []
+        this.history = []
       }
     },
     reloadComments(newValue, oldValue){

@@ -16,12 +16,21 @@
       </div>
     </div>
     <table class="table ">
-      <transition name="fade">
-        <thead v-if="newSubtask || subTasks.length == 0">
+        <thead>
           <tr>
+            <th>Subtasks</th>
+            <th>Assignee</th>
+            <th>Due date</th>
+            <th></th>
+          </tr>
+        </thead>
+      <tbody>
+          <tr v-if="newSubtask || subTasks.length == 0" class="new">
             <td>
-              <bib-input ref="subtaskNameInput" type="text" size="sm" icon-left="check-circle" v-model="title" placeholder="Start typing..."></bib-input>
-              <!-- <input type="text" v-model="title" placeholder="Start typing..."> -->
+              <div class="d-flex gap-05 align-center">
+                <bib-icon icon="check-circle" :scale="1.25"></bib-icon>
+                <input class="sub-input" ref="subtaskNameInput" type="text" v-model.trim="title" minlength="3" pattern="[a-zA-Z]{4,128}" @keyup="debounceCreateSubtask" placeholder="Start typing..." >
+              </div>
             </td>
             <td>
               <bib-select size="sm" :options="orgUsers" v-model="assignee" v-on:change="changeAssignee" ></bib-select>
@@ -29,7 +38,7 @@
               <!-- <input type="text" v-model="assignee" placeholder="Assign to..."> -->
             </td>
             <td>
-              <bib-input type="date" size="sm" v-model="date" placeholder="Set date..."></bib-input>
+              <bib-input type="date" size="sm"  icon-left="calendar" v-model="date" placeholder="Set date..."></bib-input>
               <!-- <input type="text" v-model="date" placeholder="Set date..."> -->
             </td>
             <td>
@@ -39,20 +48,17 @@
               </div>
             </td>
           </tr>
-        </thead>
-      </transition>
-      <tbody>
         <tr v-for="sub in subTasks" :key="sub.key">
           <!-- <td>{{sub.key}}</td> -->
           <td>
             <div class="d-flex gap-05 align-center">
-              <bib-icon icon="check-circle" :variant="sub.isDone ? 'success' : 'gray4'"></bib-icon> {{sub.title}}
+              <bib-icon icon="check-circle" :scale="1.25" :variant="sub.isDone ? 'success' : 'gray4'"></bib-icon> {{sub.title}}
             </div>
           </td>
           <td>
             <user-info :userId="sub.userId"></user-info>
           </td>
-          <td><span v-format-date="sub.dueDate"></span></td>
+          <td><bib-icon icon="calendar"></bib-icon> <span v-format-date="sub.dueDate"></span></td>
           <td>
             <!-- <bib-popup :pop="sub.options" icon-variant="gray5" size="sm" >
               <template v-slot:menu>
@@ -101,6 +107,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex';
+import _ from 'lodash'
 export default {
   name: "TaskGroup",
 
@@ -151,28 +158,32 @@ export default {
     currentTask(newVal) {
       if (Object.keys(newVal).length > 0) {
         this.loading = true
+        this.user = this.teamMembers.filter(t => t.id == this.currentTask.userId)
         this.$store.dispatch("subtask/fetchSubtasks", this.currentTask)
           .then(() => {
             // console.log('subtask fetched')
             this.loading = false
           })
       }
-    }
+    },
+  },
+  mounted(){
+    console.info('mouted task-group');
+    // this.user = this.teamMembers.filter(t => t.id == this.currentTask.userId)
+    // this.user = _.cloneDeep(this.currentTask.user)
   },
   methods: {
     openCreateSubtask() {
       this.newSubtask = true
       this.$nextTick(() => {
-        this.$refs.subtaskNameInput.$el.focus()
+        this.$refs.subtaskNameInput.focus()
       })
-      /*setTimeout( () => {
-        this.$refs.subtaskNameInput.$el.focus()
-      }, 300)*/
     },
     changeAssignee() {
       this.user = this.teamMembers.filter(t => t.id == this.assignee)
     },
     createSubtask() {
+      
       this.loading = true
       let subData = {
         taskId: this.currentTask.id,
@@ -192,7 +203,7 @@ export default {
       }
       this.$store.dispatch("subtask/createSubtask", subData)
         .then(t => {
-          // console.log(t)
+          console.log(t)
           this.newSubtask = false
           this.title = ""
           this.assignee = ""
@@ -204,6 +215,17 @@ export default {
           this.loading = false
         })
     },
+
+    debounceCreateSubtask: _.debounce(function() {
+      // console.log('Debounced function')
+      if (this.$refs.subtaskNameInput.validity.valid) {
+        console.info('valid input');
+        // return false
+      } else {
+        console.log('invalid input')
+      }
+      // this.createSubtask()
+    }, 1500),
     async deleteSubtask(subtask) {
       this.loading = true
       const delsub = await this.$store.dispatch("subtask/deleteSubtask", {...subtask, text: `deleted subtask "${subtask.title}"`});
@@ -224,7 +246,15 @@ export default {
 
 .sub-title {
   font-size: 1rem;
-  /*border-bottom: 1px solid var(--bib-gray4);*/
+}
+
+.sub-input {
+  border: 1px solid $dark;
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+  &:focus { outline: none; }
+  &:focus:invalid { outline: 3px solid $danger-sub3; }
+  &:invalid { border-color: $danger; }
 }
 
 .table {
@@ -238,15 +268,14 @@ export default {
     th,
     td {
       text-align: left;
-      font-weight: bold;
-      padding: 0.2rem;
+      font-weight: normal;
+      color: $gray4;
+      padding: 0.25rem 0 0.25rem 0.25rem;
       border-top: 1px solid var(--bib-light);
-      border-bottom: 1px solid var(--bib-gray6);
+      border-bottom: 1px solid var(--bib-light);
+      border-left: 1px solid transparent;
+      border-right: 1px solid transparent;
       color: var(--bib-text-light);
-
-      &:not(:first-child) {
-        border-left: 1px solid var(--bib-light);
-      }
     }
 
     .input {
@@ -258,28 +287,33 @@ export default {
     }
   }
 
+  tr.new {
+    td, th {
+      background-color: $light;
+
+    }
+  }
+
   tbody {
     td {
-      padding: 0.2rem;
+      padding: 0.25rem 0 0.25rem 0.25rem;
       border-top: 1px solid var(--bib-light);
       border-bottom: 1px solid var(--bib-light);
+      border-left: 1px solid transparent;
+      border-right: 1px solid transparent;
       color: var(--bib-dark-sub1);
 
-      &:not(:first-child) {
-        border-left: 1px solid var(--bib-light);
-      }
     }
   }
 }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity .5s;
-}
-
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
+::v-deep {
+  .bib-select {
+    .select__real { margin-top:0; margin-bottom: 0;}
+  }
+  .input {
+    input { margin-top:0; margin-bottom: 0; background-color: transparent; border-color: transparent; }
+  }
 }
 
 </style>
