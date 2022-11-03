@@ -1,13 +1,11 @@
 <template>
-  <span :id="'user-info-wrapper-'+ userId" class="user-info-wrapper d-flex align-center">
+  <span :id="'user-info-wrapper-'+ userId + random" class="user-info-wrapper d-flex align-center">
     <template v-if="userName">
-      <bib-avatar :src="pic" size="1.25rem"></bib-avatar>
+      <bib-avatar :src="pic" :size="avatarSize"></bib-avatar>
     </template>
-    <template>
-      <span :id="'user-info-'+userId" class="user-name text-dark pl-025 pr-025">{{userName}}</span>
-    </template>
+    <span :id="'user-info-'+ userId + random" class="user-name pl-025 pr-025" :class="[ 'text-'+color, 'font-w-'+weight ]">{{userName}}</span>
     <!-- <template v-else>
-      <span :id="'user-info-'+userId" class="user-name text-dark pl-025 pr-025">{{ user.firstName + '' + user.lastName }} </span>
+      <span :id="'user-info-'+ userId + random" class="user-name text-dark pl-025 pr-025">{{ user.firstName + '' + user.lastName }} </span>
     </template> -->
     <!-- <bib-spinner :scale="1.5"></bib-spinner> -->
   </span>
@@ -21,18 +19,22 @@ export default {
 
   props: {
     userId: String,
+    avatarSize: { type: String, default: '1.25rem' },
+    color: { type: String, default: 'text-dark' },
+    weight: { type: String, default: '400' },
   },
   data() {
     return {
       pic: '',
       userName: null,
+      random: 0,
     }
   },
 
   computed: {
     ...mapGetters({
       members: 'user/getTeamMembers'
-    })
+    }),
   },
 
   watch: {
@@ -63,9 +65,11 @@ export default {
     }
   },
 
-  // mounted() {
-  //   console.log(this.members)
-  // }
+  mounted() {
+    // console.log(this.members)
+    // this.random = Math.floor((Math.random()*999) - 99);
+    this.random = Math.floor(Math.random() * (898) + 100);
+  }
 }
 
 </script>

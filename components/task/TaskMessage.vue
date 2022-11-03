@@ -1,11 +1,11 @@
 <template>
   <div class="msg position-relative" @mouseenter="isActionBarShowing = true" @mouseleave="onActionBarMouseLeave" v-click-outside="onActionBarClickOutside">
-    <figure class="width-4 user-avatar " :class="{active: userCardVisible}" >
-      <bib-avatar size="3rem" :src="userInfo.pic"></bib-avatar>
-    </figure>
-
-    <!-- user info card on click -->
-    <!-- <div class="userA-card bg-white " :class="{active: userCardVisible}">
+    
+      <figure class=" user-avatar " :class="{active: userCardVisible}">
+        <bib-avatar size="2rem" :src="userInfo.pic"></bib-avatar>
+      </figure>
+      <!-- user info card on click -->
+      <!-- <div class="userA-card bg-white " :class="{active: userCardVisible}">
       <div class="user-info">
         <span class="d-inline-block user-name text-wrap of-hidden text-of-elipsis max-width-13">{{userInfo.name}} </span>
         <span class="d-inline-block user-job text-wrap of-hidden text-of-elipsis max-width-13">{{userInfo.jobTitle}}</span>
@@ -24,16 +24,14 @@
         </div>
       </div>
     </div> -->
-
-    <!-- user info -->
-    <div class="msg__owner ">{{userInfo.name}} <span class="ml-1 font-sm">{{displayDate}}</span>
-    </div>
-
-    <!-- message content -->
-    <div class="msg__content pb-05" v-html="msg.comment">
-      <p>Lorem ipsum dolor sit amet consectetur 🙂, <a href="https://dev.proj-mgmt.biztree.com/">ipsum</a> adipisicing elit. Sit eum praesentium animi error delectus reprehenderit neque odit? Nesciunt facere quod ab veniam eligendi architecto vitae?</p>
-    </div>
-
+      <!-- user info -->
+      <div class="msg__owner ">{{userInfo.name}} <span class="ml-05">{{displayDate}}</span>
+      </div>
+      <!-- message content -->
+      <div class="msg__content pb-05" v-html="msg.comment">
+        <p>Lorem ipsum dolor sit amet consectetur 🙂, <a href="https://dev.proj-mgmt.biztree.com/">ipsum</a> adipisicing elit. Sit eum praesentium animi error delectus reprehenderit neque odit? Nesciunt facere quod ab veniam eligendi architecto vitae?</p>
+      </div>
+    
     <!-- message reactions -->
     <div v-if="reactionsExist" class="reactions-section">
       <div class="reactions">
@@ -43,7 +41,6 @@
         <bib-spinner v-if="reactionSpinner" :scale="2" variant="primary"></bib-spinner>
       </div>
     </div>
-
     <!-- message files -->
     <div v-if="files.length > 0" class="msg-files pb-05">
       <message-collapsible-section>
@@ -55,7 +52,6 @@
         </template>
       </message-collapsible-section>
     </div>
-
     <!-- <div v-show="showPlaceholder" class="placeholder mb-1 d-flex gap-05">
       <div class="left">
         <div class="shape-circle width-205 height-205 animated-background"></div>
@@ -65,7 +61,6 @@
         <div class="animated-background width-5 mt-05"></div>
       </div>
     </div> -->
-
     <!-- message replies -->
     <!-- <div v-if="repliesExist" class="replies-section pb-05">
       <message-collapsible-section>
@@ -77,7 +72,6 @@
         </template>
       </message-collapsible-section>
     </div> -->
-
     <!-- message action bar -->
     <div v-if="isActionBarShowing" class="actions-container" @click.stop>
       <!-- <div class="action favorite" :class="{ favorited }" @click="changeFavorite">
@@ -118,20 +112,19 @@
           <!-- <div class="menu-item">
               <a @click="showForwardModal">Share</a>
             </div> -->
-          <div class="menu-item" >
+          <div class="menu-item">
             <a @click.stop="editMessage">Edit</a>
           </div>
-          <div class="menu-item" >
+          <div class="menu-item">
             <a @click.stop="attachFile">Attach file</a>
           </div>
           <div class="menu-item-separator"></div>
-          <div class="menu-item danger" >
+          <div class="menu-item danger">
             <a @click.stop="deleteMessage">Delete</a>
           </div>
         </div>
       </tippy>
     </div>
-
     <!-- submit reply modal -->
     <bib-modal-wrapper v-if="replyModal" size="lg" title="Reply to..." @close="replyModal = false">
       <template slot="content">
@@ -141,7 +134,6 @@
         <loading :loading="replyLoading"></loading>
       </template>
     </bib-modal-wrapper>
-
     <!-- file upload modal -->
     <bib-modal-wrapper v-if="uploadModal" title="Select file(s)" @close="uploadModal = false">
       <template slot="content">
@@ -159,7 +151,6 @@
     </bib-modal-wrapper>
   </div>
 </template>
-
 <script>
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
@@ -319,11 +310,11 @@ export default {
     },*/
 
   },
-  created(){
+  created() {
     this.$nuxt.$on("get-taskmsg-files", () => {
       _.delay(() => {
-          this.getFiles()
-        }, 2000)
+        this.getFiles()
+      }, 2000)
       // this.getFiles()
     })
   },
@@ -506,8 +497,8 @@ export default {
     },
     deleteMessage() {
       // console.log(this.msg)
-      this.$emit('delete-message', { 
-        taskId: this.msg.taskId ? this.msg.taskId : null, 
+      this.$emit('delete-message', {
+        taskId: this.msg.taskId ? this.msg.taskId : null,
         // projectId: this.msg.projectId ? this.msg.projectId: null, 
         commentId: this.msg.id
       });
@@ -522,7 +513,7 @@ export default {
 
       // this.$emit("upload-file", this.msg)
     },
-    handleChangeFile(){
+    handleChangeFile() {
       // console.log(file)
     },
     async uploadFiles() {
@@ -591,26 +582,25 @@ export default {
 <style lang="scss" scoped>
 .msg {
   /*border-top: 1px solid $gray3;*/
-  padding-top: 1rem;
-  padding-bottom: 0.5rem;
-  padding-left: 5rem;
-  font-size: $font-size-lg;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  padding-left: 2.25rem;
+  font-size: $base-size;
+  color: $text;
 
   &__owner {
-    color: $text;
-    font-size: 1rem;
-    font-weight: 500;
+    /*color: $text;*/
+    font-weight: 600;
 
     span {
-      font-size: $font-size-xs;
-      color: $gray5;
+      color: $gray6;
       font-weight: normal;
     }
   }
 
   &__content {
-    font-size: 1rem;
-    color: $gray6;
+    /*font-size: 1rem;*/
+    /*color: $gray6;*/
   }
 
   &__files {
@@ -672,8 +662,8 @@ export default {
 .user-avatar {
   position: absolute;
   z-index: 2;
-  left: 1rem;
-  top: 1rem;
+  left: 0;
+  top: 0.125rem;
 
   &.active {
     z-index: 5;
