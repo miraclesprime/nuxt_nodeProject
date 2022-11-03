@@ -31,7 +31,7 @@
       <template v-if="displayType == 'list'">
         <bib-table :fields="tableFields" :sections="dbFiles" :key="tempKey" :hide-no-column="true">
           <template #cell(name)="data">
-            <div class="d-flex align-center gap-05 ">
+            <div class="d-flex align-center gap-05 cursor-pointer" @click="showPreviewModal(data.value)">
               <bib-avatar v-if="imageType(data.value)" shape="rounded" :src="data.value.url" size="1.5rem">
               </bib-avatar>
               <bib-icon v-else-if="data.value.extension == '.docx'" icon="word" :scale="1.25"></bib-icon>
@@ -74,7 +74,8 @@
       </template>
       <template v-if="displayType == 'grid'">
         <div class="files d-flex flex-wrap gap-1 p-1">
-          <bib-file v-for="(file, index) in files" :key="file.key + tempKey" :property="file" @click.native="downloadFile(file)"></bib-file>
+          <bib-file v-for="(file, index) in files" :key="file.key + tempKey" :property="file" @click.native="showPreviewModal(file)"></bib-file>
+          <!-- <bib-file v-for="(file, index) in files" :key="file.key + tempKey" :property="file" @click.native="downloadFile(file)"></bib-file> -->
         </div>
       </template>
       <loading :loading="loading"></loading>
@@ -99,9 +100,24 @@
         </div>
       </template>
     </bib-modal-wrapper>
+    <!-- file preview modal -->
+    <bib-modal-wrapper v-if="previewModal" title="Preview" size="lg" @close="closePreviewModal">
+      <template slot="content">
+        <div v-if="!filePreview" class="text-center">
+          <bib-spinner class="mx-auto" ></bib-spinner>
+        </div>
+        <div v-else class="text-center">
+          <img :src="filePreview" class="w-fit" style="max-width:100%;" alt="preview">
+        </div>
+      </template>
+      <template slot="footer">
+        <div class="text-center">
+          <bib-button label="Close" variant="light" pill @click="closePreviewModal"></bib-button>
+        </div>
+      </template>
+    </bib-modal-wrapper>
   </div>
 </template>
-
 <script>
 import { mapGetters } from 'vuex'
 import { FILE_FIELDS } from "~/config/constants"
@@ -156,6 +172,8 @@ export default {
       fileLoader: false,
       dbFiles: [],
       tempKey: 1,
+      previewModal: false,
+      filePreview: '',
     }
   },
   computed: {
@@ -169,6 +187,7 @@ export default {
           name: dbf.name,
           key: dbf.key,
           preview: dbf.url,
+          url: dbf.url,
           extension: dbf.extension,
           type: dbf.type,
           size: dbf.size,
@@ -262,6 +281,29 @@ export default {
         this.loading = false
       })
     },
+    async showPreviewModal(file){
+      this.previewModal = true
+      // console.info(file)
+
+      if (file.type.indexOf('image/') == 0 && "url" in file) {
+        let imgtype = file.type.split("/")[1]
+        const prev = await this.$axios.get("file/single/"+file.key, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          }
+        })
+        this.filePreview = `data:image/${imgtype};base64,${prev.data.data}`
+      } else {
+        this.downloadFile(file)
+        this.previewModal = false
+        // this.filePreview = "https://via.placeholder.com/200x160/f0f0f0/6f6f79?text="+file.extension
+      }
+    
+    },
+    closePreviewModal(){
+      this.filePreview = ''
+      this.previewModal = false
+    },
     downloadFile(file) {
       // console.log(file.key)
       // let key = file.key.split('.')
@@ -280,14 +322,14 @@ export default {
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(f.data.data);
-            alert('your file has downloaded!');
+            alert('your file downloaded!');
           }
         })
         .catch(e => console.error(e))
     },
     deleteFile(file) {
       // console.info(file)
-      let del = window.confirm("Are you sure want to delete "+file.name+"?")
+      let del = window.confirm("Are you sure want to delete " + file.name + "?")
       if (del) {
         this.$axios.delete("file/" + file.key, {
             headers: {
@@ -312,7 +354,6 @@ export default {
 }
 
 </script>
-
 <style scoped lang="scss">
 .file-actions {
   border-bottom: 1px solid $gray4;
