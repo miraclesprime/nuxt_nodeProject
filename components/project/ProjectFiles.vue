@@ -74,7 +74,7 @@
       </template>
       <template v-if="displayType == 'grid'">
         <div class="files d-flex flex-wrap gap-1 p-1">
-          <bib-file v-for="(file, index) in files" :key="file.key + tempKey" :property="file" @click.native="showPreviewModal(file)"></bib-file>
+          <bib-file v-for="file in files" :key="file.key + tempKey" :property="file" @click.native="showPreviewModal(file)"></bib-file>
           <!-- <bib-file v-for="(file, index) in files" :key="file.key + tempKey" :property="file" @click.native="downloadFile(file)"></bib-file> -->
         </div>
       </template>
@@ -118,6 +118,7 @@
     </bib-modal-wrapper>
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
 import { FILE_FIELDS } from "~/config/constants"
@@ -137,35 +138,7 @@ export default {
           size: "234",
           owner: "dfskh45",
           updatedAt: "2022-08-22T22:40:21",
-        },
-        {
-          name: "Long File Name for microsoft word file",
-          // preview: "https://loremflickr.com/640/360?random=2",
-          extension: "docx",
-          type: "File",
-          size: "534",
-        },
-        {
-          name: "Long File Name for adobe pdf file",
-          // preview: "https://loremflickr.com/640/360?random=2",
-          extension: "pdf",
-          type: "File",
-          size: "534",
-        },
-        {
-          name: "Long File Name for microsoft excel file",
-          // preview: "https://loremflickr.com/640/360?random=2",
-          extension: "xlsx",
-          type: "File",
-          size: "534",
-        },
-        {
-          name: "Extra Long File Name for microsoft powerpoint presentation file",
-          // preview: "https://loremflickr.com/640/360?random=2",
-          extension: "pptx",
-          type: "File",
-          size: "534",
-        },
+        }
       ],*/
       isFileFavorite: false,
       uploadModal: false,
@@ -290,6 +263,7 @@ export default {
         const prev = await this.$axios.get("file/single/"+file.key, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            'preview': 'preview'
           }
         })
         this.filePreview = `data:image/${imgtype};base64,${prev.data.data}`

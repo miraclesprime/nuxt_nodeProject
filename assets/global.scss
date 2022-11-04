@@ -113,6 +113,22 @@ ul {
   transform: translateX(0);
 }
 
+::v-deep {
+  .modal__wrapper.modal-lg { max-width: 45rem;}
+}
+
+.editable-input {
+  width: 99%;
+  padding: 0.2rem 0.3rem;
+  font-size: $font-size-lg;
+  font-weight: 600;
+  border-width: 1px;
+  border-style: solid;
+  border-color: transparent;
+  border-radius: 0.25rem;
+  &:hover { border-color: $gray4;}
+  &:focus { outline: none; border-color: $dark; box-shadow: 0 0 2px $dark-sub4; }
+}
 // task bundle
 .task-bundle {
   display: flex;
