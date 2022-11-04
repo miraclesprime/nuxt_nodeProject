@@ -158,11 +158,12 @@ export const TEAMMATES = [{
 
 // project index page constants -----
 
-export const PROJECT_TABS = [{
+export const PROJECT_TABS = [
+  /*{
     key: "overview",
     value: "overview",
     title: "Overview"
-  },
+  },*/
   {
     key: "tasks",
     value: "tasks",

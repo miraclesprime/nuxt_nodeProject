@@ -1,12 +1,21 @@
 <template>
   <client-only>
     <div id="proj-overview-wrapper" class="row ">
-      <div id="proj-overview-inner" class="overview-wrapper my-2 mx-auto position-relative">
+      <div id="proj-overview-inner" class="overview-wrapper mx-auto position-relative">
         <!-- <div id="proj-overview-alert" class="shape-rounded font-sm bg-danger d-flex py-05 px-1 text-white align-center">
         <bib-icon icon="warning" variant="white" class="mr-05"></bib-icon>
         You have two tasks past due! "<a href="#" class="text-white">View task</a>" or "<a href="#" class="text-white">Remind me later</a>".
         <a href="#" class="ml-auto text-white">Snooze</a>
       </div> -->
+        <div class="d-flex align-center gap-05" >
+          <div class="width-2 height-2 d-inline-flex align-center justify-center cursor-pointer" >
+            <!-- <bib-icon :icon="isComplete.icon" :variant="isComplete.variant" :scale="1.5"></bib-icon> -->
+            <bib-avatar></bib-avatar>
+          </div>
+          <div class="flex-grow-1">
+            <input type="text" class="editable-input" ref="taskTitleInput" placeholder="Project name" v-model="activeProject.title" v-on:keyup="debounceUpdate('title', activeProject.title)" >
+          </div>
+        </div>
         <div id="proj-row1" class="row my-1">
           <div id="proj-row1-col1" class="col-4">
             <div id="proj-progress-wrap1" class="bg-secondary-sub3 shape-rounded text-center p-05 h-100">
@@ -35,19 +44,19 @@
         <bib-spinner variant="primary" :scale="2"></bib-spinner> Saving changes...
       </div> -->
         <div id="proj-row2" class="row">
-          <div id="proj-row2-col1" class="col-8">
-            <bib-input type="text" label="Project name" placeholder="Project name" v-model="activeProject.title" v-on:keyup.native="debounceUpdate('title', activeProject.title)"></bib-input>
+          <div id="proj-row2-col1" class="col-6">
+            <!-- <bib-input type="text" label="Project name" placeholder="Project name" v-model="activeProject.title" v-on:keyup.native="debounceUpdate('title', activeProject.title)"></bib-input> -->
+            <bib-select label="Owner" test_id="po-owner-dd1" :options="filterUser" v-model="activeProject.userId" v-on:change="debounceUpdate('Owner', activeProject.userId)"></bib-select>
           </div>
-          <div id="proj-row2-col2" class="col-4">
-            <bib-input type="date" label="Due date" v-model="dateInput" v-on:change.native="debounceUpdate('Due date', dateInput)"></bib-input>
+          <div id="proj-row2-col2" class="col-3">
+            <bib-input type="date" label="Start date" v-model="startDate" v-on:change.native="debounceUpdate('Start date', startDate)"></bib-input>
+          </div>
+          <div id="proj-row2-col3" class="col-3">
+            <bib-input type="date" label="Due date" v-model="dueDate" v-on:change.native="debounceUpdate('Due date', dueDate)"></bib-input>
           </div>
         </div>
         <div id="proj-row3" class="row">
-          <div id="proj-row3-col1" class="col-6">
-            <!-- <bib-input type="select" :options="filterUser" v-model="activeProject.userId" placeholder="Please select..." label="Owner" v-on:change.native="debounceUpdate($event)" ></bib-input> -->
-            <bib-select label="Owner" test_id="po-owner-dd1" :options="filterUser" v-model="activeProject.userId" v-on:change="debounceUpdate('Owner', activeProject.userId)"></bib-select>
-          </div>
-          <div id="proj-row3-col2" class="col-6">
+          <div id="proj-row3-col2" class="col-12">
             <bib-input type="select" label="Department" :options="department" placeholder="Department"></bib-input>
           </div>
         </div>
@@ -76,7 +85,7 @@
         </div>
         <div id="proj-row6" class="row">
           <div id="proj-row6-col1" class="col-12">
-            <bib-input type="textarea" label="Project brief" v-model="activeProject.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate('Project brief', activeProject.description)"></bib-input>
+            <bib-input type="textarea" label="Brief" v-model="activeProject.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate('Project brief', activeProject.description)"></bib-input>
           </div>
         </div>
         <loading :loading="loading"></loading>
@@ -100,6 +109,7 @@ export default {
       flag: false,
       // totalTasks: this.tasks.length || 1,
       owner: {},
+      startDate: '',
       filterKey: "",
       department: DEPARTMENT,
       status: STATUS,
@@ -203,7 +213,8 @@ export default {
         return { value: u.id, id: u.id, label: u.firstName + ' ' + u.lastName, firstName: u.firstName, lastName: u.lastName, email: u.email, img: u.avatar }
       })
     },
-    dateInput: {
+
+    dueDate: {
       get: function() {
         let nd
         if (!this.activeProject.dueDate) {
@@ -253,12 +264,12 @@ export default {
   },
 
   methods: {
-    toggleSidebar() {
+    /*toggleSidebar() {
       this.flag = !this.flag;
       this.$root.$emit("open-sidebar", this.flag);
-    },
+    },*/
 
-    dropdownInputKeydown($event) {
+    /*dropdownInputKeydown($event) {
       // console.log('dropdown input keydown', $event)
       this.filterKey = $event
     },
@@ -271,9 +282,9 @@ export default {
     },
     inviteViaEmail() {
       console.log('inviteViaEmail')
-    },
+    },*/
 
-    statusClass(status) {
+    /*statusClass(status) {
       if (status === "Past Due") return "text-red";
       if (status === "In-progress") return "text-blue";
     },
@@ -282,7 +293,8 @@ export default {
       if (priority === "Urgent") return "text-red";
       if (priority === "Top") return "text-orange";
       return "text-green";
-    },
+    },*/
+
     async updateProject(text) {
       // console.log('update project', this.activeProject)
       this.loading = true
@@ -354,13 +366,6 @@ export default {
 #proj-overview-alert {
   a {
     text-decoration: underline;
-  }
-}
-
-::v-deep {
-  .input--select.input--select--collapsed {
-    margin: 0.5em 0 !important;
-    border-color: var(--bib-gray4);
   }
 }
 

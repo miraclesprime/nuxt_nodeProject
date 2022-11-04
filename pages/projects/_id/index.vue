@@ -4,36 +4,55 @@
       <button type="button" @click="$router.back()" class="d-flex cursor-pointer bg-white border-white">
         <bib-icon icon="arrowhead-left" :scale="1.5" variant="gray5"></bib-icon>
       </button>
-        <bib-avatar></bib-avatar>
+      <bib-avatar></bib-avatar>
       <span id="project-id-project-title" class=" font-w-700  mr-1 " style="font-size: 1.25rem;">{{project ? project.title : ''}}</span>
       <!-- <bib-page-title label="Page Title"></bib-page-title> -->
-      <template v-if="project.status">
+      <!-- <template v-if="project.status">
         <span id="project-id-badge-status" class="badge-status">{{project.status.text}}</span>
-      </template>
+      </template> -->
       <div class="ml-auto d-flex gap-05 align-center position-relative" id="project-id-button-wraps">
         <div class="team-avatar-list pr-05">
-          <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :key="index" :style="{ left: -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
+          <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :key="index" size="2rem" :style="{ left: -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
         </div>
-        <bib-button label="invite" variant="light" pill v-on:click="$nuxt.$emit('add-teammember-modal')"></bib-button>
-        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark" @click="setFavorite">
+        <!-- <bib-button label="invite" variant="light" pill v-on:click="$nuxt.$emit('add-teammember-modal')"></bib-button> -->
+        
+        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item1" title="Team">
+          <bib-icon icon="user-group-solid" class="m-auto"></bib-icon> 
+        </div> 
+        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item2" title="Conversation">
+          <bib-icon icon="comment-forum" class="m-auto"></bib-icon> 
+        </div>
+        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item3" title="Files">
+          <bib-icon icon="folder-solid" class="m-auto"></bib-icon> 
+        </div>
+        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark" @click="setFavorite" title="Favorite">
           <bib-icon class="m-auto" :icon="isFavorite.icon" :variant="isFavorite.variant"></bib-icon>
         </div>
         <div id="project-id-horizontal-dots-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center">
           <bib-button pop="horizontal-dots" id="project-id-horizontal-dots">
             <template v-slot:menu>
               <div class="list" id="project-id-list">
-                <!-- <span class="list__item" id="project-id-list-item1">Show project details</span> -->
+                <span class="list__item" id="project-id-list-item1" @click="projectModal = true">View details</span>
                 <!-- <hr id="project-id-hr"> -->
                 <span class="list__item" id="project-id-list-item2" @click="setFavorite">
                   <bib-icon :icon="isFavorite.icon" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
                 </span>
                 <span class="list__item" id="project-id-list-item3">
-                  <bib-icon icon="user-add" class="mr-075"></bib-icon> Share with
+                  <bib-icon icon="user-group-solid" class="mr-075"></bib-icon> Team
                 </span>
-                <span class="list__item" id="project-id-list-item4" @click="renameModal = !renameModal">
+                <span class="list__item" id="project-id-list-item3">
+                  <bib-icon icon="comment-forum" class="mr-075"></bib-icon> Conversation
+                </span>
+                <span class="list__item" id="project-id-list-item3">
+                  <bib-icon icon="folder-solid" class="mr-075"></bib-icon> Files
+                </span>
+                <span class="list__item" id="project-id-list-item3">
+                  <bib-icon icon="group" class="mr-075"></bib-icon> Subtasks
+                </span>
+                <!-- <span class="list__item" id="project-id-list-item4" @click="renameModal = !renameModal">
                   <bib-icon icon="pencil" class="mr-075"></bib-icon> Rename
-                </span>
-                <div class="mt-1" id="project-id-div"></div>
+                </span> -->
+                <!-- <div class="mt-1" id="project-id-div"></div> -->
                 <span class="list__item" id="project-id-list-item5" @click="reportModal = !reportModal">
                   <bib-icon icon="warning" class="mr-075"></bib-icon> Report
                 </span>
@@ -50,15 +69,29 @@
       <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="PROJECT_TABS" />
     </div>
     <div id="project-id-tab-content" class="project-id-tab-content position-relative h-100 of-scroll-y">
-      <project-overview v-if="activeTab.value == PROJECT_TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="projectTasks" :currentProject="project"></project-overview>
+      <!-- <project-overview v-if="activeTab.value == PROJECT_TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="projectTasks" :currentProject="project"></project-overview> -->
       <task-view v-if="activeTab.value == PROJECT_TAB_TITLES.tasks" :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType"></task-view>
       <project-conversation v-if="activeTab.value == PROJECT_TAB_TITLES.conversations" :fields="TABLE_FIELDS" :tasks="projectTasks"></project-conversation>
       <!-- <task-timeline-view v-if="activeTab.value == PROJECT_TAB_TITLES.timeline" :fields="TABLE_FIELDS" :tasks="tasks" />
       <task-calendar-view v-if="activeTab.value == PROJECT_TAB_TITLES.calendar" :fields="TABLE_FIELDS" :tasks="tasks" /> -->
-      <task-team v-if="activeTab.value == PROJECT_TAB_TITLES.team" ></task-team>
-      <project-files v-if="activeTab.value == PROJECT_TAB_TITLES.files" ></project-files>
-      <project-history v-if="activeTab.value == PROJECT_TAB_TITLES.history" ></project-history>
+      <task-team v-if="activeTab.value == PROJECT_TAB_TITLES.team"></task-team>
+      <project-files v-if="activeTab.value == PROJECT_TAB_TITLES.files"></project-files>
+      <project-history v-if="activeTab.value == PROJECT_TAB_TITLES.history"></project-history>
     </div>
+
+    <!-- project modals -->
+    <bib-modal-wrapper v-if="projectModal" title="Overview" size="lg" @close="projectModal = false">
+      <!-- <template slot="header">
+        <bib-icon variant="gray5" class="cursor-pointer" :scale="1.2" icon="comment-forum"></bib-icon>
+        <bib-icon variant="gray5" class="cursor-pointer ml-05" :scale="1.2" icon="attachment"></bib-icon>
+        <bib-icon variant="gray5" class="cursor-pointer ml-05" :scale="1.2" icon="share-arrow"></bib-icon>
+        <bib-icon variant="gray5" class="cursor-pointer ml-05" :scale="1.2" icon="trash"></bib-icon>
+      </template> -->
+      <template slot="content">
+        <project-overview :fields="TABLE_FIELDS" :tasks="projectTasks" :currentProject="project"></project-overview>
+      </template>
+    </bib-modal-wrapper>
+
     <!-- project rename modal -->
     <bib-modal-wrapper v-if="renameModal" title="Rename project" @close="renameModal = false">
       <template slot="content">
@@ -100,7 +133,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import { TABLE_FIELDS, PROJECT_TABS, PROJECT_DEFAULT_TAB, PROJECT_TAB_TITLES } from "config/constants";
-import axios from 'axios';
+// import axios from 'axios';
+
 export default {
   name: 'ProjectId',
   /*middleware({ app, store, redirect, route }) {
@@ -119,6 +153,7 @@ export default {
   },*/
   data() {
     return {
+      projectModal: false,
       activeTab: PROJECT_DEFAULT_TAB,
       PROJECT_TABS,
       PROJECT_TAB_TITLES,
@@ -202,13 +237,13 @@ export default {
         return { icon: "bookmark", variant: "gray5", text: "Add to favorites", status: false }
       }
     },
-    teammates(){
+    teammates() {
       let tm = { main: [], extra: [] }
       this.allusers.filter(u => {
         this.team.forEach((t, index) => {
           if (t.id == u.id && index < 4) {
             tm.main.push(u)
-          } else if(t.id == u.id) {
+          } else if (t.id == u.id) {
             tm.extra.push(u)
           }
         })
@@ -234,7 +269,7 @@ export default {
       }).then((res) => {
         // console.log(res.data)
         if (res) {
-          if(!res.data || res.data.isDeleted){
+          if (!res.data || res.data.isDeleted) {
             this.$router.push("/notfound")
           } else {
             this.$store.dispatch('project/setSingleProject', res.data)
@@ -300,7 +335,7 @@ export default {
   },*/
 
   methods: {
-    
+
     async fetchProject() {
       const proj = await this.$axios.$get(`project/${this.$route.params.id}`, {
         headers: { 'Authorization': `Bearer ${this.token}` }
@@ -334,7 +369,7 @@ export default {
       } else {
         this.$store.dispatch("project/addToFavorite", { id: this.$route.params.id })
           .then(msg => {
-            this.popupMessages.push({ text: msg, variant: "success"})
+            this.popupMessages.push({ text: msg, variant: "success" })
 
             // alert(msg)
           })
@@ -379,7 +414,7 @@ export default {
         console.log(e)
       })
     },
-    
+
   }
 }
 
@@ -404,10 +439,19 @@ export default {
 
 .team-avatar-list {
   position: relative;
+
   .avatar:hover {
     z-index: 11
   }
-  .extra { margin-left: 0.75rem; color: $secondary; }
+
+  .extra {
+    margin-left: 0.75rem;
+    color: $secondary;
+  }
+}
+
+::v-deep {
+  .modal__wrapper.modal-lg { max-width: 45rem;}
 }
 
 </style>
