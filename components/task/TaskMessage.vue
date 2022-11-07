@@ -47,7 +47,7 @@
         <template slot="title">Files ({{ files.length }})</template>
         <template slot="content">
           <div class="d-flex align-start gap-1 mt-05 mb-075">
-            <message-files v-for="file in files" :property="file" :key="tempKey + file.key"></message-files>
+            <message-files v-for="file in files" :property="file" :key="tempKey + file.key" @file-click="showPreviewModal(file)"></message-files>
           </div>
         </template>
       </message-collapsible-section>
@@ -149,8 +149,25 @@
         </div>
       </template>
     </bib-modal-wrapper>
+    <!-- file preview modal -->
+    <bib-modal-wrapper v-if="previewModal" title="Preview" size="lg" @close="closePreviewModal">
+      <template slot="content">
+        <div v-if="!filePreview" class="text-center">
+          <bib-spinner class="mx-auto" ></bib-spinner>
+        </div>
+        <div v-else class="text-center">
+          <img :src="filePreview" class="w-fit" style="max-width:100%;" alt="preview">
+        </div>
+      </template>
+      <template slot="footer">
+        <div class="text-center">
+          <bib-button label="Close" variant="light" pill @click="closePreviewModal"></bib-button>
+        </div>
+      </template>
+    </bib-modal-wrapper>
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
@@ -222,6 +239,8 @@ export default {
       tempKey: 1,
       uploadModal: false,
       fileLoader: false,
+      previewModal: false,
+      filePreview: ''
     }
   },
   computed: {
@@ -575,6 +594,31 @@ export default {
         // this.loading = false
       })
     },
+
+    async showPreviewModal(file){
+      this.previewModal = true
+      // console.info(file)
+
+      if (file.type.indexOf('image/') == 0 && "url" in file) {
+        let imgtype = file.type.split("/")[1]
+        const prev = await this.$axios.get("file/single/"+file.key, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            'preview': 'preview'
+          }
+        })
+        this.filePreview = `data:image/${imgtype};base64,${prev.data.data}`
+      } else {
+        // this.downloadFile(file)
+        this.previewModal = false
+        // this.filePreview = "https://via.placeholder.com/200x160/f0f0f0/6f6f79?text="+file.extension
+      }
+    
+    },
+    closePreviewModal(){
+      this.filePreview = ''
+      this.previewModal = false
+    }
   }
 }
 
