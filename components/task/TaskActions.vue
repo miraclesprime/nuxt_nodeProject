@@ -1,7 +1,6 @@
 <template>
   <div id="task-actions-wrapper" class="task-actions p-025 bg-white">
     <div class="action-left d-flex " id="ta-action-left">
-  
       <div class="d-flex gap-05 shape-rounded py-025 px-05 cursor-pointer text-secondary text-hover-dark bg-hover-gray3" id="ta-add-task-button" v-on:click.stop="showCreateTaskModal">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-task-text" class="">New Task</span>
       </div>
@@ -11,18 +10,20 @@
     </div>
     <div class="action-right d-flex gap-05" id="ta-action-right">
       <ul class="actions" id="ta-action-right-actions">
-        <li class="action" id="ta-action1">
+        <li class="action" id="ta-action1" title="Viewing">
           <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="changeViewName"></sorting-comp>
         </li>
-        <li class="action" id="ta-action2">
+        <li class="action" id="ta-action2" title="Sort by">
           <sorting-comp label="Sorted by" :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy"></sorting-comp>
         </li>
-        
+        <li class="action" id="ta-action3" title="Group by">
+          <sorting-comp label="Group by" :items="groupby" icon="group" v-on:change-sort="groupBy"></sorting-comp>
+        </li>
         <li class="action" id="ta-action5">
-          <span class="mr-025" id="ta-action5-text">View</span>
-          <div class="d-flex width-105 height-105 align-center justify-center bg-dark bg-hover-gray1 shape-rounded p-025 cursor-pointer" id="ta-action5-link">
-            <bib-icon v-if="gridType == 'list'" icon="apps-large" variant="white" @click.native="changeGridType('grid')"></bib-icon>
-            <bib-icon v-if="gridType == 'grid'" icon="list" variant="white" @click.native="changeGridType('list')"></bib-icon>
+          <!-- <span class="mr-025" id="ta-action5-text">View</span> -->
+          <div class="d-flex width-2 height-2 align-center justify-center bg-light bg-hover-gray2 shape-circle p-025 cursor-pointer" id="ta-action5-link" title="Change view">
+            <bib-icon v-if="gridType == 'list'" icon="table" variant="gray6" @click.native="changeGridType('grid')"></bib-icon>
+            <bib-icon v-if="gridType == 'grid'" icon="list" variant="gray6" @click.native="changeGridType('list')"></bib-icon>
           </div>
         </li>
       </ul>
@@ -32,7 +33,7 @@
 </template>
 
 <script>
-import { VIEW_FILTER, TASK_SORT } from 'config/constants.js'
+import { VIEW_FILTER, TASK_SORT, TASK_GROUP } from 'config/constants.js'
 export default {
   props: {
     gridType: {
@@ -46,7 +47,8 @@ export default {
       selectInfo: null,
       sortName: '',
       viewing: VIEW_FILTER,
-      sorting: TASK_SORT
+      sorting: TASK_SORT,
+      groupby: TASK_GROUP,
     };
   },
   methods: {
@@ -86,6 +88,10 @@ export default {
       this.$emit("sort", $event)
     },
 
+    groupBy($event) {
+      this.$emit("group", $event)
+    },
+
     changeViewName($event){
       this.$emit("filterView", $event)
     }
@@ -122,7 +128,7 @@ export default {
 
 .action {
   display: flex;
-  padding: 0 20px;
+  padding: 0 0.25rem;
   align-items: center;
 }
 

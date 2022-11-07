@@ -28,7 +28,7 @@
         <div class="animated-background  height-105" style="width:9rem;" ></div>
       </div>
       <template v-else>
-        <file-comp v-for="file in files" :key="file.key + fileKey" :property="file"  @delete-file="deleteFile"></file-comp>
+        <file-comp v-for="file in files" :key="file.key + fileKey" :property="file"  @delete-file="deleteFile" @click.native="showPreviewModal(file)"></file-comp>
       </template>
     </div>
     
@@ -43,6 +43,23 @@
         <div class="d-flex">
           <bib-button label="Cancel" variant="light" pill @click="uploadModal = false"></bib-button>
           <bib-button label="Upload" variant="success" class="ml-auto" pill @click="uploadFiles"></bib-button>
+        </div>
+      </template>
+    </bib-modal-wrapper>
+
+    <!-- file preview modal -->
+    <bib-modal-wrapper v-if="previewModal" title="Preview" size="lg" @close="closePreviewModal">
+      <template slot="content">
+        <div v-if="!filePreview" class="text-center">
+          <bib-spinner class="mx-auto" ></bib-spinner>
+        </div>
+        <div v-else class="text-center">
+          <img :src="filePreview" class="w-fit" style="max-width:100%;" alt="preview">
+        </div>
+      </template>
+      <template slot="footer">
+        <div class="text-center">
+          <bib-button label="Close" variant="light" pill @click="closePreviewModal"></bib-button>
         </div>
       </template>
     </bib-modal-wrapper>
@@ -64,6 +81,8 @@ export default {
       dbFiles: [],
       fileKey: 1,
       showPlaceholder: false,
+      previewModal: false,
+      filePreview: '',
     }
   },
   computed: {
@@ -78,6 +97,7 @@ export default {
           name: dbf.name,
           key: dbf.key,
           preview: dbf.url,
+          url: dbf.url,
           extension: dbf.extension,
           type: dbf.type,
           size: dbf.size,
@@ -220,6 +240,31 @@ export default {
           })
           .catch(e => console.error(e))
       }
+    },
+
+    async showPreviewModal(file){
+      this.previewModal = true
+
+      if (file.type.indexOf('image/') == 0 && "url" in file) {
+        let imgtype = file.type.split("/")[1]
+        const prev = await this.$axios.get("file/single/"+file.key, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            'preview': 'preview'
+          }
+        })
+        this.filePreview = `data:image/${imgtype};base64,${prev.data.data}`
+      } else {
+        this.downloadFile(file)
+        this.previewModal = false
+        // this.filePreview = "https://via.placeholder.com/200x160/f0f0f0/6f6f79?text="+file.extension
+      }
+    
+    },
+
+    closePreviewModal(){
+      this.filePreview = ''
+      this.previewModal = false
     },
 
   }

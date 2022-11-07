@@ -1,6 +1,6 @@
 <template>
   <div id="task-view-wrapper" class="task-view-wrapper bg-light position-relative">
-    <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:show-newsection="showNewsection" v-on:filterView="filterView" v-on:sort="taskSort($event)"></task-actions>
+    <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:show-newsection="showNewsection" v-on:filterView="filterView" v-on:sort="taskSort($event)" @group="taskGroup($event)"></task-actions>
     <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createSection"></new-section-form>
     <template v-if="gridType === 'list'">
       <!-- task list table -->
@@ -308,6 +308,9 @@ export default {
 
       this.templateKey += 1
 
+    },
+    taskGroup(task){
+      console.log($event)
     },
     updateKey() {
       // console.log("update-key event received", this.templateKey)
