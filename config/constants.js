@@ -368,6 +368,13 @@ export const TASK_SORT = [
   { label: 'Due Date', key: 'dueDate' },
 ]
 
+export const TASK_GROUP = [
+  { label: 'Title', key:'title' },
+  { label: 'Priority', key:'priority' },
+  { label: 'Status', key:'status' },
+  { label: 'Due Date', key:'dueDate' },
+]
+
 export const FAVORITE_SORT = [
   { label: 'Name', key: 'title' },
   { label: 'Status', key: 'status' },

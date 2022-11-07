@@ -16,16 +16,16 @@
         </div>
         <!-- <bib-button label="invite" variant="light" pill v-on:click="$nuxt.$emit('add-teammember-modal')"></bib-button> -->
         
-        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item1" title="Team">
+        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item1" v-tooltip="'Team'">
           <bib-icon icon="user-group-solid" class="m-auto"></bib-icon> 
         </div> 
-        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item2" title="Conversation">
+        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item2" v-tooltip="'Conversation'">
           <bib-icon icon="comment-forum" class="m-auto"></bib-icon> 
         </div>
-        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item3" title="Files">
+        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item3" v-tooltip="'Files'">
           <bib-icon icon="folder-solid" class="m-auto"></bib-icon> 
         </div>
-        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark" @click="setFavorite" title="Favorite">
+        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark" @click="setFavorite" v-tooltip="'Favorite'">
           <bib-icon class="m-auto" :icon="isFavorite.icon" :variant="isFavorite.variant"></bib-icon>
         </div>
         <div id="project-id-horizontal-dots-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center">
@@ -65,9 +65,9 @@
         <loading :loading="favLoading"></loading>
       </div>
     </nav>
-    <div class="menu " id='project-id-menu-content'>
+    <!-- <div class="menu " id='project-id-menu-content'>
       <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="PROJECT_TABS" />
-    </div>
+    </div> -->
     <div id="project-id-tab-content" class="project-id-tab-content position-relative h-100 of-scroll-y">
       <!-- <project-overview v-if="activeTab.value == PROJECT_TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="projectTasks" :currentProject="project"></project-overview> -->
       <task-view v-if="activeTab.value == PROJECT_TAB_TITLES.tasks" :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType"></task-view>
@@ -89,6 +89,7 @@
       </template> -->
       <template slot="content">
         <project-overview :fields="TABLE_FIELDS" :tasks="projectTasks" :currentProject="project"></project-overview>
+        <!-- <div class="height-1"></div> -->
       </template>
     </bib-modal-wrapper>
 
