@@ -225,7 +225,8 @@ export default {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
               "taskid": this.task.id,
-              "text": "File deleted from task"
+              "text": "File deleted from task",
+              'userid': file.userId
             }
           }).then(f => {
             // console.log(f.data)
