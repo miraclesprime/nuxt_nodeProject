@@ -395,7 +395,7 @@ export default {
       let react = reaction.data.find(d => d.user.id == this.user.Id)
       this.$axios.delete("/project/" + this.msg.id + "/reaction", {
           headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") },
-          data: { reactionId: react.id },
+          data: { reactionId: react.id, userId: react.userId },
         })
         .then(d => {
           // console.log(d.data)

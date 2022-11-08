@@ -309,7 +309,8 @@ export default {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
               'projectid': this.project.id,
-              'text': `file ${file.name} deleted`
+              'text': `file ${file.name} deleted`,
+              'userid': file.userId
             }
           }).then(f => {
             console.log(f.data)
