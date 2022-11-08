@@ -1,19 +1,30 @@
 <template>
-  <div class="position-relative p-1 of-scroll-y">
-    <div v-for="hist in history" class="history">
-      <figure class=" flex-shrink-0 flex-grow-0">
-        <bib-avatar size="2.175rem" :src="$userInfo(hist.userId).Photo"></bib-avatar>
-      </figure>
-      <div class="content">
-        <div class="info">
-          <span class="name">{{ $userInfo(hist.userId).FirstName }} {{ $userInfo(hist.userId).LastName }}</span>
-          <!-- <span class="name">{{ hist.userId }} </span> -->
-          <span class="time">{{ displayDate(hist.updatedAt) }}</span>
-        </div>
-        <div class="history-text">{{ hist.text }}</div>
-        <!-- {{$userInfo(hist.user.id)}} -->
+  <div class="position-relative ">
+    <div v-if="history.length == 0" class="placeholder mb-1 d-flex gap-05">
+      <div class="left">
+        <div class="shape-circle width-205 height-205 animated-background"></div>
+      </div>
+      <div class="right">
+        <div class="animated-background width-4"></div>
+        <div class="animated-background width-5 mt-05"></div>
       </div>
     </div>
+    <template v-else>
+      <div v-for="hist in history" class="history">
+        <figure class=" flex-shrink-0 flex-grow-0">
+          <bib-avatar size="2.175rem" :src="$userInfo(hist.userId).Photo"></bib-avatar>
+        </figure>
+        <div class="content">
+          <div class="info">
+            <span class="name">{{ $userInfo(hist.userId).FirstName }} {{ $userInfo(hist.userId).LastName }}</span>
+            <!-- <span class="name">{{ hist.userId }} </span> -->
+            <span class="time">{{ displayDate(hist.updatedAt) }}</span>
+          </div>
+          <div class="history-text">{{ hist.text }}</div>
+          <!-- {{$userInfo(hist.user.id)}} -->
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 <script>
@@ -26,25 +37,26 @@ export default {
 
   data() {
     return {
-
-      history: [{
-          updatedAt: '2022-09-02T05:48:02.000Z',
-          user: {
-            id: "DKgl9av2NwnaG1vz",
-            firstName: "Vishwajeet",
-            lastName: "Mandal",
-            email: "vishwajeet.mandal@qsstechnosoft.com"
-          },
-        },
-        {
-          updatedAt: '2022-09-02T05:48:02.000Z',
-          user: {
-            id: "k61YQdJ6J7ldOGpJ",
-            firstName: "Dhruv",
-            lastName: "Sharma",
-            email: "dhruv.sharma@qsstechnosoft.com"
-          },
-        }
+      showPlaceholder: true,
+      history: [
+        /*{
+                  updatedAt: '2022-09-02T05:48:02.000Z',
+                  user: {
+                    id: "DKgl9av2NwnaG1vz",
+                    firstName: "Vishwajeet",
+                    lastName: "Mandal",
+                    email: "vishwajeet.mandal@qsstechnosoft.com"
+                  },
+                },
+                {
+                  updatedAt: '2022-09-02T05:48:02.000Z',
+                  user: {
+                    id: "k61YQdJ6J7ldOGpJ",
+                    firstName: "Dhruv",
+                    lastName: "Sharma",
+                    email: "dhruv.sharma@qsstechnosoft.com"
+                  },
+                }*/
       ]
     }
   },
@@ -54,7 +66,7 @@ export default {
       members: 'user/getTeamMembers',
       project: "project/getSingleProject",
     }),
-    
+
     /*userInfo() {
       if (this.members.length) {
         let u = this.members.find((el) => el.id == this.msg.userId)
@@ -90,8 +102,9 @@ export default {
   margin-top: 12px;
   margin-bottom: 8px;
   padding-top: 12px;
-  border-top: 1px solid rgba(29, 29, 32, 0.12);
+  border-top: 1px solid $light;
   gap: 10px;
+
   &:first-child {
     border-top: 0 none;
     padding-top: 0;
