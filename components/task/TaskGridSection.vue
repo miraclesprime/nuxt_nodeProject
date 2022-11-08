@@ -95,7 +95,7 @@
               <div class="task-mid d-flex gap-05">
                 <status-badge :status="task.status"></status-badge>
                 <priority-badge :priority="task.priority"></priority-badge>
-
+                <priority-comp :priority="task.priority" iconOnly="true"></priority-comp>
                 <!-- <span v-if="task.status" class="shape-rounded p-025">{{task.status.text}}</span> <span v-if="task.priority" class="shape-rounded p-025">{{task.priority.text}}</span> -->
               </div>
               <div class="task-bottom" :id="'tg-card-bottom'+task.id">

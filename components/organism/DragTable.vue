@@ -17,13 +17,13 @@
         </tr>
       </thead>
       <tr :style="{ width: '0rem' }" v-if="collapsible">
-        <td :colspan="cols.length+1">
-          <div class="section-header d-flex align-center gap-05 text-dark">
+        <td :colspan="cols.length+1" class="section">
+          <div class="section-header d-flex align-center gap-05 text-gray6">
             <div class="drag-handle width-2 text-center"><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
                 <rect fill="none" height="24" width="24" />
                 <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div>
             <div class="d-flex gap-05 align-center cursor-pointer" @click.self="collapseItem($event, 'tbody'+section.id)">
-              <bib-icon icon="arrow-down" :scale="0.5" variant="black"></bib-icon> {{section.title.includes('_section') ? 'Untitled section' : section.title}}
+              <bib-icon icon="arrow-down" :scale="0.5" variant="gray6"></bib-icon> {{section.title.includes('_section') ? 'Untitled section' : section.title}}
             </div>
           </div>
         </td>
@@ -46,7 +46,7 @@
               <priority-comp :key="componentKey" :priority="task[col.key]"></priority-comp>
             </template>
             <template v-if="col.key == 'createdAt' || col.key == 'dueDate'">
-              <format-date :key="componentKey" :datetime="task[col.key]"></format-date>
+              <span class="d-inline-flex align-center gap-05"><bib-icon icon="calendar" variant="gray4"></bib-icon><format-date :key="componentKey" :datetime="task[col.key]"></format-date></span>
             </template>
             <template v-if="col.key == 'project'">
               <project-info v-if="task[col.key].length" :projectId="task[col.key][0].projectId"></project-info>
@@ -275,7 +275,7 @@ export default {
     font-weight: normal;
 
     th {
-      border: $gray4 1px solid;
+      border: $light 1px solid;
       border-top: none;
       text-align: left;
 
@@ -299,6 +299,7 @@ export default {
     &.collapsed {
       visibility: collapse;
     }
+
   }
 
   &__srow {
@@ -348,13 +349,15 @@ export default {
 
     &:active {
       cursor: default;
-      background-color: #f6f6f6;
-      outline: 1px solid $gray5;
+      /*background-color: #f6f6f6;*/
+      outline: 1px solid $dark;
+      box-shadow: 0 0 4px $primary-sub3;
     }
 
     &.active {
-      background-color: #f6f6f6;
-      outline: 1px solid $gray5;
+      /*background-color: #f6f6f6;*/
+      outline: 1px solid $dark;
+      box-shadow: 0 0 4px $primary-sub3;
     }
   }
 
@@ -376,10 +379,12 @@ export default {
     }
   }
 }
-
-.section-header {
-  font-size: $base-size;
-  font-weight: bold;
+.section { border-bottom-color: $gray4;
+  .section-header {
+    font-size: $base-size;
+    font-weight: bold;
+    /*color: $gray6;*/
+  }
 }
 
 </style>

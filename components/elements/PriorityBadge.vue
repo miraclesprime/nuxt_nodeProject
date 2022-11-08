@@ -1,13 +1,14 @@
 <template>
-  <div :id="'priority-badge-'+compId" class="priority-badge d-flex gap-05 align-center px-05 shape-rounded" :class="priorityOutput.bg">
+  <div :id="'priority-badge-'+compId" class="priority-badge d-flex gap-05 align-center px-05 shape-rounded" :style="{ 'background-color': hex2rgba(priorityOutput.color)}">
     <!-- <bib-icon v-if="priorityOutput.icon" icon="urgent-solid" :scale="1" :variant="priorityOutput.color"></bib-icon> -->
-    <span class="icon w-05 height-1 text-center font-xs" :class="'text-' + priorityOutput.color">!</span>
-    <span v-if="priorityOutput.text && !iconOnly" :id="'priority-text'+compId" class="text-capitalize font-xs" :class="'text-' + priorityOutput.color">
+    <strong :id="'priority-icon-'+compId" class="icon text-center " :style="{'color': priorityOutput.color}">!</strong>
+    <span v-if="priorityOutput.text && !iconOnly" :id="'priority-text'+compId" class="text-capitalize font-xs" :style="{'color': priorityOutput.color}">
       {{ priorityOutput.text }}
     </span>
   </div>
 </template>
 <script>
+import { ColorVariants } from '~/../bib-shared/js/colors'
 export default {
 
   name: 'PriorityBadge',
@@ -24,29 +25,36 @@ export default {
   computed: {
     priorityOutput() {
       if (this.priority == null) {
-        return { text: "", color: "", bg: "bg-secondary-sub4" }
+        return { text: "", color: "" }
       }
       switch (this.priority.id) {
         case 1:
-          return { text: this.priority.text, color: "danger", bg: "bg-danger-sub3" }
+          return { text: this.priority.text, color: ColorVariants.Danger }
         case 2:
-          return { text: this.priority.text, color: "orange", bg: "bg-orange-sub3" }
+          return { text: this.priority.text, color: ColorVariants.Orange }
         case 3:
-          return { text: this.priority.text, color: "success", bg: "bg-success-sub4" }
+          return { text: this.priority.text, color: ColorVariants.Success }
         default:
-          return { text: "", color: "", bg: "bg-secondary-sub4" }
+          return { text: "", color: "" }
       }
     },
   	compId(){
       return Math.floor((Math.random()*1000)+1);
     },
   },
+  methods: {
+    hex2rgba (hex = ColorVariants.Light, alpha = .16) {
+      const [r, g, b] = hex.match(/\w\w/g).map(x => parseInt(x, 16));
+      return `rgba(${r},${g},${b},${alpha})`;
+    },
+  }
 }
 
 </script>
 <style lang="scss" scoped>
 .priority-badge {
   min-height: 24px;
+  strong { width:8px; line-height: 16px;}
 }
 /*.bg-orange-sub3 { background-color: rgba($orange, 0.2);}*/
 </style>
