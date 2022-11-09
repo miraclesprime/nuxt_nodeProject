@@ -366,7 +366,8 @@ export const actions = {
       const res = await this.$axios.$delete(`/task/${payload.taskId}/comments/${payload.commentId}`,{
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-          "text": payload.text
+          "text": payload.text,
+          "userid": payload.userId
         }
       });
       if (res.statusCode == 200) {

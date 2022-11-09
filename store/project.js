@@ -523,7 +523,8 @@ export const actions = {
       const res = await this.$axios.$delete(`/project/${payload.projectId}/comments/${payload.commentId}`,{
         headers: { 
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-          'text': "deleted comment"
+          'text': "deleted comment",
+          "userid": payload.userId
         }
       });
       if (res.statusCode == 200) {
