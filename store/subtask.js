@@ -64,6 +64,7 @@ export const actions = {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           "text": payload.text,
           "taskid": payload.taskId,
+          "userid": payload.userId
         }
       })
       return delsub
