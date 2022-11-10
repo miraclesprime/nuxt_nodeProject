@@ -83,6 +83,7 @@ export default {
       showPlaceholder: false,
       previewModal: false,
       filePreview: '',
+      // cdtf: false
     }
   },
   computed: {
@@ -123,6 +124,8 @@ export default {
   mounted() {
     // console.log('mounted, task id->', this.task.id)
     this.getFiles()
+      // this.canDeleteTaskFile()
+    // })
   },
   methods: {
     imageType(data) {
@@ -267,6 +270,17 @@ export default {
       this.filePreview = ''
       this.previewModal = false
     },
+
+    // canDeleteTaskFile() {
+    //   console.log(this.task.userId, JSON.parse(localStorage.getItem('user')).sub)
+    //   //  console.log(JSON.parse(localStorage.getItem('user')).subr)
+    //   if (this.file.userId == JSON.parse(localStorage.getItem('user')).sub || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN' ) {
+    //     this.cdtf = true
+    //     return true;
+    //   }
+    //   this.cdtf = false
+    //   return false
+    // },
 
   }
 }

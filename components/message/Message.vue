@@ -323,7 +323,8 @@ export default {
         `/channels/${chat.id}/messages/${this.message._id}`;
     },*/
     canDeleteMessage() {
-      if (this.msg.userId == this.user.Id) {
+      // console.log(JSON.parse(localStorage.getItem('user')).subr)
+      if (this.msg.userId == this.user.Id || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
         return true;
       }
       return false
