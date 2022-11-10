@@ -5,9 +5,7 @@
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon>
             <span id="pta-add-teammate-text">New Teammate</span>
       </div>
-
     </div>
-    
   </div>
 </template>
 

@@ -2,26 +2,27 @@
   <div id="create-team-modal-wrapper">
     <bib-modal-wrapper @close="showTaskTeamModal = false" v-show="showTaskTeamModal" title="Assign people to task " id="create-team" @keypress.native="bindEnter($event, 'create-team-task-btn')">
       <template v-slot:content>
-        <label id="create-team-task-modal-heading" class="text-gray6">Participants</label>
-        <!-- <bib-input type="select" :options="memberOptions" v-model="member" v-on:change.native="selectTeam"></bib-input> -->
-        <bib-button test_id="create-team-task-dd1" dropdown1="add" label="Type name or email" v-model="member" v-on:input-change="teamInputChange" v-on:input-keydown="teamInputKeydown" class="mt-05 mb-05">
-          <template v-slot:menu>
-            <ul id="atm-fields" class="border-gray1" style="border-radius: 0 !important; border: 1px solid var(--bib-gray1);">
-              <li :id="'atm-field-'+index" v-for="(tm, index) in filterTeam" :key="'atm-items'+index" v-on:click="teamItemClick(tm)">
-                <bib-avatar :src="tm.avatar" size="1.5rem"></bib-avatar>
-                <span :id="'atm-person-name'+index" class="ml-05"> {{tm.label}} <span class="ml-075">{{tm.email}}</span></span>
-              </li>
-            </ul>
-          </template>
-        </bib-button>
-        <div id="task-team-members" class="py-025">
-          <template v-for="t in team">
-            <email-chip :key="t.id" :email="t.email" :name="t.label" :avatar="t.avatar" class="mt-05" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
-          </template>
-          <small v-show="team.length == 0" class="text-danger">Select at least 1 team member.</small>
-          <p v-if="message" v-text="message" class="font-sm mt-025 text-orange"></p>
-        </div>
-        <!-- <div class="pt-2">
+        <div style="height: 10rem;">
+          <label id="create-team-task-modal-heading" class="text-gray6">Participants</label>
+          <!-- <bib-input type="select" :options="memberOptions" v-model="member" v-on:change.native="selectTeam"></bib-input> -->
+          <bib-button test_id="create-team-task-dd1" dropdown1="add" label="Type name or email" v-model="member" v-on:input-change="teamInputChange" v-on:input-keydown="teamInputKeydown" class="mt-05 mb-05">
+            <template v-slot:menu>
+              <ul id="atm-fields" class="border-gray1" style="border-radius: 0 !important; border: 1px solid var(--bib-gray1);">
+                <li :id="'atm-field-'+index" v-for="(tm, index) in filterTeam" :key="'atm-items'+index" v-on:click="teamItemClick(tm)">
+                  <bib-avatar :src="tm.avatar" size="1.5rem"></bib-avatar>
+                  <span :id="'atm-person-name'+index" class="ml-05"> {{tm.label}} <span class="ml-075">{{tm.email}}</span></span>
+                </li>
+              </ul>
+            </template>
+          </bib-button>
+          <div id="task-team-members" class="py-025">
+            <template v-for="t in team">
+              <email-chip :key="t.id" :email="t.email" :name="t.label" :avatar="t.avatar" class="mt-05" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
+            </template>
+            <small v-show="team.length == 0" class="text-danger">Select at least 1 team member.</small>
+            <p v-if="message" v-text="message" class="font-sm mt-025 text-orange"></p>
+          </div>
+          <!-- <div class="pt-2">
           <strong>Use link to invite</strong>
           <div class="d-flex align-end mt-1">
             <div class="flex-grow-1">
@@ -32,7 +33,8 @@
             </div>
           </div>
         </div> -->
-        <loading :loading="loading"></loading>
+          <loading :loading="loading"></loading>
+        </div>
       </template>
       <template v-slot:footer>
         <div class=" d-flex justify-end" id="create-team-task-model-footer">
@@ -76,13 +78,11 @@ export default {
       task: "task/getSelectedTask",
     }),
     filterTeam() {
-      /*return this.companyUsers.filter((u) => {
-        if (u.email.indexOf(this.filterKey) >= 0) {
-          return u
-        }
-      })*/
+      let regex = new RegExp(this.filterKey, 'g\i')
+
       return this.teamMembers.filter((u) => {
-        if (u.email.indexOf(this.filterKey) >= 0) {
+        if (regex.test(u.label) || regex.test(u.email)) {
+          // if (u.email.indexOf(this.filterKey) >= 0) {
           return u
         }
       })
