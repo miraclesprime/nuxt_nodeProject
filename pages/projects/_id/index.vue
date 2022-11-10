@@ -15,18 +15,17 @@
           <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :key="index" size="2rem" :style="{ left: -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
         </div>
         <!-- <bib-button label="invite" variant="light" pill v-on:click="$nuxt.$emit('add-teammember-modal')"></bib-button> -->
-        
         <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item1" v-tooltip="'Team'" @click="projectTeamModal = true">
-          <bib-icon icon="user-group-solid" class="m-auto"></bib-icon> 
-        </div> 
+          <bib-icon icon="user-group-solid" class="m-auto"></bib-icon>
+        </div>
         <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item2" v-tooltip="'Conversation'">
-          <bib-icon icon="comment-forum" class="m-auto"></bib-icon> 
+          <bib-icon icon="comment-forum" class="m-auto"></bib-icon>
         </div>
         <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item3" v-tooltip="'Files'">
-          <bib-icon icon="folder-solid" class="m-auto"></bib-icon> 
+          <bib-icon icon="folder-solid" class="m-auto"></bib-icon>
         </div>
         <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item4" v-tooltip="'History'" @click="modalOpen('history', 'History')">
-          <bib-icon icon="time" class="m-auto"></bib-icon> 
+          <bib-icon icon="time" class="m-auto"></bib-icon>
         </div>
         <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark" @click="setFavorite" v-tooltip="'Favorite'">
           <bib-icon class="m-auto" :icon="isFavorite.icon" :variant="isFavorite.variant"></bib-icon>
@@ -60,7 +59,7 @@
                   <bib-icon icon="warning" class="mr-075"></bib-icon> Report
                 </span>
                 <hr id="project-id-hr2">
-                <span class="list__item list__item__danger" id="project-id-list-item6" @click="deleteProject(project)">Delete </span>
+                <span v-if="cdp" class="list__item list__item__danger" id="project-id-list-item6" @click="deleteProject(project)">Delete </span>
               </div>
             </template>
           </bib-button>
@@ -81,7 +80,6 @@
       <project-files v-if="activeTab.value == PROJECT_TAB_TITLES.files"></project-files>
       <!-- <project-history v-if="activeTab.value == PROJECT_TAB_TITLES.history"></project-history> -->
     </div>
-
     <!-- project modals -->
     <bib-modal-wrapper v-if="projectModal" :title="projectModalTitle" size="xl" @close="projectModal = false">
       <!-- <template slot="header">
@@ -93,17 +91,17 @@
       <template slot="content">
         <project-overview v-if="projectModalContent == 'overview'" :fields="TABLE_FIELDS" :tasks="projectTasks" :currentProject="project"></project-overview>
         <!-- <div class="height-1"></div> -->
-        <project-history v-if="projectModalContent == 'history'" ></project-history>
+        <project-history v-if="projectModalContent == 'history'"></project-history>
       </template>
     </bib-modal-wrapper>
-
     <!-- project team -->
     <bib-modal-wrapper v-if="projectTeamModal" title="Team" size="lg" @close="projectTeamModal = false">
       <template slot="content">
-        <task-team ></task-team>
+        <div style="height: 12rem;">
+          <task-team></task-team>
+        </div>
       </template>
     </bib-modal-wrapper>
-
     <!-- project rename modal -->
     <!-- <bib-modal-wrapper v-if="renameModal" title="Rename project" @close="renameModal = false">
       <template slot="content">
@@ -182,6 +180,7 @@ export default {
       loading: false,
       favLoading: false,
       popupMessages: [],
+      cdp: false
     }
   },
 
@@ -308,7 +307,9 @@ export default {
     // console.log(this.$route.params.id)
     this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
     this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
-    this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id })
+    this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id }).then(() => {
+      this.canDeleteProject();
+    })
   },
 
   /*beforeRouteEnter (to, from, next){
@@ -351,7 +352,7 @@ export default {
 
   methods: {
 
-    modalOpen(content, title){
+    modalOpen(content, title) {
       this.projectModal = true
       this.projectModalTitle = title
       this.projectModalContent = content
@@ -434,6 +435,17 @@ export default {
         this.popupMessages.push({ text: e, variant: "danger" })
         console.log(e)
       })
+    },
+
+    canDeleteProject() {
+      console.log(this.project.userId, JSON.parse(localStorage.getItem('user')).sub)
+      //  console.log(JSON.parse(localStorage.getItem('user')).subr)
+      if (this.project.userId == JSON.parse(localStorage.getItem('user')).sub || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN' ) {
+        this.cdp = true
+        return true;
+      }
+      this.cdp = false
+      return false
     },
 
   }

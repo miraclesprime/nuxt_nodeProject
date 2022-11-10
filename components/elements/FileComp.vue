@@ -11,7 +11,7 @@
               <span class="list__item" @click.stop="detailFile">Detail</span>
               <span class="list__item" @click.stop="downloadFile">Download</span>
               <hr>
-              <span class="list__item list__item__danger" @click.stop="deleteFile">Delete</span>
+              <span v-if="cdtf" class="list__item list__item__danger" @click.stop="deleteFile">Delete</span>
             </div>
           </template>
         </bib-popup>
@@ -37,18 +37,27 @@ export default {
           owner: "",
         }
       }
-    }
+    },
+    // canDelete: {
+    //   type: Boolean,
+    //   default: () => {
+    //     return false
+    //   }
+    // }
   },
 
   data() {
     return {
-
+      cdtf: false
     }
   },
   computed: {
     id() {
       return this.title.replace(" ", "_").toLowerCase()
     }
+  },
+  mounted() {
+    this.canDeleteTaskFile()
   },
   methods: {
     openFile(){
@@ -83,6 +92,17 @@ export default {
     },
     deleteFile(){
         this.$emit("delete-file", this.property)
+    },
+
+    canDeleteTaskFile() {
+      console.log(this.property.owner, JSON.parse(localStorage.getItem('user')).sub)
+      //  console.log(JSON.parse(localStorage.getItem('user')).subr)
+      if (this.property.owner == JSON.parse(localStorage.getItem('user')).sub || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN' ) {
+        this.cdtf = true
+        return true;
+      }
+      this.cdtf = false
+      return false
     },
   }
 }
