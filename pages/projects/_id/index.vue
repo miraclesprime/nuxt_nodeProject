@@ -59,7 +59,7 @@
                   <bib-icon icon="warning" class="mr-075"></bib-icon> Report
                 </span>
                 <hr id="project-id-hr2">
-                <span class="list__item list__item__danger" id="project-id-list-item6" @click="deleteProject(project)">Delete </span>
+                <span v-if="cdp" class="list__item list__item__danger" id="project-id-list-item6" @click="deleteProject(project)">Delete </span>
               </div>
             </template>
           </bib-button>
@@ -180,6 +180,7 @@ export default {
       loading: false,
       favLoading: false,
       popupMessages: [],
+      cdp: false
     }
   },
 
@@ -306,7 +307,9 @@ export default {
     // console.log(this.$route.params.id)
     this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
     this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
-    this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id })
+    this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id }).then(() => {
+      this.canDeleteProject();
+    })
   },
 
   /*beforeRouteEnter (to, from, next){
@@ -432,6 +435,17 @@ export default {
         this.popupMessages.push({ text: e, variant: "danger" })
         console.log(e)
       })
+    },
+
+    canDeleteProject() {
+      console.log(this.project.userId, JSON.parse(localStorage.getItem('user')).sub)
+      //  console.log(JSON.parse(localStorage.getItem('user')).subr)
+      if (this.project.userId == JSON.parse(localStorage.getItem('user')).sub || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN' ) {
+        this.cdp = true
+        return true;
+      }
+      this.cdp = false
+      return false
     },
 
   }

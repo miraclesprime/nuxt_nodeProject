@@ -112,14 +112,14 @@
           <!-- <div class="menu-item">
               <a @click="showForwardModal">Share</a>
             </div> -->
-          <div class="menu-item">
+          <div v-if="msg.userId == user.Id" class="menu-item">
             <a @click.stop="editMessage">Edit</a>
           </div>
-          <div class="menu-item">
+          <div v-if="msg.userId == user.Id" class="menu-item">
             <a @click.stop="attachFile">Attach file</a>
           </div>
           <div class="menu-item-separator"></div>
-          <div class="menu-item danger">
+          <div v-if="canDeleteMessage" class="menu-item danger">
             <a @click.stop="deleteMessage">Delete</a>
           </div>
         </div>
@@ -321,12 +321,13 @@ export default {
         `/directs/${chat.user.id}/messages/${this.message._id}` :
         `/channels/${chat.id}/messages/${this.message._id}`;
     },*/
-    /*canDeleteMessage() {
-      if (this.msg.userId == this.user.Id) {
+    canDeleteMessage() {
+      //  console.log(JSON.parse(localStorage.getItem('user')).subr)
+      if (this.msg.userId == this.user.Id || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN' ) {
         return true;
       }
       return false
-    },*/
+    },
 
   },
   created() {
