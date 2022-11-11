@@ -113,7 +113,7 @@
     <bib-modal-wrapper v-if="projectTeamModal" title="Team" size="lg" @close="projectTeamModal = false">
       <template slot="content">
         <div style="height: 12rem;">
-          <task-team></task-team>
+          <project-team-modal></project-team-modal>
         </div>
       </template>
     </bib-modal-wrapper>
@@ -158,6 +158,7 @@
     </bib-popup-notification-wrapper>
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
 import { TABLE_FIELDS, PROJECT_TABS, PROJECT_DEFAULT_TAB, PROJECT_TAB_TITLES } from "config/constants";

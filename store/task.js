@@ -240,7 +240,12 @@ export const actions = {
         let team = res.data.data.members;
         // console.log(team)
         let data = team.map((el) => {
-          return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName };
+          if(ctx.state.selectedTask.userId == el.user.id) {
+            el.isOwner = true
+          } else {
+            el.isOwner = false
+          }
+          return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName, isOwner: el.isOwner };
         });
         ctx.commit('fetchTeamMember', data)
       })

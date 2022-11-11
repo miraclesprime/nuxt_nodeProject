@@ -22,17 +22,6 @@
             <small v-show="team.length == 0" class="text-danger">Select at least 1 team member.</small>
             <p v-if="message" v-text="message" class="font-sm mt-025 text-orange"></p>
           </div>
-          <!-- <div class="pt-2">
-          <strong>Use link to invite</strong>
-          <div class="d-flex align-end mt-1">
-            <div class="flex-grow-1">
-              <bib-input type="text" label="Url" size="sm" :value="taskUrl" disabled></bib-input>
-            </div>
-            <div class="mb-05 pl-05">
-              <bib-button variant="primary" label="Copy link" pill @click="copyUrl"></bib-button>
-            </div>
-          </div>
-        </div> -->
           <loading :loading="loading"></loading>
         </div>
       </template>
@@ -50,6 +39,7 @@
     </bib-popup-notification-wrapper>
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
 
