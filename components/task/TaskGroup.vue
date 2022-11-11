@@ -25,7 +25,7 @@
           </tr>
         </thead>
       <tbody>
-          <tr v-if="newSubtask || subTasks.length == 0" class="new">
+          <tr v-if="newSubtask || localSubTasks.length == 0" class="new">
             <td>
               <div class="d-flex gap-05 align-center">
                 <bib-icon icon="check-circle" :scale="1.25"></bib-icon>
@@ -48,7 +48,7 @@
               </div>
             </td>
           </tr>
-        <tr v-for="sub in subTasks" :key="sub.key">
+        <tr v-for="sub in localSubTasks" :key="sub.key">
           <!-- <td>{{sub.key}}</td> -->
           <td>
             <div class="d-flex gap-05 align-center">
@@ -69,8 +69,8 @@
                 </div>
               </template>
             </bib-popup> -->
-          <span class="cursor-pointer shape-circle" @click="deleteSubtask(sub)">
-            <bib-icon icon="trash" variant="danger" ></bib-icon>
+          <span v-if="sub.canDelete" class="cursor-pointer shape-circle" @click="deleteSubtask(sub)">
+            <bib-icon icon="trash-solid" ></bib-icon>
           </span>
           </td>
         </tr>
@@ -153,6 +153,18 @@ export default {
       })
       return [{ label: 'Please select...', value: null }, ...data]
     },
+
+    localSubTasks() {
+      let subTs = _.cloneDeep(this.subTasks);
+      subTs.map((s) => {
+        if(s.userId == JSON.parse(localStorage.getItem('user')).sub || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
+          s.canDelete = true;
+        } else {
+          s.canDelete = false;
+        }
+      })
+      return subTs;
+    }
   },
   watch: {
     currentTask(newVal) {

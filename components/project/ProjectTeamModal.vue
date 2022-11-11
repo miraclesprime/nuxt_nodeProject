@@ -12,7 +12,7 @@
         </ul>
       </template>
     </bib-button>
-    <div id="task-team-members" class="py-025">
+    <div id="project-team-members" class="py-025">
       <template v-for="t in team">
         <email-chip :key="t.id" :email="t.email" :name="t.label" :avatar="t.avatar" class="mt-05" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
       </template>
@@ -23,8 +23,8 @@
       <bib-button label="Add" variant="primary" pill @click="addTeamMember"></bib-button>
     </div>
     <label class="text-gray6 font-md">Team</label>
-    <template v-if="taskMembers.length">
-      <bib-table :key="'tt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="taskMembers" :hide-no-column="true" headless>
+    <template v-if="projectMembers.length">
+      <bib-table :key="'tt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="projectMembers" :hide-no-column="true" headless>
         <template #cell(name)="data">
           <div class="d-flex gap-05">
             <bib-avatar class="mt-auto mb-auto" size="1.5rem">
@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { PROJECT_TEAM_FIELDS } from "../../../config/constants";
+import { PROJECT_TEAM_FIELDS } from "../../config/constants";
 import { mapGetters } from 'vuex';
 
 export default {
@@ -65,13 +65,13 @@ export default {
       flag: false,
       key: 0,
       loading: false,
-      norecord: false
+      norecord: false,
     };
   },
 
   watch: {
-    taskMembers() {
-      if (this.taskMembers.length == 0) {
+    projectMembers() {
+      if (this.projectMembers.length == 0) {
         this.loading = false
         this.norecord = true
       } else {
@@ -83,11 +83,10 @@ export default {
 
   computed: {
     ...mapGetters({
-      task: "task/getSelectedTask",
-      taskMembers: 'task/getTaskMembers',
+      project: "project/getSingleProject",
+      projectMembers: 'project/getProjectMembers',
       teamMembers: "user/getTeamMembers",
     }),
-
     filterTeam() {
       let regex = new RegExp(this.filterKey, 'g\i')
       return this.teamMembers.filter((u) => {
@@ -100,13 +99,12 @@ export default {
 
   mounted() {
     this.loading = true
-    console.log(this.task.id)
-    this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
+    this.$store.dispatch('project/fetchTeamMember', { projectId: this.$route.params.id })
   },
 
   created() {
     this.$root.$on('update-key', ($event) => {
-      this.$store.dispatch('task/fetchTeamMember', { id: this.task.id }).then(() => {
+      this.$store.dispatch('project/fetchTeamMember', { projectId: this.$route.params.id }).then(() => {
         this.key += $event
       })
     })
@@ -118,7 +116,7 @@ export default {
     },
     teamItemClick(tm) {
       // console.log(tm)
-      let existing = this.taskMembers.filter(ex => ex.id == tm.id)
+      let existing = this.projectMembers.filter(ex => ex.id == tm.id)
       // console.log(existing)
       if (existing.length == 0) {
         this.message = ""
@@ -146,7 +144,7 @@ export default {
         this.loading = false
         return false
       } else {
-        this.$store.dispatch('task/addMember', { taskId: this.task.id, team: this.team }).then(() => {
+        this.$store.dispatch('project/addMember', { projectId: this.project.id, team: this.team }).then(() => {
           // this.$nuxt.$emit('update-key', 1)
           // this.showTeamCreateModal = false
           this.loading = false;
@@ -166,7 +164,7 @@ export default {
       this.loading = true
       let confirmDelete = window.confirm("Are you sure want to delete " + member.name + "!")
       if (confirmDelete) {
-        await this.$store.dispatch("task/deleteMember", { taskId: this.task.id, member: member })
+        await this.$store.dispatch("project/deleteMember", { projectId: this.$route.params.id, member: member })
           .then((res) => {
             // console.log(res)
             this.key += 1

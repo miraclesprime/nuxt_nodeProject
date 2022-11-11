@@ -350,7 +350,12 @@ export const actions = {
       .then((res) => {
         let team = res.data.data.members;
         let data = team.map((el) => {
-          return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName };
+          if(ctx.state.selectedProject.userId == el.user.id) {
+            el.isOwner = true
+          } else {
+            el.isOwner = false
+          }
+          return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName, isOwner: el.isOwner };
         });
         ctx.commit('fetchTeamMember', data)
       })
@@ -518,7 +523,7 @@ export const actions = {
   },
 
   async deleteProjectComment(ctx, payload) {
-
+    
     try {
       const res = await this.$axios.$delete(`/project/${payload.projectId}/comments/${payload.commentId}`,{
         headers: { 

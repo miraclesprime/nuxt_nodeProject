@@ -18,15 +18,15 @@
         <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item1" v-tooltip="'Team'" @click="projectTeamModal = true">
           <bib-icon icon="user-group-solid" class="m-auto"></bib-icon>
         </div>
-        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item2" v-tooltip="'Conversation'">
-          <bib-icon icon="comment-forum" class="m-auto"></bib-icon>
+        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item2" v-tooltip="'Conversation'" @click="conversationModal = true">
+          <bib-icon icon="comment-forum-solid" class="m-auto"></bib-icon>
         </div>
         <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item3" v-tooltip="'Files'">
           <bib-icon icon="folder-solid" class="m-auto"></bib-icon>
         </div>
-        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item4" v-tooltip="'History'" @click="modalOpen('history', 'History')">
+        <!-- <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item4" v-tooltip="'History'" >
           <bib-icon icon="time" class="m-auto"></bib-icon>
-        </div>
+        </div> -->
         <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark" @click="setFavorite" v-tooltip="'Favorite'">
           <bib-icon class="m-auto" :icon="isFavorite.icon" :variant="isFavorite.variant"></bib-icon>
         </div>
@@ -42,8 +42,8 @@
                 <span class="list__item" id="project-id-list-item3">
                   <bib-icon icon="user-group-solid" class="mr-075"></bib-icon> Team
                 </span>
-                <span class="list__item" id="project-id-list-item3">
-                  <bib-icon icon="comment-forum" class="mr-075"></bib-icon> Conversation
+                <span class="list__item" id="project-id-list-item3" @click="conversationModal = true">
+                  <bib-icon icon="comment-forum-solid" class="mr-075"></bib-icon> Conversation
                 </span>
                 <span class="list__item" id="project-id-list-item3">
                   <bib-icon icon="folder-solid" class="mr-075"></bib-icon> Files
@@ -73,13 +73,14 @@
     <div id="project-id-tab-content" class="project-id-tab-content position-relative h-100 of-scroll-y">
       <!-- <project-overview v-if="activeTab.value == PROJECT_TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="projectTasks" :currentProject="project"></project-overview> -->
       <task-view v-if="activeTab.value == PROJECT_TAB_TITLES.tasks" :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType"></task-view>
-      <project-conversation v-if="activeTab.value == PROJECT_TAB_TITLES.conversations" :fields="TABLE_FIELDS" :tasks="projectTasks"></project-conversation>
+      <!-- <project-conversation v-if="activeTab.value == PROJECT_TAB_TITLES.conversations" :fields="TABLE_FIELDS" :tasks="projectTasks"></project-conversation> -->
       <!-- <task-timeline-view v-if="activeTab.value == PROJECT_TAB_TITLES.timeline" :fields="TABLE_FIELDS" :tasks="tasks" />
       <task-calendar-view v-if="activeTab.value == PROJECT_TAB_TITLES.calendar" :fields="TABLE_FIELDS" :tasks="tasks" /> -->
       <!-- <task-team v-if="activeTab.value == PROJECT_TAB_TITLES.team"></task-team> -->
       <project-files v-if="activeTab.value == PROJECT_TAB_TITLES.files"></project-files>
       <!-- <project-history v-if="activeTab.value == PROJECT_TAB_TITLES.history"></project-history> -->
     </div>
+
     <!-- project modals -->
     <bib-modal-wrapper v-if="projectModal" :title="projectModalTitle" size="xl" @close="projectModal = false">
       <!-- <template slot="header">
@@ -91,17 +92,32 @@
       <template slot="content">
         <project-overview v-if="projectModalContent == 'overview'" :fields="TABLE_FIELDS" :tasks="projectTasks" :currentProject="project"></project-overview>
         <!-- <div class="height-1"></div> -->
-        <project-history v-if="projectModalContent == 'history'"></project-history>
+        <!-- <project-history v-if="projectModalContent == 'history'"></project-history> -->
       </template>
     </bib-modal-wrapper>
+
+    <!-- conversation modal -->
+    <bib-modal-wrapper v-if="conversationModal" title="Conversation" size="xl" @close="conversationModal = false" >
+      <template slot="content">
+        <project-conversation ></project-conversation>
+      </template>
+      <template slot="footer">
+        <div class="message-input-wrapper d-flex gap-1">
+          <bib-avatar :src="user2.Photo" size="2rem" class="flex-shrink-0" ></bib-avatar>
+          <message-input class="flex-grow-1" :value="value" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
+        </div>
+      </template>
+    </bib-modal-wrapper>
+
     <!-- project team -->
     <bib-modal-wrapper v-if="projectTeamModal" title="Team" size="lg" @close="projectTeamModal = false">
       <template slot="content">
         <div style="height: 12rem;">
-          <task-team></task-team>
+          <project-team-modal></project-team-modal>
         </div>
       </template>
     </bib-modal-wrapper>
+
     <!-- project rename modal -->
     <!-- <bib-modal-wrapper v-if="renameModal" title="Rename project" @close="renameModal = false">
       <template slot="content">
@@ -117,6 +133,7 @@
         </div>
       </template>
     </bib-modal-wrapper> -->
+
     <!-- report modal -->
     <bib-modal-wrapper v-if="reportModal" title="Report" size="sm" @close="reportModal = false">
       <template slot="content">
@@ -131,6 +148,7 @@
         </div>
       </template>
     </bib-modal-wrapper>
+
     <!-- notification -->
     <bib-popup-notification-wrapper>
       <template #wrapper>
@@ -140,6 +158,7 @@
     </bib-popup-notification-wrapper>
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
 import { TABLE_FIELDS, PROJECT_TABS, PROJECT_DEFAULT_TAB, PROJECT_TAB_TITLES } from "config/constants";
@@ -164,6 +183,14 @@ export default {
   data() {
     return {
       projectModal: false,
+      conversationModal: false,
+      value: {
+        files: [
+          /*{ id: 156, name: 'thefile.png' },
+          { id: 282, name: 'anotherfile.jpg' },*/
+        ]
+      },
+      editMessage: {},
       projectModalTitle: '',
       projectModalContent: '',
       projectTeamModal: false,
@@ -234,6 +261,8 @@ export default {
       projectTasks: "task/tasksForListView",
       taskFields: "task/tableFields",
       favProjects: "project/getFavProjects",
+      // user: "user/getUser",
+      user2: "user/getUser2",
     }),
     projectName: {
       get() {
@@ -274,6 +303,10 @@ export default {
     this.$nuxt.$on("set-active-task", (task) => {
       this.activeTask = task;
     });
+
+    this.$nuxt.$on("edit-message", (msg) => {
+      this.editMessage = msg
+    })
 
     if (process.client) {
       // console.log(this.$route.params.id)
@@ -447,6 +480,63 @@ export default {
       this.cdp = false
       return false
     },
+    onFileInput(payload) {
+      // console.log(payload)
+      this.value.files = payload.files
+    },
+    onsubmit(data) {
+      if (this.editMessage?.id) {
+        this.$store.dispatch("project/updateProjectComment", { projectId: this.project.id, commentId: this.editMessage.id, comment: data.text })
+        .then(res => {
+          if (this.value.files.length > 0) {
+            this.uploadFile(this.value.files, this.editMessage)
+            this.value.files = []
+          }
+          // this.fetchProjectComments()
+          this.$nuxt.$emit('refresh-list')
+          this.editMessage = {}
+
+        })
+        .catch(e => console.log(e))
+      } else {
+        this.$store.dispatch("project/createProjectComment", { id: this.project.id, comment: data.text })
+          .then(res => {
+            // console.log("comment submit->", res.data)
+            if (this.value.files.length > 0) {
+              this.uploadFile(this.value.files, res.data)
+              this.value.files = []
+            }
+            // this.fetchProjectComments()
+            this.$nuxt.$emit('refresh-list')
+          })
+          .catch(e => console.log(e))
+      }
+    },
+    async uploadFile(commentFiles, data){
+      let formdata = new FormData()
+      let filelist = []
+
+      commentFiles.forEach(file => {
+        formdata.append('files', file)
+        filelist.push(file.name)
+      })
+      formdata.append('projectId', this.project.id)
+      formdata.append('projCommentId', data.id)
+      formdata.append('text', `uploaded file(s) "${filelist.join(", ")}" to comment`)
+
+      const fi = await this.$axios.post("/file/upload", formdata, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      })
+      // console.log(fi.data)
+      if (fi.data.statusCode == 200) {
+        // console.log("file upload->", fi.data)
+        this.value.files = []
+        this.$nuxt.$emit("get-msg-files")
+      }
+    }
 
   }
 }

@@ -27,6 +27,7 @@
     <add-member-to-task ref="taskTeamModal"></add-member-to-task>
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
 import { TaskTeamFields } from '../../../config/constants';
