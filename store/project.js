@@ -518,7 +518,7 @@ export const actions = {
   },
 
   async deleteProjectComment(ctx, payload) {
-
+    
     try {
       const res = await this.$axios.$delete(`/project/${payload.projectId}/comments/${payload.commentId}`,{
         headers: { 

@@ -1,7 +1,7 @@
 <template>
   <div class="position-relative">
     <template v-for="group in msgGroup">
-      <div v-show="group.data.length > 0" class="d-flex align-center p-05 ">
+      <div v-show="group.data.length > 0" class="d-flex align-center pb-05 ">
         <bib-icon icon="arrow-down" :scale="0.5"></bib-icon>
         <div class="px-1 font-w-500">
           {{group.title}}
@@ -13,9 +13,7 @@
       <div v-for="msg in group.data">
         <message :msg="msg" @delete-message="onDeleteMessage" @upload-file="uploadFileTrigger"></message>
       </div>
-    </template>
-    <!-- <reaction-picker ref="reactionPicker" @select="onReactionSelect" ></reaction-picker> -->
-    
+    </template>    
     <loading :loading="msgLoading"></loading>
   </div>
 </template>
@@ -94,7 +92,7 @@ export default {
         const delmsg = await this.$store.dispatch("project/deleteProjectComment", payload);
         // console.log(delmsg)
         if (delmsg.statusCode == 200) {
-          this.$emit("refresh-list")
+          this.$nuxt.$emit("refresh-list")
         }
         this.msgLoading = false
       }
@@ -103,14 +101,11 @@ export default {
       console.log(msg)
     },*/
     uploadFileTrigger(msg){
-      console.log(msg)
+      // console.log(msg)
       this.uploadModal = true
       this.msg = msg
     },
-    handleChangeFile(files, event) {
-      // console.info(this.$refs.files.filesUploaded)
-      // console.log(files, event.target.files)
-    },
+    
     
   }
 }

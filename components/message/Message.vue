@@ -1,11 +1,11 @@
 <template>
-  <div class="msg position-relative" @mouseenter="isActionBarShowing = true" @mouseleave="onActionBarMouseLeave" v-click-outside="onActionBarClickOutside">
-    <figure class="width-4 user-avatar cursor-pointer" :class="{active: userCardVisible}" @click="toggleUserCard">
-      <bib-avatar size="3rem" :src="userInfo.pic"></bib-avatar>
+  <div class="msg position-relative py-025" @mouseenter="isActionBarShowing = true" @mouseleave="onActionBarMouseLeave" v-click-outside="onActionBarClickOutside">
+    <figure class="width-3 user-avatar " :class="{active: userCardVisible}" @click="toggleUserCard">
+      <bib-avatar size="2rem" :src="userInfo.pic"></bib-avatar>
     </figure>
 
     <!-- user info card on click -->
-    <div class="user-card bg-white " :class="{active: userCardVisible}">
+    <!-- <div class="user-card bg-white " :class="{active: userCardVisible}">
       <div class="user-info">
         <span class="d-inline-block user-name text-wrap of-hidden text-of-elipsis max-width-13">{{userInfo.name}} </span>
         <span class="d-inline-block user-job text-wrap of-hidden text-of-elipsis max-width-13">{{userInfo.jobTitle}}</span>
@@ -23,10 +23,10 @@
           <div class="flex-grow-1 text-gray5 ">Email<br><span class="text-primary d-inline-block of-hidden text-of-elipsis max-width-13">{{userInfo.email}}</span></div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- user info -->
-    <div class="msg__owner pb-025">{{userInfo.name}} <span class="ml-1 font-sm">{{displayDate}}</span>
+    <div class="msg__owner ">{{userInfo.name}} <span class="ml-1 font-sm">{{displayDate}}</span>
     </div>
 
     <!-- message content -->
@@ -159,7 +159,6 @@
       </template>
     </bib-modal-wrapper>
 
-    <!-- file preview -->
     <!-- file preview modal -->
     <bib-modal-wrapper v-if="previewModal" title="Preview" size="lg" @close="closePreviewModal">
       <template slot="content">
@@ -195,8 +194,11 @@ import {
   faStar as fasStar,
 } from '@fortawesome/free-solid-svg-icons';
 import { faComment, faStar } from '@fortawesome/free-regular-svg-icons';
-export default {
 
+var relativeTime = require('dayjs/plugin/relativeTime')
+dayjs.extend(relativeTime)
+
+export default {
   name: 'Message',
   props: {
     msg: Object,
@@ -258,10 +260,10 @@ export default {
       }
     },
     displayDate() {
-      let d = new Date(this.msg.updatedAt)
+      /*let d = new Date(this.msg.updatedAt)
       let dd = dayjs(this.msg.updatedAt).format('dddd, D MMM, YYYY @ HH:mm')
-      // return d.toDateString()
-      return dd
+      return dd*/
+      return dayjs(this.msg.updatedAt).fromNow()
     },
     /*reactions() {
       return Object.entries(groupBy(this.message.reactions, (r) => r.reaction)).map(
@@ -522,7 +524,7 @@ export default {
       this.isMenuOpen = false;
     },
     deleteMessage() {
-      this.$emit('delete-message', { projectId: this.msg.projectId, commentId: this.msg.id });
+      this.$emit('delete-message', { projectId: this.msg.projectId, commentId: this.msg.id, userId: this.msg.userId });
       this.isMenuOpen = false;
     },
     toggleUserCard() {
@@ -622,25 +624,25 @@ export default {
 </script>
 <style lang="scss" scoped>
 .msg {
-  border-top: 1px solid $gray3;
-  padding-top: 1rem;
-  padding-left: 4rem;
-  font-size: $font-size-lg;
+  /*border-top: 1px solid $gray3;
+  padding-top: 1rem;*/
+  padding-left: 3rem;
+  font-size: $base-size;
 
   &__owner {
     color: $text;
-    font-size: 1rem;
+    /*font-size: 1rem;*/
     font-weight: 500;
 
     span {
-      font-size: $font-size-xs;
-      color: $gray5;
+      /*font-size: $font-size-xs;*/
+      color: $gray6;
       font-weight: normal;
     }
   }
 
   &__content {
-    font-size: 1rem;
+    /*font-size: 1rem;*/
     color: $gray6;
   }
 
@@ -691,20 +693,11 @@ export default {
   }
 }
 
-/*@keyframes open {
-  from { width: 0; min-width:0; height: 0; min-height: 0; }
-  to { width: 18rem; min-width:18rem; height: auto; min-height: 10rem; }
-}
-@keyframes paddingAnimate {
-  from { padding: 0; }
-  to { padding: 0.75rem; }
-}*/
-
 .user-avatar {
   position: absolute;
   z-index: 2;
   left: 0;
-  top: 1rem;
+  top: 3px;
 
   &.active {
     z-index: 5;

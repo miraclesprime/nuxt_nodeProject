@@ -520,7 +520,8 @@ export default {
       this.$emit('delete-message', {
         taskId: this.msg.taskId ? this.msg.taskId : null,
         // projectId: this.msg.projectId ? this.msg.projectId: null, 
-        commentId: this.msg.id
+        commentId: this.msg.id,
+        userId: this.msg.userId,
       });
       this.isMenuOpen = false;
     },
