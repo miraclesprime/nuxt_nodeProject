@@ -147,7 +147,14 @@
       <sidebar-files></sidebar-files>
       <!-- <sidebar-history></sidebar-history> -->
     </div>
-    <add-member-to-task ref="taskTeamModal"></add-member-to-task>
+    <!-- <add-member-to-task ref="taskTeamModal"></add-member-to-task> -->
+    <bib-modal-wrapper v-if="taskTeamModal" title="Team" size="lg" @close="taskTeamModal = false">
+      <template slot="content">
+        <div style="height: 12rem;">
+          <task-team></task-team>
+        </div>
+      </template>
+    </bib-modal-wrapper>
 
     <div class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-105">
       <bib-avatar :src="userPhoto" size="2rem" class="flex-shrink-0" ></bib-avatar>
@@ -155,6 +162,7 @@
     </div>
   </article>
 </template>
+
 <script>
 import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 import { mapGetters } from "vuex"
@@ -224,6 +232,7 @@ export default {
       editMessage: {},
       reloadComments: 1,
       reloadHistory: 1,
+      taskTeamModal: false
     };
   },
 
@@ -385,7 +394,8 @@ export default {
 
   methods: {
     showAddTeamModal() {
-      this.$refs.taskTeamModal.showTaskTeamModal = true
+      // this.$refs.taskTeamModal.showTaskTeamModal = true
+      this.taskTeamModal = true
     },
     closeSidebar(event) {
       // console.log('click-outside task-sidebar',  event.originalTarget, event.target.classList)
