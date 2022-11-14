@@ -369,6 +369,15 @@ export default {
     }
   }
 
+  td.section {
+    border-bottom: 1px solid $gray4;
+    .section-header {
+      font-size: $base-size;
+      font-weight: bold;
+      /*color: $gray6;*/
+    }
+  }
+
   .drag-handle {
     cursor: grab;
     opacity: 0.125;
@@ -379,12 +388,6 @@ export default {
     }
   }
 }
-.section { border-bottom-color: $gray4;
-  .section-header {
-    font-size: $base-size;
-    font-weight: bold;
-    /*color: $gray6;*/
-  }
-}
+
 
 </style>

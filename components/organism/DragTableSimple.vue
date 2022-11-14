@@ -41,8 +41,8 @@
           <template v-if="col.key == 'priority'">
             <priority-comp :key="task.title+col.key+componentKey" :priority="task[col.key]"></priority-comp>
           </template>
-          <template v-if="col.key == 'createdAt' || col.key == 'dueDate'">
-            <format-date :key="task.title+col.key+componentKey" :datetime="task[col.key]"></format-date>
+          <template v-if="col.key == 'startDate' || col.key == 'dueDate'">
+            <span class="d-inline-flex align-center gap-05"><bib-icon icon="calendar" variant="gray4"></bib-icon><format-date :key="task.title+col.key+componentKey" :datetime="task[col.key]"></format-date></span>
           </template>
           <template v-if="col.key == 'project'">
             <project-info v-if="task[col.key].length" :key="task.title+col.key+componentKey" :projectId="task[col.key][0].projectId"></project-info>
@@ -73,8 +73,8 @@
           <template v-if="col.key == 'priority'">
             <priority-comp :key="task.title+col.key+componentKey" :priority="task[col.key]"></priority-comp>
           </template>
-          <template v-if="col.key == 'createdAt' || col.key == 'dueDate'">
-            <format-date :key="task.title+col.key+componentKey" :datetime="task[col.key]"></format-date>
+          <template v-if="col.key == 'startDate' || col.key == 'dueDate'">
+            <span class="d-inline-flex align-center gap-05"><bib-icon icon="calendar" variant="gray4"></bib-icon><format-date :key="task.title+col.key+componentKey" :datetime="task[col.key]"></format-date></span>
           </template>
           <template v-if="col.key == 'project'">
             <project-info v-if="task[col.key].length" :key="task.title+col.key+componentKey" :projectId="task[col.key][0].projectId"></project-info>

@@ -35,7 +35,7 @@ export const PROJECT_FIELDS = [
         }
     },
     {
-        key: "createdAt",
+        key: "startDate",
         label: "Start Date",
         header_icon: {
             icon: 'swap-vertical',

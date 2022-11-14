@@ -110,7 +110,7 @@ export default {
       flag: false,
       // totalTasks: this.tasks.length || 1,
       owner: {},
-      startDate: '',
+      // startDate: '',
       filterKey: "",
       department: DEPARTMENT,
       status: STATUS,
@@ -214,6 +214,24 @@ export default {
       return this.teamMembers.map((u) => {
         return { value: u.id, id: u.id, label: u.firstName + ' ' + u.lastName, firstName: u.firstName, lastName: u.lastName, email: u.email, img: u.avatar }
       })
+    },
+
+    startDate: {
+      get: function() {
+        let nd
+        if (!this.activeProject.startDate) {
+          nd = new Date()
+        } else {
+          nd = new Date(this.activeProject.startDate)
+        }
+        /*let mm = (nd.getMonth() + 1) < 10 ? '0' + (nd.getMonth() + 1) : nd.getMonth() + 1
+        let dd = (nd.getDate()) < 10 ? '0' + (nd.getDate()) : nd.getDate()
+        return `${nd.getFullYear()}-${mm}-${dd}`*/
+        return dayjs(nd).format('YYYY-MM-DD')
+      },
+      set: function(newValue) {
+        this.activeProject.startDate = new Date(newValue)
+      }
     },
 
     dueDate: {
