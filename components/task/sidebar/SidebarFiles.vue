@@ -28,7 +28,7 @@
         <div class="animated-background  height-105" style="width:9rem;" ></div>
       </div>
       <template v-else>
-        <file-comp v-for="file in files" :key="file.key + fileKey" :property="file"  @delete-file="deleteFile" @click.native="showPreviewModal(file)"></file-comp>
+        <file-comp v-for="file in files" :key="file.key + fileKey" :property="file"  @delete-file="deleteFile" @preview-file="showPreviewModal(file)"></file-comp>
       </template>
     </div>
     
