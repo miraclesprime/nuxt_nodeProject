@@ -1,7 +1,7 @@
 <template>
   <client-only>
-    <div class="file d-flex ">
-      <figure class="position-relative w-100">
+    <div class="file-wrap d-flex ">
+      <figure class="position-relative w-100" v-tooltip="property.name">
         <img :src="filePreview" class="shape-rounded d-block" >
         <div class="file-overlay d-flex align-center justify-center cursor-pointer" @click="$emit('file-click')">
           <fa :icon="faMagnifyingGlassPlus" class="width-2 height-2" ></fa>
@@ -10,17 +10,12 @@
           <bib-button pop="elipsis" :scale="1">
             <template v-slot:menu>
               <div class="list ">
-                <span class="list__item file-name ">{{property.name}}</span>
-                <hr>
-                <!-- <span class="list__item">
-                <bib-icon icon="upload" :scale="1.1" variant="gray5" class="mr-075"></bib-icon> Open
-              </span> -->
-                <span class="list__item" @click.stop="fileDetailModal = true">
-                  <bib-icon icon="urgent" :scale="1.1" variant="gray5" class="mr-075"></bib-icon> Details
-                </span>
-                <span class="list__item" @click.stop="downloadFile">
-                  <bib-icon icon="align-bottom" :scale="1.1" variant="gray5" class="mr-075"></bib-icon> Download File
-                </span>
+                <!-- <span class="list__item file-name ">{{property.name}}</span> -->
+                <!-- <hr> -->
+                <span class="list__item" @click="$emit('file-click')">Preview</span>
+                <span class="list__item">Open</span>
+                <span class="list__item" @click.stop="fileDetailModal = true">Detail</span>
+                <span class="list__item" @click.stop="downloadFile">Download File</span>
                 <!-- <span class="list__item">
                 <bib-icon icon="duplicate" :scale="1.1" variant="gray5" class="mr-075"></bib-icon> Copy
               </span> -->
@@ -37,14 +32,20 @@
         <template slot="content">
           <table class="table">
             <tr v-for="file in fileDetail">
-              <th class="text-right font-w-400">{{file.key}}:</th>
-              <td class="text-left text-gray6 pl-1">{{file.value}}</td>
+              <template v-if="file.key == 'size'">
+                <th class="text-right font-w-400">{{file.key}}:</th>
+                <td class="text-left text-gray6 pl-1">{{$formatBytes(file.value)}}</td>
+              </template>
+              <template v-else>
+                <th class="text-right font-w-400">{{file.key}}:</th>
+                <td class="text-left text-gray6 pl-1">{{file.value}}</td>
+              </template>
             </tr>
           </table>
         </template>
         <template slot="footer">
           <div class="d-flex justify-end">
-            <bib-button label="Close" variant="light" pill @click.stop="fileDetailModal = false"></bib-button>
+            <bib-button label="Close" variant="light" pill @click="fileDetailModal = false"></bib-button>
             <!-- <bib-button label="Create" variant="success" class="ml-auto" pill></bib-button> -->
           </div>
         </template>
@@ -136,7 +137,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.file {
+.file-wrap {
   min-height: 8rem;
   font-size: 1rem;
   background-color: rgb(240, 240, 240);

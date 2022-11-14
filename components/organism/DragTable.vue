@@ -45,8 +45,8 @@
             <template v-if="col.key == 'priority'">
               <priority-comp :key="componentKey" :priority="task[col.key]"></priority-comp>
             </template>
-            <template v-if="col.key == 'createdAt' || col.key == 'dueDate'">
-              <span class="d-inline-flex align-center gap-05"><bib-icon icon="calendar" variant="gray4"></bib-icon><format-date :key="componentKey" :datetime="task[col.key]"></format-date></span>
+            <template v-if="col.key == 'startDate' || col.key == 'dueDate'">
+              <span class="d-inline-flex align-center gap-05"><bib-icon icon="calendar" variant="gray4"></bib-icon><format-date :key="componentKey" :datetime="task[col.key]"></format-date></span> 
             </template>
             <template v-if="col.key == 'project'">
               <project-info v-if="task[col.key].length" :projectId="task[col.key][0].projectId"></project-info>
@@ -369,6 +369,15 @@ export default {
     }
   }
 
+  td.section {
+    border-bottom: 1px solid $gray4;
+    .section-header {
+      font-size: $base-size;
+      font-weight: bold;
+      /*color: $gray6;*/
+    }
+  }
+
   .drag-handle {
     cursor: grab;
     opacity: 0.125;
@@ -379,12 +388,6 @@ export default {
     }
   }
 }
-.section { border-bottom-color: $gray4;
-  .section-header {
-    font-size: $base-size;
-    font-weight: bold;
-    /*color: $gray6;*/
-  }
-}
+
 
 </style>

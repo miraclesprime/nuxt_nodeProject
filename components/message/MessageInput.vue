@@ -110,8 +110,9 @@
           <video-recorder @record="addVideo" />
           <image-capturer @capture="addImage" /> -->
         </div>
-        <button class="send-btn" type="button" @click="sendMessage">
+        <button class="send-btn" type="button" @click="sendMessage"> Send
           <fa :icon="faPaperPlane"></fa>
+          <!-- <bib-icon icon="send-solid" ></bib-icon> -->
         </button>
       </div>
     </div>
@@ -544,14 +545,26 @@ export default {
   color: #fff;
   border: 0;
   cursor: pointer;
-  width: 100px;
-  line-height: 15px;
+  /*width: 100px;*/
+  padding: 0.35rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  /*line-height: 15px;*/
   background-color: transparent;
-  background-color: rgb(43, 160, 38);
+  color: rgba(43, 160, 38, 1);
+  background-color: rgba(43, 160, 38, .16);
   border-radius: 5px;
 
   svg {
-    width: 14px;
+    /*width: 14px;*/
+    fill: rgba(43, 160, 38, 1);
+  }
+  &:hover {
+    background-color:rgba(43, 160, 38, 1);
+    color: white;
+    svg { fill: white;}
   }
 }
 

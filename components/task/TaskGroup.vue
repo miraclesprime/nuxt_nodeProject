@@ -58,7 +58,11 @@
           <td>
             <user-info :userId="sub.userId"></user-info>
           </td>
-          <td><bib-icon icon="calendar"></bib-icon> <span v-format-date="sub.dueDate"></span></td>
+          <td>
+            <div class="d-inline-flex align-center gap-05">
+              <bib-icon icon="calendar"></bib-icon> <span v-format-date="sub.dueDate"></span>
+            </div>
+          </td>
           <td>
             <!-- <bib-popup :pop="sub.options" icon-variant="gray5" size="sm" >
               <template v-slot:menu>

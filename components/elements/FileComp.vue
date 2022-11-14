@@ -1,14 +1,14 @@
 <template>
-  <div class="file border-light shape-rounded p-025">
-    <div class="d-flex gap-05 align-center">
-      <bib-avatar size="2rem" :src="property.preview"></bib-avatar> <span class="file-text font-md text-truncate">{{property.name}}</span>
+  <div class="file-wrap border-light shape-rounded p-025" >
+    <div class="d-flex gap-05 align-center" v-tooltip="`${property.name} (${property.size})`">
+      <bib-avatar size="2rem" :src="property.preview"></bib-avatar> <span class="file-text font-md text-truncate" >{{property.name}}</span>
       <div class="width-2 height-2 bg-light shape-circle d-flex align-center justify-center">
         <bib-popup pop="elipsis" icon-variant="gray5" icon-hover-variant="gray6">
           <template v-slot:menu>
             <div class="list">
               <span class="list__item" @click.stop="previewFile">Preview</span>
               <span class="list__item" @click.stop="openFile">Open</span>
-              <span class="list__item" @click.stop="detailFile">Detail</span>
+              <span class="list__item" @click.stop="fileDetailModal = true">Detail</span>
               <span class="list__item" @click.stop="downloadFile">Download</span>
               <hr>
               <span v-if="cdtf" class="list__item list__item__danger" @click.stop="deleteFile">Delete</span>
@@ -17,6 +17,29 @@
         </bib-popup>
       </div>
     </div>
+    <!-- file detail modal -->
+    <bib-modal-wrapper v-if="fileDetailModal" title="File Details" @close="fileDetailModal = false">
+        <template slot="content">
+          <table class="table">
+            <tr v-for="file in fileDetail">
+              <template v-if="file.key == 'size'">
+                <th class="text-right font-w-400">{{file.key}}:</th>
+                <td class="text-left text-gray6 pl-1">{{$formatBytes(file.value)}}</td>
+              </template>
+              <template v-else>
+                <th class="text-right font-w-400">{{file.key}}:</th>
+                <td class="text-left text-gray6 pl-1">{{file.value}}</td>
+              </template>
+            </tr>
+          </table>
+        </template>
+        <template slot="footer">
+          <div class="d-flex justify-end">
+            <bib-button label="Close" variant="light" pill @click="fileDetailModal = false"></bib-button>
+            <!-- <bib-button label="Create" variant="success" class="ml-auto" pill></bib-button> -->
+          </div>
+        </template>
+      </bib-modal-wrapper>
   </div>
 </template>
 <script>
@@ -48,12 +71,26 @@ export default {
 
   data() {
     return {
+      fileDetailModal: false,
       cdtf: false
     }
   },
   computed: {
-    id() {
+    /*id() {
       return this.title.replace(" ", "_").toLowerCase()
+    }*/
+    fileDetail() {
+      let arr = []
+      if (this.property.hasOwnProperty("key")) {
+        Object.entries(this.property).map(([key, value]) => {
+          // if (value) {
+            if (key == 'name' || key == "extension" || key == "size" || key == "createdAt" || key == "updatedAt") {
+              arr.push({ value: value, key: key })
+            }
+          // }
+        })
+      }
+      return arr
     }
   },
   mounted() {
@@ -108,12 +145,21 @@ export default {
 }
 
 </script>
-<style lang="css" scoped>
-.file {}
+<style lang="scss" scoped>
+.file-wrap {}
 
 .file-text {
-    width: 7.5rem;
-  /*font-size: $font-size-sm;*/
+    width: 7.5rem;  
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: $base-size;
+}
+table th,
+table td {
+  padding: 0.25rem;
 }
 
 </style>

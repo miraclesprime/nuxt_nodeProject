@@ -293,14 +293,14 @@ export default {
 
     startDateInput: {
       get: function() {
-        if (!this.form.createdAt) {
+        if (!this.form.startDate) {
           return dayjs().format('YYYY-MM-DD')
         } else {
-          return dayjs(this.form.createdAt).format('YYYY-MM-DD')
+          return dayjs(this.form.startDate).format('YYYY-MM-DD')
         }
       },
       set: function(newValue) {
-        this.form.createdAt = new Date(newValue)
+        this.form.startDate = new Date(newValue)
       }
     },
     dateInput: {
@@ -363,6 +363,7 @@ export default {
           id: '',
           title: "Enter title...",
           createdAt: "",
+          startDate: "",
           dueDate: "",
           userId: "",
           sectionId: "_section" + this.project.id,
@@ -489,6 +490,7 @@ export default {
           "title": this.form.title,
           "description": this.form.description,
           "createdAt": this.form.createdAt || new Date(),
+          "startDate": this.form.startDate || new Date(),
           "dueDate": this.form.dueDate || new Date(),
           "priorityId": this.form.priorityId,
           "budget": 0,
@@ -520,7 +522,7 @@ export default {
 
       this.$store.dispatch("task/updateTask", { id: this.form.id, data: { ...this.form }, user, projectId: this.form.projectId ? this.form.projectId : null, text: historyText })
         .then((u) => {
-          console.log(u)
+          // console.log(u)
           this.$nuxt.$emit("update-key")
           // this.$nuxt.$emit("refresh-history")
           this.reloadHistory += 1

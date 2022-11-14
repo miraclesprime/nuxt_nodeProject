@@ -296,6 +296,7 @@ export const actions = {
       title: payload.title,
       statusId: null,
       description: null,
+      startDate: null,
       dueDate: null,
       priority: null,
       budget: null,
