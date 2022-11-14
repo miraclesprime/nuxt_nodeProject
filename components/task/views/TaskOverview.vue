@@ -150,6 +150,7 @@ export default {
       } else {
         this.activeProject = {
           title: "",
+          startDate: "",
           dueDate: "",
           priorityId: "",
           statusId: "",
@@ -265,6 +266,7 @@ export default {
         return "00:00"
       }
     },
+    
   },
 
   methods: {

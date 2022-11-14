@@ -66,7 +66,7 @@ export const TASK_FIELDS = [{
     }
   },
   {
-    key: "createdAt",
+    key: "startDate",
     label: "Start Date",
     width: "10%",
     header_icon: {

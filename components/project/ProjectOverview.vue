@@ -93,6 +93,7 @@
     </div>
   </client-only>
 </template>
+
 <script>
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
@@ -131,6 +132,7 @@ export default {
       } else {
         this.activeProject = {
           title: "",
+          startDate: "",
           dueDate: "",
           priorityId: null,
           statusId: null,
@@ -309,7 +311,7 @@ export default {
       this.loading = false
     },
     debounceUpdate: _.debounce(function(name, value) {
-      // console.log('Debounce ', name, value)
+      console.log('Debounce ', name, value)
 
       let updatedvalue = value
       if (name == "Owner") {
@@ -334,6 +336,9 @@ export default {
         updatedvalue = dayjs(value).format('DD MMM, YYYY')
       }
 
+      if( name == "Start date") {
+        updatedvalue = dayjs(value).format('DD MMM, YYYY')
+      }
 
       if (this.activeProject.priorityId == "") {
         this.activeProject.priority = null
