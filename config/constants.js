@@ -647,7 +647,7 @@ export const USER_TASKS = [
   },
   {
     label: 'Start Date',
-    key: 'createdAt',
+    key: 'startDate',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
