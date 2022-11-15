@@ -314,11 +314,11 @@ export const actions = {
         }
       })
 
-      if(res.data.statusCode == 200) {
+      if(fav.data.statusCode == 200) {
         ctx.dispatch("fetchTaskComments")
-        return res.data.data;
+        return fav.data.data;
       } else {
-        return res.data.data;
+        return fav.data.data;
       }
 
     } catch(e) {

@@ -86,6 +86,9 @@ export default {
       // cdtf: false
     }
   },
+  props: {
+    reloadFiles: { type: Number, default: 0 }
+  },
   computed: {
     ...mapGetters({
       task: "task/getSelectedTask"
@@ -119,7 +122,15 @@ export default {
       } else {
         this.dbFiles = []
       }
-    }
+    },
+
+    reloadFiles(newValue, oldValue){
+      if (newValue != oldValue) {
+         _.delay(() => {
+          this.getFiles()
+        }, 2000);
+      }
+    },
   },
   mounted() {
     // console.log('mounted, task id->', this.task.id)

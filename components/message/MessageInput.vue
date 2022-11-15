@@ -129,6 +129,7 @@
   </div>
   </client-only>
 </template>
+
 <script>
 import { Editor, EditorContent, Extension, VueRenderer } from '@tiptap/vue-2';
 import StarterKit from '@tiptap/starter-kit';

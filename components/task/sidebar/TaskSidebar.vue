@@ -102,9 +102,11 @@
           </div>
           <div class="col-4">
             <bib-input type="date" v-model="startDateInput" icon-left="calendar" placeholder="Enter date/range" label="Start date" v-on:change.native="debounceUpdate('Start date', startDateInput)"></bib-input>
+            <!-- <bib-datepicker v-model="startDateInput" label="Start date" placeholder="Start date" ></bib-datepicker> -->
           </div>
           <div class="col-4">
             <bib-input type="date" v-model="dateInput" icon-left="calendar" placeholder="Enter date/range" label="Due date" v-on:change.native="debounceUpdate('Due date', dateInput)"></bib-input>
+            <!-- <bib-datepicker v-model="dateInput" label="Due date" placeholder="Due date" ></bib-datepicker> -->
           </div>
         </div>
         <div class="row mx-0" id='sidebar-row-2'>
@@ -144,7 +146,7 @@
       </div> -->
       <!-- <sidebar-team :team="teammates.all"></sidebar-team> -->
       <sidebar-conversation :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
-      <sidebar-files></sidebar-files>
+      <sidebar-files :reloadFiles="reloadFiles"></sidebar-files>
       <!-- <sidebar-history></sidebar-history> -->
     </div>
     <!-- <add-member-to-task ref="taskTeamModal"></add-member-to-task> -->
@@ -232,6 +234,7 @@ export default {
       editMessage: {},
       reloadComments: 1,
       reloadHistory: 1,
+      reloadFiles: 1,
       taskTeamModal: false
     };
   },
@@ -638,13 +641,38 @@ export default {
       } else {
         this.$store.dispatch("task/createTaskComment", { id: this.currentTask.id, comment: data.text, text: `added comment ${trimComment}` })
           .then(res => {
-            // console.log(res)
             if (this.value.files.length > 0) {
-              this.uploadFile(this.value.files, res.data)
+              // console.log(this.value.files, res.data)
+              this.uploadFiles(this.value.files, res.data)
             }
             this.reloadComments += 1
           })
           .catch(e => console.log(e))
+      }
+    },
+
+    async uploadFiles(files, commentRes) {
+      let filelist = []
+
+      let formdata = new FormData()
+      files.forEach(file => {
+        formdata.append('files', file)
+        filelist.push(file.name)
+      })
+      formdata.append('taskId', commentRes.taskId)
+      formdata.append('taskCommentId', commentRes.id)
+      formdata.append('text', `uploaded file(s) "${filelist.join(", ")}" to task`)
+
+      const fi = await this.$axios.post("/file/upload", formdata, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      })
+      
+      if (fi.data.statusCode == 200) {
+        this.reloadFiles += 1;
+        this.value.files = []
       }
     },
   },
