@@ -90,7 +90,7 @@
         <bib-icon variant="gray5" class="cursor-pointer ml-05" :scale="1.2" icon="trash"></bib-icon>
       </template> -->
       <template slot="content">
-        <project-overview v-if="projectModalContent == 'overview'" :fields="TABLE_FIELDS" :tasks="projectTasks" :currentProject="project"></project-overview>
+        <project-overview v-if="projectModalContent == 'overview'" :sections="projectSections" ></project-overview>
         <!-- <div class="height-1"></div> -->
         <!-- <project-history v-if="projectModalContent == 'history'"></project-history> -->
       </template>

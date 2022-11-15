@@ -49,10 +49,12 @@
             <bib-select label="Owner" test_id="po-owner-dd1" :options="filterUser" v-model="activeProject.userId" v-on:change="debounceUpdate('Owner', activeProject.userId)"></bib-select>
           </div>
           <div id="proj-row2-col2" class="col-3">
-            <bib-input type="date" label="Start date" v-model="startDate" v-on:change.native="debounceUpdate('Start date', startDate)"></bib-input>
+            <!-- <bib-input type="date" label="Start date" v-model="startDate" v-on:change.native="debounceUpdate('Start date', startDate)"></bib-input> -->
+            <bib-datepicker test_id="date01" v-model="startDate" label="Start date" name="startDate" placeholder="Start date"></bib-datepicker>
           </div>
           <div id="proj-row2-col3" class="col-3">
-            <bib-input type="date" label="Due date" v-model="dueDate" v-on:change.native="debounceUpdate('Due date', dueDate)"></bib-input>
+            <!-- <bib-input type="date" label="Due date" v-model="dueDate" v-on:change.native="debounceUpdate('Due date', dueDate)"></bib-input> -->
+            <bib-datepicker test_id="date02" v-model="dueDate" label="Due date" name="dueDate" placeholder="Due date"></bib-datepicker>
           </div>
         </div>
         <div id="proj-row3" class="row">
@@ -102,13 +104,13 @@ import dayjs from 'dayjs'
 
 export default {
   props: {
-    tasks: Array,
-    // project: Object,
+    sections: Array
   },
+  
   data() {
     return {
       flag: false,
-      // totalTasks: this.tasks.length || 1,
+      // totalTasks: [],
       owner: {},
       // startDate: '',
       filterKey: "",
@@ -150,17 +152,27 @@ export default {
 
   computed: {
     ...mapGetters({
-      token: 'token/getToken',
+      // token: 'token/getToken',
       // project: 'project/getSingleProject'
       teamMembers: "user/getTeamMembers",
-      totalTasks: "task/tasksForListView"
+      // totalTasks: "task/tasksForListView",
+      // sections: "section/getProjectSections",
     }),
+
     /*assignee() {
       let items = this.companyUsers.map(u => {
         return { id: u.id, label: u.firstName + ' ' + u.lastName, event: "item-event", img: "" }
       })
       return { items: items }
     },*/
+
+    totalTasks(){
+      let tasks = []
+      this.sections.map(t=>{
+        tasks.push(...t.tasks)
+      })
+      return tasks
+    },
 
     taskOverdue() {
       if (this.totalTasks.length < 1) {
@@ -227,7 +239,8 @@ export default {
         /*let mm = (nd.getMonth() + 1) < 10 ? '0' + (nd.getMonth() + 1) : nd.getMonth() + 1
         let dd = (nd.getDate()) < 10 ? '0' + (nd.getDate()) : nd.getDate()
         return `${nd.getFullYear()}-${mm}-${dd}`*/
-        return dayjs(nd).format('YYYY-MM-DD')
+        return nd
+        // return dayjs(nd).format('YYYY-MM-DD')
       },
       set: function(newValue) {
         this.activeProject.startDate = new Date(newValue)
@@ -245,7 +258,8 @@ export default {
         /*let mm = (nd.getMonth() + 1) < 10 ? '0' + (nd.getMonth() + 1) : nd.getMonth() + 1
         let dd = (nd.getDate()) < 10 ? '0' + (nd.getDate()) : nd.getDate()
         return `${nd.getFullYear()}-${mm}-${dd}`*/
-        return dayjs(nd).format('YYYY-MM-DD')
+        return nd
+        // return dayjs(nd).format('YYYY-MM-DD')
       },
       set: function(newValue) {
         this.activeProject.dueDate = new Date(newValue)
@@ -268,8 +282,7 @@ export default {
   mounted() {
     if (process.client) {
       this.loading = true
-      let user = JSON.parse(localStorage.getItem("user"))
-      this.$store.dispatch('task/fetchTasks', { id: this.$route.params.id, filter: 'all' })
+      // let user = JSON.parse(localStorage.getItem("user"))
       this.$axios.$get(`project/${this.$route.params.id}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       }).then((res) => {
@@ -280,6 +293,7 @@ export default {
       }).catch(err => {
         console.log(err);
       })
+      // this.$store.dispatch('section/fetchProjectSections', { projectId: this.$route.params.id, filter: 'all' })
     }
   },
 

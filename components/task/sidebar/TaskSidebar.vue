@@ -102,9 +102,11 @@
           </div>
           <div class="col-4">
             <bib-input type="date" v-model="startDateInput" icon-left="calendar" placeholder="Enter date/range" label="Start date" v-on:change.native="debounceUpdate('Start date', startDateInput)"></bib-input>
+            <!-- <bib-datepicker v-model="startDateInput" label="Start date" placeholder="Start date" ></bib-datepicker> -->
           </div>
           <div class="col-4">
             <bib-input type="date" v-model="dateInput" icon-left="calendar" placeholder="Enter date/range" label="Due date" v-on:change.native="debounceUpdate('Due date', dateInput)"></bib-input>
+            <!-- <bib-datepicker v-model="dateInput" label="Due date" placeholder="Due date" ></bib-datepicker> -->
           </div>
         </div>
         <div class="row mx-0" id='sidebar-row-2'>
