@@ -50,11 +50,11 @@
           </div>
           <div id="proj-row2-col2" class="col-3">
             <!-- <bib-input type="date" label="Start date" v-model="startDate" v-on:change.native="debounceUpdate('Start date', startDate)"></bib-input> -->
-            <bib-datepicker test_id="date01" v-model="startDate" label="Start date" name="startDate" placeholder="Start date"></bib-datepicker>
+            <bib-datepicker test_id="date01" v-model="startDate" :maxDate="dueDate" format="dd MMM yyyy" @input="debounceUpdate('Start date', startDate)" label="Start date" name="startDate" placeholder="Start date" ></bib-datepicker>
           </div>
           <div id="proj-row2-col3" class="col-3">
             <!-- <bib-input type="date" label="Due date" v-model="dueDate" v-on:change.native="debounceUpdate('Due date', dueDate)"></bib-input> -->
-            <bib-datepicker test_id="date02" v-model="dueDate" label="Due date" name="dueDate" placeholder="Due date"></bib-datepicker>
+            <bib-datepicker test_id="date02" class="align-right" v-model="dueDate" :minDate="startDate" format="dd MMM yyyy" @input="debounceUpdate('Due date', dueDate)" label="Due date" name="dueDate" placeholder="Due date"></bib-datepicker>
           </div>
         </div>
         <div id="proj-row3" class="row">
@@ -229,39 +229,43 @@ export default {
     },
 
     startDate: {
-      get: function() {
+      get() {
         let nd
         if (!this.activeProject.startDate) {
           nd = new Date()
+          return new Date()
         } else {
           nd = new Date(this.activeProject.startDate)
+          return new Date(this.activeProject.startDate)
         }
         /*let mm = (nd.getMonth() + 1) < 10 ? '0' + (nd.getMonth() + 1) : nd.getMonth() + 1
         let dd = (nd.getDate()) < 10 ? '0' + (nd.getDate()) : nd.getDate()
         return `${nd.getFullYear()}-${mm}-${dd}`*/
-        return nd
+        // return nd
         // return dayjs(nd).format('YYYY-MM-DD')
       },
-      set: function(newValue) {
+      set(newValue) {
         this.activeProject.startDate = new Date(newValue)
       }
     },
 
     dueDate: {
-      get: function() {
+      get() {
         let nd
         if (!this.activeProject.dueDate) {
           nd = new Date()
+          return new Date()
         } else {
           nd = new Date(this.activeProject.dueDate)
+          return new Date(this.activeProject.dueDate)
         }
         /*let mm = (nd.getMonth() + 1) < 10 ? '0' + (nd.getMonth() + 1) : nd.getMonth() + 1
         let dd = (nd.getDate()) < 10 ? '0' + (nd.getDate()) : nd.getDate()
         return `${nd.getFullYear()}-${mm}-${dd}`*/
-        return nd
+        // return nd
         // return dayjs(nd).format('YYYY-MM-DD')
       },
-      set: function(newValue) {
+      set(newValue) {
         this.activeProject.dueDate = new Date(newValue)
       }
     },

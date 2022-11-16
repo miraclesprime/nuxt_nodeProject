@@ -399,6 +399,25 @@ ul {
   gap: 0.25rem;
 }
 
+  .bib-datepicker {
+    &.align-right {
+      .vdp-datepicker__calendar { right: 0;}
+    }
+    .vdp-datepicker__calendar {
+      width: 260px;
+      font-size: $base-size;
+      header span { height: 32px; line-height: 32px;}
+      .cell { height: 32px; line-height: 32px;
+        &.selected { background-color: $primary; color: white;
+          &:hover { background-color: $primary-sub1;}
+        }
+       }
+       .cell:not(.blank):not(.disabled).day:hover,
+       .cell:not(.blank):not(.disabled).month:hover,
+       .cell:not(.blank):not(.disabled).year:hover { border-color: transparent;}
+    }
+  }
+
 @media screen and (max-width: 1600px) {
   .side-panel {
     max-width: $sidebar-width - 160px;
