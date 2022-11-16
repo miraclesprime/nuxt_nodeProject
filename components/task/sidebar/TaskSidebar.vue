@@ -14,24 +14,24 @@
           </div>
         </div>
         <div class="d-flex gap-05 align-center" id="ts-icon-attachment-wrapper">
-          <bib-button variant="light" pill label="invite" v-on:click="$nuxt.$emit('add-member-to-task')"></bib-button>
-          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex" id='ts-icon-2'>
-            <bib-icon icon="attachment" variant="gray5" class="m-auto"></bib-icon>
+          <!-- <bib-button variant="light" label="invite" v-on:click="$nuxt.$emit('add-member-to-task')"></bib-button> -->
+          <!-- <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-2'>
+            <bib-icon icon="attachment" variant="gray5" ></bib-icon>
+          </div> -->
+          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-3'>
+            <bib-icon icon="user-group-solid" variant="gray5" ></bib-icon>
           </div>
-          <!-- <div class="p-025 cursor-pointer" id='ts-icon-3'>
-            <bib-icon icon="heart-like" variant="gray5" :scale="1.25"></bib-icon>
-          </div> -->
-          <!-- <div class="p-025 cursor-pointer" id='ts-icon-4'>
-            <bib-icon icon="comment-forum" variant="gray5" :scale="1.25"></bib-icon>
-          </div> -->
-          <!-- <div class="p-025 cursor-pointer" id='ts-icon-5'>
-            <bib-icon icon="share" variant="gray5" :scale="1.25"></bib-icon>
-          </div> -->
-          <!-- <div class="p-025 cursor-pointer" id='ts-icon-6'>
-            <bib-icon icon="horizontal-dots" variant="gray5" :scale="1.25"></bib-icon>
-          </div> -->
+          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-4'>
+            <bib-icon icon="comment-forum-solid" variant="gray5" ></bib-icon>
+          </div>
+          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-5'>
+            <bib-icon icon="folder-solid" variant="gray5" ></bib-icon>
+          </div>
+          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="ts-icon-6" @click="setFavorite">
+            <bib-icon :icon="isFavorite.icon" :variant="isFavorite.variant" ></bib-icon>
+          </div>
           <div id="ts-list-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center">
-            <bib-button pop="horizontal-dots">
+            <bib-button pop="elipsis">
               <template v-slot:menu>
                 <div class="list" id="ts-list">
                   <span class="list__item" id="ts-list-item-1" :class="['list__item__' + isComplete.variant]" @click="markComplete">
@@ -40,21 +40,21 @@
                   <span class="list__item" id="ts-list-item-2" @click="setFavorite">
                     <bib-icon :icon="isFavorite.icon" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
                   </span>
-                  <span class="list__item" id="ts-list-item-3">
-                    <bib-icon icon="upload" variant="gray5" class="mr-075"></bib-icon> Attach file...
+                  <span class="list__item" id="ts-list-item-5">
+                    <bib-icon icon="check-square-solid" variant="gray5" class="mr-075"></bib-icon> Subtasks
                   </span>
                   <span class="list__item" id="ts-list-item-4">
-                    <bib-icon icon="user-add" variant="gray5" class="mr-075"></bib-icon> Invite
-                  </span>
-                  <span class="list__item" id="ts-list-item-5">
-                    <bib-icon icon="notification" variant="gray5" class="mr-075"></bib-icon> Set reminder
-                  </span>
-                  <span class="list__item" id="ts-list-item-6">
-                    <bib-icon icon="duplicate" variant="gray5" class="mr-075"></bib-icon> Copy
+                    <bib-icon icon="user-group-solid" variant="gray5" class="mr-075"></bib-icon> Team
                   </span>
                   <span class="list__item" id="ts-list-item-7">
-                    <bib-icon icon="warning" variant="gray5" class="mr-075"></bib-icon> Report
+                    <bib-icon icon="comment-forum-solid" variant="gray5" class="mr-075"></bib-icon> Conversation
                   </span>
+                  <span class="list__item" id="ts-list-item-3">
+                    <bib-icon icon="folder-solid" variant="gray5" class="mr-075"></bib-icon> Files
+                  </span>
+                  <!-- <span class="list__item" id="ts-list-item-6">
+                    <bib-icon icon="duplicate" variant="gray5" class="mr-075"></bib-icon> Copy
+                  </span> -->
                   <hr>
                   <span class="list__item list__item__danger" id="ts-list-item-8" @click="deleteTask(currentTask)">Delete</span>
                 </div>
@@ -76,10 +76,10 @@
           </div>
           <div>
             <div class="team-avatar-list px-05">
-              <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :key="index" :style="{ 'left': -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
+              <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :key="index" v-tooltip="team.label" :title="team.label" :style="{ 'left': -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
             </div>
           </div>
-          <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light cursor-pointer" @click="showAddTeamModal">
+          <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light cursor-pointer" v-tooltip="Team" @click="showAddTeamModal">
             <bib-icon icon="user-group-solid"></bib-icon>
           </div>
         </div>
@@ -101,12 +101,12 @@
             <!-- <bib-input type="select" :options="orgUsers" v-model="form.userId" placeholder="Please select..." label="Assignee" v-on:change.native="debounceUpdate()"></bib-input> -->
           </div>
           <div class="col-4">
-            <bib-input type="date" v-model="startDateInput" icon-left="calendar" placeholder="Enter date/range" label="Start date" v-on:change.native="debounceUpdate('Start date', startDateInput)"></bib-input>
-            <!-- <bib-datepicker v-model="startDateInput" label="Start date" placeholder="Start date" ></bib-datepicker> -->
+            <!-- <bib-input type="date" v-model="startDateInput" icon-left="calendar" placeholder="Enter date/range" label="Start date" v-on:change.native="debounceUpdate('Start date', startDateInput)"></bib-input> -->
+            <bib-datepicker v-model="startDateInput" format="dd MMM yyyy" label="Start date" placeholder="Start date" @input="debounceUpdate('Start date', startDateInput)" ></bib-datepicker>
           </div>
           <div class="col-4">
-            <bib-input type="date" v-model="dateInput" icon-left="calendar" placeholder="Enter date/range" label="Due date" v-on:change.native="debounceUpdate('Due date', dateInput)"></bib-input>
-            <!-- <bib-datepicker v-model="dateInput" label="Due date" placeholder="Due date" ></bib-datepicker> -->
+            <!-- <bib-input type="date" v-model="dateInput" icon-left="calendar" placeholder="Enter date/range" label="Due date" v-on:change.native="debounceUpdate('Due date', dateInput)"></bib-input> -->
+            <bib-datepicker class="align-right" v-model="dateInput" format="dd MMM yyyy" label="Due date" placeholder="Due date" @input="debounceUpdate('Due date', dateInput)" ></bib-datepicker>
           </div>
         </div>
         <div class="row mx-0" id='sidebar-row-2'>
@@ -140,7 +140,7 @@
       </div>
       <!-- </template> -->
       <!-- <sidebar-overview  :fields="taskFields" :activeTask="form" v-on:create-task="createTask" v-on:update-task="updateTask" /> -->
-      <task-group title="Subtasks"></task-group>
+      <task-group ></task-group>
       <!-- <div class="container pt-1" >
         <task-group></task-group>
       </div> -->
@@ -295,30 +295,34 @@ export default {
     },
 
     startDateInput: {
-      get: function() {
+      get() {
         if (!this.form.startDate) {
-          return dayjs().format('YYYY-MM-DD')
+          // return dayjs().format('YYYY-MM-DD')
+          return new Date()
         } else {
-          return dayjs(this.form.startDate).format('YYYY-MM-DD')
+          // return dayjs(this.form.startDate).format('YYYY-MM-DD')
+          return new Date(this.form.startDate)
         }
       },
-      set: function(newValue) {
+      set(newValue) {
         this.form.startDate = new Date(newValue)
       }
     },
     dateInput: {
-      get: function() {
+      get() {
         let nd
         if (!this.form.dueDate) {
           nd = new Date()
+          return new Date()
         } else {
           nd = new Date(this.form.dueDate)
+          return new Date(this.form.dueDate)
         }
-        let mm = (nd.getMonth() + 1) < 10 ? '0' + (nd.getMonth() + 1) : nd.getMonth() + 1
+        /*let mm = (nd.getMonth() + 1) < 10 ? '0' + (nd.getMonth() + 1) : nd.getMonth() + 1
         let dd = (nd.getDate()) < 10 ? '0' + (nd.getDate()) : nd.getDate()
-        return `${nd.getFullYear()}-${mm}-${dd}`
+        return `${nd.getFullYear()}-${mm}-${dd}`*/
       },
-      set: function(newValue) {
+      set(newValue) {
         this.form.dueDate = new Date(newValue)
       }
     },

@@ -174,7 +174,7 @@ export const actions = {
     // console.log('update task payload', payload)
     // console.log(payload.project[0].projectId)
     if (payload.statusId !== 5) {
-      const res = await this.$axios.$put('/task', { id: payload.id, projectId: ctx.rootState.project.selectedProject.id || payload.project[0].projectId, data: { statusId: 5 } }, {
+      const res = await this.$axios.$put('/task', { id: payload.id, projectId: ctx.rootState.project.selectedProject.id || payload.project[0].projectId, data: { statusId: 5 }, text: 'Updated the status to Done' }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
       // ctx.dispatch("fetchTasks", { id: ctx.rootState.project.selectedProject.id, filter: 'all' })
@@ -182,7 +182,7 @@ export const actions = {
     }
 
     if (payload.statusId == 5) {
-      const res = await this.$axios.$put('/task', { id: payload.id, projectId: ctx.rootState.project.selectedProject.id  || payload.project[0].projectId, data: { statusId: 2 } }, {
+      const res = await this.$axios.$put('/task', { id: payload.id, projectId: ctx.rootState.project.selectedProject.id  || payload.project[0].projectId, data: { statusId: 2 }, text: 'Updated the status to In-progress' }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
       // ctx.dispatch("fetchTasks", { id: ctx.rootState.project.selectedProject.id, filter: 'all' })

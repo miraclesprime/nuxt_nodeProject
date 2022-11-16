@@ -31,7 +31,7 @@
           <bib-icon class="m-auto" :icon="isFavorite.icon" :variant="isFavorite.variant"></bib-icon>
         </div>
         <div id="project-id-horizontal-dots-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center">
-          <bib-button pop="horizontal-dots" id="project-id-horizontal-dots">
+          <bib-popup pop="horizontal-dots" id="project-id-horizontal-dots">
             <template v-slot:menu>
               <div class="list" id="project-id-list">
                 <span class="list__item" id="project-id-list-item1" @click="modalOpen('overview', 'Overview')">View details</span>
@@ -62,7 +62,7 @@
                 <span v-if="cdp" class="list__item list__item__danger" id="project-id-list-item6" @click="deleteProject(project)">Delete </span>
               </div>
             </template>
-          </bib-button>
+          </bib-popup>
         </div>
         <loading :loading="favLoading"></loading>
       </div>

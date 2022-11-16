@@ -20,7 +20,7 @@
           <tr>
             <th>Subtasks</th>
             <th>Assignee</th>
-            <th>Due date</th>
+            <th width="150">Due date</th>
             <th></th>
           </tr>
         </thead>
@@ -35,11 +35,10 @@
             <td>
               <bib-select size="sm" :options="orgUsers" v-model="assignee" v-on:change="changeAssignee" ></bib-select>
               <!-- <bib-input type="text" size="sm" avatar-left="" v-model="assignee" placeholder="Assign to..."></bib-input> -->
-              <!-- <input type="text" v-model="assignee" placeholder="Assign to..."> -->
             </td>
             <td>
-              <bib-input type="date" size="sm"  icon-left="calendar" v-model="date" placeholder="Set date..."></bib-input>
-              <!-- <input type="text" v-model="date" placeholder="Set date..."> -->
+              <!-- <bib-input type="date" size="sm"  icon-left="calendar" v-model="date" placeholder="Set date..."></bib-input> -->
+              <bib-datepicker v-model="date" size="sm" class="align-right" format="dd MMM yyyy" placeholder="Set date..."></bib-datepicker>
             </td>
             <td>
               <div class="d-flex gap-05">
@@ -73,7 +72,7 @@
                 </div>
               </template>
             </bib-popup> -->
-          <span v-if="sub.canDelete" class="cursor-pointer shape-circle" @click="deleteSubtask(sub)">
+          <span v-if="sub.canDelete" class="cursor-pointer shape-circle bg-light" v-tooltip="Delete" title="Delete" @click="deleteSubtask(sub)">
             <bib-icon icon="trash-solid" ></bib-icon>
           </span>
           </td>

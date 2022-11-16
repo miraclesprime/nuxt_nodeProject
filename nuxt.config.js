@@ -22,17 +22,19 @@ export default {
   },
   /// Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
-    "~/plugins/plugins",
+    "~/plugins/plugins.js",
     "~/plugins/axios.js",
     "~/plugins/dayjs.js",
     "~/plugins/dateFormat.client.js",
     "~/plugins/statusFormat.client.js",
     "~/plugins/priorityFormat.client.js",
+    "~/plugins/datepicker.client.js",
     // "~/plugins/chatLink.client.js",
     // "~/plugins/userInfo.js",
     "~/utils/userInfo.client.js",
     "~/../bib-shared/js/colors.js",
     "~/../bib-shared/js/plugins.js",
+    // "~/../bib-shared/plugins/datepicker.js",
     ],
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: [
