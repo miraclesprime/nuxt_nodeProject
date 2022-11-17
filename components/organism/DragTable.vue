@@ -195,7 +195,6 @@ export default {
       }
     },
     updateTaskStatus(task) {
-      console.log(task.statusId)
       this.$emit('task-checkmark-click', task)
     },
     rowClick($event, task) {

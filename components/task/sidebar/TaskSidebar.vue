@@ -18,13 +18,16 @@
           <!-- <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-2'>
             <bib-icon icon="attachment" variant="gray5" ></bib-icon>
           </div> -->
-          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-3'>
+          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-3' @click="showAddTeamModal">
             <bib-icon icon="user-group-solid" variant="gray5" ></bib-icon>
           </div>
-          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-4'>
+          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-3' v-scroll-to="'#task_subtasks'">
+            <bib-icon icon="check-square-solid" variant="gray5"></bib-icon>
+          </div>
+          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-4' v-scroll-to="'#task_conversation'">
             <bib-icon icon="comment-forum-solid" variant="gray5" ></bib-icon>
           </div>
-          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-5'>
+          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-5' v-scroll-to="'#task_files'">
             <bib-icon icon="folder-solid" variant="gray5" ></bib-icon>
           </div>
           <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="ts-icon-6" @click="setFavorite">
@@ -40,16 +43,16 @@
                   <span class="list__item" id="ts-list-item-2" @click="setFavorite">
                     <bib-icon :icon="isFavorite.icon" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
                   </span>
-                  <span class="list__item" id="ts-list-item-5">
-                    <bib-icon icon="check-square-solid" variant="gray5" class="mr-075"></bib-icon> Subtasks
+                  <span class="list__item" id="ts-list-item-4" @click="showAddTeamModal">
+                    <bib-icon icon="user-group-solid" variant="gray5" class="mr-075" ></bib-icon> Team
                   </span>
-                  <span class="list__item" id="ts-list-item-4">
-                    <bib-icon icon="user-group-solid" variant="gray5" class="mr-075"></bib-icon> Team
+                  <span class="list__item" id="ts-list-item-5" v-scroll-to="'#task_subtasks'">
+                    <bib-icon icon="check-square-solid" variant="gray5" class="mr-075" v-scroll-to=""></bib-icon> Subtasks
                   </span>
-                  <span class="list__item" id="ts-list-item-7">
+                  <span class="list__item" id="ts-list-item-7" v-scroll-to="'#task_conversation'">
                     <bib-icon icon="comment-forum-solid" variant="gray5" class="mr-075"></bib-icon> Conversation
                   </span>
-                  <span class="list__item" id="ts-list-item-3">
+                  <span class="list__item" id="ts-list-item-3" v-scroll-to="'#task_files'">
                     <bib-icon icon="folder-solid" variant="gray5" class="mr-075"></bib-icon> Files
                   </span>
                   <!-- <span class="list__item" id="ts-list-item-6">
@@ -76,10 +79,10 @@
           </div>
           <div>
             <div class="team-avatar-list px-05">
-              <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :key="index" v-tooltip="team.label" :title="team.label" :style="{ 'left': -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
+              <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :key="index" v-tooltip="`${team.label}`" :title="team.label" :style="{ 'left': -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
             </div>
           </div>
-          <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light cursor-pointer" v-tooltip="Team" @click="showAddTeamModal">
+          <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light cursor-pointer" v-tooltip="'Team'" @click="showAddTeamModal">
             <bib-icon icon="user-group-solid"></bib-icon>
           </div>
         </div>
@@ -140,13 +143,13 @@
       </div>
       <!-- </template> -->
       <!-- <sidebar-overview  :fields="taskFields" :activeTask="form" v-on:create-task="createTask" v-on:update-task="updateTask" /> -->
-      <task-group ></task-group>
+      <task-group id="task_subtasks"></task-group>
       <!-- <div class="container pt-1" >
         <task-group></task-group>
       </div> -->
       <!-- <sidebar-team :team="teammates.all"></sidebar-team> -->
-      <sidebar-conversation :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
-      <sidebar-files :reloadFiles="reloadFiles"></sidebar-files>
+      <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
+      <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
       <!-- <sidebar-history></sidebar-history> -->
     </div>
     <!-- <add-member-to-task ref="taskTeamModal"></add-member-to-task> -->

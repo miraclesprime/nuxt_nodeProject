@@ -8,7 +8,7 @@
         <div id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y">
           <template v-if="gridType == 'list'">
             <template v-if="todos.length">
-              <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" v-on:task-click="$nuxt.$emit('open-sidebar', $event)" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy"  @row-click="openSidebar" @row-rightclick="taskRightClick"></drag-table>
+              <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy"  @row-click="openSidebar" @row-rightclick="taskRightClick" @task-checkmark-click="taskMarkComplete"></drag-table>
 
               <!-- table context menu -->
               <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
@@ -223,7 +223,7 @@ export default {
     },
 
     openSidebar(task) {
-      console.log(task)
+      // console.log(task)
       // let project = [{
       //   projectId: this.project.id,
       //   project: {
@@ -298,7 +298,7 @@ export default {
       // console.log(typeof task, this.activeTask)
       this.loading = true
       if (typeof task == "object" && Object.keys(task).length > 0) {
-        console.log(task)
+        // console.log(task)
       } else {
         // alert("no task selected")
         task = this.activeTask

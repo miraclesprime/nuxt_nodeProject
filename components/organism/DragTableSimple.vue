@@ -80,7 +80,7 @@
             <project-info v-if="task[col.key].length" :key="task.title+col.key+componentKey" :projectId="task[col.key][0].projectId"></project-info>
           </template>
           <div v-if="col.key == 'title'" class="d-flex gap-05 align-center h-100">
-            <bib-icon icon="check-circle" :scale="1.25" :variant="taskCheckIcon(task)" class="cursor-pointer" @click.self="updateTaskStatus(task)"></bib-icon>
+            <bib-icon icon="check-circle" :scale="1.25" :variant="taskCheckIcon(task)" class="cursor-pointer" @click="(e) => updateTaskStatus(task)"></bib-icon>
             <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">
               {{task[col.key]}}
             </span>
@@ -219,7 +219,6 @@ export default {
       }
     },
     updateTaskStatus(task) {
-      console.log(task.statusId)
       this.$emit('task-checkmark-click', task)
     },
     /*isFavorite(task) {
