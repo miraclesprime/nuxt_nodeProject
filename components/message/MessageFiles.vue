@@ -1,7 +1,7 @@
 <template>
   <client-only>
     <div class="file-wrap d-flex ">
-      <figure class="position-relative w-100" v-tooltip="property.name">
+      <figure class="position-relative w-100" v-tooltip="`${property.name}`">
         <img :src="filePreview" class="shape-rounded d-block" >
         <div class="file-overlay d-flex align-center justify-center cursor-pointer" @click="$emit('file-click')">
           <fa :icon="faMagnifyingGlassPlus" class="width-2 height-2" ></fa>

@@ -45,6 +45,7 @@
     "vue-dnd-zone": "^0.4.0",
     "vue-doc-preview": "^0.3.2",
     "vue-html2canvas": "^0.0.4",
+    "vue-scrollto": "^2.20.0",
     "vue-signature-pad": "^3.0.1",
     "vue-smooth-dnd": "^0.8.1",
     "vue-tippy": "^4.14.0",

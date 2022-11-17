@@ -72,7 +72,7 @@
                 </div>
               </template>
             </bib-popup> -->
-          <span v-if="sub.canDelete" class="cursor-pointer shape-circle bg-light" v-tooltip="Delete" title="Delete" @click="deleteSubtask(sub)">
+          <span v-if="sub.canDelete" class="cursor-pointer shape-circle bg-light" v-tooltip="'Delete'" title="Delete" @click="deleteSubtask(sub)">
             <bib-icon icon="trash-solid" ></bib-icon>
           </span>
           </td>
