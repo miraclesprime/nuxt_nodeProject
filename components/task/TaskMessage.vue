@@ -630,7 +630,7 @@ export default {
   /*border-top: 1px solid $gray3;*/
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
-  padding-left: 2.25rem;
+  padding-left: 2.75rem;
   font-size: $base-size;
   color: $text;
 

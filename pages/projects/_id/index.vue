@@ -21,7 +21,7 @@
         <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item2" v-tooltip="'Conversation'" @click="conversationModal = true">
           <bib-icon icon="comment-forum-solid" class="m-auto"></bib-icon>
         </div>
-        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item3" v-tooltip="'Files'">
+        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item3" v-tooltip="'Files'" @click="modalOpen('files', 'Files')">
           <bib-icon icon="folder-solid" class="m-auto"></bib-icon>
         </div>
         <!-- <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item4" v-tooltip="'History'" >
@@ -45,7 +45,7 @@
                 <span class="list__item" id="project-id-list-item3" @click="conversationModal = true">
                   <bib-icon icon="comment-forum-solid" class="mr-075"></bib-icon> Conversation
                 </span>
-                <span class="list__item" id="project-id-list-item3">
+                <span class="list__item" id="project-id-list-item3" @click="modalOpen('files', 'Files')">
                   <bib-icon icon="folder-solid" class="mr-075"></bib-icon> Files
                 </span>
                 <span class="list__item" id="project-id-list-item3">
@@ -72,12 +72,12 @@
     </div> -->
     <div id="project-id-tab-content" class="project-id-tab-content position-relative h-100 of-scroll-y">
       <!-- <project-overview v-if="activeTab.value == PROJECT_TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="projectTasks" :currentProject="project"></project-overview> -->
-      <task-view v-if="activeTab.value == PROJECT_TAB_TITLES.tasks" :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType"></task-view>
+      <task-view :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType"></task-view>
       <!-- <project-conversation v-if="activeTab.value == PROJECT_TAB_TITLES.conversations" :fields="TABLE_FIELDS" :tasks="projectTasks"></project-conversation> -->
       <!-- <task-timeline-view v-if="activeTab.value == PROJECT_TAB_TITLES.timeline" :fields="TABLE_FIELDS" :tasks="tasks" />
       <task-calendar-view v-if="activeTab.value == PROJECT_TAB_TITLES.calendar" :fields="TABLE_FIELDS" :tasks="tasks" /> -->
       <!-- <task-team v-if="activeTab.value == PROJECT_TAB_TITLES.team"></task-team> -->
-      <project-files v-if="activeTab.value == PROJECT_TAB_TITLES.files"></project-files>
+      <!-- <project-files v-if="activeTab.value == PROJECT_TAB_TITLES.files"></project-files> -->
       <!-- <project-history v-if="activeTab.value == PROJECT_TAB_TITLES.history"></project-history> -->
     </div>
 
@@ -91,8 +91,9 @@
       </template> -->
       <template slot="content">
         <project-overview v-if="projectModalContent == 'overview'" :sections="projectSections" ></project-overview>
+        <project-files v-if="projectModalContent == 'files'"></project-files>
+
         <!-- <div class="height-1"></div> -->
-        <!-- <project-history v-if="projectModalContent == 'history'"></project-history> -->
       </template>
     </bib-modal-wrapper>
 

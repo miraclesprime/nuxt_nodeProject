@@ -78,7 +78,7 @@ export default {
     
     fileDetail() {
       let arr = []
-      if (this.property.hasOwnProperty("id")) {
+      if (this.property.hasOwnProperty("key")) {
         Object.entries(this.property).map(([key, value]) => {
           // if (value) {
             if (key == 'name' || key == "extension" || key == "size" || key == "createdAt" || key == "updatedAt") {
