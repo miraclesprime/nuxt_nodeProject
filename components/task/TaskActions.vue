@@ -13,11 +13,11 @@
         <li class="action" id="ta-action1" title="Viewing">
           <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="changeViewName"></sorting-comp>
         </li>
-        <li class="action" id="ta-action2" title="Sort by">
-          <sorting-comp label="Sorted by" :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy"></sorting-comp>
+        <li class="action" id="ta-action3" title="Group by" v-tooltip="'Group by'">
+          <sorting-comp label="Group by" :items="groupby" icon="accessibility-braille-solid" v-on:change-sort="groupBy"></sorting-comp>
         </li>
-        <li class="action" id="ta-action3" title="Group by">
-          <sorting-comp label="Group by" :items="groupby" icon="group" v-on:change-sort="groupBy"></sorting-comp>
+        <li class="action" id="ta-action2" title="Sort by" v-tooltip="'Sort by'">
+          <sorting-comp label="Sorted by" :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy"></sorting-comp>
         </li>
         <li class="action" id="ta-action5">
           <!-- <span class="mr-025" id="ta-action5-text">View</span> -->

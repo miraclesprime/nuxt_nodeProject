@@ -259,7 +259,7 @@ export default {
     },
 
     openSidebar(task, projectId) {
-      console.log(event.target)
+      // console.log(event.target)
       let project = [{
         projectId: projectId,
         project: {

@@ -2,13 +2,13 @@
   <div class=" h-100">
     <div class="message-wrapper ">
       <template v-if="showPlaceholder">
-        <div class="d-flex align-center p-05 border-bottom-gray2">
+        <!-- <div class="d-flex align-center p-05 border-bottom-gray2">
           <bib-icon icon="arrow-down" :scale="0.5"></bib-icon>
           <div class="px-1 ">
             <div class="animated-background width-6"></div>
           </div>
-        </div>
-        <div class="placeholder m-1 d-flex align-center gap-1">
+        </div> -->
+        <div class="placeholder m-1 d-flex align-center gap-05">
           <div class="left">
             <div class="shape-circle width-3 height-3 animated-background"></div>
           </div>
@@ -18,8 +18,11 @@
           </div>
         </div>
       </template>
-      <template v-else-if="comments.length > 0">
-        <message-list :messages="comments" ></message-list>
+      <template v-else-if="sortedData.length > 0">
+        <div v-for="item in sortedData">
+          <message v-if="item.comment" :msg="item"></message>
+          <task-history v-if="item.text" :history="item"></task-history>
+        </div>
       </template>
       <template v-else>
         <span class="d-inline-flex gap-05 align-center my-025 text-gray5">
@@ -49,14 +52,25 @@ export default {
       editMessage: {},
       comments: [],
       showPlaceholder: false,
+      history: [],
     };
   },
   computed: {
     ...mapGetters({
+      // user: "user/getUser2",
+      // members: 'user/getTeamMembers',
       project: "project/getSingleProject",
-      projectMembers: "project/getProjectMembers",
+      // projectMembers: "project/getProjectMembers",
       // comments: "project/getProjectComments",
-    })
+    }),
+    sortedData(){
+      let s = [ ...this.history, ...this.comments]
+      if(s.length > 0){
+        return s.sort((a, b) => new Date(a.updatedAt) - new Date(b.updatedAt));
+      } else {
+        return []
+      }
+    },
   },
   created() {
     this.$nuxt.$on("edit-message", (msg) => {
@@ -71,6 +85,12 @@ export default {
     this.fetchProjectComments()
     // this.$store.dispatch("project/fetchProjectComments", { id: this.project.id })
     this.$store.dispatch("project/fetchTeamMember", { projectId: this.project.id })
+    this.$store.dispatch("project/fetchHistory", this.project)
+      .then(h => {
+        // console.log(h)
+        this.history = h
+      })
+      .catch(e => console.error(e))
   },
   methods: {
     async fetchProjectComments() {

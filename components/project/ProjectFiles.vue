@@ -10,24 +10,13 @@
         </div> -->
       </div>
       <div class="action-right d-flex gap-05" id="file-action-right">
-        <ul class="actions" id="file-action-right-actions">
-          <!-- <li class="action" id="file-action1">
-          <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="changeViewName"></sorting-comp>
-        </li>
-        <li class="action" id="file-action2">
-          <sorting-comp label="Sorted by" :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy"></sorting-comp>
-        </li> -->
-          <li class="action" id="files-action">
-            <span class="mr-025" id="file-action5-text">View</span>
-            <div class="d-flex width-105 height-105 align-center justify-center bg-dark bg-hover-gray1 shape-rounded p-025 cursor-pointer" id="file-action5-link">
-              <bib-icon v-if="displayType == 'list'" icon="apps-large" variant="white" @click.native="displayType = 'grid'"></bib-icon>
-              <bib-icon v-if="displayType == 'grid'" icon="list" variant="white" @click.native="displayType = 'list'"></bib-icon>
-            </div>
-          </li>
-        </ul>
+        <div class="d-flex width-2 height-2 align-center justify-center bg-light bg-hover-gray3 shape-circle p-025 cursor-pointer" id="file-action5-link">
+          <bib-icon v-if="displayType == 'list'" icon="table" variant="gray5" @click.native="displayType = 'grid'"></bib-icon>
+          <bib-icon v-if="displayType == 'grid'" icon="list" variant="gray5" @click.native="displayType = 'list'"></bib-icon>
+        </div>
       </div>
     </div>
-    <div class="of-scroll-y h-100" id="project-files">
+    <!-- <div id="project-files"> -->
       <template v-if="displayType == 'list'">
         <bib-table :fields="tableFields" :sections="dbFiles" :key="tempKey" :hide-no-column="true">
           <template #cell(name)="data">
@@ -73,19 +62,15 @@
         </bib-table>
       </template>
       <template v-if="displayType == 'grid'">
-        <div class="files d-flex flex-wrap gap-1 p-1">
-          <bib-file v-for="file in files" :key="file.key + tempKey" :property="file" @click.native="showPreviewModal(file)"></bib-file>
-          <!-- <bib-file v-for="(file, index) in files" :key="file.key + tempKey" :property="file" @click.native="downloadFile(file)"></bib-file> -->
+        <div class="files d-flex flex-wrap gap-1 py-1">
+          <message-files v-for="file in files" :property="file" :key="file.key" @file-click="showPreviewModal(file)" ></message-files>
+          <!-- <bib-file v-for="file in files" :key="file.key + tempKey" :property="file" @click.native="showPreviewModal(file)"></bib-file> -->
         </div>
       </template>
       <loading :loading="loading"></loading>
-      <!-- <div v-for="n in 15" class="file bg-secondary-sub3 border-hover-gray4 ">
-        <img :src="'https://loremflickr.com/320/240?random='+n" alt="">
-        <div class="d-flex align-center gap-05 p-05">
-          <bib-icon icon="file-text" variant="gray4" :scale="1.5"></bib-icon> <span>extremely-extremely-very-loooong-File-name.jpg</span>
-        </div>
-      </div> -->
-    </div>
+      
+    <!-- </div> -->
+    
     <bib-modal-wrapper v-if="uploadModal" title="Select file(s)" @close="uploadModal = false">
       <template slot="content">
         <div style="margin-left: -1rem; margin-right: -1rem;">

@@ -626,7 +626,7 @@ export default {
 .msg {
   /*border-top: 1px solid $gray3;
   padding-top: 1rem;*/
-  padding-left: 3rem;
+  padding-left: 2.75rem;
   font-size: $base-size;
 
   &__owner {
