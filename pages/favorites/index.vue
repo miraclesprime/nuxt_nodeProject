@@ -4,56 +4,11 @@
       <page-title title="Favorites"></page-title>
       <favorite-actions v-on:change-viewing="changeView" v-on:change-sorting="changeSort"></favorite-actions>
       <div id="favorite-scroll-wrap" class="of-scroll-y position-relative">
-        <drag-table-simple :fields="projectTableFields" :tasks="sortedProject" :componentKey="key" :drag="false" :sectionTitle="'Favorite Projects'" @row-click="projectRoute" :newTaskButton="{label: 'New Project', event: 'new-project', variant: 'secondary', hover: 'dark'}" v-on:table-sort="sortProject" @row-context="projectRightClick"></drag-table-simple>
-        <!-- <bib-table :key="'fproj'+key" :fields="projectTableFields" class="border-gray4 bg-white" :sections="sortedProject" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Favorite Projects'}" @file-title-sort="sortProject('name')" @file-status-sort="sortProject('status')" @file-priority-sort="sortProject('priority')" @file-owner-sort="sortProject('owner')" @file-dueDate-sort="sortProject('dueDate')">
-          <template #cell(title)="data">
-            <div class="d-flex gap-05 align-center text-dark " :id="'projects-' + data.value.title">
-              <bib-icon icon="briefcase" variant="gray5" :scale="1.1"></bib-icon>
-              <nuxt-link :to="'/projects/'+data.value.id" class="text-dark">{{data.value.title}}</nuxt-link>
-            </div>
-          </template>
-          <template #cell(department)="data">
-            Department
-          </template>
-          <template #cell(status)="data">
-            <status-comp :status="data.value.status"></status-comp>
-            
-          </template>
-          <template #cell(priority)="data">
-            <priority-comp :priority="data.value.priority"></priority-comp>
-            
-          </template>
-          <template #cell(owner)="data">
-            <user-info :userId="data.value.userId"></user-info>
-          </template>
-          <template #cell(dueDate)="data">
-            <format-date :datetime="data.value.dueDate"></format-date>
-          </template>
-        </bib-table> -->
+        <!-- projects table -->
+        <drag-table-simple :fields="projectTableFields" :tasks="sortedProject" :titleIcon="{icon:'briefcase'}" :componentKey="key" :drag="false" :sectionTitle="'Favorite Projects'" @row-click="projectRoute" :newTaskButton="{label: 'New Project', event: 'new-project', variant: 'secondary', hover: 'dark'}" v-on:table-sort="sortProject" @row-context="projectRightClick"></drag-table-simple>
+        
         <!-- task table -->
-        <drag-table-simple :fields="taskTableFields" :componentKey="key+1" :tasks="sortedTask" :sectionTitle="'Favorite Tasks'" :drag="false" v-on:new-task="openSidebar" v-on:table-sort="sortTask" @row-click="openSidebar" @row-context="taskRightClick"></drag-table-simple>
-        <!-- <bib-table :key="'ftasks'+key" :fields="taskTableFields" class="border-gray4 bg-white" :sections="sortedTask" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Favorite Tasks'}" @file-title-sort="sortTask('name')" @file-status-sort="sortTask('status')" @file-priority-sort="sortTask('priority')" @file-owner-sort="sortTask('owner')" @file-dueDate-sort="sortTask('dueDate')">
-          <template #cell(title)="data">
-            <div class="d-flex gap-05 align-center" :id="'projects-' + data.value.title">
-              <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data.value.statusId)"></bib-icon>
-              <span :id="'projects-' + data.value.title + '-text'" class="text-dark text-left cursor-pointer flex-grow-1" style="  line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{data.value.title}}</span>
-            </div>
-          </template>
-          <template #cell(owner)="data">
-            <user-info :userId="data.value.userId"></user-info>
-          </template>
-          <template #cell(status)="data">
-            <status-comp :status="data.value.status"></status-comp>
-            
-          </template>
-          <template #cell(dueDate)="data">
-            <format-date :datetime="data.value.dueDate"></format-date>
-          </template>
-          <template #cell(priority)="data">
-            <priority-comp :priority="data.value.priority"></priority-comp>
-            
-          </template>
-        </bib-table> -->
+        <drag-table-simple :fields="taskTableFields" :componentKey="key+1" :tasks="sortedTask" :sectionTitle="'Favorite Tasks'" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="openSidebar" v-on:table-sort="sortTask" @row-click="openSidebar" @row-context="taskRightClick"></drag-table-simple>
         <!-- <ul>
           <li v-for="item in sortedTaskUtil" :key="item.id">{{ item.title }}</li>
         </ul> -->
