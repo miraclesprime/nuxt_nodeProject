@@ -53,7 +53,9 @@
               <!-- <project-info :projectId="task[col.key][0].projectId" ></project-info> -->
             </template>
             <div v-if="col.key == 'title'" class="d-flex gap-05 align-center h-100">
-              <bib-icon icon="check-circle" :scale="1.25" :variant="taskCheckIcon(task)" class="cursor-pointer" @click="updateTaskStatus(task)"></bib-icon>
+              <span v-if="titleIcon.icon" class="width-105 height-105" :class="{'cursor-pointer': titleIcon.event}" @click.stop="updateTaskStatus(task)">
+                <bib-icon :icon="titleIcon.icon" :scale="1.5" :variant="taskCheckIcon(task)" ></bib-icon>
+              </span>
               <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">
                 {{task[col.key]}}
               </span>
@@ -118,6 +120,15 @@ export default {
         return [];
       },
       required: true,
+    },
+    titleIcon: {
+      type: Object,
+      default(){
+        return {
+          icon: '',
+          event: '',
+        }
+      }
     },
     tasksKey: {
       type: String,
@@ -195,7 +206,8 @@ export default {
       }
     },
     updateTaskStatus(task) {
-      this.$emit('task-checkmark-click', task)
+      // this.$emit('task-checkmark-click', task)
+      this.$emit(this.titleIcon.event, task)
     },
     rowClick($event, task) {
       this.unselectAll()

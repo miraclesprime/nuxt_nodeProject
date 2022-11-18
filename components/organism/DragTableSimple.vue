@@ -25,7 +25,7 @@
       </td>
     </tr>
     <draggable v-if="drag" :list="tasks" tag="tbody" class="task-draggable " handle=".drag-handle" @start="taskDragStart" :move="moveTask" @end="taskDragEnd" :style="{ visibility: isCollapsed ? 'collapse': '' }">
-      <tr v-for="(task, taskindex) in tasks" :key="task.title +'-'+ componentKey + taskindex" class="table__irow" @click.stop="rowClick(task)" @click.right.prevent="rowRightClick($event, task)">
+      <tr v-for="(task, taskindex) in tasks" :key="task.title +'-'+ componentKey + taskindex" class="table__irow" @click.stop="rowClick($event, task)" @click.right.prevent="rowRightClick($event, task)">
         <td>
           <div class="drag-handle width-2 "><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
               <rect fill="none" height="24" width="24" />
@@ -62,7 +62,7 @@
       </tr>
     </draggable>
     <tbody v-else :style="{ visibility: isCollapsed ? 'collapse': '' }">
-      <tr v-for="(task, taskindex) in tasks" :key="task.title + componentKey + taskindex" class="table__irow" @click.stop="rowClick(task)" @click.right.prevent="rowRightClick($event, task)">
+      <tr v-for="(task, taskindex) in tasks" :key="task.title + componentKey + taskindex" class="table__irow" @click.stop="rowClick($event, task)" @click.right.prevent="rowRightClick($event, task)">
         <td v-for="(col, index) in cols" :key="task.title + col + index + componentKey">
           <template v-if="col.key == 'userId'">
             <user-info :key="task.title+col.key+componentKey" :userId="task[col.key]"></user-info>
@@ -80,7 +80,10 @@
             <project-info v-if="task[col.key].length" :key="task.title+col.key+componentKey" :projectId="task[col.key][0].projectId"></project-info>
           </template>
           <div v-if="col.key == 'title'" class="d-flex gap-05 align-center h-100">
-            <bib-icon icon="check-circle" :scale="1.25" :variant="taskCheckIcon(task)" class="cursor-pointer" @click="(e) => updateTaskStatus(task)"></bib-icon>
+            <span v-if="titleIcon.icon" class="width-105 height-105 " :class="{'cursor-pointer': titleIcon.event}" @click.stop="updateTaskStatus(task)">
+              <!-- <bib-icon :icon="check-circle" :scale="1.25" :variant="taskCheckIcon(task)" ></bib-icon> -->
+              <bib-icon :icon="titleIcon.icon" :scale="1.5" :variant="taskCheckIcon(task)" ></bib-icon>
+            </span>
             <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">
               {{task[col.key]}}
             </span>
@@ -141,6 +144,15 @@ export default {
         return []
       },
     },
+    titleIcon: {
+      type: Object,
+      default(){
+        return {
+          icon: '',
+          event: '',
+        }
+      }
+    },
     collapsible: {
       type: Boolean,
       default: true
@@ -197,7 +209,8 @@ export default {
     this.localdata = this.tasks ? JSON.parse(JSON.stringify(this.tasks)) : []
   },
   methods: {
-    rowClick(task) {
+    rowClick($event, task) {
+      // console.log($event.target)
       this.$emit("row-click", task)
     },
     rowRightClick($event, task) {
@@ -219,7 +232,8 @@ export default {
       }
     },
     updateTaskStatus(task) {
-      this.$emit('task-checkmark-click', task)
+      // this.$emit('task-checkmark-click', task)
+      this.$emit(this.titleIcon.event, task)
     },
     /*isFavorite(task) {
       let fav = this.favTasks.some(t => t.task.id == task.id)

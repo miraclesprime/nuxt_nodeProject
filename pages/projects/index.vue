@@ -31,7 +31,7 @@
           </template>
         </bib-table> -->
 
-        <drag-table-simple :fields="tableFields" :tasks="projects" :componentKey="templateKey" :drag="false" :sectionTitle="'Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick"></drag-table-simple>
+        <drag-table-simple :fields="tableFields" :tasks="projects" :titleIcon="tableTitleIcon" :componentKey="templateKey" :drag="false" :sectionTitle="'Projects'" @row-click="projectRoute"  v-on:table-sort="sortProject" @row-context="projectRightClick"></drag-table-simple>
         
         <!-- table context menu -->
         <table-context-menu :items="projectContextItems" :show="projectContextMenu" :coordinates="contextCoords" :activeItem="activeProject" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
@@ -89,6 +89,11 @@ export default {
       },
       orderBy: 'asc',
       newkey: "",
+      tableTitleIcon: {
+        icon: 'briefcase',
+        variant: 'gray5',
+        event: 'project-icon-click'
+      },
     }
   },
   mounted() {
