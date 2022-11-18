@@ -238,11 +238,8 @@ export default {
           nd = new Date(this.activeProject.startDate)
           return new Date(this.activeProject.startDate)
         }
-        /*let mm = (nd.getMonth() + 1) < 10 ? '0' + (nd.getMonth() + 1) : nd.getMonth() + 1
-        let dd = (nd.getDate()) < 10 ? '0' + (nd.getDate()) : nd.getDate()
-        return `${nd.getFullYear()}-${mm}-${dd}`*/
         // return nd
-        // return dayjs(nd).format('YYYY-MM-DD')
+        // return dayjs(nd).format('DD-MM-YYYY')
       },
       set(newValue) {
         this.activeProject.startDate = new Date(newValue)
@@ -253,17 +250,15 @@ export default {
       get() {
         let nd
         if (!this.activeProject.dueDate) {
-          nd = new Date()
+          // nd = new Date()
           return new Date()
         } else {
-          nd = new Date(this.activeProject.dueDate)
+          // nd = new Date(this.activeProject.dueDate)
           return new Date(this.activeProject.dueDate)
         }
-        /*let mm = (nd.getMonth() + 1) < 10 ? '0' + (nd.getMonth() + 1) : nd.getMonth() + 1
-        let dd = (nd.getDate()) < 10 ? '0' + (nd.getDate()) : nd.getDate()
-        return `${nd.getFullYear()}-${mm}-${dd}`*/
+        
         // return nd
-        // return dayjs(nd).format('YYYY-MM-DD')
+        // return dayjs(nd).format('DD-MM-YYYY')
       },
       set(newValue) {
         this.activeProject.dueDate = new Date(newValue)

@@ -8,37 +8,11 @@
         <div id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y">
           <template v-if="gridType == 'list'">
             <template v-if="todos.length">
-              <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy"  @row-click="openSidebar" @row-rightclick="taskRightClick" @task-checkmark-click="taskMarkComplete"></drag-table>
+              <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy"  @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete"></drag-table>
 
               <!-- table context menu -->
               <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
 
-              <!-- <bib-table v-for="(todo, index) in localdata" :key="todo.id + '-' + viewName ? viewName : 'view' + '-' + sortName ? sortName : 'sort' + '-' + key" :fields="taskFields" :sections="todo.tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: todo.title}" :headless="index > 0" class="border-gray4 bg-white" @file-title-sort="sortTitle" @file-project-sort="sortProject" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
-                <template #cell(title)="data">
-                  <div class="d-flex gap-05 align-center">
-                    <bib-icon icon="check-circle" :scale="1.5" :variant="taskCheckIcon(data)" class="cursor-pointer" @click="updateTaskStatus(data.value)"></bib-icon>
-                    <span class="text-dark text-left cursor-pointer flex-grow-1" style=" line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{ data.value.title }}</span>
-                  </div>
-                </template>
-                <template #cell(projectId)="data">
-                  <project-info :projectId="data.value.project[0] ? data.value.project[0].projectId : null" :key="key"></project-info>
-                </template>
-                <template #cell(owner)="data">
-                  <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
-                </template>
-                <template #cell(status)="data">
-                  <status-comp :status="data.value.status"></status-comp>
-                </template>
-                <template #cell(createdAt)="data">
-                  <format-date :datetime="data.value.createdAt" :key="key"></format-date>
-                </template>
-                <template #cell(dueDate)="data">
-                  <format-date :datetime="data.value.dueDate" :key="key"></format-date>
-                </template>
-                <template #cell(priority)="data">
-                  <priority-comp :priority="data.value.priority"></priority-comp>
-                </template>
-              </bib-table> -->
               <loading :loading="loading"></loading>
             </template>
             <div v-else>
