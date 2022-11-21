@@ -527,7 +527,7 @@ export default {
 
     // Sort By Action List
     sortBy($event) {
-      // console.log($event, this.orderBy)
+      console.log($event, this.orderBy)
       // sort by title
       if ($event == 'title' && this.orderBy == 'asc') {
         this.localdata.forEach(function(todo, index) {
@@ -580,14 +580,14 @@ export default {
       }
 
       // sort by create date
-      if ($event == 'createdAt') {
+      if ($event == 'startDate') {
         if (this.orderBy == "asc") {
           this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            todo["tasks"] = todo.tasks.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
           })
         } else {
           this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            todo["tasks"] = todo.tasks.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
           })
         }
       }

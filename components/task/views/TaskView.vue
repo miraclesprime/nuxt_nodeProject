@@ -274,7 +274,7 @@ export default {
         // this.templateKey += 1
       }
       // sort By Start Date
-      if ($event == "createdAt") {
+      if ($event == "startDate") {
         if (this.orderBy == "asc") {
           this.orderBy = "desc"
           this.localdata.forEach(function(sec) {

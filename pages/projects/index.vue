@@ -238,10 +238,10 @@ export default {
           }
       }
 
-      if($event == 'createdAt') {
+      if($event == 'startDate') {
 
           if(this.orderBy == 'asc') {
-            this.$store.dispatch('project/sortProjects', {key: 'owner', order: 'asc'} ).then((res) => {
+            this.$store.dispatch('project/sortProjects', {key: 'startDate', order: 'asc'} ).then((res) => {
               this.orderBy = 'desc'
               this.templateKey += 1;
               this.sortName = 'start date';
@@ -250,7 +250,7 @@ export default {
           }
 
           if(this.orderBy == 'desc') {
-            this.$store.dispatch('project/sortProjects', {key: 'owner', order: 'desc'} ).then((res) => {
+            this.$store.dispatch('project/sortProjects', {key: 'startDate', order: 'desc'} ).then((res) => {
               this.orderBy = 'asc'
               this.templateKey += 1;
               this.sortName = 'start date';
