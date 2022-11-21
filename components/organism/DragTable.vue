@@ -69,13 +69,37 @@
           </td>
         </tr>
       </draggable>
-      <!-- <tr v-if="newTaskButton">
-        <td colspan="2">
-          <div class="d-inline-flex align-center gap-05 cursor-pointer font-md" :class="['text-'+newTaskButton.variant, 'text-hover-'+newTaskButton.hover]" v-on:click.stop="$emit(newTaskButton.event, section)">
-            <bib-icon icon="add" variant="success" :scale="1.1" class=""></bib-icon> <span>{{newTaskButton.label}}</span>
+      <tr v-if="newRow.id == section.id" :id="'newRow'+section.id" class="table__newrow" >
+        <td><bib-icon icon="drag" variant="primary"></bib-icon></td>
+        <td v-for="col in cols">
+          <template v-if="col.key == 'title'">
+            <bib-input size="sm" v-model="newRow.title" placeholder="Enter title..."></bib-input>
+          </template>
+          <template v-if="col.key == 'userId'">
+            <bib-select size="sm" :options="filterUser" v-model="newRow.userId" placeholder="Enter title..."></bib-select>
+          </template>
+          <template v-if="col.key == 'status'">
+            <bib-input type="select" size="sm" :options="status" v-model="newRow.statusId" placeholder="Status"></bib-input>
+          </template>
+          <template v-if="col.key == 'priority'">
+            <bib-input type="select" size="sm" :options="priority" v-model="newRow.priorityId" placeholder="Priority"></bib-input>
+          </template>
+          <template v-if="col.key == 'startDate'">
+            <span class="d-inline-flex align-center gap-05"><bib-icon icon="calendar" variant="gray4"></bib-icon> <bib-input size="sm" v-model="newRow.startDate" type="date"></bib-input></span> 
+          </template>
+          <template v-if="col.key == 'dueDate'">
+            <span class="d-inline-flex align-center gap-05"><bib-icon icon="calendar" variant="gray4"></bib-icon> <bib-input size="sm" v-model="newRow.dueDate" type="date"></bib-input></span> 
+          </template>
+        </td>
+      </tr>
+      <tr v-if="newTaskButton">
+        <td></td>
+        <td :colspan="cols.length">
+          <div class="d-inline-flex align-center gap-05 cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
+            <bib-icon :icon="newTaskButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <!-- <span>{{newTaskButton.label}}</span> -->
           </div>
         </td>
-      </tr> -->
+      </tr>
     </table>
   </draggable>
 </template>
@@ -94,6 +118,8 @@
  * @vue-dynamic-emits [ 'header_icon click', 'task_checkmark click' 'newtask button click' ] 
  * @vue-prop componentKey=Number - key to update child components
  */
+import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
+import { mapGetters} from 'vuex'
 import draggable from 'vuedraggable'
 export default {
   name: "DragTable",
@@ -150,9 +176,10 @@ export default {
       default () {
         return {
           label: "New Task",
-          event: "new-task",
+          icon: "add",
+          // event: "new-task",
           variant: "secondary",
-          hover: "dark",
+          // hover: "dark",
         }
       }
     },
@@ -168,16 +195,47 @@ export default {
       localdata: [],
       taskMoveSection: null,
       highlight: false,
+      department: DEPARTMENT,
+      status: STATUS,
+      priority: PRIORITY,
+      newRow: {
+        id: "",
+        title: "",
+        userId: "",
+        statusId: "",
+        priorityId: "",
+        startDate: "",
+        dueDate: "",
+        department: "",
+      }
     };
   },
   computed: {
-    activeClass() { return keyI => this.sections[keyI].active ? 'active' : '' },
+    ...mapGetters({
+      teamMembers: "user/getTeamMembers",
 
+    }),
+    activeClass() { return keyI => this.sections[keyI].active ? 'active' : '' },
+    filterUser() {
+      return this.teamMembers.map((u) => {
+        return { 
+          value: u.id,
+          id: u.id,
+          label: u.firstName + ' ' + u.lastName,
+          firstName: u.firstName,
+          lastName: u.lastName,
+          email: u.email,
+          img: u.avatar 
+        }
+      })
+    },
   },
   created() {
     // console.info('created lifecycle', this.cols.length)
     this.cols = this.fields.map((field) => { return { key: field.key, event: field.event } })
     // this.cols.shift();
+    this.$nuxt.$on('close-context', () => { this.newRow.id = ''})
+    this.$on('row-click', () => { this.newRow.id = ''})
   },
   mounted() {
     // console.info('mounted lifecycle', this.sections.length);
@@ -253,7 +311,12 @@ export default {
       // console.warn(e.to.dataset.section)
       this.taskMoveSection = +e.to.dataset.section
     },
-
+    newRowClick(sectionId){
+      // console.log(sectionId)
+      this.newRow.id = sectionId
+      this.$nuxt.$emit('close-sidebar')
+      // this.$refs['newRow'+sectionId].style.visibility = 'visible'
+    },
   },
 };
 
@@ -372,6 +435,12 @@ export default {
     }
   }
 
+  &__newrow {
+    td { 
+      background-color: $light;
+    }
+  }
+
   &__headless {
     border-top: 0;
 
@@ -398,7 +467,29 @@ export default {
       fill: $gray5;
     }
   }
+  .new-button {
+    background-color: $success-sub6;
+    color: $success;
+    padding: 2px 2px;
+    &:hover {
+      background-color: $success-sub3;
+    }
+  }
 }
 
+::v-deep {
+  .table__newrow {
+    .input input,
+    .input select,
+    .bib-select .select__real { 
+      margin-top: 0.1rem; 
+      margin-bottom: 0.1rem;
+    }
+    .bib-select .select__btn {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+}
 
 </style>
