@@ -694,7 +694,7 @@ export const USER_TASK_SORT = [
   { label: 'Project', key: 'project' },
   { label: 'Priority', key: 'priority' },
   { label: 'Status', key: 'status' },
-  { label: 'Start Date', key: 'createdAt' },
+  { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },
 ]
 
