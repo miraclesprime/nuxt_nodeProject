@@ -8,6 +8,7 @@
 </template>
 <script>
 import { ColorVariants } from '~/../bib-shared/js/colors'
+// import { hex2rgba } from '~/utils/color'
 export default {
 
   name: 'StatusBadge',
