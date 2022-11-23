@@ -146,7 +146,11 @@ export default {
         this.loading = false
         return false
       } else {
-        this.$store.dispatch('task/addMember', { taskId: this.task.id, team: this.team }).then(() => {
+        let teamtext = this.team.map(t => {
+          return t.label
+        })
+        // console.log(teamtext.join(', '));
+        this.$store.dispatch('task/addMember', { taskId: this.task.id, team: this.team, text: `added ${teamtext.join(', ')} to task` }).then(() => {
           // this.$nuxt.$emit('update-key', 1)
           // this.showTeamCreateModal = false
           this.loading = false;
