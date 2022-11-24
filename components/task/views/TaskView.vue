@@ -34,6 +34,7 @@
     </bib-modal-wrapper>
   </div>
 </template>
+
 <script>
 import { TASK_FIELDS, TASK_CONTEXT_MENU } from "config/constants";
 import { mapGetters } from 'vuex';
@@ -282,12 +283,12 @@ export default {
         if (this.orderBy == "asc") {
           this.orderBy = "desc"
           this.localdata.forEach(function(sec) {
-            sec["tasks"] = sec.tasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            sec["tasks"] = sec.tasks.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
           })
         } else {
           this.orderBy = "asc"
           this.localdata.forEach(function(sec) {
-            sec["tasks"] = sec.tasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            sec["tasks"] = sec.tasks.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
           })
 
         }

@@ -52,7 +52,7 @@
               </span>
             </template>
             <template v-if="col.key == 'project'">
-              <project-info v-if="task[col.key].length" :projectId="task[col.key][0].projectId"></project-info>
+              <project-info v-if="task[col.key].length" :projectId="task[col.key][0].projectId || task[col.key][0].project.id"></project-info>
               <!-- <project-info :projectId="task[col.key][0].projectId" ></project-info> -->
             </template>
             <div v-if="col.key == 'title'" class="d-flex gap-05 align-center h-100">

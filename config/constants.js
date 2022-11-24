@@ -364,7 +364,7 @@ export const TASK_SORT = [
   { label: 'Owner', key: 'userId' },
   { label: 'Priority', key: 'priority' },
   { label: 'Status', key: 'status' },
-  { label: 'Start Date', key: 'createdAt' },
+  { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },
 ]
 
@@ -455,6 +455,16 @@ export const PROJECT_FAVORITES = [
     }
   },
   {
+    label: 'Start Date',
+    key: 'startDate',
+    width: '10%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  },
+  {
     label: 'Due Date',
     key: 'dueDate',
     width: '10%',
@@ -511,6 +521,16 @@ export const TASK_FAVORITES = [
     label: 'Owner',
     key: 'userId',
     width: '15%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  },
+  {
+    label: 'Start Date',
+    key: 'startDate',
+    width: '10%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -594,6 +614,16 @@ export const COMPANY_TASK_FIELDS = [
     label: 'Owner',
     key: 'userId',
     width: '15%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  },
+  {
+    label: 'Start Date',
+    key: 'startDate',
+    width: '10%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',

@@ -207,7 +207,7 @@ export default {
     },
 
     taskMarkComplete(task) {
-      console.log(typeof task, this.activeTask)
+      // console.log(typeof task, this.activeTask)
       this.loading = true
       if (typeof task == "object" && Object.keys(task).length > 0) {
         console.log(task)
@@ -221,8 +221,9 @@ export default {
           this.loading = false
           // this.popupMessages.push({ text: d.message, variant: "success" })
           // this.$nuxt.$emit("update-key")
-          this.updateKey()
-          this.$store.dispatch("task/setSingleTask", d)
+          this.$store.dispatch("task/setSingleTask", d).then(() => {
+            this.updateKey()
+          })
         }).catch(e => {
           console.log(e)
           // this.popupMessages.push({ text: e.message, variant: "warning" })
@@ -347,7 +348,7 @@ export default {
 
 
     toggleSidebar($event) {
-      console.log($event)
+      // console.log($event)
       // in case of create task 
       if (!$event) {
         this.$nuxt.$emit("open-sidebar", $event)

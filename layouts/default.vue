@@ -466,6 +466,7 @@ export default {
       //   // window.location.reload()
       //   this.$router.push({ path: "/usertasks" })
       // }
+      this.teammate.find((u) => u.email == $event.email);
       this.$router.push({ path: "/usertasks", query: {email: $event.email }})
     },
 
