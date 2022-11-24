@@ -4,28 +4,18 @@
     <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createSection"></new-section-form>
     <template v-if="gridType === 'list'">
       <!-- task list table -->
-      <drag-table :fields="tableFields" :sections="localdata" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" :key="templateKey" :componentKey="templateKey" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd"></drag-table>
+      <drag-table :fields="tableFields" :sections="localdata" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" :key="templateKey" :componentKey="templateKey" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow"></drag-table>
       <!-- table context menu -->
-      <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" ref="task_menu" @item-click="contextItemClick" ></table-context-menu>
+      <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" ref="task_menu" @item-click="contextItemClick"></table-context-menu>
       <!-- <task-list-section :project="project" :sections="localdata" :templateKey="templateKey" v-on:sort-task="taskSort($event)" v-on:update-key="updateKey"></task-list-section> -->
     </template>
     <template v-else>
-      <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" 
-        @create-section="createSection"
-        @section-rename="renameSectionModal" 
-        @section-delete="deleteSection" 
-        v-on:update-key="updateKey" 
-        v-on:create-task="toggleSidebar($event)" 
-        v-on:set-favorite="setFavorite" 
-        v-on:mark-complete="markComplete" 
-        v-on:delete-task="deleteTask" 
-        @section-dragend="sectionDragEnd" 
-        @task-dragend="taskDragEnd">
+      <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" @create-section="createSection" @section-rename="renameSectionModal" @section-delete="deleteSection" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="setFavorite" v-on:mark-complete="markComplete" v-on:delete-task="deleteTask" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd">
       </task-grid-section>
     </template>
     <loading :loading="loading"></loading>
-    <span id="projects-0" v-show="nodata" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
-      <bib-icon icon="warning"></bib-icon> No records found
+    <span id="projects-0" v-show="nodata" class="d-inline-flex gap-05 align-center m-1 text-gray5 font-md">
+      <bib-icon icon="warning" variant="orange"></bib-icon> No records found
     </span>
     <!-- section rename modal -->
     <bib-modal-wrapper v-if="renameModal" title="Rename section" @close="renameModal = false">
@@ -76,6 +66,20 @@ export default {
       renameModal: false,
       sectionId: null,
       sectionTitle: "",
+      newRow: {
+        id: "",
+        sectionId: "",
+        title: "",
+        userId: "",
+        statusId: 1,
+        priorityId: 3,
+        startDate: "",
+        dueDate: "",
+        department: "",
+        description: "",
+        budget: "",
+        text: "",
+      }
     };
   },
   computed: {
@@ -172,8 +176,8 @@ export default {
       this.activeTask = {}
       // this.$store.dispatch('task/setSingleTask', {})
     },
-    contextItemClick(key){
-      console.log(key)
+    contextItemClick(key) {
+      // console.log(key)
       switch (key) {
         case 'done-task':
           // statements_1
@@ -310,7 +314,7 @@ export default {
       this.templateKey += 1
 
     },
-    taskGroup(task){
+    taskGroup(task) {
       console.log($event)
     },
     updateKey() {
@@ -357,6 +361,37 @@ export default {
         }
       }]
       this.$nuxt.$emit("open-sidebar", { ...task, project: project });
+    },
+
+    createNewTask($event) {
+      this.loading = true
+      this.$store.dispatch("task/createTask", { ...$event, text: `task "${$event.title}" created` })
+        .then(t => {          
+          this.loading = false
+          this.resetNewRow()
+          this.updateKey()
+        })
+        .catch(e => {
+          console.warn(e)
+          this.loading = false
+        })
+    },
+
+    resetNewRow() {
+      this.newRow = {
+        id: "",
+        sectionId: "",
+        title: "",
+        userId: "",
+        statusId: 1,
+        priorityId: 3,
+        startDate: "",
+        dueDate: "",
+        department: "",
+        description: "",
+        budget: "",
+        text: "",
+      }
     },
 
     showNewsection() {
@@ -502,24 +537,25 @@ export default {
     },
 
     deleteTask(task) {
-      let del = confirm("Are you sure")
+      // let del = confirm("Are you sure")
       this.loading = true
-      if (del) {
-        this.$store.dispatch("task/deleteTask", task).then(t => {
-
-          if (t.statusCode == 200) {
-            this.updateKey()
-          } else {
-            console.warn(t.message);
-          }
-          this.loading = false
-        }).catch(e => {
-          this.loading = false
-          console.log(e)
-        })
-      } else {
+      // if (del) {
+      this.$store.dispatch("task/deleteTask", task).then(t => {
+        console.log(t)
+        if (t.statusCode == 200) {
+          this.updateKey()
+          console.warn(t.message);
+        } else {
+          console.warn(t.message);
+        }
         this.loading = false
-      }
+      }).catch(e => {
+        this.loading = false
+        console.log(e)
+      })
+      /*} else {
+        this.loading = false
+      }*/
     },
 
     deleteSection(section) {
@@ -576,7 +612,7 @@ export default {
     }, 600),
 
     taskDragEnd: _.debounce(async function(payload) {
-      console.log('task dragend =>', payload)
+      // console.log('task dragend =>', payload)
       // this.highlight = null
       this.loading = true
       let tasks = _.cloneDeep(payload.tasks)
@@ -585,7 +621,7 @@ export default {
         el.order = i
       })
 
-      console.log("sorted->", tasks)
+      // console.log("sorted->", tasks)
 
       let taskDnD = await this.$axios.$put("/section/crossSectionDragDrop", { data: tasks, sectionId: payload.sectionId }, {
         headers: {
@@ -594,7 +630,7 @@ export default {
         }
       })
 
-      console.log(taskDnD.message)
+      // console.log(taskDnD.message)
       if (taskDnD.statusCode == 200) {
         this.$emit("update-key")
       } else {

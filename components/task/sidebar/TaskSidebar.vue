@@ -614,14 +614,11 @@ export default {
     deleteTask(task) {
       this.loading = true
       this.$store.dispatch("task/deleteTask", task).then(t => {
-
         if (t.statusCode == 200) {
-          // this.popupMessages.push({ text: t.message, variant: "success" })
           this.$nuxt.$emit("update-key")
           this.$nuxt.$emit("close-sidebar");
-
+          // console.warn(t.message);
         } else {
-          // this.popupMessages.push({ text: t.message, variant: "warning" })
           console.warn(t.message);
         }
         this.loading = false
