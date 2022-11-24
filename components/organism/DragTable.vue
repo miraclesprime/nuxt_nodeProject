@@ -221,34 +221,10 @@ export default {
       department: DEPARTMENT,
       status: STATUS,
       priority: PRIORITY,
-      /*newRow: {
-        sectionId: "",
-        title: "",
-        userId: "",
-        statusId: 1,
-        priorityId: 3,
-        startDate: "",
-        dueDate: "",
-        department: "",
-        description: "",
-        budget: "",
-        text: "",
-      }*/
+      
       validTitle: ""
     };
   },
-  /*watch: {
-    newRow(newValue){
-      console.log(newValue)
-      if (newValue.sectionId == '') {
-        // Object.entries(newValue)
-        for (const [key, value] of Object.entries(newValue)) {
-          console.log(`${key}: ${value}`);
-          this.newRow[key] = ''
-        }
-      }
-    },
-  },*/
   computed: {
     ...mapGetters({
       teamMembers: "user/getTeamMembers",
@@ -273,8 +249,7 @@ export default {
     // console.info('created lifecycle', this.cols.length)
     this.cols = this.fields.map((field) => { return { key: field.key, event: field.event } })
     // this.cols.shift();
-    // this.$nuxt.$on('close-context', () => { this.resetNewRow() })
-    // this.$on('row-click', () => { this.resetNewRow() })
+    
   },
   mounted() {
     // console.info('mounted lifecycle', this.sections.length);
@@ -313,13 +288,10 @@ export default {
         })
       // console.log($event.currentTarget)
       this.$emit('row-click', task)
-      // this.newRow.sectionId = ''
-      // this.resetNewRow()
-      // document.getElementById(key).classList.toggle('active')
+      
     },
     rowRightClick($event, task) {
       this.$emit("close-context-menu")
-      // this.resetNewRow()
       this.unselectAll()
         .then(r => {
           $event.currentTarget.classList.add("active")
@@ -335,6 +307,7 @@ export default {
         row.classList.remove('active');
       }
       this.$emit("hide-newrow")
+      this.$emit("close-context-menu")
       return "success"
     },
     taskDragStart(e) {
@@ -348,17 +321,12 @@ export default {
       this.$emit('task-dragend', { tasks: sectionData[0].tasks, sectionId: e.to.dataset.section })
     },
     moveTask(e) {
-      // console.log('dragged->' ,e.draggedContext)
-      // console.info('related->', e.relatedContext.component.$el)
-      // console.warn(e.to.dataset.section)
       this.taskMoveSection = +e.to.dataset.section
     },
     newRowClick(sectionId) {
       // console.log(sectionId)
       this.newRow.sectionId = sectionId
-      // this.$nuxt.$emit('close-sidebar')
       this.unselectAll
-      // this.$refs['newRow'+sectionId].style.visibility = 'visible'
     },
     newRowCreate: _.debounce(function() {
       // console.table([this.newRow.sectionId, this.newRow.title]);
