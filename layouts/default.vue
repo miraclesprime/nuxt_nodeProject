@@ -146,7 +146,7 @@ export default {
       ],
       navItems1: [
         { label: "Home", icon: "home", key: "dashboard-route", selected: false },
-        { label: "Inbox", icon: "mail-new", selected: false },
+        { label: "Inbox", icon: "mail-new", key: "inbox", selected: false },
         { label: "My tasks", icon: "check-circle", key: 'mytasks', selected: false },
         { label: "Favorites", icon: "bookmark-multiple-solid", key: 'favorites', selected: false },
       ],
@@ -451,6 +451,9 @@ export default {
 
       if ($event.key == 'dreams') {
         this.$router.push('/dreams')
+      }
+      if ($event.key == 'inbox') {
+        this.$router.push('/inbox')
       }
     },
 

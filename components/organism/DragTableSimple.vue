@@ -97,6 +97,37 @@
         </td>
       </tr>
     </tbody>
+    <tr v-if="newRow" class="table__newrow">
+      <!-- <td><span class="d-inline-flex align-center height-105 bg-primary shape-rounded">
+          <bib-icon icon="drag" variant="light"></bib-icon>
+        </span></td> -->
+      <td v-for="col in cols">
+        <template v-if="col.key == 'title'">
+          <bib-input size="sm" autofocus v-model="newRow.title" :variant="validTitle" @input="newRowCreate" required placeholder="Enter title..."></bib-input>
+        </template>
+        <template v-if="col.key == 'userId'">
+          <bib-select size="sm" :options="filterUser" v-model="newRow.userId" @change="newRowCreate" placeholder="Enter title..."></bib-select>
+        </template>
+        <template v-if="col.key == 'status'">
+          <bib-input type="select" size="sm" :options="status" v-model="newRow.statusId" @change.native="newRowCreate" placeholder="Status"></bib-input>
+        </template>
+        <template v-if="col.key == 'priority'">
+          <bib-input type="select" size="sm" :options="priority" v-model="newRow.priorityId" @change.native="newRowCreate" placeholder="Priority"></bib-input>
+        </template>
+        <template v-if="col.key == 'startDate'">
+          <span class="d-inline-flex align-center gap-05">
+            <bib-icon icon="calendar" variant="gray4"></bib-icon>
+            <bib-input size="sm" v-model="newRow.startDate" type="date" @input="newRowCreate" ></bib-input>
+          </span>
+        </template>
+        <template v-if="col.key == 'dueDate'">
+          <span class="d-inline-flex align-center gap-05">
+            <bib-icon icon="calendar" variant="gray4"></bib-icon>
+            <bib-input size="sm" v-model="newRow.dueDate" type="date" @input="newRowCreate"></bib-input>
+          </span>
+        </template>
+      </td>
+    </tr>
     <!-- <tr v-if="newTaskButton">
       <td colspan="2">
         <div class="d-inline-flex align-center gap-05 cursor-pointer font-md" :class="['text-'+newTaskButton.variant, 'text-hover-'+newTaskButton.hover]" v-on:click.stop="newTaskEvent">
@@ -104,6 +135,14 @@
         </div>
       </td>
     </tr> -->
+    <tr v-if="newTaskButton">
+      
+      <td :colspan="cols.length">
+        <div class="d-inline-flex align-center px-05 py-025 cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick()">
+          <bib-icon :icon="newTaskButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{newTaskButton.label}}</span>
+        </div>
+      </td>
+    </tr>
   </table>
 </template>
 <script>
@@ -128,10 +167,7 @@ export default {
     draggable
   },
   props: {
-    sectionTitle: {
-      type: String,
-      default: "Section 1",
-    },
+    
     fields: {
       type: Array,
       default () {
@@ -153,6 +189,10 @@ export default {
         }
       }
     },
+    sectionTitle: {
+      type: String,
+      default: "Section 1",
+    },
     collapsible: {
       type: Boolean,
       default: true
@@ -170,9 +210,26 @@ export default {
       default () {
         return {
           label: "New Task",
-          event: "new-task",
+          icon: "add",
           variant: "secondary",
-          hover: "dark",
+        }
+      }
+    },
+    newRow: {
+      type: Object,
+      default () {
+        return {
+          sectionId: "",
+          title: "",
+          userId: "",
+          statusId: 1,
+          priorityId: 3,
+          startDate: "",
+          dueDate: "",
+          department: "",
+          description: "",
+          budget: "",
+          text: "",
         }
       }
     },
@@ -218,11 +275,6 @@ export default {
       setTimeout(() => {
         this.$emit("row-context", { event: $event, task: task })
       }, 200)
-      // this.actionMenu = true
-      // const targetEl = $event.target
-      // this.$refs.c_menu.style.left = $event.pageX + 'px'
-      // this.$refs.c_menu.style.top = $event.pageY + 'px'
-
     },
     taskCheckIcon(task) {
       if (task.statusId == 5) {
@@ -235,21 +287,15 @@ export default {
       // this.$emit('task-checkmark-click', task)
       this.$emit(this.titleIcon.event, task)
     },
-    /*isFavorite(task) {
-      let fav = this.favTasks.some(t => t.task.id == task.id)
-      if (fav) {
-        return { icon: "bookmark-solid", variant: "orange", text: "Remove favorite", status: true }
-      } else {
-        return { icon: "bookmark", variant: "gray5", text: "Add to favorites", status: false }
-      }
-    },*/
     unselectAll() {
       let rows = document.getElementsByClassName('table__irow');
       for (let row of rows) {
         row.classList.remove('active');
       }
       // console.log('clicked outside drag-table-simple component')
+      this.$emit("hide-newrow")
       this.$emit("close-context-menu")
+      return 'success'
     },
     taskDragStart(e) {
       // console.warn(e.to.classList.add("highlight"));
@@ -262,16 +308,29 @@ export default {
       this.$emit('task-dragend', sectionData[0].tasks)
     },
     moveTask(e) {
-      // console.log('dragged->' ,e.draggedContext)
-      // console.info('related->', e.relatedContext.component.$el)
-      // console.warn(e.to.dataset.section)
       this.taskMoveSection = +e.to.dataset.section
-
     },
 
-    newTaskEvent() {
+    /*newTaskEvent() {
       this.$emit(this.newTaskButton.event, false)
-    }
+    },*/
+    newRowClick() {
+      // console.log(sectionId)
+      // this.newRow.sectionId = sectionId
+      // this.$nuxt.$emit('close-sidebar')
+      this.unselectAll
+      // this.$refs['newRow'+sectionId].style.visibility = 'visible'
+    },
+    newRowCreate: _.debounce(function() {
+      // console.table([this.newRow.sectionId, this.newRow.title]);
+      if (!this.newRow.title) {
+        console.warn("new row title is required")
+        this.validTitle = "alert"
+        return false
+      }
+      this.validTitle = ""
+      this.$emit("create-newrow", this.newRow)
+    }, 1500),
   },
 };
 
@@ -398,6 +457,17 @@ export default {
 
     svg {
       fill: $gray5;
+    }
+  }
+  .new-button {
+    background-color: $success-sub6;
+    color: $success;
+    /*padding: 2px 2px;*/
+    span { max-width: 0; overflow: hidden; transition: all 200ms ease-in; }
+
+    &:hover {
+      background-color: $success-sub3;
+      span { max-width: 8rem; padding-left: 0.5rem; }
     }
   }
 }
