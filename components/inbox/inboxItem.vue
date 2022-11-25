@@ -18,7 +18,7 @@
     <div class="content font-md py-1">
       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit
     </div>
-    <drag-table-simple :fields="fields" :tasks="tasks" :titleIcon="{ icon: 'check-circle'}" :collapsible="false" :drag="false"></drag-table-simple>
+    <drag-table-simple :fields="fields" :tasks="tasks" headless :titleIcon="{ icon: 'check-circle'}" :collapsible="false" :drag="false" ></drag-table-simple>
     <div class="sent font-sm">Sent on Sept. 22, 2022 @ 9:32 PM (EST)</div>
   </div>
 </template>

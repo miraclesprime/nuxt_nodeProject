@@ -46,7 +46,7 @@
               <priority-comp :key="componentKey" :priority="task[col.key]"></priority-comp>
             </template>
             <template v-if="col.key == 'startDate' || col.key == 'dueDate'">
-              <span class="d-inline-flex align-center gap-05">
+              <span v-if="task[col.key]" class="d-inline-flex align-center gap-05">
                 <bib-icon icon="calendar" variant="gray4"></bib-icon>
                 <format-date :key="componentKey" :datetime="task[col.key]"></format-date>
               </span>
@@ -103,10 +103,10 @@
           </template>
         </td>
       </tr>
-      <tr v-if="newTaskButton">
+      <tr v-if="newTaskButton.show">
         <td></td>
         <td :colspan="cols.length">
-          <div class="d-inline-flex align-center px-05 py-025 cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
+          <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
             <bib-icon :icon="newTaskButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{newTaskButton.label}}</span>
           </div>
         </td>
@@ -182,9 +182,9 @@ export default {
       type: Object,
       default () {
         return {
+          show: false,
           label: "New Task",
           icon: "add",
-          variant: "secondary",
         }
       }
     },
@@ -325,6 +325,7 @@ export default {
     },
     newRowClick(sectionId) {
       // console.log(sectionId)
+      // this.newRow.show = true
       this.newRow.sectionId = sectionId
       this.unselectAll
     },

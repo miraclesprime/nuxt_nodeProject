@@ -1,6 +1,6 @@
 <template>
   <table v-click-outside="unselectAll" class="table">
-    <thead>
+    <thead v-if="!headless">
       <tr class="table__hrow">
         <th v-if="drag" width="3%">&nbsp;</th>
         <th v-for="(field, index) in fields" :key="field.key + index" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
@@ -42,7 +42,7 @@
             <priority-comp :key="task.title+col.key+componentKey" :priority="task[col.key]"></priority-comp>
           </template>
           <template v-if="col.key == 'startDate' || col.key == 'dueDate'">
-            <span class="d-inline-flex align-center gap-05"><bib-icon icon="calendar" variant="gray4"></bib-icon><format-date :key="task.title+col.key+componentKey" :datetime="task[col.key]"></format-date></span>
+            <span v-if="task[col.key]" class="d-inline-flex align-center gap-05"><bib-icon icon="calendar" variant="gray4"></bib-icon><format-date :key="task.title+col.key+componentKey" :datetime="task[col.key]"></format-date></span>
           </template>
           <template v-if="col.key == 'project'">
             <project-info v-if="task[col.key].length" :key="task.title+col.key+componentKey" :projectId="task[col.key][0].projectId"></project-info>
@@ -74,7 +74,7 @@
             <priority-comp :key="task.title+col.key+componentKey" :priority="task[col.key]"></priority-comp>
           </template>
           <template v-if="col.key == 'startDate' || col.key == 'dueDate'">
-            <span class="d-inline-flex align-center gap-05"><bib-icon icon="calendar" variant="gray4"></bib-icon><format-date :key="task.title+col.key+componentKey" :datetime="task[col.key]"></format-date></span>
+            <span v-if="task[col.key]" class="d-inline-flex align-center gap-05"><bib-icon icon="calendar" variant="gray4"></bib-icon><format-date :key="task.title+col.key+componentKey" :datetime="task[col.key]"></format-date></span>
           </template>
           <template v-if="col.key == 'project'">
             <project-info v-if="task[col.key].length" :key="task.title+col.key+componentKey" :projectId="task[col.key][0].projectId || task[col.key][0].project.id"></project-info>
@@ -97,10 +97,10 @@
         </td>
       </tr>
     </tbody>
-    <tr v-if="newRow" class="table__newrow">
-      <!-- <td><span class="d-inline-flex align-center height-105 bg-primary shape-rounded">
+    <tr v-if="newRow.show" class="table__newrow">
+      <td v-if="drag"><span class="d-inline-flex align-center height-105 bg-primary shape-rounded">
           <bib-icon icon="drag" variant="light"></bib-icon>
-        </span></td> -->
+        </span></td>
       <td v-for="col in cols">
         <template v-if="col.key == 'title'">
           <bib-input size="sm" autofocus v-model="newRow.title" :variant="validTitle" @input="newRowCreate" required placeholder="Enter title..."></bib-input>
@@ -136,9 +136,8 @@
       </td>
     </tr> -->
     <tr v-if="newTaskButton">
-      
       <td :colspan="cols.length">
-        <div class="d-inline-flex align-center px-05 py-025 cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick()">
+        <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick()">
           <bib-icon :icon="newTaskButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{newTaskButton.label}}</span>
         </div>
       </td>
@@ -160,6 +159,8 @@
  * @vue-dynamic-emits [ 'header_icon click', 'title click', 'task_checkmark click' 'newtask button click' ] 
  * @vue-prop componentKey=Number - key to update child components
  */
+import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
+import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 export default {
   name: "DragTableSimple",
@@ -180,6 +181,7 @@ export default {
         return []
       },
     },
+    headless: Boolean,
     titleIcon: {
       type: Object,
       default(){
@@ -207,18 +209,18 @@ export default {
     },
     newTaskButton: {
       type: Object,
-      default () {
+      /*default () {
         return {
           label: "New Task",
           icon: "add",
-          variant: "secondary",
         }
-      }
+      }*/
     },
     newRow: {
       type: Object,
       default () {
         return {
+          show: false,
           sectionId: "",
           title: "",
           userId: "",
@@ -249,12 +251,31 @@ export default {
       taskMoveSection: null,
       highlight: false,
       // actionMenu: false,
+      department: DEPARTMENT,
+      status: STATUS,
+      priority: PRIORITY,
     };
   },
   computed: {
+    ...mapGetters({
+      teamMembers: "user/getTeamMembers",
+
+    }),
     activeClass() { return keyI => this.sections[keyI].active ? 'active' : '' },
     iconRotate() { return this.isCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)' },
-
+    filterUser() {
+      return this.teamMembers.map((u) => {
+        return {
+          value: u.id,
+          id: u.id,
+          label: u.firstName + ' ' + u.lastName,
+          firstName: u.firstName,
+          lastName: u.lastName,
+          email: u.email,
+          img: u.avatar
+        }
+      })
+    },
   },
   created() {
     // console.info('created lifecycle', this.cols.length)
@@ -319,6 +340,7 @@ export default {
       // this.newRow.sectionId = sectionId
       // this.$nuxt.$emit('close-sidebar')
       this.unselectAll
+      this.newRow.show = true
       // this.$refs['newRow'+sectionId].style.visibility = 'visible'
     },
     newRowCreate: _.debounce(function() {

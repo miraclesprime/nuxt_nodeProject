@@ -1,7 +1,7 @@
 <template>
   <section v-show="showNewsection" id="new-section-container">
     <div id="new-section-input-wrapper" class="d-flex align-center p-05 bg-light">
-      <input id="new-section-input" type="text" class="new-section-input" ref="newsectioninput" v-model.trim="newSectionName" v-on:blur="onClickOutside" v-on:keyup.enter="$emit('create-section', newSectionName)" placeholder="Enter section name">
+      <input id="new-section-input" type="text" class="new-section-input" ref="newsectioninput" v-model.trim="newSectionName" v-on:blur="onClickOutside" v-on:keyup.enter="$emit('create-section', newSectionName)" @keyup.esc="onClickOutside(true)" placeholder="Enter section name">
       <small v-if="showError" class="text-danger ml-05">{{showError}}</small>
       <div v-show="showLoading" class="d-flex align-center">
         <bib-spinner :scale="2"></bib-spinner> <span class="text-secondary">Creating section ...</span>
@@ -39,7 +39,12 @@ export default {
     }
   },
   methods: {
-    onClickOutside() {
+    onClickOutside(escape) {
+      if (escape) {
+        this.newSectionName = null
+        this.$emit("toggle-newsection", false)
+        return false
+      }
       if (!this.newSectionName) {
         this.newSectionName = null
         // this.newSection = false
@@ -48,6 +53,9 @@ export default {
         this.$emit("create-section", this.newSectionName)
       }
     },
+    /*escape(){
+      this.$emit("toggle-newsection", false)
+    },*/
   }
 }
 

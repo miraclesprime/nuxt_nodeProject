@@ -1,5 +1,5 @@
 <template>
-  <div :id="'task-grid-wrapper'+ task.id" class="task-grid" v-on:click="openSidebar()">
+  <div :id="'task-grid-wrapper'+ task.id" class="task-grid bg-white" v-on:click.stop="openSidebar()">
     <figure v-if="task.cover" :id="'task-card-image'+task.id" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
     <div class="task-top" :id="'tg-top-wrap'+ task.id">
       <!-- <div class="d-flex" :id="'tg-inside-wrap'+ task.id" @click="openSidebar()">
@@ -16,15 +16,30 @@
         <template v-slot:menu>
           <div class="list" :id="'task-list'+task.id">
             <span class="list__item" :id="'task-comp'+task.id" v-on:click="markComplete(task)">
-              <bib-icon icon="check-circle" :variant="task.statusId == 5 ? 'success' : 'secondary-sub1'" class="mr-05"></bib-icon> {{task.statusId != 5 ? "Mark" : ""}} Completed
+              <bib-icon icon="check-circle" :variant="task.statusId == 5 ? 'success' : 'secondary-sub1'" :scale="1.1" class="mr-05"></bib-icon> {{task.statusId != 5 ? "Mark" : ""}} Completed
             </span>
             <span class="list__item" :id="'tg-fav'+task.id" data-fav="isFavorite.status" v-on:click.stop="addToFavorites(task)">
               <bib-icon :icon="isFavorite.icon" :variant="isFavorite.variant" class="mr-05"></bib-icon> {{isFavorite.text}}
             </span>
-            <span class="list__item" :id="'task-attach'+task.id">
+            <!-- <span class="list__item" :id="'task-attach'+task.id">
               <bib-icon icon="upload" class="mr-05"></bib-icon> Attach file...
+            </span> -->
+            <span class="list__item" :id="'tg-attach'+task.id">
+              <bib-icon icon="check-square-solid" class="mr-05"></bib-icon> Subtasks
             </span>
-            <span class="list__item" :id="'task-assign'+task.id">
+            <span class="list__item" :id="'tg-assign'+task.id">
+              <bib-icon icon="user-group-solid" class="mr-05"></bib-icon> Team
+            </span>
+            <span class="list__item" :id="'tg-reminder'+task.id">
+              <bib-icon icon="comment-forum" class="mr-05"></bib-icon> Conversation
+            </span>
+            <span class="list__item " :id="'tg-copy-link'+task.id">
+              <bib-icon icon="awesome-file" class="mr-05"></bib-icon> Files
+            </span>
+            <span class="list__item" :id="'tg-move'+task.id">
+              <bib-icon icon="time-history" class="mr-05"></bib-icon> History
+            </span>
+            <!-- <span class="list__item" :id="'task-assign'+task.id">
               <bib-icon icon="user-add" class="mr-05"></bib-icon> Assign to...
             </span>
             <span class="list__item" :id="'task-reminder'+task.id">
@@ -35,15 +50,20 @@
             </span>
             <span class="list__item" :id="'task-move'+task.id">
               <bib-icon icon="transfer" class="mr-05"></bib-icon> Move to
-            </span>
+            </span> -->
             <span class="list__item " :id="'task-view-task'+task.id">
               <bib-icon icon="warning" class="mr-05"></bib-icon> Report
             </span>
             <hr>
-            <span class="list__item danger" :id="'task-delete-task'+task.id" @click="deleteTask(task)">Delete Task</span>
+            <span class="list__item list__item__danger" :id="'task-delete-task'+task.id" @click="deleteTask(task)">Delete Task</span>
           </div>
         </template>
       </bib-button>
+    </div>
+    <div class="task-mid d-flex gap-05">
+      <status-badge :status="task.status"></status-badge>
+      <priority-badge :priority="task.priority"></priority-badge>
+      <!-- <priority-comp :priority="task.priority" :iconOnly="true"></priority-comp> -->
     </div>
     <div class="task-bottom" :id="'tg-bottom'+ task.id">
       <user-info v-if="task.userId" :userId="task.userId"></user-info>
@@ -76,7 +96,7 @@ export default {
     },
   },
   methods: {
-    
+
     openSidebar() {
       // console.log(task)
       this.$nuxt.$emit("open-sidebar", this.task);
@@ -143,5 +163,4 @@ export default {
 
 </script>
 <style scoped lang="scss">
-
 </style>
