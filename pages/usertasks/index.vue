@@ -6,7 +6,7 @@
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
         <template v-if="gridType == 'list'">
           <template v-if="tasks.length">
-            <drag-table-simple :key="key" :componentKey="key" :fields="taskFields" :tasks="tasks" :sectionTitle="'Department'" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar"></drag-table-simple>
+            <drag-table-simple :key="key" :componentKey="key" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :fields="taskFields" :tasks="tasks" :sectionTitle="'Department'" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar"></drag-table-simple>
             <!-- table context menu -->
             <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick"></table-context-menu>
           </template>
@@ -142,6 +142,15 @@ export default {
     
   },
 
+  created() {
+    if (process.client) {
+      
+      this.$nuxt.$on("update-key", () => {
+        this.fetchUserTasks()
+      })  
+    }
+  },
+
   methods: {
     async fetchUserTasks() {
       if (process.client) {
@@ -173,9 +182,10 @@ export default {
       // console.log("update-key event received", $event)
       this.popupMessages.push({ text: $event, variant: "success" })
       let compid = JSON.parse(localStorage.getItem("user")).subb;
-      this.$store.dispatch("company/setCompanyTasks", { companyId: compid, filter: "all" }).then(() => {
-        this.key += 1
-      })
+      this.fetchUserTasks()
+      // this.$store.dispatch("company/setCompanyTasks", { companyId: compid, filter: "all" }).then(() => {
+      //   this.key += 1
+      // })
     },
 
     openSidebar(task) {
@@ -253,7 +263,7 @@ export default {
     },
 
     taskMarkComplete(task) {
-      console.log(typeof task, this.activeTask)
+      // console.log(typeof task, this.activeTask)
       this.loading = true
       if (typeof task == "object" && Object.keys(task).length > 0) {
         console.log(task)
@@ -268,7 +278,9 @@ export default {
           // this.popupMessages.push({ text: d.message, variant: "success" })
           // this.$nuxt.$emit("update-key")
           this.updateKey()
-          this.$store.dispatch("task/setSingleTask", d)
+          this.$store.dispatch("task/setSingleTask", d).then(() => {
+            this.key += 1;
+          })
         }).catch(e => {
           console.log(e)
           // this.popupMessages.push({ text: e.message, variant: "warning" })
@@ -393,13 +405,14 @@ export default {
 
 
     toggleSidebar($event) {
-      console.log($event)
+      // console.log($event)
       // in case of create task 
       if (!$event) {
         this.$nuxt.$emit("open-sidebar", $event)
       }
       this.flag = !this.flag;
     },
+
   },
 
 }

@@ -3,7 +3,7 @@
     <template v-if="userName">
       <bib-avatar :src="pic" :size="avatarSize"></bib-avatar>
     </template>
-    <span :id="'user-info-'+ userId + random" class="user-name pl-025 pr-025" :class="[ 'text-'+color, 'font-w-'+weight ]">{{userName}}</span>
+    <span :id="'user-info-'+ userId + random" class="user-name " :class="[ 'text-'+color, 'font-w-'+weight ]">{{userName}}</span>
     <!-- <template v-else>
       <span :id="'user-info-'+ userId + random" class="user-name text-dark pl-025 pr-025">{{ user.firstName + '' + user.lastName }} </span>
     </template> -->

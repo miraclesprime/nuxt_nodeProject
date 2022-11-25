@@ -37,8 +37,8 @@
               <!-- <bib-input type="text" size="sm" avatar-left="" v-model="assignee" placeholder="Assign to..."></bib-input> -->
             </td>
             <td>
-              <!-- <bib-input type="date" size="sm"  icon-left="calendar" v-model="date" placeholder="Set date..."></bib-input> -->
-              <bib-datepicker v-model="date" size="sm" class="align-right" format="dd MMM yyyy" placeholder="Set date..."></bib-datepicker>
+              <bib-input type="date" size="sm"  icon-left="calendar" v-model="date" placeholder="Set date..."></bib-input>
+              <!-- <bib-datepicker v-model="date" size="sm" class="align-right" format="dd MMM yyyy" placeholder="Set date..."></bib-datepicker> -->
             </td>
             <td>
               <div class="d-flex gap-05">

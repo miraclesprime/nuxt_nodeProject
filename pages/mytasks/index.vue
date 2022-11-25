@@ -16,8 +16,8 @@
               <loading :loading="loading"></loading>
             </template>
             <div v-else>
-              <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
-                <bib-icon icon="warning"></bib-icon> No records found
+              <span id="projects-0" class="d-inline-flex gap-05 align-center m-1 text-gray5">
+                <bib-icon icon="warning" variant="orange"></bib-icon> No records found
               </span>
             </div>
           </template>

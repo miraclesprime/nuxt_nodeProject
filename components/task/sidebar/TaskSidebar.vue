@@ -364,7 +364,7 @@ export default {
       if (Object.keys(this.currentTask).length) {
         this.form = JSON.parse(JSON.stringify(this.currentTask));
         if (this.currentTask.project.length) {
-          this.form.projectId = this.currentTask.project[0].projectId
+          this.form.projectId = this.currentTask.project[0].projectId || this.currentTask.project[0].project.id
         } else {
           this.form.projectId = this.project.id
         }
@@ -614,14 +614,11 @@ export default {
     deleteTask(task) {
       this.loading = true
       this.$store.dispatch("task/deleteTask", task).then(t => {
-
         if (t.statusCode == 200) {
-          // this.popupMessages.push({ text: t.message, variant: "success" })
           this.$nuxt.$emit("update-key")
           this.$nuxt.$emit("close-sidebar");
-
+          // console.warn(t.message);
         } else {
-          // this.popupMessages.push({ text: t.message, variant: "warning" })
           console.warn(t.message);
         }
         this.loading = false

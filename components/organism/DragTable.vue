@@ -46,15 +46,18 @@
               <priority-comp :key="componentKey" :priority="task[col.key]"></priority-comp>
             </template>
             <template v-if="col.key == 'startDate' || col.key == 'dueDate'">
-              <span class="d-inline-flex align-center gap-05"><bib-icon icon="calendar" variant="gray4"></bib-icon><format-date :key="componentKey" :datetime="task[col.key]"></format-date></span> 
+              <span v-if="task[col.key]" class="d-inline-flex align-center gap-05">
+                <bib-icon icon="calendar" variant="gray4"></bib-icon>
+                <format-date :key="componentKey" :datetime="task[col.key]"></format-date>
+              </span>
             </template>
             <template v-if="col.key == 'project'">
-              <project-info v-if="task[col.key].length" :projectId="task[col.key][0].projectId"></project-info>
+              <project-info v-if="task[col.key].length" :projectId="task[col.key][0].projectId || task[col.key][0].project.id"></project-info>
               <!-- <project-info :projectId="task[col.key][0].projectId" ></project-info> -->
             </template>
             <div v-if="col.key == 'title'" class="d-flex gap-05 align-center h-100">
               <span v-if="titleIcon.icon" class="width-105 height-105" :class="{'cursor-pointer': titleIcon.event}" @click.stop="updateTaskStatus(task)">
-                <bib-icon :icon="titleIcon.icon" :scale="1.5" :variant="taskCheckIcon(task)" ></bib-icon>
+                <bib-icon :icon="titleIcon.icon" :scale="1.5" :variant="taskCheckIcon(task)"></bib-icon>
               </span>
               <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">
                 {{task[col.key]}}
@@ -69,34 +72,42 @@
           </td>
         </tr>
       </draggable>
-      <tr v-if="newRow.id == section.id" :id="'newRow'+section.id" class="table__newrow" >
-        <td><bib-icon icon="drag" variant="primary"></bib-icon></td>
+      <tr v-if="newRow.sectionId == section.id" class="table__newrow">
+        <td><span class="d-inline-flex align-center height-105 bg-primary shape-rounded">
+            <bib-icon icon="drag" variant="light"></bib-icon>
+          </span></td>
         <td v-for="col in cols">
           <template v-if="col.key == 'title'">
-            <bib-input size="sm" v-model="newRow.title" placeholder="Enter title..."></bib-input>
+            <bib-input size="sm" autofocus v-model="newRow.title" :variant="validTitle" @input="newRowCreate" required placeholder="Enter title..."></bib-input>
           </template>
           <template v-if="col.key == 'userId'">
-            <bib-select size="sm" :options="filterUser" v-model="newRow.userId" placeholder="Enter title..."></bib-select>
+            <bib-select size="sm" :options="filterUser" v-model="newRow.userId" @change="newRowCreate" placeholder="Enter title..."></bib-select>
           </template>
           <template v-if="col.key == 'status'">
-            <bib-input type="select" size="sm" :options="status" v-model="newRow.statusId" placeholder="Status"></bib-input>
+            <bib-input type="select" size="sm" :options="status" v-model="newRow.statusId" @change.native="newRowCreate" placeholder="Status"></bib-input>
           </template>
           <template v-if="col.key == 'priority'">
-            <bib-input type="select" size="sm" :options="priority" v-model="newRow.priorityId" placeholder="Priority"></bib-input>
+            <bib-input type="select" size="sm" :options="priority" v-model="newRow.priorityId" @change.native="newRowCreate" placeholder="Priority"></bib-input>
           </template>
           <template v-if="col.key == 'startDate'">
-            <span class="d-inline-flex align-center gap-05"><bib-icon icon="calendar" variant="gray4"></bib-icon> <bib-input size="sm" v-model="newRow.startDate" type="date"></bib-input></span> 
+            <span class="d-inline-flex align-center gap-05">
+              <bib-icon icon="calendar" variant="gray4"></bib-icon>
+              <bib-input size="sm" v-model="newRow.startDate" type="date" @input="newRowCreate" ></bib-input>
+            </span>
           </template>
           <template v-if="col.key == 'dueDate'">
-            <span class="d-inline-flex align-center gap-05"><bib-icon icon="calendar" variant="gray4"></bib-icon> <bib-input size="sm" v-model="newRow.dueDate" type="date"></bib-input></span> 
+            <span class="d-inline-flex align-center gap-05">
+              <bib-icon icon="calendar" variant="gray4"></bib-icon>
+              <bib-input size="sm" v-model="newRow.dueDate" type="date" @input="newRowCreate"></bib-input>
+            </span>
           </template>
         </td>
       </tr>
-      <tr v-if="newTaskButton">
+      <tr v-if="newTaskButton.show">
         <td></td>
         <td :colspan="cols.length">
-          <div class="d-inline-flex align-center gap-05 cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
-            <bib-icon :icon="newTaskButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <!-- <span>{{newTaskButton.label}}</span> -->
+          <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
+            <bib-icon :icon="newTaskButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{newTaskButton.label}}</span>
           </div>
         </td>
       </tr>
@@ -114,13 +125,14 @@
  * @vue-prop sections=[] {Array} - table data.
  * @vue-prop collapseObj=null {Object} - collapsible table settings.
  * @vue-prop newTaskbutton={Object} - add new row button
- * @vue-emits ['row-click', 'row-rightclick', 'close-context-menu', 'task-checkmark-click', 'section-dragend', 'task-dragend' ]
+ * @vue-emits ['row-click', 'row-rightclick', 'close-context-menu', 'section-dragend', 'task-dragend' ]
  * @vue-dynamic-emits [ 'header_icon click', 'task_checkmark click' 'newtask button click' ] 
  * @vue-prop componentKey=Number - key to update child components
  */
 import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
-import { mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
+import _ from 'lodash'
 export default {
   name: "DragTable",
   components: {
@@ -149,7 +161,7 @@ export default {
     },
     titleIcon: {
       type: Object,
-      default(){
+      default () {
         return {
           icon: '',
           event: '',
@@ -162,24 +174,35 @@ export default {
         return "tasks"
       },
     },
-    collapsible: { type: Boolean, default: true },
-    /*collapseObj: {
-      type: Object,
-      default () {
-        return {
-          variant: "dark"
-        };
-      }
-    },*/
+    collapsible: {
+      type: Boolean,
+      default: true,
+    },
     newTaskButton: {
       type: Object,
       default () {
         return {
+          show: false,
           label: "New Task",
           icon: "add",
-          // event: "new-task",
-          variant: "secondary",
-          // hover: "dark",
+        }
+      }
+    },
+    newRow: {
+      type: Object,
+      default () {
+        return {
+          sectionId: "",
+          title: "",
+          userId: "",
+          statusId: 1,
+          priorityId: 3,
+          startDate: "",
+          dueDate: "",
+          department: "",
+          description: "",
+          budget: "",
+          text: "",
         }
       }
     },
@@ -198,16 +221,8 @@ export default {
       department: DEPARTMENT,
       status: STATUS,
       priority: PRIORITY,
-      newRow: {
-        id: "",
-        title: "",
-        userId: "",
-        statusId: "",
-        priorityId: "",
-        startDate: "",
-        dueDate: "",
-        department: "",
-      }
+      
+      validTitle: ""
     };
   },
   computed: {
@@ -218,14 +233,14 @@ export default {
     activeClass() { return keyI => this.sections[keyI].active ? 'active' : '' },
     filterUser() {
       return this.teamMembers.map((u) => {
-        return { 
+        return {
           value: u.id,
           id: u.id,
           label: u.firstName + ' ' + u.lastName,
           firstName: u.firstName,
           lastName: u.lastName,
           email: u.email,
-          img: u.avatar 
+          img: u.avatar
         }
       })
     },
@@ -234,8 +249,7 @@ export default {
     // console.info('created lifecycle', this.cols.length)
     this.cols = this.fields.map((field) => { return { key: field.key, event: field.event } })
     // this.cols.shift();
-    this.$nuxt.$on('close-context', () => { this.newRow.id = ''})
-    this.$on('row-click', () => { this.newRow.id = ''})
+    
   },
   mounted() {
     // console.info('mounted lifecycle', this.sections.length);
@@ -274,7 +288,7 @@ export default {
         })
       // console.log($event.currentTarget)
       this.$emit('row-click', task)
-      // document.getElementById(key).classList.toggle('active')
+      
     },
     rowRightClick($event, task) {
       this.$emit("close-context-menu")
@@ -292,7 +306,8 @@ export default {
       for (let row of rows) {
         row.classList.remove('active');
       }
-
+      this.$emit("hide-newrow")
+      this.$emit("close-context-menu")
       return "success"
     },
     taskDragStart(e) {
@@ -306,17 +321,24 @@ export default {
       this.$emit('task-dragend', { tasks: sectionData[0].tasks, sectionId: e.to.dataset.section })
     },
     moveTask(e) {
-      // console.log('dragged->' ,e.draggedContext)
-      // console.info('related->', e.relatedContext.component.$el)
-      // console.warn(e.to.dataset.section)
       this.taskMoveSection = +e.to.dataset.section
     },
-    newRowClick(sectionId){
+    newRowClick(sectionId) {
       // console.log(sectionId)
-      this.newRow.id = sectionId
-      this.$nuxt.$emit('close-sidebar')
-      // this.$refs['newRow'+sectionId].style.visibility = 'visible'
+      // this.newRow.show = true
+      this.newRow.sectionId = sectionId
+      this.unselectAll
     },
+    newRowCreate: _.debounce(function() {
+      // console.table([this.newRow.sectionId, this.newRow.title]);
+      if (!this.newRow.title) {
+        console.warn("new row title is required")
+        this.validTitle = "alert"
+        return false
+      }
+      this.validTitle = ""
+      this.$emit("create-newrow", this.newRow)
+    }, 1500),
   },
 };
 
@@ -436,7 +458,7 @@ export default {
   }
 
   &__newrow {
-    td { 
+    td {
       background-color: $light;
     }
   }
@@ -451,6 +473,7 @@ export default {
 
   td.section {
     border-bottom: 1px solid $gray4;
+
     .section-header {
       font-size: $base-size;
       font-weight: bold;
@@ -467,24 +490,30 @@ export default {
       fill: $gray5;
     }
   }
+
   .new-button {
     background-color: $success-sub6;
     color: $success;
-    padding: 2px 2px;
+    /*padding: 2px 2px;*/
+    span { max-width: 0; overflow: hidden; transition: all 200ms ease-in; }
+
     &:hover {
       background-color: $success-sub3;
+      span { max-width: 8rem; padding-left: 0.5rem; }
     }
   }
 }
 
 ::v-deep {
   .table__newrow {
+
     .input input,
     .input select,
-    .bib-select .select__real { 
-      margin-top: 0.1rem; 
+    .bib-select .select__real {
+      margin-top: 0.1rem;
       margin-bottom: 0.1rem;
     }
+
     .bib-select .select__btn {
       padding-left: 0;
       padding-right: 0;

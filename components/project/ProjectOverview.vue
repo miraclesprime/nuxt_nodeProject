@@ -50,11 +50,11 @@
           </div>
           <div id="proj-row2-col2" class="col-3">
             <!-- <bib-input type="date" label="Start date" v-model="startDate" v-on:change.native="debounceUpdate('Start date', startDate)"></bib-input> -->
-            <bib-datepicker test_id="date01" v-model="startDate" :maxDate="dueDate" format="dd MMM yyyy" @input="debounceUpdate('Start date', startDate)" label="Start date" name="startDate" placeholder="Start date" ></bib-datepicker>
+            <bib-datepicker test_id="date01" v-model="startDate" :value="startDate" :maxDate="dueDate" format="dd MMM yyyy" @input="debounceUpdate('Start date', startDate)" label="Start date" name="startDate" placeholder="Start date" ></bib-datepicker>
           </div>
           <div id="proj-row2-col3" class="col-3">
             <!-- <bib-input type="date" label="Due date" v-model="dueDate" v-on:change.native="debounceUpdate('Due date', dueDate)"></bib-input> -->
-            <bib-datepicker test_id="date02" class="align-right" v-model="dueDate" :minDate="startDate" format="dd MMM yyyy" @input="debounceUpdate('Due date', dueDate)" label="Due date" name="dueDate" placeholder="Due date"></bib-datepicker>
+            <bib-datepicker test_id="date02" class="align-right" v-model="dueDate" :value="dueDate" :minDate="startDate" format="dd MMM yyyy" @input="debounceUpdate('Due date', dueDate)" label="Due date" name="dueDate" placeholder="Due date"></bib-datepicker>
           </div>
         </div>
         <div id="proj-row3" class="row">
@@ -134,8 +134,8 @@ export default {
       } else {
         this.activeProject = {
           title: "",
-          startDate: "",
-          dueDate: "",
+          startDate: new Date(),
+          dueDate: new Date(),
           priorityId: null,
           statusId: null,
           // time: "",
@@ -230,12 +230,12 @@ export default {
 
     startDate: {
       get() {
-        let nd
+        // let nd
         if (!this.activeProject.startDate) {
-          nd = new Date()
+          // nd = new Date()
           return new Date()
         } else {
-          nd = new Date(this.activeProject.startDate)
+          // nd = new Date(this.activeProject.startDate)
           return new Date(this.activeProject.startDate)
         }
         // return nd
@@ -248,7 +248,7 @@ export default {
 
     dueDate: {
       get() {
-        let nd
+        // let nd
         if (!this.activeProject.dueDate) {
           // nd = new Date()
           return new Date()
