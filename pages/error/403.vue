@@ -1,14 +1,18 @@
 <template>
-  <div id="403-error-wrapper">
-    <h1 id="403-error-heading1">Not Enough permission to see this page</h1>
-    <h1 id="403-error-heading2">An error occurred</h1>
-    <NuxtLink to="/">Redirect to Home</NuxtLink>
+  <div id="error-403-wrapper" class="shape-rounded bg-light">
+    <h1 id="error-403-heading1">Not Enough permission to see this page</h1>
+    <NuxtLink class="error-link" to="/">Redirect to Home</NuxtLink>
   </div>
 </template>
 
-<script>
-export default {
-  // props: ["error"],
-  // layout: "error"
-};
-</script>
+<style scoped lang="scss">
+#error-403-wrapper {
+  max-width: 30rem;
+  margin: 50px auto;
+  text-align: center;
+  padding: 1rem;
+}
+.error-link {
+  text-decoration: underline;
+}
+</style>
