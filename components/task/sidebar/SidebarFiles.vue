@@ -4,7 +4,7 @@
       <p class="text-gray5 font-md">Files </p>
     </div>
     <div id="task-file-actions-wrapper" class="file-actions border-bottom-gray2 d-flex align-center py-025">
-      <div class="d-inline-flex gap-05 cursor-pointer shape-rounded py-025 px-05 bg-success-sub4 bg-hover-success-sub1 text-success text-hover-white" id="file-upload-button" @click="uploadModal = true">
+      <div class="d-inline-flex gap-05 cursor-pointer shape-rounded py-025 px-05 bg-success-sub6 bg-hover-success-sub3 text-success " id="file-upload-button" @click="uploadModal = true">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="file-upload-text" class="">Upload File</span>
       </div>
       <!-- <div class="action-left d-flex " id="file-action-left">

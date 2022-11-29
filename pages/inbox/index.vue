@@ -1,6 +1,6 @@
 <template>
   <div id="inbox-wrapper" class="inbox-wrapper d-flex h-100">
-    <main>
+    <main class="position-relative">
       <page-title title="Inbox" :avatar="'I'"></page-title>
       <nav id="inbox-nav" class="d-flex align-center gap-05 py-05 px-025 border-bottom-light">
         <!-- <button type="button" @click="$router.back()" class="d-flex cursor-pointer bg-white border-white">
@@ -52,14 +52,14 @@
         </div>
       </nav>
       <div class="position-relative h-100 of-scroll-y">
-        <div v-for="n in 5">
-          <inbox-item></inbox-item>
+        <div v-for="n in inbox">
+          <inbox-item :item="n"></inbox-item>
         </div>
+        <loading :loading="loading"></loading>
       </div>
-      <loading :loading="loading"></loading>
     </main>
     <aside class=" border-left-gray4">
-    	right col
+      right col
     </aside>
   </div>
 </template>
@@ -71,14 +71,33 @@ export default {
   data() {
     return {
       loading: false,
+      inbox: []
     }
-  }
+  },
+  mounted() {
+    this.loading = true
+    this.$axios.get('user/user-history', {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+      }
+    }).then(i => {
+      this.inbox = i.data.data
+      this.loading = false
+    }).catch(e => { 
+      console.warn(e)
+      this.loading = false }) }
 }
 
 </script>
 <style lang="scss" scoped>
 .inbox-wrapper {
-	main { flex: 1 1 auto; }
-	aside { flex: 0 0 $sidebar-width; }
+  main {
+    flex: 1 1 auto;
+  }
+
+  aside {
+    flex: 0 0 $sidebar-width;
+  }
 }
+
 </style>

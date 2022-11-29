@@ -33,12 +33,13 @@
         </div>
         <div class="task-section__body" :id="'tgs-task-section-body-'+section.id">
           <draggable :list="section.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable" :class="{highlight: highlight == section.id}" :data-section="section.id">
-            <!-- <transition-group > -->
-            <div class="task-grid bg-white" v-for="task in section.tasks" :key="task.title + templateKey + '-' + task.id" :class="[ currentTask.id == task.id ? 'active' : '']" :id="'tg-card-'+task.id" v-on:click.stop="openSidebar(task, section.projectId)">
+            <!-- <div class="task-grid bg-white" v-for="task in section.tasks" :key="task.title + templateKey + '-' + task.id" :class="[ currentTask.id == task.id ? 'active' : '']" :id="'tg-card-'+task.id" v-on:click.stop="openSidebar(task, section.projectId)">
               <figure v-if="task.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
               <div class="task-top" :id="'tg-card-top'+task.id">
                 <div class="d-flex" :id="'tg-card-inside-wrap'+task.id">
-                  <bib-icon icon="check-circle" :scale="1.5" :variant="task.statusId == 5 ? 'success' : 'light'" class="cursor-pointer" @click="markComplete(task)"></bib-icon>
+                  <span class="cursor-pointer" @click="markComplete(task)">
+                    <bib-icon icon="check-circle" :scale="1.5" :variant="task.statusId == 5 ? 'success' : 'light'" ></bib-icon>
+                  </span>
                   <span class="ml-05" :id="'tg-title'+task.id">{{ task.title }} </span>
                 </div>
                 <div class="shape-circle bg-light width-2 height-2 d-flex flex-shrink-0 justify-center align-center">
@@ -67,21 +68,6 @@
                         <span class="list__item" :id="'tg-move'+task.id">
                           <bib-icon icon="time-history" class="mr-05"></bib-icon> History
                         </span>
-                        <!-- <span class="list__item" :id="'tg-attach'+task.id">
-                          <bib-icon icon="upload" class="mr-05"></bib-icon> Attach file...
-                        </span>
-                        <span class="list__item" :id="'tg-assign'+task.id">
-                          <bib-icon icon="user-add" class="mr-05"></bib-icon> Assign to...
-                        </span>
-                        <span class="list__item" :id="'tg-reminder'+task.id">
-                          <bib-icon icon="notification" class="mr-05"></bib-icon> Set as reminder
-                        </span>
-                        <span class="list__item " :id="'tg-copy-link'+task.id">
-                          <bib-icon icon="duplicate" class="mr-05"></bib-icon> Copy
-                        </span>
-                        <span class="list__item" :id="'tg-move'+task.id">
-                          <bib-icon icon="transfer" class="mr-05"></bib-icon> Move to
-                        </span> -->
                         <span class="list__item " :id="'tg-view-task'+task.id">
                           <bib-icon icon="warning" class="mr-05"></bib-icon> Report
                         </span>
@@ -95,18 +81,18 @@
               <div class="task-mid d-flex gap-05">
                 <status-badge :status="task.status"></status-badge>
                 <priority-badge :priority="task.priority"></priority-badge>
-                <!-- <priority-comp :priority="task.priority" :iconOnly="true"></priority-comp> -->
               </div>
               <div class="task-bottom" :id="'tg-card-bottom'+task.id">
                 <user-info v-if="task.userId" :userId="task.userId"></user-info>
-                <div class="align-center gap-05 ml-auto">
+                <div v-if="task.dueDate" class="align-center gap-05 ml-auto">
                   <bib-icon icon="calendar" :variant="overdue(task)"></bib-icon>
-                  <format-date v-if="task.dueDate" :datetime="task.dueDate" :variant="overdue(task)" ></format-date>
+                  <format-date :datetime="task.dueDate" :variant="overdue(task)" ></format-date>
                 </div>
-                <!-- <span :id="'tg-bottom-duedate'+task.id" v-format-date="task.dueDate"></span> -->
               </div>
-            </div>
-            <!-- </transition-group> -->
+            </div> -->
+            <template v-for="task in section.tasks">
+              <task-grid :task="task" :key="task.title + templateKey + '-' + task.id" :class="[ currentTask.id == task.id ? 'active' : '']" @open-sidebar="openSidebar(task, section.projectId)" ></task-grid>
+            </template>
           </draggable>
         </div>
       </div>
@@ -275,19 +261,19 @@ export default {
         left: scrollAmt,
         behavior: 'smooth'
       });
-
     },
-    addToFavorites(task) {
+
+    /*addToFavorites(task) {
       // console.log('to be favorites task', task.id)
       this.$emit("set-favorite", task)
-    },
+    },*/
     /*
         taskCheckIcon(task) {
           return task.statusId == 5 ? 'success' : 'secondary-sub1'
         },*/
-    markComplete(task) {
+    /*markComplete(task) {
       this.$emit("mark-complete", task)
-    },
+    },*/
     createSection(){
       if (this.newSectionName.length > 0) {
         this.newSectionLoader = true
@@ -346,7 +332,7 @@ export default {
 }
 
 ::v-deep {
-  .user-info-wrapper {
+  /*.user-info-wrapper {
     .user-name {
       visibility: hidden;
       opacity: 0;
@@ -357,7 +343,7 @@ export default {
       visibility: visible;
       opacity: 1;
     }
-  }
+  }*/
 
   .bg-danger {
     .user-name {
@@ -372,9 +358,7 @@ export default {
     }
   }
 
-  .custom-checkbox {
-    height: 22px;
-  }
+  
 }
 
 </style>

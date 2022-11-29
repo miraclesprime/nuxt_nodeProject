@@ -560,11 +560,15 @@ export const PROJECT_CONTEXT_MENU = [
 export const TASK_CONTEXT_MENU = [
   { label: 'Mark Complete', event: 'done-task', variant: '', icon: 'check-circle', iconVariant: 'gray5' },
   { label: 'Add to Favorites', event: 'fav-task', variant: '', icon: 'bookmark', iconVariant: 'gray5' },
-  { label: 'Attach file...', event: 'attach-file', variant: '', icon: 'upload', iconVariant: 'gray5' },
+  { label: 'Team', event: 'gotoTeam', variant: '', icon: 'user-group-solid', iconVariant: 'gray5' },
+  { label: 'SubTasks', event: 'gotoSubtask', variant: '', icon: 'check-square-solid', iconVariant: 'gray5' },
+  { label: 'Conversation', event: 'gotoComment', variant: '', icon: 'comment-forum-solid', iconVariant: 'gray5' },
+  { label: 'Files', event: 'gotoFiles', variant: '', icon: 'folder-solid', iconVariant: 'gray5' },
+  /*{ label: 'Attach file...', event: 'attach-file', variant: '', icon: 'upload', iconVariant: 'gray5' },
   { label: 'Assign to...', event: 'assign-task', variant: '', icon: 'user-add', iconVariant: 'gray5' },
   { label: 'Set as reminder', event: 'set-reminder', variant: '', icon: 'notification', iconVariant: 'gray5' },
   { label: 'Copy', event: 'copy-task', variant: '', icon: 'duplicate', iconVariant: 'gray5' },
-  { label: 'Move', event: 'move-task', variant: '', icon: 'transfer', iconVariant: 'gray5' },
+  { label: 'Move', event: 'move-task', variant: '', icon: 'transfer', iconVariant: 'gray5' },*/
   { label: 'Report', event: 'report-task', variant: '', icon: 'warning', iconVariant: 'gray5' },
   { label: 'Delete', event: 'delete-task', variant: 'danger', icon: '', iconVariant: '' },
 ]

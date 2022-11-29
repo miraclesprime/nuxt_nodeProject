@@ -293,7 +293,7 @@ export default {
       this.$emit("row-click", task)
     },
     rowRightClick($event, task) {
-      this.$emit("close-context-menu")
+      // this.$emit("close-context-menu")
       setTimeout(() => {
         this.$emit("row-context", { event: $event, task: task })
       }, 200)
@@ -316,7 +316,7 @@ export default {
       }
       // console.log('clicked outside drag-table-simple component')
       this.$emit("hide-newrow")
-      this.$emit("close-context-menu")
+      // this.$emit("close-context-menu")
       return 'success'
     },
     taskDragStart(e) {
@@ -339,7 +339,6 @@ export default {
     newRowClick() {
       // console.log(sectionId)
       // this.newRow.sectionId = sectionId
-      // this.$nuxt.$emit('close-sidebar')
       this.unselectAll
       this.newRow.show = true
       // this.$refs['newRow'+sectionId].style.visibility = 'visible'
