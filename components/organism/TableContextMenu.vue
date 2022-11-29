@@ -1,7 +1,7 @@
 <template>
   <div :id="'c_menu_'+id" class="table-context-menu" v-show="show" v-click-outside="onClickOutside" :style="position">
     <div class="list">
-      <span v-for="(item, index) in items" :key="item.label+index" class="list__item cursor-pointer" :class=" ['list__item__'+item.variant] " v-on:click="onItemClick(item)">
+      <span v-for="(item, index) in items" :key="item.label+index" class="list__item cursor-pointer" :class=" ['list__item__'+item.variant] " v-on:click.stop="onItemClick(item)">
         <bib-icon v-if="item.icon" :icon="item.icon" :variant="activeVariant(item)" class="mr-05"></bib-icon> {{item.label}}
       </span>
       <!-- <hr> -->

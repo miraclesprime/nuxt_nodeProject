@@ -176,7 +176,7 @@ export const DUMMY_TASKS = [{
       }
     }]
   },
-  {
+  /*{
     "id": 12,
     "userId": "AMrlNbW6Zzoayg5K",
     "companyId": "O3GWpmbk5ezJn4KR",
@@ -1066,7 +1066,7 @@ export const DUMMY_TASKS = [{
         "updatedAt": "2022-11-23T12:41:19.000Z"
       }
     }]
-  }
+  }*/
 ];
 
 /*export const DUMMY_TASKS = [{

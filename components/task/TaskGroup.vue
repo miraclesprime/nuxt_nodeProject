@@ -6,11 +6,11 @@
     </div>
     <!-- <section-title></section-title> -->
     <div id="subtask-title-wrapper" class="section-title w-100 py-025">
-      <div v-if="newSubtask" class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded bg-success-sub4 bg-hover-success-sub1 text-success text-hover-white cursor-pointer" @click="newSubtask = false">
-        <bib-icon icon="close" variant="secondary" :scale="1.2"></bib-icon>
+      <div v-if="newSubtask" class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded bg-success-sub6 bg-hover-success-sub3 text-success  cursor-pointer" @click="newSubtask = false">
+        <bib-icon icon="close" variant="success" :scale="1.2"></bib-icon>
         <span>Cancel</span>
       </div>
-      <div v-else class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded bg-success-sub4 bg-hover-success-sub1 text-success text-hover-white cursor-pointer" @click="openCreateSubtask">
+      <div v-else class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded bg-success-sub6 bg-hover-success-sub3 text-success  cursor-pointer" @click="openCreateSubtask">
         <bib-icon icon="add" variant="success" :scale="1.2"></bib-icon>
         <span>Add Subtask</span>
       </div>
@@ -182,11 +182,11 @@ export default {
       }
     },
   },
-  mounted(){
-    console.info('mouted task-group');
+  /*mounted(){
+    // console.info('mouted task-group');
     // this.user = this.teamMembers.filter(t => t.id == this.currentTask.userId)
     // this.user = _.cloneDeep(this.currentTask.user)
-  },
+  },*/
   methods: {
     openCreateSubtask() {
       this.newSubtask = true

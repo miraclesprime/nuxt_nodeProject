@@ -1,25 +1,24 @@
 <template>
-  <div id="task-actions-wrapper" class="task-actions p-025 ">
+  <div id="task-actions-wrapper" class="task-actions p-025 bg-white">
     <div class="action-left d-flex " id="ta-action-left">
-      <div class="d-flex gap-05 py-025 px-05 shape-rounded cursor-pointer bg-success-sub4 text-success bg-hover-success text-hover-white" id="ta-add-task-button" v-on:click.stop="showCreateTaskModal">
+      <div class="d-flex gap-05 py-025 px-05 shape-rounded cursor-pointer text-success bg-success-sub6 bg-hover-success-sub3 " id="ta-add-task-button" v-on:click.stop="showCreateTaskModal">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-task-text" class="">New Task</span>
       </div>
-      
     </div>
     <div class="action-right d-flex gap-05" id="ta-action-right">
       <ul class="actions" id="ta-action-right-actions">
-        <li class="action" id="ta-action1">
-          <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="changeViewName"></sorting-comp>
+        <li class="action" id="ta-action1" v-tooltip="'Viewing'">
+          <sorting-comp :items="viewing" icon="eye-open" v-on:change-sort="changeViewName"></sorting-comp>
         </li>
-        <li class="action" id="ta-action2">
-          <sorting-comp label="Sorted by" :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy"></sorting-comp>
+        <li class="action" id="ta-action2" v-tooltip="'Sort by'">
+          <sorting-comp :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy"></sorting-comp>
         </li>
         
         <li class="action" id="ta-action5">
-          <span class="mr-025" id="ta-action5-text">View</span>
-          <div class="d-flex width-105 height-105 align-center justify-center bg-dark bg-hover-gray1 shape-rounded p-025 cursor-pointer" id="ta-action5-link">
-            <bib-icon v-if="gridType == 'list'" icon="apps-large" variant="white" @click.native="changeGridType('grid')"></bib-icon>
-            <bib-icon v-if="gridType == 'grid'" icon="list" variant="white" @click.native="changeGridType('list')"></bib-icon>
+          <!-- <span class="mr-025" id="ta-action5-text">View</span> -->
+          <div class="d-flex width-2 height-2 align-center justify-center bg-light bg-hover-gray2 shape-circle p-025 cursor-pointer" id="ta-action5-link" v-tooltip="'Change view'">
+            <bib-icon v-if="gridType == 'list'" icon="table" variant="gray6" @click.native="changeGridType('grid')"></bib-icon>
+            <bib-icon v-if="gridType == 'grid'" icon="list" variant="gray6" @click.native="changeGridType('list')"></bib-icon>
           </div>
         </li>
       </ul>
@@ -100,7 +99,7 @@ export default {
 
 .action {
   display: flex;
-  padding: 0 20px;
+  padding: 0 4px;
   align-items: center;
 }
 

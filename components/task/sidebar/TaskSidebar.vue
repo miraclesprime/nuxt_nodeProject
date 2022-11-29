@@ -151,6 +151,7 @@
       <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
       <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
       <!-- <sidebar-history></sidebar-history> -->
+      <button ref="topScroll" id="topScroll" style="visibility: hidden; opacity: 0" v-scroll-to="scrollId ? '#'+scrollId : '#sidebar-inner-wrap'"></button>
     </div>
     <!-- <add-member-to-task ref="taskTeamModal"></add-member-to-task> -->
     <bib-modal-wrapper v-if="taskTeamModal" title="Team" size="lg" @close="taskTeamModal = false">
@@ -180,7 +181,7 @@ export default {
   props: {
     // activeTask: Object,
     sectionIdActive: Number,
-    // teamKey: Number
+    scrollId: String,
   },
   data: function() {
     return {
@@ -368,6 +369,7 @@ export default {
         } else {
           this.form.projectId = this.project.id
         }
+        // console.info(this.$refs.topScroll)
       } else {
         this.form = {
           id: '',
@@ -388,6 +390,12 @@ export default {
         }
       }
     },
+    scrollId(newValue, oldValue){
+      console.info(newValue, oldValue)
+      this.$nextTick(() => {
+        this.$refs.topScroll.click()
+      });
+    },
 
   },
 
@@ -401,6 +409,7 @@ export default {
   mounted() {
     this.$store.dispatch("project/fetchProjects")
     this.activeSidebarTab = 'Overview'
+    
   },
 
   methods: {
@@ -414,23 +423,18 @@ export default {
       classlist.forEach(c => {
         // console.info(c)
         if (event.target.classList.contains(c)) {
-          // console.log('class found', c)
-          return
+          console.log('class found->', c)
+          return false
         } /*else {
           console.warn("v-click-outside event", event.originalTarget)
         }*/
       })
 
-      /*if (event.target.classList.contains("cursor-pointer") || event.target.classList.contains("task-grid") || event.target.classList.contains("table__irow")) {
-        console.info('class found')
-        return false
-      }*/
-
       this.$nuxt.$emit("close-sidebar");
     },
-    sidebarTabChange(tab) {
+    /*sidebarTabChange(tab) {
       this.activeSidebarTab = tab.value;
-    },
+    },*/
     /*formattedDate(d) {
       let date = new Date(d);
       let month = date.getMonth() + 1;
