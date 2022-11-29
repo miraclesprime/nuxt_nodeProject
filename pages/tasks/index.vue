@@ -328,6 +328,14 @@ export default {
         })
       }
 
+      if($event == 'startDate') {
+        this.$store.dispatch('company/sortCompanyTasks', { sName: 'startDate', order: this.orderBy }).then(() => {
+          this.key += 1
+        }).catch((err) => {
+          console.log(err)
+        })
+      }
+
       if($event == 'dueDate') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'dueDate', order: this.orderBy }).then(() => {
           this.key += 1

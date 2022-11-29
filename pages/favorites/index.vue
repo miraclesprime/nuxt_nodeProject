@@ -320,6 +320,31 @@ export default {
           }
           this.key += 1
           break;
+        case 'startDate':
+          let dArr2 = []
+
+          for (let i = 0; i < this.sortedProject.length; i++) {
+            if (this.sortedProject[i].userId) {
+              dArr2.unshift(this.sortedProject[i])
+            } else {
+              dArr2.push(this.sortedProject[i])
+            }
+          }
+
+          this.sortedProject = dArr2;
+          if (this.projOrder == "asc") {
+            this.sortedProject.sort((a, b) => {
+              if (a.startDate && b.startDate) { return new Date(a.startDate) - new Date(b.startDate) }
+            });
+            this.projOrder = "desc"
+          } else {
+            this.sortedProject.sort((a, b) => {
+              if (a.startDate && b.startDate) { return new Date(b.startDate) - new Date(a.startDate) }
+            });
+            this.projOrder = "asc"
+          }
+          this.key += 1
+          break;
         default:
           this.fetchProjects()
           break;
@@ -386,6 +411,20 @@ export default {
           } else {
             this.sortedTask.sort((a, b) => {
               if (a.dueDate && b.dueDate) { return new Date(b.dueDate) - new Date(a.dueDate) }
+            });
+            this.taskOrder = "asc"
+          }
+          this.key += 1
+          break;
+        case 'startDate':
+          if (this.taskOrder == "asc") {
+            this.sortedTask.sort((a, b) => {
+              if (a.startDate && b.startDate) { return new Date(a.startDate) - new Date(b.startDate) }
+            });
+            this.taskOrder = "desc"
+          } else {
+            this.sortedTask.sort((a, b) => {
+              if (a.startDate && b.startDate) { return new Date(b.startDate) - new Date(a.startDate) }
             });
             this.taskOrder = "asc"
           }
