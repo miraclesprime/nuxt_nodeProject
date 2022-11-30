@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <div id="my-tasks-page-wrapper" class="mytask-page-wrapper">
+    <div id="my-tasks-page-wrapper" class="mytask-page-wrapper ">
       <page-title title="My Tasks"></page-title>
       <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="showNewTodo" />
       <div>
@@ -22,7 +22,7 @@
             </div>
           </template>
           <template v-else>
-            <div class="h-100 of-scroll-x position-relative">
+            <div class="bg-light h-100 of-scroll-x position-relative">
               <draggable :list="localdata" class="d-flex h-100" :move="moveTodo" v-on:end="todoDragEnd" handle=".section-drag-handle">
                 <div class="task-grid-section" v-for="(todo, index) in localdata" :key="index + viewName + '-' + key">
                   <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
@@ -56,7 +56,7 @@
                   </div>
                   <div class="task-section__body h-100">
                     <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
-                      <task-grid :task="task" v-for="(task, index) in todo.tasks" :key="task.id + '-' + index + key"></task-grid>
+                      <task-grid :task="task" v-for="(task, index) in todo.tasks" :key="task.id + '-' + index + key" @open-sidebar="openSidebar"></task-grid>
                     </draggable>
                   </div>
                 </div>
@@ -175,8 +175,9 @@ export default {
   },
 
   methods: {
-    /*openSidebar(task) {
-      // console.log(task)
+    
+    openSidebar(task) {
+      console.log(task)
       this.$nuxt.$emit("open-sidebar", task);
 
       let el = event.target.offsetParent
@@ -188,7 +189,8 @@ export default {
         behavior: 'smooth'
       });
 
-    },*/
+    },
+
     taskRightClick(payload) {
       this.taskContextMenu = true;
       const { event, task } = payload
@@ -196,16 +198,9 @@ export default {
       this.contextCoords = { left: event.pageX+'px', top: event.pageY+'px' }
     },
 
-    openSidebar(task) {
-      // console.log(task)
-      // let project = [{
-      //   projectId: this.project.id,
-      //   project: {
-      //     id: this.project.id
-      //   }
-      // }]
+    /*openSidebar(task) {
       this.$nuxt.$emit("open-sidebar", task);
-    },
+    },*/
     
     closeContext() {
       this.taskContextMenu = false
@@ -492,11 +487,7 @@ export default {
       this.loading = false;
     })
 
-    }, 600),
-
-    /*openSidebar(task) {
-      this.$nuxt.$emit("open-sidebar", task);
-    },*/
+    }, 600),    
 
     filterView($event) {
       this.loading = true

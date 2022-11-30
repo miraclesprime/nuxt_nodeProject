@@ -2,9 +2,8 @@
   <div id="create-team-modal-wrapper">
     <bib-modal-wrapper @close="showTaskTeamModal = false" v-show="showTaskTeamModal" title="Assign people to task " id="create-team" @keypress.native="bindEnter($event, 'create-team-task-btn')">
       <template v-slot:content>
-        <div style="height: 10rem;">
-          <label id="create-team-task-modal-heading" class="text-gray6">Participants</label>
-          <!-- <bib-input type="select" :options="memberOptions" v-model="member" v-on:change.native="selectTeam"></bib-input> -->
+        <div style="min-height: 12rem;">
+          <!-- <label id="create-team-task-modal-heading" class="text-gray6">Participants</label>
           <bib-button test_id="create-team-task-dd1" dropdown1="add" label="Type name or email" v-model="member" v-on:input-change="teamInputChange" v-on:input-keydown="teamInputKeydown" class="mt-05 mb-05">
             <template v-slot:menu>
               <ul id="atm-fields" class="border-gray1" style="border-radius: 0 !important; border: 1px solid var(--bib-gray1);">
@@ -21,7 +20,8 @@
             </template>
             <small v-show="team.length == 0" class="text-danger">Select at least 1 team member.</small>
             <p v-if="message" v-text="message" class="font-sm mt-025 text-orange"></p>
-          </div>
+          </div> -->
+          <task-team></task-team>
           <loading :loading="loading"></loading>
         </div>
       </template>
@@ -31,12 +31,7 @@
         </div>
       </template>
     </bib-modal-wrapper>
-    <bib-popup-notification-wrapper>
-      <template #wrapper>
-        <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
-        </bib-popup-notification>
-      </template>
-    </bib-popup-notification-wrapper>
+    
   </div>
 </template>
 
@@ -55,7 +50,6 @@ export default {
       error: false,
       loading: false,
       message: "",
-      popupMessages: [],
     };
   },
 
@@ -155,15 +149,13 @@ export default {
       }
 
     },
-    copyUrl() {
+    /*copyUrl() {
       navigator.clipboard.writeText(this.taskUrl).then(() => {
-        // console.log('success')
-        this.popupMessages.push({ text: "Copied successfully", variant: "success" })
+        console.log('success')
       }, () => {
-        this.popupMessages.push({ text: "Failed to copy", variant: "danger" })
         console.log("failed to copy")
       });
-    },
+    },*/
   },
 
 };

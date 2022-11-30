@@ -291,7 +291,7 @@ export default {
       
     },
     rowRightClick($event, task) {
-      this.$emit("close-context-menu")
+      // this.$emit("close-context-menu")
       this.unselectAll()
         .then(r => {
           $event.currentTarget.classList.add("active")
@@ -307,7 +307,7 @@ export default {
         row.classList.remove('active');
       }
       this.$emit("hide-newrow")
-      this.$emit("close-context-menu")
+      // this.$emit("close-context-menu")
       return "success"
     },
     taskDragStart(e) {

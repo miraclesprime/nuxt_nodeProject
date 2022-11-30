@@ -7,16 +7,16 @@
       <span>
         <user-info :userId="'O3GWpmbk5ezJn4KR'"></user-info>
       </span> <strong>assigned a task to you in</strong>
-      <bib-icon icon="briefcase" variant="gray5" ></bib-icon> Marketing / Website Design
+      <bib-icon icon="briefcase" variant="gray5" ></bib-icon> {{item.projectTitle}}
     </div>
     <div class="d-flex align-center justify-between">
-      <h4>Task name or message title</h4>
+      <h4>{{item.taskTitle}}</h4>
       <span class="duedate d-inline-flex align-center gap-05 text-secondary font-md">
-        <bib-icon icon="calendar" variant="gray5"></bib-icon> due today
+        <bib-icon icon="calendar" variant="gray5"></bib-icon> <format-date :datetime="item.updatedAt"></format-date>
       </span>
     </div>
     <div class="content font-md py-1">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit
+      {{item.text}}
     </div>
     <drag-table-simple :fields="fields" :tasks="tasks" headless :titleIcon="{ icon: 'check-circle'}" :collapsible="false" :drag="false" ></drag-table-simple>
     <div class="sent font-sm">Sent on Sept. 22, 2022 @ 9:32 PM (EST)</div>
@@ -27,6 +27,10 @@ import { DUMMY_TASKS } from '~/dummy/tasks'
 export default {
 
   name: 'InboxItem',
+
+  props: {
+    item: Object,
+  },
 
   data() {
     return {

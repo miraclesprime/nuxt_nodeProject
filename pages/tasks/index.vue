@@ -1,9 +1,9 @@
 <template>
   <client-only>
-    <div id="task-page-wrapper" class="task-page-wrapper">
+    <div id="task-page-wrapper" class="task-page-wrapper ">
       <page-title title="Tasks"></page-title>
       <company-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:new-task="toggleSidebar($event)"></company-tasks-actions>
-      <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
+      <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y" :class="{ 'bg-light': gridType != 'list'}">
         <template v-if="gridType == 'list'">
           <template v-if="tasks.length">
             <drag-table-simple :key="key" :componentKey="key" :fields="taskFields" :tasks="tasks" :sectionTitle="'Department'" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" ></drag-table-simple>
@@ -11,33 +11,12 @@
             <!-- table context menu -->
             <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
 
-            <!-- <bib-table :fields="taskFields" :sections="tasks" :hide-no-column="true" :collapseObj="{collapsed: false, label: 'Department', variant: 'secondary'}" class="border-gray4 bg-white" :key="viewName + '-' + key" @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
-              <template #cell(title)="data">
-                <span class="text-dark text-left cursor-pointer d-block" style=" line-height:1.25;" @click="$nuxt.$emit('open-sidebar', data.value)">{{ data.value.title }}</span>
-              </template>
-              <template #cell(status)="data">
-                <status-comp :status="data.value.status"></status-comp>
-                
-              </template>
-              <template #cell(priority)="data">
-                <priority-comp :priority="data.value.priority"></priority-comp>
-                
-              </template>
-              <template #cell(owner)="data">
-                <user-info v-if="data.value.userId" :userId="data.value.userId"></user-info>
-              </template>
-              <template #cell(dueDate)="data">
-                <span :id="'projects-' + data.value.dueDate + '-text'" class="text-dark text-truncate" v-format-date="data.value.dueDate"></span>
-              </template>
-            </bib-table> -->
           </template>
-          <template v-else>
-            <div>
-              <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
-                <bib-icon icon="warning"></bib-icon> No records found
-              </span>
-            </div>
-          </template>
+          <div v-else>
+            <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 shape-rounded py-05 px-1">
+              <bib-icon icon="warning"></bib-icon> No records found
+            </span>
+          </div>
         </template>
         <template v-else>
           <div class="d-flex">
@@ -55,7 +34,7 @@
               </div>
               <div class="task-section__body">
                 <div v-for="(item, index) in tasks" :key="index + '-' + key" >
-                  <task-grid :task="item" v-on:update-key="updateKey" />
+                  <task-grid :task="item" v-on:update-key="updateKey" @open-sidebar="openSidebar" />
                 </div>
               </div>
             </div>
@@ -132,15 +111,16 @@ export default {
       })
     },
 
-    openSidebar(task) {
+    openSidebar(task, scroll) {
       // console.log(task)
-      this.$nuxt.$emit("open-sidebar", task);
+      this.$nuxt.$emit("open-sidebar", {...task, scrollId: scroll});
     },
 
     taskRightClick(payload) {
       this.taskContextMenu = true;
       const { event, task } = payload
       this.activeTask = task;
+      this.$store.dispatch('task/setSingleTask', task)
       this.contextCoords = { left: event.pageX+'px', top: event.pageY+'px' }
     },
 
@@ -162,8 +142,18 @@ export default {
         case 'delete-task':
           this.deleteTask(this.activeTask)
           break;
-        case 'assign-task':
-          // statements_1
+        case 'gotoTeam':
+          // this.openSidebar(this.activeTask, 'comment')
+          this.$nuxt.$emit('add-member-to-task')
+          break;
+        case 'gotoComment':
+          this.openSidebar(this.activeTask, 'task_conversation')
+          break;
+        case 'gotoSubtask':
+          this.openSidebar(this.activeTask, 'task_subtasks')
+          break;
+        case 'gotoFiles':
+          this.openSidebar(this.activeTask, 'task_files')
           break;
         default:
           alert("no task assigned")

@@ -297,63 +297,6 @@ ul {
 
 }
 
-.task-grid {
-  font-size: 14px;
-  margin: 0.75rem 0 ;
-  background: var(--bib-light);
-  border: 1px solid var(--bib-gray4);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 200ms ease;
-
-  &.bg-danger {
-    background-color: var(--bib-danger);
-    color: #fff;
-
-    .user-name {
-      color: #fff
-    }
-  }
-
-  &.active {
-    /*background-color: var(--bib-gray4);*/
-    border-color: $dark;
-    box-shadow: 0 0 0 4px $primary-sub3;
-  }
-
-  .task-image {
-    aspect-ratio: 16 / 9;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-  }
-
-  .task-top,
-  .task-bottom {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px;
-  }
-
-  .task-top {
-    margin-bottom: 0.5rem;
-  }
-
-  .task-mid {
-    padding: 4px 8px;
-  }
-
-  .task-bottom {
-    align-items: center;
-
-    span {
-      font-size: 13px;
-    }
-  }
-
-
-}
-
 .tippy-tooltip {
   padding: 1px;
   background-color: $gray7;

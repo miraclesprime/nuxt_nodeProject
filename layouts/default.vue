@@ -3,7 +3,7 @@
     <bib-app-wrapper class="test" :navigationCollapsed="collapseNavigation" :select="appHeaderActions.select" @collapseNavigation="() => {
           resizeCalendar()
           collapseNavigation = !collapseNavigation;
-        }" :button="appCreateButton" @createbtn-click="createBtnClick">
+        }" :button="appCreateButton" @createbtn-click="createBtnClick" >
       <template #topbar>
         <bib-header :avatarLink="user2 ? user2.Photo : ''">
           <template #avatar_menu>
@@ -84,7 +84,7 @@
       <template #content>
         <div class="main" id='main-content' :class="openSidebar ? 'open-sidebar' : ''">
           <Nuxt />
-          <task-sidebar @open-sidebar="toggleSidebar()" :sectionIdActive="sectionPreselect"></task-sidebar>
+          <task-sidebar @open-sidebar="toggleSidebar()" :sectionIdActive="sectionPreselect" :scrollId="scrollId"></task-sidebar>
         </div>
       </template>
     </bib-app-wrapper>
@@ -197,13 +197,14 @@ export default {
       userProfileUrl: process.env.USER_PROFILE_URL,
       logoutUrl: process.env.LOGOUT_URL,
       sectionPreselect: null,
+      scrollId: "",
     }
   },
   created() {
     this.$root.$on("open-sidebar", (payload) => {
       // console.log("openSidebar => ", typeof(payload), payload)
       this.openSidebar = true;
-      // this.toggleSidebar
+      this.scrollId = payload.scrollId
 
       if (!payload.id) {
         // console.info(payload, typeof payload);
