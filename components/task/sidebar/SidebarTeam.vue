@@ -77,6 +77,7 @@ export default {
   },
 
   mounted() {
+    console.log(">>>>>>>>>>> SidebarTeam mounted",this.task.id)
     this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
   },
 
