@@ -558,8 +558,8 @@ export const PROJECT_CONTEXT_MENU = [
 ]
 
 export const TASK_CONTEXT_MENU = [
-  { label: 'Mark Complete', event: 'done-task', variant: '', icon: 'check-circle', iconVariant: 'gray5' },
-  { label: 'Add to Favorites', event: 'fav-task', variant: '', icon: 'bookmark', iconVariant: 'gray5' },
+  { label: 'Mark Complete', event: 'done-task', variant: '', icon: 'check-circle-solid', iconVariant: 'gray5' },
+  { label: 'Add to Favorites', event: 'fav-task', variant: '', icon: 'bookmark-solid', iconVariant: 'gray5' },
   { label: 'Team', event: 'gotoTeam', variant: '', icon: 'user-group-solid', iconVariant: 'gray5' },
   { label: 'SubTasks', event: 'gotoSubtask', variant: '', icon: 'check-square-solid', iconVariant: 'gray5' },
   { label: 'Conversation', event: 'gotoComment', variant: '', icon: 'comment-forum-solid', iconVariant: 'gray5' },
