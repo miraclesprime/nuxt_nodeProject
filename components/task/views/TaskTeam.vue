@@ -55,9 +55,11 @@ import { PROJECT_TEAM_FIELDS } from "../../../config/constants";
 import { mapGetters } from 'vuex';
 
 export default {
+  props: {
+    task: Object,
+  },
   data: function() {
     return {
-      localtask: {},
       member: "",
       team: [],
       filterKey: "",
@@ -80,17 +82,11 @@ export default {
         this.loading = false
       }
     },
-    task(newValue){
-      console.log(newValue?.id)
-      if (newValue?.id) {
-        this.localtask = newValue
-      }
-    }
   },
 
   computed: {
     ...mapGetters({
-      task: "task/getSelectedTask",
+      // task: "task/getSelectedTask",
       taskMembers: 'task/getTaskMembers',
       teamMembers: "user/getTeamMembers",
     }),
@@ -106,14 +102,17 @@ export default {
   },
 
   mounted() {
-    // this.loading = true
-    // console.log(this.task.id)
-    this.$store.dispatch('task/fetchTeamMember', { id: this.localtask.id })
+    console.info('mounted task team->', this.task.title)
+    this.loading = false
+    this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
+      .then(t => {
+        this.loading = false
+      })
   },
 
   created() {
     this.$root.$on('update-key', ($event) => {
-      this.$store.dispatch('task/fetchTeamMember', { id: this.localtask.id }).then(() => {
+      this.$store.dispatch('task/fetchTeamMember', { id: this.task.id }).then(() => {
         this.key += $event
       })
     })
@@ -157,12 +156,13 @@ export default {
           return t.label
         })
         // console.log(teamtext.join(', '));
-        this.$store.dispatch('task/addMember', { taskId: this.localtask.id, team: this.team, text: `added ${teamtext.join(', ')} to task` }).then(() => {
+        this.$store.dispatch('task/addMember', { taskId: this.task.id, team: this.team, text: `added ${teamtext.join(', ')} to task` }).then(() => {
           // this.$nuxt.$emit('update-key', 1)
           // this.showTeamCreateModal = false
           this.loading = false;
           this.message = ""
           this.team = []
+          this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
         }).catch((err) => {
           this.loading = false;
           // this.showTeamCreateModal = false
@@ -177,9 +177,10 @@ export default {
       this.loading = true
       let confirmDelete = window.confirm("Are you sure want to delete " + member.name + "!")
       if (confirmDelete) {
-        await this.$store.dispatch("task/deleteMember", { taskId: this.localtask.id, member: member })
+        await this.$store.dispatch("task/deleteMember", { taskId: this.task.id, memberId: member.id, text: `${member.name} removed from task` })
           .then((res) => {
             // console.log(res)
+            this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
             this.key += 1
             // alert(res)
           })

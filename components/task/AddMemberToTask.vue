@@ -1,8 +1,8 @@
 <template>
   <div id="create-team-modal-wrapper">
-    <bib-modal-wrapper @close="showTaskTeamModal = false" v-show="showTaskTeamModal" title="Assign people to task " id="create-team" @keypress.native="bindEnter($event, 'create-team-task-btn')">
+    <bib-modal-wrapper @close="showTaskTeamModal = false" v-show="showTaskTeamModal" :title="'Assign people to task - '+localtask.title" id="create-team" @keypress.native="bindEnter($event, 'create-team-task-btn')">
       <template v-slot:content>
-        <div style="min-height: 12rem;">
+        <div v-if="showTaskTeamModal" style="min-height: 12rem;">
           <!-- <label id="create-team-task-modal-heading" class="text-gray6">Participants</label>
           <bib-button test_id="create-team-task-dd1" dropdown1="add" label="Type name or email" v-model="member" v-on:input-change="teamInputChange" v-on:input-keydown="teamInputKeydown" class="mt-05 mb-05">
             <template v-slot:menu>
@@ -21,7 +21,7 @@
             <small v-show="team.length == 0" class="text-danger">Select at least 1 team member.</small>
             <p v-if="message" v-text="message" class="font-sm mt-025 text-orange"></p>
           </div> -->
-          <task-team></task-team>
+          <task-team :task="localtask"></task-team>
           <loading :loading="loading"></loading>
         </div>
       </template>
@@ -44,6 +44,7 @@ export default {
     return {
       showTaskTeamModal: false,
       // assignee: {},
+      localtask: {},
       member: "",
       team: [],
       filterKey: "",
@@ -51,6 +52,16 @@ export default {
       loading: false,
       message: "",
     };
+  },
+
+  watch: {
+    showTaskTeamModal(newValue){
+      if (newValue) {
+        this.localtask = this.task
+      } else {
+        this.localtask = {}
+      }
+    },
   },
 
   computed: {
