@@ -391,7 +391,7 @@ export default {
       }
     },
     scrollId(newValue, oldValue){
-      console.info(newValue, oldValue)
+      // console.info(newValue, oldValue)
       this.$nextTick(() => {
         this.$refs.topScroll.click()
       });

@@ -25,11 +25,11 @@
           <loading :loading="loading"></loading>
         </div>
       </template>
-      <template v-slot:footer>
+      <!-- <template v-slot:footer>
         <div class=" d-flex justify-end" id="create-team-task-model-footer">
           <bib-button @click.native="addTeamMember" variant="success" size="lg" id="create-team-task-btn" pill label="Done"></bib-button>
         </div>
-      </template>
+      </template> -->
     </bib-modal-wrapper>
     
   </div>
@@ -125,7 +125,7 @@ export default {
       }
       this.team.push(m[0])
     },*/
-    addTeamMember() {
+    /*addTeamMember() {
       this.loading = true
 
       if (this.team.length == 0) {
@@ -148,7 +148,7 @@ export default {
         })
       }
 
-    },
+    },*/
     /*copyUrl() {
       navigator.clipboard.writeText(this.taskUrl).then(() => {
         console.log('success')

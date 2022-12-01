@@ -1,5 +1,5 @@
 <template>
-  <div id="task-team-wrapper" class="task-group w-100">
+  <div id="task-team-wrapper" class="task-group position-relative w-100">
     <!-- <project-team-action ></project-team-action> -->
     <label id="create-team-modal-heading" class="text-gray6 font-md">Invite people </label>
     <bib-button test_id="teamlist-dd1" dropdown1="add1" label="Type name or email" v-model="member" v-on:input-keydown="teamInputKeydown" class="mt-05 mb-05">
@@ -57,6 +57,7 @@ import { mapGetters } from 'vuex';
 export default {
   data: function() {
     return {
+      localtask: {},
       member: "",
       team: [],
       filterKey: "",
@@ -77,6 +78,12 @@ export default {
       } else {
         this.norecord = false
         this.loading = false
+      }
+    },
+    task(newValue){
+      console.log(newValue?.id)
+      if (newValue?.id) {
+        this.localtask = newValue
       }
     }
   },
@@ -99,14 +106,14 @@ export default {
   },
 
   mounted() {
-    this.loading = true
-    console.log(this.task.id)
-    this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
+    // this.loading = true
+    // console.log(this.task.id)
+    this.$store.dispatch('task/fetchTeamMember', { id: this.localtask.id })
   },
 
   created() {
     this.$root.$on('update-key', ($event) => {
-      this.$store.dispatch('task/fetchTeamMember', { id: this.task.id }).then(() => {
+      this.$store.dispatch('task/fetchTeamMember', { id: this.localtask.id }).then(() => {
         this.key += $event
       })
     })
@@ -150,7 +157,7 @@ export default {
           return t.label
         })
         // console.log(teamtext.join(', '));
-        this.$store.dispatch('task/addMember', { taskId: this.task.id, team: this.team, text: `added ${teamtext.join(', ')} to task` }).then(() => {
+        this.$store.dispatch('task/addMember', { taskId: this.localtask.id, team: this.team, text: `added ${teamtext.join(', ')} to task` }).then(() => {
           // this.$nuxt.$emit('update-key', 1)
           // this.showTeamCreateModal = false
           this.loading = false;
@@ -170,7 +177,7 @@ export default {
       this.loading = true
       let confirmDelete = window.confirm("Are you sure want to delete " + member.name + "!")
       if (confirmDelete) {
-        await this.$store.dispatch("task/deleteMember", { taskId: this.task.id, member: member })
+        await this.$store.dispatch("task/deleteMember", { taskId: this.localtask.id, member: member })
           .then((res) => {
             // console.log(res)
             this.key += 1
