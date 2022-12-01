@@ -2,7 +2,7 @@
   <client-only>
     <div id="task-page-wrapper" class="task-page-wrapper">
       <page-title title="Tasks"></page-title>
-      <company-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:new-task="toggleSidebar($event)"></company-tasks-actions>
+      <user-name-task-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:new-task="toggleSidebar($event)"></user-name-task-actions>
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
         <template v-if="gridType == 'list'">
           <template v-if="tasks.length">
@@ -76,6 +76,7 @@ export default {
       contextCoords: {},
       userfortask: "",
       tasks: [],
+      taskOrder: 'asc'
     }
   },
   computed: {
@@ -158,7 +159,7 @@ export default {
         const res = await this.$axios.get("user/user-tasks", {
           headers: { 
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-            // 'Filter': payload.filter || 'all',
+            'Filter': 'all',
             'userid': this.userfortask ? this.userfortask.id : ""
             }
         });
@@ -312,91 +313,147 @@ export default {
       }
     },
 
-    filterView($event) {
+    async filterView($event) {
       this.loading = true
       let compid = JSON.parse(localStorage.getItem("user")).subb;
-      if ($event == 'complete') {
-        this.$store.dispatch('company/setCompanyTasks', { companyId: compid, filter: 'complete' }).then((res) => {
+      const res = await this.$axios.get("user/user-tasks", {
+          headers: { 
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            'Filter': $event,
+            'userid': this.userfortask ? this.userfortask.id : ""
+            }
+        });
+         if (res.data.statusCode == 200) {
+          this.tasks = res.data.data
           this.key += 1;
-          this.loading = false
-        }).catch(e => console.log(e))
-        this.viewName = 'complete'
-      }
-      if ($event == 'incomplete') {
-        this.$store.dispatch('company/setCompanyTasks', { companyId: compid, filter: 'incomplete' }).then((res) => {
-          this.key += 1;
-          this.loading = false
-        }).catch(e => console.log(e))
-        this.viewName = 'incomplete'
-      }
-      if ($event == 'all') {
-        this.$store.dispatch('company/setCompanyTasks', { companyId: compid, filter: 'all' }).then((res) => {
-          this.key += 1;
-          this.loading = false
-        }).catch(e => console.log(e))
-        this.viewName = 'all'
-      }
-      this.loading = false
-
+        } else {
+          console.error(e);
+        }
+        this.viewName = $event
+        this.loading = false
     },
 
     // Sort By Action List
     sortBy($event) {
 
-      console.log($event)
+      // console.log($event)
 
-      if ($event == 'title') {
-        this.$store.dispatch('company/sortCompanyTasks', { sName: 'name', order: this.orderBy }).then(() => {
+      switch ($event) {
+        case 'title':
+          if (this.taskOrder == "asc") {
+            this.tasks.sort((a, b) => a.title.localeCompare(b.title))
+            this.taskOrder = "desc"
+          } else {
+            this.tasks.sort((a, b) => b.title.localeCompare(a.title))
+            this.taskOrder = "asc"
+          }
           this.key += 1
-        }).catch((err) => {
-          console.log(err)
-        })
-      }
+          break;
+          
+        case 'status':
+          if (this.taskOrder == "asc") {
+            this.tasks.sort((a, b) => a.status.text.localeCompare(b.status.text));
+            this.taskOrder = "desc"
 
-      if ($event == 'userId') {
-        this.$store.dispatch('company/sortCompanyTasks', { sName: 'userId', order: this.orderBy }).then(() => {
+          } else {
+            this.tasks.sort((a, b) => b.status.text.localeCompare(a.status.text));
+            this.taskOrder = "asc"
+
+          }
           this.key += 1
-        }).catch((err) => {
-          console.log(err)
-        })
-      }
+          break;
 
-      if ($event == 'project') {
-        this.$store.dispatch('company/sortCompanyTasks', { sName: 'project', order: this.orderBy }).then(() => {
+        case 'priority':
+          if (this.taskOrder == "asc") {
+            this.tasks.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
+            this.taskOrder = "desc"
+
+          } else {
+            this.tasks.sort((a, b) => b.priority.text.localeCompare(a.priority.text));
+            this.taskOrder = "asc"
+
+          }
           this.key += 1
-        }).catch((err) => {
-          console.log(err)
-        })
-      }
+          break;
 
-      if ($event == 'status') {
-        this.$store.dispatch('company/sortCompanyTasks', { sName: 'status', order: this.orderBy }).then(() => {
+        case 'userId':
+          if (this.taskOrder == "asc") {
+            this.tasks.sort((a, b) => {
+              if (Object.keys(a.user).length > 0 && Object.keys(b.user).length > 0) { return a.user.firstName.localeCompare(b.user.firstName) }
+            });
+            this.taskOrder = "desc"
+          } else {
+            this.tasks.sort((a, b) => {
+              if (Object.keys(a.user).length > 0 && Object.keys(b.user).length > 0) { return b.user.firstName.localeCompare(a.user.firstName) }
+            });
+            this.taskOrder = "asc"
+          }
           this.key += 1
-        }).catch((err) => {
-          console.log(err)
-        })
-      }
+          break;
 
-      if ($event == 'priority') {
-        this.$store.dispatch('company/sortCompanyTasks', { sName: 'priority', order: this.orderBy }).then(() => {
+        case 'dueDate':
+          if (this.taskOrder == "asc") {
+            this.tasks.sort((a, b) => {
+              if (a.dueDate && b.dueDate) { return new Date(a.dueDate) - new Date(b.dueDate) }
+            });
+            this.taskOrder = "desc"
+          } else {
+            this.tasks.sort((a, b) => {
+              if (a.dueDate && b.dueDate) { return new Date(b.dueDate) - new Date(a.dueDate) }
+            });
+            this.taskOrder = "asc"
+          }
           this.key += 1
-        }).catch((err) => {
-          console.log(err)
-        })
-      }
+          break;
 
-      if ($event == 'dueDate') {
-        this.$store.dispatch('company/sortCompanyTasks', { sName: 'dueDate', order: this.orderBy }).then(() => {
+        case 'startDate':
+          if (this.taskOrder == "asc") {
+            this.tasks.sort((a, b) => {
+              if (a.startDate && b.startDate) { return new Date(a.startDate) - new Date(b.startDate) }
+            });
+            this.taskOrder = "desc"
+          } else {
+            this.tasks.sort((a, b) => {
+              if (a.startDate && b.startDate) { return new Date(b.startDate) - new Date(a.startDate) }
+            });
+            this.taskOrder = "asc"
+          }
           this.key += 1
-        }).catch((err) => {
-          console.log(err)
-        })
-      }
+          break;
 
-      if (this.orderBy == 'asc') {
-        this.orderBy = 'desc'
-      } else {
-        this.orderBy = 'asc'
+        case "project":
+          let newArr = []
+
+          for (let i = 0; i < this.tasks.length; i++) {
+            if (this.tasks[i].project[0]) {
+              newArr.unshift(this.tasks[i])
+            } else {
+              newArr.push(this.tasks[i])
+            }
+          }
+
+          if (this.taskOrder == "asc") { 
+            newArr.sort((a, b) => {
+              if (a.project[0].length > 0 && b.project[0].length > 0) {
+                return a.project[0].project.title.localeCompare(b.project[0].project.title);
+              }
+            });
+            this.taskOrder = "desc"
+          } else {
+              newArr.sort((a, b) => {
+              if (a.project[0].length > 0 && b.project[0].length > 0) {
+                return b.project[0].project.title.localeCompare(a.project[0].project.title);
+              }
+            });
+            this.taskOrder = "asc"
+          }
+
+          this.tasks = newArr;
+          this.key += 1
+          break;
+        default:
+          this.fetchTasks()
+          break;
       }
 
       this.key += 1

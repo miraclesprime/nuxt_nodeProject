@@ -1,5 +1,5 @@
 <template>
-  <div id="task-team-wrapper" class="task-group w-100">
+  <div id="task-team-wrapper" class="task-group position-relative w-100">
     <!-- <project-team-action ></project-team-action> -->
     <label id="create-team-modal-heading" class="text-gray6 font-md">Invite people </label>
     <bib-button test_id="teamlist-dd1" dropdown1="add1" label="Type name or email" v-model="member" v-on:input-keydown="teamInputKeydown" class="mt-05 mb-05">
@@ -55,6 +55,9 @@ import { PROJECT_TEAM_FIELDS } from "../../../config/constants";
 import { mapGetters } from 'vuex';
 
 export default {
+  props: {
+    task: Object,
+  },
   data: function() {
     return {
       member: "",
@@ -78,12 +81,12 @@ export default {
         this.norecord = false
         this.loading = false
       }
-    }
+    },
   },
 
   computed: {
     ...mapGetters({
-      task: "task/getSelectedTask",
+      // task: "task/getSelectedTask",
       taskMembers: 'task/getTaskMembers',
       teamMembers: "user/getTeamMembers",
     }),
@@ -99,9 +102,12 @@ export default {
   },
 
   mounted() {
-    this.loading = true
-    console.log(this.task.id)
+    console.info('mounted task team->', this.task.title)
+    this.loading = false
     this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
+      .then(t => {
+        this.loading = false
+      })
   },
 
   created() {
@@ -156,6 +162,7 @@ export default {
           this.loading = false;
           this.message = ""
           this.team = []
+          this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
         }).catch((err) => {
           this.loading = false;
           // this.showTeamCreateModal = false
@@ -170,9 +177,10 @@ export default {
       this.loading = true
       let confirmDelete = window.confirm("Are you sure want to delete " + member.name + "!")
       if (confirmDelete) {
-        await this.$store.dispatch("task/deleteMember", { taskId: this.task.id, member: member })
+        await this.$store.dispatch("task/deleteMember", { taskId: this.task.id, memberId: member.id, text: `${member.name} removed from task` })
           .then((res) => {
             // console.log(res)
+            this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
             this.key += 1
             // alert(res)
           })

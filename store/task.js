@@ -80,7 +80,7 @@ export const mutations = {
     state.tasks.push(payload);
   },
 
-  
+
   createTaskComment(state, payload) {
     state.taskComments.push(payload)
   },
@@ -109,7 +109,7 @@ export const mutations = {
     state.teamKey += 1;
   },
 
-  SETTASKHISTORY(state, payload){
+  SETTASKHISTORY(state, payload) {
     state.taskHistory = payload
   }
 
@@ -150,7 +150,7 @@ export const actions = {
     if (res.statusCode == 200) {
       ctx.commit('createTask', res.data);
       ctx.commit("section/addTaskToSection", res.data, { root: true });
-    } 
+    }
     return res.data
   },
 
@@ -182,7 +182,7 @@ export const actions = {
     }
 
     if (payload.statusId == 5) {
-      const res = await this.$axios.$put('/task', { id: payload.id, projectId: ctx.rootState.project.selectedProject.id  || payload.project[0].projectId || payload.project[0].project.id, data: { statusId: 2 }, text: 'Updated the status to In-progress' }, {
+      const res = await this.$axios.$put('/task', { id: payload.id, projectId: ctx.rootState.project.selectedProject.id || payload.project[0].projectId || payload.project[0].project.id, data: { statusId: 2 }, text: 'Updated the status to In-progress' }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
       // ctx.dispatch("fetchTasks", { id: ctx.rootState.project.selectedProject.id, filter: 'all' })
@@ -231,27 +231,28 @@ export const actions = {
   },
 
   async fetchTeamMember(ctx, payload) {
-    await this.$axios.get(`/task/${payload.id}/members`, {
+    try {
+      const tm = await this.$axios.get(`/task/${payload.id}/members`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       })
-      .then((res) => {
-        let team = res.data.data.members;
-        // console.log(team)
-        let data = team.map((el) => {
-          if(ctx.state.selectedTask.userId == el.user.id) {
-            el.isOwner = true
-          } else {
-            el.isOwner = false
-          }
-          return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName, isOwner: el.isOwner };
-        });
-        ctx.commit('fetchTeamMember', data)
-      })
-      .catch((err) => {
-        console.log("Error!!");
+      console.log(tm)
+      let team = tm.data.data.members;
+
+      let data = team.map((el) => {
+        if (payload.userId == el.user.id) {
+          el.isOwner = true
+        } else {
+          el.isOwner = false
+        }
+        return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName, isOwner: el.isOwner };
       });
+      ctx.commit('fetchTeamMember', data)
+      return data
+    } catch (e) {
+      console.log('fetchTeamMember ->', e);
+    }
   },
 
   async addMember(ctx, payload) {
@@ -265,7 +266,7 @@ export const actions = {
         }
       })
     }
-    await this.$axios.post(`/task/${ctx.state.selectedTask.id}/members`, { users: data, text: payload.text }, {
+    await this.$axios.post(`/task/${payload.taskId}/members`, { users: data, text: payload.text }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     }).then((res) => {
       let team = res.data.data.members;
@@ -274,14 +275,14 @@ export const actions = {
       });
       ctx.commit('addMember', data);
     }).catch((err) => {
-      console.log('Error!!', err)
+      console.log('add member->', err)
     })
 
   },
 
   async deleteMember(ctx, payload) {
     try {
-      let m = await this.$axios.delete(`/task/${ctx.state.selectedTask.id}/members`, {
+      let m = await this.$axios.delete(`/task/${payload.taskId}/members`, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
@@ -314,14 +315,14 @@ export const actions = {
         }
       })
 
-      if(fav.data.statusCode == 200) {
+      if (fav.data.statusCode == 200) {
         ctx.dispatch("fetchTaskComments")
         return fav.data.data;
       } else {
         return fav.data.data;
       }
 
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
   },
@@ -341,34 +342,34 @@ export const actions = {
         return res
       }
 
-    }catch(e) {
+    } catch (e) {
       console.log(e)
     }
   },
 
   async updateTaskComment(ctx, payload) {
     try {
-      const res = await this.$axios.$put(`/task/${payload.taskId}/comments/${payload.commentId}`,{
+      const res = await this.$axios.$put(`/task/${payload.taskId}/comments/${payload.commentId}`, {
         comment: payload.comment,
         text: payload.text,
       }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
       if (res.statusCode == 200) {
-        ctx.dispatch("fetchTaskComments", {id: payload.taskId})
+        ctx.dispatch("fetchTaskComments", { id: payload.taskId })
         return res
       } else {
         return res
       }
 
-    }catch(e) {
+    } catch (e) {
       console.log(e)
     }
   },
 
   async deleteTaskComment(ctx, payload) {
     try {
-      const res = await this.$axios.$delete(`/task/${payload.taskId}/comments/${payload.commentId}`,{
+      const res = await this.$axios.$delete(`/task/${payload.taskId}/comments/${payload.commentId}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           "text": payload.text,
@@ -376,13 +377,13 @@ export const actions = {
         }
       });
       if (res.statusCode == 200) {
-        ctx.dispatch("fetchTaskComments", {id: payload.taskId})
+        ctx.dispatch("fetchTaskComments", { id: payload.taskId })
         return res
       } else {
         return res
       }
 
-    }catch(e) {
+    } catch (e) {
       console.log(e)
     }
   },
@@ -399,7 +400,7 @@ export const actions = {
         return res
       }
 
-    }catch(e) {
+    } catch (e) {
       console.log(e)
     }
   },
@@ -409,16 +410,16 @@ export const actions = {
       const hist = await this.$axios.$get("/history/all", {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-          'obj': JSON.stringify( {"taskId": payload.id} )
+          'obj': JSON.stringify({ "taskId": payload.id })
         }
 
       })
-      
+
       if (hist.statusCode == 200) {
         ctx.commit("SETTASKHISTORY", hist.data)
       }
       return hist.data
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
   }

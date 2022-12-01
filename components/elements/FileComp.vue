@@ -112,7 +112,7 @@ export default {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           }
         }).then(f => {
-          console.log(f.data)
+          // console.log(f.data)
           if (f.data.statusCode == 200) {
             const a = document.createElement('a');
             a.style.display = 'none';
@@ -132,7 +132,7 @@ export default {
     },
 
     canDeleteTaskFile() {
-      console.log(this.property.owner, JSON.parse(localStorage.getItem('user')).sub)
+      // console.log(this.property.owner, JSON.parse(localStorage.getItem('user')).sub)
       //  console.log(JSON.parse(localStorage.getItem('user')).subr)
       if (this.property.owner == JSON.parse(localStorage.getItem('user')).sub || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN' ) {
         this.cdtf = true

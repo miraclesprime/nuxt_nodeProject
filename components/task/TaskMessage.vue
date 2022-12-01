@@ -273,9 +273,9 @@ export default {
         }
       );
     },*/
-    repliesExist() {
+    /*repliesExist() {
       return this.msg.replies?.length ? true : false
-    },
+    },*/
     reactionsExist() {
       if (this.msg.reactions?.length || this.reactionGroup.length) {
         return true
@@ -339,22 +339,11 @@ export default {
     })
   },
   mounted() {
-    // this.reactions = []
-    // console.info(this.msg.id, " msg reactions =>", this.msg.reactions, 'local reactions =>', this.reactions);
-    // this.reactions = this.msg.reactions
-    this.reactions = _.cloneDeep(this.msg.reactions);
+    
+    this.fetchReactions()
     this.getFiles()
-    /*this.$axios.get('/task/' + this.msg.id + "/reactions", {
-        headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
-      })
-      .then(r => {
-        this.reactions = r
-      })
-      .catch(e => console.log(e))*/
+
   },
-  /*updated(){
-    console.log('updated', this.msg.reactions)
-  },*/
 
   methods: {
     /*fetchReplies() {

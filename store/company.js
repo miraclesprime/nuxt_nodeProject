@@ -171,6 +171,15 @@ export const mutations = {
     }*/
 
     // sort by due date
+    if (payload.sName == 'startDate' && payload.order == 'asc') {
+      state.companyTasks.sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
+    }
+
+    if (payload.sName == 'startDate' && payload.order == 'desc') {
+      state.companyTasks.sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
+    }
+
+    // sort by due date
     if (payload.sName == 'dueDate' && payload.order == 'asc') {
       state.companyTasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
     }

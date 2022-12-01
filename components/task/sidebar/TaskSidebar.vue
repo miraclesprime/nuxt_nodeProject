@@ -157,7 +157,7 @@
     <bib-modal-wrapper v-if="taskTeamModal" title="Team" size="lg" @close="taskTeamModal = false">
       <template slot="content">
         <div style="height: 12rem;">
-          <task-team></task-team>
+          <task-team :task="currentTask"></task-team>
         </div>
       </template>
     </bib-modal-wrapper>
@@ -391,7 +391,7 @@ export default {
       }
     },
     scrollId(newValue, oldValue){
-      console.info(newValue, oldValue)
+      // console.info(newValue, oldValue)
       this.$nextTick(() => {
         this.$refs.topScroll.click()
       });
