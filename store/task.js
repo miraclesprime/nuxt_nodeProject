@@ -237,7 +237,7 @@ export const actions = {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       })
-      console.log(tm)
+      // console.log(tm)
       let team = tm.data.data.members;
 
       let data = team.map((el) => {

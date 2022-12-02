@@ -28,7 +28,7 @@
           <tr v-if="newSubtask || localSubTasks.length == 0" class="new">
             <td>
               <div class="d-flex gap-05 align-center">
-                <bib-icon icon="check-circle" :scale="1.25"></bib-icon>
+                <bib-icon icon="check-circle-solid" variant="white" :scale="1.25"></bib-icon>
                 <input class="sub-input" ref="subtaskNameInput" type="text" v-model.trim="title" minlength="3" pattern="[a-zA-Z]{4,128}" @keyup="debounceCreateSubtask" placeholder="Start typing..." >
               </div>
             </td>

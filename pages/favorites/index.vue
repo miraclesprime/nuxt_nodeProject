@@ -6,15 +6,13 @@
       <div id="favorite-scroll-wrap" class="of-scroll-y position-relative">
         <!-- projects table -->
         <drag-table-simple :fields="projectTableFields" :tasks="sortedProject" :titleIcon="{icon:'briefcase'}" :componentKey="key" :drag="false" :sectionTitle="'Favorite Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick"></drag-table-simple>
+        <table-context-menu :items="projectContextItems" :show="projectContextMenu" :coordinates="contextCoords" @close-context="projectContextMenu = false" @item-click="projContextItemClick" ref="proj_menu"></table-context-menu>
         
         <!-- task table -->
         <drag-table-simple :fields="taskTableFields" :componentKey="key+1" :tasks="sortedTask" :sectionTitle="'Favorite Tasks'" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="openSidebar" v-on:table-sort="sortTask" @row-click="openSidebar" @row-context="taskRightClick"></drag-table-simple>
-        <!-- <ul>
-          <li v-for="item in sortedTaskUtil" :key="item.id">{{ item.title }}</li>
-        </ul> -->
-        <loading :loading="loading"></loading>
-        <table-context-menu :items="projectContextItems" :show="projectContextMenu" :coordinates="contextCoords" @close-context="projectContextMenu = false" @item-click="projContextItemClick" ref="proj_menu"></table-context-menu>
         <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" @close-context="taskContextMenu = false" @item-click="taskContextItemClick" ref="task_menu"></table-context-menu>
+        
+        <loading :loading="loading"></loading>
       </div>
       <!-- project rename modal -->
       <bib-modal-wrapper v-if="renameModal" title="Rename project" @close="renameModal = false">
@@ -151,9 +149,7 @@ export default {
       this.taskContextMenu = true
       const { event, task } = payload
       this.activeTask = task;
-      // console.info(this.$refs.task_menu.$el)
-      // this.$refs.task_menu.$el.style.left = payload.event.pageX + 'px'
-      // this.$refs.task_menu.$el.style.top = payload.event.pageY + 'px'
+      this.$store.dispatch('task/setSingleTask', task)
       this.contextCoords = { left: event.pageX+'px', top: event.pageY+'px' }
     },
 
@@ -524,8 +520,17 @@ export default {
         case 'delete-task':
           this.deleteTask(this.activeTask)
           break;
-        case 'assign-task':
-          // statements_1
+        case 'gotoTeam':
+          this.$nuxt.$emit('add-member-to-task')
+          break;
+        case 'gotoComment':
+          this.openSidebar(this.activeTask, 'task_conversation')
+          break;
+        case 'gotoSubtask':
+          this.openSidebar(this.activeTask, 'task_subtasks')
+          break;
+        case 'gotoFiles':
+          this.openSidebar(this.activeTask, 'task_files')
           break;
         default:
           alert("no task assigned")
@@ -707,12 +712,11 @@ export default {
     },
 
     // task context menu methods ------------------------------------------
-
-    openSidebar(task) {
-      this.$nuxt.$emit("open-sidebar", task);
-      /*this.$store.dispatch('task/setSingleTask', {...task, projectId: projectId})
-      this.$store.dispatch('task/fetchTeamMember', { id: task.id } )*/
+    openSidebar(task, scroll) {
+      // console.log(task)
+      this.$nuxt.$emit("open-sidebar", {...task, scrollId: scroll});
     },
+    
     newProject() {
       console.log('new project')
       this.$nuxt.$emit('create-project-modal')
