@@ -18,7 +18,7 @@
           <!-- <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-2'>
             <bib-icon icon="attachment" variant="gray5" ></bib-icon>
           </div> -->
-          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-3' @click="showAddTeamModal">
+          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="ts-icon-3" v-tooltip="'Team'" @click="showAddTeamModal">
             <bib-icon icon="user-group-solid" variant="gray5" ></bib-icon>
           </div>
           <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-3' v-scroll-to="'#task_subtasks'">
@@ -31,17 +31,17 @@
             <bib-icon icon="folder-solid" variant="gray5" ></bib-icon>
           </div>
           <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="ts-icon-6" @click="setFavorite">
-            <bib-icon :icon="isFavorite.icon" :variant="isFavorite.variant" ></bib-icon>
+            <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" ></bib-icon>
           </div>
           <div id="ts-list-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center">
             <bib-button pop="elipsis">
               <template v-slot:menu>
                 <div class="list" id="ts-list">
-                  <span class="list__item" id="ts-list-item-1" :class="['list__item__' + isComplete.variant]" @click="markComplete">
-                    <bib-icon :icon="isComplete.icon" :variant="isComplete.variant" class="mr-075"></bib-icon> {{isComplete.text}}
+                  <span class="list__item" id="ts-list-item-1" @click="markComplete">
+                    <bib-icon icon="check-circle-solid" :variant="isComplete.variant" class="mr-075"></bib-icon> {{isComplete.text}}
                   </span>
                   <span class="list__item" id="ts-list-item-2" @click="setFavorite">
-                    <bib-icon :icon="isFavorite.icon" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
+                    <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
                   </span>
                   <span class="list__item" id="ts-list-item-4" @click="showAddTeamModal">
                     <bib-icon icon="user-group-solid" variant="gray5" class="mr-075" ></bib-icon> Team
@@ -69,7 +69,7 @@
       <div class="border-top-gray3 border-bottom-gray3 position-relative px-105 py-025 mb-1" id="ts-row">
         <div class="d-flex align-center gap-05" id="ts-col-1">
           <div class="width-2 height-2 d-inline-flex align-center justify-center cursor-pointer" @click="markComplete">
-            <bib-icon :icon="isComplete.icon" :variant="isComplete.variant" :scale="1.5"></bib-icon>
+            <bib-icon icon="check-circle-solid" :variant="isComplete.variant" :scale="1.5"></bib-icon>
           </div>
           <div class="flex-grow-1">
             <!-- <span v-if="!editTitle" class="font-w-700" @click.stop="editTitle = true">{{form.title}}</span> -->
@@ -79,7 +79,7 @@
           </div>
           <div>
             <div class="team-avatar-list px-05">
-              <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :key="index" v-tooltip="`${team.label}`" :title="team.label" :style="{ 'left': -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
+              <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :key="index" v-tooltip="team.label" :title="team.label" :style="{ 'left': -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
             </div>
           </div>
           <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light cursor-pointer" v-tooltip="'Team'" @click="showAddTeamModal">
@@ -333,16 +333,16 @@ export default {
     isFavorite() {
       let fav = this.favTasks.some(t => t.task.id == this.currentTask.id)
       if (fav) {
-        return { icon: "bookmark-solid", variant: "orange", text: "Remove favorite", status: true }
+        return { variant: "orange", text: "Remove favorite", status: true }
       } else {
-        return { icon: "bookmark", variant: "gray5", text: "Add to favorites", status: false }
+        return { variant: "gray3", text: "Add to favorites", status: false }
       }
     },
     isComplete() {
       if (this.currentTask.statusId == 5) {
-        return { icon: "check-circle", variant: "success", text: "Completed" }
+        return { variant: "success", text: "Completed" }
       } else {
-        return { icon: "check-circle", variant: "gray5", text: "Mark Completed" }
+        return { variant: "gray3", text: "Mark Completed" }
       }
     },
     userPhoto(){

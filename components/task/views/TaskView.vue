@@ -4,7 +4,7 @@
     <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createSection"></new-section-form>
     <template v-if="gridType === 'list'">
       <!-- task list table -->
-      <drag-table :fields="tableFields" :sections="localdata" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" :key="templateKey" :componentKey="templateKey" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" :newTaskButton="newTaskButton" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow"></drag-table>
+      <drag-table :fields="tableFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" :key="templateKey" :componentKey="templateKey" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" :newTaskButton="newTaskButton" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow"></drag-table>
       <!-- table context menu -->
       <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" ref="task_menu" @item-click="contextItemClick"></table-context-menu>
       <!-- <task-list-section :project="project" :sections="localdata" :templateKey="templateKey" v-on:sort-task="taskSort($event)" v-on:update-key="updateKey"></task-list-section> -->
@@ -14,9 +14,9 @@
       </task-grid-section>
     </template>
     <loading :loading="loading"></loading>
-    <span id="projects-0" v-show="nodata" class="d-inline-flex gap-05 align-center m-1 text-gray5 font-md">
+    <!-- <span id="projects-0" v-show="nodata" class="d-inline-flex gap-05 align-center m-1 text-gray5 font-md">
       <bib-icon icon="warning" variant="orange"></bib-icon> No records found
-    </span>
+    </span> -->
     <!-- section rename modal -->
     <bib-modal-wrapper v-if="renameModal" title="Rename section" @close="renameModal = false">
       <template slot="content">
@@ -113,13 +113,13 @@ export default {
         return false
       }
     },*/
-    nodata() {
-      if (this.sections.length > 0) {
-        return false
-      } else {
-        return true
-      }
-    },
+    // nodata() {
+    //   if (this.sections.length > 0) {
+    //     return false
+    //   } else {
+    //     return true
+    //   }
+    // },
   },
   created() {
 

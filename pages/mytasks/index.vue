@@ -8,7 +8,7 @@
         <div id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y">
           <template v-if="gridType == 'list'">
             <template v-if="todos.length">
-              <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy"  @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete"></drag-table>
+              <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy"  @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete"></drag-table>
 
               <!-- table context menu -->
               <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
@@ -175,32 +175,19 @@ export default {
   },
 
   methods: {
-    
-    openSidebar(task) {
-      console.log(task)
-      this.$nuxt.$emit("open-sidebar", task);
-
-      let el = event.target.offsetParent
-      let scrollAmt = event.target.offsetLeft - event.target.offsetWidth;
-
-      el.scrollTo({
-        top: 0,
-        left: scrollAmt,
-        behavior: 'smooth'
-      });
-
-    },
 
     taskRightClick(payload) {
       this.taskContextMenu = true;
       const { event, task } = payload
       this.activeTask = task;
+      this.$store.dispatch('task/setSingleTask', task)
       this.contextCoords = { left: event.pageX+'px', top: event.pageY+'px' }
     },
 
-    /*openSidebar(task) {
-      this.$nuxt.$emit("open-sidebar", task);
-    },*/
+    openSidebar(task, scroll) {
+      // console.log(task)
+      this.$nuxt.$emit("open-sidebar", {...task, scrollId: scroll});
+    },
     
     closeContext() {
       this.taskContextMenu = false
@@ -219,8 +206,18 @@ export default {
         case 'delete-task':
           this.deleteTask(this.activeTask)
           break;
-        case 'assign-task':
-          // statements_1
+        case 'gotoTeam':
+          // this.openSidebar(this.activeTask, 'comment')
+          this.$nuxt.$emit('add-member-to-task')
+          break;
+        case 'gotoComment':
+          this.openSidebar(this.activeTask, 'task_conversation')
+          break;
+        case 'gotoSubtask':
+          this.openSidebar(this.activeTask, 'task_subtasks')
+          break;
+        case 'gotoFiles':
+          this.openSidebar(this.activeTask, 'task_files')
           break;
         default:
           alert("no task assigned")

@@ -81,7 +81,6 @@
           </template>
           <div v-if="col.key == 'title'" class="d-flex gap-05 align-center h-100">
             <span v-if="titleIcon.icon" class="width-105 height-105 " :class="{'cursor-pointer': titleIcon.event}" @click.stop="updateTaskStatus(task)">
-              <!-- <bib-icon :icon="check-circle" :scale="1.25" :variant="taskCheckIcon(task)" ></bib-icon> -->
               <bib-icon :icon="titleIcon.icon" :scale="1.5" :variant="taskCheckIcon(task)" ></bib-icon>
             </span>
             <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">

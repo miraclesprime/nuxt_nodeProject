@@ -28,7 +28,7 @@
           <bib-icon icon="time" class="m-auto"></bib-icon>
         </div> -->
         <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark" @click="setFavorite" v-tooltip="'Favorite'">
-          <bib-icon class="m-auto" :icon="isFavorite.icon" :variant="isFavorite.variant"></bib-icon>
+          <bib-icon class="m-auto" icon="bookmark-solid" :variant="isFavorite.variant"></bib-icon>
         </div>
         <div id="project-id-horizontal-dots-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center">
           <bib-popup pop="horizontal-dots" id="project-id-horizontal-dots">
@@ -37,7 +37,7 @@
                 <span class="list__item" id="project-id-list-item1" @click="modalOpen('overview', 'Overview')">View details</span>
                 <!-- <hr id="project-id-hr"> -->
                 <span class="list__item" id="project-id-list-item2" @click="setFavorite">
-                  <bib-icon :icon="isFavorite.icon" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
+                  <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
                 </span>
                 <span class="list__item" id="project-id-list-item3">
                   <bib-icon icon="user-group-solid" class="mr-075"></bib-icon> Team
@@ -276,9 +276,9 @@ export default {
     isFavorite() {
       let fav = this.favProjects.some(t => t.id == this.project.id)
       if (fav) {
-        return { icon: "bookmark-solid", variant: "orange", text: "Remove favorite", status: true }
+        return { variant: "orange", text: "Remove favorite", status: true }
       } else {
-        return { icon: "bookmark", variant: "gray5", text: "Add to favorites", status: false }
+        return { variant: "gray5", text: "Add to favorites", status: false }
       }
     },
     teammates() {
