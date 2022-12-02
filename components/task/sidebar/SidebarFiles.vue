@@ -6,7 +6,8 @@
     <div id="task-file-actions-wrapper" class="file-actions border-bottom-gray2 d-flex align-center py-025">
       <div class="d-inline-flex gap-05 cursor-pointer shape-rounded py-025 px-05 bg-success-sub6 bg-hover-success-sub3 text-success " id="file-upload-button" @click="uploadModal = true">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="file-upload-text" class="">Upload File</span>
-      </div>
+      </div> || 
+      <!-- <button @click="showPdfPreview">Open PDf</button> -->
       <!-- <div class="action-left d-flex " id="file-action-left">
       </div> -->
       <!-- <div class="action-right d-flex gap-05" id="file-action-right">
@@ -31,7 +32,9 @@
         <file-comp v-for="file in files" :key="file.key + fileKey" :property="file"  @delete-file="deleteFile" @preview-file="showPreviewModal(file)"></file-comp>
       </template>
     </div>
-    
+
+
+    <!-- File Upload modal -->
     <bib-modal-wrapper v-if="uploadModal" title="Select file(s)" @close="uploadModal = false">
       <template slot="content">
         <div style="margin-left: -1rem; margin-right: -1rem;">
@@ -47,7 +50,7 @@
       </template>
     </bib-modal-wrapper>
 
-    <!-- file preview modal -->
+    <!-- file pic preview modal -->
     <bib-modal-wrapper v-if="previewModal" title="Preview" size="lg" @close="closePreviewModal">
       <template slot="content">
         <div v-if="!filePreview" class="text-center">
@@ -63,14 +66,33 @@
         </div>
       </template>
     </bib-modal-wrapper>
+
+    <!-- pdf file preview modal -->
+    <bib-modal-wrapper v-if="pdfPreview" title="previewPdf" @close="pdfPreview = false">
+      <template slot="content">
+          <!-- <vue-pdf-embed :source="source2" /> -->
+          <pdf-preview></pdf-preview>
+      </template>
+      <template slot="footer">
+        <div class="text-center">
+          <bib-button label="Close" variant="light" pill @click="pdfPreview = false"></bib-button>
+        </div>
+      </template>
+    </bib-modal-wrapper>
+  
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
 import { FILE_FIELDS } from "~/config/constants"
+// import { VuePdfEmbed } from 'vue-pdf-embed'
 
 export default {
   name: "TaskFiles",
+  // components: {
+  //   VuePdfEmbed
+  // },
   data: function() {
     return {
       displayType: 'grid',
@@ -82,8 +104,9 @@ export default {
       fileKey: 1,
       showPlaceholder: false,
       previewModal: false,
+      pdfPreview: false,
+      // source2: 'data:application/pdf;base64,JVBERi0xLjcKCjEgMCBvYmogICUgZW50cnkgcG9pbnQKPDwKICAvVHlwZSAvQ2F0YWxvZwogIC9QYWdlcyAyIDAgUgo+PgplbmRvYmoKCjIgMCBvYmoKPDwKICAvVHlwZSAvUGFnZXMKICAvTWVkaWFCb3ggWyAwIDAgMjAwIDIwMCBdCiAgL0NvdW50IDEKICAvS2lkcyBbIDMgMCBSIF0KPj4KZW5kb2JqCgozIDAgb2JqCjw8CiAgL1R5cGUgL1BhZ2UKICAvUGFyZW50IDIgMCBSCiAgL1Jlc291cmNlcyA8PAogICAgL0ZvbnQgPDwKICAgICAgL0YxIDQgMCBSIAogICAgPj4KICA+PgogIC9Db250ZW50cyA1IDAgUgo+PgplbmRvYmoKCjQgMCBvYmoKPDwKICAvVHlwZSAvRm9udAogIC9TdWJ0eXBlIC9UeXBlMQogIC9CYXNlRm9udCAvVGltZXMtUm9tYW4KPj4KZW5kb2JqCgo1IDAgb2JqICAlIHBhZ2UgY29udGVudAo8PAogIC9MZW5ndGggNDQKPj4Kc3RyZWFtCkJUCjcwIDUwIFRECi9GMSAxMiBUZgooSGVsbG8sIHdvcmxkISkgVGoKRVQKZW5kc3RyZWFtCmVuZG9iagoKeHJlZgowIDYKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDEwIDAwMDAwIG4gCjAwMDAwMDAwNzkgMDAwMDAgbiAKMDAwMDAwMDE3MyAwMDAwMCBuIAowMDAwMDAwMzAxIDAwMDAwIG4gCjAwMDAwMDAzODAgMDAwMDAgbiAKdHJhaWxlcgo8PAogIC9TaXplIDYKICAvUm9vdCAxIDAgUgo+PgpzdGFydHhyZWYKNDkyCiUlRU9G',
       filePreview: '',
-      // cdtf: false
     }
   },
   props: {
@@ -275,6 +298,25 @@ export default {
         // this.filePreview = "https://via.placeholder.com/200x160/f0f0f0/6f6f79?text="+file.extension
       }
     
+    },
+
+    async showPdfPreview(file) {
+      this.pdfPreview = true
+
+      // if (file.type.indexOf('image/') == 0 && "url" in file) {
+      //   let imgtype = file.type.split("/")[1]
+      //   const prev = await this.$axios.get("file/single/"+file.key, {
+      //     headers: {
+      //       'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+      //       'preview': 'preview'
+      //     }
+      //   })
+      //   this.filePreview = `data:image/${imgtype};base64,${prev.data.data}`
+      // } else {
+      //   // this.downloadFile(file)
+      //   this.pdfPreview = false
+      //   // this.filePreview = "https://via.placeholder.com/200x160/f0f0f0/6f6f79?text="+file.extension
+      // }
     },
 
     closePreviewModal(){

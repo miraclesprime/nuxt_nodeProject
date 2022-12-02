@@ -1,119 +1,143 @@
 <template>
-  <draggable :list="localdata" tag="div" handle=".drag-handle" class="" @end="$emit('section-dragend', localdata)">
-    <table v-for="(section, index) in localdata" :key="section.id + templateKey" v-click-outside="unselectAll" class="table" :class="{ 'table__headless': index>=1 }">
-      <thead>
-        <tr class="table__hrow">
-          <th width="3%">&nbsp;</th>
-          <th v-for="(field, index) in fields" :key="field.key + index" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
-            <div class="align-center">
-              <span class="flex-grow-1"> {{ field.label }} </span>
-              <template v-if="field.header_icon">
-                <div class="ml-05 shape-circle bg-light bg-hover-gray2 width-105 height-105 d-flex justify-center align-center cursor-pointer" :class="{'bg-black': field.header_icon.isActive }" @click="$emit(field.header_icon.event, field.key)">
-                  <bib-icon :icon="field.header_icon.icon" :scale="1" variant="gray5" hoverVariant="gray6"></bib-icon>
-                </div>
-              </template>
+  <div>
+    
+    <draggable v-if="localdata.length == 0" :list="localdata" tag="div" handle=".drag-handle" class="" @end="$emit('section-dragend', localdata)">
+      <table class="table">
+        <thead>
+          <tr class="table__hrow">
+            <th width="3%">&nbsp;</th>
+            <th v-for="(field, index) in fields" :key="field.key + index" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
+              <div class="align-center">
+                <span class="flex-grow-1"> {{ field.label }} </span>
+                <template v-if="field.header_icon">
+                  <div class="ml-05 shape-circle bg-light bg-hover-gray2 width-105 height-105 d-flex justify-center align-center cursor-pointer" :class="{'bg-black': field.header_icon.isActive }" @click="$emit(field.header_icon.event, field.key)">
+                    <bib-icon :icon="field.header_icon.icon" :scale="1" variant="gray5" hoverVariant="gray6"></bib-icon>
+                  </div>
+                </template>
+              </div>
+            </th>
+          </tr>
+        </thead>
+      </table>
+    </draggable>
+
+    <draggable v-if="localdata.length > 0" :list="localdata" tag="div" handle=".drag-handle" class="" @end="$emit('section-dragend', localdata)">
+      <table v-for="(section, index) in localdata" :key="section.id + templateKey" v-click-outside="unselectAll" class="table" :class="{ 'table__headless': index>=1 }">
+        <thead>
+          <tr class="table__hrow">
+            <th width="3%">&nbsp;</th>
+            <th v-for="(field, index) in fields" :key="field.key + index" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
+              <div class="align-center">
+                <span class="flex-grow-1"> {{ field.label }} </span>
+                <template v-if="field.header_icon">
+                  <div class="ml-05 shape-circle bg-light bg-hover-gray2 width-105 height-105 d-flex justify-center align-center cursor-pointer" :class="{'bg-black': field.header_icon.isActive }" @click="$emit(field.header_icon.event, field.key)">
+                    <bib-icon :icon="field.header_icon.icon" :scale="1" variant="gray5" hoverVariant="gray6"></bib-icon>
+                  </div>
+                </template>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tr :style="{ width: '0rem' }" v-if="collapsible">
+          <td :colspan="cols.length+1" class="section">
+            <div class="section-header d-flex align-center gap-05 text-gray6">
+              <div class="drag-handle width-2 text-center"><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
+                  <rect fill="none" height="24" width="24" />
+                  <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div>
+              <div class="d-flex gap-05 align-center cursor-pointer" @click.self="collapseItem($event, 'tbody'+section.id)">
+                <bib-icon icon="arrow-down" :scale="0.5" variant="gray6"></bib-icon> {{section.title.includes('_section') ? 'Untitled section' : section.title}}
+              </div>
             </div>
-          </th>
-        </tr>
-      </thead>
-      <tr :style="{ width: '0rem' }" v-if="collapsible">
-        <td :colspan="cols.length+1" class="section">
-          <div class="section-header d-flex align-center gap-05 text-gray6">
-            <div class="drag-handle width-2 text-center"><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
-                <rect fill="none" height="24" width="24" />
-                <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div>
-            <div class="d-flex gap-05 align-center cursor-pointer" @click.self="collapseItem($event, 'tbody'+section.id)">
-              <bib-icon icon="arrow-down" :scale="0.5" variant="gray6"></bib-icon> {{section.title.includes('_section') ? 'Untitled section' : section.title}}
-            </div>
-          </div>
-        </td>
-      </tr>
-      <draggable :list="section[tasksKey]" tag="tbody" :ref="'tbody'+section.id" :data-section="section.id" :group="{name: 'task'}" class="task-draggable " handle=".drag-handle" @start="taskDragStart" :move="moveTask" @end="taskDragEnd">
-        <tr v-for="(task, index) in section[tasksKey]" :key="task.id + section.title + index + templateKey" class="table__irow" @click.stop="rowClick($event, task)" @click.right.prevent="rowRightClick($event, task)">
-          <td>
-            <div class="drag-handle width-2 "><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
-                <rect fill="none" height="24" width="24" />
-                <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div>
           </td>
-          <td v-for="(col, index) in cols" :key="task.id + col + templateKey + index ">
+        </tr>
+        <draggable :list="section[tasksKey]" tag="tbody" :ref="'tbody'+section.id" :data-section="section.id" :group="{name: 'task'}" class="task-draggable " handle=".drag-handle" @start="taskDragStart" :move="moveTask" @end="taskDragEnd">
+          <tr v-for="(task, index) in section[tasksKey]" :key="task.id + section.title + index + templateKey" class="table__irow" @click.stop="rowClick($event, task)" @click.right.prevent="rowRightClick($event, task)">
+            <td>
+              <div class="drag-handle width-2 "><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
+                  <rect fill="none" height="24" width="24" />
+                  <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div>
+            </td>
+            <td v-for="(col, index) in cols" :key="task.id + col + templateKey + index ">
+              <template v-if="col.key == 'userId'">
+                <user-info :key="componentKey" :userId="task[col.key]"></user-info>
+              </template>
+              <template v-if="col.key == 'status'">
+                <status-comp :key="componentKey" :status="task[col.key]"></status-comp>
+              </template>
+              <template v-if="col.key == 'priority'">
+                <priority-comp :key="componentKey" :priority="task[col.key]"></priority-comp>
+              </template>
+              <template v-if="col.key == 'startDate' || col.key == 'dueDate'">
+                <span v-if="task[col.key]" class="d-inline-flex align-center gap-05">
+                  <bib-icon icon="calendar" variant="gray4"></bib-icon>
+                  <format-date :key="componentKey" :datetime="task[col.key]"></format-date>
+                </span>
+              </template>
+              <template v-if="col.key == 'project'">
+                <project-info v-if="task[col.key].length" :projectId="task[col.key][0].projectId || task[col.key][0].project.id"></project-info>
+                <!-- <project-info :projectId="task[col.key][0].projectId" ></project-info> -->
+              </template>
+              <div v-if="col.key == 'title'" class="d-flex gap-05 align-center h-100">
+                <span v-if="titleIcon.icon" class="width-105 height-105" :class="{'cursor-pointer': titleIcon.event}" @click.stop="updateTaskStatus(task)">
+                  <bib-icon :icon="titleIcon.icon" :scale="1.5" :variant="taskCheckIcon(task)"></bib-icon>
+                </span>
+                <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">
+                  {{task[col.key]}}
+                </span>
+                <span v-else class="flex-grow-1">
+                  {{task[col.key]}}
+                </span>
+              </div>
+              <template v-if="col.key == 'department'">
+                {{task[col.key]}}
+              </template>
+            </td>
+          </tr>
+        </draggable>
+        <tr v-if="newRow.sectionId == section.id" class="table__newrow">
+          <td><span class="d-inline-flex align-center height-105 bg-primary shape-rounded">
+              <bib-icon icon="drag" variant="light"></bib-icon>
+            </span></td>
+          <td v-for="col in cols">
+            <template v-if="col.key == 'title'">
+              <bib-input size="sm" autofocus v-model="newRow.title" :variant="validTitle" @input="newRowCreate" required placeholder="Enter title..."></bib-input>
+            </template>
             <template v-if="col.key == 'userId'">
-              <user-info :key="componentKey" :userId="task[col.key]"></user-info>
+              <bib-select size="sm" :options="filterUser" v-model="newRow.userId" @change="newRowCreate" placeholder="Enter title..."></bib-select>
             </template>
             <template v-if="col.key == 'status'">
-              <status-comp :key="componentKey" :status="task[col.key]"></status-comp>
+              <bib-input type="select" size="sm" :options="status" v-model="newRow.statusId" @change.native="newRowCreate" placeholder="Status"></bib-input>
             </template>
             <template v-if="col.key == 'priority'">
-              <priority-comp :key="componentKey" :priority="task[col.key]"></priority-comp>
+              <bib-input type="select" size="sm" :options="priority" v-model="newRow.priorityId" @change.native="newRowCreate" placeholder="Priority"></bib-input>
             </template>
-            <template v-if="col.key == 'startDate' || col.key == 'dueDate'">
-              <span v-if="task[col.key]" class="d-inline-flex align-center gap-05">
+            <template v-if="col.key == 'startDate'">
+              <span class="d-inline-flex align-center gap-05">
                 <bib-icon icon="calendar" variant="gray4"></bib-icon>
-                <format-date :key="componentKey" :datetime="task[col.key]"></format-date>
+                <bib-input size="sm" v-model="newRow.startDate" type="date" @input="newRowCreate" ></bib-input>
               </span>
             </template>
-            <template v-if="col.key == 'project'">
-              <project-info v-if="task[col.key].length" :projectId="task[col.key][0].projectId || task[col.key][0].project.id"></project-info>
-              <!-- <project-info :projectId="task[col.key][0].projectId" ></project-info> -->
-            </template>
-            <div v-if="col.key == 'title'" class="d-flex gap-05 align-center h-100">
-              <span v-if="titleIcon.icon" class="width-105 height-105" :class="{'cursor-pointer': titleIcon.event}" @click.stop="updateTaskStatus(task)">
-                <bib-icon :icon="titleIcon.icon" :scale="1.5" :variant="taskCheckIcon(task)"></bib-icon>
+            <template v-if="col.key == 'dueDate'">
+              <span class="d-inline-flex align-center gap-05">
+                <bib-icon icon="calendar" variant="gray4"></bib-icon>
+                <bib-input size="sm" v-model="newRow.dueDate" type="date" @input="newRowCreate"></bib-input>
               </span>
-              <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">
-                {{task[col.key]}}
-              </span>
-              <span v-else class="flex-grow-1">
-                {{task[col.key]}}
-              </span>
-            </div>
-            <template v-if="col.key == 'department'">
-              {{task[col.key]}}
             </template>
           </td>
         </tr>
-      </draggable>
-      <tr v-if="newRow.sectionId == section.id" class="table__newrow">
-        <td><span class="d-inline-flex align-center height-105 bg-primary shape-rounded">
-            <bib-icon icon="drag" variant="light"></bib-icon>
-          </span></td>
-        <td v-for="col in cols">
-          <template v-if="col.key == 'title'">
-            <bib-input size="sm" autofocus v-model="newRow.title" :variant="validTitle" @input="newRowCreate" required placeholder="Enter title..."></bib-input>
-          </template>
-          <template v-if="col.key == 'userId'">
-            <bib-select size="sm" :options="filterUser" v-model="newRow.userId" @change="newRowCreate" placeholder="Enter title..."></bib-select>
-          </template>
-          <template v-if="col.key == 'status'">
-            <bib-input type="select" size="sm" :options="status" v-model="newRow.statusId" @change.native="newRowCreate" placeholder="Status"></bib-input>
-          </template>
-          <template v-if="col.key == 'priority'">
-            <bib-input type="select" size="sm" :options="priority" v-model="newRow.priorityId" @change.native="newRowCreate" placeholder="Priority"></bib-input>
-          </template>
-          <template v-if="col.key == 'startDate'">
-            <span class="d-inline-flex align-center gap-05">
-              <bib-icon icon="calendar" variant="gray4"></bib-icon>
-              <bib-input size="sm" v-model="newRow.startDate" type="date" @input="newRowCreate" ></bib-input>
-            </span>
-          </template>
-          <template v-if="col.key == 'dueDate'">
-            <span class="d-inline-flex align-center gap-05">
-              <bib-icon icon="calendar" variant="gray4"></bib-icon>
-              <bib-input size="sm" v-model="newRow.dueDate" type="date" @input="newRowCreate"></bib-input>
-            </span>
-          </template>
-        </td>
-      </tr>
-      <tr v-if="newTaskButton.show">
-        <td></td>
-        <td :colspan="cols.length">
-          <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
-            <bib-icon :icon="newTaskButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{newTaskButton.label}}</span>
-          </div>
-        </td>
-      </tr>
-    </table>
-  </draggable>
+        <tr v-if="newTaskButton.show">
+          <td></td>
+          <td :colspan="cols.length">
+            <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
+              <bib-icon :icon="newTaskButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{newTaskButton.label}}</span>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </draggable>
+  </div>
 </template>
+
 <script>
 /**
  * @module Orgamisms/DragTable
@@ -129,7 +153,7 @@
  * @vue-dynamic-emits [ 'header_icon click', 'task_checkmark click' 'newtask button click' ] 
  * @vue-prop componentKey=Number - key to update child components
  */
-import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
+import { DEPARTMENT, STATUS, PRIORITY, TASK_FIELDS } from '~/config/constants.js'
 import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 import _ from 'lodash'
@@ -221,7 +245,7 @@ export default {
       department: DEPARTMENT,
       status: STATUS,
       priority: PRIORITY,
-      
+      tableFields: TASK_FIELDS,
       validTitle: ""
     };
   },
