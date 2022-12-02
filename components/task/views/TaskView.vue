@@ -14,9 +14,9 @@
       </task-grid-section>
     </template>
     <loading :loading="loading"></loading>
-    <span id="projects-0" v-show="nodata" class="d-inline-flex gap-05 align-center m-1 text-gray5 font-md">
+    <!-- <span id="projects-0" v-show="nodata" class="d-inline-flex gap-05 align-center m-1 text-gray5 font-md">
       <bib-icon icon="warning" variant="orange"></bib-icon> No records found
-    </span>
+    </span> -->
     <!-- section rename modal -->
     <bib-modal-wrapper v-if="renameModal" title="Rename section" @close="renameModal = false">
       <template slot="content">
@@ -113,13 +113,13 @@ export default {
         return false
       }
     },*/
-    nodata() {
-      if (this.sections.length > 0) {
-        return false
-      } else {
-        return true
-      }
-    },
+    // nodata() {
+    //   if (this.sections.length > 0) {
+    //     return false
+    //   } else {
+    //     return true
+    //   }
+    // },
   },
   created() {
 
