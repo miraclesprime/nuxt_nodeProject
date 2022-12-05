@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import VuePdfEmbed from 'vue-pdf-embed'
+// import VuePdfEmbed from 'vue-pdf-embed'
 
 export default {
     // components: {
