@@ -6,8 +6,7 @@
     <div id="task-file-actions-wrapper" class="file-actions border-bottom-gray2 d-flex align-center py-025">
       <div class="d-inline-flex gap-05 cursor-pointer shape-rounded py-025 px-05 bg-success-sub6 bg-hover-success-sub3 text-success " id="file-upload-button" @click="uploadModal = true">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="file-upload-text" class="">Upload File</span>
-      </div> || 
-      <button @click="showPdfPreview">Open PDf</button>
+      </div> 
       <!-- <div class="action-left d-flex " id="file-action-left">
       </div> -->
       <!-- <div class="action-right d-flex gap-05" id="file-action-right">
@@ -50,32 +49,20 @@
       </template>
     </bib-modal-wrapper>
 
-    <!-- file pic preview modal -->
+    <!-- preview modal -->
     <bib-modal-wrapper v-if="previewModal" title="Preview" size="lg" @close="closePreviewModal">
       <template slot="content">
-        <div v-if="!filePreview" class="text-center">
-          <bib-spinner class="mx-auto" ></bib-spinner>
-        </div>
-        <div v-else class="text-center">
-          <img :src="filePreview" class="w-fit" style="max-width:100%;" alt="preview">
+        <!-- <div v-if="!imgPreview || !pdfPreview" class="text-center">
+        </div> -->
+        <div class="text-center">
+          <img v-if="imgPreview" :src="imgPreview" class="w-fit" style="max-width:100%;" alt="preview">
+          <pdf-preview v-else-if="pdfPreview" :pdfsrc="pdfPreview"></pdf-preview>
+          <bib-spinner v-else class="mx-auto" ></bib-spinner>
         </div>
       </template>
       <template slot="footer">
         <div class="text-center">
           <bib-button label="Close" variant="light" pill @click="closePreviewModal"></bib-button>
-        </div>
-      </template>
-    </bib-modal-wrapper>
-
-    <!-- pdf file preview modal -->
-    <bib-modal-wrapper v-if="pdfPreview" title="previewPdf" @close="pdfPreview = false">
-      <template slot="content">
-          <!-- <vue-pdf-embed :source="source2" /> -->
-          <pdf-preview></pdf-preview>
-      </template>
-      <template slot="footer">
-        <div class="text-center">
-          <bib-button label="Close" variant="light" pill @click="pdfPreview = false"></bib-button>
         </div>
       </template>
     </bib-modal-wrapper>
@@ -100,8 +87,8 @@ export default {
       fileKey: 1,
       showPlaceholder: false,
       previewModal: false,
-      pdfPreview: false,
-      filePreview: '',
+      imgPreview: '',
+      pdfPreview: ''
     }
   },
   props: {
@@ -286,7 +273,19 @@ export default {
             'preview': 'preview'
           }
         })
-        this.filePreview = `data:image/${imgtype};base64,${prev.data.data}`
+        this.imgPreview = `data:image/${imgtype};base64,${prev.data.data}`
+        this.pdfPreview = ''
+      } else if(file.type.indexOf('pdf') && "url" in file) { 
+
+        const prev = await this.$axios.get("file/single/"+file.key, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            'preview': 'preview'
+          }
+        })
+        this.pdfPreview = `data:application/pdf;base64,${prev.data.data}`
+        this.imgPreview = ''
+        
       } else {
         this.downloadFile(file)
         this.previewModal = false
@@ -295,27 +294,10 @@ export default {
     
     },
 
-    async showPdfPreview(file) {
-      this.pdfPreview = true
-
-      // if (file.type.indexOf('image/') == 0 && "url" in file) {
-      //   let imgtype = file.type.split("/")[1]
-      //   const prev = await this.$axios.get("file/single/"+file.key, {
-      //     headers: {
-      //       'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-      //       'preview': 'preview'
-      //     }
-      //   })
-      //   this.filePreview = `data:image/${imgtype};base64,${prev.data.data}`
-      // } else {
-      //   // this.downloadFile(file)
-      //   this.pdfPreview = false
-      //   // this.filePreview = "https://via.placeholder.com/200x160/f0f0f0/6f6f79?text="+file.extension
-      // }
-    },
 
     closePreviewModal(){
-      this.filePreview = ''
+      this.imgPreview = ''
+      this.pdfPreview = ''
       this.previewModal = false
     },
 
