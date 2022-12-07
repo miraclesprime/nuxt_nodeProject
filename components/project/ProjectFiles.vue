@@ -88,11 +88,14 @@
     <!-- file preview modal -->
     <bib-modal-wrapper v-if="previewModal" title="Preview" size="lg" @close="closePreviewModal">
       <template slot="content">
-        <div v-if="!filePreview" class="text-center">
+        <!-- <div v-if="!filePreview" class="text-center">
           <bib-spinner class="mx-auto" ></bib-spinner>
-        </div>
-        <div v-else class="text-center">
-          <img :src="filePreview" class="w-fit" style="max-width:100%;" alt="preview">
+        </div> -->
+        <div class="text-center">
+          <!-- <img :src="filePreview" class="w-fit" style="max-width:100%;" alt="preview"> -->
+          <img v-if="imgPreview" :src="imgPreview" class="w-fit" style="max-width:100%;" alt="preview">
+          <pdf-preview v-else-if="pdfPreview" :pdfsrc="pdfPreview"></pdf-preview>
+          <bib-spinner v-else class="mx-auto" ></bib-spinner>
         </div>
       </template>
       <template slot="footer">
@@ -131,7 +134,8 @@ export default {
       dbFiles: [],
       tempKey: 1,
       previewModal: false,
-      filePreview: '',
+      imgPreview: '',
+      pdfPreview: ''
     }
   },
   computed: {
@@ -251,8 +255,20 @@ export default {
             'preview': 'preview'
           }
         })
-        this.filePreview = `data:image/${imgtype};base64,${prev.data.data}`
-      } else {
+        this.imgPreview = `data:image/${imgtype};base64,${prev.data.data}`
+        this.pdfPreview = ''
+      } else if(file.type.indexOf('pdf') && "url" in file) { 
+
+        const prev = await this.$axios.get("file/single/"+file.key, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            'preview': 'preview'
+          }
+        })
+        this.pdfPreview = `data:application/pdf;base64,${prev.data.data}`
+        this.imgPreview = ''
+        
+      } else { 
         this.downloadFile(file)
         this.previewModal = false
         // this.filePreview = "https://via.placeholder.com/200x160/f0f0f0/6f6f79?text="+file.extension
@@ -260,7 +276,8 @@ export default {
     
     },
     closePreviewModal(){
-      this.filePreview = ''
+      this.imgPreview = ''
+      this.pdfPreview = ''
       this.previewModal = false
     },
     downloadFile(file) {
