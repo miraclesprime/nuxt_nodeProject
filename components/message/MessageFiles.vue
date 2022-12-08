@@ -12,7 +12,7 @@
               <div class="list ">
                 <!-- <span class="list__item file-name ">{{property.name}}</span> -->
                 <!-- <hr> -->
-                <span class="list__item" @click="$emit('file-click')">Preview</span>
+                <span class="list__item" v-if="canPreview" @click="$emit('file-click')">Preview</span>
                 <span class="list__item">Open</span>
                 <span class="list__item" @click.stop="fileDetailModal = true">Detail</span>
                 <span class="list__item" @click.stop="downloadFile">Download File</span>
@@ -60,7 +60,7 @@ export default {
 
   name: 'MessageFiles',
   props: {
-    property: { type: Object }
+    property: { type: Object },
   },
 
   components: {
@@ -88,7 +88,14 @@ export default {
         })
       }
       return arr
-    }
+    },
+    canPreview() {
+      if (this.property.type.indexOf('image/') == 0 || this.property.type.indexOf('pdf') > 0) {
+        return true
+      } else {
+        return false
+      }
+    },
   },
   mounted(){
     this.previewFile()

@@ -602,6 +602,7 @@ export default {
         })
         this.imgPreview = `data:image/${imgtype};base64,${prev.data.data}`
         this.pdfPreview = ''
+
       } else if(file.type.indexOf('pdf') && "url" in file) { 
 
         const prev = await this.$axios.get("file/single/"+file.key, {
