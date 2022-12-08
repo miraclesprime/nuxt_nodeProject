@@ -6,7 +6,7 @@
         <bib-popup pop="elipsis" icon-variant="gray5" icon-hover-variant="gray6">
           <template v-slot:menu>
             <div class="list">
-              <span class="list__item" @click.stop="previewFile">Preview</span>
+              <span class="list__item" v-if="canPreview" @click.stop="previewFile">Preview</span>
               <span class="list__item" @click.stop="openFile">Open</span>
               <span class="list__item" @click.stop="fileDetailModal = true">Detail</span>
               <span class="list__item" @click.stop="downloadFile">Download</span>
@@ -52,12 +52,12 @@ export default {
       default: () => {
         return {
             key: "",
-          name: "File-name.ext",
-          size: 853581,
-          preview: "",
-          type: "",
-          extension: "",
-          owner: "",
+            name: "File-name.ext",
+            size: 853581,
+            preview: "",
+            type: "",
+            extension: "",
+            owner: "",
         }
       }
     },
@@ -91,7 +91,15 @@ export default {
         })
       }
       return arr
-    }
+    },
+
+    canPreview() {
+      if (this.property.type.indexOf('image/') == 0 || this.property.type.indexOf('pdf') > 0) {
+        return true
+      } else {
+        return false
+      }
+    },
   },
   mounted() {
     this.canDeleteTaskFile()
