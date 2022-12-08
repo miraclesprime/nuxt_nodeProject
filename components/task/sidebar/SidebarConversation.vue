@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <div class="px-105 py-05 h-100" id="sc-container">
+    <div class="px-105 py-05 " id="sc-container">
       <div class="d-flex justify-between sub-title pb-05 border-bottom-gray2 ">
         <p class="text-gray5 font-md ">Conversation </p>
       </div>
@@ -65,17 +65,17 @@ export default {
   },
   props: {
     reloadComments: { type: Number, default: 0 },
-    reloadHistory: { type: Number, default: 0},
+    reloadHistory: { type: Number, default: 0 },
   },
   computed: {
     ...mapGetters({
       task: "task/getSelectedTask",
-      taskHistory: "task/getTaskHistory",
+      // taskHistory: "task/getTaskHistory",
       taskMembers: "task/getTaskMembers",
       project: "project/getSingleProject"
     }),
     sortedData(){
-      let s = [ ...this.taskHistory, ...this.comments]
+      let s = [ ...this.history, ...this.comments]
       if(s.length > 0){
         return s.sort((a, b) => new Date(a.updatedAt) - new Date(b.updatedAt));
       } else {

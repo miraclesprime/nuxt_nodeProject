@@ -82,9 +82,11 @@
         </bib-detail-collapse>
       </template>
       <template #content>
-        <div class="main" id='main-content' :class="openSidebar ? 'open-sidebar' : ''">
+        <div class="main" id="main-content" :class="openSidebar ? 'open-sidebar' : ''">
           <Nuxt />
-          <task-sidebar @open-sidebar="toggleSidebar()" :sectionIdActive="sectionPreselect" :scrollId="scrollId"></task-sidebar>
+          <transition name="drawer">
+            <task-sidebar v-if="openSidebar" :sectionIdActive="sectionPreselect" :scrollId="scrollId"></task-sidebar>
+          </transition>
         </div>
       </template>
     </bib-app-wrapper>
@@ -255,6 +257,10 @@ export default {
         this.navItems1[0].selected = true;
       }
 
+      if (this.$router.history.current.fullPath == '/inbox') {
+        this.navItems1[1].selected = true;
+      }
+
       if (this.$router.history.current.fullPath == '/mytasks') {
         this.navItems1[2].selected = true;
       }
@@ -371,21 +377,6 @@ export default {
         return false
       }
     },
-
-    /*createProject(data) {
-      this.$store.dispatch('project/createProject', data.name);
-    },*/
-
-    /*toggleSidebar($event) {
-      // console.log($event)
-      // in case of create task 
-      if (!$event) {
-        this.$store.dispatch("task/setSingleTask", {})
-      } else {
-        this.$store.dispatch("task/setSingleTask", task)
-      }
-
-    },*/
 
     createAction($event) {
       // console.log($event.key)

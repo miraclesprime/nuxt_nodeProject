@@ -284,6 +284,18 @@ export const actions = {
     ctx.commit('fetchProjects', res.data);
   },
 
+  async fetchSingleProject(ctx, payload) {
+    const proj = await this.$axios.$get(`/project/${payload}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+      }
+    });
+    if (proj.statusCode == 200) {
+      ctx.commit('setSingleProject', proj.data);
+    }
+    return proj
+  },
+
   // for dispatching setting single project object
   setSingleProject(ctx, payload) {
     ctx.commit('setSingleProject', payload)

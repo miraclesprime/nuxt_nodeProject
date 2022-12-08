@@ -1,6 +1,9 @@
 import dayjs from 'dayjs';
+var relativeTime = require('dayjs/plugin/relativeTime')
+dayjs.extend(relativeTime)
 
 export default ({ app }, inject) => {
   inject('toDate', time => dayjs(time).format('YYYY-MM-DD'));
   inject('toDateTime', time => dayjs(time).format('YYYY-MM-DD HH:mm:ss'));
+  inject('displayDate', date => dayjs(date).fromNow())
 };

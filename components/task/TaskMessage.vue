@@ -2,7 +2,7 @@
   <div class="msg position-relative" @mouseenter="isActionBarShowing = true" @mouseleave="onActionBarMouseLeave" v-click-outside="onActionBarClickOutside">
     
       <figure class=" user-avatar " :class="{active: userCardVisible}">
-        <bib-avatar size="2rem" :src="userInfo.pic"></bib-avatar>
+        <bib-avatar size="2rem" :src="user1.Photo"></bib-avatar>
       </figure>
       <!-- user info card on click -->
       <!-- <div class="userA-card bg-white " :class="{active: userCardVisible}">
@@ -25,7 +25,7 @@
       </div>
     </div> -->
       <!-- user info -->
-      <div class="msg__owner ">{{userInfo.name}} <span class="ml-05">{{displayDate}}</span>
+      <div class="msg__owner ">{{user1.Name}} <span class="ml-05">{{$displayDate(msg.updatedAt)}}</span>
       </div>
       <!-- message content -->
       <div class="msg__content pb-05" v-html="msg.comment">
@@ -242,6 +242,7 @@ export default {
       uploadModal: false,
       fileLoader: false,
       previewModal: false,
+      user1: this.$userInfo(this.msg.userId),
       imgPreview: '',
       pdfPreview: '',
     }
@@ -253,18 +254,16 @@ export default {
       project: 'project/getSingleProject',
       task: 'task/getSelectedTask'
     }),
-    userInfo() {
+    /*userInfo() {
       if (this.members.length) {
         let u = this.members.find((el) => el.id == this.msg.userId)
         // console.log(u)
         return { id: u.id, name: `${u.firstName} ${u.lastName}`, firstName: u.firstName, lastName: u.lastName, email: u.email, pic: u.avatar, jobTitle: "Title/Company Name" }
       }
-    },
-    displayDate() {
-      /*let d = new Date(this.msg.updatedAt)
-      let dd = dayjs(this.msg.updatedAt).format('dddd, D MMM, YYYY @ HH:mm')*/
+    },*/
+    /*displayDate() {
       return dayjs(this.msg.updatedAt).fromNow()
-    },
+    },*/
     /*reactions() {
       return Object.entries(groupBy(this.message.reactions, (r) => r.reaction)).map(
         ([reaction, entries]) => {
@@ -603,6 +602,7 @@ export default {
         })
         this.imgPreview = `data:image/${imgtype};base64,${prev.data.data}`
         this.pdfPreview = ''
+
       } else if(file.type.indexOf('pdf') && "url" in file) { 
 
         const prev = await this.$axios.get("file/single/"+file.key, {
@@ -633,10 +633,9 @@ export default {
 
 <style lang="scss" scoped>
 .msg {
-  /*border-top: 1px solid $gray3;*/
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
-  padding-left: 2.75rem;
+  padding-left: 3rem;
   font-size: $base-size;
   color: $text;
 

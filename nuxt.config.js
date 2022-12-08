@@ -32,6 +32,7 @@ export default {
     // "~/plugins/chatLink.client.js",
     // "~/plugins/userInfo.js",
     "~/utils/userInfo.client.js",
+    "~/utils/utils.client.js",
     "~/../bib-shared/js/colors.js",
     "~/../bib-shared/js/plugins.js",
     // "~/../bib-shared/plugins/datepicker.js",
