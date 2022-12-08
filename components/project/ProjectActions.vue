@@ -99,7 +99,6 @@ export default {
 <style scoped lang="scss">
 .task-actions {
   display: flex;
-  /*padding: 0.25em 0;*/
   border-bottom: 1px solid $gray4;
   align-items: center;
 }

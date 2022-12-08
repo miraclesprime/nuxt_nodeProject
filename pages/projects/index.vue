@@ -63,7 +63,7 @@
 
 <script>
 import { PROJECT_FIELDS } from '../../dummy/project';
-import {PROJECT_CONTEXT_MENU} from '../../config/constants';
+import { PROJECT_CONTEXT_MENU } from '../../config/constants';
 import { mapGetters } from 'vuex';
 
 export default {

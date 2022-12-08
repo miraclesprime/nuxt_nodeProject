@@ -1,7 +1,7 @@
 <template>
   <div class="msg position-relative py-025" @mouseenter="isActionBarShowing = true" @mouseleave="onActionBarMouseLeave" v-click-outside="onActionBarClickOutside">
     <figure class="width-3 user-avatar " :class="{active: userCardVisible}" @click="toggleUserCard">
-      <bib-avatar size="2rem" :src="userInfo.pic"></bib-avatar>
+      <bib-avatar size="2rem" :src="$userInfo(msg.userId).Photo"></bib-avatar>
     </figure>
 
     <!-- user info card on click -->
@@ -26,7 +26,7 @@
     </div> -->
 
     <!-- user info -->
-    <div class="msg__owner ">{{userInfo.name}} <span class="ml-1 font-sm">{{displayDate}}</span>
+    <div class="msg__owner ">{{$userInfo(msg.userId).Name}} <span class="ml-1 font-sm">{{displayDate}}</span>
     </div>
 
     <!-- message content -->
@@ -252,13 +252,13 @@ export default {
       user: "user/getUser2",
       members: 'user/getTeamMembers'
     }),
-    userInfo() {
+    /*userInfo() {
       if (this.members.length) {
         let u = this.members.find((el) => el.id == this.msg.userId)
         // console.log(u)
         return { id: u.id, name: `${u.firstName} ${u.lastName}`, firstName: u.firstName, lastName: u.lastName, email: u.email, pic: u.avatar, jobTitle: "Title/Company Name" }
       }
-    },
+    },*/
     displayDate() {
       /*let d = new Date(this.msg.updatedAt)
       let dd = dayjs(this.msg.updatedAt).format('dddd, D MMM, YYYY @ HH:mm')
@@ -624,9 +624,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .msg {
-  /*border-top: 1px solid $gray3;
-  padding-top: 1rem;*/
-  padding-left: 2.75rem;
+  padding-left: 3rem;
   font-size: $base-size;
 
   &__owner {

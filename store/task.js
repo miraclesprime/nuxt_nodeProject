@@ -126,6 +126,17 @@ export const actions = {
     }
   },
 
+  async fetchSingleTask(ctx, taskId){
+    const task = await this.$axios.get("/task/"+taskId, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+    })
+    // console.log(task)
+    if (task.statusCode == 200) {
+      ctx.commit('setSingleTask', task.data)
+    }
+    return task.data
+  },
+
   // set single task
   setSingleTask(ctx, payload) {
     ctx.commit('setSingleTask', payload)

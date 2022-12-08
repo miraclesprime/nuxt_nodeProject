@@ -163,7 +163,6 @@
 <script>
 import { mapGetters } from 'vuex'
 import { TABLE_FIELDS, PROJECT_TABS, PROJECT_DEFAULT_TAB, PROJECT_TAB_TITLES } from "config/constants";
-// import axios from 'axios';
 
 export default {
   name: 'ProjectId',
@@ -206,6 +205,7 @@ export default {
       reportText: "",
       reportSubj: "",
       loading: false,
+      // isFav: this.$isFavProject(this.$route.params.id),
       favLoading: false,
       popupMessages: [],
       cdp: false
@@ -472,7 +472,7 @@ export default {
     },
 
     canDeleteProject() {
-      console.log(this.project.userId, JSON.parse(localStorage.getItem('user')).sub)
+      // console.log(this.project.userId, JSON.parse(localStorage.getItem('user')).sub)
       //  console.log(JSON.parse(localStorage.getItem('user')).subr)
       if (this.project.userId == JSON.parse(localStorage.getItem('user')).sub || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN' ) {
         this.cdp = true

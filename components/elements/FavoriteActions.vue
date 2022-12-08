@@ -13,10 +13,10 @@
     <div class="action-right" id="fa-action-right">
       <ul class="actions" id="fa-actions-list">
         <li class="action" id="fa-action-item1">
-          <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="$emit('change-viewing', $event)"></sorting-comp>
+          <sorting-comp :items="viewing" icon="eye-open" v-on:change-sort="$emit('change-viewing', $event)"></sorting-comp>
         </li>
         <li class="action" id="fa-action-item2">
-          <sorting-comp label="Sorted by" :items="sorting" icon="swap-vertical" v-on:change-sort="$emit('change-sorting', $event)"></sorting-comp>
+          <sorting-comp :items="sorting" icon="swap-vertical" v-on:change-sort="$emit('change-sorting', $event)"></sorting-comp>
         </li>
       </ul>
     </div>
@@ -34,26 +34,7 @@ export default {
       viewing: VIEW_FILTER,
       sorting: FAVORITE_SORT
     };
-  },
-
-  methods: {
-    /*viewProjects($event) {
-      // console.log($event);
-      this.$emit('change-viewing', $event)
-    },*/
-
-    sortBy($event) {
-      // if(this.orderBy == 'asc') {
-      //   this.orderBy = 'desc'
-      // } else {
-      //   this.orderBy = 'asc'
-      // }
-      // this.$store.dispatch('project/sortProjects', {key: $event, order: this.orderBy})
-      // this.selectedSort = $event;
-      // this.$emit('sortValue', $event)
-      console.log($event)
-    }
-  }
+  }, 
   
 };
 
@@ -79,7 +60,7 @@ export default {
 
 .action {
   display: flex;
-  padding: 0 20px;
+  padding: 0 4px;
   align-items: center;
 }
 

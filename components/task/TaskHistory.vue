@@ -1,10 +1,13 @@
 <template>
-  <div class="d-inline-flex align-center flex-wrap my-025 task-history ">
-    <user-info :userId="history.userId" avatarSize="2rem"  weight="600"></user-info>
-    <!-- <bib-avatar :src="userInfo(history.userId).Photo"></bib-avatar>
-    <span class="text-dark-sub1">{{$userInfo(history.userId).Name}}</span> -->
-    <span class="mx-05 ">{{history.text}}</span>
-    <span class="text-gray6 ">{{displayDate(history.updatedAt)}}</span>
+  <div class="d-inline-flex align-center flex-wrap my-025 task-history position-relative">
+    <figure class="user-avatar">
+      <bib-avatar :src="user.Photo" size="2rem" ></bib-avatar>
+    </figure>
+    <div>
+      <span class="font-w-600">{{user.Name}}</span>
+      <span class="mx-05 ">{{history.text}}</span>
+      <span class="text-gray6 ">{{$displayDate(history.updatedAt)}}</span>
+    </div>
   </div>
 </template>
 <script>
@@ -22,22 +25,20 @@ export default {
 
   data() {
     return {
-
+      user: this.$userInfo(this.history.userId)
     }
   },
-  methods: {
-    displayDate(date) {      
-      return dayjs(date).fromNow()
-    },
-  }
 }
 
 </script>
 <style lang="scss" scoped>
-.task-history { font-size: $base-size; color: $text; }
-::v-root {
-  .user-info-wrapper {
-    .user-name { font-weight: 600;}
-  }
+.task-history { font-size: $base-size; color: $text; padding-left: 3rem; min-height: 2rem; }
+.user-avatar {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  top: 0.125rem;
+
 }
+
 </style>
