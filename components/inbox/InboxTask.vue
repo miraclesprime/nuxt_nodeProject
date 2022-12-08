@@ -266,6 +266,7 @@ export default {
     showAddTeamModal() {
       this.$nuxt.$emit("add-member-to-task")
     },
+    
     debounceUpdate() {},
     deleteTask(taskId) {
 

@@ -363,8 +363,9 @@ export default {
     currentTask() {
       // console.log(this.currentTask)
       if (Object.keys(this.currentTask).length) {
-        this.form = JSON.parse(JSON.stringify(this.currentTask));
-        if (this.currentTask.project.length) {
+        // this.form = JSON.parse(JSON.stringify(this.currentTask));
+        this.form = _.cloneDeep(this.currentTask);
+        if (this.currentTask.project?.length) {
           this.form.projectId = this.currentTask.project[0].projectId || this.currentTask.project[0].project.id
         } else {
           this.form.projectId = this.project.id
@@ -418,19 +419,23 @@ export default {
       this.taskTeamModal = true
     },
     closeSidebar(event) {
-      // console.log('click-outside task-sidebar',  event.originalTarget, event.target.classList)
-      const classlist = ["cursor-pointer", "menu-item", "task-grid", "table__irow"]
-      classlist.forEach(c => {
-        // console.info(c)
-        if (event.target.classList.contains(c)) {
-          console.log('class found->', c)
-          return false
-        } /*else {
-          console.warn("v-click-outside event", event.originalTarget)
-        }*/
-      })
+      // console.log('click outside task-sidebar', event.srcElement, event.target)
+      let main = document.getElementById("main-content").className
+      // console.info(main.indexOf('open-sidebar'), main.contains('open-sidebar'))
+      if(main.indexOf('open-sidebar') > 0){
+        const classlist = ["cursor-pointer", "menu-item", "task-grid", "table__irow"]
+        classlist.forEach(c => {
+          // console.info(c)
+          if (event.target.classList.contains(c)) {
+            console.log('class found->', c)
+            return false
+          } /*else {
+            console.warn("v-click-outside event", event.originalTarget)
+          }*/
+        })
 
-      this.$nuxt.$emit("close-sidebar");
+        this.$nuxt.$emit("close-sidebar");
+      }
     },
     /*sidebarTabChange(tab) {
       this.activeSidebarTab = tab.value;

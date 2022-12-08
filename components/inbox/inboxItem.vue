@@ -1,5 +1,5 @@
 <template>
-  <div class="inbox-item border-bottom-gray2 py-1 px-3 position-relative" :class="{'bg-light': active == item.id}" @click="itemClick">
+  <div class="inbox-item border-bottom-gray2 py-1 px-3 position-relative cursor-pointer" :class="{'bg-light': active == item.id}" @click="itemClick">
     <div class="new text-white font-xs position-absolute">New
       <span class="triangle"></span>
     </div>
@@ -21,7 +21,7 @@
       </span>
     </div>
     <div class="content font-md py-1">
-      <span v-if="!projTitle">{{item.text}}</span><br>
+      <span >{{item.text}}</span><br>
       <div v-html="taskcomment.comment"></div>
     </div>
     <!-- <drag-table-simple :fields="fields" :tasks="tasks" headless :titleIcon="{ icon: 'check-circle'}" :collapsible="false" :drag="false"></drag-table-simple> -->

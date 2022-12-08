@@ -2,7 +2,7 @@
   <div class="msg position-relative" @mouseenter="isActionBarShowing = true" @mouseleave="onActionBarMouseLeave" v-click-outside="onActionBarClickOutside">
     
       <figure class=" user-avatar " :class="{active: userCardVisible}">
-        <bib-avatar size="2rem" :src="user.Photo"></bib-avatar>
+        <bib-avatar size="2rem" :src="user1.Photo"></bib-avatar>
       </figure>
       <!-- user info card on click -->
       <!-- <div class="userA-card bg-white " :class="{active: userCardVisible}">
@@ -25,7 +25,7 @@
       </div>
     </div> -->
       <!-- user info -->
-      <div class="msg__owner ">{{user.Name}} <span class="ml-05">{{$displayDate(msg.updatedAt)}}</span>
+      <div class="msg__owner ">{{user1.Name}} <span class="ml-05">{{$displayDate(msg.updatedAt)}}</span>
       </div>
       <!-- message content -->
       <div class="msg__content pb-05" v-html="msg.comment">
@@ -242,7 +242,7 @@ export default {
       uploadModal: false,
       fileLoader: false,
       previewModal: false,
-      user: this.$userInfo(this.msg.userId)
+      user1: this.$userInfo(this.msg.userId),
       imgPreview: '',
       pdfPreview: '',
     }

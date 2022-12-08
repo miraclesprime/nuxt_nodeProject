@@ -100,7 +100,7 @@ export default {
       this.taskProject = "task"
       this.$store.dispatch("task/fetchSingleTask", payload.taskId)
         .then(i => {
-          console.log(i)
+          // console.log('inbox task->',i.data)
           this.task = i.data
           this.loading2 = false
         })
@@ -117,7 +117,7 @@ export default {
       this.taskProject = "project"
       this.$store.dispatch("project/fetchSingleProject", payload.projectId)
         .then(p => {
-          console.log(p)
+          // console.log(p)
           this.project = p.data
           this.loading2 = false
         })

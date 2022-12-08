@@ -1,7 +1,7 @@
 <template>
 	<article class="position-relative p-1">
 		<h3>{{project.title}}</h3>
-		<div>{{project.id}}</div>
+		<div>{{$userInfo(project.userId).Name}}</div>
 	</article>
 </template>
 

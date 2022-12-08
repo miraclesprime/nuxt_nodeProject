@@ -130,9 +130,9 @@ export const actions = {
     const task = await this.$axios.get("/task/"+taskId, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
-    // console.log(task)
-    if (task.statusCode == 200) {
-      ctx.commit('setSingleTask', task.data)
+    // console.log('state task->',task.data.data)
+    if (task.data.statusCode == 200) {
+      ctx.commit('setSingleTask', task.data.data)
     }
     return task.data
   },
