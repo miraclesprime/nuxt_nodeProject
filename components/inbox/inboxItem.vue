@@ -3,29 +3,30 @@
     <div class="new text-white font-xs position-absolute">New
       <span class="triangle"></span>
     </div>
-    <div class="d-inline-flex gap-05 pb-1 text-secondary font-md">
+    <div class="d-inline-flex gap-05 pb-05 text-secondary font-md">
       <span>
         <user-info :userId="item.userId"></user-info>
       </span>
       <span v-if="projTitle">
-        <strong>assigned a task to you in</strong>
+        <!-- <strong>assigned a task to you in</strong> -->
         <bib-icon icon="briefcase" variant="gray5"></bib-icon> {{projTitle}}
       </span>
-      <span v-else><strong>{{item.text}}</strong></span>
+      <!-- <span v-else><strong>{{item.text}}</strong></span> -->
     </div>
     <div class="d-flex align-center justify-between">
-      <h4>{{taskTitle}}</h4>
+      <h4>{{taskTitle || projTitle}}</h4>
       <span class="duedate d-inline-flex align-center gap-05 text-secondary font-md">
         <bib-icon icon="calendar" variant="gray5"></bib-icon>
         <format-date :datetime="item.updatedAt"></format-date>
       </span>
     </div>
-    <div class="content font-md py-1">
+    <div class="content font-md py-05">
       <span >{{item.text}}</span><br>
-      <div v-html="taskcomment.comment"></div>
+      <div v-html="taskComment.comment"></div>
+      <div v-html="projComment.comment"></div>
     </div>
     <!-- <drag-table-simple :fields="fields" :tasks="tasks" headless :titleIcon="{ icon: 'check-circle'}" :collapsible="false" :drag="false"></drag-table-simple> -->
-    <div class="sent font-sm">Sent on Sept. 22, 2022 @ 9:32 PM (EST)</div>
+    <div class="sent font-sm text-gray5">Sent on Sept. 22, 2022 @ 9:32 PM (EST)</div>
   </div>
 </template>
 <script>
@@ -68,11 +69,14 @@ export default {
     taskTitle() {
       return this.item['task'] ? this.item.task.title : ''
     },
-    taskcomment() {
+    taskComment() {
       return this.item['taskComment'] ? this.item.taskComment : ''
     },
     projTitle() {
       return this.item['project'] ? this.item.project.title : ''
+    },
+    projComment() {
+      return this.item['projectComment'] ? this.item.projectComment : ''
     },
   },
   methods: {
