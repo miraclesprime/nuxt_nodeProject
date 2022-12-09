@@ -54,7 +54,7 @@
           </div>
           <div id="proj-row2-col3" class="col-3">
             <!-- <bib-input type="date" label="Due date" v-model="dueDate" v-on:change.native="debounceUpdate('Due date', dueDate)"></bib-input> -->
-            <bib-datepicker test_id="date02" class="align-right" v-model="dueDate" :value="dueDate" :minDate="startDate" format="dd MMM yyyy" @input="debounceUpdate('Due date', dueDate)" label="Due date" name="dueDate" placeholder="Due date"></bib-datepicker>
+            <bib-datepicker test_id="date02" v-model="dueDate" :value="dueDate" :minDate="startDate" format="dd MMM yyyy" @input="debounceUpdate('Due date', dueDate)" label="Due date" name="dueDate" placeholder="Due date"></bib-datepicker>
           </div>
         </div>
         <div id="proj-row3" class="row">

@@ -2,27 +2,27 @@
   <div class="inbox-task h-100 position-relative" >
     <div class="d-flex justify-between side-panel__header__actions mb-05" id='ts-side-panel'>
       <!-- <div class="d-flex align-center gap-05" id="ts-icon-close-Wrapper">
-          <div id='ts-icon-7' class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" @click="$nuxt.$emit('close-sidebar')">
+          <div id='ts-icon-close' class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" @click="$nuxt.$emit('close-sidebar')">
             <bib-icon icon="page-last" class="m-auto"></bib-icon>
           </div>
-          <div class="d-flex cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2" id='ts-icon-external-wrapper'>
+          <div class="d-flex cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2" id='ts-icon-external'>
             <bib-icon icon="expand-fullscreen" variant="gray6" class="m-auto"></bib-icon>
           </div>
         </div> -->
       <div class="d-flex gap-05 ml-auto align-center" id="ts-icon-attachment-wrapper">
-        <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="ts-icon-3" v-tooltip="'Team'" @click="showAddTeamModal">
+        <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="ts-icon-2" v-tooltip="'Team'" @click="showAddTeamModal">
           <bib-icon icon="user-group-solid" variant="gray5"></bib-icon>
         </div>
-        <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-3' v-scroll-to="'#task_subtasks'">
+        <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-3' v-tooltip="'Subtasks'" v-scroll-to="'#task_subtasks'">
           <bib-icon icon="check-square-solid" variant="gray5"></bib-icon>
         </div>
-        <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-4' v-scroll-to="'#task_conversation'">
+        <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-4' v-tooltip="'Conversation'" v-scroll-to="'#task_conversation'">
           <bib-icon icon="comment-forum-solid" variant="gray5"></bib-icon>
         </div>
-        <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-5' v-scroll-to="'#task_files'">
+        <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-5' v-tooltip="'Files'" v-scroll-to="'#task_files'">
           <bib-icon icon="folder-solid" variant="gray5"></bib-icon>
         </div>
-        <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="ts-icon-6" @click="setFavorite">
+        <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="ts-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
           <bib-icon icon="bookmark-solid" :variant="isFavorite.variant"></bib-icon>
         </div>
         <div id="ts-list-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center">
@@ -67,16 +67,16 @@
         <input type="text" class="editable-input" ref="taskTitleInput" v-model="form.title" placeholder="Enter task name..." v-on:keyup="debounceUpdate('Title', form.title)">
         <!-- <small v-show="error == 'invalid'" class="text-danger font-xs d-block" style="margin-top: -0.25rem;">Task name is required</small> -->
       </div>
-      <!-- <div>
+      <div>
         <div class="team-avatar-list px-05">
-          <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :key="index" v-tooltip="team.label" :title="team.label" :style="{ 'left': -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
+          <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :key="index" :title="team.label" :style="{ 'left': -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra" v-tooltip="extraNames">+{{teammates.extra.length}}</span>
         </div>
-      </div> -->
+      </div>
       <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light cursor-pointer" v-tooltip="'Team'" @click="showAddTeamModal">
         <bib-icon icon="user-group-solid"></bib-icon>
       </div>
     </div>
-    <div class="of-scroll-y position-relative py-05" id="ts-row" >
+    <div class="of-scroll-y position-relative py-05" id="ts-of-scroll-y" >
       <!-- task form -->
         <div class="task-info position-relative px-1" id='sidebar-inner-wrap'>
           <div class="row mx-0" id='sidebar-row-1'>
@@ -165,11 +165,13 @@ export default {
   watch: {
     task(newValue){
       this.form = _.cloneDeep(newValue)
+      this.$store.dispatch("task/fetchTeamMember", this.task)
     },
   },
   computed: {
     ...mapGetters({
       favTasks: "task/getFavTasks",
+      team: 'task/getTaskMembers',
       teamMembers: "user/getTeamMembers",
       projects: "project/getAllProjects",
       sections: "section/getProjectSections",
@@ -249,6 +251,29 @@ export default {
         return this.task.user.Photo
       }
     },*/
+    teammates() {
+      let tm = { main: [], extra: [], all: [] }
+      if (Object.keys(this.task).length == 0) {
+        return tm
+      }
+      this.teamMembers.filter(u => {
+        this.team.forEach((t, index) => {
+          if (t.id == u.id) {
+            tm.all.push(u)
+            if (index < 4) {
+              tm.main.push(u)
+            } else {
+              tm.extra.push(u)
+            }
+          }
+        })
+      })
+      return tm
+    },
+    extraNames(){
+      let eArr = this.teammates.extra.map(e=>e.label)
+      return eArr.join(', ')
+    },
   },
   created() {
     this.$nuxt.$on("edit-message", (msg) => {
