@@ -21,7 +21,7 @@
           </div>
         </nav>
         <div class="position-relative h-100 of-scroll-y">
-          <div v-for="n in inbox">
+          <div v-for="n in combinedInbox">
             <inbox-item :item="n" :key="n.id" @task-click="fetchTask" @project-click="fetchProject" :active="active"></inbox-item>
           </div>
           <loading :loading="loading"></loading>
@@ -58,7 +58,30 @@ export default {
   computed: {
     ...mapGetters({
       token: "token/getToken"
-    })
+    }),
+    combinedInbox(){
+      let inbox2 = []
+      
+      this.inbox.forEach(i => {
+        // inbox2.push(i)
+        let lastinbox2 = inbox2.slice(-1)[0]
+        // console.log(inbox2.length, i.taskId, i.projectId, i.userId)
+        if (inbox2.length == 0) {
+          inbox2.push(i)
+          return
+        }
+        if((lastinbox2?.taskId == i.taskId || lastinbox2?.projectId == i.projectId) && lastinbox2.userId == i.userId){
+          if (!lastinbox2?.content) {
+            lastinbox2['content'] = []
+          } 
+          lastinbox2.content.push({ title: i.text, time: this.$toTime(i.updatedAt) })
+          inbox2[inbox2.length - 1] = lastinbox2
+        } else {
+          inbox2.push(i)
+        }
+      })
+      return inbox2
+    }
   },
   mounted() {
     this.loading = true
@@ -71,6 +94,7 @@ export default {
       this.inbox = i.data.data
       this.loading = false
       this.switchTaskProject()
+
     }).catch(e => {
       console.warn(e)
       this.loading = false
