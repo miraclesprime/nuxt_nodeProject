@@ -21,12 +21,17 @@
       </span>
     </div>
     <div class="content font-md py-05">
-      <span >{{item.text}}</span><br>
+      <div v-if="item.content" class="inbox-item-content mb-05">
+        <template v-for="c in item.content" >
+          <div>{{c.title}}</div><div>@ {{c.time}}</div> 
+        </template>
+      </div>
+      <!-- <drag-table-simple v-if="item.content" :fields="fields" :tasks="item.content" headless :titleIcon="{ icon: 'tick'}" :collapsible="false" :drag="false"></drag-table-simple> -->
+      <span v-else>{{item.text}}<br></span>
       <div v-html="taskComment.comment"></div>
       <div v-html="projComment.comment"></div>
     </div>
-    <!-- <drag-table-simple :fields="fields" :tasks="tasks" headless :titleIcon="{ icon: 'check-circle'}" :collapsible="false" :drag="false"></drag-table-simple> -->
-    <div class="sent font-sm text-gray5">Sent on Sept. 22, 2022 @ 9:32 PM (EST)</div>
+    <div class="sent font-sm text-gray5">Sent <!-- on Sept. 22, 2022 --> @ {{$toTime(item.updatedAt)}} </div>
   </div>
 </template>
 <script>
@@ -45,8 +50,13 @@ export default {
       fields: [{
         key: "title",
         label: "Task name",
-        width: "32%",
-      }, {
+        width: "70%",
+      },
+      {
+        key: "time",
+        label: "@",
+      },
+       /*{
         key: "status",
         label: "Status",
       }, {
@@ -61,7 +71,7 @@ export default {
       }, {
         key: "dueDate",
         label: "Due Date",
-      }],
+      }*/],
       tasks: DUMMY_TASKS,
     }
   },
@@ -96,6 +106,15 @@ export default {
 .inbox-item {
   h4 {
     font-size: 16px;
+  }
+  &-content {
+    background-color: white;
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    /*gap: 0.25rem;*/
+    border-top: 1px solid $light;
+    border-right: 1px solid $light;
+    > * { padding: 0.325rem; border-bottom: 1px solid $light; border-left: 1px solid $light; }
   }
 }
 
