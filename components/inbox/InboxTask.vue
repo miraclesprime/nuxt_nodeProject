@@ -122,9 +122,9 @@
         <!-- subtasks -->
         <task-group></task-group>
         <!-- conversation -->
-        <sidebar-conversation></sidebar-conversation>
+        <sidebar-conversation :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
         <!-- files -->
-        <sidebar-files></sidebar-files>
+        <sidebar-files :reloadFiles="reloadFiles"></sidebar-files>
     </div>
     <!-- message input -->
     <div class="task-message-input d-flex gap-1 border-top-light py-1 px-105">
@@ -160,6 +160,9 @@ export default {
       },
       // user: this.$userInfo(this.task.userId),
       editMessage: {},
+      reloadComments: 1,
+      reloadHistory: 1,
+      reloadFiles: 1,
     }
   },
   watch: {
@@ -286,16 +289,102 @@ export default {
 
   },
   methods: {
-    markComplete() {},
-    setFavorite() {},
+    markComplete() {
+      // console.log(this.task)
+      this.loading = true
+      this.$store.dispatch('task/updateTaskStatus', this.task)
+        .then((d) => {
+          // console.log(d)
+          this.loading = false
+          // this.$nuxt.$emit("update-key")
+          this.$store.dispatch("task/setSingleTask", d)
+          this.reloadComments += 1
+        }).catch(e => {
+          // console.log(e)
+          this.loading = false
+        })
+    },
+    setFavorite() {
+      // console.info(this.isFavorite.status)
+      if (this.isFavorite.status) {
+        this.$store.dispatch("task/removeFromFavorite", { id: this.task.id })
+          .then(msg => console.log(msg))
+          .catch(e => console.log(e))
+      } else {
+        this.$store.dispatch("task/addToFavorite", { id: this.task.id })
+          .then(msg => console.log(msg))
+          .catch(e => console.log(e))
+      }
+    },
     showAddTeamModal() {
       this.$nuxt.$emit("add-member-to-task")
     },
     
-    debounceUpdate() {},
-    deleteTask(taskId) {
+    debounceUpdate: _.debounce(function(name, value) {
+      if (this.form.id) {
+        // console.log('Debounce', name, value)
+        let updatedvalue = value
+        if (name == 'Assignee') {
+          let user = this.teamMembers.find(t => t.id == value)
+          updatedvalue = user.label
+        }
+        if (name == 'Status') {
+          this.statusValues.find(s => {
+            if (s.value == value) {
+              updatedvalue = s.label
+            }
+          })
+        }
+        if (name == 'Priority') {
+          this.priorityValues.find(p => {
+            if (p.value == value) {
+              updatedvalue = p.label
+            }
+          })
+        }
+        if (name == "Due date" || name == "Start date") {
+          updatedvalue = dayjs(value).format('DD MMM, YYYY')
+        }
+        if (this.form.priorityId == "") {
+          this.form.priority = null
+          this.form.priorityId = null
+        }
+        if (this.form.statusId == "") {
+          this.form.status = null
+          this.form.statusId = null
+        }
+        // console.log(updatedvalue)
+        this.updateTask(`changed ${name} to "${updatedvalue}"`)
+        this.reloadComments += 1
+
+      }
+    }, 1000),
+
+    async updateTask(historyText, projectId) {
+      this.loading = true
+
+      let user;
+      if (!this.form.userId || this.form.userId != "") {
+        user = this.teamMembers.filter(u => u.id == this.form.userId)
+      } else {
+        user = null
+      }
+
+      this.$store.dispatch("task/updateTask", { id: this.form.id, data: { ...this.form }, user, projectId: this.form.projectId ? this.form.projectId : null, text: historyText })
+        .then((u) => {
+          // console.log(u)
+          this.$nuxt.$emit("update-key")
+          // this.$nuxt.$emit("refresh-history")
+          this.reloadHistory += 1
+          this.loading = false
+        })
+        .catch(e => {
+          console.log(e)
+          this.loading = false
+        })
 
     },
+    
     onFileInput(payload) {
       // console.log(payload)
       this.value.files = payload.files

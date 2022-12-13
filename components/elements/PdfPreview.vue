@@ -1,6 +1,6 @@
 <template>
   <div>
-    <iframe width="100%" height="400px" name="plugin" :src="pdfsrc" ></iframe>
+    <iframe width="100%" height="460px" name="plugin" :src="pdfsrc" ></iframe>
   </div>
 </template>
 
@@ -16,6 +16,6 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="scss" scoped>
+  /*iframe { aspect-ratio: 5 / 7}*/
 </style>
