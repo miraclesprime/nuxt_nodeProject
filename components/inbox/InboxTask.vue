@@ -64,7 +64,7 @@
         <bib-icon icon="check-circle-solid" :variant="isComplete.variant" :scale="1.5"></bib-icon>
       </div>
       <div class="flex-grow-1">
-        <input type="text" class="editable-input" ref="taskTitleInput" v-model="form.title" placeholder="Enter task name..." v-on:keyup="debounceUpdate('Title', form.title)">
+        <input type="text" class="editable-input" ref="taskTitleInput" v-model="form.title" placeholder="Enter task name..." v-on:keyup="debounceUpdate('Title', 'title', form.title)">
         <!-- <small v-show="error == 'invalid'" class="text-danger font-xs d-block" style="margin-top: -0.25rem;">Task name is required</small> -->
       </div>
       <div>
@@ -78,7 +78,7 @@
     </div>
     <div class="of-scroll-y position-relative py-05" id="ts-of-scroll-y" >
       <!-- task form -->
-        <div class="task-info position-relative px-1" id='sidebar-inner-wrap'>
+        <!-- <div class="task-info position-relative px-1" id='sidebar-inner-wrap'>
           <div class="row mx-0" id='sidebar-row-1'>
             <div class="col-4" id='sidebar-col-1'>
               <bib-select label="Assignee" test_id="task_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="debounceUpdate('Assignee', form.userId)"></bib-select>
@@ -117,8 +117,9 @@
           <div class="py-05 px-05" id="sidebar-btn-wrapper">
             <bib-button v-show="!task.id" label="Create Task" variant="primary" v-on:click="createTask"></bib-button>
           </div>
-          <!-- <loading :loading="loading"></loading> -->
-        </div>
+        </div> -->
+        <!-- editable fields -->
+        <sidebar-fields :task="form" @update-field="updateTask"></sidebar-fields>
         <!-- subtasks -->
         <task-group></task-group>
         <!-- conversation -->
@@ -320,7 +321,7 @@ export default {
       this.$nuxt.$emit("add-member-to-task")
     },
     
-    debounceUpdate: _.debounce(function(name, value) {
+    debounceUpdate: _.debounce(function(name, field, value) {
       if (this.form.id) {
         // console.log('Debounce', name, value)
         let updatedvalue = value
@@ -354,13 +355,13 @@ export default {
           this.form.statusId = null
         }
         // console.log(updatedvalue)
-        this.updateTask(`changed ${name} to "${updatedvalue}"`)
+        this.updateTask({ name: name, field, field, value: value }, `changed ${name} to "${updatedvalue}"`)
         this.reloadComments += 1
 
       }
     }, 1000),
 
-    async updateTask(historyText, projectId) {
+    updateTask(taskData, historyText, projectId) {
       this.loading = true
 
       let user;
@@ -370,7 +371,15 @@ export default {
         user = null
       }
 
-      this.$store.dispatch("task/updateTask", { id: this.form.id, data: { ...this.form }, user, projectId: this.form.projectId ? this.form.projectId : null, text: historyText })
+      this.$store.dispatch("task/updateTask", {
+        id: this.form.id,
+        // data: { ...this.form },
+        data: { [taskData.field]: taskData.value },
+        user,
+        projectId: this.form.projectId ? this.form.projectId : null,
+        text: historyText
+        // text: `changed ${taskData.name} to ${updatedvalue}`,
+      })
         .then((u) => {
           // console.log(u)
           this.$nuxt.$emit("update-key")

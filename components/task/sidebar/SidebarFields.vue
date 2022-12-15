@@ -49,6 +49,11 @@ import _ from 'lodash'
 export default {
 
   name: 'SidebarFields',
+  props: {
+    task: {
+      type: Object,
+    }
+  },
 
   data() {
     return {
@@ -66,7 +71,7 @@ export default {
     ...mapGetters({
       teamMembers: "user/getTeamMembers",
       sections: "section/getProjectSections",
-      currentTask: 'task/getSelectedTask',
+      // currentTask: 'task/getSelectedTask',
       project: "project/getSingleProject",
       projects: "project/getAllProjects",
     }),
@@ -123,13 +128,13 @@ export default {
     },
   },
   watch: {
-    currentTask() {
-      // console.log(this.currentTask)
-      if (Object.keys(this.currentTask).length) {
-        // this.form = JSON.parse(JSON.stringify(this.currentTask));
-        this.form = _.cloneDeep(this.currentTask);
-        if (this.currentTask.project?.length) {
-          this.form.projectId = this.currentTask.project[0].projectId || this.currentTask.project[0].project.id
+    task() {
+      // console.log(this.task)
+      if (Object.keys(this.task).length) {
+        // this.form = JSON.parse(JSON.stringify(this.task));
+        this.form = _.cloneDeep(this.task);
+        if (this.task.project?.length) {
+          this.form.projectId = this.task.project[0].projectId || this.task.project[0].project.id
         } else {
           this.form.projectId = this.project.id
         }
@@ -154,6 +159,9 @@ export default {
         }
       }
     },
+  },
+  mounted() {
+    // console.log('mounted-> sidebar field')
   },
   methods: {
     changeProject() {
@@ -195,8 +203,8 @@ export default {
 
       })
     },
-    debounceUpdateField: _.debounce(function(name, field, value) {
-    // updateField(name, field, value) {
+    debounceUpdateField: _.debounce(function(name, field, value, label) {
+      // updateField(name, field, value) {
       console.log(name, field, value)
       this.$emit("update-field", { name: name, field: field, value: value })
     }, 1000)

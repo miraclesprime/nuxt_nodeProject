@@ -93,7 +93,7 @@ export const mutations = {
     state.singleTaskComment = payload
   },
 
-  setSingleTask(state, currentTask) {
+  SET_SINGLE_TASK(state, currentTask) {
     state.selectedTask = currentTask;
   },
 
@@ -132,14 +132,14 @@ export const actions = {
     })
     // console.log('state task->',task.data.data)
     if (task.data.statusCode == 200) {
-      ctx.commit('setSingleTask', task.data.data)
+      ctx.commit('SET_SINGLE_TASK', task.data.data)
     }
     return task.data
   },
 
   // set single task
   setSingleTask(ctx, payload) {
-    ctx.commit('setSingleTask', payload)
+    ctx.commit('SET_SINGLE_TASK', payload)
   },
 
   async getFavTasks(ctx) {

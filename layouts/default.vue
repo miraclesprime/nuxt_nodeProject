@@ -85,7 +85,7 @@
         <div class="main" id="main-content" :class="openSidebar ? 'open-sidebar' : ''">
           <Nuxt />
           <transition name="drawer">
-            <task-sidebar v-if="openSidebar" :sectionIdActive="sectionPreselect" :scrollId="scrollId"></task-sidebar>
+            <task-sidebar v-show="openSidebar" :sectionIdActive="sectionPreselect" :scrollId="scrollId"></task-sidebar>
           </transition>
         </div>
       </template>
@@ -232,6 +232,7 @@ export default {
         } else {
           this.$store.dispatch('project/setSingleProject', {})
         }
+        // console.log(payload)
         this.$store.dispatch("task/setSingleTask", payload)
         this.$store.dispatch('task/fetchTeamMember', { id: payload.id })
       }

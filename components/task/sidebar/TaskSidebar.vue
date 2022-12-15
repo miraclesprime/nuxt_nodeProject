@@ -92,7 +92,7 @@
 
     <div class="of-scroll-y d-grid" id="ts-of-scroll-y" style="grid-template-columns: none; align-items: start">
       
-      <sidebar-fields @update-field="updateTask"></sidebar-fields>
+      <sidebar-fields :task="currentTask" @update-field="updateTask"></sidebar-fields>
       
       <task-group id="task_subtasks"></task-group>
 
@@ -145,7 +145,6 @@ export default {
         { title: "Files", value: "Files" },
         { title: "History", value: "History" },
       ],
-      activeSidebarTab: "Overview",
       taskFields: [{
           key: "id",
           label: "#",
@@ -200,7 +199,7 @@ export default {
       project: "project/getSingleProject",
       projects: "project/getAllProjects",
       // sections: "section/getProjectSections",
-      currentTask: 'task/getSelectedTask',
+      currentTask: "task/getSelectedTask",
       favTasks: "task/getFavTasks",
     }),
     /*orgUsers() {
@@ -276,8 +275,8 @@ export default {
   },
 
   watch: {
-    currentTask() {
-      // console.log(this.currentTask)
+    currentTask(newVal) {
+      console.log(newVal)
       if (Object.keys(this.currentTask).length) {
         // this.form = JSON.parse(JSON.stringify(this.currentTask));
         this.form = _.cloneDeep(this.currentTask);
@@ -325,7 +324,7 @@ export default {
 
   mounted() {
     this.$store.dispatch("project/fetchProjects")
-    this.activeSidebarTab = 'Overview'
+    // console.info('mounted-> task sidebar')
   },
 
   methods: {
@@ -399,8 +398,36 @@ export default {
       }
     },
 
-    async updateTask(taskData, historyText, projectId) {
+    updateTask(taskData, historyText, projectId) {
+
       this.loading = true
+
+      let updatedvalue = taskData.value
+      if (taskData.name == 'Assignee') {
+        let user = this.teamMembers.find(t => t.id == taskData.value)
+        updatedvalue = user.label
+      }
+      if (taskData.name == 'Project') {
+        let user = this.projects.find(t => t.id == taskData.value)
+        updatedvalue = user.title
+      }
+      if (taskData.name == 'Status') {
+        this.statusValues.find(s => {
+          if (s.value == taskData.value) {
+            updatedvalue = s.label
+          }
+        })
+      }
+      if (taskData.name == 'Priority') {
+        this.priorityValues.find(p => {
+          if (p.value == taskData.value) {
+            updatedvalue = p.label
+          }
+        })
+      }
+      if (taskData.name == "Due date" || taskData.name == "Start date") {
+        updatedvalue = dayjs(taskData.value).format('DD MMM, YYYY')
+      }
 
       let user;
       if (!this.form.userId || this.form.userId != "") {
@@ -414,7 +441,7 @@ export default {
         data: { [taskData.field]: taskData.value },
         user,
         projectId: this.form.projectId ? this.form.projectId : null,
-        text: historyText,
+        text: `changed ${taskData.name} to ${updatedvalue}`,
       })
         .then((u) => {
           // console.log(u)
@@ -432,7 +459,7 @@ export default {
 
     debounceUpdate: _.debounce(function(payload) {
       if (this.form.id) {
-        console.log('Debounce', payload)
+        // console.log('Debounce', payload)
         /*let updatedvalue = payload.value
         if (payload.field == 'Assignee') {
           let user = this.teamMembers.find(t => t.id == payload.value)
@@ -464,7 +491,7 @@ export default {
           this.form.statusId = null
         }
         // console.log(updatedvalue)
-        this.updateTask({ field: payload.field, value: payload.value },`changed ${payload.name} to "${payload.value}"`)
+        this.updateTask({ name: payload.name, field: payload.field, value: payload.value },`changed ${payload.name} to "${payload.value}"`)
         this.reloadComments += 1
 
       }
