@@ -3,7 +3,7 @@
 <script>
 export default {
   mounted() {
-    this.$router.push("/dashboard");
+    this.$router.push("/projects");
   }
 };
 </script>
