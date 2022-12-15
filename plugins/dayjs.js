@@ -6,5 +6,5 @@ export default ({ app }, inject) => {
   inject('toDate', time => dayjs(time).format('YYYY-MM-DD'));
   inject('toTime', time => dayjs(time).format('HH:mm'));
   inject('toDateTime', time => dayjs(time).format('YYYY-MM-DD HH:mm:ss'));
-  inject('displayDate', date => dayjs(date).fromNow())
+  inject('displayDate', date => dayjs(date).fromNow()) // display distance in days
 };
