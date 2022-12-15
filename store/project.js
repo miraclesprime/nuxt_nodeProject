@@ -316,10 +316,8 @@ export const actions = {
     }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
-  // console.log(res.data)
     if (res.statusCode == 200) {
       ctx.commit('createProject', res.data);
-      // ctx.commit('setSingleProject', res.data);
       return res
     } else {
       return res
@@ -327,7 +325,6 @@ export const actions = {
   },
 
   async deleteProject(ctx, payload) {
-    // console.log(payload)
     const res = await this.$axios.$delete("/project", {
       headers: { "Authorization": `Bearer ${localStorage.getItem('accessToken')}` },
       data: { id: payload.id, project: payload, text: `project "${payload.title}" deleted` }
@@ -373,7 +370,7 @@ export const actions = {
         ctx.commit('fetchTeamMember', data)
       })
       .catch((err) => {
-        console.log("Error!!");
+        console.log(err);
       });
   },
 
@@ -390,7 +387,6 @@ export const actions = {
       })
     }
 
-    // console.log(data)
     let names = data.map(n => `${n.firstName} ${n.lastName}`);
 
     const res = await this.$axios.post("/project/add-member", { projectId: payload.projectId, team: data, text: `${names.join(', ')} added to project` }, {
@@ -408,7 +404,6 @@ export const actions = {
   },
 
   async deleteMember(ctx, payload) {
-    // console.log( `${payload.member.name}`)
     try {
       let m = await this.$axios.delete("/project/remove-member", {
         headers: {
@@ -419,7 +414,6 @@ export const actions = {
           "text": `${payload.member.name} removed from project`
         }
       })
-      // console.log(m)
       if (m.data.statusCode == 200) {
         ctx.dispatch("fetchTeamMember", { projectId: payload.projectId })
         return m.data.message

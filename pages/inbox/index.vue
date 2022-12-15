@@ -74,7 +74,16 @@ export default {
           if (!lastinbox2?.content) {
             lastinbox2['content'] = []
           } 
+          if (!lastinbox2?.comment) {
+            lastinbox2['comment'] = []
+          }
           lastinbox2.content.push({ title: i.text, time: this.$toTime(i.updatedAt) })
+          if (i.taskComment) {
+            lastinbox2.comment.push( i.taskComment )
+          }
+          if (i.projectComment) {
+            lastinbox2.comment.push( i.projectComment )
+          }
           inbox2[inbox2.length - 1] = lastinbox2
         } else {
           inbox2.push(i)

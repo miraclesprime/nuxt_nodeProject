@@ -64,7 +64,7 @@
         <bib-icon icon="check-circle-solid" :variant="isComplete.variant" :scale="1.5"></bib-icon>
       </div>
       <div class="flex-grow-1">
-        <input type="text" class="editable-input" ref="taskTitleInput" v-model="form.title" placeholder="Enter task name..." v-on:keyup="debounceUpdate('Title', form.title)">
+        <input type="text" class="editable-input" ref="taskTitleInput" v-model="form.title" placeholder="Enter task name..." v-on:keyup="debounceUpdate('Title', 'title', form.title)">
         <!-- <small v-show="error == 'invalid'" class="text-danger font-xs d-block" style="margin-top: -0.25rem;">Task name is required</small> -->
       </div>
       <div>
@@ -78,7 +78,7 @@
     </div>
     <div class="of-scroll-y position-relative py-05" id="ts-of-scroll-y" >
       <!-- task form -->
-        <div class="task-info position-relative px-1" id='sidebar-inner-wrap'>
+        <!-- <div class="task-info position-relative px-1" id='sidebar-inner-wrap'>
           <div class="row mx-0" id='sidebar-row-1'>
             <div class="col-4" id='sidebar-col-1'>
               <bib-select label="Assignee" test_id="task_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="debounceUpdate('Assignee', form.userId)"></bib-select>
@@ -117,14 +117,15 @@
           <div class="py-05 px-05" id="sidebar-btn-wrapper">
             <bib-button v-show="!task.id" label="Create Task" variant="primary" v-on:click="createTask"></bib-button>
           </div>
-          <!-- <loading :loading="loading"></loading> -->
-        </div>
+        </div> -->
+        <!-- editable fields -->
+        <sidebar-fields :task="form" @update-field="updateTask"></sidebar-fields>
         <!-- subtasks -->
         <task-group></task-group>
         <!-- conversation -->
-        <sidebar-conversation></sidebar-conversation>
+        <sidebar-conversation :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
         <!-- files -->
-        <sidebar-files></sidebar-files>
+        <sidebar-files :reloadFiles="reloadFiles"></sidebar-files>
     </div>
     <!-- message input -->
     <div class="task-message-input d-flex gap-1 border-top-light py-1 px-105">
@@ -160,6 +161,9 @@ export default {
       },
       // user: this.$userInfo(this.task.userId),
       editMessage: {},
+      reloadComments: 1,
+      reloadHistory: 1,
+      reloadFiles: 1,
     }
   },
   watch: {
@@ -286,16 +290,110 @@ export default {
 
   },
   methods: {
-    markComplete() {},
-    setFavorite() {},
+    markComplete() {
+      // console.log(this.task)
+      this.loading = true
+      this.$store.dispatch('task/updateTaskStatus', this.task)
+        .then((d) => {
+          // console.log(d)
+          this.loading = false
+          // this.$nuxt.$emit("update-key")
+          this.$store.dispatch("task/setSingleTask", d)
+          this.reloadComments += 1
+        }).catch(e => {
+          // console.log(e)
+          this.loading = false
+        })
+    },
+    setFavorite() {
+      // console.info(this.isFavorite.status)
+      if (this.isFavorite.status) {
+        this.$store.dispatch("task/removeFromFavorite", { id: this.task.id })
+          .then(msg => console.log(msg))
+          .catch(e => console.log(e))
+      } else {
+        this.$store.dispatch("task/addToFavorite", { id: this.task.id })
+          .then(msg => console.log(msg))
+          .catch(e => console.log(e))
+      }
+    },
     showAddTeamModal() {
       this.$nuxt.$emit("add-member-to-task")
     },
     
-    debounceUpdate() {},
-    deleteTask(taskId) {
+    debounceUpdate: _.debounce(function(name, field, value) {
+      if (this.form.id) {
+        // console.log('Debounce', name, value)
+        let updatedvalue = value
+        if (name == 'Assignee') {
+          let user = this.teamMembers.find(t => t.id == value)
+          updatedvalue = user.label
+        }
+        if (name == 'Status') {
+          this.statusValues.find(s => {
+            if (s.value == value) {
+              updatedvalue = s.label
+            }
+          })
+        }
+        if (name == 'Priority') {
+          this.priorityValues.find(p => {
+            if (p.value == value) {
+              updatedvalue = p.label
+            }
+          })
+        }
+        if (name == "Due date" || name == "Start date") {
+          updatedvalue = dayjs(value).format('DD MMM, YYYY')
+        }
+        if (this.form.priorityId == "") {
+          this.form.priority = null
+          this.form.priorityId = null
+        }
+        if (this.form.statusId == "") {
+          this.form.status = null
+          this.form.statusId = null
+        }
+        // console.log(updatedvalue)
+        this.updateTask({ name: name, field, field, value: value }, `changed ${name} to "${updatedvalue}"`)
+        this.reloadComments += 1
+
+      }
+    }, 1000),
+
+    updateTask(taskData, historyText, projectId) {
+      this.loading = true
+
+      let user;
+      if (!this.form.userId || this.form.userId != "") {
+        user = this.teamMembers.filter(u => u.id == this.form.userId)
+      } else {
+        user = null
+      }
+
+      this.$store.dispatch("task/updateTask", {
+        id: this.form.id,
+        // data: { ...this.form },
+        data: { [taskData.field]: taskData.value },
+        user,
+        projectId: this.form.projectId ? this.form.projectId : null,
+        text: historyText
+        // text: `changed ${taskData.name} to ${updatedvalue}`,
+      })
+        .then((u) => {
+          // console.log(u)
+          this.$nuxt.$emit("update-key")
+          // this.$nuxt.$emit("refresh-history")
+          this.reloadHistory += 1
+          this.loading = false
+        })
+        .catch(e => {
+          console.log(e)
+          this.loading = false
+        })
 
     },
+    
     onFileInput(payload) {
       // console.log(payload)
       this.value.files = payload.files

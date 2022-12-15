@@ -49,7 +49,6 @@ export const actions = {
     const res = await this.$axios.$post('/subtask', payload, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
-    // console.log("create task response =>", res)
 
     if (res.statusCode == 200) {
       ctx.commit('createSubTask', res.data);

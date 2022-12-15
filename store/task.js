@@ -93,7 +93,7 @@ export const mutations = {
     state.singleTaskComment = payload
   },
 
-  setSingleTask(state, currentTask) {
+  SET_SINGLE_TASK(state, currentTask) {
     state.selectedTask = currentTask;
   },
 
@@ -130,16 +130,16 @@ export const actions = {
     const task = await this.$axios.get("/task/"+taskId, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
-    // console.log('state task->',task.data.data)
+
     if (task.data.statusCode == 200) {
-      ctx.commit('setSingleTask', task.data.data)
+      ctx.commit('SET_SINGLE_TASK', task.data.data)
     }
     return task.data
   },
 
   // set single task
   setSingleTask(ctx, payload) {
-    ctx.commit('setSingleTask', payload)
+    ctx.commit('SET_SINGLE_TASK', payload)
   },
 
   async getFavTasks(ctx) {
@@ -156,7 +156,6 @@ export const actions = {
     const res = await this.$axios.$post('/task', payload, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
-    // console.log("create task response =>", res)
 
     if (res.statusCode == 200) {
       ctx.commit('createTask', res.data);
@@ -173,7 +172,6 @@ export const actions = {
   },
 
   async deleteTask(ctx, payload) {
-    // console.log(payload)
     const res = await this.$axios.$delete("/task", {
       headers: { "Authorization": `Bearer ${localStorage.getItem('accessToken')}` },
       data: { id: payload.id, task: payload, text: `task "${payload.title}" deleted` },
@@ -182,13 +180,11 @@ export const actions = {
   },
 
   async updateTaskStatus(ctx, payload) {
-    // console.log('update task payload', payload)
-    // console.log(payload.project[0].projectId)
     if (payload.statusId !== 5) {
       const res = await this.$axios.$put('/task', { id: payload.id, projectId: ctx.rootState.project.selectedProject.id || payload.project[0].projectId || payload.project[0].project.id, data: { statusId: 5 }, text: 'Updated the status to Done' }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
-      // ctx.dispatch("fetchTasks", { id: ctx.rootState.project.selectedProject.id, filter: 'all' })
+
       return res.data
     }
 
@@ -196,23 +192,22 @@ export const actions = {
       const res = await this.$axios.$put('/task', { id: payload.id, projectId: ctx.rootState.project.selectedProject.id || payload.project[0].projectId || payload.project[0].project.id, data: { statusId: 2 }, text: 'Updated the status to In-progress' }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
-      // ctx.dispatch("fetchTasks", { id: ctx.rootState.project.selectedProject.id, filter: 'all' })
+      
       return res.data
     }
 
   },
 
   async addToFavorite(ctx, payload) {
-    // console.log(payload)
+
     try {
       let fav = await this.$axios.post(`/task/${payload.id}/favorite`, {}, {
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
         }
       })
-      // console.log(fav)
+      
       if (fav.data.statusCode == 200) {
-        // console.log('Added To Favorites')
         ctx.dispatch("getFavTasks")
         return fav.data.message
       } else {
@@ -248,7 +243,7 @@ export const actions = {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       })
-      // console.log(tm)
+      
       let team = tm.data.data.members;
 
       let data = team.map((el) => {

@@ -167,7 +167,7 @@ export default {
       // formdata.append('text', 'File added for task');
       formdata.append('text', `uploaded file(s) "${filelist.join(", ")}" to task`)
 
-      if (this.task.project[0]) {
+      if (this.task.hasOwnProperty('project')) {
         formdata.append('projectId', this.task.project[0].projectId)
       }
 

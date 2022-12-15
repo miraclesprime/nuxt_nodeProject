@@ -35,7 +35,6 @@ export const state = () => ({
         const res = await this.$axios.$post('/inbox', payload, {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
           });
-          // console.log("create task response =>", res)
       
           if (res.statusCode == 200) {
             ctx.commit('createInboxEntry', res.data);
@@ -47,7 +46,6 @@ export const state = () => ({
         const res = await this.$axios.$post(`/inbox/${payload.id}`, {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
           });
-          // console.log("create task response =>", res)
       
           if (res.statusCode == 200) {
             ctx.commit('setSingleInbox', res.data);
@@ -59,7 +57,6 @@ export const state = () => ({
         const res = await this.$axios.$post(`/inbox`, {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
           });
-          // console.log("create task response =>", res)
       
           if (res.statusCode == 200) {
             ctx.commit('setInbox', res.data);

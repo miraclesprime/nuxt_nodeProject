@@ -3,7 +3,7 @@
     <div class="new text-white font-xs position-absolute">New
       <span class="triangle"></span>
     </div>
-    <div class="d-inline-flex gap-05 pb-05 text-secondary font-md">
+    <div class="w-100 d-inline-flex gap-05 pb-05 text-secondary font-md">
       <span>
         <user-info :userId="item.userId"></user-info>
       </span>
@@ -12,6 +12,17 @@
         <bib-icon icon="briefcase" variant="gray5"></bib-icon> {{projTitle}}
       </span>
       <!-- <span v-else><strong>{{item.text}}</strong></span> -->
+      <div class="inbox-flags d-inline-flex align-center ml-auto">
+        <span class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Flag message'">
+          <bib-icon icon="flag-racing" variant="gray5"></bib-icon>
+        </span>
+        <span class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Mark as unread'">
+          <bib-icon icon="mail-solid" variant="gray5"></bib-icon>
+        </span>
+        <span class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Archive'">
+          <bib-icon icon="file-multiple" variant="gray5"></bib-icon>
+        </span>
+      </div>
     </div>
     <div class="d-flex align-center justify-between">
       <h4>{{taskTitle || projTitle}}</h4>
@@ -21,15 +32,18 @@
       </span>
     </div>
     <div class="content font-md py-05">
-      <div v-if="item.content" class="inbox-item-content mb-05">
+      <div v-if="item.content || item.comment" class="inbox-item-content mb-05">
         <template v-for="c in item.content" >
           <div>{{c.title}}</div><div>@ {{c.time}}</div> 
+        </template>
+        <template v-for="cm in item.comment" >
+          <div v-html="cm.comment"></div><div>@ {{$toTime(cm.updatedAt)}}</div> 
         </template>
       </div>
       <!-- <drag-table-simple v-if="item.content" :fields="fields" :tasks="item.content" headless :titleIcon="{ icon: 'tick'}" :collapsible="false" :drag="false"></drag-table-simple> -->
       <span v-else>{{item.text}}<br></span>
-      <div v-html="taskComment.comment"></div>
-      <div v-html="projComment.comment"></div>
+      <!-- <div v-html="taskComment.comment"></div>
+      <div v-html="projComment.comment"></div> -->
     </div>
     <div class="sent font-sm text-gray5">Sent <!-- on Sept. 22, 2022 --> @ {{$toTime(item.updatedAt)}} </div>
   </div>

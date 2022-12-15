@@ -24,11 +24,6 @@ export const mutations = {
   },
 
   fetchProjectSections(state, payload){
-    /*let sorted = payload.map((el) => {
-      console.log(el)
-      return el.tasks.sort(function(a,b) {return a.order - b.order})
-    })*/
-    // console.log("sorted sections mutation",sorted)
     state.projectSections = payload
   },
 
@@ -106,7 +101,6 @@ export const actions = {
     const res = await this.$axios.$put("/section", payload, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
-    // console.log("rename section vuex", res)
     
     return res
   },
@@ -116,7 +110,6 @@ export const actions = {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` },
       data: { id: payload.id, projectId: payload.projectId, text: `section '${payload.title}' deleted` },
     })
-    // console.log("rename section vuex", res)
     
     return res 
   },

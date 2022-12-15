@@ -148,28 +148,6 @@ export const mutations = {
 
     }
 
-    /*if (payload.sName == 'userId' && payload.order == 'desc') {
-
-      let arr = JSON.parse(JSON.stringify(state.companyTasks))
-      let newArr = []
-
-      for (let i = 0; i < arr.length; i++) {
-        if (arr[i].user) {
-          newArr.unshift(arr[i])
-        } else {
-          newArr.push(arr[i])
-        }
-      }
-
-      newArr.sort((a, b) => {
-        if (a.user && b.user) {
-          return b.user.firstName.localeCompare(a.user.firstName);
-        }
-      });
-      state.companyTasks = newArr;
-
-    }*/
-
     // sort by due date
     if (payload.sName == 'startDate' && payload.order == 'asc') {
       state.companyTasks.sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
@@ -230,11 +208,10 @@ export const actions = {
       headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` }
     })
     if (res.statusCode == 200) {
-      // console.log(res.data)
       let cu = res.data.map(u => u.user)
       ctx.commit("fetchCompanyMembers", cu)
     } else {
-      console.log(res);
+      return res
     }
   },
   async setCompanyTasks(ctx, payload) {

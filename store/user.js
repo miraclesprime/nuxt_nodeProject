@@ -3,7 +3,6 @@ export const state = () => ({
   user2: null,
   teamMembers: [],
   userTasks: [],
-  // userTodos: [],
 });
 
 export const getters = {
@@ -27,9 +26,6 @@ export const getters = {
     return state.userTasks;
   },
 
-  /*getUserTodos(state) {
-    return state.userTodos
-  }*/
 };
 
 export const mutations = {
@@ -48,10 +44,6 @@ export const mutations = {
   setUserTasks(state, payload) {
     state.userTasks = payload
   },
-
-  /*setUserTodos(state, payload) {
-    state.userTodos = payload.sort((a, b) => a.uOrder - b.uOrder)
-  },*/
 
   sortUserTasks(state, payload) {
 
@@ -85,7 +77,6 @@ export const mutations = {
       });
       state.userTasks = newArr;
 
-      // state.userTasks.sort((a,b) => a.project[0].project.title.localeCompare(b.project[0].project.title))
     }
 
     if (payload.sName == 'projectId' && payload.order == 'desc') {
@@ -108,7 +99,6 @@ export const mutations = {
       });
       state.userTasks = newArr;
 
-      // state.userTasks.sort((a,b) => b.project[0].project.title.localeCompare(a.project[0].project.title))
     }
 
     // sort By Status
@@ -140,13 +130,6 @@ export const mutations = {
 
       state.userTasks = newArr;
     }
-    /*if(payload.sName == 'status' && payload.order == 'asc') {
-      state.userTasks.sort((a,b) => a.status.text.localeCompare(b.status.text))
-    }
-
-    if(payload.sName == 'status' && payload.order == 'desc') {
-      state.userTasks.sort((a,b) => b.status.text.localeCompare(a.status.text))
-    }*/
 
     // sort by create date
     if (payload.sName == 'createdAt' && payload.order == 'asc') {
@@ -193,13 +176,7 @@ export const mutations = {
       }
       state.userTasks = newArr;
     }
-    /*if(payload.sName == 'priority' && payload.order == 'asc') {
-      state.userTasks.sort((a,b) => a.priority.text.localeCompare(b.priority.text))
-    }
 
-    if(payload.sName == 'priority' && payload.order == 'desc') {
-      state.userTasks.sort((a,b) => b.priority.text.localeCompare(a.priority.text))
-    }*/
   },
   
 };
@@ -233,17 +210,6 @@ export const actions = {
       return res.data
     }
   },
-  /*async fetchUserTodos(ctx, payload) {
-    const todos = await this.$axios.$get("todo/all", {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-    })
-    // console.log(todos)
-    if (todos.statusCode == 200) {
-      ctx.commit("setUserTodos", todos.data)
-      // return todos.data
-    }
-    return todos
-  },*/
 
   sortUserTasks(ctx, payload) {
     ctx.commit('sortUserTasks', payload)
