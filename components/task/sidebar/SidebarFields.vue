@@ -38,7 +38,7 @@
     <!-- <div class="py-05 px-105" id="sidebar-btn-wrapper">
       <bib-button v-show="!currentTask.id" label="Create Task" variant="primary" v-on:click="createTask"></bib-button>
     </div> -->
-    <loading :loading="loading"></loading>
+    <loading :loading="loading2 || loading"></loading>
   </div>
 </template>
 <script>
@@ -52,6 +52,10 @@ export default {
   props: {
     task: {
       type: Object,
+    },
+    loading: {
+        type: Boolean,
+        default: false
     }
   },
 
@@ -64,7 +68,7 @@ export default {
       form: {
 
       },
-      loading: false,
+      loading2: false,
     }
   },
   computed: {
@@ -176,7 +180,7 @@ export default {
         }
         return false
       }
-      this.loading = true
+      this.loading2 = true
       if (this.form.projectId && (!this.form.sectionId || this.form.sectionId == "")) {
         this.form.sectionId = "_section" + this.form.projectId
       }
@@ -184,7 +188,7 @@ export default {
       this.$store.dispatch("section/fetchProjectSections", { projectId: this.form.projectId, filter: 'all' }).then((sections) => {
         // console.log(sections)
         if (!this.form.id || this.form.id == "") {
-          this.loading = false
+          this.loading2 = false
           return false
         }
         let sec = sections.find(s => s.title.includes("_section"))
@@ -196,16 +200,13 @@ export default {
         } else {
           this.form.sectionId = sec.id
         }
-        this.loading = false
-        // this.updateTask(`removed from project "${proj.label}"`, this.form.projectId)
+        this.loading2 = false
         this.debounceUpdateField("Project", "projectId", this.form.projectId)
-        // this.$emit("update-field", { name: "Project", field: "projectId", value: this.form.projectId })
 
       })
     },
     debounceUpdateField: _.debounce(function(name, field, value, label) {
-      // updateField(name, field, value) {
-      console.log(name, field, value)
+      // console.log(name, field, value)
       this.$emit("update-field", { name: name, field: field, value: value })
     }, 1000)
   }
