@@ -48,9 +48,9 @@
                 <span class="list__item" id="project-id-list-item3" @click="modalOpen('files', 'Files')">
                   <bib-icon icon="folder-solid" class="mr-075"></bib-icon> Files
                 </span>
-                <span class="list__item" id="project-id-list-item3">
+                <!-- <span class="list__item" id="project-id-list-item3">
                   <bib-icon icon="group" class="mr-075"></bib-icon> Subtasks
-                </span>
+                </span> -->
                 <!-- <span class="list__item" id="project-id-list-item4" @click="renameModal = !renameModal">
                   <bib-icon icon="pencil" class="mr-075"></bib-icon> Rename
                 </span> -->

@@ -1,6 +1,6 @@
 <template>
   <div class="inbox-task h-100 position-relative" >
-    <div class="d-flex justify-between side-panel__header__actions mb-05" id='ts-side-panel'>
+    <div class="d-flex justify-between side-panel__header__actions " id='ts-side-panel'>
       <!-- <div class="d-flex align-center gap-05" id="ts-icon-close-Wrapper">
           <div id='ts-icon-close' class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" @click="$nuxt.$emit('close-sidebar')">
             <bib-icon icon="page-last" class="m-auto"></bib-icon>
@@ -10,9 +10,9 @@
           </div>
         </div> -->
       <div class="d-flex gap-05 ml-auto align-center" id="ts-icon-attachment-wrapper">
-        <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="ts-icon-2" v-tooltip="'Team'" @click="showAddTeamModal">
+        <!-- <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="ts-icon-2" v-tooltip="'Team'" @click="showAddTeamModal">
           <bib-icon icon="user-group-solid" variant="gray5"></bib-icon>
-        </div>
+        </div> -->
         <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-3' v-tooltip="'Subtasks'" v-scroll-to="'#task_subtasks'">
           <bib-icon icon="check-square-solid" variant="gray5"></bib-icon>
         </div>
@@ -26,7 +26,7 @@
           <bib-icon icon="bookmark-solid" :variant="isFavorite.variant"></bib-icon>
         </div>
         <div id="ts-list-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center">
-          <bib-button pop="elipsis">
+          <bib-popup pop="horizontal-dots">
             <template v-slot:menu>
               <div class="list" id="ts-list">
                 <span class="list__item" id="ts-list-item-1" @click="markComplete">
@@ -54,7 +54,7 @@
                 <span class="list__item list__item__danger" id="ts-list-item-8" @click="deleteTask(item.taskId)">Delete</span>
               </div>
             </template>
-          </bib-button>
+          </bib-popup>
         </div>
       </div>
     </div>
@@ -77,47 +77,7 @@
       </div>
     </div>
     <div class="of-scroll-y position-relative py-05" id="ts-of-scroll-y" >
-      <!-- task form -->
-        <!-- <div class="task-info position-relative px-1" id='sidebar-inner-wrap'>
-          <div class="row mx-0" id='sidebar-row-1'>
-            <div class="col-4" id='sidebar-col-1'>
-              <bib-select label="Assignee" test_id="task_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="debounceUpdate('Assignee', form.userId)"></bib-select>
-            </div>
-            <div class="col-4">
-              <bib-datepicker v-model="startdateInput" :value="startdateInput" format="dd MMM yyyy" label="Start date" placeholder="Start date" @input="debounceUpdate('Start date', startdateInput)"></bib-datepicker>
-            </div>
-            <div class="col-4">
-              <bib-datepicker class="align-right" v-model="duedateInput" :value="duedateInput" format="dd MMM yyyy" label="Due date" placeholder="Due date" @input="debounceUpdate('Due date', duedateInput)"></bib-datepicker>
-            </div>
-          </div>
-          <div class="row mx-0" id='sidebar-row-2'>
-            <div class="col-4" id='sidebar-col-2'>
-              <bib-input type="select" label="Project" :options="companyProjects" v-model.number="form.projectId" v-on:change.native="changeProject"></bib-input>
-            </div>
-            <div class="col-4">
-              <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="form.sectionId" placeholder="Please select ..." v-on:change.native="debounceUpdate('Section', form.sectionId)" :disabled="!form.projectId"></bib-input>
-            </div>
-            <div class="col-4" id='sidebar-col-3'>
-              <bib-input type="select" label="Department" :options="department" placeholder="Please select..."></bib-input>
-            </div>
-          </div>
-          <div class="row mx-0" id='sidebar-row-3'>
-            <div class="col-4" id='sidebar-col-4'>
-              <bib-input type="select" label="Priority" v-model.number="form.priorityId" :options="priorityValues" placeholder="Please select..." v-on:change.native="debounceUpdate('Priority', form.priorityId)"></bib-input>
-            </div>
-            <div class="col-4" id='sidebar-col-5'>
-              <bib-input type="select" label="Status" v-model.number="form.statusId" :options="statusValues" placeholder="Please select..." v-on:change.native="debounceUpdate('Status', form.statusId)"></bib-input>
-            </div>
-          </div>
-          <div class="row mx-0" id='sidebar-row-4'>
-            <div class="col-12" id='sidebar-col-6'>
-              <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter task description..." label="Description" v-on:keyup.native="debounceUpdate('Description', form.description)"></bib-input>
-            </div>
-          </div>
-          <div class="py-05 px-05" id="sidebar-btn-wrapper">
-            <bib-button v-show="!task.id" label="Create Task" variant="primary" v-on:click="createTask"></bib-button>
-          </div>
-        </div> -->
+      
         <!-- editable fields -->
         <sidebar-fields :task="form" @update-field="updateTask"></sidebar-fields>
         <!-- subtasks -->
@@ -180,58 +140,6 @@ export default {
       projects: "project/getAllProjects",
       sections: "section/getProjectSections",
     }),
-    orgUsers() {
-      let data = this.teamMembers.map(u => {
-        return { label: u.firstName + ' ' + u.lastName, img: u.avatar, value: u.id }
-      })
-      return [{ label: 'Please select...', value: null }, ...data]
-    },
-    companyProjects() {
-      // console.log("new project", this.project.id, this.project.title)
-      let data = this.projects.map(p => {
-        return { label: p.title, value: p.id }
-      })
-      return [{ label: 'Please select...', value: null }, ...data]
-    },
-    sectionOpts() {
-      let sec = [{ label: "Select section", value: "_section" + this.form.projectId }]
-      this.sections.forEach((s) => {
-        if (s.title.includes("_section")) {
-          return false
-        }
-        sec.push({ label: s.title, value: s.id })
-      });
-      return sec
-    },
-    startdateInput: {
-      get() {
-        if (!this.form.startDate) {
-          // return dayjs().format('YYYY-MM-DD')
-          return new Date()
-        } else {
-          // return dayjs(this.form.startDate).format('YYYY-MM-DD')
-          return new Date(this.form.startDate)
-        }
-      },
-      set(newValue) {
-        this.form.startDate = new Date(newValue)
-      }
-    },
-    duedateInput: {
-      get() {
-        let nd
-        if (!this.form.dueDate) {
-          nd = new Date()
-          return new Date()
-        } else {
-          nd = new Date(this.form.dueDate)
-          return new Date(this.form.dueDate)
-        }
-      },
-      set(newValue) {
-        this.form.dueDate = new Date(newValue)
-      }
-    },
     isFavorite() {
       let fav = this.favTasks.some(t => t.task.id == this.task.id)
       if (fav) {
@@ -321,31 +229,10 @@ export default {
       this.$nuxt.$emit("add-member-to-task")
     },
     
-    debounceUpdate: _.debounce(function(name, field, value) {
+    debounceUpdate: _.debounce(function(payload) {
       if (this.form.id) {
         // console.log('Debounce', name, value)
-        let updatedvalue = value
-        if (name == 'Assignee') {
-          let user = this.teamMembers.find(t => t.id == value)
-          updatedvalue = user.label
-        }
-        if (name == 'Status') {
-          this.statusValues.find(s => {
-            if (s.value == value) {
-              updatedvalue = s.label
-            }
-          })
-        }
-        if (name == 'Priority') {
-          this.priorityValues.find(p => {
-            if (p.value == value) {
-              updatedvalue = p.label
-            }
-          })
-        }
-        if (name == "Due date" || name == "Start date") {
-          updatedvalue = dayjs(value).format('DD MMM, YYYY')
-        }
+        
         if (this.form.priorityId == "") {
           this.form.priority = null
           this.form.priorityId = null
@@ -355,7 +242,7 @@ export default {
           this.form.statusId = null
         }
         // console.log(updatedvalue)
-        this.updateTask({ name: name, field, field, value: value }, `changed ${name} to "${updatedvalue}"`)
+        this.updateTask({ name: payload.name, field: payload.field, value: payload.value })
         this.reloadComments += 1
 
       }
@@ -363,6 +250,33 @@ export default {
 
     updateTask(taskData, historyText, projectId) {
       this.loading = true
+
+      let updatedvalue = taskData.value
+      if (taskData.name == 'Assignee') {
+        let user = this.teamMembers.find(t => t.id == taskData.value)
+        updatedvalue = user.label
+      }
+      if (taskData.name == 'Project') {
+        let user = this.projects.find(t => t.id == taskData.value)
+        updatedvalue = user.title
+      }
+      if (taskData.name == 'Status') {
+        this.statusValues.find(s => {
+          if (s.value == taskData.value) {
+            updatedvalue = s.label
+          }
+        })
+      }
+      if (taskData.name == 'Priority') {
+        this.priorityValues.find(p => {
+          if (p.value == taskData.value) {
+            updatedvalue = p.label
+          }
+        })
+      }
+      if (taskData.name == "Due date" || taskData.name == "Start date") {
+        updatedvalue = dayjs(taskData.value).format('DD MMM, YYYY')
+      }
 
       let user;
       if (!this.form.userId || this.form.userId != "") {
@@ -377,8 +291,8 @@ export default {
         data: { [taskData.field]: taskData.value },
         user,
         projectId: this.form.projectId ? this.form.projectId : null,
-        text: historyText
-        // text: `changed ${taskData.name} to ${updatedvalue}`,
+        // text: historyText
+        text: `changed ${taskData.name} to ${updatedvalue}`,
       })
         .then((u) => {
           // console.log(u)

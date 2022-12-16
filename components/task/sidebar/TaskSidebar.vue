@@ -92,7 +92,7 @@
 
     <div class="of-scroll-y d-grid" id="ts-of-scroll-y" style="grid-template-columns: none; align-items: start">
       
-      <sidebar-fields :task="currentTask" @update-field="updateTask"></sidebar-fields>
+      <sidebar-fields :task="currentTask" :loading="loading" @update-field="updateTask"></sidebar-fields>
       
       <task-group id="task_subtasks"></task-group>
 
@@ -276,7 +276,7 @@ export default {
 
   watch: {
     currentTask(newVal) {
-      console.log(newVal)
+      // console.log(newVal)
       if (Object.keys(this.currentTask).length) {
         // this.form = JSON.parse(JSON.stringify(this.currentTask));
         this.form = _.cloneDeep(this.currentTask);
@@ -460,28 +460,7 @@ export default {
     debounceUpdate: _.debounce(function(payload) {
       if (this.form.id) {
         // console.log('Debounce', payload)
-        /*let updatedvalue = payload.value
-        if (payload.field == 'Assignee') {
-          let user = this.teamMembers.find(t => t.id == payload.value)
-          updatedvalue = user.label
-        }
-        if (payload.field == 'Status') {
-          this.statusValues.find(s => {
-            if (s.value == payload.value) {
-              updatedvalue = s.label
-            }
-          })
-        }
-        if (payload.field == 'Priority') {
-          this.priorityValues.find(p => {
-            if (p.value == payload.value) {
-              updatedvalue = p.label
-            }
-          })
-        }
-        if (payload.field == "Due date" || payload.field == "Start date") {
-          updatedvalue = dayjs(payload.value).format('DD MMM, YYYY')
-        }*/
+        
         if (this.form.priorityId == "") {
           this.form.priority = null
           this.form.priorityId = null
@@ -491,7 +470,7 @@ export default {
           this.form.statusId = null
         }
         // console.log(updatedvalue)
-        this.updateTask({ name: payload.name, field: payload.field, value: payload.value },`changed ${payload.name} to "${payload.value}"`)
+        this.updateTask({ name: payload.name, field: payload.field, value: payload.value })
         this.reloadComments += 1
 
       }
