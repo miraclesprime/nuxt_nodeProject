@@ -1,5 +1,5 @@
 <template>
-  <div class="inbox-item border-bottom-gray2 py-1 px-3 position-relative cursor-pointer" :class="{'bg-light': active == item.id}" @click="itemClick">
+  <div class="inbox-item border-bottom-gray2 py-1 px-3 position-relative cursor-pointer" :class="{'active': active == item.id}" @click="itemClick">
     <div class="new text-white font-xs position-absolute">New
       <span class="triangle"></span>
     </div>
@@ -129,6 +129,12 @@ export default {
     border-top: 1px solid $light;
     border-right: 1px solid $light;
     > * { padding: 0.325rem; border-bottom: 1px solid $light; border-left: 1px solid $light; }
+  }
+
+  &.active { background-color: $light;
+    .new {
+      span { border-right-color: $light; }
+    }
   }
 }
 

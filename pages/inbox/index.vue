@@ -21,8 +21,11 @@
           </div>
         </nav>
         <div class="position-relative h-100 of-scroll-y">
-          <div v-for="n in combinedInbox">
-            <inbox-item :item="n" :key="n.id" @task-click="fetchTask" @project-click="fetchProject" :active="active"></inbox-item>
+          <div v-for="(value, key) in combinedInbox">
+            <h4 class="font-md text-gray6 text-capitalize py-05 px-2 border-bottom-light">{{key}}</h4>
+            <template v-for="o in value">
+              <inbox-item :item="o" :key="o.id" @task-click="fetchTask" @project-click="fetchProject" :active="active"></inbox-item>
+            </template>
           </div>
           <loading :loading="loading"></loading>
         </div>
@@ -40,6 +43,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import dayjs from 'dayjs'
 export default {
 
   name: 'Inbox',
@@ -60,9 +64,133 @@ export default {
       token: "token/getToken"
     }),
     combinedInbox(){
-      let inbox2 = []
+      let today = [], yesterday = [], older = [];
+
+      let inbox2 = { today: today, yesterday: yesterday, older: older}
+
+      this.inbox.forEach((item,index) => {
+        // console.info(dayjs(item.updatedAt).diff(dayjs(), 'day'))
+        switch (dayjs(item.updatedAt).diff(dayjs(), 'day')) {
+          case 0:
+            today.push(item)
+            break;
+          case -1 < -2:
+            yesterday.push(item)
+            break;
+          default:
+            older.push(item)
+            break;
+        }
+      })
+
+      let o2 = [], t2 = [], y2 = []
+
+      today.forEach(o => {
+        // let t2last = t2.slice(-1)[0]
+        // console.log(t2.length, i.taskId, i.projectId, i.userId)
+        /*if (t2.length == 0) {
+          t2.push(o)
+          return
+        }*/
+
+        /*if((t2last?.taskId == o.taskId || t2last?.projectId == o.projectId) && t2last.userId == o.userId){
+          if (!t2last?.content) {
+            t2last['content'] = []
+          } 
+          if (!t2last?.comment) {
+            t2last['comment'] = []
+          }
+          t2last.content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
+          if (o.taskComment) {
+            t2last.comment.push( o.taskComment )
+          }
+          if (o.projectComment) {
+            t2last.comment.push( o.projectComment )
+          }
+          t2[t2.length - 1] = t2last
+        } else {
+          t2.push(o)
+        }*/
+        t2.push(o)
+
+        let prIndex = this.testUserProject(t2, o)
+        let taIndex = this.testUserTask(t2, o)
+        console.log('index->', prIndex, taIndex)
+
+        /*if (prIndex) {
+          if (!t2[prIndex]?.content) {
+            t2[prIndex]['content'] = []
+          } 
+          if (!t2[prIndex]?.comment) {
+            t2[prIndex]['comment'] = []
+          }
+          t2[prIndex].content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
+          if (o.taskComment) {
+            t2[prIndex].comment.push( o.taskComment )
+          }
+          if (o.projectComment) {
+            t2[prIndex].comment.push( o.projectComment )
+          }
+        } else {
+          t2.push(o)
+        }*/
+      })
+
+      yesterday.forEach(o => {
+        let y2last = y2.slice(-1)[0]
+        // console.log(y2.length, i.taskId, i.projectId, i.userId)
+        if (y2.length == 0) {
+          y2.push(o)
+          return
+        }
+        if((y2last?.taskId == o.taskId || y2last?.projectId == o.projectId) && y2last.userId == o.userId){
+          if (!y2last?.content) {
+            y2last['content'] = []
+          } 
+          if (!y2last?.comment) {
+            y2last['comment'] = []
+          }
+          y2last.content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
+          if (o.taskComment) {
+            y2last.comment.push( o.taskComment )
+          }
+          if (o.projectComment) {
+            y2last.comment.push( o.projectComment )
+          }
+          y2[y2.length - 1] = y2last
+        } else {
+          y2.push(o)
+        }
+      })
+
+      older.forEach(o => {
+        let o2last = o2.slice(-1)[0]
+        // console.log(o2.length, i.taskId, i.projectId, i.userId)
+        if (o2.length == 0) {
+          o2.push(o)
+          return
+        }
+        if((o2last?.taskId == o.taskId || o2last?.projectId == o.projectId) && o2last.userId == o.userId){
+          if (!o2last?.content) {
+            o2last['content'] = []
+          } 
+          if (!o2last?.comment) {
+            o2last['comment'] = []
+          }
+          o2last.content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
+          if (o.taskComment) {
+            o2last.comment.push( o.taskComment )
+          }
+          if (o.projectComment) {
+            o2last.comment.push( o.projectComment )
+          }
+          o2[o2.length - 1] = o2last
+        } else {
+          o2.push(o)
+        }
+      })
       
-      this.inbox.forEach(i => {
+      /*this.inbox.forEach(i => {
         // inbox2.push(i)
         let lastinbox2 = inbox2.slice(-1)[0]
         // console.log(inbox2.length, i.taskId, i.projectId, i.userId)
@@ -88,8 +216,8 @@ export default {
         } else {
           inbox2.push(i)
         }
-      })
-      return inbox2
+      })*/
+      return { today: t2, yesterday: y2, older: o2}
     }
   },
   mounted() {
@@ -110,6 +238,12 @@ export default {
     })
   },
   methods: {
+    testUserTask(arr, item){
+      return arr.findIndex(a => a.userId == item.userId && a.taskId == item.taskId)
+    },
+    testUserProject(arr, item){
+      return arr.findIndex(a => a.userId == item.userId && a.projectId == item.projectId)      
+    },
     switchTaskProject() {
       this.active = this.inbox[0].id
       // console.log('active->', this.inbox[0].id)
