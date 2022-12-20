@@ -33,35 +33,35 @@ export const state = () => ({
 
     async createInboxEntry(ctx, payload) {
         const res = await this.$axios.$post('/inbox', payload, {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-          });
-      
-          if (res.statusCode == 200) {
-            ctx.commit('createInboxEntry', res.data);
-          }
-          return res.data
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+        });
+    
+        if (res.statusCode == 200) {
+          ctx.commit('createInboxEntry', res.data);
+        }
+        return res.data
     },
 
     async getInboxEntry(ctx, payload) {
         const res = await this.$axios.$post(`/inbox/${payload.id}`, {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-          });
-      
-          if (res.statusCode == 200) {
-            ctx.commit('setSingleInbox', res.data);
-          }
-          return res.data
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+        });
+    
+        if (res.statusCode == 200) {
+          ctx.commit('setSingleInbox', res.data);
+        }
+        return res.data
     },
 
     async getInboxEntries(ctx, payload) {
         const res = await this.$axios.$post(`/inbox`, {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-          });
-      
-          if (res.statusCode == 200) {
-            ctx.commit('setInbox', res.data);
-          }
-          return res.data
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+        });
+    
+        if (res.statusCode == 200) {
+          ctx.commit('setInbox', res.data);
+        }
+        return res.data
     }
   };
   
