@@ -75,9 +75,10 @@
             <!-- <small v-show="error == 'invalid'" class="text-danger font-xs d-block" style="margin-top: -0.25rem;">Task name is required</small> -->
           </div>
           <div>
-            <div class="team-avatar-list px-05">
+            <!-- <div class="team-avatar-list px-05">
               <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :key="index" v-tooltip="team.label" :title="team.label" :style="{ 'left': -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
-            </div>
+            </div> -->
+            <team-avatar-list :team="team"></team-avatar-list>
           </div>
           <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light cursor-pointer" v-tooltip="'Team'" @click="showAddTeamModal">
             <bib-icon icon="user-group-solid"></bib-icon>
@@ -586,20 +587,6 @@ export default {
 
   .input {
     color: #ccc;
-  }
-}
-
-.team-avatar-list {
-  position: relative;
-
-  .avatar:hover {
-    z-index: 11
-  }
-
-  .extra {
-    margin-left: 0.25rem;
-    color: $secondary;
-    vertical-align: middle;
   }
 }
 

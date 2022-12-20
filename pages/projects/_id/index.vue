@@ -71,14 +71,11 @@
       <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="PROJECT_TABS" />
     </div> -->
     <div id="project-id-tab-content" class="project-id-tab-content bg-light position-relative h-100 of-scroll-y">
-      <!-- <project-overview v-if="activeTab.value == PROJECT_TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="projectTasks" :currentProject="project"></project-overview> -->
       <task-view :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType"></task-view>
-      <!-- <project-conversation v-if="activeTab.value == PROJECT_TAB_TITLES.conversations" :fields="TABLE_FIELDS" :tasks="projectTasks"></project-conversation> -->
+      
       <!-- <task-timeline-view v-if="activeTab.value == PROJECT_TAB_TITLES.timeline" :fields="TABLE_FIELDS" :tasks="tasks" />
       <task-calendar-view v-if="activeTab.value == PROJECT_TAB_TITLES.calendar" :fields="TABLE_FIELDS" :tasks="tasks" /> -->
-      <!-- <task-team v-if="activeTab.value == PROJECT_TAB_TITLES.team"></task-team> -->
-      <!-- <project-files v-if="activeTab.value == PROJECT_TAB_TITLES.files"></project-files> -->
-      <!-- <project-history v-if="activeTab.value == PROJECT_TAB_TITLES.history"></project-history> -->
+      
     </div>
 
     <!-- project modals -->

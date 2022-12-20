@@ -69,12 +69,13 @@ export default {
       let inbox2 = { today: today, yesterday: yesterday, older: older}
 
       this.inbox.forEach((item,index) => {
-        // console.info(dayjs(item.updatedAt).diff(dayjs(), 'day'))
-        switch (dayjs(item.updatedAt).diff(dayjs(), 'day')) {
+        let ud = new Date(item.updatedAt)
+        // console.info(ud.getDate() - new Date().getDate())
+        switch (ud.getDate() - new Date().getDate()) {
           case 0:
             today.push(item)
             break;
-          case -1 < -2:
+          case -1:
             yesterday.push(item)
             break;
           default:
@@ -86,38 +87,15 @@ export default {
       let o2 = [], t2 = [], y2 = []
 
       today.forEach(o => {
-        // let t2last = t2.slice(-1)[0]
-        // console.log(t2.length, i.taskId, i.projectId, i.userId)
-        /*if (t2.length == 0) {
+        if (t2.length == 0) {
           t2.push(o)
-          return
-        }*/
+        }
 
-        /*if((t2last?.taskId == o.taskId || t2last?.projectId == o.projectId) && t2last.userId == o.userId){
-          if (!t2last?.content) {
-            t2last['content'] = []
-          } 
-          if (!t2last?.comment) {
-            t2last['comment'] = []
-          }
-          t2last.content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
-          if (o.taskComment) {
-            t2last.comment.push( o.taskComment )
-          }
-          if (o.projectComment) {
-            t2last.comment.push( o.projectComment )
-          }
-          t2[t2.length - 1] = t2last
-        } else {
-          t2.push(o)
-        }*/
-        t2.push(o)
+        let prIndex = t2.findIndex(a => a.userId == o.userId && a?.projectId == o?.projectId)
+        let taIndex = t2.findIndex(a => a.userId == o.userId && a?.taskId == o?.taskId)
+        // console.log('index->', prIndex, taIndex)
 
-        let prIndex = this.testUserProject(t2, o)
-        let taIndex = this.testUserTask(t2, o)
-        console.log('index->', prIndex, taIndex)
-
-        /*if (prIndex) {
+        if (prIndex >= 0) {
           if (!t2[prIndex]?.content) {
             t2[prIndex]['content'] = []
           } 
@@ -125,42 +103,67 @@ export default {
             t2[prIndex]['comment'] = []
           }
           t2[prIndex].content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
-          if (o.taskComment) {
-            t2[prIndex].comment.push( o.taskComment )
-          }
           if (o.projectComment) {
             t2[prIndex].comment.push( o.projectComment )
           }
-        } else {
-          t2.push(o)
-        }*/
+          return
+        } 
+
+        if (taIndex >= 0) {
+          if (!t2[taIndex]?.content) {
+            t2[taIndex]['content'] = []
+          } 
+          if (!t2[taIndex]?.comment) {
+            t2[taIndex]['comment'] = []
+          }
+          t2[taIndex].content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
+          if (o.taskComment) {
+            t2[taIndex].comment.push( o.taskComment )
+          }
+          return
+        } 
+
+        t2.push(o)
+        
       })
 
       yesterday.forEach(o => {
-        let y2last = y2.slice(-1)[0]
-        // console.log(y2.length, i.taskId, i.projectId, i.userId)
         if (y2.length == 0) {
           y2.push(o)
-          return
         }
-        if((y2last?.taskId == o.taskId || y2last?.projectId == o.projectId) && y2last.userId == o.userId){
-          if (!y2last?.content) {
-            y2last['content'] = []
+        
+        let prIndex = y2.findIndex(a => a.userId == o.userId && a?.projectId == o?.projectId)
+        let taIndex = y2.findIndex(a => a.userId == o.userId && a?.taskId == o?.taskId)
+
+        if (prIndex >= 0) {
+          if (!y2[prIndex]?.content) {
+            y2[prIndex]['content'] = []
           } 
-          if (!y2last?.comment) {
-            y2last['comment'] = []
+          if (!y2[prIndex]?.comment) {
+            y2[prIndex]['comment'] = []
           }
-          y2last.content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
-          if (o.taskComment) {
-            y2last.comment.push( o.taskComment )
-          }
+          y2[prIndex].content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
           if (o.projectComment) {
-            y2last.comment.push( o.projectComment )
+            y2[prIndex].comment.push( o.projectComment )
           }
-          y2[y2.length - 1] = y2last
-        } else {
-          y2.push(o)
-        }
+          return
+        } 
+
+        if (taIndex >= 0) {
+          if (!y2[taIndex]?.content) {
+            y2[taIndex]['content'] = []
+          } 
+          if (!y2[taIndex]?.comment) {
+            y2[taIndex]['comment'] = []
+          }
+          y2[taIndex].content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
+          if (o.taskComment) {
+            y2[taIndex].comment.push( o.taskComment )
+          }
+          return
+        } 
+
+        y2.push(o)
       })
 
       older.forEach(o => {
@@ -190,33 +193,6 @@ export default {
         }
       })
       
-      /*this.inbox.forEach(i => {
-        // inbox2.push(i)
-        let lastinbox2 = inbox2.slice(-1)[0]
-        // console.log(inbox2.length, i.taskId, i.projectId, i.userId)
-        if (inbox2.length == 0) {
-          inbox2.push(i)
-          return
-        }
-        if((lastinbox2?.taskId == i.taskId || lastinbox2?.projectId == i.projectId) && lastinbox2.userId == i.userId){
-          if (!lastinbox2?.content) {
-            lastinbox2['content'] = []
-          } 
-          if (!lastinbox2?.comment) {
-            lastinbox2['comment'] = []
-          }
-          lastinbox2.content.push({ title: i.text, time: this.$toTime(i.updatedAt) })
-          if (i.taskComment) {
-            lastinbox2.comment.push( i.taskComment )
-          }
-          if (i.projectComment) {
-            lastinbox2.comment.push( i.projectComment )
-          }
-          inbox2[inbox2.length - 1] = lastinbox2
-        } else {
-          inbox2.push(i)
-        }
-      })*/
       return { today: t2, yesterday: y2, older: o2}
     }
   },
