@@ -77,7 +77,7 @@ export const mutations = {
     state.singleProjComment = payload
   },
 
-  SETFAVPROJECTS(state, payload) {
+  setFavProjects(state, payload) {
     state.favProjects = payload
   },
 
@@ -265,7 +265,7 @@ export const mutations = {
 
   },
 
-  SETPROJECTHISTORY(state, payload){
+  setProjectHistory(state, payload){
     state.projectHistory = payload
   }
 
@@ -281,6 +281,7 @@ export const actions = {
         'Filter': payload ? payload : 'all'
       }
     });
+
     ctx.commit('fetchProjects', res.data);
   },
 
@@ -341,9 +342,9 @@ export const actions = {
         }
       })
       if (fav.statusCode == 200) {
-        ctx.commit("SETFAVPROJECTS", fav.data)
+        ctx.commit("setFavProjects", fav.data)
       } else {
-        ctx.commit("SETFAVPROJECTS", [])
+        ctx.commit("setFavProjects", [])
       }
     } catch (e) {
       console.log(e);
@@ -576,11 +577,10 @@ export const actions = {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           'obj': JSON.stringify( {"projectId": payload.id} )
         }
-
       })
       
       if (hist.statusCode == 200) {
-        ctx.commit("SETPROJECTHISTORY", hist.data)
+        ctx.commit("setProjectHistory", hist.data)
       }
       return hist.data
     } catch(e) {

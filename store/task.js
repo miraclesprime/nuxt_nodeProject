@@ -93,7 +93,7 @@ export const mutations = {
     state.singleTaskComment = payload
   },
 
-  SET_SINGLE_TASK(state, currentTask) {
+  setSingleTask(state, currentTask) {
     state.selectedTask = currentTask;
   },
 
@@ -109,7 +109,7 @@ export const mutations = {
     state.teamKey += 1;
   },
 
-  SETTASKHISTORY(state, payload) {
+  setTaskHistory(state, payload) {
     state.taskHistory = payload
   }
 
@@ -132,14 +132,14 @@ export const actions = {
     })
 
     if (task.data.statusCode == 200) {
-      ctx.commit('SET_SINGLE_TASK', task.data.data)
+      ctx.commit('setSingleTask', task.data.data)
     }
     return task.data
   },
 
   // set single task
   setSingleTask(ctx, payload) {
-    ctx.commit('SET_SINGLE_TASK', payload)
+    ctx.commit('setSingleTask', payload)
   },
 
   async getFavTasks(ctx) {
@@ -314,18 +314,18 @@ export const actions = {
 
   async fetchTaskComments(ctx, payload) {
     try {
-      let fav = await this.$axios.get(`/task/${payload.id}/comments`, {
+      let res = await this.$axios.get(`/task/${payload.id}/comments`, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
         }
       })
 
-      if (fav.data.statusCode == 200) {
+      if (res.data.statusCode == 200) {
         ctx.dispatch("fetchTaskComments")
-        return fav.data.data;
+        return res.data.data;
       } else {
-        return fav.data.data;
+        return res.data.data;
       }
 
     } catch (e) {
@@ -418,11 +418,10 @@ export const actions = {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           'obj': JSON.stringify({ "taskId": payload.id })
         }
-
       })
 
       if (hist.statusCode == 200) {
-        ctx.commit("SETTASKHISTORY", hist.data)
+        ctx.commit("setTaskHistory", hist.data)
       }
       return hist.data
     } catch (e) {

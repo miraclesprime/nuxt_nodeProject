@@ -62,14 +62,15 @@
       <div class="flex-grow-1">
         <input type="text" class="editable-input" ref="taskTitleInput" placeholder="Project name" v-model="activeProject.title" v-on:keyup="debounceUpdate('title', activeProject.title)">
       </div>
-      <div class="team-avatar-list pr-05">
+      <!-- <div class="team-avatar-list pr-05">
         <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :key="index" size="2rem" :style="{ left: -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
-      </div>
+      </div> -->
+      <team-avatar-list :team="team" ></team-avatar-list>
       <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex align-center justify-center cursor-pointer" id="project-id-team-menu" v-tooltip="'Team'" @click="projectTeamModal = true">
         <bib-icon icon="user-group-solid" ></bib-icon>
       </div>
     </div>
-    <div class="form-fields px-105 py-05">
+    <div class="form-fields px-2 py-05">
       <div id="proj-row2" class="row">
         <div id="proj-row2-col1" class="col-6">
           <bib-select label="Owner" test_id="po-owner-dd1" :options="filterUser" v-model="activeProject.userId" v-on:change="debounceUpdate('Owner', activeProject.userId)"></bib-select>
