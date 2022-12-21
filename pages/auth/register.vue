@@ -128,7 +128,6 @@ export default {
         let response = await this.$auth.loginWith("local", {
           data: this.userInfo,
         });
-        // console.log(response)
       } catch (err) {
         console.log(err);
       }
