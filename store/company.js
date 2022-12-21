@@ -197,12 +197,14 @@ export const mutations = {
 };
 
 export const actions = {
+
   async fetchCompanies(ctx) {
     const res = await this.$axios.$get('/company', {
       headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` }
     });
     ctx.commit('fetchCompanies', res.data);
   },
+
   async fetchCompanyMembers(ctx, companyId) {
     const res = await this.$axios.$get("/company/" + companyId + "/members/", {
       headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` }
@@ -214,6 +216,7 @@ export const actions = {
       return res
     }
   },
+  
   async setCompanyTasks(ctx, payload) {
     const res = await this.$axios.$get(`company/${payload.companyId}/tasks`, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }

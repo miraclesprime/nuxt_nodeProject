@@ -183,6 +183,7 @@ export const mutations = {
 
 
 export const actions = {
+  
   async setUser(ctx, payload) {
     await ctx.commit('setUser', payload);
   },

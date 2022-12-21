@@ -228,7 +228,6 @@ export const state = () => ({
       const res = await this.$axios.$post('/dream', payload, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
-      // console.log("create dream response =>", res)
   
       if (res.statusCode == 200) {
         ctx.commit('createDream', res.data);

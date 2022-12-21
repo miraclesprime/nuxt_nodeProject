@@ -241,7 +241,6 @@ export const state = () => ({
       const res = await this.$axios.$post('/goal', payload, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
-      // console.log("create task response =>", res)
   
       if (res.statusCode == 200) {
         ctx.commit('createGoal', res.data);
@@ -254,12 +253,15 @@ export const state = () => ({
     },
 
     async setFavGoals(ctx) {
+      
       try {
+
         const fav = await this.$axios.$get("/goal/user/favorites", {
           headers: {
             "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
           }
         })
+
         if (fav.statusCode == 200) {
           ctx.commit("setFavGoals", fav.data)
         } else {

@@ -53,6 +53,7 @@ export const mutations = {
 };
 
 export const actions = {
+  
   async fetchSections(ctx) {
     const res = await this.$axios.$get('/section', {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
