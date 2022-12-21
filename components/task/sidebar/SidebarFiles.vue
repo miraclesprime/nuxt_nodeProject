@@ -1,5 +1,5 @@
 <template>
-  <div id="task-files-wrapper" class=" px-105 py-05">
+  <div id="task-files-wrapper" class="px-2 py-05">
     <div class="d-flex justify-between sub-title pb-05 border-bottom-gray2 ">
       <p class="text-gray5 font-md">Files </p>
     </div>

@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <div class="px-105 py-05 " id="sc-container">
+    <div class="px-2 py-05 " id="sc-container">
       <div class="d-flex justify-between sub-title pb-05 border-bottom-gray2 ">
         <p class="text-gray5 font-md ">Conversation </p>
       </div>

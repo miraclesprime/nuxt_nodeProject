@@ -1,5 +1,5 @@
 <template>
-  <div class="task-group w-100 position-relative py-05 px-105" id="task-group-main-wrapper">
+  <div class="task-group w-100 position-relative py-05 px-2" id="task-group-main-wrapper">
     <div id="task-group-title-wrapper" class="border-bottom-gray2 d-flex justify-between sub-title pb-05">
       <p id="task-group-title" class="text-gray5 font-md">Subtasks </p>
       <!-- <sorting-comp :items="sortingItems" icon="swap-vertical"></sorting-comp> -->

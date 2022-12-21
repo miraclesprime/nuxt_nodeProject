@@ -70,7 +70,7 @@
           </div>
           <div class="flex-grow-1">
             <!-- <span v-if="!editTitle" class="font-w-700" @click.stop="editTitle = true">{{form.title}}</span> -->
-            <input type="text" class="editable-input" ref="taskTitleInput" v-model="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdate({name: 'Title', field:'title', value:form.title})" >
+            <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="taskTitleInput" v-model="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdate({name: 'Title', field:'title', value:form.title})" >
             <!-- <bib-input v-else type="text" v-model="form.title" placeholder="Enter task name..." v-on:keyup.native="debounceUpdate('Title', form.title)" @blur="editTitle = false"></bib-input> -->
             <!-- <small v-show="error == 'invalid'" class="text-danger font-xs d-block" style="margin-top: -0.25rem;">Task name is required</small> -->
           </div>
@@ -92,16 +92,14 @@
     </div>
 
     <div class="of-scroll-y d-grid" id="ts-of-scroll-y" style="grid-template-columns: none; align-items: start">
-      
-      <sidebar-fields :task="currentTask" :loading="loading" @update-field="updateTask"></sidebar-fields>
-      
+      <sidebar-fields :task="currentTask" :loading="loading" @update-field="updateTask" @create-task="createTask"></sidebar-fields>
       <task-group id="task_subtasks"></task-group>
-
       <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
       <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
       <!-- <sidebar-history></sidebar-history> -->
       <button ref="topScroll" id="topScroll" style="visibility: hidden; opacity: 0" v-scroll-to="scrollId ? '#'+scrollId : '#sidebar-inner-wrap'"></button>
     </div>
+
     <!-- <add-member-to-task ref="taskTeamModal"></add-member-to-task> -->
     <bib-modal-wrapper v-if="taskTeamModal" title="Team" size="lg" @close="taskTeamModal = false">
       <template slot="content">
@@ -353,37 +351,37 @@ export default {
       }
     },
     createTask($event) {
-      // console.table($event);
+      console.info($event);
       if (this.error == "valid") {
         this.loading = true
 
         let user;
-        if (!this.form.userId || this.form.userId != "") {
-          user = this.teamMembers.filter(u => u.id == this.form.userId)
+        if (!$event.userId || $event.userId != "") {
+          user = this.teamMembers.filter(u => u.id == $event.userId)
         } else {
           user = null
         }
 
-        if (this.form.projectId && (!this.form.sectionId || this.form.sectionId == "")) {
-          this.form.sectionId = "_section" + this.form.projectId
+        if ($event.projectId && (!$event.sectionId || $event.sectionId == "")) {
+          $event.sectionId = "_section" + $event.projectId
         }
 
-        if (!this.form.projectId || this.form.projectId == "") {
-          this.form.projectId = null
-          this.form.sectionId = null
+        if (!$event.projectId || $event.projectId == "") {
+          $event.projectId = null
+          $event.sectionId = null
         }
 
         this.$store.dispatch("task/createTask", {
-          "sectionId": this.form.sectionId,
-          "projectId": this.form.projectId,
+          "sectionId": $event.sectionId,
+          "projectId": $event.projectId,
           "title": this.form.title,
-          "description": this.form.description,
-          "createdAt": this.form.createdAt || new Date(),
-          "startDate": this.form.startDate || new Date(),
-          "dueDate": this.form.dueDate || new Date(),
-          "priorityId": this.form.priorityId,
+          "description": $event.description,
+          "createdAt": $event.createdAt || new Date(),
+          "startDate": $event.startDate || new Date(),
+          "dueDate": $event.dueDate || new Date(),
+          "priorityId": $event.priorityId,
           "budget": 0,
-          "statusId": this.form.statusId,
+          "statusId": $event.statusId,
           user,
           "text": `task "${this.form.title}" created`,
         }).then(() => {
@@ -399,18 +397,20 @@ export default {
       }
     },
 
-    updateTask(taskData, historyText, projectId) {
-
+    updateTask(taskData) {
+      console.log(taskData)
       this.loading = true
 
       let updatedvalue = taskData.value
+      let projectId = null
       if (taskData.name == 'Assignee') {
         let user = this.teamMembers.find(t => t.id == taskData.value)
         updatedvalue = user.label
       }
       if (taskData.name == 'Project') {
-        let user = this.projects.find(t => t.id == taskData.value)
-        updatedvalue = user.title
+        let proj = this.projects.find(t => t.id == taskData.value)
+        updatedvalue = proj.title
+        projectId = taskData.value
       }
       if (taskData.name == 'Status') {
         this.statusValues.find(s => {
@@ -441,7 +441,7 @@ export default {
         id: this.form.id,
         data: { [taskData.field]: taskData.value },
         user,
-        projectId: this.form.projectId ? this.form.projectId : null,
+        projectId: projectId ? projectId : null,
         text: `changed ${taskData.name} to ${updatedvalue}`,
       })
         .then((u) => {

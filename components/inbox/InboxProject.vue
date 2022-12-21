@@ -70,7 +70,7 @@
         <bib-icon icon="user-group-solid" ></bib-icon>
       </div>
     </div>
-    <div class="form-fields px-105 py-05">
+    <div class="form-fields px-2 py-05">
       <div id="proj-row2" class="row">
         <div id="proj-row2-col1" class="col-6">
           <bib-select label="Owner" test_id="po-owner-dd1" :options="filterUser" v-model="activeProject.userId" v-on:change="debounceUpdate('Owner', activeProject.userId)"></bib-select>

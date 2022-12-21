@@ -1,9 +1,9 @@
 <template>
   <div class="team-avatar-list d-inline-flex align-center px-05">
-    <tippy arrow v-for="(team, index) in teammates.main" :key="team.id + index" theme="light-border">
-      <span slot="trigger">
-        <bib-avatar :src="team.avatar" class="border-gray2"></bib-avatar>
-      </span>
+    <tippy arrow v-for="(team, index) in teammates.main" :key="team.id + index" theme="light-border" :style="{ 'margin-left': -2*index+'px'}">
+      <template v-slot:trigger>
+        <bib-avatar :src="team.avatar" size="2rem" class="border-gray2"></bib-avatar>
+      </template>
       {{team.label}}
     </tippy>
     <tippy arrow placement="left" theme="light-border">
@@ -78,11 +78,13 @@ export default {
 
   .extra {
     margin-left: 0.25rem;
+    width: 2rem;
     color: $secondary;
     vertical-align: middle;
   }
 }
-
-.tippy-tooltip { background-color: $gray7; padding: 3px 6px; }
+::v-deep {
+  .tippy-tooltip { background-color: $gray7; padding: 3px 6px; }
+}
 
 </style>

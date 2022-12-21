@@ -128,7 +128,7 @@ ul {
 
 .editable-input {
   width: 99%;
-  padding: 0.2rem 0.3rem;
+  padding: 0.2rem 0.4rem;
   font-size: $font-size-lg;
   font-weight: 600;
   border-width: 1px;
@@ -136,7 +136,10 @@ ul {
   border-color: transparent;
   border-radius: 0.25rem;
   &:hover { border-color: $gray4;}
-  &:focus { outline: none; border-color: $dark; box-shadow: 0 0 2px $dark-sub4; }
+  &:focus { outline: none; border-color: $dark; box-shadow: 0 0 3px $dark-sub4; }
+  &.error { border-color: $danger-sub1; color: $danger;
+    &:focus { border-color: $danger-sub1; box-shadow: 0 0 3px $danger-sub2;}
+  }
 }
 // task bundle
 .task-bundle {
