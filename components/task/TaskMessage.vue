@@ -52,26 +52,7 @@
         </template>
       </message-collapsible-section>
     </div>
-    <!-- <div v-show="showPlaceholder" class="placeholder mb-1 d-flex gap-05">
-      <div class="left">
-        <div class="shape-circle width-205 height-205 animated-background"></div>
-      </div>
-      <div class="right">
-        <div class="animated-background width-4"></div>
-        <div class="animated-background width-5 mt-05"></div>
-      </div>
-    </div> -->
-    <!-- message replies -->
-    <!-- <div v-if="repliesExist" class="replies-section pb-05">
-      <message-collapsible-section>
-        <template slot="title">Replies ({{ msg.replies.length }})</template>
-        <template slot="content">
-          <div class="replies">
-            <task-message-reply v-for="reply in msg.replies" :key="reply.id" :reply="reply" />
-          </div>
-        </template>
-      </message-collapsible-section>
-    </div> -->
+    
     <!-- message action bar -->
     <div v-if="isActionBarShowing" class="actions-container" @click.stop>
       <!-- <div class="action favorite" :class="{ favorited }" @click="changeFavorite">
@@ -100,18 +81,6 @@
           </div>
         </template>
         <div class="menu" :class="{ open: isMenuOpen }">
-          <!-- <div class="menu-item">
-            <a @click="replyMessage">Reply</a>
-          </div> -->
-          <!-- <div class="menu-item">
-            <a @click="markAsUnread">Mark unread</a>
-          </div> -->
-          <!-- <div class="menu-item">
-            <a @click="copyMessageLink">Copy link</a>
-          </div> -->
-          <!-- <div class="menu-item">
-              <a @click="showForwardModal">Share</a>
-            </div> -->
           <div v-if="msg.userId == user.Id" class="menu-item">
             <a @click.stop="editMessage">Edit</a>
           </div>
@@ -231,9 +200,7 @@ export default {
         { name: "ImageFile Name", type: "image/png", size: "2340", preview: 'https://placehold.jp/2ba026/ffffff/180x180.jpg' },
         { name: "ImageFile Name", type: "image/png", size: "2340", preview: 'https://placehold.jp/24/1f42a2/ffffff/250x200.jpg?text=placeholder%20image' }*/
       ],
-      replies: [
-        /*{ id: 254, user: { id: "DKgl9av2NwnaG1vz", photo: 'https://i.pravatar.cc/100', firstName: "Vishu", lastName: "M", }, updatedAt: "2022-08-14T06:54:37.000Z", comment: "this is reply text" },*/
-      ],
+      
       replyLoading: false,
       reactions: [],
       reactionKey: 1,
@@ -254,30 +221,7 @@ export default {
       project: 'project/getSingleProject',
       task: 'task/getSelectedTask'
     }),
-    /*userInfo() {
-      if (this.members.length) {
-        let u = this.members.find((el) => el.id == this.msg.userId)
-        // console.log(u)
-        return { id: u.id, name: `${u.firstName} ${u.lastName}`, firstName: u.firstName, lastName: u.lastName, email: u.email, pic: u.avatar, jobTitle: "Title/Company Name" }
-      }
-    },*/
-    /*displayDate() {
-      return dayjs(this.msg.updatedAt).fromNow()
-    },*/
-    /*reactions() {
-      return Object.entries(groupBy(this.message.reactions, (r) => r.reaction)).map(
-        ([reaction, entries]) => {
-          return {
-            reaction,
-            entries,
-            sent: entries.find((e) => e.sender === this.user.id),
-          };
-        }
-      );
-    },*/
-    /*repliesExist() {
-      return this.msg.replies?.length ? true : false
-    },*/
+    
     reactionsExist() {
       if (this.msg.reactions?.length || this.reactionGroup.length) {
         return true
@@ -305,24 +249,6 @@ export default {
       this.reactionKey += 1
       return rg
     },
-    /*liked() {
-      return this.reactions.find((r) => r.sent && r.reaction === '👍');
-    },
-    reactionItems() {
-      return ['😂', '😍', '😬', '😒', '😐', '😣', '😏', '🙏', '🎉', '🎯'].map((reaction) => ({
-        reaction,
-        selected: this.reactions.find((r) => r.reaction === reaction)?.sent??false,
-      }));
-    },
-    favorited() {
-      return this.favorites.some((fav) => fav.ref === this.message._id);
-    },
-    link() {
-      const chat = this.chats[this.message.chat];
-      return chat.type === 'direct' ?
-        `/directs/${chat.user.id}/messages/${this.message._id}` :
-        `/channels/${chat.id}/messages/${this.message._id}`;
-    },*/
     canDeleteMessage() {
       //  console.log(JSON.parse(localStorage.getItem('user')).subr)
       if (this.msg.userId == this.user.Id || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN' ) {
@@ -348,17 +274,6 @@ export default {
   },
 
   methods: {
-    /*fetchReplies() {
-      this.$axios.get('/task/' + this.msg.id + "/replies", {
-          headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
-        })
-        .then(rep => {
-          // console.log(rep.data)
-          this.replies = rep.data.data
-          this.showPlaceholder = false
-        })
-        .catch(e => console.warn(e))
-    },*/
     fetchReactions() {
       this.$axios.get('/task/' + this.msg.id + "/reactions", {
           headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
@@ -403,7 +318,6 @@ export default {
         .then(rep => {
           // console.log(rep.data)
           this.replyLoading = false
-          // this.fetchReplies()
           this.$nuxt.$emit("refresh-list")
           this.replyModal = false
         })
@@ -478,30 +392,9 @@ export default {
           .catch(e => console.log(e))
       }
     },
-    /*replyMessage() {
-      console.log('reply message action')
-      this.replyModal = !this.replyModal
-    },*/
-    /*copyMessageLink() {
-      navigator?.clipboard?.writeText?.(window.location.origin + this.link);
-      this.isMenuOpen = false;
-    },*/
     defer(func) {
       setTimeout(func, 0);
     },
-    /*async changeFavorite() {
-      console.log('favorite clicked')
-      if (this.favorited) {
-        await this.removeFavorite({ type: 'message', id: this.message._id });
-      } else {
-        await this.addFavorite({ type: 'message', id: this.message._id });
-      }
-    },*/
-    /*async markAsUnread() {
-      this.isMenuOpen = false;
-      // await this.setMessageAsUnread(this.message._id);
-      this.$emit('unread-message');
-    },*/
     editMessage() {
       this.$nuxt.$emit('edit-message', this.msg);
       this.isMenuOpen = false;
