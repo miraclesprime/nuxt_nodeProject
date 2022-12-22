@@ -787,6 +787,12 @@ export default {
   color: rgb(34, 34, 34);
 }
 
+.tippy-tooltip {
+  padding: 1px;
+  background-color: $gray7;
+  text-align: left;
+}
+
 .toolbar-separator {
   width: 1px;
   margin: 2px 4px;

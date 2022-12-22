@@ -1,5 +1,5 @@
 <template>
-  <div class="task-info position-relative px-1" id="task-input-wrap">
+  <div class="task-info position-relative px-105" id="task-input-wrap">
     <div class="row mx-0" id="sidebar-row-1">
       <div class="col-4" id="sidebar-col-1">
         <bib-select label="Assignee" test_id="task_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="debounceUpdateField('Assignee', 'userId', form.userId)"></bib-select>
@@ -35,9 +35,9 @@
         <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter task description..." label="Description" v-on:keyup.native="debounceUpdateField('Description', 'description', form.description)"></bib-input>
       </div>
     </div>
-    <!-- <div class="py-05 px-105" id="sidebar-btn-wrapper">
-      <bib-button v-show="!currentTask.id" label="Create Task" variant="primary" v-on:click="createTask"></bib-button>
-    </div> -->
+    <div class="py-05 px-05" id="sidebar-btn-wrapper">
+      <bib-button v-show="!task.id" label="Create Task" variant="primary" v-on:click="createTask"></bib-button>
+    </div>
     <loading :loading="loading2 || loading"></loading>
   </div>
 </template>
@@ -205,10 +205,15 @@ export default {
 
       })
     },
-    debounceUpdateField: _.debounce(function(name, field, value, label) {
+    debounceUpdateField: _.debounce(function(name, field, value) {
       // console.log(name, field, value)
-      this.$emit("update-field", { name: name, field: field, value: value })
-    }, 1000)
+      if (this.form?.id) {
+        this.$emit("update-field", { name: name, field: field, value: value })
+      }
+    }, 1000),
+    createTask(){
+      this.$emit("create-task", this.form)
+    },
   }
 }
 

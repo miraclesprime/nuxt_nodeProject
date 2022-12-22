@@ -11,10 +11,11 @@
         <span id="project-id-badge-status" class="badge-status">{{project.status.text}}</span>
       </template> -->
       <div class="ml-auto d-flex gap-05 align-center position-relative" id="project-id-button-wraps">
-        <div class="team-avatar-list pr-05">
+        <!-- <div class="team-avatar-list pr-05">
           <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :key="index" size="2rem" :style="{ left: -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
-        </div>
-        <!-- <bib-button label="invite" variant="light" pill v-on:click="$nuxt.$emit('add-teammember-modal')"></bib-button> -->
+        </div> -->
+        <team-avatar-list :team="team"></team-avatar-list>
+
         <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item1" v-tooltip="'Team'" @click="projectTeamModal = true">
           <bib-icon icon="user-group-solid" class="m-auto"></bib-icon>
         </div>
@@ -71,14 +72,11 @@
       <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="PROJECT_TABS" />
     </div> -->
     <div id="project-id-tab-content" class="project-id-tab-content bg-light position-relative h-100 of-scroll-y">
-      <!-- <project-overview v-if="activeTab.value == PROJECT_TAB_TITLES.overview" :fields="TABLE_FIELDS" :tasks="projectTasks" :currentProject="project"></project-overview> -->
       <task-view :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType"></task-view>
-      <!-- <project-conversation v-if="activeTab.value == PROJECT_TAB_TITLES.conversations" :fields="TABLE_FIELDS" :tasks="projectTasks"></project-conversation> -->
+      
       <!-- <task-timeline-view v-if="activeTab.value == PROJECT_TAB_TITLES.timeline" :fields="TABLE_FIELDS" :tasks="tasks" />
       <task-calendar-view v-if="activeTab.value == PROJECT_TAB_TITLES.calendar" :fields="TABLE_FIELDS" :tasks="tasks" /> -->
-      <!-- <task-team v-if="activeTab.value == PROJECT_TAB_TITLES.team"></task-team> -->
-      <!-- <project-files v-if="activeTab.value == PROJECT_TAB_TITLES.files"></project-files> -->
-      <!-- <project-history v-if="activeTab.value == PROJECT_TAB_TITLES.history"></project-history> -->
+      
     </div>
 
     <!-- project modals -->
@@ -281,7 +279,7 @@ export default {
         return { variant: "gray5", text: "Add to favorites", status: false }
       }
     },
-    teammates() {
+    /*teammates() {
       let tm = { main: [], extra: [] }
       this.allusers.filter(u => {
         this.team.forEach((t, index) => {
@@ -293,7 +291,7 @@ export default {
         })
       })
       return tm
-    }
+    }*/
   },
 
   created() {
