@@ -2,12 +2,7 @@
   <div :id="'task-grid-wrapper'+ task.id" class="task-grid bg-white" @click.stop="$emit('open-sidebar', task)">
     <figure v-if="task.cover" :id="'task-card-image'+task.id" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
     <div class="task-top" :id="'tg-top-wrap'+ task.id">
-      <!-- <div class="d-flex" :id="'tg-inside-wrap'+ task.id" @click="openSidebar()">
-        <custom-check-box :id="'tg-' + task.id" />
-        <span class="ml-05" style="margin-top: 2px" :id="'tg-title'+ task.id"
-          >{{ task.title }}</span
-        >
-      </div> -->
+      
       <div class="d-flex" :id="'task-card-inside-wrap'+task.id">
         <span class="cursor-pointer" @click.stop="markComplete(task)">
           <bib-icon icon="check-circle" :scale="1.5" :variant="task.statusId == 5 ? 'success' : 'light'"></bib-icon>
@@ -21,32 +16,6 @@
               <span v-for="(item, index) in contextMenuItems" :key="item.label+index" class="list__item cursor-pointer" :class=" ['list__item__'+item.variant] " v-on:click.stop="contextItemClick(item)">
                 <bib-icon v-if="item.icon" :icon="item.icon" :variant="activeVariant(item)" class="mr-05"></bib-icon> {{item.label}}
               </span>
-              <!-- <span class="list__item" :id="'task-comp'+task.id" v-on:click.stop="markComplete(task)">
-                <bib-icon icon="check-circle" :variant="task.statusId == 5 ? 'success' : 'secondary-sub1'" :scale="1.1" class="mr-05"></bib-icon> {{task.statusId != 5 ? "Mark" : ""}} Completed
-              </span>
-              <span class="list__item" :id="'tg-fav'+task.id" data-fav="isFavorite.status" v-on:click.stop="addToFavorites(task)">
-                <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-05"></bib-icon> {{isFavorite.text}}
-              </span>
-              <span class="list__item" :id="'tg-attach'+task.id">
-                <bib-icon icon="check-square-solid" class="mr-05"></bib-icon> Subtasks
-              </span>
-              <span class="list__item" :id="'tg-assign'+task.id">
-                <bib-icon icon="user-group-solid" class="mr-05"></bib-icon> Team
-              </span>
-              <span class="list__item" :id="'tg-reminder'+task.id">
-                <bib-icon icon="comment-forum" class="mr-05"></bib-icon> Conversation
-              </span>
-              <span class="list__item " :id="'tg-copy-link'+task.id">
-                <bib-icon icon="awesome-file" class="mr-05"></bib-icon> Files
-              </span>
-              <span class="list__item" :id="'tg-move'+task.id">
-                <bib-icon icon="time-history" class="mr-05"></bib-icon> History
-              </span>
-              <span class="list__item " :id="'task-view-task'+task.id">
-                <bib-icon icon="warning" class="mr-05"></bib-icon> Report
-              </span>
-              <hr>
-              <span class="list__item list__item__danger" :id="'task-delete-task'+task.id" @click="deleteTask(task)">Delete Task</span> -->
             </div>
           </template>
         </bib-popup>

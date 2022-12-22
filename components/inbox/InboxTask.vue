@@ -82,7 +82,7 @@
         <!-- editable fields -->
         <sidebar-fields :task="form" @update-field="updateTask"></sidebar-fields>
         <!-- subtasks -->
-        <task-group></task-group>
+        <sidebar-subtask></sidebar-subtask>
         <!-- conversation -->
         <sidebar-conversation :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
         <!-- files -->

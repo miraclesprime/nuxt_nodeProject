@@ -7,16 +7,14 @@
       <drag-table :fields="tableFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" :key="templateKey" :componentKey="templateKey" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" :newTaskButton="newTaskButton" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow"></drag-table>
       <!-- table context menu -->
       <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" ref="task_menu" @item-click="contextItemClick"></table-context-menu>
-      <!-- <task-list-section :project="project" :sections="localdata" :templateKey="templateKey" v-on:sort-task="taskSort($event)" v-on:update-key="updateKey"></task-list-section> -->
+
     </template>
     <template v-else>
       <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" @create-section="createSection" @section-rename="renameSectionModal" @section-delete="deleteSection" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="setFavorite" v-on:mark-complete="markComplete" v-on:delete-task="deleteTask" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd">
       </task-grid-section>
     </template>
     <loading :loading="loading"></loading>
-    <!-- <span id="projects-0" v-show="nodata" class="d-inline-flex gap-05 align-center m-1 text-gray5 font-md">
-      <bib-icon icon="warning" variant="orange"></bib-icon> No records found
-    </span> -->
+    
     <!-- section rename modal -->
     <bib-modal-wrapper v-if="renameModal" title="Rename section" @close="renameModal = false">
       <template slot="content">

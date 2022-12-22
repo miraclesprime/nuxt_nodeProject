@@ -4,7 +4,6 @@
       <p id="task-group-title" class="text-gray5 font-md">Subtasks </p>
       <!-- <sorting-comp :items="sortingItems" icon="swap-vertical"></sorting-comp> -->
     </div>
-    <!-- <section-title></section-title> -->
     <div id="subtask-title-wrapper" class="section-title w-100 py-025">
       <div v-if="newSubtask" class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded bg-success-sub6 bg-hover-success-sub3 text-success  cursor-pointer" @click="newSubtask = false">
         <bib-icon icon="close" variant="success" :scale="1.2"></bib-icon>
@@ -63,15 +62,6 @@
             </div>
           </td>
           <td>
-            <!-- <bib-popup :pop="sub.options" icon-variant="gray5" size="sm" >
-              <template v-slot:menu>
-                <div class="list">
-                  <span class="list__item">View</span>
-                  <span class="list__item">Edit</span>
-                  <span class="list__item danger">Delete</span>
-                </div>
-              </template>
-            </bib-popup> -->
           <span v-if="sub.canDelete" class="cursor-pointer shape-circle bg-light" v-tooltip="'Delete'" title="Delete" @click="deleteSubtask(sub)">
             <bib-icon icon="trash-solid" ></bib-icon>
           </span>
@@ -79,32 +69,6 @@
         </tr>
       </tbody>
     </table>
-    <!-- <span id="subtask-0" v-show="subTasks.length == 0" class="d-inline-flex gap-1 align-center m-05 bg-warning-sub3 border-warning shape-rounded py-025 px-1">
-      <bib-icon icon="warning"></bib-icon> No subtasks found
-    </span> -->
-    <!-- <bib-table
-      :fields="taskFields"
-      :sections="taskSections"
-      :headless="true"
-      hide-no-column
-      class="bg-white border-white border-top-gray4"
-    >
-      <template #cell(name)="data">
-        <div  class="d-flex gap-05 align-center">
-          <bib-icon icon="check-circle" variant="secondary" class="cursor-pointer" ></bib-icon>
-          <span class="text-dark">{{ data.value.name }}</span>
-        </div>
-      </template>
-      <template #cell(assignee)="data">
-        <user-info :user="data.value.assignee"></user-info>
-      </template>
-      <template #cell(dueDate)="data">
-        <span class="text-dark">{{ data.value.dueDate }}</span>
-      </template>
-      <template #cell(options)="data">
-        <bib-icon icon="horizontal-dots"></bib-icon>
-      </template>
-    </bib-table> -->
     <loading :loading="loading"></loading>
   </div>
 </template>
@@ -112,7 +76,7 @@
 import { mapGetters } from 'vuex';
 import _ from 'lodash'
 export default {
-  name: "TaskGroup",
+  name: "SidebarSubtask",
 
   props: {
     // groupName: {},

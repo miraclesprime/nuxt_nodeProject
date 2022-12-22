@@ -93,7 +93,7 @@
 
     <div class="of-scroll-y d-grid" id="ts-of-scroll-y" style="grid-template-columns: none; align-items: start">
       <sidebar-fields :task="currentTask" :loading="loading" @update-field="updateTask" @create-task="createTask"></sidebar-fields>
-      <task-group id="task_subtasks"></task-group>
+      <sidebar-subtask id="task_subtasks"></sidebar-subtask>
       <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
       <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
       <!-- <sidebar-history></sidebar-history> -->
