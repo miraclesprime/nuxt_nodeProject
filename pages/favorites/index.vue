@@ -37,7 +37,6 @@
 import _ from 'lodash'
 import { PROJECT_FAVORITES, TASK_FAVORITES, PROJECT_CONTEXT_MENU, TASK_CONTEXT_MENU } from '../../config/constants'
 import { mapGetters } from 'vuex';
-// import { sortTaskUtil } from '~/utils/taskSort.js'
 
 export default {
   data() {
@@ -56,7 +55,6 @@ export default {
       sortName: '',
       projOrder: 'asc',
       taskOrder: 'asc',
-      // sortedTaskUtil: [],
       projectContextItems: PROJECT_CONTEXT_MENU,
       taskContextMenuItems: TASK_CONTEXT_MENU,
       projectContextMenu: false,
@@ -74,7 +72,6 @@ export default {
 
 
   mounted() {
-    console.info("mounted favorites page");
     this.loading = true
 
     let user = localStorage.getItem("user")
@@ -94,54 +91,43 @@ export default {
   methods: {
 
     async fetchProjects() {
-      // this.loading = true
 
       let favProj = await JSON.parse(JSON.stringify(this.favProjects))
-
-      // let favProj = fp.map(p => p.projects)
+      
       let sorted = await favProj.sort((a, b) => a.projects.title.localeCompare(b.projects.title))
-
-      // console.log("sorted fav project =>", sorted)
+      
       let sortedArray = []
       sorted.forEach(p => { sortedArray.push(p.projects) })
       this.sortedProject = sortedArray
       this.key += 1
       this.loading = false
-      // })
     },
+
     async fetchTasks() {
-      // this.loading = true
 
       let favTask = await JSON.parse(JSON.stringify(this.favTasks))
-
-      // let favTask = ft.map(s => s.task)
+      
       let sorted = await favTask.sort((a, b) => a.task.title.localeCompare(b.task.title))
-
-      // console.log("sorted fav task =>", sorted)
+      
       let sortedArray = []
       sorted.forEach(t => { sortedArray.push(t.task) })
       this.sortedTask = sortedArray
       this.key += 1
       this.loading = false
-      // })
     },
 
     projectRoute(project) {
-      // console.log(project)
       this.$router.push('/projects/' + project.id)
     },
 
     projectRightClick(payload) {
-      // console.log(payload, this.$refs.proj_menu.$el)
       this.taskContextMenu = false
       this.projectContextMenu = true
-      // console.info(this.$refs.proj_menu.$el)
+      
       const { event, task } = payload
       this.activeProject = task;
       this.renameProjectData = JSON.parse(JSON.stringify(task));
       this.contextCoords = { left: event.pageX+'px', top: event.pageY+'px' }
-      // this.$refs.proj_menu.$el.style.left = payload.event.pageX + 'px'
-      // this.$refs.proj_menu.$el.style.top = payload.event.pageY + 'px'
     },
 
     taskRightClick(payload) {
@@ -154,11 +140,9 @@ export default {
     },
 
     taskCheckIcon(statusId) {
-      // console.log(statusId)
       return statusId == 5 ? 'success' : 'secondary-sub1'
     },
     changeView($event) {
-      // console.log($event)
       if ($event == 'complete') {
         this.fetchProjects().then(() => {
           let com = this.sortedProject.filter(p => p.statusId == 5)
@@ -186,8 +170,6 @@ export default {
       }
     },
     changeSort($event) {
-      // sort by title
-      // console.log($event)
       if (this.projOrder == this.taskOrder) {
         this.sortProject($event)
         this.sortTask($event)
@@ -200,8 +182,9 @@ export default {
 
     },
     sortProject(field) {
-      // console.log(field, this.projOrder)
+
       switch (field) {
+
         case 'title':
           if (this.projOrder == "asc") {
             this.sortedProject.sort((a, b) => a.title.localeCompare(b.title))
@@ -212,6 +195,7 @@ export default {
           }
           this.key += 1
           break;
+
         case 'status':
           let sArr = []
 
@@ -239,6 +223,7 @@ export default {
 
           this.key += 1
           break;
+
         case 'priority':
           let pArr = []
 
@@ -265,6 +250,7 @@ export default {
           }
           this.key += 1
           break;
+
         case 'userId':
           let uArr = []
 
@@ -291,6 +277,7 @@ export default {
           }
           this.key += 1
           break;
+
         case 'dueDate':
           let dArr = []
 
@@ -316,6 +303,7 @@ export default {
           }
           this.key += 1
           break;
+
         case 'startDate':
           let dArr2 = []
 
@@ -341,15 +329,17 @@ export default {
           }
           this.key += 1
           break;
+
         default:
           this.fetchProjects()
           break;
       }
     },
+
     async sortTask(field) {
-      // console.log(field, this.taskOrder)
 
       switch (field) {
+
         case 'title':
           if (this.taskOrder == "asc") {
             this.sortedTask.sort((a, b) => a.title.localeCompare(b.title))
@@ -360,6 +350,7 @@ export default {
           }
           this.key += 1
           break;
+
         case 'status':
           if (this.taskOrder == "asc") {
             this.sortedTask.sort((a, b) => a.status.text.localeCompare(b.status.text));
@@ -372,6 +363,7 @@ export default {
           }
           this.key += 1
           break;
+
         case 'priority':
           if (this.taskOrder == "asc") {
             this.sortedTask.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
@@ -384,6 +376,7 @@ export default {
           }
           this.key += 1
           break;
+
         case 'userId':
           if (this.taskOrder == "asc") {
             this.sortedTask.sort((a, b) => {
@@ -398,6 +391,7 @@ export default {
           }
           this.key += 1
           break;
+
         case 'dueDate':
           if (this.taskOrder == "asc") {
             this.sortedTask.sort((a, b) => {
@@ -412,6 +406,7 @@ export default {
           }
           this.key += 1
           break;
+
         case 'startDate':
           if (this.taskOrder == "asc") {
             this.sortedTask.sort((a, b) => {
@@ -426,12 +421,9 @@ export default {
           }
           this.key += 1
           break;
-        case "project":
-          // let favTask = await _.cloneDeep(this.favTasks)
-          // let favTask = await JSON.parse(JSON.stringify(this.favTasks))
-          let newArr = []
 
-          // console.log('favTask=>',favTask)
+        case "project":
+          let newArr = []
 
           for (let i = 0; i < this.sortedTask.length; i++) {
             if (this.sortedTask[i].project[0]) {
@@ -449,6 +441,7 @@ export default {
           this.sortedTask = newArr;
           this.key += 1
           break;
+
         default:
           this.fetchTasks()
           break;
@@ -457,6 +450,7 @@ export default {
     },
 
     projectCheckActive() {
+
       for (let i = 0; i < this.projectTableFields.length; i++) {
         if (this.projectTableFields[i].header_icon) {
           this.projectTableFields[i].header_icon.isActive = false
@@ -467,7 +461,9 @@ export default {
         }
       }
     },
+
     taskCheckActive() {
+
       for (let i = 0; i < this.taskTableFields.length; i++) {
         if (this.taskTableFields[i].header_icon) {
           this.taskTableFields[i].header_icon.isActive = false
@@ -480,27 +476,27 @@ export default {
     },
 
     projContextItemClick(key){
-      console.log(key)
+
       switch (key) {
+
         case 'fav-project':
-          console.log('fav project')
           this.projSetFavorite(this.activeProject)
           break;
+
         case 'rename-project':
-          console.log('rename project')
           this.renameModal = true
           break;
+
         case 'delete-project':
-          console.log('delete project')
           this.projDeleteTask(this.activeProject)
           break;
+
         case 'share-project':
-          console.log('share project')
-          // statements_1
           break;
+
         case 'report-project':
-          console.log('report project')
           break;
+
         default:
           alert("no project assigned")
           break;
@@ -508,30 +504,37 @@ export default {
     },
 
     taskContextItemClick(key){
-      console.log(key)
+    
       switch (key) {
+
         case 'done-task':
-          // statements_1
           this.taskMarkComplete(this.activeTask)
           break;
+
         case 'fav-task':
           this.taskSetFavorite(this.activeTask)
           break;
+
         case 'delete-task':
           this.deleteTask(this.activeTask)
           break;
+
         case 'gotoTeam':
           this.$nuxt.$emit('add-member-to-task')
           break;
+
         case 'gotoComment':
           this.openSidebar(this.activeTask, 'task_conversation')
           break;
+
         case 'gotoSubtask':
           this.openSidebar(this.activeTask, 'task_subtasks')
           break;
+
         case 'gotoFiles':
           this.openSidebar(this.activeTask, 'task_files')
           break;
+
         default:
           alert("no task assigned")
           break;
@@ -541,15 +544,12 @@ export default {
     // project context menu methods ------------------------
 
     projSetFavorite(project) {
-      // console.info("to be fav task", task)
       this.loading = true
       let isFav = this.favProjects.some((f) => f.projects.id == project.id)
 
       if (isFav) {
         this.$store.dispatch("project/removeFromFavorite", { id: project.id })
           .then(msg => {
-            console.log(msg)
-            // this.popupMessages.push({ text: msg, variant: "success" })
             this.updateKey()
             this.loading = false
           })
@@ -560,8 +560,6 @@ export default {
       } else {
         this.$store.dispatch("project/addToFavorite", { id: project.id })
           .then(msg => {
-            console.log(msg)
-            // this.popupMessages.push({ text: msg, variant: "success" })
             this.updateKey()
             this.loading = false
           })
@@ -579,16 +577,13 @@ export default {
         this.$store.dispatch("project/deleteProject", project).then(t => {
 
           if (t.statusCode == 200) {
-            // this.popupMessages.push({ text: t.message, variant: "success" })
             this.updateKey()
           } else {
-            // this.popupMessages.push({ text: t.message, variant: "warning" })
             console.warn(t.message);
           }
           this.loading = false
         }).catch(e => {
           this.loading = false
-          // this.popupMessages.push({ text: e, variant: "danger" })
           console.log(e)
         })
       } else {
@@ -607,7 +602,6 @@ export default {
       }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       })
-      // console.log(proj)
       if (proj.data.statusCode == 200) {
         this.$store.dispatch("project/setSingleProject", proj.data.data)
         this.updateKey()
@@ -620,16 +614,12 @@ export default {
     // task context menu methods ----------------------------------------
 
     taskSetFavorite(task) {
-      // console.info("to be fav task", task)
       this.loading = true
       let isFav = this.favTasks.some((f) => f.taskId == task.id)
-      // console.log(isFav)
 
       if (isFav) {
         this.$store.dispatch("task/removeFromFavorite", { id: task.id })
           .then(msg => {
-            console.log(msg)
-            // this.popupMessages.push({ text: msg, variant: "success" })
             this.updateKey()
             this.loading = false
           })
@@ -640,8 +630,6 @@ export default {
       } else {
         this.$store.dispatch("task/addToFavorite", { id: task.id })
           .then(msg => {
-            console.log(msg)
-            // this.popupMessages.push({ text: msg, variant: "success" })
             this.updateKey()
             this.loading = false
           })
@@ -658,20 +646,15 @@ export default {
       if (typeof task == "object" && Object.keys(task).length > 0) {
         console.log(task)
       } else {
-        // alert("no task selected")
         task = this.activeTask
       }
       this.$store.dispatch('task/updateTaskStatus', task)
         .then((d) => {
-          // console.log(d)
           this.loading = false
-          // this.popupMessages.push({ text: d.message, variant: "success" })
-          // this.$nuxt.$emit("update-key")
           this.updateKey()
           this.$store.dispatch("task/setSingleTask", d)
         }).catch(e => {
           console.log(e)
-          // this.popupMessages.push({ text: e.message, variant: "warning" })
           this.loading = false
         })
     },
@@ -683,16 +666,13 @@ export default {
         this.$store.dispatch("task/deleteTask", task).then(t => {
 
           if (t.statusCode == 200) {
-            // this.popupMessages.push({ text: t.message, variant: "success" })
             this.updateKey()
           } else {
-            // this.popupMessages.push({ text: t.message, variant: "warning" })
             console.warn(t.message);
           }
           this.loading = false
         }).catch(e => {
           this.loading = false
-          // this.popupMessages.push({ text: e, variant: "danger" })
           console.log(e)
         })
       } else {
@@ -701,7 +681,6 @@ export default {
     },
 
     updateKey() {
-      // console.log("update-key event received", this.templateKey)
       this.$store.dispatch('project/setFavProjects').then(() => {
         this.fetchProjects()
       })
@@ -713,12 +692,10 @@ export default {
 
     // task context menu methods ------------------------------------------
     openSidebar(task, scroll) {
-      // console.log(task)
       this.$nuxt.$emit("open-sidebar", {...task, scrollId: scroll});
     },
     
     newProject() {
-      console.log('new project')
       this.$nuxt.$emit('create-project-modal')
     }
   }
