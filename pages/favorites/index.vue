@@ -139,9 +139,6 @@ export default {
       this.contextCoords = { left: event.pageX+'px', top: event.pageY+'px' }
     },
 
-    taskCheckIcon(statusId) {
-      return statusId == 5 ? 'success' : 'secondary-sub1'
-    },
     changeView($event) {
       if ($event == 'complete') {
         this.fetchProjects().then(() => {
@@ -449,31 +446,6 @@ export default {
       this.key += 1
     },
 
-    projectCheckActive() {
-
-      for (let i = 0; i < this.projectTableFields.length; i++) {
-        if (this.projectTableFields[i].header_icon) {
-          this.projectTableFields[i].header_icon.isActive = false
-        }
-
-        if (this.projectTableFields[i].header_icon && this.projectTableFields[i].key == this.sortName) {
-          this.projectTableFields[i].header_icon.isActive = true
-        }
-      }
-    },
-
-    taskCheckActive() {
-
-      for (let i = 0; i < this.taskTableFields.length; i++) {
-        if (this.taskTableFields[i].header_icon) {
-          this.taskTableFields[i].header_icon.isActive = false
-        }
-
-        if (this.taskTableFields[i].header_icon && this.taskTableFields[i].key == this.sortName) {
-          this.taskTableFields[i].header_icon.isActive = true
-        }
-      }
-    },
 
     projContextItemClick(key){
 
@@ -695,9 +667,6 @@ export default {
       this.$nuxt.$emit("open-sidebar", {...task, scrollId: scroll});
     },
     
-    newProject() {
-      this.$nuxt.$emit('create-project-modal')
-    }
   }
 }
 
