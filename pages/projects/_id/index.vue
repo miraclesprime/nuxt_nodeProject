@@ -6,14 +6,7 @@
       </button>
       <bib-avatar></bib-avatar>
       <span id="project-id-project-title" class=" font-w-700  mr-1 " style="font-size: 1.25rem;">{{project ? project.title : ''}}</span>
-      <!-- <bib-page-title label="Page Title"></bib-page-title> -->
-      <!-- <template v-if="project.status">
-        <span id="project-id-badge-status" class="badge-status">{{project.status.text}}</span>
-      </template> -->
       <div class="ml-auto d-flex gap-05 align-center position-relative" id="project-id-button-wraps">
-        <!-- <div class="team-avatar-list pr-05">
-          <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :key="index" size="2rem" :style="{ left: -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
-        </div> -->
         <team-avatar-list :team="team"></team-avatar-list>
 
         <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item1" v-tooltip="'Team'" @click="projectTeamModal = true">
@@ -25,9 +18,6 @@
         <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item3" v-tooltip="'Files'" @click="modalOpen('files', 'Files')">
           <bib-icon icon="folder-solid" class="m-auto"></bib-icon>
         </div>
-        <!-- <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item4" v-tooltip="'History'" >
-          <bib-icon icon="time" class="m-auto"></bib-icon>
-        </div> -->
         <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark" @click="setFavorite" v-tooltip="'Favorite'">
           <bib-icon class="m-auto" icon="bookmark-solid" :variant="isFavorite.variant"></bib-icon>
         </div>
@@ -49,13 +39,6 @@
                 <span class="list__item" id="project-id-list-item3" @click="modalOpen('files', 'Files')">
                   <bib-icon icon="folder-solid" class="mr-075"></bib-icon> Files
                 </span>
-                <!-- <span class="list__item" id="project-id-list-item3">
-                  <bib-icon icon="group" class="mr-075"></bib-icon> Subtasks
-                </span> -->
-                <!-- <span class="list__item" id="project-id-list-item4" @click="renameModal = !renameModal">
-                  <bib-icon icon="pencil" class="mr-075"></bib-icon> Rename
-                </span> -->
-                <!-- <div class="mt-1" id="project-id-div"></div> -->
                 <span class="list__item" id="project-id-list-item5" @click="reportModal = !reportModal">
                   <bib-icon icon="warning" class="mr-075"></bib-icon> Report
                 </span>
@@ -68,30 +51,15 @@
         <loading :loading="favLoading"></loading>
       </div>
     </nav>
-    <!-- <div class="menu " id='project-id-menu-content'>
-      <bib-tabs :value="activeTab.value" @change="tabChange" :tabs="PROJECT_TABS" />
-    </div> -->
     <div id="project-id-tab-content" class="project-id-tab-content bg-light position-relative h-100 of-scroll-y">
       <task-view :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType"></task-view>
-      
-      <!-- <task-timeline-view v-if="activeTab.value == PROJECT_TAB_TITLES.timeline" :fields="TABLE_FIELDS" :tasks="tasks" />
-      <task-calendar-view v-if="activeTab.value == PROJECT_TAB_TITLES.calendar" :fields="TABLE_FIELDS" :tasks="tasks" /> -->
-      
     </div>
 
     <!-- project modals -->
     <bib-modal-wrapper v-if="projectModal" :title="projectModalTitle" size="xl" @close="projectModal = false">
-      <!-- <template slot="header">
-        <bib-icon variant="gray5" class="cursor-pointer" :scale="1.2" icon="comment-forum"></bib-icon>
-        <bib-icon variant="gray5" class="cursor-pointer ml-05" :scale="1.2" icon="attachment"></bib-icon>
-        <bib-icon variant="gray5" class="cursor-pointer ml-05" :scale="1.2" icon="share-arrow"></bib-icon>
-        <bib-icon variant="gray5" class="cursor-pointer ml-05" :scale="1.2" icon="trash"></bib-icon>
-      </template> -->
       <template slot="content">
         <project-overview v-if="projectModalContent == 'overview'" :sections="projectSections" ></project-overview>
         <project-files v-if="projectModalContent == 'files'"></project-files>
-
-        <!-- <div class="height-1"></div> -->
       </template>
     </bib-modal-wrapper>
 
@@ -116,22 +84,6 @@
         </div>
       </template>
     </bib-modal-wrapper>
-
-    <!-- project rename modal -->
-    <!-- <bib-modal-wrapper v-if="renameModal" title="Rename project" @close="renameModal = false">
-      <template slot="content">
-        <div>
-          <bib-input type="text" v-model.trim="projectName" placeholder="Enter name..."></bib-input>
-          <loading :loading="loading"></loading>
-        </div>
-      </template>
-      <template slot="footer">
-        <div class="d-flex justify-between">
-          <bib-button label="Cancel" variant="light" pill @click="renameModal = false"></bib-button>
-          <bib-button label="Rename" variant="success" pill v-on:click="renameProject"></bib-button>
-        </div>
-      </template>
-    </bib-modal-wrapper> -->
 
     <!-- report modal -->
     <bib-modal-wrapper v-if="reportModal" title="Report" size="sm" @close="reportModal = false">
@@ -164,29 +116,12 @@ import { TABLE_FIELDS, PROJECT_TABS, PROJECT_DEFAULT_TAB, PROJECT_TAB_TITLES } f
 
 export default {
   name: 'ProjectId',
-  /*middleware({ app, store, redirect, route }) {
-    // console.log(route)
-    const token = app.$cookies.get('b_ssojwt')
-    axios.get(`http://localhost:9000/project/${route.params.id}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    }).then(res => {
-      console.log(res.data)
-      if (res.data.statusCode == 200) {
-        // alert("found")
-      } else {
-        redirect("/notfound")
-      }
-    })
-  },*/
   data() {
     return {
       projectModal: false,
       conversationModal: false,
       value: {
-        files: [
-          /*{ id: 156, name: 'thefile.png' },
-          { id: 282, name: 'anotherfile.jpg' },*/
-        ]
+        files: []
       },
       editMessage: {},
       projectModalTitle: '',
@@ -203,66 +138,25 @@ export default {
       reportText: "",
       reportSubj: "",
       loading: false,
-      // isFav: this.$isFavProject(this.$route.params.id),
       favLoading: false,
       popupMessages: [],
       cdp: false
     }
   },
 
-  /*async validate({ params, query, store, redirect }) {
-    const res = await axios.get(`http://localhost:9000/project/${params.id}`, {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-    })
-      if (res) {
-        // console.log(res)
-        if(!res.data.data || res.data.data.isDeleted){
-          // this.$router.push("/notfound")
-          return redirect("/notfound")
-        } else {
-          store.dispatch('project/setSingleProject', res.data.data)
-
-          return true // if the params are valid
-        }
-      } else {
-        return redirect("/notfound")
-      }
-
-    // return false // will stop Nuxt to render the route and display the error page
-  },*/
-
-  /*async fetch({ app, params, query, store, redirect }) {
-    // await operations
-    const token = app.$cookies.get('b_ssojwt')
-    const res = await axios.get(`http://localhost:9000/project/${params.id}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
-      if (res) {
-        // console.log(res)
-        if(!res.data.data || res.data.data.isDeleted){
-          redirect("/notfound")
-        } else {
-          store.dispatch('project/setSingleProject', res.data.data)
-          
-        }
-      } else {
-        redirect("/notfound")
-      }
-  },*/
-
   computed: {
+
     ...mapGetters({
-      token: 'token/getToken',
-      allusers: "user/getTeamMembers",
-      project: 'project/getSingleProject',
-      team: "project/getProjectMembers",
-      projectSections: 'section/getProjectSections',
-      projectTasks: "task/tasksForListView",
-      taskFields: "task/tableFields",
-      favProjects: "project/getFavProjects",
-      // user: "user/getUser",
-      user2: "user/getUser2",
+        token: 'token/getToken',
+        project: 'project/getSingleProject',
+        team: "project/getProjectMembers",
+        projectSections: 'section/getProjectSections',
+        projectTasks: "task/tasksForListView",
+        taskFields: "task/tableFields",
+        favProjects: "project/getFavProjects",
+        user2: "user/getUser2",
     }),
+
     projectName: {
       get() {
         return this.project.title
@@ -271,6 +165,7 @@ export default {
         this.projectTitle = value
       }
     },
+
     isFavorite() {
       let fav = this.favProjects.some(t => t.id == this.project.id)
       if (fav) {
@@ -279,19 +174,7 @@ export default {
         return { variant: "gray5", text: "Add to favorites", status: false }
       }
     },
-    /*teammates() {
-      let tm = { main: [], extra: [] }
-      this.allusers.filter(u => {
-        this.team.forEach((t, index) => {
-          if (t.id == u.id && index < 4) {
-            tm.main.push(u)
-          } else if (t.id == u.id) {
-            tm.extra.push(u)
-          }
-        })
-      })
-      return tm
-    }*/
+
   },
 
   created() {
@@ -308,12 +191,9 @@ export default {
     })
 
     if (process.client) {
-      // console.log(this.$route.params.id)
-      // this.validating = true
       this.$axios.$get(`project/${this.$route.params.id}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       }).then((res) => {
-        // console.log(res.data)
         if (res) {
           if (!res.data || res.data.isDeleted) {
             this.$router.push("/notfound")
@@ -336,51 +216,12 @@ export default {
 
   },
   mounted() {
-    // console.log(this.$route.params.id)
     this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
     this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
     this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id }).then(() => {
       this.canDeleteProject();
     })
   },
-
-  /*beforeRouteEnter (to, from, next){
-    if (process.client) {
-
-    console.log(to.params)
-
-    const token = localStorage.getItem('accessToken')
-    
-    axios.get(`http://localhost:9000/project/${to.params.id}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      }).then((res) => {
-        console.log(res.data)
-          if (res.data.statusCode == 200) {
-            if (res.data.data.isDeleted) {
-              next("/projects/noproject")
-            } else {
-              next()
-            }
-          }
-      }).catch(err => {
-        alert( JSON.stringify(err) )
-        // console.log("There was an error in project", err);
-      })
-    }
-  },*/
-
-  /*beforeRouteUpdate(to, from, next){
-    console.log(to, from)
-    next("/projects/noproject")
-  },*/
-
-  /*beforeResolve (to, from, next) {
-    if (this.$store.getters.isLoggedIn) {
-      next('/projects/noproject')
-    } else {
-      next();
-    }
-  },*/
 
   methods: {
 
@@ -395,28 +236,22 @@ export default {
         headers: { 'Authorization': `Bearer ${this.token}` }
       })
       if (proj) {
-        // console.log(proj)
         this.$store.dispatch('project/setSingleProject', proj.data)
       }
       const sec = await this.$axios.$get(`section/project/${this.$route.params.id}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       })
       if (sec) {
-        // console.log(sec)
         this.sections = sec.data
       }
     },
-    tabChange(value) {
-      this.activeTab = value;
-    },
+
     setFavorite() {
       this.favLoading = true
       if (this.isFavorite.status) {
         this.$store.dispatch("project/removeFromFavorite", { id: this.$route.params.id })
           .then(msg => {
             this.popupMessages.push({ text: msg, variant: "orange" })
-
-            // alert(msg)
           })
           .catch(e => console.log(e))
           .then(() => this.favLoading = false)
@@ -424,38 +259,17 @@ export default {
         this.$store.dispatch("project/addToFavorite", { id: this.$route.params.id })
           .then(msg => {
             this.popupMessages.push({ text: msg, variant: "success" })
-
-            // alert(msg)
           })
           .catch(e => console.log(e))
           .then(() => this.favLoading = false)
       }
-      // this.favLoading = false
     },
-    async renameProject() {
-      this.loading = true
-      const proj = await this.$axios.put("/project", {
-        id: this.project.id,
-        data: {
-          title: this.projectTitle
-        },
-        user: this.project.user
-      }, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-      })
-      // console.log(proj)
-      if (proj.data.statusCode == 200) {
-        this.$store.dispatch("project/setSingleProject", proj.data.data)
-        this.renameModal = false
-      }
-      this.loading = false
-    },
+
     deleteProject(project) {
       this.loading = true
       this.$store.dispatch("project/deleteProject", project).then(p => {
 
         if (p.statusCode == 200) {
-          // this.popupMessages.push({ text: p.message, variant: "success" })
           this.$router.push('/projects')
         } else {
           this.popupMessages.push({ text: p.message, variant: "warning" })
@@ -470,8 +284,6 @@ export default {
     },
 
     canDeleteProject() {
-      // console.log(this.project.userId, JSON.parse(localStorage.getItem('user')).sub)
-      //  console.log(JSON.parse(localStorage.getItem('user')).subr)
       if (this.project.userId == JSON.parse(localStorage.getItem('user')).sub || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN' ) {
         this.cdp = true
         return true;
@@ -479,10 +291,11 @@ export default {
       this.cdp = false
       return false
     },
+
     onFileInput(payload) {
-      // console.log(payload)
       this.value.files = payload.files
     },
+
     onsubmit(data) {
       if (this.editMessage?.id) {
         this.$store.dispatch("project/updateProjectComment", { projectId: this.project.id, commentId: this.editMessage.id, comment: data.text })
@@ -491,7 +304,6 @@ export default {
             this.uploadFile(this.value.files, this.editMessage)
             this.value.files = []
           }
-          // this.fetchProjectComments()
           this.$nuxt.$emit('refresh-list')
           this.editMessage = {}
 
@@ -500,12 +312,10 @@ export default {
       } else {
         this.$store.dispatch("project/createProjectComment", { id: this.project.id, comment: data.text })
           .then(res => {
-            // console.log("comment submit->", res.data)
             if (this.value.files.length > 0) {
               this.uploadFile(this.value.files, res.data)
               this.value.files = []
             }
-            // this.fetchProjectComments()
             this.$nuxt.$emit('refresh-list')
           })
           .catch(e => console.log(e))
@@ -529,9 +339,7 @@ export default {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
         }
       })
-      // console.log(fi.data)
       if (fi.data.statusCode == 200) {
-        // console.log("file upload->", fi.data)
         this.value.files = []
         this.$nuxt.$emit("get-msg-files")
       }
