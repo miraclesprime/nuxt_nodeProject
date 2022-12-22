@@ -67,18 +67,6 @@
       </div>
     </div> -->
 
-    <!-- message replies -->
-    <!-- <div v-if="repliesExist" class="replies-section pb-05">
-      <message-collapsible-section>
-        <template slot="title">Replies ({{ msg.replies.length }})</template>
-        <template slot="content">
-          <div class="replies">
-            <message-reply v-for="reply in msg.replies" :key="reply.id" :reply="reply" />
-          </div>
-        </template>
-      </message-collapsible-section>
-    </div> -->
-
     <!-- message action bar -->
     <div v-if="isActionBarShowing" class="actions-container" @click.stop>
       <!-- <div class="action favorite" :class="{ favorited }" @click="changeFavorite">
@@ -132,16 +120,6 @@
         </div>
       </tippy>
     </div>
-
-    <!-- submit reply modal -->
-    <!-- <bib-modal-wrapper v-if="replyModal" size="lg" title="Reply to..." @close="replyModal = false">
-      <template slot="content">
-        <div style="margin: -1rem -2rem -2rem; ">
-          <message-input key="projMsgInput" :value="value" @input="onFileInput" @submit="onReplySubmit"></message-input>
-        </div>
-        <loading :loading="replyLoading"></loading>
-      </template>
-    </bib-modal-wrapper> -->
 
     <!-- file upload modal -->
     <bib-modal-wrapper v-if="uploadModal" title="Select file(s)" @close="uploadModal = false">
@@ -238,10 +216,6 @@ export default {
       previewModal: false,
       imgPreview: '',
       pdfPreview: '',
-      replies: [
-        /*{ id: 254, user: { id: "DKgl9av2NwnaG1vz", photo: 'https://i.pravatar.cc/100', firstName: "Vishu", lastName: "M", }, updatedAt: "2022-08-14T06:54:37.000Z", comment: "this is reply text" },*/
-      ],
-      // replyLoading: false,
       reactions: [],
       reactionKey: 1,
       reactionSpinner: false,
@@ -255,33 +229,13 @@ export default {
       user: "user/getUser2",
       members: 'user/getTeamMembers'
     }),
-    /*userInfo() {
-      if (this.members.length) {
-        let u = this.members.find((el) => el.id == this.msg.userId)
-        // console.log(u)
-        return { id: u.id, name: `${u.firstName} ${u.lastName}`, firstName: u.firstName, lastName: u.lastName, email: u.email, pic: u.avatar, jobTitle: "Title/Company Name" }
-      }
-    },*/
     displayDate() {
       /*let d = new Date(this.msg.updatedAt)
       let dd = dayjs(this.msg.updatedAt).format('dddd, D MMM, YYYY @ HH:mm')
       return dd*/
       return dayjs(this.msg.updatedAt).fromNow()
     },
-    /*reactions() {
-      return Object.entries(groupBy(this.message.reactions, (r) => r.reaction)).map(
-        ([reaction, entries]) => {
-          return {
-            reaction,
-            entries,
-            sent: entries.find((e) => e.sender === this.user.id),
-          };
-        }
-      );
-    },*/
-    repliesExist() {
-      return this.msg.replies?.length ? true : false
-    },
+    
     reactionsExist() {
       if (this.msg.reactions?.length || this.reactionGroup.length) {
         return true
@@ -309,38 +263,13 @@ export default {
       this.reactionKey += 1
       return rg
     },
-    /*liked() {
-      return this.reactions.find((r) => r.sent && r.reaction === '👍');
-    },
-    reactionItems() {
-      return ['😂', '😍', '😬', '😒', '😐', '😣', '😏', '🙏', '🎉', '🎯'].map((reaction) => ({
-        reaction,
-        selected: this.reactions.find((r) => r.reaction === reaction)?.sent??false,
-      }));
-    },
-    favorited() {
-      return this.favorites.some((fav) => fav.ref === this.message._id);
-    },
-    link() {
-      const chat = this.chats[this.message.chat];
-      return chat.type === 'direct' ?
-        `/directs/${chat.user.id}/messages/${this.message._id}` :
-        `/channels/${chat.id}/messages/${this.message._id}`;
-    },*/
     canDeleteMessage() {
       // console.log(JSON.parse(localStorage.getItem('user')).subr)
       if (this.msg.userId == this.user.Id || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
         return true;
       }
       return false
-      /*const chat = this.chats[this.msg.chat];
-      return (
-        chat?.type === 'group' &&
-        chat.members.some(
-          ({ access, user }) =>
-          (access === 'admin' || access === 'moderator') && user.id === this.user.id
-        )
-      );*/
+      
     },
 
   },
@@ -350,35 +279,10 @@ export default {
     })
   },
   mounted() {
-    // this.reactions = []
-    // console.info(this.msg.id, " msg reactions =>", this.msg.reactions, 'local reactions =>', this.reactions);
-    // this.reactions = this.msg.reactions
     this.reactions = _.cloneDeep(this.msg.reactions);
     this.getFiles()
-    /*this.$axios.get('/project/' + this.msg.id + "/reactions", {
-        headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
-      })
-      .then(r => {
-        this.reactions = r
-      })
-      .catch(e => console.log(e))*/
   },
-  /*updated(){
-    console.log('updated', this.msg.reactions)
-  },*/
-
   methods: {
-    /*fetchReplies() {
-      this.$axios.get('/project/' + this.msg.id + "/replies", {
-          headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
-        })
-        .then(rep => {
-          // console.log(rep.data)
-          this.replies = rep.data.data
-          this.showPlaceholder = false
-        })
-        .catch(e => console.warn(e))
-    },*/
     fetchReactions() {
       this.$axios.get('/project/' + this.msg.id + "/reactions", {
           headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
@@ -414,24 +318,7 @@ export default {
       // console.log(payload)
       this.value.files = payload.files
     },*/
-    /*onReplySubmit(data) {
-      // console.log(data)
-      this.replyLoading = true
-      this.$axios.post('/project/' + this.msg.id + "/reply", { projectCommentId: this.msg.id, comment: data.text }, {
-          headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
-        })
-        .then(rep => {
-          // console.log(rep.data)
-          this.replyLoading = false
-          // this.fetchReplies()
-          this.$nuxt.$emit("refresh-list")
-          this.replyModal = false
-        })
-        .catch(e => {
-          this.replyLoading = false
-          console.warn(e)
-        })
-    },*/
+    
     onActionBarMouseLeave() {
       if (!(this.isMenuOpen || this.isReactionPickerOpen)) {
         this.isActionBarShowing = false;
@@ -458,8 +345,7 @@ export default {
       this.isReactionPickerOpen = false;
       this.reactionSpinner = true
       let duplicateReaction = this.reactions.some(r => r.userId == this.user.Id && r.reaction == data)
-      // console.warn(duplicateReaction)
-      // this.$emit('reaction-clicked', this.msg.id, data);
+      
       if (duplicateReaction) {
         alert("Reaction already exists!")
         this.reactionSpinner = false

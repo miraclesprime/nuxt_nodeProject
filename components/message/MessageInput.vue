@@ -166,7 +166,7 @@ import { snipFileName } from '~/utils/file';
 // import { ChannelPlugin } from '~/plugins/editor-channel';
 // import { ChatLink } from '~/plugins/editor-link';
 
-import MentionList from '~/components/message-mention/MessageMentionList.vue';
+import MentionList from '~/components/message/MessageMentionList.vue';
 
 export default {
   name: "MessageInput",
