@@ -98,7 +98,7 @@
     <!-- conversation modal -->
     <bib-modal-wrapper v-if="conversationModal" title="Conversation" size="xl" @close="conversationModal = false" >
       <template slot="content">
-        <project-conversation ></project-conversation>
+        <project-conversation :project="project"></project-conversation>
       </template>
       <template slot="footer">
         <div class="message-input-wrapper d-flex gap-1">

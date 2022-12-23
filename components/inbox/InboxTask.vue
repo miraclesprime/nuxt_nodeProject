@@ -78,7 +78,6 @@
       </div>
     </div>
     <div class="of-scroll-y position-relative py-05" id="ts-of-scroll-y" >
-      
         <!-- editable fields -->
         <sidebar-fields :task="form" @update-field="updateTask"></sidebar-fields>
         <!-- subtasks -->
@@ -89,7 +88,7 @@
         <sidebar-files :reloadFiles="reloadFiles"></sidebar-files>
     </div>
     <!-- message input -->
-    <div class="task-message-input d-flex gap-1 border-top-light py-1 px-105">
+    <div id="task-message-input" class=" d-flex gap-1 border-top-light py-1 px-105">
       <bib-avatar :src="user.Photo" size="2rem" class="flex-shrink-0"></bib-avatar>
       <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
     </div>
@@ -369,5 +368,5 @@ export default {
 
 </script>
 <style lang="scss" scoped>
-.inbox-task { display: grid; grid-template-columns: none; grid-template-rows: 1fr 1fr minmax(400px, auto) 1fr; }
+  .inbox-task { display: grid; grid-template-columns: none; grid-template-rows: 1fr 1fr minmax(400px, auto) 1fr; }
 </style>

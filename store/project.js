@@ -479,10 +479,8 @@ export const actions = {
 
       if(res.data.statusCode == 200) {
         ctx.commit("fetchProjectComments", res.data.data)
-        return res.data.data;
-      } else {
-        return res.data.data;
-      }
+      } 
+      return res.data;
     } catch(e) {
       console.log(e);
     }

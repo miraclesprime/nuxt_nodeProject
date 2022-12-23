@@ -1,5 +1,5 @@
 <template>
-  <article class="position-relative ">
+  <div class="h-100 inbox-project">
     <div class="d-flex gap-05 align-center justify-end position-relative border-bottom-light px-105 py-05" id="project-id-button-wraps">
       
       <!-- <bib-button label="invite" variant="light" pill v-on:click="$nuxt.$emit('add-teammember-modal')"></bib-button> -->
@@ -54,6 +54,7 @@
       </div>
       <loading :loading="favLoading"></loading>
     </div>
+
     <div class="d-flex align-center gap-05 px-105 py-025 border-bottom-light">
       <div class="width-2 height-2 d-inline-flex align-center justify-center cursor-pointer">
         <bib-icon icon="check-circle-solid" :variant="isComplete.variant" :scale="1.5"></bib-icon>
@@ -70,52 +71,69 @@
         <bib-icon icon="user-group-solid" ></bib-icon>
       </div>
     </div>
-    <div class="form-fields px-2 py-05">
-      <div id="proj-row2" class="row">
-        <div id="proj-row2-col1" class="col-6">
-          <bib-select label="Owner" test_id="po-owner-dd1" :options="filterUser" v-model="activeProject.userId" v-on:change="debounceUpdate('Owner', activeProject.userId)"></bib-select>
+
+    <div class="of-scroll-y position-relative px-2">
+      <div class="form-fields pt-05 pb-1">
+        <div id="proj-row2" class="row">
+          <div id="proj-row2-col1" class="col-6">
+            <bib-select label="Owner" test_id="po-owner-dd1" :options="filterUser" v-model="activeProject.userId" v-on:change="debounceUpdate('Owner', activeProject.userId)"></bib-select>
+          </div>
+          <div id="proj-row2-col2" class="col-3">          
+            <bib-datepicker test_id="date01" v-model="startDate" :value="startDate" :maxDate="dueDate" format="dd MMM yyyy" @input="debounceUpdate('Start date', startDate)" label="Start date" name="startDate" placeholder="Start date"></bib-datepicker>
+          </div>
+          <div id="proj-row2-col3" class="col-3">
+            <bib-datepicker test_id="date02" class="align-right" v-model="dueDate" :value="dueDate" :minDate="startDate" format="dd MMM yyyy" @input="debounceUpdate('Due date', dueDate)" label="Due date" name="dueDate" placeholder="Due date"></bib-datepicker>
+          </div>
         </div>
-        <div id="proj-row2-col2" class="col-3">          
-          <bib-datepicker test_id="date01" v-model="startDate" :value="startDate" :maxDate="dueDate" format="dd MMM yyyy" @input="debounceUpdate('Start date', startDate)" label="Start date" name="startDate" placeholder="Start date"></bib-datepicker>
+        <div id="proj-row3" class="row">
+          <div id="proj-row3-col2" class="col-12">
+            <bib-input type="select" label="Department" :options="department" placeholder="Department"></bib-input>
+          </div>
         </div>
-        <div id="proj-row2-col3" class="col-3">
-          <bib-datepicker test_id="date02" class="align-right" v-model="dueDate" :value="dueDate" :minDate="startDate" format="dd MMM yyyy" @input="debounceUpdate('Due date', dueDate)" label="Due date" name="dueDate" placeholder="Due date"></bib-datepicker>
+        <div id="proj-row4" class="row">
+          <div id="proj-row4-col1" class="col-6">
+            <bib-input type="select" label="Priority" v-model.number="activeProject.priorityId" :options="priority" placeholder="Please select..." v-on:change.native="debounceUpdate('Priority', activeProject.priorityId)"></bib-input>
+          </div>
+          <div id="proj-row4-col2" class="col-6">
+            <bib-input type="select" label="Status" v-model.number="activeProject.statusId" :options="status" placeholder="Please select..." v-on:change.native="debounceUpdate('Status', activeProject.statusId)"></bib-input>
+          </div>
         </div>
+        <div id="proj-row5" class="row">
+          <div id="proj-row5-col1" class="col-4">
+            <label class="text-gray6">Time</label>
+            <div class="shape-rounded border-gray4 my-05 p-05">Hours {{time}}</div>
+          </div>
+          <div id="proj-row5-col2" class="col-4">
+            <bib-input type="number" icon-left="currency-dollar" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="debounceUpdate('Budget', activeProject.budget)"></bib-input>
+          </div>
+          <div id="proj-row5-col3" class="col-4">
+            <label class="text-gray6">Progress</label>
+            <div class="shape-rounded border-gray4 my-05 p-05">{{progress}}%</div>
+          </div>
+        </div>
+        <div id="proj-row6" class="row">
+          <div id="proj-row6-col1" class="col-12">
+            <bib-input type="textarea" label="Brief" v-model="activeProject.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate('Project brief', activeProject.description)"></bib-input>
+          </div>
+        </div>
+        <loading :loading="loading"></loading>
       </div>
-      <div id="proj-row3" class="row">
-        <div id="proj-row3-col2" class="col-12">
-          <bib-input type="select" label="Department" :options="department" placeholder="Department"></bib-input>
-        </div>
+      
+      <div class="border-bottom-gray2 d-flex justify-between sub-title pb-05">
+        <p class="text-gray5 font-md">Conversation </p>
       </div>
-      <div id="proj-row4" class="row">
-        <div id="proj-row4-col1" class="col-6">
-          <bib-input type="select" label="Priority" v-model.number="activeProject.priorityId" :options="priority" placeholder="Please select..." v-on:change.native="debounceUpdate('Priority', activeProject.priorityId)"></bib-input>
-        </div>
-        <div id="proj-row4-col2" class="col-6">
-          <bib-input type="select" label="Status" v-model.number="activeProject.statusId" :options="status" placeholder="Please select..." v-on:change.native="debounceUpdate('Status', activeProject.statusId)"></bib-input>
-        </div>
+      <project-conversation :project="project"></project-conversation>
+      
+      <div class="border-bottom-gray2 d-flex justify-between sub-title pb-05">
+        <p class="text-gray5 font-md">Files </p>
       </div>
-      <div id="proj-row5" class="row">
-        <div id="proj-row5-col1" class="col-4">
-          <label class="text-gray6">Time</label>
-          <div class="shape-rounded border-gray4 my-05 p-05">Hours {{time}}</div>
-        </div>
-        <div id="proj-row5-col2" class="col-4">
-          <bib-input type="number" icon-left="currency-dollar" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="debounceUpdate('Budget', activeProject.budget)"></bib-input>
-        </div>
-        <div id="proj-row5-col3" class="col-4">
-          <label class="text-gray6">Progress</label>
-          <div class="shape-rounded border-gray4 my-05 p-05">{{progress}}%</div>
-        </div>
-      </div>
-      <div id="proj-row6" class="row">
-        <div id="proj-row6-col1" class="col-12">
-          <bib-input type="textarea" label="Brief" v-model="activeProject.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate('Project brief', activeProject.description)"></bib-input>
-        </div>
-      </div>
+      <project-files></project-files>
     </div>
-      <loading :loading="loading"></loading>
-  </article>
+    <div id="project-message-input" class=" d-flex gap-1 border-top-light py-1 px-105">
+      <bib-avatar :src="user2.Photo" size="2rem" class="flex-shrink-0"></bib-avatar>
+      <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
+    </div>
+  </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'
@@ -139,6 +157,13 @@ export default {
       loading: false,
       favLoading: false,
       cdp: false,
+      value: {
+        files: [
+          /*{ id: 156, name: 'thefile.png' },
+          { id: 282, name: 'anotherfile.jpg' },*/
+        ]
+      },
+      editMessage: {},
     }
   },
 
@@ -155,6 +180,7 @@ export default {
       team: "project/getProjectMembers",
       sections: "section/getProjectSections",
       favProjects: "project/getFavProjects",
+      user2: "user/getUser2",
     }),
     /*activeProject() {
       return this.project;
@@ -365,9 +391,74 @@ export default {
       }
       // return false
     },
+    onFileInput(payload) {
+      // console.log(payload)
+      this.value.files = payload.files
+    },
+    onsubmit(data) {
+      if (this.editMessage?.id) {
+        this.$store.dispatch("project/updateProjectComment", { projectId: this.project.id, commentId: this.editMessage.id, comment: data.text })
+        .then(res => {
+          if (this.value.files.length > 0) {
+            this.uploadFile(this.value.files, this.editMessage)
+            this.value.files = []
+          }
+          // this.fetchProjectComments()
+          this.$nuxt.$emit('refresh-list')
+          this.editMessage = {}
+
+        })
+        .catch(e => console.log(e))
+      } else {
+        this.$store.dispatch("project/createProjectComment", { id: this.project.id, comment: data.text })
+          .then(res => {
+            // console.log("comment submit->", res.data)
+            if (this.value.files.length > 0) {
+              this.uploadFile(this.value.files, res.data)
+              this.value.files = []
+            }
+            // this.fetchProjectComments()
+            this.$nuxt.$emit('refresh-list')
+          })
+          .catch(e => console.log(e))
+      }
+    },
+    async uploadFile(commentFiles, data){
+      let formdata = new FormData()
+      let filelist = []
+
+      commentFiles.forEach(file => {
+        formdata.append('files', file)
+        filelist.push(file.name)
+      })
+      formdata.append('projectId', this.project.id)
+      formdata.append('projCommentId', data.id)
+      formdata.append('text', `uploaded file(s) "${filelist.join(", ")}" to comment`)
+
+      const fi = await this.$axios.post("/file/upload", formdata, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      })
+      // console.log(fi.data)
+      if (fi.data.statusCode == 200) {
+        // console.log("file upload->", fi.data)
+        this.value.files = []
+        this.$nuxt.$emit("get-msg-files")
+      }
+    }
   }
 }
 
 </script>
 <style lang="scss" scoped>
+.inbox-project {
+  display: grid;
+  grid-template-columns: none;
+  grid-template-rows: 1fr 1fr minmax(400px, auto) 1fr;
+}
+.sub-title {
+  font-size: 1rem;
+}
 </style>

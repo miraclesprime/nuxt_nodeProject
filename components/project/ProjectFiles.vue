@@ -1,8 +1,8 @@
 <template>
-  <div id="project-files-wrapper" class="h-100">
-    <div id="project-file-actions-wrapper" class="file-actions d-flex align-center p-025 ">
+  <div id="project-files-wrapper" class="project-files-wrapper mb-105">
+    <div id="project-file-actions-wrapper" class="file-actions d-flex align-center py-025 ">
       <div class="action-left d-flex " id="file-action-left">
-        <div class="d-flex gap-05 cursor-pointer shape-rounded bg-hover-gray3 py-025 px-05 text-secondary text-hover-dark" id="file-upload-button" @click="uploadModal = true">
+        <div class="d-flex gap-05 cursor-pointer shape-rounded bg-success-sub6 bg-hover-success-sub3 py-025 px-05 text-success " id="file-upload-button" @click="uploadModal = true">
           <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="file-upload-text" class="">Upload File</span>
         </div>
         <!-- <div class="d-flex gap-05 ml-1 cursor-pointer text-secondary text-hover-dark" id="file-add-section-button" >
@@ -10,9 +10,9 @@
         </div> -->
       </div>
       <div class="action-right d-flex gap-05" id="file-action-right">
-        <div class="d-flex width-2 height-2 align-center justify-center bg-light bg-hover-gray3 shape-circle p-025 cursor-pointer" id="file-action5-link">
-          <bib-icon v-if="displayType == 'list'" icon="table" variant="gray5" @click.native="displayType = 'grid'"></bib-icon>
-          <bib-icon v-if="displayType == 'grid'" icon="list" variant="gray5" @click.native="displayType = 'list'"></bib-icon>
+        <div class="d-flex width-2 height-2 align-center justify-center bg-light bg-hover-gray4 shape-circle p-025 cursor-pointer" id="file-action5-link">
+          <bib-icon v-if="displayType == 'list'" icon="table" variant="gray6" @click.native="displayType = 'grid'"></bib-icon>
+          <bib-icon v-if="displayType == 'grid'" icon="list" variant="gray6" @click.native="displayType = 'list'"></bib-icon>
         </div>
       </div>
     </div>
@@ -20,7 +20,7 @@
       <template v-if="displayType == 'list'">
         <bib-table :fields="tableFields" :sections="dbFiles" :key="tempKey" :hide-no-column="true">
           <template #cell(name)="data">
-            <div class="d-flex align-center gap-05 cursor-pointer" @click="showPreviewModal(data.value)">
+            <div class="d-flex align-center text-left gap-05 cursor-pointer" @click="showPreviewModal(data.value)">
               <bib-avatar v-if="imageType(data.value)" shape="rounded" :src="data.value.url" size="1.5rem">
               </bib-avatar>
               <bib-icon v-else-if="data.value.extension == '.docx'" icon="word" :scale="1.25"></bib-icon>
@@ -40,7 +40,7 @@
           </template>
           <template #cell(size)="data">
             <div class=" text-gray1">
-              {{ data.value.size }}
+              {{ $formatBytes(data.value.size) }}
             </div>
           </template>
           <template #cell(owner)="data">
@@ -50,21 +50,34 @@
             <format-date :datetime="data.value.updatedAt"></format-date>
           </template>
           <template #cell_action="data">
-            <div class="d-flex">
+            <div class="shape-circle bg-light bg-hover-gray4 width-2 height-2 d-flex justify-center align-center file-menu">
+              <bib-button pop="horizontal-dots" :scale="1">
+                <template v-slot:menu>
+                  <div class="list ">
+                    <span class="list__item" v-if="canPreview(data.value)" @click="showPreviewModal(data.value)">Preview</span>
+                    <span class="list__item">Open</span>
+                    <span class="list__item" @click.stop="openFileDetail(data.value)">Detail</span>
+                    <span class="list__item" @click.stop="downloadFile(data.value)">Download File</span>
+                    <hr>
+                    <span class="list__item list__item__danger" @click.stop="deleteFile(data.value)">Delete</span>
+                  </div>
+                </template>
+              </bib-button>
+            </div>
+            <!-- <div class="d-flex">
               <div class="shape-rounded width-105 height-105 d-flex justify-center align-center cursor-pointer bg-hover-gray4" @click="downloadFile(data.value)">
                 <bib-icon icon="align-bottom"></bib-icon>
               </div>
               <div class="shape-rounded width-105 height-105 d-flex justify-center align-center cursor-pointer bg-hover-gray4" @click="deleteFile(data.value)">
                 <bib-icon icon="trash" variant="danger"></bib-icon>
               </div>
-            </div>
+            </div> -->
           </template>
         </bib-table>
       </template>
       <template v-if="displayType == 'grid'">
-        <div class="files d-flex flex-wrap gap-1 py-1">
+        <div class="files d-grid gap-1 py-1">
           <message-files v-for="file in files" :property="file" :key="file.key" @file-click="showPreviewModal(file)" ></message-files>
-          <!-- <bib-file v-for="file in files" :key="file.key + tempKey" :property="file" @click.native="showPreviewModal(file)"></bib-file> -->
         </div>
       </template>
       <loading :loading="loading"></loading>
@@ -86,7 +99,7 @@
       </template>
     </bib-modal-wrapper>
     <!-- file preview modal -->
-    <bib-modal-wrapper v-if="previewModal" title="Preview" size="lg" @close="closePreviewModal">
+    <bib-modal-wrapper v-if="previewModal" title="Preview" size="xl" @close="closePreviewModal">
       <template slot="content">
         <!-- <div v-if="!filePreview" class="text-center">
           <bib-spinner class="mx-auto" ></bib-spinner>
@@ -104,12 +117,37 @@
         </div>
       </template>
     </bib-modal-wrapper>
+    <!-- file detail modal -->
+    <bib-modal-wrapper v-if="fileDetailModal" title="File Details" @close="fileDetailModal = false">
+        <template slot="content">
+          <table class="table">
+            <tr v-for="file in fileDetail">
+              <template v-if="file.key == 'size'">
+                <th class="text-right font-w-400">{{file.key}}:</th>
+                <td class="text-left text-gray6 pl-1">{{$formatBytes(file.value)}}</td>
+              </template>
+              <template v-else>
+                <th class="text-right font-w-400">{{file.key}}:</th>
+                <td class="text-left text-gray6 pl-1">{{file.value}}</td>
+              </template>
+            </tr>
+          </table>
+        </template>
+        <template slot="footer">
+          <div class="d-flex justify-end">
+            <bib-button label="Close" variant="light" pill @click="fileDetailModal = false"></bib-button>
+            <!-- <bib-button label="Create" variant="success" class="ml-auto" pill></bib-button> -->
+          </div>
+        </template>
+      </bib-modal-wrapper>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import { FILE_FIELDS } from "~/config/constants"
+import dayjs from 'dayjs'
+
 export default {
   name: "ProjectFiles",
   data: function() {
@@ -135,7 +173,9 @@ export default {
       tempKey: 1,
       previewModal: false,
       imgPreview: '',
-      pdfPreview: ''
+      pdfPreview: '',
+      fileDetailModal: false,
+      fileDetail: {},
     }
   },
   computed: {
@@ -159,7 +199,8 @@ export default {
         })
       })
       return files
-    }
+    },
+
   },
   mounted() {
     console.log('mounted, project id->', this.project.id)
@@ -327,11 +368,37 @@ export default {
           .catch(e => console.error(e))
       }
     },
+    openFileDetail(file) {
+      let arr = []
+      if (file.hasOwnProperty("key")) {
+        Object.entries(file).map(([key, value]) => {
+          // if (value) {
+            if (key == 'name' || key == "extension" || key == "size") {
+              arr.push({ value: value, key: key })
+            }
+            if (key == "createdAt" || key == "updatedAt") {
+              arr.push({ key: key, value: dayjs(value).format('DD MMM YYYY')})
+            }
+          // }
+        })
+      }
+      this.fileDetail = arr
+      this.fileDetailModal = true
+      // return arr
+    },
+    canPreview(file) {
+      if (file.type.indexOf('image/') == 0 || file.type.indexOf('pdf') > 0) {
+        return true
+      } else {
+        return false
+      }
+    },
   }
 }
 
 </script>
 <style scoped lang="scss">
+.project-files-wrapper { margin-bottom: 1.5rem; }
 .file-actions {
   border-bottom: 1px solid $gray4;
 }
@@ -362,8 +429,9 @@ export default {
 }
 
 .files {
+  grid-template-columns: repeat(3, 1fr);
   .file {
-    flex: 0 0 18rem;
+    /*flex: 0 0 18rem;*/
     border-radius: 0.5rem;
 
     img {
@@ -373,6 +441,14 @@ export default {
       border-top-left-radius: 0.5rem;
       border-top-right-radius: 0.5rem;
     }
+  }
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: $base-size;
+  th, td {
+    padding: 0.25rem;
   }
 }
 
