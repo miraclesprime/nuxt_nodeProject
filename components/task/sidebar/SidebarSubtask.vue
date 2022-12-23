@@ -220,7 +220,7 @@ export default {
 </script>
 <style scoped lang="scss">
 .task-group {
-  margin-bottom: 3rem;
+  margin-bottom: 1rem;
 }
 
 .sub-title {

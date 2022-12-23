@@ -2,9 +2,9 @@
   <client-only>
     <div class="file-wrap d-flex ">
       <figure class="position-relative w-100" v-tooltip="`${property.name}`">
-        <img :src="filePreview" class="shape-rounded d-block" >
+        <img :src="filePreview" class="shape-rounded d-block">
         <div class="file-overlay d-flex align-center justify-center cursor-pointer" @click="$emit('file-click')">
-          <fa :icon="faMagnifyingGlassPlus" class="width-2 height-2" ></fa>
+          <fa :icon="faMagnifyingGlassPlus" class="width-2 height-2"></fa>
         </div>
         <div class="shape-circle bg-gray4 width-2 height-2 d-flex justify-center align-center file-menu">
           <bib-button pop="elipsis" :scale="1">
@@ -56,6 +56,8 @@
 <script>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
+import dayjs from 'dayjs'
+
 export default {
 
   name: 'MessageFiles',
@@ -75,16 +77,17 @@ export default {
     }
   },
   computed: {
-    
+
     fileDetail() {
       let arr = []
       if (this.property.hasOwnProperty("key")) {
         Object.entries(this.property).map(([key, value]) => {
-          // if (value) {
-            if (key == 'name' || key == "extension" || key == "size" || key == "createdAt" || key == "updatedAt") {
-              arr.push({ value: value, key: key })
-            }
-          // }
+          if (key == 'name' || key == "extension" || key == "size") {
+            arr.push({ value: value, key: key })
+          }
+          if (key == "createdAt" || key == "updatedAt") {
+            arr.push({key: key, value: dayjs(value).format('DD MMM YYYY')})
+          }
         })
       }
       return arr
@@ -97,15 +100,15 @@ export default {
       }
     },
   },
-  mounted(){
+  mounted() {
     this.previewFile()
-    
+
   },
   methods: {
-    async previewFile(){
+    async previewFile() {
       if (this.property.type.indexOf('image/') == 0 && "url" in this.property) {
-      let imgtype = this.property.type.split("/")[1]
-        const prev = await this.$axios.get("file/single/"+this.property.key, {
+        let imgtype = this.property.type.split("/")[1]
+        const prev = await this.$axios.get("file/single/" + this.property.key, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           }
@@ -113,7 +116,7 @@ export default {
         // console.log(prev.data.data)
         this.filePreview = `data:image/${imgtype};base64,${prev.data.data}`
       } else {
-        this.filePreview = "https://via.placeholder.com/200x160/f0f0f0/6f6f79?text="+this.property.extension
+        this.filePreview = "https://via.placeholder.com/200x160/f0f0f0/6f6f79?text=" + this.property.extension
       }
     },
 
@@ -142,15 +145,19 @@ export default {
 }
 
 </script>
-
 <style lang="scss" scoped>
 .file-wrap {
   min-height: 8rem;
   font-size: 1rem;
   background-color: rgb(240, 240, 240);
   flex: 0 1 14rem;
+
   figure {
-    img { width:100%; object-fit: cover; aspect-ratio: 1.5 / 1; }
+    img {
+      width: 100%;
+      object-fit: cover;
+      aspect-ratio: 1.5 / 1;
+    }
   }
 
   .file-overlay {
@@ -198,6 +205,7 @@ table {
   width: 100%;
   font-size: $base-size;
 }
+
 table th,
 table td {
   padding: 0.25rem;
