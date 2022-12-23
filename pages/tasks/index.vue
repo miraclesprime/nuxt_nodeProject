@@ -51,6 +51,7 @@
     </div>
   </client-only>
 </template>
+
 <script>
 import { mapGetters } from "vuex";
 import { COMPANY_TASK_FIELDS as TaskFields, TASK_CONTEXT_MENU } from '../../config/constants'
@@ -76,10 +77,9 @@ export default {
   },
   computed: {
     ...mapGetters({
-      token: "token/getToken",
-      user: "user/getUser",
-      tasks: "company/getCompanyTasks",
-      favTasks: 'task/getFavTasks'
+        user: "user/getUser",
+        tasks: "company/getCompanyTasks",
+        favTasks: 'task/getFavTasks'
     }),
   },
 
@@ -88,11 +88,12 @@ export default {
       this.$nuxt.$on('change-grid-type', ($event) => {
         this.gridType = $event;
       })
+
       this.$nuxt.$on("update-key", () => {
-        // console.log('updated key event received')
         let user = JSON.parse(localStorage.getItem("user"))
         this.$store.dispatch('company/setCompanyTasks', { companyId: user.subb }).then(() => { this.key += 1 })
       })
+      
       this.loading = true
       let compid = JSON.parse(localStorage.getItem("user")).subb;
       this.$store.dispatch('company/setCompanyTasks', { companyId: compid, filter: 'all' }).then((res) => {
@@ -102,8 +103,8 @@ export default {
   },
 
   methods: {
+
     updateKey($event) {
-      // console.log("update-key event received", $event)
       if ($event) {
         this.popupMessages.push({ text: $event, variant: "success" })
       }
@@ -114,7 +115,6 @@ export default {
     },
 
     openSidebar(task, scroll) {
-      // console.log(task)
       this.$nuxt.$emit("open-sidebar", {...task, scrollId: scroll});
     },
 
@@ -132,10 +132,8 @@ export default {
     },
 
     contextItemClick(key){
-      // console.log(key)
       switch (key) {
         case 'done-task':
-          // statements_1
           this.taskMarkComplete(this.activeTask)
           break;
         case 'fav-task':
@@ -145,7 +143,6 @@ export default {
           this.deleteTask(this.activeTask)
           break;
         case 'gotoTeam':
-          // this.openSidebar(this.activeTask, 'comment')
           this.$nuxt.$emit('add-member-to-task')
           break;
         case 'gotoComment':
@@ -164,15 +161,12 @@ export default {
     },
 
     taskSetFavorite(task) {
-      // console.info("to be fav task", task)
       this.loading = true
       let isFav = this.favTasks.some((f) => f.taskId == task.id)
-      // console.log(isFav)
 
       if (isFav) {
         this.$store.dispatch("task/removeFromFavorite", { id: task.id })
           .then(msg => {
-            // console.log(msg)
             this.updateKey('Removed from favorites')
             this.loading = false
           })
@@ -183,8 +177,6 @@ export default {
       } else {
         this.$store.dispatch("task/addToFavorite", { id: task.id })
           .then(msg => {
-            // console.log(msg)
-            // this.popupMessages.push({ text: msg, variant: "success" })
             this.updateKey('Added to favorites')
             this.loading = false
           })
@@ -196,26 +188,20 @@ export default {
     },
 
     taskMarkComplete(task) {
-      // console.log(typeof task, this.activeTask)
       this.loading = true
       if (typeof task == "object" && Object.keys(task).length > 0) {
         console.log(task)
       } else {
-        // alert("no task selected")
         task = this.activeTask
       }
       this.$store.dispatch('task/updateTaskStatus', task)
         .then((d) => {
-          // console.log(d)
           this.loading = false
-          // this.popupMessages.push({ text: d.message, variant: "success" })
-          // this.$nuxt.$emit("update-key")
           this.$store.dispatch("task/setSingleTask", d).then(() => {
             this.updateKey()
           })
         }).catch(e => {
           console.log(e)
-          // this.popupMessages.push({ text: e.message, variant: "warning" })
           this.loading = false
         })
     },
@@ -227,16 +213,13 @@ export default {
         this.$store.dispatch("task/deleteTask", task).then(t => {
 
           if (t.statusCode == 200) {
-            // this.popupMessages.push({ text: t.message, variant: "success" })
             this.updateKey()
           } else {
-            // this.popupMessages.push({ text: t.message, variant: "warning" })
             console.warn(t.message);
           }
           this.loading = false
         }).catch(e => {
           this.loading = false
-          // this.popupMessages.push({ text: e, variant: "danger" })
           console.log(e)
         })
       } else {
@@ -274,8 +257,6 @@ export default {
 
     // Sort By Action List
     sortBy($event) {
-
-      console.log($event)
 
       if($event == 'title') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'name', order: this.orderBy }).then(() => {
@@ -345,8 +326,6 @@ export default {
 
 
     toggleSidebar($event) {
-      // console.log($event)
-      // in case of create task 
       if (!$event) {
         this.$nuxt.$emit("open-sidebar", $event)
       }

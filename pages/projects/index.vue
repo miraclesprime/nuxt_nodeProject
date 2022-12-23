@@ -1,35 +1,11 @@
 <template>
-  <div id="projects-wrapper" class="projects-wrapper" >
-    
-    <page-title title="Projects"></page-title>
-    
+  <div id="projects-wrapper" class="projects-wrapper" >   
+    <page-title title="Projects"></page-title>  
     <project-actions @sortValue='sortName=$event' @viewValue='viewName=$event' v-on:loading="loading = $event" v-bind:sort="sortName" />
+   
     <div id="projects-list-wrapper" class="projects-list-wrapper of-scroll-y position-relative" >
       <loading :loading="loading"></loading>
       <template v-if="projects.length">
-        <!-- <bib-table :fields="tableFields" class="border-gray4 bg-white" :sections="projects" :key="'sort-'+ sortName ? sortName : 'sName' + 'view-' + viewName ? viewName : 'vName' + Math.random().split(-3) " :hide-no-column="true" @file-title-sort="sortTitle" @file-owner-sort="sortOwner" @file-status-sort="sortByStatus" @file-startDate-sort="sortByStartDate" @file-dueDate-sort="sortByDueDate" @file-priority-sort="sortByPriority">
-          <template #cell(title)="data">
-            <div class="d-flex align-center text-dark cursor-pointer" :id="'projects-' + data.value.title" @click="goToProjectId(data.value)">
-              <bib-icon icon="briefcase" variant="gray5" :scale="1.1" class="mr-025"></bib-icon>
-              <span :id="'projects-' + data.value.title + '-text'">{{data.value.title}}</span>
-            </div>
-          </template>
-          <template #cell(userId)="data">
-            <user-info :userId="data.value.userId" :key="newkey" ></user-info>
-          </template>
-          <template #cell(status)="data">
-            <status-comp :status="data.value.status"></status-comp>
-          </template>
-          <template #cell(createdAt)="data">
-            <format-date :datetime="data.value.createdAt" :key="newkey"></format-date>
-          </template>
-          <template #cell(dueDate)="data">
-            <format-date :datetime="data.value.dueDate" :key="newkey"></format-date>
-          </template>
-          <template #cell(priority)="data">
-            <priority-comp :priority="data.value.priority"></priority-comp>
-          </template>
-        </bib-table> -->
 
         <drag-table-simple :fields="tableFields" :tasks="projects" :titleIcon="{ icon: 'briefcase-solid', event: 'row-click'}" :componentKey="templateKey" :drag="false" :sectionTitle="'Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick" ></drag-table-simple>
         
@@ -92,6 +68,7 @@ export default {
       
     }
   },
+
   mounted() {
     this.$store.dispatch('project/fetchProjects').then(() => { 
       this.templateKey += 1;
@@ -102,12 +79,13 @@ export default {
   },
   computed: {
     ...mapGetters({
-      projects: 'project/getAllProjects',
-      favProjects: 'project/getFavProjects',
+        projects: 'project/getAllProjects',
+        favProjects: 'project/getFavProjects',
     })
   },
 
   methods: {
+    
     checkActive() {
       for(let i=0; i<this.tableFields.length; i++) {
           if(this.tableFields[i].header_icon) {
@@ -120,18 +98,7 @@ export default {
       }
     },
 
-    tabChange(value) {
-      this.activeTab = value;
-    },
-    goToProjectId(project) {
-      // console.log(project)
-      this.$store.dispatch('project/setSingleProject', project)
-      this.$router.push("/projects/" + project.id)
-    },
-
-
     projectRoute(project) {
-      // console.log(project)
       this.$router.push('/projects/' + project.id)
     },
 
@@ -144,7 +111,6 @@ export default {
     },
 
     sortProject($event) {
-      console.log($event, this.orderBy)
       
       if($event == 'title') {
 
@@ -284,29 +250,22 @@ export default {
     closeContext() {
       this.projectContextMenu = false
       this.activeProject = {}
-      // this.$store.dispatch('task/setSingleTask', {})
     },
 
     contextItemClick(key){
       switch (key) {
         case 'fav-project':
-          console.log('fav project')
           this.setFavorite(this.activeProject)
           break;
         case 'rename-project':
-          console.log('rename project')
           this.renameModal = true
           break;
         case 'delete-project':
-          console.log('delete project')
           this.deleteTask(this.activeProject)
           break;
         case 'share-project':
-          console.log('share project')
-          // statements_1
           break;
         case 'report-project':
-          console.log('report project')
           break;
         default:
           alert("no project assigned")
@@ -315,16 +274,12 @@ export default {
     },
 
     setFavorite(project) {
-      // console.info("to be fav task", task)
       this.loading = true
       let isFav = this.favProjects.some((f) => f.id == project.id)
-      // console.log(isFav)
 
       if (isFav) {
         this.$store.dispatch("project/removeFromFavorite", { id: project.id })
           .then(msg => {
-            console.log(msg)
-            // this.popupMessages.push({ text: msg, variant: "success" })
             this.updateKey()
             this.loading = false
           })
@@ -335,8 +290,6 @@ export default {
       } else {
         this.$store.dispatch("project/addToFavorite", { id: project.id })
           .then(msg => {
-            console.log(msg)
-            // this.popupMessages.push({ text: msg, variant: "success" })
             this.updateKey()
             this.loading = false
           })
@@ -354,16 +307,13 @@ export default {
         this.$store.dispatch("project/deleteProject", project).then(t => {
 
           if (t.statusCode == 200) {
-            // this.popupMessages.push({ text: t.message, variant: "success" })
             this.updateKey()
           } else {
-            // this.popupMessages.push({ text: t.message, variant: "warning" })
             console.warn(t.message);
           }
           this.loading = false
         }).catch(e => {
           this.loading = false
-          // this.popupMessages.push({ text: e, variant: "danger" })
           console.log(e)
         })
       } else {
@@ -382,7 +332,7 @@ export default {
       }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       })
-      // console.log(proj)
+      
       if (proj.data.statusCode == 200) {
         this.$store.dispatch("project/setSingleProject", proj.data.data)
         this.updateKey()
@@ -393,9 +343,7 @@ export default {
     },
 
     updateKey() {
-      // console.log("update-key event received", this.templateKey)
       this.$store.dispatch("project/fetchProjects").then(() => {
-        // this.taskByOrder()
         console.log('fetched again')
         this.templateKey += 1;
       })

@@ -90,6 +90,7 @@
     </div>
   </client-only>
 </template>
+
 <script>
 import _ from 'lodash'
 import draggable from 'vuedraggable'
@@ -130,18 +131,13 @@ export default {
 
   computed: {
     ...mapGetters({
-      // tasks: 'user/getUserTasks',
       todos: "todo/getAllTodos",
       favTasks: 'task/getFavTasks'
-    }),
-    /*localdata() {
-      return JSON.parse(JSON.stringify(this.todos))
-    }*/
+    })
   },
 
   watch: {
     todos(newVal) {
-      // console.log(newVal)
       let todos = JSON.parse(JSON.stringify(newVal))
       todos.forEach(function(todo) {
         todo["tasks"] = todo.tasks.sort((a, b) => a.tOrder - b.tOrder);
@@ -156,7 +152,6 @@ export default {
         this.gridType = $event;
       })
       this.$nuxt.$on("update-key", () => {
-        // console.log('updated key event received')
         this.$store.dispatch("todo/fetchTodos", {filter: 'all'} ).then(() => { this.key += 1 })
       })
     }
@@ -164,9 +159,7 @@ export default {
 
   mounted() {
     this.loading = true
-    // this.$store.dispatch('user/setUserTasks', { filter: 'all' }).then((res) => {
     this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
-      // console.log(res)
       if (res.statusCode == 200) {
         this.key += 1
       }
@@ -185,7 +178,6 @@ export default {
     },
 
     openSidebar(task, scroll) {
-      // console.log(task)
       this.$nuxt.$emit("open-sidebar", {...task, scrollId: scroll});
     },
     
@@ -197,7 +189,6 @@ export default {
     contextItemClick(key){
       switch (key) {
         case 'done-task':
-          // statements_1
           this.taskMarkComplete(this.activeTask)
           break;
         case 'fav-task':
@@ -207,7 +198,6 @@ export default {
           this.deleteTask(this.activeTask)
           break;
         case 'gotoTeam':
-          // this.openSidebar(this.activeTask, 'comment')
           this.$nuxt.$emit('add-member-to-task')
           break;
         case 'gotoComment':
@@ -228,16 +218,12 @@ export default {
     // task context menu methods ----------------------------------------
 
     taskSetFavorite(task) {
-      // console.info("to be fav task", task)
       this.loading = true
       let isFav = this.favTasks.some((f) => f.taskId == task.id)
-      // console.log(isFav)
 
       if (isFav) {
         this.$store.dispatch("task/removeFromFavorite", { id: task.id })
           .then(msg => {
-            console.log(msg)
-            // this.popupMessages.push({ text: msg, variant: "success" })
             this.updateKey()
             this.loading = false
           })
@@ -248,8 +234,6 @@ export default {
       } else {
         this.$store.dispatch("task/addToFavorite", { id: task.id })
           .then(msg => {
-            console.log(msg)
-            // this.popupMessages.push({ text: msg, variant: "success" })
             this.updateKey()
             this.loading = false
           })
@@ -261,25 +245,18 @@ export default {
     },
 
     taskMarkComplete(task) {
-      // console.log(typeof task, this.activeTask)
       this.loading = true
       if (typeof task == "object" && Object.keys(task).length > 0) {
-        // console.log(task)
       } else {
-        // alert("no task selected")
         task = this.activeTask
       }
       this.$store.dispatch('task/updateTaskStatus', task)
         .then((d) => {
-          // console.log(d)
           this.loading = false
-          // this.popupMessages.push({ text: d.message, variant: "success" })
-          // this.$nuxt.$emit("update-key")
           this.updateKey()
           this.$store.dispatch("task/setSingleTask", d)
         }).catch(e => {
           console.log(e)
-          // this.popupMessages.push({ text: e.message, variant: "warning" })
           this.loading = false
         })
     },
@@ -291,16 +268,13 @@ export default {
         this.$store.dispatch("task/deleteTask", task).then(t => {
 
           if (t.statusCode == 200) {
-            // this.popupMessages.push({ text: t.message, variant: "success" })
             this.updateKey()
           } else {
-            // this.popupMessages.push({ text: t.message, variant: "warning" })
             console.warn(t.message);
           }
           this.loading = false
         }).catch(e => {
           this.loading = false
-          // this.popupMessages.push({ text: e, variant: "danger" })
           console.log(e)
         })
       } else {
@@ -309,19 +283,16 @@ export default {
     },
 
     updateKey() {
-      // console.log("update-key event received", $event)
       this.loading = true
-      // this.popupMessages.push({ text: $event, variant: "success" })
       this.$store.dispatch("todo/fetchTodos", {filter: 'all'}).then((res) => {
-        // console.log(res)
         if (res.statusCode == 200) {
           this.key += 1
         }
         this.loading = false;
       })
     },
+    
     showNewTodo() {
-      // this.$refs.newsectionform.newSection = true
       this.newSection = true
     },
 
@@ -332,7 +303,7 @@ export default {
         userId: JSON.parse(localStorage.getItem("user")).sub,
         title: $event,
       })
-      // console.log(todo)
+
       if (todo.statusCode == 200) {
         this.updateKey()
         this.newSection = false
@@ -342,11 +313,13 @@ export default {
         this.sectionLoading = false
       }
     },
+
     showRenameModal(todo) {
       this.todoTitle = todo.title
       this.todoId = todo.id
       this.renameModal = true
     },
+
     async renameTodo() {
       this.loading = true
       const res = await this.$store.dispatch("todo/renameTodo", {
@@ -355,7 +328,7 @@ export default {
           title: this.todoTitle
         }
       })
-      // console.log("rename todotion output", res)
+
       if (res.statusCode = 200) {
         this.renameModal = false
         this.popupMessages.push({ text: "Section renamed", variant: "success" })
@@ -363,8 +336,8 @@ export default {
       }
       this.loading = false
     },
+
     deleteTodo(todo) {
-      // console.log(todo.id)
       this.$store.dispatch("todo/deleteTodo", todo)
         .then((d) => {
           this.popupMessages.push({ text: d.message, variant: "success" })
@@ -373,32 +346,17 @@ export default {
         .catch(e => console.log(e))
     },
 
-    taskCheckIcon(data) {
-      return data.value.statusId == 5 ? 'success' : 'secondary-sub2'
-    },
-    updateTaskStatus(item) {
-      // console.log(item)
-      this.loading = true
-      this.$store.dispatch('task/updateTaskStatus', item)
-        .then(() => {
-          this.$nuxt.$emit("update-key")
-        })
-        .catch(e => console.log(e))
-        .then(() => this.loading = false)
-    },
     taskDragStart(e) {
       this.drag = true
-      // console.log('drag start', e)
     },
+
     moveTask(e) {
-      // this.taskDnDlist = tasks
-      console.log(e.to)
       this.taskDnDsectionId = +e.to.dataset.section
       this.highlight = +e.to.dataset.section
 
     },
+
     taskDragEnd: _.debounce(async function(payload) {
-      // console.log('task move end =>', payload)
 
       this.highlight = null
       console.log(payload.tasks)
@@ -406,10 +364,7 @@ export default {
       payload.tasks.forEach((e, i) => {
         e.tOrder = i
       })
-
-      console.log(payload)
-
-      // let taskDnD;
+      
       let taskDnD = await this.$axios.$put("/todo/crossTodoDragDrop", { data: payload.tasks, todoId: payload.sectionId }, {
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
@@ -417,31 +372,11 @@ export default {
         }
       })
 
-      /*if (this.taskDnDsectionId) {
-        taskDnD = await this.$axios.$put("/todo/crossTodoDragDrop", { data: tasks, todoId: tasks[0].sectionId }, {
-          headers: {
-            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-            "Content-Type": "application/json"
-          }
-        })
-      }*/
-      /*else {
-             taskDnD = await this.$axios.$put("/task/todoTask-dd", { data: this.taskDnDlist }, {
-               headers: {
-                 "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-                 "Content-Type": "application/json"
-               }
-             })
-           }*/
-
-      console.log(taskDnD.message)
       if (taskDnD.statusCode != 200) {
-        // console.warn(taskDnD.message)
         this.popupMessages.push({ msg: taskDnD.message, variant: 'danger' })
       }
 
       this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
-      // console.log(res)
       if (res.statusCode == 200) {
         this.key += 1
       }
@@ -450,7 +385,6 @@ export default {
     }, 600),
 
     moveTodo(e) {
-      // console.log("move section =>",e.relatedContext.list)
       this.highlight = +e.to.dataset.section
     },
 
@@ -469,15 +403,11 @@ export default {
         }
       })
 
-      console.log(todoDnD)
-
       if (todoDnD.statusCode != 200) {
-        // console.info(todoDnD.message)
         this.popupMessages.push({ msg: todoDnD.message, variant: 'danger' })
       }
 
       this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
-      // console.log(res)
       if (res.statusCode == 200) {
         this.key += 1
       }
@@ -509,13 +439,10 @@ export default {
           this.loading = false
         }).catch(e => console.log(e))
       }
-
-
     },
 
     // Sort By Action List
     sortBy($event) {
-      console.log($event, this.orderBy)
       // sort by title
       if ($event == 'title' && this.orderBy == 'asc') {
         this.localdata.forEach(function(todo, index) {
