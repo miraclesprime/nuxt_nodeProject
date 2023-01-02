@@ -69,9 +69,11 @@ export default {
       let inbox2 = { today: today, yesterday: yesterday, older: older}
 
       this.inbox.forEach((item,index) => {
-        let ud = new Date(item.updatedAt)
-        // console.info(ud.getDate() - new Date().getDate())
-        switch (ud.getDate() - new Date().getDate()) {
+        // let ud = new Date(item.updatedAt).getTime()
+        let timeDiff = new Date().getTime() - new Date(item.updatedAt).getTime()
+        let daysDiff = Math.round(timeDiff / (1000 * 60 * 60 * 24))
+        // console.info(daysDiff)
+        /*switch (daysDiff) {
           case 0:
             today.push(item)
             break;
@@ -81,7 +83,16 @@ export default {
           default:
             older.push(item)
             break;
+        }*/
+        if ( daysDiff >= 0 && daysDiff <= 1) {
+          today.push(item)
+          return
+        } 
+        if (daysDiff > 1 && daysDiff < 2) {
+          yesterday.push(item)
+          return
         }
+        older.push(item)
       })
 
       let o2 = [], t2 = [], y2 = []

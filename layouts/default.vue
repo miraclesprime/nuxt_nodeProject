@@ -3,7 +3,7 @@
     <bib-app-wrapper class="test" :navigationCollapsed="collapseNavigation" :select="appHeaderActions.select" @collapseNavigation="() => {
           resizeCalendar()
           collapseNavigation = !collapseNavigation;
-        }" :button="appCreateButton" @createbtn-click="createBtnClick" :isLightTheme="lightThemeChecked" >
+        }" :isLightTheme="lightThemeChecked" >
       <template #topbar>
         <bib-header :avatarLink="user2 ? user2.Photo : ''"  :isLightTheme="lightThemeChecked">
           <template #avatar_menu>
@@ -33,7 +33,7 @@
         <bib-app-switcher :menuItems="appItems"  :isLightTheme="lightThemeChecked" @toggle-theme="handleToggleWrapperTheme"></bib-app-switcher>
       </template>
       <template #navigation>
-        <bib-button v-show="!collapseNavigation" dropdown="" label="" class="height-3 create-dropdown ">
+        <!-- <bib-button v-show="!collapseNavigation" dropdown="" label="" class="height-3 create-dropdown ">
           <template v-slot:menu>
             <ul>
               <li v-for="item in appHeaderActions.button.items" :key="item.label" class="d-flex align-center cursor-pointer" @click.stop="createAction(item)">
@@ -42,7 +42,7 @@
               </li>
             </ul>
           </template>
-        </bib-button>
+        </bib-button> -->
         <!-- <div v-show="!collapseNavigation">
           <bib-button label="Create" variant="success" size="lg" pill class="w-75"></bib-button>
           <bib-button dropdown="" label="" class="w-75" style="transform: translateY(-28px); z-index:9;">
@@ -58,10 +58,10 @@
         </div> -->
         <bib-app-navigation :items="navItems1" @click="goToRoute($event, navItems1)" :isLightTheme="lightThemeChecked"></bib-app-navigation>
         <!-- separator -->
-        <div class="bg-dark-sub1 mt-05 mb-05" style="height: 1px"></div>
+        <div class=" mt-05 mb-05" :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']" style="height: 1px"></div>
         <bib-app-navigation :items="navItems2" @click="goToRoute($event, navItems2)" :isLightTheme="lightThemeChecked"></bib-app-navigation>
         <!-- separator -->
-        <div class="bg-dark-sub1 mt-05 mb-05" style="height: 1px"></div>
+        <div class=" mt-05 mb-05" :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']" style="height: 1px"></div>
         <bib-detail-collapse v-show="!collapseNavigation" label="Favorite Projects" variant="white" open>
           <template v-slot:content>
             <!-- <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light" id="layout-add-icon">
@@ -71,7 +71,7 @@
           </template>
         </bib-detail-collapse>
         <!-- separator -->
-        <div class="bg-dark-sub1 mt-05 mb-05" style="height: 1px"></div>
+        <div class=" mt-05 mb-05" :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']" style="height: 1px"></div>
         <bib-detail-collapse v-show="!collapseNavigation" label="People" variant="white" open>
           <template v-slot:content>
             <!-- <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light">
@@ -105,12 +105,12 @@ export default {
     return {
       openSidebar: false,
       flag: false,
-      appCreateButton: {
+      /*appCreateButton: {
         label: this.$i18n.t("Create"),
         event: "createbtn-click",
         variant: "success",
         icon: "add",
-      },
+      },*/
       appItems: [{
           img: "Layers",
           color: "primary",
@@ -162,12 +162,12 @@ export default {
       collapseNavigation: false,
       lightThemeChecked: false,
       appHeaderActions: {
-        button: {
+        /*button: {
           items: [
             { label: "New Task", icon: "check-circle", iconVariant: "success", key: "new-task" },
             { label: "New Project", icon: "briefcase", key: "new-project" },
           ]
-        },
+        },*/
         select: {
           items: [{
               label: "Biztree",
@@ -289,8 +289,10 @@ export default {
        
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2NjQ4NjYxMzUyNTQsImV4cCI6MTY3MjY0MjEzNTI1NCwianRpIjoiODc1ZDRhZjYtYjk3NC00OTk0LWEwNTUtMTA0MTVkOGE1ZWNiIn0.vaIav6u9D_wbfwgXlcTH526L1OOwXqLFHWIf6VqMdz0"
 
-      // this.$cookies.set('b_ssojwt', cookie);
-      // this.$store.dispatch('token/setToken', cookie);
+      let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnRUxZcWFRV1FHOWRuamsyIiwic3ViZSI6InJhamVldi5zaGFybWFAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJVU0VSIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY3MjYzOTg2MDMzMSwiZXhwIjoxNjgwNDE1ODYwMzMxLCJqdGkiOiJhYWZlYmUxYi1kZGI2LTRmODMtYjIzYy1hZWRkMDcxMzU1ZTEifQ.AxRf7tHVZC4r0Io6J9ghNZJscPkRKWM3LBOgevkQdKE"
+
+      this.$cookies.set('b_ssojwt', cookie);
+      this.$store.dispatch('token/setToken', cookie);
 
       if (this.$cookies.get('b_ssojwt')) {
         let jwt = this.$cookies.get('b_ssojwt');
@@ -362,10 +364,10 @@ export default {
   },
 
   methods: {
-    createBtnClick(e) {
+    /*createBtnClick(e) {
       // console.log('create', e)
       this.collapseNavigation = false
-    },
+    },*/
     isRouteActive(id) {
       if (this.$route.path.includes(id)) {
         return true
@@ -374,7 +376,7 @@ export default {
       }
     },
 
-    createAction($event) {
+    /*createAction($event) {
       // console.log($event.key)
       switch ($event.key) {
         case "new-task":
@@ -389,7 +391,7 @@ export default {
           console.log('default')
           break;
       }
-    },
+    },*/
 
     resizeCalendar() {
       if (document.getElementById('myDiv')) {
