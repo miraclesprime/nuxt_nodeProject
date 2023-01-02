@@ -526,11 +526,11 @@ export default {
       if ($event == "priority") {
         if (this.orderBy == "asc") {
           this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
+            todo["tasks"] = todo.tasks.sort((a, b) => a.priority.id - b.priority.id);
           })
         } else {
           this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) => b.priority.text.localeCompare(a.priority.text));
+            todo["tasks"] = todo.tasks.sort((a, b) => b.priority.id - a.priority.id);
           })
         }
       }

@@ -38,7 +38,7 @@
     <div class="py-05 px-05" id="sidebar-btn-wrapper">
       <bib-button v-show="!task.id" label="Create Task" variant="primary" v-on:click="createTask"></bib-button>
     </div>
-    <loading :loading="loading2 || loading"></loading>
+    <!-- <loading :loading="loading2 || loading"></loading> -->
   </div>
 </template>
 <script>

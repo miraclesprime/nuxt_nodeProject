@@ -271,12 +271,12 @@ export default {
         if (this.orderBy == "asc") {
           this.orderBy = "desc"
           this.localdata.forEach(function(sec) {
-            sec["tasks"] = sec.tasks.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
+            sec["tasks"] = sec.tasks.sort((a, b) => a.priority.id - b.priority.id);
           })
         } else {
           this.orderBy = "asc"
           this.localdata.forEach(function(sec) {
-            sec["tasks"] = sec.tasks.sort((a, b) => b.priority.text.localeCompare(a.priority.text));
+            sec["tasks"] = sec.tasks.sort((a, b) => b.priority.id - a.priority.id);
           })
         }
         // this.templateKey += 1
