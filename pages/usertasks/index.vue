@@ -314,11 +314,11 @@ export default {
 
         case 'priority':
           if (this.taskOrder == "asc") {
-            this.tasks.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
+            this.tasks.sort((a, b) => a.priority.id - b.priority.id);
             this.taskOrder = "desc"
 
           } else {
-            this.tasks.sort((a, b) => b.priority.text.localeCompare(a.priority.text));
+            this.tasks.sort((a, b) => b.priority.id - a.priority.id);
             this.taskOrder = "asc"
 
           }
