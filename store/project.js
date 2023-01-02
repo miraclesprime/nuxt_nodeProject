@@ -237,7 +237,7 @@ export const mutations = {
 
       newArr.sort((a, b) => {
         if (a.priority && b.priority) {
-          return a.priority.text.localeCompare(b.priority.text)
+          return a.priority.id - b.priority.id;
         }
       });
       state.projects = newArr;
@@ -257,7 +257,7 @@ export const mutations = {
 
       newArr.sort((a, b) => {
         if (a.priority && b.priority) {
-          return b.priority.text.localeCompare(a.priority.text)
+          return b.priority.id - a.priority.id
         }
       });
       state.projects = newArr;

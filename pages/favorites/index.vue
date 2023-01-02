@@ -236,12 +236,12 @@ export default {
 
           if (this.projOrder == "asc") {
             this.sortedProject.sort((a, b) => {
-              if (a.priority && b.priority) { return a.priority.text.localeCompare(b.priority.text) }
+              if (a.priority && b.priority) { return a.priority.id - b.priority.id }
             });
             this.projOrder = "desc"
           } else {
             this.sortedProject.sort((a, b) => {
-              if (a.priority && b.priority) { return b.priority.text.localeCompare(a.priority.text) }
+              if (a.priority && b.priority) { return b.priority.id - a.priority.id }
             });
             this.projOrder = "asc"
           }
@@ -363,11 +363,11 @@ export default {
 
         case 'priority':
           if (this.taskOrder == "asc") {
-            this.sortedTask.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
+            this.sortedTask.sort((a, b) => a.priority.id - b.priority.id);
             this.taskOrder = "desc"
 
           } else {
-            this.sortedTask.sort((a, b) => b.priority.text.localeCompare(a.priority.text));
+            this.sortedTask.sort((a, b) => b.priority.id - a.priority.id);
             this.taskOrder = "asc"
 
           }
