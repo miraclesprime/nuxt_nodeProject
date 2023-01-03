@@ -15,37 +15,45 @@
       </div>
     </div>
     <table class="table ">
-        <thead>
-          <tr>
-            <th>Subtasks</th>
-            <th>Assignee</th>
-            <th width="150">Due date</th>
-            <th></th>
-          </tr>
-        </thead>
+      <thead>
+        <tr>
+          <th>Subtasks</th>
+          <th>Assignee</th>
+          <th width="150">Due date</th>
+          <th></th>
+        </tr>
+      </thead>
       <tbody>
-          <tr v-if="newSubtask || localSubTasks.length == 0" class="new">
-            <td>
-              <div class="d-flex gap-05 align-center">
-                <bib-icon icon="check-circle-solid" variant="white" :scale="1.25"></bib-icon>
-                <input class="sub-input" ref="subtaskNameInput" type="text" v-model.trim="title" minlength="3" pattern="[a-zA-Z]{4,128}" @keyup="debounceCreateSubtask" placeholder="Start typing..." >
-              </div>
-            </td>
-            <td>
-              <bib-select size="sm" :options="orgUsers" v-model="assignee" v-on:change="changeAssignee" ></bib-select>
-              <!-- <bib-input type="text" size="sm" avatar-left="" v-model="assignee" placeholder="Assign to..."></bib-input> -->
-            </td>
-            <td>
-              <bib-input type="date" size="sm"  icon-left="calendar" v-model="date" placeholder="Set date..."></bib-input>
-              <!-- <bib-datepicker v-model="date" size="sm" class="align-right" format="dd MMM yyyy" placeholder="Set date..."></bib-datepicker> -->
-            </td>
-            <td>
-              <div class="d-flex gap-05">
-                <bib-icon icon="trash" variant="gray5" v-on:click="newSubtask = false"></bib-icon>
-                <bib-icon icon="tick" variant="success" v-on:click="createSubtask"></bib-icon>
-              </div>
-            </td>
-          </tr>
+        <tr v-if="newSubtask || localSubTasks.length == 0" class="new">
+          <td>
+            <div class="d-flex gap-05 align-center">
+              <bib-icon icon="check-circle-solid" variant="white" :scale="1.25"></bib-icon>
+              <input class="sub-input" ref="subtaskNameInput" type="text" v-model.trim="title" pattern="[a-zA-Z0-9-_ ]+" @keyup="validateInput" @blur="validateInput" placeholder="Enter text...">
+            </div>
+          </td>
+          <td>
+            <div class="d-flex align-center gap-05">
+              <bib-avatar size="1.25rem"></bib-avatar>
+              <span>Assign to...</span>
+            </div>
+            <!-- <bib-select size="sm" :options="orgUsers" v-model="assignee" v-on:change="changeAssignee"></bib-select> -->
+            <!-- <bib-input type="text" size="sm" avatar-left="" v-model="assignee" placeholder="Assign to..."></bib-input> -->
+          </td>
+          <td>
+            <div class="d-flex align-center gap-05">
+              <bib-icon icon="calendar"></bib-icon>
+              <span>Set due...</span>
+            </div>
+            <!-- <bib-input type="date" size="sm" icon-left="calendar" v-model="date" placeholder="Set date..."></bib-input> -->
+            <!-- <bib-datepicker v-model="date" size="sm" class="align-right" format="dd MMM yyyy" placeholder="Set date..."></bib-datepicker> -->
+          </td>
+          <td>
+            <!-- <div class="d-flex gap-05">
+              <bib-icon icon="trash" variant="gray5" v-on:click="newSubtask = false"></bib-icon>
+              <bib-icon icon="tick" variant="success" v-on:click="createSubtask"></bib-icon>
+            </div> -->
+          </td>
+        </tr>
         <tr v-for="sub in localSubTasks" :key="sub.key">
           <!-- <td>{{sub.key}}</td> -->
           <td>
@@ -62,9 +70,9 @@
             </div>
           </td>
           <td>
-          <span v-if="sub.canDelete" class="cursor-pointer shape-circle bg-light" v-tooltip="'Delete'" title="Delete" @click="deleteSubtask(sub)">
-            <bib-icon icon="trash-solid" ></bib-icon>
-          </span>
+            <span v-if="sub.canDelete" class="cursor-pointer shape-circle bg-light" v-tooltip="'Delete'" title="Delete" @click="deleteSubtask(sub)">
+              <bib-icon icon="trash-solid"></bib-icon>
+            </span>
           </td>
         </tr>
       </tbody>
@@ -93,7 +101,7 @@ export default {
       title: "",
       assignee: "",
       date: "",
-      taskSections: [{
+      /*taskSections: [{
         key: 1,
         id: 199,
         title: "Remind me what time it is",
@@ -101,7 +109,7 @@ export default {
         dueDate: "22 Jan 2022",
         // isDone: false,
         options: "elipsis",
-      }, ],
+      }, ],*/
       user: {},
       flag: false,
       loading: false,
@@ -112,6 +120,7 @@ export default {
       teamMembers: "user/getTeamMembers",
       currentTask: "task/getSelectedTask",
       subTasks: "subtask/getSubTasks",
+      user2: "user/getUser2",
     }),
 
     orgUsers() {
@@ -124,7 +133,7 @@ export default {
     localSubTasks() {
       let subTs = _.cloneDeep(this.subTasks);
       subTs.map((s) => {
-        if(s.userId == JSON.parse(localStorage.getItem('user')).sub || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
+        if (s.userId == JSON.parse(localStorage.getItem('user')).sub || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
           s.canDelete = true;
         } else {
           s.canDelete = false;
@@ -137,19 +146,26 @@ export default {
     currentTask(newVal) {
       if (Object.keys(newVal).length > 0) {
         this.loading = true
-        this.user = this.teamMembers.filter(t => t.id == this.currentTask.userId)
+        let usr = this.teamMembers.filter(t => t.id == this.currentTask.userId)
+        this.user = usr[0]
         this.$store.dispatch("subtask/fetchSubtasks", this.currentTask)
           .then(() => {
             // console.log('subtask fetched')
             this.loading = false
           })
+          .catch(e => {
+            console.log(e)
+            this.loading = false
+          })
+      } else {
+        this.user = undefined
       }
     },
   },
   /*mounted(){
-    // console.info('mouted task-group');
+    console.info('mouted task-group');
     // this.user = this.teamMembers.filter(t => t.id == this.currentTask.userId)
-    // this.user = _.cloneDeep(this.currentTask.user)
+    // this.user = _.cloneDeep(this.user2)
   },*/
   methods: {
     openCreateSubtask() {
@@ -158,31 +174,33 @@ export default {
         this.$refs.subtaskNameInput.focus()
       })
     },
-    changeAssignee() {
+    /*changeAssignee() {
       this.user = this.teamMembers.filter(t => t.id == this.assignee)
-    },
+    },*/
     createSubtask() {
-      
+
       this.loading = true
       let subData = {
         taskId: this.currentTask.id,
         title: this.title,
         user: {
-          id: this.user[0].id,
-          firstName: this.user[0].firstName,
-          lastName: this.user[0].lastName,
-          email: this.user[0].email,
+          id: this.user?.id || this.user2.Id,
+          firstName: this.user?.firstName || this.user2.FirstName,
+          lastName: this.user?.lastName || this.user2.LastName,
+          email: this.user?.email || this.user2.Email,
         },
-        description: this.description,
-        dueDate: this.date,
+        description: "",
+        dueDate: "",
         priorityId: 1,
         statusId: 1,
         budget: 0,
         text: `added subtask "${this.title}"`,
       }
+
+      // console.log(subData)
       this.$store.dispatch("subtask/createSubtask", subData)
         .then(t => {
-          console.log(t)
+          // console.log(t)
           this.newSubtask = false
           this.title = ""
           this.assignee = ""
@@ -195,19 +213,20 @@ export default {
         })
     },
 
-    debounceCreateSubtask: _.debounce(function() {
-      // console.log('Debounced function')
+    validateInput: _.debounce(function() {
       if (this.$refs.subtaskNameInput.validity.valid) {
-        console.info('valid input');
-        // return false
+        // console.info('valid input');
+        this.$refs.subtaskNameInput.classList.remove("error")
+        this.createSubtask()
       } else {
-        console.log('invalid input')
+        // console.log('invalid input')
+        this.$refs.subtaskNameInput.classList.add("error")
       }
-      // this.createSubtask()
     }, 1500),
+
     async deleteSubtask(subtask) {
       this.loading = true
-      const delsub = await this.$store.dispatch("subtask/deleteSubtask", {...subtask, text: `deleted subtask "${subtask.title}"`});
+      const delsub = await this.$store.dispatch("subtask/deleteSubtask", { ...subtask, text: `deleted subtask "${subtask.title}"` });
       if (delsub.statusCode == 200) {
         this.$store.dispatch("subtask/fetchSubtasks", this.currentTask)
         this.$nuxt.$emit("refresh-history")
@@ -231,9 +250,18 @@ export default {
   border: 1px solid $dark;
   border-radius: 0.25rem;
   padding: 0.25rem;
-  &:focus { outline: none; }
-  &:focus:invalid { outline: 3px solid $danger-sub3; }
-  &:invalid { border-color: $danger; }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus:invalid {
+    outline: 3px solid $danger-sub3;
+  }
+
+  &:invalid {
+    border-color: $danger;
+  }
 }
 
 .table {
@@ -267,7 +295,9 @@ export default {
   }
 
   tr.new {
-    td, th {
+
+    td,
+    th {
       background-color: $light;
 
     }
@@ -288,10 +318,19 @@ export default {
 
 ::v-deep {
   .bib-select {
-    .select__real { margin-top:0; margin-bottom: 0;}
+    .select__real {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
   }
+
   .input {
-    input { margin-top:0; margin-bottom: 0; background-color: transparent; border-color: transparent; }
+    input {
+      margin-top: 0;
+      margin-bottom: 0;
+      background-color: transparent;
+      border-color: transparent;
+    }
   }
 }
 

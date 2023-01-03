@@ -1,7 +1,7 @@
 <template>
   <div id="project-action-wrapper" class="task-actions py-025 ml-025">
     <div id="pa-add-project-wrapper" class="action-left">
-      <div class="d-flex gap-05 shape-rounded py-025 px-05 cursor-pointer text-secondary text-hover-dark bg-hover-gray3" id="pa-add-project-button" v-on:click="showCreateTaskModal">
+      <div class="d-flex gap-05 shape-rounded py-025 px-05 cursor-pointer text-success bg-success-sub6 bg-hover-success-sub3" id="pa-add-project-button" v-on:click="showCreateTaskModal">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-task-text">New Project</span>
       </div>
     </div>
