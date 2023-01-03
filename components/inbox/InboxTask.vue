@@ -280,8 +280,8 @@ export default {
       }
 
       let user;
-      if (!this.form.userId || this.form.userId != "") {
-        user = this.teamMembers.filter(u => u.id == this.form.userId)
+      if (taskData.field == 'userId' && taskData.value != "") {
+        user = this.teamMembers.filter(u => u.id == taskData.value)
       } else {
         user = null
       }
