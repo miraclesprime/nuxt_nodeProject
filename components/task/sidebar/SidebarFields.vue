@@ -164,9 +164,6 @@ export default {
       }
     },
   },
-  mounted() {
-    // console.log('mounted-> sidebar field')
-  },
   methods: {
     changeProject() {
       if (!this.form.projectId || this.form.projectId == "") {

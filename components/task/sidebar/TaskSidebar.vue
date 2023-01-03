@@ -351,7 +351,7 @@ export default {
       }
     },
     createTask($event) {
-      console.info($event);
+
       if (this.error == "valid") {
         this.loading = true
 
@@ -398,7 +398,7 @@ export default {
     },
 
     updateTask(taskData) {
-      console.log(taskData)
+      
       this.loading = true
 
       let updatedvalue = taskData.value
@@ -431,8 +431,8 @@ export default {
       }
 
       let user;
-      if (!this.form.userId || this.form.userId != "") {
-        user = this.teamMembers.filter(u => u.id == this.form.userId)
+      if (taskData.field == 'userId' && taskData.value != "") {
+        user = this.teamMembers.filter(u => u.id == taskData.value)
       } else {
         user = null
       }
