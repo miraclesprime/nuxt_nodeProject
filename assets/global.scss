@@ -349,6 +349,10 @@ ul {
   gap: 0.25rem;
 }
 
+.modal__wrapper {
+  &.modal-lg { max-width: 45rem; }
+}
+
   .bib-datepicker {
     &.align-right {
       .vdp-datepicker__calendar { right: 0;}

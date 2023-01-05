@@ -1,7 +1,7 @@
 <template>
-  <div class="file-wrap border-light shape-rounded p-025" >
+  <div class="file-wrap border-light shape-rounded p-025">
     <div class="d-flex gap-05 align-center" v-tooltip="`${property.name} (${property.size})`">
-      <bib-avatar size="2rem" :src="property.preview"></bib-avatar> <span class="file-text font-md text-truncate" >{{property.name}}</span>
+      <bib-avatar size="2rem" :src="property.preview"></bib-avatar> <span class="file-text font-md text-truncate">{{property.name}}</span>
       <div class="width-2 height-2 bg-light shape-circle d-flex align-center justify-center">
         <bib-popup pop="elipsis" icon-variant="gray5" icon-hover-variant="gray6">
           <template v-slot:menu>
@@ -19,30 +19,31 @@
     </div>
     <!-- file detail modal -->
     <bib-modal-wrapper v-if="fileDetailModal" title="File Details" @close="fileDetailModal = false">
-        <template slot="content">
-          <table class="table">
-            <tr v-for="file in fileDetail">
-              <template v-if="file.key == 'size'">
-                <th class="text-right font-w-400">{{file.key}}:</th>
-                <td class="text-left text-gray6 pl-1">{{$formatBytes(file.value)}}</td>
-              </template>
-              <template v-else>
-                <th class="text-right font-w-400">{{file.key}}:</th>
-                <td class="text-left text-gray6 pl-1">{{file.value}}</td>
-              </template>
-            </tr>
-          </table>
-        </template>
-        <template slot="footer">
-          <div class="d-flex justify-end">
-            <bib-button label="Close" variant="light" pill @click="fileDetailModal = false"></bib-button>
-            <!-- <bib-button label="Create" variant="success" class="ml-auto" pill></bib-button> -->
-          </div>
-        </template>
-      </bib-modal-wrapper>
+      <template slot="content">
+        <table class="table">
+          <tr v-for="file in fileDetail">
+            <template v-if="file.key == 'size'">
+              <th class="text-right font-w-400">{{file.key}}:</th>
+              <td class="text-left text-gray6 pl-1">{{$formatBytes(file.value)}}</td>
+            </template>
+            <template v-else>
+              <th class="text-right font-w-400">{{file.key}}:</th>
+              <td class="text-left text-gray6 pl-1">{{file.value}}</td>
+            </template>
+          </tr>
+        </table>
+      </template>
+      <template slot="footer">
+        <div class="d-flex justify-end">
+          <bib-button label="Close" variant="light" pill @click="fileDetailModal = false"></bib-button>
+          <!-- <bib-button label="Create" variant="success" class="ml-auto" pill></bib-button> -->
+        </div>
+      </template>
+    </bib-modal-wrapper>
   </div>
 </template>
 <script>
+import dayjs from 'dayjs'
 export default {
 
   name: 'FileComp',
@@ -51,13 +52,13 @@ export default {
       type: Object,
       default: () => {
         return {
-            key: "",
-            name: "File-name.ext",
-            size: 853581,
-            preview: "",
-            type: "",
-            extension: "",
-            owner: "",
+          key: "",
+          name: "File-name.ext",
+          size: 853581,
+          preview: "",
+          type: "",
+          extension: "",
+          owner: "",
         }
       }
     },
@@ -83,11 +84,12 @@ export default {
       let arr = []
       if (this.property.hasOwnProperty("key")) {
         Object.entries(this.property).map(([key, value]) => {
-          // if (value) {
-            if (key == 'name' || key == "extension" || key == "size" || key == "createdAt" || key == "updatedAt") {
-              arr.push({ value: value, key: key })
-            }
-          // }
+          if (key == 'name' || key == "extension" || key == "size") {
+            arr.push({ value: value, key: key })
+          }
+          if (key == "createdAt" || key == "updatedAt") {
+            arr.push({ key: key, value: dayjs(value).format('DD MMM YYYY') })
+          }
         })
       }
       return arr
@@ -105,14 +107,14 @@ export default {
     this.canDeleteTaskFile()
   },
   methods: {
-    openFile(){
-        this.$emit("open-file", this.property)
+    openFile() {
+      this.$emit("open-file", this.property)
     },
-    previewFile(){
-        this.$emit("preview-file", this.property)
+    previewFile() {
+      this.$emit("preview-file", this.property)
     },
-    detailFile(){
-        this.$emit("detail-file", this.property)
+    detailFile() {
+      this.$emit("detail-file", this.property)
     },
     downloadFile() {
       this.$axios.get("file/" + this.property.key, {
@@ -135,14 +137,14 @@ export default {
         })
         .catch(e => console.error(e))
     },
-    deleteFile(){
-        this.$emit("delete-file", this.property)
+    deleteFile() {
+      this.$emit("delete-file", this.property)
     },
 
     canDeleteTaskFile() {
       // console.log(this.property.owner, JSON.parse(localStorage.getItem('user')).sub)
       //  console.log(JSON.parse(localStorage.getItem('user')).subr)
-      if (this.property.owner == JSON.parse(localStorage.getItem('user')).sub || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN' ) {
+      if (this.property.owner == JSON.parse(localStorage.getItem('user')).sub || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
         this.cdtf = true
         return true;
       }
@@ -157,7 +159,7 @@ export default {
 .file-wrap {}
 
 .file-text {
-    width: 7.5rem;  
+  width: 7.5rem;
 }
 
 table {
@@ -165,6 +167,7 @@ table {
   width: 100%;
   font-size: $base-size;
 }
+
 table th,
 table td {
   padding: 0.25rem;

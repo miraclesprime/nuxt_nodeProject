@@ -22,12 +22,12 @@
           <small v-else class="text-danger">Project owner is required</small>
         </div>
         <!-- <bib-input label="Enter email" placeholder="Enter email"></bib-input> -->
-        <div id="cpm-jumbotron-wrapper" class="d-flex p-075 bg-light shape-rounded mt-1">
+        <!-- <div id="cpm-jumbotron-wrapper" class="d-flex p-075 bg-light shape-rounded mt-1">
           <div id="cpm-jumbotron" class="width-2 height-2">
             <bib-avatar text="!" variant="primary" text-variant="light" size="1rem"></bib-avatar>
           </div>
           <span id="cpm-jumbotron-text" class="pl-05 font-sm text-gray6">Lorem ipsum, dolor sit amet consectetur adipisicing, Lorem ipsum dolor sit, amet. elit. Ad, Lorem ipsum dolor sit amet. sunt.</span>
-        </div>
+        </div> -->
         <loading :loading="loading"></loading>
       </template>
       <template v-slot:footer>

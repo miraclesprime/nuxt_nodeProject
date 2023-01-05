@@ -6,7 +6,7 @@
     <div id="task-file-actions-wrapper" class="file-actions border-bottom-gray2 d-flex align-center py-025">
       <div class="d-inline-flex gap-05 cursor-pointer shape-rounded py-025 px-05 bg-success-sub6 bg-hover-success-sub3 text-success " id="file-upload-button" @click="uploadModal = true">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="file-upload-text" class="">Upload File</span>
-      </div> 
+      </div>
       <!-- <div class="action-left d-flex " id="file-action-left">
       </div> -->
       <!-- <div class="action-right d-flex gap-05" id="file-action-right">
@@ -21,18 +21,15 @@
         </ul>
       </div> -->
     </div>
-    
-    <div id="task-files" class="files d-flex flex-wrap gap-1 py-05">
+    <div id="task-files" class="files py-05">
       <div v-if="showPlaceholder" class="placeholder d-inline-flex align-center gap-1 p-025 border-gray3 bg-white">
-        <div class="animated-background width-2 height-2 shape-circle" ></div>
-        <div class="animated-background  height-105" style="width:9rem;" ></div>
+        <div class="animated-background width-2 height-2 shape-circle"></div>
+        <div class="animated-background  height-105" style="width:9rem;"></div>
       </div>
       <template v-else>
-        <file-comp v-for="file in files" :key="file.key + fileKey" :property="file"  @delete-file="deleteFile" @preview-file="showPreviewModal(file)"></file-comp>
+        <file-comp v-for="file in files" :key="file.key + fileKey" :property="file" @delete-file="deleteFile" @preview-file="showPreviewModal(file)"></file-comp>
       </template>
     </div>
-
-
     <!-- File Upload modal -->
     <bib-modal-wrapper v-if="uploadModal" title="Select file(s)" @close="uploadModal = false">
       <template slot="content">
@@ -48,7 +45,6 @@
         </div>
       </template>
     </bib-modal-wrapper>
-
     <!-- preview modal -->
     <bib-modal-wrapper v-if="previewModal" title="Preview" size="lg" @close="closePreviewModal">
       <template slot="content">
@@ -57,7 +53,7 @@
         <div class="text-center">
           <img v-if="imgPreview" :src="imgPreview" class="w-fit" style="max-width:100%;" alt="preview">
           <pdf-preview v-else-if="pdfPreview" :pdfsrc="pdfPreview"></pdf-preview>
-          <bib-spinner v-else class="mx-auto" ></bib-spinner>
+          <bib-spinner v-else class="mx-auto"></bib-spinner>
         </div>
       </template>
       <template slot="footer">
@@ -66,10 +62,8 @@
         </div>
       </template>
     </bib-modal-wrapper>
-  
   </div>
 </template>
-
 <script>
 import { mapGetters } from 'vuex'
 import { FILE_FIELDS } from "~/config/constants"
@@ -88,7 +82,9 @@ export default {
       showPlaceholder: false,
       previewModal: false,
       imgPreview: '',
-      pdfPreview: ''
+      pdfPreview: '',
+      oldfilesCount: 0,
+      ffcount: 0,
     }
   },
   props: {
@@ -115,8 +111,12 @@ export default {
           createdAt: dbf.createdAt,
         })
       })
+      this.oldfilesCount = files.length
       return files
-    }
+    },
+    /*filesCount() {
+      return this.dbFiles.length
+    },*/
   },
   watch: {
     task(newValue, oldValue) {
@@ -126,21 +126,22 @@ export default {
         this.getFiles()
       } else {
         this.dbFiles = []
+        this.oldfilesCount = 0
       }
     },
 
-    reloadFiles(newValue, oldValue){
+    reloadFiles(newValue, oldValue) {
       if (newValue != oldValue) {
-         _.delay(() => {
+        _.delay(() => {
           this.getFiles()
-        }, 2000);
+        }, 3000);
       }
     },
   },
   mounted() {
     // console.log('mounted, task id->', this.task.id)
     this.getFiles()
-      // this.canDeleteTaskFile()
+    // this.canDeleteTaskFile()
     // })
   },
   methods: {
@@ -182,14 +183,14 @@ export default {
         _.delay(() => {
           // console.log('delay->', fi.data);
           this.getFiles()
-        }, 2000);
-        
+          this.fileLoader = false
+          this.uploadModal = false
+        }, 5000);
+
       }
-      this.fileLoader = false
-      this.uploadModal = false
     },
 
-    async getFiles() {
+    getFiles() {
       this.showPlaceholder = true
       // console.info(Object.keys(this.task).length, !this.task)
       if (Object.keys(this.task).length == 0) {
@@ -199,6 +200,7 @@ export default {
       }
       let obj1 = { taskId: this.task.id }
       this.$axios.get("file/db/all", {
+          // timeout: 2500,
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
             'obj': JSON.stringify(obj1)
@@ -206,13 +208,26 @@ export default {
         }).then(f => {
           // console.log(f.data)
           if (f.data.statusCode == 200) {
+            // let oldfilesCount = this.filesCount
             this.dbFiles = f.data.data
             this.showPlaceholder = false
             this.fileKey += 1;
             this.$nuxt.$emit("refresh-history")
+            console.info('old files->', this.oldfilesCount, 'new files->', this.dbFiles.length)
+            if (this.ffcount <= 1 && this.oldfilesCount == this.dbFiles.length) {
+              _.delay(() => {
+                this.ffcount += 1
+                this.getFiles()
+              }, 5000)
+              console.log('Same files count! Hit api again to fetch updated files')
+            }
           }
         })
-        .catch(e => console.error(e))
+        .catch(e => {
+          console.error(e)
+          this.showPlaceholder = false
+          this.dbFiles = []
+        })
     },
 
     downloadFile(file) {
@@ -262,12 +277,12 @@ export default {
       }
     },
 
-    async showPreviewModal(file){
+    async showPreviewModal(file) {
       this.previewModal = true
 
       if (file.type.indexOf('image/') == 0 && "url" in file) {
         let imgtype = file.type.split("/")[1]
-        const prev = await this.$axios.get("file/single/"+file.key, {
+        const prev = await this.$axios.get("file/single/" + file.key, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
             'preview': 'preview'
@@ -275,9 +290,9 @@ export default {
         })
         this.imgPreview = `data:image/${imgtype};base64,${prev.data.data}`
         this.pdfPreview = ''
-      } else if(file.type.indexOf('pdf') && "url" in file) { 
+      } else if (file.type.indexOf('pdf') && "url" in file) {
 
-        const prev = await this.$axios.get("file/single/"+file.key, {
+        const prev = await this.$axios.get("file/single/" + file.key, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
             'preview': 'preview'
@@ -285,17 +300,17 @@ export default {
         })
         this.pdfPreview = `data:application/pdf;base64,${prev.data.data}`
         this.imgPreview = ''
-        
+
       } else {
         this.downloadFile(file)
         this.previewModal = false
         // this.filePreview = "https://via.placeholder.com/200x160/f0f0f0/6f6f79?text="+file.extension
       }
-    
+
     },
 
 
-    closePreviewModal(){
+    closePreviewModal() {
       this.imgPreview = ''
       this.pdfPreview = ''
       this.previewModal = false
@@ -321,9 +336,9 @@ export default {
   /*border-bottom: 1px solid $gray2;*/
 }
 
-.action-right {
+/*.action-right {
   margin-left: auto;
-}
+}*/
 
 .actions {
   display: flex;
@@ -344,6 +359,12 @@ export default {
   display: flex;
   padding: 0 20px;
   align-items: center;
+}
+
+.files {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
 }
 
 </style>
