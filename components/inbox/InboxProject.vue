@@ -151,6 +151,7 @@ export default {
   data() {
     return {
       activeProject: {},
+      owner: {},
       department: DEPARTMENT,
       status: STATUS,
       priority: PRIORITY,
@@ -169,7 +170,8 @@ export default {
 
   watch: {
     project(newVal) {
-      this.activeProject = _.cloneDeep(newVal)
+        this.activeProject = _.cloneDeep(newVal)
+        this.owner = this.teamMembers.filter(tm => tm.id == newVal.userId)
     },
   },
 
@@ -277,10 +279,11 @@ export default {
   },
 
   mounted() {
-    console.log('mounted inbox project')
-    this.$store.dispatch("project/fetchTeamMember", { projectId: this.project.id }).then(() => {
-      this.canDeleteProject();
-    })
+    setTimeout(() => {
+      this.$store.dispatch("project/fetchTeamMember", { projectId: this.project.id }).then(() => {
+        this.canDeleteProject();
+      })
+    }, 2500)
   },
 
   methods: {
@@ -326,17 +329,21 @@ export default {
     }, 1200),
 
     async updateProject(text) {
-      // console.log('update project', this.activeProject)
-      this.loading = true
-      let proj = await this.$axios.$put("/project", { id: this.activeProject.id, user: this.owner[0], data: this.activeProject, text: text || '' }, {
+      // this.loading = true
+      let proj = await this.$axios.$put("/project", { 
+          id: this.activeProject.id, 
+          user: this.owner[0], 
+          data: this.activeProject, 
+          text: text || '' 
+        }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       })
-      // console.log(proj.data)
+
       if (proj.statusCode == 200) {
-        this.activeProject = proj.data
         this.$store.dispatch("project/setSingleProject", proj.data)
+        // this.$store.dispatch("project/fetchSingleProject", proj.data.id)
       }
-      this.loading = false
+      // this.loading = false
     },
 
     setFavorite() {
