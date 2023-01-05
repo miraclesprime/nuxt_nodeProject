@@ -21,7 +21,7 @@
         </ul>
       </div> -->
     </div>
-    <div id="task-files" class="files d-flex flex-wrap gap-1 py-05">
+    <div id="task-files" class="files py-05">
       <div v-if="showPlaceholder" class="placeholder d-inline-flex align-center gap-1 p-025 border-gray3 bg-white">
         <div class="animated-background width-2 height-2 shape-circle"></div>
         <div class="animated-background  height-105" style="width:9rem;"></div>
@@ -82,7 +82,9 @@ export default {
       showPlaceholder: false,
       previewModal: false,
       imgPreview: '',
-      pdfPreview: ''
+      pdfPreview: '',
+      oldfilesCount: 0,
+      ffcount: 0,
     }
   },
   props: {
@@ -109,8 +111,12 @@ export default {
           createdAt: dbf.createdAt,
         })
       })
+      this.oldfilesCount = files.length
       return files
-    }
+    },
+    /*filesCount() {
+      return this.dbFiles.length
+    },*/
   },
   watch: {
     task(newValue, oldValue) {
@@ -120,6 +126,7 @@ export default {
         this.getFiles()
       } else {
         this.dbFiles = []
+        this.oldfilesCount = 0
       }
     },
 
@@ -127,7 +134,7 @@ export default {
       if (newValue != oldValue) {
         _.delay(() => {
           this.getFiles()
-        }, 2500);
+        }, 3000);
       }
     },
   },
@@ -178,7 +185,7 @@ export default {
           this.getFiles()
           this.fileLoader = false
           this.uploadModal = false
-        }, 2500);
+        }, 5000);
 
       }
     },
@@ -201,10 +208,19 @@ export default {
         }).then(f => {
           // console.log(f.data)
           if (f.data.statusCode == 200) {
+            // let oldfilesCount = this.filesCount
             this.dbFiles = f.data.data
             this.showPlaceholder = false
             this.fileKey += 1;
             this.$nuxt.$emit("refresh-history")
+            console.info('old files->', this.oldfilesCount, 'new files->', this.dbFiles.length)
+            if (this.ffcount <= 1 && this.oldfilesCount == this.dbFiles.length) {
+              _.delay(() => {
+                this.ffcount += 1
+                this.getFiles()
+              }, 5000)
+              console.log('Same files count! Hit api again to fetch updated files')
+            }
           }
         })
         .catch(e => {
@@ -320,9 +336,9 @@ export default {
   /*border-bottom: 1px solid $gray2;*/
 }
 
-.action-right {
+/*.action-right {
   margin-left: auto;
-}
+}*/
 
 .actions {
   display: flex;
@@ -343,6 +359,12 @@ export default {
   display: flex;
   padding: 0 20px;
   align-items: center;
+}
+
+.files {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
 }
 
 </style>
