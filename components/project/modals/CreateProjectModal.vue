@@ -1,13 +1,13 @@
 <template>
   <div id="create-project-modal-wrapper">
-    <bib-modal-wrapper @close="showCreateProjectModal = false" v-show="showCreateProjectModal" title="Create Project" id="create-project" @keypress.native="bindEnter($event, 'create-project-btn')">
+    <bib-modal-wrapper @close="closeModal" v-show="showCreateProjectModal" title="Create Project" id="create-project" @keypress.native="bindEnter($event, 'create-project-btn')">
       <template v-slot:content>
         <label class="text-gray6">Project name <span class="text-danger">*</span></label>
         <bib-input v-model.trim="projectName" placeholder="Name your project"></bib-input>
         <small class="text-danger mb-05" style="margin-top:-0.5rem; display:block;">{{projectName ? '' : 'Project name is required'}}</small>
-        <bib-input label="Department" v-model="department" placeholder="Type or select department name"></bib-input>
-        <label id="create-project-modal-heading" class="text-gray6">Assign a project lead <span class="text-danger">*</span></label>
-        <bib-button test_id="create-project-dd1" dropdown1="add" label="Type name or email" v-model="owner" v-on:input-keydown="dropdownInputKeydown" :footer="{icon: 'add', label: 'Invite via email', event: 'footer-action'}" @footer-action="inviteViaEmail" class="mt-05 mb-05">
+        <!-- <bib-input label="Department" v-model="department" placeholder="Type or select department name"></bib-input> -->
+        <label id="create-project-modal-heading" class="text-gray6" style="margin-bottom: -0.5rem;">Assign a project lead <span class="text-danger">*</span></label>
+        <bib-button test_id="create-project-dd1" dropdown1="add" label="Type name or email" v-model="owner" v-on:input-keydown="dropdownInputKeydown" :footer="{icon: 'add', label: 'Invite via email', event: 'footer-action'}" @footer-action="inviteViaEmail" class="mb-05">
           <template v-slot:menu>
             <ul id="cpm-fields" class="border-gray1" style="border-radius: 0 !important; border: 1px solid var(--bib-gray1);">
               <li :id="'cpm-field-'+index" v-for="(tm, index) in filterUser" :key="'cpm-item-'+index" v-on:click="dd1ItemClick(tm)">
@@ -18,7 +18,7 @@
           </template>
         </bib-button>
         <div id="project-team-members" class="d-flex pt-025">
-          <email-chip v-if="Object.keys(owner).length > 0" :name="owner.label" :email="owner.email ? owner.email : owner.sube" :avatar="owner.avatar" v-bind:close="true" v-on:remove-email="removeOwner"></email-chip>
+          <email-chip v-if="Object.keys(owner).length > 0" :name="owner.label" :email="owner.email ? owner.email : owner.sube" :avatar="owner.avatar" v-bind:close="true" v-on:remove-email="owner = {}"></email-chip>
           <small v-else class="text-danger">Project owner is required</small>
         </div>
         <!-- <bib-input label="Enter email" placeholder="Enter email"></bib-input> -->
@@ -33,11 +33,7 @@
       <template v-slot:footer>
         <!-- <div v-if="error" class="shape-rounded border-danger px-075 py-05 text-danger font-sm">{{errorMsg}}</div> -->
         <div class="m-auto pt-1 d-flex justify-between" id='tm-create-project-model'>
-          <bib-button @click.native="
-              () => {
-                showCreateProjectModal = false;
-              }
-            " variant="light" size="lg" pill label="Cancel"></bib-button>
+          <bib-button @click.native="closeModal" variant="light" size="lg" pill label="Cancel"></bib-button>
           <bib-button @click.native="createProject()" variant="success" size="lg" id="create-project-btn" pill label="Create"></bib-button>
         </div>
       </template>
@@ -52,7 +48,7 @@ export default {
   data() {
     return {
       showCreateProjectModal: false,
-      projectName: "Project name",
+      projectName: "",
       owner: {},
       department: "",
       projectlead: "Enter name or email",
@@ -107,8 +103,10 @@ export default {
     /*leadChange() {
       console.log(this.owner)
     },*/
-    removeOwner() {
+    closeModal() {
+      this.projectName = ''
       this.owner = {}
+      this.showCreateProjectModal = false
     },
     bindEnter(event, button) {
       if (event.key == "Enter") {
@@ -126,6 +124,8 @@ export default {
           // console.log(res)
           this.loading = false
           if (res.statusCode == 200) {
+            this.projectName = ''
+            this.owner = {}
             this.showCreateProjectModal = false
           }
           console.log(res.message)
@@ -158,23 +158,14 @@ export default {
 </script>
 <style lang="scss" scoped>
 ::v-deep {
-  .modal__wrapper {
-    .modal__wrapper__header {
-      padding: 1rem 1.5rem 0;
-
-      span {
-        font-weight: bold;
+  /*.input {
+    &.error {
+      input {
+        border-color: $danger-sub1; color: $danger;
+        &:focus, &:hover { border-color: $danger-sub1; }
       }
     }
-
-    .modal__wrapper__content {
-      padding: 1.5rem;
-    }
-
-    .modal__wrapper__footer {
-      padding: 0 1.5rem 1rem;
-    }
-  }
+  }*/
 }
 
 </style>
