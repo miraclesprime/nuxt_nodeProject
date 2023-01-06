@@ -300,6 +300,10 @@ export default {
           description: '',
           budget: 0,
         }
+        this.$nextTick(() => {
+          this.$refs.taskTitleInput.focus()
+        });
+
         if (this.sectionIdActive) {
           this.form.sectionId = this.sectionIdActive
         }
