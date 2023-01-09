@@ -198,7 +198,22 @@ export const actions = {
         "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
       }
     })
-    ctx.commit("setTeamMembers", members)
+    if(JSON.parse(localStorage.getItem('user')).subr != 'ADMIN') {
+        const userlist = await this.$axios.$get("/user/list", {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` }
+        })
+        if (userlist.statusCode == 200) {
+          let userTeam = members.filter(u => {
+            if(userlist.data.userIds.includes(u.Id)) {
+              return u
+            }
+          })
+          ctx.commit("setTeamMembers", userTeam)
+        }  
+    } else {
+      ctx.commit("setTeamMembers", members)
+    }
+    
   },
 
   async setUserTasks(ctx, payload) {
