@@ -2,6 +2,7 @@ export const state = () => ({
   user: null,
   user2: null,
   teamMembers: [],
+  appMembers: [],
   userTasks: [],
 });
 
@@ -22,6 +23,14 @@ export const getters = {
     return members
   },
 
+  getAppMembers(state){
+    let appmembers = []
+    state.appMembers.map(t => {
+      appmembers.push({ label: t.FirstName + ' ' + t.LastName, firstName: t.FirstName, lastName: t.LastName, email: t.Email, icon: "user", id: t.Id, status: t.Status, role: t.Role, avatar: t.Photo, selected: false })
+    })
+    return appmembers
+  },
+
   getUserTasks(state) {
     return state.userTasks;
   },
@@ -39,6 +48,10 @@ export const mutations = {
 
   setTeamMembers(state, payload) {
     state.teamMembers = payload;
+  },
+
+  setAppMembers(state, payload) {
+    state.appMembers = payload;
   },
 
   setUserTasks(state, payload) {
@@ -198,7 +211,10 @@ export const actions = {
         "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
       }
     })
-    if(JSON.parse(localStorage.getItem('user')).subr != 'ADMIN') {
+
+    ctx.commit("setTeamMembers", members)
+
+    if(JSON.parse(localStorage.getItem('user')).subr == 'USER') {
         const userlist = await this.$axios.$get("/user/list", {
           headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` }
         })
@@ -208,10 +224,10 @@ export const actions = {
               return u
             }
           })
-          ctx.commit("setTeamMembers", userTeam)
+          ctx.commit("setAppMembers", userTeam)
         }  
     } else {
-      ctx.commit("setTeamMembers", members)
+      ctx.commit("setAppMembers", members)
     }
     
   },
