@@ -198,7 +198,7 @@ export const actions = {
         "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
       }
     })
-    if(JSON.parse(localStorage.getItem('user')).subr != 'ADMIN') {
+    if(JSON.parse(localStorage.getItem('user')).subr == 'USER') {
         const userlist = await this.$axios.$get("/user/list", {
           headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` }
         })
