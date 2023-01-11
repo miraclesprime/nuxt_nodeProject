@@ -65,12 +65,15 @@
             <user-info :userId="sub.userId"></user-info>
           </td>
           <td>
-            <div class="d-inline-flex align-center gap-05">
-              <bib-icon icon="calendar"></bib-icon> <span v-format-date="sub.dueDate"></span>
+            <div class="d-inline-flex align-center gap-05" >
+              <bib-icon icon="calendar"></bib-icon>
+              <datepicker v-model="sub.dueDate" @input="updateSubtask(sub, 'dueDate')" placeholder="Select date..." clear-button ></datepicker>
+              <!-- <span v-if="sub.dueDate" v-format-date="sub.dueDate"></span> <span v-else>Select date...</span> -->
             </div>
+            
           </td>
           <td>
-            <span v-if="sub.canDelete" class="cursor-pointer shape-circle bg-light" v-tooltip="'Delete'" title="Delete" @click="deleteSubtask(sub)">
+            <span v-show="sub.canDelete" class="cursor-pointer shape-circle bg-light" v-tooltip="'Delete'"  @click="deleteSubtask(sub)">
               <bib-icon icon="trash-solid"></bib-icon>
             </span>
           </td>
@@ -83,14 +86,20 @@
 <script>
 import { mapGetters } from 'vuex';
 import _ from 'lodash'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 export default {
   name: "SidebarSubtask",
 
   props: {
     // groupName: {},
   },
+  components: {
+    fa: FontAwesomeIcon,
+  },
   data: function() {
     return {
+      faCalendar,
       sortingItems: [
         { label: "Name", value: "name" },
         { label: "Assignee", value: "assignee" },
@@ -224,6 +233,17 @@ export default {
       }
     }, 1500),
 
+    async updateSubtask(subtask, key){
+      console.log(subtask.id, key, subtask[key])
+      const sub = await this.$store.dispatch("subtask/updateSubtask", { id: subtask.id, data: { [key]: subtask[key] } })
+      console.log(sub)
+      if (sub.statusCode == 200) {
+        console.log("success")
+      } else {
+        console.warn("error")
+      }
+    },
+
     async deleteSubtask(subtask) {
       this.loading = true
       const delsub = await this.$store.dispatch("subtask/deleteSubtask", { ...subtask, text: `deleted subtask "${subtask.title}"` });
@@ -233,6 +253,8 @@ export default {
       }
       this.loading = false
     },
+
+    
   }
 };
 
@@ -332,6 +354,13 @@ export default {
       border-color: transparent;
     }
   }
+  .vdp-datepicker {
+    > :first-child { display: inline-flex; align-items: center; }
+    input { border: 0 none; outline: none 0; max-width: 7rem;
+      &:focus { outline: none 0; border: 0 none; }
+    }
+  }
 }
+
 
 </style>
