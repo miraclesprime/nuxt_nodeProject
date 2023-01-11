@@ -28,7 +28,7 @@
           <td>
             <div class="d-flex gap-05 align-center">
               <bib-icon icon="check-circle-solid" variant="white" :scale="1.25"></bib-icon>
-              <input class="sub-input" ref="subtaskNameInput" type="text" v-model.trim="title" pattern="[a-zA-Z0-9-_ ]+" @keyup="validateInput" @blur="validateInput" placeholder="Enter text...">
+              <input class="sub-input" ref="subtaskNameInput" type="text" v-model.trim="title" :disabled="loading" pattern="[a-zA-Z0-9-_ ]+" @keyup="validateInput" @blur="validateInput" placeholder="Enter text...">
             </div>
           </td>
           <td>
@@ -58,19 +58,19 @@
           <!-- <td>{{sub.key}}</td> -->
           <td>
             <div class="d-flex gap-05 align-center">
-              <bib-icon icon="check-circle" :scale="1.25" :variant="sub.isDone ? 'success' : 'gray4'"></bib-icon> {{sub.title}}
+              <span class="cursor-pointer" style="width:20px; height:20px" @click="markComplete(sub)"><bib-icon icon="check-circle" :scale="1.25" :variant="sub.isDone ? 'success' : 'gray4'"></bib-icon></span>
+              <input type="text" class="editable-input sm" v-model="sub.title" @input="debounceUpdate(sub, {title: sub.title})">
             </div>
           </td>
           <td>
-            <user-info :userId="sub.userId"></user-info>
+            <bib-select :options="orgUsers" v-model="sub.userId" size="sm" class="bg-white" v-on:change="updateSubtask(sub, {userId: sub.userId})"></bib-select>
+            <!-- <user-info :userId="sub.userId"></user-info> -->
           </td>
           <td>
             <div class="d-inline-flex align-center gap-05" >
               <bib-icon icon="calendar"></bib-icon>
-              <datepicker v-model="sub.dueDate" @input="updateSubtask(sub, 'dueDate')" placeholder="Select date..." clear-button ></datepicker>
-              <!-- <span v-if="sub.dueDate" v-format-date="sub.dueDate"></span> <span v-else>Select date...</span> -->
-            </div>
-            
+              <datepicker v-model="sub.dueDate" @input="updateSubtask(sub, {dueDate: sub.dueDate})" placeholder="Select date..." clear-button ></datepicker>
+            </div>            
           </td>
           <td>
             <span v-show="sub.canDelete" class="cursor-pointer shape-circle bg-light" v-tooltip="'Delete'"  @click="deleteSubtask(sub)">
@@ -86,26 +86,26 @@
 <script>
 import { mapGetters } from 'vuex';
 import _ from 'lodash'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faCalendar } from '@fortawesome/free-regular-svg-icons';
+// import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+// import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 export default {
   name: "SidebarSubtask",
 
   props: {
     // groupName: {},
   },
-  components: {
+  /*components: {
     fa: FontAwesomeIcon,
-  },
+  },*/
   data: function() {
     return {
-      faCalendar,
-      sortingItems: [
+      // faCalendar,
+      /*sortingItems: [
         { label: "Name", value: "name" },
         { label: "Assignee", value: "assignee" },
         { label: "Due Date", value: "dueDate" },
         // { label: "Status", value:"status" },
-      ],
+      ],*/
       newSubtask: false,
       title: "",
       assignee: "",
@@ -134,7 +134,7 @@ export default {
 
     orgUsers() {
       let data = this.teamMembers.map(u => {
-        return { label: u.firstName + ' ' + u.lastName, value: u.id }
+        return { label: u.firstName + ' ' + u.lastName, value: u.id, img: u.avatar }
       })
       return [{ label: 'Please select...', value: null }, ...data]
     },
@@ -184,7 +184,8 @@ export default {
       })
     },
     /*changeAssignee() {
-      this.user = this.teamMembers.filter(t => t.id == this.assignee)
+      let usr = this.teamMembers.filter(t => t.id == this.assignee)
+      this.user = usr[0]
     },*/
     createSubtask() {
 
@@ -233,12 +234,33 @@ export default {
       }
     }, 1500),
 
-    async updateSubtask(subtask, key){
-      console.log(subtask.id, key, subtask[key])
-      const sub = await this.$store.dispatch("subtask/updateSubtask", { id: subtask.id, data: { [key]: subtask[key] } })
-      console.log(sub)
+    debounceUpdate: _.debounce(function(subtask, key) {
+      this.updateSubtask(subtask, key)
+    }, 1500),
+
+    markComplete(subtask){
+      let sub = subtask
+      if (sub.isDone) {
+        sub.statusId = 1
+        sub.isDone = false
+      } else {
+        sub.isDone = true
+        sub.statusId = 5
+      }
+      // console.log(sub.statusId, sub.isDone)
+      this.updateSubtask(sub, {statusId: sub.statusId, isDone: sub.isDone})
+    },
+
+    async updateSubtask(subtask, data){
+      // console.log(subtask.id, key, subtask[key])
+      const sub = await this.$store.dispatch("subtask/updateSubtask", { id: subtask.id, data: data })
+      console.log(sub.data)
       if (sub.statusCode == 200) {
-        console.log("success")
+        /*this.localSubTasks.forEach(ld => {
+          if (ld.id == sub.data.id) {
+            ld == sub.data
+          }
+        })*/
       } else {
         console.warn("error")
       }
@@ -299,12 +321,14 @@ export default {
       text-align: left;
       font-weight: normal;
       color: $gray4;
-      padding: 0.25rem 0 0.25rem 0.25rem;
+      padding: 0.25rem 0.25rem 0.25rem 0.25rem;
       border-top: 1px solid var(--bib-light);
       border-bottom: 1px solid var(--bib-light);
       border-left: 1px solid transparent;
       border-right: 1px solid transparent;
       color: var(--bib-text-light);
+      &:first-child { padding-left: 0 }
+      &:last-child { padding-right: 0 }
     }
 
     .input {
@@ -327,13 +351,14 @@ export default {
 
   tbody {
     td {
-      padding: 0.25rem 0 0.25rem 0.25rem;
+      padding: 0.25rem 0.25rem 0.25rem 0.25rem;
       border-top: 1px solid var(--bib-light);
       border-bottom: 1px solid var(--bib-light);
       border-left: 1px solid transparent;
       border-right: 1px solid transparent;
       color: var(--bib-dark-sub1);
-
+      &:first-child { padding-left: 0 }
+      &:last-child { padding-right: 0 }
     }
   }
 }
@@ -360,7 +385,20 @@ export default {
       &:focus { outline: none 0; border: 0 none; }
     }
   }
+  .bib-select {
+    width: 12rem; height: 2rem;
+    &.bib-select--sm {
+      .select__real { margin: 0;}
+    }
+    &.bg-white {
+      .select__btn { background-color: transparent; padding: 0;}
+    }
+  }
 }
 
+/*.bib-select {
+  width: 8rem;
+  .select__btn { background-color: transparent;}
+}*/
 
 </style>

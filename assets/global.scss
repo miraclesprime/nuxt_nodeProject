@@ -140,6 +140,7 @@ ul {
   &.error { border-color: $danger-sub1; color: $danger;
     &:focus { border-color: $danger-sub1; box-shadow: 0 0 3px $danger-sub2;}
   }
+  &.sm { padding: 0.125rem 0.2rem; font-weight: normal; font-size: $font-size-sm; border-radius: 0.1rem; }
 }
 // task bundle
 .task-bundle {
