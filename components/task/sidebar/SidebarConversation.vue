@@ -128,7 +128,7 @@ export default {
         this.comments = []
         return
       }
-      this.showPlaceholder = true
+      // this.showPlaceholder = true
       const comm = await this.$axios.get(`/task/${this.task.id}/comments`, {
         headers: {
           "Content-Type": "application/json",
@@ -141,19 +141,19 @@ export default {
       if (comm.data.statusCode == 200) {
         this.comments = comm.data.data
       }
-      this.showPlaceholder = false
+      // this.showPlaceholder = false
       // this.$store.dispatch("task/fetcTaskComments", { id: this.task.id })
     },
 
     async onDeleteMessage(payload) {
-      this.msgLoading = true
+      // this.msgLoading = true
       // let data = {taskId: this.task.id, commentId: payload.msgId }
       const del = await this.$store.dispatch("task/deleteTaskComment", {...payload, text: "task comment deleted"});
       if (del.statusCode == 200) {
         // this.$emit("refresh-list")
         this.fetchTaskComments()
       }
-      this.msgLoading = false
+      // this.msgLoading = false
       // console.log(del)
     },
 
@@ -164,16 +164,16 @@ export default {
     },
 
     fetchHistory() {
-      this.msgLoading = true
+      // this.msgLoading = true
       this.$store.dispatch("task/fetchHistory", this.task)
         .then(h => {
           // console.log(h)
           this.history = h
-          this.msgLoading = false
+          // this.msgLoading = false
         })
         .catch(e => {
           console.error(e)
-          this.msgLoading = false
+          // this.msgLoading = false
 
         })
     },

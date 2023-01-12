@@ -135,6 +135,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
 import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'

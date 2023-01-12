@@ -34,7 +34,7 @@
     <div class="content font-md py-05">
       <div v-if="item.content || item.comment" class="inbox-item-content mb-05">
         <template v-for="c in item.content" >
-          <div>{{c.title}}</div><div>@ {{c.time}}</div> 
+          <div :key="c.title">{{c.title}}</div><div :key="c.title">@ {{c.time}}</div> 
         </template>
         <template v-for="cm in item.comment" >
           <div v-html="cm.comment"></div><div>@ {{$toTime(cm.updatedAt)}}</div> 
