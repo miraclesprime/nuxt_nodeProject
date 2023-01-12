@@ -246,7 +246,7 @@ export default {
     },
     reactionGroup() {
       let rg = []
-      if (this.reactions.length) {
+      if (this.reactions) {
         this.reactions.map(r => {
           let rindex = rg.findIndex((el) => el.reaction == r.reaction)
           let relem = rg.find((el, index) => el.reaction == r.reaction)

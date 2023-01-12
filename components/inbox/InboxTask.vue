@@ -95,6 +95,7 @@
     <loading :loading="loading"></loading>
   </div>
 </template>
+
 <script>
 import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 import { mapGetters } from 'vuex'
@@ -250,7 +251,7 @@ export default {
     }, 1000),
 
     updateTask(taskData, historyText, projectId) {
-      this.loading = true
+      // this.loading = true
 
       let updatedvalue = taskData.value
       if (taskData.name == 'Assignee') {
@@ -300,11 +301,11 @@ export default {
           this.$nuxt.$emit("update-key")
           // this.$nuxt.$emit("refresh-history")
           this.reloadHistory += 1
-          this.loading = false
+          // this.loading = false
         })
         .catch(e => {
           console.log(e)
-          this.loading = false
+          // this.loading = false
         })
 
     },
