@@ -112,7 +112,7 @@ export default {
   },
   methods: {
     fetchComments() {
-      this.showPlaceholder = true
+      // this.showPlaceholder = true
       /*const comm = await this.$axios.get(`/project/${this.project.id}/comments`, {
         headers: {
           "Content-Type": "application/json",
@@ -127,10 +127,10 @@ export default {
         // console.log(c)
         this.comments = c.data
         this.fetchHistory()
-        this.showPlaceholder = false
+        // this.showPlaceholder = false
       }).catch(e => {
         console.warn(e)
-        this.showPlaceholder = false
+        // this.showPlaceholder = false
       })
     },
     fetchHistory() {
