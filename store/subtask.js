@@ -25,8 +25,14 @@ export const mutations = {
     state.subTasks.push(payload);
   },
 
-  setSingleSubTask(state, currentTask) {
+  setSelectedSubtask(state, currentTask) {
     state.selectedSubTask = currentTask;
+  },
+
+  updateSingleSubtask(state, payload) {
+    let idx = state.subTasks.findIndex(st => st.id == payload.id )
+    state.subTasks[idx] = payload
+    // console.log(payload, idx)
   },
 
   createSubtaskComment(state, payload) {
@@ -51,8 +57,8 @@ export const actions = {
   },
 
   // set single SubTask
-  setSingleSubTask(ctx, payload) {
-    ctx.commit('setSingleSubTask', payload)
+  setSelectedSubtask(ctx, payload) {
+    ctx.commit('setSelectedSubtask', payload)
   },
 
   // create subtask
@@ -72,6 +78,10 @@ export const actions = {
     const res = await this.$axios.$put("/subtask", payload, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
+    // console.log(res.data)
+    if (res.statusCode == 200) {
+      ctx.commit("updateSingleSubtask", res.data)
+    }
     return res
   },
 

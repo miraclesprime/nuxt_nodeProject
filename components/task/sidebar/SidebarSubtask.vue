@@ -54,7 +54,7 @@
             </div> -->
           </td>
         </tr>
-        <tr v-for="sub in localSubTasks" :key="sub.key">
+        <tr v-for="sub in localSubTasks" :key="sub.id + subkey">
           <!-- <td>{{sub.key}}</td> -->
           <td>
             <div class="d-flex gap-05 align-center">
@@ -73,9 +73,14 @@
             </div>            
           </td>
           <td>
-            <span v-show="sub.canDelete" class="cursor-pointer shape-circle bg-light" v-tooltip="'Delete'"  @click="deleteSubtask(sub)">
-              <bib-icon icon="trash-solid"></bib-icon>
-            </span>
+            <div class="d-flex align-center justify-end gap-025">
+              <span v-show="sub.canDelete" class="cursor-pointer shape-rounded width-105 height-105 align-center justify-center bg-hover-light" v-tooltip="'Delete'" @click="deleteSubtask(sub)">
+                <bib-icon icon="trash-solid" :scale="1" variant="gray5"></bib-icon>
+              </span>
+              <span class="cursor-pointer shape-rounded width-105 height-105 align-center justify-center bg-hover-light" v-tooltip="'Detail'" @click="$emit('view-subtask', sub)" >
+                <bib-icon icon="arrow-right" :scale="1.25" variant="gray5" ></bib-icon>
+              </span>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -122,6 +127,7 @@ export default {
       user: {},
       flag: false,
       loading: false,
+      subkey: 0,
     };
   },
   computed: {
@@ -234,33 +240,31 @@ export default {
       }
     }, 1500),
 
-    debounceUpdate: _.debounce(function(subtask, key) {
-      this.updateSubtask(subtask, key)
+    debounceUpdate: _.debounce(function(subtask, data) {
+      this.updateSubtask(subtask, data)
     }, 1500),
 
     markComplete(subtask){
-      let sub = subtask
-      if (sub.isDone) {
-        sub.statusId = 1
-        sub.isDone = false
+      // let sub = subtask
+      if (subtask.isDone) {
+        subtask.statusId = 1
+        subtask.isDone = false
       } else {
-        sub.isDone = true
-        sub.statusId = 5
+        subtask.isDone = true
+        subtask.statusId = 5
       }
-      // console.log(sub.statusId, sub.isDone)
-      this.updateSubtask(sub, {statusId: sub.statusId, isDone: sub.isDone})
+      // console.log(subtask.id, subtask.statusId, subtask.isDone)
+
+      this.updateSubtask(subtask, {statusId: subtask.statusId, isDone: subtask.isDone})
     },
 
     async updateSubtask(subtask, data){
       // console.log(subtask.id, key, subtask[key])
       const sub = await this.$store.dispatch("subtask/updateSubtask", { id: subtask.id, data: data })
-      console.log(sub.data)
+      // console.log(sub.data)
       if (sub.statusCode == 200) {
-        /*this.localSubTasks.forEach(ld => {
-          if (ld.id == sub.data.id) {
-            ld == sub.data
-          }
-        })*/
+        // console.log('update subtask success->', sub.data)
+        this.subkey += 1
       } else {
         console.warn("error")
       }

@@ -93,10 +93,11 @@
 
     <div class="of-scroll-y d-grid" id="ts-of-scroll-y" style="grid-template-columns: none; align-items: start">
       <sidebar-fields :task="currentTask" :loading="loading" @update-field="updateTask" @create-task="createTask"></sidebar-fields>
-      <sidebar-subtask id="task_subtasks"></sidebar-subtask>
+      <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)"></sidebar-subtask>
       <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
       <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
       <!-- <sidebar-history></sidebar-history> -->
+      <!-- <subtask-detail></subtask-detail> -->
       <button ref="topScroll" id="topScroll" style="visibility: hidden; opacity: 0" v-scroll-to="scrollId ? '#'+scrollId : '#sidebar-inner-wrap'"></button>
     </div>
 
@@ -574,6 +575,12 @@ export default {
         this.reloadFiles += 1;
         this.value.files = []
       }
+    },
+
+    // subtask detail
+    viewSubtask($event){
+      console.log($event)
+      this.$store.dispatch("subtask/setSelectedSubtask", $event)
     },
   },
 };
