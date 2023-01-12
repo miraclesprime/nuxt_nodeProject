@@ -28,7 +28,7 @@
           <td>
             <div class="d-flex gap-05 align-center">
               <bib-icon icon="check-circle-solid" variant="white" :scale="1.25"></bib-icon>
-              <input class="sub-input" ref="subtaskNameInput" type="text" v-model.trim="title" :disabled="loading" pattern="[a-zA-Z0-9-_ ]+" @keyup="validateInput" @blur="validateInput" placeholder="Enter text...">
+              <input class="sub-input" ref="subtaskNameInput" type="text" v-model.trim="title" :disabled="loading" pattern="[a-zA-Z0-9-_ ]+" @keyup="validateInput" placeholder="Enter text...">
             </div>
           </td>
           <td>
@@ -229,15 +229,20 @@ export default {
         })
     },
 
-    validateInput: _.debounce(function() {
+    validateInput(){
       if (this.$refs.subtaskNameInput.validity.valid) {
         // console.info('valid input');
         this.$refs.subtaskNameInput.classList.remove("error")
-        this.createSubtask()
+        this.debounceCreate()
       } else {
         // console.log('invalid input')
         this.$refs.subtaskNameInput.classList.add("error")
       }
+    },
+
+    debounceCreate: _.debounce(function() {
+      // console.warn("debounceCreate fired")
+      this.createSubtask()
     }, 1500),
 
     debounceUpdate: _.debounce(function(subtask, data) {
