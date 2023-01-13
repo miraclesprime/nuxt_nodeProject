@@ -2,7 +2,7 @@ export const state = () => ({
   subTasks: [],
   selectedSubTask: {},
   subtaskComments: [],
-  singleSubtaskComment: {},
+  // singleSubtaskComment: {},
 });
 
 export const getters = {
@@ -12,6 +12,10 @@ export const getters = {
 
   getSelectedSubTask(state) {
     return state.selectedSubTask;
+  },
+
+  getSubTaskComments(state){
+    return state.subtaskComments
   },
 };
 
@@ -25,8 +29,8 @@ export const mutations = {
     state.subTasks.push(payload);
   },
 
-  setSelectedSubtask(state, currentTask) {
-    state.selectedSubTask = currentTask;
+  setSelectedSubtask(state, payload) {
+    state.selectedSubTask = payload;
   },
 
   updateSingleSubtask(state, payload) {
@@ -111,12 +115,12 @@ export const actions = {
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
         }
       })
-
+      // console.log(res.data)
       if (res.data.statusCode == 200) {
-        ctx.dispatch("fetchSubtaskComments")
-        return res.data.data;
+        ctx.commit("fetchSubtaskComments", res.data.data)
+        return res.data;
       } else {
-        return res.data.data;
+        return res.data;
       }
 
     } catch (e) {

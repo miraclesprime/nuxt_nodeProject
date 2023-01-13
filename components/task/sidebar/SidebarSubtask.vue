@@ -58,7 +58,7 @@
           <!-- <td>{{sub.key}}</td> -->
           <td>
             <div class="d-flex gap-05 align-center">
-              <span class="cursor-pointer" style="width:20px; height:20px" @click="markComplete(sub)"><bib-icon icon="check-circle" :scale="1.25" :variant="sub.isDone ? 'success' : 'gray4'"></bib-icon></span>
+              <span class="cursor-pointer" style="width:20px; height:20px" @click="markComplete(sub)"><bib-icon icon="check-circle-solid" :scale="1.25" :variant="sub.isDone ? 'success' : 'gray4'"></bib-icon></span>
               <input type="text" class="editable-input sm" v-model="sub.title" @input="debounceUpdate(sub, {title: sub.title})">
             </div>
           </td>
@@ -67,9 +67,9 @@
             <!-- <user-info :userId="sub.userId"></user-info> -->
           </td>
           <td>
-            <div class="d-inline-flex align-center gap-05" >
+            <div class="d-inline-flex align-center gap-05 position-relative" >
               <bib-icon icon="calendar"></bib-icon>
-              <datepicker v-model="sub.dueDate" @input="updateSubtask(sub, {dueDate: sub.dueDate})" placeholder="Select date..." clear-button ></datepicker>
+              <datepicker v-model="sub.dueDate" @input="updateSubtask(sub, {dueDate: sub.dueDate})" placeholder="Select date..." wrapper-class="align-right" clear-button ></datepicker>
             </div>            
           </td>
           <td>
@@ -85,7 +85,7 @@
         </tr>
       </tbody>
     </table>
-    <loading :loading="loading"></loading>
+    <!-- <loading :loading="loading"></loading> -->
   </div>
 </template>
 <script>
@@ -389,6 +389,9 @@ export default {
     }
   }
   .vdp-datepicker {
+    &.align-right {
+      .vdp-datepicker__calendar { right: 0;}
+    }
     > :first-child { display: inline-flex; align-items: center; }
     input { border: 0 none; outline: none 0; max-width: 7rem;
       &:focus { outline: none 0; border: 0 none; }

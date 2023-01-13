@@ -1,10 +1,10 @@
 <template>
   <article id="side-panel" class="side-panel" v-click-outside="closeSidebar">
-    <div class="side-panel__header" id='ts-header'>
+    <div class="side-panel__header" id="ts-header">
       <!-- <div class="side-panel__header__file__info" id='ts-header-file-info'>
         <div id='ts-secondary-text' class="p-05 of-hidden text-of-elipsis h-fit text-wrap text-secondary"></div>
       </div> -->
-      <div class="d-flex justify-between side-panel__header__actions mb-05" id='ts-side-panel'>
+      <div class="d-flex justify-between side-panel__header__actions mb-05" id="ts-side-panel">
         <div class="d-flex align-center gap-05" id="ts-icon-close-Wrapper">
           <div id='ts-icon-close' class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" v-tooltip="'Close'" title="Close" @click="$nuxt.$emit('close-sidebar')">
             <bib-icon icon="page-last" class="m-auto"></bib-icon>
@@ -97,8 +97,12 @@
       <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
       <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
       <!-- <sidebar-history></sidebar-history> -->
-      <!-- <subtask-detail></subtask-detail> -->
       <button ref="topScroll" id="topScroll" style="visibility: hidden; opacity: 0" v-scroll-to="scrollId ? '#'+scrollId : '#sidebar-inner-wrap'"></button>
+    </div>
+
+    <div class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-105">
+      <bib-avatar :src="userPhoto" size="2rem" class="flex-shrink-0" ></bib-avatar>
+      <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
     </div>
 
     <!-- <add-member-to-task ref="taskTeamModal"></add-member-to-task> -->
@@ -109,11 +113,9 @@
         </div>
       </template>
     </bib-modal-wrapper>
+    
+    <subtask-detail v-if="showSubtaskDetail" @close-sidebar-detail="showSubtaskDetail = false"></subtask-detail>
 
-    <div class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-105">
-      <bib-avatar :src="userPhoto" size="2rem" class="flex-shrink-0" ></bib-avatar>
-      <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
-    </div>
   </article>
 </template>
 
@@ -186,7 +188,8 @@ export default {
       reloadComments: 1,
       reloadHistory: 1,
       reloadFiles: 1,
-      taskTeamModal: false
+      taskTeamModal: false,
+      showSubtaskDetail: false,
     };
   },
 
@@ -329,6 +332,7 @@ export default {
   mounted() {
     this.$store.dispatch("project/fetchProjects")
     // console.info('mounted-> task sidebar')
+    this.showSubtaskDetail = false
   },
 
   methods: {
@@ -345,13 +349,14 @@ export default {
         classlist.forEach(c => {
           // console.info(c)
           if (event.target.classList.contains(c)) {
-            console.log('class found->', c)
+            // console.log('class found->', c)
             return false
           } /*else {
             console.warn("v-click-outside event", event.originalTarget)
           }*/
         })
 
+        this.showSubtaskDetail = false
         this.$nuxt.$emit("close-sidebar");
       }
     },
@@ -579,7 +584,8 @@ export default {
 
     // subtask detail
     viewSubtask($event){
-      console.log($event)
+      // console.log($event)
+      this.showSubtaskDetail = true
       this.$store.dispatch("subtask/setSelectedSubtask", $event)
     },
   },
