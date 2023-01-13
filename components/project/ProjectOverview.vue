@@ -330,7 +330,7 @@ export default {
 
     async updateProject(text) {
       // console.log('update project', this.activeProject)
-      this.loading = true
+      // this.loading = true
       let proj = await this.$axios.$put("/project", { id: this.project.id, user: this.owner[0], data: this.activeProject, text: text || '' }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       })
@@ -339,7 +339,7 @@ export default {
         this.project = proj.data
         this.$store.dispatch("project/setSingleProject", proj.data)
       }
-      this.loading = false
+      // this.loading = false
     },
     debounceUpdate: _.debounce(function(name, value) {
       console.log('Debounce ', name, value)

@@ -404,7 +404,7 @@ export default {
 
     updateTask(taskData) {
       
-      this.loading = true
+      // this.loading = true
 
       let updatedvalue = taskData.value
       let projectId = null
@@ -454,11 +454,11 @@ export default {
           this.$nuxt.$emit("update-key")
           // this.$nuxt.$emit("refresh-history")
           this.reloadHistory += 1
-          this.loading = false
+          // this.loading = false
         })
         .catch(e => {
           console.log(e)
-          this.loading = false
+          // this.loading = false
         })
 
     },
