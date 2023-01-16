@@ -14,6 +14,8 @@
         <span>Add Subtask</span>
       </div>
     </div>
+    <div class="position-relative">
+      
     <table class="table ">
       <thead>
         <tr>
@@ -85,7 +87,8 @@
         </tr>
       </tbody>
     </table>
-    <!-- <loading :loading="loading"></loading> -->
+    <loading :loading="loading"></loading>
+    </div>
   </div>
 </template>
 <script>
@@ -96,12 +99,6 @@ import _ from 'lodash'
 export default {
   name: "SidebarSubtask",
 
-  props: {
-    // groupName: {},
-  },
-  /*components: {
-    fa: FontAwesomeIcon,
-  },*/
   data: function() {
     return {
       // faCalendar,

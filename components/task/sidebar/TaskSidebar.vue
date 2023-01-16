@@ -93,7 +93,7 @@
 
     <div class="of-scroll-y d-grid" id="ts-of-scroll-y" style="grid-template-columns: none; align-items: start">
       <sidebar-fields :task="currentTask" :loading="loading" @update-field="updateTask" @create-task="createTask"></sidebar-fields>
-      <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)"></sidebar-subtask>
+      <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)" ></sidebar-subtask>
       <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
       <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
       <!-- <sidebar-history></sidebar-history> -->
@@ -188,6 +188,7 @@ export default {
       reloadComments: 1,
       reloadHistory: 1,
       reloadFiles: 1,
+      // reloadSubtask: 1,
       taskTeamModal: false,
       showSubtaskDetail: false,
     };
@@ -318,6 +319,11 @@ export default {
       this.$nextTick(() => {
         this.$refs.topScroll.click()
       });
+    },
+    showSubtaskDetail(newValue){
+      if(!newValue){
+        this.$store.dispatch("subtask/fetchSubtasks", this.currentTask )
+      }
     },
 
   },
@@ -586,7 +592,8 @@ export default {
     viewSubtask($event){
       // console.log($event)
       this.showSubtaskDetail = true
-      this.$store.dispatch("subtask/setSelectedSubtask", $event)
+      // this.$store.dispatch("subtask/setSelectedSubtask", $event)
+      this.$store.commit("subtask/setSelectedSubtask", $event)
     },
   },
 };

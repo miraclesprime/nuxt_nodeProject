@@ -1,7 +1,7 @@
 <template>
   <section id="subtask-detail-wrapper" class="position-absolute subtask-detail-wrapper bg-white">
     <div class="d-flex align-center gap-05 px-105 py-075">
-      <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" v-tooltip="'Close'" title="Close" @click="closeSidebarDetail">
+      <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" title="Close" @click="closeSidebarDetail">
         <bib-icon icon="page-last" class="m-auto"></bib-icon>
       </div>
       <!-- <div class="d-flex cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2">
@@ -14,12 +14,12 @@
           <bib-icon icon="check-circle-solid" :variant="isComplete.variant" :scale="1.5"></bib-icon>
         </div>
         <div class="flex-grow-1">
-          <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" v-model="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdateField({name: 'Title', field:'title', value:form.title})">
+          <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" v-model="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdateField({title: form.title})">
         </div>
         <div>
           <!-- <team-avatar-list :team="team"></team-avatar-list> -->
         </div>
-        <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light cursor-pointer" v-tooltip="assignee.label">
+        <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light cursor-pointer" :title="assignee.label">
           <bib-avatar :src="assignee.avatar" size="1.5rem"></bib-avatar>
         </div>
       </div>
@@ -30,24 +30,24 @@
             
         <div class="row">
           <div class="col-6">
-            <bib-select label="Assignee" test_id="subtask_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="debounceUpdateField('Assignee', 'userId', form.userId)"></bib-select>
+            <bib-select label="Assignee" test_id="subtask_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="updateSubtask({userId: form.userId})"></bib-select>
           </div>
           <div class="col-6">
-            <bib-datepicker class="align-right" v-model="dueDateInput" :value="dueDateInput" format="dd MMM yyyy" label="Due date" placeholder="Due date" @input="debounceUpdateField('Due date', 'dueDate', dueDateInput)"></bib-datepicker>
+            <bib-datepicker class="align-right" v-model="dueDateInput" :value="dueDateInput" format="dd MMM yyyy" label="Due date" placeholder="Due date" @input="updateSubtask({dueDate: dueDateInput})"></bib-datepicker>
           </div>
           <!-- <div class="col-6"></div> -->
         </div>
         <div class="row " >
           <div class="col-6" >
-            <bib-input type="select" label="Priority" v-model.number="form.priorityId" :options="priorityValues" placeholder="Please select..." v-on:change.native="debounceUpdateField('Priority', 'priorityId', form.priorityId)"></bib-input>
+            <bib-input type="select" label="Priority" v-model.number="form.priorityId" :options="priorityValues" placeholder="Please select..." v-on:change.native="updateSubtask({priorityId: form.priorityId})"></bib-input>
           </div>
           <div class="col-6" >
-            <bib-input type="select" label="Status" v-model.number="form.statusId" :options="statusValues" placeholder="Please select..." v-on:change.native="debounceUpdateField('Status', 'statusId', form.statusId)"></bib-input>
+            <bib-input type="select" label="Status" v-model.number="form.statusId" :options="statusValues" placeholder="Please select..." v-on:change.native="updateSubtask({statusId: form.statusId})"></bib-input>
           </div>
         </div>
         <div class="row " >
           <div class="col-12" >
-            <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter subtask description..." label="Description" v-on:keyup.native="debounceUpdateField('Description', 'description', form.description)"></bib-input>
+            <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter subtask description..." label="Description" v-on:keyup.native="debounceUpdateField({description: form.description})"></bib-input>
           </div>
         </div>
 
@@ -98,6 +98,7 @@ export default {
         ]
       },
       editMessage: {},
+      subkey: 0,
     }
   },
   computed: {
@@ -121,7 +122,8 @@ export default {
         return _.cloneDeep(this.subtask)
       },
       set(newValue) {
-        this.title = newValue.title
+        console.log(newValue, this)
+        // this.title = newValue.title
       }
     },
 
@@ -140,12 +142,12 @@ export default {
     },
     dueDateInput: {
       get() {
-        let nd
+        // let nd
         if (!this.form.dueDate) {
-          nd = new Date()
+          // nd = new Date()
           return new Date()
         } else {
-          nd = new Date(this.form.dueDate)
+          // nd = new Date(this.form.dueDate)
           return new Date(this.form.dueDate)
         }
       },
@@ -161,20 +163,9 @@ export default {
       } else {
         return []
       }*/
-        return [{id:1, text: 'lorem ipsum', userId: 'osdweh3425'}]
+        return [{id:1, text: 'lorem ipsum', userId: 'k61YQdJ6J7ldOGpJ', updatedAt: '2023-01-11T10:58:26.000Z'}, { id: 21, text: 'dolor sit amet', userId: 'DKgl9av2NwnaG1vz', updatedAt: '2023-01-12T11:23:52.000Z'}]
     },
   },
-  /*watch: {
-    subtask(newVal, oldVal) {
-      if (newVal.id != oldVal.id) {
-        this.$store.dispatch("subtask/fetchSubtaskComments", newVal)
-        .then(sc => {
-            this.comments = sc.data
-        })
-        .catch(e => console.warn(e))
-      }
-    }
-  },*/
 
   created(){
     this.$nuxt.$on("edit-message", (msg) => {
@@ -184,6 +175,9 @@ export default {
   },
 
   mounted(){
+    // console.log('mounted subtask detail')
+    this.$store.dispatch("subtask/fetchSubTask", this.subtask)
+    
     this.$store.dispatch("subtask/fetchSubtaskComments", this.subtask)
         .then(sc => {
             // console.log(sc.data)
@@ -192,21 +186,45 @@ export default {
         .catch(e => console.warn(e))
   },
   methods: {
-    markComplete() {
+    markComplete(){
+      // let sub = subtask
+      if (this.form.isDone) {
+        this.form.statusId = 1
+        this.form.isDone = false
+      } else {
+        this.form.isDone = true
+        this.form.statusId = 5
+      }
+      console.info(this.form.id, this.form.statusId, this.form.isDone)
+      this.updateSubtask({statusId: this.form.statusId, isDone: this.form.isDone})
+    },
 
+    async updateSubtask(data){
+      // console.log(subtask.id, key, subtask[key])
+      const sub = await this.$store.dispatch("subtask/updateSubtask", { id: this.form.id, data: data })
+      // console.log(sub.data)
+      if (sub.statusCode == 200) {
+        // console.log('update subtask success->', sub.data)
+        this.$store.dispatch("subtask/setSelectedSubtask", sub.data)
+        // this.$store.dispatch("subtask/fetchSubTask", sub.data)
+      } else {
+        console.warn("error")
+      }
     },
     closeSidebarDetail() {
       this.$emit('close-sidebar-detail')
       this.$store.dispatch("subtask/setSelectedSubtask", "")
     },
 
-    debounceUpdateField: _.debounce(function(name, field, value) {
+    debounceUpdateField: _.debounce(function(data) {
       // console.log(name, field, value)
       if (this.form?.id) {
         // this.$emit("update-field", { name: name, field: field, value: value })
-        console.log(name, field, value)
+        // console.log(name, field, value)
+        // console.log(this.form, data)
+        this.updateSubtask(data)
       }
-    }, 1000),
+    }, 1500),
 
     onFileInput(payload) {
       // console.log(payload)
