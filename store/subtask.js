@@ -60,9 +60,13 @@ export const actions = {
     }
   },
 
-  // set single SubTask
-  setSelectedSubtask(ctx, payload) {
-    ctx.commit('setSelectedSubtask', payload)
+  async fetchSubTask(ctx, payload){
+    const res = await this.$axios.$get("/subtask/"+payload.id, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+    })
+    if (res.statusCode == 200) {
+      ctx.commit("setSelectedSubtask", res.data)
+    }
   },
 
   // create subtask
@@ -85,6 +89,7 @@ export const actions = {
     // console.log(res.data)
     if (res.statusCode == 200) {
       ctx.commit("updateSingleSubtask", res.data)
+      ctx.commit("setSelectedSubtask", res.data)
     }
     return res
   },
