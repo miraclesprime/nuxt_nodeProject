@@ -390,8 +390,11 @@ export default {
       .vdp-datepicker__calendar { right: 0;}
     }
     > :first-child { display: inline-flex; align-items: center; }
-    input { border: 0 none; outline: none 0; max-width: 7rem;
+    input { border: 0 none; outline: none 0; max-width: 6rem;
       &:focus { outline: none 0; border: 0 none; }
+    }
+    &__clear-button { color: $gray5; font-size: $font-size-sm;
+      i { font-style: normal;}
     }
   }
   .bib-select {
