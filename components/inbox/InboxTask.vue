@@ -81,7 +81,7 @@
         <!-- editable fields -->
         <sidebar-fields :task="form" @update-field="updateTask"></sidebar-fields>
         <!-- subtasks -->
-        <sidebar-subtask></sidebar-subtask>
+        <sidebar-subtask @view-subtask="viewSubtask($event)"></sidebar-subtask>
         <!-- conversation -->
         <sidebar-conversation :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
         <!-- files -->
@@ -92,6 +92,9 @@
       <bib-avatar :src="user.Photo" size="2rem" class="flex-shrink-0"></bib-avatar>
       <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
     </div>
+    
+    <subtask-detail v-if="showSubtaskDetail" @close-sidebar-detail="showSubtaskDetail = false"></subtask-detail>
+
     <loading :loading="loading"></loading>
   </div>
 </template>
@@ -126,12 +129,19 @@ export default {
       reloadComments: 1,
       reloadHistory: 1,
       reloadFiles: 1,
+      showSubtaskDetail: false,
+
     }
   },
   watch: {
     task(newValue){
       this.form = _.cloneDeep(newValue)
       this.$store.dispatch("task/fetchTeamMember", this.task)
+    },
+    showSubtaskDetail(newValue){
+      if(!newValue){
+        this.$store.dispatch("subtask/fetchSubtasks", this.currentTask )
+      }
     },
   },
   computed: {
@@ -363,6 +373,12 @@ export default {
     },
     createTask($event) {
       console.log($event)
+    },
+    viewSubtask($event){
+      // console.log($event)
+      this.showSubtaskDetail = true
+      // this.$store.dispatch("subtask/setSelectedSubtask", $event)
+      this.$store.commit("subtask/setSelectedSubtask", $event)
     },
   }
 }

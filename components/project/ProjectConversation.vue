@@ -123,8 +123,10 @@ export default {
       if (comm.data.statusCode == 200) {
         this.comments = comm.data.data
       }*/
-      this.$store.dispatch("project/fetchProjectComments", { id: this.project.id }).then(c => {
-        // console.log(c)
+      this.$store.dispatch("project/fetchProjectComments", { id: this.project.id })
+      .then(c => {
+        console.log(c)
+        // if (true) {}
         this.comments = c.data
         this.fetchHistory()
         // this.showPlaceholder = false

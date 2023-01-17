@@ -33,7 +33,7 @@
             <bib-select label="Assignee" test_id="subtask_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="updateSubtask({userId: form.userId})"></bib-select>
           </div>
           <div class="col-6">
-            <bib-datepicker class="align-right" v-model="dueDateInput" :value="dueDateInput" format="dd MMM yyyy" label="Due date" placeholder="Due date" @input="updateSubtask({dueDate: dueDateInput})"></bib-datepicker>
+            <bib-datepicker class="align-right" v-model="dueDateInput" :value="dueDateInput" format="dd MMM yyyy" label="Due date" placeholder="Due date" @input="updateSubtask({dueDate: form.dueDate})"></bib-datepicker>
           </div>
           <!-- <div class="col-6"></div> -->
         </div>
@@ -200,7 +200,7 @@ export default {
     },
 
     async updateSubtask(data){
-      // console.log(subtask.id, key, subtask[key])
+      console.log(data.dueDate, this.form.dueDate)
       const sub = await this.$store.dispatch("subtask/updateSubtask", { id: this.form.id, data: data })
       // console.log(sub.data)
       if (sub.statusCode == 200) {
