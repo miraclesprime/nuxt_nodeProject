@@ -27,45 +27,52 @@
     </div>
     <!-- other fields -->
     <div class="of-scroll-y px-105">
-            
-        <div class="row">
-          <div class="col-6">
-            <bib-select label="Assignee" test_id="subtask_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="updateSubtask({userId: form.userId})"></bib-select>
-          </div>
-          <div class="col-6">
-            <bib-datepicker class="align-right" v-model="dueDateInput" :value="dueDateInput" format="dd MMM yyyy" label="Due date" placeholder="Due date" @input="updateSubtask({dueDate: form.dueDate})"></bib-datepicker>
-          </div>
-          <!-- <div class="col-6"></div> -->
+      <div class="row">
+        <div class="col-6">
+          <bib-select label="Assignee" test_id="subtask_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="updateSubtask({userId: form.userId})"></bib-select>
         </div>
-        <div class="row " >
-          <div class="col-6" >
-            <bib-input type="select" label="Priority" v-model.number="form.priorityId" :options="priorityValues" placeholder="Please select..." v-on:change.native="updateSubtask({priorityId: form.priorityId})"></bib-input>
-          </div>
-          <div class="col-6" >
-            <bib-input type="select" label="Status" v-model.number="form.statusId" :options="statusValues" placeholder="Please select..." v-on:change.native="updateSubtask({statusId: form.statusId})"></bib-input>
-          </div>
+        <div class="col-6">
+          <bib-datepicker class="align-right" v-model="dueDateInput" :value="dueDateInput" format="dd MMM yyyy" label="Due date" placeholder="Due date" @input="updateSubtask({dueDate: form.dueDate})"></bib-datepicker>
         </div>
-        <div class="row " >
-          <div class="col-12" >
-            <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter subtask description..." label="Description" v-on:keyup.native="debounceUpdateField({description: form.description})"></bib-input>
-          </div>
+        <!-- <div class="col-6"></div> -->
+      </div>
+      <div class="row ">
+        <div class="col-6">
+          <bib-input type="select" label="Priority" v-model.number="form.priorityId" :options="priorityValues" placeholder="Please select..." v-on:change.native="updateSubtask({priorityId: form.priorityId})"></bib-input>
         </div>
-
-        <div class="py-05 " >
-            <div class="d-flex justify-between sub-title pb-05 border-bottom-gray2 ">
-                <p class="text-gray5 font-md ">Conversation </p>
+        <div class="col-6">
+          <bib-input type="select" label="Status" v-model.number="form.statusId" :options="statusValues" placeholder="Please select..." v-on:change.native="updateSubtask({statusId: form.statusId})"></bib-input>
+        </div>
+      </div>
+      <div class="row ">
+        <div class="col-12">
+          <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter subtask description..." label="Description" v-on:keyup.native="debounceUpdateField({description: form.description})"></bib-input>
+        </div>
+      </div>
+      <div class="py-05 ">
+        <div class="d-flex justify-between sub-title pb-05 border-bottom-gray2 ">
+          <p class="text-gray5 font-md ">Conversation </p>
+        </div>
+        <div v-if="loadingComments" class="my-05">
+          <div class="d-inline-flex gap-05 align-center ">
+            <div class="shape-circle width-2 height-2 animated-background"></div>
+            <div>
+              <div class="animated-background width-10 mb-025" style="height: 0.8rem"></div>
+              <div class="animated-background width-7" style="height:0.6rem"></div>
             </div>
-            <template v-if="sortedData.length > 0">
-                <div v-for="item in sortedData">
-                  <task-message v-if="item.comment" :msg="item" ></task-message>
-                  <!-- <task-history v-if="item.text" :history="item"></task-history> -->
-                </div>
-            </template>
+          </div>
         </div>
+        <template v-else-if="sortedData.length > 0">
+          <div v-for="item in sortedData">
+            <task-message v-if="item.comment" :msg="item" @delete-message="onDeleteMessage"></task-message>
+            <!-- <task-history v-if="item.text" :history="item"></task-history> -->
+          </div>
+        </template>
+      </div>
     </div>
     <!-- message input -->
     <div class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-105">
-      <bib-avatar :src="user2.Photo" size="2rem" class="flex-shrink-0" ></bib-avatar>
+      <bib-avatar :src="user2.Photo" size="2rem" class="flex-shrink-0"></bib-avatar>
       <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
     </div>
   </section>
@@ -82,15 +89,16 @@ export default {
   },*/
   data() {
     return {
-        statusValues: STATUS,
-        priorityValues: PRIORITY,
+      statusValues: STATUS,
+      priorityValues: PRIORITY,
       /*form: {
         title: '',
 
       },*/
       error: '',
       loading: false,
-      comments: [],
+      loadingComments: false,
+      // comments: [],
       value: {
         files: [
           /*{ id: 156, name: 'thefile.png' },
@@ -98,14 +106,14 @@ export default {
         ]
       },
       editMessage: {},
-      subkey: 0,
+      // subkey: 0,
     }
   },
   computed: {
     ...mapGetters({
       user2: "user/getUser2",
       subtask: "subtask/getSelectedSubTask",
-      subtaskComments: "subtask,getSubTaskComments",
+      subtaskComments: "subtask/getSubTaskComments",
       teamMembers: "user/getTeamMembers",
     }),
 
@@ -155,38 +163,52 @@ export default {
         this.form.dueDate = new Date(newValue)
       }
     },
-    sortedData(){
+    sortedData() {
       // let s = [ ...this.history, ...this.comments]
-        /*let s = [...this.subtaskComments]
-      if(s.length > 0){
+      let s = [...this.subtaskComments]
+      if (s.length > 0) {
         return s.sort((a, b) => new Date(a.updatedAt) - new Date(b.updatedAt));
       } else {
         return []
-      }*/
-        return [{id:1, text: 'lorem ipsum', userId: 'k61YQdJ6J7ldOGpJ', updatedAt: '2023-01-11T10:58:26.000Z'}, { id: 21, text: 'dolor sit amet', userId: 'DKgl9av2NwnaG1vz', updatedAt: '2023-01-12T11:23:52.000Z'}]
+      }
+      /*return [
+          {id:10, text: 'lorem ipsum', userId: 'k61YQdJ6J7ldOGpJ', updatedAt: '2023-01-11T10:58:26.000Z'}, 
+          { id: 21, text: 'dolor sit amet', userId: 'DKgl9av2NwnaG1vz', updatedAt: '2023-01-12T11:23:52.000Z'}, 
+          {"id": 1, "userId": "DKgl9av2NwnaG1vz", "subtaskId": 1, "comment": "<p>asdgdfa</p>", "isDeleted": false, "createdAt": "2023-01-18T06:40:00.000Z", "updatedAt": "2023-01-18T06:40:00.000Z" },
+          ]*/
     },
   },
 
-  created(){
+  created() {
     this.$nuxt.$on("edit-message", (msg) => {
       // console.log(msg)
       this.editMessage = msg
     })
   },
 
-  mounted(){
+  mounted() {
     // console.log('mounted subtask detail')
     this.$store.dispatch("subtask/fetchSubTask", this.subtask)
-    
+
+    this.loadingComments = true
     this.$store.dispatch("subtask/fetchSubtaskComments", this.subtask)
-        .then(sc => {
-            // console.log(sc.data)
-            this.comments = sc.data
-        })
-        .catch(e => console.warn(e))
+      .then(subc => { this.loadingComments = false })
+      .catch(e => {
+        console.warn(e)
+        this.loadingComments = false
+      })
   },
   methods: {
-    markComplete(){
+    fetchComments() {
+      this.loadingComments = true
+      this.$store.dispatch("subtask/fetchSubtaskComments", this.subtask)
+        .then(subc => { this.loadingComments = false })
+        .catch(e => {
+          console.warn(e)
+          this.loadingComments = false
+        })
+    },
+    markComplete() {
       // let sub = subtask
       if (this.form.isDone) {
         this.form.statusId = 1
@@ -196,10 +218,10 @@ export default {
         this.form.statusId = 5
       }
       console.info(this.form.id, this.form.statusId, this.form.isDone)
-      this.updateSubtask({statusId: this.form.statusId, isDone: this.form.isDone})
+      this.updateSubtask({ statusId: this.form.statusId, isDone: this.form.isDone })
     },
 
-    async updateSubtask(data){
+    async updateSubtask(data) {
       console.log(data.dueDate, this.form.dueDate)
       const sub = await this.$store.dispatch("subtask/updateSubtask", { id: this.form.id, data: data })
       // console.log(sub.data)
@@ -237,19 +259,22 @@ export default {
 
       if (this.editMessage?.id) {
         this.$store.dispatch("subtask/updateSubtaskComment", { taskId: this.subtask.id, commentId: this.editMessage.id, comment: data.text, text: `updated comment ${trimComment}` })
-        .then(res => {
+          .then(res => {
             console.log('update comment', res)
-          // this.reloadComments += 1
-        })
-        .catch(e => console.log(e))
+            // this.reloadComments += 1
+          })
+          .catch(e => console.log(e))
       } else {
         this.$store.dispatch("subtask/createSubtaskComment", { id: this.subtask.id, comment: data.text, text: `added comment "${trimComment}"` })
           .then(res => {
+            if (res.data.statusCode == 200) {
+
+            }
             if (this.value.files.length > 0) {
               // console.log(this.value.files, res.data)
-              // this.uploadFiles(this.value.files, res.data)
+              this.uploadFiles(this.value.files, res.data)
             }
-            console.log('create comment', res)
+            // console.log('create comment', res)
             // this.reloadComments += 1
           })
           .catch(e => console.log(e))
@@ -280,6 +305,21 @@ export default {
         this.value.files = []
       }
     },*/
+
+    async onDeleteMessage(payload) {
+        console.log(payload)
+      this.loadingComments = true
+      // let data = {taskId: this.task.id, commentId: payload.msgId }
+      const del = await this.$store.dispatch("subtask/deleteSubtaskComment", { ...payload, subtaskId: this.subtask.id, text: "subtask comment deleted" });
+      if (del.statusCode == 200) {
+        // this.$emit("refresh-list")
+        this.fetchComments()
+      } else {
+        console.warn(del.message)
+      }
+      // this.msgLoading = false
+      // console.log(del)
+    },
   }
 }
 

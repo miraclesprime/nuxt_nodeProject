@@ -100,7 +100,7 @@
             <fa :icon="faPaperclip"></fa>
             <input ref="file" multiple type="file" class="attachment-input" @change="onFilesSelect" />
           </div>
-          <tippy arrow trigger="click" interactive :animate-fill="false" :distance="60" placement="top-start" >
+          <tippy arrow trigger="click" theme="light-border p-0" interactive :animate-fill="false" :distance="10" placement="top-start" >
             <div slot="trigger" class="toolbar-icon">
               <fa :icon="faGrin"></fa>
             </div>
@@ -165,6 +165,7 @@ import { VEmojiPicker } from 'v-emoji-picker';
 import { snipFileName } from '~/utils/file';
 // import { ChannelPlugin } from '~/plugins/editor-channel';
 // import { ChatLink } from '~/plugins/editor-link';
+import "~/assets/tippy-theme.scss";
 
 import MentionList from '~/components/message/MessageMentionList.vue';
 
@@ -785,12 +786,6 @@ export default {
 
 ::v-deep .tippy-active .toolbar-icon {
   color: rgb(34, 34, 34);
-}
-
-.tippy-tooltip {
-  padding: 1px;
-  background-color: $gray7;
-  text-align: left;
 }
 
 .toolbar-separator {

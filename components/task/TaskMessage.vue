@@ -61,7 +61,7 @@
       <div class="action" @click.stop="onLikeClick">
         <fa :icon="faThumbsUp" />
       </div>
-      <tippy :visible="isReactionPickerOpen" :animate-fill="false" :distance="6" interactive placement="bottom-end" trigger="manual" :onHide="() => defer(() => (isReactionPickerOpen = false))">
+      <tippy :visible="isReactionPickerOpen" theme="light-border p-0" :animate-fill="false" :distance="6" interactive placement="bottom-end" trigger="manual" :onHide="() => defer(() => (isReactionPickerOpen = false))">
         <template slot="trigger">
           <div class="action" :class="{ active: isReactionPickerOpen }" @click="toggleReactionPicker">
             <fa :icon="faSmile" />
@@ -74,7 +74,7 @@
       <!-- <div class="action" @click="replyMessage">
         <fa :icon="faComment" />
       </div> -->
-      <tippy :visible="isMenuOpen" :animate-fill="false" :distance="6" interactive placement="bottom-end" trigger="manual" :onHide="() => defer(() => (isMenuOpen = false))">
+      <tippy :visible="isMenuOpen" theme="light-border p-0" :animate-fill="false" :distance="6" interactive placement="bottom-end" trigger="manual" :onHide="() => defer(() => (isMenuOpen = false))">
         <template slot="trigger">
           <div v-if="msg.userId == user.Id" class="action" :class="{ active: isMenuOpen }" @click="toggleMenu">
             <fa :icon="faEllipsisH" />
@@ -95,14 +95,14 @@
       </tippy>
     </div>
     <!-- submit reply modal -->
-    <bib-modal-wrapper v-if="replyModal" size="lg" title="Reply to..." @close="replyModal = false">
+    <!-- <bib-modal-wrapper v-if="replyModal" size="lg" title="Reply to..." @close="replyModal = false">
       <template slot="content">
         <div style="margin: -1rem -2rem -2rem; ">
           <message-input :value="value" @input="onFileInput" @submit="onReplySubmit"></message-input>
         </div>
         <loading :loading="replyLoading"></loading>
       </template>
-    </bib-modal-wrapper>
+    </bib-modal-wrapper> -->
     <!-- file upload modal -->
     <bib-modal-wrapper v-if="uploadModal" title="Select file(s)" @close="uploadModal = false">
       <template slot="content">
@@ -155,6 +155,7 @@ import {
   faStar as fasStar,
 } from '@fortawesome/free-solid-svg-icons';
 import { faComment, faStar } from '@fortawesome/free-regular-svg-icons';
+import "~/assets/tippy-theme.scss";
 
 var relativeTime = require('dayjs/plugin/relativeTime')
 dayjs.extend(relativeTime)
@@ -177,7 +178,7 @@ export default {
       isMenuOpen: false,
       isShowingDeleteConfirmModal: false,
       isReactionPickerOpen: false,
-      replyModal: false,
+      // replyModal: false,
       faFile,
       faThumbsUp,
       faSmile,
@@ -201,7 +202,7 @@ export default {
         { name: "ImageFile Name", type: "image/png", size: "2340", preview: 'https://placehold.jp/24/1f42a2/ffffff/250x200.jpg?text=placeholder%20image' }*/
       ],
       
-      replyLoading: false,
+      // replyLoading: false,
       reactions: [],
       reactionKey: 1,
       reactionSpinner: false,
@@ -309,7 +310,7 @@ export default {
       // console.log(payload)
       this.value.files = payload.files
     },
-    onReplySubmit(data) {
+    /*onReplySubmit(data) {
       // console.log(data)
       this.replyLoading = true
       this.$axios.post('/task/' + this.msg.id + "/reply", { taskCommentId: this.msg.id, comment: data.text }, {
@@ -325,7 +326,7 @@ export default {
           this.replyLoading = false
           console.warn(e)
         })
-    },
+    },*/
     onActionBarMouseLeave() {
       if (!(this.isMenuOpen || this.isReactionPickerOpen)) {
         this.isActionBarShowing = false;
@@ -859,5 +860,12 @@ export default {
     background-color: fff;
   }
 }
+::v-deep {
+  .tippy-popper {
+    .tippy-tooltip { padding: 1px !important;}
+    .tippy-content { margin: -0.3125rem -0.5625rem; }
+  }
+}
+.tippy-popper .tippy-tooltip { padding: 1px !important;}
 
 </style>
