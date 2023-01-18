@@ -1,12 +1,12 @@
 <template>
   <div class="team-avatar-list d-inline-flex align-center px-05">
-    <tippy arrow v-for="(team, index) in teammates.main" :key="team.id + index" theme="light-border" :style="{ 'margin-left': -2*index+'px'}">
+    <tippy arrow v-for="(team, index) in teammates.main" :key="team.id + index" :style="{ 'margin-left': -2*index+'px'}">
       <template v-slot:trigger>
         <bib-avatar :src="team.avatar" size="2rem" class="border-gray2"></bib-avatar>
       </template>
       {{team.label}}
     </tippy>
-    <tippy arrow placement="left" theme="light-border">
+    <tippy arrow placement="left" >
       <template v-slot:trigger>
         <span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
       </template>
@@ -18,8 +18,7 @@
 import { mapGetters } from 'vuex'
 import tippy from 'tippy.js';
 import VueTippy, { TippyComponent } from "vue-tippy";
-import "tippy.js/themes/light.css";
-import "tippy.js/themes/light-border.css";
+// import "~/assets/tippy-theme.scss";
 export default {
 
   name: 'TeamAvatarList',
@@ -82,9 +81,6 @@ export default {
     color: $secondary;
     vertical-align: middle;
   }
-}
-::v-deep {
-  .tippy-tooltip { background-color: $gray7; padding: 3px 6px; }
 }
 
 </style>

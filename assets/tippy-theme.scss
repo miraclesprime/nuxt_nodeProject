@@ -1,0 +1,47 @@
+// themes
+// light: light theme without border and box-shadow
+// light-border: light theme with border and box-shadow
+// p-0: for removing padding between tippy-content and tippy-tooltip
+
+.tippy-tooltip {
+  &.light-border-theme {
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid $gray4;
+    color: $text;
+    box-shadow: 0 4px 14px -2px rgba(0, 8, 16, .08)
+  }
+  &.light-theme {
+    background-color: #fff;
+    background-clip: padding-box;
+  }
+  &.p-0-theme {
+    padding: 0;
+  }
+}
+
+.tippy-popper {
+  &[x-placement^="top"] {
+    .light-border-theme .tippy-arrow {
+      border-top-color: $gray4;
+    }
+  }
+
+  &[x-placement^="bottom"] {
+    .light-border-theme .tippy-arrow {
+      border-bottom-color: $gray4;
+    }
+  }
+
+  &[x-placement^="left"] {
+    .light-border-theme .tippy-arrow {
+      border-left-color: $gray4;
+    }
+  }
+
+  &[x-placement^="right"] {
+    .light-border-theme .tippy-arrow {
+      border-right-color: $gray4;
+    }
+  }
+}
