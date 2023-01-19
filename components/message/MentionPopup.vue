@@ -1,5 +1,5 @@
 <template>
-  <tippy ref="tippy" :animate-fill="false" interactive placement="top-right" trigger="click">
+  <tippy ref="tippy" theme="light-border p-0" :animate-fill="false" interactive placement="top-right" trigger="click">
     <div slot="trigger" class="toolbar-icon">
       <fa :icon="faAddressCard" />
     </div>
