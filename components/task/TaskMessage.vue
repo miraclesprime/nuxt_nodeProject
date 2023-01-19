@@ -354,7 +354,6 @@ export default {
       this.reactionSpinner = true
       let duplicateReaction = this.reactions.some(r => r.userId == this.user.Id && r.reaction == data)
       // console.warn(duplicateReaction)
-      // this.$emit('reaction-clicked', this.msg.id, data);
       if (duplicateReaction) {
         alert("Reaction already exists!")
         this.reactionSpinner = false

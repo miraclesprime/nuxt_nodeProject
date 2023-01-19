@@ -83,6 +83,7 @@ export default {
       "../bib-shared/css/basic.scss",*/
       "~/assets/variable.scss",
       "../bib-shared/css/global.scss",
+      // "~/node_modules/@bizinbox/bib-ui-lib/dist/utilities.scss",
     ],
   },
   // router: {

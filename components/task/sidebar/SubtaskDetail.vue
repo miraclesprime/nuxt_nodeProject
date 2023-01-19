@@ -50,7 +50,7 @@
         </div>
       </div>
       <div class="py-05 ">
-        <div class="d-flex justify-between sub-title pb-05 border-bottom-gray2 ">
+        <div class="d-flex justify-between sub-title pb-05 mb-05 border-bottom-gray2 ">
           <p class="text-gray5 font-md ">Conversation </p>
         </div>
         <div v-if="loadingComments" class="my-05">
@@ -63,7 +63,7 @@
           </div>
         </div>
         <template v-else-if="sortedData.length > 0">
-          <div v-for="item in sortedData">
+          <div v-for="item in sortedData" >
             <task-message v-if="item.comment" :msg="item" @delete-message="onDeleteMessage"></task-message>
             <!-- <task-history v-if="item.text" :history="item"></task-history> -->
           </div>
@@ -258,10 +258,10 @@ export default {
       let trimComment = _.truncate(data.text.slice(3, -4), { length: 128 })
 
       if (this.editMessage?.id) {
-        this.$store.dispatch("subtask/updateSubtaskComment", { taskId: this.subtask.id, commentId: this.editMessage.id, comment: data.text, text: `updated comment ${trimComment}` })
+        this.$store.dispatch("subtask/updateSubtaskComment", { subtaskId: this.subtask.id, commentId: this.editMessage.id, comment: data.text, text: `updated comment ${trimComment}` })
           .then(res => {
-            console.log('update comment', res)
-            // this.reloadComments += 1
+            // console.log('update comment', res)
+            this.editMessage = {}
           })
           .catch(e => console.log(e))
       } else {
@@ -275,7 +275,6 @@ export default {
               this.uploadFiles(this.value.files, res.data)
             }
             // console.log('create comment', res)
-            // this.reloadComments += 1
           })
           .catch(e => console.log(e))
       }
