@@ -93,7 +93,7 @@
 
     <div class="of-scroll-y d-grid" id="ts-of-scroll-y" style="grid-template-columns: none; align-items: start">
       <sidebar-fields :task="currentTask" :loading="loading" @update-field="updateTask" @create-task="createTask"></sidebar-fields>
-      <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)" ></sidebar-subtask>
+      <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" ></sidebar-subtask>
       <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
       <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
       <!-- <sidebar-history></sidebar-history> -->
@@ -254,14 +254,14 @@ export default {
       if (fav) {
         return { variant: "orange", text: "Remove favorite", status: true }
       } else {
-        return { variant: "gray3", text: "Add to favorites", status: false }
+        return { variant: "gray5", text: "Add to favorites", status: false }
       }
     },
     isComplete() {
       if (this.currentTask.statusId == 5) {
         return { variant: "success", text: "Completed" }
       } else {
-        return { variant: "gray3", text: "Mark Completed" }
+        return { variant: "gray5", text: "Mark Completed" }
       }
     },
     userPhoto(){
@@ -323,7 +323,7 @@ export default {
     showSubtaskDetail(newValue){
       if(!newValue){
         this.$store.dispatch("subtask/fetchSubtasks", this.currentTask )
-      }
+      } 
     },
 
   },
