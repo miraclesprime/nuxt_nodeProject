@@ -4,9 +4,40 @@
       <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" title="Close" @click="closeSidebarDetail">
         <bib-icon icon="page-last" class="m-auto"></bib-icon>
       </div>
-      <!-- <div class="d-flex cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2">
-        <bib-icon icon="expand-fullscreen" variant="gray6" class="m-auto"></bib-icon>
-      </div> -->
+      <div class="ml-auto d-flex align-center gap-05">
+          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="ts-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
+            <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" ></bib-icon>
+          </div>
+          <div class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center">
+            <bib-button pop="horizontal-dots">
+              <template v-slot:menu>
+                <div class="list" id="ts-list">
+                  <span class="list__item" id="ts-list-item-1" @click="markComplete">
+                    <bib-icon icon="check-circle-solid" :variant="isComplete.variant" class="mr-075"></bib-icon> {{isComplete.text}}
+                  </span>
+                  <span class="list__item" id="ts-list-item-2" @click="setFavorite">
+                    <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
+                  </span>
+                  <!-- <span class="list__item" id="ts-list-item-4" @click="showAddTeamModal">
+                    <bib-icon icon="user-group-solid" variant="gray5" class="mr-075"></bib-icon> Team
+                  </span>
+                  <span class="list__item" id="ts-list-item-5" v-scroll-to="'#task_subtasks'">
+                    <bib-icon icon="check-square-solid" variant="gray5" class="mr-075" v-scroll-to=""></bib-icon> Subtasks
+                  </span>
+                  <span class="list__item" id="ts-list-item-7" v-scroll-to="'#task_conversation'">
+                    <bib-icon icon="comment-forum-solid" variant="gray5" class="mr-075"></bib-icon> Conversation
+                  </span>
+                  <span class="list__item" id="ts-list-item-3" v-scroll-to="'#task_files'">
+                    <bib-icon icon="folder-solid" variant="gray5" class="mr-075"></bib-icon> Files
+                  </span> -->
+                  
+                  <hr>
+                  <span class="list__item list__item__danger" id="ts-list-item-8" @click="$nuxt.$emit('delete-subtask', subtask)">Delete</span>
+                </div>
+              </template>
+            </bib-button>
+          </div>
+      </div>
     </div>
     <div class="border-top-gray3 border-bottom-gray3 position-relative px-105 py-025 mb-1">
       <div class="d-flex align-center gap-05">
@@ -63,9 +94,9 @@
           </div>
         </div>
         <template v-else-if="sortedData.length > 0">
-          <div v-for="item in sortedData" >
+          <div v-for="item in sortedData">
             <task-message v-if="item.comment" :msg="item" @delete-message="onDeleteMessage"></task-message>
-            <!-- <task-history v-if="item.text" :history="item"></task-history> -->
+            <task-history v-if="item.text" :history="item"></task-history>
           </div>
         </template>
       </div>
@@ -106,6 +137,7 @@ export default {
         ]
       },
       editMessage: {},
+      isFavorite: { variant: "gray5", text: "Add to favorites", status: false },
       // subkey: 0,
     }
   },
@@ -135,8 +167,28 @@ export default {
       }
     },
 
+    /*isFavorite() {
+      this.$axios.get("subtask/"+this.subtask.id+"/favorite", {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+        }
+      }).then(fvsub => {
+        console.log(fvsub)
+          if (fvsub) {
+            return { variant: "orange", text: "Remove favorite", status: true }
+          } else {
+            return { variant: "gray3", text: "Add to favorites", status: false }
+          }
+      }).catch(e => {
+        return { variant: "danger", text: "Error", status: false }
+        })
+    },*/
     isComplete() {
-      return { variant: this.form.isDone ? 'success' : 'gray4' };
+      if (this.form.isDone) {
+        return { variant: "success", text: "Completed" }
+      } else {
+        return { variant: "gray5", text: "Mark Completed" }
+      }
     },
 
     assignee() {
@@ -188,7 +240,20 @@ export default {
 
   mounted() {
     // console.log('mounted subtask detail')
-    this.$store.dispatch("subtask/fetchSubTask", this.subtask)
+    this.$store.dispatch("subtask/fetchSubTask", this.subtask).then(st => {
+        this.$axios.get("subtask/"+this.subtask.id+"/favorite", {
+            headers: {
+              "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+            }
+          }).then(fvsub => {
+            // console.log(fvsub.data)
+              if (fvsub.data.message) {
+                this.isFavorite = { variant: "orange", text: "Remove favorite", status: true }
+              } else {
+                this.isFavorite = { variant: "gray5", text: "Add to favorites", status: false }
+              }
+          })
+    })
 
     this.loadingComments = true
     this.$store.dispatch("subtask/fetchSubtaskComments", this.subtask)
@@ -217,12 +282,34 @@ export default {
         this.form.isDone = true
         this.form.statusId = 5
       }
-      console.info(this.form.id, this.form.statusId, this.form.isDone)
+      // console.info(this.form.id, this.form.statusId, this.form.isDone)
       this.updateSubtask({ statusId: this.form.statusId, isDone: this.form.isDone })
     },
 
+    setFavorite() {
+      console.info(this.subtask.id, this.isFavorite.status)
+
+      if (this.isFavorite.status) {
+        this.$axios.delete("subtask/"+this.subtask.id+"/favorite", { 
+            headers: {
+              "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+            } 
+        })
+          .then(msg => console.log(msg.message))
+          .catch(e => console.log(e))
+      } else {
+        this.$axios.post("subtask/"+this.subtask.id+"/favorite", {}, { 
+            headers: {
+              "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+            } 
+        })
+          .then(msg => console.log(msg.message))
+          .catch(e => console.log(e))
+      }
+    },
+
     async updateSubtask(data) {
-      console.log(data.dueDate, this.form.dueDate)
+      // console.log(data.dueDate, this.form.dueDate)
       const sub = await this.$store.dispatch("subtask/updateSubtask", { id: this.form.id, data: data })
       // console.log(sub.data)
       if (sub.statusCode == 200) {
@@ -306,7 +393,7 @@ export default {
     },*/
 
     async onDeleteMessage(payload) {
-        console.log(payload)
+      console.log(payload)
       this.loadingComments = true
       // let data = {taskId: this.task.id, commentId: payload.msgId }
       const del = await this.$store.dispatch("subtask/deleteSubtaskComment", { ...payload, subtaskId: this.subtask.id, text: "subtask comment deleted" });
