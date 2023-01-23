@@ -69,6 +69,10 @@ export const actions = {
     }
   },
 
+  setSelectedSubtask(ctx, payload){
+    ctx.commit("setSelectedSubtask", payload)
+  },
+
   // create subtask
   async createSubtask(ctx, payload) {
     const res = await this.$axios.$post('/subtask', payload, {

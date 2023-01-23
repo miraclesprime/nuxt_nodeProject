@@ -45,7 +45,7 @@
           <bib-icon icon="check-circle-solid" :variant="isComplete.variant" :scale="1.5"></bib-icon>
         </div>
         <div class="flex-grow-1">
-          <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" v-model="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdateField({title: form.title})">
+          <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" v-model="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdateField({field: 'title', value: form.title, name: 'Title'})">
         </div>
         <div>
           <!-- <team-avatar-list :team="team"></team-avatar-list> -->
@@ -60,24 +60,24 @@
     <div class="of-scroll-y px-105">
       <div class="row">
         <div class="col-6">
-          <bib-select label="Assignee" test_id="subtask_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="updateSubtask({userId: form.userId})"></bib-select>
+          <bib-select label="Assignee" test_id="subtask_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="updateSubtask({field: 'userId', value: form.userId, name: 'User' })"></bib-select>
         </div>
         <div class="col-6">
-          <bib-datepicker class="align-right" v-model="dueDateInput" :value="dueDateInput" format="dd MMM yyyy" label="Due date" placeholder="Due date" @input="updateSubtask({dueDate: form.dueDate})"></bib-datepicker>
+          <bib-datepicker class="align-right" v-model="dueDateInput" :value="dueDateInput" format="dd MMM yyyy" label="Due date" placeholder="Due date" @input="updateSubtask({field: 'dueDate', value: form.dueDate, name: 'Due date'})"></bib-datepicker>
         </div>
         <!-- <div class="col-6"></div> -->
       </div>
       <div class="row ">
         <div class="col-6">
-          <bib-input type="select" label="Priority" v-model.number="form.priorityId" :options="priorityValues" placeholder="Please select..." v-on:change.native="updateSubtask({priorityId: form.priorityId})"></bib-input>
+          <bib-input type="select" label="Priority" v-model.number="form.priorityId" :options="priorityValues" placeholder="Please select..." v-on:change.native="updateSubtask({field: 'priorityId', value: form.priorityId, name: 'Priority'})"></bib-input>
         </div>
         <div class="col-6">
-          <bib-input type="select" label="Status" v-model.number="form.statusId" :options="statusValues" placeholder="Please select..." v-on:change.native="updateSubtask({statusId: form.statusId})"></bib-input>
+          <bib-input type="select" label="Status" v-model.number="form.statusId" :options="statusValues" placeholder="Please select..." v-on:change.native="updateSubtask({field: 'statusId', value: form.statusId, name: 'Status'})"></bib-input>
         </div>
       </div>
       <div class="row ">
         <div class="col-12">
-          <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter subtask description..." label="Description" v-on:keyup.native="debounceUpdateField({description: form.description})"></bib-input>
+          <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter subtask description..." label="Description" v-on:keyup.native="debounceUpdateField({field: 'description', value: form.description, name: 'Description'})"></bib-input>
         </div>
       </div>
       <div class="py-05 ">
@@ -95,7 +95,8 @@
         </div>
         <template v-else-if="sortedData.length > 0">
           <div v-for="item in sortedData">
-            <task-message v-if="item.comment" :msg="item" @delete-message="onDeleteMessage"></task-message>
+            <!-- <task-message v-if="item.comment" :msg="item" @delete-message="onDeleteMessage"></task-message> -->
+            <message v-if="item.comment" :msg="item" fieldkey="subtask" @delete-message="onDeleteMessage"></message>
             <task-history v-if="item.text" :history="item"></task-history>
           </div>
         </template>
@@ -283,7 +284,7 @@ export default {
         this.form.statusId = 5
       }
       // console.info(this.form.id, this.form.statusId, this.form.isDone)
-      this.updateSubtask({ statusId: this.form.statusId, isDone: this.form.isDone })
+      this.updateSubtask({ field: 'statusId', value: this.form.statusId, name: 'Status', isDone: this.form.isDone })
     },
 
     setFavorite() {
@@ -310,15 +311,26 @@ export default {
 
     async updateSubtask(data) {
       // console.log(data.dueDate, this.form.dueDate)
-      const sub = await this.$store.dispatch("subtask/updateSubtask", { id: this.form.id, data: data })
-      // console.log(sub.data)
-      if (sub.statusCode == 200) {
-        // console.log('update subtask success->', sub.data)
-        this.$store.dispatch("subtask/setSelectedSubtask", sub.data)
-        // this.$store.dispatch("subtask/fetchSubTask", sub.data)
-      } else {
-        console.warn("error")
-      }
+        let updata = {[data.field]: data.value}
+        let userobj = {}
+        let sub
+        if (data.name == 'Status') {
+            updata = { [data.field]: data.value, isDone: true }
+        }
+        if (data.name == 'User') {
+            userobj = this.$userInfo(data.value)
+            let user = { id: userobj.Id, email: userobj.Email, firstName: userobj.FirstName, lastName: userobj.LastName }
+            sub = await this.$store.dispatch("subtask/updateSubtask", { id: this.form.id, data: updata, user, text: `updated ${data.name} to ${userobj.Name}` })
+        } else {
+            // console.log(data, userobj, updata)
+            sub = await this.$store.dispatch("subtask/updateSubtask", { id: this.form.id, data: updata, text: `updated ${data.name} to ${data.value}` })
+        }
+        // console.log(sub.data)
+        if (sub.statusCode == 200) {
+            this.$store.dispatch("subtask/setSelectedSubtask", sub.data)
+        } else {
+            console.warn("error")
+        }
     },
     closeSidebarDetail() {
       this.$emit('close-sidebar-detail')
