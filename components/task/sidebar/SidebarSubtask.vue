@@ -179,6 +179,15 @@ export default {
     // this.user = this.teamMembers.filter(t => t.id == this.currentTask.userId)
     // this.user = _.cloneDeep(this.user2)
   },*/
+  created(){
+    this.$nuxt.$on("delete-subtask", (subtask) => {
+      if (subtask.id) {
+        this.deleteSubtask(subtask)
+      } else {
+        console.log('No subtask to delete')
+      }
+    })
+  },
   methods: {
     openCreateSubtask() {
       this.newSubtask = true
@@ -277,7 +286,9 @@ export default {
       const delsub = await this.$store.dispatch("subtask/deleteSubtask", { ...subtask, text: `deleted subtask "${subtask.title}"` });
       if (delsub.statusCode == 200) {
         this.$store.dispatch("subtask/fetchSubtasks", this.currentTask)
-        this.$nuxt.$emit("refresh-history")
+        // this.$nuxt.$emit("refresh-history")
+        this.$emit('close-sidebar-detail')
+        this.$store.dispatch("subtask/setSelectedSubtask", "")
       }
       this.loading = false
     },
