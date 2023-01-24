@@ -138,7 +138,7 @@ export default {
         ]
       },
       editMessage: {},
-      isFavorite: { variant: "gray5", text: "Add to favorites", status: false },
+      // isFavorite: { variant: "gray5", text: "Add to favorites", status: false },
       // subkey: 0,
     }
   },
@@ -146,7 +146,9 @@ export default {
     ...mapGetters({
       user2: "user/getUser2",
       subtask: "subtask/getSelectedSubTask",
+      favsubtasks: "subtask/getFavSubtasks",
       subtaskComments: "subtask/getSubTaskComments",
+      subtaskHistory: "subtask/getSubtaskHistory",
       teamMembers: "user/getTeamMembers",
     }),
 
@@ -218,7 +220,7 @@ export default {
     },
     sortedData() {
       // let s = [ ...this.history, ...this.comments]
-      let s = [...this.subtaskComments]
+      let s = [...this.subtaskComments, ...this.subtaskHistory]
       if (s.length > 0) {
         return s.sort((a, b) => new Date(a.updatedAt) - new Date(b.updatedAt));
       } else {
@@ -229,6 +231,14 @@ export default {
           { id: 21, text: 'dolor sit amet', userId: 'DKgl9av2NwnaG1vz', updatedAt: '2023-01-12T11:23:52.000Z'}, 
           {"id": 1, "userId": "DKgl9av2NwnaG1vz", "subtaskId": 1, "comment": "<p>asdgdfa</p>", "isDeleted": false, "createdAt": "2023-01-18T06:40:00.000Z", "updatedAt": "2023-01-18T06:40:00.000Z" },
           ]*/
+    },
+    isFavorite(){
+        let fav = this.favsubtasks.findIndex(fv => fv.subtaskId == this.subtask.id)
+        if (fav >= 0) {
+            return { variant: "orange", text: "Remove favorite", status: true }
+        } else {
+            return { variant: "gray5", text: "Add to favorites", status: false }
+        }
     },
   },
 
@@ -241,20 +251,9 @@ export default {
 
   mounted() {
     // console.log('mounted subtask detail')
-    this.$store.dispatch("subtask/fetchSubTask", this.subtask).then(st => {
-        this.$axios.get("subtask/"+this.subtask.id+"/favorite", {
-            headers: {
-              "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-            }
-          }).then(fvsub => {
-            // console.log(fvsub.data)
-              if (fvsub.data.message) {
-                this.isFavorite = { variant: "orange", text: "Remove favorite", status: true }
-              } else {
-                this.isFavorite = { variant: "gray5", text: "Add to favorites", status: false }
-              }
-          })
-    })
+    this.$store.dispatch("subtask/fetchSubTask", this.subtask)
+
+    this.$store.dispatch("subtask/fetchFavorites")
 
     this.loadingComments = true
     this.$store.dispatch("subtask/fetchSubtaskComments", this.subtask)
@@ -263,6 +262,8 @@ export default {
         console.warn(e)
         this.loadingComments = false
       })
+
+    this.$store.dispatch("subtask/fetchSubtaskHistory", this.subtask)
   },
   methods: {
     fetchComments() {
@@ -296,7 +297,10 @@ export default {
               "Authorization": "Bearer " + localStorage.getItem("accessToken"),
             } 
         })
-          .then(msg => console.log(msg.message))
+          .then(msg => {
+            console.log(msg.data.message)
+            this.$store.dispatch("subtask/fetchFavorites")
+        })
           .catch(e => console.log(e))
       } else {
         this.$axios.post("subtask/"+this.subtask.id+"/favorite", {}, { 
@@ -304,7 +308,11 @@ export default {
               "Authorization": "Bearer " + localStorage.getItem("accessToken"),
             } 
         })
-          .then(msg => console.log(msg.message))
+          .then(msg => {
+            console.log(msg.data.message)
+            this.$store.dispatch("subtask/fetchFavorites")
+
+        })
           .catch(e => console.log(e))
       }
     },
@@ -314,8 +322,15 @@ export default {
         let updata = {[data.field]: data.value}
         let userobj = {}
         let sub
+        let histvalue = data.value
         if (data.name == 'Status') {
+            let st = this.statusValues.find(s => s.value == data.value)
             updata = { [data.field]: data.value, isDone: true }
+            histvalue = st.label
+        }
+        if ( data.name == "Priority"){
+            let pr = this.priorityValues.find(p => p.value == data.value)
+            histvalue = pr.label
         }
         if (data.name == 'User') {
             userobj = this.$userInfo(data.value)
@@ -323,11 +338,12 @@ export default {
             sub = await this.$store.dispatch("subtask/updateSubtask", { id: this.form.id, data: updata, user, text: `updated ${data.name} to ${userobj.Name}` })
         } else {
             // console.log(data, userobj, updata)
-            sub = await this.$store.dispatch("subtask/updateSubtask", { id: this.form.id, data: updata, text: `updated ${data.name} to ${data.value}` })
+            sub = await this.$store.dispatch("subtask/updateSubtask", { id: this.form.id, data: updata, text: `updated ${data.name} to ${histvalue}` })
         }
         // console.log(sub.data)
         if (sub.statusCode == 200) {
             this.$store.dispatch("subtask/setSelectedSubtask", sub.data)
+            this.$store.dispatch("subtask/fetchSubtaskHistory", this.subtask)
         } else {
             console.warn("error")
         }
