@@ -61,17 +61,17 @@
           <td>
             <div class="d-flex gap-05 align-center">
               <span class="cursor-pointer" style="width:20px; height:20px" @click="markComplete(sub)"><bib-icon icon="check-circle-solid" :scale="1.25" :variant="sub.isDone ? 'success' : 'gray4'"></bib-icon></span>
-              <input type="text" class="editable-input sm" v-model="sub.title" @input="debounceUpdate(sub, {title: sub.title})">
+              <input type="text" class="editable-input sm" v-model="sub.title" @input="debounceUpdate(sub, {field: 'Title', value: sub.title, name: 'Title'})">
             </div>
           </td>
           <td>
-            <bib-select :options="orgUsers" v-model="sub.userId" size="sm" class="bg-white" v-on:change="updateSubtask(sub, {userId: sub.userId})"></bib-select>
+            <bib-select :options="orgUsers" v-model="sub.userId" size="sm" class="bg-white" v-on:change="updateSubtask(sub, {field: 'userId', value: sub.userId, name: 'User'})"></bib-select>
             <!-- <user-info :userId="sub.userId"></user-info> -->
           </td>
           <td>
             <div class="d-inline-flex align-center gap-05 position-relative" >
               <bib-icon icon="calendar"></bib-icon>
-              <datepicker v-model="sub.dueDate" @input="updateSubtask(sub, {dueDate: sub.dueDate})" placeholder="Select date..." wrapper-class="align-right" clear-button ></datepicker>
+              <datepicker v-model="sub.dueDate" @input="updateSubtask(sub, {field: 'dueDate', value: sub.dueDate, name: 'Due date'})" placeholder="Select date..." wrapper-class="align-right" clear-button ></datepicker>
             </div>            
           </td>
           <td>
@@ -266,19 +266,43 @@ export default {
       }
       // console.log(subtask.id, subtask.statusId, subtask.isDone)
 
-      this.updateSubtask(subtask, {statusId: subtask.statusId, isDone: subtask.isDone})
+      this.updateSubtask(subtask, {field: 'statusId', value: subtask.statusId, name: 'Status'})
     },
 
     async updateSubtask(subtask, data){
-      // console.log(subtask.id, key, subtask[key])
-      const sub = await this.$store.dispatch("subtask/updateSubtask", { id: subtask.id, data: data })
+      let updata = {[data.field]: data.value}
+      let userobj = {}
+      let sub
+      if (data.name == 'Status') {
+          updata = { [data.field]: data.value, isDone: true }
+      }
+      if (data.name == 'User') {
+          userobj = this.$userInfo(data.value)
+          let user = { id: userobj.Id, email: userobj.Email, firstName: userobj.FirstName, lastName: userobj.LastName }
+          sub = await this.$store.dispatch("subtask/updateSubtask", { id: subtask.id, data: updata, user, text: `updated ${data.name} to ${userobj.Name}` })
+      } else {
+          // console.log(data, userobj, updata)
+          sub = await this.$store.dispatch("subtask/updateSubtask", { id: subtask.id, data: updata, text: `updated ${data.name} to ${data.value}` })
+      }
+      // console.log(sub.data)
+      if (sub.statusCode == 200) {
+          this.$store.dispatch("subtask/setSelectedSubtask", sub.data)
+      } else {
+          console.warn("error")
+      }
+      /*// console.log(subtask.id, key, subtask[key])
+      let updata = { [data.field]: data.value }
+      if (data.field == 'Status') {
+        updata = { [data.field]: data.value, isDone: subtask.isDone }
+      }
+      const sub = await this.$store.dispatch("subtask/updateSubtask", { id: subtask.id, data: updata, text: `updated ${data.name} to ${data.value}` })
       // console.log(sub.data)
       if (sub.statusCode == 200) {
         // console.log('update subtask success->', sub.data)
         this.subkey += 1
       } else {
         console.warn("error")
-      }
+      }*/
     },
 
     async deleteSubtask(subtask) {
