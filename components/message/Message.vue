@@ -182,6 +182,12 @@ export default {
   name: 'Message',
   props: {
     msg: Object,
+    fieldkey: {
+      type: String, 
+      default: () => { 
+        return 'project'
+      }
+    }
   },
   components: {
     fa: FontAwesomeIcon,
@@ -284,7 +290,7 @@ export default {
   },
   methods: {
     fetchReactions() {
-      this.$axios.get('/project/' + this.msg.id + "/reactions", {
+      this.$axios.get(`/${this.fieldkey}/${this.msg.id}/reactions`, {
           headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
         })
         .then(r => {
@@ -303,7 +309,7 @@ export default {
     deleteOwnReaction(reaction) {
       this.reactionSpinner = true
       let react = reaction.data.find(d => d.user.id == this.user.Id)
-      this.$axios.delete("/project/" + this.msg.id + "/reaction", {
+      this.$axios.delete(`/${this.fieldkey}/${this.msg.id}/reaction`, {
           headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") },
           data: { reactionId: react.id, userId: react.userId },
         })
@@ -342,6 +348,7 @@ export default {
     },
     onReactionClick({ data }) {
       // console.log(data)
+
       this.isReactionPickerOpen = false;
       this.reactionSpinner = true
       let duplicateReaction = this.reactions.some(r => r.userId == this.user.Id && r.reaction == data)
@@ -350,7 +357,8 @@ export default {
         alert("Reaction already exists!")
         this.reactionSpinner = false
       } else {
-        this.$axios.post("/project/" + this.msg.id + "/reaction", { reaction: data, projectId: this.msg.projectId, text: `reacted ${data} to comment` }, {
+
+        this.$axios.post(`/${this.fieldkey}/${this.msg.id}/reaction`, { reaction: data, [`${this.fieldkey}Id`]: this.msg[`${this.fieldkey}Id`], text: `reacted ${data} to comment` }, {
             headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
           })
           .then(d => {
@@ -370,7 +378,7 @@ export default {
         alert("Reaction already exists!")
         this.reactionSpinner = false
       } else {
-        this.$axios.post("/project/" + this.msg.id + "/reaction", { reaction: "👍", projectId: this.msg.projectId, text: "liked 👍 the comment" }, {
+        this.$axios.post(`/${this.fieldkey}/${this.msg.id}/reaction`, { reaction: "👍", [`${this.fieldkey}Id`]: this.msg[`${this.fieldkey}Id`], text: "liked 👍 the comment" }, {
             headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
           })
           .then(d => {
@@ -385,7 +393,7 @@ export default {
       }
     },
     replyMessage() {
-      console.log('reply message action')
+      // console.log('reply message action')
       this.replyModal = !this.replyModal
     },
     /*copyMessageLink() {
@@ -413,7 +421,7 @@ export default {
       this.isMenuOpen = false;
     },
     deleteMessage() {
-      this.$emit('delete-message', { projectId: this.msg.projectId, commentId: this.msg.id, userId: this.msg.userId });
+      this.$emit('delete-message', { [`${this.fieldkey}Id`]: this.msg[`${this.fieldkey}Id`], commentId: this.msg.id, userId: this.msg.userId });
       this.isMenuOpen = false;
     },
     toggleUserCard() {
@@ -434,9 +442,9 @@ export default {
       myfiles.forEach(file => {
         formdata.append('files', file)
       })
-      formdata.append('projectId', this.msg.projectId)
-      formdata.append('projCommentId', this.msg.id)
-      formdata.append('text', "file uploaded to project comment")
+      formdata.append([`${this.fieldkey}Id`], this.msg[`${this.fieldkey}Id`])
+      formdata.append([`${this.fieldkey}CommentId`], this.msg.id)
+      formdata.append('text', `file uploaded to ${this.fieldkey} comment`)
 
       const fi = await this.$axios.post("/file/upload", formdata, {
         headers: {
@@ -460,7 +468,7 @@ export default {
     },
     getFiles() {
       // this.loading = true
-      let obj1 = { projectCommentId: this.msg.id }
+      let obj1 = { [`${this.fieldkey}CommentId`]: this.msg.id }
       this.$axios.get("file/db/all", {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,

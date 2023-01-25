@@ -403,7 +403,6 @@ export default {
       // console.log(this.msg)
       this.$emit('delete-message', {
         taskId: this.msg.taskId ? this.msg.taskId : null,
-        // projectId: this.msg.projectId ? this.msg.projectId: null, 
         commentId: this.msg.id,
         userId: this.msg.userId,
       });
