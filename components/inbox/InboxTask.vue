@@ -286,6 +286,15 @@ export default {
           }
         })
       }
+
+      if( taskData.name == 'Section') {
+        this.sections.find(sec => {
+          if(sec.id == taskData.value) {
+            updatedvalue = sec.title
+          }
+        })
+      }
+
       if (taskData.name == "Due date" || taskData.name == "Start date") {
         updatedvalue = dayjs(taskData.value).format('DD MMM, YYYY')
       }
