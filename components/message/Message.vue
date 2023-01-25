@@ -75,7 +75,7 @@
       <div class="action" @click.stop="onLikeClick">
         <fa :icon="faThumbsUp" />
       </div>
-      <tippy :visible="isReactionPickerOpen" :animate-fill="false" :distance="6" interactive placement="bottom-end" trigger="manual" :onHide="() => defer(() => (isReactionPickerOpen = false))">
+      <tippy :visible="isReactionPickerOpen" theme="light-border p-0" :animate-fill="false" :distance="6" interactive placement="bottom-end" trigger="manual" :onHide="() => defer(() => (isReactionPickerOpen = false))">
         <template slot="trigger">
           <div class="action" :class="{ active: isReactionPickerOpen }" @click="toggleReactionPicker">
             <fa :icon="faSmile" />
@@ -88,7 +88,7 @@
       <!-- <div class="action" @click="replyMessage">
         <fa :icon="faComment" />
       </div> -->
-      <tippy :visible="isMenuOpen" :animate-fill="false" :distance="6" interactive placement="bottom-end" trigger="manual" :onHide="() => defer(() => (isMenuOpen = false))">
+      <tippy :visible="isMenuOpen" theme="light-border p-0" :animate-fill="false" :distance="6" interactive placement="bottom-end" trigger="manual" :onHide="() => defer(() => (isMenuOpen = false))">
         <template slot="trigger">
           <div class="action" :class="{ active: isMenuOpen }" @click="toggleMenu">
             <fa :icon="faEllipsisH" />
