@@ -5,18 +5,13 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - IMAGE_TAG=${COMMIT_HASH:latest}
-  build:
-    commands:
       - echo Build started on `date`
-      - echo Installign BIB Shared components library
-      - echo Installign dependencies...
-      - cp -r ../../github.com/Biztree/bib-shared ../
       - echo copying environment file
       - aws s3 cp ${STAGE_ENV_FILE_PATH} app.env
       - aws s3 cp ${GLOBAL_ENV_FILE_PATH} global.env
       - cat app.env global.env >> .env      
+  build:
+    commands:
       - echo installing dependencies  
       - yarn install
       - echo Building the Front End distro...
