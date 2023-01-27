@@ -22,26 +22,26 @@ export default {
   },
   /// Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
-    "~/plugins/plugins.js",
+    "~/plugins/plugins.client.js",
     "~/plugins/axios.js",
     "~/plugins/dayjs.js",
     "~/plugins/dateFormat.client.js",
     "~/plugins/statusFormat.client.js",
     "~/plugins/priorityFormat.client.js",
-    "~/plugins/datepicker.client.js",
+    // "~/plugins/datepicker.client.js",
     // "~/plugins/chatLink.client.js",
     // "~/plugins/userInfo.js",
     "~/utils/userInfo.client.js",
     "~/utils/utils.client.js",
-    "~/../bib-shared/js/colors.js",
-    "~/../bib-shared/js/plugins.js",
+    // "~/../bib-shared/js/colors.js",
+    // "~/../bib-shared/js/plugins.js",
     // "~/../bib-shared/plugins/datepicker.js",
     ],
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: [
     { path: "~/components/", pathPrefix: false },
     { path: "~/components/elements/", pathPrefix: false },
-    { path: "~/../bib-shared/components/", pathPrefix: false },
+    // { path: "~/../bib-shared/components/", pathPrefix: false },
   ],
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
@@ -54,21 +54,43 @@ export default {
     "@nuxtjs/style-resources",
     [
       "nuxt-i18n",
-      {
+      /*{
         vueI18nLoader: true,
         defaultLocale: "fr",
         locales: [
           {
             code: "en",
             name: "English",
+            file: "en.json",
           },
           {
             code: "fr",
             name: "Français",
+            file: "fr.json",
           },
         ],
         vueI18n: i18n,
-      },
+        langDir: "~/node_modules/@bizinbox/bib-ui-lib/dist/lang",
+      },*/
+      {
+        vueI18nLoader: true,
+        defaultLocale: 'en',
+        locales: [
+          {
+            code: "en",
+            name: "English",
+            file: "en.json",
+          },
+          {
+            code: "fr",
+            name: "Français",
+            file: "fr.json",
+          },
+        ],
+        globalInjection: true,
+        vueI18n: i18n,
+        langDir: "~/node_modules/@bizinbox/bib-ui-lib/dist/lang",
+      }
     ],
   ],
 
@@ -82,8 +104,8 @@ export default {
       "../bib-shared/css/utilities.scss",
       "../bib-shared/css/basic.scss",*/
       "~/assets/variable.scss",
-      "../bib-shared/css/global.scss",
-      // "~/node_modules/@bizinbox/bib-ui-lib/dist/utilities.scss",
+      // "../bib-shared/css/global.scss",
+      "~/node_modules/@bizinbox/bib-ui-lib/dist/utilities.scss",
     ],
   },
   // router: {

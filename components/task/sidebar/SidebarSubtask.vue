@@ -1,4 +1,5 @@
 <template>
+  <client-only>
   <div class="task-group w-100 position-relative py-05 px-2" id="task-group-main-wrapper">
     <div id="task-group-title-wrapper" class="border-bottom-gray2 d-flex justify-between sub-title pb-05">
       <p id="task-group-title" class="text-gray5 font-md">Subtasks </p>
@@ -71,7 +72,7 @@
           <td>
             <div class="d-inline-flex align-center gap-05 position-relative" >
               <bib-icon icon="calendar"></bib-icon>
-              <datepicker v-model="sub.dueDate" @input="updateSubtask(sub, {field: 'dueDate', value: sub.dueDate, name: 'Due date'})" placeholder="Select date..." wrapper-class="align-right" clear-button ></datepicker>
+              <!-- <datepicker v-model="sub.dueDate" @input="updateSubtask(sub, {field: 'dueDate', value: sub.dueDate, name: 'Due date'})" placeholder="Select date..." wrapper-class="align-right" clear-button ></datepicker> -->
             </div>            
           </td>
           <td>
@@ -90,12 +91,14 @@
     <loading :loading="loading"></loading>
     </div>
   </div>
+</client-only>
 </template>
 <script>
 import { mapGetters } from 'vuex';
 import _ from 'lodash'
 // import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 // import { faCalendar } from '@fortawesome/free-regular-svg-icons';
+// import Datepicker from 'vue-datepicker'
 export default {
   name: "SidebarSubtask",
 
