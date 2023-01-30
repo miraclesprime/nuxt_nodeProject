@@ -206,7 +206,7 @@ export default {
     })
   },
   mounted() {
-    this.$store.dispatch("project/fetchProjects")
+    // this.$store.dispatch("project/fetchProjects")
 
   },
   methods: {
