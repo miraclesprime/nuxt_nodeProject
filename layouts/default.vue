@@ -1,4 +1,5 @@
 <template>
+<client-only>
   <div id="layout-wrapper">
     <bib-app-wrapper class="test" :navigationCollapsed="collapseNavigation" :select="appHeaderActions.select" @collapseNavigation="() => {
           resizeCalendar()
@@ -96,7 +97,9 @@
     <add-member-to-task ref="taskTeamModal"></add-member-to-task>
     
   </div>
+</client-only>
 </template>
+
 <script>
 import { mapGetters } from "vuex";
 
