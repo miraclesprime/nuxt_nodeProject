@@ -1,6 +1,6 @@
 <template>
   <div class="inbox-item border-bottom-gray2 py-1 px-3 position-relative cursor-pointer" :class="{'active': active == item.id}" @click="itemClick">
-    <div class="new text-white font-xs position-absolute">New
+    <div class="new text-white font-xs position-absolute">New 
       <span class="triangle"></span>
     </div>
     <div class="w-100 d-inline-flex gap-05 pb-05 text-secondary font-md">
@@ -22,6 +22,7 @@
         <span class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Archive'">
           <bib-icon icon="file-multiple" variant="gray5"></bib-icon>
         </span>
+        <span class="shape-rounded px-05 py-025 bg-light">{{item.id}}</span>
       </div>
     </div>
     <div class="d-flex align-center justify-between">
@@ -33,15 +34,15 @@
     </div>
     <div class="content font-md py-05">
       <div v-if="item.content || item.comment" class="inbox-item-content mb-05">
-        <template v-for="c in item.content" >
-          <div>{{c.title}}</div><div>@ {{c.time}}</div> 
+        <template v-for="cn in item.content" >
+          <div>{{cn.title}}</div><div>@ {{cn.time}}</div> 
         </template>
-        <template v-for="cm in item.comment" >
+        <template v-for="cm in item.comment" >          
           <div v-html="cm.comment"></div><div>@ {{$toTime(cm.updatedAt)}}</div> 
         </template>
       </div>
       <!-- <drag-table-simple v-if="item.content" :fields="fields" :tasks="item.content" headless :titleIcon="{ icon: 'tick'}" :collapsible="false" :drag="false"></drag-table-simple> -->
-      <span v-else>{{item.text}}<br></span>
+      <span v-else v-html="item.text"><br></span>
       <!-- <div v-html="taskComment.comment"></div>
       <div v-html="projComment.comment"></div> -->
     </div>
@@ -93,15 +94,15 @@ export default {
     taskTitle() {
       return this.item['task'] ? this.item.task.title : ''
     },
-    taskComment() {
+    /*taskComment() {
       return this.item['taskComment'] ? this.item.taskComment : ''
-    },
+    },*/
     projTitle() {
       return this.item['project'] ? this.item.project.title : ''
     },
-    projComment() {
+    /*projComment() {
       return this.item['projectComment'] ? this.item.projectComment : ''
-    },
+    },*/
   },
   methods: {
     itemClick() {

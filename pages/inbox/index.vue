@@ -72,7 +72,7 @@ export default {
         // let ud = new Date(item.updatedAt).getTime()
         let timeDiff = new Date().getTime() - new Date(item.updatedAt).getTime()
         let daysDiff = Math.round(timeDiff / (1000 * 60 * 60 * 24))
-        // console.info(daysDiff)
+        // console.info(item.id, daysDiff)
         /*switch (daysDiff) {
           case 0:
             today.push(item)

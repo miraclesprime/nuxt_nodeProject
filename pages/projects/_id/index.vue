@@ -1,113 +1,115 @@
 <template>
-  <div id="project-id-wrapper" class="project-id-wrapper ">
-    <nav id="project-id-nav" class="d-flex align-center gap-05 py-075 px-025 ">
-      <button type="button" @click="$router.back()" class="d-flex cursor-pointer bg-white border-white">
-        <bib-icon icon="arrowhead-left" :scale="1.5" variant="gray5"></bib-icon>
-      </button>
-      <bib-avatar></bib-avatar>
-      <span id="project-id-project-title" class=" font-w-700  mr-1 " style="font-size: 1.25rem;">{{project ? project.title : ''}}</span>
-      <div class="ml-auto d-flex gap-05 align-center position-relative" id="project-id-button-wraps">
-        <team-avatar-list :team="team"></team-avatar-list>
+  <client-only>
+    <div id="project-id-wrapper" class="project-id-wrapper ">
+      <nav id="project-id-nav" class="d-flex align-center gap-05 py-075 px-025 ">
+        <button type="button" @click="$router.back()" class="d-flex cursor-pointer bg-white border-white">
+          <bib-icon icon="arrowhead-left" :scale="1.5" variant="gray5"></bib-icon>
+        </button>
+        <bib-avatar></bib-avatar>
+        <span id="project-id-project-title" class=" font-w-700  mr-1 " style="font-size: 1.25rem;">{{project ? project.title : ''}}</span>
+        <div class="ml-auto d-flex gap-05 align-center position-relative" id="project-id-button-wraps">
+          <team-avatar-list :team="team"></team-avatar-list>
 
-        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item1" v-tooltip="'Team'" @click="projectTeamModal = true">
-          <bib-icon icon="user-group-solid" class="m-auto"></bib-icon>
+          <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item1" v-tooltip="'Team'" @click="projectTeamModal = true">
+            <bib-icon icon="user-group-solid" class="m-auto"></bib-icon>
+          </div>
+          <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item2" v-tooltip="'Conversation'" @click="conversationModal = true">
+            <bib-icon icon="comment-forum-solid" class="m-auto"></bib-icon>
+          </div>
+          <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item3" v-tooltip="'Files'" @click="modalOpen('files', 'Files')">
+            <bib-icon icon="folder-solid" class="m-auto"></bib-icon>
+          </div>
+          <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark" @click="setFavorite" v-tooltip="'Favorite'">
+            <bib-icon class="m-auto" icon="bookmark-solid" :variant="isFavorite.variant"></bib-icon>
+          </div>
+          <div id="project-id-horizontal-dots-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center">
+            <bib-popup pop="horizontal-dots" id="project-id-horizontal-dots">
+              <template v-slot:menu>
+                <div class="list" id="project-id-list">
+                  <span class="list__item" id="project-id-list-item1" @click="modalOpen('overview', 'Overview')">View details</span>
+                  <!-- <hr id="project-id-hr"> -->
+                  <span class="list__item" id="project-id-list-item2" @click="setFavorite">
+                    <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
+                  </span>
+                  <span class="list__item" id="project-id-list-item3">
+                    <bib-icon icon="user-group-solid" class="mr-075"></bib-icon> Team
+                  </span>
+                  <span class="list__item" id="project-id-list-item3" @click="conversationModal = true">
+                    <bib-icon icon="comment-forum-solid" class="mr-075"></bib-icon> Conversation
+                  </span>
+                  <span class="list__item" id="project-id-list-item3" @click="modalOpen('files', 'Files')">
+                    <bib-icon icon="folder-solid" class="mr-075"></bib-icon> Files
+                  </span>
+                  <span class="list__item" id="project-id-list-item5" @click="reportModal = !reportModal">
+                    <bib-icon icon="warning" class="mr-075"></bib-icon> Report
+                  </span>
+                  <hr id="project-id-hr2">
+                  <span v-if="cdp" class="list__item list__item__danger" id="project-id-list-item6" @click="deleteProject(project)">Delete </span>
+                </div>
+              </template>
+            </bib-popup>
+          </div>
+          <loading :loading="favLoading"></loading>
         </div>
-        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item2" v-tooltip="'Conversation'" @click="conversationModal = true">
-          <bib-icon icon="comment-forum-solid" class="m-auto"></bib-icon>
-        </div>
-        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item3" v-tooltip="'Files'" @click="modalOpen('files', 'Files')">
-          <bib-icon icon="folder-solid" class="m-auto"></bib-icon>
-        </div>
-        <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark" @click="setFavorite" v-tooltip="'Favorite'">
-          <bib-icon class="m-auto" icon="bookmark-solid" :variant="isFavorite.variant"></bib-icon>
-        </div>
-        <div id="project-id-horizontal-dots-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center">
-          <bib-popup pop="horizontal-dots" id="project-id-horizontal-dots">
-            <template v-slot:menu>
-              <div class="list" id="project-id-list">
-                <span class="list__item" id="project-id-list-item1" @click="modalOpen('overview', 'Overview')">View details</span>
-                <!-- <hr id="project-id-hr"> -->
-                <span class="list__item" id="project-id-list-item2" @click="setFavorite">
-                  <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
-                </span>
-                <span class="list__item" id="project-id-list-item3">
-                  <bib-icon icon="user-group-solid" class="mr-075"></bib-icon> Team
-                </span>
-                <span class="list__item" id="project-id-list-item3" @click="conversationModal = true">
-                  <bib-icon icon="comment-forum-solid" class="mr-075"></bib-icon> Conversation
-                </span>
-                <span class="list__item" id="project-id-list-item3" @click="modalOpen('files', 'Files')">
-                  <bib-icon icon="folder-solid" class="mr-075"></bib-icon> Files
-                </span>
-                <span class="list__item" id="project-id-list-item5" @click="reportModal = !reportModal">
-                  <bib-icon icon="warning" class="mr-075"></bib-icon> Report
-                </span>
-                <hr id="project-id-hr2">
-                <span v-if="cdp" class="list__item list__item__danger" id="project-id-list-item6" @click="deleteProject(project)">Delete </span>
-              </div>
-            </template>
-          </bib-popup>
-        </div>
-        <loading :loading="favLoading"></loading>
+      </nav>
+      <div id="project-id-tab-content" class="project-id-tab-content bg-light position-relative h-100 of-scroll-y">
+        <task-view :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType"></task-view>
       </div>
-    </nav>
-    <div id="project-id-tab-content" class="project-id-tab-content bg-light position-relative h-100 of-scroll-y">
-      <task-view :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType"></task-view>
+
+      <!-- project modals -->
+      <bib-modal-wrapper v-if="projectModal" :title="projectModalTitle" size="xl" @close="projectModal = false">
+        <template slot="content">
+          <project-overview v-if="projectModalContent == 'overview'" :sections="projectSections" ></project-overview>
+          <project-files v-if="projectModalContent == 'files'"></project-files>
+        </template>
+      </bib-modal-wrapper>
+
+      <!-- conversation modal -->
+      <bib-modal-wrapper v-if="conversationModal" title="Conversation" size="xl" @close="conversationModal = false" >
+        <template slot="content">
+          <project-conversation :project="project"></project-conversation>
+        </template>
+        <template slot="footer">
+          <div class="message-input-wrapper d-flex gap-1">
+            <bib-avatar :src="user2.Photo" size="2rem" class="flex-shrink-0" ></bib-avatar>
+            <message-input class="flex-grow-1" :value="value" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
+          </div>
+        </template>
+      </bib-modal-wrapper>
+
+      <!-- project team -->
+      <bib-modal-wrapper v-if="projectTeamModal" title="Team" size="lg" @close="projectTeamModal = false">
+        <template slot="content">
+          <div style="height: 12rem;">
+            <project-team-modal></project-team-modal>
+          </div>
+        </template>
+      </bib-modal-wrapper>
+
+      <!-- report modal -->
+      <bib-modal-wrapper v-if="reportModal" title="Report" size="sm" @close="reportModal = false">
+        <template slot="content">
+          <bib-input type="text" label="Subject" v-model.trim="reportSubj" placeholder="enter subject"></bib-input>
+          <bib-input type="textarea" label="Message" v-model.trim="reportText" placeholder="enter text"></bib-input>
+          <loading :loading="loading"></loading>
+        </template>
+        <template slot="footer">
+          <div class="text-center d-flex justify-between">
+            <bib-button label="Cancel" variant="light" pill v-on:click="reportModal = false"></bib-button>
+            <bib-button label="Send" variant="success" pill v-on:click="submitReport"></bib-button>
+          </div>
+        </template>
+      </bib-modal-wrapper>
+
+      <!-- notification -->
+      <bib-popup-notification-wrapper>
+        <template #wrapper>
+          <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
+          </bib-popup-notification>
+        </template>
+      </bib-popup-notification-wrapper>
     </div>
-
-    <!-- project modals -->
-    <bib-modal-wrapper v-if="projectModal" :title="projectModalTitle" size="xl" @close="projectModal = false">
-      <template slot="content">
-        <project-overview v-if="projectModalContent == 'overview'" :sections="projectSections" ></project-overview>
-        <project-files v-if="projectModalContent == 'files'"></project-files>
-      </template>
-    </bib-modal-wrapper>
-
-    <!-- conversation modal -->
-    <bib-modal-wrapper v-if="conversationModal" title="Conversation" size="xl" @close="conversationModal = false" >
-      <template slot="content">
-        <project-conversation :project="project"></project-conversation>
-      </template>
-      <template slot="footer">
-        <div class="message-input-wrapper d-flex gap-1">
-          <bib-avatar :src="user2.Photo" size="2rem" class="flex-shrink-0" ></bib-avatar>
-          <message-input class="flex-grow-1" :value="value" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
-        </div>
-      </template>
-    </bib-modal-wrapper>
-
-    <!-- project team -->
-    <bib-modal-wrapper v-if="projectTeamModal" title="Team" size="lg" @close="projectTeamModal = false">
-      <template slot="content">
-        <div style="height: 12rem;">
-          <project-team-modal></project-team-modal>
-        </div>
-      </template>
-    </bib-modal-wrapper>
-
-    <!-- report modal -->
-    <bib-modal-wrapper v-if="reportModal" title="Report" size="sm" @close="reportModal = false">
-      <template slot="content">
-        <bib-input type="text" label="Subject" v-model.trim="reportSubj" placeholder="enter subject"></bib-input>
-        <bib-input type="textarea" label="Message" v-model.trim="reportText" placeholder="enter text"></bib-input>
-        <loading :loading="loading"></loading>
-      </template>
-      <template slot="footer">
-        <div class="text-center d-flex justify-between">
-          <bib-button label="Cancel" variant="light" pill v-on:click="reportModal = false"></bib-button>
-          <bib-button label="Send" variant="success" pill v-on:click="submitReport"></bib-button>
-        </div>
-      </template>
-    </bib-modal-wrapper>
-
-    <!-- notification -->
-    <bib-popup-notification-wrapper>
-      <template #wrapper>
-        <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
-        </bib-popup-notification>
-      </template>
-    </bib-popup-notification-wrapper>
-  </div>
+  </client-only>
 </template>
 
 <script>
@@ -191,6 +193,7 @@ export default {
     })
 
     if (process.client) {
+      // console.log('created on client')
       this.$axios.$get(`project/${this.$route.params.id}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       }).then((res) => {
@@ -216,11 +219,13 @@ export default {
 
   },
   mounted() {
-    this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
-    this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
-    this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id }).then(() => {
-      this.canDeleteProject();
-    })
+    if (process.client) {
+      this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
+      this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
+      this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id }).then(() => {
+        this.canDeleteProject();
+      })
+    }
   },
 
   methods: {
