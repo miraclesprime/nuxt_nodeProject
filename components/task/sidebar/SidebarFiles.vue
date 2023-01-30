@@ -214,13 +214,13 @@ export default {
             this.fileKey += 1;
             this.$nuxt.$emit("refresh-history")
             // console.info('old files->', this.oldfilesCount, 'new files->', this.dbFiles.length)
-            if (this.ffcount <= 1 && this.oldfilesCount == this.dbFiles.length) {
-              _.delay(() => {
-                this.ffcount += 1
-                this.getFiles()
-              }, 5000)
-              // console.log('Same files count! Hit api again to fetch updated files')
-            }
+            // if (this.ffcount <= 1 && this.oldfilesCount == this.dbFiles.length) {
+            //   _.delay(() => {
+            //     this.ffcount += 1
+            //     this.getFiles()
+            //   }, 5000)
+            //   // console.log('Same files count! Hit api again to fetch updated files')
+            // }
           }
         })
         .catch(e => {

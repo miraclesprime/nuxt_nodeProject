@@ -95,3 +95,4 @@ server.key
 server/
 
 .npmrc
+.yarnrc

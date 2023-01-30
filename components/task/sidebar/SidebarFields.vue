@@ -133,14 +133,15 @@ export default {
   },
   watch: {
     task() {
-      // console.log(this.task)
       if (Object.keys(this.task).length) {
         // this.form = JSON.parse(JSON.stringify(this.task));
         this.form = _.cloneDeep(this.task);
         if (this.task.project?.length) {
           this.form.projectId = this.task.project[0].projectId || this.task.project[0].project.id
+          this.$store.dispatch("section/fetchProjectSections", { projectId: this.form.projectId, filter: 'all' })
         } else {
           this.form.projectId = this.project.id
+          this.$store.dispatch("section/fetchProjectSections", { projectId: this.form.projectId, filter: 'all' })
         }
         // console.info(this.$refs.topScroll)
       } else {
