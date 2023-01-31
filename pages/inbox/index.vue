@@ -24,7 +24,7 @@
           <div v-for="(value, key) in combinedInbox">
             <h4 class="font-md text-gray6 text-capitalize py-05 px-2 border-bottom-light">{{key}}</h4>
             <template v-for="o in value">
-              <inbox-item :item="o" :key="o.id" @task-click="fetchTask" @project-click="fetchProject" :active="active"></inbox-item>
+              <inbox-item :item="o" :key="o.id" @task-click="fetchTask" @project-click="fetchProject" :active="active" :status="inboxItemStatus(o)"></inbox-item>
             </template>
           </div>
           <loading :loading="loading"></loading>
@@ -57,11 +57,13 @@ export default {
       project: {},
       active: 0,
       taskProject: '',
+      // inboxStatus: [],
     }
   },
   computed: {
     ...mapGetters({
-      token: "token/getToken"
+      token: "token/getToken",
+      inboxStatus: "inbox/getInbox",
     }),
     combinedInbox(){
       let today = [], yesterday = [], older = [];
@@ -72,23 +74,13 @@ export default {
         // let ud = new Date(item.updatedAt).getTime()
         let timeDiff = new Date().getTime() - new Date(item.updatedAt).getTime()
         let daysDiff = Math.round(timeDiff / (1000 * 60 * 60 * 24))
-        // console.info(daysDiff)
-        /*switch (daysDiff) {
-          case 0:
-            today.push(item)
-            break;
-          case -1:
-            yesterday.push(item)
-            break;
-          default:
-            older.push(item)
-            break;
-        }*/
-        if ( daysDiff >= 0 && daysDiff <= 1) {
+        // console.info(item.id, daysDiff)
+        
+        if ( daysDiff >= 0 && daysDiff < 1) {
           today.push(item)
           return
         } 
-        if (daysDiff > 1 && daysDiff < 2) {
+        if (daysDiff >= 1 && daysDiff < 2) {
           yesterday.push(item)
           return
         }
@@ -218,11 +210,12 @@ export default {
       this.inbox = i.data.data
       this.loading = false
       this.switchTaskProject()
-
     }).catch(e => {
       console.warn(e)
       this.loading = false
     })
+
+    this.$store.dispatch("inbox/fetchInboxEntries")
   },
   methods: {
     testUserTask(arr, item){
@@ -279,7 +272,11 @@ export default {
           console.warn(e)
           this.loading2 = false
         })
-    }
+    },
+
+    inboxItemStatus(inbox){
+      return this.inboxStatus.find(item => item.historyId == inbox.id)
+    },
   },
 }
 

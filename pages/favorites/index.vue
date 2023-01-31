@@ -72,9 +72,10 @@ export default {
 
 
   mounted() {
+
     this.loading = true
 
-    let user = localStorage.getItem("user")
+    let user = JSON.parse(localStorage.getItem("user"))
 
     this.$store.dispatch("company/fetchCompanyMembers", user.subb)
 
