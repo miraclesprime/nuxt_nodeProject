@@ -15,9 +15,14 @@ export const state = () => ({
   };
 
   export const mutations = {
-
     createInboxEntry(state, payload) {
-        state.inbox.push(payload)
+        let ii = state.inbox.findIndex(inb => inb.historyId == payload.historyId )
+        console.log('inbox index found', ii)
+        if (ii >= 0) {
+            state.inbox[ii] = payload
+        } else {
+            state.inbox.push(payload)
+        }
     },
 
     setSingleInbox(state, payload) {

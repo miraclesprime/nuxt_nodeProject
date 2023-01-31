@@ -1,6 +1,6 @@
 <template>
-  <div class="inbox-item border-bottom-gray2 py-1 px-3 position-relative cursor-pointer" :class="{'active': active == item.id}" @click="itemClick">
-    <div v-if="!status.markRead" class="new text-white font-xs position-absolute">New
+  <div class="inbox-item border-bottom-gray2 py-1 px-3 position-relative cursor-pointer" :class="{'active': active == item.id}" :key="refreshKey" @click="itemClick">
+    <div v-if="!inboxStatus.markRead" class="new text-white font-xs position-absolute">New
       <span class="triangle"></span>
     </div>
     <div class="w-100 d-inline-flex align-center gap-05 pb-05 text-secondary font-md">
@@ -16,8 +16,8 @@
         <span class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Flag message'">
           <bib-icon icon="flag-racing" variant="gray5"></bib-icon>
         </span>
-        <span class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="readText" @click="markRead">
-          <bib-icon icon="mail-solid" :variant="status.markRead ? 'gray6' : 'gray5'"></bib-icon>
+        <span class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="readText" @click.stop="markRead">
+          <bib-icon icon="mail-solid" :variant="inboxStatus.markRead ? 'gray6' : 'gray5'"></bib-icon>
         </span>
         <span class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Archive'">
           <bib-icon icon="file-multiple" variant="gray5"></bib-icon>
@@ -53,7 +53,8 @@
   </div>
 </template>
 <script>
-import { DUMMY_TASKS } from '~/dummy/tasks'
+import { mapGetters } from 'vuex'
+// import { DUMMY_TASKS } from '~/dummy/tasks'
 export default {
 
   name: 'InboxItem',
@@ -61,7 +62,7 @@ export default {
   props: {
     item: Object,
     active: Number,
-    status: {
+    /*status: {
       type: Object,
       default: function() {
         return {
@@ -70,7 +71,7 @@ export default {
           markArchive: false,
         }
       }
-    },
+    },*/
   },
 
   data() {
@@ -84,32 +85,20 @@ export default {
           key: "time",
           label: "@",
         },
-        /*{
-        key: "status",
-        label: "Status",
-      }, {
-        key: "priority",
-        label: "Priority",
-      }, {
-        key: "assignee",
-        label: "Owner",
-      }, {
-        key: "startDate",
-        label: "Start Date",
-      }, {
-        key: "dueDate",
-        label: "Due Date",
-      }*/
       ],
-      tasks: DUMMY_TASKS,
+      // tasks: DUMMY_TASKS,
       /*status: {
         markRead: false,
         markFlag: false,
         markArchive: false,
       },*/
+      refreshKey: 0,
     }
   },
   computed: {
+    ...mapGetters({
+      userInbox: "inbox/getInbox",
+    }),
     taskTitle() {
       return this.item['task'] ? this.item.task.title : ''
     },
@@ -122,7 +111,17 @@ export default {
     /*projComment() {
       return this.item['projectComment'] ? this.item.projectComment : ''
     },*/
-    readText() { return this.status.markRead ? 'Mark as Unread' : 'Mark as Read' },
+    inboxStatus() {
+      let st = this.userInbox.find(it => it.historyId == this.item.id)
+      if (st || this.refreshKey > 0) {
+        return st
+      } else {
+        return {markRead: false, markFlag: false, markArchive: false}
+      }
+    },
+    readText() { 
+      return this.inboxStatus.markRead ? 'Mark as Unread' : 'Mark as Read' 
+    },
   },
   methods: {
     itemClick() {
@@ -133,21 +132,32 @@ export default {
         this.$emit('project-click', { id: this.item.id, projectId: this.item.projectId })
       }
       // this.markRead()
-      this.$store.dispatch("inbox/createInboxEntry", { historyId: this.item.id })
+      this.$store.dispatch("inbox/createInboxEntry", { historyId: this.item.id, obj: { markRead: true, markFlag: false, markArchive: false } })
+      .then(res => { 
+        // console.log(res.data)
+        if (res.statusCode == 200) {
+          this.refreshKey += 1
+        }
+      })
 
     },
     markRead() {
-      /*this.$axios.post("/inbox", { historyId: this.item.id }, {
-        headers: {
-          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+
+      let obj1 = { markRead: false, markFlag: false, markArchive: false }
+
+      if (this.inboxStatus.markRead) {
+        obj1.markRead = false
+      } else {
+        obj1.markRead = true
+      }
+
+      this.$store.dispatch("inbox/createInboxEntry", { historyId: this.item.id, obj: obj1 }).then(res => {
+        // console.log(res.data)
+        if (res.statusCode == 200) {
+          this.refreshKey += 1
         }
-      }).then(h => {
-        // console.log(h.data)
-        this.status.markRead = h.data.data.markRead
-        this.status.markFlag = h.data.data.markFlag
-        this.status.markArchive = h.data.data.markArchive
-        this.readText = 'Mark as Unread'
-      }).catch(e => console.warn(e))*/
+      }).catch(e => console.warn(e))
+      
     },
   }
 }

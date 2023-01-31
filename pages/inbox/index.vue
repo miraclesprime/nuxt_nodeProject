@@ -24,7 +24,7 @@
           <div v-for="(value, key) in combinedInbox">
             <h4 class="font-md text-gray6 text-capitalize py-05 px-2 border-bottom-light">{{key}}</h4>
             <template v-for="o in value">
-              <inbox-item :item="o" :key="o.id" @task-click="fetchTask" @project-click="fetchProject" :active="active" :status="inboxItemStatus(o)"></inbox-item>
+              <inbox-item :item="o" :key="o.id" @task-click="fetchTask" @project-click="fetchProject" :active="active" ></inbox-item>
             </template>
           </div>
           <loading :loading="loading"></loading>
@@ -63,7 +63,7 @@ export default {
   computed: {
     ...mapGetters({
       token: "token/getToken",
-      inboxStatus: "inbox/getInbox",
+      // inboxStatus: "inbox/getInbox",
     }),
     combinedInbox(){
       let today = [], yesterday = [], older = [];
@@ -274,9 +274,9 @@ export default {
         })
     },
 
-    inboxItemStatus(inbox){
+    /*inboxItemStatus(inbox){
       return this.inboxStatus.find(item => item.historyId == inbox.id)
-    },
+    },*/
   },
 }
 
