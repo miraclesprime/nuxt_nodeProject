@@ -202,7 +202,7 @@ export default {
       team: 'task/getTaskMembers',
       project: "project/getSingleProject",
       projects: "project/getAllProjects",
-      // sections: "section/getProjectSections",
+      sections: "section/getProjectSections",
       currentTask: "task/getSelectedTask",
       favTasks: "task/getFavTasks",
     }),
@@ -427,6 +427,13 @@ export default {
         let proj = this.projects.find(t => t.id == taskData.value)
         updatedvalue = proj.title
         projectId = taskData.value
+      }
+      if( taskData.name == 'Section') {
+        this.sections.find(sec => {
+          if(sec.id == taskData.value) {
+            updatedvalue = sec.title
+          }
+        })
       }
       if (taskData.name == 'Status') {
         this.statusValues.find(s => {

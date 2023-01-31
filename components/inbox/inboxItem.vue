@@ -1,9 +1,9 @@
 <template>
   <div class="inbox-item border-bottom-gray2 py-1 px-3 position-relative cursor-pointer" :class="{'active': active == item.id}" @click="itemClick">
-    <div class="new text-white font-xs position-absolute">New 
+    <div v-if="!status.markRead" class="new text-white font-xs position-absolute">New
       <span class="triangle"></span>
     </div>
-    <div class="w-100 d-inline-flex gap-05 pb-05 text-secondary font-md">
+    <div class="w-100 d-inline-flex align-center gap-05 pb-05 text-secondary font-md">
       <span>
         <user-info :userId="item.userId"></user-info>
       </span>
@@ -16,13 +16,13 @@
         <span class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Flag message'">
           <bib-icon icon="flag-racing" variant="gray5"></bib-icon>
         </span>
-        <span class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Mark as unread'">
-          <bib-icon icon="mail-solid" variant="gray5"></bib-icon>
+        <span class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="readText" @click="markRead">
+          <bib-icon icon="mail-solid" :variant="status.markRead ? 'gray6' : 'gray5'"></bib-icon>
         </span>
         <span class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Archive'">
           <bib-icon icon="file-multiple" variant="gray5"></bib-icon>
         </span>
-        <span class="shape-rounded px-05 py-025 bg-light">{{item.id}}</span>
+        <span class="shape-rounded px-025 border-gray4 text-gray5 font-xs">{{item.id}}</span>
       </div>
     </div>
     <div class="d-flex align-center justify-between">
@@ -34,11 +34,13 @@
     </div>
     <div class="content font-md py-05">
       <div v-if="item.content || item.comment" class="inbox-item-content mb-05">
-        <template v-for="cn in item.content" >
-          <div>{{cn.title}}</div><div>@ {{cn.time}}</div> 
+        <template v-for="cn in item.content">
+          <div>{{cn.title}}</div>
+          <div>@ {{cn.time}}</div>
         </template>
-        <template v-for="cm in item.comment" >          
-          <div v-html="cm.comment"></div><div>@ {{$toTime(cm.updatedAt)}}</div> 
+        <template v-for="cm in item.comment">
+          <div v-html="cm.comment"></div>
+          <div>@ {{$toTime(cm.updatedAt)}}</div>
         </template>
       </div>
       <!-- <drag-table-simple v-if="item.content" :fields="fields" :tasks="item.content" headless :titleIcon="{ icon: 'tick'}" :collapsible="false" :drag="false"></drag-table-simple> -->
@@ -46,7 +48,8 @@
       <!-- <div v-html="taskComment.comment"></div>
       <div v-html="projComment.comment"></div> -->
     </div>
-    <div class="sent font-sm text-gray5">Sent <!-- on Sept. 22, 2022 --> @ {{$toTime(item.updatedAt)}} </div>
+    <div class="sent font-sm text-gray5">Sent
+      <!-- on Sept. 22, 2022 --> @ {{$toTime(item.updatedAt)}} </div>
   </div>
 </template>
 <script>
@@ -58,20 +61,30 @@ export default {
   props: {
     item: Object,
     active: Number,
+    status: {
+      type: Object,
+      default: function() {
+        return {
+          markRead: false,
+          markFlag: false,
+          markArchive: false,
+        }
+      }
+    },
   },
 
   data() {
     return {
       fields: [{
-        key: "title",
-        label: "Task name",
-        width: "70%",
-      },
-      {
-        key: "time",
-        label: "@",
-      },
-       /*{
+          key: "title",
+          label: "Task name",
+          width: "70%",
+        },
+        {
+          key: "time",
+          label: "@",
+        },
+        /*{
         key: "status",
         label: "Status",
       }, {
@@ -86,8 +99,14 @@ export default {
       }, {
         key: "dueDate",
         label: "Due Date",
-      }*/],
+      }*/
+      ],
       tasks: DUMMY_TASKS,
+      /*status: {
+        markRead: false,
+        markFlag: false,
+        markArchive: false,
+      },*/
     }
   },
   computed: {
@@ -103,15 +122,32 @@ export default {
     /*projComment() {
       return this.item['projectComment'] ? this.item.projectComment : ''
     },*/
+    readText() { return this.status.markRead ? 'Mark as Unread' : 'Mark as Read' },
   },
   methods: {
     itemClick() {
       if (this.item.taskId) {
-        this.$emit('task-click', {id: this.item.id, taskId: this.item.taskId})
+        this.$emit('task-click', { id: this.item.id, taskId: this.item.taskId })
       }
       if (this.item.projectId) {
-        this.$emit('project-click', {id: this.item.id, projectId: this.item.projectId})
+        this.$emit('project-click', { id: this.item.id, projectId: this.item.projectId })
       }
+      // this.markRead()
+      this.$store.dispatch("inbox/createInboxEntry", { historyId: this.item.id })
+
+    },
+    markRead() {
+      /*this.$axios.post("/inbox", { historyId: this.item.id }, {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+        }
+      }).then(h => {
+        // console.log(h.data)
+        this.status.markRead = h.data.data.markRead
+        this.status.markFlag = h.data.data.markFlag
+        this.status.markArchive = h.data.data.markArchive
+        this.readText = 'Mark as Unread'
+      }).catch(e => console.warn(e))*/
     },
   }
 }
@@ -122,6 +158,7 @@ export default {
   h4 {
     font-size: 16px;
   }
+
   &-content {
     background-color: white;
     display: grid;
@@ -129,12 +166,21 @@ export default {
     /*gap: 0.25rem;*/
     border-top: 1px solid $light;
     border-right: 1px solid $light;
-    > * { padding: 0.325rem; border-bottom: 1px solid $light; border-left: 1px solid $light; }
+
+    >* {
+      padding: 0.325rem;
+      border-bottom: 1px solid $light;
+      border-left: 1px solid $light;
+    }
   }
 
-  &.active { background-color: $light;
+  &.active {
+    background-color: $light;
+
     .new {
-      span { border-right-color: $light; }
+      span {
+        border-right-color: $light;
+      }
     }
   }
 }

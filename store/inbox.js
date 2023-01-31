@@ -3,6 +3,17 @@ export const state = () => ({
     singleInbox: {}
   });
   
+  export const getters = {
+
+    getSingleInbox(state) {
+        return state.singleInbox;
+    },
+
+    getInbox(state) {
+        return state.inbox;
+    }
+  };
+
   export const mutations = {
 
     createInboxEntry(state, payload) {
@@ -18,32 +29,22 @@ export const state = () => ({
     }
   };
   
-  export const getters = {
-
-    getSingleInbox(state) {
-        return state.singleInbox;
-    },
-
-    getInbox(state) {
-        return state.inbox;
-    }
-  };
-  
   export const actions = {
 
     async createInboxEntry(ctx, payload) {
-        const res = await this.$axios.$post('/inbox', payload, {
+        const res = await this.$axios.post('/inbox', payload, {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
         });
-    
-        if (res.statusCode == 200) {
-          ctx.commit('createInboxEntry', res.data);
+
+        // console.log(res.data)
+        if (res.data.statusCode == 200) {
+          ctx.commit('createInboxEntry', res.data.data);
         }
         return res.data
     },
 
-    async getInboxEntry(ctx, payload) {
-        const res = await this.$axios.$post(`/inbox/${payload.id}`, {
+    async fetchInboxEntry(ctx, payload) {
+        const res = await this.$axios.get(`/inbox/${payload.id}`, {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
         });
     
@@ -53,13 +54,14 @@ export const state = () => ({
         return res.data
     },
 
-    async getInboxEntries(ctx, payload) {
-        const res = await this.$axios.$post(`/inbox`, {
+    async fetchInboxEntries(ctx, payload) {
+        const res = await this.$axios.get(`/inbox`, {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
         });
-    
-        if (res.statusCode == 200) {
-          ctx.commit('setInbox', res.data);
+
+        // console.log(res.data)
+        if (res.data.statusCode == 200) {
+          ctx.commit('setInbox', res.data.data);
         }
         return res.data
     }
