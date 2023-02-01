@@ -246,6 +246,7 @@ export default {
       })
       formdata.append('projectId', this.project.id)
       formdata.append('text', `file(s) [${filelist.join(", ")}] uploaded to project`)
+      formdata.append('isHidden', true)
 
       const fi = await this.$axios.post("/file/upload", formdata, {
         headers: {
@@ -353,6 +354,7 @@ export default {
               'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
               'projectid': this.project.id,
               'text': `file ${file.name} deleted`,
+              'isHidden': true,
               'userid': file.userId
             }
           }).then(f => {
