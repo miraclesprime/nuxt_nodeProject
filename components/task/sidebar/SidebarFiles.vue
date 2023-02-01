@@ -167,6 +167,7 @@ export default {
       formdata.append('taskId', this.task.id)
       // formdata.append('text', 'File added for task');
       formdata.append('text', `uploaded file(s) "${filelist.join(", ")}" to task`)
+      formdata.append('isHidden', true)
 
       if (this.task.hasOwnProperty('project')) {
         formdata.append('projectId', this.task.project[0].projectId)
@@ -260,6 +261,7 @@ export default {
               'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
               "taskid": this.task.id,
               "text": "File deleted from task",
+              'isHidden': true,
               'userid': file.userId
             }
           }).then(f => {

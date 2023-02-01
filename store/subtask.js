@@ -171,6 +171,7 @@ export const actions = {
       const res = await this.$axios.$post(`/subtask/${payload.id}/comments`, {
         comment: payload.comment,
         text: payload.text,
+        isHidden: true,
       }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
@@ -191,6 +192,7 @@ export const actions = {
       const res = await this.$axios.$put(`/subtask/${payload.subtaskId}/comments/${payload.commentId}`, {
         comment: payload.comment,
         text: payload.text,
+        isHidden: true,
       }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
@@ -212,6 +214,7 @@ export const actions = {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           "text": payload.text,
+          "isHidden": true,
           "userid": payload.userId
         }
       });

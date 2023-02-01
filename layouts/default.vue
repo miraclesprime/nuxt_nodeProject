@@ -73,7 +73,7 @@
         </bib-detail-collapse>
         <!-- separator -->
         <div class=" mt-05 mb-05" :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']" style="height: 1px"></div>
-        <bib-detail-collapse v-show="!collapseNavigation" label="People" variant="white" open>
+        <bib-detail-collapse v-show="!collapseNavigation" label="People" variant="white" open v-if="isAdmin">
           <template v-slot:content>
             <!-- <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light">
               <bib-icon icon="add" variant="success" :scale="2" class="p-025 ml-025"></bib-icon> <span class="p-025">Add a team mate</span>
@@ -198,9 +198,11 @@ export default {
       logoutUrl: process.env.LOGOUT_URL,
       sectionPreselect: null,
       scrollId: "",
+      isAdmin: false
     }
   },
   created() {
+    
     this.$root.$on("open-sidebar", (payload) => {
       // console.log("openSidebar => ", typeof(payload), payload)
       this.openSidebar = true;
@@ -287,7 +289,7 @@ export default {
       }
 
       // Dhruv
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY3Mjg5MjY3MzA2NiwiZXhwIjoxNjgwNjY4NjczMDY2LCJqdGkiOiIyMzk3NjMyMS1mYWNiLTQzYWQtOTFjOS0wOWQzMzU2NDQ1ZmUifQ.Vuzv8ejSvZMqshraxNek9dfHy4SonAazZJfHO2BN1bY"
+      let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY3Mjg5MjY3MzA2NiwiZXhwIjoxNjgwNjY4NjczMDY2LCJqdGkiOiIyMzk3NjMyMS1mYWNiLTQzYWQtOTFjOS0wOWQzMzU2NDQ1ZmUifQ.Vuzv8ejSvZMqshraxNek9dfHy4SonAazZJfHO2BN1bY"
 
       // Vishwajeet
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2NzI5MDEyNzg3MjIsImV4cCI6MTY4MDY3NzI3ODcyMiwianRpIjoiNzE3YjIwYWUtYWRmZi00ZGVjLThlZjQtZjM0OWQzMjk0NjJjIn0.B7GJbgfziMHPRnXPMba6oFGz3gKcoi5sgpL9e69LX8E"
@@ -295,8 +297,8 @@ export default {
       // Rajeev
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnRUxZcWFRV1FHOWRuamsyIiwic3ViZSI6InJhamVldi5zaGFybWFAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJVU0VSIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY3MjYzOTg2MDMzMSwiZXhwIjoxNjgwNDE1ODYwMzMxLCJqdGkiOiJhYWZlYmUxYi1kZGI2LTRmODMtYjIzYy1hZWRkMDcxMzU1ZTEifQ.AxRf7tHVZC4r0Io6J9ghNZJscPkRKWM3LBOgevkQdKE"
 
-      // this.$cookies.set('b_ssojwt', cookie);
-      // this.$store.dispatch('token/setToken', cookie);
+      this.$cookies.set('b_ssojwt', cookie);
+      this.$store.dispatch('token/setToken', cookie);
 
       if (this.$cookies.get('b_ssojwt')) {
         let jwt = this.$cookies.get('b_ssojwt');
@@ -335,6 +337,11 @@ export default {
             }
           }).then((value) => {
             // console.log('user created!!')
+            if(JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
+              this.isAdmin = true;
+            } else {
+              this.isAdmin = false
+            }
             this.$store.dispatch("project/setFavProjects")
             this.$store.dispatch("goals/setFavGoals")
             this.$store.dispatch("user/setTeamMembers")

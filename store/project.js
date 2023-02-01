@@ -491,7 +491,8 @@ export const actions = {
       let trimComment = _.truncate(payload.comment.slice(3, -4), { length: 128 })
       const res = await this.$axios.$post(`/project/${payload.id}/comments`, {
         comment: payload.comment,
-        text: `new comment ${trimComment}`
+        text: `new comment ${trimComment}`,
+        isHidden: true,
       }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
@@ -513,6 +514,7 @@ export const actions = {
       const res = await this.$axios.$put(`/project/${payload.projectId}/comments/${payload.commentId}`,{
         comment: payload.comment,
         text: `updated comment ${trimComment}`,
+        isHidden: true,
       }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
@@ -535,6 +537,7 @@ export const actions = {
         headers: { 
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           'text': "deleted comment",
+          'isHidden': true,
           "userid": payload.userId
         }
       });
