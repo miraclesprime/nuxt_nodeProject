@@ -27,7 +27,7 @@
             <div v-for="item in sortedData">
               <!-- <task-message v-if="item.comment" :msg="item" @delete-message="onDeleteMessage" @upload-file="uploadFileTrigger"></task-message> -->
               <message v-if="item.comment" :msg="item" fieldkey="task" @delete-message="onDeleteMessage" @upload-file="uploadFileTrigger"></message>
-              <task-history v-if="item.text" :history="item"></task-history>
+              <task-history v-if="item.text && !item.isHidden" :history="item"></task-history>
             </div>
           </template>
           <!-- <template v-else>

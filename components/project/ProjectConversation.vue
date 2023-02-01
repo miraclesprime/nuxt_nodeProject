@@ -20,7 +20,7 @@
     <template v-else-if="sortedData.length > 0">
       <div v-for="item in sortedData">
         <message v-if="item.comment" :msg="item"></message>
-        <task-history v-if="item.text" :history="item"></task-history>
+        <task-history v-if="item.text && !item.isHidden" :history="item"></task-history>
       </div>
     </template>
     <template v-else>
@@ -125,7 +125,7 @@ export default {
       }*/
       this.$store.dispatch("project/fetchProjectComments", { id: this.project.id })
       .then(c => {
-        console.log(c)
+        // console.log(c)
         // if (true) {}
         this.comments = c.data
         this.fetchHistory()

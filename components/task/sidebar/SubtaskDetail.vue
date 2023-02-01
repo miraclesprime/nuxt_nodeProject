@@ -97,7 +97,7 @@
           <div v-for="item in sortedData">
             <!-- <task-message v-if="item.comment" :msg="item" @delete-message="onDeleteMessage"></task-message> -->
             <message v-if="item.comment" :msg="item" fieldkey="subtask" @delete-message="onDeleteMessage"></message>
-            <task-history v-if="item.text" :history="item"></task-history>
+            <task-history v-if="item.text && !item.isHidden" :history="item"></task-history>
           </div>
         </template>
       </div>

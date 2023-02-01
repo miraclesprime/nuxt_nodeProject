@@ -17,7 +17,7 @@ export const state = () => ({
   export const mutations = {
     createInboxEntry(state, payload) {
         let ii = state.inbox.findIndex(inb => inb.historyId == payload.historyId )
-        console.log('inbox index found', ii)
+        // console.log('inbox index found', ii)
         if (ii >= 0) {
             state.inbox[ii] = payload
         } else {
