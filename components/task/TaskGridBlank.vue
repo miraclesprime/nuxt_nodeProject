@@ -1,15 +1,15 @@
 <template>
-  <div :id="'task-grid-wrapper'+ task.id" class="task-grid bg-white" @click.stop="$emit('open-sidebar', task)">
-    <figure v-if="task.cover" :id="'task-card-image'+task.id" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
-    <div class="task-top" :id="'tg-top-wrap'+ task.id">
-      
-      <div class="d-flex" :id="'task-card-inside-wrap'+task.id">
-        <span class="cursor-pointer" @click.stop="markComplete(task)">
-          <bib-icon icon="check-circle-solid" :scale="1.5" :variant="task.statusId == 5 ? 'success' : 'light'"></bib-icon>
+  <div id="task-grid-wrapper" class="task-grid bg-white active" >
+    <div class="task-top" id="tg-top-wrap">
+      <div class="d-flex gap-025" id="task-card-inside-wrap">
+        <span class="cursor-pointer" >
+          <bib-icon icon="check-circle-solid" :scale="1.5" variant="light"></bib-icon>
         </span>
-        <span class="ml-05 flex-grow-1" :id="'task-title'+task.id">{{ task.title }} </span>
+        <!-- <span class="ml-05 flex-grow-1" :id="'task-title'+task.id">{{ task.title }} </span> -->
+        <input type="text" id="newtaskInput" class="editable-input" v-model="title" @input="debounceCreate" placeholder="Enter title...">
       </div>
-      <div class="shape-circle bg-light width-2 height-2 d-flex flex-shrink-0 justify-center align-center">
+      <span>{{sectionId}}</span>
+      <!-- <div class="shape-circle bg-light width-2 height-2 d-flex flex-shrink-0 justify-center align-center">
         <bib-popup pop="elipsis" icon="elipsis" icon-variant="gray5" icon-hover-variant="dark">
           <template v-slot:menu>
             <div class="list" :id="'task-list'+task.id">
@@ -19,60 +19,63 @@
             </div>
           </template>
         </bib-popup>
-      </div>
+      </div> -->
     </div>
     <div class="task-mid d-flex gap-05">
-      <status-badge :status="task.status"></status-badge>
-      <priority-badge :priority="task.priority"></priority-badge>
-      <!-- <priority-comp :priority="task.priority" :iconOnly="true"></priority-comp> -->
+      <status-badge :status="{id: 1, text: 'Not Started'}"></status-badge>
+      <!-- <priority-badge :priority="task.priority"></priority-badge> -->
+      <priority-comp :priority="{id:2, text: 'Medium'}" :iconOnly="true"></priority-comp>
     </div>
-    <div class="task-bottom" :id="'tg-bottom'+ task.id">
-      <user-info v-if="task.userId" :userId="task.userId"></user-info>
-      <div v-if="task.dueDate" class="align-center gap-05 ml-auto">
-        <bib-icon icon="calendar" :variant="overdue(task)"></bib-icon>
-        <format-date :datetime="task.dueDate" :variant="overdue(task)"></format-date>
+    <div class="task-bottom" id="tg-bottom">
+      <!-- <user-info v-if="task.userId" :userId="task.userId"></user-info> -->
+      <bib-avatar size="1.25rem"></bib-avatar>
+      <div  class="align-center gap-05 ml-auto">
+        <bib-icon icon="calendar" variant="gray5"></bib-icon>
+        <format-date :datetime="new Date().toString()" variant="gray5"></format-date>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
-import { TASK_CONTEXT_MENU } from "../../config/constants";
+// import { mapGetters } from 'vuex'
+// import { TASK_CONTEXT_MENU } from "../../config/constants";
 export default {
+  name: "taskGridBlank",
   props: {
-    task: Object,
+    sectionId: Number,
   },
   data() {
     return {
-      flag: false,
-      contextMenuItems: TASK_CONTEXT_MENU,
+      title: "",
+      // flag: false,
+      // contextMenuItems: TASK_CONTEXT_MENU,
     };
   },
   computed: {
-    ...mapGetters({
+    /*...mapGetters({
       favTasks: "task/getFavTasks",
-    }),
-    isFavorite() {
-      let fav = this.favTasks.some(t => t.task.id == this.task.id)
-      if (fav) {
-        return { variant: "orange", text: "Remove favorite", status: true }
-      } else {
-        return { variant: "gray5", text: "Add to favorites", status: false }
-      }
-    },
+    }),*/
+  },
+  mounted(){
+    this.$nextTick(() => {
+      document.getElementById("newtaskInput").focus
+    });
   },
   methods: {
-    overdue(item) {
+    debounceCreate: _.debounce(function() {
+      console.info(this.title)
+    }, 1500),
+    /*overdue(item) {
       // console.log(new Date(item.dueDate), new Date);
       return (new Date(item.dueDate) < new Date() && item.statusId != 5) ? 'danger' : 'gray5';
-    },
+    },*/
 
-    openSidebar(task, scroll) {
+    /*openSidebar(task, scroll) {
       // console.log(task)
       this.$nuxt.$emit("open-sidebar", {...task, scrollId: scroll});
-    },
+    },*/
 
-    addToFavorites(task) {
+    /*addToFavorites(task) {
       // console.info("to be fav task", task)
       let isFav = this.favTasks.some((f) => f.taskId == task.id)
       // console.log(isFav)
@@ -96,8 +99,8 @@ export default {
             console.log(e)
           })
       }
-    },
-    markComplete(task) {
+    },*/
+    /*markComplete(task) {
       // console.log(this.currentTask)
       this.$store.dispatch('task/updateTaskStatus', task)
         .then((d) => {
@@ -107,8 +110,8 @@ export default {
         }).catch(e => {
           console.log(e)
         })
-    },
-    deleteTask(task) {
+    },*/
+    /*deleteTask(task) {
       this.$store.dispatch("task/deleteTask", task).then(t => {
         if (t.statusCode == 200) {
           this.$emit("update-key", t.message)
@@ -118,8 +121,8 @@ export default {
       }).catch(e => {
         console.log(e)
       })
-    },
-    activeVariant(item){
+    },*/
+    /*activeVariant(item){
         if (item.label.includes('Complete')) {
           return this.task.statusId == 5 ? 'success': 'gray5'
         }
@@ -131,8 +134,8 @@ export default {
           // console.log(fata, fapo)
           return fata ? 'orange': 'gray5'
         }
-    },
-    contextItemClick(item){
+    },*/
+    /*contextItemClick(item){
       // console.log(item)
       switch (item.event) {
         case 'done-task':
@@ -161,7 +164,7 @@ export default {
           alert("no task assigned")
           break;
       }
-    },
+    },*/
   },
 };
 
@@ -172,28 +175,11 @@ export default {
   margin: 1rem 0;
   border: 1px solid var(--bib-gray4);
   border-radius: 6px;
-  cursor: pointer;
   transition: all 200ms ease;
-
-  &.bg-danger {
-    background-color: var(--bib-danger);
-    color: #fff;
-
-    .user-name {
-      color: #fff
-    }
-  }
 
   &.active {
     border-color: $dark;
     box-shadow: 0 0 0 4px $primary-sub3;
-  }
-
-  .task-image {
-    aspect-ratio: 16 / 9;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
   }
 
   .task-top,
@@ -219,6 +205,8 @@ export default {
       font-size: 13px;
     }
   }
+
+  .editable-input { font-size: $base-size; font-weight: nowmal; }
 
 }
 

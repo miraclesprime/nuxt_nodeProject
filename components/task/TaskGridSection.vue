@@ -93,6 +93,10 @@
             <template v-for="task in section.tasks">
               <task-grid :task="task" :key="task.title + templateKey + '-' + task.id" :class="[ currentTask.id == task.id ? 'active' : '']" @open-sidebar="openSidebar(task, section.projectId)" ></task-grid>
             </template>
+            <div v-click-outside="closeNewTask">
+              <div class="bg-success-sub6 shape-rounded cursor-pointer bg-hover-success-sub3 px-05 text-success text-center font-lg" @click.stop="newTask = true" >+</div>
+              <task-grid-blank v-if="newTask" :key="section.id" :sectionId="section.id" ></task-grid-blank>
+            </div>
           </draggable>
         </div>
       </div>
@@ -143,6 +147,7 @@ export default {
       sectionInput: false,
       newSectionName: '',
       newSectionLoader: false,
+      newTask: false,
     };
   },
   props: {
@@ -199,6 +204,18 @@ export default {
   },
 
   methods: {
+    closeNewTask($event){
+      // console.log($event.originalTarget)
+      this.newTask = false
+      $event.target.classList.forEach((cl, index) => {
+        // console.info(index, cl)
+        if (cl == 'editable-input') {
+          return false
+        } else {
+          this.newTask = false
+        }
+      })
+    },
     isFavorite(task) {
       let fav = this.favTasks.some(t => t.task.id == task.id)
       if (fav) {

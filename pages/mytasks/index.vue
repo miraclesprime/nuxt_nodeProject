@@ -56,7 +56,9 @@
                   </div>
                   <div class="task-section__body h-100">
                     <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
-                      <task-grid :task="task" v-for="(task, index) in todo.tasks" :key="task.id + '-' + index + key" @open-sidebar="openSidebar"></task-grid>
+                      <template v-for="(task, index) in todo.tasks">
+                        <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @open-sidebar="openSidebar"></task-grid>
+                      </template>
                     </draggable>
                   </div>
                 </div>
@@ -132,7 +134,8 @@ export default {
   computed: {
     ...mapGetters({
       todos: "todo/getAllTodos",
-      favTasks: 'task/getFavTasks'
+      favTasks: 'task/getFavTasks',
+      currentTask: 'task/getSelectedTask',
     })
   },
 

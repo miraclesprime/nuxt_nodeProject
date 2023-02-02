@@ -33,8 +33,8 @@
                 </div>
               </div>
               <div class="task-section__body">
-                <div v-for="(item, index) in tasks" :key="index + '-' + key" >
-                  <task-grid :task="item" v-on:update-key="updateKey" @open-sidebar="openSidebar" />
+                <div v-for="(task, index) in tasks" :key="index + '-' + key" >
+                  <task-grid :task="task" :class="[ currentTask.id == task.id ? 'active' : '']" v-on:update-key="updateKey" @open-sidebar="openSidebar" />
                 </div>
               </div>
             </div>
@@ -79,7 +79,8 @@ export default {
     ...mapGetters({
         user: "user/getUser",
         tasks: "company/getCompanyTasks",
-        favTasks: 'task/getFavTasks'
+        favTasks: 'task/getFavTasks',
+        currentTask: 'task/getSelectedTask',
     }),
   },
 
