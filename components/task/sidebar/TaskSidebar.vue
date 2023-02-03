@@ -92,7 +92,7 @@
     </div>
 
     <div class="of-scroll-y d-grid" id="ts-of-scroll-y" style="grid-template-columns: none; align-items: start">
-      <sidebar-fields :task="currentTask" :loading="loading" @update-field="updateTask" @create-task="createTask"></sidebar-fields>
+      <sidebar-fields :task="currentTask" :loading="loading" @update-project-field="updateProject" @update-field="updateTask" @create-task="createTask"></sidebar-fields>
       <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" ></sidebar-subtask>
       <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
       <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
@@ -423,11 +423,11 @@ export default {
         let user = this.teamMembers.find(t => t.id == taskData.value)
         updatedvalue = user.label
       }
-      if (taskData.name == 'Project') {
-        let proj = this.projects.find(t => t.id == taskData.value)
-        updatedvalue = proj.title
-        projectId = taskData.value
-      }
+      // if (taskData.name == 'Project') {
+      //   let proj = this.projects.find(t => t.id == taskData.value)
+      //   updatedvalue = proj.title
+      //   projectId = taskData.value
+      // }
       if( taskData.name == 'Section') {
         this.sections.find(sec => {
           if(sec.id == taskData.value) {
@@ -466,6 +466,38 @@ export default {
         user,
         projectId: projectId ? projectId : null,
         text: `changed ${taskData.name} to ${updatedvalue}`,
+      })
+        .then((u) => {
+          // console.log(u)
+          this.$nuxt.$emit("update-key")
+          // this.$nuxt.$emit("refresh-history")
+          this.reloadHistory += 1
+          // this.loading = false
+        })
+        .catch(e => {
+          console.log(e)
+          // this.loading = false
+        })
+
+    },
+
+    async updateProject(taskData) {
+
+      let proj = this.projects.find(t => t.id == taskData.projValue)
+
+      let user;
+      if (taskData.field == 'userId' && taskData.value != "") {
+        user = this.teamMembers.filter(u => u.id == taskData.value)
+      } else {
+        user = null
+      }
+
+      this.$store.dispatch("task/updateTask", {
+        id: this.form.id,
+        data: { [taskData.projField]: taskData.projValue, [taskData.secField]: taskData.secValue },
+        user,
+        projectId: taskData.oldProjValue,
+        text: proj ? `changed ${taskData.projField} to ${proj.title}` : `Task removed from Project`,
       })
         .then((u) => {
           // console.log(u)

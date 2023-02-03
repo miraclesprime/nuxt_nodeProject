@@ -141,7 +141,6 @@ export default {
           this.$store.dispatch("section/fetchProjectSections", { projectId: this.form.projectId, filter: 'all' })
         } else {
           this.form.projectId = this.project.id
-          this.$store.dispatch("section/fetchProjectSections", { projectId: this.form.projectId, filter: 'all' })
         }
         // console.info(this.$refs.topScroll)
       } else {
@@ -172,7 +171,8 @@ export default {
         this.form.sectionId = null
         if (this.form.id) {
           // this.updateTask('removed from project', this.form.projectId)
-          this.debounceUpdateField("Project", "projectId", this.form.projectId)
+          // this.debounceUpdateField("Project", "projectId", this.form.projectId)
+          this.debounceProjectUpdateField("Project", "projectId", this.form.projectId, "Section","sectionId", this.form.sectionId, this.task.project[0].projectId)
           // this.$emit("update-field", { name: "Project", field: 'projectId', value: this.form.projectId })
           return false
         }
@@ -199,7 +199,8 @@ export default {
           this.form.sectionId = sec.id
         }
         this.loading2 = false
-        this.debounceUpdateField("Project", "projectId", this.form.projectId)
+        // this.debounceUpdateField("Project", "projectId", this.form.projectId)
+        this.debounceProjectUpdateField("Project", "projectId", this.form.projectId, "Section","sectionId", this.form.sectionId, this.form.projectId)
 
       })
     },
@@ -207,6 +208,12 @@ export default {
       // console.log(name, field, value)
       if (this.form?.id) {
         this.$emit("update-field", { name: name, field: field, value: value })
+      }
+    }, 1000),
+    debounceProjectUpdateField: _.debounce(function(pName, pField, pValue, sName, sField, sValue, oldProjValue) {
+      // console.log(name, field, value)
+      if (this.form?.id) {
+        this.$emit("update-project-field", { projName: pName, projField: pField, projValue: pValue, secName: sName, secField: sField, secValue: sValue, oldProjValue: oldProjValue })
       }
     }, 1000),
     createTask(){
