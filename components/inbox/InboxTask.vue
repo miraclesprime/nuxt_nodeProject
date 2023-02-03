@@ -79,7 +79,7 @@
     </div>
     <div class="of-scroll-y position-relative py-05" id="ts-of-scroll-y" >
         <!-- editable fields -->
-        <sidebar-fields :task="form" @update-field="updateTask"></sidebar-fields>
+        <sidebar-fields :task="form" @update-project-field="updateProject" @update-field="updateTask"></sidebar-fields>
         <!-- subtasks -->
         <sidebar-subtask @view-subtask="viewSubtask($event)"></sidebar-subtask>
         <!-- conversation -->
@@ -314,6 +314,38 @@ export default {
         projectId: this.form.projectId ? this.form.projectId : null,
         // text: historyText
         text: `changed ${taskData.name} to ${updatedvalue}`,
+      })
+        .then((u) => {
+          // console.log(u)
+          this.$nuxt.$emit("update-key")
+          // this.$nuxt.$emit("refresh-history")
+          this.reloadHistory += 1
+          // this.loading = false
+        })
+        .catch(e => {
+          console.log(e)
+          // this.loading = false
+        })
+
+    },
+
+    async updateProject(taskData) {
+
+      let proj = this.projects.find(t => t.id == taskData.projValue)
+
+      let user;
+      if (taskData.field == 'userId' && taskData.value != "") {
+        user = this.teamMembers.filter(u => u.id == taskData.value)
+      } else {
+        user = null
+      }
+
+      this.$store.dispatch("task/updateTask", {
+        id: this.form.id,
+        data: { [taskData.projField]: taskData.projValue, [taskData.secField]: taskData.secValue },
+        user,
+        projectId: taskData.oldProjValue,
+        text: proj ? `changed ${taskData.projField} to ${proj.title}` : `Task removed from Project`,
       })
         .then((u) => {
           // console.log(u)

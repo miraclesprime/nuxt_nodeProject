@@ -93,6 +93,11 @@
             <template v-for="task in section.tasks">
               <task-grid :task="task" :key="task.title + templateKey + '-' + task.id" :class="[ currentTask.id == task.id ? 'active' : '']" @open-sidebar="openSidebar(task, section.projectId)" ></task-grid>
             </template>
+            <task-grid-blank :section="section" :key="'blankTaskGrid'+section.id" :ref="'blankTaskGrid'+section.id" @close-other="closeOtherBlankGrid"></task-grid-blank>
+            <!-- <div v-click-outside="closeNewTask">
+              <div class="bg-success-sub6 shape-rounded cursor-pointer bg-hover-success-sub3 px-05 text-success text-center font-lg" @click.stop="showNewTask(section.id)" >+</div>
+              <task-grid-blank :ref="'newTaskGrid'+section.id" :key="'newTaskGrid'+section.id" :sectionId="section.id" ></task-grid-blank>
+            </div> -->
           </draggable>
         </div>
       </div>
@@ -143,6 +148,7 @@ export default {
       sectionInput: false,
       newSectionName: '',
       newSectionLoader: false,
+      newTask: false,
     };
   },
   props: {
@@ -195,10 +201,18 @@ export default {
         console.log(e)
         this.loading = false
       })
-
   },
 
   methods: {
+    closeOtherBlankGrid($event){
+      // console.log($event, this.$refs)
+      for (var ref in this.$refs) {
+        // console.info(this.$refs[ref][0].title, $event)
+        if(this.$refs[ref][0].title != $event){
+          this.$refs[ref][0].newTask = false
+        }
+      }
+    },
     isFavorite(task) {
       let fav = this.favTasks.some(t => t.task.id == task.id)
       if (fav) {

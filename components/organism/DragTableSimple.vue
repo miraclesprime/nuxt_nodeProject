@@ -289,10 +289,18 @@ export default {
   methods: {
     rowClick($event, task) {
       // console.log($event.target)
+      this.unselectAll()
+        .then(r => {
+          $event.currentTarget.classList.add("active")
+        })
       this.$emit("row-click", task)
     },
     rowRightClick($event, task) {
       // this.$emit("close-context-menu")
+      this.unselectAll()
+        .then(r => {
+          $event.currentTarget.classList.add("active")
+        })
       setTimeout(() => {
         this.$emit("row-context", { event: $event, task: task })
       }, 200)
@@ -308,7 +316,7 @@ export default {
       // this.$emit('task-checkmark-click', task)
       this.$emit(this.titleIcon.event, task)
     },
-    unselectAll() {
+    async unselectAll() {
       let rows = document.getElementsByClassName('table__irow');
       for (let row of rows) {
         row.classList.remove('active');

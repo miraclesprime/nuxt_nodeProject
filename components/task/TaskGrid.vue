@@ -5,7 +5,7 @@
       
       <div class="d-flex" :id="'task-card-inside-wrap'+task.id">
         <span class="cursor-pointer" @click.stop="markComplete(task)">
-          <bib-icon icon="check-circle" :scale="1.5" :variant="task.statusId == 5 ? 'success' : 'light'"></bib-icon>
+          <bib-icon icon="check-circle-solid" :scale="1.5" :variant="task.statusId == 5 ? 'success' : 'light'"></bib-icon>
         </span>
         <span class="ml-05 flex-grow-1" :id="'task-title'+task.id">{{ task.title }} </span>
       </div>

@@ -161,7 +161,7 @@ export const actions = {
       ctx.commit('createTask', res.data);
       ctx.commit("section/addTaskToSection", res.data, { root: true });
     }
-    return res.data
+    return res
   },
 
   async updateTask(ctx, payload) {
