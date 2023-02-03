@@ -1,15 +1,16 @@
 <template>
-  <div id="task-grid-wrapper" class="task-grid bg-white active" >
-    <div class="task-top" id="tg-top-wrap">
-      <div class="d-flex gap-025" id="task-card-inside-wrap">
-        <span class="cursor-pointer" >
-          <bib-icon icon="check-circle-solid" :scale="1.5" variant="light"></bib-icon>
-        </span>
-        <!-- <span class="ml-05 flex-grow-1" :id="'task-title'+task.id">{{ task.title }} </span> -->
-        <input type="text" id="newtaskInput" class="editable-input" v-model="title" @input="debounceCreate" placeholder="Enter title...">
-      </div>
-      <span>{{sectionId}}</span>
-      <!-- <div class="shape-circle bg-light width-2 height-2 d-flex flex-shrink-0 justify-center align-center">
+  <div v-click-outside="closeNewTask">
+    <div class="bg-success-sub6 shape-rounded cursor-pointer bg-hover-success-sub3 px-05 text-success text-center font-lg" @click.stop="showNewTask">+</div>
+    <div v-show="newTask" id="task-grid-wrapper" class="task-grid bg-white active">
+      <div class="task-top" id="tg-top-wrap">
+        <div class="d-flex gap-025" id="task-card-inside-wrap">
+          <span class="cursor-pointer">
+            <bib-icon icon="check-circle-solid" :scale="1.5" variant="light"></bib-icon>
+          </span>
+          <!-- <span class="ml-05 flex-grow-1" :id="'task-title'+task.id">{{ task.title }} </span> -->
+          <input type="text" id="newtaskInput" ref="newtaskInput" class="editable-input" v-model="taskTitle" @input="debounceCreate" @keyup.esc="newTask = false" placeholder="Enter title...">
+        </div>
+        <!-- <div class="shape-circle bg-light width-2 height-2 d-flex flex-shrink-0 justify-center align-center">
         <bib-popup pop="elipsis" icon="elipsis" icon-variant="gray5" icon-hover-variant="dark">
           <template v-slot:menu>
             <div class="list" :id="'task-list'+task.id">
@@ -20,18 +21,19 @@
           </template>
         </bib-popup>
       </div> -->
-    </div>
-    <div class="task-mid d-flex gap-05">
-      <status-badge :status="{id: 1, text: 'Not Started'}"></status-badge>
-      <!-- <priority-badge :priority="task.priority"></priority-badge> -->
-      <priority-comp :priority="{id:2, text: 'Medium'}" :iconOnly="true"></priority-comp>
-    </div>
-    <div class="task-bottom" id="tg-bottom">
-      <!-- <user-info v-if="task.userId" :userId="task.userId"></user-info> -->
-      <bib-avatar size="1.25rem"></bib-avatar>
-      <div  class="align-center gap-05 ml-auto">
-        <bib-icon icon="calendar" variant="gray5"></bib-icon>
-        <format-date :datetime="new Date().toString()" variant="gray5"></format-date>
+      </div>
+      <div class="task-mid d-flex gap-05">
+        <status-badge :status="{id: 1, text: 'Not Started'}"></status-badge>
+        <!-- <priority-badge :priority="task.priority"></priority-badge> -->
+        <priority-comp :priority="{id:2, text: 'Medium'}" :iconOnly="true"></priority-comp>
+      </div>
+      <div class="task-bottom" id="tg-bottom">
+        <!-- <user-info v-if="task.userId" :userId="task.userId"></user-info> -->
+        <bib-avatar size="1.25rem"></bib-avatar>
+        <div class="align-center gap-05 ml-auto">
+          <bib-icon icon="calendar" variant="gray5"></bib-icon>
+          <format-date :datetime="new Date().toString()" variant="gray5"></format-date>
+        </div>
       </div>
     </div>
   </div>
@@ -40,13 +42,15 @@
 // import { mapGetters } from 'vuex'
 // import { TASK_CONTEXT_MENU } from "../../config/constants";
 export default {
-  name: "taskGridBlank",
+  name: "TaskGridBlank",
   props: {
-    sectionId: Number,
+    section: Object,
   },
   data() {
     return {
-      title: "",
+      title: "blankTaskGrid" + this.section.id,
+      taskTitle: "",
+      newTask: false,
       // flag: false,
       // contextMenuItems: TASK_CONTEXT_MENU,
     };
@@ -56,115 +60,61 @@ export default {
       favTasks: "task/getFavTasks",
     }),*/
   },
-  mounted(){
-    this.$nextTick(() => {
+  mounted() {
+    /*this.$nextTick(() => {
       document.getElementById("newtaskInput").focus
-    });
+    });*/
   },
   methods: {
-    debounceCreate: _.debounce(function() {
-      console.info(this.title)
-    }, 1500),
-    /*overdue(item) {
-      // console.log(new Date(item.dueDate), new Date);
-      return (new Date(item.dueDate) < new Date() && item.statusId != 5) ? 'danger' : 'gray5';
-    },*/
-
-    /*openSidebar(task, scroll) {
-      // console.log(task)
-      this.$nuxt.$emit("open-sidebar", {...task, scrollId: scroll});
-    },*/
-
-    /*addToFavorites(task) {
-      // console.info("to be fav task", task)
-      let isFav = this.favTasks.some((f) => f.taskId == task.id)
-      // console.log(isFav)
-
-      if (isFav) {
-        this.$store.dispatch("task/removeFromFavorite", { id: task.id })
-          .then(msg => {
-            // console.log(msg)
-            this.$emit("update-key", msg)
-          })
-          .catch(e => {
-            console.log(e)
-          })
+    showNewTask() {
+      /*let elem = this.$refs['newTaskGrid'+id][0]
+      console.log(elem)
+      if (elem.style.display = 'block') {
+        elem.style.display = 'none'
       } else {
-        this.$store.dispatch("task/addToFavorite", { id: task.id })
-          .then(msg => {
-            // console.log(msg)
-            this.$emit("update-key", msg)
-          })
-          .catch(e => {
-            console.log(e)
-          })
-      }
-    },*/
-    /*markComplete(task) {
-      // console.log(this.currentTask)
-      this.$store.dispatch('task/updateTaskStatus', task)
-        .then((d) => {
-          console.log(d)
-          this.$nuxt.$emit("update-key")
-          this.$store.dispatch("task/setSingleTask", d)
-        }).catch(e => {
-          console.log(e)
-        })
-    },*/
-    /*deleteTask(task) {
-      this.$store.dispatch("task/deleteTask", task).then(t => {
-        if (t.statusCode == 200) {
-          this.$emit("update-key", t.message)
+        elem.style.display = 'block'
+      }*/
+
+      this.newTask = true
+      this.$nextTick(() => {
+        // document.getElementById("newtaskInput").focus
+        this.$refs.newtaskInput.focus()
+        this.$emit("close-other", "blankTaskGrid" + this.section.id)
+      });
+    },
+    closeNewTask($event) {
+      // console.log($event.originalTarget)
+      this.newTask = false
+      /*$event.target.classList.forEach((cl, index) => {
+        // console.info(index, cl)
+        if (cl == 'editable-input') {
+          return false
         } else {
-          console.warn(t.message);
+          this.newTask = false
         }
-      }).catch(e => {
-        console.log(e)
-      })
-    },*/
-    /*activeVariant(item){
-        if (item.label.includes('Complete')) {
-          return this.task.statusId == 5 ? 'success': 'gray5'
+      })*/
+    },
+    debounceCreate: _.debounce(function() {
+      // console.info(this.taskTitle)
+      this.$store.dispatch("task/createTask", {
+        sectionId: this.section.id,
+        title: this.taskTitle,
+        description: "",
+        statusId: 1,
+        dueDate: "",
+        priorityId: 3,
+        budget: 0,
+        text: `task "${this.taskTitle}" created`,
+      }).then(t => {
+        // console.log(t)
+        if (t.statusCode == 200) {
+          // this.$emit("update-key")
+          this.$nuxt.$emit("update-key")
         }
-        if (item.label.includes('Delete')) {
-          return 'danger'
-        }
-        if (item.label.includes('Favorites')) {
-          let fata = this.favTasks.some(ft=>ft.taskId == this.task.id)
-          // console.log(fata, fapo)
-          return fata ? 'orange': 'gray5'
-        }
-    },*/
-    /*contextItemClick(item){
-      // console.log(item)
-      switch (item.event) {
-        case 'done-task':
-          // statements_1
-          this.markComplete(this.task)
-          break;
-        case 'fav-task':
-          this.addToFavorites(this.task)
-          break;
-        case 'delete-task':
-          this.deleteTask(this.task)
-          break;
-        case 'gotoTeam':
-          this.$nuxt.$emit('add-member-to-task')
-          break;
-        case 'gotoComment':
-          this.openSidebar(this.task, 'task_conversation')
-          break;
-        case 'gotoSubtask':
-          this.openSidebar(this.task, 'task_subtasks')
-          break;
-        case 'gotoFiles':
-          this.openSidebar(this.task, 'task_files')
-          break;
-        default:
-          alert("no task assigned")
-          break;
-      }
-    },*/
+        this.taskTitle = ""
+        this.newTask = false
+      }).catch(e => console.warn(e))
+    }, 1500),
   },
 };
 
@@ -206,7 +156,10 @@ export default {
     }
   }
 
-  .editable-input { font-size: $base-size; font-weight: nowmal; }
+  .editable-input {
+    font-size: $base-size;
+    font-weight: nowmal;
+  }
 
 }
 

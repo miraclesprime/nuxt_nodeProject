@@ -93,10 +93,11 @@
             <template v-for="task in section.tasks">
               <task-grid :task="task" :key="task.title + templateKey + '-' + task.id" :class="[ currentTask.id == task.id ? 'active' : '']" @open-sidebar="openSidebar(task, section.projectId)" ></task-grid>
             </template>
-            <div v-click-outside="closeNewTask">
-              <div class="bg-success-sub6 shape-rounded cursor-pointer bg-hover-success-sub3 px-05 text-success text-center font-lg" @click.stop="newTask = true" >+</div>
-              <task-grid-blank v-if="newTask" :key="section.id" :sectionId="section.id" ></task-grid-blank>
-            </div>
+            <task-grid-blank :section="section" :key="'blankTaskGrid'+section.id" :ref="'blankTaskGrid'+section.id" @close-other="closeOtherBlankGrid"></task-grid-blank>
+            <!-- <div v-click-outside="closeNewTask">
+              <div class="bg-success-sub6 shape-rounded cursor-pointer bg-hover-success-sub3 px-05 text-success text-center font-lg" @click.stop="showNewTask(section.id)" >+</div>
+              <task-grid-blank :ref="'newTaskGrid'+section.id" :key="'newTaskGrid'+section.id" :sectionId="section.id" ></task-grid-blank>
+            </div> -->
           </draggable>
         </div>
       </div>
@@ -200,21 +201,17 @@ export default {
         console.log(e)
         this.loading = false
       })
-
   },
 
   methods: {
-    closeNewTask($event){
-      // console.log($event.originalTarget)
-      this.newTask = false
-      $event.target.classList.forEach((cl, index) => {
-        // console.info(index, cl)
-        if (cl == 'editable-input') {
-          return false
-        } else {
-          this.newTask = false
+    closeOtherBlankGrid($event){
+      // console.log($event, this.$refs)
+      for (var ref in this.$refs) {
+        // console.info(this.$refs[ref][0].title, $event)
+        if(this.$refs[ref][0].title != $event){
+          this.$refs[ref][0].newTask = false
         }
-      })
+      }
     },
     isFavorite(task) {
       let fav = this.favTasks.some(t => t.task.id == task.id)
