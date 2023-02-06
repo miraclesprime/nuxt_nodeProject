@@ -231,7 +231,6 @@ export default {
     },
 
     moveTask(e) {
-
       // this.taskDnDlist = tasks
       this.taskDnDsectionId = +e.to.dataset.section
       this.highlight = +e.to.dataset.section
@@ -246,7 +245,6 @@ export default {
     },
 
     moveSection(e) {
-
       // console.log("move section =>",e.relatedContext.list)
       this.highlight = +e.to.dataset.section
 
