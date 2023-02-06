@@ -281,6 +281,13 @@ export default {
     }
   },
 
+  created() {
+    this.$nuxt.$on("edit-message", (msg) => {
+      // console.log(msg)
+      this.editMessage = msg
+    })
+  },
+
   mounted() {
     setTimeout(() => {
       this.$store.dispatch("project/fetchTeamMember", { projectId: this.project.id }).then(() => {

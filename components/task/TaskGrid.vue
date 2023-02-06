@@ -7,7 +7,7 @@
           <bib-icon icon="check-circle-solid" :scale="1.5" :variant="task.statusId == 5 ? 'success' : 'light'"></bib-icon>
         </span>
         <span class="flex-grow-1" :id="'task-title'+task.id">
-          <!-- {{ task.title }} --> <textarea class="editable-input" v-model="form.title" @input="debounceUpdate('Title', 'title', form.title)" rows="1"></textarea></span>
+          <textarea class="editable-input" :class="{'loading': loading}" v-model="form.title" @input="debounceUpdate('Title', 'title', form.title)" rows="1"></textarea></span>
       </div>
       <div class="shape-circle bg-light width-2 height-2 d-flex flex-shrink-0 justify-center align-center">
         <bib-popup pop="elipsis" icon="elipsis" icon-variant="gray5" icon-hover-variant="dark">
@@ -39,13 +39,16 @@
 import { mapGetters } from 'vuex'
 import { TASK_CONTEXT_MENU } from "../../config/constants";
 export default {
+  name: "TaskGrid",
   props: {
     task: Object,
+    project: Number,
   },
   data() {
     return {
       // flag: false,
       contextMenuItems: TASK_CONTEXT_MENU,
+      loading: false,
     };
   },
   computed: {
@@ -60,7 +63,7 @@ export default {
         return { variant: "gray5", text: "Add to favorites", status: false }
       }
     },
-    form(){
+    form() {
       return _.cloneDeep(this.task)
     },
   },
@@ -89,11 +92,34 @@ export default {
 
     debounceUpdate: _.debounce(function(title, field, value) {
       console.log(...arguments)
-      // this.updateTask(title, field, value)
+      this.updateTask(title, field, value)
     }, 1500),
 
-    updateTask(title, field, value){
-      this.$store.dispatch("task/updateTask", this.form)
+    updateTask(title, field, value) {
+      this.loading = true
+      const project = () => {
+        if (this.task.project.length > 0) {
+          return this.task.project[0].projectId
+        } else if (this.project) {
+          return this.project
+        } else {
+          return null
+        }
+      }
+      console.info(project(), this.task.project.length)
+      this.$store.dispatch("task/updateTask", {
+          id: this.task.id,
+          projectId: project(),
+          data: {
+            [field]: value
+          },
+          text: `changed ${title} to ${value}`
+        })
+        .then(res => {
+          console.info(res)
+          this.loading = false
+        })
+        .catch(e => console.warn(e))
     },
 
     addToFavorites(task) {
@@ -223,8 +249,9 @@ export default {
   .editable-input {
     font-size: $base-size;
     font-weight: normal;
-    resize: vertical;
+    resize: initial;
     padding-block: 0.1rem;
+    min-height: 1.8rem;
   }
 
   .task-top,
