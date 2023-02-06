@@ -1,4 +1,5 @@
 <template>
+<client-only>
   <div class="inbox-task h-100 position-relative" >
     <div class="d-flex justify-between side-panel__header__actions " id='ts-side-panel'>
       <!-- <div class="d-flex align-center gap-05" id="ts-icon-close-Wrapper">
@@ -97,6 +98,7 @@
 
     <loading :loading="loading"></loading>
   </div>
+</client-only>
 </template>
 
 <script>
@@ -170,34 +172,6 @@ export default {
     user() {
       return this.$userInfo(this.task.userId)
     },
-    /*userPhoto(){
-      if (this.task.user?.Photo) {
-        return this.task.user.Photo
-      }
-    },*/
-    /*teammates() {
-      let tm = { main: [], extra: [], all: [] }
-      if (Object.keys(this.task).length == 0) {
-        return tm
-      }
-      this.teamMembers.filter(u => {
-        this.team.forEach((t, index) => {
-          if (t.id == u.id) {
-            tm.all.push(u)
-            if (index < 4) {
-              tm.main.push(u)
-            } else {
-              tm.extra.push(u)
-            }
-          }
-        })
-      })
-      return tm
-    },
-    extraNames(){
-      let eArr = this.teammates.extra.map(e=>e.label)
-      return eArr.join(', ')
-    },*/
   },
   created() {
     this.$nuxt.$on("edit-message", (msg) => {

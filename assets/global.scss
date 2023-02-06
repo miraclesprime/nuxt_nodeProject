@@ -141,6 +141,7 @@ ul {
     &:focus { border-color: $danger-sub1; box-shadow: 0 0 3px $danger-sub2;}
   }
   &.sm { padding: 0.125rem 0.2rem; font-weight: normal; font-size: $font-size-sm; border-radius: 0.1rem; }
+  &.loading { background-image: url('./static/spinner.svg'); background-position: right center; background-repeat: no-repeat; background-size: contain;}
 }
 // task bundle
 .task-bundle {

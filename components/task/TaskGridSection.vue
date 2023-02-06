@@ -91,7 +91,7 @@
               </div>
             </div> -->
             <template v-for="task in section.tasks">
-              <task-grid :task="task" :key="task.title + templateKey + '-' + task.id" :class="[ currentTask.id == task.id ? 'active' : '']" @open-sidebar="openSidebar(task, section.projectId)" ></task-grid>
+              <task-grid :task="task" :project="section.projectId" :key="task.title + templateKey + '-' + task.id" :class="[ currentTask.id == task.id ? 'active' : '']" @open-sidebar="openSidebar(task, section.projectId)" ></task-grid>
             </template>
             <task-grid-blank :section="section" :key="'blankTaskGrid'+section.id" :ref="'blankTaskGrid'+section.id" @close-other="closeOtherBlankGrid"></task-grid-blank>
             <!-- <div v-click-outside="closeNewTask">
@@ -231,7 +231,6 @@ export default {
     },
 
     moveTask(e) {
-
       // this.taskDnDlist = tasks
       this.taskDnDsectionId = +e.to.dataset.section
       this.highlight = +e.to.dataset.section
@@ -246,7 +245,6 @@ export default {
     },
 
     moveSection(e) {
-
       // console.log("move section =>",e.relatedContext.list)
       this.highlight = +e.to.dataset.section
 

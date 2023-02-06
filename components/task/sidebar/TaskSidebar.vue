@@ -587,6 +587,7 @@ export default {
         this.$store.dispatch("task/updateTaskComment", { taskId: this.currentTask.id, commentId: this.editMessage.id, comment: data.text, text: `updated comment ${trimComment}` })
         .then(res => {
           this.reloadComments += 1
+          this.editMessage = {}
         })
         .catch(e => console.log(e))
       } else {

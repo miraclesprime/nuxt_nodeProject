@@ -7,8 +7,9 @@
           <span class="cursor-pointer">
             <bib-icon icon="check-circle-solid" :scale="1.5" variant="light"></bib-icon>
           </span>
-          <!-- <span class="ml-05 flex-grow-1" :id="'task-title'+task.id">{{ task.title }} </span> -->
-          <input type="text" id="newtaskInput" ref="newtaskInput" class="editable-input" v-model="taskTitle" @input="debounceCreate" @keyup.esc="newTask = false" placeholder="Enter title...">
+          <span class=" flex-grow-1" id="task-title-input">
+            <textarea id="newtaskInput" ref="newtaskInput" class="editable-input" :class="{'loading': loading}" rows="1" v-model="taskTitle" @input="debounceCreate" @keyup.esc="newTask = false" placeholder="Enter title..."></textarea>
+          </span>
         </div>
         <!-- <div class="shape-circle bg-light width-2 height-2 d-flex flex-shrink-0 justify-center align-center">
         <bib-popup pop="elipsis" icon="elipsis" icon-variant="gray5" icon-hover-variant="dark">
@@ -51,6 +52,7 @@ export default {
       title: "blankTaskGrid" + this.section.id,
       taskTitle: "",
       newTask: false,
+      loading: false,
       // flag: false,
       // contextMenuItems: TASK_CONTEXT_MENU,
     };
@@ -64,6 +66,16 @@ export default {
     /*this.$nextTick(() => {
       document.getElementById("newtaskInput").focus
     });*/
+    const tx = document.getElementsByTagName("textarea");
+    for (let i = 0; i < tx.length; i++) {
+      tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+      tx[i].addEventListener("input", OnInput, false);
+    }
+
+    function OnInput() {
+      this.style.height = 0;
+      this.style.height = (this.scrollHeight) + "px";
+    }
   },
   methods: {
     showNewTask() {
@@ -79,6 +91,7 @@ export default {
       this.$nextTick(() => {
         // document.getElementById("newtaskInput").focus
         this.$refs.newtaskInput.focus()
+        this.loading = false
         this.$emit("close-other", "blankTaskGrid" + this.section.id)
       });
     },
@@ -96,6 +109,8 @@ export default {
     },
     debounceCreate: _.debounce(function() {
       // console.info(this.taskTitle)
+      // this.$refs.newtaskInput.classList.add("loading")
+      this.loading = true
       this.$store.dispatch("task/createTask", {
         sectionId: this.section.id,
         title: this.taskTitle,
@@ -113,8 +128,9 @@ export default {
         }
         this.taskTitle = ""
         this.newTask = false
+        this.loading = false
       }).catch(e => console.warn(e))
-    }, 1500),
+    }, 1200),
   },
 };
 
@@ -158,7 +174,10 @@ export default {
 
   .editable-input {
     font-size: $base-size;
-    font-weight: nowmal;
+    font-weight: normal;
+    resize: initial;
+    padding-block: 0.1rem;
+    min-height: 1.8rem;
   }
 
 }
