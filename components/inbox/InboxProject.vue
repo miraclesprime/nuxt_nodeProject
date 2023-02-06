@@ -1,4 +1,5 @@
 <template>
+<client-only>
   <div class="h-100 inbox-project">
     <div class="d-flex gap-05 align-center justify-end position-relative border-bottom-light px-105 py-05" id="project-id-button-wraps">
       
@@ -134,6 +135,7 @@
       <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
     </div>
   </div>
+</client-only>
 </template>
 
 <script>
