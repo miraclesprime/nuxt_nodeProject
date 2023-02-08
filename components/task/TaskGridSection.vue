@@ -256,7 +256,7 @@ export default {
     },
 
     donotCloseSidebar(classes){
-      const cl = ['editable-input', 'user-name', 'date-info']
+      const cl = ['editable-input', 'user-info', 'date-info']
       let out = true
       cl.forEach( (c) => {
         let cd = classes.contains(c)
