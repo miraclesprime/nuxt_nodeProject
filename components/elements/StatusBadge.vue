@@ -7,7 +7,8 @@
   </div>
 </template>
 <script>
-import { ColorVariants } from '~/../bib-shared/js/colors'
+// import { ColorVariants } from '~/node_modules/@bizinbox/bib-ui-lib/dist/library'
+// import { ColorVariants } from '~/../bib-shared/js/colors'
 // import { hex2rgba } from '~/utils/color'
 export default {
 
@@ -30,15 +31,15 @@ export default {
       }
       switch (this.status.id) {
         case 1:
-          return { text: this.status.text, color: ColorVariants.Secondary }
+          return { text: this.status.text, color: this.colors.ColorVariants.Secondary }
         case 2:
-          return { text: this.status.text, color: ColorVariants.Primary }
+          return { text: this.status.text, color: this.colors.ColorVariants.Primary }
         case 3:
-          return { text: this.status.text, color: ColorVariants.Orange }
+          return { text: this.status.text, color: this.colors.ColorVariants.Orange }
         case 4:
-          return { text: this.status.text, color: ColorVariants.Danger }
+          return { text: this.status.text, color: this.colors.ColorVariants.Danger }
         case 5:
-          return { text: this.status.text, color: ColorVariants.Success }
+          return { text: this.status.text, color: this.colors.ColorVariants.Success }
         default:
           return { text: "", color: "" }
       }
@@ -48,7 +49,7 @@ export default {
     },
   },
   methods: {
-    hex2rgba (hex = ColorVariants.Light, alpha = .16) {
+    hex2rgba (hex = this.colors.ColorVariants.Light, alpha = .16) {
       const [r, g, b] = hex.match(/\w\w/g).map(x => parseInt(x, 16));
       return `rgba(${r},${g},${b},${alpha})`;
     },

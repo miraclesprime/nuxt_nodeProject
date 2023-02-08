@@ -27,19 +27,34 @@
       <!-- <priority-comp :priority="task.priority" :iconOnly="true"></priority-comp> -->
     </div>
     <div class="task-bottom" :id="'tg-bottom'+ task.id">
-      <user-info v-if="task.userId" :userId="task.userId"></user-info>
+      <span :name="'user'+task.id">
+        <user-info v-if="task.userId" :userId="task.userId" ></user-info>
+        <bib-avatar v-else size="1.25rem"></bib-avatar>
+      </span>
       <div v-if="task.dueDate" class="align-center gap-05 ml-auto">
         <bib-icon icon="calendar" :variant="overdue(task)"></bib-icon>
         <format-date :datetime="task.dueDate" :variant="overdue(task)"></format-date>
       </div>
     </div>
+    <tippy :to="'user'+task.id" :key="'user'+task.id" theme="light-border" arrow="false" trigger="click" interactive="true">
+      <div v-for="user in users">
+        <p>{{user.label}}</p>
+      </div>
+    </tippy>
+    <!-- <button :name="'exp'+task.id">Tooltip using component</button> -->
   </div>
 </template>
 <script>
+import _ from 'lodash'
 import { mapGetters } from 'vuex'
 import { TASK_CONTEXT_MENU } from "../../config/constants";
+import tippy from 'tippy.js';
+import VueTippy, { TippyComponent } from 'vue-tippy';
 export default {
   name: "TaskGrid",
+  components: {
+    tippy: TippyComponent,
+  },
   props: {
     task: Object,
     project: Number,
@@ -54,6 +69,7 @@ export default {
   computed: {
     ...mapGetters({
       favTasks: "task/getFavTasks",
+      users: "user/getTeamMembers",
     }),
     isFavorite() {
       let fav = this.favTasks.some(t => t.task.id == this.task.id)
