@@ -325,6 +325,10 @@ ul {
   cursor: pointer;
 }
 
+.events-none {
+  pointer-events: none;
+}
+
 @keyframes placeHolderShimmer{
     0%{
         background-position: -880px 0

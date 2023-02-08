@@ -1,5 +1,5 @@
 <template>
-  <div :id="'task-grid-wrapper'+ task.id" class="task-grid bg-white" @click.stop="$emit('open-sidebar', task)">
+  <div :id="'task-grid-wrapper'+ task.id" class="task-grid position-relative bg-white" @click.stop="$emit('open-sidebar', task)">
     <figure v-if="task.cover" :id="'task-card-image'+task.id" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
     <div class="task-top" :id="'tg-top-wrap'+ task.id">
       <div class="d-flex" :id="'task-card-inside-wrap'+task.id">
@@ -7,7 +7,7 @@
           <bib-icon icon="check-circle-solid" :scale="1.5" :variant="task.statusId == 5 ? 'success' : 'light'"></bib-icon>
         </span>
         <span class="flex-grow-1" :id="'task-title'+task.id">
-          <textarea class="editable-input" :class="{'loading': loading}" v-model="form.title" @input="debounceUpdate('Title', 'title', form.title)" rows="1"></textarea></span>
+          <textarea class="editable-input" v-model="form.title" @input="debounceUpdate('Title', 'title', form.title)" rows="1"></textarea></span>
       </div>
       <div class="shape-circle bg-light width-2 height-2 d-flex flex-shrink-0 justify-center align-center">
         <bib-popup pop="elipsis" icon="elipsis" icon-variant="gray5" icon-hover-variant="dark">
@@ -26,22 +26,36 @@
       <priority-badge :priority="task.priority"></priority-badge>
       <!-- <priority-comp :priority="task.priority" :iconOnly="true"></priority-comp> -->
     </div>
-    <div class="task-bottom" :id="'tg-bottom'+ task.id">
-      <span :name="'user'+task.id">
-        <user-info v-if="task.userId" :userId="task.userId" ></user-info>
-        <bib-avatar v-else size="1.25rem"></bib-avatar>
-      </span>
+    <div class="task-bottom " :id="'tg-bottom'+ task.id">
+      <!-- <span :name="'user'+task.id"> -->
+        <span v-if="task.userId" class="user-info" @click.stop="triggerUserPicker">
+          <user-info :userId="task.userId" class="events-none" ></user-info>
+        </span>
+        <span v-else class="user-name-blank user-info bg-white shape-circle align-center justify-center" @click.stop="triggerUserPicker">
+          <bib-icon icon="user" variant="gray4" class="events-none"></bib-icon>
+        </span>
+      <!-- </span> -->
       <div v-if="task.dueDate" class="align-center gap-05 ml-auto">
         <bib-icon icon="calendar" :variant="overdue(task)"></bib-icon>
         <format-date :datetime="task.dueDate" :variant="overdue(task)"></format-date>
       </div>
+      <div v-else class="date-info-blank date-info shape-circle align-center justify-center ml-auto">
+        <bib-icon icon="calendar" variant="gray4" class="events-none"></bib-icon>
+      </div>
     </div>
-    <tippy :to="'user'+task.id" :key="'user'+task.id" theme="light-border" arrow="false" trigger="click" interactive="true">
-      <div v-for="user in users">
-        <p>{{user.label}}</p>
+    <!-- user picker -->
+    <tippy :visible="userPicker" :key="'user'+task.id" theme="light-border" :animate-fill="false" arrow="false" distance="1" trigger="manual" interactive="true" :onHidden="() => userPicker = false">
+      <bib-input type="text" v-model="filterKey" size="sm"></bib-input>
+      <div style="max-height: 12rem; overflow-y: auto">
+        <ul class="m-0 p-0 text-left">
+          <li v-for="user in filterTeam" :key="user.id" class="p-025 cursor-pointer" @click="updateTask('Assignee', 'userId', user.id, user.label)">
+            <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
+          </li>
+        </ul>
       </div>
     </tippy>
     <!-- <button :name="'exp'+task.id">Tooltip using component</button> -->
+    <loading :loading="loading"></loading>
   </div>
 </template>
 <script>
@@ -63,13 +77,15 @@ export default {
     return {
       // flag: false,
       contextMenuItems: TASK_CONTEXT_MENU,
+      userPicker: false,
+      filterKey: "",
       loading: false,
     };
   },
   computed: {
     ...mapGetters({
       favTasks: "task/getFavTasks",
-      users: "user/getTeamMembers",
+      teamMembers: "user/getTeamMembers",
     }),
     isFavorite() {
       let fav = this.favTasks.some(t => t.task.id == this.task.id)
@@ -81,6 +97,14 @@ export default {
     },
     form() {
       return _.cloneDeep(this.task)
+    },
+    filterTeam() {
+      let regex = new RegExp(this.filterKey, 'g\i')
+      return this.teamMembers.filter((u) => {
+        if (regex.test(u.label) || regex.test(u.email)) {
+          return u
+        }
+      })
     },
   },
   mounted() {
@@ -96,6 +120,9 @@ export default {
     }
   },
   methods: {
+    triggerUserPicker(){
+      this.userPicker = !this.userPicker
+    },
     overdue(item) {
       // console.log(new Date(item.dueDate), new Date);
       return (new Date(item.dueDate) < new Date() && item.statusId != 5) ? 'danger' : 'gray5';
@@ -111,8 +138,9 @@ export default {
       this.updateTask(title, field, value)
     }, 1500),
 
-    updateTask(title, field, value) {
+    updateTask(title, field, value, historyValue) {
       this.loading = true
+      this.userPicker = false
       const project = () => {
         if (this.task.project.length > 0) {
           return this.task.project[0].projectId
@@ -122,18 +150,28 @@ export default {
           return null
         }
       }
-      console.info(project(), this.task.project.length)
+
+      let user
+      if (field == "userId" && value != '') {
+        user = this.teamMembers.filter(t => t.id == value)
+      } else {
+        user = null
+      }
+
+      console.info(project(), this.task.project.length, historyValue, user)
       this.$store.dispatch("task/updateTask", {
           id: this.task.id,
           projectId: project(),
           data: {
             [field]: value
           },
-          text: `changed ${title} to ${value}`
+          user,
+          text: `changed ${title} to ${historyValue ?? value}`
         })
         .then(res => {
-          console.info(res)
+          // console.info(res)
           this.loading = false
+          this.$nuxt.$emit("update-key")
         })
         .catch(e => console.warn(e))
     },
@@ -295,5 +333,8 @@ export default {
   }
 
 }
+
+.user-name-blank,
+.date-info-blank { width: 1.5rem; height: 1.5rem; border: 1px dashed $gray4;}
 
 </style>
