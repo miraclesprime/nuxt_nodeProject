@@ -9,7 +9,8 @@
   </div>
 </template>
 <script>
-import { ColorVariants } from '~/../bib-shared/js/colors'
+// import { ColorVariants } from '~/node_modules/@bizinbox/bib-ui-lib/dist/library'
+// import { ColorVariants } from '~/../bib-shared/js/colors'
 export default {
 
   name: 'PriorityComp',
@@ -31,11 +32,11 @@ export default {
       }
       switch (this.priority.id) {
         case 1:
-          return { text: this.priority.text, color: ColorVariants.Danger, icon: true, iconVariant: "danger" }
+          return { text: this.priority.text, color: this.colors.ColorVariants.Danger, icon: true, iconVariant: "danger" }
         case 2:
-          return { text: this.priority.text, color: ColorVariants.Orange, icon: true, iconVariant: "orange" }
+          return { text: this.priority.text, color: this.colors.ColorVariants.Orange, icon: true, iconVariant: "orange" }
         case 3:
-          return { text: this.priority.text, color: ColorVariants.Success, icon: true, iconVariant: "success" }
+          return { text: this.priority.text, color: this.colors.ColorVariants.Success, icon: true, iconVariant: "success" }
         default:
           return { text: "", color: "", icon: false }
       }
@@ -45,7 +46,7 @@ export default {
     },
   },
   methods: {
-    hex2rgba (hex = ColorVariants.Light, alpha = .16) {
+    hex2rgba (hex = this.colors.ColorVariants.Light, alpha = .16) {
       const [r, g, b] = hex.match(/\w\w/g).map(x => parseInt(x, 16));
       return `rgba(${r},${g},${b},${alpha})`;
     },

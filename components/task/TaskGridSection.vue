@@ -255,8 +255,29 @@ export default {
       return (new Date(item.dueDate) < new Date() && item.statusId != 5) ? 'danger' : 'gray5';
     },
 
+    donotCloseSidebar(classes){
+      const cl = ['editable-input', 'user-name', 'date-info']
+      let out = true
+      cl.forEach( (c) => {
+        let cd = classes.contains(c)
+        // console.info(cd)
+        if (cd) {
+          out = false
+          return false
+        } 
+      });
+      return out
+    },
+
     openSidebar(task, projectId) {
-      // console.log(event.target)
+      // console.log(event.target.classList)
+      // let elclass = event.target.classList
+      let fwd = this.donotCloseSidebar(event.target.classList)
+      if(!fwd) {
+        this.$nuxt.$emit("close-sidebar");
+        return false
+      } 
+      
       let project = [{
         projectId: projectId,
         project: {
@@ -267,7 +288,6 @@ export default {
 
       let el = event.target.offsetParent
       let scrollAmt = event.target.offsetLeft - event.target.offsetWidth;
-
       el.scrollTo({
         top: 0,
         left: scrollAmt,

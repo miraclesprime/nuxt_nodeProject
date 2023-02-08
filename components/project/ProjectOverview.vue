@@ -342,7 +342,7 @@ export default {
       // this.loading = false
     },
     debounceUpdate: _.debounce(function(name, value) {
-      console.log('Debounce ', name, value)
+      // console.log('Debounce ', name, value)
 
       let updatedvalue = value
       if (name == "Owner") {

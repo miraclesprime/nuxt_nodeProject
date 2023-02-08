@@ -470,7 +470,6 @@ export default {
         .then((u) => {
           // console.log(u)
           this.$nuxt.$emit("update-key")
-          // this.$nuxt.$emit("refresh-history")
           this.reloadHistory += 1
           // this.loading = false
         })
@@ -497,12 +496,12 @@ export default {
         data: { [taskData.projField]: taskData.projValue, [taskData.secField]: taskData.secValue },
         user,
         projectId: taskData.oldProjValue,
-        text: proj ? `changed ${taskData.projField} to ${proj.title}` : `Task removed from Project`,
+        projectChanged: true, // do not log history to project
+        text: proj ? `changed ${taskData.projField} to ${proj.title}` : 'Task removed from Project',
       })
         .then((u) => {
           // console.log(u)
           this.$nuxt.$emit("update-key")
-          // this.$nuxt.$emit("refresh-history")
           this.reloadHistory += 1
           // this.loading = false
         })
