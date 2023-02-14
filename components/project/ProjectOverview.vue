@@ -108,7 +108,6 @@
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
 import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
-// import Datepicker from 'vuejs-datepicker';
 import dayjs from 'dayjs'
 
 export default {

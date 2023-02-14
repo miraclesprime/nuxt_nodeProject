@@ -1,4 +1,5 @@
 <template>
+  <client-only>
   <div :id="'task-grid-wrapper'+ task.id" class="task-grid position-relative bg-white" @click.stop="$emit('open-sidebar', task)">
     <figure v-if="task.cover" :id="'task-card-image'+task.id" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
     <div class="task-top" :id="'tg-top-wrap'+ task.id">
@@ -62,6 +63,7 @@
     <!-- <button :name="'exp'+task.id">Tooltip using component</button> -->
     <loading :loading="loading"></loading>
   </div>
+</client-only>
 </template>
 <script>
 import _ from 'lodash'
@@ -69,12 +71,10 @@ import { mapGetters } from 'vuex'
 import { TASK_CONTEXT_MENU } from "../../config/constants";
 import tippy from 'tippy.js';
 import VueTippy, { TippyComponent } from 'vue-tippy';
-import Datepicker from 'vuejs-datepicker';
 export default {
   name: "TaskGrid",
   components: {
     tippy: TippyComponent,
-    vueDatepicker: Datepicker,
   },
   props: {
     task: Object,
@@ -104,7 +104,6 @@ export default {
       }
     },
     overdue() {
-      // console.log(new Date(item.dueDate), new Date);
       // return (new Date(item.dueDate) < new Date() && item.statusId != 5) ? 'danger' : 'gray5';
       return (new Date(this.task.dueDate) < new Date()) ? false : true
     },
@@ -123,6 +122,7 @@ export default {
   mounted() {
     const tx = document.getElementsByTagName("textarea");
     for (let i = 0; i < tx.length; i++) {
+      // console.log(tx)
       tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
       tx[i].addEventListener("input", OnInput, false);
     }
