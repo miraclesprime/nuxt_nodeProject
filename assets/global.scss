@@ -355,7 +355,8 @@ ul {
   gap: 0.25rem;
 }
 
-  .bib-datepicker {
+  .bib-datepicker,
+  .vdp-datepicker {
     &.align-right {
       .vdp-datepicker__calendar { right: 0;}
     }
