@@ -2,11 +2,12 @@
   <span :id="'date-' + Math.random().toString().slice(-3)" class="date-info text-truncate" :class="'text-'+variant">{{output}}</span>
 </template>
 <script>
+import dayjs from 'dayjs'
 export default {
 
   name: 'FormatDate',
   props: {
-    datetime: { type: String },
+    datetime: [Date, String],
     variant: String,
   },
   data() {
@@ -19,9 +20,10 @@ export default {
       if (!this.datetime) {
         return ""
       }
-      let d = new Date(this.datetime)
+      /*let d = new Date(this.datetime)
       let m = d.getMonth()
-      return `${d.getDate()} ${this.months[m]} ${d.getFullYear()}`
+      return `${d.getDate()} ${this.months[m]} ${d.getFullYear()}`*/
+      return dayjs(this.datetime).format('D MMM YYYY')
     }
   },
 }

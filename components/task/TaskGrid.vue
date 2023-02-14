@@ -35,16 +35,17 @@
           <bib-icon icon="user" variant="gray4" class="events-none"></bib-icon>
         </span>
       <!-- </span> -->
-      <div v-if="task.dueDate" class="align-center gap-05 ml-auto">
-        <bib-icon icon="calendar" :variant="overdue(task)"></bib-icon>
-        <format-date :datetime="task.dueDate" :variant="overdue(task)"></format-date>
+      <!-- <div v-if="task.dueDate" class="align-center gap-05 ml-auto" @click.stop="triggerDatePicker">
+        <bib-icon icon="calendar" :variant="overdue(task)" class="events-none"></bib-icon>
+        <format-date :datetime="task.dueDate" :variant="overdue(task)" class="events-none"></format-date>
       </div>
-      <div v-else class="date-info-blank date-info shape-circle align-center justify-center ml-auto">
+      <div v-else class="date-info-blank date-info shape-circle align-center justify-center ml-auto" @click.stop="triggerDatePicker">
         <bib-icon icon="calendar" variant="gray4" class="events-none"></bib-icon>
-      </div>
+      </div> -->
+      <inline-datepicker :datetime="task.dueDate" :overdue="overdue" @date-updated="debounceUpdate('Due date', 'dueDate', $event)"></inline-datepicker>
     </div>
     <!-- user picker -->
-    <tippy :visible="userPicker" :key="'user'+task.id" theme="light-border" :animate-fill="false" arrow="false" distance="1" trigger="manual" interactive="true" :onHidden="() => userPicker = false">
+    <tippy :visible="userPickerOpen" :id="'user'+task.id" :key="'user'+task.id" theme="light-border" :animate-fill="false" arrow="false" distance="1" trigger="manual" interactive="true" :onHidden="() => defer(() => userPickerOpen = false)" >
       <bib-input type="text" v-model="filterKey" size="sm"></bib-input>
       <div style="max-height: 12rem; overflow-y: auto">
         <ul class="m-0 p-0 text-left">
@@ -54,6 +55,10 @@
         </ul>
       </div>
     </tippy>
+    <!-- date picker -->
+    <!-- <tippy :visible="datePickerOpen" :id="'date'+task.id" :key="'date'+task.id" theme="light-border" :animate-fill="false" arrow="false" distance="1" trigger="manual" interactive="true" :onHidden="() => defer(() => datePickerOpen = false)" >
+      <vue-datepicker :value="task.dueDate" v-model="task.dueDate" placeholder="Due date"></vue-datepicker>
+    </tippy> -->
     <!-- <button :name="'exp'+task.id">Tooltip using component</button> -->
     <loading :loading="loading"></loading>
   </div>
@@ -64,10 +69,12 @@ import { mapGetters } from 'vuex'
 import { TASK_CONTEXT_MENU } from "../../config/constants";
 import tippy from 'tippy.js';
 import VueTippy, { TippyComponent } from 'vue-tippy';
+import Datepicker from 'vuejs-datepicker';
 export default {
   name: "TaskGrid",
   components: {
     tippy: TippyComponent,
+    vueDatepicker: Datepicker,
   },
   props: {
     task: Object,
@@ -77,7 +84,8 @@ export default {
     return {
       // flag: false,
       contextMenuItems: TASK_CONTEXT_MENU,
-      userPicker: false,
+      userPickerOpen: false,
+      datePickerOpen: false,
       filterKey: "",
       loading: false,
     };
@@ -94,6 +102,11 @@ export default {
       } else {
         return { variant: "gray5", text: "Add to favorites", status: false }
       }
+    },
+    overdue() {
+      // console.log(new Date(item.dueDate), new Date);
+      // return (new Date(item.dueDate) < new Date() && item.statusId != 5) ? 'danger' : 'gray5';
+      return (new Date(this.task.dueDate) < new Date()) ? false : true
     },
     form() {
       return _.cloneDeep(this.task)
@@ -120,12 +133,15 @@ export default {
     }
   },
   methods: {
-    triggerUserPicker(){
-      this.userPicker = !this.userPicker
+    defer(func) {
+      setTimeout(func, 100);
     },
-    overdue(item) {
-      // console.log(new Date(item.dueDate), new Date);
-      return (new Date(item.dueDate) < new Date() && item.statusId != 5) ? 'danger' : 'gray5';
+    
+    triggerUserPicker(){
+      this.userPickerOpen = !this.userPickerOpen
+    },
+    triggerDatePicker(){
+      this.datePickerOpen = !this.datePickerOpen
     },
 
     openSidebar(task, scroll) {
@@ -140,7 +156,7 @@ export default {
 
     updateTask(title, field, value, historyValue) {
       this.loading = true
-      this.userPicker = false
+      this.userPickerOpen = false
       const project = () => {
         if (this.task.project.length > 0) {
           return this.task.project[0].projectId
@@ -158,7 +174,7 @@ export default {
         user = null
       }
 
-      console.info(project(), this.task.project.length, historyValue, user)
+      // console.info(project(), this.task.project.length, historyValue, user)
       this.$store.dispatch("task/updateTask", {
           id: this.task.id,
           projectId: project(),
@@ -327,9 +343,9 @@ export default {
     align-items: center;
     color: $gray5;
 
-    span {
+    /*span {
       font-size: 13px;
-    }
+    }*/
   }
 
 }
