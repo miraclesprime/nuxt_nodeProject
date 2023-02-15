@@ -423,7 +423,7 @@ export default {
     },
 
     renameSectionModal($event) {
-      console.log($event)
+      // console.log($event)
       this.renameModal = true
       this.sectionId = $event.id
       this.sectionTitle = $event.title
@@ -593,7 +593,7 @@ export default {
         el.order = i
       })
 
-      console.log("ordered sections =>", clone)
+      // console.log("ordered sections =>", clone)
 
       let sectionDnD = await this.$axios.$put("/section/dragdrop", { projectId: this.project.id, data: clone }, {
         headers: {
@@ -602,7 +602,7 @@ export default {
         }
       })
 
-      console.log(sectionDnD.message)
+      // console.log(sectionDnD.message)
 
       if (sectionDnD.statusCode == 200) {
         this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id }).then(() => {
