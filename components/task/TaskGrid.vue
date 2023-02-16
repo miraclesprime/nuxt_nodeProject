@@ -8,7 +8,7 @@
           <bib-icon icon="check-circle-solid" :scale="1.5" :variant="task.statusId == 5 ? 'success' : 'light'"></bib-icon>
         </span>
         <span class="flex-grow-1" :id="'task-title'+task.id">
-          <textarea class="editable-input" v-model="form.title" @input="debounceUpdate('Title', 'title', form.title)" rows="1"></textarea></span>
+          <textarea class="editable-input" ref="titleInput" v-model="form.title" @input="debounceUpdate('Title', 'title', form.title)" rows="1"></textarea></span>
       </div>
       <div class="shape-circle bg-light width-2 height-2 d-flex flex-shrink-0 justify-center align-center">
         <bib-popup pop="elipsis" icon="elipsis" icon-variant="gray5" icon-hover-variant="dark">
@@ -46,7 +46,7 @@
       <inline-datepicker :datetime="task.dueDate" :overdue="overdue" @date-updated="debounceUpdate('Due date', 'dueDate', $event)"></inline-datepicker>
     </div>
     <!-- user picker -->
-    <tippy :visible="userPickerOpen" :id="'user'+task.id" :key="'user'+task.id" theme="light-border" :animate-fill="false" arrow="false" distance="1" trigger="manual" interactive="true" :onHidden="() => defer(() => userPickerOpen = false)" >
+    <tippy :visible="userPickerOpen" :id="'user'+task.id" :key="'user'+task.id" appendTo="parent" theme="light-border" :animate-fill="false" arrow="false" distance="1" trigger="manual" interactive="true" :onHidden="() => defer(() => userPickerOpen = false)" >
       <bib-input type="text" v-model="filterKey" size="sm"></bib-input>
       <div style="max-height: 12rem; overflow-y: auto">
         <ul class="m-0 p-0 text-left">
@@ -61,7 +61,7 @@
       <vue-datepicker :value="task.dueDate" v-model="task.dueDate" placeholder="Due date"></vue-datepicker>
     </tippy> -->
     <!-- <button :name="'exp'+task.id">Tooltip using component</button> -->
-    <loading :loading="loading"></loading>
+    <loading2 :loading="loading" text="wait..."></loading2>
   </div>
 </client-only>
 </template>
@@ -120,17 +120,24 @@ export default {
     },
   },
   mounted() {
-    const tx = document.getElementsByTagName("textarea");
-    for (let i = 0; i < tx.length; i++) {
-      // console.log(tx)
+    // const tx = document.getElementsByTagName("textarea");
+    /*for (let i = 0; i < tx.length; i++) {
+      console.log(tx)
       tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
       tx[i].addEventListener("input", OnInput, false);
-    }
-
-    function OnInput() {
+    }*/
+    
+    /*function OnInput() {
       this.style.height = 0;
       this.style.height = (this.scrollHeight) + "px";
-    }
+    }*/
+
+  },
+  updated(){
+    let ht = this.$refs.titleInput.scrollHeight
+    // console.info('scroll height -> ', ht)
+    this.$refs.titleInput.style.height = ht+2+'px'
+
   },
   methods: {
     defer(func) {
@@ -150,7 +157,7 @@ export default {
     },
 
     debounceUpdate: _.debounce(function(title, field, value) {
-      console.log(...arguments)
+      // console.log(...arguments)
       this.updateTask(title, field, value)
     }, 1500),
 
@@ -328,6 +335,7 @@ export default {
   .task-bottom {
     display: flex;
     justify-content: space-between;
+    gap: 0.25rem;
     padding: 8px;
   }
 

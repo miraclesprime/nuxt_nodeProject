@@ -280,7 +280,7 @@ export default {
     },
 
     openSidebar(task, projectId) {
-      // console.log(event.target.classList)
+      console.log(event.target.classList)
       // let elclass = event.target.classList
       let fwd = this.donotCloseSidebar(event.target.classList)
       if(!fwd) {

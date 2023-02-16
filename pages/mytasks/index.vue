@@ -62,8 +62,9 @@
                     </draggable>
                   </div>
                 </div>
-                <div class="task-grid-section"></div>
-                <div class="task-grid-section"></div>
+                <div class="task-grid-section " id="task-grid-section-blank-2"></div>
+                <div class="task-grid-section " id="task-grid-section-blank-3"></div>
+                <div class="task-grid-section " id="task-grid-section-blank-4" style="border-left-color: transparent;" ></div>
               </draggable>
             </div>
           </template>
@@ -180,8 +181,36 @@ export default {
       this.contextCoords = { left: event.pageX+'px', top: event.pageY+'px' }
     },
 
+    donotCloseSidebar(classes){
+      const cl = ['editable-input', 'user-info', 'date-info']
+      let out = true
+      cl.forEach( (c) => {
+        let cd = classes.contains(c)
+        // console.info(cd)
+        if (cd) {
+          out = false
+          return false
+        } 
+      });
+      return out
+    },
+
     openSidebar(task, scroll) {
+      // console.log(event.target)
+      let fwd = this.donotCloseSidebar(event.target.classList)
+      if(!fwd) {
+        this.$nuxt.$emit("close-sidebar");
+        return false
+      } 
       this.$nuxt.$emit("open-sidebar", {...task, scrollId: scroll});
+
+      let el = event.target.offsetParent
+      let scrollAmt = event.target.offsetLeft - event.target.offsetWidth;
+      el.scrollTo({
+        top: 0,
+        left: scrollAmt,
+        behavior: 'smooth'
+      });
     },
     
     closeContext() {
