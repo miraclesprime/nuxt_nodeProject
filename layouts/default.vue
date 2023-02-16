@@ -63,7 +63,7 @@
         <bib-app-navigation :items="navItems2" @click="goToRoute($event, navItems2)" :isLightTheme="lightThemeChecked"></bib-app-navigation>
         <!-- separator -->
         <div class=" mt-05 mb-05" :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']" style="height: 1px"></div>
-        <bib-detail-collapse v-show="!collapseNavigation" label="Favorite Projects" variant="white" open>
+        <bib-detail-collapse v-show="!collapseNavigation" label="Favorite Projects" label-weight="400" variant="light" open>
           <template v-slot:content>
             <!-- <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light" id="layout-add-icon">
               <bib-icon icon="add" variant="success" :scale="1.5" class="p-025 ml-025"></bib-icon> <span id=" layout-icon-text" class="p-025">Create a project</span>
@@ -73,7 +73,7 @@
         </bib-detail-collapse>
         <!-- separator -->
         <div class=" mt-05 mb-05" :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']" style="height: 1px"></div>
-        <bib-detail-collapse v-show="!collapseNavigation" label="People" variant="white" open v-if="isAdmin">
+        <bib-detail-collapse v-show="!collapseNavigation" label="People" label-weight="400" variant="light" open v-if="isAdmin">
           <template v-slot:content>
             <!-- <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light">
               <bib-icon icon="add" variant="success" :scale="2" class="p-025 ml-025"></bib-icon> <span class="p-025">Add a team mate</span>

@@ -259,6 +259,11 @@ ul {
   &-capitalize {
     text-transform: capitalize;
   }
+  &-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .side-panel .wrapper select {
@@ -282,15 +287,10 @@ ul {
   border-radius: 0.15rem;
 }
 
-.text-truncate {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 
 .task-grid-section {
   /*background-color: white;*/
-  flex: 0 0 18rem;
+  flex: 0 0 18.75rem;
   padding: 10px;
   user-select: none;
 

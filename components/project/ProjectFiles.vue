@@ -39,7 +39,7 @@
             </div>
           </template>
           <template #cell(size)="data">
-            <div class=" text-gray1">
+            <div class="text-truncate text-gray1">
               {{ $formatBytes(data.value.size) }}
             </div>
           </template>

@@ -1,10 +1,6 @@
 <template>
   <client-only>
-    <div>
-      <!-- <div v-if="datetime" class="align-center gap-05 ml-auto" @click.stop="triggerDatePicker">
-      <bib-icon icon="calendar" :variant="overdue ? 'gray5' : 'danger'" class="events-none"></bib-icon>
-      <format-date :datetime="datetime" :variant="overdue ? 'gray5' : 'danger'" class="events-none"></format-date>
-    </div> -->
+    <div >
       <div v-if="localDate" class="align-center gap-05 ml-auto" @click.stop="triggerDatePicker">
         <bib-icon icon="calendar" :variant="newOverdue ? 'gray5' : 'danger'" class="events-none"></bib-icon>
         <format-date :datetime="localDate" :variant="newOverdue ? 'gray5' : 'danger'" class="events-none"></format-date>
@@ -13,8 +9,8 @@
         <bib-icon icon="calendar" variant="gray4" class="events-none"></bib-icon> <span v-format-date="localDate"></span>
       </div>
       <!-- date picker -->
-      <tippy :visible="datePickerOpen" theme="light-border p-0" :animate-fill="false" arrow="false" distance="1" trigger="manual" interactive="true" :onHidden="() => defer(() => datePickerOpen = false)">
-        <datepicker :value="localDate" v-model="localDate" :inline="true" @input="datePicked" placeholder="Due date"></datepicker>
+      <tippy :visible="datePickerOpen" appendTo="parent" theme="light-border p-0" :animate-fill="false" arrow="false" distance="1" trigger="manual" interactive="true" :onHide="() => defer(() => datePickerOpen = false)">
+        <datepicker :value="localDate" v-model="localDate" :inline="true" @input="datePicked" @click.native.stop placeholder="Due date"></datepicker>
       </tippy>
     </div>
   </client-only>
@@ -52,14 +48,14 @@ export default {
   },
   methods: {
     defer(func) {
-      console.warn('defer function')
-      setTimeout(func, 100);
+      // console.warn('defer function')
+      setTimeout(func, 0);
     },
     triggerDatePicker() {
       this.datePickerOpen = !this.datePickerOpen
     },
     datePicked() {
-      console.log('input', this.localDate)
+      // console.log('input', this.localDate)
       this.datePickerOpen = false
       this.$emit("date-updated", this.localDate)
     },
