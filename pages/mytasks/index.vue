@@ -2,7 +2,7 @@
   <client-only>
     <div id="my-tasks-page-wrapper" class="mytask-page-wrapper ">
       <page-title title="My Tasks"></page-title>
-      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="showNewTodo" />
+      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="showNewTodo" @change-grid-type="($event)=>gridType = $event"></user-tasks-actions>
       <div>
         <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form>
         <div id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y">
@@ -22,7 +22,7 @@
             </div>
           </template>
           <template v-else>
-            <div class="bg-light h-100 of-scroll-x position-relative">
+            <div id="tgs-scroll" class="bg-light h-100 of-scroll-x position-relative">
               <draggable :list="localdata" class="d-flex h-100" :move="moveTodo" v-on:end="todoDragEnd" handle=".section-drag-handle">
                 <div class="task-grid-section" v-for="(todo, index) in localdata" :key="index + viewName + '-' + key">
                   <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
@@ -142,7 +142,8 @@ export default {
 
   watch: {
     todos(newVal) {
-      let todos = JSON.parse(JSON.stringify(newVal))
+      // let todos = JSON.parse(JSON.stringify(newVal))
+      let todos = _.cloneDeep(newVal)
       todos.forEach(function(todo) {
         todo["tasks"] = todo.tasks.sort((a, b) => a.tOrder - b.tOrder);
       })
@@ -152,9 +153,9 @@ export default {
 
   created() {
     if (process.client) {
-      this.$nuxt.$on('change-grid-type', ($event) => {
+      /*this.$nuxt.$on('change-grid-type', ($event) => {
         this.gridType = $event;
-      })
+      })*/
       this.$nuxt.$on("update-key", () => {
         this.$store.dispatch("todo/fetchTodos", {filter: 'all'} ).then(() => { this.key += 1 })
       })
@@ -204,8 +205,10 @@ export default {
       } 
       this.$nuxt.$emit("open-sidebar", {...task, scrollId: scroll});
 
-      let el = event.target.offsetParent
-      let scrollAmt = event.target.offsetLeft - event.target.offsetWidth;
+      // let el = event.target.offsetParent
+      // let scrollAmt = event.target.offsetLeft - event.target.offsetWidth;
+      let el = document.getElementById("tgs-scroll")
+      let scrollAmt = event.target.closest(".task-grid").offsetLeft - event.target.offsetWidth;
       el.scrollTo({
         top: 0,
         left: scrollAmt,

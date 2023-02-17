@@ -202,7 +202,7 @@ export default {
     },
     taskSort($event) {
       // sort by title
-      console.log('sort key->', $event, 'sort-order->', this.orderBy)
+      // console.log('sort key->', $event, 'sort-order->', this.orderBy)
       if ($event == "title") {
         // var orderBy = "asc"
         if (this.orderBy == "asc") {
@@ -495,7 +495,7 @@ export default {
       if (isFav) {
         this.$store.dispatch("task/removeFromFavorite", { id: task.id })
           .then(msg => {
-            console.log(msg)
+            // console.log(msg)
             this.updateKey()
             this.loading = false
           })
@@ -506,7 +506,7 @@ export default {
       } else {
         this.$store.dispatch("task/addToFavorite", { id: task.id })
           .then(msg => {
-            console.log(msg)
+            // console.log(msg)
             this.updateKey()
             this.loading = false
           })
@@ -518,10 +518,10 @@ export default {
     },
 
     markComplete(task) {
-      console.log(typeof task, this.task)
+      // console.log(typeof task, this.task)
       this.loading = true
       if (typeof task == "object" && Object.keys(task).length > 0) {
-        console.log(task)
+        // console.log(task)
       } else {
         // alert("no task selected")
         task = this.activeTask
@@ -544,10 +544,10 @@ export default {
       this.loading = true
       // if (del) {
       this.$store.dispatch("task/deleteTask", task).then(t => {
-        console.log(t)
+        // console.log(t)
         if (t.statusCode == 200) {
           this.updateKey()
-          console.warn(t.message);
+          // console.warn(t.message);
         } else {
           console.warn(t.message);
         }
@@ -649,6 +649,7 @@ export default {
 <style lang="scss" scoped>
 .task-view-wrapper {
   min-height: 5rem;
+  min-height: 100%;
 }
 
 .new-section-input {

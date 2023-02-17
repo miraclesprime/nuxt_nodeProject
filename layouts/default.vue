@@ -204,7 +204,7 @@ export default {
   created() {
     
     this.$root.$on("open-sidebar", (payload) => {
-      // console.log("openSidebar => ", typeof(payload), payload)
+      // console.log("root open-sidebar -> ", typeof(payload), payload)
       this.openSidebar = true;
       this.scrollId = payload.scrollId
 
