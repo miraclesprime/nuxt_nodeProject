@@ -1,5 +1,5 @@
 <template>
-  <div class="of-scroll-x position-relative" style="min-height: 20rem;">
+  <div id="tgs-scroll" class="of-scroll-x position-relative" style="min-height: 30rem;">
     <draggable :list="localdata" class="d-flex " :move="moveSection" v-on:end="$emit('section-dragend', localdata)" handle=".section-drag-handle">
       <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${templateKey}${section.title}${section.id}`">
         <div class="w-100 d-flex align-center section-title-wrapper border-bottom-gray2 mb-075" :id="'tgs-inner-wrap-'+section.id" :class="{'active': sectionEdit}" >
@@ -280,7 +280,7 @@ export default {
     },
 
     openSidebar(task, projectId) {
-      console.log(event.target.classList)
+      // console.log(event.target.classList)
       // let elclass = event.target.classList
       let fwd = this.donotCloseSidebar(event.target.classList)
       if(!fwd) {
@@ -296,8 +296,10 @@ export default {
       }]
       this.$nuxt.$emit("open-sidebar", { ...task, project: project });
 
-      let el = event.target.offsetParent
-      let scrollAmt = event.target.offsetLeft - event.target.offsetWidth;
+      // let el = event.target.offsetParent
+      let el = document.getElementById("tgs-scroll")
+      let scrollAmt = event.target.closest(".task-grid").offsetLeft - event.target.offsetWidth;
+      // console.log(event.target.closest(".task-grid").offsetLeft)
       el.scrollTo({
         top: 0,
         left: scrollAmt,

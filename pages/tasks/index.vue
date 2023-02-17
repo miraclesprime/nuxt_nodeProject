@@ -2,7 +2,7 @@
   <client-only>
     <div id="task-page-wrapper" class="task-page-wrapper ">
       <page-title title="Tasks"></page-title>
-      <company-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:new-task="toggleSidebar($event)"></company-tasks-actions>
+      <company-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:new-task="toggleSidebar($event)" @change-grid-type="($event)=>gridType = $event"></company-tasks-actions>
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y" :class="{ 'bg-light': gridType != 'list'}">
         <template v-if="gridType == 'list'">
           <template v-if="tasks.length">
@@ -34,7 +34,7 @@
               </div>
               <div class="task-section__body">
                 <div v-for="(task, index) in tasks" :key="index + '-' + key" >
-                  <task-grid :task="task" :class="[ currentTask.id == task.id ? 'active' : '']" v-on:update-key="updateKey" @open-sidebar="openSidebar" />
+                  <task-grid :task="task" :class="[ currentTask.id == task.id ? 'active' : '']" v-on:update-key="updateKey" @open-sidebar="openSidebar" ></task-grid>
                 </div>
               </div>
             </div>
@@ -86,9 +86,10 @@ export default {
 
   created() {
     if (process.client) {
-      this.$nuxt.$on('change-grid-type', ($event) => {
-        this.gridType = $event;
-      })
+      /*this.$nuxt.$on('change-grid-type', (layout) => {
+        // console.log(layout)
+        this.gridType = layout;
+      })*/
 
       this.$nuxt.$on("update-key", () => {
         let user = JSON.parse(localStorage.getItem("user"))
