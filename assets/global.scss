@@ -351,8 +351,9 @@ ul {
     position: relative;
 }
 
-.gap-025 {
-  gap: 0.25rem;
+.gap {
+  &-025 { gap: 0.25rem; }
+  &-01 { gap: 0.1rem; }
 }
 
   .bib-datepicker,
