@@ -330,6 +330,7 @@ export default {
       }
       this.sectionInput = false
       this.newSectionName = ''
+      this.$emit("update-key")
     }
   },
 };

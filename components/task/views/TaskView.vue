@@ -4,7 +4,7 @@
     <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createSection"></new-section-form>
     <template v-if="gridType === 'list'">
       <!-- task list table -->
-      <drag-table :fields="tableFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" :key="templateKey" :componentKey="templateKey" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" :newTaskButton="newTaskButton" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow"></drag-table>
+      <drag-table :fields="tableFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" :key="templateKey" :componentKey="templateKey" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" :newTaskButton="newTaskButton" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow" @edit-section="renameSection"></drag-table>
       <!-- table context menu -->
       <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" ref="task_menu" @item-click="contextItemClick"></table-context-menu>
 
@@ -423,28 +423,26 @@ export default {
     },
 
     renameSectionModal($event) {
-      // console.log($event)
-      this.renameModal = true
+      console.log($event)
+      /*this.renameModal = true
       this.sectionId = $event.id
-      this.sectionTitle = $event.title
+      this.sectionTitle = $event.title*/
     },
 
-    async renameSection() {
-      this.loading = true
+    async renameSection(payload) {
       const sec = await this.$store.dispatch("section/renameSection", {
         projectId: Number(this.$route.params.id),
-        id: this.sectionId,
+        id: this.sectionId || payload.id,
         data: {
-          title: this.sectionTitle
+          title: this.sectionTitle || payload.value
         },
-        text: `section renamed to '${this.sectionTitle}'`,
+        text: `renamed section to "${this.sectionTitle || payload.value}"`,
       })
       // console.log("rename section output", sec)
       if (sec.statusCode = 200) {
-        this.renameModal = false
+        // this.renameModal = false
         this.updateKey()
       }
-      this.loading = false
     },
 
     // taskSelected($event) {

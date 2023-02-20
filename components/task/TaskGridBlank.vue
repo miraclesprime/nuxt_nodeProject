@@ -1,6 +1,6 @@
 <template>
   <div  v-click-outside="closeNewTask">
-    <div class="bg-success-sub6 shape-rounded cursor-pointer bg-hover-success-sub3 px-05 text-success text-center font-lg" @click.stop="showNewTask">+</div>
+    
     <div v-show="newTask" id="task-grid-wrapper" class="task-grid bg-white position-relative active">
       <div class="task-top" id="tg-top-wrap">
         <div class="d-flex gap-025" id="task-card-inside-wrap">
@@ -38,6 +38,7 @@
       </div>
       <loading2 :loading="loading" text="creating..."></loading2>
     </div>
+    <div class="bg-success-sub6 shape-rounded cursor-pointer bg-hover-success-sub3 px-05 text-success text-center font-lg" @click.stop="showNewTask">+</div>
   </div>
 </template>
 <script>

@@ -42,10 +42,14 @@
           <td :colspan="cols.length+1" class="section">
             <div class="section-header d-flex align-center gap-05 text-gray6">
               <div class="drag-handle width-2 text-center"><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
-                  <rect fill="none" height="24" width="24" />
-                  <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div>
-              <div class="d-flex gap-05 align-center cursor-pointer" @click.self="collapseItem($event, 'tbody'+section.id)">
-                <bib-icon icon="arrow-down" :scale="0.5" variant="gray6"></bib-icon> {{section.title.includes('_section') ? 'Untitled section' : section.title}}
+                <rect fill="none" height="24" width="24" />
+                <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div>
+              <div class="d-flex gap-01 align-center w-25" >
+                <span class="width-105 height-105 align-center justify-center cursor-pointer" @click.self="collapseItem($event, 'tbody'+section.id)">
+                  <bib-icon icon="arrow-down" :scale="0.5" variant="gray6" class="events-none"></bib-icon>
+                </span>
+                <!-- {{section.title.includes('_section') ? 'Untitled section' : section.title}} -->
+                <input type="text" class="editable-input" :value="section.title.includes('_section') ? 'Untitled section' : section.title" @input="debounceRenameSection(section.id, $event)">
               </div>
             </div>
           </td>
@@ -77,12 +81,13 @@
                 <project-info v-if="task[col.key].length" :projectId="task[col.key][0].projectId || task[col.key][0].project.id"></project-info>
                 <!-- <project-info :projectId="task[col.key][0].projectId" ></project-info> -->
               </template>
-              <div v-if="col.key == 'title'" class="d-flex gap-05 align-center h-100">
+              <div v-if="col.key == 'title'" class="d-flex gap-025 align-center h-100">
                 <span v-if="titleIcon.icon" class="width-105 height-105" :class="{'cursor-pointer': titleIcon.event}" @click.stop="updateTaskStatus(task)">
                   <bib-icon :icon="titleIcon.icon" :scale="1.5" :variant="taskCheckIcon(task)"></bib-icon>
                 </span>
                 <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">
-                  {{task[col.key]}}
+                  <!-- {{task[col.key]}} -->
+                  <input type="text" class="editable-input" :value="task[col.key]" @input="debounceUpdate(task, 'title', $event)">
                 </span>
                 <span v-else class="flex-grow-1">
                   {{task[col.key]}}
@@ -149,7 +154,7 @@
  * @vue-prop sections=[] {Array} - table data.
  * @vue-prop collapseObj=null {Object} - collapsible table settings.
  * @vue-prop newTaskbutton={Object} - add new row button
- * @vue-emits ['row-click', 'row-rightclick', 'close-context-menu', 'section-dragend', 'task-dragend' ]
+ * @vue-emits ['row-click', 'row-rightclick', 'close-context-menu', 'section-dragend', 'task-dragend', 'edit-field', 'edit-section' ]
  * @vue-dynamic-emits [ 'header_icon click', 'task_checkmark click' 'newtask button click' ] 
  * @vue-prop componentKey=Number - key to update child components
  */
@@ -281,11 +286,21 @@ export default {
     this.templateKey += 1
   },
   methods: {
+    debounceUpdate: _.debounce(function(task, field, event){
+      // console.log(task.id, field, event.target.value)
+      this.$emit('edit-field', {task: task, field, value: event.target.value})
+    }, 1200),
+    
+    debounceRenameSection: _.debounce(function(id, event) {
+      // console.log(id, event.target.value)
+      this.$emit("edit-section", {id, value: event.target.value})
+    },1000),
+
     collapseItem(event, refId) {
-      // console.log(refId, event)
       let elem = this.$refs[refId][0].$el
       let tar = event.target
 
+      // console.log(event.target, elem)
       if (elem.style.visibility == 'collapse') {
         elem.style.visibility = 'visible'
         tar.firstChild.style.transform = 'rotate(0deg)'
@@ -455,6 +470,7 @@ export default {
       &:first-child {
         text-align: center;
       }
+      .editable-input { font-weight: normal; font-size: $base-size; }
     }
 
     &:hover {
@@ -501,8 +517,8 @@ export default {
     .section-header {
       font-size: $base-size;
       font-weight: bold;
-      /*color: $gray6;*/
     }
+    .editable-input { font-size: $base-size; color: $gray6; }
   }
 
   .drag-handle {

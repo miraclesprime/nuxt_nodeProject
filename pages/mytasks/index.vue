@@ -8,11 +8,9 @@
         <div id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y">
           <template v-if="gridType == 'list'">
             <template v-if="todos.length">
-              <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy"  @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete"></drag-table>
-
+              <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete" @edit-field="updateTask" @edit-section="renameSection"></drag-table>
               <!-- table context menu -->
-              <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
-
+              <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick"></table-context-menu>
               <loading :loading="loading"></loading>
             </template>
             <div v-else>
@@ -64,7 +62,7 @@
                 </div>
                 <div class="task-grid-section " id="task-grid-section-blank-2"></div>
                 <div class="task-grid-section " id="task-grid-section-blank-3"></div>
-                <div class="task-grid-section " id="task-grid-section-blank-4" style="border-left-color: transparent;" ></div>
+                <div class="task-grid-section " id="task-grid-section-blank-4" style="border-left-color: transparent;"></div>
               </draggable>
             </div>
           </template>
@@ -93,7 +91,6 @@
     </div>
   </client-only>
 </template>
-
 <script>
 import _ from 'lodash'
 import draggable from 'vuedraggable'
@@ -128,7 +125,7 @@ export default {
       taskContextMenu: false,
       activeTask: {},
       contextMenuItems: TASK_CONTEXT_MENU,
-      contextCoords: { },
+      contextCoords: {},
     }
   },
 
@@ -157,7 +154,7 @@ export default {
         this.gridType = $event;
       })*/
       this.$nuxt.$on("update-key", () => {
-        this.$store.dispatch("todo/fetchTodos", {filter: 'all'} ).then(() => { this.key += 1 })
+        this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then(() => { this.key += 1 })
       })
     }
   },
@@ -179,19 +176,19 @@ export default {
       const { event, task } = payload
       this.activeTask = task;
       this.$store.dispatch('task/setSingleTask', task)
-      this.contextCoords = { left: event.pageX+'px', top: event.pageY+'px' }
+      this.contextCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
     },
 
-    donotCloseSidebar(classes){
+    donotCloseSidebar(classes) {
       const cl = ['editable-input', 'user-info', 'date-info']
       let out = true
-      cl.forEach( (c) => {
+      cl.forEach((c) => {
         let cd = classes.contains(c)
         // console.info(cd)
         if (cd) {
           out = false
           return false
-        } 
+        }
       });
       return out
     },
@@ -199,29 +196,31 @@ export default {
     openSidebar(task, scroll) {
       // console.log(event.target)
       let fwd = this.donotCloseSidebar(event.target.classList)
-      if(!fwd) {
+      if (!fwd) {
         this.$nuxt.$emit("close-sidebar");
         return false
-      } 
-      this.$nuxt.$emit("open-sidebar", {...task, scrollId: scroll});
+      }
+      this.$nuxt.$emit("open-sidebar", { ...task, scrollId: scroll });
 
-      // let el = event.target.offsetParent
-      // let scrollAmt = event.target.offsetLeft - event.target.offsetWidth;
       let el = document.getElementById("tgs-scroll")
-      let scrollAmt = event.target.closest(".task-grid").offsetLeft - event.target.offsetWidth;
-      el.scrollTo({
-        top: 0,
-        left: scrollAmt,
-        behavior: 'smooth'
-      });
+      if (event.target.closest(".task-grid")) {
+        // let el = event.target.offsetParent
+        // let scrollAmt = event.target.offsetLeft - event.target.offsetWidth;
+        let scrollAmt = event.target.closest(".task-grid").offsetLeft - event.target.offsetWidth;
+        el.scrollTo({
+          top: 0,
+          left: scrollAmt,
+          behavior: 'smooth'
+        });
+      }
     },
-    
+
     closeContext() {
       this.taskContextMenu = false
       this.activeTask = {}
     },
 
-    contextItemClick(key){
+    contextItemClick(key) {
       switch (key) {
         case 'done-task':
           this.taskMarkComplete(this.activeTask)
@@ -281,8 +280,7 @@ export default {
 
     taskMarkComplete(task) {
       this.loading = true
-      if (typeof task == "object" && Object.keys(task).length > 0) {
-      } else {
+      if (typeof task == "object" && Object.keys(task).length > 0) {} else {
         task = this.activeTask
       }
       this.$store.dispatch('task/updateTaskStatus', task)
@@ -294,6 +292,24 @@ export default {
           console.log(e)
           this.loading = false
         })
+    },
+
+    updateTask(payload) {
+      console.log(payload)
+      alert("in progress. Updated value => " + payload.value)
+      /*this.$store.dispatch("task/updateTask", {
+        id: payload.task.id,
+        projectId: payload.task.project[0].projectId || payload.task.project[0].project.id,
+        data: { [payload.field]: payload.value },
+        text: `changed ${payload.field} to "${payload.value}"`
+      })
+        .then(t => { console.log(t); this.updateKey() })
+        .catch(e => console.warn(e))*/
+    },
+
+    renameSection(payload){
+      console.log(payload)
+      alert("in progress. Updated value => " + payload.value)
     },
 
     deleteTask(task) {
@@ -319,14 +335,14 @@ export default {
 
     updateKey() {
       this.loading = true
-      this.$store.dispatch("todo/fetchTodos", {filter: 'all'}).then((res) => {
+      this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
         if (res.statusCode == 200) {
           this.key += 1
         }
         this.loading = false;
       })
     },
-    
+
     showNewTodo() {
       this.newSection = true
     },
@@ -399,7 +415,7 @@ export default {
       payload.tasks.forEach((e, i) => {
         e.tOrder = i
       })
-      
+
       let taskDnD = await this.$axios.$put("/todo/crossTodoDragDrop", { data: payload.tasks, todoId: payload.sectionId }, {
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
@@ -412,11 +428,11 @@ export default {
       }
 
       this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
-      if (res.statusCode == 200) {
-        this.key += 1
-      }
-      this.loading = false;
-    })
+        if (res.statusCode == 200) {
+          this.key += 1
+        }
+        this.loading = false;
+      })
     }, 600),
 
     moveTodo(e) {
@@ -443,13 +459,13 @@ export default {
       }
 
       this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
-      if (res.statusCode == 200) {
-        this.key += 1
-      }
-      this.loading = false;
-    })
+        if (res.statusCode == 200) {
+          this.key += 1
+        }
+        this.loading = false;
+      })
 
-    }, 600),    
+    }, 600),
 
     filterView($event) {
       this.loading = true
