@@ -9,7 +9,7 @@
             </template>
             <span v-else @click.stop="makeSectionEditable('sectionEditInput'+section.id)">{{ section.title.includes('_section') ? 'Untitled section' : section.title }}</span>
           </div> -->
-          <task-grid-section-title :section="section"></task-grid-section-title>
+          <task-grid-section-title :section="section" @update-title="renameSection"></task-grid-section-title>
           <div class="d-flex align-center section-options" :id="'tgs-section-options-'+section.id">
             <div class="cursor-pointer shape-rounded bg-hover-gray2 mx-05 align-center" v-on:click.stop="showCreateTaskModal(section.id)">
               <bib-icon icon="add" variant="gray5" :scale="1.25"></bib-icon>
@@ -263,26 +263,12 @@ export default {
     overdue(item) {
       // console.log(new Date(item.dueDate), new Date);
       return (new Date(item.dueDate) < new Date() && item.statusId != 5) ? 'danger' : 'gray5';
-    },
-
-    donotCloseSidebar(classes){
-      const cl = ['editable-input', 'user-info', 'date-info']
-      let out = true
-      cl.forEach( (c) => {
-        let cd = classes.contains(c)
-        // console.info(cd)
-        if (cd) {
-          out = false
-          return false
-        } 
-      });
-      return out
-    },
+    },   
 
     openSidebar(task, projectId) {
       // console.log(event.target.classList)
       // let elclass = event.target.classList
-      let fwd = this.donotCloseSidebar(event.target.classList)
+      let fwd = this.$donotCloseSidebar(event.target.classList)
       if(!fwd) {
         this.$nuxt.$emit("close-sidebar");
         return false
@@ -331,7 +317,23 @@ export default {
       this.sectionInput = false
       this.newSectionName = ''
       this.$emit("update-key")
-    }
+    },
+    renameSection(payload){
+      // console.log(payload)
+      this.$store.dispatch("section/renameSection", {
+        id: payload.id,
+        // projectId: this.section.projectId,
+        data: {
+          title: payload.title
+        },
+        text: `renamed section to "${payload.title}"`,
+      }, ).then(r => {
+        // console.log(r)
+        if (r.statusCode == 200) {
+          this.$emit("update-key")
+        }
+      }).catch(e => console.warn(e))
+    },
   },
 };
 
