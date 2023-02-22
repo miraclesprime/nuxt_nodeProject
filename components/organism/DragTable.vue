@@ -1,6 +1,5 @@
 <template>
   <div>
-    
     <draggable v-if="localdata.length == 0" :list="localdata" tag="div" handle=".drag-handle" class="" @end="$emit('section-dragend', localdata)">
       <table class="table">
         <thead>
@@ -63,7 +62,12 @@
             </td>
             <td v-for="(col, index) in cols" :key="task.id + col + templateKey + index ">
               <template v-if="col.key == 'userId'">
-                <user-info :key="componentKey" :userId="task[col.key]"></user-info>
+                <span v-if="task[col.key]" class="user-info cursor-pointer" @click.stop="triggerUserPicker(task)">
+                  <user-info :key="componentKey+task['id']" :userId="task[col.key]" :user="task['user']"></user-info>
+                </span>
+                <span v-else class="user-name-blank user-info cursor-pointer shape-circle align-center justify-center" @click.stop="triggerUserPicker(task)">
+                  <bib-icon icon="user" variant="gray4" class="events-none"></bib-icon>
+                </span>
               </template>
               <template v-if="col.key == 'status'">
                 <status-comp :key="componentKey" :status="task[col.key]"></status-comp>
@@ -140,6 +144,17 @@
         </tr>
       </table>
     </draggable>
+    <!-- user picker popup -->
+    <tippy :visible="userPickerOpen" id="user-picker" key="user-picker" appendTo="parent" theme="light-border" :animate-fill="false" arrow="false" distance="1" trigger="manual" interactive="true" >
+        <bib-input type="text" v-model="filterKey" size="sm"></bib-input>
+        <div style="max-height: 12rem; overflow-y: auto">
+          <ul class="m-0 p-0 text-left">
+            <li v-for="user in filterTeam" :key="user.id" class="p-025 cursor-pointer" @click="updateTask('userId', user.id, user.label)">
+              <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
+            </li>
+          </ul>
+        </div>
+      </tippy>
   </div>
 </template>
 
@@ -162,10 +177,13 @@ import { DEPARTMENT, STATUS, PRIORITY, TASK_FIELDS } from '~/config/constants.js
 import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 import _ from 'lodash'
+import tippy from 'tippy.js';
+import VueTippy, { TippyComponent } from 'vue-tippy';
 export default {
   name: "DragTable",
   components: {
-    draggable
+    draggable,
+    tippy: TippyComponent,
   },
   props: {
     /*headless: {
@@ -251,13 +269,15 @@ export default {
       status: STATUS,
       priority: PRIORITY,
       tableFields: TASK_FIELDS,
-      validTitle: ""
+      userPickerOpen: false,
+      filterKey: "",
+      validTitle: "",
+      activeTask: {},
     };
   },
   computed: {
     ...mapGetters({
       teamMembers: "user/getTeamMembers",
-
     }),
     activeClass() { return keyI => this.sections[keyI].active ? 'active' : '' },
     filterUser() {
@@ -270,6 +290,14 @@ export default {
           lastName: u.lastName,
           email: u.email,
           img: u.avatar
+        }
+      })
+    },
+    filterTeam() {
+      let regex = new RegExp(this.filterKey, 'g\i')
+      return this.teamMembers.filter((u) => {
+        if (regex.test(u.label) || regex.test(u.email)) {
+          return u
         }
       })
     },
@@ -286,6 +314,15 @@ export default {
     this.templateKey += 1
   },
   methods: {
+    defer(func) {
+      setTimeout(func, 100);
+    },
+    
+    triggerUserPicker(task) {
+      // console.log(task.id, task.title)
+      this.activeTask = task
+      this.userPickerOpen = !this.userPickerOpen
+    },
     debounceUpdate: _.debounce(function(task, field, event){
       // console.log(task.id, field, event.target.value)
       this.$emit('edit-field', {task: task, field, value: event.target.value})
@@ -319,6 +356,10 @@ export default {
     updateTaskStatus(task) {
       // this.$emit('task-checkmark-click', task)
       this.$emit(this.titleIcon.event, task)
+    },
+    updateTask(field, value, label) {
+      // console.log(arguments)
+      this.$emit('edit-field', {task: this.activeTask, field, value, label})
     },
     rowClick($event, task) {
       this.unselectAll()
@@ -542,6 +583,13 @@ export default {
       span { max-width: 8rem; padding-left: 0.5rem; }
     }
   }
+}
+
+.user-name-blank,
+.date-info-blank {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px dashed $gray4;
 }
 
 ::v-deep {

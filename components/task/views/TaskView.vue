@@ -551,7 +551,7 @@ export default {
         id: payload.task.id,
         projectId: payload.task.project[0].projectId || payload.task.project[0].project.id,
         data: { [payload.field]: payload.value },
-        text: `changed ${payload.field} to "${payload.value}"`
+        text: `changed ${payload.field} to "${payload.label || payload.value}"`
       })
         .then(t => {
           console.log(t)
