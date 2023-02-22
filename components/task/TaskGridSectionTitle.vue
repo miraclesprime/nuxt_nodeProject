@@ -29,21 +29,22 @@ export default {
     },
 
     debounceUpdateTitle: _.debounce(function() {
-      console.log(this.title)
-      this.$store.dispatch("section/renameSection", {
+      // console.log(this.title)
+      this.$emit("update-title", {id: this.section.id, title: this.title})
+      /*this.$store.dispatch("section/renameSection", {
         id: this.section.id,
         projectId: this.section.projectId,
         data: {
           title: this.title
         },
-        text: `renamed section to ${this.title}`,
+        text: `renamed section to "${this.title}"`,
       }, ).then(r => {
         // console.log(r)
         if (r.statusCode == 200) {
           this.sectionEdit = false
           this.$nuxt.$emit("update-key")
         }
-      }).catch(e => console.warn(e))
+      }).catch(e => console.warn(e))*/
     }, 1200),
   }
 }

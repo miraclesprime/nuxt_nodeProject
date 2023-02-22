@@ -1,4 +1,4 @@
-export function isFavProject({store}, idx) {
+/*export function isFavProject({ store }, idx) {
   const favtasks = store.state.task.favTasks
   let fav = favtasks.some(t => t.id == idx)
   if (fav) {
@@ -6,9 +6,9 @@ export function isFavProject({store}, idx) {
   } else {
     return { variant: "gray5", text: "Add to favorites", status: false }
   }
-};
+};*/
 
-/*export default ({ store }, inject) => {
+export default ({ store, app, context }, inject) => {
   inject('isFavTask', (idx) => {
     const favtasks = store.state.task.favTasks
     let fav = favtasks.some(t => t.id == idx)
@@ -28,5 +28,18 @@ export function isFavProject({store}, idx) {
       return { variant: "gray5", text: "Add to favorites", status: false }
     }
   });
+
+  inject('donotCloseSidebar', (classes) => {
+    const cl = ['editable-input', 'user-info', 'date-info']
+    let out = true
+    cl.forEach((c) => {
+      let cd = classes.contains(c)
+      // console.info(cd)
+      if (cd) {
+        out = false
+        return false
+      }
+    });
+    return out
+  })
 }
-*/

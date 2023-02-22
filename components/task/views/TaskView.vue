@@ -2,13 +2,14 @@
   <div id="task-view-wrapper" class="task-view-wrapper position-relative">
     <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:show-newsection="showNewsection" v-on:filterView="filterView" v-on:sort="taskSort($event)" @group="taskGroup($event)"></task-actions>
     <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createSection"></new-section-form>
+
     <template v-if="gridType === 'list'">
       <!-- task list table -->
-      <drag-table :fields="tableFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" :key="templateKey" :componentKey="templateKey" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" :newTaskButton="newTaskButton" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow" @edit-section="renameSection"></drag-table>
+      <drag-table :fields="tableFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" :key="templateKey" :componentKey="templateKey" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" :newTaskButton="newTaskButton" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow" @edit-field="updateTask" @edit-section="renameSection"></drag-table>
       <!-- table context menu -->
       <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" ref="task_menu" @item-click="contextItemClick"></table-context-menu>
-
     </template>
+
     <template v-else>
       <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" @create-section="createSection" @section-rename="renameSectionModal" @section-delete="deleteSection" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="setFavorite" v-on:mark-complete="markComplete" v-on:delete-task="deleteTask" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd">
       </task-grid-section>
@@ -357,6 +358,12 @@ export default {
       }
     },
     openSidebar(task) {
+      let fwd = this.$donotCloseSidebar(event.target.classList)
+      if (!fwd) {
+        this.$nuxt.$emit("close-sidebar");
+        return false
+      }
+
       let project = [{
         projectId: this.project.id,
         project: {
@@ -434,9 +441,9 @@ export default {
         projectId: Number(this.$route.params.id),
         id: this.sectionId || payload.id,
         data: {
-          title: this.sectionTitle || payload.value
+          title: this.sectionTitle || payload.title
         },
-        text: `renamed section to "${this.sectionTitle || payload.value}"`,
+        text: `renamed section to "${this.sectionTitle || payload.title}"`,
       })
       // console.log("rename section output", sec)
       if (sec.statusCode = 200) {
@@ -535,6 +542,22 @@ export default {
           console.log(e)
           this.loading = false
         })
+    },
+
+    updateTask(payload) {
+      console.log(payload)
+      // alert("in progress. Updated value => " + payload.value)
+      this.$store.dispatch("task/updateTask", {
+        id: payload.task.id,
+        projectId: payload.task.project[0].projectId || payload.task.project[0].project.id,
+        data: { [payload.field]: payload.value },
+        text: `changed ${payload.field} to "${payload.value}"`
+      })
+        .then(t => {
+          console.log(t)
+          this.updateKey()
+        })
+        .catch(e => console.warn(e))
     },
 
     deleteTask(task) {

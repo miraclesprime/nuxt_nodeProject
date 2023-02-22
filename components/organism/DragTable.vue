@@ -86,12 +86,12 @@
                   <bib-icon :icon="titleIcon.icon" :scale="1.5" :variant="taskCheckIcon(task)"></bib-icon>
                 </span>
                 <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">
-                  <!-- {{task[col.key]}} -->
-                  <input type="text" class="editable-input" :value="task[col.key]" @input="debounceUpdate(task, 'title', $event)">
+                  <input type="text" class="editable-input" :value="task[col.key]" @input.stop="debounceUpdate(task, 'title', $event)">
                 </span>
                 <span v-else class="flex-grow-1">
                   {{task[col.key]}}
                 </span>
+                <span class="width-1 font-xs text-gray2">{{task['id']}}</span>
               </div>
               <template v-if="col.key == 'department'">
                 {{task[col.key]}}
@@ -293,8 +293,8 @@ export default {
     
     debounceRenameSection: _.debounce(function(id, event) {
       // console.log(id, event.target.value)
-      this.$emit("edit-section", {id, value: event.target.value})
-    },1000),
+      this.$emit("edit-section", {id, title: event.target.value})
+    },1200),
 
     collapseItem(event, refId) {
       let elem = this.$refs[refId][0].$el
