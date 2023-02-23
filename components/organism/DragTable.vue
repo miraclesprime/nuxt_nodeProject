@@ -63,7 +63,7 @@
             <td v-for="(col, index) in cols" :key="task.id + col + templateKey + index ">
               <template v-if="col.key == 'userId'">
                 <span v-if="task[col.key]" class="user-info cursor-pointer" @click.stop="triggerUserPicker(task)">
-                  <user-info :key="componentKey+task['id']" :userId="task[col.key]" :user="task['user']"></user-info>
+                  <user-info :key="componentKey+task['id']" :userId="task[col.key]" :user="task['user']" class="events-none"></user-info>
                 </span>
                 <span v-else class="user-name-blank user-info cursor-pointer shape-circle align-center justify-center" @click.stop="triggerUserPicker(task)">
                   <bib-icon icon="user" variant="gray4" class="events-none"></bib-icon>
@@ -75,11 +75,15 @@
               <template v-if="col.key == 'priority'">
                 <priority-comp :key="componentKey" :priority="task[col.key]"></priority-comp>
               </template>
-              <template v-if="col.key == 'startDate' || col.key == 'dueDate'">
-                <span v-if="task[col.key]" class="d-inline-flex align-center gap-05">
+              <template v-if="col.key == 'startDate'">
+                <!-- <span v-if="task[col.key]" class="d-inline-flex align-center gap-05">
                   <bib-icon icon="calendar" variant="gray4"></bib-icon>
                   <format-date :key="componentKey" :datetime="task[col.key]"></format-date>
-                </span>
+                </span> -->
+                <inline-datepicker :datetime="task[col.key]" @date-updated="debounceUpdate(task, 'startDate', $event)"></inline-datepicker>
+              </template>
+              <template v-if="col.key == 'dueDate'">
+                <inline-datepicker :datetime="task[col.key]" @date-updated="debounceUpdate(task, 'dueDate', $event)"></inline-datepicker>
               </template>
               <template v-if="col.key == 'project'">
                 <project-info v-if="task[col.key].length" :projectId="task[col.key][0].projectId || task[col.key][0].project.id"></project-info>
@@ -90,7 +94,7 @@
                   <bib-icon :icon="titleIcon.icon" :scale="1.5" :variant="taskCheckIcon(task)"></bib-icon>
                 </span>
                 <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">
-                  <input type="text" class="editable-input" :value="task[col.key]" @input.stop="debounceUpdate(task, 'title', $event)">
+                  <input type="text" class="editable-input" :value="task[col.key]" @input.stop="debounceUpdate(task, 'title', $event.target.value)">
                 </span>
                 <span v-else class="flex-grow-1">
                   {{task[col.key]}}
@@ -121,10 +125,11 @@
               <bib-input type="select" size="sm" :options="priority" v-model="newRow.priorityId" @change.native="newRowCreate" placeholder="Priority"></bib-input>
             </template>
             <template v-if="col.key == 'startDate'">
-              <span class="d-inline-flex align-center gap-05">
+              <!-- <span class="d-inline-flex align-center gap-05">
                 <bib-icon icon="calendar" variant="gray4"></bib-icon>
                 <bib-input size="sm" v-model="newRow.startDate" type="date" @input="newRowCreate" ></bib-input>
-              </span>
+              </span> -->
+              <inline-datepicker :datetime="newRow.startDate" @date-updated="debounceUpdate(task, 'startDate', $event)"></inline-datepicker>
             </template>
             <template v-if="col.key == 'dueDate'">
               <span class="d-inline-flex align-center gap-05">
@@ -145,16 +150,28 @@
       </table>
     </draggable>
     <!-- user picker popup -->
-    <tippy :visible="userPickerOpen" id="user-picker" key="user-picker" appendTo="parent" theme="light-border" :animate-fill="false" arrow="false" distance="1" trigger="manual" interactive="true" >
-        <bib-input type="text" v-model="filterKey" size="sm"></bib-input>
+    <!-- <tippy :visible="userPickerOpen" key="user-picker" theme="light-border" :animate-fill="false" :arrow="false" interactive="true" trigger="manual" :onHidden="() => defer(() => userPickerOpen = false)" >
+      <bib-input type="text" v-model="filterKey" size="sm"></bib-input>
+      <div style="max-height: 12rem; overflow-y: auto">
+        <ul class="m-0 p-0 text-left">
+          <li v-for="user in filterTeam" :key="user.id" class="p-025 cursor-pointer" @click="updateTask('userId', user.id, user.label)">
+            <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
+          </li>
+        </ul>
+      </div>
+    </tippy> -->
+    <div v-show="userPickerOpen" ref="userPicker" class="tooltip-wrapper">
+      <div class="tooltip-content">
+        <bib-input type="text" v-model="filterKey" @click.stop="" size="sm"></bib-input>
         <div style="max-height: 12rem; overflow-y: auto">
           <ul class="m-0 p-0 text-left">
-            <li v-for="user in filterTeam" :key="user.id" class="p-025 cursor-pointer" @click="updateTask('userId', user.id, user.label)">
+            <li v-for="user in filterTeam" :key="user.id" class="p-025 cursor-pointer" @click.stop="updateTask('userId', user.id, user.label)">
               <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
             </li>
           </ul>
         </div>
-      </tippy>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -315,17 +332,20 @@ export default {
   },
   methods: {
     defer(func) {
+      console.log('defer')
       setTimeout(func, 100);
     },
     
     triggerUserPicker(task) {
-      // console.log(task.id, task.title)
+      console.log(event, event.originalTarget.offsetLeft, event.originalTarget.offsetTop)
+      this.$refs.userPicker.style.left = event.clientX+'px'
+      this.$refs.userPicker.style.top = event.clientY+event.originalTarget.scrollHeight+'px'
       this.activeTask = task
-      this.userPickerOpen = !this.userPickerOpen
+      this.userPickerOpen = true
     },
-    debounceUpdate: _.debounce(function(task, field, event){
-      // console.log(task.id, field, event.target.value)
-      this.$emit('edit-field', {task: task, field, value: event.target.value})
+    debounceUpdate: _.debounce(function(task, field, value){
+      console.log(task.id, field, value)
+      this.$emit('edit-field', {task: task, field, value})
     }, 1200),
     
     debounceRenameSection: _.debounce(function(id, event) {
@@ -386,6 +406,7 @@ export default {
       for (let row of rows) {
         row.classList.remove('active');
       }
+      this.userPickerOpen = false
       this.$emit("hide-newrow")
       // this.$emit("close-context-menu")
       return "success"

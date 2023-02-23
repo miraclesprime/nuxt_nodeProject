@@ -1,11 +1,11 @@
 <template>
   <client-only>
     <div >
-      <div v-if="localDate" class="align-center gap-05 ml-auto" @click.stop="triggerDatePicker">
+      <div v-if="localDate" class="align-center gap-05 cursor-pointer" @click.stop="triggerDatePicker">
         <bib-icon icon="calendar" :variant="newOverdue ? 'gray5' : 'danger'" class="events-none"></bib-icon>
         <format-date :datetime="localDate" :variant="newOverdue ? 'gray5' : 'danger'" class="events-none"></format-date>
       </div>
-      <div v-else class="date-info-blank date-info shape-circle align-center justify-center ml-auto" @click.stop="triggerDatePicker">
+      <div v-else class="date-info-blank date-info shape-circle align-center justify-center cursor-pointer" @click.stop="triggerDatePicker">
         <bib-icon icon="calendar" variant="gray4" class="events-none"></bib-icon> <span v-format-date="localDate"></span>
       </div>
       <!-- date picker -->

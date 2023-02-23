@@ -46,7 +46,7 @@
         <inline-datepicker :datetime="task.dueDate" :overdue="overdue" @date-updated="debounceUpdate('Due date', 'dueDate', $event)"></inline-datepicker>
       </div>
       <!-- user picker -->
-      <tippy :visible="userPickerOpen" :id="'user'+task.id" :key="'user'+task.id" appendTo="parent" theme="light-border" :animate-fill="false" arrow="false" distance="1" trigger="manual" interactive="true" :onHidden="() => defer(() => userPickerOpen = false)">
+      <tippy :visible="userPickerOpen" :id="'user'+task.id" :key="'user'+task.id" appendTo="parent" theme="light-border" :animate-fill="false" arrow="false" distance="0" trigger="manual" interactive="true" :onHidden="() => defer(() => userPickerOpen = false)">
         <bib-input type="text" v-model="filterKey" size="sm"></bib-input>
         <div style="max-height: 12rem; overflow-y: auto">
           <ul class="m-0 p-0 text-left">
