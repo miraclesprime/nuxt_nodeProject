@@ -63,10 +63,10 @@
             <td v-for="(col, index) in cols" :key="task.id + col + templateKey + index ">
               <template v-if="col.key == 'userId'">
                 <span v-if="task[col.key]" class="user-info cursor-pointer" @click.stop="triggerUserPicker(task)">
-                  <user-info :key="componentKey+task['id']" :userId="task[col.key]" :user="task['user']" class="events-none"></user-info>
+                  <user-info :key="componentKey+task['id']" :userId="task[col.key]" :user="task['user']" ></user-info>
                 </span>
                 <span v-else class="user-name-blank user-info cursor-pointer shape-circle align-center justify-center" @click.stop="triggerUserPicker(task)">
-                  <bib-icon icon="user" variant="gray4" class="events-none"></bib-icon>
+                  <bib-icon icon="user" variant="gray4" ></bib-icon>
                 </span>
               </template>
               <template v-if="col.key == 'status'">
@@ -162,10 +162,10 @@
     </tippy> -->
     <div v-show="userPickerOpen" ref="userPicker" class="tooltip-wrapper">
       <div class="tooltip-content">
-        <bib-input type="text" v-model="filterKey" @click.stop="" size="sm"></bib-input>
+        <bib-input type="text" v-model="filterKey" size="sm"></bib-input>
         <div style="max-height: 12rem; overflow-y: auto">
           <ul class="m-0 p-0 text-left">
-            <li v-for="user in filterTeam" :key="user.id" class="p-025 cursor-pointer" @click.stop="updateTask('userId', user.id, user.label)">
+            <li v-for="user in filterTeam" :key="user.id" class="p-025 font-md cursor-pointer" @click.stop="updateTask('userId', user.id, user.label)">
               <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
             </li>
           </ul>
@@ -337,11 +337,25 @@ export default {
     },
     
     triggerUserPicker(task) {
-      console.log(event, event.originalTarget.offsetLeft, event.originalTarget.offsetTop)
-      this.$refs.userPicker.style.left = event.clientX+'px'
-      this.$refs.userPicker.style.top = event.clientY+event.originalTarget.scrollHeight+'px'
       this.activeTask = task
       this.userPickerOpen = true
+
+      let picker = this.$refs.userPicker
+      picker.style.left = (event.clientX - event.offsetX) +'px'
+      picker.style.top = event.clientY+event.currentTarget.offsetTop+'px'
+      // picker.style.transform = "translateY("+diff+"px)"
+
+      // console.info(event.offsetX )
+      this.$nextTick(() => {
+        // console.log(picker.offsetLeft)
+        let diff = window.innerHeight - (picker.offsetTop + picker.offsetHeight + 10)
+        if (window.innerHeight < (picker.offsetTop + picker.offsetHeight)) {
+          picker.style.transform = "translateY("+diff+"px)"
+        } else {
+          picker.style.transform = "translateY(0)"
+        }
+      });
+
     },
     debounceUpdate: _.debounce(function(task, field, value){
       console.log(task.id, field, value)
@@ -406,7 +420,10 @@ export default {
       for (let row of rows) {
         row.classList.remove('active');
       }
-      this.userPickerOpen = false
+      // console.log(event)
+      if (event.target.tagName != "INPUT") {
+        this.userPickerOpen = false
+      }
       this.$emit("hide-newrow")
       // this.$emit("close-context-menu")
       return "success"
