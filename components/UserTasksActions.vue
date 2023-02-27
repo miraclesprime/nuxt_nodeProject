@@ -10,16 +10,16 @@
     </div>
     <div class="action-right d-flex gap-05" id="ta-action-right">
       <ul class="actions" id="ta-action-right-actions">
-        <li class="action" id="ta-action1" v-tooltip="'Viewing'">
+        <li class="action" id="ta-action1" >
           <sorting-comp :items="viewing" icon="eye-open" v-on:change-sort="changeViewName"></sorting-comp>
         </li>
-        <li class="action" id="ta-action2" v-tooltip="'Sort by'">
+        <li class="action" id="ta-action2" >
           <sorting-comp :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy"></sorting-comp>
         </li>
         
         <li class="action" id="ta-action5">
           <!-- <span class="mr-025" id="ta-action5-text">View</span> -->
-          <div class="d-flex width-2 height-2 align-center justify-center bg-light bg-hover-gray2 shape-circle p-025 cursor-pointer" id="ta-action5-link" v-tooltip="'Change view'">
+          <div class="d-flex width-2 height-2 align-center justify-center bg-light bg-hover-gray2 shape-circle p-025 cursor-pointer" id="ta-action5-link" >
             <bib-icon v-if="gridType == 'list'" icon="table" variant="gray6" @click.native="changeGridType('grid')"></bib-icon>
             <bib-icon v-if="gridType == 'grid'" icon="list" variant="gray6" @click.native="changeGridType('list')"></bib-icon>
           </div>
@@ -51,7 +51,7 @@ export default {
   },
   methods: {
     changeGridType($event) {
-      this.$nuxt.$emit("change-grid-type", $event);
+      this.$emit("change-grid-type", $event);
     },
     showCreateTaskModal() {
       // console.log('show create task modal')

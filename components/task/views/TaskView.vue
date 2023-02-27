@@ -2,13 +2,14 @@
   <div id="task-view-wrapper" class="task-view-wrapper position-relative">
     <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:show-newsection="showNewsection" v-on:filterView="filterView" v-on:sort="taskSort($event)" @group="taskGroup($event)"></task-actions>
     <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createSection"></new-section-form>
+
     <template v-if="gridType === 'list'">
       <!-- task list table -->
-      <drag-table :fields="tableFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" :key="templateKey" :componentKey="templateKey" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" :newTaskButton="newTaskButton" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow"></drag-table>
+      <drag-table :fields="tableFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" :key="templateKey" :componentKey="templateKey" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" :newTaskButton="newTaskButton" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow" @edit-field="updateTask" @edit-section="renameSection"></drag-table>
       <!-- table context menu -->
       <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" ref="task_menu" @item-click="contextItemClick"></table-context-menu>
-
     </template>
+
     <template v-else>
       <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" @create-section="createSection" @section-rename="renameSectionModal" @section-delete="deleteSection" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="setFavorite" v-on:mark-complete="markComplete" v-on:delete-task="deleteTask" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd">
       </task-grid-section>
@@ -202,7 +203,7 @@ export default {
     },
     taskSort($event) {
       // sort by title
-      console.log('sort key->', $event, 'sort-order->', this.orderBy)
+      // console.log('sort key->', $event, 'sort-order->', this.orderBy)
       if ($event == "title") {
         // var orderBy = "asc"
         if (this.orderBy == "asc") {
@@ -357,6 +358,12 @@ export default {
       }
     },
     openSidebar(task) {
+      let fwd = this.$donotCloseSidebar(event.target.classList)
+      if (!fwd) {
+        this.$nuxt.$emit("close-sidebar");
+        return false
+      }
+
       let project = [{
         projectId: this.project.id,
         project: {
@@ -424,27 +431,25 @@ export default {
 
     renameSectionModal($event) {
       console.log($event)
-      this.renameModal = true
+      /*this.renameModal = true
       this.sectionId = $event.id
-      this.sectionTitle = $event.title
+      this.sectionTitle = $event.title*/
     },
 
-    async renameSection() {
-      this.loading = true
+    async renameSection(payload) {
       const sec = await this.$store.dispatch("section/renameSection", {
         projectId: Number(this.$route.params.id),
-        id: this.sectionId,
+        id: this.sectionId || payload.id,
         data: {
-          title: this.sectionTitle
+          title: this.sectionTitle || payload.title
         },
-        text: `section renamed to '${this.sectionTitle}'`,
+        text: `renamed section to "${this.sectionTitle || payload.title}"`,
       })
       // console.log("rename section output", sec)
       if (sec.statusCode = 200) {
-        this.renameModal = false
+        // this.renameModal = false
         this.updateKey()
       }
-      this.loading = false
     },
 
     // taskSelected($event) {
@@ -495,7 +500,7 @@ export default {
       if (isFav) {
         this.$store.dispatch("task/removeFromFavorite", { id: task.id })
           .then(msg => {
-            console.log(msg)
+            // console.log(msg)
             this.updateKey()
             this.loading = false
           })
@@ -506,7 +511,7 @@ export default {
       } else {
         this.$store.dispatch("task/addToFavorite", { id: task.id })
           .then(msg => {
-            console.log(msg)
+            // console.log(msg)
             this.updateKey()
             this.loading = false
           })
@@ -518,10 +523,10 @@ export default {
     },
 
     markComplete(task) {
-      console.log(typeof task, this.task)
+      // console.log(typeof task, this.task)
       this.loading = true
       if (typeof task == "object" && Object.keys(task).length > 0) {
-        console.log(task)
+        // console.log(task)
       } else {
         // alert("no task selected")
         task = this.activeTask
@@ -539,15 +544,31 @@ export default {
         })
     },
 
+    updateTask(payload) {
+      console.log(payload)
+      // alert("in progress. Updated value => " + payload.value)
+      this.$store.dispatch("task/updateTask", {
+        id: payload.task.id,
+        projectId: payload.task.project[0].projectId || payload.task.project[0].project.id,
+        data: { [payload.field]: payload.value },
+        text: `changed ${payload.field} to "${payload.label || payload.value}"`
+      })
+        .then(t => {
+          console.log(t)
+          this.updateKey()
+        })
+        .catch(e => console.warn(e))
+    },
+
     deleteTask(task) {
       // let del = confirm("Are you sure")
       this.loading = true
       // if (del) {
       this.$store.dispatch("task/deleteTask", task).then(t => {
-        console.log(t)
+        // console.log(t)
         if (t.statusCode == 200) {
           this.updateKey()
-          console.warn(t.message);
+          // console.warn(t.message);
         } else {
           console.warn(t.message);
         }
@@ -593,7 +614,7 @@ export default {
         el.order = i
       })
 
-      console.log("ordered sections =>", clone)
+      // console.log("ordered sections =>", clone)
 
       let sectionDnD = await this.$axios.$put("/section/dragdrop", { projectId: this.project.id, data: clone }, {
         headers: {
@@ -602,7 +623,7 @@ export default {
         }
       })
 
-      console.log(sectionDnD.message)
+      // console.log(sectionDnD.message)
 
       if (sectionDnD.statusCode == 200) {
         this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id }).then(() => {
@@ -649,6 +670,7 @@ export default {
 <style lang="scss" scoped>
 .task-view-wrapper {
   min-height: 5rem;
+  min-height: 100%;
 }
 
 .new-section-input {

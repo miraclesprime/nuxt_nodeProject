@@ -2,17 +2,15 @@
   <client-only>
     <div id="my-tasks-page-wrapper" class="mytask-page-wrapper ">
       <page-title title="My Tasks"></page-title>
-      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="showNewTodo" />
+      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="showNewTodo" @change-grid-type="($event)=>gridType = $event"></user-tasks-actions>
       <div>
         <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form>
         <div id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y">
           <template v-if="gridType == 'list'">
             <template v-if="todos.length">
-              <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy"  @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete"></drag-table>
-
+              <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete" @edit-field="updateTask" @edit-section="renameTodo"></drag-table>
               <!-- table context menu -->
-              <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
-
+              <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick"></table-context-menu>
               <loading :loading="loading"></loading>
             </template>
             <div v-else>
@@ -22,11 +20,12 @@
             </div>
           </template>
           <template v-else>
-            <div class="bg-light h-100 of-scroll-x position-relative">
+            <div id="tgs-scroll" class="bg-light h-100 of-scroll-x position-relative">
               <draggable :list="localdata" class="d-flex h-100" :move="moveTodo" v-on:end="todoDragEnd" handle=".section-drag-handle">
                 <div class="task-grid-section" v-for="(todo, index) in localdata" :key="index + viewName + '-' + key">
                   <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
-                    <div class="title section-drag-handle text-dark flex-grow-1">{{todo.title}}</div>
+                    <!-- <div class="title section-drag-handle text-dark flex-grow-1">{{todo.title}}</div> -->
+                    <task-grid-section-title :section="todo" @update-title="renameTodo"></task-grid-section-title>
                     <div class="d-flex align-center section-options" :id="'tg-section-options-'+todo.id">
                       <div class="cursor-pointer mx-05 d-flex align-center" :id="'tg-section-addtask-'+todo.id" v-on:click.stop="$nuxt.$emit('open-sidebar', todo.id)">
                         <bib-icon icon="add" variant="gray5" :scale="1.25"></bib-icon>
@@ -62,8 +61,9 @@
                     </draggable>
                   </div>
                 </div>
-                <div class="task-grid-section"></div>
-                <div class="task-grid-section"></div>
+                <div class="task-grid-section " id="task-grid-section-blank-2"></div>
+                <div class="task-grid-section " id="task-grid-section-blank-3"></div>
+                <div class="task-grid-section " id="task-grid-section-blank-4" style="border-left-color: transparent;"></div>
               </draggable>
             </div>
           </template>
@@ -82,17 +82,10 @@
             </div>
           </template>
         </bib-modal-wrapper>
-        <bib-popup-notification-wrapper>
-          <template #wrapper>
-            <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
-            </bib-popup-notification>
-          </template>
-        </bib-popup-notification-wrapper>
       </div>
     </div>
   </client-only>
 </template>
-
 <script>
 import _ from 'lodash'
 import draggable from 'vuedraggable'
@@ -117,7 +110,6 @@ export default {
       newSection: false,
       sectionLoading: false,
       sectionError: "",
-      popupMessages: [],
       highlight: null,
       taskDnDsectionId: null,
       taskDnDlist: [],
@@ -127,7 +119,7 @@ export default {
       taskContextMenu: false,
       activeTask: {},
       contextMenuItems: TASK_CONTEXT_MENU,
-      contextCoords: { },
+      contextCoords: {},
     }
   },
 
@@ -141,7 +133,8 @@ export default {
 
   watch: {
     todos(newVal) {
-      let todos = JSON.parse(JSON.stringify(newVal))
+      // let todos = JSON.parse(JSON.stringify(newVal))
+      let todos = _.cloneDeep(newVal)
       todos.forEach(function(todo) {
         todo["tasks"] = todo.tasks.sort((a, b) => a.tOrder - b.tOrder);
       })
@@ -151,11 +144,11 @@ export default {
 
   created() {
     if (process.client) {
-      this.$nuxt.$on('change-grid-type', ($event) => {
+      /*this.$nuxt.$on('change-grid-type', ($event) => {
         this.gridType = $event;
-      })
+      })*/
       this.$nuxt.$on("update-key", () => {
-        this.$store.dispatch("todo/fetchTodos", {filter: 'all'} ).then(() => { this.key += 1 })
+        this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then(() => { this.key += 1 })
       })
     }
   },
@@ -177,19 +170,37 @@ export default {
       const { event, task } = payload
       this.activeTask = task;
       this.$store.dispatch('task/setSingleTask', task)
-      this.contextCoords = { left: event.pageX+'px', top: event.pageY+'px' }
+      this.contextCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
     },
 
     openSidebar(task, scroll) {
-      this.$nuxt.$emit("open-sidebar", {...task, scrollId: scroll});
+      // console.log(event.target)
+      let fwd = this.$donotCloseSidebar(event.target.classList)
+      if (!fwd) {
+        this.$nuxt.$emit("close-sidebar");
+        return false
+      }
+      this.$nuxt.$emit("open-sidebar", { ...task, scrollId: scroll });
+
+      let el = document.getElementById("tgs-scroll")
+      if (event.target.closest(".task-grid")) {
+        // let el = event.target.offsetParent
+        // let scrollAmt = event.target.offsetLeft - event.target.offsetWidth;
+        let scrollAmt = event.target.closest(".task-grid").offsetLeft - event.target.offsetWidth;
+        el.scrollTo({
+          top: 0,
+          left: scrollAmt,
+          behavior: 'smooth'
+        });
+      }
     },
-    
+
     closeContext() {
       this.taskContextMenu = false
       this.activeTask = {}
     },
 
-    contextItemClick(key){
+    contextItemClick(key) {
       switch (key) {
         case 'done-task':
           this.taskMarkComplete(this.activeTask)
@@ -249,8 +260,7 @@ export default {
 
     taskMarkComplete(task) {
       this.loading = true
-      if (typeof task == "object" && Object.keys(task).length > 0) {
-      } else {
+      if (typeof task == "object" && Object.keys(task).length > 0) {} else {
         task = this.activeTask
       }
       this.$store.dispatch('task/updateTaskStatus', task)
@@ -262,6 +272,23 @@ export default {
           console.log(e)
           this.loading = false
         })
+    },
+
+    updateTask(payload) {
+      console.log(payload)
+      // alert("in progress. Updated value => " + payload.value)
+
+      this.$store.dispatch("task/updateTask", {
+        id: payload.task.id,
+        projectId: payload.task.project[0].projectId || payload.task.project[0].project.id,
+        data: { [payload.field]: payload.value },
+        text: `changed ${payload.field} to "${payload.value}"`
+      })
+        .then(t => {
+          console.log(t)
+          this.updateKey()
+        })
+        .catch(e => console.warn(e))
     },
 
     deleteTask(task) {
@@ -287,14 +314,14 @@ export default {
 
     updateKey() {
       this.loading = true
-      this.$store.dispatch("todo/fetchTodos", {filter: 'all'}).then((res) => {
+      this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
         if (res.statusCode == 200) {
           this.key += 1
         }
         this.loading = false;
       })
     },
-    
+
     showNewTodo() {
       this.newSection = true
     },
@@ -323,27 +350,24 @@ export default {
       this.renameModal = true
     },
 
-    async renameTodo() {
-      this.loading = true
-      const res = await this.$store.dispatch("todo/renameTodo", {
-        id: this.todoId,
+    renameTodo(payload) {
+      // console.table(payload);
+      this.$store.dispatch("todo/renameTodo", {
+        id: payload.id,
         data: {
-          title: this.todoTitle
-        }
-      })
-
-      if (res.statusCode = 200) {
-        this.renameModal = false
-        this.popupMessages.push({ text: "Section renamed", variant: "success" })
-        this.updateKey()
-      }
-      this.loading = false
+          title: payload.title
+        },
+        text: `renamed section to "${payload.title}"`,
+      }).then(res => {
+        if (res.statusCode == 200) {
+          this.updateKey()
+        } else { alert("Error -> "+ res.statusCode) }
+      }).catch(e => console.warn(e))
     },
 
     deleteTodo(todo) {
       this.$store.dispatch("todo/deleteTodo", todo)
         .then((d) => {
-          this.popupMessages.push({ text: d.message, variant: "success" })
           this.updateKey()
         })
         .catch(e => console.log(e))
@@ -367,7 +391,7 @@ export default {
       payload.tasks.forEach((e, i) => {
         e.tOrder = i
       })
-      
+
       let taskDnD = await this.$axios.$put("/todo/crossTodoDragDrop", { data: payload.tasks, todoId: payload.sectionId }, {
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
@@ -376,15 +400,15 @@ export default {
       })
 
       if (taskDnD.statusCode != 200) {
-        this.popupMessages.push({ msg: taskDnD.message, variant: 'danger' })
+        alert(taskDnD.message)
       }
 
       this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
-      if (res.statusCode == 200) {
-        this.key += 1
-      }
-      this.loading = false;
-    })
+        if (res.statusCode == 200) {
+          this.key += 1
+        }
+        this.loading = false;
+      })
     }, 600),
 
     moveTodo(e) {
@@ -397,7 +421,7 @@ export default {
         el.uOrder = i
       })
 
-      console.log("ordered todos=>", todos)
+      // console.log("ordered todos=>", todos)
 
       let todoDnD = await this.$axios.$put("/todo/dragdrop", { data: todos }, {
         headers: {
@@ -407,17 +431,17 @@ export default {
       })
 
       if (todoDnD.statusCode != 200) {
-        this.popupMessages.push({ msg: todoDnD.message, variant: 'danger' })
+        alert(taskDnD.message)
       }
 
       this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
-      if (res.statusCode == 200) {
-        this.key += 1
-      }
-      this.loading = false;
-    })
+        if (res.statusCode == 200) {
+          this.key += 1
+        }
+        this.loading = false;
+      })
 
-    }, 600),    
+    }, 600),
 
     filterView($event) {
       this.loading = true

@@ -259,6 +259,11 @@ ul {
   &-capitalize {
     text-transform: capitalize;
   }
+  &-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .side-panel .wrapper select {
@@ -282,15 +287,10 @@ ul {
   border-radius: 0.15rem;
 }
 
-.text-truncate {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 
 .task-grid-section {
   /*background-color: white;*/
-  flex: 0 0 18rem;
+  flex: 0 0 18.75rem;
   padding: 10px;
   user-select: none;
 
@@ -351,11 +351,13 @@ ul {
     position: relative;
 }
 
-.gap-025 {
-  gap: 0.25rem;
+.gap {
+  &-025 { gap: 0.25rem; }
+  &-01 { gap: 0.1rem; }
 }
 
-  .bib-datepicker {
+  .bib-datepicker,
+  .vdp-datepicker {
     &.align-right {
       .vdp-datepicker__calendar { right: 0;}
     }
@@ -374,6 +376,9 @@ ul {
     }
   }
 
+.tooltip-wrapper { background-color: $white; position: fixed; top: 0; left: 0; z-index: 99; border: 1px solid $gray4; border-radius: 0.25rem; width: 15rem; box-shadow: 0 2px 10px rgba(100, 100, 100, 0.25); transition: left, top 200ms ease-out; will-change: top, left;
+  .tooltip-content { padding: 0.5rem; }
+}
 
 @media screen and (max-width: 1600px) {
   .side-panel {

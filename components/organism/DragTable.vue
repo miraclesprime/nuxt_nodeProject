@@ -1,6 +1,5 @@
 <template>
   <div>
-    
     <draggable v-if="localdata.length == 0" :list="localdata" tag="div" handle=".drag-handle" class="" @end="$emit('section-dragend', localdata)">
       <table class="table">
         <thead>
@@ -42,10 +41,14 @@
           <td :colspan="cols.length+1" class="section">
             <div class="section-header d-flex align-center gap-05 text-gray6">
               <div class="drag-handle width-2 text-center"><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
-                  <rect fill="none" height="24" width="24" />
-                  <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div>
-              <div class="d-flex gap-05 align-center cursor-pointer" @click.self="collapseItem($event, 'tbody'+section.id)">
-                <bib-icon icon="arrow-down" :scale="0.5" variant="gray6"></bib-icon> {{section.title.includes('_section') ? 'Untitled section' : section.title}}
+                <rect fill="none" height="24" width="24" />
+                <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div>
+              <div class="d-flex gap-01 align-center w-25" >
+                <span class="width-105 height-105 align-center justify-center cursor-pointer" @click.self="collapseItem($event, 'tbody'+section.id)">
+                  <bib-icon icon="arrow-down" :scale="0.5" variant="gray6" class="events-none"></bib-icon>
+                </span>
+                <!-- {{section.title.includes('_section') ? 'Untitled section' : section.title}} -->
+                <input type="text" class="editable-input" :value="section.title.includes('_section') ? 'Untitled section' : section.title" @input="debounceRenameSection(section.id, $event)">
               </div>
             </div>
           </td>
@@ -59,7 +62,12 @@
             </td>
             <td v-for="(col, index) in cols" :key="task.id + col + templateKey + index ">
               <template v-if="col.key == 'userId'">
-                <user-info :key="componentKey" :userId="task[col.key]"></user-info>
+                <span v-if="task[col.key]" class="user-info cursor-pointer" @click.stop="triggerUserPicker(task)">
+                  <user-info :key="componentKey+task['id']" :userId="task[col.key]" :user="task['user']" ></user-info>
+                </span>
+                <span v-else class="user-name-blank user-info cursor-pointer shape-circle align-center justify-center" @click.stop="triggerUserPicker(task)">
+                  <bib-icon icon="user" variant="gray4" ></bib-icon>
+                </span>
               </template>
               <template v-if="col.key == 'status'">
                 <status-comp :key="componentKey" :status="task[col.key]"></status-comp>
@@ -67,26 +75,31 @@
               <template v-if="col.key == 'priority'">
                 <priority-comp :key="componentKey" :priority="task[col.key]"></priority-comp>
               </template>
-              <template v-if="col.key == 'startDate' || col.key == 'dueDate'">
-                <span v-if="task[col.key]" class="d-inline-flex align-center gap-05">
+              <template v-if="col.key == 'startDate'">
+                <!-- <span v-if="task[col.key]" class="d-inline-flex align-center gap-05">
                   <bib-icon icon="calendar" variant="gray4"></bib-icon>
                   <format-date :key="componentKey" :datetime="task[col.key]"></format-date>
-                </span>
+                </span> -->
+                <inline-datepicker :datetime="task[col.key]" @date-updated="debounceUpdate(task, 'startDate', $event)"></inline-datepicker>
+              </template>
+              <template v-if="col.key == 'dueDate'">
+                <inline-datepicker :datetime="task[col.key]" @date-updated="debounceUpdate(task, 'dueDate', $event)"></inline-datepicker>
               </template>
               <template v-if="col.key == 'project'">
                 <project-info v-if="task[col.key].length" :projectId="task[col.key][0].projectId || task[col.key][0].project.id"></project-info>
                 <!-- <project-info :projectId="task[col.key][0].projectId" ></project-info> -->
               </template>
-              <div v-if="col.key == 'title'" class="d-flex gap-05 align-center h-100">
+              <div v-if="col.key == 'title'" class="d-flex gap-025 align-center h-100">
                 <span v-if="titleIcon.icon" class="width-105 height-105" :class="{'cursor-pointer': titleIcon.event}" @click.stop="updateTaskStatus(task)">
                   <bib-icon :icon="titleIcon.icon" :scale="1.5" :variant="taskCheckIcon(task)"></bib-icon>
                 </span>
                 <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">
-                  {{task[col.key]}}
+                  <input type="text" class="editable-input" :value="task[col.key]" @input.stop="debounceUpdate(task, 'title', $event.target.value)">
                 </span>
                 <span v-else class="flex-grow-1">
                   {{task[col.key]}}
                 </span>
+                <span class="width-1 font-xs text-gray2">{{task['id']}}</span>
               </div>
               <template v-if="col.key == 'department'">
                 {{task[col.key]}}
@@ -112,10 +125,11 @@
               <bib-input type="select" size="sm" :options="priority" v-model="newRow.priorityId" @change.native="newRowCreate" placeholder="Priority"></bib-input>
             </template>
             <template v-if="col.key == 'startDate'">
-              <span class="d-inline-flex align-center gap-05">
+              <!-- <span class="d-inline-flex align-center gap-05">
                 <bib-icon icon="calendar" variant="gray4"></bib-icon>
                 <bib-input size="sm" v-model="newRow.startDate" type="date" @input="newRowCreate" ></bib-input>
-              </span>
+              </span> -->
+              <inline-datepicker :datetime="newRow.startDate" @date-updated="debounceUpdate(task, 'startDate', $event)"></inline-datepicker>
             </template>
             <template v-if="col.key == 'dueDate'">
               <span class="d-inline-flex align-center gap-05">
@@ -135,6 +149,29 @@
         </tr>
       </table>
     </draggable>
+    <!-- user picker popup -->
+    <!-- <tippy :visible="userPickerOpen" key="user-picker" theme="light-border" :animate-fill="false" :arrow="false" interactive="true" trigger="manual" :onHidden="() => defer(() => userPickerOpen = false)" >
+      <bib-input type="text" v-model="filterKey" size="sm"></bib-input>
+      <div style="max-height: 12rem; overflow-y: auto">
+        <ul class="m-0 p-0 text-left">
+          <li v-for="user in filterTeam" :key="user.id" class="p-025 cursor-pointer" @click="updateTask('userId', user.id, user.label)">
+            <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
+          </li>
+        </ul>
+      </div>
+    </tippy> -->
+    <div v-show="userPickerOpen" ref="userPicker" class="tooltip-wrapper">
+      <div class="tooltip-content">
+        <bib-input type="text" v-model="filterKey" size="sm"></bib-input>
+        <div style="max-height: 12rem; overflow-y: auto">
+          <ul class="m-0 p-0 text-left">
+            <li v-for="user in filterTeam" :key="user.id" class="p-025 font-md cursor-pointer" @click.stop="updateTask('userId', user.id, user.label)">
+              <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -149,7 +186,7 @@
  * @vue-prop sections=[] {Array} - table data.
  * @vue-prop collapseObj=null {Object} - collapsible table settings.
  * @vue-prop newTaskbutton={Object} - add new row button
- * @vue-emits ['row-click', 'row-rightclick', 'close-context-menu', 'section-dragend', 'task-dragend' ]
+ * @vue-emits ['row-click', 'row-rightclick', 'close-context-menu', 'section-dragend', 'task-dragend', 'edit-field', 'edit-section' ]
  * @vue-dynamic-emits [ 'header_icon click', 'task_checkmark click' 'newtask button click' ] 
  * @vue-prop componentKey=Number - key to update child components
  */
@@ -157,10 +194,13 @@ import { DEPARTMENT, STATUS, PRIORITY, TASK_FIELDS } from '~/config/constants.js
 import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 import _ from 'lodash'
+import tippy from 'tippy.js';
+import VueTippy, { TippyComponent } from 'vue-tippy';
 export default {
   name: "DragTable",
   components: {
-    draggable
+    draggable,
+    tippy: TippyComponent,
   },
   props: {
     /*headless: {
@@ -246,13 +286,15 @@ export default {
       status: STATUS,
       priority: PRIORITY,
       tableFields: TASK_FIELDS,
-      validTitle: ""
+      userPickerOpen: false,
+      filterKey: "",
+      validTitle: "",
+      activeTask: {},
     };
   },
   computed: {
     ...mapGetters({
       teamMembers: "user/getTeamMembers",
-
     }),
     activeClass() { return keyI => this.sections[keyI].active ? 'active' : '' },
     filterUser() {
@@ -265,6 +307,14 @@ export default {
           lastName: u.lastName,
           email: u.email,
           img: u.avatar
+        }
+      })
+    },
+    filterTeam() {
+      let regex = new RegExp(this.filterKey, 'g\i')
+      return this.teamMembers.filter((u) => {
+        if (regex.test(u.label) || regex.test(u.email)) {
+          return u
         }
       })
     },
@@ -281,11 +331,47 @@ export default {
     this.templateKey += 1
   },
   methods: {
+    defer(func) {
+      console.log('defer')
+      setTimeout(func, 100);
+    },
+    
+    triggerUserPicker(task) {
+      this.activeTask = task
+      this.userPickerOpen = true
+
+      let picker = this.$refs.userPicker
+      picker.style.left = (event.clientX - event.offsetX) +'px'
+      picker.style.top = event.clientY+event.currentTarget.offsetTop+'px'
+      // picker.style.transform = "translateY("+diff+"px)"
+
+      // console.info(event.offsetX )
+      this.$nextTick(() => {
+        // console.log(picker.offsetLeft)
+        let diff = window.innerHeight - (picker.offsetTop + picker.offsetHeight + 10)
+        if (window.innerHeight < (picker.offsetTop + picker.offsetHeight)) {
+          picker.style.transform = "translateY("+diff+"px)"
+        } else {
+          picker.style.transform = "translateY(0)"
+        }
+      });
+
+    },
+    debounceUpdate: _.debounce(function(task, field, value){
+      console.log(task.id, field, value)
+      this.$emit('edit-field', {task: task, field, value})
+    }, 1200),
+    
+    debounceRenameSection: _.debounce(function(id, event) {
+      // console.log(id, event.target.value)
+      this.$emit("edit-section", {id, title: event.target.value})
+    },1200),
+
     collapseItem(event, refId) {
-      // console.log(refId, event)
       let elem = this.$refs[refId][0].$el
       let tar = event.target
 
+      // console.log(event.target, elem)
       if (elem.style.visibility == 'collapse') {
         elem.style.visibility = 'visible'
         tar.firstChild.style.transform = 'rotate(0deg)'
@@ -304,6 +390,10 @@ export default {
     updateTaskStatus(task) {
       // this.$emit('task-checkmark-click', task)
       this.$emit(this.titleIcon.event, task)
+    },
+    updateTask(field, value, label) {
+      // console.log(arguments)
+      this.$emit('edit-field', {task: this.activeTask, field, value, label})
     },
     rowClick($event, task) {
       this.unselectAll()
@@ -329,6 +419,10 @@ export default {
       let rows = document.querySelectorAll('.table__irow');
       for (let row of rows) {
         row.classList.remove('active');
+      }
+      // console.log(event)
+      if (event.target.tagName != "INPUT") {
+        this.userPickerOpen = false
       }
       this.$emit("hide-newrow")
       // this.$emit("close-context-menu")
@@ -455,6 +549,7 @@ export default {
       &:first-child {
         text-align: center;
       }
+      .editable-input { font-weight: normal; font-size: $base-size; }
     }
 
     &:hover {
@@ -501,8 +596,8 @@ export default {
     .section-header {
       font-size: $base-size;
       font-weight: bold;
-      /*color: $gray6;*/
     }
+    .editable-input { font-size: $base-size; color: $gray6; }
   }
 
   .drag-handle {
@@ -526,6 +621,13 @@ export default {
       span { max-width: 8rem; padding-left: 0.5rem; }
     }
   }
+}
+
+.user-name-blank,
+.date-info-blank {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px dashed $gray4;
 }
 
 ::v-deep {

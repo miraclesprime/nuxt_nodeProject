@@ -1,62 +1,69 @@
 <template>
-  <div :id="'task-grid-wrapper'+ task.id" class="task-grid position-relative bg-white" @click.stop="$emit('open-sidebar', task)">
-    <figure v-if="task.cover" :id="'task-card-image'+task.id" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
-    <div class="task-top" :id="'tg-top-wrap'+ task.id">
-      <div class="d-flex" :id="'task-card-inside-wrap'+task.id">
-        <span class="cursor-pointer" @click.stop="markComplete(task)">
-          <bib-icon icon="check-circle-solid" :scale="1.5" :variant="task.statusId == 5 ? 'success' : 'light'"></bib-icon>
-        </span>
-        <span class="flex-grow-1" :id="'task-title'+task.id">
-          <textarea class="editable-input" v-model="form.title" @input="debounceUpdate('Title', 'title', form.title)" rows="1"></textarea></span>
+  <client-only>
+    <div :id="'task-grid-wrapper'+ task.id" class="task-grid position-relative bg-white" @click.stop="$emit('open-sidebar', task)">
+      <figure v-if="task.cover" :id="'task-card-image'+task.id" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
+      <div class="task-top" :id="'tg-top-wrap'+ task.id">
+        <div class="d-flex" :id="'task-card-inside-wrap'+task.id">
+          <span class="cursor-pointer" @click.stop="markComplete(task)">
+            <bib-icon icon="check-circle-solid" :scale="1.5" :variant="task.statusId == 5 ? 'success' : 'light'"></bib-icon>
+          </span>
+          <span class="flex-grow-1" :id="'task-title'+task.id">
+            <textarea class="editable-input" ref="titleInput" v-model="form.title" @input="debounceUpdate('Title', 'title', form.title)" rows="1"></textarea></span>
+        </div>
+        <div class="shape-circle bg-light width-2 height-2 d-flex flex-shrink-0 justify-center align-center">
+          <bib-popup pop="elipsis" icon="elipsis" icon-variant="gray5" icon-hover-variant="dark">
+            <template v-slot:menu>
+              <div class="list" :id="'task-list'+task.id">
+                <span v-for="(item, index) in contextMenuItems" :key="item.label+index" class="list__item cursor-pointer" :class=" ['list__item__'+item.variant] " v-on:click.stop="contextItemClick(item)">
+                  <bib-icon v-if="item.icon" :icon="item.icon" :variant="activeVariant(item)" class="mr-05"></bib-icon> {{item.label}}
+                </span>
+              </div>
+            </template>
+          </bib-popup>
+        </div>
       </div>
-      <div class="shape-circle bg-light width-2 height-2 d-flex flex-shrink-0 justify-center align-center">
-        <bib-popup pop="elipsis" icon="elipsis" icon-variant="gray5" icon-hover-variant="dark">
-          <template v-slot:menu>
-            <div class="list" :id="'task-list'+task.id">
-              <span v-for="(item, index) in contextMenuItems" :key="item.label+index" class="list__item cursor-pointer" :class=" ['list__item__'+item.variant] " v-on:click.stop="contextItemClick(item)">
-                <bib-icon v-if="item.icon" :icon="item.icon" :variant="activeVariant(item)" class="mr-05"></bib-icon> {{item.label}}
-              </span>
-            </div>
-          </template>
-        </bib-popup>
+      <div class="task-mid d-flex gap-05">
+        <status-badge :status="task.status"></status-badge>
+        <priority-badge :priority="task.priority"></priority-badge>
+        <!-- <priority-comp :priority="task.priority" :iconOnly="true"></priority-comp> -->
       </div>
-    </div>
-    <div class="task-mid d-flex gap-05">
-      <status-badge :status="task.status"></status-badge>
-      <priority-badge :priority="task.priority"></priority-badge>
-      <!-- <priority-comp :priority="task.priority" :iconOnly="true"></priority-comp> -->
-    </div>
-    <div class="task-bottom " :id="'tg-bottom'+ task.id">
-      <!-- <span :name="'user'+task.id"> -->
+      <div class="task-bottom " :id="'tg-bottom'+ task.id">
+        <!-- <span :name="'user'+task.id"> -->
         <span v-if="task.userId" class="user-info" @click.stop="triggerUserPicker">
-          <user-info :userId="task.userId" class="events-none" ></user-info>
+          <user-info :userId="task.userId" class="events-none"></user-info>
         </span>
         <span v-else class="user-name-blank user-info bg-white shape-circle align-center justify-center" @click.stop="triggerUserPicker">
           <bib-icon icon="user" variant="gray4" class="events-none"></bib-icon>
         </span>
-      <!-- </span> -->
-      <div v-if="task.dueDate" class="align-center gap-05 ml-auto">
-        <bib-icon icon="calendar" :variant="overdue(task)"></bib-icon>
-        <format-date :datetime="task.dueDate" :variant="overdue(task)"></format-date>
+        <!-- </span> -->
+        <!-- <div v-if="task.dueDate" class="align-center gap-05 ml-auto" @click.stop="triggerDatePicker">
+        <bib-icon icon="calendar" :variant="overdue(task)" class="events-none"></bib-icon>
+        <format-date :datetime="task.dueDate" :variant="overdue(task)" class="events-none"></format-date>
       </div>
-      <div v-else class="date-info-blank date-info shape-circle align-center justify-center ml-auto">
+      <div v-else class="date-info-blank date-info shape-circle align-center justify-center ml-auto" @click.stop="triggerDatePicker">
         <bib-icon icon="calendar" variant="gray4" class="events-none"></bib-icon>
+      </div> -->
+        <inline-datepicker :datetime="task.dueDate" :overdue="overdue" @date-updated="debounceUpdate('Due date', 'dueDate', $event)"></inline-datepicker>
       </div>
+      <!-- user picker -->
+      <tippy :visible="userPickerOpen" :id="'user'+task.id" :key="'user'+task.id" appendTo="parent" theme="light-border" :animate-fill="false" arrow="false" distance="0" trigger="manual" interactive="true" :onHidden="() => defer(() => userPickerOpen = false)">
+        <bib-input type="text" v-model="filterKey" size="sm"></bib-input>
+        <div style="max-height: 12rem; overflow-y: auto">
+          <ul class="m-0 p-0 text-left">
+            <li v-for="user in filterTeam" :key="user.id" class="p-025 cursor-pointer" @click="updateTask('Assignee', 'userId', user.id, user.label)">
+              <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
+            </li>
+          </ul>
+        </div>
+      </tippy>
+      <!-- date picker -->
+      <!-- <tippy :visible="datePickerOpen" :id="'date'+task.id" :key="'date'+task.id" theme="light-border" :animate-fill="false" arrow="false" distance="1" trigger="manual" interactive="true" :onHidden="() => defer(() => datePickerOpen = false)" >
+      <vue-datepicker :value="task.dueDate" v-model="task.dueDate" placeholder="Due date"></vue-datepicker>
+    </tippy> -->
+      <!-- <button :name="'exp'+task.id">Tooltip using component</button> -->
+      <loading2 :loading="loading" text="wait..."></loading2>
     </div>
-    <!-- user picker -->
-    <tippy :visible="userPicker" :key="'user'+task.id" theme="light-border" :animate-fill="false" arrow="false" distance="1" trigger="manual" interactive="true" :onHidden="() => userPicker = false">
-      <bib-input type="text" v-model="filterKey" size="sm"></bib-input>
-      <div style="max-height: 12rem; overflow-y: auto">
-        <ul class="m-0 p-0 text-left">
-          <li v-for="user in filterTeam" :key="user.id" class="p-025 cursor-pointer" @click="updateTask('Assignee', 'userId', user.id, user.label)">
-            <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
-          </li>
-        </ul>
-      </div>
-    </tippy>
-    <!-- <button :name="'exp'+task.id">Tooltip using component</button> -->
-    <loading :loading="loading"></loading>
-  </div>
+  </client-only>
 </template>
 <script>
 import _ from 'lodash'
@@ -77,7 +84,8 @@ export default {
     return {
       // flag: false,
       contextMenuItems: TASK_CONTEXT_MENU,
-      userPicker: false,
+      userPickerOpen: false,
+      datePickerOpen: false,
       filterKey: "",
       loading: false,
     };
@@ -95,6 +103,10 @@ export default {
         return { variant: "gray5", text: "Add to favorites", status: false }
       }
     },
+    overdue() {
+      // return (new Date(item.dueDate) < new Date() && item.statusId != 5) ? 'danger' : 'gray5';
+      return (new Date(this.task.dueDate) < new Date()) ? false : true
+    },
     form() {
       return _.cloneDeep(this.task)
     },
@@ -108,39 +120,50 @@ export default {
     },
   },
   mounted() {
-    const tx = document.getElementsByTagName("textarea");
-    for (let i = 0; i < tx.length; i++) {
+    // const tx = document.getElementsByTagName("textarea");
+    /*for (let i = 0; i < tx.length; i++) {
+      console.log(tx)
       tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
       tx[i].addEventListener("input", OnInput, false);
-    }
+    }*/
 
-    function OnInput() {
+    /*function OnInput() {
       this.style.height = 0;
       this.style.height = (this.scrollHeight) + "px";
-    }
+    }*/
+
+  },
+  updated() {
+    let ht = this.$refs.titleInput.scrollHeight
+    // console.info('scroll height -> ', ht)
+    this.$refs.titleInput.style.height = ht + 2 + 'px'
+
   },
   methods: {
-    triggerUserPicker(){
-      this.userPicker = !this.userPicker
+    defer(func) {
+      setTimeout(func, 100);
     },
-    overdue(item) {
-      // console.log(new Date(item.dueDate), new Date);
-      return (new Date(item.dueDate) < new Date() && item.statusId != 5) ? 'danger' : 'gray5';
+
+    triggerUserPicker() {
+      this.userPickerOpen = !this.userPickerOpen
+    },
+    triggerDatePicker() {
+      this.datePickerOpen = !this.datePickerOpen
     },
 
     openSidebar(task, scroll) {
       // console.log(task)
-      this.$nuxt.$emit("open-sidebar", { ...task, scrollId: scroll });
+      this.$emit("open-sidebar", { ...task, scrollId: scroll });
     },
 
     debounceUpdate: _.debounce(function(title, field, value) {
-      console.log(...arguments)
+      // console.log(...arguments)
       this.updateTask(title, field, value)
     }, 1500),
 
     updateTask(title, field, value, historyValue) {
       this.loading = true
-      this.userPicker = false
+      this.userPickerOpen = false
       const project = () => {
         if (this.task.project.length > 0) {
           return this.task.project[0].projectId
@@ -158,7 +181,7 @@ export default {
         user = null
       }
 
-      console.info(project(), this.task.project.length, historyValue, user)
+      // console.info(project(), this.task.project.length, historyValue, user)
       this.$store.dispatch("task/updateTask", {
           id: this.task.id,
           projectId: project(),
@@ -205,7 +228,7 @@ export default {
       // console.log(this.currentTask)
       this.$store.dispatch('task/updateTaskStatus', task)
         .then((d) => {
-          console.log(d)
+          // console.log(d)
           this.$nuxt.$emit("update-key")
           this.$store.dispatch("task/setSingleTask", d)
         }).catch(e => {
@@ -312,12 +335,13 @@ export default {
   .task-bottom {
     display: flex;
     justify-content: space-between;
+    gap: 0.25rem;
     padding: 8px;
   }
 
-  .task-top {
+  /*.task-top {
     margin-bottom: 0.5rem;
-  }
+  }*/
 
   .task-mid {
     padding: 4px 8px;
@@ -327,14 +351,18 @@ export default {
     align-items: center;
     color: $gray5;
 
-    span {
+    /*span {
       font-size: 13px;
-    }
+    }*/
   }
 
 }
 
 .user-name-blank,
-.date-info-blank { width: 1.5rem; height: 1.5rem; border: 1px dashed $gray4;}
+.date-info-blank {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px dashed $gray4;
+}
 
 </style>

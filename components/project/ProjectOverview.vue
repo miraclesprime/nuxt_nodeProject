@@ -51,16 +51,18 @@
           <div id="proj-row2-col2" class="col-3">
             <!-- <bib-input type="date" label="Start date" v-model="startDate" v-on:change.native="debounceUpdate('Start date', startDate)"></bib-input> -->
             <!-- <bib-datepicker test_id="date01" v-model="startDate" :value="startDate" :maxDate="dueDate" format="dd MMM yyyy" @input="debounceUpdate('Start date', startDate)" label="Start date" name="startDate" placeholder="Start date" ></bib-datepicker> -->
-            <template>
+            <datepicker v-model="startDate" :value="startDate" clear-button placeholder="Start date"></datepicker>
+            <!-- <template>
               <bib-datetime-picker label="Start date" placeholder="Start date" name="startDate" v-model="startDate" format="dd MMM yyyy" @input="debounceUpdate('Start date', startDate)" ></bib-datetime-picker>
-            </template>
+            </template> -->
           </div>
           <div id="proj-row2-col3" class="col-3">
             <!-- <bib-input type="date" label="Due date" v-model="dueDate" v-on:change.native="debounceUpdate('Due date', dueDate)"></bib-input> -->
             <!-- <bib-datepicker test_id="date02" v-model="dueDate" :value="dueDate" :minDate="startDate" format="dd MMM yyyy" @input="debounceUpdate('Due date', dueDate)" label="Due date" name="dueDate" placeholder="Due date"></bib-datepicker> -->
-            <template>
+            <datepicker v-model="dueDate" :value="dueDate" clear-button class="align-right" placeholder="Due date"></datepicker>
+            <!-- <template>
               <bib-datetime-picker name="dueDate" v-model="dueDate" placeholder="Due date" @input="debounceUpdate('Due date', dueDate)" label="Due date"></bib-datetime-picker>
-            </template>
+            </template> -->
           </div>
         </div>
         <div id="proj-row3" class="row">
@@ -109,6 +111,9 @@ import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 import dayjs from 'dayjs'
 
 export default {
+  /*components: {
+    vueDatepicker: Datepicker
+  },*/
   props: {
     sections: Array
   },

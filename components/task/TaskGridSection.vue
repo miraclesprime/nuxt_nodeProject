@@ -1,14 +1,20 @@
 <template>
-  <div class="of-scroll-x position-relative" style="min-height: 20rem;">
+  <div id="tgs-scroll" class="of-scroll-x position-relative" style="min-height: 30rem;">
     <draggable :list="localdata" class="d-flex " :move="moveSection" v-on:end="$emit('section-dragend', localdata)" handle=".section-drag-handle">
       <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${templateKey}${section.title}${section.id}`">
-        <div class="w-100 d-flex align-center section-title-wrapper border-bottom-gray2 mb-075" :id="'tgs-inner-wrap-'+section.id" >
-          <div class="title text-gray section-drag-handle flex-grow-1" :id="'tgs-label-'+section.id">{{ section.title.includes('_section') ? 'Untitled section' : section.title }}</div>
+        <div class="w-100 d-flex align-center section-title-wrapper border-bottom-gray2 mb-075" :id="'tgs-inner-wrap-'+section.id" :class="{'active': sectionEdit}" >
+          <!-- <div class="title text-gray section-drag-handle flex-grow-1" :id="'tgs-label-'+section.id">
+            <template v-if="sectionEdit">
+              <input type="text" class="new-section-input" :ref="'sectionEditInput'+section.id" v-model="section.title" @input.stop="updateSectionTitle(section.title)" @blur="() => {sectionEdit = false}" @keyup.esc="() => {sectionEdit = false}">
+            </template>
+            <span v-else @click.stop="makeSectionEditable('sectionEditInput'+section.id)">{{ section.title.includes('_section') ? 'Untitled section' : section.title }}</span>
+          </div> -->
+          <task-grid-section-title :section="section" @update-title="renameSection"></task-grid-section-title>
           <div class="d-flex align-center section-options" :id="'tgs-section-options-'+section.id">
-            <div class="cursor-pointer shape-rounded bg-light mx-05 d-flex align-center" v-on:click.stop="showCreateTaskModal(section.id)">
+            <div class="cursor-pointer shape-rounded bg-hover-gray2 mx-05 align-center" v-on:click.stop="showCreateTaskModal(section.id)">
               <bib-icon icon="add" variant="gray5" :scale="1.25"></bib-icon>
             </div>
-            <bib-popup pop="elipsis" icon-variant="gray5" :scale="1.1">
+            <bib-popup pop="elipsis" icon-variant="gray5" class="bg-hover-gray2" :scale="1">
               <template v-slot:menu>
                 <div :id="'tgs-list'+section.id" class="list">
                   <span class="list__item" :id="'tgs-list-1'+section.id" v-on:click.stop="showCreateTaskModal(section.id)">
@@ -109,7 +115,7 @@
               <span v-if="newSectionLoader" class="position-absolute" style="top:-2px;right:-2px;"><bib-spinner :scale="2.25"></bib-spinner></span>
             </div>
             <template v-else>
-              <input type="text" id="newsectioninput" class="new-section-input" placeholder="Enter text..." v-model.trim="newSectionName" @blur="sectionInput = false" @keyup.esc="sectionInput = false" @keyup.enter="createSection">
+              <input type="text" ref="newsectioninput" class="new-section-input" placeholder="Enter text..." v-model.trim="newSectionName" @blur="() => {newSectionName = ''; sectionInput = false}" @keyup.esc="() => {newSectionName = ''; sectionInput = false}" @input="debounceCreateSection" @keyup.enter="createSection">
             </template>
           </div>
           <span class="border-bottom-gray2 my-025"></span>
@@ -146,6 +152,7 @@ export default {
       taskDnDsectionId: null,
       // popupMessages: [],
       sectionInput: false,
+      sectionEdit: false,
       newSectionName: '',
       newSectionLoader: false,
       newTask: false,
@@ -177,7 +184,9 @@ export default {
     sectionInput(newVal){
       if (newVal) {
         this.$nextTick(()=>{
-          document.getElementById("newsectioninput").focus()
+          // document.getElementById("newsectioninput").focus()
+          // console.log(this.$refs.newsectioninput)
+          this.$refs.newsectioninput.focus()
         })
       }
     },
@@ -206,12 +215,14 @@ export default {
   methods: {
     closeOtherBlankGrid($event){
       // console.log($event, this.$refs)
-      for (var ref in this.$refs) {
-        // console.info(this.$refs[ref][0].title, $event)
-        if(this.$refs[ref][0].title != $event){
-          this.$refs[ref][0].newTask = false
+      // this.$nextTick(() => {
+        for (var ref in this.$refs) {
+          // console.info(this.$refs[ref][0], $event)
+          if(this.$refs[ref][0].title != $event){
+            this.$refs[ref][0].newTask = false
+          }
         }
-      }
+      // });
     },
     isFavorite(task) {
       let fav = this.favTasks.some(t => t.task.id == task.id)
@@ -247,32 +258,17 @@ export default {
     moveSection(e) {
       // console.log("move section =>",e.relatedContext.list)
       this.highlight = +e.to.dataset.section
-
     },
 
     overdue(item) {
       // console.log(new Date(item.dueDate), new Date);
       return (new Date(item.dueDate) < new Date() && item.statusId != 5) ? 'danger' : 'gray5';
-    },
-
-    donotCloseSidebar(classes){
-      const cl = ['editable-input', 'user-info', 'date-info']
-      let out = true
-      cl.forEach( (c) => {
-        let cd = classes.contains(c)
-        // console.info(cd)
-        if (cd) {
-          out = false
-          return false
-        } 
-      });
-      return out
-    },
+    },   
 
     openSidebar(task, projectId) {
       // console.log(event.target.classList)
       // let elclass = event.target.classList
-      let fwd = this.donotCloseSidebar(event.target.classList)
+      let fwd = this.$donotCloseSidebar(event.target.classList)
       if(!fwd) {
         this.$nuxt.$emit("close-sidebar");
         return false
@@ -286,8 +282,10 @@ export default {
       }]
       this.$nuxt.$emit("open-sidebar", { ...task, project: project });
 
-      let el = event.target.offsetParent
-      let scrollAmt = event.target.offsetLeft - event.target.offsetWidth;
+      // let el = event.target.offsetParent
+      let el = document.getElementById("tgs-scroll")
+      let scrollAmt = event.target.closest(".task-grid").offsetLeft - event.target.offsetWidth;
+      // console.log(event.target.closest(".task-grid").offsetLeft)
       el.scrollTo({
         top: 0,
         left: scrollAmt,
@@ -306,6 +304,11 @@ export default {
     /*markComplete(task) {
       this.$emit("mark-complete", task)
     },*/
+
+    debounceCreateSection: _.debounce(function() {
+      this.createSection()
+    }, 1200),
+
     createSection(){
       if (this.newSectionName.length > 0) {
         this.newSectionLoader = true
@@ -313,7 +316,24 @@ export default {
       }
       this.sectionInput = false
       this.newSectionName = ''
-    }
+      this.$emit("update-key")
+    },
+    renameSection(payload){
+      // console.log(payload)
+      this.$store.dispatch("section/renameSection", {
+        id: payload.id,
+        // projectId: this.section.projectId,
+        data: {
+          title: payload.title
+        },
+        text: `renamed section to "${payload.title}"`,
+      }, ).then(r => {
+        // console.log(r)
+        if (r.statusCode == 200) {
+          this.$emit("update-key")
+        }
+      }).catch(e => console.warn(e))
+    },
   },
 };
 
@@ -339,16 +359,19 @@ export default {
 
 .section-title-wrapper {
   min-height: 50px;
+  max-width: 280px;
   border-radius: 0.35rem;
   border: 1px dashed transparent;
   &.active {
     background-color: white;
     border-color: var(--bib-gray4);
   }
+  /*.editable-input { font-size: $base-size; background-color: transparent; }*/
 }
 
 .new-section-input {
   min-height: 2rem;
+  max-width: 200px;
   padding: 0 0.5rem;
   font-size: 1rem;
   font-weight: 600;
