@@ -5,9 +5,11 @@
 
     <template v-if="gridType === 'list'">
       <!-- task list table -->
-      <drag-table :fields="tableFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" :key="templateKey" :componentKey="templateKey" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" :newTaskButton="newTaskButton" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow" @edit-field="updateTask" @edit-section="renameSection"></drag-table>
+      <drag-table :fields="tableFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" :key="templateKey" :componentKey="templateKey" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" :newTaskButton="newTaskButton" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow" @edit-field="updateTask" @edit-section="renameSection" @user-picker="showUserPicker"></drag-table>
       <!-- table context menu -->
       <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" ref="task_menu" @item-click="contextItemClick"></table-context-menu>
+      <!-- user-picker -->
+      <user-picker v-show="userPickerOpen" :coordinates="userPickerCoords" @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)"></user-picker>
     </template>
 
     <template v-else>
@@ -49,7 +51,9 @@ export default {
       tableFields: TASK_FIELDS,
       taskContextMenuItems: TASK_CONTEXT_MENU,
       taskContextMenu: false,
+      userPickerOpen: false,
       contextCoords: {},
+      userPickerCoords: {},
       activeTask: {},
       headless: null,
       flag: false,
@@ -200,6 +204,12 @@ export default {
           alert("no task assigned")
           break;
       }
+    },
+    showUserPicker(payload){
+      // console.log(payload.event, payload.task)
+      this.userPickerOpen = true
+      this.userPickerCoords = { left: event.clientX, top: event.clientY }
+      this.activeTask = payload.task
     },
     taskSort($event) {
       // sort by title
@@ -373,17 +383,17 @@ export default {
       this.$nuxt.$emit("open-sidebar", { ...task, project: project });
     },
 
-    createNewTask($event) {
-      this.loading = true
-      this.$store.dispatch("task/createTask", { ...$event, text: `task "${$event.title}" created` })
+    createNewTask(payload) {
+      // this.loading = true
+      this.$store.dispatch("task/createTask", { ...payload, projectId: this.$route.params.id, text: `task "${payload.title}" created` })
         .then(t => {          
-          this.loading = false
+          // this.loading = false
           this.resetNewRow()
           this.updateKey()
         })
         .catch(e => {
           console.warn(e)
-          this.loading = false
+          // this.loading = false
         })
     },
 
@@ -402,6 +412,7 @@ export default {
         budget: "",
         text: "",
       }
+      this.userPickerOpen = false
     },
 
     showNewsection() {
@@ -549,12 +560,27 @@ export default {
       // alert("in progress. Updated value => " + payload.value)
       this.$store.dispatch("task/updateTask", {
         id: payload.task.id,
-        projectId: payload.task.project[0].projectId || payload.task.project[0].project.id,
+        // projectId: payload.task.project[0].projectId || payload.task.project[0].project.id,
         data: { [payload.field]: payload.value },
         text: `changed ${payload.field} to "${payload.label || payload.value}"`
       })
         .then(t => {
-          console.log(t)
+          // console.log(t)
+          this.updateKey()
+        })
+        .catch(e => console.warn(e))
+    },
+
+    updateAssignee(label, field, value, historyValue){
+      console.log(...arguments)
+      this.$store.dispatch("task/updateTask", {
+        id: this.activeTask.id,
+        projectId: this.$route.params.id,
+        data: { [field]: value},
+        text: `changed ${label} to ${historyValue}`
+      })
+        .then(t => {
+          // console.log(t)
           this.updateKey()
         })
         .catch(e => console.warn(e))

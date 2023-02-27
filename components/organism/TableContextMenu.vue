@@ -120,6 +120,8 @@ export default {
   top: 50%;
   z-index: 11;
   width: 12rem;
+  transition: top 200ms ease-out, left 300ms ease-out;
+  will-change: top, left;
 }
 
 .list {

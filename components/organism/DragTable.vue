@@ -150,17 +150,8 @@
       </table>
     </draggable>
     <!-- user picker popup -->
-    <!-- <tippy :visible="userPickerOpen" key="user-picker" theme="light-border" :animate-fill="false" :arrow="false" interactive="true" trigger="manual" :onHidden="() => defer(() => userPickerOpen = false)" >
-      <bib-input type="text" v-model="filterKey" size="sm"></bib-input>
-      <div style="max-height: 12rem; overflow-y: auto">
-        <ul class="m-0 p-0 text-left">
-          <li v-for="user in filterTeam" :key="user.id" class="p-025 cursor-pointer" @click="updateTask('userId', user.id, user.label)">
-            <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
-          </li>
-        </ul>
-      </div>
-    </tippy> -->
-    <div v-show="userPickerOpen" ref="userPicker" class="tooltip-wrapper">
+    
+    <!-- <div v-show="userPickerOpen" ref="userPicker" class="tooltip-wrapper">
       <div class="tooltip-content">
         <bib-input type="text" v-model="filterKey" size="sm"></bib-input>
         <div style="max-height: 12rem; overflow-y: auto">
@@ -171,7 +162,7 @@
           </ul>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -194,13 +185,13 @@ import { DEPARTMENT, STATUS, PRIORITY, TASK_FIELDS } from '~/config/constants.js
 import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 import _ from 'lodash'
-import tippy from 'tippy.js';
-import VueTippy, { TippyComponent } from 'vue-tippy';
+// import tippy from 'tippy.js';
+// import VueTippy, { TippyComponent } from 'vue-tippy';
 export default {
   name: "DragTable",
   components: {
     draggable,
-    tippy: TippyComponent,
+    // tippy: TippyComponent,
   },
   props: {
     /*headless: {
@@ -286,8 +277,8 @@ export default {
       status: STATUS,
       priority: PRIORITY,
       tableFields: TASK_FIELDS,
-      userPickerOpen: false,
-      filterKey: "",
+      // userPickerOpen: false,
+      // filterKey: "",
       validTitle: "",
       activeTask: {},
     };
@@ -310,14 +301,14 @@ export default {
         }
       })
     },
-    filterTeam() {
+    /*filterTeam() {
       let regex = new RegExp(this.filterKey, 'g\i')
       return this.teamMembers.filter((u) => {
         if (regex.test(u.label) || regex.test(u.email)) {
           return u
         }
       })
-    },
+    },*/
   },
   created() {
     // console.info('created lifecycle', this.cols.length)
@@ -338,23 +329,22 @@ export default {
     
     triggerUserPicker(task) {
       this.activeTask = task
-      this.userPickerOpen = true
+      // this.userPickerOpen = true
 
-      let picker = this.$refs.userPicker
+      this.$emit("user-picker", {event, task})
+      /*let picker = this.$refs.userPicker.$el
       picker.style.left = (event.clientX - event.offsetX) +'px'
-      picker.style.top = event.clientY+event.currentTarget.offsetTop+'px'
-      // picker.style.transform = "translateY("+diff+"px)"
+      picker.style.top = event.clientY+event.currentTarget.offsetTop+'px'*/
 
       // console.info(event.offsetX )
-      this.$nextTick(() => {
-        // console.log(picker.offsetLeft)
+      /*this.$nextTick(() => {
         let diff = window.innerHeight - (picker.offsetTop + picker.offsetHeight + 10)
         if (window.innerHeight < (picker.offsetTop + picker.offsetHeight)) {
           picker.style.transform = "translateY("+diff+"px)"
         } else {
           picker.style.transform = "translateY(0)"
         }
-      });
+      });*/
 
     },
     debounceUpdate: _.debounce(function(task, field, value){
@@ -392,8 +382,8 @@ export default {
       this.$emit(this.titleIcon.event, task)
     },
     updateTask(field, value, label) {
-      // console.log(arguments)
-      this.$emit('edit-field', {task: this.activeTask, field, value, label})
+      console.log(arguments)
+      // this.$emit('edit-field', {task: this.activeTask, field, value, label})
     },
     rowClick($event, task) {
       this.unselectAll()
@@ -422,7 +412,7 @@ export default {
       }
       // console.log(event)
       if (event.target.tagName != "INPUT") {
-        this.userPickerOpen = false
+        // this.userPickerOpen = false
       }
       this.$emit("hide-newrow")
       // this.$emit("close-context-menu")
