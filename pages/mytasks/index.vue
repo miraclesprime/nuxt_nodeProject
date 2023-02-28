@@ -67,7 +67,10 @@
               </draggable>
             </div>
           </template>
+          <!-- user-picker for  board view -->
+          <user-picker :show="userPickerOpen" :coordinates="userPickerCoords" @selected="updateTask({task: activeTask, field:'userId', value: $event.id, historyText: $event.label})" @close="userPickerOpen = false"></user-picker>
         </div>
+        <!-- rename section modal -->
         <bib-modal-wrapper v-if="renameModal" title="Rename section" @close="renameModal = false">
           <template slot="content">
             <div>
@@ -120,6 +123,8 @@ export default {
       activeTask: {},
       contextMenuItems: TASK_CONTEXT_MENU,
       contextCoords: {},
+      userPickerOpen: false,
+      userPickerCoords: {},
     }
   },
 
@@ -128,6 +133,7 @@ export default {
       todos: "todo/getAllTodos",
       favTasks: 'task/getFavTasks',
       currentTask: 'task/getSelectedTask',
+      teamMembers: "user/getTeamMembers",
     })
   },
 
@@ -149,6 +155,13 @@ export default {
       })*/
       this.$nuxt.$on("update-key", () => {
         this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then(() => { this.key += 1 })
+      })
+
+      this.$nuxt.$on("user-picker", (payload) => {
+        // console.log(payload)
+        this.userPickerOpen = true
+        this.userPickerCoords = { left: event.clientX + 'px', top: event.clientY + 'px'}
+        this.activeTask = payload.task
       })
     }
   },
@@ -277,12 +290,19 @@ export default {
     updateTask(payload) {
       console.log(payload)
       // alert("in progress. Updated value => " + payload.value)
+      let user
+      if (payload.field == "userId" && payload.value != '') {
+        user = this.teamMembers.filter(t => t.id == payload.value)
+      } else {
+        user = null
+      }
 
       this.$store.dispatch("task/updateTask", {
         id: payload.task.id,
         projectId: payload.task.project[0].projectId || payload.task.project[0].project.id,
         data: { [payload.field]: payload.value },
-        text: `changed ${payload.field} to "${payload.value}"`
+        user,
+        text: `changed ${payload.field} to "${payload.historyText || payload.value}"`
       })
         .then(t => {
           console.log(t)

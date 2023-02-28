@@ -497,7 +497,7 @@ export default {
         user,
         projectId: taskData.oldProjValue,
         projectChanged: true, // do not log history to project
-        text: proj ? `changed ${taskData.projField} to ${proj.title}` : 'Task removed from Project',
+        text: proj ? `changed project to ${proj.title}` : 'Task removed from Project',
       })
         .then((u) => {
           // console.log(u)

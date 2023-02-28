@@ -319,7 +319,7 @@ export default {
         data: { [taskData.projField]: taskData.projValue, [taskData.secField]: taskData.secValue },
         user,
         projectId: taskData.oldProjValue,
-        text: proj ? `changed ${taskData.projField} to ${proj.title}` : `Task removed from Project`,
+        text: proj ? `changed project to ${proj.title}` : `Task removed from Project`,
       })
         .then((u) => {
           // console.log(u)

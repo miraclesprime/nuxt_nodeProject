@@ -29,10 +29,10 @@
       </div>
       <div class="task-bottom " :id="'tg-bottom'+ task.id">
         <!-- <span :name="'user'+task.id"> -->
-        <span v-if="task.userId" class="user-info" @click.stop="triggerUserPicker">
+        <span v-if="task.userId" class="user-info" @click.stop="showUserPicker(task)">
           <user-info :userId="task.userId" class="events-none"></user-info>
         </span>
-        <span v-else class="user-name-blank user-info bg-white shape-circle align-center justify-center" @click.stop="triggerUserPicker">
+        <span v-else class="user-name-blank user-info bg-white shape-circle align-center justify-center" @click.stop="showUserPicker(task)">
           <bib-icon icon="user" variant="gray4" class="events-none"></bib-icon>
         </span>
         <!-- </span> -->
@@ -46,7 +46,8 @@
         <inline-datepicker :datetime="task.dueDate" :overdue="overdue" @date-updated="debounceUpdate('Due date', 'dueDate', $event)"></inline-datepicker>
       </div>
       <!-- user picker -->
-      <tippy :visible="userPickerOpen" :id="'user'+task.id" :key="'user'+task.id" appendTo="parent" theme="light-border" :animate-fill="false" arrow="false" distance="1" trigger="manual" interactive="true" :onHidden="() => defer(() => userPickerOpen = false)">
+      <!-- <user-picker :show="userPickerOpen" :coordinates="userPickerCoords" @selected="updateTask('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"></user-picker> -->
+      <!-- <tippy :visible="userPickerOpen" :id="'user'+task.id" :key="'user'+task.id" appendTo="parent" theme="light-border" :animate-fill="false" arrow="false" distance="0" trigger="manual" interactive="true" :onHidden="() => defer(() => userPickerOpen = false)">
         <bib-input type="text" v-model="filterKey" size="sm"></bib-input>
         <div style="max-height: 12rem; overflow-y: auto">
           <ul class="m-0 p-0 text-left">
@@ -55,7 +56,7 @@
             </li>
           </ul>
         </div>
-      </tippy>
+      </tippy> -->
       <!-- date picker -->
       <!-- <tippy :visible="datePickerOpen" :id="'date'+task.id" :key="'date'+task.id" theme="light-border" :animate-fill="false" arrow="false" distance="1" trigger="manual" interactive="true" :onHidden="() => defer(() => datePickerOpen = false)" >
       <vue-datepicker :value="task.dueDate" v-model="task.dueDate" placeholder="Due date"></vue-datepicker>
@@ -65,9 +66,11 @@
     </div>
   </client-only>
 </template>
+
 <script>
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
+import dayjs from 'dayjs'
 import { TASK_CONTEXT_MENU } from "../../config/constants";
 import tippy from 'tippy.js';
 import VueTippy, { TippyComponent } from 'vue-tippy';
@@ -140,12 +143,16 @@ export default {
 
   },
   methods: {
-    defer(func) {
+    /*defer(func) {
       setTimeout(func, 100);
-    },
+    },*/
 
-    triggerUserPicker() {
+    /*triggerUserPicker() {
       this.userPickerOpen = !this.userPickerOpen
+    },*/
+    showUserPicker(task){
+      // console.log(event, task)
+      this.$nuxt.$emit("user-picker", {event, task})
     },
     triggerDatePicker() {
       this.datePickerOpen = !this.datePickerOpen
@@ -156,12 +163,18 @@ export default {
       this.$emit("open-sidebar", { ...task, scrollId: scroll });
     },
 
-    debounceUpdate: _.debounce(function(title, field, value) {
+    debounceUpdate: _.debounce(function(label, field, value) {
       // console.log(...arguments)
-      this.updateTask(title, field, value)
+      let historyValue;
+
+      if (label == "Due date" || label == "Start date") {
+        historyValue = dayjs(taskData.value).format('DD MMM, YYYY')
+      }
+
+      this.updateTask(label, field, value, historyValue)
     }, 1500),
 
-    updateTask(title, field, value, historyValue) {
+    updateTask(label, field, value, historyValue) {
       this.loading = true
       this.userPickerOpen = false
       const project = () => {
@@ -184,12 +197,12 @@ export default {
       // console.info(project(), this.task.project.length, historyValue, user)
       this.$store.dispatch("task/updateTask", {
           id: this.task.id,
-          projectId: project(),
+          // projectId: project(),
           data: {
             [field]: value
           },
           user,
-          text: `changed ${title} to ${historyValue ?? value}`
+          text: `changed ${label} to ${historyValue ?? value}`
         })
         .then(res => {
           // console.info(res)

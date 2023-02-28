@@ -1,6 +1,5 @@
 <template>
   <div>
-    
     <draggable v-if="localdata.length == 0" :list="localdata" tag="div" handle=".drag-handle" class="" @end="$emit('section-dragend', localdata)">
       <table class="table">
         <thead>
@@ -63,7 +62,12 @@
             </td>
             <td v-for="(col, index) in cols" :key="task.id + col + templateKey + index ">
               <template v-if="col.key == 'userId'">
-                <user-info :key="componentKey" :userId="task[col.key]"></user-info>
+                <span v-if="task[col.key]" class="user-info cursor-pointer" @click.stop="triggerUserPicker(task)">
+                  <user-info :key="componentKey+task['id']" :userId="task[col.key]" :user="task['user']" ></user-info>
+                </span>
+                <span v-else class="user-name-blank user-info cursor-pointer shape-circle align-center justify-center" @click.stop="triggerUserPicker(task)">
+                  <bib-icon icon="user" variant="gray4" ></bib-icon>
+                </span>
               </template>
               <template v-if="col.key == 'status'">
                 <status-comp :key="componentKey" :status="task[col.key]"></status-comp>
@@ -71,11 +75,15 @@
               <template v-if="col.key == 'priority'">
                 <priority-comp :key="componentKey" :priority="task[col.key]"></priority-comp>
               </template>
-              <template v-if="col.key == 'startDate' || col.key == 'dueDate'">
-                <span v-if="task[col.key]" class="d-inline-flex align-center gap-05">
+              <template v-if="col.key == 'startDate'">
+                <!-- <span v-if="task[col.key]" class="d-inline-flex align-center gap-05">
                   <bib-icon icon="calendar" variant="gray4"></bib-icon>
                   <format-date :key="componentKey" :datetime="task[col.key]"></format-date>
-                </span>
+                </span> -->
+                <inline-datepicker :datetime="task[col.key]" @date-updated="debounceUpdate(task, 'startDate', $event)"></inline-datepicker>
+              </template>
+              <template v-if="col.key == 'dueDate'">
+                <inline-datepicker :datetime="task[col.key]" @date-updated="debounceUpdate(task, 'dueDate', $event)"></inline-datepicker>
               </template>
               <template v-if="col.key == 'project'">
                 <project-info v-if="task[col.key].length" :projectId="task[col.key][0].projectId || task[col.key][0].project.id"></project-info>
@@ -86,7 +94,7 @@
                   <bib-icon :icon="titleIcon.icon" :scale="1.5" :variant="taskCheckIcon(task)"></bib-icon>
                 </span>
                 <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">
-                  <input type="text" class="editable-input" :value="task[col.key]" @input.stop="debounceUpdate(task, 'title', $event)">
+                  <input type="text" class="editable-input" :value="task[col.key]" @input.stop="debounceUpdate(task, 'title', $event.target.value)">
                 </span>
                 <span v-else class="flex-grow-1">
                   {{task[col.key]}}
@@ -117,10 +125,11 @@
               <bib-input type="select" size="sm" :options="priority" v-model="newRow.priorityId" @change.native="newRowCreate" placeholder="Priority"></bib-input>
             </template>
             <template v-if="col.key == 'startDate'">
-              <span class="d-inline-flex align-center gap-05">
+              <!-- <span class="d-inline-flex align-center gap-05">
                 <bib-icon icon="calendar" variant="gray4"></bib-icon>
                 <bib-input size="sm" v-model="newRow.startDate" type="date" @input="newRowCreate" ></bib-input>
-              </span>
+              </span> -->
+              <inline-datepicker :datetime="newRow.startDate" @date-updated="debounceUpdate(task, 'startDate', $event)"></inline-datepicker>
             </template>
             <template v-if="col.key == 'dueDate'">
               <span class="d-inline-flex align-center gap-05">
@@ -140,6 +149,20 @@
         </tr>
       </table>
     </draggable>
+    <!-- user picker popup -->
+    
+    <!-- <div v-show="userPickerOpen" ref="userPicker" class="tooltip-wrapper">
+      <div class="tooltip-content">
+        <bib-input type="text" v-model="filterKey" size="sm"></bib-input>
+        <div style="max-height: 12rem; overflow-y: auto">
+          <ul class="m-0 p-0 text-left">
+            <li v-for="user in filterTeam" :key="user.id" class="p-025 font-md cursor-pointer" @click.stop="updateTask('userId', user.id, user.label)">
+              <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div> -->
   </div>
 </template>
 
@@ -162,10 +185,13 @@ import { DEPARTMENT, STATUS, PRIORITY, TASK_FIELDS } from '~/config/constants.js
 import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 import _ from 'lodash'
+// import tippy from 'tippy.js';
+// import VueTippy, { TippyComponent } from 'vue-tippy';
 export default {
   name: "DragTable",
   components: {
-    draggable
+    draggable,
+    // tippy: TippyComponent,
   },
   props: {
     /*headless: {
@@ -251,13 +277,15 @@ export default {
       status: STATUS,
       priority: PRIORITY,
       tableFields: TASK_FIELDS,
-      validTitle: ""
+      // userPickerOpen: false,
+      // filterKey: "",
+      validTitle: "",
+      activeTask: {},
     };
   },
   computed: {
     ...mapGetters({
       teamMembers: "user/getTeamMembers",
-
     }),
     activeClass() { return keyI => this.sections[keyI].active ? 'active' : '' },
     filterUser() {
@@ -273,6 +301,14 @@ export default {
         }
       })
     },
+    /*filterTeam() {
+      let regex = new RegExp(this.filterKey, 'g\i')
+      return this.teamMembers.filter((u) => {
+        if (regex.test(u.label) || regex.test(u.email)) {
+          return u
+        }
+      })
+    },*/
   },
   created() {
     // console.info('created lifecycle', this.cols.length)
@@ -286,9 +322,34 @@ export default {
     this.templateKey += 1
   },
   methods: {
-    debounceUpdate: _.debounce(function(task, field, event){
-      // console.log(task.id, field, event.target.value)
-      this.$emit('edit-field', {task: task, field, value: event.target.value})
+    defer(func) {
+      console.log('defer')
+      setTimeout(func, 100);
+    },
+    
+    triggerUserPicker(task) {
+      this.activeTask = task
+      // this.userPickerOpen = true
+
+      this.$emit("user-picker", {event, task})
+      /*let picker = this.$refs.userPicker.$el
+      picker.style.left = (event.clientX - event.offsetX) +'px'
+      picker.style.top = event.clientY+event.currentTarget.offsetTop+'px'*/
+
+      // console.info(event.offsetX )
+      /*this.$nextTick(() => {
+        let diff = window.innerHeight - (picker.offsetTop + picker.offsetHeight + 10)
+        if (window.innerHeight < (picker.offsetTop + picker.offsetHeight)) {
+          picker.style.transform = "translateY("+diff+"px)"
+        } else {
+          picker.style.transform = "translateY(0)"
+        }
+      });*/
+
+    },
+    debounceUpdate: _.debounce(function(task, field, value){
+      console.log(task.id, field, value)
+      this.$emit('edit-field', {task: task, field, value})
     }, 1200),
     
     debounceRenameSection: _.debounce(function(id, event) {
@@ -320,6 +381,10 @@ export default {
       // this.$emit('task-checkmark-click', task)
       this.$emit(this.titleIcon.event, task)
     },
+    updateTask(field, value, label) {
+      console.log(arguments)
+      // this.$emit('edit-field', {task: this.activeTask, field, value, label})
+    },
     rowClick($event, task) {
       this.unselectAll()
         .then(r => {
@@ -344,6 +409,10 @@ export default {
       let rows = document.querySelectorAll('.table__irow');
       for (let row of rows) {
         row.classList.remove('active');
+      }
+      // console.log(event)
+      if (event.target.tagName != "INPUT") {
+        // this.userPickerOpen = false
       }
       this.$emit("hide-newrow")
       // this.$emit("close-context-menu")
@@ -542,6 +611,13 @@ export default {
       span { max-width: 8rem; padding-left: 0.5rem; }
     }
   }
+}
+
+.user-name-blank,
+.date-info-blank {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px dashed $gray4;
 }
 
 ::v-deep {

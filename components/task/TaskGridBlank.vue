@@ -1,6 +1,5 @@
 <template>
   <div  v-click-outside="closeNewTask">
-    
     <div v-show="newTask" id="task-grid-wrapper" class="task-grid bg-white position-relative active">
       <div class="task-top" id="tg-top-wrap">
         <div class="d-flex gap-025" id="task-card-inside-wrap">
@@ -121,6 +120,7 @@ export default {
         statusId: 1,
         dueDate: "",
         priorityId: 3,
+        projectId: this.section.projectId,
         budget: 0,
         text: `task "${this.taskTitle}" created`,
       }).then(t => {
