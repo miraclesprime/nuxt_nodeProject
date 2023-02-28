@@ -28,7 +28,7 @@
               <span class="list__item" id="project-id-list-item2" @click="setFavorite">
                 <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
               </span>
-              <span class="list__item" id="project-id-list-item3">
+              <span class="list__item" id="project-id-list-item3" @click="showAddTeamModal">
                 <bib-icon icon="user-group-solid" class="mr-075"></bib-icon> Team
               </span>
               <span class="list__item" id="project-id-list-item3">
@@ -68,7 +68,7 @@
         <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :key="index" size="2rem" :style="{ left: -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
       </div> -->
       <team-avatar-list :team="team" ></team-avatar-list>
-      <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex align-center justify-center cursor-pointer" id="project-id-team-menu" v-tooltip="'Team'" @click="projectTeamModal = true">
+      <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex align-center justify-center cursor-pointer" id="project-id-team-menu" v-tooltip="'Team'" @click="showAddTeamModal"> 
         <bib-icon icon="user-group-solid" ></bib-icon>
       </div>
     </div>
@@ -134,6 +134,15 @@
       <bib-avatar :src="user2.Photo" size="2rem" class="flex-shrink-0"></bib-avatar>
       <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
     </div>
+
+    <!-- project team -->
+      <bib-modal-wrapper v-if="projectTeamModal" title="Team" size="lg" @close="projectTeamModal = false">
+        <template slot="content">
+          <div style="height: 12rem;">
+            <project-team-modal></project-team-modal>
+          </div>
+        </template>
+      </bib-modal-wrapper>
   </div>
 </client-only>
 </template>
@@ -168,6 +177,7 @@ export default {
         ]
       },
       editMessage: {},
+      projectTeamModal: false
     }
   },
 
@@ -376,6 +386,11 @@ export default {
           .then(() => this.favLoading = false)
       }
       // this.favLoading = false
+    },
+
+    showAddTeamModal() {
+      // this.$nuxt.$emit("add-member-to-task")
+      this.projectTeamModal = true
     },
 
     deleteProject(project) {

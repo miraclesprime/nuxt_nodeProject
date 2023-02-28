@@ -99,12 +99,12 @@ export default {
 
   mounted() {
     this.loading = true
-    this.$store.dispatch('project/fetchTeamMember', { projectId: this.$route.params.id })
+    this.$store.dispatch('project/fetchTeamMember', { projectId: this.$route.params.id || this.project.id})
   },
 
   created() {
     this.$root.$on('update-key', ($event) => {
-      this.$store.dispatch('project/fetchTeamMember', { projectId: this.$route.params.id }).then(() => {
+      this.$store.dispatch('project/fetchTeamMember', { projectId: this.$route.params.id || this.project.id }).then(() => {
         this.key += $event
       })
     })
@@ -164,7 +164,7 @@ export default {
       this.loading = true
       let confirmDelete = window.confirm("Are you sure want to delete " + member.name + "!")
       if (confirmDelete) {
-        await this.$store.dispatch("project/deleteMember", { projectId: this.$route.params.id, member: member })
+        await this.$store.dispatch("project/deleteMember", { projectId: this.$route.params.id || this.project.id, member: member })
           .then((res) => {
             // console.log(res)
             this.key += 1
