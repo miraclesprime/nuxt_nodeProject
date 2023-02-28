@@ -52,6 +52,8 @@
           <loading :loading="favLoading"></loading>
         </div>
       </nav>
+
+      <!-- Task View -->
       <div id="project-id-tab-content" class="project-id-tab-content bg-light position-relative h-100 of-scroll-y">
         <task-view :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType"></task-view>
       </div>

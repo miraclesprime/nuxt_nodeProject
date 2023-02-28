@@ -388,14 +388,16 @@ export const actions = {
       })
     }
 
-    let names = data.map(n => `${n.firstName} ${n.lastName}`);
+    let names = data.map(n => {
+      return { id: n.id, name: n.firstName + " " + n.lastName, isOwner: false };
+    });
 
     const res = await this.$axios.post("/project/add-member", { projectId: payload.projectId, team: data, text: `${names.join(', ')} added to project` }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
     
     if(res.data.statusCode == 200) {
-      ctx.commit('addMember', data);
+      ctx.commit('addMember', names);
     }
 
   },

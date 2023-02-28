@@ -66,9 +66,11 @@
     </div>
   </client-only>
 </template>
+
 <script>
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
+import dayjs from 'dayjs'
 import { TASK_CONTEXT_MENU } from "../../config/constants";
 import tippy from 'tippy.js';
 import VueTippy, { TippyComponent } from 'vue-tippy';
@@ -161,12 +163,18 @@ export default {
       this.$emit("open-sidebar", { ...task, scrollId: scroll });
     },
 
-    debounceUpdate: _.debounce(function(title, field, value) {
+    debounceUpdate: _.debounce(function(label, field, value) {
       // console.log(...arguments)
-      this.updateTask(title, field, value)
+      let historyValue;
+
+      if (label == "Due date" || label == "Start date") {
+        historyValue = dayjs(taskData.value).format('DD MMM, YYYY')
+      }
+
+      this.updateTask(label, field, value, historyValue)
     }, 1500),
 
-    updateTask(title, field, value, historyValue) {
+    updateTask(label, field, value, historyValue) {
       this.loading = true
       this.userPickerOpen = false
       const project = () => {
@@ -194,7 +202,7 @@ export default {
             [field]: value
           },
           user,
-          text: `changed ${title} to ${historyValue ?? value}`
+          text: `changed ${label} to ${historyValue ?? value}`
         })
         .then(res => {
           // console.info(res)

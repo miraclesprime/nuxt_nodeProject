@@ -6,10 +6,12 @@ phases:
   pre_build:
     commands:
       - echo Build started on `date`
-      - echo copying environment file
+      - echo $NPM_AUTH_TOKEN >> .npmrc
+      - echo copying environment files
       - aws s3 cp ${STAGE_ENV_FILE_PATH} app.env
       - aws s3 cp ${GLOBAL_ENV_FILE_PATH} global.env
-      - cat app.env global.env >> .env      
+      - cat app.env global.env >> .env
+      - ls -la 
   build:
     commands:
       - echo installing dependencies  
