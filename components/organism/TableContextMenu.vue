@@ -28,7 +28,7 @@ export default {
       }
     },
     show: { type: Boolean, default: false },
-    coordinates: { type: Object, default () { return { left: '50%', top: '50%' } } },
+    coordinates: { type: Object, default: function () { return { left: '50%', top: '50%' } } },
     activeItem: { type: Object },
   },
 
@@ -50,7 +50,6 @@ export default {
       let target = document.querySelector('#c_menu_' + this.id);
       observer.observe(target);
     },
-
   },
   computed: {
     ...mapGetters({

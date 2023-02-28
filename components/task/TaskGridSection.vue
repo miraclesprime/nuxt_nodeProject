@@ -124,7 +124,7 @@
       <div class="task-grid-section " id="task-grid-section-blank-2"></div>
       <div class="task-grid-section " style="border-left-color: transparent;" id="task-grid-section-blank-3"></div>
     </draggable>
-    <loading :loading="loading"></loading>
+    <!-- <loading :loading="loading"></loading> -->
   </div>
 </template>
 <script>
