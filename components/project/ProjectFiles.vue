@@ -150,6 +150,10 @@ import dayjs from 'dayjs'
 
 export default {
   name: "ProjectFiles",
+  props: {
+    proj: Object,
+  },
+
   data: function() {
     return {
       displayType: 'grid',
@@ -203,7 +207,7 @@ export default {
 
   },
   mounted() {
-    console.log('mounted, project id->', this.project.id)
+    console.log('mounted, project id->', this.project.id || this.proj.id)
     this.getFiles()
     /*let obj1 = { projectId: this.project.id }
     this.$axios.get("file/db/all", {
@@ -244,7 +248,7 @@ export default {
         filelist.push(file.name)
         formdata.append('files', file)
       })
-      formdata.append('projectId', this.project.id)
+      formdata.append('projectId', this.project.id || this.proj.id)
       formdata.append('text', `file(s) [${filelist.join(", ")}] uploaded to project`)
       formdata.append('isHidden', true)
 
@@ -267,7 +271,7 @@ export default {
     },
     getFiles() {
       this.loading = true
-      let obj1 = { projectId: this.project.id }
+      let obj1 = { projectId: this.project.id || this.proj.id }
       this.$axios.get("file/db/all", {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
@@ -352,7 +356,7 @@ export default {
         this.$axios.delete("file/" + file.key, {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-              'projectid': this.project.id,
+              'projectid': this.project.id || this.proj.id,
               'text': `file ${file.name} deleted`,
               'isHidden': true,
               'userid': file.userId

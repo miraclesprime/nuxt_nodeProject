@@ -76,13 +76,17 @@
                 <priority-comp :key="componentKey" :priority="task[col.key]"></priority-comp>
               </template>
               <template v-if="col.key == 'startDate'">
-                <!-- <span v-if="task[col.key]" class="d-inline-flex align-center gap-05">
+                <span v-if="task[col.key]" class="d-inline-flex align-center gap-05 cursor-pointer" @click.stop="triggerDatePicker(task, 'Start date', 'startDate')">
                   <bib-icon icon="calendar" variant="gray4"></bib-icon>
                   <format-date :key="componentKey" :datetime="task[col.key]"></format-date>
-                </span> -->
-                <inline-datepicker :datetime="task[col.key]" @date-updated="debounceUpdate(task, 'startDate', $event)"></inline-datepicker>
+                </span>
+                <!-- <inline-datepicker :datetime="task[col.key]" @date-updated="debounceUpdate(task, 'startDate', $event)"></inline-datepicker> -->
               </template>
               <template v-if="col.key == 'dueDate'">
+                <span v-if="task[col.key]" class="d-inline-flex align-center gap-05 cursor-pointer" @click.stop="triggerDatePicker(task, 'Due date', 'dueDate')">
+                  <bib-icon icon="calendar" variant="gray4"></bib-icon>
+                  <format-date :key="componentKey" :datetime="task[col.key]"></format-date>
+                </span>
                 <inline-datepicker :datetime="task[col.key]" @date-updated="debounceUpdate(task, 'dueDate', $event)"></inline-datepicker>
               </template>
               <template v-if="col.key == 'project'">
@@ -125,11 +129,11 @@
               <bib-input type="select" size="sm" :options="priority" v-model="newRow.priorityId" @change.native="newRowCreate" placeholder="Priority"></bib-input>
             </template>
             <template v-if="col.key == 'startDate'">
-              <!-- <span class="d-inline-flex align-center gap-05">
+              <span class="d-inline-flex align-center gap-05">
                 <bib-icon icon="calendar" variant="gray4"></bib-icon>
                 <bib-input size="sm" v-model="newRow.startDate" type="date" @input="newRowCreate" ></bib-input>
-              </span> -->
-              <inline-datepicker :datetime="newRow.startDate" @date-updated="debounceUpdate(task, 'startDate', $event)"></inline-datepicker>
+              </span>
+              <!-- <inline-datepicker :datetime="newRow.startDate" @date-updated="debounceUpdate(task, 'startDate', $event)"></inline-datepicker> -->
             </template>
             <template v-if="col.key == 'dueDate'">
               <span class="d-inline-flex align-center gap-05">
@@ -149,20 +153,6 @@
         </tr>
       </table>
     </draggable>
-    <!-- user picker popup -->
-    
-    <!-- <div v-show="userPickerOpen" ref="userPicker" class="tooltip-wrapper">
-      <div class="tooltip-content">
-        <bib-input type="text" v-model="filterKey" size="sm"></bib-input>
-        <div style="max-height: 12rem; overflow-y: auto">
-          <ul class="m-0 p-0 text-left">
-            <li v-for="user in filterTeam" :key="user.id" class="p-025 font-md cursor-pointer" @click.stop="updateTask('userId', user.id, user.label)">
-              <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div> -->
   </div>
 </template>
 
@@ -177,7 +167,7 @@
  * @vue-prop sections=[] {Array} - table data.
  * @vue-prop collapseObj=null {Object} - collapsible table settings.
  * @vue-prop newTaskbutton={Object} - add new row button
- * @vue-emits ['row-click', 'row-rightclick', 'close-context-menu', 'section-dragend', 'task-dragend', 'edit-field', 'edit-section' ]
+ * @vue-emits ['row-click', 'row-rightclick', 'close-context-menu', 'section-dragend', 'task-dragend', 'edit-field', 'edit-section', 'user-picker', 'date-picker' ]
  * @vue-dynamic-emits [ 'header_icon click', 'task_checkmark click' 'newtask button click' ] 
  * @vue-prop componentKey=Number - key to update child components
  */
@@ -280,7 +270,6 @@ export default {
       // userPickerOpen: false,
       // filterKey: "",
       validTitle: "",
-      activeTask: {},
     };
   },
   computed: {
@@ -328,8 +317,6 @@ export default {
     },
     
     triggerUserPicker(task) {
-      this.activeTask = task
-      // this.userPickerOpen = true
 
       this.$emit("user-picker", {event, task})
       /*let picker = this.$refs.userPicker.$el
@@ -346,6 +333,10 @@ export default {
         }
       });*/
 
+    },
+    triggerDatePicker(task, label, field){
+      // console.log(event, task, field)
+      this.$emit("date-picker", { event, task, label, field })
     },
     debounceUpdate: _.debounce(function(task, field, value){
       console.log(task.id, field, value)
@@ -381,10 +372,7 @@ export default {
       // this.$emit('task-checkmark-click', task)
       this.$emit(this.titleIcon.event, task)
     },
-    updateTask(field, value, label) {
-      console.log(arguments)
-      // this.$emit('edit-field', {task: this.activeTask, field, value, label})
-    },
+    
     rowClick($event, task) {
       this.unselectAll()
         .then(r => {
