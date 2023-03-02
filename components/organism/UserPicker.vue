@@ -20,15 +20,7 @@ export default {
 
   props: {
     show: {type: Boolean, default: false},
-    coordinates: {
-      type: Object,
-      default: function () {
-        return { left: 'hello', top: 'world' }
-      }
-      /*default: function() {
-        return { left: 1920 / 2, top: 560 / 2 }
-      }*/
-    },
+    coordinates: Object,
   },
 
   data() {

@@ -7,15 +7,19 @@
       <!-- task list table -->
       <drag-table :fields="tableFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" :key="templateKey" :componentKey="templateKey" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" :newTaskButton="newTaskButton" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow" @edit-field="updateTask" @edit-section="renameSection" @user-picker="showUserPicker"></drag-table>
       <!-- table context menu -->
-      <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" ref="task_menu" @item-click="contextItemClick"></table-context-menu>
+      <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closeContext" ref="task_menu" @item-click="contextItemClick"></table-context-menu>
     </template>
 
     <template v-else>
       <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" @create-section="createSection" @section-rename="renameSectionModal" @section-delete="deleteSection" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="setFavorite" v-on:mark-complete="markComplete" v-on:delete-task="deleteTask" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd">
       </task-grid-section>
     </template>
-    <!-- user-picker for list and board views -->
-    <user-picker :show="userPickerOpen" :coordinates="userPickerCoords" @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"></user-picker>
+
+    <!-- user-picker for list and board view -->
+    <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"></user-picker>
+
+    <!-- date-picker for list and board view -->
+    <inline-datepicker :show="datePickerOpen" :datetime="activeTask.dueDate" :coordinates="popupCoords" @date-updated="updateDate('Due date', 'dueDate', $event)" @close="datePickerOpen = false"></inline-datepicker>
     
     <loading :loading="loading"></loading>
     
@@ -41,7 +45,7 @@
 import { TASK_FIELDS, TASK_CONTEXT_MENU } from "config/constants";
 import { mapGetters } from 'vuex';
 import _ from 'lodash'
-
+import dayjs from 'dayjs'
 export default {
 
   props: {
@@ -53,8 +57,10 @@ export default {
       taskContextMenuItems: TASK_CONTEXT_MENU,
       taskContextMenu: false,
       userPickerOpen: false,
-      contextCoords: {},
-      userPickerCoords: {},
+      datePickerOpen: false,
+      /*contextCoords: {},
+      userPickerCoords: {},*/
+      popupCoords: {},
       activeTask: {},
       headless: null,
       flag: false,
@@ -133,9 +139,16 @@ export default {
       this.updateKey()
     })
     this.$nuxt.$on("user-picker", (payload) => {
+      // emitted from <task-grid>
       // console.log(payload)
       this.userPickerOpen = true
-      this.userPickerCoords = { left: event.clientX + 'px', top: event.clientY + 'px'}
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px'}
+      this.activeTask = payload.task
+    })
+    this.$nuxt.$on("date-picker", (payload) => {
+      // emitted from <task-grid>
+      this.datePickerOpen = true
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px'}
       this.activeTask = payload.task
     })
   },
@@ -182,7 +195,7 @@ export default {
       this.taskContextMenu = true
       const { event, task } = payload
 
-      this.contextCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
+      this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
       this.activeTask = task
       // console.log(task)
       // this.$store.dispatch('task/setSingleTask', task)
@@ -216,7 +229,7 @@ export default {
     showUserPicker(payload){
       // console.log(payload.event, payload.task)
       this.userPickerOpen = true
-      this.userPickerCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
     },
     taskSort($event) {
@@ -567,10 +580,9 @@ export default {
 
     updateTask(payload) {
       // console.log(payload)
-      // alert("in progress. Updated value => " + payload.value)
       let user
-      if (field == "userId" && value != '') {
-        user = this.teamMembers.filter(t => t.id == value)
+      if (payload.field == "userId" && payload.value != '') {
+        user = this.teamMembers.filter(t => t.id == payload.value)
       } else {
         user = null
       }
@@ -589,7 +601,7 @@ export default {
     },
 
     updateAssignee(label, field, value, historyValue){
-      console.log(...arguments)
+      // console.log(...arguments)
       let user
       if (field == "userId" && value != '') {
         user = this.teamMembers.filter(t => t.id == value)
@@ -605,6 +617,31 @@ export default {
         data: { [field]: value},
         user,
         text: `changed ${label} to ${historyValue}`
+      })
+        .then(t => {
+          // console.log(t)
+          this.updateKey()
+        })
+        .catch(e => console.warn(e))
+    },
+
+    updateDate(label, field, value){
+      // console.log(...arguments)
+      let user
+      if (field == "userId" && value != '') {
+        user = this.teamMembers.filter(t => t.id == value)
+      } else {
+        user = null
+      }
+
+      let newDate = dayjs(value).format("D MMM YYYY")
+
+      this.$store.dispatch("task/updateTask", {
+        id: this.activeTask.id,
+        // projectId: this.$route.params.id,
+        data: { [field]: value},
+        user,
+        text: `changed ${label} to ${newDate}`
       })
         .then(t => {
           // console.log(t)
