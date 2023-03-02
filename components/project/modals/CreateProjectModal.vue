@@ -145,27 +145,17 @@ export default {
     /*triggerModalAction(modal, payload, e = null) {
       this.$emit(modal, payload, e);
     },*/
-    removeEmail($event) {
+    /*removeEmail($event) {
       // alert($event)
       if ($event) {
 
       }
-    },
+    },*/
   },
 
 };
 
 </script>
 <style lang="scss" scoped>
-::v-deep {
-  /*.input {
-    &.error {
-      input {
-        border-color: $danger-sub1; color: $danger;
-        &:focus, &:hover { border-color: $danger-sub1; }
-      }
-    }
-  }*/
-}
 
 </style>

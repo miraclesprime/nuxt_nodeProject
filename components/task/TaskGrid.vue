@@ -36,37 +36,19 @@
           <bib-icon icon="user" variant="gray4" class="events-none"></bib-icon>
         </span>
         <!-- </span> -->
-        <!-- <div v-if="task.dueDate" class="align-center gap-05 ml-auto" @click.stop="triggerDatePicker">
-        <bib-icon icon="calendar" :variant="overdue(task)" class="events-none"></bib-icon>
-        <format-date :datetime="task.dueDate" :variant="overdue(task)" class="events-none"></format-date>
-      </div>
-      <div v-else class="date-info-blank date-info shape-circle align-center justify-center ml-auto" @click.stop="triggerDatePicker">
-        <bib-icon icon="calendar" variant="gray4" class="events-none"></bib-icon>
-      </div> -->
-        <inline-datepicker :datetime="task.dueDate" :overdue="overdue" @date-updated="debounceUpdate('Due date', 'dueDate', $event)"></inline-datepicker>
-      </div>
-      <!-- user picker -->
-      <!-- <user-picker :show="userPickerOpen" :coordinates="userPickerCoords" @selected="updateTask('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"></user-picker> -->
-      <!-- <tippy :visible="userPickerOpen" :id="'user'+task.id" :key="'user'+task.id" appendTo="parent" theme="light-border" :animate-fill="false" arrow="false" distance="0" trigger="manual" interactive="true" :onHidden="() => defer(() => userPickerOpen = false)">
-        <bib-input type="text" v-model="filterKey" size="sm"></bib-input>
-        <div style="max-height: 12rem; overflow-y: auto">
-          <ul class="m-0 p-0 text-left">
-            <li v-for="user in filterTeam" :key="user.id" class="p-025 cursor-pointer" @click="updateTask('Assignee', 'userId', user.id, user.label)">
-              <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
-            </li>
-          </ul>
+        <div v-if="task.dueDate" class="align-center gap-05 ml-auto" @click.stop="showDatePicker(task)">
+          <bib-icon icon="calendar" :variant="overdue" class="events-none"></bib-icon>
+          <format-date :datetime="task.dueDate" :variant="overdue" class="events-none"></format-date>
         </div>
-      </tippy> -->
-      <!-- date picker -->
-      <!-- <tippy :visible="datePickerOpen" :id="'date'+task.id" :key="'date'+task.id" theme="light-border" :animate-fill="false" arrow="false" distance="1" trigger="manual" interactive="true" :onHidden="() => defer(() => datePickerOpen = false)" >
-      <vue-datepicker :value="task.dueDate" v-model="task.dueDate" placeholder="Due date"></vue-datepicker>
-    </tippy> -->
-      <!-- <button :name="'exp'+task.id">Tooltip using component</button> -->
+        <div v-else class="date-info-blank date-info shape-circle align-center justify-center ml-auto" @click.stop="showDatePicker(task)">
+          <bib-icon icon="calendar" variant="gray4" class="events-none"></bib-icon>
+        </div>
+        <!-- <inline-datepicker :datetime="task.dueDate" :overdue="overdue" @date-updated="debounceUpdate('Due date', 'dueDate', $event)"></inline-datepicker> -->
+      </div>
       <loading2 :loading="loading" text="wait..."></loading2>
     </div>
   </client-only>
 </template>
-
 <script>
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
@@ -87,8 +69,6 @@ export default {
     return {
       // flag: false,
       contextMenuItems: TASK_CONTEXT_MENU,
-      userPickerOpen: false,
-      datePickerOpen: false,
       filterKey: "",
       loading: false,
     };
@@ -107,55 +87,32 @@ export default {
       }
     },
     overdue() {
-      // return (new Date(item.dueDate) < new Date() && item.statusId != 5) ? 'danger' : 'gray5';
-      return (new Date(this.task.dueDate) < new Date()) ? false : true
+      return (new Date(this.task.dueDate) < new Date() && this.task.statusId != 5) ? 'danger' : 'gray5';
+      // return (new Date(this.task.dueDate) < new Date()) ? false : true
     },
     form() {
       return _.cloneDeep(this.task)
     },
-    filterTeam() {
-      let regex = new RegExp(this.filterKey, 'g\i')
-      return this.teamMembers.filter((u) => {
-        if (regex.test(u.label) || regex.test(u.email)) {
-          return u
-        }
-      })
-    },
+    
   },
   mounted() {
-    // const tx = document.getElementsByTagName("textarea");
-    /*for (let i = 0; i < tx.length; i++) {
-      console.log(tx)
-      tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
-      tx[i].addEventListener("input", OnInput, false);
-    }*/
-
-    /*function OnInput() {
-      this.style.height = 0;
-      this.style.height = (this.scrollHeight) + "px";
-    }*/
 
   },
   updated() {
     let ht = this.$refs.titleInput.scrollHeight
     // console.info('scroll height -> ', ht)
     this.$refs.titleInput.style.height = ht + 2 + 'px'
-
   },
   methods: {
-    /*defer(func) {
-      setTimeout(func, 100);
-    },*/
 
-    /*triggerUserPicker() {
-      this.userPickerOpen = !this.userPickerOpen
-    },*/
-    showUserPicker(task){
+    showUserPicker(task) {
       // console.log(event, task)
-      this.$nuxt.$emit("user-picker", {event, task})
+      this.$nuxt.$emit("user-picker", { event, task })
     },
-    triggerDatePicker() {
-      this.datePickerOpen = !this.datePickerOpen
+    showDatePicker(task) {
+      // console.log(event, task)
+      this.$nuxt.$emit("date-picker", { event, task })
+      // this.datePickerOpen = !this.datePickerOpen
     },
 
     openSidebar(task, scroll) {

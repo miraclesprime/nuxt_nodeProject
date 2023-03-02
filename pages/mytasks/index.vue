@@ -10,7 +10,7 @@
             <template v-if="todos.length">
               <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete" @edit-field="updateTask" @edit-section="renameTodo"></drag-table>
               <!-- table context menu -->
-              <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick"></table-context-menu>
+              <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closePopups" @item-click="contextItemClick"></table-context-menu>
               <loading :loading="loading"></loading>
             </template>
             <div v-else>
@@ -67,8 +67,12 @@
               </draggable>
             </div>
           </template>
+          
           <!-- user-picker for  board view -->
-          <user-picker :show="userPickerOpen" :coordinates="userPickerCoords" @selected="updateTask({task: activeTask, field:'userId', value: $event.id, historyText: $event.label})" @close="userPickerOpen = false"></user-picker>
+          <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateTask({task: activeTask, field:'userId', value: $event.id, historyText: $event.label})" @close="userPickerOpen = false"></user-picker>
+          
+          <!-- date-picker for list and board view -->
+          <inline-datepicker :show="datePickerOpen" :datetime="activeTask.dueDate" :coordinates="popupCoords" @date-updated="updateDate('Due date', 'dueDate', $event)" @close="datePickerOpen = false"></inline-datepicker>
         </div>
         <!-- rename section modal -->
         <bib-modal-wrapper v-if="renameModal" title="Rename section" @close="renameModal = false">
@@ -94,6 +98,7 @@ import _ from 'lodash'
 import draggable from 'vuedraggable'
 import { USER_TASKS, TASK_CONTEXT_MENU } from "../../config/constants";
 import { mapGetters } from 'vuex';
+import dayjs from 'dayjs'
 
 export default {
   components: {
@@ -119,12 +124,12 @@ export default {
       renameModal: false,
       todoId: null,
       todoTitle: null,
-      taskContextMenu: false,
       activeTask: {},
+      taskContextMenu: false,
       contextMenuItems: TASK_CONTEXT_MENU,
-      contextCoords: {},
+      popupCoords: {},
       userPickerOpen: false,
-      userPickerCoords: {},
+      datePickerOpen: false,
     }
   },
 
@@ -160,7 +165,14 @@ export default {
       this.$nuxt.$on("user-picker", (payload) => {
         // console.log(payload)
         this.userPickerOpen = true
-        this.userPickerCoords = { left: event.clientX + 'px', top: event.clientY + 'px'}
+        this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px'}
+        this.activeTask = payload.task
+      })
+
+      this.$nuxt.$on("date-picker", (payload) => {
+        // emitted from <task-grid>
+        this.datePickerOpen = true
+        this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px'}
         this.activeTask = payload.task
       })
     }
@@ -183,7 +195,7 @@ export default {
       const { event, task } = payload
       this.activeTask = task;
       this.$store.dispatch('task/setSingleTask', task)
-      this.contextCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
+      this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
     },
 
     openSidebar(task, scroll) {
@@ -208,8 +220,10 @@ export default {
       }
     },
 
-    closeContext() {
+    closePopups() {
       this.taskContextMenu = false
+      this.userPickerOpen = false
+      this.datePickerOpen = false
       this.activeTask = {}
     },
 
@@ -306,6 +320,31 @@ export default {
       })
         .then(t => {
           console.log(t)
+          this.updateKey()
+        })
+        .catch(e => console.warn(e))
+    },
+
+    updateDate(label, field, value){
+      // console.log(...arguments)
+      let user
+      if (field == "userId" && value != '') {
+        user = this.teamMembers.filter(t => t.id == value)
+      } else {
+        user = null
+      }
+
+      let newDate = dayjs(value).format("D MMM YYYY")
+
+      this.$store.dispatch("task/updateTask", {
+        id: this.activeTask.id,
+        // projectId: this.$route.params.id,
+        data: { [field]: value},
+        user,
+        text: `changed ${label} to ${newDate}`
+      })
+        .then(t => {
+          // console.log(t)
           this.updateKey()
         })
         .catch(e => console.warn(e))
