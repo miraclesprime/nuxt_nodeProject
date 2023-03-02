@@ -5,7 +5,7 @@
 
     <template v-if="gridType === 'list'">
       <!-- task list table -->
-      <drag-table :fields="tableFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" :key="templateKey" :componentKey="templateKey" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" :newTaskButton="newTaskButton" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow" @edit-field="updateTask" @edit-section="renameSection" @user-picker="showUserPicker"></drag-table>
+      <drag-table :fields="tableFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" :key="templateKey" :componentKey="templateKey" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" :newTaskButton="newTaskButton" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow" @edit-field="updateTask" @edit-section="renameSection" @user-picker="showUserPicker" @date-picker="showDatePicker"></drag-table>
       <!-- table context menu -->
       <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closeContext" ref="task_menu" @item-click="contextItemClick"></table-context-menu>
     </template>
@@ -19,7 +19,7 @@
     <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"></user-picker>
 
     <!-- date-picker for list and board view -->
-    <inline-datepicker :show="datePickerOpen" :datetime="activeTask.dueDate" :coordinates="popupCoords" @date-updated="updateDate('Due date', 'dueDate', $event)" @close="datePickerOpen = false"></inline-datepicker>
+    <inline-datepicker :show="datePickerOpen" :datetime="activeTask.dueDate" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
     
     <loading :loading="loading"></loading>
     
@@ -58,6 +58,7 @@ export default {
       taskContextMenu: false,
       userPickerOpen: false,
       datePickerOpen: false,
+      datepickerArgs: { label: "", field: ""},
       /*contextCoords: {},
       userPickerCoords: {},*/
       popupCoords: {},
@@ -141,15 +142,18 @@ export default {
     this.$nuxt.$on("user-picker", (payload) => {
       // emitted from <task-grid>
       // console.log(payload)
-      this.userPickerOpen = true
+      /*this.userPickerOpen = true
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px'}
-      this.activeTask = payload.task
+      this.activeTask = payload.task*/
+      this.showUserPicker(payload)
     })
     this.$nuxt.$on("date-picker", (payload) => {
       // emitted from <task-grid>
-      this.datePickerOpen = true
+      /*this.datePickerOpen = true
+      this.datepickerField = payload.field || 'dueDate'
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px'}
-      this.activeTask = payload.task
+      this.activeTask = payload.task*/
+      this.showDatePicker(payload)
     })
   },
 
@@ -227,10 +231,19 @@ export default {
       }
     },
     showUserPicker(payload){
-      // console.log(payload.event, payload.task)
+      // console.log(payload)
       this.userPickerOpen = true
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
+    },
+    showDatePicker(payload){
+      console.log(payload)
+      // payload consists of event, task, label, field
+      this.datePickerOpen = true
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
+      this.datepickerArgs.field = payload.field || 'dueDate'
+      this.datepickerArgs.label = payload.label || 'Due date'
     },
     taskSort($event) {
       // sort by title
@@ -625,23 +638,16 @@ export default {
         .catch(e => console.warn(e))
     },
 
-    updateDate(label, field, value){
-      // console.log(...arguments)
-      let user
-      if (field == "userId" && value != '') {
-        user = this.teamMembers.filter(t => t.id == value)
-      } else {
-        user = null
-      }
-
+    updateDate(value){
+      console.log(...arguments, this.datepickerArgs)
       let newDate = dayjs(value).format("D MMM YYYY")
 
       this.$store.dispatch("task/updateTask", {
         id: this.activeTask.id,
         // projectId: this.$route.params.id,
-        data: { [field]: value},
-        user,
-        text: `changed ${label} to ${newDate}`
+        data: { [this.datepickerArgs.field]: value},
+        user: null,
+        text: `changed ${this.datepickerArgs.label} to ${newDate}`
       })
         .then(t => {
           // console.log(t)
