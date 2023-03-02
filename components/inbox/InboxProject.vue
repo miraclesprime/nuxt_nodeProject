@@ -123,12 +123,12 @@
       <div class="border-bottom-gray2 d-flex justify-between sub-title pb-05">
         <p class="text-gray5 font-md">Conversation </p>
       </div>
-      <project-conversation :project="project"></project-conversation>
+      <project-conversation :project="project" :key="'conv-'+project.id"></project-conversation>
       
       <div class="border-bottom-gray2 d-flex justify-between sub-title pb-05">
         <p class="text-gray5 font-md">Files </p>
       </div>
-      <project-files></project-files>
+      <project-files :proj="project" :key="'files'+project.id"></project-files>
     </div>
     <div id="project-message-input" class=" d-flex gap-1 border-top-light py-1 px-105">
       <bib-avatar :src="user2.Photo" size="2rem" class="flex-shrink-0"></bib-avatar>

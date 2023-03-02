@@ -262,6 +262,7 @@ export default {
       this.task = {}
       this.loading2 = true
       this.taskProject = "project"
+      console.log(payload.projectId)
       this.$store.dispatch("project/fetchSingleProject", payload.projectId)
         .then(p => {
           // console.log(p)
