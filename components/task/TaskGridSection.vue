@@ -134,6 +134,7 @@
 */
 import draggable from 'vuedraggable'
 import { mapGetters } from 'vuex';
+import _ from 'lodash'
 
 export default {
   components: {
@@ -338,7 +339,7 @@ export default {
 };
 
 </script>
-<style scoped lang="scss">
+<style lang="scss" scoped >
 .smooth-dnd-container.vertical>.smooth-dnd-draggable-wrapper {
   overflow: initial;
 }
@@ -366,7 +367,6 @@ export default {
     background-color: white;
     border-color: var(--bib-gray4);
   }
-  /*.editable-input { font-size: $base-size; background-color: transparent; }*/
 }
 
 .new-section-input {
@@ -381,24 +381,10 @@ export default {
   &:focus {
     outline: none;
     border-color: var(--bib-dark);
-    /*border: 2px solid var(--bib-gray6);
-    border-radius: 0;*/
   }
 }
 
 ::v-deep {
-  /*.user-info-wrapper {
-    .user-name {
-      visibility: hidden;
-      opacity: 0;
-      transition: opacity 200ms ease-out;
-    }
-
-    &:hover .user-name {
-      visibility: visible;
-      opacity: 1;
-    }
-  }*/
 
   .bg-danger {
     .user-name {
@@ -413,7 +399,6 @@ export default {
     }
   }
 
-  
 }
 
 </style>
