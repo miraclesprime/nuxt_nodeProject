@@ -76,18 +76,22 @@
                 <priority-comp :key="componentKey" :priority="task[col.key]"></priority-comp>
               </template>
               <template v-if="col.key == 'startDate'">
-                <span v-if="task[col.key]" class="d-inline-flex align-center gap-05 cursor-pointer" @click.stop="triggerDatePicker(task, 'Start date', 'startDate')">
+                <span v-if="task[col.key]" class="d-inline-flex align-center gap-05 cursor-pointer ml-025" @click.stop="triggerDatePicker(task, 'Start date', 'startDate')">
                   <bib-icon icon="calendar" variant="gray4"></bib-icon>
                   <format-date :key="componentKey" :datetime="task[col.key]"></format-date>
                 </span>
-                <!-- <inline-datepicker :datetime="task[col.key]" @date-updated="debounceUpdate(task, 'startDate', $event)"></inline-datepicker> -->
+                <div v-else class="date-info-blank date-info shape-circle align-center justify-center cursor-pointer" @click.stop="triggerDatePicker(task, 'Start date', 'startDate')">
+                  <bib-icon icon="calendar" variant="gray4" class="events-none"></bib-icon>
+                </div>
               </template>
               <template v-if="col.key == 'dueDate'">
-                <span v-if="task[col.key]" class="d-inline-flex align-center gap-05 cursor-pointer" @click.stop="triggerDatePicker(task, 'Due date', 'dueDate')">
+                <span v-if="task[col.key]" class="d-inline-flex align-center gap-05 cursor-pointer ml-025" @click.stop="triggerDatePicker(task, 'Due date', 'dueDate')">
                   <bib-icon icon="calendar" variant="gray4"></bib-icon>
                   <format-date :key="componentKey" :datetime="task[col.key]"></format-date>
                 </span>
-                <inline-datepicker :datetime="task[col.key]" @date-updated="debounceUpdate(task, 'dueDate', $event)"></inline-datepicker>
+                <div v-else class="date-info-blank date-info shape-circle align-center justify-center cursor-pointer" @click.stop="triggerDatePicker(task, 'Due date', 'dueDate')">
+                  <bib-icon icon="calendar" variant="gray4" class="events-none"></bib-icon>
+                </div>
               </template>
               <template v-if="col.key == 'project'">
                 <project-info v-if="task[col.key].length" :projectId="task[col.key][0].projectId || task[col.key][0].project.id"></project-info>

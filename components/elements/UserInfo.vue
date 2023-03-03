@@ -1,5 +1,5 @@
 <template>
-  <span :id="'user-info-wrapper-'+ random" class="user-info-wrapper d-flex gap-05 align-center">
+  <span :id="'user-info-wrapper-'+ random" class="user-info-wrapper d-flex gap-025 align-center">
     <template v-if="userName">
       <bib-avatar :src="pic" :size="avatarSize"></bib-avatar>
       <span :id="'user-info-'+ random" class="user-name " :class="[ 'text-'+color, 'font-w-'+weight ]">{{userName}}</span>

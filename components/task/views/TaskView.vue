@@ -19,7 +19,7 @@
     <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"></user-picker>
 
     <!-- date-picker for list and board view -->
-    <inline-datepicker :show="datePickerOpen" :datetime="activeTask.dueDate" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
+    <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
     
     <loading :loading="loading"></loading>
     
@@ -197,6 +197,8 @@ export default {
     taskRightClick(payload) {
       this.projectContextMenu = false
       this.taskContextMenu = true
+      this.userPickerOpen = false
+      this.datePickerOpen = false
       const { event, task } = payload
 
       this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
@@ -233,6 +235,8 @@ export default {
     showUserPicker(payload){
       // console.log(payload)
       this.userPickerOpen = true
+      this.datePickerOpen = false
+      this.taskContextMenu = false
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
     },
@@ -240,6 +244,8 @@ export default {
       console.log(payload)
       // payload consists of event, task, label, field
       this.datePickerOpen = true
+      this.userPickerOpen = false
+      this.taskContextMenu = false
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
       this.datepickerArgs.field = payload.field || 'dueDate'
@@ -639,7 +645,7 @@ export default {
     },
 
     updateDate(value){
-      console.log(...arguments, this.datepickerArgs)
+      // console.log(...arguments, this.datepickerArgs)
       let newDate = dayjs(value).format("D MMM YYYY")
 
       this.$store.dispatch("task/updateTask", {

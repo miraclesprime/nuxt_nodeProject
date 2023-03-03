@@ -36,9 +36,9 @@
           <bib-icon icon="user" variant="gray4" class="events-none"></bib-icon>
         </span>
         <!-- </span> -->
-        <div v-if="task.dueDate" class="align-center gap-05 ml-auto" @click.stop="showDatePicker(task)">
+        <div v-if="task.dueDate" class="align-center gap-025 ml-auto" @click.stop="showDatePicker(task)">
           <bib-icon icon="calendar" :variant="overdue" class="events-none"></bib-icon>
-          <format-date :datetime="task.dueDate" :variant="overdue" class="events-none"></format-date>
+          <format-date :datetime="task.dueDate" variant="gray5" class="events-none"></format-date>
         </div>
         <div v-else class="date-info-blank date-info shape-circle align-center justify-center ml-auto" @click.stop="showDatePicker(task)">
           <bib-icon icon="calendar" variant="gray4" class="events-none"></bib-icon>
@@ -87,7 +87,7 @@ export default {
       }
     },
     overdue() {
-      return (new Date(this.task.dueDate) < new Date() && this.task.statusId != 5) ? 'danger' : 'gray5';
+      return (new Date(this.task.dueDate) < new Date() && this.task.statusId != 5) ? 'danger-sub1' : 'gray4';
       // return (new Date(this.task.dueDate) < new Date()) ? false : true
     },
     form() {
@@ -108,10 +108,12 @@ export default {
     showUserPicker(task) {
       // console.log(event, task)
       this.$nuxt.$emit("user-picker", { event, task })
+      this.$emit("user-picker", { event, task })
     },
     showDatePicker(task) {
       // console.log(event, task)
       this.$nuxt.$emit("date-picker", { event, task })
+      this.$emit("date-picker", { event, task })
       // this.datePickerOpen = !this.datePickerOpen
     },
 
