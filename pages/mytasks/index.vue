@@ -56,7 +56,7 @@
                   <div class="task-section__body h-100">
                     <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
                       <template v-for="(task, index) in todo.tasks">
-                        <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @open-sidebar="openSidebar"></task-grid>
+                        <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker"></task-grid>
                       </template>
                     </draggable>
                   </div>
@@ -68,11 +68,11 @@
             </div>
           </template>
           
-          <!-- user-picker for  board view -->
-          <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateTask({task: activeTask, field:'userId', value: $event.id, historyText: $event.label})" @close="userPickerOpen = false"></user-picker>
+          <!-- user-picker for board view -->
+          <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"></user-picker>
           
           <!-- date-picker for list and board view -->
-          <inline-datepicker :show="datePickerOpen" :datetime="activeTask.dueDate" :coordinates="popupCoords" @date-updated="updateDate('Due date', 'dueDate', $event)" @close="datePickerOpen = false"></inline-datepicker>
+          <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
         </div>
         <!-- rename section modal -->
         <bib-modal-wrapper v-if="renameModal" title="Rename section" @close="renameModal = false">
@@ -130,6 +130,7 @@ export default {
       popupCoords: {},
       userPickerOpen: false,
       datePickerOpen: false,
+      datepickerArgs: { label: "", field: ""},
     }
   },
 
@@ -162,19 +163,17 @@ export default {
         this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then(() => { this.key += 1 })
       })
 
-      this.$nuxt.$on("user-picker", (payload) => {
-        // console.log(payload)
-        this.userPickerOpen = true
-        this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px'}
-        this.activeTask = payload.task
-      })
-
-      this.$nuxt.$on("date-picker", (payload) => {
+      /*this.$nuxt.$on("user-picker", (payload) => {
         // emitted from <task-grid>
-        this.datePickerOpen = true
-        this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px'}
-        this.activeTask = payload.task
-      })
+        // console.log(payload)
+        this.showUserPicker(payload)
+      })*/
+
+      /*this.$nuxt.$on("date-picker", (payload) => {
+        // emitted from <task-grid>
+        // console.log(payload)
+        this.showDatePicker(payload)
+      })*/
     }
   },
 
@@ -191,7 +190,9 @@ export default {
   methods: {
 
     taskRightClick(payload) {
-      this.taskContextMenu = true;
+      this.taskContextMenu = true
+      this.userPickerOpen = false
+      this.datePickerOpen = false
       const { event, task } = payload
       this.activeTask = task;
       this.$store.dispatch('task/setSingleTask', task)
@@ -254,6 +255,26 @@ export default {
           alert("no task assigned")
           break;
       }
+    },
+
+    showUserPicker(payload){
+      console.log(payload)
+      this.userPickerOpen = true
+      this.datePickerOpen = false
+      this.taskContextMenu = false
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
+    },
+    showDatePicker(payload){
+      console.log(payload)
+      // payload consists of event, task, label, field
+      this.datePickerOpen = true
+      this.userPickerOpen = false
+      this.taskContextMenu = false
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
+      this.datepickerArgs.field = payload.field || 'dueDate'
+      this.datepickerArgs.label = payload.label || 'Due date'
     },
 
     // task context menu methods ----------------------------------------
@@ -325,7 +346,7 @@ export default {
         .catch(e => console.warn(e))
     },
 
-    updateDate(label, field, value){
+    updateAssignee(label, field, value, historyValue){
       // console.log(...arguments)
       let user
       if (field == "userId" && value != '') {
@@ -334,14 +355,32 @@ export default {
         user = null
       }
 
-      let newDate = dayjs(value).format("D MMM YYYY")
+      this.userPickerOpen = false
 
       this.$store.dispatch("task/updateTask", {
         id: this.activeTask.id,
         // projectId: this.$route.params.id,
         data: { [field]: value},
         user,
-        text: `changed ${label} to ${newDate}`
+        text: `changed ${label} to ${historyValue}`
+      })
+        .then(t => {
+          // console.log(t)
+          this.updateKey()
+        })
+        .catch(e => console.warn(e))
+    },
+
+    updateDate(value){
+      // console.log(...arguments, this.datepickerArgs)
+      let newDate = dayjs(value).format("D MMM YYYY")
+
+      this.$store.dispatch("task/updateTask", {
+        id: this.activeTask.id,
+        // projectId: this.$route.params.id,
+        data: { [this.datepickerArgs.field]: value},
+        user: null,
+        text: `changed ${this.datepickerArgs.label} to ${newDate}`
       })
         .then(t => {
           // console.log(t)
