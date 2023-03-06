@@ -32,8 +32,16 @@
               <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg></div>
         </td>
         <td v-for="(col, index) in cols" :key="task.title + col + index + componentKey">
-          <template v-if="col.key == 'userId'">
+          <!-- <template v-if="col.key == 'userId'">
             <user-info :key="task.title+col.key+componentKey" :userId="task[col.key]"></user-info>
+          </template> -->
+          <template v-if="col.key == 'userId'">
+            <span v-if="task[col.key]" class="user-info cursor-pointer" @click.stop="triggerUserPicker(task)">
+              <user-info :key="componentKey+task['id']" :userId="task[col.key]" :user="task['user']" ></user-info>
+            </span>
+            <span v-else class="user-name-blank user-info cursor-pointer shape-circle align-center justify-center" @click.stop="triggerUserPicker(task)">
+              <bib-icon icon="user" variant="gray4" ></bib-icon>
+            </span>
           </template>
           <template v-if="col.key == 'status'">
             <status-comp :key="task.title+col.key+componentKey" :status="task[col.key]"></status-comp>
@@ -41,19 +49,41 @@
           <template v-if="col.key == 'priority'">
             <priority-comp :key="task.title+col.key+componentKey" :priority="task[col.key]"></priority-comp>
           </template>
-          <template v-if="col.key == 'startDate' || col.key == 'dueDate'">
+          <!-- <template v-if="col.key == 'startDate' || col.key == 'dueDate'">
             <span v-if="task[col.key]" class="d-inline-flex align-center gap-05"><bib-icon icon="calendar" variant="gray4"></bib-icon><format-date :key="task.title+col.key+componentKey" :datetime="task[col.key]"></format-date></span>
+          </template> -->
+          <template v-if="col.key == 'startDate'">
+            <span v-if="task[col.key]" class="d-inline-flex align-center gap-05 cursor-pointer ml-025" @click.stop="triggerDatePicker(task, 'Start date', 'startDate')">
+              <bib-icon icon="calendar" variant="gray4"></bib-icon>
+              <format-date :key="componentKey" :datetime="task[col.key]"></format-date>
+            </span>
+            <div v-else class="date-info-blank date-info shape-circle align-center justify-center cursor-pointer" @click.stop="triggerDatePicker(task, 'Start date', 'startDate')">
+              <bib-icon icon="calendar" variant="gray4" class="events-none"></bib-icon>
+            </div>
+          </template>
+          <template v-if="col.key == 'dueDate'">
+            <span v-if="task[col.key]" class="d-inline-flex align-center gap-05 cursor-pointer ml-025" @click.stop="triggerDatePicker(task, 'Due date', 'dueDate')">
+              <bib-icon icon="calendar" variant="gray4"></bib-icon>
+              <format-date :key="componentKey" :datetime="task[col.key]"></format-date>
+            </span>
+            <div v-else class="date-info-blank date-info shape-circle align-center justify-center cursor-pointer" @click.stop="triggerDatePicker(task, 'Due date', 'dueDate')">
+              <bib-icon icon="calendar" variant="gray4" class="events-none"></bib-icon>
+            </div>
           </template>
           <template v-if="col.key == 'project'">
             <project-info v-if="task[col.key].length" :key="task.title+col.key+componentKey" :projectId="task[col.key][0].projectId"></project-info>
           </template>
           <div v-if="col.key == 'title'" class="h-100">
-            <span v-if="col.event" class=" d-block" >
+            <!-- <span v-if="col.event" class=" d-block" >
+              {{task[col.key]}}
+            </span> -->
+            <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">
+              <input type="text" class="editable-input" :value="task[col.key]" @input.stop="debounceUpdate(task, 'title', $event.target.value)">
+            </span>
+            <span v-else class="flex-grow-1">
               {{task[col.key]}}
             </span>
-            <span v-else>
-              {{task[col.key]}}
-            </span>
+            <span class="width-1 font-xs text-gray2">{{task['id']}}</span>
           </div>
           <template v-if="col.key == 'department'">
             {{task[col.key]}}
@@ -64,8 +94,16 @@
     <tbody v-else :style="{ visibility: isCollapsed ? 'collapse': '' }">
       <tr v-for="(task, taskindex) in tasks" :key="task.title + componentKey + taskindex" class="table__irow" @click.stop="rowClick($event, task)" @click.right.prevent="rowRightClick($event, task)">
         <td v-for="(col, index) in cols" :key="task.title + col + index + componentKey">
-          <template v-if="col.key == 'userId'">
+          <!-- <template v-if="col.key == 'userId'">
             <user-info :key="task.title+col.key+componentKey" :userId="task[col.key]"></user-info>
+          </template> -->
+          <template v-if="col.key == 'userId'">
+            <span v-if="task[col.key]" class="user-info cursor-pointer" @click.stop="triggerUserPicker(task)">
+              <user-info :key="componentKey+task['id']" :userId="task[col.key]" :user="task['user']" ></user-info>
+            </span>
+            <span v-else class="user-name-blank user-info cursor-pointer shape-circle align-center justify-center" @click.stop="triggerUserPicker(task)">
+              <bib-icon icon="user" variant="gray4" ></bib-icon>
+            </span>
           </template>
           <template v-if="col.key == 'status'">
             <status-comp :key="task.title+col.key+componentKey" :status="task[col.key]"></status-comp>
@@ -73,8 +111,26 @@
           <template v-if="col.key == 'priority'">
             <priority-comp :key="task.title+col.key+componentKey" :priority="task[col.key]"></priority-comp>
           </template>
-          <template v-if="col.key == 'startDate' || col.key == 'dueDate'">
+          <!-- <template v-if="col.key == 'startDate' || col.key == 'dueDate'">
             <span v-if="task[col.key]" class="d-inline-flex align-center gap-05"><bib-icon icon="calendar" variant="gray4"></bib-icon><format-date :key="task.title+col.key+componentKey" :datetime="task[col.key]"></format-date></span>
+          </template> -->
+          <template v-if="col.key == 'startDate'">
+            <span v-if="task[col.key]" class="d-inline-flex align-center gap-05 cursor-pointer ml-025" @click.stop="triggerDatePicker(task, 'Start date', 'startDate')">
+              <bib-icon icon="calendar" variant="gray4"></bib-icon>
+              <format-date :key="componentKey" :datetime="task[col.key]"></format-date>
+            </span>
+            <div v-else class="date-info-blank date-info shape-circle align-center justify-center cursor-pointer" @click.stop="triggerDatePicker(task, 'Start date', 'startDate')">
+              <bib-icon icon="calendar" variant="gray4" class="events-none"></bib-icon>
+            </div>
+          </template>
+          <template v-if="col.key == 'dueDate'">
+            <span v-if="task[col.key]" class="d-inline-flex align-center gap-05 cursor-pointer ml-025" @click.stop="triggerDatePicker(task, 'Due date', 'dueDate')">
+              <bib-icon icon="calendar" variant="gray4"></bib-icon>
+              <format-date :key="componentKey" :datetime="task[col.key]"></format-date>
+            </span>
+            <div v-else class="date-info-blank date-info shape-circle align-center justify-center cursor-pointer" @click.stop="triggerDatePicker(task, 'Due date', 'dueDate')">
+              <bib-icon icon="calendar" variant="gray4" class="events-none"></bib-icon>
+            </div>
           </template>
           <template v-if="col.key == 'project'">
             <project-info v-if="task[col.key].length" :key="task.title+col.key+componentKey" :projectId="task[col.key][0].projectId || task[col.key][0].project.id"></project-info>
@@ -83,12 +139,16 @@
             <span v-if="titleIcon.icon" class="width-105 height-105 " :class="{'cursor-pointer': titleIcon.event}" @click.stop="updateTaskStatus(task)">
               <bib-icon :icon="titleIcon.icon" :scale="1.5" :variant="taskCheckIcon(task)" ></bib-icon>
             </span>
-            <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">
+            <!-- <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">
               {{task[col.key]}}
+            </span> -->
+            <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">
+              <input type="text" class="editable-input" :value="task[col.key]" @input.stop="debounceUpdate(task, 'title', $event.target.value)">
             </span>
             <span v-else class="flex-grow-1">
               {{task[col.key]}}
             </span>
+            <span class="width-1 font-xs text-gray2">{{task['id']}}</span>
           </div>
           <template v-if="col.key == 'department'">
             {{task[col.key]}}
@@ -154,7 +214,7 @@
  * @vue-prop tasks=[] {Array} - table data.
  * @vue-prop collapseObj=null {Object} - collapsible table settings.
  * @vue-prop newTaskbutton={Object} - add new row button
- * @vue-emits ['task-checkmark-click', 'task-dragend' ]
+ * @vue-emits ['task-checkmark-click', 'task-dragend', 'edit-field', 'user-picker', 'date-picker' ]
  * @vue-dynamic-emits [ 'header_icon click', 'title click', 'task_checkmark click' 'newtask button click' ] 
  * @vue-prop componentKey=Number - key to update child components
  */
@@ -316,11 +376,22 @@ export default {
       // this.$emit('task-checkmark-click', task)
       this.$emit(this.titleIcon.event, task)
     },
+    triggerUserPicker(task) {
+      this.$emit("user-picker", {event, task})
+    },
+    triggerDatePicker(task, label, field){
+      this.$emit("date-picker", { event, task, label, field })
+    },
+    debounceUpdate: _.debounce(function(task, field, value){
+      // console.log(task.id, field, value)
+      this.$emit('edit-field', {task: task, field, value})
+    }, 1200),
     async unselectAll() {
       let rows = document.getElementsByClassName('table__irow');
       for (let row of rows) {
         row.classList.remove('active');
       }
+      
       // console.log('clicked outside drag-table-simple component')
       this.$emit("hide-newrow")
       // this.$emit("close-context-menu")
@@ -446,6 +517,7 @@ export default {
       }
 
       color: $text;
+      .editable-input { font-weight: normal; font-size: $base-size; }
 
     }
 
@@ -499,6 +571,13 @@ export default {
       span { max-width: 8rem; padding-left: 0.5rem; }
     }
   }
+}
+
+.user-name-blank,
+.date-info-blank {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px dashed $gray4;
 }
 
 .section-header {
