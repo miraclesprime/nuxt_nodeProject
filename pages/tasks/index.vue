@@ -6,10 +6,10 @@
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y" :class="{ 'bg-light': gridType != 'list'}">
         <template v-if="gridType == 'list'">
           <template v-if="tasks.length">
-            <drag-table-simple :key="key" :componentKey="key" :fields="taskFields" :tasks="tasks" :sectionTitle="'Department'" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" ></drag-table-simple>
+            <drag-table-simple :key="key" :componentKey="key" :fields="taskFields" :tasks="tasks" :sectionTitle="'Department'" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" ></drag-table-simple>
 
             <!-- table context menu -->
-            <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
+            <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
 
           </template>
           <div v-else>
@@ -34,12 +34,17 @@
               </div>
               <div class="task-section__body">
                 <div v-for="(task, index) in tasks" :key="index + '-' + key" >
-                  <task-grid :task="task" :class="[ currentTask.id == task.id ? 'active' : '']" v-on:update-key="updateKey" @open-sidebar="openSidebar" ></task-grid>
+                  <task-grid :task="task" :class="[ currentTask.id == task.id ? 'active' : '']" v-on:update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker" ></task-grid>
                 </div>
               </div>
             </div>
           </div>
         </template>
+        <!-- user-picker for board view -->
+        <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"></user-picker>
+        
+        <!-- date-picker for list and board view -->
+        <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
         <loading :loading="loading"></loading>
         <bib-popup-notification-wrapper>
           <template #wrapper>
@@ -55,6 +60,7 @@
 <script>
 import { mapGetters } from "vuex";
 import { COMPANY_TASK_FIELDS as TaskFields, TASK_CONTEXT_MENU } from '../../config/constants'
+import dayjs from 'dayjs'
 
 export default {
   name: 'Tasks',
@@ -72,7 +78,10 @@ export default {
       orderBy: 'desc',
       key: 100,
       popupMessages: [],
-      contextCoords: { },
+      popupCoords: { },
+      userPickerOpen: false,
+      datePickerOpen: false,
+      datepickerArgs: { label: "", field: ""},
     }
   },
   computed: {
@@ -81,6 +90,7 @@ export default {
         tasks: "company/getCompanyTasks",
         favTasks: 'task/getFavTasks',
         currentTask: 'task/getSelectedTask',
+        teamMembers: "user/getTeamMembers",
     }),
   },
 
@@ -105,7 +115,25 @@ export default {
   },
 
   methods: {
-
+    showUserPicker(payload){
+      console.log('userpicker', payload)
+      this.userPickerOpen = true
+      this.datePickerOpen = false
+      this.taskContextMenu = false
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
+    },
+    showDatePicker(payload){
+      console.log('datepicker', payload)
+      // payload consists of event, task, label, field
+      this.datePickerOpen = true
+      this.userPickerOpen = false
+      this.taskContextMenu = false
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
+      this.datepickerArgs.field = payload.field || 'dueDate'
+      this.datepickerArgs.label = payload.label || 'Due date'
+    },
     updateKey($event) {
       if ($event) {
         this.popupMessages.push({ text: $event, variant: "success" })
@@ -117,6 +145,11 @@ export default {
     },
 
     openSidebar(task, scroll) {
+      let fwd = this.$donotCloseSidebar(event.target.classList)
+      if (!fwd) {
+        this.$nuxt.$emit("close-sidebar");
+        return false
+      }
       this.$nuxt.$emit("open-sidebar", {...task, scrollId: scroll});
     },
 
@@ -125,7 +158,7 @@ export default {
       const { event, task } = payload
       this.activeTask = task;
       this.$store.dispatch('task/setSingleTask', task)
-      this.contextCoords = { left: event.pageX+'px', top: event.pageY+'px' }
+      this.popupCoords = { left: event.pageX+'px', top: event.pageY+'px' }
     },
 
     closeContext() {
@@ -160,6 +193,73 @@ export default {
           alert("no task assigned")
           break;
       }
+    },
+
+    updateTask(payload) {
+      console.log(payload)
+      // alert("in progress. Updated value => " + payload.value)
+      let user
+      if (payload.field == "userId" && payload.value != '') {
+        user = this.teamMembers.filter(t => t.id == payload.value)
+      } else {
+        user = null
+      }
+
+      this.$store.dispatch("task/updateTask", {
+        id: payload.task.id,
+        projectId: payload.task.project[0].projectId || payload.task.project[0].project.id,
+        data: { [payload.field]: payload.value },
+        user,
+        text: `changed ${payload.field} to "${payload.historyText || payload.value}"`
+      })
+        .then(t => {
+          console.log(t)
+          this.updateKey()
+        })
+        .catch(e => console.warn(e))
+    },
+
+    updateAssignee(label, field, value, historyValue){
+      // console.log(...arguments)
+      let user
+      if (field == "userId" && value != '') {
+        user = this.teamMembers.filter(t => t.id == value)
+      } else {
+        user = null
+      }
+
+      this.userPickerOpen = false
+
+      this.$store.dispatch("task/updateTask", {
+        id: this.activeTask.id,
+        // projectId: this.$route.params.id,
+        data: { [field]: value},
+        user,
+        text: `changed ${label} to ${historyValue}`
+      })
+        .then(t => {
+          // console.log(t)
+          this.updateKey()
+        })
+        .catch(e => console.warn(e))
+    },
+
+    updateDate(value){
+      // console.log(...arguments, this.datepickerArgs)
+      let newDate = dayjs(value).format("D MMM YYYY")
+
+      this.$store.dispatch("task/updateTask", {
+        id: this.activeTask.id,
+        // projectId: this.$route.params.id,
+        data: { [this.datepickerArgs.field]: value},
+        user: null,
+        text: `changed ${this.datepickerArgs.label} to ${newDate}`
+      })
+        .then(t => {
+          // console.log(t)
+          this.updateKey()
+        })
+        .catch(e => console.warn(e))
     },
 
     taskSetFavorite(task) {
