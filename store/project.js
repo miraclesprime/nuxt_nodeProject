@@ -283,6 +283,7 @@ export const actions = {
     });
 
     ctx.commit('fetchProjects', res.data);
+    return res.data;
   },
 
   async fetchSingleProject(ctx, payload) {
