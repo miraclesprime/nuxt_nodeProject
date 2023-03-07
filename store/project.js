@@ -283,6 +283,7 @@ export const actions = {
     });
 
     ctx.commit('fetchProjects', res.data);
+    return res.data;
   },
 
   async fetchSingleProject(ctx, payload) {
@@ -313,7 +314,7 @@ export const actions = {
       dueDate: null,
       priority: null,
       budget: null,
-      text: `new project created - "${payload.title}"`,
+      text: `created new project "${payload.title}"`,
     }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
@@ -323,6 +324,23 @@ export const actions = {
     } else {
       return res
     }
+  },
+
+  async updateProject(ctx, payload) {
+    // console.log('update project-> ', payload)
+    let res = await this.$axios.$put("/project", {
+      id: payload.id,
+      user: payload.user,
+      data: payload.data,
+      text: payload.text,
+    }, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+    })
+    // console.log(proj.data)
+    if (res.statusCode == 200) {
+      ctx.commit("setSingleProject", res.data)
+    }
+    return res
   },
 
   async deleteProject(ctx, payload) {

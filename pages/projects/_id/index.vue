@@ -40,6 +40,9 @@
                   <span class="list__item" id="project-id-list-item3" @click="modalOpen('files', 'Files')">
                     <bib-icon icon="folder-solid" class="mr-075"></bib-icon> Files
                   </span>
+                  <span class="list__item" id="project-id-list-item3" @click="copyProjectLink">
+                    <bib-icon icon="duplicate" class="mr-075"></bib-icon> Copy Link
+                  </span>
                   <span class="list__item" id="project-id-list-item5" @click="reportModal = !reportModal">
                     <bib-icon icon="warning" class="mr-075"></bib-icon> Report
                   </span>
@@ -153,6 +156,7 @@ export default {
     ...mapGetters({
         token: 'token/getToken',
         project: 'project/getSingleProject',
+        projects: 'project/getAllProjects',
         team: "project/getProjectMembers",
         projectSections: 'section/getProjectSections',
         projectTasks: "task/tasksForListView",
@@ -182,6 +186,26 @@ export default {
   },
 
   created() {
+
+    if(this.projects.length == 0) {
+
+      this.$store.dispatch('project/fetchProjects').then((res) => {
+        let proj = res.find((p) => {
+          if(p.id == this.$route.params.id) {
+            return p;
+          } 
+        })
+
+        if(proj && JSON.parse(localStorage.getItem('user')).subr == 'USER') {
+            console.log('user has access!')
+        } else {
+            alert('You do not have access to this page!')
+            this.$router.push('/projects')      
+        }
+
+      });
+    }
+
     this.$nuxt.$on("change-grid-type", (type) => {
       this.gridType = type;
     });
@@ -301,6 +325,12 @@ export default {
 
     onFileInput(payload) {
       this.value.files = payload.files
+    },
+
+    async copyProjectLink() {
+      let url = window.location.href;
+
+      await navigator.clipboard.writeText(url);
     },
 
     onsubmit(data) {

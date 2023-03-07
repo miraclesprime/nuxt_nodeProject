@@ -14,7 +14,8 @@ export const PROJECT_FIELDS = [
             icon: 'swap-vertical',
             event: 'table-sort',
             isActive: false
-        }
+        },
+        event: "task-click",
     },
     {
         key: "userId",

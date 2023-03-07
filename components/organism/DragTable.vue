@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="bg-white">
     <draggable v-if="localdata.length == 0" :list="localdata" tag="div" handle=".drag-handle" class="" @end="$emit('section-dragend', localdata)">
       <table class="table">
         <thead>
@@ -137,7 +137,6 @@
                 <bib-icon icon="calendar" variant="gray4"></bib-icon>
                 <bib-input size="sm" v-model="newRow.startDate" type="date" @input="newRowCreate" ></bib-input>
               </span>
-              <!-- <inline-datepicker :datetime="newRow.startDate" @date-updated="debounceUpdate(task, 'startDate', $event)"></inline-datepicker> -->
             </template>
             <template v-if="col.key == 'dueDate'">
               <span class="d-inline-flex align-center gap-05">
@@ -294,14 +293,6 @@ export default {
         }
       })
     },
-    /*filterTeam() {
-      let regex = new RegExp(this.filterKey, 'g\i')
-      return this.teamMembers.filter((u) => {
-        if (regex.test(u.label) || regex.test(u.email)) {
-          return u
-        }
-      })
-    },*/
   },
   created() {
     // console.info('created lifecycle', this.cols.length)
@@ -315,35 +306,16 @@ export default {
     this.templateKey += 1
   },
   methods: {
-    defer(func) {
-      console.log('defer')
-      setTimeout(func, 100);
-    },
     
     triggerUserPicker(task) {
-
       this.$emit("user-picker", {event, task})
-      /*let picker = this.$refs.userPicker.$el
-      picker.style.left = (event.clientX - event.offsetX) +'px'
-      picker.style.top = event.clientY+event.currentTarget.offsetTop+'px'*/
-
-      // console.info(event.offsetX )
-      /*this.$nextTick(() => {
-        let diff = window.innerHeight - (picker.offsetTop + picker.offsetHeight + 10)
-        if (window.innerHeight < (picker.offsetTop + picker.offsetHeight)) {
-          picker.style.transform = "translateY("+diff+"px)"
-        } else {
-          picker.style.transform = "translateY(0)"
-        }
-      });*/
-
     },
     triggerDatePicker(task, label, field){
       // console.log(event, task, field)
       this.$emit("date-picker", { event, task, label, field })
     },
     debounceUpdate: _.debounce(function(task, field, value){
-      console.log(task.id, field, value)
+      // console.log(task.id, field, value)
       this.$emit('edit-field', {task: task, field, value})
     }, 1200),
     
@@ -403,9 +375,7 @@ export default {
         row.classList.remove('active');
       }
       // console.log(event)
-      if (event.target.tagName != "INPUT") {
-        // this.userPickerOpen = false
-      }
+      
       this.$emit("hide-newrow")
       // this.$emit("close-context-menu")
       return "success"
@@ -460,7 +430,7 @@ export default {
   td {
     padding-left: 8px;
     padding-right: 6px;
-    background-color: white;
+    /*background-color: white;*/
   }
 
   &__hrow {

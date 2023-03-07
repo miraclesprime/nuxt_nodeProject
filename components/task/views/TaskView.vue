@@ -141,18 +141,10 @@ export default {
     })
     this.$nuxt.$on("user-picker", (payload) => {
       // emitted from <task-grid>
-      // console.log(payload)
-      /*this.userPickerOpen = true
-      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px'}
-      this.activeTask = payload.task*/
       this.showUserPicker(payload)
     })
     this.$nuxt.$on("date-picker", (payload) => {
       // emitted from <task-grid>
-      /*this.datePickerOpen = true
-      this.datepickerField = payload.field || 'dueDate'
-      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px'}
-      this.activeTask = payload.task*/
       this.showDatePicker(payload)
     })
   },
@@ -160,10 +152,6 @@ export default {
   mounted() {
     this.loading = true
     this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' }).then((res) => {
-      // console.log("project sections => ", res.length)
-      /*if (res.length < 1) {
-        this.nodata = true
-      }*/
 
       this.localdata = JSON.parse(JSON.stringify(this.sections))
 
@@ -204,12 +192,10 @@ export default {
       this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
       this.activeTask = task
       // console.log(task)
-      // this.$store.dispatch('task/setSingleTask', task)
     },
     closeContext() {
       this.taskContextMenu = false
       this.activeTask = {}
-      // this.$store.dispatch('task/setSingleTask', {})
     },
     contextItemClick(key) {
       // console.log(key)
@@ -241,7 +227,7 @@ export default {
       this.activeTask = payload.task
     },
     showDatePicker(payload){
-      console.log(payload)
+      // console.log(payload)
       // payload consists of event, task, label, field
       this.datePickerOpen = true
       this.userPickerOpen = false
@@ -368,7 +354,7 @@ export default {
       this.templateKey += 1
 
     },
-    taskGroup(task) {
+    taskGroup($event) {
       console.log($event)
     },
     updateKey() {
@@ -379,24 +365,6 @@ export default {
         this.taskByOrder()
       })
     },
-    /*showSectionTitle(section) {
-      if (section.title.includes("_section")) {
-        return null
-      } else {
-        return {
-          collapsed: false,
-          label: section.title,
-          variant: 'black',
-        }
-      }
-    },
-    showSectionTitleBoard(section) {
-      if (section.title.includes("_section")) {
-        return ''
-      } else {
-        return section.title
-      }
-    },*/
 
     toggleSidebar($event) {
       // console.log("taskview => ",$event)
