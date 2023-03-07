@@ -153,6 +153,7 @@ export default {
     ...mapGetters({
         token: 'token/getToken',
         project: 'project/getSingleProject',
+        projects: 'project/getAllProjects',
         team: "project/getProjectMembers",
         projectSections: 'section/getProjectSections',
         projectTasks: "task/tasksForListView",
@@ -182,6 +183,26 @@ export default {
   },
 
   created() {
+
+    if(this.projects.length == 0) {
+
+      this.$store.dispatch('project/fetchProjects').then((res) => {
+        let proj = res.find((p) => {
+          if(p.id == this.$route.params.id) {
+            return p;
+          } 
+        })
+
+        if(proj && JSON.parse(localStorage.getItem('user')).subr == 'USER') {
+            console.log('user has access!')
+        } else {
+            alert('You do not have access to this page!')
+            this.$router.push('/projects')      
+        }
+
+      });
+    }
+
     this.$nuxt.$on("change-grid-type", (type) => {
       this.gridType = type;
     });
