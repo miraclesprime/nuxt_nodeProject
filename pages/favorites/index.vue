@@ -464,6 +464,10 @@ export default {
           this.projDeleteTask(this.activeProject)
           break;
 
+        case 'copy-project':
+          this.copyProjectLink(this.activeProject)
+          break;
+
         case 'share-project':
           break;
 
@@ -582,6 +586,12 @@ export default {
       }
       this.renameProjectData = {}
       this.loading = false
+    },
+
+    async copyProjectLink(proj) {
+      let url = window.location.host + `/projects/${proj.id}`;
+
+      await navigator.clipboard.writeText(url);
     },
 
     // task context menu methods ----------------------------------------

@@ -40,6 +40,9 @@
                   <span class="list__item" id="project-id-list-item3" @click="modalOpen('files', 'Files')">
                     <bib-icon icon="folder-solid" class="mr-075"></bib-icon> Files
                   </span>
+                  <span class="list__item" id="project-id-list-item3" @click="copyProjectLink">
+                    <bib-icon icon="duplicate" class="mr-075"></bib-icon> Copy Link
+                  </span>
                   <span class="list__item" id="project-id-list-item5" @click="reportModal = !reportModal">
                     <bib-icon icon="warning" class="mr-075"></bib-icon> Report
                   </span>
@@ -322,6 +325,12 @@ export default {
 
     onFileInput(payload) {
       this.value.files = payload.files
+    },
+
+    async copyProjectLink() {
+      let url = window.location.href;
+
+      await navigator.clipboard.writeText(url);
     },
 
     onsubmit(data) {

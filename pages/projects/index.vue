@@ -263,6 +263,9 @@ export default {
         case 'delete-project':
           this.deleteTask(this.activeProject)
           break;
+        case 'copy-project':
+          this.copyProjectLink(this.activeProject)
+          break;
         case 'share-project':
           break;
         case 'report-project':
@@ -340,6 +343,12 @@ export default {
       }
       this.renameProjectData = {}
       this.loading = false
+    },
+
+    async copyProjectLink(proj) {
+      let url = window.location.host + `/projects/${proj.id}`;
+
+      await navigator.clipboard.writeText(url);
     },
 
     updateKey() {

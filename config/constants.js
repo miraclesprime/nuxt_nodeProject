@@ -554,6 +554,7 @@ export const PROJECT_CONTEXT_MENU = [
   { label: 'Add to Favorites', event: 'fav-project', variant: '', icon: 'bookmark-solid', iconVariant: 'gray5' },
   /*{ label: 'Share with', event: 'share-project', variant: '', icon: 'user-add', iconVariant: 'gray5' },*/
   { label: 'Rename', event: 'rename-project', variant: '', icon: 'pencil', iconVariant: 'gray5' },
+  { label: 'Copy Link', event: 'copy-project', variant: '', icon: 'duplicate', iconVariant: 'gray5' },
   { label: 'Report', event: 'report-project', variant: '', icon: 'warning', iconVariant: 'gray5' },
   { label: 'Delete', event: 'delete-project', variant: 'danger', icon: '', iconVariant: '' },
 ]
