@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="bg-white">
     <draggable v-if="localdata.length == 0" :list="localdata" tag="div" handle=".drag-handle" class="" @end="$emit('section-dragend', localdata)">
       <table class="table">
         <thead>
@@ -430,7 +430,7 @@ export default {
   td {
     padding-left: 8px;
     padding-right: 6px;
-    background-color: white;
+    /*background-color: white;*/
   }
 
   &__hrow {

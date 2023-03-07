@@ -13,29 +13,29 @@
             <bib-avatar></bib-avatar>
           </div>
           <div class="flex-grow-1">
-            <input type="text" class="editable-input" ref="taskTitleInput" placeholder="Project name" v-model="activeProject.title" v-on:keyup="debounceUpdate('title', activeProject.title)" >
+            <input type="text" class="editable-input" ref="taskTitleInput" placeholder="Project name" v-model="activeProject.title" v-on:keyup="debounceUpdate('title', 'title', activeProject.title)" >
           </div>
         </div>
         <div id="proj-row1" class="row my-1">
           <div id="proj-row1-col1" class="col-4">
-            <div id="proj-progress-wrap1" class="bg-secondary-sub3 shape-rounded text-center p-05 h-100">
-              <p id="proj-progress-title1" class="text-left text-secondary">Progress</p>
+            <div id="proj-progress-wrap1" class="bg-light shape-rounded text-center px-05 py-1 h-100">
+              <p id="proj-progress-title1" class="text-left text-gray5">Progress</p>
               <progress-circle variant="success" :radius="55" :progress="progress" class="mx-auto mt-1"></progress-circle>
             </div>
           </div>
           <div id="proj-row1-col2" class="col-4">
-            <div id="proj-progress-wrap2" class="bg-secondary-sub3 shape-rounded text-center p-05 h-100">
-              <p id="proj-progress-title2" class="text-left text-secondary">Tasks</p>
-              <div id="proj-progress-in" class="p-1">
-                <progress-bar label="Past due" background='danger' :value="taskOverdue" :total="totalTasks.length" class="my-025"></progress-bar>
-                <progress-bar label="Due soon" background='warning' :value="taskDuesoon" :total="totalTasks.length" class="my-025"></progress-bar>
-                <progress-bar label="Completed" background='success' :value="taskComplete" :total="totalTasks.length" class="my-025"></progress-bar>
-                <progress-bar label="In progress" :value="taskInprogress" :total="totalTasks.length" class="my-025"></progress-bar>
+            <div id="proj-progress-wrap2" class="bg-light shape-rounded text-center px-05 py-1 h-100">
+              <p id="proj-progress-title2" class="text-left text-gray5">Tasks</p>
+              <div id="proj-progress-in" class="px-1 py-05">
+                <progress-bar label="Past due" background='danger' :value="taskOverdue" :total="totalTasks.length" class="my-05"></progress-bar>
+                <progress-bar label="Due soon" background='warning' :value="taskDuesoon" :total="totalTasks.length" class="my-05"></progress-bar>
+                <progress-bar label="Completed" background='success' :value="taskComplete" :total="totalTasks.length" class="my-05"></progress-bar>
+                <progress-bar label="In progress" :value="taskInprogress" :total="totalTasks.length" class="mt-05"></progress-bar>
               </div>
             </div>
           </div>
           <div id="proj-row1-col3" class="col-4">
-            <div id="proj-progress-wrap3" class="bg-secondary-sub3 shape-rounded text-center p-05 h-100">
+            <div id="proj-progress-wrap3" class="bg-light shape-rounded text-center px-05 py-1 h-100">
               <!-- <bib-spinner variant="primary"></bib-spinner> -->
             </div>
           </div>
@@ -46,20 +46,20 @@
         <div id="proj-row2" class="row">
           <div id="proj-row2-col1" class="col-6">
             <!-- <bib-input type="text" label="Project name" placeholder="Project name" v-model="activeProject.title" v-on:keyup.native="debounceUpdate('title', activeProject.title)"></bib-input> -->
-            <bib-select label="Owner" test_id="po-owner-dd1" :options="filterUser" v-model="activeProject.userId" v-on:change="debounceUpdate('Owner', activeProject.userId)"></bib-select>
+            <bib-select label="Owner" test_id="po-owner-dd1" :options="filterUser" v-model="activeProject.userId" v-on:change="debounceUpdate('Owner', 'userId', activeProject.userId)"></bib-select>
           </div>
           <div id="proj-row2-col2" class="col-3">
             <!-- <bib-input type="date" label="Start date" v-model="startDate" v-on:change.native="debounceUpdate('Start date', startDate)"></bib-input> -->
-            <!-- <bib-datepicker test_id="date01" v-model="startDate" :value="startDate" :maxDate="dueDate" format="dd MMM yyyy" @input="debounceUpdate('Start date', startDate)" label="Start date" name="startDate" placeholder="Start date" ></bib-datepicker> -->
-            <datepicker v-model="startDate" :value="startDate" clear-button placeholder="Start date"></datepicker>
+            <bib-datepicker test_id="date01" v-model="startDate" :value="startDate" :maxDate="dueDate" format="dd MMM yyyy" @input="debounceUpdate('Start date', 'startDate', startDate)" label="Start date" name="startDate" placeholder="Start date" ></bib-datepicker>
+            <!-- <datepicker v-model="startDate" :value="startDate" placeholder="Start date" @input="debounceUpdate('Start date', 'startDate', startDate)"></datepicker> -->
             <!-- <template>
               <bib-datetime-picker label="Start date" placeholder="Start date" name="startDate" v-model="startDate" format="dd MMM yyyy" @input="debounceUpdate('Start date', startDate)" ></bib-datetime-picker>
             </template> -->
           </div>
           <div id="proj-row2-col3" class="col-3">
             <!-- <bib-input type="date" label="Due date" v-model="dueDate" v-on:change.native="debounceUpdate('Due date', dueDate)"></bib-input> -->
-            <!-- <bib-datepicker test_id="date02" v-model="dueDate" :value="dueDate" :minDate="startDate" format="dd MMM yyyy" @input="debounceUpdate('Due date', dueDate)" label="Due date" name="dueDate" placeholder="Due date"></bib-datepicker> -->
-            <datepicker v-model="dueDate" :value="dueDate" clear-button class="align-right" placeholder="Due date"></datepicker>
+            <bib-datepicker test_id="date02" v-model="dueDate" :value="dueDate" :minDate="startDate" format="dd MMM yyyy" @input="debounceUpdate('Due date', 'dueDate', dueDate)" label="Due date" name="dueDate" class="align-right" placeholder="Due date"></bib-datepicker>
+            <!-- <datepicker v-model="dueDate" :value="dueDate" class="align-right" placeholder="Due date" @input="debounceUpdate('Due date', 'dueDate', dueDate)"></datepicker> -->
             <!-- <template>
               <bib-datetime-picker name="dueDate" v-model="dueDate" placeholder="Due date" @input="debounceUpdate('Due date', dueDate)" label="Due date"></bib-datetime-picker>
             </template> -->
@@ -72,10 +72,10 @@
         </div>
         <div id="proj-row4" class="row">
           <div id="proj-row4-col1" class="col-6">
-            <bib-input type="select" label="Priority" v-model.number="activeProject.priorityId" :options="priority" placeholder="Please select..." v-on:change.native="debounceUpdate('Priority', activeProject.priorityId)"></bib-input>
+            <bib-input type="select" label="Priority" v-model.number="activeProject.priorityId" :options="priority" placeholder="Please select..." v-on:change.native="debounceUpdate('Priority', 'priorityId', activeProject.priorityId)"></bib-input>
           </div>
           <div id="proj-row4-col2" class="col-6">
-            <bib-input type="select" label="Status" v-model.number="activeProject.statusId" :options="status" placeholder="Please select..." v-on:change.native="debounceUpdate('Status', activeProject.statusId)"></bib-input>
+            <bib-input type="select" label="Status" v-model.number="activeProject.statusId" :options="status" placeholder="Please select..." v-on:change.native="debounceUpdate('Status', 'statusId', activeProject.statusId)"></bib-input>
           </div>
         </div>
         <div id="proj-row5" class="row">
@@ -85,7 +85,7 @@
             <!-- <bib-input type="time" v-model="time" placeholder="Select your time" label="Time"></bib-input> -->
           </div>
           <div id="proj-row5-col2" class="col-4">
-            <bib-input type="number" icon-left="currency-dollar" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="debounceUpdate('Budget', activeProject.budget)"></bib-input>
+            <bib-input type="number" icon-left="currency-dollar" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="debounceUpdate('Budget', 'budget', activeProject.budget)"></bib-input>
           </div>
           <div id="proj-row5-col3" class="col-4">
             <label class="text-gray6">Progress</label>
@@ -95,7 +95,7 @@
         </div>
         <div id="proj-row6" class="row">
           <div id="proj-row6-col1" class="col-12">
-            <bib-input type="textarea" label="Brief" v-model="activeProject.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate('Project brief', activeProject.description)"></bib-input>
+            <bib-input type="textarea" label="Brief" v-model="activeProject.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate('Project brief', 'description', activeProject.description)"></bib-input>
           </div>
         </div>
         <loading :loading="loading"></loading>
@@ -140,8 +140,9 @@ export default {
   watch: {
     project() {
       if (Object.keys(this.project).length) {
-        this.activeProject = JSON.parse(JSON.stringify(this.project));
-        this.owner = this.teamMembers.filter(tm => tm.id == this.activeProject.userId)
+        // this.activeProject = JSON.parse(JSON.stringify(this.project));
+        this.activeProject = _.cloneDeep(this.project)
+        this.owner = this.teamMembers.find(tm => tm.id == this.activeProject.userId)
       } else {
         this.activeProject = {
           title: "",
@@ -301,48 +302,17 @@ export default {
           this.loading = false
         }
       }).catch(err => {
-        console.log(err);
+        console.warn(err);
       })
       // this.$store.dispatch('section/fetchProjectSections', { projectId: this.$route.params.id, filter: 'all' })
     }
   },
 
   methods: {
-    /*toggleSidebar() {
-      this.flag = !this.flag;
-      this.$root.$emit("open-sidebar", this.flag);
-    },*/
 
-    /*dropdownInputKeydown($event) {
-      // console.log('dropdown input keydown', $event)
-      this.filterKey = $event
-    },
-    dd1ItemClick(tm) {
-      console.log(tm)
-      // this.owner = `${tm.label} - ${tm.email}`
-      this.activeProject.user = tm
-      this.activeProject.userId = tm.id
-      // this.debounceUpdate()
-    },
-    inviteViaEmail() {
-      console.log('inviteViaEmail')
-    },*/
-
-    /*statusClass(status) {
-      if (status === "Past Due") return "text-red";
-      if (status === "In-progress") return "text-blue";
-    },
-
-    priorityClass(priority) {
-      if (priority === "Urgent") return "text-red";
-      if (priority === "Top") return "text-orange";
-      return "text-green";
-    },*/
-
-    async updateProject(text) {
+    /*async updateProject(text) {
       // console.log('update project', this.activeProject)
-      // this.loading = true
-      let proj = await this.$axios.$put("/project", { id: this.project.id, user: this.owner[0], data: this.activeProject, text: text || '' }, {
+      let proj = await this.$axios.$put("/project", { id: this.project.id, user: this.owner, data: this.activeProject, text: text || '' }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       })
       // console.log(proj.data)
@@ -350,36 +320,36 @@ export default {
         this.project = proj.data
         this.$store.dispatch("project/setSingleProject", proj.data)
       }
-      // this.loading = false
-    },
-    debounceUpdate: _.debounce(function(name, value) {
-      // console.log('Debounce ', name, value)
+    },*/
+
+    debounceUpdate: _.debounce(function(label, field, value) {
+      // console.log('Debounce ', label, value)
 
       let updatedvalue = value
-      if (name == "Owner") {
-        this.owner = this.teamMembers.filter(tm => tm.id == value)
-        updatedvalue = this.owner[0].label
+      if (label == "Owner") {
+        this.owner = this.teamMembers.find(tm => tm.id == value)
+        updatedvalue = this.owner.label
       }
-      if (name == 'Status') {
+      if (label == 'Status') {
         this.status.find(s => {
           if(s.value == value){
             updatedvalue = s.label
           }
         })
       }
-      if (name == 'Priority') {
+      if (label == 'Priority') {
         this.priority.find(p => {
           if(p.value == value){
             updatedvalue = p.label
           }
         })
       }
-      if (name == "Due date") {
-        updatedvalue = dayjs(value).format('DD MMM, YYYY')
+      if (label == "Due date") {
+        updatedvalue = dayjs(value).format('DD MMM YYYY')
       }
 
-      if( name == "Start date") {
-        updatedvalue = dayjs(value).format('DD MMM, YYYY')
+      if( label == "Start date") {
+        updatedvalue = dayjs(value).format('DD MMM YYYY')
       }
 
       if (this.activeProject.priorityId == "") {
@@ -390,7 +360,13 @@ export default {
         this.activeProject.status = null
         this.activeProject.statusId = null
       }
-      this.updateProject(`changed ${name} to ${updatedvalue}`)
+      // this.updateProject(`changed ${label} to ${updatedvalue}`)
+      this.$store.dispatch("project/updateProject", {
+        id: this.project.id,
+        user: this.owner,
+        data: { [field]: value },
+        text: `changed ${label} to ${updatedvalue}`
+      })
     }, 1200)
 
   },

@@ -7,10 +7,16 @@
       <loading :loading="loading"></loading>
       <template v-if="projects.length">
 
-        <drag-table-simple :fields="tableFields" :tasks="projects" :titleIcon="{ icon: 'briefcase-solid', event: 'row-click'}" :componentKey="templateKey" :drag="false" :sectionTitle="'Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick" ></drag-table-simple>
+        <drag-table-simple :fields="tableFields" :tasks="projects" :titleIcon="{ icon: 'briefcase-solid', event: 'row-click'}" :componentKey="templateKey" :drag="false" :sectionTitle="'Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick" @edit-field="updateProject" @user-picker="showUserPicker" @date-picker="showDatePicker" ></drag-table-simple>
         
         <!-- table context menu -->
-        <table-context-menu :items="projectContextItems" :show="projectContextMenu" :coordinates="contextCoords" :activeItem="activeProject" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
+        <table-context-menu :items="projectContextItems" :show="projectContextMenu" :coordinates="popupCoords" :activeItem="activeProject" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
+
+        <!-- user-picker for list and board view -->
+        <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"></user-picker>
+
+        <!-- date-picker for list and board view -->
+        <inline-datepicker :show="datePickerOpen" :datetime="activeProject[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
       </template>
       <template v-else>
         <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
@@ -41,6 +47,7 @@
 import { PROJECT_FIELDS } from '../../dummy/project';
 import { PROJECT_CONTEXT_MENU } from '../../config/constants';
 import { mapGetters } from 'vuex';
+import dayjs from 'dayjs'
 
 export default {
   data() {
@@ -49,7 +56,13 @@ export default {
       viewName: '',
       projectContextItems: PROJECT_CONTEXT_MENU,
       projectContextMenu: false,
-      contextCoords: { },
+      userPickerOpen: false,
+      datePickerOpen: false,
+      datepickerArgs: { label: "", field: ""},
+      /*contextCoords: {},
+      userPickerCoords: {},*/
+      popupCoords: {},
+      // contextCoords: { },
       activeProject: {},
       renameProjectData: {},
       renameModal: false,
@@ -58,11 +71,6 @@ export default {
       templateKey: 0,
       tableFields: PROJECT_FIELDS,
       gridType: "list",
-      activeTask: {
-        assignee: null,
-        priority: null,
-        status: null,
-      },
       orderBy: 'asc',
       newkey: "",
       
@@ -81,6 +89,7 @@ export default {
     ...mapGetters({
         projects: 'project/getAllProjects',
         favProjects: 'project/getFavProjects',
+        teamMembers: "user/getTeamMembers",
     })
   },
 
@@ -99,6 +108,14 @@ export default {
     },
 
     projectRoute(project) {
+      let fwd = this.$donotCloseSidebar(event.target.classList)
+      if (!fwd) {
+        // this.$nuxt.$emit("close-sidebar");
+        this.closeContext()
+        this.userPickerOpen = false
+        this.datePickerOpen = false
+        return false
+      }
       this.$router.push('/projects/' + project.id)
     },
 
@@ -107,7 +124,7 @@ export default {
       const { event, task } = payload
       this.activeProject = task;
       this.renameProjectData = JSON.parse(JSON.stringify(task));
-      this.contextCoords = { left: event.pageX+'px', top: event.pageY+'px' }
+      this.popupCoords = { left: event.pageX+'px', top: event.pageY+'px' }
     },
 
     sortProject($event) {
@@ -273,6 +290,26 @@ export default {
       }
     },
 
+    showUserPicker(payload){
+      // console.log(payload)
+      this.userPickerOpen = true
+      this.datePickerOpen = false
+      this.taskContextMenu = false
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeProject = payload.task
+    },
+    showDatePicker(payload){
+      // console.log(payload)
+      // payload consists of event, task, label, field
+      this.datePickerOpen = true
+      this.userPickerOpen = false
+      this.taskContextMenu = false
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeProject = payload.task
+      this.datepickerArgs.field = payload.field || 'dueDate'
+      this.datepickerArgs.label = payload.label || 'Due date'
+    },
+
     setFavorite(project) {
       this.loading = true
       let isFav = this.favProjects.some((f) => f.id == project.id)
@@ -298,6 +335,73 @@ export default {
             console.log(e)
           })
       }
+    },
+
+    updateProject(payload){
+      const { task, field, value } = payload
+      // console.log(task)
+      let user = this.teamMembers.find(t => t.id == task.userId)
+
+      this.$store.dispatch("project/updateProject", {
+        id: task.id,
+        user,
+        data: { [field]: value},
+        text: `changed ${field} to ${value}`
+      })
+        .then(t => {
+          // console.log(t)
+          if (t.statusCode == 200) {
+            this.updateKey()
+          } else {
+            console.warn(t)
+          }
+        })
+        .catch(e => console.warn(e))
+    },
+
+    updateAssignee(label, field, value, historyValue){
+      // console.log(...arguments)
+
+      this.userPickerOpen = false
+      let user = this.teamMembers.find(t => t.id == value)
+
+      this.$store.dispatch("project/updateProject", {
+        id: this.activeProject.id,
+        user,
+        data: { [field]: value},
+        text: `changed ${label} to ${historyValue}`
+      })
+        .then(t => {
+          // console.log(t)
+          if (t.statusCode == 200) {
+            this.updateKey()
+          } else {
+            console.warn(t)
+          }
+        })
+        .catch(e => console.warn(e))
+    },
+
+    updateDate(value){
+      // console.log(...arguments, this.datepickerArgs)
+      let user = this.teamMembers.find(tm => tm.id == this.activeProject.userId)
+      let newDate = dayjs(value).format("D MMM YYYY")
+
+      this.$store.dispatch("project/updateProject", {
+        id: this.activeProject.id,
+        user,
+        data: { [this.datepickerArgs.field]: value},
+        text: `changed ${this.datepickerArgs.label} to ${newDate}`
+      })
+        .then(t => {
+          // console.log(t)
+          if (t.statusCode == 200) {
+            this.updateKey()
+          } else {
+            console.warn(t)
+          }
+        })
+        .catch(e => console.warn(e))
     },
 
     deleteTask(project) {
@@ -344,7 +448,7 @@ export default {
 
     updateKey() {
       this.$store.dispatch("project/fetchProjects").then(() => {
-        console.log('fetched again')
+        // console.log('fetched again')
         this.templateKey += 1;
       })
     },
