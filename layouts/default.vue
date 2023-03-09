@@ -280,13 +280,13 @@ export default {
         },500)
       }
 
-      if (this.$router.history.current.fullPath == '/goals') {
-        this.navItems2[2].selected = true;
-      }
+      // if (this.$router.history.current.fullPath == '/goals') {
+      //   this.navItems2[2].selected = true;
+      // }
 
-      if (this.$router.history.current.fullPath == '/dreams') {
-        this.navItems2[3].selected = true;
-      }
+      // if (this.$router.history.current.fullPath == '/dreams') {
+      //   this.navItems2[3].selected = true;
+      // }
 
       // Dhruv
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY3Mjg5MjY3MzA2NiwiZXhwIjoxNjgwNjY4NjczMDY2LCJqdGkiOiIyMzk3NjMyMS1mYWNiLTQzYWQtOTFjOS0wOWQzMzU2NDQ1ZmUifQ.Vuzv8ejSvZMqshraxNek9dfHy4SonAazZJfHO2BN1bY"
@@ -343,7 +343,7 @@ export default {
               this.isAdmin = false
             }
             this.$store.dispatch("project/setFavProjects")
-            this.$store.dispatch("goals/setFavGoals")
+            // this.$store.dispatch("goals/setFavGoals")
             this.$store.dispatch("user/setTeamMembers")
             this.$store.dispatch("task/getFavTasks")
           }).catch((err) => {
@@ -446,13 +446,14 @@ export default {
         this.$router.push('/mytasks')
       }
 
-      if ($event.key == 'goals') {
-        this.$router.push('/goals')
-      }
+      // if ($event.key == 'goals') {
+      //   this.$router.push('/goals')
+      // }
 
-      if ($event.key == 'dreams') {
-        this.$router.push('/dreams')
-      }
+      // if ($event.key == 'dreams') {
+      //   this.$router.push('/dreams')
+      // }
+      
       if ($event.key == 'inbox') {
         this.$router.push('/inbox')
       }
