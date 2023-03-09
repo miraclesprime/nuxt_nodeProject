@@ -106,11 +106,11 @@
             </span>
           </template>
           <template v-if="col.key == 'status'">
-            {{task[col.key]}}
+            <!-- {{task[col.key]}} -->
             <status-comp :key="task.title+col.key+componentKey" :status="task[col.key]"></status-comp>
           </template>
           <template v-if="col.key == 'priority'">
-            {{task[col.key]}}
+            <!-- {{task[col.key]}} -->
             <priority-comp :key="task.title+col.key+componentKey" :priority="task[col.key]"></priority-comp>
           </template>
           <!-- <template v-if="col.key == 'startDate' || col.key == 'dueDate'">

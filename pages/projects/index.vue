@@ -44,8 +44,7 @@
 </template>
 
 <script>
-import { PROJECT_FIELDS } from '../../dummy/project';
-import { PROJECT_CONTEXT_MENU } from '../../config/constants';
+import { PROJECT_CONTEXT_MENU, PROJECT_FIELDS } from '../../config/constants';
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
 

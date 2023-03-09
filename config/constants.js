@@ -24,6 +24,77 @@ export const TABLE_FIELDS = [{
   }
 ];
 
+export const PROJECT_FIELDS = [
+  {
+      key: "title",
+      label: "Project name",
+      width: '30%',
+      header_icon: {
+          icon: 'swap-vertical',
+          event: 'table-sort',
+          isActive: false
+      },
+      event: "task-click",
+  },
+  {
+      key: "userId",
+      label: "Owner",
+      header_icon: {
+          icon: 'swap-vertical',
+          event: 'table-sort',
+          isActive: false
+      }
+  },
+  {
+      key: "status",
+      label: "Status",
+      header_icon: {
+          icon: 'swap-vertical',
+          event: 'table-sort',
+          isActive: false
+      }
+  },
+  {
+      key: "startDate",
+      label: "Start Date",
+      header_icon: {
+          icon: 'swap-vertical',
+          event: 'table-sort',
+          isActive: false
+      }
+  },
+  {
+      key: "dueDate",
+      label: "Due Date",
+      header_icon: {
+          icon: 'swap-vertical',
+          event: 'table-sort',
+          isActive: false
+      }
+  },
+  {
+      key: "priority",
+      label: "Priority",
+      header_icon: {
+          icon: 'swap-vertical',
+          event: 'table-sort',
+          isActive: false
+      }
+  },
+  {
+      key: "tag",
+      label: "Tags"
+  },
+  {
+      key: "",
+      label: "Team"
+  },
+  {
+      key: "department",
+      label: "Department",
+  },
+]
+
 export const TASK_FIELDS = [{
     key: "title",
     label: "Task name",
