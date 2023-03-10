@@ -38,9 +38,6 @@
                         <span class="list__item" id="ts-list-item-3" v-scroll-to="'#task_files'">
                         <bib-icon icon="folder-solid" variant="gray5" class="mr-075"></bib-icon> Files
                         </span>
-                        <!-- <span class="list__item" id="ts-list-item-6">
-                            <bib-icon icon="duplicate" variant="gray5" class="mr-075"></bib-icon> Copy
-                        </span> -->
                         <hr>
                         <span class="list__item list__item__danger" id="ts-list-item-8" @click="deleteTask(item.taskId)">Delete</span>
                     </div>
@@ -56,13 +53,9 @@
             </div>
             <div class="flex-grow-1">
                 <input type="text" class="editable-input" ref="taskTitleInput" v-model="form.title" placeholder="Enter task name..." v-on:keyup="debounceUpdate('Title', 'title', form.title)">
-                <!-- <small v-show="error == 'invalid'" class="text-danger font-xs d-block" style="margin-top: -0.25rem;">Task name is required</small> -->
             </div>
             <div>
                 <team-avatar-list :team="team"></team-avatar-list>
-                <!-- <div class="team-avatar-list px-05">
-                <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :key="index" :title="team.label" :style="{ 'left': -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra" v-tooltip="extraNames">+{{teammates.extra.length}}</span>
-                </div> -->
             </div>
             <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light cursor-pointer" v-tooltip="'Team'" @click="showAddTeamModal">
                 <bib-icon icon="user-group-solid"></bib-icon>
@@ -83,11 +76,10 @@
             <bib-avatar :src="user.Photo" size="2rem" class="flex-shrink-0"></bib-avatar>
             <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
             </div>
-            
-            <subtask-detail v-if="showSubtaskDetail" @close-sidebar-detail="showSubtaskDetail = false"></subtask-detail>
 
             <loading :loading="loading"></loading>
         </div>
+        <subtask-detail v-if="showSubtaskDetail" @close-sidebar-detail="showSubtaskDetail = false"></subtask-detail>
     </div>
 </client-only>
 </template>
@@ -168,7 +160,6 @@ export default {
         if (process.client) {
 
             this.$nuxt.$on("edit-message", (msg) => {
-            
                 this.editMessage = msg
             })
 
@@ -193,23 +184,18 @@ export default {
 
     methods: {
         markComplete() {
-            // console.log(this.task)
             this.loading = true
             this.$store.dispatch('task/updateTaskStatus', this.task)
                 .then((d) => {
-                // console.log(d)
-                this.loading = false
-                // this.$nuxt.$emit("update-key")
-                this.$store.dispatch("task/setSingleTask", d)
-                this.reloadComments += 1
+                    this.loading = false
+                    this.$store.dispatch("task/setSingleTask", d)
+                    this.reloadComments += 1
                 }).catch(e => {
-                // console.log(e)
-                this.loading = false
+                    this.loading = false
                 })
         },
 
         setFavorite() {
-            // console.info(this.isFavorite.status)
             if (this.isFavorite.status) {
                 this.$store.dispatch("task/removeFromFavorite", { id: this.task.id })
                 .then(msg => console.log(msg))
@@ -227,17 +213,15 @@ export default {
         
         debounceUpdate: _.debounce(function(payload) {
             if (this.form.id) {
-                // console.log('Debounce', name, value)
                 
                 if (this.form.priorityId == "") {
-                this.form.priority = null
-                this.form.priorityId = null
+                    this.form.priority = null
+                    this.form.priorityId = null
                 }
                 if (this.form.statusId == "") {
-                this.form.status = null
-                this.form.statusId = null
+                    this.form.status = null
+                    this.form.statusId = null
                 }
-                // console.log(updatedvalue)
                 this.updateTask({ name: payload.name, field: payload.field, value: payload.value })
                 this.reloadComments += 1
 
@@ -245,7 +229,6 @@ export default {
         }, 1000),
 
         updateTask(taskData, historyText, projectId) {
-            // this.loading = true
 
             let updatedvalue = taskData.value
             if (taskData.name == 'Assignee') {
@@ -258,24 +241,24 @@ export default {
             }
             if (taskData.name == 'Status') {
                 this.statusValues.find(s => {
-                if (s.value == taskData.value) {
-                    updatedvalue = s.label
-                }
+                    if (s.value == taskData.value) {
+                        updatedvalue = s.label
+                    }
                 })
             }
             if (taskData.name == 'Priority') {
                 this.priorityValues.find(p => {
-                if (p.value == taskData.value) {
-                    updatedvalue = p.label
-                }
+                    if (p.value == taskData.value) {
+                        updatedvalue = p.label
+                    }
                 })
             }
 
             if( taskData.name == 'Section') {
                 this.sections.find(sec => {
-                if(sec.id == taskData.value) {
-                    updatedvalue = sec.title
-                }
+                    if(sec.id == taskData.value) {
+                        updatedvalue = sec.title
+                    }
                 })
             }
 
@@ -292,25 +275,17 @@ export default {
 
             this.$store.dispatch("task/updateTask", {
                 id: this.form.id,
-                // data: { ...this.form },
                 data: { [taskData.field]: taskData.value },
                 user,
                 projectId: this.form.projectId ? this.form.projectId : null,
-                // text: historyText
                 text: `changed ${taskData.name} to ${updatedvalue}`,
-            })
-                .then((u) => {
-                // console.log(u)
-                this.$nuxt.$emit("update-key")
-                // this.$nuxt.$emit("refresh-history")
-                this.reloadHistory += 1
-                // this.loading = false
+            }).then((u) => {
+                    this.$nuxt.$emit("update-key")
+                    this.reloadHistory += 1
                 })
                 .catch(e => {
-                console.log(e)
-                // this.loading = false
+                    console.log(e)
                 })
-
         },
 
         async updateProject(taskData) {
@@ -330,27 +305,20 @@ export default {
                 user,
                 projectId: taskData.oldProjValue,
                 text: proj ? `changed project to ${proj.title}` : `Task removed from Project`,
-            })
-                .then((u) => {
-                // console.log(u)
-                this.$nuxt.$emit("update-key")
-                // this.$nuxt.$emit("refresh-history")
-                this.reloadHistory += 1
-                // this.loading = false
+            }).then((u) => {
+                    this.$nuxt.$emit("update-key")
+                    this.reloadHistory += 1
                 })
                 .catch(e => {
-                console.log(e)
-                // this.loading = false
+                    console.log(e)
                 })
-
         },
         
         onFileInput(payload) {
-            // console.log(payload)
             this.value.files = payload.files
-            },
-            onsubmit(data) {
-            // console.log(data, this.editMessage?.id)
+        },
+
+        onsubmit(data) {
             let trimComment = _.truncate(data.text.slice(3, -4), { length: 128 })
 
             if (this.editMessage?.id) {
@@ -363,7 +331,6 @@ export default {
                 this.$store.dispatch("task/createTaskComment", { id: this.task.id, comment: data.text, text: `added comment ${trimComment}` })
                 .then(res => {
                     if (this.value.files.length > 0) {
-                    // console.log(this.value.files, res.data)
                     this.uploadFiles(this.value.files, res.data)
                     }
                     this.reloadComments += 1
@@ -401,9 +368,7 @@ export default {
         },
 
         viewSubtask($event){
-            // console.log($event)
             this.showSubtaskDetail = true
-            // this.$store.dispatch("subtask/setSelectedSubtask", $event)
             this.$store.commit("subtask/setSelectedSubtask", $event)
         },
     }
