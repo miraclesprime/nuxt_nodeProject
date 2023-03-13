@@ -1,7 +1,7 @@
 <template>
    <client-only>
-    <div class="position-relative h-100 of-scroll-y" id="single-task">
-        <div class="inbox-task h-100 position-relative" >
+    <div class="position-relative h-100" id="single-task">
+        <div class="single-task h-100 position-relative" >
             <div class="d-flex justify-between side-panel__header__actions " id='ts-side-panel'>
             <div class="d-flex gap-05 ml-auto align-center" id="ts-icon-attachment-wrapper">
                 <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-3' v-tooltip="'Subtasks'" v-scroll-to="'#task_subtasks'">
@@ -376,9 +376,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#single-task {
-    max-width: $sidebar-width;
-    margin: 0 auto;
-}
+#single-task { max-width: $sidebar-width; margin: 0 auto; }
+.single-task { display: grid; grid-template-columns: none; grid-template-rows: 1fr 1fr minmax(400px, auto) 1fr; }
 
 </style>
