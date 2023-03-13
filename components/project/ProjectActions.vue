@@ -114,7 +114,7 @@ export default {
 
 .action {
   display: flex;
-  padding: 0 20px;
+  padding: 0 4px;
   align-items: center;
 }
 
