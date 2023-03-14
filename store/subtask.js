@@ -85,6 +85,7 @@ export const actions = {
     if (res.statusCode == 200) {
       ctx.commit("setSelectedSubtask", res.data)
     }
+    return res.data;
   },
 
   setSelectedSubtask(ctx, payload) {

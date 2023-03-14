@@ -52,9 +52,9 @@
                   <span class="list__item" id="ts-list-item-3" v-scroll-to="'#task_files'">
                     <bib-icon icon="folder-solid" variant="gray5" class="mr-075"></bib-icon> Files
                   </span>
-                  <!-- <span class="list__item" id="ts-list-item-6">
-                    <bib-icon icon="duplicate" variant="gray5" class="mr-075"></bib-icon> Copy
-                  </span> -->
+                  <span class="list__item" id="project-id-list-item3" @click="copyTaskLink">
+                      <bib-icon icon="duplicate" class="mr-075"></bib-icon> Copy Link
+                  </span>
                   <hr>
                   <span class="list__item list__item__danger" id="ts-list-item-8" @click="deleteTask(currentTask)">Delete</span>
                 </div>
@@ -100,7 +100,7 @@
       <button ref="topScroll" id="topScroll" style="visibility: hidden; opacity: 0" v-scroll-to="scrollId ? '#'+scrollId : '#sidebar-inner-wrap'"></button>
     </div>
 
-    <div class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-105">
+    <div class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-2">
       <bib-avatar :src="userPhoto" size="2rem" class="flex-shrink-0" ></bib-avatar>
       <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
     </div>
@@ -633,6 +633,12 @@ export default {
       this.showSubtaskDetail = true
       // this.$store.dispatch("subtask/setSelectedSubtask", $event)
       this.$store.commit("subtask/setSelectedSubtask", $event)
+    },
+
+    async copyTaskLink() {
+      let url = window.location.host + `/tasks/${this.currentTask.id}`;
+
+      await navigator.clipboard.writeText(url);
     },
   },
 };

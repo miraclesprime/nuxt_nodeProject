@@ -207,7 +207,7 @@ export default {
 
   },
   mounted() {
-    console.log('mounted, project id->', this.project.id || this.proj.id)
+    // console.log('mounted, project id->', this.project.id || this.proj.id)
     this.getFiles()
     /*let obj1 = { projectId: this.project.id }
     this.$axios.get("file/db/all", {

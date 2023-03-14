@@ -142,7 +142,7 @@ export default {
     },
     showSubtaskDetail(newValue){
       if(!newValue){
-        this.$store.dispatch("subtask/fetchSubtasks", this.currentTask )
+        this.$store.dispatch("subtask/fetchSubtasks", this.task )
       }
     },
   },
@@ -191,7 +191,7 @@ export default {
         .then((d) => {
           // console.log(d)
           this.loading = false
-          // this.$nuxt.$emit("update-key")
+          this.$emit("update-key", d)
           this.$store.dispatch("task/setSingleTask", d)
           this.reloadComments += 1
         }).catch(e => {
