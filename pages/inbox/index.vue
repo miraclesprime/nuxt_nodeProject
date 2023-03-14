@@ -31,7 +31,7 @@
         </div>
       </main>
       <aside class="position-relative bg-white border-left-gray4">
-        <inbox-task v-if="taskProject == 'task'" :task="task"></inbox-task>
+        <inbox-task v-if="taskProject == 'task'" :task="task" @update-key="task = $event"></inbox-task>
         <inbox-project v-if="taskProject == 'project'" :project="project"></inbox-project>
         <figure v-if="taskProject == ''" class="position-absolute d-flex align-center justify-center" style="inset:45%; z-index: 5;">
           <bib-icon icon="bib-logo" variant="light" :scale="3"></bib-icon>
@@ -240,7 +240,9 @@ export default {
     },
     fetchTask(payload) {
       // console.info(payload)
-      this.active = payload.id
+      if (payload.id) {
+        this.active = payload.id
+      }
       this.project = {}
       // console.log(payload)
       this.loading2 = true
@@ -274,6 +276,10 @@ export default {
           this.loading2 = false
         })
     },
+
+    refreshTask(task){
+      this.task = task
+    }
 
     /*inboxItemStatus(inbox){
       return this.inboxStatus.find(item => item.historyId == inbox.id)

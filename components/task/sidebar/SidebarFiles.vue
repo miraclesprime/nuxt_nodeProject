@@ -46,7 +46,7 @@
       </template>
     </bib-modal-wrapper>
     <!-- preview modal -->
-    <bib-modal-wrapper v-if="previewModal" title="Preview" size="lg" @close="closePreviewModal">
+    <bib-modal-wrapper v-if="previewModal" title="Preview" size="xl" @close="closePreviewModal">
       <template slot="content">
         <!-- <div v-if="!imgPreview || !pdfPreview" class="text-center">
         </div> -->

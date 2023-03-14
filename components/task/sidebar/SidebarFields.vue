@@ -3,7 +3,6 @@
     <div class="row mx-0" id="sidebar-row-1">
       <div class="col-4" id="sidebar-col-1">
         <bib-select label="Assignee" test_id="task_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="debounceUpdateField('Assignee', 'userId', form.userId)"></bib-select>
-        {{form.userId}}
       </div>
       <div class="col-4">
         <bib-datepicker v-model="startDateInput" :value="startDateInput" format="dd MMM yyyy" label="Start date" placeholder="Start date" @input="debounceUpdateField('Start date', 'startDate', startDateInput)"></bib-datepicker>
