@@ -21,22 +21,25 @@
                     <template v-slot:menu>
                     <div class="list" id="ts-list">
                         <span class="list__item" id="ts-list-item-1" @click="markComplete">
-                        <bib-icon icon="check-circle-solid" :variant="isComplete.variant" class="mr-075"></bib-icon> {{isComplete.text}}
+                            <bib-icon icon="check-circle-solid" :variant="isComplete.variant" class="mr-075"></bib-icon> {{isComplete.text}}
                         </span>
                         <span class="list__item" id="ts-list-item-2" @click="setFavorite">
-                        <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
+                            <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
                         </span>
                         <span class="list__item" id="ts-list-item-4" @click="showAddTeamModal">
-                        <bib-icon icon="user-group-solid" variant="gray5" class="mr-075"></bib-icon> Team
+                            <bib-icon icon="user-group-solid" variant="gray5" class="mr-075"></bib-icon> Team
                         </span>
                         <span class="list__item" id="ts-list-item-5" v-scroll-to="'#task_subtasks'">
-                        <bib-icon icon="check-square-solid" variant="gray5" class="mr-075" v-scroll-to=""></bib-icon> Subtasks
+                            <bib-icon icon="check-square-solid" variant="gray5" class="mr-075" v-scroll-to=""></bib-icon> Subtasks
                         </span>
                         <span class="list__item" id="ts-list-item-7" v-scroll-to="'#task_conversation'">
-                        <bib-icon icon="comment-forum-solid" variant="gray5" class="mr-075"></bib-icon> Conversation
+                            <bib-icon icon="comment-forum-solid" variant="gray5" class="mr-075"></bib-icon> Conversation
                         </span>
                         <span class="list__item" id="ts-list-item-3" v-scroll-to="'#task_files'">
-                        <bib-icon icon="folder-solid" variant="gray5" class="mr-075"></bib-icon> Files
+                            <bib-icon icon="folder-solid" variant="gray5" class="mr-075"></bib-icon> Files
+                        </span>
+                        <span class="list__item" id="project-id-list-item3" @click="copyTaskLink">
+                            <bib-icon icon="duplicate" class="mr-075"></bib-icon> Copy Link
                         </span>
                         <hr>
                         <span class="list__item list__item__danger" id="ts-list-item-8" @click="deleteTask(item.taskId)">Delete</span>
@@ -65,7 +68,7 @@
                 <!-- editable fields -->
                 <sidebar-fields :task="form" @update-project-field="updateProject" @update-field="updateTask"></sidebar-fields>
                 <!-- subtasks -->
-                <sidebar-subtask @view-subtask="viewSubtask($event)"></sidebar-subtask>
+                <sidebar-subtask :reloadSubtask="reloadSubtask" @reload-subtask="reloadSubtask++" @view-subtask="viewSubtask($event)"></sidebar-subtask>
                 <!-- conversation -->
                 <sidebar-conversation :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
                 <!-- files -->
@@ -106,6 +109,7 @@ export default {
             reloadComments: 1,
             reloadHistory: 1,
             reloadFiles: 1,
+            reloadSubtask: 1,
             showSubtaskDetail: false,
         }
     },
@@ -118,7 +122,7 @@ export default {
         
         showSubtaskDetail(newValue){
             if(!newValue){
-                this.$store.dispatch("subtask/fetchSubtasks", this.currentTask )
+                this.$store.dispatch("subtask/fetchSubtasks", this.form )
             }
         },
     },
@@ -371,6 +375,12 @@ export default {
             this.showSubtaskDetail = true
             this.$store.commit("subtask/setSelectedSubtask", $event)
         },
+
+        async copyTaskLink() {
+            let url = window.location.href;
+
+            await navigator.clipboard.writeText(url);
+        }
     }
 }
 </script>

@@ -210,6 +210,9 @@ export default {
         case 'delete-task':
           this.deleteTask(this.activeTask)
           break;
+        case 'copy-task':
+          this.copyTaskLink(this.activeTask)
+          break;
         case 'assign-task':
           // statements_1
           break;
@@ -732,6 +735,12 @@ export default {
       }
       this.loading = false
     }, 600),
+
+    async copyTaskLink(task) {
+      let url = window.location.host + `/tasks/${task.id}`;
+
+      await navigator.clipboard.writeText(url);
+    },
   },
 
 };

@@ -196,7 +196,7 @@ export default {
           } 
         })
 
-        if(proj && JSON.parse(localStorage.getItem('user')).subr == 'USER') {
+        if((proj && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
             console.log('user has access!')
         } else {
             alert('You do not have access to this page!')

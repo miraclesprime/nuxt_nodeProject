@@ -642,6 +642,7 @@ export const TASK_CONTEXT_MENU = [
   { label: 'Set as reminder', event: 'set-reminder', variant: '', icon: 'notification', iconVariant: 'gray5' },
   { label: 'Copy', event: 'copy-task', variant: '', icon: 'duplicate', iconVariant: 'gray5' },
   { label: 'Move', event: 'move-task', variant: '', icon: 'transfer', iconVariant: 'gray5' },*/
+  { label: 'Copy Link', event: 'copy-task', variant: '', icon: 'duplicate', iconVariant: 'gray5' },
   { label: 'Report', event: 'report-task', variant: '', icon: 'warning', iconVariant: 'gray5' },
   { label: 'Delete', event: 'delete-task', variant: 'danger', icon: '', iconVariant: '' },
 ]

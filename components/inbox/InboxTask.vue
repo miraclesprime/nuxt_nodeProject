@@ -142,7 +142,7 @@ export default {
     },
     showSubtaskDetail(newValue){
       if(!newValue){
-        this.$store.dispatch("subtask/fetchSubtasks", this.currentTask )
+        this.$store.dispatch("subtask/fetchSubtasks", this.task )
       }
     },
   },

@@ -62,11 +62,11 @@
           <td>
             <div class="d-flex gap-05 align-center">
               <span class="cursor-pointer" style="width:20px; height:20px" @click="markComplete(sub)"><bib-icon icon="check-circle-solid" :scale="1.25" :variant="sub.isDone ? 'success' : 'gray4'"></bib-icon></span>
-              <input type="text" class="editable-input sm" v-model="sub.title" @input="debounceUpdate(sub, {field: 'Title', value: sub.title, name: 'Title'})">
+              <input type="text" class="editable-input sm" v-model="sub.title" @input="debounceUpdate(sub, {field: 'title', value: sub.title, name: 'Title'})">
             </div>
           </td>
           <td>
-            <bib-select :options="orgUsers" v-model="sub.userId" size="sm" class="bg-white" v-on:change="updateSubtask(sub, {field: 'userId', value: sub.userId, name: 'User'})"></bib-select>
+            <bib-select :key="subkey" :options="orgUsers" v-model="sub.userId" size="sm" class="bg-white" v-on:change="updateSubtask(sub, {field: 'userId', value: sub.userId, name: 'User'})"></bib-select>
             <!-- <user-info :userId="sub.userId"></user-info> -->
           </td>
           <td>
@@ -101,6 +101,9 @@ import _ from 'lodash'
 // import Datepicker from 'vue-datepicker'
 export default {
   name: "SidebarSubtask",
+  props: {
+    reloadSubtask: Number
+  },
 
   data: function() {
     return {
@@ -142,7 +145,9 @@ export default {
       let data = this.teamMembers.map(u => {
         return { label: u.firstName + ' ' + u.lastName, value: u.id, img: u.avatar }
       })
-      return [{ label: 'Please select...', value: null }, ...data]
+      let completeData = [{ label: 'Please select...', value: null }, ...data];
+        this.subkey++;
+      return completeData;
     },
 
     localSubTasks() {
@@ -166,6 +171,7 @@ export default {
         this.$store.dispatch("subtask/fetchSubtasks", this.currentTask)
           .then(() => {
             // console.log('subtask fetched')
+            this.subkey++;
             this.loading = false
           })
           .catch(e => {
@@ -276,20 +282,32 @@ export default {
       let updata = {[data.field]: data.value}
       let userobj = {}
       let sub
-      if (data.name == 'Status') {
+      if (data.name == 'Status' && data.value == 5) {
           updata = { [data.field]: data.value, isDone: true }
+      } 
+      
+      if (data.name == 'Status' && data.value != 5) {
+          updata = { [data.field]: data.value, isDone: false }
+      } 
+
+      if(data.name == 'Title') {
+        updata = { [data.field]: data.value }
       }
+
       if (data.name == 'User') {
           userobj = this.$userInfo(data.value)
           let user = { id: userobj.Id, email: userobj.Email, firstName: userobj.FirstName, lastName: userobj.LastName }
           sub = await this.$store.dispatch("subtask/updateSubtask", { id: subtask.id, data: updata, user, text: `updated ${data.name} to ${userobj.Name}` })
       } else {
-          // console.log(data, userobj, updata)
+          console.log(data, userobj, updata)
           sub = await this.$store.dispatch("subtask/updateSubtask", { id: subtask.id, data: updata, text: `updated ${data.name} to ${data.value}` })
       }
       // console.log(sub.data)
       if (sub.statusCode == 200) {
           this.$store.dispatch("subtask/setSelectedSubtask", sub.data)
+          this.$store.dispatch('subtask/fetchSubtasks', this.currentTask).then(() => {
+            this.$emit('reload-subtask')
+          })
       } else {
           console.warn("error")
       }
