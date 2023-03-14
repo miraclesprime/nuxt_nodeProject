@@ -323,11 +323,18 @@ export default {
         let userobj = {}
         let sub
         let histvalue = data.value
-        if (data.name == 'Status') {
+        if (data.name == 'Status' && data.value == 5) {
             let st = this.statusValues.find(s => s.value == data.value)
             updata = { [data.field]: data.value, isDone: true }
             histvalue = st.label
         }
+        
+        if (data.name == 'Status' && data.value != 5) {
+            let st = this.statusValues.find(s => s.value == data.value)
+            updata = { [data.field]: data.value, isDone: false }
+            histvalue = st.label
+        } 
+
         if ( data.name == "Priority"){
             let pr = this.priorityValues.find(p => p.value == data.value)
             histvalue = pr.label
@@ -343,6 +350,10 @@ export default {
         // console.log(sub.data)
         if (sub.statusCode == 200) {
             this.$store.dispatch("subtask/setSelectedSubtask", sub.data)
+            this.$store.dispatch('subtask/fetchSubTask', sub.data).then((res) => {
+              console.log(res)
+              this.form = res;
+            })
             this.$store.dispatch("subtask/fetchSubtaskHistory", this.subtask)
         } else {
             console.warn("error")
