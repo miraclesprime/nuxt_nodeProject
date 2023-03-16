@@ -119,7 +119,8 @@ export default {
 
     openSidebar(task, scroll) {
       // console.log(task)
-      this.$emit("open-sidebar", { ...task, scrollId: scroll });
+      // this.$emit("open-sidebar", { ...task, scrollId: scroll });
+      this.$nuxt.$emit("open-sidebar", { ...task, scrollId: scroll });
     },
 
     debounceUpdate: _.debounce(function(label, field, value) {
