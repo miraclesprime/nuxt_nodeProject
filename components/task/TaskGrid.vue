@@ -245,6 +245,9 @@ export default {
         case 'delete-task':
           this.deleteTask(this.task)
           break;
+        case 'copy-task':
+          this.copyTaskLink(this.task)
+          break;
         case 'gotoTeam':
           this.$nuxt.$emit('add-member-to-task')
           break;
@@ -262,6 +265,12 @@ export default {
           break;
       }
     },
+
+    async copyTaskLink(task) {
+      
+        let url = window.location.host + `/tasks/${task.id}`;
+        await navigator.clipboard.writeText(url);
+    }
   },
 };
 
