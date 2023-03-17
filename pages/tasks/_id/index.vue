@@ -70,7 +70,7 @@
                 <!-- subtasks -->
                 <sidebar-subtask :reloadSubtask="reloadSubtask" @reload-subtask="reloadSubtask++" @view-subtask="viewSubtask($event)"></sidebar-subtask>
                 <!-- conversation -->
-                <sidebar-conversation :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
+                <sidebar-conversation :taskId="task" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
                 <!-- files -->
                 <sidebar-files :reloadFiles="reloadFiles"></sidebar-files>
             </div>
@@ -164,6 +164,8 @@ export default {
         
         if (process.client) {
 
+            this.tId = this.$route.params.id;
+
             this.$nuxt.$on("edit-message", (msg) => {
                 this.editMessage = msg
             })
@@ -185,6 +187,10 @@ export default {
             })
 
         }
+    },
+
+    mounted() {
+        this.$store.dispatch("company/fetchCompanyMembers", JSON.parse(localStorage.getItem("user")).subb)
     },
 
     methods: {
