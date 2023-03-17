@@ -78,7 +78,7 @@
               {{task[col.key]}}
             </span> -->
             <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">
-              <input type="text" class="editable-input" :value="task[col.key]" @input.stop="debounceUpdate(task, 'title', $event.target.value)">
+              <input type="text" class="editable-input" :value="task[col.key]" @input.stop="debounceUpdate(task, 'title', $event.target.value, $event)" @blur="restoreField">
             </span>
             <span v-else class="flex-grow-1">
               {{task[col.key]}}
@@ -143,7 +143,7 @@
               {{task[col.key]}}
             </span> -->
             <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">
-              <input type="text" class="editable-input" :value="task[col.key]" @input.stop="debounceUpdate(task, 'title', $event.target.value)">
+              <input type="text" class="editable-input" :value="task[col.key]" @input.stop="debounceUpdate(task, 'title', $event.target.value, $event)" @blur="restoreField">
             </span>
             <span v-else class="flex-grow-1">
               {{task[col.key]}}
@@ -382,9 +382,21 @@ export default {
     triggerDatePicker(task, label, field){
       this.$emit("date-picker", { event, task, label, field })
     },
-    debounceUpdate: _.debounce(function(task, field, value){
+    restoreField(){
+      // console.log('restoreField', event.target)
+      event.target.blur()
+      event.target.classList.remove("error")
+      this.unselectAll()
+    },
+    debounceUpdate: _.debounce(function(task, field, value, $event){
       // console.log(task.id, field, value)
-      this.$emit('edit-field', {task: task, field, value})
+      if (value == "") {
+        $event.target.classList.add('error')
+        console.warn(field + ' cannot be left blank')
+      } else {
+        $event.target.classList.remove('error')
+        this.$emit('edit-field', {task: task, field, value})
+      }
     }, 1200),
     async unselectAll() {
       let rows = document.getElementsByClassName('table__irow');

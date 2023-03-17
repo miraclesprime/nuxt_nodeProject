@@ -8,7 +8,7 @@
             <bib-icon icon="check-circle-solid" :scale="1.5" :variant="task.statusId == 5 ? 'success' : 'light'"></bib-icon>
           </span>
           <span class="flex-grow-1" :id="'task-title'+task.id">
-            <textarea class="editable-input" ref="titleInput" v-model="form.title" @input="debounceUpdate('Title', 'title', form.title)" rows="1"></textarea></span>
+            <textarea class="editable-input" ref="titleInput" @input="debounceUpdate('Title', 'title', $event.target.value, $event)" rows="1" @blur="restoreField">{{form.title}}</textarea></span>
         </div>
         <div class="shape-circle bg-light width-2 height-2 d-flex flex-shrink-0 justify-center align-center">
           <bib-popup pop="elipsis" icon="elipsis" icon-variant="gray5" icon-hover-variant="dark">
@@ -43,7 +43,6 @@
         <div v-else class="date-info-blank date-info shape-circle align-center justify-center ml-auto" @click.stop="showDatePicker(task)">
           <bib-icon icon="calendar" variant="gray4" class="events-none"></bib-icon>
         </div>
-        <!-- <inline-datepicker :datetime="task.dueDate" :overdue="overdue" @date-updated="debounceUpdate('Due date', 'dueDate', $event)"></inline-datepicker> -->
       </div>
       <loading2 :loading="loading" text="wait..."></loading2>
     </div>
@@ -55,15 +54,10 @@ import _ from 'lodash'
 import { mapGetters } from 'vuex'
 import dayjs from 'dayjs'
 import { TASK_CONTEXT_MENU } from "../../config/constants";
-import tippy from 'tippy.js';
-import VueTippy, { TippyComponent } from 'vue-tippy';
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
 export default {
   name: "TaskGrid",
-  components: {
-    tippy: TippyComponent,
-  },
   props: {
     task: Object,
     project: Number,
@@ -98,12 +92,12 @@ export default {
     },
     
   },
-  mounted() {
-
-  },
+  /*mounted() {
+    console.log('mounted', this.form.title)
+  },*/
   updated() {
     let ht = this.$refs.titleInput.scrollHeight
-    // console.info('scroll height -> ', ht)
+    // console.info('scroll height -> ', ht, this.form.title)
     this.$refs.titleInput.style.height = ht + 2 + 'px'
   },
   methods: {
@@ -126,7 +120,17 @@ export default {
       this.$nuxt.$emit("open-sidebar", { ...task, scrollId: scroll });
     },
 
-    debounceUpdate: _.debounce(function(label, field, value) {
+    restoreField(){
+      // console.log('restoreField', event.target)
+      // event.target.blur()
+      if (event.target.value == "") {
+        event.target.value = this.form.title
+        event.target.classList.remove("error")
+      }
+      // this.unselectAll()
+    },
+
+    debounceUpdate: _.debounce(function(label, field, value, $event) {
       // console.log(...arguments)
       let historyValue;
 
@@ -134,8 +138,17 @@ export default {
         historyValue = dayjs(taskData.value).format('DD MMM, YYYY')
       }
 
-      this.updateTask(label, field, value, historyValue)
-    }, 1500),
+      if (value == "") {
+        $event.target.classList.add('error')
+        console.warn(field + ' cannot be left blank')
+      } else {
+        $event.target.classList.remove('error')
+        // this.$emit('edit-field', {task: task, field, value})
+        this.updateTask(label, field, value, historyValue)
+      }
+
+      // this.updateTask(label, field, value, historyValue)
+    }, 1200),
 
     updateTask(label, field, value, historyValue) {
       this.loading = true
