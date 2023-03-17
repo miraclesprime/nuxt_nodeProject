@@ -92,6 +92,7 @@ import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 import { mapGetters } from 'vuex'
 import dayjs from 'dayjs'
 import _ from 'lodash'
+import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
 export default {
     name: "SingleTask",
@@ -379,7 +380,11 @@ export default {
         copyTaskLink() {
             let url = window.location.href;
 
-            navigator.clipboard.writeText(url);
+            if (navigator.clipboard) { 
+                navigator.clipboard.writeText(url);
+            } else { 
+                unsecuredCopyToClipboard(url);
+            }
         }
     }
 }

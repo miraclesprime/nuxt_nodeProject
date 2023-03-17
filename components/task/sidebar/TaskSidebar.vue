@@ -125,6 +125,7 @@ import { mapGetters } from "vuex"
 import { userInfo } from '@/utils/userInfo.client'
 import dayjs from 'dayjs'
 import _ from 'lodash'
+import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
 export default {
   name: "TaskSidebar",
@@ -638,7 +639,11 @@ export default {
     copyTaskLink() {
       let url = window.location.host + `/tasks/${this.currentTask.id}`;
 
-      navigator.clipboard.writeText(url);
+      if (navigator.clipboard) { 
+        navigator.clipboard.writeText(url);
+      } else { 
+        unsecuredCopyToClipboard(url);
+      }
     },
   },
 };

@@ -47,6 +47,7 @@
 import { PROJECT_CONTEXT_MENU, PROJECT_FIELDS } from '../../config/constants';
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
+import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
 export default {
   data() {
@@ -449,9 +450,13 @@ export default {
     },
 
     copyProjectLink(proj) {
-      let url = window.location.host + `/projects/${proj.id}`;
+        let url = window.location.host + `/projects/${proj.id}`;
 
-      navigator.clipboard.writeText(url);
+        if (navigator.clipboard) { 
+          navigator.clipboard.writeText(url);
+        } else { 
+          unsecuredCopyToClipboard(url);
+        }
     },
 
     updateKey() {

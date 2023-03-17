@@ -46,6 +46,8 @@ import { TASK_FIELDS, TASK_CONTEXT_MENU } from "config/constants";
 import { mapGetters } from 'vuex';
 import _ from 'lodash'
 import dayjs from 'dayjs'
+import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
+
 export default {
 
   props: {
@@ -751,7 +753,11 @@ export default {
     copyTaskLink(task) {
       let url = window.location.host + `/tasks/${task.id}`;
 
-      navigator.clipboard.writeText(url);
+      if (navigator.clipboard) { 
+        navigator.clipboard.writeText(url);
+      } else { 
+        unsecuredCopyToClipboard(url);
+      }
     },
   },
 

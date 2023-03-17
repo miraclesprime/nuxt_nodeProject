@@ -99,6 +99,7 @@ import draggable from 'vuedraggable'
 import { USER_TASKS, TASK_CONTEXT_MENU } from "../../config/constants";
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
+import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
 export default {
   name: "MyTasks",
@@ -672,7 +673,12 @@ export default {
     copyTaskLink(task) {
       
         let url = window.location.host + `/tasks/${task.id}`;
-        navigator.clipboard.writeText(url);
+        
+        if (navigator.clipboard) { 
+          navigator.clipboard.writeText(url);
+        } else { 
+          unsecuredCopyToClipboard(url);
+        }
     }
   },
 
