@@ -635,10 +635,10 @@ export default {
       this.$store.commit("subtask/setSelectedSubtask", $event)
     },
 
-    async copyTaskLink() {
+    copyTaskLink() {
       let url = window.location.host + `/tasks/${this.currentTask.id}`;
 
-      await navigator.clipboard.writeText(url);
+      navigator.clipboard.writeText(url);
     },
   },
 };

@@ -165,6 +165,9 @@ export const actions = {
   },
 
   async updateTask(ctx, payload) {
+    if(payload.title == "") {
+      alert("Task can't have empty Value")
+    }
     const res = await this.$axios.$put("/task", payload, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
