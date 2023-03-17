@@ -213,6 +213,18 @@ export default {
         case 'copy-task':
           this.copyTaskLink(this.activeTask)
           break;
+        case 'gotoTeam':
+          this.$nuxt.$emit('add-member-to-task')
+          break;
+        case 'gotoComment':
+          this.openSidebar(this.activeTask, 'task_conversation')
+          break;
+        case 'gotoSubtask':
+          this.openSidebar(this.activeTask, 'task_subtasks')
+          break;
+        case 'gotoFiles':
+          this.openSidebar(this.activeTask, 'task_files')
+          break;
         case 'assign-task':
           // statements_1
           break;
