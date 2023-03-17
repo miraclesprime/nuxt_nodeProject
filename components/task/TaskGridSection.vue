@@ -303,7 +303,8 @@ export default {
 .new-section-input {
   min-height: 2rem;
   max-width: 200px;
-  padding: 0 0.5rem;
+  /*padding: 0 0.5rem;*/
+  padding: 0.2rem 0.4rem;
   font-size: 1rem;
   font-weight: 600;
   border-radius: 0.25rem;
@@ -311,7 +312,8 @@ export default {
 
   &:focus {
     outline: none;
-    border-color: var(--bib-dark);
+    border-color: $dark;
+    box-shadow: 0 0 3px $dark-sub4;
   }
 }
 
