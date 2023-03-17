@@ -48,18 +48,16 @@
     </div>
   </client-only>
 </template>
+
 <script>
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
 import dayjs from 'dayjs'
 import { TASK_CONTEXT_MENU } from "../../config/constants";
-// import tippy from 'tippy.js';
-// import VueTippy, { TippyComponent } from 'vue-tippy';
+import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
+
 export default {
   name: "TaskGrid",
-  /*components: {
-    tippy: TippyComponent,
-  },*/
   props: {
     task: Object,
     project: Number,
@@ -284,10 +282,15 @@ export default {
       }
     },
 
-    async copyTaskLink(task) {
+    copyTaskLink(task) {
       
         let url = window.location.host + `/tasks/${task.id}`;
-        await navigator.clipboard.writeText(url);
+        
+        if (navigator.clipboard) { 
+          navigator.clipboard.writeText(url);
+        } else { 
+          unsecuredCopyToClipboard(url);
+        }
     }
   },
 };

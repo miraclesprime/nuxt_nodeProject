@@ -70,7 +70,7 @@
                 <!-- subtasks -->
                 <sidebar-subtask :reloadSubtask="reloadSubtask" @reload-subtask="reloadSubtask++" @view-subtask="viewSubtask($event)"></sidebar-subtask>
                 <!-- conversation -->
-                <sidebar-conversation :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
+                <sidebar-conversation :taskId="task" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
                 <!-- files -->
                 <sidebar-files :reloadFiles="reloadFiles"></sidebar-files>
             </div>
@@ -92,6 +92,7 @@ import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 import { mapGetters } from 'vuex'
 import dayjs from 'dayjs'
 import _ from 'lodash'
+import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
 export default {
     name: "SingleTask",
@@ -163,6 +164,8 @@ export default {
         
         if (process.client) {
 
+            this.tId = this.$route.params.id;
+
             this.$nuxt.$on("edit-message", (msg) => {
                 this.editMessage = msg
             })
@@ -184,6 +187,10 @@ export default {
             })
 
         }
+    },
+
+    mounted() {
+        this.$store.dispatch("company/fetchCompanyMembers", JSON.parse(localStorage.getItem("user")).subb)
     },
 
     methods: {
@@ -376,10 +383,14 @@ export default {
             this.$store.commit("subtask/setSelectedSubtask", $event)
         },
 
-        async copyTaskLink() {
+        copyTaskLink() {
             let url = window.location.href;
 
-            await navigator.clipboard.writeText(url);
+            if (navigator.clipboard) { 
+                navigator.clipboard.writeText(url);
+            } else { 
+                unsecuredCopyToClipboard(url);
+            }
         }
     }
 }

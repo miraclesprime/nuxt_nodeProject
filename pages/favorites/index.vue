@@ -46,6 +46,7 @@ import _ from 'lodash'
 import { PROJECT_FAVORITES, TASK_FAVORITES, PROJECT_CONTEXT_MENU, TASK_CONTEXT_MENU } from '../../config/constants'
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
+import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
 export default {
   name: "Favorites",
@@ -641,16 +642,26 @@ export default {
       }).catch(e => console.warn(e))
     },
 
-    async copyProjectLink(proj) {
+    copyProjectLink(proj) {
       
       let url = window.location.host + `/projects/${proj.id}`;
-      await navigator.clipboard.writeText(url);
+      
+      if (navigator.clipboard) { 
+        navigator.clipboard.writeText(url);
+      } else { 
+        unsecuredCopyToClipboard(url);
+      }
     },
 
-    async copyTaskLink(task) {
+    copyTaskLink(task) {
       
         let url = window.location.host + `/tasks/${task.id}`;
-        await navigator.clipboard.writeText(url);
+       
+        if (navigator.clipboard) { 
+          navigator.clipboard.writeText(url);
+        } else { 
+          unsecuredCopyToClipboard(url);
+        }
     },
 
     updateTask(payload) {
