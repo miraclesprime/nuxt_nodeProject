@@ -101,6 +101,7 @@ import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
 
 export default {
+  name: "MyTasks",
   components: {
     draggable
   },

@@ -181,7 +181,12 @@ export const actions = {
 
   async updateTaskStatus(ctx, payload) {
     if (payload.statusId !== 5) {
-      const res = await this.$axios.$put('/task', { id: payload.id, projectId: ctx.rootState.project.selectedProject.id || payload.project[0].projectId || payload.project[0].project.id, data: { statusId: 5 }, text: 'Updated the status to Done' }, {
+      const res = await this.$axios.$put('/task', {
+        id: payload.id,
+        projectId: ctx.rootState.project.selectedProject.id || payload.project[0].projectId || payload.project[0].project.id,
+        data: { statusId: 5, isDone: true },
+        text: "Updated the status to Done"
+      }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
 
@@ -189,7 +194,12 @@ export const actions = {
     }
 
     if (payload.statusId == 5) {
-      const res = await this.$axios.$put('/task', { id: payload.id, projectId: ctx.rootState.project.selectedProject.id || payload.project[0].projectId || payload.project[0].project.id, data: { statusId: 2 }, text: 'Updated the status to In-progress' }, {
+      const res = await this.$axios.$put('/task', {
+        id: payload.id,
+        projectId: ctx.rootState.project.selectedProject.id || payload.project[0].projectId || payload.project[0].project.id,
+        data: { statusId: 2, isDone: false },
+        text: 'Updated the status to In-progress'
+      }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
       

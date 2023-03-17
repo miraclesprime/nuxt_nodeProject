@@ -1,54 +1,61 @@
 <template>
-  <div class="task-info position-relative px-105" id="task-input-wrap">
-    <div class="row mx-0" id="sidebar-row-1">
-      <div class="col-4" id="sidebar-col-1">
-        <bib-select :key="randomKey" label="Assignee" test_id="task_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="debounceUpdateField('Assignee', 'userId', form.userId)"></bib-select>
+  <client-only>
+    <div class="task-info position-relative px-105" id="task-input-wrap">
+      <div class="row mx-0" id="sidebar-row-1">
+        <div class="col-4" id="sidebar-col-1">
+          <bib-select :key="randomKey" label="Assignee" test_id="task_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="debounceUpdateField('Assignee', 'userId', form.userId)"></bib-select>
+        </div>
+        <div class="col-4">
+          <bib-datepicker v-model="startDateInput" :value="startDateInput" format="dd MMM yyyy" label="Start date" placeholder="Start date" @input="debounceUpdateField('Start date', 'startDate', startDateInput)"></bib-datepicker>
+          <!-- <datepicker v-model="startDateInput" :value="startDateInput" format="dd MMM yyyy"></datepicker> -->
+        </div>
+        <div class="col-4">
+          <bib-datepicker class="align-right" v-model="dueDateInput" :value="dueDateInput" format="dd MMM yyyy" label="Due date" placeholder="Due date" @input="debounceUpdateField('Due date', 'dueDate', dueDateInput)"></bib-datepicker>
+        </div>
       </div>
-      <div class="col-4">
-        <bib-datepicker v-model="startDateInput" :value="startDateInput" format="dd MMM yyyy" label="Start date" placeholder="Start date" @input="debounceUpdateField('Start date', 'startDate', startDateInput)"></bib-datepicker>
+      <div class="row mx-0" id="sidebar-row-2">
+        <div class="col-4" id="sidebar-col-2">
+          <bib-input type="select" label="Project" :options="companyProjects" v-model.number="form.projectId" v-on:change.native="changeProject"></bib-input>
+        </div>
+        <div class="col-4">
+          <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="form.sectionId" placeholder="Please select ..." v-on:change.native="debounceUpdateField('Section', 'sectionId', form.sectionId)" :disabled="!form.projectId"></bib-input>
+        </div>
+        <div class="col-4" id="sidebar-col-3">
+          <bib-input type="select" label="Department" :options="department" placeholder="Please select..."></bib-input>
+        </div>
       </div>
-      <div class="col-4">
-        <bib-datepicker class="align-right" v-model="dueDateInput" :value="dueDateInput" format="dd MMM yyyy" label="Due date" placeholder="Due date" @input="debounceUpdateField('Due date', 'dueDate', dueDateInput)"></bib-datepicker>
+      <div class="row mx-0" id="sidebar-row-3">
+        <div class="col-4" id="sidebar-col-4">
+          <bib-input type="select" label="Priority" v-model.number="form.priorityId" :options="priorityValues" placeholder="Please select..." v-on:change.native="debounceUpdateField('Priority', 'priorityId', form.priorityId)"></bib-input>
+        </div>
+        <div class="col-4" id="sidebar-col-5">
+          <bib-input type="select" label="Status" v-model.number="form.statusId" :options="statusValues" placeholder="Please select..." v-on:change.native="debounceUpdateField('Status', 'statusId', form.statusId)"></bib-input>
+        </div>
       </div>
+      <div class="row mx-0" id="sidebar-row-4">
+        <div class="col-12" id="sidebar-col-6">
+          <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter task description..." label="Description" v-on:keyup.native="debounceUpdateField('Description', 'description', form.description)"></bib-input>
+        </div>
+      </div>
+      <div class="py-05 px-05" id="sidebar-btn-wrapper">
+        <bib-button v-show="!task.id" label="Create Task" variant="primary" v-on:click="createTask"></bib-button>
+      </div>
+      <!-- <loading :loading="loading2 || loading"></loading> -->
     </div>
-    <div class="row mx-0" id="sidebar-row-2">
-      <div class="col-4" id="sidebar-col-2">
-        <bib-input type="select" label="Project" :options="companyProjects" v-model.number="form.projectId" v-on:change.native="changeProject"></bib-input>
-      </div>
-      <div class="col-4">
-        <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="form.sectionId" placeholder="Please select ..." v-on:change.native="debounceUpdateField('Section', 'sectionId', form.sectionId)" :disabled="!form.projectId"></bib-input>
-      </div>
-      <div class="col-4" id="sidebar-col-3">
-        <bib-input type="select" label="Department" :options="department" placeholder="Please select..."></bib-input>
-      </div>
-    </div>
-    <div class="row mx-0" id="sidebar-row-3">
-      <div class="col-4" id="sidebar-col-4">
-        <bib-input type="select" label="Priority" v-model.number="form.priorityId" :options="priorityValues" placeholder="Please select..." v-on:change.native="debounceUpdateField('Priority', 'priorityId', form.priorityId)"></bib-input>
-      </div>
-      <div class="col-4" id="sidebar-col-5">
-        <bib-input type="select" label="Status" v-model.number="form.statusId" :options="statusValues" placeholder="Please select..." v-on:change.native="debounceUpdateField('Status', 'statusId', form.statusId)"></bib-input>
-      </div>
-    </div>
-    <div class="row mx-0" id="sidebar-row-4">
-      <div class="col-12" id="sidebar-col-6">
-        <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter task description..." label="Description" v-on:keyup.native="debounceUpdateField('Description', 'description', form.description)"></bib-input>
-      </div>
-    </div>
-    <div class="py-05 px-05" id="sidebar-btn-wrapper">
-      <bib-button v-show="!task.id" label="Create Task" variant="primary" v-on:click="createTask"></bib-button>
-    </div>
-    <!-- <loading :loading="loading2 || loading"></loading> -->
-  </div>
+  </client-only>
 </template>
 <script>
 import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 import { mapGetters } from "vuex"
 import dayjs from 'dayjs'
 import _ from 'lodash'
+// import Datepicker from 'vuejs-datepicker';
 export default {
 
   name: 'SidebarFields',
+  /*components: {
+    Datepicker
+  },*/
   props: {
     task: {
       type: Object,

@@ -405,12 +405,17 @@ export const actions = {
         }
       })
     }
-
+    let nameText = []
     let names = data.map(n => {
-      return { id: n.id, name: n.firstName + " " + n.lastName, isOwner: false };
+      nameText.push(`${n.firstName} ${n.lastName}`)
+      return { id: n.id, name: `${n.firstName} ${n.lastName}`, isOwner: false };
     });
 
-    const res = await this.$axios.post("/project/add-member", { projectId: payload.projectId, team: data, text: `${names.join(', ')} added to project` }, {
+    const res = await this.$axios.post("/project/add-member", {
+      projectId: payload.projectId,
+      team: data,
+      text: `${nameText.join(', ')} added to project`
+    }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
     

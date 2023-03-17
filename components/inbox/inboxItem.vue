@@ -22,7 +22,7 @@
         <span class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Archive'">
           <bib-icon icon="file-multiple" variant="gray5"></bib-icon>
         </span>
-        <span class="shape-rounded px-025 border-gray4 text-gray5 font-xs">{{item.id}}</span>
+        <!-- <span class="shape-rounded px-025 border-gray4 text-gray5 font-xs">{{item.id}}</span> -->
       </div>
     </div>
     <div class="d-flex align-center justify-between">
@@ -35,7 +35,7 @@
     <div class="content font-md py-05">
       <div v-if="item.content || item.comment" class="inbox-item-content mb-05">
         <template v-for="cn in item.content">
-          <div>{{cn.title}}</div>
+          <div v-html="cn.title"></div>
           <div>@ {{cn.time}}</div>
         </template>
         <template v-for="cm in item.comment">

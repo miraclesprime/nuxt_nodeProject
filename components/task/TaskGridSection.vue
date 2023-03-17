@@ -39,63 +39,6 @@
         </div>
         <div class="task-section__body" :id="'tgs-task-section-body-'+section.id">
           <draggable :list="section.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable" :class="{highlight: highlight == section.id}" :data-section="section.id">
-            <!-- <div class="task-grid bg-white" v-for="task in section.tasks" :key="task.title + templateKey + '-' + task.id" :class="[ currentTask.id == task.id ? 'active' : '']" :id="'tg-card-'+task.id" v-on:click.stop="openSidebar(task, section.projectId)">
-              <figure v-if="task.cover" id="tg-card-image" class="task-image bg-light" style="background-image:url('https://via.placeholder.com/200x110')"></figure>
-              <div class="task-top" :id="'tg-card-top'+task.id">
-                <div class="d-flex" :id="'tg-card-inside-wrap'+task.id">
-                  <span class="cursor-pointer" @click="markComplete(task)">
-                    <bib-icon icon="check-circle" :scale="1.5" :variant="task.statusId == 5 ? 'success' : 'light'" ></bib-icon>
-                  </span>
-                  <span class="ml-05" :id="'tg-title'+task.id">{{ task.title }} </span>
-                </div>
-                <div class="shape-circle bg-light width-2 height-2 d-flex flex-shrink-0 justify-center align-center">
-                  <bib-popup pop="elipsis" icon-variant="gray5" icon-hover-variant="dark" >
-                    <template v-slot:menu>
-                      <div class="list" :id="'tg-list'+task.id">
-                        <span class="list__item success" :id="'tg-comp'+task.id" v-on:click="markComplete(task)">
-                          <bib-icon icon="check-circle" :variant="task.statusId == 5 ? 'success' : 'secondary-sub1'" class="mr-05"></bib-icon> {{task.statusId != 5 ? "Mark" : ""}} Completed
-                        </span>
-                        <span class="list__item" :id="'tg-fav'+task.id" data-fav="isFavorite(task).status" v-on:click.stop="addToFavorites(task)">
-                          <bib-icon :icon="isFavorite(task).icon" :variant="isFavorite(task).variant" class="mr-05"></bib-icon> {{isFavorite(task).text}}
-                        </span>
-                        <hr>
-                        <span class="list__item" :id="'tg-attach'+task.id">
-                          <bib-icon icon="check-square-solid" class="mr-05"></bib-icon> Subtasks
-                        </span>
-                        <span class="list__item" :id="'tg-assign'+task.id">
-                          <bib-icon icon="user-group-solid" class="mr-05"></bib-icon> Team
-                        </span>
-                        <span class="list__item" :id="'tg-reminder'+task.id">
-                          <bib-icon icon="comment-forum" class="mr-05"></bib-icon> Conversation
-                        </span>
-                        <span class="list__item " :id="'tg-copy-link'+task.id">
-                          <bib-icon icon="awesome-file" class="mr-05"></bib-icon> Files
-                        </span>
-                        <span class="list__item" :id="'tg-move'+task.id">
-                          <bib-icon icon="time-history" class="mr-05"></bib-icon> History
-                        </span>
-                        <span class="list__item " :id="'tg-view-task'+task.id">
-                          <bib-icon icon="warning" class="mr-05"></bib-icon> Report
-                        </span>
-                        <hr>
-                        <span class="list__item list__item__danger" :id="'tg-delete-task'+task.id" @click="$emit('delete-task', task)">Delete Task</span>
-                      </div>
-                    </template>
-                  </bib-popup>
-                </div>
-              </div>
-              <div class="task-mid d-flex gap-05">
-                <status-badge :status="task.status"></status-badge>
-                <priority-badge :priority="task.priority"></priority-badge>
-              </div>
-              <div class="task-bottom" :id="'tg-card-bottom'+task.id">
-                <user-info v-if="task.userId" :userId="task.userId"></user-info>
-                <div v-if="task.dueDate" class="align-center gap-05 ml-auto">
-                  <bib-icon icon="calendar" :variant="overdue(task)"></bib-icon>
-                  <format-date :datetime="task.dueDate" :variant="overdue(task)" ></format-date>
-                </div>
-              </div>
-            </div> -->
             <template v-for="task in section.tasks">
               <task-grid :task="task" :project="section.projectId" :key="task.title + templateKey + '-' + task.id" :class="[ currentTask.id == task.id ? 'active' : '']" @open-sidebar="openSidebar(task, section.projectId)" ></task-grid>
             </template>
@@ -267,7 +210,7 @@ export default {
     },   
 
     openSidebar(task, projectId) {
-      // console.log(event.target.classList)
+      // console.log(...arguments)
       // let elclass = event.target.classList
       let fwd = this.$donotCloseSidebar(event.target.classList)
       if(!fwd) {
@@ -281,7 +224,7 @@ export default {
           id: projectId
         }
       }]
-      this.$nuxt.$emit("open-sidebar", { ...task, project: project });
+      this.$nuxt.$emit("open-sidebar", { ...task, project });
 
       // let el = event.target.offsetParent
       let el = document.getElementById("tgs-scroll")
@@ -293,18 +236,6 @@ export default {
         behavior: 'smooth'
       });
     },
-
-    /*addToFavorites(task) {
-      // console.log('to be favorites task', task.id)
-      this.$emit("set-favorite", task)
-    },*/
-    /*
-        taskCheckIcon(task) {
-          return task.statusId == 5 ? 'success' : 'secondary-sub1'
-        },*/
-    /*markComplete(task) {
-      this.$emit("mark-complete", task)
-    },*/
 
     debounceCreateSection: _.debounce(function() {
       this.createSection()

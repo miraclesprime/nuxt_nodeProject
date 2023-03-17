@@ -31,12 +31,12 @@
         </div>
       </main>
       <aside class="position-relative bg-white border-left-gray4">
-        <inbox-task v-if="taskProject == 'task'" :task="task"></inbox-task>
+        <inbox-task v-if="taskProject == 'task'" :task="task" @update-key="task = $event"></inbox-task>
         <inbox-project v-if="taskProject == 'project'" :project="project"></inbox-project>
         <figure v-if="taskProject == ''" class="position-absolute d-flex align-center justify-center" style="inset:45%; z-index: 5;">
           <bib-icon icon="bib-logo" variant="light" :scale="3"></bib-icon>
         </figure>
-        <loading :loading="loading2"></loading>
+        <!-- <loading :loading="loading2"></loading> -->
       </aside>
     </div>
   </client-only>
@@ -51,7 +51,7 @@ export default {
   data() {
     return {
       loading: false,
-      loading2: false,
+      // loading2: false,
       inbox: [],
       task: {},
       project: {},
@@ -62,7 +62,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      token: "token/getToken",
+      // token: "token/getToken",
       // inboxStatus: "inbox/getInbox",
     }),
     combinedInbox(){
@@ -106,7 +106,7 @@ export default {
             t2[prIndex]['comment'] = []
           }
           t2[prIndex].content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
-          if (o.projectComment) {
+          if (o.projectComment.id) {
             t2[prIndex].comment.push( o.projectComment )
           }
           return
@@ -120,7 +120,7 @@ export default {
             t2[taIndex]['comment'] = []
           }
           t2[taIndex].content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
-          if (o.taskComment) {
+          if (o.taskComment.id) {
             t2[taIndex].comment.push( o.taskComment )
           }
           return
@@ -146,7 +146,7 @@ export default {
             y2[prIndex]['comment'] = []
           }
           y2[prIndex].content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
-          if (o.projectComment) {
+          if (o.projectComment.id) {
             y2[prIndex].comment.push( o.projectComment )
           }
           return
@@ -160,7 +160,7 @@ export default {
             y2[taIndex]['comment'] = []
           }
           y2[taIndex].content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
-          if (o.taskComment) {
+          if (o.taskComment.id) {
             y2[taIndex].comment.push( o.taskComment )
           }
           return
@@ -184,10 +184,10 @@ export default {
             o2last['comment'] = []
           }
           o2last.content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
-          if (o.taskComment) {
+          if (o.taskComment.id) {
             o2last.comment.push( o.taskComment )
           }
-          if (o.projectComment) {
+          if (o.projectComment.id) {
             o2last.comment.push( o.projectComment )
           }
           o2[o2.length - 1] = o2last
@@ -199,10 +199,24 @@ export default {
       return { today: t2, yesterday: y2, older: o2}
     }
   },
+  fetch(){
+    this.$axios.get('user/user-history', {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+      }
+    }).then(i => {
+      this.inbox = i.data.data
+      // this.loading = false
+      this.switchTaskProject()
+    }).catch(e => {
+      console.warn(e)
+      // this.loading = false
+    })
+  },
   mounted() {
     this.loading = true
 
-    this.$axios.get('user/user-history', {
+    /*this.$axios.get('user/user-history', {
       headers: {
         "Authorization": "Bearer " + localStorage.getItem("accessToken"),
       }
@@ -213,9 +227,14 @@ export default {
     }).catch(e => {
       console.warn(e)
       this.loading = false
-    })
+    })*/
 
-    this.$store.dispatch("inbox/fetchInboxEntries")
+    this.$store.dispatch("inbox/fetchInboxEntries").then(res=>{
+      this.loading = false
+    }).catch( err => {
+      console.warn(err)
+      this.loading = false
+    })
   },
   methods: {
     testUserTask(arr, item){
@@ -240,40 +259,46 @@ export default {
     },
     fetchTask(payload) {
       // console.info(payload)
-      this.active = payload.id
+      if (payload.id) {
+        this.active = payload.id
+      }
       this.project = {}
       // console.log(payload)
-      this.loading2 = true
+      // this.loading2 = true
       this.taskProject = "task"
       this.$store.dispatch("task/fetchSingleTask", payload.taskId)
         .then(i => {
           // console.log('inbox task->',i.data)
           this.task = i.data
-          this.loading2 = false
+          // this.loading2 = false
         })
         .catch(e => {
           console.warn(e)
-          this.loading2 = false
+          // this.loading2 = false
         })
     },
     fetchProject(payload) {
       // console.info(payload)
       this.active = payload.id
       this.task = {}
-      this.loading2 = true
+      // this.loading2 = true
       this.taskProject = "project"
       console.log(payload.projectId)
       this.$store.dispatch("project/fetchSingleProject", payload.projectId)
         .then(p => {
           // console.log(p)
           this.project = p.data
-          this.loading2 = false
+          // this.loading2 = false
         })
         .catch(e => {
           console.warn(e)
-          this.loading2 = false
+          // this.loading2 = false
         })
     },
+
+    refreshTask(task){
+      this.task = task
+    }
 
     /*inboxItemStatus(inbox){
       return this.inboxStatus.find(item => item.historyId == inbox.id)

@@ -100,7 +100,7 @@
       <button ref="topScroll" id="topScroll" style="visibility: hidden; opacity: 0" v-scroll-to="scrollId ? '#'+scrollId : '#sidebar-inner-wrap'"></button>
     </div>
 
-    <div class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-105">
+    <div class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-2">
       <bib-avatar :src="userPhoto" size="2rem" class="flex-shrink-0" ></bib-avatar>
       <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
     </div>

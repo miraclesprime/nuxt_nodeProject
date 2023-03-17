@@ -7,19 +7,13 @@
       <div class="task-conversation w-100 " id="sc-task-team">
         <div class="message-wrapper py-05 position-relative">
           <template v-if="showPlaceholder">
-            <!-- <div class="d-flex align-center p-05 border-bottom-gray2">
-              <bib-icon icon="arrow-down" :scale="0.5"></bib-icon>
-              <div class="px-1 ">
-                <div class="animated-background width-6"></div>
-              </div>
-            </div> -->
-            <div class="placeholder m-1 d-flex align-center gap-1">
+            <div class="placeholder my-05 d-flex align-center gap-05">
               <div class="left">
-                <div class="shape-circle width-3 height-3 animated-background"></div>
+                <div class="shape-circle width-2 height-2 animated-background"></div>
               </div>
               <div class="right">
-                <div class="animated-background width-4"></div>
-                <div class="animated-background width-10 mt-05"></div>
+                <div class="animated-background width-4 " style="height: 0.8rem;"></div>
+                <div class="animated-background width-10 mt-025" style="height: 0.6rem;"></div>
               </div>
             </div>
           </template>
@@ -35,7 +29,7 @@
               <bib-icon icon="warning"></bib-icon> No conversation found
             </span>
           </template> -->
-          <loading :loading="msgLoading"></loading>
+          <!-- <loading :loading="msgLoading"></loading> -->
         </div>
         <!-- <div class="task-message-input ">
           <message-input :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
@@ -129,7 +123,7 @@ export default {
         this.comments = []
         return
       }
-      // this.showPlaceholder = true
+      this.showPlaceholder = true
       const comm = await this.$axios.get(`/task/${this.task.id}/comments`, {
         headers: {
           "Content-Type": "application/json",
@@ -142,7 +136,7 @@ export default {
       if (comm.data.statusCode == 200) {
         this.comments = comm.data.data
       }
-      // this.showPlaceholder = false
+      this.showPlaceholder = false
       // this.$store.dispatch("task/fetcTaskComments", { id: this.task.id })
     },
 
