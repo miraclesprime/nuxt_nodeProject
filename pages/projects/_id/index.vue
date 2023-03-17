@@ -120,6 +120,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { TABLE_FIELDS, PROJECT_TABS, PROJECT_DEFAULT_TAB, PROJECT_TAB_TITLES } from "config/constants";
+import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
 export default {
   name: 'ProjectId',
@@ -328,9 +329,13 @@ export default {
     },
 
     copyProjectLink() {
-      let url = window.location.href;
+        let url = window.location.href;
 
-      navigator.clipboard.writeText(url);
+        if (navigator.clipboard) { 
+          navigator.clipboard.writeText(url);
+        } else { 
+          unsecuredCopyToClipboard(url);
+        }
     },
 
     onsubmit(data) {
