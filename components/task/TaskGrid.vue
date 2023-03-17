@@ -266,10 +266,10 @@ export default {
       }
     },
 
-    async copyTaskLink(task) {
+    copyTaskLink(task) {
       
         let url = window.location.host + `/tasks/${task.id}`;
-        await navigator.clipboard.writeText(url);
+        navigator.clipboard.writeText(url);
     }
   },
 };

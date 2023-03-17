@@ -641,16 +641,16 @@ export default {
       }).catch(e => console.warn(e))
     },
 
-    async copyProjectLink(proj) {
+    copyProjectLink(proj) {
       
       let url = window.location.host + `/projects/${proj.id}`;
-      await navigator.clipboard.writeText(url);
+      navigator.clipboard.writeText(url);
     },
 
-    async copyTaskLink(task) {
+    copyTaskLink(task) {
       
         let url = window.location.host + `/tasks/${task.id}`;
-        await navigator.clipboard.writeText(url);
+        navigator.clipboard.writeText(url);
     },
 
     updateTask(payload) {

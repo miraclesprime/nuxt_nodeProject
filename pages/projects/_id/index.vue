@@ -327,10 +327,10 @@ export default {
       this.value.files = payload.files
     },
 
-    async copyProjectLink() {
+    copyProjectLink() {
       let url = window.location.href;
 
-      await navigator.clipboard.writeText(url);
+      navigator.clipboard.writeText(url);
     },
 
     onsubmit(data) {

@@ -448,10 +448,10 @@ export default {
       this.loading = false
     },
 
-    async copyProjectLink(proj) {
+    copyProjectLink(proj) {
       let url = window.location.host + `/projects/${proj.id}`;
 
-      await navigator.clipboard.writeText(url);
+      navigator.clipboard.writeText(url);
     },
 
     updateKey() {
