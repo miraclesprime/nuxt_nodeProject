@@ -50,6 +50,7 @@ import dayjs from 'dayjs'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
 export default {
+  name: "Projects",
   data() {
     return {
       sortName: '',

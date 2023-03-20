@@ -100,7 +100,7 @@
       <button ref="topScroll" id="topScroll" style="visibility: hidden; opacity: 0" v-scroll-to="scrollId ? '#'+scrollId : '#sidebar-inner-wrap'"></button>
     </div>
 
-    <div class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-2">
+    <div v-if="currentTask.id" class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-2">
       <bib-avatar :src="userPhoto" size="2rem" class="flex-shrink-0" ></bib-avatar>
       <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
     </div>
@@ -401,12 +401,13 @@ export default {
           "statusId": $event.statusId,
           user,
           "text": `task "${this.form.title}" created`,
-        }).then(() => {
+        }).then((task) => {
+          console.log(task.data)
+          this.$store.dispatch("task/setSingleTask", task.data)
           this.$emit("update-key")
           this.$nuxt.$emit("update-key")
           this.loading = false
-          // this.hideSidebar()
-          this.$nuxt.$emit('close-sidebar')
+          // this.$nuxt.$emit('close-sidebar')
         }).catch(e => {
           console.warn(e)
           this.loading = false
@@ -531,7 +532,7 @@ export default {
 
       } else {
         console.log(this.form)
-        // this.createTask()
+        // this.createTask(this.form)
       }
     }, 1000),
     setFavorite() {

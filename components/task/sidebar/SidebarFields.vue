@@ -37,9 +37,9 @@
           <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter task description..." label="Description" v-on:keyup.native="debounceUpdateField('Description', 'description', form.description)"></bib-input>
         </div>
       </div>
-      <div class="py-05 px-05" id="sidebar-btn-wrapper">
+      <!-- <div class="py-05 px-05" id="sidebar-btn-wrapper">
         <bib-button v-show="!task.id" label="Create Task" variant="primary" v-on:click="createTask"></bib-button>
-      </div>
+      </div> -->
       <!-- <loading :loading="loading2 || loading"></loading> -->
     </div>
   </client-only>
@@ -226,9 +226,9 @@ export default {
         this.$emit("update-project-field", { projName: pName, projField: pField, projValue: pValue, secName: sName, secField: sField, secValue: sValue, oldProjValue: oldProjValue })
       }
     }, 1000),
-    createTask(){
+    /*createTask(){
       this.$emit("create-task", this.form)
-    },
+    },*/
   }
 }
 
