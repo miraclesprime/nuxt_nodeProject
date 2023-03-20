@@ -107,7 +107,7 @@
                 <span v-else class="flex-grow-1">
                   {{task[col.key]}}
                 </span>
-                <span class="width-1 font-xs text-gray2">{{task['id']}}</span>
+                <span class="width-105 height-105 align-center justify-center font-xs text-gray2 cursor-pointer bg-hover-gray2"><bib-icon icon="arrow-right" variant="gray2" hover-variant="gray6" ></bib-icon></span>
               </div>
               <template v-if="col.key == 'department'">
                 {{task[col.key]}}
@@ -323,8 +323,8 @@ export default {
     },
 
     debounceUpdate: _.debounce(function(task, field, value, $event){
-      // console.log(task.id, field, value)
-      if (value == "") {
+      // console.log(task.id, field, _.trim(value))
+      if (_.trim(value) == "") {
         $event.target.classList.add('error')
         console.warn(field + ' cannot be left blank')
       } else {
@@ -335,7 +335,7 @@ export default {
     
     debounceRenameSection: _.debounce(function(id, event) {
       // console.log(id, event.target.value)
-      if (event.target.value == "") {
+      if (_.trim(event.target.value) == "") {
         event.target.classList.add("error")
         console.warn('section title cannot be left blank')
       } else {

@@ -70,7 +70,7 @@
           </div>
           <div class="flex-grow-1">
             <!-- <span v-if="!editTitle" class="font-w-700" @click.stop="editTitle = true">{{form.title}}</span> -->
-            <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="taskTitleInput" v-model="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdate({name: 'Title', field:'title', value:form.title})" >
+            <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="taskTitleInput" v-model="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" >
             <!-- <bib-input v-else type="text" v-model="form.title" placeholder="Enter task name..." v-on:keyup.native="debounceUpdate('Title', form.title)" @blur="editTitle = false"></bib-input> -->
             <!-- <small v-show="error == 'invalid'" class="text-danger font-xs d-block" style="margin-top: -0.25rem;">Task name is required</small> -->
           </div>
@@ -529,6 +529,9 @@ export default {
         this.updateTask({ name: payload.name, field: payload.field, value: payload.value })
         this.reloadComments += 1
 
+      } else {
+        console.log(this.form)
+        // this.createTask()
       }
     }, 1000),
     setFavorite() {
