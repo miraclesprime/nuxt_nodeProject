@@ -156,13 +156,13 @@ export default {
       } else {
         this.form = {
           id: '',
-          title: "Enter title...",
-          createdAt: "",
+          title: "",
+          // createdAt: "",
           startDate: "",
           dueDate: "",
           userId: "",
           sectionId: "_section" + this.project.id,
-          projectId: this.project.id,
+          projectId: this.project.id || "",
           statusId: 1,
           priorityId: 2,
           description: '',
@@ -170,6 +170,11 @@ export default {
         }
         if (this.sectionIdActive) {
           this.form.sectionId = this.sectionIdActive
+        }
+        if (this.project?.id) {
+          this.form.sectionId = "_section" + this.project.id
+        } else {
+          this.form.sectionId = ""
         }
       }
     },
@@ -186,11 +191,13 @@ export default {
           // this.$emit("update-field", { name: "Project", field: 'projectId', value: this.form.projectId })
           return false
         }
+        this.$emit("newtask-fields", this.form)
         return false
       }
       this.loading2 = true
       if (this.form.projectId && (!this.form.sectionId || this.form.sectionId == "")) {
         this.form.sectionId = "_section" + this.form.projectId
+        this.$emit("newtask-fields", this.form)
       }
       // console.log(this.form, this.form.projectId)
       this.$store.dispatch("section/fetchProjectSections", { projectId: this.form.projectId, filter: 'all' }).then((sections) => {
@@ -211,13 +218,14 @@ export default {
         this.loading2 = false
         // this.debounceUpdateField("Project", "projectId", this.form.projectId)
         this.debounceProjectUpdateField("Project", "projectId", this.form.projectId, "Section","sectionId", this.form.sectionId, this.form.projectId)
-
       })
     },
     debounceUpdateField: _.debounce(function(name, field, value) {
       // console.log(name, field, value)
       if (this.form?.id) {
         this.$emit("update-field", { name: name, field: field, value: value })
+      } else {
+        this.$emit("newtask-fields", this.form)
       }
     }, 1000),
     debounceProjectUpdateField: _.debounce(function(pName, pField, pValue, sName, sField, sValue, oldProjValue) {
