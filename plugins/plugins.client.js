@@ -11,6 +11,6 @@ Vue.use(Vuelidate)
 Vue.use(vClickOutside)
 Vue.use(VueScrollTo, {
   container: "#ts-of-scroll-y",
-  duration: 1200,
+  duration: 1500,
   easing: 'ease-out'
 });

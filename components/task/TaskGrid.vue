@@ -138,7 +138,7 @@ export default {
         historyValue = dayjs(taskData.value).format('DD MMM, YYYY')
       }
 
-      if (value == "") {
+      if (_.trim(value) == "") {
         $event.target.classList.add('error')
         console.warn(field + ' cannot be left blank')
       } else {

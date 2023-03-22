@@ -7,10 +7,10 @@
     </div>
     <div class="action-right d-flex gap-05" id="ta-action-right">
       <ul class="actions" id="ta-action-right-actions">
-        <li class="action" id="ta-action1" v-tooltip="'Viewing'">
+        <li class="action" id="ta-action1" v-tooltip="'View'">
           <sorting-comp :items="viewing" icon="eye-open" v-on:change-sort="changeViewName"></sorting-comp>
         </li>
-        <li class="action" id="ta-action2" v-tooltip="'Sort by'">
+        <li class="action" id="ta-action2" v-tooltip="'Sort By'">
           <sorting-comp :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy"></sorting-comp>
         </li>
         

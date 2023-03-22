@@ -29,8 +29,8 @@ export default {
     },
 
     debounceUpdateTitle: _.debounce(function(event) {
-      console.log(event.target)
-      if (event.target.value == "") {
+      // console.log(event.target)
+      if (_.trim(event.target.value) == "") {
         event.target.classList.add('error')
         console.warn('section title cannot be left blank')
       } else {

@@ -10,18 +10,18 @@
     </div>
     <div class="action-right d-flex gap-05" id="ta-action-right">
       <ul class="actions" id="ta-action-right-actions">
-        <li class="action" id="ta-action1" title="Viewing" >
+        <li class="action" id="ta-action1" title="Viewing"  v-tooltip="'View'">
           <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="changeViewName"></sorting-comp>
         </li>
-        <li class="action" id="ta-action3" title="Group by" >
+        <li class="action" id="ta-action3" title="Group by"  v-tooltip="'Group By'">
           <sorting-comp label="Group by" :items="groupby" icon="accessibility-braille-solid" v-on:change-sort="groupBy"></sorting-comp>
         </li>
-        <li class="action" id="ta-action2" title="Sort by" >
+        <li class="action" id="ta-action2" title="Sort by"  v-tooltip="'Sort By'">
           <sorting-comp label="Sort by" :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy"></sorting-comp>
         </li>
         <li class="action" id="ta-action5">
           <!-- <span class="mr-025" id="ta-action5-text">View</span> -->
-          <div class="d-flex width-2 height-2 align-center justify-center bg-light bg-hover-gray2 shape-circle p-025 cursor-pointer" id="ta-action5-link" title="Change view" >
+          <div class="d-flex width-2 height-2 align-center justify-center bg-light bg-hover-gray2 shape-circle p-025 cursor-pointer" id="ta-action5-link" title="Change view"  v-tooltip="'List/Grid'">
             <bib-icon v-if="gridType == 'list'" icon="table" variant="gray6" @click.native="changeGridType('grid')"></bib-icon>
             <bib-icon v-if="gridType == 'grid'" icon="list" variant="gray6" @click.native="changeGridType('list')"></bib-icon>
           </div>

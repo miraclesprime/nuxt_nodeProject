@@ -50,6 +50,7 @@ import dayjs from 'dayjs'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
 export default {
+  name: "Projects",
   data() {
     return {
       sortName: '',
@@ -441,7 +442,7 @@ export default {
       })
       
       if (proj.data.statusCode == 200) {
-        this.$store.dispatch("project/setSingleProject", proj.data.data)
+        // this.$store.dispatch("project/setSingleProject", proj.data.data)
         this.updateKey()
         this.renameModal = false
       }
