@@ -70,7 +70,7 @@
           </div>
           <div class="flex-grow-1">
             <!-- <span v-if="!editTitle" class="font-w-700" @click.stop="editTitle = true">{{form.title}}</span> -->
-            <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="taskTitleInput" v-model="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" >
+            <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="taskTitleInput" v-model.trim="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" >
             <!-- <bib-input v-else type="text" v-model="form.title" placeholder="Enter task name..." v-on:keyup.native="debounceUpdate('Title', form.title)" @blur="editTitle = false"></bib-input> -->
             <!-- <small v-show="error == 'invalid'" class="text-danger font-xs d-block" style="margin-top: -0.25rem;">Task name is required</small> -->
           </div>
@@ -92,18 +92,21 @@
     </div>
 
     <div class="of-scroll-y d-grid" id="ts-of-scroll-y" style="grid-template-columns: none; align-items: start">
-      <sidebar-fields :task="currentTask" :loading="loading" @update-project-field="updateProject" @update-field="updateTask" @create-task="createTask"></sidebar-fields>
-      <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" ></sidebar-subtask>
-      <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
-      <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
-      <!-- <sidebar-history></sidebar-history> -->
-      <button ref="topScroll" id="topScroll" style="visibility: hidden; opacity: 0" v-scroll-to="scrollId ? '#'+scrollId : '#sidebar-inner-wrap'"></button>
+      <sidebar-fields :task="currentTask" :loading="loading" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform" ></sidebar-fields>
+      <template v-if="currentTask.id">
+        <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" ></sidebar-subtask>
+        <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
+        <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
+        <!-- <sidebar-history></sidebar-history> -->
+        <button ref="topScroll" id="topScroll" style="visibility: hidden; opacity: 0" v-scroll-to="scrollId"></button>
+      </template>
     </div>
 
-    <div class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-2">
+    <div v-if="currentTask.id" class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-2">
       <bib-avatar :src="userPhoto" size="2rem" class="flex-shrink-0" ></bib-avatar>
       <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
     </div>
+    <div v-else style="height: 10rem;"></div>
 
     <!-- <add-member-to-task ref="taskTeamModal"></add-member-to-task> -->
     <bib-modal-wrapper v-if="taskTeamModal" title="Team" size="lg" @close="taskTeamModal = false">
@@ -132,7 +135,7 @@ export default {
   props: {
     // activeTask: Object,
     sectionIdActive: Number,
-    scrollId: String,
+    scrollId: {type: String, default: "sidebar-inner-wrap"},
   },
   data: function() {
     return {
@@ -140,15 +143,15 @@ export default {
       // activeItem: {},
       // editTitle: false,
       form: {},
-      sidebarTabs: [
+      /*sidebarTabs: [
         { title: "Overview", value: "Overview" },
         { title: "Subtasks", value: "Subtasks" },
         { title: "Team", value: "Team" },
         { title: "Conversations", value: "Conversations" },
         { title: "Files", value: "Files" },
         { title: "History", value: "History" },
-      ],
-      taskFields: [{
+      ],*/
+      /*taskFields: [{
           key: "id",
           label: "#",
         },
@@ -172,8 +175,8 @@ export default {
           key: "dueDate",
           label: "Due Date",
         },
-      ],
-      assignee: "",
+      ],*/
+      // assignee: "",
       statusValues: STATUS,
       priorityValues: PRIORITY,
       department: DEPARTMENT,
@@ -299,8 +302,8 @@ export default {
           startDate: "",
           dueDate: "",
           userId: "",
-          sectionId: "_section" + this.project.id,
-          projectId: this.project.id,
+          sectionId: "",
+          projectId: "",
           statusId: 1,
           priorityId: 2,
           description: '',
@@ -367,46 +370,51 @@ export default {
         this.$nuxt.$emit("close-sidebar");
       }
     },
-    createTask($event) {
+    createTask(taskform) {
+      console.log(taskform)
+      // return
 
       if (this.error == "valid") {
         this.loading = true
 
         let user;
-        if (!$event.userId || $event.userId != "") {
-          user = this.teamMembers.filter(u => u.id == $event.userId)
+        if (!taskform.userId || taskform.userId != "") {
+          user = this.teamMembers.filter(u => u.id == taskform.userId)
         } else {
           user = null
         }
 
-        if ($event.projectId && (!$event.sectionId || $event.sectionId == "")) {
-          $event.sectionId = "_section" + $event.projectId
+        if (taskform.projectId && (!taskform.sectionId || taskform.sectionId == "")) {
+          taskform.sectionId = "_section" + taskform.projectId
+        } else {
+          taskform.sectionId = ""
         }
 
-        if (!$event.projectId || $event.projectId == "") {
-          $event.projectId = null
-          $event.sectionId = null
+        if (!taskform.projectId || taskform.projectId == "") {
+          taskform.projectId = null
+          taskform.sectionId = null
         }
 
         this.$store.dispatch("task/createTask", {
-          "sectionId": $event.sectionId,
-          "projectId": $event.projectId,
+          "sectionId": taskform.sectionId,
+          "projectId": taskform.projectId,
           "title": this.form.title,
-          "description": $event.description,
-          "createdAt": $event.createdAt || new Date(),
-          "startDate": $event.startDate || new Date(),
-          "dueDate": $event.dueDate || new Date(),
-          "priorityId": $event.priorityId,
-          "budget": 0,
-          "statusId": $event.statusId,
+          "description": taskform.description,
+          // "createdAt": taskform.createdAt || new Date(),
+          "startDate": taskform.startDate,
+          "dueDate": taskform.dueDate,
+          "priorityId": taskform.priorityId,
+          "budget": taskform.budget,
+          "statusId": taskform.statusId,
           user,
           "text": `task "${this.form.title}" created`,
-        }).then(() => {
+        }).then((task) => {
+          console.log(task.data)
+          this.$store.dispatch("task/setSingleTask", task.data)
           this.$emit("update-key")
           this.$nuxt.$emit("update-key")
           this.loading = false
-          // this.hideSidebar()
-          this.$nuxt.$emit('close-sidebar')
+          // this.$nuxt.$emit('close-sidebar')
         }).catch(e => {
           console.warn(e)
           this.loading = false
@@ -513,6 +521,11 @@ export default {
 
     },
 
+    updateTaskform(taskfields){
+      this.form = taskfields
+      this.createTask(this.form)
+    },
+
     debounceUpdate: _.debounce(function(payload) {
       if (this.form.id) {
         // console.log('Debounce', payload)
@@ -530,8 +543,12 @@ export default {
         this.reloadComments += 1
 
       } else {
-        console.log(this.form)
-        // this.createTask()
+        // if new task
+        this.$refs.taskTitleInput.blur()
+        // this.form.sectionId = ""
+        // this.form.projectId = ""
+        // console.log(this.form)
+        this.createTask(this.form)
       }
     }, 1000),
     setFavorite() {
@@ -655,8 +672,8 @@ export default {
 <style lang="scss" scoped>
 .side-panel {
   display: grid;
-  grid-template-rows: 1fr auto 1fr;
-  
+  /*grid-template-rows: 1fr auto 1fr;*/
+  grid-template-rows: 1fr minmax(70%, auto) 1fr;
 }
 
 .row {

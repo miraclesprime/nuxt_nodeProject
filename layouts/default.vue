@@ -237,8 +237,10 @@ export default {
       }
     });
     this.$root.$on('close-sidebar', () => {
+      // console.info('close-sidebar event')
       this.openSidebar = false
       this.$store.dispatch("task/setSingleTask", {})
+      // this.$store.dispatch('project/setSingleProject', {})
     })
     this.$root.$on("create-project-modal", () => {
       this.$refs.projectModals.showCreateProjectModal = true;

@@ -255,6 +255,11 @@ export default {
     }
   },
 
+  beforeDestroy(){
+    console.info("before destroy hook");
+    this.$store.dispatch('project/setSingleProject', {})
+  },
+
   methods: {
 
     modalOpen(content, title) {
@@ -263,7 +268,7 @@ export default {
       this.projectModalContent = content
     },
 
-    async fetchProject() {
+    /*async fetchProject() {
       const proj = await this.$axios.$get(`project/${this.$route.params.id}`, {
         headers: { 'Authorization': `Bearer ${this.token}` }
       })
@@ -276,7 +281,7 @@ export default {
       if (sec) {
         this.sections = sec.data
       }
-    },
+    },*/
 
     setFavorite() {
       this.favLoading = true
