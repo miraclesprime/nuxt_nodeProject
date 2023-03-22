@@ -257,7 +257,7 @@ export default {
 
   beforeDestroy(){
     console.info("before destroy hook");
-    this.$store.dispatch('project/setSingleProject', {})
+    // this.$store.dispatch('project/setSingleProject', {})
   },
 
   methods: {
