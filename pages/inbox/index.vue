@@ -20,15 +20,15 @@
           </ul> -->
           </div>
         </nav>
-        <div class="position-relative h-100 of-scroll-y" style="padding-bottom: 2rem;">
+        <div class="position-relative h-100 of-scroll-y" >
           <div v-for="(value, key) in combinedInbox">
             <h4 class="font-md text-gray6 text-capitalize py-05 px-2 border-bottom-light">{{key}}</h4>
             <template v-for="(o, index) in value">
               <inbox-item :item="o" :key="o.id"  @task-click="fetchTask" @project-click="fetchProject" :active="active"></inbox-item>
             </template>
           </div>
-          <div ref="infinitescrolltrigger" class="h-8"></div>
-          <loading :loading="loading"></loading>
+          <div ref="infinitescrolltrigger" v-show="currentPage <= pageCount" class="align-center justify-center text-gray5"> <bib-spinner variant="gray5"></bib-spinner> </div>
+          <!-- <loading :loading="loading"></loading> -->
         </div>
       </main>
       <aside class="position-relative bg-white border-left-gray4">
@@ -60,7 +60,7 @@ export default {
       active: 0,
       taskProject: '',
       // inboxStatus: [],
-      currentPage: 1,
+      currentPage: 0,
       pageCount: 1,
     }
   },
@@ -207,7 +207,7 @@ export default {
       return { today: t2, yesterday: y2, older: o2 }
     }
   },
-  fetch() {
+  /*fetch() {
     this.$axios.get('user/user-history', {
       headers: {
         "page": 1,
@@ -222,9 +222,9 @@ export default {
       console.warn(e)
       // this.loading = false
     })
-  },
+  },*/
   mounted() {
-    this.loading = true
+    // this.loading = true
 
     /*this.$axios.get('user/user-history', {
       headers: {
@@ -253,7 +253,7 @@ export default {
     scrollTrigger() {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-          if(entry.intersectionRatio > 0 && this.currentPage < this.pageCount) {
+          if(entry.intersectionRatio > 0 && this.currentPage <= this.pageCount) {
             console.log(this.currentPage, " of ", this.pageCount)
             /*const newdata = _.throttle( () => {
               console.log('throttle trigger')
@@ -261,10 +261,11 @@ export default {
 
             const newdata = _.debounce(() => {
               this.$store.dispatch("user/fetchUserHistory", { page: this.currentPage + 1}).then(h => {
-                console.log(h.data)
+                // console.log(h.data)
                 if (h.data.statusCode == 200) {
+                  this.pageCount = h.data.totalPage
                   this.currentPage++
-                  this.inbox = h.data.data
+                  this.inbox.push(...h.data.data)
                 }
               })
             }, 1500)
@@ -351,6 +352,8 @@ export default {
 .inbox-wrapper {
   main {
     flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
   }
 
   aside {
