@@ -20,14 +20,15 @@
           </ul> -->
           </div>
         </nav>
-        <div class="position-relative h-100 of-scroll-y">
+        <div class="position-relative h-100 of-scroll-y" >
           <div v-for="(value, key) in combinedInbox">
             <h4 class="font-md text-gray6 text-capitalize py-05 px-2 border-bottom-light">{{key}}</h4>
-            <template v-for="o in value">
-              <inbox-item :item="o" :key="o.id" @task-click="fetchTask" @project-click="fetchProject" :active="active" ></inbox-item>
+            <template v-for="(o, index) in value">
+              <inbox-item :item="o" :key="o.id"  @task-click="fetchTask" @project-click="fetchProject" :active="active"></inbox-item>
             </template>
           </div>
-          <loading :loading="loading"></loading>
+          <div ref="infinitescrolltrigger" v-show="currentPage <= pageCount" class="align-center justify-center text-gray5"> <bib-spinner variant="gray5"></bib-spinner> </div>
+          <!-- <loading :loading="loading"></loading> -->
         </div>
       </main>
       <aside class="position-relative bg-white border-left-gray4">
@@ -44,6 +45,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import dayjs from 'dayjs'
+import _ from 'lodash'
 export default {
 
   name: 'Inbox',
@@ -58,6 +60,8 @@ export default {
       active: 0,
       taskProject: '',
       // inboxStatus: [],
+      currentPage: 0,
+      pageCount: 1,
     }
   },
   computed: {
@@ -65,21 +69,23 @@ export default {
       // token: "token/getToken",
       // inboxStatus: "inbox/getInbox",
     }),
-    combinedInbox(){
-      let today = [], yesterday = [], older = [];
+    combinedInbox() {
+      let today = [],
+        yesterday = [],
+        older = [];
 
-      let inbox2 = { today: today, yesterday: yesterday, older: older}
+      let inbox2 = { today: today, yesterday: yesterday, older: older }
 
-      this.inbox.forEach((item,index) => {
+      this.inbox.forEach((item, index) => {
         // let ud = new Date(item.updatedAt).getTime()
         let timeDiff = new Date().getTime() - new Date(item.updatedAt).getTime()
         let daysDiff = Math.round(timeDiff / (1000 * 60 * 60 * 24))
         // console.info(item.id, daysDiff)
-        
-        if ( daysDiff >= 0 && daysDiff < 1) {
+
+        if (daysDiff >= 0 && daysDiff < 1) {
           today.push(item)
           return
-        } 
+        }
         if (daysDiff >= 1 && daysDiff < 2) {
           yesterday.push(item)
           return
@@ -87,7 +93,9 @@ export default {
         older.push(item)
       })
 
-      let o2 = [], t2 = [], y2 = []
+      let o2 = [],
+        t2 = [],
+        y2 = []
 
       today.forEach(o => {
         if (t2.length == 0) {
@@ -101,70 +109,70 @@ export default {
         if (prIndex >= 0) {
           if (!t2[prIndex]?.content) {
             t2[prIndex]['content'] = []
-          } 
+          }
           if (!t2[prIndex]?.comment) {
             t2[prIndex]['comment'] = []
           }
           t2[prIndex].content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
           if (o.projectComment.id) {
-            t2[prIndex].comment.push( o.projectComment )
+            t2[prIndex].comment.push(o.projectComment)
           }
           return
-        } 
+        }
 
         if (taIndex >= 0) {
           if (!t2[taIndex]?.content) {
             t2[taIndex]['content'] = []
-          } 
+          }
           if (!t2[taIndex]?.comment) {
             t2[taIndex]['comment'] = []
           }
           t2[taIndex].content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
           if (o.taskComment.id) {
-            t2[taIndex].comment.push( o.taskComment )
+            t2[taIndex].comment.push(o.taskComment)
           }
           return
-        } 
+        }
 
         t2.push(o)
-        
+
       })
 
       yesterday.forEach(o => {
         if (y2.length == 0) {
           y2.push(o)
         }
-        
+
         let prIndex = y2.findIndex(a => a.userId == o.userId && a?.projectId == o?.projectId)
         let taIndex = y2.findIndex(a => a.userId == o.userId && a?.taskId == o?.taskId)
 
         if (prIndex >= 0) {
           if (!y2[prIndex]?.content) {
             y2[prIndex]['content'] = []
-          } 
+          }
           if (!y2[prIndex]?.comment) {
             y2[prIndex]['comment'] = []
           }
           y2[prIndex].content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
           if (o.projectComment.id) {
-            y2[prIndex].comment.push( o.projectComment )
+            y2[prIndex].comment.push(o.projectComment)
           }
           return
-        } 
+        }
 
         if (taIndex >= 0) {
           if (!y2[taIndex]?.content) {
             y2[taIndex]['content'] = []
-          } 
+          }
           if (!y2[taIndex]?.comment) {
             y2[taIndex]['comment'] = []
           }
           y2[taIndex].content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
           if (o.taskComment.id) {
-            y2[taIndex].comment.push( o.taskComment )
+            y2[taIndex].comment.push(o.taskComment)
           }
           return
-        } 
+        }
 
         y2.push(o)
       })
@@ -176,45 +184,47 @@ export default {
           o2.push(o)
           return
         }
-        if((o2last?.taskId == o.taskId || o2last?.projectId == o.projectId) && o2last.userId == o.userId){
+        if ((o2last?.taskId == o.taskId || o2last?.projectId == o.projectId) && o2last.userId == o.userId) {
           if (!o2last?.content) {
             o2last['content'] = []
-          } 
+          }
           if (!o2last?.comment) {
             o2last['comment'] = []
           }
           o2last.content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
           if (o.taskComment.id) {
-            o2last.comment.push( o.taskComment )
+            o2last.comment.push(o.taskComment)
           }
           if (o.projectComment.id) {
-            o2last.comment.push( o.projectComment )
+            o2last.comment.push(o.projectComment)
           }
           o2[o2.length - 1] = o2last
         } else {
           o2.push(o)
         }
       })
-      
-      return { today: t2, yesterday: y2, older: o2}
+
+      return { today: t2, yesterday: y2, older: o2 }
     }
   },
-  fetch(){
+  /*fetch() {
     this.$axios.get('user/user-history', {
       headers: {
+        "page": 1,
         "Authorization": "Bearer " + localStorage.getItem("accessToken"),
       }
     }).then(i => {
       this.inbox = i.data.data
+      this.pageCount = i.data.totalPage
       // this.loading = false
       this.switchTaskProject()
     }).catch(e => {
       console.warn(e)
       // this.loading = false
     })
-  },
+  },*/
   mounted() {
-    this.loading = true
+    // this.loading = true
 
     /*this.$axios.get('user/user-history', {
       headers: {
@@ -229,19 +239,50 @@ export default {
       this.loading = false
     })*/
 
-    this.$store.dispatch("inbox/fetchInboxEntries").then(res=>{
+    this.$store.dispatch("inbox/fetchInboxEntries").then(res => {
       this.loading = false
-    }).catch( err => {
+    }).catch(err => {
       console.warn(err)
       this.loading = false
     })
+
+    this.scrollTrigger();
+
   },
   methods: {
-    testUserTask(arr, item){
+    scrollTrigger() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if(entry.intersectionRatio > 0 && this.currentPage <= this.pageCount) {
+            console.log(this.currentPage, " of ", this.pageCount)
+            /*const newdata = _.throttle( () => {
+              console.log('throttle trigger')
+            }, 1000)*/
+
+            const newdata = _.debounce(() => {
+              this.$store.dispatch("user/fetchUserHistory", { page: this.currentPage + 1}).then(h => {
+                // console.log(h.data)
+                if (h.data.statusCode == 200) {
+                  this.pageCount = h.data.totalPage
+                  this.currentPage++
+                  this.inbox.push(...h.data.data)
+                }
+              })
+            }, 1500)
+
+            newdata()
+          }
+        });
+      });
+      process.nextTick(()=>{
+        observer.observe(this.$refs.infinitescrolltrigger);
+      });
+    },
+    testUserTask(arr, item) {
       return arr.findIndex(a => a.userId == item.userId && a.taskId == item.taskId)
     },
-    testUserProject(arr, item){
-      return arr.findIndex(a => a.userId == item.userId && a.projectId == item.projectId)      
+    testUserProject(arr, item) {
+      return arr.findIndex(a => a.userId == item.userId && a.projectId == item.projectId)
     },
     switchTaskProject() {
       this.active = this.inbox[0].id
@@ -296,7 +337,7 @@ export default {
         })
     },
 
-    refreshTask(task){
+    refreshTask(task) {
       this.task = task
     }
 
@@ -311,6 +352,8 @@ export default {
 .inbox-wrapper {
   main {
     flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
   }
 
   aside {
