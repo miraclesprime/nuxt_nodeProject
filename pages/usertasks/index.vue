@@ -1,7 +1,7 @@
 <template>
   <client-only>
     <div id="task-page-wrapper" class="task-page-wrapper">
-      <page-title title="Tasks"></page-title>
+      <page-title :title="`${selectedUser.firstName} ${selectedUser.lastName}'s Tasks`"></page-title>
       <user-name-task-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:new-task="toggleSidebar($event)"></user-name-task-actions>
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
         <template v-if="gridType == 'list'">
@@ -69,13 +69,14 @@ export default {
       contextCoords: {},
       userfortask: "",
       tasks: [],
-      taskOrder: 'asc'
+      taskOrder: 'asc',
+      selectedUser: {}
     }
   },
   computed: {
     ...mapGetters({
         user: "user/getUser",
-        teamMembers: "user/getTeamMembers"
+        teamMembers: "user/getTeamMembers",
     }),
   },
 
@@ -94,6 +95,7 @@ export default {
             handler(newVal) {
                 this.userfortask = this.teamMembers.find((u) => {
                   if(u.email == newVal.email) {
+                    this.selectedUser = u
                     return u;
                   }
                 })
@@ -113,6 +115,7 @@ export default {
       _.delay(() => {
           this.userfortask = this.teamMembers.find((u) => {
             if(u.email == this.$route.query.email) {
+              this.selectedUser = u
               return u;
             }
           })
