@@ -23,7 +23,7 @@ export const getters = {
     return members
   },
 
-  getAppMembers(state){
+  getAppMembers(state) {
     let appmembers = []
     state.appMembers.map(t => {
       appmembers.push({ label: t.FirstName + ' ' + t.LastName, firstName: t.FirstName, lastName: t.LastName, email: t.Email, icon: "user", id: t.Id, status: t.Status, role: t.Role, avatar: t.Photo, selected: false })
@@ -191,12 +191,12 @@ export const mutations = {
     }
 
   },
-  
+
 };
 
 
 export const actions = {
-  
+
   async setUser(ctx, payload) {
     await ctx.commit('setUser', payload);
   },
@@ -214,22 +214,22 @@ export const actions = {
 
     ctx.commit("setTeamMembers", members)
 
-    if(JSON.parse(localStorage.getItem('user')).subr == 'USER') {
-        const userlist = await this.$axios.$get("/user/list", {
-          headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` }
+    if (JSON.parse(localStorage.getItem('user')).subr == 'USER') {
+      const userlist = await this.$axios.$get("/user/list", {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` }
+      })
+      if (userlist.statusCode == 200) {
+        let userTeam = members.filter(u => {
+          if (userlist.data.userIds.includes(u.Id)) {
+            return u
+          }
         })
-        if (userlist.statusCode == 200) {
-          let userTeam = members.filter(u => {
-            if(userlist.data.userIds.includes(u.Id)) {
-              return u
-            }
-          })
-          ctx.commit("setAppMembers", userTeam)
-        }  
+        ctx.commit("setAppMembers", userTeam)
+      }
     } else {
       ctx.commit("setAppMembers", members)
     }
-    
+
   },
 
   async setUserTasks(ctx, payload) {
@@ -247,5 +247,13 @@ export const actions = {
     ctx.commit('sortUserTasks', payload)
   },
 
-  
+  async fetchUserHistory(ctx, payload) {
+    const hist = await this.$axios.get('user/user-history', {
+      headers: {
+        "page": payload.page,
+        "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+      }
+    })
+    return hist
+  }
 };
