@@ -6,14 +6,11 @@
           collapseNavigation = !collapseNavigation;
         }" :isLightTheme="lightThemeChecked" >
       <template #topbar>
-        <bib-header :avatarLink="user2 ? user2.Photo : ''"  :isLightTheme="lightThemeChecked">
+        <bib-header :avatarLink="user2 ? user2.Photo : ''"  :isLightTheme="lightThemeChecked" :mainAction="btnText">
           <template #avatar_menu>
             <bib-button pop="arrowhead-right" :scale="1.3">
               <template v-slot:menu>
                 <div class="list" id="layout-list">
-                  <!-- <span class="list__item">
-                    <bib-icon icon="home" :scale="1.1" variant="gray5" class="mr-075"></bib-icon> My Account
-                  </span> -->
                   <span class="list__item" id="layout-list-item1">
                     <a :href="userProfileUrl" id="layout-list-item1-link">
                       <bib-icon icon="user-canonical" :scale="1.1" variant="gray5" class="mr-075"></bib-icon> My Profile
@@ -34,29 +31,6 @@
         <bib-app-switcher :menuItems="appItems"  :isLightTheme="lightThemeChecked" @toggle-theme="handleToggleWrapperTheme"></bib-app-switcher>
       </template>
       <template #navigation>
-        <!-- <bib-button v-show="!collapseNavigation" dropdown="" label="" class="height-3 create-dropdown ">
-          <template v-slot:menu>
-            <ul>
-              <li v-for="item in appHeaderActions.button.items" :key="item.label" class="d-flex align-center cursor-pointer" @click.stop="createAction(item)">
-                <bib-icon :variant="item.iconVariant" :icon="item.icon" :scale="1.1"></bib-icon>
-                <span class="ml-05">{{item.label}}</span>
-              </li>
-            </ul>
-          </template>
-        </bib-button> -->
-        <!-- <div v-show="!collapseNavigation">
-          <bib-button label="Create" variant="success" size="lg" pill class="w-75"></bib-button>
-          <bib-button dropdown="" label="" class="w-75" style="transform: translateY(-28px); z-index:9;">
-            <template v-slot:menu>
-              <ul>
-                <li v-for="item in appHeaderActions.button.items" :key="item.label" class="d-flex align-center" @click="createAction(item)">
-                  <bib-icon :variant="item.iconVariant" :icon="item.icon" :scale="1.1"></bib-icon>
-                  <span class="ml-05">{{item.label}}</span>
-                </li>
-              </ul>
-            </template>
-          </bib-button>
-        </div> -->
         <bib-app-navigation :items="navItems1" @click="goToRoute($event, navItems1)" :isLightTheme="lightThemeChecked"></bib-app-navigation>
         <!-- separator -->
         <div class=" mt-05 mb-05" :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']" style="height: 1px"></div>
@@ -65,9 +39,6 @@
         <div class=" mt-05 mb-05" :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']" style="height: 1px"></div>
         <bib-detail-collapse v-show="!collapseNavigation" label="Favorite Projects" label-weight="400" variant="light" open>
           <template v-slot:content>
-            <!-- <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light" id="layout-add-icon">
-              <bib-icon icon="add" variant="success" :scale="1.5" class="p-025 ml-025"></bib-icon> <span id=" layout-icon-text" class="p-025">Create a project</span>
-            </div> -->
             <bib-app-navigation :items="favProjects" @click="goToProject($event)"></bib-app-navigation>
           </template>
         </bib-detail-collapse>
@@ -75,9 +46,6 @@
         <div class=" mt-05 mb-05" :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']" style="height: 1px"></div>
         <bib-detail-collapse v-show="!collapseNavigation" label="People" label-weight="400" variant="light" open v-if="isAdmin">
           <template v-slot:content>
-            <!-- <div class="d-flex p-05 gap-05 cursor-pointer text-secondary text-hover-light">
-              <bib-icon icon="add" variant="success" :scale="2" class="p-025 ml-025"></bib-icon> <span class="p-025">Add a team mate</span>
-            </div> -->
             <bib-app-navigation :items="appMembers" @click="goToUsertask($event, teammate)"></bib-app-navigation>
           </template>
         </bib-detail-collapse>
@@ -198,7 +166,8 @@ export default {
       logoutUrl: process.env.LOGOUT_URL,
       sectionPreselect: null,
       scrollId: "",
-      isAdmin: false
+      isAdmin: false,
+      btnText: "upgrade"
     }
   },
   created() {
@@ -313,6 +282,12 @@ export default {
         }).join(''));
 
         let user = JSON.parse(jsonPayload);
+
+        if(user.subbs == 'FREETRIAL') {
+          this.btnText = "See Plans & Pricing"
+        } else {
+          this.btnText = "Upgrade"
+        }
 
         localStorage.setItem('user', JSON.stringify(user))
         this.$store.dispatch('user/setUser', user)
