@@ -60,7 +60,7 @@ export default {
       active: 0,
       taskProject: '',
       // inboxStatus: [],
-      currentPage: 0,
+      currentPage: -1,
       pageCount: 1,
     }
   },
