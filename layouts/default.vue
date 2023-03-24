@@ -167,7 +167,7 @@ export default {
       sectionPreselect: null,
       scrollId: "",
       isAdmin: false,
-      btnText: "upgrade"
+      btnText: "Upgrade"
     }
   },
   created() {
@@ -267,6 +267,12 @@ export default {
 
       // Rajeev
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnRUxZcWFRV1FHOWRuamsyIiwic3ViZSI6InJhamVldi5zaGFybWFAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJVU0VSIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY3MjYzOTg2MDMzMSwiZXhwIjoxNjgwNDE1ODYwMzMxLCJqdGkiOiJhYWZlYmUxYi1kZGI2LTRmODMtYjIzYy1hZWRkMDcxMzU1ZTEifQ.AxRf7tHVZC4r0Io6J9ghNZJscPkRKWM3LBOgevkQdKE"
+
+      //free
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJWWW14a2F6cFJqWWRKMFBvIiwic3ViZSI6ImFyaXR6YTNAc2hhcGVkY3YuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJEWE1WeWI4MmtEM2V2QVpFIiwic3ViYnMiOiJGUkVFVFJJQUwiLCJzdWJyIjoiQURNSU4iLCJzdWJjIjoiVW5pdGVkIFN0YXRlcyIsImVudiI6ImRldiIsImlhdCI6MTY3OTYzNzM2MzkxMiwiZXhwIjoxNjg3NDEzMzYzOTEyLCJqdGkiOiJkZGJiMzE1MC04ODkxLTQ5MjAtYTVjYy0yNDBhYTcxZTdhMDQifQ.7Xy5W1dEFUN-R6rHXYL3awJ5QjDa_73uxhGl_nqcvEc"
+
+      // Charan
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQeTdMRGR3cE9xMWUxWUtYIiwic3ViZSI6ImNoYXJhbi5wYWxAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJVU0VSIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY3NzQ5NjY2MDM4NywiZXhwIjoxNjg1MjcyNjYwMzg3LCJqdGkiOiJkNjAwOWQ0Zi1lNDFjLTQ2YWMtYjU0MC1iOTk3NzJmNDIzY2MifQ.6G04xtF0oRIaHr5gV4Jxx71TJRPb3sb3S1e85BMn3vc"
 
       // this.$cookies.set('b_ssojwt', cookie);
       // this.$store.dispatch('token/setToken', cookie);

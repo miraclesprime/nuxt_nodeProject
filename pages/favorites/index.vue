@@ -38,6 +38,15 @@
           </div>
         </template>
       </bib-modal-wrapper>
+      <!-- popup notification -->
+        <bib-popup-notification-wrapper>
+          <template #wrapper>
+            <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
+            </bib-popup-notification>
+          </template>
+        </bib-popup-notification-wrapper>
+      <!-- confirm delete task -->
+      <confirm-dialog v-if="confirmModal" :message="confirmMsg" @close="confirmDelete"></confirm-dialog>
     </div>
   </client-only>
 </template>
@@ -60,6 +69,8 @@ export default {
       activeProject: {},
       currentProject: {},
       activeTask: {},
+      taskToDelete: {},
+      popupMessages: [],
       key: 0,
       loading: false,
       loading2: false,
@@ -77,6 +88,8 @@ export default {
       taskDatepickerOpen: false,
       datepickerArgs: { label: null, field: null },
       popupCoords: {},
+      confirmModal: false,
+      confirmMsg: ""
     }
   },
 
@@ -823,13 +836,36 @@ export default {
           this.loading = false
         })
     },
+    confirmDelete(state){
+      console.log(state, this.taskToDelete)
+      this.confirmModal = false
+      this.confirmMsg = ""
+      if (state) {
+        this.$store.dispatch("task/deleteTask", this.taskToDelete)
+        .then(t => {
+          // console.log(t)
+          if (t.statusCode == 200) {
+            this.updateKey(t.message)
+            this.taskToDelete = {}
+          } else {
+            this.popupMessages.push({ text: t.message, variant: "orange" })
+            console.warn(t.message);
+          }
+        })
+        .catch(e => {
+          console.warn(e)
+        })
+      } 
+    },
 
     deleteTask(task) {
-      let del = confirm("Are you sure")
-      this.loading = true
-      if (del) {
-        this.$store.dispatch("task/deleteTask", task).then(t => {
+      // let del = confirm("Are you sure")
+      this.taskToDelete = task
+      this.confirmMsg = "Are you sure "
+      this.confirmModal = true
 
+      /*if (del) {
+        this.$store.dispatch("task/deleteTask", task).then(t => {
           if (t.statusCode == 200) {
             this.updateKey()
           } else {
@@ -840,9 +876,7 @@ export default {
           this.loading = false
           console.log(e)
         })
-      } else {
-        this.loading = false
-      }
+      } */
     },
 
     updateKey() {
