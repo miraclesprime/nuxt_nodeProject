@@ -46,12 +46,29 @@
         <!-- date-picker for list and board view -->
         <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
         <loading :loading="loading"></loading>
+        <!-- popup notification -->
         <bib-popup-notification-wrapper>
           <template #wrapper>
             <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
             </bib-popup-notification>
           </template>
         </bib-popup-notification-wrapper>
+        <!-- confirm delete task -->
+        <confirm-dialog v-if="confirmModal" :message="confirmMsg" @close="confirmDelete"></confirm-dialog>
+        <!-- confirm modal -->
+        <!-- <bib-modal-wrapper v-if="confirmModal" size="sm" @close="confirmModal = false">
+          <template slot="content">
+            <div class="text-center">
+              <p class="font-w-600"> Are you sure want to delete? </p>
+            </div>
+          </template>
+          <template slot="footer">
+            <div class="d-flex">
+              <bib-button label="No" variant="light" pill @click="confirmModal = false "></bib-button>
+              <bib-button label="Yes" variant="success" class="ml-auto" pill @click="deleteTask"></bib-button>
+            </div>
+          </template>
+        </bib-modal-wrapper> -->
       </div>
     </div>
   </client-only>
@@ -72,6 +89,7 @@ export default {
       taskFields: TaskFields,
       taskContextMenu: false,
       activeTask: {},
+      taskToDelete: {},
       contextMenuItems: TASK_CONTEXT_MENU,
       loading: false,
       flag: false,
@@ -83,6 +101,8 @@ export default {
       userPickerOpen: false,
       datePickerOpen: false,
       datepickerArgs: { label: "", field: ""},
+      confirmModal: false,
+      confirmMsg: ""
     }
   },
   computed: {
@@ -117,7 +137,7 @@ export default {
 
   methods: {
     showUserPicker(payload){
-      console.log('userpicker', payload)
+      // console.log('userpicker', payload)
       this.userPickerOpen = true
       this.datePickerOpen = false
       this.taskContextMenu = false
@@ -125,7 +145,7 @@ export default {
       this.activeTask = payload.task
     },
     showDatePicker(payload){
-      console.log('datepicker', payload)
+      // console.log('datepicker', payload)
       // payload consists of event, task, label, field
       this.datePickerOpen = true
       this.userPickerOpen = false
@@ -294,7 +314,7 @@ export default {
     },
 
     taskMarkComplete(task) {
-      this.loading = true
+      // this.loading = true
       if (typeof task == "object" && Object.keys(task).length > 0) {
         console.log(task)
       } else {
@@ -302,35 +322,41 @@ export default {
       }
       this.$store.dispatch('task/updateTaskStatus', task)
         .then((d) => {
-          this.loading = false
+          // this.loading = false
           this.$store.dispatch("task/setSingleTask", d).then(() => {
             this.updateKey()
           })
         }).catch(e => {
-          console.log(e)
-          this.loading = false
+          console.warn(e)
+          // this.loading = false
         })
     },
-
-    deleteTask(task) {
-      let del = confirm("Are you sure")
-      this.loading = true
-      if (del) {
-        this.$store.dispatch("task/deleteTask", task).then(t => {
-
+    confirmDelete(state){
+      console.log(state, this.taskToDelete)
+      this.confirmModal = false
+      this.confirmMsg = ""
+      if (state) {
+        this.$store.dispatch("task/deleteTask", this.taskToDelete)
+        .then(t => {
+          // console.log(t)
           if (t.statusCode == 200) {
-            this.updateKey()
+            this.updateKey(t.message)
+            this.taskToDelete = {}
           } else {
+            this.popupMessages.push({ text: t.message, variant: "orange" })
             console.warn(t.message);
           }
-          this.loading = false
-        }).catch(e => {
-          this.loading = false
-          console.log(e)
         })
-      } else {
-        this.loading = false
-      }
+        .catch(e => {
+          console.warn(e)
+        })
+      } 
+    },
+    deleteTask(task) {
+      // let del = confirm("Are you sure")
+      this.taskToDelete = task
+      this.confirmMsg = "Are you sure "
+      this.confirmModal = true
     },
 
     filterView($event) {

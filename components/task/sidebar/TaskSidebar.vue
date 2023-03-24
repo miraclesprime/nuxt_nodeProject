@@ -84,7 +84,7 @@
             <bib-icon icon="user-group-solid"></bib-icon>
           </div>
         </div>
-        <loading :loading="loading"></loading>
+        <!-- <loading :loading="loading"></loading> -->
       </div>
       <!-- <div class="d-flex align-center gap-1 justify-center text-secondary font-sm" v-show="loading">
         <bib-spinner variant="primary" :scale="2"></bib-spinner> Saving changes...
@@ -98,8 +98,8 @@
         <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
         <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
         <!-- <sidebar-history></sidebar-history> -->
-        <button ref="topScroll" id="topScroll" style="visibility: hidden; opacity: 0" v-scroll-to="scrollId"></button>
       </template>
+      <button ref="topScroll" id="topScroll" style="visibility: hidden; opacity: 0" v-scroll-to="scrollId"></button>
     </div>
 
     <div v-if="currentTask.id" class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-2">
@@ -550,7 +550,7 @@ export default {
         // console.log(this.form)
         this.createTask(this.form)
       }
-    }, 1000),
+    }, 800),
     setFavorite() {
       // console.info(this.isFavorite.status)
       if (this.isFavorite.status) {
