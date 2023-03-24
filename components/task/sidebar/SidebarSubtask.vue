@@ -88,7 +88,7 @@
         </tr>
       </tbody>
     </table>
-    <loading :loading="loading"></loading>
+    <!-- <loading :loading="loading"></loading> -->
     </div>
   </div>
 </client-only>
