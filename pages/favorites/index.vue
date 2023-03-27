@@ -855,7 +855,10 @@ export default {
         .catch(e => {
           console.warn(e)
         })
-      } 
+      } else {
+        this.popupMessages.push({ text: "Action cancelled", variant: "orange" })
+        this.taskToDelete = {}
+      }
     },
 
     deleteTask(task) {
@@ -879,7 +882,10 @@ export default {
       } */
     },
 
-    updateKey() {
+    updateKey($event) {
+      if ($event) {
+        this.popupMessages.push({ text: $event, variant: "success" })
+      }
       this.$store.dispatch('project/setFavProjects').then(() => {
         this.fetchProjects()
       })

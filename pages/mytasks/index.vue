@@ -56,7 +56,7 @@
                   <div class="task-section__body h-100">
                     <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
                       <template v-for="(task, index) in todo.tasks">
-                        <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker"></task-grid>
+                        <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker"></task-grid>
                       </template>
                     </draggable>
                   </div>
@@ -89,6 +89,14 @@
             </div>
           </template>
         </bib-modal-wrapper>
+        <bib-popup-notification-wrapper>
+          <template #wrapper>
+            <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
+            </bib-popup-notification>
+          </template>
+        </bib-popup-notification-wrapper>
+
+        <confirm-dialog v-if="confirmModal" :message="confirmMsg" @close="confirmDelete"></confirm-dialog>
       </div>
     </div>
   </client-only>
@@ -127,12 +135,16 @@ export default {
       todoId: null,
       todoTitle: null,
       activeTask: {},
+      taskToDelete: {},
       taskContextMenu: false,
       contextMenuItems: TASK_CONTEXT_MENU,
       popupCoords: {},
+      popupMessages: [],
       userPickerOpen: false,
       datePickerOpen: false,
       datepickerArgs: { label: "", field: ""},
+      confirmModal: false,
+      confirmMsg: ""
     }
   },
 
@@ -382,34 +394,48 @@ export default {
         .catch(e => console.warn(e))
     },
 
-    deleteTask(task) {
-      let del = confirm("Are you sure")
-      this.loading = true
-      if (del) {
-        this.$store.dispatch("task/deleteTask", task).then(t => {
-
+    confirmDelete(state){
+      console.log(state, this.taskToDelete)
+      this.confirmModal = false
+      this.confirmMsg = ""
+      if (state) {
+        this.$store.dispatch("task/deleteTask", this.taskToDelete)
+        .then(t => {
+          // console.log(t)
           if (t.statusCode == 200) {
-            this.updateKey()
+            this.updateKey(t.message)
+            this.taskToDelete = {}
           } else {
+            this.popupMessages.push({ text: t.message, variant: "orange" })
             console.warn(t.message);
           }
-          this.loading = false
-        }).catch(e => {
-          this.loading = false
-          console.log(e)
+        })
+        .catch(e => {
+          console.warn(e)
         })
       } else {
-        this.loading = false
+        this.popupMessages.push({ text: "Action cancelled", variant: "orange" })
+        this.taskToDelete = {}
       }
     },
 
-    updateKey() {
-      this.loading = true
+    deleteTask(task) {
+      // let del = confirm("Are you sure")
+      this.taskToDelete = task
+      this.confirmMsg = "Are you sure "
+      this.confirmModal = true
+    },
+
+    updateKey($event) {
+      if ($event) {
+        this.popupMessages.push({ text: $event, variant: "success" })
+      }
+      // this.loading = true
       this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
         if (res.statusCode == 200) {
           this.key += 1
         }
-        this.loading = false;
+        // this.loading = false;
       })
     },
 

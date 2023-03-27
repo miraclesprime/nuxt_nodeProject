@@ -40,7 +40,7 @@
         <div class="task-section__body" :id="'tgs-task-section-body-'+section.id">
           <draggable :list="section.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable" :class="{highlight: highlight == section.id}" :data-section="section.id">
             <template v-for="task in section.tasks">
-              <task-grid :task="task" :project="section.projectId" :key="task.title + templateKey + '-' + task.id" :class="[ currentTask.id == task.id ? 'active' : '']" @open-sidebar="openSidebar(task, section.projectId)" ></task-grid>
+              <task-grid :task="task" :project="section.projectId" :key="task.title + templateKey + '-' + task.id" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="$emit('update-key')" @open-sidebar="openSidebar(task, section.projectId)" ></task-grid>
             </template>
             <task-grid-blank :section="section" :key="'blankTaskGrid'+section.id" :ref="'blankTaskGrid'+section.id" @close-other="closeOtherBlankGrid"></task-grid-blank>
             <!-- <div v-click-outside="closeNewTask">
@@ -72,8 +72,8 @@
 </template>
 <script>
 /*
-  @vue-emits:['section-rename', 'section-delete', "create-task", 'delete-task', "set-favorite", "mark-complete", ],
-  @vue-nuxt-emits:[ "update-key", ],
+  @vue-emits:['section-rename', 'section-delete', "create-task", "set-favorite", "mark-complete", "update-key" ],
+  @vue-nuxt-emits:[ "create-task", "close-sidebar" ],
 */
 import draggable from 'vuedraggable'
 import { mapGetters } from 'vuex';
