@@ -8,10 +8,8 @@
           <div class="dialog__item " :class="[textVariant]" v-html="message">
           </div>
         </div>
-        <!-- buttons -->
-        <div class="d-flex justify-between pt-105">
-          <bib-button label="Cancel" variant="secondary" pill @click.native.stop="close(false)"></bib-button>
-          <bib-button label="Ok" variant="primary" pill @click.native.stop="close(true)"></bib-button>
+        <div class="d-flex justify-end pt-105">
+          <bib-button label="Ok" variant="primary" pill @click.native.stop="$emit('close')"></bib-button>
         </div>
       </div>
     </transition>
@@ -19,22 +17,22 @@
 </template>
 <script>
 /**
- * @module Molecules/Dialog
+ * @module Molecules/Alert
  * @author Vishwajeet
- * @desc Dialog component to be replaced with window dialogs.
- * @vue-prop {any} message = String.
+ * @desc Alert component to be replaced with window alert.
+ * @vue-prop {any} message=String.
  * @vue-prop {string} position = "center" - message horizontal position [ left | right | center].
- *
- * @vue-emit ['close'] returns [true | false] depends if the user clicks 'Cancel' or 'Ok'.
+ * @vue-emit ['close'] returns nothings. 
  */
 export default {
-  name: "ConfirmDialog",
+  name: "AlertDialog",
   props: {
     message: {
       type: String,
-      default: 'Notification Message.'
+      default: 'Alert'
     },
     position: { type: String, default: "center" },
+    // autohide: { default: 2000 },
     variant: {
       type: String,
       default: 'white'
@@ -44,11 +42,11 @@ export default {
     return {
       // showArray: [],
       // show: false,
-      timeoutName: `popupNotificationMsgTimeout_${Math.floor(Math.random() * Date.now())}`
     };
   },
 
   computed: {
+
     computedStyle() {
       if (this.position === 'left') {
         return 'margin-right: auto'
@@ -69,11 +67,6 @@ export default {
     }
 
   },
-  methods: {
-    close(state) {
-      this.$emit("close", state);
-    },
-  },
 };
 
 </script>
@@ -81,9 +74,6 @@ export default {
 .dialog-wrapper {
   position: fixed;
   inset: 0;
-  /*width: fit-content;
-  max-width: 100%;
-  height: fit-content;*/
   overflow-x: hidden;
   overflow-y: auto;
   z-index: 101;
@@ -117,12 +107,19 @@ export default {
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.5s;
+  transition: all 0.5s;
+}
+
+.fade-enter-to,
+.fade-leave {
+  /*opacity: 1;*/
+  margin-top: 2rem;
 }
 
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
+  margin-top: 1rem;
 }
 
 </style>

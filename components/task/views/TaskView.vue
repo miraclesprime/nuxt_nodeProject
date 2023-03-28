@@ -22,7 +22,16 @@
     <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
     
     <loading :loading="loading"></loading>
-    
+    <!-- popup notification -->
+      <bib-popup-notification-wrapper>
+        <template #wrapper>
+          <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
+          </bib-popup-notification>
+        </template>
+      </bib-popup-notification-wrapper>
+    <!-- confirm delete task -->
+    <confirm-dialog v-if="confirmModal" :message="confirmMsg" @close="confirmDelete"></confirm-dialog>
+
     <!-- section rename modal -->
     <bib-modal-wrapper v-if="renameModal" title="Rename section" @close="renameModal = false">
       <template slot="content">
@@ -64,7 +73,9 @@ export default {
       /*contextCoords: {},
       userPickerCoords: {},*/
       popupCoords: {},
+      popupMessages: [],
       activeTask: {},
+      taskToDelete: {},
       headless: null,
       flag: false,
       newSection: false,
@@ -77,6 +88,8 @@ export default {
       templateKey: 0,
       orderBy: "asc",
       renameModal: false,
+      confirmModal: false,
+      confirmMsg: "",
       sectionId: null,
       sectionTitle: "",
       newTaskButton: {
@@ -647,7 +660,37 @@ export default {
         .catch(e => console.warn(e))
     },
 
+    confirmDelete(state){
+      // console.log(state, this.taskToDelete)
+      this.confirmModal = false
+      this.confirmMsg = ""
+      if (state) {
+        this.$store.dispatch("task/deleteTask", this.taskToDelete)
+        .then(t => {
+          // console.log(t)
+          if (t.statusCode == 200) {
+            this.updateKey(t.message)
+            this.taskToDelete = {}
+          } else {
+            this.popupMessages.push({ text: t.message, variant: "orange" })
+            console.warn(t.message);
+          }
+        })
+        .catch(e => {
+          console.warn(e)
+        })
+      } else {
+        this.popupMessages.push({ text: "Action cancelled", variant: "orange" })
+        this.taskToDelete = {}
+      }
+    },
     deleteTask(task) {
+      // let del = confirm("Are you sure")
+      this.taskToDelete = task
+      this.confirmMsg = "Are you sure "
+      this.confirmModal = true
+    },
+    /*deleteTask(task) {
       // let del = confirm("Are you sure")
       this.loading = true
       // if (del) {
@@ -664,10 +707,7 @@ export default {
         this.loading = false
         console.log(e)
       })
-      /*} else {
-        this.loading = false
-      }*/
-    },
+    },*/
 
     deleteSection(section) {
       // let sec = this.sections.find(s => s.id == section.id)

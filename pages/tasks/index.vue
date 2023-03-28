@@ -55,20 +55,7 @@
         </bib-popup-notification-wrapper>
         <!-- confirm delete task -->
         <confirm-dialog v-if="confirmModal" :message="confirmMsg" @close="confirmDelete"></confirm-dialog>
-        <!-- confirm modal -->
-        <!-- <bib-modal-wrapper v-if="confirmModal" size="sm" @close="confirmModal = false">
-          <template slot="content">
-            <div class="text-center">
-              <p class="font-w-600"> Are you sure want to delete? </p>
-            </div>
-          </template>
-          <template slot="footer">
-            <div class="d-flex">
-              <bib-button label="No" variant="light" pill @click="confirmModal = false "></bib-button>
-              <bib-button label="Yes" variant="success" class="ml-auto" pill @click="deleteTask"></bib-button>
-            </div>
-          </template>
-        </bib-modal-wrapper> -->
+        <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
       </div>
     </div>
   </client-only>
@@ -102,7 +89,9 @@ export default {
       datePickerOpen: false,
       datepickerArgs: { label: "", field: ""},
       confirmModal: false,
-      confirmMsg: ""
+      confirmMsg: "",
+      alertDialog: false,
+      alertMsg: "",
     }
   },
   computed: {
@@ -214,7 +203,9 @@ export default {
           this.openSidebar(this.activeTask, 'task_files')
           break;
         default:
-          alert("no task assigned")
+          // alert("no task assigned")
+          this.alertDialog = true
+          this.alertMsg = "No task assigned"
           break;
       }
     },
@@ -332,7 +323,7 @@ export default {
         })
     },
     confirmDelete(state){
-      console.log(state, this.taskToDelete)
+      // console.log(state, this.taskToDelete)
       this.confirmModal = false
       this.confirmMsg = ""
       if (state) {
@@ -350,7 +341,10 @@ export default {
         .catch(e => {
           console.warn(e)
         })
-      } 
+      } else {
+        this.popupMessages.push({ text: "Action cancelled", variant: "orange" })
+        this.taskToDelete = {}
+      }
     },
     deleteTask(task) {
       // let del = confirm("Are you sure")
