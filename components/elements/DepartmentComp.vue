@@ -1,6 +1,6 @@
 <template>
   <div :id="'department-wrap-'+compId" class="d-flex gap-05 align-center">
-    <span v-if="department.title" :id="'department-text'+compId" class="text-capitalize">
+    <span v-if="department" :id="'department-text'+compId" class="text-capitalize">
       {{ department.title }}
     </span>
   </div>
