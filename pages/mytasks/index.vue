@@ -173,8 +173,11 @@ export default {
       /*this.$nuxt.$on('change-grid-type', ($event) => {
         this.gridType = $event;
       })*/
-      this.$nuxt.$on("update-key", () => {
+      this.$nuxt.$on("update-key", (msg) => {
         this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then(() => { this.key += 1 })
+        if (msg) {
+          this.popupMessages.push({text: msg, variant: 'success'})
+        }
       })
 
     }

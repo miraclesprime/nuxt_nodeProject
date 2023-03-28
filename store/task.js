@@ -149,6 +149,7 @@ export const actions = {
     if (res.data.statusCode == 200) {
       ctx.commit("getFavTasks", res.data.data)
     }
+    return res.data
   },
 
   // create Task

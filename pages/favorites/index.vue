@@ -101,11 +101,31 @@ export default {
     })
   },
 
+  created() {
+    if (process.client) {
+      /*this.$nuxt.$on('change-grid-type', ($event) => {
+        this.gridType = $event;
+      })*/
+      this.$nuxt.$on("update-key", (msg) => {
+        this.$store.dispatch('project/fetchFavProjects').then(() => {
+          this.fetchProjects()
+        })
+        this.$store.dispatch('task/getFavTasks').then(() => {
+          this.fetchTasks()
+        })
+        if (msg) {
+          this.popupMessages.push({text: msg, variant: 'success'})
+        }
+      })
+
+    }
+  },
+
   mounted() {
     this.loading = true
     let user = JSON.parse(localStorage.getItem("user"))
     this.$store.dispatch("company/fetchCompanyMembers", user.subb)
-    this.$store.dispatch('project/setFavProjects').then(() => {
+    this.$store.dispatch('project/fetchFavProjects').then(() => {
       this.fetchProjects()
     })
     this.$store.dispatch('task/getFavTasks').then(() => {
@@ -617,7 +637,7 @@ export default {
         this.$store.dispatch("project/deleteProject", project).then(t => {
 
           if (t.statusCode == 200) {
-            this.updateKey()
+            this.updateKey(t.message)
           } else {
             console.warn(t.message);
           }
@@ -886,7 +906,7 @@ export default {
       if ($event) {
         this.popupMessages.push({ text: $event, variant: "success" })
       }
-      this.$store.dispatch('project/setFavProjects').then(() => {
+      this.$store.dispatch('project/fetchFavProjects').then(() => {
         this.fetchProjects()
       })
 

@@ -108,6 +108,7 @@
     </div>
     <div v-else style="height: 10rem;"></div>
 
+    <confirm-dialog v-if="confirmModal" :message="confirmMsg" @close="confirmDelete"></confirm-dialog>
     <!-- <add-member-to-task ref="taskTeamModal"></add-member-to-task> -->
     <bib-modal-wrapper v-if="taskTeamModal" title="Team" size="lg" @close="taskTeamModal = false">
       <template slot="content">
@@ -195,6 +196,9 @@ export default {
       // reloadSubtask: 1,
       taskTeamModal: false,
       showSubtaskDetail: false,
+      taskToDelete: {},
+      confirmModal: false,
+      confirmMsg: "",
     };
   },
 
@@ -578,12 +582,41 @@ export default {
           this.loading = false
         })
     },
+    confirmDelete(state){
+      // console.log(state, this.taskToDelete)
+      this.confirmModal = false
+      this.confirmMsg = ""
+      if (state) {
+        this.$store.dispatch("task/deleteTask", this.taskToDelete)
+        .then(t => {
+          // console.log(t)
+          if (t.statusCode == 200) {
+            this.$nuxt.$emit("close-sidebar");
+            this.$nuxt.$emit("update-key", t.message)
+            // this.updateKey(t.message)
+            this.taskToDelete = {}
+          } else {
+            // this.popupMessages.push({ text: t.message, variant: "orange" })
+            console.warn(t.message);
+          }
+        })
+        .catch(e => {
+          console.warn(e)
+        })
+      } else {
+        // this.popupMessages.push({ text: "Action cancelled", variant: "orange" })
+        this.taskToDelete = {}
+      }
+    },
     deleteTask(task) {
-      this.loading = true
-      this.$store.dispatch("task/deleteTask", task).then(t => {
+      this.taskToDelete = task
+      this.confirmMsg = "Are you sure "
+      this.confirmModal = true
+      // this.loading = true
+      /*this.$store.dispatch("task/deleteTask", task).then(t => {
         if (t.statusCode == 200) {
-          this.$nuxt.$emit("update-key")
           this.$nuxt.$emit("close-sidebar");
+          this.$nuxt.$emit("update-key", t.message)
           // console.warn(t.message);
         } else {
           console.warn(t.message);
@@ -593,7 +626,7 @@ export default {
         // this.popupMessages.push({ text: e, variant: "danger" })
         this.loading = false
         console.log(e)
-      })
+      })*/
     },
     onFileInput(payload) {
       // console.log(payload)

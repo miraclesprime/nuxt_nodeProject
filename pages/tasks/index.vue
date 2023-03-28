@@ -111,9 +111,12 @@ export default {
         this.gridType = layout;
       })*/
 
-      this.$nuxt.$on("update-key", () => {
+      this.$nuxt.$on("update-key", (msg) => {
         let user = JSON.parse(localStorage.getItem("user"))
         this.$store.dispatch('company/setCompanyTasks', { companyId: user.subb }).then(() => { this.key += 1 })
+        if (msg) {
+          this.popupMessages.push({text: msg, variant: 'success'})
+        }
       })
       
       this.loading = true
