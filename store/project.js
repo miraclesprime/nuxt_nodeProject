@@ -352,7 +352,7 @@ export const actions = {
     
   },
 
-  async setFavProjects(ctx) {
+  async fetchFavProjects(ctx) {
     try {
       const fav = await this.$axios.$get("/project/user/favorites", {
         headers: {
@@ -364,6 +364,7 @@ export const actions = {
       } else {
         ctx.commit("setFavProjects", [])
       }
+      return fav
     } catch (e) {
       console.log(e);
     }

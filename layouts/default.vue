@@ -31,10 +31,10 @@
         <bib-app-switcher :menuItems="appItems"  :isLightTheme="lightThemeChecked" @toggle-theme="handleToggleWrapperTheme"></bib-app-switcher>
       </template>
       <template #navigation>
-        <bib-app-navigation :items="navItems1" @click="goToRoute($event, navItems1)" :isLightTheme="lightThemeChecked"></bib-app-navigation>
+        <bib-app-navigation :items="navItems1" @click="goToRoute" :isLightTheme="lightThemeChecked"></bib-app-navigation>
         <!-- separator -->
         <div class=" mt-05 mb-05" :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']" style="height: 1px"></div>
-        <bib-app-navigation :items="navItems2" @click="goToRoute($event, navItems2)" :isLightTheme="lightThemeChecked"></bib-app-navigation>
+        <bib-app-navigation :items="navItems2" @click="goToRoute" :isLightTheme="lightThemeChecked"></bib-app-navigation>
         <!-- separator -->
         <div class=" mt-05 mb-05" :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']" style="height: 1px"></div>
         <bib-detail-collapse v-show="!collapseNavigation" label="Favorite Projects" label-weight="400" variant="light" open>
@@ -325,7 +325,7 @@ export default {
             } else {
               this.isAdmin = false
             }
-            this.$store.dispatch("project/setFavProjects")
+            this.$store.dispatch("project/fetchFavProjects")
             // this.$store.dispatch("goals/setFavGoals")
             this.$store.dispatch("user/setTeamMembers")
             this.$store.dispatch("task/getFavTasks")
@@ -395,10 +395,11 @@ export default {
       return false;
     },
 
-    goToRoute($event) {
+    goToRoute(event, item) {
+      // console.log(event, item)
 
       for (let i = 0; i < this.navItems1.length; i++) {
-        if (this.navItems1[i].key == $event.key) {
+        if (this.navItems1[i].key == item.key) {
           this.navItems1[i].selected = true;
         } else {
           this.navItems1[i].selected = false;
@@ -406,40 +407,23 @@ export default {
       }
 
       for (let i = 0; i < this.navItems2.length; i++) {
-        if (this.navItems2[i].key == $event.key) {
+        if (this.navItems2[i].key == item.key) {
           this.navItems2[i].selected = true;
         } else {
           this.navItems2[i].selected = false;
         }
       }
 
-      if ($event.key == 'dashboard-route') {
-        this.$router.push('/dashboard')
-      }
-      if ($event.key == 'project-route') {
-        this.$router.push('/projects')
-      }
-      if ($event.key == 'favorites') {
-        this.$router.push('/favorites')
-      }
-      if ($event.key == 'task-route') {
-        this.$router.push('/tasks')
-      }
-      if ($event.key == 'mytasks') {
-        this.$router.push('/mytasks')
-      }
+      if (item.key == 'dashboard-route') this.$router.push('/dashboard')
+      if (item.key == 'project-route') this.$router.push('/projects')
+      if (item.key == 'favorites') this.$router.push('/favorites')
+      if (item.key == 'task-route') this.$router.push('/tasks')
+      if (item.key == 'mytasks') this.$router.push('/mytasks')
+      if (item.key == 'inbox') this.$router.push('/inbox')
 
-      // if ($event.key == 'goals') {
-      //   this.$router.push('/goals')
-      // }
-
-      // if ($event.key == 'dreams') {
-      //   this.$router.push('/dreams')
-      // }
+      // if (item.key == 'goals') this.$router.push('/goals')
+      // if (item.key == 'dreams') this.$router.push('/dreams')
       
-      if ($event.key == 'inbox') {
-        this.$router.push('/inbox')
-      }
     },
 
     goToProject($event) {
