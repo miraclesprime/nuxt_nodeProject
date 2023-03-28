@@ -33,6 +33,7 @@
             </div>
           </div>
         </template>
+        <alert-dialog v-show="alertDialog" :message="alertMsg"></alert-dialog>
         <loading :loading="loading"></loading>
         <bib-popup-notification-wrapper>
           <template #wrapper>
@@ -70,7 +71,9 @@ export default {
       userfortask: "",
       tasks: [],
       taskOrder: 'asc',
-      selectedUser: {}
+      selectedUser: {},
+      alertDialog: false,
+      alertMsg:"",
     }
   },
   computed: {
@@ -198,7 +201,9 @@ export default {
         case 'assign-task':
           break;
         default:
-          alert("no task assigned")
+          // alert("no task assigned")
+          this.alertDialog = true
+          this.alertMsg = "no task assigned"
           break;
       }
     },
