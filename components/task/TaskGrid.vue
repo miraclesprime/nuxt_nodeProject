@@ -14,7 +14,7 @@
           <bib-popup pop="elipsis" icon="elipsis" icon-variant="gray5" icon-hover-variant="dark">
             <template v-slot:menu>
               <div class="list" :id="'task-list'+task.id">
-                <span v-for="(item, index) in contextMenuItems" :key="item.label+index" class="list__item cursor-pointer" :class=" ['list__item__'+item.variant] " v-on:click.stop="contextItemClick(item)">
+                <span v-for="(item, index) in contextMenuItems" :key="item.label+index" class="list__item cursor-pointer" :class=" ['list__item__'+item.variant] " @click.stop="contextItemClick(item)">
                   <bib-icon v-if="item.icon" :icon="item.icon" :variant="activeVariant(item)" class="mr-05"></bib-icon> {{item.label}}
                 </span>
               </div>
@@ -45,6 +45,15 @@
         </div>
       </div>
       <loading2 :loading="loading" text="wait..."></loading2>
+      <!-- popup notification -->
+      <bib-popup-notification-wrapper>
+        <template #wrapper>
+          <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
+          </bib-popup-notification>
+        </template>
+      </bib-popup-notification-wrapper>
+      <!-- confirm delete task -->
+      <confirm-dialog v-if="confirmModal" :message="confirmMsg" @close="confirmDelete"></confirm-dialog>
     </div>
   </client-only>
 </template>
@@ -68,6 +77,10 @@ export default {
       contextMenuItems: TASK_CONTEXT_MENU,
       filterKey: "",
       loading: false,
+      popupMessages: [],
+      taskToDelete: {},
+      confirmModal: false,
+      confirmMsg: "",
     };
   },
   computed: {
@@ -224,16 +237,36 @@ export default {
           console.log(e)
         })
     },
+    confirmDelete(state){
+      // console.log(state, this.taskToDelete)
+      this.confirmModal = false
+      this.confirmMsg = ""
+      if (state) {
+        this.$store.dispatch("task/deleteTask", this.taskToDelete)
+        .then(t => {
+          // console.log(t)
+          if (t.statusCode == 200) {
+            this.popupMessages.push({ text: t.message, variant: "success" })
+            this.$emit("update-key", t.message)
+            this.taskToDelete = {}
+          } else {
+            this.popupMessages.push({ text: t.message, variant: "orange" })
+            console.warn(t.message);
+          }
+        })
+        .catch(e => {
+          console.warn(e)
+        })
+      } else {
+        this.popupMessages.push({ text: "Action cancelled", variant: "orange" })
+        this.taskToDelete = {}
+      }
+    },
     deleteTask(task) {
-      this.$store.dispatch("task/deleteTask", task).then(t => {
-        if (t.statusCode == 200) {
-          this.$emit("update-key", t.message)
-        } else {
-          console.warn(t.message);
-        }
-      }).catch(e => {
-        console.log(e)
-      })
+      // let del = confirm("Are you sure")
+      this.taskToDelete = task
+      this.confirmMsg = "Are you sure "
+      this.confirmModal = true
     },
     activeVariant(item) {
       if (item.label.includes('Complete')) {
@@ -249,6 +282,7 @@ export default {
       }
     },
     contextItemClick(item) {
+      // event.stopImmediatePropagation()
       // console.log(item)
       switch (item.event) {
         case 'done-task':
