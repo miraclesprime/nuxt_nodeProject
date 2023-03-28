@@ -5,18 +5,11 @@
     <span v-if="statusOutput.text && !iconOnly" :id="'status-text-'+compId " class="text-dark text-truncate">{{ statusOutput.text }}</span>
   </div>
 </template>
+
 <script>
-// import { ColorVariants } from '~/node_modules/@bizinbox/bib-ui-lib/dist/library'
-// import { ColorVariants } from '~/../bib-shared/js/colors'
 export default {
 
   name: 'StatusComp',
-
-  data() {
-    return {
-
-    }
-  },
   props: {
     status: { type: Object },
     iconOnly: { type: Boolean, default: false }
