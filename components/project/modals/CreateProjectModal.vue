@@ -6,6 +6,9 @@
         <bib-input v-model.trim="projectName" placeholder="Name your project"></bib-input>
         <small class="text-danger mb-05" style="margin-top:-0.5rem; display:block;">{{projectName ? '' : 'Project name is required'}}</small>
         <!-- <bib-input label="Department" v-model="department" placeholder="Type or select department name"></bib-input> -->
+        <template>
+            <bib-input v-model="department" :options="departments" size="md" type="select"></bib-input>
+        </template>
         <label id="create-project-modal-heading" class="text-gray6" style="margin-bottom: -0.5rem;">Assign a project lead <span class="text-danger">*</span></label>
         <bib-button test_id="create-project-dd1" dropdown1="add" label="Type name or email" v-model="owner" v-on:input-keydown="dropdownInputKeydown" :footer="{icon: 'add', label: 'Invite via email', event: 'footer-action'}" @footer-action="inviteViaEmail" class="mb-05">
           <template v-slot:menu>
@@ -21,13 +24,6 @@
           <email-chip v-if="Object.keys(owner).length > 0" :name="owner.label" :email="owner.email ? owner.email : owner.sube" :avatar="owner.avatar" v-bind:close="true" v-on:remove-email="owner = {}"></email-chip>
           <small v-else class="text-danger">Project owner is required</small>
         </div>
-        <!-- <bib-input label="Enter email" placeholder="Enter email"></bib-input> -->
-        <!-- <div id="cpm-jumbotron-wrapper" class="d-flex p-075 bg-light shape-rounded mt-1">
-          <div id="cpm-jumbotron" class="width-2 height-2">
-            <bib-avatar text="!" variant="primary" text-variant="light" size="1rem"></bib-avatar>
-          </div>
-          <span id="cpm-jumbotron-text" class="pl-05 font-sm text-gray6">Lorem ipsum, dolor sit amet consectetur adipisicing, Lorem ipsum dolor sit, amet. elit. Ad, Lorem ipsum dolor sit amet. sunt.</span>
-        </div> -->
         <loading :loading="loading"></loading>
       </template>
       <template v-slot:footer>
@@ -50,7 +46,7 @@ export default {
       showCreateProjectModal: false,
       projectName: "",
       owner: {},
-      department: "",
+      department: null,
       projectlead: "Enter name or email",
       filterKey: "",
       error: false,
@@ -63,6 +59,7 @@ export default {
     ...mapGetters({
       user: "user/getUser",
       teamMembers: "user/getTeamMembers",
+      departments: "department/getAllDepartments",
       // companyUsers: "company/getCompanyMembers"
     }),
     filterUser() {
@@ -74,6 +71,7 @@ export default {
     },
   },
   mounted() {
+    
     if (this.user) {
       this.$axios.get(`${process.env.USER_API_URL}/${this.user.sub}`, {
           headers: {
@@ -83,6 +81,8 @@ export default {
           this.owner = {id: res.data[0].Id, firstName: res.data[0].FirstName, lastName: res.data[0].LastName, avatar: res.data[0].Photo, email: res.data[0].Email};
         })
     }
+
+    this.$store.dispatch("department/fetchDepartments")
   },
   methods: {
     dropdownInputChange($event) {
@@ -120,7 +120,7 @@ export default {
       // let ownerId = this.owner.sub || this.owner.id
       // console.log(ownerId)
       if (this.projectName && this.owner.id) {
-        this.$store.dispatch('project/createProject', { user: this.owner, title: this.projectName }).then((res) => {
+        this.$store.dispatch('project/createProject', { user: this.owner, title: this.projectName, departmentId: this.department }).then((res) => {
           // console.log(res)
           this.loading = false
           if (res.statusCode == 200) {

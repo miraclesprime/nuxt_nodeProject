@@ -87,7 +87,9 @@
             <!-- <span class="width-1 font-xs text-gray2">{{task['id']}}</span> -->
           </div>
           <template v-if="col.key == 'department'">
-            {{task[col.key]}}
+            <span v-if="task[col.key]?.title" class="text-capitalize">
+              {{ task[col.key].title }}
+            </span>
           </template>
         </td>
       </tr>
@@ -153,7 +155,10 @@
             <!-- <span class="width-1 font-xs text-gray2">{{task['id']}}</span> -->
           </div>
           <template v-if="col.key == 'department'">
-            {{task[col.key]}}
+            <span v-if="task[col.key]?.title" class="text-capitalize">
+              {{ task[col.key].title }}
+            </span>
+            <!-- <department-comp :key="task.title+col.key+componentKey" :department="task[col.key]"></department-comp> -->
           </template>
         </td>
       </tr>

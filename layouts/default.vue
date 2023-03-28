@@ -39,14 +39,14 @@
         <div class=" mt-05 mb-05" :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']" style="height: 1px"></div>
         <bib-detail-collapse v-show="!collapseNavigation" label="Favorite Projects" label-weight="400" variant="light" open>
           <template v-slot:content>
-            <bib-app-navigation :items="favProjects" @click="goToProject($event)"></bib-app-navigation>
+            <bib-app-navigation :items="favProjects" @click="goToProject"></bib-app-navigation>
           </template>
         </bib-detail-collapse>
         <!-- separator -->
         <div class=" mt-05 mb-05" :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']" style="height: 1px"></div>
         <bib-detail-collapse v-show="!collapseNavigation" label="People" label-weight="400" variant="light" open v-if="isAdmin">
           <template v-slot:content>
-            <bib-app-navigation :items="appMembers" @click="goToUsertask($event, teammate)"></bib-app-navigation>
+            <bib-app-navigation :items="appMembers" @click="goToUsertask"></bib-app-navigation>
           </template>
         </bib-detail-collapse>
       </template>
@@ -259,7 +259,8 @@ export default {
       //   this.navItems2[3].selected = true;
       // }
 
-      // Dhruv
+      // Dhruv (admin)
+
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY3Mjg5MjY3MzA2NiwiZXhwIjoxNjgwNjY4NjczMDY2LCJqdGkiOiIyMzk3NjMyMS1mYWNiLTQzYWQtOTFjOS0wOWQzMzU2NDQ1ZmUifQ.Vuzv8ejSvZMqshraxNek9dfHy4SonAazZJfHO2BN1bY"
 
       // Vishwajeet
@@ -426,11 +427,12 @@ export default {
       
     },
 
-    goToProject($event) {
-      this.$router.push("/projects/" + $event.id)
+    goToProject($event, item) {
+      // console.log(...arguments)
+      this.$router.push("/projects/" + item.id)
     },
 
-    goToUsertask($event){
+    goToUsertask($event, item){
 
       // console.log($event.id, this.$route.path)
       // sessionStorage.setItem("usertaskadmin", $event.id)
@@ -438,8 +440,8 @@ export default {
       //   // window.location.reload()
       //   this.$router.push({ path: "/usertasks" })
       // }
-      this.teammate.find((u) => u.email == $event.email);
-      this.$router.push({ path: "/usertasks", query: {email: $event.email }})
+      this.teammate.find((u) => u.email == item.email);
+      this.$router.push({ path: "/usertasks", query: {email: item.email }})
     },
 
     // Handle User logout

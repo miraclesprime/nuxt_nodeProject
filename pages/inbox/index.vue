@@ -42,6 +42,7 @@
     </div>
   </client-only>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
 import dayjs from 'dayjs'
