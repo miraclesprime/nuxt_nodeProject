@@ -143,6 +143,18 @@
           </div>
         </template>
       </bib-modal-wrapper>
+
+      <bib-popup-notification-wrapper>
+        <template #wrapper>
+          <bib-popup-notification
+            v-for="(msg, index) in popupMessages"
+            :key="index"
+            :message="msg.text"
+            :variant="msg.variant"
+          >
+          </bib-popup-notification>
+        </template>
+      </bib-popup-notification-wrapper>
   </div>
 </client-only>
 </template>
@@ -177,7 +189,8 @@ export default {
         ]
       },
       editMessage: {},
-      projectTeamModal: false
+      projectTeamModal: false,
+      popupMessages: [],
     }
   },
 
@@ -371,16 +384,16 @@ export default {
       if (this.isFavorite.status) {
         this.$store.dispatch("project/removeFromFavorite", { id: this.project.id })
           .then(msg => {
-            // this.popupMessages.push({ text: msg, variant: "orange" })
-            alert(msg)
+            this.popupMessages.push({ text: msg, variant: "orange" })
+            // alert(msg)
           })
           .catch(e => console.log(e))
           .then(() => this.favLoading = false)
       } else {
         this.$store.dispatch("project/addToFavorite", { id: this.project.id })
           .then(msg => {
-            // this.popupMessages.push({ text: msg, variant: "success" })
-            alert(msg)
+            this.popupMessages.push({ text: msg, variant: "success" })
+            // alert(msg)
           })
           .catch(e => console.log(e))
           .then(() => this.favLoading = false)

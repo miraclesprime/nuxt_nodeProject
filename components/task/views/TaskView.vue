@@ -31,6 +31,7 @@
       </bib-popup-notification-wrapper>
     <!-- confirm delete task -->
     <confirm-dialog v-if="confirmModal" :message="confirmMsg" @close="confirmDelete"></confirm-dialog>
+    <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
 
     <!-- section rename modal -->
     <bib-modal-wrapper v-if="renameModal" title="Rename section" @close="renameModal = false">
@@ -90,6 +91,8 @@ export default {
       renameModal: false,
       confirmModal: false,
       confirmMsg: "",
+      alertDialog: false,
+      alertMsg:"",
       sectionId: null,
       sectionTitle: "",
       newTaskButton: {
@@ -244,7 +247,9 @@ export default {
           // statements_1
           break;
         default:
-          alert("no task assigned")
+          // alert("no task assigned")
+          this.alertDialog = true
+          this.alertMsg = "no task assigned"
           break;
       }
     },

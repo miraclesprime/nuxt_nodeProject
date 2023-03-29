@@ -1,6 +1,6 @@
 <template>
   <div class="text-center" id="dashboard-wrapper">
-    <h2 class="pt-2 pb-1 text-secondary" id="dashboard-title">Welcome </h2>
+    <h1 class="mt-3 mb-1 " id="dashboard-title"><span id="dashboard-title-span" class="dashboard-title">Welcome</span> </h1>
     <div class="row">
       <div class="col-3 mx-auto">
         <div v-if="user2" class="d-flex justify-center align-center flex-d-column">
@@ -39,3 +39,10 @@ export default {
 }
 
 </script>
+<style lang="scss" scoped>
+.dashboard-title {
+  background: linear-gradient(10deg, $purple, $orange);
+  background-clip: text;
+  color: transparent;
+}
+</style>

@@ -213,6 +213,8 @@ export default {
       user1: this.$userInfo(this.msg.userId),
       imgPreview: '',
       pdfPreview: '',
+      alertDialog: false,
+      alertMsg:"",
     }
   },
   computed: {
@@ -355,7 +357,9 @@ export default {
       let duplicateReaction = this.reactions.some(r => r.userId == this.user.Id && r.reaction == data)
       // console.warn(duplicateReaction)
       if (duplicateReaction) {
-        alert("Reaction already exists!")
+        // alert("Reaction already exists!")
+        this.alertDialog = true
+        this.alertMsg = "Reaction already exists"
         this.reactionSpinner = false
       } else {
         this.$axios.post("/task/" + this.msg.id + "/reaction", { reaction: data, taskId: this.task.id, text: `reacted ${data} to comment` }, {
@@ -375,7 +379,9 @@ export default {
       this.reactionSpinner = true
       let duplicateReaction = this.reactions.some(r => r.userId == this.user.Id && r.reaction == "👍")
       if (duplicateReaction) {
-        alert("Reaction already exists!")
+        // alert("Reaction already exists!")
+        this.alertDialog = true
+        this.alertMsg = "Reaction already exists"
         this.reactionSpinner = false
       } else {
         this.$axios.post("/task/" + this.msg.id + "/reaction", { reaction: "👍", taskId: this.task.id, text: "liked 👍 the comment" }, {

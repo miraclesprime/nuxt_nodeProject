@@ -191,13 +191,13 @@ export default {
           // this.$emit("update-field", { name: "Project", field: 'projectId', value: this.form.projectId })
           return false
         }
-        this.$emit("newtask-fields", this.form)
+        // this.$emit("newtask-fields", this.form)
         return false
       }
       this.loading2 = true
       if (this.form.projectId && (!this.form.sectionId || this.form.sectionId == "")) {
         this.form.sectionId = "_section" + this.form.projectId
-        this.$emit("newtask-fields", this.form)
+        // this.$emit("newtask-fields", this.form)
       }
       // console.log(this.form, this.form.projectId)
       this.$store.dispatch("section/fetchProjectSections", { projectId: this.form.projectId, filter: 'all' }).then((sections) => {
@@ -224,16 +224,16 @@ export default {
       // console.log(name, field, value)
       if (this.form?.id) {
         this.$emit("update-field", { name: name, field: field, value: value })
-      } else {
+      } /*else {
         this.$emit("newtask-fields", this.form)
-      }
+      }*/
     }, 1000),
     debounceProjectUpdateField: _.debounce(function(pName, pField, pValue, sName, sField, sValue, oldProjValue) {
       // console.log(name, field, value)
       if (this.form?.id) {
         this.$emit("update-project-field", { projName: pName, projField: pField, projValue: pValue, secName: sName, secField: sField, secValue: sValue, oldProjValue: oldProjValue })
       }
-    }, 1000),
+    }, 500),
     /*createTask(){
       this.$emit("create-task", this.form)
     },*/

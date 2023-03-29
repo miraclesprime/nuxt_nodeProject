@@ -120,6 +120,7 @@
         </div>
       </tippy>
     </div>
+    <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
 
     <!-- file upload modal -->
     <bib-modal-wrapper v-if="uploadModal" title="Select file(s)" @close="uploadModal = false">
@@ -228,6 +229,8 @@ export default {
       tempKey: 1,
       uploadModal: false,
       fileLoader: false,
+      alertDialog: false,
+      alertMsg:"",
     }
   },
   computed: {
@@ -354,7 +357,9 @@ export default {
       let duplicateReaction = this.reactions.some(r => r.userId == this.user.Id && r.reaction == data)
       
       if (duplicateReaction) {
-        alert("Reaction already exists!")
+        // alert("Reaction already exists!")
+        this.alertDialog = true
+        this.alertMsg = "Reaction already exists"
         this.reactionSpinner = false
       } else {
 
@@ -375,7 +380,9 @@ export default {
       this.reactionSpinner = true
       let duplicateReaction = this.reactions.some(r => r.userId == this.user.Id && r.reaction == "👍")
       if (duplicateReaction) {
-        alert("Reaction already exists!")
+        // alert("Reaction already exists!")
+        this.alertDialog = true
+        this.alertMsg = "Reaction already exists"
         this.reactionSpinner = false
       } else {
         this.$axios.post(`/${this.fieldkey}/${this.msg.id}/reaction`, { reaction: "👍", [`${this.fieldkey}Id`]: this.msg[`${this.fieldkey}Id`], text: "liked 👍 the comment" }, {

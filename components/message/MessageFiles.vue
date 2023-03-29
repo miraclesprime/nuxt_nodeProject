@@ -136,7 +136,7 @@ export default {
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(f.data.data);
-            alert('your file has downloaded!');
+            // alert('your file has downloaded!');
           }
         })
         .catch(e => console.error(e))
