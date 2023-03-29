@@ -82,7 +82,6 @@ export default {
         })
     }
 
-    this.$store.dispatch("department/fetchDepartments")
   },
   methods: {
     dropdownInputChange($event) {

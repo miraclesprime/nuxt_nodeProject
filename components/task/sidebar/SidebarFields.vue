@@ -21,7 +21,7 @@
           <bib-input type="select" label="Section" :options="sectionOpts" v-model.number="form.sectionId" placeholder="Please select ..." v-on:change.native="debounceUpdateField('Section', 'sectionId', form.sectionId)" :disabled="!form.projectId"></bib-input>
         </div>
         <div class="col-4" id="sidebar-col-3">
-          <bib-input type="select" label="Department" :options="department" placeholder="Please select..."></bib-input>
+          <bib-input type="select" label="Department" :options="departments" v-model.number="form.departmentId" v-on:change.native="debounceUpdateField('Department', 'departmentId', form.departmentId)"></bib-input>
         </div>
       </div>
       <div class="row mx-0" id="sidebar-row-3">
@@ -45,7 +45,7 @@
   </client-only>
 </template>
 <script>
-import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
+import { STATUS, PRIORITY } from '~/config/constants.js'
 import { mapGetters } from "vuex"
 import dayjs from 'dayjs'
 import _ from 'lodash'
@@ -71,7 +71,6 @@ export default {
       assignee: "",
       statusValues: STATUS,
       priorityValues: PRIORITY,
-      department: DEPARTMENT,
       form: {
 
       },
@@ -83,7 +82,7 @@ export default {
     ...mapGetters({
       teamMembers: "user/getTeamMembers",
       sections: "section/getProjectSections",
-      // currentTask: 'task/getSelectedTask',
+      departments: "department/getAllDepartments",
       project: "project/getSingleProject",
       projects: "project/getAllProjects",
     }),
@@ -163,6 +162,7 @@ export default {
           userId: "",
           sectionId: "_section" + this.project.id,
           projectId: this.project.id || "",
+          departmentId: 1,
           statusId: 1,
           priorityId: 2,
           description: '',
