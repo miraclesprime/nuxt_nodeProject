@@ -1,9 +1,6 @@
 <template>
   <article id="side-panel" class="side-panel" v-click-outside="closeSidebar">
     <div class="side-panel__header" id="ts-header">
-      <!-- <div class="side-panel__header__file__info" id='ts-header-file-info'>
-        <div id='ts-secondary-text' class="p-05 of-hidden text-of-elipsis h-fit text-wrap text-secondary"></div>
-      </div> -->
       <div class="d-flex justify-between side-panel__header__actions mb-05" id="ts-side-panel">
         <div class="d-flex align-center gap-05" id="ts-icon-close-Wrapper">
           <div id='ts-icon-close' class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" v-tooltip="'Close'" title="Close" @click="$nuxt.$emit('close-sidebar')">
@@ -28,7 +25,8 @@
             <bib-icon icon="folder-solid" variant="gray5" ></bib-icon>
           </div>
           <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="ts-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
-            <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" ></bib-icon>
+            <bib-spinner v-if="favProcess" :scale="2" ></bib-spinner>
+            <bib-icon v-else icon="bookmark-solid" :variant="isFavorite.variant" ></bib-icon>
           </div>
           <div id="ts-list-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center">
             <bib-button pop="elipsis">
@@ -38,7 +36,9 @@
                     <bib-icon icon="check-circle-solid" :variant="isComplete.variant" class="mr-075"></bib-icon> {{isComplete.text}}
                   </span>
                   <span class="list__item" id="ts-list-item-2" @click="setFavorite">
-                    <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
+                    <bib-spinner v-if="favProcess" :scale="2" ></bib-spinner>
+                    <bib-icon v-else icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon>
+                    {{isFavorite.text}}
                   </span>
                   <span class="list__item" id="ts-list-item-4" @click="showAddTeamModal">
                     <bib-icon icon="user-group-solid" variant="gray5" class="mr-075" ></bib-icon> Team
@@ -71,13 +71,8 @@
           <div class="flex-grow-1">
             <!-- <span v-if="!editTitle" class="font-w-700" @click.stop="editTitle = true">{{form.title}}</span> -->
             <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="taskTitleInput" v-model.trim="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" >
-            <!-- <bib-input v-else type="text" v-model="form.title" placeholder="Enter task name..." v-on:keyup.native="debounceUpdate('Title', form.title)" @blur="editTitle = false"></bib-input> -->
-            <!-- <small v-show="error == 'invalid'" class="text-danger font-xs d-block" style="margin-top: -0.25rem;">Task name is required</small> -->
           </div>
           <div>
-            <!-- <div class="team-avatar-list px-05">
-              <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :key="index" v-tooltip="team.label" :title="team.label" :style="{ 'left': -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
-            </div> -->
             <team-avatar-list :team="team"></team-avatar-list>
           </div>
           <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light cursor-pointer" v-tooltip="'Team'" @click="showAddTeamModal">
@@ -86,9 +81,6 @@
         </div>
         <!-- <loading :loading="loading"></loading> -->
       </div>
-      <!-- <div class="d-flex align-center gap-1 justify-center text-secondary font-sm" v-show="loading">
-        <bib-spinner variant="primary" :scale="2"></bib-spinner> Saving changes...
-      </div> -->
     </div>
 
     <div class="of-scroll-y d-grid" id="ts-of-scroll-y" style="grid-template-columns: none; align-items: start">
@@ -134,66 +126,26 @@ import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 export default {
   name: "TaskSidebar",
   props: {
-    // activeTask: Object,
     sectionIdActive: Number,
     scrollId: {type: String, default: "sidebar-inner-wrap"},
   },
   data: function() {
     return {
       loading: false,
+      favProcess: false,
       // activeItem: {},
       // editTitle: false,
       form: {},
-      /*sidebarTabs: [
-        { title: "Overview", value: "Overview" },
-        { title: "Subtasks", value: "Subtasks" },
-        { title: "Team", value: "Team" },
-        { title: "Conversations", value: "Conversations" },
-        { title: "Files", value: "Files" },
-        { title: "History", value: "History" },
-      ],*/
-      /*taskFields: [{
-          key: "id",
-          label: "#",
-        },
-        {
-          key: "title",
-          label: "Task name",
-        },
-        {
-          key: "status",
-          label: "Status",
-        },
-        {
-          key: "priority",
-          label: "Priority",
-        },
-        {
-          key: "assignee",
-          label: "Assignee",
-        },
-        {
-          key: "dueDate",
-          label: "Due Date",
-        },
-      ],*/
-      // assignee: "",
       statusValues: STATUS,
       priorityValues: PRIORITY,
       department: DEPARTMENT,
-      // error: false
-      // companyProjects: [],
       value: {
-        files: [
-          /*{ id: 156, name: 'thefile.png' },
-          { id: 282, name: 'anotherfile.jpg' },*/
-        ]
+        files: []
       },
       editMessage: {},
       reloadComments: 1,
       reloadHistory: 1,
       reloadFiles: 1,
-      // reloadSubtask: 1,
       taskTeamModal: false,
       showSubtaskDetail: false,
       taskToDelete: {},
@@ -208,35 +160,14 @@ export default {
       teamMembers: "user/getTeamMembers",
       tasks: "task/tasksForListView",
       team: 'task/getTaskMembers',
+      departments: "department/getAllDepartments",
       project: "project/getSingleProject",
       projects: "project/getAllProjects",
       sections: "section/getProjectSections",
       currentTask: "task/getSelectedTask",
       favTasks: "task/getFavTasks",
     }),
-    /*orgUsers() {
-      let data = this.teamMembers.map(u => {
-        return { label: u.firstName + ' ' + u.lastName, img: u.avatar, value: u.id }
-      })
-      return [{ label: 'Please select...', value: null }, ...data]
-    },
-    companyProjects() {
-      // console.log("new project", this.project.id, this.project.title)
-      let data = this.projects.map(p => {
-        return { label: p.title, value: p.id }
-      })
-      return [{ label: 'Please select...', value: null }, ...data]
-    },
-    sectionOpts() {
-      let sec = [{ label: "Select section", value: "_section" + this.form.projectId }]
-      this.sections.forEach((s) => {
-        if (s.title.includes("_section")) {
-          return false
-        }
-        sec.push({ label: s.title, value: s.id })
-      });
-      return sec
-    },*/
+    
     teammates() {
       let tm = { main: [], extra: [], all: [] }
       if (Object.keys(this.currentTask).length == 0) {
@@ -307,6 +238,7 @@ export default {
           dueDate: "",
           userId: "",
           sectionId: "",
+          departmentId: 1,
           projectId: "",
           statusId: 1,
           priorityId: 2,
@@ -375,8 +307,7 @@ export default {
       }
     },
     createTask(taskform) {
-      console.log(taskform)
-      // return
+      // console.log(taskform)
 
       if (this.error == "valid") {
         this.loading = true
@@ -404,10 +335,10 @@ export default {
           "projectId": taskform.projectId,
           "title": this.form.title,
           "description": taskform.description,
-          // "createdAt": taskform.createdAt || new Date(),
           "startDate": taskform.startDate,
           "dueDate": taskform.dueDate,
           "priorityId": taskform.priorityId,
+          "departmentId": taskform.departmentId,
           "budget": taskform.budget,
           "statusId": taskform.statusId,
           user,
@@ -459,6 +390,13 @@ export default {
         this.priorityValues.find(p => {
           if (p.value == taskData.value) {
             updatedvalue = p.label
+          }
+        })
+      }
+      if (taskData.name == 'Department') {
+        this.departments.find(d => {
+          if (d.value == taskData.value) {
+            updatedvalue = d.label
           }
         })
       }
@@ -522,7 +460,6 @@ export default {
           console.log(e)
           // this.loading = false
         })
-
     },
 
     updateTaskform(taskfields){
@@ -554,17 +491,20 @@ export default {
         // console.log(this.form)
         this.createTask(this.form)
       }
-    }, 800),
+    }, 500),
     setFavorite() {
+      this.favProcess = true
       // console.info(this.isFavorite.status)
       if (this.isFavorite.status) {
         this.$store.dispatch("task/removeFromFavorite", { id: this.currentTask.id })
           .then(msg => console.log(msg))
           .catch(e => console.log(e))
+          .then(()=>this.favProcess = false)
       } else {
         this.$store.dispatch("task/addToFavorite", { id: this.currentTask.id })
           .then(msg => console.log(msg))
           .catch(e => console.log(e))
+          .then(()=>this.favProcess = false)
       }
     },
     markComplete() {

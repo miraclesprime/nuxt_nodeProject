@@ -6,9 +6,9 @@
       </template>
       {{team.label}}
     </tippy>
-    <tippy arrow placement="left" >
+    <tippy v-if="teammates.extra.length" arrow placement="left" >
       <template v-slot:trigger>
-        <span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
+        <span class="extra">+{{teammates.extra.length}}</span>
       </template>
       {{extraNames}}
     </tippy>

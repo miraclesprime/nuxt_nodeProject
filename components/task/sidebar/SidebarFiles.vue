@@ -30,6 +30,7 @@
         <file-comp v-for="file in files" :key="file.key + fileKey" :property="file" @delete-file="deleteFile" @preview-file="showPreviewModal(file)"></file-comp>
       </template>
     </div>
+    <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
     <!-- File Upload modal -->
     <bib-modal-wrapper v-if="uploadModal" title="Select file(s)" @close="uploadModal = false">
       <template slot="content">
@@ -85,6 +86,8 @@ export default {
       pdfPreview: '',
       oldfilesCount: 0,
       ffcount: 0,
+      alertDialog: false,
+      alertMsg:"",
     }
   },
   props: {
@@ -213,7 +216,7 @@ export default {
             this.dbFiles = f.data.data
             this.showPlaceholder = false
             this.fileKey += 1;
-            this.$nuxt.$emit("refresh-history")
+            // this.$nuxt.$emit("refresh-history")
             // console.info('old files->', this.oldfilesCount, 'new files->', this.dbFiles.length)
             // if (this.ffcount <= 1 && this.oldfilesCount == this.dbFiles.length) {
             //   _.delay(() => {
@@ -267,7 +270,9 @@ export default {
           }).then(f => {
             // console.log(f.data)
             if (f.data.statusCode == 200) {
-              alert(f.data.message);
+              this.alertDialog = true
+              this.alertMsg = f.data.message
+              // alert(f.data.message);
               _.delay(() => {
                 this.getFiles().then((res) => {
                   this.fileKey += 1;

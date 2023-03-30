@@ -183,6 +183,7 @@ export default {
           this.sectionPreselect = payload
         }
         this.$store.dispatch("task/setSingleTask", {})
+        this.$store.commit("task/fetchTeamMember", [])
       } else {
         if (payload.project.length > 0) {
           // console.log(payload.project[0])
@@ -326,8 +327,8 @@ export default {
             } else {
               this.isAdmin = false
             }
+            this.$store.dispatch("department/fetchDepartments")
             this.$store.dispatch("project/fetchFavProjects")
-            // this.$store.dispatch("goals/setFavGoals")
             this.$store.dispatch("user/setTeamMembers")
             this.$store.dispatch("task/getFavTasks")
           }).catch((err) => {
