@@ -647,6 +647,18 @@ export const TASK_CONTEXT_MENU = [
   { label: 'Delete', event: 'delete-task', variant: 'danger', icon: '', iconVariant: '' },
 ]
 
+export const SUBTASK_CONTEXT_MENU = [
+  { label: 'Mark Complete', event: 'done-subtask', variant: '', icon: 'check-circle-solid', iconVariant: 'gray5' },
+  { label: 'View Details', event: 'view-subtask', variant: '', icon: 'eye-open', iconVariant: 'gray5' },
+  { label: 'Team', event: 'gotoTeam', variant: '', icon: 'user-group-solid', iconVariant: 'gray5' },
+  // { label: 'SubTasks', event: 'gotoSubtask', variant: '', icon: 'check-square-solid', iconVariant: 'gray5' },
+  // { label: 'Conversation', event: 'gotoComment', variant: '', icon: 'comment-forum-solid', iconVariant: 'gray5' },
+  // { label: 'Files', event: 'gotoFiles', variant: '', icon: 'folder-solid', iconVariant: 'gray5' },
+  { label: 'Copy Link', event: 'copy-subtask', variant: '', icon: 'duplicate', iconVariant: 'gray5' },
+  { label: 'Report', event: 'report-subtask', variant: '', icon: 'warning', iconVariant: 'gray5' },
+  { label: 'Delete', event: 'delete-subtask', variant: 'danger', icon: '', iconVariant: '' },
+]
+
 export const COMPANY_TASK_FIELDS = [
 
   {

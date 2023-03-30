@@ -216,7 +216,7 @@ export default {
             this.dbFiles = f.data.data
             this.showPlaceholder = false
             this.fileKey += 1;
-            this.$nuxt.$emit("refresh-history")
+            // this.$nuxt.$emit("refresh-history")
             // console.info('old files->', this.oldfilesCount, 'new files->', this.dbFiles.length)
             // if (this.ffcount <= 1 && this.oldfilesCount == this.dbFiles.length) {
             //   _.delay(() => {

@@ -50,19 +50,22 @@
             <!-- <bib-input type="date" size="sm" icon-left="calendar" v-model="date" placeholder="Set date..."></bib-input> -->
             <!-- <bib-datepicker v-model="date" size="sm" class="align-right" format="dd MMM yyyy" placeholder="Set date..."></bib-datepicker> -->
           </td>
-          <td>
-            <!-- <div class="d-flex gap-05">
+          <!-- <td>
+            <div class="d-flex gap-05">
               <bib-icon icon="trash" variant="gray5" v-on:click="newSubtask = false"></bib-icon>
               <bib-icon icon="tick" variant="success" v-on:click="createSubtask"></bib-icon>
-            </div> -->
-          </td>
+            </div>
+          </td> -->
         </tr>
-        <tr v-for="sub in localSubTasks" :key="sub.id + subkey">
+        <tr class="table-row" v-for="sub in localSubTasks" :key="sub.id + subkey" @click.right.prevent="subtaskRightClick($event, sub)" v-click-outside="closeContext">
           <!-- <td>{{sub.key}}</td> -->
           <td>
             <div class="d-flex gap-05 align-center">
               <span class="cursor-pointer" style="width:20px; height:20px" @click="markComplete(sub)"><bib-icon icon="check-circle-solid" :scale="1.25" :variant="sub.isDone ? 'success' : 'gray4'"></bib-icon></span>
               <input type="text" class="editable-input sm" v-model="sub.title" @input="debounceUpdate(sub, {field: 'title', value: sub.title, name: 'Title'})">
+              <span class="cursor-pointer shape-rounded width-105 height-105 align-center justify-center bg-hover-light" v-tooltip="'Detail'" @click="$emit('view-subtask', sub)" >
+                <bib-icon icon="arrow-right" :scale="1" variant="gray5" ></bib-icon>
+              </span>
             </div>
           </td>
           <td>
@@ -75,25 +78,26 @@
               <!-- <datepicker v-model="sub.dueDate" @input="updateSubtask(sub, {field: 'dueDate', value: sub.dueDate, name: 'Due date'})" placeholder="Select date..." wrapper-class="align-right" clear-button ></datepicker> -->
             </div>            
           </td>
-          <td>
+          <!-- <td>
             <div class="d-flex align-center justify-end gap-025">
               <span v-show="sub.canDelete" class="cursor-pointer shape-rounded width-105 height-105 align-center justify-center bg-hover-light" v-tooltip="'Delete'" @click="deleteSubtask(sub)">
                 <bib-icon icon="trash-solid" :scale="1" variant="gray5"></bib-icon>
               </span>
-              <span class="cursor-pointer shape-rounded width-105 height-105 align-center justify-center bg-hover-light" v-tooltip="'Detail'" @click="$emit('view-subtask', sub)" >
-                <bib-icon icon="arrow-right" :scale="1.25" variant="gray5" ></bib-icon>
-              </span>
             </div>
-          </td>
+          </td> -->
         </tr>
       </tbody>
     </table>
+    <!-- subtask context menu -->
+    <table-context-menu :items="subtaskContextMenu" :show="showContext" :coordinates="popupCoords" :activeItem="activeSubtask" @close-context="closeContext" ref="task_menu" @item-click="contextItemClick"></table-context-menu>
+    <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
     <!-- <loading :loading="loading"></loading> -->
     </div>
   </div>
 </client-only>
 </template>
 <script>
+import { DEPARTMENT, STATUS, PRIORITY, SUBTASK_CONTEXT_MENU } from '~/config/constants.js'
 import { mapGetters } from 'vuex';
 import _ from 'lodash'
 // import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -101,12 +105,14 @@ import _ from 'lodash'
 // import Datepicker from 'vue-datepicker'
 export default {
   name: "SidebarSubtask",
-  props: {
+  /*props: {
     reloadSubtask: Number
-  },
+  },*/
 
   data: function() {
     return {
+      statusValues: STATUS,
+      priorityValues: PRIORITY,
       // faCalendar,
       /*sortingItems: [
         { label: "Name", value: "name" },
@@ -114,7 +120,13 @@ export default {
         { label: "Due Date", value: "dueDate" },
         // { label: "Status", value:"status" },
       ],*/
+      subtaskContextMenu: SUBTASK_CONTEXT_MENU,
+      showContext: false,
+      popupCoords: {},
+      userPickerOpen: false,
+      datePickerOpen: false,
       newSubtask: false,
+      activeSubtask: {},
       title: "",
       assignee: "",
       date: "",
@@ -131,6 +143,8 @@ export default {
       flag: false,
       loading: false,
       subkey: 0,
+      alertDialog: false,
+      alertMsg:"",
     };
   },
   computed: {
@@ -164,10 +178,11 @@ export default {
   },
   watch: {
     currentTask(newVal) {
+      // console.log(newVal)
       if (Object.keys(newVal).length > 0) {
         this.loading = true
-        let usr = this.teamMembers.filter(t => t.id == this.currentTask.userId)
-        this.user = usr[0]
+        this.user = this.teamMembers.find(t => t.id == this.currentTask.userId)
+        // this.user = usr[0]
         this.$store.dispatch("subtask/fetchSubtasks", this.currentTask)
           .then(() => {
             // console.log('subtask fetched')
@@ -198,6 +213,50 @@ export default {
     })
   },
   methods: {
+    subtaskRightClick($event, subtask) {
+      this.showContext = true
+      this.userPickerOpen = false
+      this.datePickerOpen = false
+      // console.log($event)
+
+      this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
+      this.activeSubtask = subtask
+    },
+    closeContext(){
+      this.showContext = false
+    },
+    contextItemClick(key) {
+      console.log(key)
+      switch (key) {
+        case 'done-subtask':
+          this.markComplete(this.activeSubtask)
+          break;
+        case 'view-subtask':
+          this.$emit("view-subtask")
+          break;
+        case 'delete-subtask':
+          this.deleteTask(this.activeSubtask)
+          break;
+        case 'copy-subtask':
+          this.copyLink(this.activeSubtask)
+          break;
+        case 'gotoTeam':
+          this.$nuxt.$emit('add-member-to-subtask')
+          break;
+        /*case 'gotoComment':
+          this.openSidebar(this.activeSubtask)
+          break;
+        case 'gotoFiles':
+          this.openSidebar(this.activeSubtask)
+          break;*/
+        
+        default:
+          // alert("no task assigned")
+          this.alertDialog = true
+          this.alertMsg = "no task assigned"
+          break;
+      }
+    },
     openCreateSubtask() {
       this.newSubtask = true
       this.$nextTick(() => {
@@ -258,11 +317,11 @@ export default {
     debounceCreate: _.debounce(function() {
       // console.warn("debounceCreate fired")
       this.createSubtask()
-    }, 1500),
+    }, 800),
 
     debounceUpdate: _.debounce(function(subtask, data) {
       this.updateSubtask(subtask, data)
-    }, 1500),
+    }, 1000),
 
     markComplete(subtask){
       // let sub = subtask
@@ -282,13 +341,23 @@ export default {
       let updata = {[data.field]: data.value}
       let userobj = {}
       let sub
+      let histvalue = data.value
       if (data.name == 'Status' && data.value == 5) {
           updata = { [data.field]: data.value, isDone: true }
+          let st = this.statusValues.find(s => s.value == data.value)
+          histvalue = st.label
       } 
       
       if (data.name == 'Status' && data.value != 5) {
           updata = { [data.field]: data.value, isDone: false }
+          let st = this.statusValues.find(s => s.value == data.value)
+          histvalue = st.label
       } 
+
+      if ( data.name == "Priority"){
+          let pr = this.priorityValues.find(p => p.value == data.value)
+          histvalue = pr.label
+      }
 
       if(data.name == 'Title') {
         updata = { [data.field]: data.value }
@@ -297,10 +366,19 @@ export default {
       if (data.name == 'User') {
           userobj = this.$userInfo(data.value)
           let user = { id: userobj.Id, email: userobj.Email, firstName: userobj.FirstName, lastName: userobj.LastName }
-          sub = await this.$store.dispatch("subtask/updateSubtask", { id: subtask.id, data: updata, user, text: `updated ${data.name} to ${userobj.Name}` })
+          sub = await this.$store.dispatch("subtask/updateSubtask", {
+            id: subtask.id,
+            data: updata,
+            user,
+            text: `updated ${data.name} to ${userobj.Name}`
+          })
       } else {
-          console.log(data, userobj, updata)
-          sub = await this.$store.dispatch("subtask/updateSubtask", { id: subtask.id, data: updata, text: `updated ${data.name} to ${data.value}` })
+          // console.log(data, userobj, updata)
+          sub = await this.$store.dispatch("subtask/updateSubtask", {
+            id: subtask.id,
+            data: updata,
+            text: `updated ${data.name} to ${histvalue}`
+          })
       }
       // console.log(sub.data)
       if (sub.statusCode == 200) {
@@ -311,19 +389,6 @@ export default {
       } else {
           console.warn("error")
       }
-      /*// console.log(subtask.id, key, subtask[key])
-      let updata = { [data.field]: data.value }
-      if (data.field == 'Status') {
-        updata = { [data.field]: data.value, isDone: subtask.isDone }
-      }
-      const sub = await this.$store.dispatch("subtask/updateSubtask", { id: subtask.id, data: updata, text: `updated ${data.name} to ${data.value}` })
-      // console.log(sub.data)
-      if (sub.statusCode == 200) {
-        // console.log('update subtask success->', sub.data)
-        this.subkey += 1
-      } else {
-        console.warn("error")
-      }*/
     },
 
     async deleteSubtask(subtask) {
@@ -338,6 +403,14 @@ export default {
       this.loading = false
     },
 
+    copyLink(subtask) {
+      let url = window.location.host + `/subtask/${subtask.id}`;
+      if (navigator.clipboard) { 
+        navigator.clipboard.writeText(url);
+      } else { 
+        unsecuredCopyToClipboard(url);
+      }
+    }
     
   }
 };
@@ -401,6 +474,8 @@ export default {
       }
     }
   }
+
+  .table-row {  }
 
   tr.new {
 
