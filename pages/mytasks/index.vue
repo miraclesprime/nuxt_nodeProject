@@ -74,6 +74,9 @@
           <!-- date-picker for list and board view -->
           <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
         </div>
+        
+        <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
+
         <!-- rename section modal -->
         <bib-modal-wrapper v-if="renameModal" title="Rename section" @close="renameModal = false">
           <template slot="content">
@@ -144,7 +147,9 @@ export default {
       datePickerOpen: false,
       datepickerArgs: { label: "", field: ""},
       confirmModal: false,
-      confirmMsg: ""
+      confirmMsg: "",
+      alertDialog: false,
+      alertMsg:"",
     }
   },
 
@@ -261,7 +266,9 @@ export default {
           this.openSidebar(this.activeTask, 'task_files')
           break;
         default:
-          alert("no task assigned")
+          // alert("no task assigned")
+          this.alertDialog = true
+          this.alertMsg = "no task assigned"
           break;
       }
     },
@@ -481,7 +488,11 @@ export default {
       }).then(res => {
         if (res.statusCode == 200) {
           this.updateKey()
-        } else { alert("Error -> "+ res.statusCode) }
+        } else { 
+          this.alertDialog = true
+          this.alertMsg = "Error -> "+ res.statusCode
+          // alert("Error -> "+ res.statusCode)
+        }
       }).catch(e => console.warn(e))
     },
 
@@ -520,7 +531,9 @@ export default {
       })
 
       if (taskDnD.statusCode != 200) {
-        alert(taskDnD.message)
+        this.alertDialog = true
+        this.alertMsg = taskDnD.message
+        // alert(taskDnD.message)
       }
 
       this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
@@ -551,7 +564,9 @@ export default {
       })
 
       if (todoDnD.statusCode != 200) {
-        alert(taskDnD.message)
+        this.alertDialog = true
+        this.alertMsg = taskDnD.message
+        // alert(taskDnD.message)
       }
 
       this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {

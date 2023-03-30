@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
+import { STATUS, PRIORITY } from '~/config/constants.js'
 import { mapGetters } from 'vuex'
 import dayjs from 'dayjs'
 import _ from 'lodash'
@@ -101,7 +101,6 @@ export default {
             loading: false,
             statusValues: STATUS,
             priorityValues: PRIORITY,
-            department: DEPARTMENT,
             form: {},
             value: {
                 files: []
@@ -132,6 +131,7 @@ export default {
          ...mapGetters({
             task: 'task/getSelectedTask',
             favTasks: "task/getFavTasks",
+            departments: "department/getAllDepartments",
             team: 'task/getTaskMembers',
             teamMembers: "user/getTeamMembers",
             projects: "project/getAllProjects",
@@ -257,6 +257,15 @@ export default {
                     }
                 })
             }
+
+            if (taskData.name == 'Department') {
+                this.departments.find(d => {
+                    if (d.value == taskData.value) {
+                        updatedvalue = d.label
+                    }
+                })
+            }
+
             if (taskData.name == 'Priority') {
                 this.priorityValues.find(p => {
                     if (p.value == taskData.value) {

@@ -2,20 +2,13 @@
 <client-only>
   <div class="h-100 inbox-project">
     <div class="d-flex gap-05 align-center justify-end position-relative border-bottom-light px-105 py-05" id="project-id-button-wraps">
-      
-      <!-- <bib-button label="invite" variant="light" pill v-on:click="$nuxt.$emit('add-teammember-modal')"></bib-button> -->
-      <!-- <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item1" v-tooltip="'Team'" @click="projectTeamModal = true">
-        <bib-icon icon="user-group-solid" class="m-auto"></bib-icon>
-      </div> -->
+
       <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item2" v-tooltip="'Conversation'">
         <bib-icon icon="comment-forum-solid" class="m-auto"></bib-icon>
       </div>
       <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item3" v-tooltip="'Files'">
         <bib-icon icon="folder-solid" class="m-auto"></bib-icon>
       </div>
-      <!-- <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item4" v-tooltip="'History'" >
-          <bib-icon icon="time" class="m-auto"></bib-icon>
-        </div> -->
       <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex align-center justify-center cursor-pointer" id="project-id-bookmark" @click="setFavorite" v-tooltip="isFavorite.text">
         <bib-icon icon="bookmark-solid" :variant="isFavorite.variant"></bib-icon>
       </div>
@@ -23,8 +16,6 @@
         <bib-popup pop="horizontal-dots" id="project-id-horizontal-dots">
           <template v-slot:menu>
             <div class="list" id="project-id-list">
-              <!-- <span class="list__item" id="project-id-list-item1" @click="modalOpen('overview', 'Overview')">View details</span> -->
-              <!-- <hr id="project-id-hr"> -->
               <span class="list__item" id="project-id-list-item2" @click="setFavorite">
                 <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
               </span>
@@ -37,13 +28,6 @@
               <span class="list__item" id="project-id-list-item3">
                 <bib-icon icon="folder-solid" class="mr-075"></bib-icon> Files
               </span>
-              <!-- <span class="list__item" id="project-id-list-item3">
-                  <bib-icon icon="group" class="mr-075"></bib-icon> Subtasks
-                </span> -->
-              <!-- <span class="list__item" id="project-id-list-item4" @click="renameModal = !renameModal">
-                  <bib-icon icon="pencil" class="mr-075"></bib-icon> Rename
-                </span> -->
-              <!-- <div class="mt-1" id="project-id-div"></div> -->
               <span class="list__item" id="project-id-list-item5" @click="reportModal = !reportModal">
                 <bib-icon icon="warning" class="mr-075"></bib-icon> Report
               </span>
@@ -59,14 +43,10 @@
     <div class="d-flex align-center gap-05 px-105 py-025 border-bottom-light">
       <div class="width-2 height-2 d-inline-flex align-center justify-center cursor-pointer">
         <bib-icon icon="check-circle-solid" :variant="isComplete.variant" :scale="1.5"></bib-icon>
-        <!-- <bib-avatar></bib-avatar> -->
       </div>
       <div class="flex-grow-1">
         <input type="text" class="editable-input" ref="taskTitleInput" placeholder="Project name" v-model="activeProject.title" v-on:keyup="debounceUpdate('title', activeProject.title)">
       </div>
-      <!-- <div class="team-avatar-list pr-05">
-        <bib-avatar v-for="(team, index) in teammates.main" :src="team.avatar" :key="index" size="2rem" :style="{ left: -0.5 * index + 'rem'}" class="border-gray2"></bib-avatar><span v-show="teammates.extra.length" class="extra">+{{teammates.extra.length}}</span>
-      </div> -->
       <team-avatar-list :team="team" ></team-avatar-list>
       <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex align-center justify-center cursor-pointer" id="project-id-team-menu" v-tooltip="'Team'" @click="showAddTeamModal"> 
         <bib-icon icon="user-group-solid" ></bib-icon>
@@ -88,7 +68,7 @@
         </div>
         <div id="proj-row3" class="row">
           <div id="proj-row3-col2" class="col-12">
-            <bib-input type="select" label="Department" :options="department" placeholder="Department"></bib-input>
+            <bib-input type="select" label="Department" :options="departments" v-model.number="activeProject.departmentId" v-on:change.native="debounceUpdate('Department', activeProject.departmentId)"></bib-input>
           </div>
         </div>
         <div id="proj-row4" class="row">
@@ -143,13 +123,25 @@
           </div>
         </template>
       </bib-modal-wrapper>
+
+      <bib-popup-notification-wrapper>
+        <template #wrapper>
+          <bib-popup-notification
+            v-for="(msg, index) in popupMessages"
+            :key="index"
+            :message="msg.text"
+            :variant="msg.variant"
+          >
+          </bib-popup-notification>
+        </template>
+      </bib-popup-notification-wrapper>
   </div>
 </client-only>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
+import { STATUS, PRIORITY } from '~/config/constants.js'
 import dayjs from 'dayjs'
 
 import _ from 'lodash'
@@ -164,20 +156,17 @@ export default {
     return {
       activeProject: {},
       owner: {},
-      department: DEPARTMENT,
       status: STATUS,
       priority: PRIORITY,
       loading: false,
       favLoading: false,
       cdp: false,
       value: {
-        files: [
-          /*{ id: 156, name: 'thefile.png' },
-          { id: 282, name: 'anotherfile.jpg' },*/
-        ]
+        files: []
       },
       editMessage: {},
-      projectTeamModal: false
+      projectTeamModal: false,
+      popupMessages: [],
     }
   },
 
@@ -192,14 +181,12 @@ export default {
     ...mapGetters({
       allusers: "user/getTeamMembers",
       teamMembers: "user/getTeamMembers",
+      departments: "department/getAllDepartments",
       team: "project/getProjectMembers",
       sections: "section/getProjectSections",
       favProjects: "project/getFavProjects",
       user2: "user/getUser2",
     }),
-    /*activeProject() {
-      return this.project;
-    },*/
     totalTasks() {
       let tasks = []
       this.sections.map(t => {
@@ -247,13 +234,6 @@ export default {
     time() {
       if (this.activeProject.dueDate) {
         let d = dayjs(this.activeProject.dueDate)
-        /*let diff = new Date(this.activeProject.dueDate) - new Date();
-        let diffDays = Math.floor(diff / 864e5); // days
-        let diffHrs = Math.floor((diff % 864e5) / 36e5); // hours
-        let diffMins = Math.round(((diff % 864e5) % 36e5) / 6e4); // minutes
-        let totalHrs = (diffDays * 24) + diffHrs*/
-        // return `${totalHrs}:${diffMins}`
-        // return dayjs(this.activeProject.dueDate).fromNow(true)
         return d.diff(dayjs(), 'hour')
       } else {
         return "00:00"
@@ -264,7 +244,6 @@ export default {
         return 0
       } else {
         let done = this.totalTasks.filter(t => t.statusId == 5)
-        // console.log(done.length, this.totalTasks.length)
         return Math.round((done.length / this.totalTasks.length) * 100)
       }
     },
@@ -293,7 +272,6 @@ export default {
 
   created() {
     this.$nuxt.$on("edit-message", (msg) => {
-      // console.log(msg)
       this.editMessage = msg
     })
   },
@@ -308,7 +286,6 @@ export default {
 
   methods: {
     debounceUpdate: _.debounce(function(name, value) {
-      // console.log('Debounce ', name, value)
 
       let updatedvalue = value
       if (name == "Owner") {
@@ -329,6 +306,15 @@ export default {
           }
         })
       }
+
+      if (name == 'Department') {
+        this.departments.find(d => {
+          if (d.value == value) {
+            updatedvalue = d.label
+          }
+        })
+      }
+
       if (name == "Due date") {
         updatedvalue = dayjs(value).format('DD MMM, YYYY')
       }
@@ -349,7 +335,7 @@ export default {
     }, 1200),
 
     async updateProject(text) {
-      // this.loading = true
+
       let proj = await this.$axios.$put("/project", { 
           id: this.activeProject.id, 
           user: this.owner[0], 
@@ -361,9 +347,7 @@ export default {
 
       if (proj.statusCode == 200) {
         this.$store.dispatch("project/setSingleProject", proj.data)
-        // this.$store.dispatch("project/fetchSingleProject", proj.data.id)
       }
-      // this.loading = false
     },
 
     setFavorite() {
@@ -371,16 +355,16 @@ export default {
       if (this.isFavorite.status) {
         this.$store.dispatch("project/removeFromFavorite", { id: this.project.id })
           .then(msg => {
-            // this.popupMessages.push({ text: msg, variant: "orange" })
-            alert(msg)
+            this.popupMessages.push({ text: msg, variant: "orange" })
+            // alert(msg)
           })
           .catch(e => console.log(e))
           .then(() => this.favLoading = false)
       } else {
         this.$store.dispatch("project/addToFavorite", { id: this.project.id })
           .then(msg => {
-            // this.popupMessages.push({ text: msg, variant: "success" })
-            alert(msg)
+            this.popupMessages.push({ text: msg, variant: "success" })
+            // alert(msg)
           })
           .catch(e => console.log(e))
           .then(() => this.favLoading = false)

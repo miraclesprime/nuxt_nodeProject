@@ -25,7 +25,8 @@
             <bib-icon icon="folder-solid" variant="gray5" ></bib-icon>
           </div>
           <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="ts-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
-            <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" ></bib-icon>
+            <bib-spinner v-if="favProcess" :scale="2" ></bib-spinner>
+            <bib-icon v-else icon="bookmark-solid" :variant="isFavorite.variant" ></bib-icon>
           </div>
           <div id="ts-list-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center">
             <bib-button pop="elipsis">
@@ -35,7 +36,9 @@
                     <bib-icon icon="check-circle-solid" :variant="isComplete.variant" class="mr-075"></bib-icon> {{isComplete.text}}
                   </span>
                   <span class="list__item" id="ts-list-item-2" @click="setFavorite">
-                    <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
+                    <bib-spinner v-if="favProcess" :scale="2" ></bib-spinner>
+                    <bib-icon v-else icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon>
+                    {{isFavorite.text}}
                   </span>
                   <span class="list__item" id="ts-list-item-4" @click="showAddTeamModal">
                     <bib-icon icon="user-group-solid" variant="gray5" class="mr-075" ></bib-icon> Team
@@ -129,6 +132,10 @@ export default {
   data: function() {
     return {
       loading: false,
+      favProcess: false,
+
+      // activeItem: {},
+      // editTitle: false,
       form: {},
       statusValues: STATUS,
       priorityValues: PRIORITY,
@@ -232,7 +239,7 @@ export default {
           dueDate: "",
           userId: "",
           sectionId: "",
-          departmentId: "",
+          departmentId: 1,
           projectId: "",
           statusId: 1,
           priorityId: 2,
@@ -301,8 +308,7 @@ export default {
       }
     },
     createTask(taskform) {
-      console.log(taskform)
-      // return
+      // console.log(taskform)
 
       if (this.error == "valid") {
         this.loading = true
@@ -455,7 +461,6 @@ export default {
           console.log(e)
           // this.loading = false
         })
-
     },
 
     updateTaskform(taskfields){
@@ -487,17 +492,20 @@ export default {
         // console.log(this.form)
         this.createTask(this.form)
       }
-    }, 800),
+    }, 500),
     setFavorite() {
+      this.favProcess = true
       // console.info(this.isFavorite.status)
       if (this.isFavorite.status) {
         this.$store.dispatch("task/removeFromFavorite", { id: this.currentTask.id })
           .then(msg => console.log(msg))
           .catch(e => console.log(e))
+          .then(()=>this.favProcess = false)
       } else {
         this.$store.dispatch("task/addToFavorite", { id: this.currentTask.id })
           .then(msg => console.log(msg))
           .catch(e => console.log(e))
+          .then(()=>this.favProcess = false)
       }
     },
     markComplete() {

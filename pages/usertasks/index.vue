@@ -33,11 +33,11 @@
             </div>
           </div>
         </template>
-        <alert-dialog v-show="alertDialog" :message="alertMsg"></alert-dialog>
+        <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
         <loading :loading="loading"></loading>
         <bib-popup-notification-wrapper>
           <template #wrapper>
-            <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
+            <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" :autohide="5000">
             </bib-popup-notification>
           </template>
         </bib-popup-notification-wrapper>
@@ -45,7 +45,6 @@
     </div>
   </client-only>
 </template>
-
 <script>
 import { mapGetters } from "vuex";
 import _ from 'lodash'
@@ -73,67 +72,55 @@ export default {
       taskOrder: 'asc',
       selectedUser: {},
       alertDialog: false,
-      alertMsg:"",
+      alertMsg: "",
     }
   },
   computed: {
     ...mapGetters({
-        user: "user/getUser",
-        teamMembers: "user/getTeamMembers",
+      user: "user/getUser",
+      teamMembers: "user/getTeamMembers",
     }),
+  },
+
+  watch: {
+    '$route.query': {
+      immediate: true,
+      handler(newVal) {
+        this.userfortask = this.teamMembers.find((u) => {
+          if (u.email == newVal.email) {
+            this.selectedUser = u
+            return u;
+          }
+        })
+        this.fetchUserTasks()
+      }
+    }
   },
 
   created() {
     if (process.client) {
-      
-      this.$nuxt.$on('change-grid-type', ($event) => {
-        this.gridType = $event;
+
+      this.$nuxt.$on("update-key", () => {
+        this.fetchUserTasks()
       })
     }
   },
 
-  watch: {
-        '$route.query': {
-            immediate: true,
-            handler(newVal) {
-                this.userfortask = this.teamMembers.find((u) => {
-                  if(u.email == newVal.email) {
-                    this.selectedUser = u
-                    return u;
-                  }
-                })
-                this.fetchUserTasks()
-            }
-        }
-    },
-
   mounted() {
-
-    if(process.client) {
-
-      if(!this.$route.query.email) {
-        this.$router.push({ path: "/dashboard"})
+    if (process.client) {
+      if (!this.$route.query.email) {
+        this.$router.push({ path: "/dashboard" })
       }
 
       _.delay(() => {
-          this.userfortask = this.teamMembers.find((u) => {
-            if(u.email == this.$route.query.email) {
-              this.selectedUser = u
-              return u;
-            }
-          })
-          this.fetchUserTasks()
-      }, 5000);
-    }
-    
-  },
-
-  created() {
-    if (process.client) {
-      
-      this.$nuxt.$on("update-key", () => {
+        this.userfortask = this.teamMembers.find((u) => {
+          if (u.email == this.$route.query.email) {
+            this.selectedUser = u
+            return u;
+          }
+        })
         this.fetchUserTasks()
-      })  
+      }, 5000);
     }
   },
 
@@ -143,27 +130,27 @@ export default {
       if (process.client) {
         this.loading = true
         const res = await this.$axios.get("user/user-tasks", {
-          headers: { 
+          headers: {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
             'Filter': 'all',
             'userid': this.userfortask ? this.userfortask.id : ""
-            }
+          }
         });
 
         if (res.data.statusCode == 200) {
           let taskArr = res.data.data.sort((a, b) => {
-              if (a.dueDate && b.dueDate) { 
-                return new Date(b.dueDate) - new Date(a.dueDate) 
-              }
+            if (a.dueDate && b.dueDate) {
+              return new Date(b.dueDate) - new Date(a.dueDate)
+            }
           });
           this.tasks = taskArr
         } else {
           console.error(e);
         }
-      this.loading = false
+        this.loading = false
       }
     },
-    
+
     updateKey($event) {
       this.popupMessages.push({ text: $event, variant: "success" })
       let compid = JSON.parse(localStorage.getItem("user")).subb;
@@ -239,8 +226,7 @@ export default {
 
     taskMarkComplete(task) {
       this.loading = true
-      if (typeof task == "object" && Object.keys(task).length > 0) {
-      } else {
+      if (typeof task == "object" && Object.keys(task).length > 0) {} else {
         task = this.activeTask
       }
       this.$store.dispatch('task/updateTaskStatus', task)
@@ -257,9 +243,9 @@ export default {
     },
 
     deleteTask(task) {
-      let del = confirm("Are you sure")
+      // let del = confirm("Are you sure")
       this.loading = true
-      if (del) {
+      // if (del) {
         this.$store.dispatch("task/deleteTask", task).then(t => {
 
           if (t.statusCode == 200) {
@@ -272,29 +258,29 @@ export default {
           this.loading = false
           console.log(e)
         })
-      } else {
-        this.loading = false
-      }
+      // } else {
+      //   this.loading = false
+      // }
     },
 
     async filterView($event) {
       this.loading = true
       let compid = JSON.parse(localStorage.getItem("user")).subb;
       const res = await this.$axios.get("user/user-tasks", {
-          headers: { 
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-            'Filter': $event,
-            'userid': this.userfortask ? this.userfortask.id : ""
-            }
-        });
-         if (res.data.statusCode == 200) {
-          this.tasks = res.data.data
-          this.key += 1;
-        } else {
-          console.error(e);
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          'Filter': $event,
+          'userid': this.userfortask ? this.userfortask.id : ""
         }
-        this.viewName = $event
-        this.loading = false
+      });
+      if (res.data.statusCode == 200) {
+        this.tasks = res.data.data
+        this.key += 1;
+      } else {
+        console.error(e);
+      }
+      this.viewName = $event
+      this.loading = false
     },
 
     // Sort By Action List
@@ -311,7 +297,7 @@ export default {
           }
           this.key += 1
           break;
-          
+
         case 'status':
           if (this.taskOrder == "asc") {
             this.tasks.sort((a, b) => a.status.text.localeCompare(b.status.text));
@@ -355,15 +341,15 @@ export default {
 
         case 'dueDate':
 
-            let newArr = []
+          let newArr = []
 
-            for (let i = 0; i < this.tasks.length; i++) {
-              if (this.tasks[i].dueDate) {
-                newArr.unshift(this.tasks[i])
-              } else {
-                newArr.push(this.tasks[i])
-              }
+          for (let i = 0; i < this.tasks.length; i++) {
+            if (this.tasks[i].dueDate) {
+              newArr.unshift(this.tasks[i])
+            } else {
+              newArr.push(this.tasks[i])
             }
+          }
 
           if (this.taskOrder == "asc") {
             newArr.sort((a, b) => {
@@ -385,13 +371,13 @@ export default {
 
           let newArr2 = []
 
-            for (let i = 0; i < this.tasks.length; i++) {
-              if (this.tasks[i].startDate) {
-                newArr2.unshift(this.tasks[i])
-              } else {
-                newArr2.push(this.tasks[i])
-              }
+          for (let i = 0; i < this.tasks.length; i++) {
+            if (this.tasks[i].startDate) {
+              newArr2.unshift(this.tasks[i])
+            } else {
+              newArr2.push(this.tasks[i])
             }
+          }
 
           if (this.taskOrder == "asc") {
             newArr2.sort((a, b) => {
@@ -420,7 +406,7 @@ export default {
             }
           }
 
-          if (this.taskOrder == "asc") { 
+          if (this.taskOrder == "asc") {
             newArr3.sort((a, b) => {
               if (a.project[0].length > 0 && b.project[0].length > 0) {
                 return a.project[0].project.title.localeCompare(b.project[0].project.title);
@@ -428,7 +414,7 @@ export default {
             });
             this.taskOrder = "desc"
           } else {
-              newArr3.sort((a, b) => {
+            newArr3.sort((a, b) => {
               if (a.project[0].length > 0 && b.project[0].length > 0) {
                 return b.project[0].project.title.localeCompare(a.project[0].project.title);
               }
@@ -448,7 +434,6 @@ export default {
       this.key += 1
 
     },
-
 
     toggleSidebar($event) {
       if (!$event) {

@@ -54,6 +54,7 @@
       </bib-popup-notification-wrapper>
       <!-- confirm delete task -->
       <confirm-dialog v-if="confirmModal" :message="confirmMsg" @close="confirmDelete"></confirm-dialog>
+      <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
     </div>
   </client-only>
 </template>
@@ -81,6 +82,8 @@ export default {
       taskToDelete: {},
       confirmModal: false,
       confirmMsg: "",
+      alertDialog: false,
+      alertMsg:"",
     };
   },
   computed: {
@@ -311,7 +314,9 @@ export default {
           this.openSidebar(this.task, 'task_files')
           break;
         default:
-          alert("no task assigned")
+          // alert("no task assigned")
+          this.alertDialog = true
+          this.alertMsg = "no task assigned"
           break;
       }
     },

@@ -105,6 +105,7 @@
           </div>
         </template>
       </bib-modal-wrapper>
+      <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
 
       <!-- notification -->
       <bib-popup-notification-wrapper>
@@ -148,6 +149,8 @@ export default {
       loading: false,
       favLoading: false,
       popupMessages: [],
+      alertDialog: false,
+      alertMsg:"",
       cdp: false
     }
   },
@@ -200,7 +203,9 @@ export default {
         if((proj && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
             console.log('user has access!')
         } else {
-            alert('You do not have access to this page!')
+            // alert('You do not have access to this page!')
+            this.alertDialog = true
+            this.alertMsg = "You do not have access to this page!"
             this.$router.push('/projects')      
         }
 

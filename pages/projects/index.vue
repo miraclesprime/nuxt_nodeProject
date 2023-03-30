@@ -24,6 +24,7 @@
         </span>
       </template>
 
+      <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
       <!-- project rename modal -->
       <bib-modal-wrapper v-if="renameModal" title="Rename project" @close="renameModal = false">
         <template slot="content">
@@ -74,7 +75,8 @@ export default {
       gridType: "list",
       orderBy: 'asc',
       newkey: "",
-      
+      alertDialog: false,
+      alertMsg:"",
     }
   },
 
@@ -289,7 +291,9 @@ export default {
         case 'report-project':
           break;
         default:
-          alert("no project assigned")
+          // alert("no project assigned")
+          this.alertDialog = true
+          this.alertMsg = "no task assigned"
           break;
       }
     },

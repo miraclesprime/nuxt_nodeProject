@@ -46,9 +46,9 @@ export default {
     };
   },
   methods: {
-    changeGridType($event) {
+    /*changeGridType($event) {
       this.$nuxt.$emit("change-grid-type", $event);
-    },
+    },*/
     showCreateTaskModal() {
       // console.log('show create task modal')
       this.$emit("new-task", false) //event will be captured by parent only

@@ -150,6 +150,7 @@ export default {
     ...mapGetters({
       favTasks: "task/getFavTasks",
       team: 'task/getTaskMembers',
+      departments: "department/getAllDepartments",
       teamMembers: "user/getTeamMembers",
       projects: "project/getAllProjects",
       sections: "section/getProjectSections",
@@ -257,6 +258,14 @@ export default {
         this.priorityValues.find(p => {
           if (p.value == taskData.value) {
             updatedvalue = p.label
+          }
+        })
+      }
+
+      if (taskData.name == 'Department') {
+        this.departments.find(d => {
+          if (d.value == taskData.value) {
+            updatedvalue = d.label
           }
         })
       }

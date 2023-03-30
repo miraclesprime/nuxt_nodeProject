@@ -39,14 +39,15 @@
         </template>
       </bib-modal-wrapper>
       <!-- popup notification -->
-        <bib-popup-notification-wrapper>
-          <template #wrapper>
-            <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
-            </bib-popup-notification>
-          </template>
-        </bib-popup-notification-wrapper>
+      <bib-popup-notification-wrapper>
+        <template #wrapper>
+          <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
+          </bib-popup-notification>
+        </template>
+      </bib-popup-notification-wrapper>
       <!-- confirm delete task -->
       <confirm-dialog v-if="confirmModal" :message="confirmMsg" @close="confirmDelete"></confirm-dialog>
+      <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
     </div>
   </client-only>
 </template>
@@ -89,7 +90,9 @@ export default {
       datepickerArgs: { label: null, field: null },
       popupCoords: {},
       confirmModal: false,
-      confirmMsg: ""
+      confirmMsg: "",
+      alertDialog: false,
+      alertMsg:"",
     }
   },
 
@@ -564,7 +567,9 @@ export default {
         case 'report-project':
           break;
         default:
-          alert("no project assigned")
+          // alert("no project assigned")
+          this.alertDialog = true
+          this.alertMsg = "no project assigned"
           break;
       }
     },
@@ -596,7 +601,9 @@ export default {
           this.openSidebar(this.activeTask, 'task_files')
           break;
         default:
-          alert("no task assigned")
+          // alert("no task assigned")
+          this.alertDialog = true
+          this.alertMsg = "no task assigned"
           break;
       }
     },
