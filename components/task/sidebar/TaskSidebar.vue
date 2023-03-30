@@ -238,7 +238,7 @@ export default {
           dueDate: "",
           userId: "",
           sectionId: "",
-          departmentId: "",
+          departmentId: 1,
           projectId: "",
           statusId: 1,
           priorityId: 2,
