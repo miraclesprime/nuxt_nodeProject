@@ -110,7 +110,9 @@
                 <span class="width-105 height-105 align-center justify-center font-xs text-gray2 cursor-pointer bg-hover-gray2"><bib-icon icon="arrow-right" variant="gray2" hover-variant="gray6" ></bib-icon></span>
               </div>
               <template v-if="col.key == 'department'">
-                {{task[col.key]}}
+                <span v-if="task[col.key]?.title" class="text-capitalize">
+                  {{ task[col.key].title }}
+                </span>
               </template>
             </td>
           </tr>
@@ -174,7 +176,7 @@
  * @vue-dynamic-emits [ 'header_icon click', 'task_checkmark click' 'newtask button click' ] 
  * @vue-prop componentKey=Number - key to update child components
  */
-import { DEPARTMENT, STATUS, PRIORITY, TASK_FIELDS } from '~/config/constants.js'
+import { STATUS, PRIORITY, TASK_FIELDS } from '~/config/constants.js'
 import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 import _ from 'lodash'
@@ -247,7 +249,7 @@ export default {
           priorityId: 3,
           startDate: "",
           dueDate: "",
-          department: "",
+          departmentId: 1,
           description: "",
           budget: "",
           text: "",
@@ -266,7 +268,6 @@ export default {
       localdata: [],
       taskMoveSection: null,
       highlight: false,
-      department: DEPARTMENT,
       status: STATUS,
       priority: PRIORITY,
       tableFields: TASK_FIELDS,
@@ -278,6 +279,7 @@ export default {
   computed: {
     ...mapGetters({
       teamMembers: "user/getTeamMembers",
+      departments: "department/getDepartments"
     }),
     activeClass() { return keyI => this.sections[keyI].active ? 'active' : '' },
     filterUser() {
