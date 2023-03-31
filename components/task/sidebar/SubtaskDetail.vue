@@ -4,6 +4,7 @@
       <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" title="Close" @click="closeSidebarDetail">
         <bib-icon icon="page-last" class="m-auto"></bib-icon>
       </div>
+      <!-- <span class="text-underline cursor-pointer" @click="closeSidebarDetail">{{form.task.title}}</span> -->
       <div class="ml-auto d-flex align-center gap-05">
           <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="ts-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
             <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" ></bib-icon>
@@ -59,20 +60,26 @@
     <!-- other fields -->
     <div class="of-scroll-y px-105">
       <div class="row">
-        <div class="col-6">
+        <div class="col-4">
           <bib-select label="Assignee" test_id="subtask_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="updateSubtask({field: 'userId', value: form.userId, name: 'User' })"></bib-select>
         </div>
-        <div class="col-6">
+        <div class="col-4">
+          <bib-datepicker v-model="startDateInput" :value="startDateInput" format="dd MMM yyyy" label="Start date" placeholder="Start date" @input="updateSubtask({name: 'Start date', field: 'startDate', value: form.startDate})"></bib-datepicker>
+        </div>
+        <div class="col-4">
           <bib-datepicker class="align-right" v-model="dueDateInput" :value="dueDateInput" format="dd MMM yyyy" label="Due date" placeholder="Due date" @input="updateSubtask({field: 'dueDate', value: form.dueDate, name: 'Due date'})"></bib-datepicker>
         </div>
         <!-- <div class="col-6"></div> -->
       </div>
       <div class="row ">
-        <div class="col-6">
+        <div class="col-4">
           <bib-input type="select" label="Priority" v-model.number="form.priorityId" :options="priorityValues" placeholder="Please select..." v-on:change.native="updateSubtask({field: 'priorityId', value: form.priorityId, name: 'Priority'})"></bib-input>
         </div>
-        <div class="col-6">
+        <div class="col-4">
           <bib-input type="select" label="Status" v-model.number="form.statusId" :options="statusValues" placeholder="Please select..." v-on:change.native="updateSubtask({field: 'statusId', value: form.statusId, name: 'Status'})"></bib-input>
+        </div>
+        <div class="col-4" >
+          <bib-input type="select" label="Department" :options="departments" v-model.number="form.departmentId" v-on:change.native="updateSubtask({name:'Department', field: 'departmentId', value: form.departmentId})"></bib-input>
         </div>
       </div>
       <div class="row ">
@@ -150,6 +157,7 @@ export default {
       subtaskComments: "subtask/getSubTaskComments",
       subtaskHistory: "subtask/getSubtaskHistory",
       teamMembers: "user/getTeamMembers",
+      departments: "department/getAllDepartments",
     }),
 
     orgUsers() {
@@ -186,6 +194,7 @@ export default {
         return { variant: "danger", text: "Error", status: false }
         })
     },*/
+
     isComplete() {
       if (this.form.isDone) {
         return { variant: "success", text: "Completed" }
@@ -203,14 +212,23 @@ export default {
         return { Name: "no user found" }
       }
     },
-    dueDateInput: {
+    startDateInput: {
       get() {
-        // let nd
-        if (!this.form.dueDate) {
-          // nd = new Date()
+        if (!this.form.startDate) {
           return new Date()
         } else {
-          // nd = new Date(this.form.dueDate)
+          return new Date(this.form.startDate)
+        }
+      },
+      set(newValue) {
+        this.form.startDate = new Date(newValue)
+      }
+    },
+    dueDateInput: {
+      get() {
+        if (!this.form.dueDate) {
+          return new Date()
+        } else {
           return new Date(this.form.dueDate)
         }
       },
@@ -372,7 +390,7 @@ export default {
         // console.log(this.form, data)
         this.updateSubtask(data)
       }
-    }, 1500),
+    }, 800),
 
     onFileInput(payload) {
       // console.log(payload)

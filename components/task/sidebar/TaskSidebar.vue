@@ -85,20 +85,20 @@
 
     <div class="of-scroll-y d-grid" id="ts-of-scroll-y" style="grid-template-columns: none; align-items: start">
       <sidebar-fields :task="currentTask" :loading="loading" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform" ></sidebar-fields>
-      <template v-if="currentTask.id">
+      <!-- <template v-if="currentTask.id"> -->
         <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" ></sidebar-subtask>
         <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
         <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
         <!-- <sidebar-history></sidebar-history> -->
-      </template>
+      <!-- </template> -->
       <button ref="topScroll" id="topScroll" style="visibility: hidden; opacity: 0" v-scroll-to="scrollId"></button>
     </div>
 
-    <div v-if="currentTask.id" class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-2">
+    <div class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-2">
       <bib-avatar :src="userPhoto" size="2rem" class="flex-shrink-0" ></bib-avatar>
       <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
     </div>
-    <div v-else style="height: 10rem;"></div>
+    <!-- <div v-else style="height: 10rem;"></div> -->
 
     <confirm-dialog v-if="confirmModal" :message="confirmMsg" @close="confirmDelete"></confirm-dialog>
     <!-- <add-member-to-task ref="taskTeamModal"></add-member-to-task> -->

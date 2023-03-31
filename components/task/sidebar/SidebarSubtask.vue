@@ -18,7 +18,7 @@
     <div class="position-relative">
       
     <table class="table ">
-      <thead>
+      <thead v-if="localSubTasks.length > 0">
         <tr>
           <th>Subtasks</th>
           <th>Assignee</th>
@@ -27,7 +27,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-if="newSubtask || localSubTasks.length == 0" class="new">
+        <tr v-if="newSubtask" class="new">
           <td>
             <div class="d-flex gap-05 align-center">
               <bib-icon icon="check-circle-solid" variant="white" :scale="1.25"></bib-icon>
@@ -279,7 +279,9 @@ export default {
           lastName: this.user?.lastName || this.user2.LastName,
           email: this.user?.email || this.user2.Email,
         },
+        departmentId: 1,
         description: "",
+        startDate: "",
         dueDate: "",
         priorityId: 1,
         statusId: 1,
