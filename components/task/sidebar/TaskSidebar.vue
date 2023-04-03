@@ -401,7 +401,7 @@ export default {
         })
       }
       if (taskData.name == "Due date" || taskData.name == "Start date") {
-        updatedvalue = dayjs(taskData.value).format('DD MMM, YYYY')
+        updatedvalue = dayjs(taskData.value).format('DD MMM YYYY')
       }
 
       let user;
@@ -487,8 +487,8 @@ export default {
         // if new task
         this.$refs.taskTitleInput.blur()
         // this.form.sectionId = ""
-        // this.form.projectId = ""
-        // console.log(this.form)
+        this.form.projectId = this.project?.id || ""
+        // console.log(this.form, this.project.title)
         this.createTask(this.form)
       }
     }, 500),
@@ -622,11 +622,11 @@ export default {
     },
 
     // subtask detail
-    viewSubtask($event){
-      // console.log($event)
+    viewSubtask(subtask){
+      console.log(subtask)
       this.showSubtaskDetail = true
-      // this.$store.dispatch("subtask/setSelectedSubtask", $event)
-      this.$store.commit("subtask/setSelectedSubtask", $event)
+      this.$store.dispatch("subtask/setSelectedSubtask", subtask)
+      // this.$store.commit("subtask/setSelectedSubtask", subtask)
     },
 
     copyTaskLink() {

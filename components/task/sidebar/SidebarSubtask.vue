@@ -31,7 +31,7 @@
           <td>
             <div class="d-flex gap-05 align-center">
               <bib-icon icon="check-circle-solid" variant="white" :scale="1.25"></bib-icon>
-              <input class="sub-input" ref="subtaskNameInput" type="text" v-model.trim="title" :disabled="loading" pattern="[a-zA-Z0-9-_ ]+" @keyup="validateInput" placeholder="Enter text...">
+              <input class="sub-input" ref="subtaskNameInput" type="text" v-model.trim="title" :disabled="loading" pattern="[a-zA-Z0-9-_ ]+" @keyup="validateInput" required placeholder="Enter text...">
             </div>
           </td>
           <td>
@@ -43,8 +43,8 @@
             <!-- <bib-input type="text" size="sm" avatar-left="" v-model="assignee" placeholder="Assign to..."></bib-input> -->
           </td>
           <td>
-            <div class="d-flex align-center gap-05">
-              <bib-icon icon="calendar"></bib-icon>
+            <div class="d-flex align-center gap-025">
+              <bib-icon icon="calendar" variant="gray4"></bib-icon>
               <span>Set due...</span>
             </div>
             <!-- <bib-input type="date" size="sm" icon-left="calendar" v-model="date" placeholder="Set date..."></bib-input> -->
@@ -73,9 +73,10 @@
             <!-- <user-info :userId="sub.userId"></user-info> -->
           </td>
           <td>
-            <div class="d-inline-flex align-center gap-05 position-relative" >
-              <bib-icon icon="calendar"></bib-icon>
-              <!-- <datepicker v-model="sub.dueDate" @input="updateSubtask(sub, {field: 'dueDate', value: sub.dueDate, name: 'Due date'})" placeholder="Select date..." wrapper-class="align-right" clear-button ></datepicker> -->
+            <div class="d-inline-flex align-center gap-025 position-relative" >
+              <bib-icon icon="calendar" variant="gray4"></bib-icon>
+              <!-- <bib-datepicker size="sm" v-model="sub.dueDate" format="dd MM YYYY" @input="updateSubtask(sub, {field: 'dueDate', value: sub.dueDate, name: 'Due date'})" placeholder="Select date..." class="align-right" ></bib-datepicker> -->
+              <datepicker v-model="sub.dueDate" format="dd MMM yyyy" @input="updateSubtask(sub, {field: 'dueDate', value: sub.dueDate, name: 'Due date'})" placeholder="Select date..." class="align-right" ></datepicker>
             </div>            
           </td>
           <!-- <td>
@@ -99,6 +100,7 @@
 <script>
 import { DEPARTMENT, STATUS, PRIORITY, SUBTASK_CONTEXT_MENU } from '~/config/constants.js'
 import { mapGetters } from 'vuex';
+import dayjs from 'dayjs'
 import _ from 'lodash'
 // import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 // import { faCalendar } from '@fortawesome/free-regular-svg-icons';
@@ -204,6 +206,7 @@ export default {
     // this.user = _.cloneDeep(this.user2)
   },*/
   created(){
+    this.newSubtask = false
     this.$nuxt.$on("delete-subtask", (subtask) => {
       if (subtask.id) {
         this.deleteSubtask(subtask)
@@ -232,7 +235,7 @@ export default {
           this.markComplete(this.activeSubtask)
           break;
         case 'view-subtask':
-          this.$emit("view-subtask")
+          this.$emit("view-subtask", this.activeSubtask)
           break;
         case 'delete-subtask':
           this.deleteTask(this.activeSubtask)
@@ -283,11 +286,13 @@ export default {
         description: "",
         startDate: "",
         dueDate: "",
-        priorityId: 1,
+        priorityId: 2,
         statusId: 1,
         budget: 0,
         text: `added subtask "${this.title}"`,
       }
+
+      if (this.title) {}
 
       // console.log(subData)
       this.$store.dispatch("subtask/createSubtask", subData)
@@ -306,8 +311,9 @@ export default {
     },
 
     validateInput(){
-      if (this.$refs.subtaskNameInput.validity.valid) {
-        // console.info('valid input');
+      // let sb = _.trim(this.title)
+      if (this.$refs.subtaskNameInput.validity.valid && this.title != "") {
+        // console.info('valid input', this.title);
         this.$refs.subtaskNameInput.classList.remove("error")
         this.debounceCreate()
       } else {
@@ -323,7 +329,7 @@ export default {
 
     debounceUpdate: _.debounce(function(subtask, data) {
       this.updateSubtask(subtask, data)
-    }, 1000),
+    }, 800),
 
     markComplete(subtask){
       // let sub = subtask
@@ -363,6 +369,10 @@ export default {
 
       if(data.name == 'Title') {
         updata = { [data.field]: data.value }
+      }
+
+      if (data.name == "Due date") {
+        histvalue = dayjs(data.value).format('DD MMM YYYY')
       }
 
       if (data.name == 'User') {

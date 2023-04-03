@@ -216,16 +216,22 @@ export default {
     updateTask(payload) {
       console.log(payload)
       // alert("in progress. Updated value => " + payload.value)
-      let user
+      let user, projectId
       if (payload.field == "userId" && payload.value != '') {
         user = this.teamMembers.filter(t => t.id == payload.value)
       } else {
         user = null
       }
 
+      if (payload.task.project.length > 0) {
+        projectId = payload.task.project[0].projectId || payload.task.project[0].project.id
+      } else {
+        projectId = null
+      }
+
       this.$store.dispatch("task/updateTask", {
         id: payload.task.id,
-        projectId: payload.task.project[0].projectId || payload.task.project[0].project.id,
+        projectId,
         data: { [payload.field]: payload.value },
         user,
         text: `changed ${payload.field} to "${payload.historyText || payload.value}"`
