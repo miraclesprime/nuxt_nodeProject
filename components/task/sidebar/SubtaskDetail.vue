@@ -119,6 +119,7 @@
 <script>
 import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 import { mapGetters } from 'vuex'
+import dayjs from 'dayjs'
 import _ from 'lodash'
 export default {
 
@@ -173,7 +174,7 @@ export default {
         return _.cloneDeep(this.subtask)
       },
       set(newValue) {
-        console.log(newValue, this)
+        console.log(newValue)
         // this.title = newValue.title
       }
     },
@@ -357,6 +358,13 @@ export default {
             let pr = this.priorityValues.find(p => p.value == data.value)
             histvalue = pr.label
         }
+        if ( data.name == "Department"){
+            let dp = this.departments.find(d => d.value == data.value)
+            histvalue = dp.label
+        }
+        if (data.name == "Due date" || data.name == "Start date") {
+          histvalue = dayjs(data.value).format('DD MMM YYYY')
+        }
         if (data.name == 'User') {
             userobj = this.$userInfo(data.value)
             let user = { id: userobj.Id, email: userobj.Email, firstName: userobj.FirstName, lastName: userobj.LastName }
@@ -369,7 +377,7 @@ export default {
         if (sub.statusCode == 200) {
             this.$store.dispatch("subtask/setSelectedSubtask", sub.data)
             this.$store.dispatch('subtask/fetchSubTask', sub.data).then((res) => {
-              console.log(res)
+              // console.log(res)
               this.form = res;
             })
             this.$store.dispatch("subtask/fetchSubtaskHistory", this.subtask)

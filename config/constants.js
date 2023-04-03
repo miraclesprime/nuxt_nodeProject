@@ -38,7 +38,7 @@ export const PROJECT_FIELDS = [
   },
   {
       key: "userId",
-      label: "Owner",
+      label: "Assignee",
       header_icon: {
           icon: 'swap-vertical',
           event: 'table-sort',
@@ -128,7 +128,7 @@ export const TASK_FIELDS = [{
   },
   {
     key: "userId",
-    label: "Owner",
+    label: "Assignee",
     width: "20%",
     header_icon: {
       icon: 'swap-vertical',
@@ -176,7 +176,7 @@ export const FILE_FIELDS = [
   },
   {
     key: "owner",
-    label: "Owner",
+    label: "Assignee",
   },
   {
     key: "date",
@@ -413,7 +413,7 @@ export const DREAM_VIEW_FILTER = [
 
 export const PROJECT_SORT = [
   { label: 'Name', key: 'name' },
-  { label: 'Owner', key: 'owner' },
+  { label: 'Assignee', key: 'owner' },
   { label: 'Status', key: 'status' },
   { label: 'Priority', key: 'priority' },
   { label: 'Start Date', key: 'startDate' },
@@ -432,7 +432,7 @@ export const PROJECT_TEAM_FIELDS = [
 
 export const TASK_SORT = [
   { label: 'Name', key: 'title' },
-  { label: 'Owner', key: 'userId' },
+  { label: 'Assignee', key: 'userId' },
   { label: 'Priority', key: 'priority' },
   { label: 'Status', key: 'status' },
   { label: 'Start Date', key: 'startDate' },
@@ -450,7 +450,7 @@ export const FAVORITE_SORT = [
   { label: 'Name', key: 'title' },
   { label: 'Status', key: 'status' },
   { label: 'Priority', key: 'priority' },
-  { label: 'Owner', key: 'userId' },
+  { label: 'Assignee', key: 'userId' },
   { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },
 ]
@@ -517,7 +517,7 @@ export const PROJECT_FAVORITES = [
     }
   },
   {
-    label: 'Owner',
+    label: 'Assignee',
     key: 'userId',
     width: '20%',
     header_icon: {
@@ -590,7 +590,7 @@ export const TASK_FAVORITES = [
     }
   },
   {
-    label: 'Owner',
+    label: 'Assignee',
     key: 'userId',
     width: '15%',
     header_icon: {
@@ -701,7 +701,7 @@ export const COMPANY_TASK_FIELDS = [
     }
   },
   {
-    label: 'Owner',
+    label: 'Assignee',
     key: 'userId',
     width: '15%',
     header_icon: {
@@ -822,7 +822,7 @@ export const GOAL_SORT = [
   { label: 'Name', key: 'name' },
   { label: 'Priority', key: 'priority' },
   { label: 'Status', key: 'status' },
-  { label: 'Owner', key: 'owner' },
+  { label: 'Assignee', key: 'owner' },
   { label: 'Due Date', key: 'dueDate' },
 ]
 
@@ -830,7 +830,7 @@ export const DREAM_SORT = [
   { label: 'Name', key: 'name' },
   { label: 'Priority', key: 'priority' },
   { label: 'Status', key: 'status' },
-  { label: 'Owner', key: 'owner' },
+  { label: 'Assignee', key: 'owner' },
   { label: 'Due Date', key: 'dueDate' },
 ]
 
@@ -839,7 +839,7 @@ export const COMPANY_TASK_SORT = [
   { label: 'Project', key: 'project' },
   { label: 'Status', key: 'status' },
   { label: 'Priority', key: 'priority' },
-  { label: 'Owner', key: 'userId' },
+  { label: 'Assignee', key: 'userId' },
   { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },
 ]
