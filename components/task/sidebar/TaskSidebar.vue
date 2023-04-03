@@ -70,7 +70,7 @@
           </div>
           <div class="flex-grow-1">
             <!-- <span v-if="!editTitle" class="font-w-700" @click.stop="editTitle = true">{{form.title}}</span> -->
-            <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="taskTitleInput" v-model.trim="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" >
+            <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="taskTitleInput" v-model.trim="form.title" placeholder="Write a Task Name" v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" >
           </div>
           <div>
             <team-avatar-list :team="team"></team-avatar-list>
