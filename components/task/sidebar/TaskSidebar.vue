@@ -11,7 +11,6 @@
           </div>
         </div>
         <div class="d-flex gap-05 align-center" id="ts-icons-wrapper">
-
           <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="ts-icon-2" v-tooltip="'Team'" title="Team" @click="showAddTeamModal">
             <bib-icon icon="user-group-solid" variant="gray5" ></bib-icon>
           </div>
