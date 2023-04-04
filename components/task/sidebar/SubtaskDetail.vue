@@ -179,23 +179,6 @@ export default {
       }
     },
 
-    /*isFavorite() {
-      this.$axios.get("subtask/"+this.subtask.id+"/favorite", {
-        headers: {
-          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-        }
-      }).then(fvsub => {
-        console.log(fvsub)
-          if (fvsub) {
-            return { variant: "orange", text: "Remove favorite", status: true }
-          } else {
-            return { variant: "gray3", text: "Add to favorites", status: false }
-          }
-      }).catch(e => {
-        return { variant: "danger", text: "Error", status: false }
-        })
-    },*/
-
     isComplete() {
       if (this.form.isDone) {
         return { variant: "success", text: "Completed" }
