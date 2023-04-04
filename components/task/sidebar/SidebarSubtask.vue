@@ -238,7 +238,7 @@ export default {
           this.$emit("view-subtask", this.activeSubtask)
           break;
         case 'delete-subtask':
-          this.deleteTask(this.activeSubtask)
+          this.deleteSubtask(this.activeSubtask)
           break;
         case 'copy-subtask':
           this.copyLink(this.activeSubtask)
@@ -404,7 +404,7 @@ export default {
     },
 
     async deleteSubtask(subtask) {
-      this.loading = true
+      // this.loading = true
       const delsub = await this.$store.dispatch("subtask/deleteSubtask", { ...subtask, text: `deleted subtask "${subtask.title}"` });
       if (delsub.statusCode == 200) {
         this.$store.dispatch("subtask/fetchSubtasks", this.currentTask)
@@ -412,7 +412,7 @@ export default {
         this.$emit('close-sidebar-detail')
         this.$store.dispatch("subtask/setSelectedSubtask", "")
       }
-      this.loading = false
+      // this.loading = false
     },
 
     copyLink(subtask) {

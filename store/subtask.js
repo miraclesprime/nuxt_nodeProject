@@ -5,6 +5,7 @@ export const state = () => ({
   subtaskHistory: [],
   // singleSubtaskComment: {},
   favSubtasks: [],
+  subtaskMembers: [],
 });
 
 export const getters = {
@@ -27,6 +28,10 @@ export const getters = {
   getFavSubtasks(state) {
     return state.favSubtasks
   },
+
+  getSubtaskMembers(state){
+    return state.subtaskMembers
+  }
 };
 
 export const mutations = {
@@ -45,6 +50,10 @@ export const mutations = {
 
   setFavSubtasks(state, payload) {
     state.favSubtasks = payload
+  },
+
+  setSubtaskMembers(state, payload){
+    state.subtaskMembers = payload
   },
 
   updateSingleSubtask(state, payload) {
@@ -144,6 +153,27 @@ export const actions = {
       // console.log(fvsub.data.data)
       ctx.commit("setFavSubtasks", fvsub.data.data)
     }).catch(e => console.warn(e))
+  },
+
+  addMembers(ctx, payload){
+    this.$axios.post("subtask/"+payload.id+"/members").then(stm => {
+      if (stm.statusCode == 200) {
+        ctx.commit("setSubtaskMembers", stm.data)
+      }
+      return stm
+    }).catch( e => e)
+  },
+
+  async fetchSubtaskMembers(ctx, payload) {
+    const st = await this.$axios.get("subtask/"+payload.id+"/members", {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+      }
+    })
+    if (st.statusCode == 200) {
+      // ctx.commit("setSubtaskMembers", st.data)
+    }
+    return st.data
   },
 
   async fetchSubtaskComments(ctx, payload) {

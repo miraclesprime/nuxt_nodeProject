@@ -219,6 +219,7 @@ export default {
   watch: {
     currentTask(newVal) {
       // console.log(newVal)
+      this.showSubtaskDetail = false
       if (Object.keys(this.currentTask).length) {
         // this.form = JSON.parse(JSON.stringify(this.currentTask));
         this.form = _.cloneDeep(this.currentTask);
@@ -622,7 +623,7 @@ export default {
 
     // subtask detail
     viewSubtask(subtask){
-      console.log(subtask)
+      // console.log(subtask)
       this.showSubtaskDetail = true
       this.$store.dispatch("subtask/setSelectedSubtask", subtask)
       // this.$store.commit("subtask/setSelectedSubtask", subtask)

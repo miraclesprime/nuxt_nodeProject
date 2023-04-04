@@ -57,6 +57,7 @@ import { mapGetters } from 'vuex';
 export default {
   props: {
     task: Object,
+    mode: {type: String, default: "task"},
   },
   data: function() {
     return {
@@ -89,6 +90,7 @@ export default {
       // task: "task/getSelectedTask",
       taskMembers: 'task/getTaskMembers',
       teamMembers: "user/getTeamMembers",
+      subtaskMembers: 'subtask/getSubtaskMembers',
     }),
 
     filterTeam() {
@@ -102,12 +104,16 @@ export default {
   },
 
   mounted() {
-    console.info('mounted task team->', this.task.title)
-    this.loading = false
-    this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
-      .then(t => {
-        this.loading = false
-      })
+    // console.info('mounted task team->', this.task.title)
+    // this.loading = false
+    if (this.mode == "task") {
+      this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
+        /*.then(t => {
+          this.loading = false
+        })*/
+    } else {
+      this.$store.dispatch("subtask/fetchSubtaskMembers", {id: this.task.id})
+    }
   },
 
   created() {
@@ -142,7 +148,7 @@ export default {
       // console.log(tm)
       // let rm = this.team.filter(t=>t.id == tm.id)
       let rm = this.team.map(t => t.id == tm.id)
-      console.log(rm.indexOf(true))
+      // console.log(rm.indexOf(true))
       this.team.splice(rm.indexOf(true), 1)
     },
     addTeamMember() {
@@ -155,28 +161,40 @@ export default {
         let teamtext = this.team.map(t => {
           return t.label
         })
-        // console.log(teamtext.join(', '));
-        this.$store.dispatch('task/addMember', { taskId: this.task.id, team: this.team, text: `added ${teamtext.join(', ')} to task` }).then(() => {
-          // this.$nuxt.$emit('update-key', 1)
-          // this.showTeamCreateModal = false
-          this.loading = false;
-          this.message = ""
-          this.team = []
-          this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
-        }).catch((err) => {
-          this.loading = false;
-          // this.showTeamCreateModal = false
-          this.message = ""
-          this.team = []
-          console.log(err)
-        })
+        if (this.mode == "task") {
+          // console.log(teamtext.join(', '));
+          this.$store.dispatch('task/addMember', { taskId: this.task.id, team: this.team, text: `added ${teamtext.join(', ')} to task` }).then(() => {
+            this.loading = false;
+            this.message = ""
+            this.team = []
+            this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
+          }).catch((err) => {
+            this.loading = false;
+            // this.showTeamCreateModal = false
+            this.message = ""
+            this.team = []
+            console.log(err)
+          })
+        } else {
+          this.$store.dispatch("subtask/addMembers", { subtaskId: this.task.id, team: this.team, text: `added ${teamtext.join(', ')} to ${this.mode}` }).then(st => {
+            this.loading = false;
+            this.message = ""
+            this.team = []
+            this.$store.dispatch("subtask/fetchSubtaskMembers", { id: this.task.id })
+          }).catch((err) => {
+            this.loading = false;
+            this.message = ""
+            this.team = []
+            console.log(err)
+          })
+        }
       }
     },
     async deleteMember(member) {
       // console.log(member)
       this.loading = true
-      let confirmDelete = window.confirm("Are you sure want to delete " + member.name + "!")
-      if (confirmDelete) {
+      // let confirmDelete = window.confirm("Are you sure want to delete " + member.name + "!")
+      // if (confirmDelete) {
         await this.$store.dispatch("task/deleteMember", { taskId: this.task.id, memberId: member.id, text: `${member.name} removed from task` })
           .then((res) => {
             // console.log(res)
@@ -186,15 +204,13 @@ export default {
           })
           .catch(e => console.log(e))
         this.loading = false
-      }
+      // }
     },
   }
 };
 
 </script>
 <style scoped lang="scss">
-/*.task-group {
-  margin-bottom: 3rem;
-}*/
+
 
 </style>
