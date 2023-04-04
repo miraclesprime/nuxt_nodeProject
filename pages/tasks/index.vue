@@ -2,11 +2,11 @@
   <client-only>
     <div id="task-page-wrapper" class="task-page-wrapper ">
       <page-title title="Tasks"></page-title>
-      <company-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:new-task="toggleSidebar($event)" @change-grid-type="($event)=>gridType = $event"></company-tasks-actions>
+      <company-tasks-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:new-task="toggleSidebar($event)" @change-grid-type="($event)=>gridType = $event" @search-tasks="searchTasks"></company-tasks-actions>
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y" :class="{ 'bg-light': gridType != 'list'}">
         <template v-if="gridType == 'list'">
           <template v-if="tasks.length">
-            <drag-table-simple :key="key" :componentKey="key" :fields="taskFields" :tasks="tasks" :sectionTitle="'Department'" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" ></drag-table-simple>
+            <drag-table-simple :key="key" :componentKey="key" :fields="taskFields" :tasks="localData" :sectionTitle="'Department'" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" ></drag-table-simple>
 
             <!-- table context menu -->
             <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
@@ -33,7 +33,7 @@
                 </div>
               </div>
               <div class="task-section__body">
-                <div v-for="(task, index) in tasks" :key="index + '-' + key" >
+                <div v-for="(task, index) in localData" :key="index + '-' + key" >
                   <task-grid :task="task" :class="[ currentTask.id == task.id ? 'active' : '']" v-on:update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker" ></task-grid>
                 </div>
               </div>
@@ -66,6 +66,7 @@ import { mapGetters } from "vuex";
 import { COMPANY_TASK_FIELDS as TaskFields, TASK_CONTEXT_MENU } from '../../config/constants'
 import dayjs from 'dayjs'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
+import _ from 'lodash'
 
 export default {
   name: 'Tasks',
@@ -92,6 +93,7 @@ export default {
       confirmMsg: "",
       alertDialog: false,
       alertMsg: "",
+      localData: []
     }
   },
   computed: {
@@ -102,6 +104,7 @@ export default {
         currentTask: 'task/getSelectedTask',
         teamMembers: "user/getTeamMembers",
     }),
+
   },
 
   created() {
@@ -125,6 +128,12 @@ export default {
         this.loading = false;
       })
     }
+  },
+
+  watch: {
+    tasks(newVal) {
+        this.localData = _.cloneDeep(newVal)
+    },
   },
 
   methods: {
@@ -476,6 +485,23 @@ export default {
         } else { 
           unsecuredCopyToClipboard(url);
         }
+    },
+
+    searchTasks(text) {
+      
+      let newArr = this.tasks.filter((t) => {
+        if(t.title.includes(text) || t.title.toLowerCase().includes(text) || t.description.includes(text) || t.description.toLowerCase().includes(text)) {
+          return t  
+        } 
+      })
+
+      if(newArr.length >= 0) {
+        this.localData = newArr
+        this.key++;
+      } else {
+        this.localData = this.tasks;
+        this.key++;
+      }
     }
   },
 
