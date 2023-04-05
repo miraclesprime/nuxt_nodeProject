@@ -1,71 +1,145 @@
 <template>
-<client-only>
-  <div id="layout-wrapper">
-    <bib-app-wrapper class="test" :navigationCollapsed="collapseNavigation" :select="appHeaderActions.select" @collapseNavigation="() => {
-          resizeCalendar()
-          collapseNavigation = !collapseNavigation;
-        }" :isLightTheme="lightThemeChecked" >
-      <template #topbar>
-        <bib-header :avatarLink="user2 ? user2.Photo : ''"  :isLightTheme="lightThemeChecked" :mainAction="btnText">
-          <template #avatar_menu>
-            <bib-button pop="arrowhead-right" :scale="1.3">
-              <template v-slot:menu>
-                <div class="list" id="layout-list">
-                  <span class="list__item" id="layout-list-item1">
-                    <a :href="userProfileUrl" id="layout-list-item1-link">
-                      <bib-icon icon="user-canonical" :scale="1.1" variant="gray5" class="mr-075"></bib-icon> My Profile
-                    </a>
-                  </span>
-                  <span class="list__item" id="layout-list-item2">
-                    <a :href="logoutUrl" id="layout-list-item2-link">
-                      <bib-icon icon="output" :scale="1.1" variant="gray5" class="mr-075"></bib-icon> Logout
-                    </a>
-                  </span>
-                </div>
-              </template>
-            </bib-button>
-          </template>
-        </bib-header>
-      </template>
-      <template #switcher>
-        <bib-app-switcher :menuItems="appItems"  :isLightTheme="lightThemeChecked" @toggle-theme="handleToggleWrapperTheme"></bib-app-switcher>
-      </template>
-      <template #navigation>
-        <bib-app-navigation :items="navItems1" @click="goToRoute" :isLightTheme="lightThemeChecked"></bib-app-navigation>
-        <!-- separator -->
-        <div class=" mt-05 mb-05" :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']" style="height: 1px"></div>
-        <bib-app-navigation :items="navItems2" @click="goToRoute" :isLightTheme="lightThemeChecked"></bib-app-navigation>
-        <!-- separator -->
-        <div class=" mt-05 mb-05" :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']" style="height: 1px"></div>
-        <bib-detail-collapse v-show="!collapseNavigation" label="Favorite Projects" label-weight="400" variant="light" open>
-          <template v-slot:content>
-            <bib-app-navigation :items="favProjects" @click="goToProject"></bib-app-navigation>
-          </template>
-        </bib-detail-collapse>
-        <!-- separator -->
-        <div class=" mt-05 mb-05" :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']" style="height: 1px"></div>
-        <bib-detail-collapse v-show="!collapseNavigation" label="People" label-weight="400" variant="light" open v-if="isAdmin">
-          <template v-slot:content>
-            <bib-app-navigation :items="appMembers" @click="goToUsertask"></bib-app-navigation>
-          </template>
-        </bib-detail-collapse>
-      </template>
-      <template #content>
-        <div class="main" id="main-content" :class="openSidebar ? 'open-sidebar' : ''">
-          <Nuxt />
-          <transition name="drawer">
-            <task-sidebar v-show="openSidebar" :sectionIdActive="sectionPreselect" :scrollId="scrollId"></task-sidebar>
-          </transition>
-        </div>
-      </template>
-    </bib-app-wrapper>
-    <!-- task sidebar -->
-    <create-project-modal ref="projectModals"></create-project-modal>
-    <add-teammember-modal ref="teammemberModal"></add-teammember-modal>
-    <add-member-to-task ref="taskTeamModal"></add-member-to-task>
-    
-  </div>
-</client-only>
+  <client-only>
+    <div id="layout-wrapper">
+      <bib-app-wrapper
+        class="test"
+        :navigationCollapsed="collapseNavigation"
+        :select="appHeaderActions.select"
+        @collapseNavigation="
+          () => {
+            resizeCalendar();
+            collapseNavigation = !collapseNavigation;
+          }
+        "
+        :isLightTheme="lightThemeChecked"
+      >
+        <template #topbar>
+          <bib-header
+            :avatarLink="user2 ? user2.Photo : ''"
+            :isLightTheme="lightThemeChecked"
+            :mainAction="btnText"
+          >
+            <template #avatar_menu>
+              <bib-button pop="arrowhead-right" :scale="1.3">
+                <template v-slot:menu>
+                  <div class="list" id="layout-list">
+                    <span class="list__item" id="layout-list-item1">
+                      <a :href="userProfileUrl" id="layout-list-item1-link">
+                        <bib-icon
+                          icon="user-canonical"
+                          :scale="1.1"
+                          variant="gray5"
+                          class="mr-075"
+                        ></bib-icon>
+                        My Profile
+                      </a>
+                    </span>
+                    <span class="list__item" id="layout-list-item2">
+                      <a :href="logoutUrl" id="layout-list-item2-link">
+                        <bib-icon
+                          icon="output"
+                          :scale="1.1"
+                          variant="gray5"
+                          class="mr-075"
+                        ></bib-icon>
+                        Logout
+                      </a>
+                    </span>
+                  </div>
+                </template>
+              </bib-button>
+            </template>
+          </bib-header>
+        </template>
+        <template #switcher>
+          <bib-app-switcher
+            :menuItems="appItems"
+            :isLightTheme="lightThemeChecked"
+            @toggle-theme="handleToggleWrapperTheme"
+          ></bib-app-switcher>
+        </template>
+        <template #navigation>
+          <bib-app-navigation
+            :items="navItems1"
+            @click="goToRoute"
+            :isLightTheme="lightThemeChecked"
+          ></bib-app-navigation>
+          <!-- separator -->
+          <div
+            class="mt-05 mb-05"
+            :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']"
+            style="height: 1px"
+          ></div>
+          <bib-app-navigation
+            :items="navItems2"
+            @click="goToRoute"
+            :isLightTheme="lightThemeChecked"
+          ></bib-app-navigation>
+          <!-- separator -->
+          <div
+            class="mt-05 mb-05"
+            :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']"
+            style="height: 1px"
+          ></div>
+          <bib-detail-collapse
+            v-show="!collapseNavigation"
+            label="Favorite Projects"
+            label-weight="400"
+            variant="light"
+            open
+          >
+            <template v-slot:content>
+              <bib-app-navigation
+                :items="favProjects"
+                @click="goToProject"
+              ></bib-app-navigation>
+            </template>
+          </bib-detail-collapse>
+          <!-- separator -->
+          <div
+            class="mt-05 mb-05"
+            :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']"
+            style="height: 1px"
+          ></div>
+          <bib-detail-collapse
+            v-show="!collapseNavigation"
+            label="People"
+            label-weight="400"
+            variant="light"
+            open
+            v-if="isAdmin"
+          >
+            <template v-slot:content>
+              <bib-app-navigation
+                :items="appMembers"
+                @click="goToUsertask"
+              ></bib-app-navigation>
+            </template>
+          </bib-detail-collapse>
+        </template>
+        <template #content>
+          <div
+            class="main"
+            id="main-content"
+            :class="openSidebar ? 'open-sidebar' : ''"
+          >
+            <Nuxt />
+            <transition name="drawer">
+              <task-sidebar
+                v-show="openSidebar"
+                :sectionIdActive="sectionPreselect"
+                :scrollId="scrollId"
+              ></task-sidebar>
+            </transition>
+          </div>
+        </template>
+      </bib-app-wrapper>
+      <!-- task sidebar -->
+      <create-project-modal ref="projectModals"></create-project-modal>
+      <add-teammember-modal ref="teammemberModal"></add-teammember-modal>
+      <add-member-to-task ref="taskTeamModal"></add-member-to-task>
+    </div>
+  </client-only>
 </template>
 
 <script>
@@ -82,44 +156,96 @@ export default {
         variant: "success",
         icon: "add",
       },*/
-      appItems: [{
-          img: "Layers",
-          color: "primary",
+      appItems: [
+        {
+          img: "layers-solid",
+          color: "secondary",
           text: "Templates",
           href: process.env.BIB_TEMPLATES_APP_URL,
         },
-        { img: "Files", color: "success-sub1", text: "Files", href: process.env.BIB_DRIVE_URL },
-        { img: "Signature", color: "orange", text: "eSign", href: process.env.BIB_ESIGN_APP_URL },
-        { img: "Tick", color: "primary", text: "Project", active: true, href: process.env.VUE_APP_URL },
-        { img: "CommentForum", color: "purple", text: "Chat", href: process.env.BIB_CHAT_APP_URL },
         {
-          img: "pencil",
-          color: "primary-sub1",
-          text: "Editor",
-          href: "http://dev.editor.business-in-a-box.com"
+          img: "cloud-solid",
+          color: "success-sub1",
+          text: "Files",
+          href: process.env.BIB_DRIVE_URL,
         },
         {
-          img: "video",
+          img: "signature",
+          color: "orange",
+          text: "eSign",
+          href: process.env.BIB_ESIGN_APP_URL,
+        },
+        {
+          img: "projects",
+          color: "primary",
+          text: "Project",
+          active: true,
+          href: process.env.VUE_APP_URL,
+        },
+        {
+          img: "chat",
+          color: "purple",
+          text: "Chat",
+          href: process.env.BIB_CHAT_APP_URL,
+        },
+        {
+          img: "editor",
+          color: "primary-sub1",
+          text: "Editor",
+          href: "http://dev.editor.business-in-a-box.com",
+        },
+        {
+          img: "meetings",
           color: "warning",
           text: "Video",
-          href: "https://dev-video-conf.business-in-a-box.com"
+          href: "https://dev-video-conf.business-in-a-box.com",
         },
         {
           img: "data-storage-single",
           color: "primary",
           text: "Drive",
-          href: ""
+          href: "",
         },
       ],
       navItems1: [
-        { label: "Home", icon: "home-solid", key: "dashboard-route", selected: false },
-        { label: "Inbox", icon: "mail-new-solid", key: "inbox", selected: false },
-        { label: "My tasks", icon: "check-circle-solid", key: 'mytasks', selected: false },
-        { label: "Favorites", icon: "bookmark-multiple-solid", key: 'favorites', selected: false },
+        {
+          label: "Home",
+          icon: "home-solid",
+          key: "dashboard-route",
+          selected: false,
+        },
+        {
+          label: "Inbox",
+          icon: "mail-new-solid",
+          key: "inbox",
+          selected: false,
+        },
+        {
+          label: "My tasks",
+          icon: "check-circle-solid",
+          key: "mytasks",
+          selected: false,
+        },
+        {
+          label: "Favorites",
+          icon: "bookmark-multiple-solid",
+          key: "favorites",
+          selected: false,
+        },
       ],
       navItems2: [
-        { label: "Tasks", icon: "check-all", key: "task-route", selected: false },
-        { label: "Projects", icon: "briefcase-solid", key: 'project-route', selected: false },
+        {
+          label: "Tasks",
+          icon: "check-all",
+          key: "task-route",
+          selected: false,
+        },
+        {
+          label: "Projects",
+          icon: "briefcase-solid",
+          key: "project-route",
+          selected: false,
+        },
         // { label: "Goals", icon: "flag-racing", key: 'goals', selected: false },
         // { label: "Dream", icon: "star", key: 'dreams', selected: false },
       ],
@@ -140,7 +266,8 @@ export default {
           ]
         },*/
         select: {
-          items: [{
+          items: [
+            {
               label: "Biztree",
               event: "item-click",
               img: "https://i.pravatar.cc/100",
@@ -158,8 +285,8 @@ export default {
           },
           selectedOrg: {
             label: "Biztree",
-            img: "https://i.pravatar.cc/100"
-          }
+            img: "https://i.pravatar.cc/100",
+          },
         },
       },
       userProfileUrl: process.env.USER_PROFILE_URL,
@@ -167,89 +294,94 @@ export default {
       sectionPreselect: null,
       scrollId: "",
       isAdmin: false,
-      btnText: "Upgrade"
-    }
+      btnText: "Upgrade",
+    };
   },
   created() {
-    
     this.$root.$on("open-sidebar", (payload) => {
       // console.log("root open-sidebar -> ", typeof(payload), payload)
       this.openSidebar = true;
-      this.scrollId = payload.scrollId
+      this.scrollId = payload.scrollId;
 
       if (!payload.id) {
         // console.info(payload, typeof payload);
-        if (typeof(payload) == "number") {
-          this.sectionPreselect = payload
+        if (typeof payload == "number") {
+          this.sectionPreselect = payload;
         }
-        this.$store.dispatch("task/setSingleTask", {})
-        this.$store.commit("task/fetchTeamMember", [])
+        this.$store.dispatch("task/setSingleTask", {});
+        this.$store.commit("task/fetchTeamMember", []);
       } else {
         if (payload.project.length > 0) {
           // console.log(payload.project[0])
-          this.$store.dispatch("section/fetchProjectSections", { projectId: payload.project[0].projectId, filter: 'all' })
+          this.$store.dispatch("section/fetchProjectSections", {
+            projectId: payload.project[0].projectId,
+            filter: "all",
+          });
           // fetch single project data
-          this.$axios.$get(`project/${payload.project[0].projectId}`, {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-          }).then((res) => {
-            if (res) {
-              this.$store.dispatch('project/setSingleProject', res.data)
-            }
-          }).catch(err => console.log(err))
+          this.$axios
+            .$get(`project/${payload.project[0].projectId}`, {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+              },
+            })
+            .then((res) => {
+              if (res) {
+                this.$store.dispatch("project/setSingleProject", res.data);
+              }
+            })
+            .catch((err) => console.log(err));
           // this.$store.dispatch("project/setSingleProject", payload.project[0].project)
           // this.$store.dispatch("task/setSingleTask", { ...payload, projectId: payload.project[0].projectId })
         } else {
-          this.$store.dispatch('project/setSingleProject', {})
+          this.$store.dispatch("project/setSingleProject", {});
         }
         // console.log(payload)
-        this.$store.dispatch("task/setSingleTask", payload)
-        this.$store.dispatch('task/fetchTeamMember', { id: payload.id })
+        this.$store.dispatch("task/setSingleTask", payload);
+        this.$store.dispatch("task/fetchTeamMember", { id: payload.id });
       }
     });
-    this.$root.$on('close-sidebar', () => {
+    this.$root.$on("close-sidebar", () => {
       // console.info('close-sidebar event')
-      this.openSidebar = false
-      this.$store.dispatch("task/setSingleTask", {})
+      this.openSidebar = false;
+      this.$store.dispatch("task/setSingleTask", {});
       // this.$store.dispatch('project/setSingleProject', {})
-    })
+    });
     this.$root.$on("create-project-modal", () => {
       this.$refs.projectModals.showCreateProjectModal = true;
-    })
+    });
     this.$nuxt.$on("add-teammember-modal", () => {
-      this.$refs.teammemberModal.showTeamCreateModal = true
-    })
+      this.$refs.teammemberModal.showTeamCreateModal = true;
+    });
     this.$nuxt.$on("add-member-to-task", () => {
-      this.$refs.taskTeamModal.showTaskTeamModal = true
-    })
+      this.$refs.taskTeamModal.showTaskTeamModal = true;
+    });
   },
   mounted() {
-
     if (process.client) {
-
-      if (this.$router.history.current.fullPath == '/dashboard') {
+      if (this.$router.history.current.fullPath == "/dashboard") {
         this.navItems1[0].selected = true;
       }
 
-      if (this.$router.history.current.fullPath == '/inbox') {
+      if (this.$router.history.current.fullPath == "/inbox") {
         this.navItems1[1].selected = true;
       }
 
-      if (this.$router.history.current.fullPath == '/mytasks') {
+      if (this.$router.history.current.fullPath == "/mytasks") {
         this.navItems1[2].selected = true;
       }
 
-      if (this.$router.history.current.fullPath == '/favorites') {
+      if (this.$router.history.current.fullPath == "/favorites") {
         this.navItems1[3].selected = true;
       }
 
-      if (this.$router.history.current.fullPath == '/tasks') {
+      if (this.$router.history.current.fullPath == "/tasks") {
         this.navItems2[0].selected = true;
       }
 
-      if (this.$router.history.current.fullPath == '/projects') {
+      if (this.$router.history.current.fullPath == "/projects") {
         setTimeout(() => {
           this.navItems2[1].selected = true;
-        },500)
+        }, 500);
       }
 
       // if (this.$router.history.current.fullPath == '/goals') {
@@ -261,8 +393,7 @@ export default {
       // }
 
       // Dhruv (admin)
-
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4MDY3NDA0MjQ1OSwiZXhwIjoxNjg4NDUwMDQyNDU5LCJqdGkiOiIxNWE4YzdjNS1jNzNmLTRmMWMtYjRlMS00NmQ4NWI5OGJmMDAifQ.ko4EnWzxUP3GfXCaRbPdOLXf-0MlmymbKwYb3SqAKL0"
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4MDY3NDA0MjQ1OSwiZXhwIjoxNjg4NDUwMDQyNDU5LCJqdGkiOiIxNWE4YzdjNS1jNzNmLTRmMWMtYjRlMS00NmQ4NWI5OGJmMDAifQ.ko4EnWzxUP3GfXCaRbPdOLXf-0MlmymbKwYb3SqAKL0";
 
       // Vishwajeet
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2ODA2NzI3NTEwOTksImV4cCI6MTY4ODQ0ODc1MTA5OSwianRpIjoiOGUyYzc4M2YtOTY3My00OGVlLTgyOTgtMGVjZTU5NTIyZWJhIn0.rftT95n4vGjR52nHsrLVHnbH3WNETaBpUaD9c5b7DRA"
@@ -279,126 +410,116 @@ export default {
       // this.$cookies.set('b_ssojwt', cookie);
       // this.$store.dispatch('token/setToken', cookie);
 
-      if (this.$cookies.get('b_ssojwt')) {
-        let jwt = this.$cookies.get('b_ssojwt');
+      if (this.$cookies.get("b_ssojwt")) {
+        let jwt = this.$cookies.get("b_ssojwt");
 
         // extract user
-        var base64Url = jwt.split('.')[1];
-        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
+        var base64Url = jwt.split(".")[1];
+        var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        var jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split("")
+            .map(function (c) {
+              return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+            })
+            .join("")
+        );
 
         let user = JSON.parse(jsonPayload);
 
-        if(user.subbs == 'FREETRIAL') {
-          this.btnText = "See Plans & Pricing"
+        if (user.subbs == "FREETRIAL") {
+          this.btnText = "See Plans & Pricing";
         } else {
-          this.btnText = "Upgrade"
+          this.btnText = "Upgrade";
         }
 
-        localStorage.setItem('user', JSON.stringify(user))
-        this.$store.dispatch('user/setUser', user)
+        localStorage.setItem("user", JSON.stringify(user));
+        this.$store.dispatch("user/setUser", user);
 
-        this.$axios.get(`${process.env.USER_API_URL}/${user.sub}`, {
-          headers: {
-            'Authorization': `Bearer ${jwt}`
-          }
-        }).then((res) => {
-          let firstName = res.data[0].FirstName;
-          let lastName = res.data[0].LastName;
-
-          this.$store.dispatch("user/setUser2", res.data[0])
-
-          this.$axios.$post("/user/create", {
-            id: user.sub,
-            email: user.sube,
-            firstName: firstName,
-            lastName: lastName,
-            companyId: user.subb
-          }, {
+        this.$axios
+          .get(`${process.env.USER_API_URL}/${user.sub}`, {
             headers: {
-              'Authorization': `Bearer ${jwt}`
-            }
-          }).then((value) => {
-            // console.log('user created!!')
-            if(JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
-              this.isAdmin = true;
-            } else {
-              this.isAdmin = false
-            }
-            this.$store.dispatch("department/fetchDepartments")
-            this.$store.dispatch("project/fetchFavProjects")
-            this.$store.dispatch("user/setTeamMembers")
-            this.$store.dispatch("task/getFavTasks")
-          }).catch((err) => {
-            console.log('there was some issue!!!')
+              Authorization: `Bearer ${jwt}`,
+            },
           })
+          .then((res) => {
+            let firstName = res.data[0].FirstName;
+            let lastName = res.data[0].LastName;
 
-        }).catch((err) => {
-          console.log(err);
-        })
+            this.$store.dispatch("user/setUser2", res.data[0]);
 
-        this.$store.dispatch('token/setToken', jwt);
-        localStorage.setItem('accessToken', jwt);
+            this.$axios
+              .$post(
+                "/user/create",
+                {
+                  id: user.sub,
+                  email: user.sube,
+                  firstName: firstName,
+                  lastName: lastName,
+                  companyId: user.subb,
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${jwt}`,
+                  },
+                }
+              )
+              .then((value) => {
+                if (JSON.parse(localStorage.getItem("user")).subr == "ADMIN") {
+                  this.isAdmin = true;
+                } else {
+                  this.isAdmin = false;
+                }
+                this.$store.dispatch("department/fetchDepartments");
+                this.$store.dispatch("project/fetchFavProjects");
+                this.$store.dispatch("user/setTeamMembers");
+                this.$store.dispatch("task/getFavTasks");
+              })
+              .catch((err) => {
+                console.log("there was some issue!!!");
+              });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
 
-        this.$store.dispatch("company/fetchCompanyMembers", user.subb)
+        this.$store.dispatch("token/setToken", jwt);
+        localStorage.setItem("accessToken", jwt);
 
+        this.$store.dispatch("company/fetchCompanyMembers", user.subb);
       } else {
-        window.location.href = process.env.AUTH_REDIRECT_URL + process.env.VUE_APP_URL;
+        window.location.href =
+          process.env.AUTH_REDIRECT_URL + process.env.VUE_APP_URL;
       }
     }
   },
 
   computed: {
     ...mapGetters({
-      favProjects: 'project/getFavProjects',
-      teammate: 'user/getTeamMembers',
+      favProjects: "project/getFavProjects",
+      teammate: "user/getTeamMembers",
       appMembers: "user/getAppMembers",
-      user2: 'user/getUser2',
-      // activeTask: "task/getSelectedTask",
-    })
+      user2: "user/getUser2",
+    }),
   },
 
   methods: {
-    /*createBtnClick(e) {
-      // console.log('create', e)
-      this.collapseNavigation = false
-    },*/
     isRouteActive(id) {
       if (this.$route.path.includes(id)) {
-        return true
+        return true;
       } else {
-        return false
+        return false;
       }
     },
 
-    /*createAction($event) {
-      // console.log($event.key)
-      switch ($event.key) {
-        case "new-task":
-          // console.log($event.key)
-          this.$nuxt.$emit("open-sidebar", $event)
-          break;
-        case "new-project":
-          // console.log($event.key)
-          this.$refs.projectModals.showCreateProjectModal = true;
-          break;
-        default:
-          console.log('default')
-          break;
-      }
-    },*/
-
     resizeCalendar() {
-      if (document.getElementById('myDiv')) {
-        window.dispatchEvent(new Event('resize'));
+      if (document.getElementById("myDiv")) {
+        window.dispatchEvent(new Event("resize"));
       }
       return false;
     },
 
     goToRoute(event, item) {
-      // console.log(event, item)
 
       for (let i = 0; i < this.navItems1.length; i++) {
         if (this.navItems1[i].key == item.key) {
@@ -416,33 +537,21 @@ export default {
         }
       }
 
-      if (item.key == 'dashboard-route') this.$router.push('/dashboard')
-      if (item.key == 'project-route') this.$router.push('/projects')
-      if (item.key == 'favorites') this.$router.push('/favorites')
-      if (item.key == 'task-route') this.$router.push('/tasks')
-      if (item.key == 'mytasks') this.$router.push('/mytasks')
-      if (item.key == 'inbox') this.$router.push('/inbox')
-
-      // if (item.key == 'goals') this.$router.push('/goals')
-      // if (item.key == 'dreams') this.$router.push('/dreams')
-      
+      if (item.key == "dashboard-route") this.$router.push("/dashboard");
+      if (item.key == "project-route") this.$router.push("/projects");
+      if (item.key == "favorites") this.$router.push("/favorites");
+      if (item.key == "task-route") this.$router.push("/tasks");
+      if (item.key == "mytasks") this.$router.push("/mytasks");
+      if (item.key == "inbox") this.$router.push("/inbox");
     },
 
     goToProject($event, item) {
-      // console.log(...arguments)
-      this.$router.push("/projects/" + item.id)
+      this.$router.push("/projects/" + item.id);
     },
 
-    goToUsertask($event, item){
-
-      // console.log($event.id, this.$route.path)
-      // sessionStorage.setItem("usertaskadmin", $event.id)
-      // if (this.$route.path == "/usertasks") {
-      //   // window.location.reload()
-      //   this.$router.push({ path: "/usertasks" })
-      // }
+    goToUsertask($event, item) {
       this.teammate.find((u) => u.email == item.email);
-      this.$router.push({ path: "/usertasks", query: {email: item.email }})
+      this.$router.push({ path: "/usertasks", query: { email: item.email } });
     },
 
     // Handle User logout
@@ -456,9 +565,8 @@ export default {
     handleToggleWrapperTheme(value) {
       this.lightThemeChecked = value;
     },
-  }
-}
-
+  },
+};
 </script>
 <style lang="scss">
 html {
@@ -478,8 +586,6 @@ html {
 }
 
 .main {
-  /*display: grid;
-  grid-template-rows: 2.5rem 2.5rem 2.5rem 100%;*/
   overflow: hidden;
   background-color: white;
   position: relative;
@@ -507,14 +613,14 @@ html {
         position: absolute;
       }
 
-      .drop-wrapper { top: 2.5rem;}
-
+      .drop-wrapper {
+        top: 2.5rem;
+      }
     }
   }
 }
 
 ::v-deep {
-
   .button--drop.create-dropdown {
     .menu {
       details {
@@ -531,7 +637,5 @@ html {
     max-width: $sidebar-width;
     border-left: 1px solid $gray4;
   }
-
 }
-
 </style>
