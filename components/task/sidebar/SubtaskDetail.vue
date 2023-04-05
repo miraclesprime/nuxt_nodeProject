@@ -4,7 +4,7 @@
       <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" title="Close" @click="closeSidebarDetail">
         <bib-icon icon="page-last" class="m-auto"></bib-icon>
       </div>
-      <!-- <span class="text-underline cursor-pointer" @click="closeSidebarDetail">{{form.task.title}}</span> -->
+      <span class="text-underline cursor-pointer" @click="closeSidebarDetail">{{form?.task?.title}}</span>
       <div class="ml-auto d-flex align-center gap-05">
           <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="ts-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
             <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" ></bib-icon>
@@ -49,11 +49,14 @@
           <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" v-model="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdateField({field: 'title', value: form.title, name: 'Title'})">
         </div>
         <div>
-          <!-- <team-avatar-list :team="team"></team-avatar-list> -->
+          <team-avatar-list :team="team"></team-avatar-list>
         </div>
-        <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light cursor-pointer" :title="assignee.label">
+        <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light cursor-pointer" v-tooltip="'Team'" @click="showAddTeamModal">
+          <bib-icon icon="user-group-solid"></bib-icon>
+        </div>
+        <!-- <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light cursor-pointer" :title="assignee.label">
           <bib-avatar :src="assignee.avatar" size="1.5rem"></bib-avatar>
-        </div>
+        </div> -->
       </div>
       <!-- <loading :loading="loading"></loading> -->
     </div>
@@ -107,6 +110,9 @@
             <task-history v-if="item.text && !item.isHidden" :history="item"></task-history>
           </div>
         </template>
+
+        <sidebar-files id="subtask_files" mode="subtask" :reloadFiles="reloadFiles"></sidebar-files>
+
       </div>
     </div>
     <!-- message input -->
@@ -114,11 +120,19 @@
       <bib-avatar :src="user2.Photo" size="2rem" class="flex-shrink-0"></bib-avatar>
       <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
     </div>
+
+    <bib-modal-wrapper v-if="taskTeamModal" title="Team" size="lg" @close="taskTeamModal = false">
+      <template slot="content">
+        <div style="min-height: 12rem;">
+          <task-team :task="subtask" mode="subtask" ></task-team>
+        </div>
+      </template>
+    </bib-modal-wrapper>
   </section>
 </template>
 <script>
 import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import dayjs from 'dayjs'
 import _ from 'lodash'
 export default {
@@ -148,6 +162,8 @@ export default {
       editMessage: {},
       // isFavorite: { variant: "gray5", text: "Add to favorites", status: false },
       // subkey: 0,
+      reloadFiles: 0,
+      taskTeamModal: false,
     }
   },
   computed: {
@@ -159,6 +175,7 @@ export default {
       subtaskHistory: "subtask/getSubtaskHistory",
       teamMembers: "user/getTeamMembers",
       departments: "department/getAllDepartments",
+      team: 'subtask/getSubtaskMembers',
     }),
 
     orgUsers() {
@@ -228,11 +245,6 @@ export default {
       } else {
         return []
       }
-      /*return [
-          {id:10, text: 'lorem ipsum', userId: 'k61YQdJ6J7ldOGpJ', updatedAt: '2023-01-11T10:58:26.000Z'}, 
-          { id: 21, text: 'dolor sit amet', userId: 'DKgl9av2NwnaG1vz', updatedAt: '2023-01-12T11:23:52.000Z'}, 
-          {"id": 1, "userId": "DKgl9av2NwnaG1vz", "subtaskId": 1, "comment": "<p>asdgdfa</p>", "isDeleted": false, "createdAt": "2023-01-18T06:40:00.000Z", "updatedAt": "2023-01-18T06:40:00.000Z" },
-          ]*/
     },
     isFavorite(){
         let fav = this.favsubtasks.findIndex(fv => fv.subtaskId == this.subtask.id)
@@ -254,7 +266,7 @@ export default {
   mounted() {
     // console.log('mounted subtask detail')
     this.$store.dispatch("subtask/fetchSubTask", this.subtask)
-
+    this.$store.dispatch("subtask/fetchSubtaskMembers", this.subtask)
     this.$store.dispatch("subtask/fetchFavorites")
 
     this.loadingComments = true
@@ -268,6 +280,15 @@ export default {
     this.$store.dispatch("subtask/fetchSubtaskHistory", this.subtask)
   },
   methods: {
+
+    ...mapActions({
+      fetchSubtaskMembers: "subtask/fetchSubtaskMembers",
+    }),
+
+    showAddTeamModal() {
+      // this.$refs.taskTeamModal.showTaskTeamModal = true
+      this.taskTeamModal = true
+    },
     fetchComments() {
       this.loadingComments = true
       this.$store.dispatch("subtask/fetchSubtaskComments", this.subtask)

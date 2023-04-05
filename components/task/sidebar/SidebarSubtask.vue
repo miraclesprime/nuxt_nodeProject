@@ -93,6 +93,14 @@
     <table-context-menu :items="subtaskContextMenu" :show="showContext" :coordinates="popupCoords" :activeItem="activeSubtask" @close-context="closeContext" ref="task_menu" @item-click="contextItemClick"></table-context-menu>
     <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
     <!-- <loading :loading="loading"></loading> -->
+
+    <bib-modal-wrapper v-if="taskTeamModal" title="Team" size="lg" @close="taskTeamModal = false">
+      <template slot="content">
+        <div style="min-height: 12rem;">
+          <task-team :task="activeSubtask" mode="subtask" ></task-team>
+        </div>
+      </template>
+    </bib-modal-wrapper>
     </div>
   </div>
 </client-only>
@@ -147,6 +155,7 @@ export default {
       subkey: 0,
       alertDialog: false,
       alertMsg:"",
+      taskTeamModal: false,
     };
   },
   computed: {
@@ -238,13 +247,14 @@ export default {
           this.$emit("view-subtask", this.activeSubtask)
           break;
         case 'delete-subtask':
-          this.deleteTask(this.activeSubtask)
+          this.deleteSubtask(this.activeSubtask)
           break;
         case 'copy-subtask':
           this.copyLink(this.activeSubtask)
           break;
         case 'gotoTeam':
-          this.$nuxt.$emit('add-member-to-subtask')
+          // this.$nuxt.$emit('add-member-to-subtask')
+          this.taskTeamModal = true
           break;
         /*case 'gotoComment':
           this.openSidebar(this.activeSubtask)
@@ -404,7 +414,7 @@ export default {
     },
 
     async deleteSubtask(subtask) {
-      this.loading = true
+      // this.loading = true
       const delsub = await this.$store.dispatch("subtask/deleteSubtask", { ...subtask, text: `deleted subtask "${subtask.title}"` });
       if (delsub.statusCode == 200) {
         this.$store.dispatch("subtask/fetchSubtasks", this.currentTask)
@@ -412,7 +422,7 @@ export default {
         this.$emit('close-sidebar-detail')
         this.$store.dispatch("subtask/setSelectedSubtask", "")
       }
-      this.loading = false
+      // this.loading = false
     },
 
     copyLink(subtask) {

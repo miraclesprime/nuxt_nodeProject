@@ -5,6 +5,7 @@ export const state = () => ({
   subtaskHistory: [],
   // singleSubtaskComment: {},
   favSubtasks: [],
+  subtaskMembers: [],
 });
 
 export const getters = {
@@ -27,6 +28,10 @@ export const getters = {
   getFavSubtasks(state) {
     return state.favSubtasks
   },
+
+  getSubtaskMembers(state){
+    return state.subtaskMembers
+  }
 };
 
 export const mutations = {
@@ -45,6 +50,10 @@ export const mutations = {
 
   setFavSubtasks(state, payload) {
     state.favSubtasks = payload
+  },
+
+  setSubtaskMembers(state, payload){
+    state.subtaskMembers = payload
   },
 
   updateSingleSubtask(state, payload) {
@@ -144,6 +153,68 @@ export const actions = {
       // console.log(fvsub.data.data)
       ctx.commit("setFavSubtasks", fvsub.data.data)
     }).catch(e => console.warn(e))
+  },
+
+  async addMembers(ctx, payload){
+    let data;
+    if (ctx.getters.getSubtaskMembers.length < 1) {
+      data = payload.team;
+    } else {
+      data = payload.team.filter((el1) => {
+        if (ctx.getters.getSubtaskMembers.some((el2) => el2.id != el1.id)) {
+          return el1;
+        }
+      })
+    }
+    try {
+      const stm = await this.$axios.post("subtask/"+payload.id+"/members", { users: data, text: payload.text }, {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+        }
+      })
+      return stm.data
+    } catch(e) {
+      console.warn(e);
+    }
+  },
+
+  async fetchSubtaskMembers(ctx, payload) {
+    // console.log("fetch sub members->",payload)
+    const st = await this.$axios.get("subtask/"+payload.id+"/members", {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+      }
+    })
+    if (st.data.statusCode == 200) {
+      let team = st.data.data.members;
+
+      let data = team.map((el) => {
+        if (payload.userId == el.user.id) {
+          el.isOwner = true
+        } else {
+          el.isOwner = false
+        }
+        return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName, isOwner: el.isOwner };
+      });
+      ctx.commit("setSubtaskMembers", data)
+    }
+    return st.data
+  },
+
+  async deleteMember(ctx, payload) {
+    try {
+      let m = await this.$axios.delete(`/subtask/${payload.id}/members`, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+          "userId": payload.memberId,
+          "text": payload.text,
+        }
+      })
+      return m.data
+    } catch (e) {
+      console.log(e);
+    }
   },
 
   async fetchSubtaskComments(ctx, payload) {

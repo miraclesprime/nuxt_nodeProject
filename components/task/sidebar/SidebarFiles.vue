@@ -1,5 +1,5 @@
 <template>
-  <div id="task-files-wrapper" class="px-2 py-05">
+  <div id="task-files-wrapper" class=" py-05" :class="{'px-2': mode == 'task'}">
     <div class="d-flex justify-between sub-title pb-05 border-bottom-gray2 ">
       <p class="text-gray5 font-md">Files </p>
     </div>
@@ -91,11 +91,13 @@ export default {
     }
   },
   props: {
+    mode: { type: String, default: "task"},
     reloadFiles: { type: Number, default: 0 }
   },
   computed: {
     ...mapGetters({
-      task: "task/getSelectedTask"
+      task: "task/getSelectedTask",
+      subtask: "subtask/getSelectedSubTask",
     }),
 
     files() {
@@ -122,7 +124,7 @@ export default {
     },*/
   },
   watch: {
-    task(newValue, oldValue) {
+    /*task(newValue, oldValue) {
       // console.log(newValue.id, newValue.title)
       if (newValue.id && newValue.id != oldValue.id) {
         // console.log(newValue.id, oldValue.id)
@@ -131,7 +133,17 @@ export default {
         this.dbFiles = []
         this.oldfilesCount = 0
       }
-    },
+    },*/
+
+    /*subtask(newValue, oldValue) {
+      if (newValue.id && newValue.id != oldValue.id) {
+        // console.log(newValue.id, oldValue.id)
+        this.getFiles()
+      } else {
+        this.dbFiles = []
+        this.oldfilesCount = 0
+      }
+    },*/
 
     reloadFiles(newValue, oldValue) {
       if (newValue != oldValue) {
@@ -167,12 +179,12 @@ export default {
         formdata.append('files', file)
         filelist.push(file.name)
       })
-      formdata.append('taskId', this.task.id)
+      this.mode == 'task' ? formdata.append('taskId', this.task.id) : formdata.append('subTaskId', this.subtask.id)
       // formdata.append('text', 'File added for task');
-      formdata.append('text', `uploaded file(s) "${filelist.join(", ")}" to task`)
+      formdata.append('text', `uploaded file(s) "${filelist.join(", ")}" to ${this.mode}`)
       formdata.append('isHidden', true)
 
-      if (this.task.hasOwnProperty('project')) {
+      if (this.mode == "task" && this.task.hasOwnProperty('project')) {
         formdata.append('projectId', this.task.project[0].projectId)
       }
 
@@ -195,14 +207,19 @@ export default {
     },
 
     getFiles() {
+      console.log("file mode",this.mode)
       this.showPlaceholder = true
       // console.info(Object.keys(this.task).length, !this.task)
-      if (Object.keys(this.task).length == 0) {
+
+      if (this.mode == "task" && Object.keys(this.task).length == 0) {
         // console.log('no task selected')
         this.dbFiles = []
         return
       }
-      let obj1 = { taskId: this.task.id }
+
+      let obj1
+      this.mode == "task" ? obj1 = { taskId: this.task.id } : obj1 = { subTaskId: this.subtask.id }
+
       this.$axios.get("file/db/all", {
           // timeout: 2500,
           headers: {
