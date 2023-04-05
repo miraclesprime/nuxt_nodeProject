@@ -4,7 +4,7 @@
       <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" title="Close" @click="closeSidebarDetail">
         <bib-icon icon="page-last" class="m-auto"></bib-icon>
       </div>
-      <!-- <span class="text-underline cursor-pointer" @click="closeSidebarDetail">{{form.task.title}}</span> -->
+      <span class="text-underline cursor-pointer" @click="closeSidebarDetail">{{form?.task?.title}}</span>
       <div class="ml-auto d-flex align-center gap-05">
           <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="ts-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
             <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" ></bib-icon>
@@ -124,7 +124,7 @@
     <bib-modal-wrapper v-if="taskTeamModal" title="Team" size="lg" @close="taskTeamModal = false">
       <template slot="content">
         <div style="min-height: 12rem;">
-          <task-team :task="subtask" mode="subtask"></task-team>
+          <task-team :task="subtask" mode="subtask" ></task-team>
         </div>
       </template>
     </bib-modal-wrapper>
@@ -132,7 +132,7 @@
 </template>
 <script>
 import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import dayjs from 'dayjs'
 import _ from 'lodash'
 export default {
@@ -245,11 +245,6 @@ export default {
       } else {
         return []
       }
-      /*return [
-          {id:10, text: 'lorem ipsum', userId: 'k61YQdJ6J7ldOGpJ', updatedAt: '2023-01-11T10:58:26.000Z'}, 
-          { id: 21, text: 'dolor sit amet', userId: 'DKgl9av2NwnaG1vz', updatedAt: '2023-01-12T11:23:52.000Z'}, 
-          {"id": 1, "userId": "DKgl9av2NwnaG1vz", "subtaskId": 1, "comment": "<p>asdgdfa</p>", "isDeleted": false, "createdAt": "2023-01-18T06:40:00.000Z", "updatedAt": "2023-01-18T06:40:00.000Z" },
-          ]*/
     },
     isFavorite(){
         let fav = this.favsubtasks.findIndex(fv => fv.subtaskId == this.subtask.id)
@@ -285,6 +280,11 @@ export default {
     this.$store.dispatch("subtask/fetchSubtaskHistory", this.subtask)
   },
   methods: {
+
+    ...mapActions({
+      fetchSubtaskMembers: "subtask/fetchSubtaskMembers",
+    }),
+
     showAddTeamModal() {
       // this.$refs.taskTeamModal.showTaskTeamModal = true
       this.taskTeamModal = true

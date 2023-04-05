@@ -23,7 +23,7 @@
       <bib-button label="Add" variant="primary" pill @click="addTeamMember"></bib-button>
     </div>
     <label class="text-gray6 font-md">Team</label>
-    <template v-if="taskMembers.length">
+    <template v-if="taskMembers.length && mode == 'task'">
       <bib-table :key="'tt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="taskMembers" :hide-no-column="true" headless>
         <template #cell(name)="data">
           <div class="d-flex gap-05">
@@ -41,15 +41,32 @@
         </template>
       </bib-table>
     </template>
+    <template v-else>
+      <bib-table :key="'st-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="subtaskMembers" :hide-no-column="true" headless>
+        <template #cell(name)="data">
+          <div class="d-flex gap-05">
+            <bib-avatar class="mt-auto mb-auto" size="1.5rem">
+            </bib-avatar>
+            <span class="text-dark">
+              {{ data.value.name }} <span v-if="data.value.isOwner">(Owner)</span>
+            </span>
+          </div>
+        </template>
+        <template #cell_action="data">
+          <div v-if="!data.value.isOwner" class="cursor-pointer shape-circle" v-on:click="deleteMember(data.value)">
+            <bib-icon icon="trash-solid" variant="gray5"></bib-icon>
+          </div>
+        </template>
+      </bib-table>
+    </template>
     <template v-if="norecord">
-      <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
-        <bib-icon icon="warning"></bib-icon> No records found
+      <span id="projects-0" class="d-inline-flex gap-05 align-center my-1 text-gray5 font-md">
+        <bib-icon icon="warning" variant="gray4"></bib-icon> No records found
       </span>
     </template>
     <loading :loading="loading"></loading>
   </div>
 </template>
-
 <script>
 import { PROJECT_TEAM_FIELDS } from "~/config/constants";
 import { mapGetters } from 'vuex';
@@ -57,7 +74,7 @@ import { mapGetters } from 'vuex';
 export default {
   props: {
     task: Object,
-    mode: {type: String, default: "task"},
+    mode: { type: String, default: "task" },
   },
   data: function() {
     return {
@@ -75,12 +92,25 @@ export default {
 
   watch: {
     taskMembers() {
-      if (this.taskMembers.length == 0) {
-        this.loading = false
-        this.norecord = true
-      } else {
-        this.norecord = false
-        this.loading = false
+      if (this.mode == "task") {
+        if (this.taskMembers.length == 0) {
+          this.loading = false
+          this.norecord = true
+        } else {
+          this.norecord = false
+          this.loading = false
+        }
+      }
+    },
+    subtaskMembers() {
+      if (this.mode == "subtask") {
+        if (this.subtaskMembers.length == 0) {
+          this.loading = false
+          this.norecord = true
+        } else {
+          this.norecord = false
+          this.loading = false
+        }
       }
     },
   },
@@ -108,19 +138,20 @@ export default {
     // this.loading = false
     if (this.mode == "task") {
       this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
-        /*.then(t => {
-          this.loading = false
-        })*/
-    } else {
-      this.$store.dispatch("subtask/fetchSubtaskMembers", {id: this.task.id})
+    }
+    if (this.mode == "subtask") {
+      this.$store.dispatch("subtask/fetchSubtaskMembers", { id: this.task.id })
     }
   },
 
   created() {
     this.$root.$on('update-key', ($event) => {
-      this.$store.dispatch('task/fetchTeamMember', { id: this.task.id }).then(() => {
-        this.key += $event
-      })
+      if (this.mode == "task") {
+        this.$store.dispatch('task/fetchTeamMember', { id: this.task.id }).then(() => this.key += $event)
+      }
+      if(this.mode == "subtask") {
+        this.$store.dispatch("subtask/fetchSubtaskMembers", { id: this.task.id }).then(() => this.key += $event)
+      }
     })
   },
   methods: {
@@ -175,13 +206,16 @@ export default {
             this.team = []
             console.log(err)
           })
-        } else {
-          this.$store.dispatch("subtask/addMembers", { subtaskId: this.task.id, team: this.team, text: `added ${teamtext.join(', ')} to ${this.mode}` }).then(st => {
+        }
+        if(this.mode == "subtask") {
+          this.$store.dispatch("subtask/addMembers", { id: this.task.id, team: this.team, text: `added ${teamtext.join(', ')} to subtask` })
+          .then(() => {
             this.loading = false;
             this.message = ""
             this.team = []
-            this.$store.dispatch("subtask/fetchSubtaskMembers", { id: this.task.id })
-          }).catch((err) => {
+            this.$store.dispatch("subtask/fetchSubtaskMembers", { id: this.task.id, userId: this.task.userId })
+          })
+          .catch((err) => {
             this.loading = false;
             this.message = ""
             this.team = []
@@ -193,8 +227,7 @@ export default {
     async deleteMember(member) {
       // console.log(member)
       this.loading = true
-      // let confirmDelete = window.confirm("Are you sure want to delete " + member.name + "!")
-      // if (confirmDelete) {
+      if (this.mode == "task") {
         await this.$store.dispatch("task/deleteMember", { taskId: this.task.id, memberId: member.id, text: `${member.name} removed from task` })
           .then((res) => {
             // console.log(res)
@@ -204,13 +237,22 @@ export default {
           })
           .catch(e => console.log(e))
         this.loading = false
-      // }
+      }
+      if (this.mode == "subtask") {
+        await this.$store.dispatch("subtask/deleteMember", { id: this.task.id, memberId: member.id, text: `${member.name} removed from subtask` })
+          .then((res) => {
+            // console.log(res)
+            this.$store.dispatch('subtask/fetchSubtaskMembers', { id: this.task.id })
+            this.key += 1
+            // alert(res)
+          })
+          .catch(e => console.log(e))
+        this.loading = false
+      }
     },
   }
 };
 
 </script>
 <style scoped lang="scss">
-
-
 </style>
