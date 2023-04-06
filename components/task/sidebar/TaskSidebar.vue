@@ -103,7 +103,7 @@
     <!-- <add-member-to-task ref="taskTeamModal"></add-member-to-task> -->
     <bib-modal-wrapper v-if="taskTeamModal" title="Team" size="lg" @close="taskTeamModal = false">
       <template slot="content">
-        <div style="height: 12rem;">
+        <div style="min-height: 12rem;">
           <task-team :task="currentTask"></task-team>
         </div>
       </template>
