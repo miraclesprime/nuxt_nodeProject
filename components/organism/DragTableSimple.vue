@@ -109,7 +109,11 @@
             </span>
           </template>
           <template v-if="col.key == 'status'">
-            <status-comp :key="task.title+col.key+componentKey" :status="task[col.key]"></status-comp>
+            <div class="align-center justify-between" @click.stop="triggerStatusPicker(task, 'Status', 'statusId')">
+              <status-comp :key="task.title+col.key+componentKey" :status="task[col.key]"></status-comp>
+              <bib-icon icon="arrowhead-down" variant="gray4"></bib-icon>
+            </div>
+            <!-- <status-comp-editable :key="task.title+col.key+componentKey" ref="task.id+col.key+index" :value="task[col.key]" @change-status="$emit('edit-field', {task: task, field: 'statusId', value: $event.value, historyText: $event.label })" @close-other=""></status-comp-editable> -->
           </template>
           <template v-if="col.key == 'priority'">
             <priority-comp :key="task.title+col.key+componentKey" :priority="task[col.key]"></priority-comp>
@@ -389,6 +393,9 @@ export default {
     triggerDatePicker(task, label, field){
       this.$emit("date-picker", { event, task, label, field })
     },
+    triggerStatusPicker(task, label, field){
+      this.$emit("status-picker", { event, task })
+    },
     restoreField(){
       // console.log('restoreField', event.target)
       event.target.blur()
@@ -404,7 +411,7 @@ export default {
         $event.target.classList.remove('error')
         this.$emit('edit-field', {task: task, field, value})
       }
-    }, 1200),
+    }, 800),
     async unselectAll() {
       let rows = document.getElementsByClassName('table__irow');
       for (let row of rows) {

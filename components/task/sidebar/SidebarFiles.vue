@@ -207,7 +207,7 @@ export default {
     },
 
     getFiles() {
-      console.log("file mode",this.mode)
+      // console.log("file mode",this.mode)
       this.showPlaceholder = true
       // console.info(Object.keys(this.task).length, !this.task)
 

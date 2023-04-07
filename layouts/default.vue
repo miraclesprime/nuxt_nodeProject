@@ -113,6 +113,7 @@
               <bib-app-navigation
                 :items="appMembers"
                 @click="goToUsertask"
+                :key="navKey"
               ></bib-app-navigation>
             </template>
           </bib-detail-collapse>
@@ -150,6 +151,7 @@ export default {
     return {
       openSidebar: false,
       flag: false,
+      navKey: 0,
       /*appCreateButton: {
         label: this.$i18n.t("Create"),
         event: "createbtn-click",
@@ -521,6 +523,9 @@ export default {
 
     goToRoute(event, item) {
 
+      this.appMembers.map((u) => u.selected = false)
+      this.navKey++;
+
       for (let i = 0; i < this.navItems1.length; i++) {
         if (this.navItems1[i].key == item.key) {
           this.navItems1[i].selected = true;
@@ -547,10 +552,38 @@ export default {
 
     goToProject($event, item) {
       this.$router.push("/projects/" + item.id);
+
+      for (let i = 0; i < this.navItems1.length; i++) {
+          this.navItems1[i].selected = false;
+      }
+
+      for (let i = 0; i < this.navItems2.length; i++) {
+            this.navItems2[i].selected = false;
+      }
+
+      this.navItems2[1].selected = true;    
     },
 
     goToUsertask($event, item) {
       this.teammate.find((u) => u.email == item.email);
+      
+      this.appMembers.map((u) => {
+        if(u.email == item.email) {
+          u.selected = true;
+        } else {
+          u.selected = false;
+        }
+      })
+
+      for (let i = 0; i < this.navItems1.length; i++) {
+          this.navItems1[i].selected = false;
+      }
+
+      for (let i = 0; i < this.navItems2.length; i++) {
+          this.navItems2[i].selected = false;
+      }
+
+      this.navKey++;
       this.$router.push({ path: "/usertasks", query: { email: item.email } });
     },
 

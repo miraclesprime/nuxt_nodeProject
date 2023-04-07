@@ -1,13 +1,13 @@
 <template>
   <div id="projects-wrapper" class="projects-wrapper" >   
     <page-title title="Projects"></page-title>  
-    <project-actions @sortValue='sortName=$event' @viewValue='viewName=$event' v-on:loading="loading = $event" v-bind:sort="sortName" />
+    <project-actions @sortValue='sortName=$event' @viewValue='viewName=$event' v-on:loading="loading = $event" v-bind:sort="sortName" @search-projects="searchProjects" />
    
     <div id="projects-list-wrapper" class="projects-list-wrapper of-scroll-y position-relative" >
       <loading :loading="loading"></loading>
       <template v-if="projects.length">
 
-        <drag-table-simple :fields="tableFields" :tasks="projects" :titleIcon="{ icon: 'briefcase-solid', event: 'row-click'}" :componentKey="templateKey" :drag="false" :sectionTitle="'Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick" @edit-field="updateProject" @user-picker="showUserPicker" @date-picker="showDatePicker" ></drag-table-simple>
+        <drag-table-simple :fields="tableFields" :tasks="projects" :titleIcon="{ icon: 'briefcase-solid', event: 'row-click'}" :componentKey="templateKey" :drag="false" :sectionTitle="'Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick" @edit-field="updateProject" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" ></drag-table-simple>
         
         <!-- table context menu -->
         <table-context-menu :items="projectContextItems" :show="projectContextMenu" :coordinates="popupCoords" :activeItem="activeProject" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
@@ -17,6 +17,9 @@
 
         <!-- date-picker for list and board view -->
         <inline-datepicker :show="datePickerOpen" :datetime="activeProject[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
+
+        <!-- status picker for list view -->
+        <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateProject({ task: activeProject, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker>
       </template>
       <template v-else>
         <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
@@ -61,10 +64,8 @@ export default {
       userPickerOpen: false,
       datePickerOpen: false,
       datepickerArgs: { label: "", field: ""},
-      /*contextCoords: {},
-      userPickerCoords: {},*/
+      statusPickerOpen: false,
       popupCoords: {},
-      // contextCoords: { },
       activeProject: {},
       renameProjectData: {},
       renameModal: false,
@@ -77,6 +78,7 @@ export default {
       newkey: "",
       alertDialog: false,
       alertMsg:"",
+      localData: []
     }
   },
 
@@ -94,6 +96,12 @@ export default {
         favProjects: 'project/getFavProjects',
         teamMembers: "user/getTeamMembers",
     })
+  },
+
+  watch: {
+    projects(newVal) {
+        this.localData = _.cloneDeep(newVal)
+    },
   },
 
   methods: {
@@ -318,6 +326,15 @@ export default {
       this.datepickerArgs.label = payload.label || 'Due date'
     },
 
+    showStatusPicker(payload){
+      this.statusPickerOpen = true
+      this.userPickerOpen = false
+      this.datePickerOpen = false
+      this.taskContextMenu = false
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeProject = payload.task
+    },
+
     setFavorite(project) {
       this.loading = true
       let isFav = this.favProjects.some((f) => f.id == project.id)
@@ -354,7 +371,7 @@ export default {
         id: task.id,
         user,
         data: { [field]: value},
-        text: `changed ${field} to ${value}`
+        text: `changed ${field} to ${payload.historyText || value}`
       })
         .then(t => {
           // console.log(t)
@@ -367,7 +384,7 @@ export default {
         .catch(e => console.warn(e))
     },
 
-    updateAssignee(label, field, value, historyValue){
+    updateAssignee(label, field, value, historyText){
       // console.log(...arguments)
 
       this.userPickerOpen = false
@@ -377,7 +394,7 @@ export default {
         id: this.activeProject.id,
         user,
         data: { [field]: value},
-        text: `changed ${label} to ${historyValue}`
+        text: `changed ${label} to ${historyText}`
       })
         .then(t => {
           // console.log(t)
@@ -470,6 +487,33 @@ export default {
         this.templateKey += 1;
       })
     },
+
+    searchProjects(text) {
+
+      let formattedText = text.toLowerCase().trim();;
+      
+      let newArr = this.projects.filter((p) => {
+       
+       if(p.description) {
+          if(p.title.includes(formattedText) || p.title.toLowerCase().includes(formattedText) || p.description.includes(formattedText) || p.description.toLowerCase().includes(formattedText)) {
+            return p
+          } 
+        } else {
+          if(p.title.includes(formattedText) || p.title.toLowerCase().includes(formattedText)) {
+            return p
+          } 
+        }
+
+      })
+
+      if(newArr.length >= 0) {
+        this.localData = newArr
+        this.key++;
+      } else {
+        this.localData = JSON.parse(JSON.stringify(this.projects));
+        this.key++;
+      }
+    }
   },
 
 
