@@ -5,7 +5,10 @@
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-task-text">New Project</span>
       </div>
     </div>
-    <div class="action-right" id="pa-action-right">
+    <div class="action-right d-flex gap-05" id="pa-action-right">
+      <template>
+        <bib-input size="sm" type="text" v-model="searchText" name="name" @input="$emit('search-projects', searchText)" placeholder="Search Projects..."></bib-input>
+      </template>
       <ul class="actions" id="pa-actions-list">
         <li class="action" id="pa-action-item1" v-tooltip="'View'">
           <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="viewProjects($event)"></sorting-comp>
@@ -36,7 +39,8 @@ export default {
       selectedSort: null,
       orderBy: '',
       viewing: VIEW_FILTER,
-      sorting: PROJECT_SORT
+      sorting: PROJECT_SORT,
+      searchText: ""
     };
   },
   

@@ -1,7 +1,7 @@
 <template>
   <div id="projects-wrapper" class="projects-wrapper" >   
     <page-title title="Projects"></page-title>  
-    <project-actions @sortValue='sortName=$event' @viewValue='viewName=$event' v-on:loading="loading = $event" v-bind:sort="sortName" />
+    <project-actions @sortValue='sortName=$event' @viewValue='viewName=$event' v-on:loading="loading = $event" v-bind:sort="sortName" @search-projects="searchProjects" />
    
     <div id="projects-list-wrapper" class="projects-list-wrapper of-scroll-y position-relative" >
       <loading :loading="loading"></loading>
@@ -78,6 +78,7 @@ export default {
       newkey: "",
       alertDialog: false,
       alertMsg:"",
+      localData: []
     }
   },
 
@@ -95,6 +96,12 @@ export default {
         favProjects: 'project/getFavProjects',
         teamMembers: "user/getTeamMembers",
     })
+  },
+
+  watch: {
+    projects(newVal) {
+        this.localData = _.cloneDeep(newVal)
+    },
   },
 
   methods: {
@@ -480,6 +487,33 @@ export default {
         this.templateKey += 1;
       })
     },
+
+    searchProjects(text) {
+
+      let formattedText = text.toLowerCase().trim();;
+      
+      let newArr = this.projects.filter((p) => {
+       
+       if(p.description) {
+          if(p.title.includes(formattedText) || p.title.toLowerCase().includes(formattedText) || p.description.includes(formattedText) || p.description.toLowerCase().includes(formattedText)) {
+            return p
+          } 
+        } else {
+          if(p.title.includes(formattedText) || p.title.toLowerCase().includes(formattedText)) {
+            return p
+          } 
+        }
+
+      })
+
+      if(newArr.length >= 0) {
+        this.localData = newArr
+        this.key++;
+      } else {
+        this.localData = JSON.parse(JSON.stringify(this.projects));
+        this.key++;
+      }
+    }
   },
 
 
