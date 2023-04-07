@@ -191,7 +191,7 @@ export default {
         return _.cloneDeep(this.subtask)
       },
       set(newValue) {
-        console.log(newValue)
+        // console.log(newValue)
         // this.title = newValue.title
       }
     },

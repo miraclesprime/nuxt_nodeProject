@@ -31,7 +31,7 @@
           <td>
             <div class="d-flex gap-05 align-center">
               <bib-icon icon="check-circle-solid" variant="white" :scale="1.25"></bib-icon>
-              <input class="sub-input" ref="subtaskNameInput" type="text" v-model.trim="title" :disabled="loading" pattern="[a-zA-Z0-9-_ ]+" @keyup="validateInput" required placeholder="Enter text...">
+              <input class="sub-input" ref="subtaskNameInput" type="text" v-model.trim="title" :disabled="loading" pattern="[a-zA-Z0-9-_ ]+" @input="validateInput" @keyup.enter="validateInput" required placeholder="Enter text...">
             </div>
           </td>
           <td>
@@ -323,7 +323,7 @@ export default {
     validateInput(){
       // let sb = _.trim(this.title)
       if (this.$refs.subtaskNameInput.validity.valid && this.title != "") {
-        // console.info('valid input', this.title);
+        // console.info('valid input');
         this.$refs.subtaskNameInput.classList.remove("error")
         this.debounceCreate()
       } else {

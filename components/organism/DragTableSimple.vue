@@ -109,7 +109,8 @@
             </span>
           </template>
           <template v-if="col.key == 'status'">
-            <status-comp :key="task.title+col.key+componentKey" :status="task[col.key]"></status-comp>
+            <!-- <status-comp :key="task.title+col.key+componentKey" :status="task[col.key]"></status-comp> -->
+            <status-comp-editable :key="task.title+col.key+componentKey" :value="task[col.key]" @change-status="$emit('edit-field', {task: task, field: 'statusId', value: $event.value, historyText: $event.label })"></status-comp-editable>
           </template>
           <template v-if="col.key == 'priority'">
             <priority-comp :key="task.title+col.key+componentKey" :priority="task[col.key]"></priority-comp>
@@ -404,7 +405,7 @@ export default {
         $event.target.classList.remove('error')
         this.$emit('edit-field', {task: task, field, value})
       }
-    }, 1200),
+    }, 800),
     async unselectAll() {
       let rows = document.getElementsByClassName('table__irow');
       for (let row of rows) {

@@ -246,7 +246,7 @@ export default {
         text: `changed ${payload.field} to "${payload.historyText || payload.value}"`
       })
         .then(t => {
-          console.log(t)
+          // console.log(t)
           this.updateKey()
         })
         .catch(e => console.warn(e))
