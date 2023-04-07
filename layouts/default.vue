@@ -113,6 +113,7 @@
               <bib-app-navigation
                 :items="appMembers"
                 @click="goToUsertask"
+                :key="navKey"
               ></bib-app-navigation>
             </template>
           </bib-detail-collapse>
@@ -150,6 +151,7 @@ export default {
     return {
       openSidebar: false,
       flag: false,
+      navKey: 0,
       /*appCreateButton: {
         label: this.$i18n.t("Create"),
         event: "createbtn-click",
@@ -393,10 +395,10 @@ export default {
       // }
 
       // Dhruv (admin)
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4MDY3NDA0MjQ1OSwiZXhwIjoxNjg4NDUwMDQyNDU5LCJqdGkiOiIxNWE4YzdjNS1jNzNmLTRmMWMtYjRlMS00NmQ4NWI5OGJmMDAifQ.ko4EnWzxUP3GfXCaRbPdOLXf-0MlmymbKwYb3SqAKL0";
+      let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4MDY3NDA0MjQ1OSwiZXhwIjoxNjg4NDUwMDQyNDU5LCJqdGkiOiIxNWE4YzdjNS1jNzNmLTRmMWMtYjRlMS00NmQ4NWI5OGJmMDAifQ.ko4EnWzxUP3GfXCaRbPdOLXf-0MlmymbKwYb3SqAKL0";
 
       // Vishwajeet
-      let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2ODA2NzI3NTEwOTksImV4cCI6MTY4ODQ0ODc1MTA5OSwianRpIjoiOGUyYzc4M2YtOTY3My00OGVlLTgyOTgtMGVjZTU5NTIyZWJhIn0.rftT95n4vGjR52nHsrLVHnbH3WNETaBpUaD9c5b7DRA"
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2ODA2NzI3NTEwOTksImV4cCI6MTY4ODQ0ODc1MTA5OSwianRpIjoiOGUyYzc4M2YtOTY3My00OGVlLTgyOTgtMGVjZTU5NTIyZWJhIn0.rftT95n4vGjR52nHsrLVHnbH3WNETaBpUaD9c5b7DRA"
 
       // Rajeev
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnRUxZcWFRV1FHOWRuamsyIiwic3ViZSI6InJhamVldi5zaGFybWFAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJVU0VSIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY3MjYzOTg2MDMzMSwiZXhwIjoxNjgwNDE1ODYwMzMxLCJqdGkiOiJhYWZlYmUxYi1kZGI2LTRmODMtYjIzYy1hZWRkMDcxMzU1ZTEifQ.AxRf7tHVZC4r0Io6J9ghNZJscPkRKWM3LBOgevkQdKE"
@@ -521,6 +523,9 @@ export default {
 
     goToRoute(event, item) {
 
+      this.appMembers.map((u) => u.selected = false)
+      this.navKey++;
+
       for (let i = 0; i < this.navItems1.length; i++) {
         if (this.navItems1[i].key == item.key) {
           this.navItems1[i].selected = true;
@@ -547,10 +552,38 @@ export default {
 
     goToProject($event, item) {
       this.$router.push("/projects/" + item.id);
+
+      for (let i = 0; i < this.navItems1.length; i++) {
+          this.navItems1[i].selected = false;
+      }
+
+      for (let i = 0; i < this.navItems2.length; i++) {
+            this.navItems2[i].selected = false;
+      }
+
+      this.navItems2[1].selected = true;    
     },
 
     goToUsertask($event, item) {
       this.teammate.find((u) => u.email == item.email);
+      
+      this.appMembers.map((u) => {
+        if(u.email == item.email) {
+          u.selected = true;
+        } else {
+          u.selected = false;
+        }
+      })
+
+      for (let i = 0; i < this.navItems1.length; i++) {
+          this.navItems1[i].selected = false;
+      }
+
+      for (let i = 0; i < this.navItems2.length; i++) {
+          this.navItems2[i].selected = false;
+      }
+
+      this.navKey++;
       this.$router.push({ path: "/usertasks", query: { email: item.email } });
     },
 

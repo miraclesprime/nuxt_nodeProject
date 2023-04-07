@@ -488,11 +488,21 @@ export default {
     },
 
     searchTasks(text) {
+
+      let formattedText = text.toLowerCase().trim();;
       
       let newArr = this.tasks.filter((t) => {
-        if(t.title.includes(text) || t.title.toLowerCase().includes(text) || t.description.includes(text) || t.description.toLowerCase().includes(text)) {
-          return t  
-        } 
+        
+        if(t.description) {
+          if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText) || t.description.includes(formattedText) || t.description.toLowerCase().includes(formattedText)) {
+            return t
+          } 
+        } else {
+          if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
+            return t
+          } 
+        }
+
       })
 
       if(newArr.length >= 0) {
