@@ -6,7 +6,7 @@
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y" :class="{ 'bg-light': gridType != 'list'}">
         <template v-if="gridType == 'list'">
           <template v-if="tasks.length">
-            <drag-table-simple :key="key" :componentKey="key" :fields="taskFields" :tasks="localData" :sectionTitle="'Department'" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" ></drag-table-simple>
+            <drag-table-simple :key="key" :componentKey="key" :fields="taskFields" :tasks="localData" :sectionTitle="'Department'" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" ></drag-table-simple>
 
             <!-- table context menu -->
             <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
@@ -40,11 +40,14 @@
             </div>
           </div>
         </template>
-        <!-- user-picker for board view -->
+        <!-- user-picker for list and board view -->
         <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"></user-picker>
         
         <!-- date-picker for list and board view -->
         <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
+        <!-- status picker for list view -->
+        <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker>
+
         <loading :loading="loading"></loading>
         <!-- popup notification -->
         <bib-popup-notification-wrapper>
@@ -89,6 +92,7 @@ export default {
       userPickerOpen: false,
       datePickerOpen: false,
       datepickerArgs: { label: "", field: ""},
+      statusPickerOpen: false,
       confirmModal: false,
       confirmMsg: "",
       alertDialog: false,
@@ -139,6 +143,7 @@ export default {
   methods: {
     showUserPicker(payload){
       // console.log('userpicker', payload)
+      this.statusPickerOpen = false
       this.userPickerOpen = true
       this.datePickerOpen = false
       this.taskContextMenu = false
@@ -148,6 +153,7 @@ export default {
     showDatePicker(payload){
       // console.log('datepicker', payload)
       // payload consists of event, task, label, field
+      this.statusPickerOpen = false
       this.datePickerOpen = true
       this.userPickerOpen = false
       this.taskContextMenu = false
@@ -155,6 +161,14 @@ export default {
       this.activeTask = payload.task
       this.datepickerArgs.field = payload.field || 'dueDate'
       this.datepickerArgs.label = payload.label || 'Due date'
+    },
+    showStatusPicker(payload){
+      this.statusPickerOpen = true
+      this.userPickerOpen = false
+      this.datePickerOpen = false
+      this.taskContextMenu = false
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
     },
     updateKey($event) {
       if ($event) {
@@ -223,11 +237,11 @@ export default {
     },
 
     updateTask(payload) {
-      console.log(payload)
+      // console.log(payload)
       // alert("in progress. Updated value => " + payload.value)
       let user, projectId
       if (payload.field == "userId" && payload.value != '') {
-        user = this.teamMembers.filter(t => t.id == payload.value)
+        user = this.teamMembers.find(t => t.id == payload.value)
       } else {
         user = null
       }
