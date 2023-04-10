@@ -28,8 +28,6 @@ export default {
     return {
       status: STATUS,
       // filterKey: "",
-      // localValue: {},
-      // position: { left: 0, top: 0 },
     }
   },
   watch: {

@@ -44,7 +44,10 @@
             </span>
           </template>
           <template v-if="col.key == 'status'">
-            <status-comp :key="task.title+col.key+componentKey" :status="task[col.key]"></status-comp>
+            <div class="align-center justify-between" @click.stop="triggerStatusPicker(task, 'Status', 'statusId')">
+              <status-comp :key="task.title+col.key+componentKey" :status="task[col.key]"></status-comp>
+              <bib-icon icon="arrowhead-down" variant="gray4"></bib-icon>
+            </div>
           </template>
           <template v-if="col.key == 'priority'">
             <priority-comp :key="task.title+col.key+componentKey" :priority="task[col.key]"></priority-comp>
@@ -78,7 +81,7 @@
               {{task[col.key]}}
             </span> -->
             <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">
-              <input type="text" class="editable-input" :value="task[col.key]" @input.stop="debounceUpdate(task, 'title', $event.target.value, $event)" @blur="restoreField">
+              <input type="text" class="editable-input" :value="task[col.key]" @input.stop="debounceUpdate(task, 'Title', 'title', $event.target.value, $event)" @blur="restoreField">
             </span>
             <span v-else class="flex-grow-1">
               {{task[col.key]}}
@@ -113,7 +116,7 @@
               <status-comp :key="task.title+col.key+componentKey" :status="task[col.key]"></status-comp>
               <bib-icon icon="arrowhead-down" variant="gray4"></bib-icon>
             </div>
-            <!-- <status-comp-editable :key="task.title+col.key+componentKey" ref="task.id+col.key+index" :value="task[col.key]" @change-status="$emit('edit-field', {task: task, field: 'statusId', value: $event.value, historyText: $event.label })" @close-other=""></status-comp-editable> -->
+            
           </template>
           <template v-if="col.key == 'priority'">
             <priority-comp :key="task.title+col.key+componentKey" :priority="task[col.key]"></priority-comp>
@@ -150,7 +153,7 @@
               {{task[col.key]}}
             </span> -->
             <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">
-              <input type="text" class="editable-input" :value="task[col.key]" @input.stop="debounceUpdate(task, 'title', $event.target.value, $event)" @blur="restoreField">
+              <input type="text" class="editable-input" :value="task[col.key]" @input.stop="debounceUpdate(task, 'Title', 'title', $event.target.value, $event)" @blur="restoreField">
             </span>
             <span v-else class="flex-grow-1">
               {{task[col.key]}}
@@ -402,14 +405,14 @@ export default {
       event.target.classList.remove("error")
       this.unselectAll()
     },
-    debounceUpdate: _.debounce(function(task, field, value, $event){
+    debounceUpdate: _.debounce(function(task, label, field, value, $event){
       // console.log(task.id, field, _.trim(value))
       if (_.trim(value) == "") {
         $event.target.classList.add('error')
         console.warn(field + ' cannot be left blank')
       } else {
         $event.target.classList.remove('error')
-        this.$emit('edit-field', {task: task, field, value})
+        this.$emit('edit-field', {task, label, field, value})
       }
     }, 800),
     async unselectAll() {

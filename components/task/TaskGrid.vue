@@ -148,10 +148,10 @@ export default {
 
     debounceUpdate: _.debounce(function(label, field, value, $event) {
       // console.log(...arguments)
-      let historyValue;
+      let historyText;
 
       if (label == "Due date" || label == "Start date") {
-        historyValue = dayjs(taskData.value).format('DD MMM, YYYY')
+        historyText = dayjs(taskData.value).format('DD MMM, YYYY')
       }
 
       if (_.trim(value) == "") {
@@ -160,13 +160,13 @@ export default {
       } else {
         $event.target.classList.remove('error')
         // this.$emit('edit-field', {task: task, field, value})
-        this.updateTask(label, field, value, historyValue)
+        this.updateTask(label, field, value, historyText)
       }
 
-      // this.updateTask(label, field, value, historyValue)
+      // this.updateTask(label, field, value, historyText)
     }, 1200),
 
-    updateTask(label, field, value, historyValue) {
+    updateTask(label, field, value, historyText) {
       this.loading = true
       this.userPickerOpen = false
       const project = () => {
@@ -186,7 +186,7 @@ export default {
         user = null
       }
 
-      // console.info(project(), this.task.project.length, historyValue, user)
+      // console.info(project(), this.task.project.length, historyText, user)
       this.$store.dispatch("task/updateTask", {
           id: this.task.id,
           // projectId: project(),
@@ -194,7 +194,7 @@ export default {
             [field]: value
           },
           user,
-          text: `changed ${label} to ${historyValue ?? value}`
+          text: `changed ${label} to ${historyText ?? value}`
         })
         .then(res => {
           // console.info(res)

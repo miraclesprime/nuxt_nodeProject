@@ -9,6 +9,9 @@
       </div>
     </div>
     <div class="action-right d-flex gap-05" id="ta-action-right">
+      <template>
+        <bib-input size="sm" type="text" v-model="searchText" name="name" @input="$emit('search-mytasks', searchText)" placeholder="Search Tasks..."></bib-input>
+      </template>
       <ul class="actions" id="ta-action-right-actions">
         <li class="action" id="ta-action1" v-tooltip="'View'">
           <sorting-comp :items="viewing" icon="eye-open" v-on:change-sort="changeViewName"></sorting-comp>
@@ -46,7 +49,8 @@ export default {
       selectInfo: null,
       sortName: '',
       viewing: VIEW_FILTER,
-      sorting: USER_TASK_SORT
+      sorting: USER_TASK_SORT,
+      searchText: ""
     };
   },
   methods: {

@@ -1,11 +1,11 @@
 <template>
   <div id="task-view-wrapper" class="task-view-wrapper position-relative">
-    <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:show-newsection="showNewsection" v-on:filterView="filterView" v-on:sort="taskSort($event)" @group="taskGroup($event)"></task-actions>
+    <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:show-newsection="showNewsection" v-on:filterView="filterView" v-on:sort="taskSort($event)" @group="taskGroup($event)" @search-projectTasks="searchTasks"></task-actions>
     <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createSection"></new-section-form>
 
     <template v-if="gridType === 'list'">
       <!-- task list table -->
-      <drag-table :fields="tableFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" :key="templateKey" :componentKey="templateKey" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" :newTaskButton="newTaskButton" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow" @edit-field="updateTask" @edit-section="renameSection" @user-picker="showUserPicker" @date-picker="showDatePicker"></drag-table>
+      <drag-table :fields="tableFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" :key="templateKey" :componentKey="templateKey" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" :newTaskButton="newTaskButton" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow" @edit-field="updateTask" @edit-section="renameSection" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker"></drag-table>
       <!-- table context menu -->
       <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closeContext" ref="task_menu" @item-click="contextItemClick"></table-context-menu>
     </template>
@@ -20,6 +20,9 @@
 
     <!-- date-picker for list and board view -->
     <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
+
+    <!-- status picker for list view -->
+    <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker>
     
     <loading :loading="loading"></loading>
     <!-- popup notification -->
@@ -71,8 +74,7 @@ export default {
       userPickerOpen: false,
       datePickerOpen: false,
       datepickerArgs: { label: "", field: ""},
-      /*contextCoords: {},
-      userPickerCoords: {},*/
+      statusPickerOpen: false,
       popupCoords: {},
       popupMessages: [],
       activeTask: {},
@@ -127,30 +129,14 @@ export default {
       sections: "section/getProjectSections",
     }),
 
-    /*isFavorite() {
-      let fav = this.favTasks.some(t => t.task.id == this.currentTask.id)
-      if (fav) {
-        return { icon: "bookmark-solid", variant: "orange", text: "Remove favorite", status: true }
-      } else {
-        return { icon: "bookmark", variant: "gray5", text: "Add to favorites", status: false }
-      }
-    },*/
-
-    /*sectionError() {
-      if (this.newSectionName.indexOf("_") == 0) {
-        return true
-      } else {
-        return false
-      }
-    },*/
-    // nodata() {
-    //   if (this.sections.length > 0) {
-    //     return false
-    //   } else {
-    //     return true
-    //   }
-    // },
   },
+
+  watch: {
+    sections(newVal) {
+        this.localdata = _.cloneDeep(newVal)
+    },
+  },
+
   created() {
 
     this.$nuxt.$on("update-key", () => {
@@ -271,6 +257,14 @@ export default {
       this.activeTask = payload.task
       this.datepickerArgs.field = payload.field || 'dueDate'
       this.datepickerArgs.label = payload.label || 'Due date'
+    },
+    showStatusPicker(payload){
+      this.statusPickerOpen = true
+      this.userPickerOpen = false
+      this.datePickerOpen = false
+      this.taskContextMenu = false
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
     },
     taskSort($event) {
       // sort by title
@@ -508,12 +502,6 @@ export default {
       }
     },
 
-    // taskSelected($event) {
-    //   this.$store.dispatch('task/setSingleTask', $event)
-    //   this.activeTask = $event;
-    //   this.toggleSidebar($event)
-    //   this.teamKey += 1;
-    // },
 
     filterView($event) {
       this.loading = true
@@ -613,7 +601,7 @@ export default {
         id: payload.task.id,
         data: { [payload.field]: payload.value },
         user,
-        text: `changed ${payload.field} to "${payload.label || payload.value}"`
+        text: `changed ${payload.label} to "${payload.historyText || payload.value}"`
       })
         .then(t => {
           // console.log(t)
@@ -695,24 +683,6 @@ export default {
       this.confirmMsg = "Are you sure "
       this.confirmModal = true
     },
-    /*deleteTask(task) {
-      // let del = confirm("Are you sure")
-      this.loading = true
-      // if (del) {
-      this.$store.dispatch("task/deleteTask", task).then(t => {
-        // console.log(t)
-        if (t.statusCode == 200) {
-          this.updateKey()
-          // console.warn(t.message);
-        } else {
-          console.warn(t.message);
-        }
-        this.loading = false
-      }).catch(e => {
-        this.loading = false
-        console.log(e)
-      })
-    },*/
 
     deleteSection(section) {
       // let sec = this.sections.find(s => s.id == section.id)
@@ -804,6 +774,43 @@ export default {
         unsecuredCopyToClipboard(url);
       }
     },
+
+    searchTasks(text) {
+
+      let formattedText = text.toLowerCase().trim();
+
+      let secs = JSON.parse(JSON.stringify(this.sections))
+      
+      let newArr = secs.map((s) => {
+
+          let filtered = s.tasks.filter((t) => {
+          
+          if(t.description) {
+            if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText) || t.description.includes(formattedText) || t.description.toLowerCase().includes(formattedText)) {
+              return t
+            } 
+          } else {
+            if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
+              return t
+            } 
+          }
+
+        })
+
+        s.tasks = filtered
+
+        return s;
+      
+      })
+
+      if(newArr.length >= 0) {
+        this.localdata = newArr
+        this.templateKey++;
+      } else {
+        this.localdata = this.sections;
+        this.templateKey++;
+      }
+    }
   },
 
 };

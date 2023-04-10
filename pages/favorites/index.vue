@@ -5,22 +5,34 @@
       <favorite-actions v-on:change-viewing="changeView" v-on:change-sorting="changeSort"></favorite-actions>
       <div id="favorite-scroll-wrap" class="of-scroll-y position-relative">
         <!-- project table -->
-        <drag-table-simple :fields="projectTableFields" :tasks="sortedProject" :titleIcon="{icon:'briefcase'}" :componentKey="key" :drag="false" :sectionTitle="'Favorite Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick" @edit-field="renameProject" @user-picker="showProjUserpicker" @date-picker="showProjDatepicker"></drag-table-simple>
+        <drag-table-simple :fields="projectTableFields" :tasks="sortedProject" :titleIcon="{icon:'briefcase'}" :componentKey="key" :drag="false" :sectionTitle="'Favorite Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick" @edit-field="renameProject" @user-picker="showProjUserpicker" @date-picker="showProjDatepicker" @status-picker="showProjectStatuspicker"></drag-table-simple>
+        
         <!-- project context menu -->
         <table-context-menu :items="projectContextItems" :show="projectContextMenu" :coordinates="popupCoords" @close-context="closePopups" @item-click="projContextItemClick" ref="proj_menu"></table-context-menu>
+        
         <!-- user-picker for project and task -->
         <user-picker :show="projUserpickerOpen" :coordinates="popupCoords" @selected="updateProjAssignee('Assignee', 'userId', $event.id, $event.label)" @close="closePopups"></user-picker>
+        
         <!-- date-picker for project and task -->
         <inline-datepicker :show="projDatepickerOpen" :datetime="activeProject[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateProjDate" @close="closePopups"></inline-datepicker>
-        <!-- =============== -->
+
+        <!-- status picker for list view -->
+        <status-picker :show="projStatuspickerOpen" :coordinates="popupCoords" @selected="renameProject({ task: activeProject, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="projStatuspickerOpen = false" ></status-picker>
+        
         <!-- task table -->
-        <drag-table-simple :fields="taskTableFields" :componentKey="key+1" :tasks="sortedTask" :sectionTitle="'Favorite Tasks'" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="openSidebar" v-on:table-sort="sortTask" @row-click="openSidebar" @row-context="taskRightClick" @edit-field="updateTask" @user-picker="showTaskUserpicker" @date-picker="showTaskDatepicker"></drag-table-simple>
+        <drag-table-simple :fields="taskTableFields" :componentKey="key+1" :tasks="sortedTask" :sectionTitle="'Favorite Tasks'" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="openSidebar" v-on:table-sort="sortTask" @row-click="openSidebar" @row-context="taskRightClick" @edit-field="updateTask" @user-picker="showTaskUserpicker" @date-picker="showTaskDatepicker" @status-picker="showTaskStatusPicker"></drag-table-simple>
         <!-- task context menu -->
         <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" @close-context="closePopups" @item-click="taskContextItemClick" ref="task_menu"></table-context-menu>
+        
         <!-- user-picker for project and task -->
         <user-picker :show="taskUserpickerOpen" :coordinates="popupCoords" @selected="updateTaskAssignee('Assignee', 'userId', $event.id, $event.label)" @close="closePopups"></user-picker>
+        
         <!-- date-picker for project and task -->
         <inline-datepicker :show="taskDatepickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateTaskDate" @close="closePopups"></inline-datepicker>
+
+        <!-- status picker for list view -->
+        <status-picker :show="taskStatuspickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeProject, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="taskStatuspickerOpen = false" ></status-picker>
+
         <loading :loading="loading"></loading>
       </div>
       <!-- project rename modal -->
@@ -89,6 +101,8 @@ export default {
       taskDatepickerOpen: false,
       datepickerArgs: { label: null, field: null },
       popupCoords: {},
+      projStatuspickerOpen: false,
+      taskStatuspickerOpen: false,
       confirmModal: false,
       confirmMsg: "",
       alertDialog: false,
@@ -193,14 +207,13 @@ export default {
     },
 
     showProjUserpicker(payload) {
-      console.log(payload)
+      // console.log(payload)
       // payload consists of event, task
       this.closePopups()
       this.projUserpickerOpen = true
       this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
       this.activeProject = payload.task
     },
-
     showProjDatepicker(payload) {
       // console.log(payload)
       // payload consists of event, task, label, field
@@ -211,6 +224,13 @@ export default {
       this.datepickerArgs.field = payload.field || 'dueDate'
       this.datepickerArgs.label = payload.label || 'Due date'
     },
+    showProjectStatuspicker(payload){
+      this.closePopups()
+      this.projStatuspickerOpen = true
+      this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
+      this.activeProject = payload.task
+    },
+
     showTaskUserpicker(payload) {
       // console.log(payload)
       this.closePopups()
@@ -227,14 +247,16 @@ export default {
       // payload consists of event, task, label, field
       this.closePopups()
       this.taskDatepickerOpen = true
-      /*this.projUserpickerOpen = false
-      this.taskUserpickerOpen = false
-      this.taskContextMenu = false
-      this.projectContextMenu = false*/
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
       this.datepickerArgs.field = payload.field || 'dueDate'
       this.datepickerArgs.label = payload.label || 'Due date'
+    },
+    showTaskStatusPicker(payload){
+      this.closePopups()
+      this.taskStatuspickerOpen = true
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
     },
 
     closePopups() {
@@ -244,6 +266,7 @@ export default {
       this.taskUserpickerOpen = false
       this.projDatepickerOpen = false
       this.taskDatepickerOpen = false
+      this.taskStatuspickerOpen = false
       this.activeProject = {}
       this.activeTask = {}
       this.datepickerArgs = { label: null, field: null }
@@ -665,11 +688,9 @@ export default {
       this.loading2 = true
       this.$store.dispatch("project/updateProject", {
         id: this.currentProject.id || payload.task.id,
-        data: {
-          title: this.currentProject.title || payload.value
-        },
+        data: { [payload.field]: this.currentProject.title || payload.value },
         user: this.currentProject.user || payload.task.user,
-        text: `changed title to ${this.currentProject.title || payload.value}`
+        text: `changed ${payload.label} to ${payload.historyText || payload.value}`
       }).then(res => {
         // console.log(res)
         if (res.statusCode == 200) {
@@ -705,29 +726,43 @@ export default {
     },
 
     updateTask(payload) {
-      // console.log(payload)
+      const { task, label, field, value, historyText} = payload
+      // console.log(task, label, field, value, historyText, this.activeTask)
       // payload consists of task, field, value
+
       let user
-      if (payload.field == "userId" && payload.value != '') {
-        user = this.teamMembers.filter(t => t.id == payload.value)
+      if (field == "userId" && value != '') {
+        user = this.teamMembers.filter(t => t.id == value)
       } else {
         user = null
       }
 
+      let projectId
+      if (task?.project) {
+        projectId = task.project[0].projectId || task.project[0].project.id
+      } else {
+        projectId = this.activeTask.project[0].projectId
+      }
+
+      let taskId
+      if (task?.id) {
+        taskId = task.id
+      } else {
+        taskId = this.activeTask.id
+      }
+
+      console.info(projectId)
+
       this.$store.dispatch("task/updateTask", {
-          id: payload.task.id,
-          projectId: payload.task.project[0].projectId || payload.task.project[0].project.id,
-          data: {
-            [payload.field]: payload.value
-          },
+          id: taskId,
+          projectId,
+          data: {[field]: value},
           user,
-          text: `changed ${payload.field} to "${payload.historyText || payload.value}"`
-        })
-        .then(t => {
+          text: `changed ${label} to "${historyText || value}"`
+        }).then(t => {
           // console.log(t)
           this.updateKey()
-        })
-        .catch(e => console.warn(e))
+        }).catch(e => console.warn(e))
     },
 
     updateProjAssignee(label, field, value, historyValue) {

@@ -45,6 +45,7 @@
         
         <!-- date-picker for list and board view -->
         <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
+        
         <!-- status picker for list view -->
         <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker>
 
@@ -266,7 +267,7 @@ export default {
         .catch(e => console.warn(e))
     },
 
-    updateAssignee(label, field, value, historyValue){
+    updateAssignee(label, field, value, historyText){
       // console.log(...arguments)
       let user
       if (field == "userId" && value != '') {
@@ -282,7 +283,7 @@ export default {
         // projectId: this.$route.params.id,
         data: { [field]: value},
         user,
-        text: `changed ${label} to ${historyValue}`
+        text: `changed ${label} to ${historyText}`
       })
         .then(t => {
           // console.log(t)
@@ -503,7 +504,7 @@ export default {
 
     searchTasks(text) {
 
-      let formattedText = text.toLowerCase().trim();;
+      let formattedText = text.toLowerCase().trim();
       
       let newArr = this.tasks.filter((t) => {
         

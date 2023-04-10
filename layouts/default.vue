@@ -395,7 +395,7 @@ export default {
       // }
 
       // Dhruv (admin)
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4MDY3NDA0MjQ1OSwiZXhwIjoxNjg4NDUwMDQyNDU5LCJqdGkiOiIxNWE4YzdjNS1jNzNmLTRmMWMtYjRlMS00NmQ4NWI5OGJmMDAifQ.ko4EnWzxUP3GfXCaRbPdOLXf-0MlmymbKwYb3SqAKL0";
+      let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4MDY3NDA0MjQ1OSwiZXhwIjoxNjg4NDUwMDQyNDU5LCJqdGkiOiIxNWE4YzdjNS1jNzNmLTRmMWMtYjRlMS00NmQ4NWI5OGJmMDAifQ.ko4EnWzxUP3GfXCaRbPdOLXf-0MlmymbKwYb3SqAKL0";
 
       // Vishwajeet
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2ODA2NzI3NTEwOTksImV4cCI6MTY4ODQ0ODc1MTA5OSwianRpIjoiOGUyYzc4M2YtOTY3My00OGVlLTgyOTgtMGVjZTU5NTIyZWJhIn0.rftT95n4vGjR52nHsrLVHnbH3WNETaBpUaD9c5b7DRA"
@@ -409,8 +409,8 @@ export default {
       // Charan
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQeTdMRGR3cE9xMWUxWUtYIiwic3ViZSI6ImNoYXJhbi5wYWxAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJVU0VSIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY3NzQ5NjY2MDM4NywiZXhwIjoxNjg1MjcyNjYwMzg3LCJqdGkiOiJkNjAwOWQ0Zi1lNDFjLTQ2YWMtYjU0MC1iOTk3NzJmNDIzY2MifQ.6G04xtF0oRIaHr5gV4Jxx71TJRPb3sb3S1e85BMn3vc"
 
-      // this.$cookies.set('b_ssojwt', cookie);
-      // this.$store.dispatch('token/setToken', cookie);
+      this.$cookies.set('b_ssojwt', cookie);
+      this.$store.dispatch('token/setToken', cookie);
 
       if (this.$cookies.get("b_ssojwt")) {
         let jwt = this.$cookies.get("b_ssojwt");

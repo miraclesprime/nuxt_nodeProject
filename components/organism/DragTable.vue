@@ -70,7 +70,11 @@
                 </span>
               </template>
               <template v-if="col.key == 'status'">
-                <status-comp :key="componentKey" :status="task[col.key]"></status-comp>
+                <div class="align-center justify-between" @click.stop="triggerStatusPicker(task, 'Status', 'statusId')">
+                  <status-comp :key="componentKey" :status="task[col.key]"></status-comp>
+                  <bib-icon icon="arrowhead-down" variant="gray4"></bib-icon>
+                </div>
+                <!-- <status-comp :key="componentKey" :status="task[col.key]"></status-comp> -->
               </template>
               <template v-if="col.key == 'priority'">
                 <priority-comp :key="componentKey" :priority="task[col.key]"></priority-comp>
@@ -102,7 +106,7 @@
                   <bib-icon :icon="titleIcon.icon" :scale="1.5" :variant="taskCheckIcon(task)"></bib-icon>
                 </span>
                 <span v-if="col.event" class=" flex-grow-1" style=" line-height:1.25;">
-                  <input type="text" class="editable-input" :value="task[col.key]" @input.stop="debounceUpdate(task, 'title', $event.target.value, $event)" @blur="restoreField" >
+                  <input type="text" class="editable-input" :value="task[col.key]" @input.stop="debounceUpdate(task, 'Title', 'title', $event.target.value, $event)" @blur="restoreField" >
                 </span>
                 <span v-else class="flex-grow-1">
                   {{task[col.key]}}
@@ -316,6 +320,9 @@ export default {
       // console.log(event, task, field)
       this.$emit("date-picker", { event, task, label, field })
     },
+    triggerStatusPicker(task, label, field){
+      this.$emit("status-picker", { event, task })
+    },
 
     restoreField(){
       // console.log('restoreField', event.target)
@@ -324,14 +331,14 @@ export default {
       this.unselectAll()
     },
 
-    debounceUpdate: _.debounce(function(task, field, value, $event){
+    debounceUpdate: _.debounce(function(task, label, field, value, $event){
       // console.log(task.id, field, _.trim(value))
       if (_.trim(value) == "") {
         $event.target.classList.add('error')
         console.warn(field + ' cannot be left blank')
       } else {
         $event.target.classList.remove('error')
-        this.$emit('edit-field', {task: task, field, value})
+        this.$emit('edit-field', {task, label, field, value})
       }
     }, 1200),
     

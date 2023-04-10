@@ -2,13 +2,13 @@
   <client-only>
     <div id="my-tasks-page-wrapper" class="mytask-page-wrapper ">
       <page-title title="My Tasks"></page-title>
-      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="showNewTodo" @change-grid-type="($event)=>gridType = $event"></user-tasks-actions>
+      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="showNewTodo" @change-grid-type="($event)=>gridType = $event" @search-mytasks="searchTasks"></user-tasks-actions>
       <div>
         <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form>
         <div id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y">
           <template v-if="gridType == 'list'">
             <template v-if="todos.length">
-              <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete" @edit-field="updateTask" @edit-section="renameTodo" @date-picker="showDatePicker"></drag-table>
+              <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete" @edit-field="updateTask" @edit-section="renameTodo" @date-picker="showDatePicker" @status-picker="showStatusPicker"></drag-table>
               <!-- table context menu -->
               <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closePopups" @item-click="contextItemClick"></table-context-menu>
               <loading :loading="loading"></loading>
@@ -73,6 +73,9 @@
           
           <!-- date-picker for list and board view -->
           <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
+
+          <!-- status picker for list view -->
+          <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker>
         </div>
         
         <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
@@ -146,6 +149,7 @@ export default {
       userPickerOpen: false,
       datePickerOpen: false,
       datepickerArgs: { label: "", field: ""},
+      statusPickerOpen: false,
       confirmModal: false,
       confirmMsg: "",
       alertDialog: false,
@@ -292,6 +296,14 @@ export default {
       this.datepickerArgs.field = payload.field || 'dueDate'
       this.datepickerArgs.label = payload.label || 'Due date'
     },
+    showStatusPicker(payload){
+      this.statusPickerOpen = true
+      this.userPickerOpen = false
+      this.datePickerOpen = false
+      this.taskContextMenu = false
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
+    },
 
     // task context menu methods ----------------------------------------
 
@@ -352,7 +364,7 @@ export default {
         projectId: payload.task.project[0].projectId || payload.task.project[0].project.id,
         data: { [payload.field]: payload.value },
         user,
-        text: `changed ${payload.field} to "${payload.historyText || payload.value}"`
+        text: `changed ${payload.label} to "${payload.historyText || payload.value}"`
       })
         .then(t => {
           // console.log(t)
@@ -722,6 +734,43 @@ export default {
         } else { 
           unsecuredCopyToClipboard(url);
         }
+    },
+
+    searchTasks(text) {
+
+      let formattedText = text.toLowerCase().trim();
+
+      let Ts = JSON.parse(JSON.stringify(this.todos))
+      
+      let newArr = Ts.map((todo) => {
+
+          let filtered = todo.tasks.filter((t) => {
+          
+          if(t.description) {
+            if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText) || t.description.includes(formattedText) || t.description.toLowerCase().includes(formattedText)) {
+              return t
+            } 
+          } else {
+            if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
+              return t
+            } 
+          }
+
+        })
+
+        todo.tasks = filtered
+
+        return todo;
+      
+      })
+
+      if(newArr.length >= 0) {
+        this.localdata = newArr
+        this.key++;
+      } else {
+        this.localdata = this.todos;
+        this.key++;
+      }
     }
   },
 

@@ -6,9 +6,11 @@
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
         <template v-if="gridType == 'list'">
           <template>
-            <drag-table-simple :key="key" :componentKey="key" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :fields="taskFields" :tasks="tasks" :sectionTitle="'Department'" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar"></drag-table-simple>
+            <drag-table-simple :key="key" :componentKey="key" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :fields="taskFields" :tasks="tasks" :sectionTitle="'Department'" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @status-picker="showStatusPicker"></drag-table-simple>
             <!-- table context menu -->
-            <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="contextCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick"></table-context-menu>
+            <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick"></table-context-menu>
+            <!-- status picker for list view -->
+            <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker>
           </template>
         </template>
         <template v-else>
@@ -58,6 +60,12 @@ export default {
       gridType: "list",
       taskFields: TaskFields,
       taskContextMenu: false,
+      statusPickerOpen: false,
+      popupMessages: [],
+      popupCoords: { },
+      /*userPickerOpen: false,
+      datePickerOpen: false,
+      datepickerArgs: { label: "", field: ""},*/
       activeTask: {},
       contextMenuItems: TASK_CONTEXT_MENU,
       loading: false,
@@ -65,8 +73,8 @@ export default {
       viewName: "all",
       orderBy: 'desc',
       key: 100,
-      popupMessages: [],
-      contextCoords: {},
+      /*popupMessages: [],
+      contextCoords: {},*/
       userfortask: "",
       tasks: [],
       taskOrder: 'asc',
@@ -152,7 +160,9 @@ export default {
     },
 
     updateKey($event) {
-      this.popupMessages.push({ text: $event, variant: "success" })
+      if ($event) {
+        this.popupMessages.push({ text: $event, variant: "success" })
+      }
       let compid = JSON.parse(localStorage.getItem("user")).subb;
       this.fetchUserTasks()
     },
@@ -163,12 +173,22 @@ export default {
 
     taskRightClick(payload) {
       this.taskContextMenu = true;
+      this.statusPickerOpen = false
       const { event, task } = payload
       this.activeTask = task;
-      this.contextCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
+      this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
+    },
+    showStatusPicker(payload){
+      this.statusPickerOpen = true
+      /*this.userPickerOpen = false
+      this.datePickerOpen = false*/
+      this.taskContextMenu = false
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
     },
 
     closeContext() {
+      this.statusPickerOpen = false
       this.taskContextMenu = false
       this.activeTask = {}
     },
@@ -240,6 +260,34 @@ export default {
           console.log(e)
           this.loading = false
         })
+    },
+    updateTask(payload) {
+      // console.log(payload)
+      let user, projectId
+      if (payload.field == "userId" && payload.value != '') {
+        user = this.teamMembers.find(t => t.id == payload.value)
+      } else {
+        user = null
+      }
+
+      if (payload.task.project.length > 0) {
+        projectId = payload.task.project[0].projectId || payload.task.project[0].project.id
+      } else {
+        projectId = null
+      }
+
+      this.$store.dispatch("task/updateTask", {
+        id: payload.task.id,
+        projectId,
+        data: { [payload.field]: payload.value },
+        user,
+        text: `changed ${payload.field} to "${payload.historyText || payload.value}"`
+      })
+        .then(t => {
+          // console.log(t)
+          this.updateKey()
+        })
+        .catch(e => console.warn(e))
     },
 
     deleteTask(task) {
