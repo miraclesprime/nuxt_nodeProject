@@ -503,7 +503,7 @@ export default {
 
     searchTasks(text) {
 
-      let formattedText = text.toLowerCase().trim();;
+      let formattedText = text.toLowerCase().trim();
       
       let newArr = this.tasks.filter((t) => {
         

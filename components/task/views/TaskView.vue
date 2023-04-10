@@ -1,6 +1,6 @@
 <template>
   <div id="task-view-wrapper" class="task-view-wrapper position-relative">
-    <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:show-newsection="showNewsection" v-on:filterView="filterView" v-on:sort="taskSort($event)" @group="taskGroup($event)"></task-actions>
+    <task-actions :gridType="gridType" v-on:create-task="toggleSidebar($event)" v-on:show-newsection="showNewsection" v-on:filterView="filterView" v-on:sort="taskSort($event)" @group="taskGroup($event)" @search-projectTasks="searchTasks"></task-actions>
     <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createSection"></new-section-form>
 
     <template v-if="gridType === 'list'">
@@ -71,8 +71,6 @@ export default {
       userPickerOpen: false,
       datePickerOpen: false,
       datepickerArgs: { label: "", field: ""},
-      /*contextCoords: {},
-      userPickerCoords: {},*/
       popupCoords: {},
       popupMessages: [],
       activeTask: {},
@@ -127,30 +125,14 @@ export default {
       sections: "section/getProjectSections",
     }),
 
-    /*isFavorite() {
-      let fav = this.favTasks.some(t => t.task.id == this.currentTask.id)
-      if (fav) {
-        return { icon: "bookmark-solid", variant: "orange", text: "Remove favorite", status: true }
-      } else {
-        return { icon: "bookmark", variant: "gray5", text: "Add to favorites", status: false }
-      }
-    },*/
-
-    /*sectionError() {
-      if (this.newSectionName.indexOf("_") == 0) {
-        return true
-      } else {
-        return false
-      }
-    },*/
-    // nodata() {
-    //   if (this.sections.length > 0) {
-    //     return false
-    //   } else {
-    //     return true
-    //   }
-    // },
   },
+
+  watch: {
+    sections(newVal) {
+        this.localdata = _.cloneDeep(newVal)
+    },
+  },
+
   created() {
 
     this.$nuxt.$on("update-key", () => {
@@ -508,12 +490,6 @@ export default {
       }
     },
 
-    // taskSelected($event) {
-    //   this.$store.dispatch('task/setSingleTask', $event)
-    //   this.activeTask = $event;
-    //   this.toggleSidebar($event)
-    //   this.teamKey += 1;
-    // },
 
     filterView($event) {
       this.loading = true
@@ -695,24 +671,6 @@ export default {
       this.confirmMsg = "Are you sure "
       this.confirmModal = true
     },
-    /*deleteTask(task) {
-      // let del = confirm("Are you sure")
-      this.loading = true
-      // if (del) {
-      this.$store.dispatch("task/deleteTask", task).then(t => {
-        // console.log(t)
-        if (t.statusCode == 200) {
-          this.updateKey()
-          // console.warn(t.message);
-        } else {
-          console.warn(t.message);
-        }
-        this.loading = false
-      }).catch(e => {
-        this.loading = false
-        console.log(e)
-      })
-    },*/
 
     deleteSection(section) {
       // let sec = this.sections.find(s => s.id == section.id)
@@ -804,6 +762,43 @@ export default {
         unsecuredCopyToClipboard(url);
       }
     },
+
+    searchTasks(text) {
+
+      let formattedText = text.toLowerCase().trim();
+
+      let secs = JSON.parse(JSON.stringify(this.sections))
+      
+      let newArr = secs.map((s) => {
+
+          let filtered = s.tasks.filter((t) => {
+          
+          if(t.description) {
+            if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText) || t.description.includes(formattedText) || t.description.toLowerCase().includes(formattedText)) {
+              return t
+            } 
+          } else {
+            if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
+              return t
+            } 
+          }
+
+        })
+
+        s.tasks = filtered
+
+        return s;
+      
+      })
+
+      if(newArr.length >= 0) {
+        this.localdata = newArr
+        this.templateKey++;
+      } else {
+        this.localdata = this.sections;
+        this.templateKey++;
+      }
+    }
   },
 
 };

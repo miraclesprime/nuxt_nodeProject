@@ -2,7 +2,7 @@
   <client-only>
     <div id="my-tasks-page-wrapper" class="mytask-page-wrapper ">
       <page-title title="My Tasks"></page-title>
-      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="showNewTodo" @change-grid-type="($event)=>gridType = $event"></user-tasks-actions>
+      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="showNewTodo" @change-grid-type="($event)=>gridType = $event" @search-mytasks="searchTasks"></user-tasks-actions>
       <div>
         <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form>
         <div id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y">
@@ -722,6 +722,43 @@ export default {
         } else { 
           unsecuredCopyToClipboard(url);
         }
+    },
+
+    searchTasks(text) {
+
+      let formattedText = text.toLowerCase().trim();
+
+      let Ts = JSON.parse(JSON.stringify(this.todos))
+      
+      let newArr = Ts.map((todo) => {
+
+          let filtered = todo.tasks.filter((t) => {
+          
+          if(t.description) {
+            if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText) || t.description.includes(formattedText) || t.description.toLowerCase().includes(formattedText)) {
+              return t
+            } 
+          } else {
+            if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
+              return t
+            } 
+          }
+
+        })
+
+        todo.tasks = filtered
+
+        return todo;
+      
+      })
+
+      if(newArr.length >= 0) {
+        this.localdata = newArr
+        this.key++;
+      } else {
+        this.localdata = this.todos;
+        this.key++;
+      }
     }
   },
 
