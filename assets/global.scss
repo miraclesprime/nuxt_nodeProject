@@ -356,28 +356,30 @@ ul {
   &-01 { gap: 0.1rem; }
 }
 
-  .bib-datepicker,
-  .vdp-datepicker {
-    &.align-right {
-      .vdp-datepicker__calendar { right: 0;}
-    }
-    .vdp-datepicker__calendar {
-      width: 290px;
-      font-size: $base-size;
-      header span { height: 36px; line-height: 36px;}
-      .cell:not(.blank):not(.disabled).day:hover,
-      .cell:not(.blank):not(.disabled).month:hover,
-      .cell:not(.blank):not(.disabled).year:hover { border-color: transparent; background-color: $secondary-sub2; }
-      .cell { height: 36px; line-height: 36px; border-left-width: 0; border-right-width: 0; border-bottom: 1px solid $light; 
-        &.selected { background-color: $secondary; color: white;
-          &:hover { background-color: $secondary-sub1;}
-        }
-        &.day-header { color: $gray5; text-transform: uppercase; border-top: 1px solid $light; border-bottom-color: $gray6;}
-       }
-      header .prev::after { border-right: 9px solid $secondary;}
-      header .next::after { border-left: 8px solid $secondary;}
-    }
+.bib-datepicker,
+.vdp-datepicker {
+  &.align-right {
+    .vdp-datepicker__calendar { right: 0;}
   }
+  .vdp-datepicker__calendar {
+    width: 290px;
+    font-size: $base-size;
+    header span { height: 36px; line-height: 36px;}
+    .cell:not(.blank):not(.disabled).day:hover,
+    .cell:not(.blank):not(.disabled).month:hover,
+    .cell:not(.blank):not(.disabled).year:hover { border-color: transparent; background-color: $secondary-sub2; }
+    .cell { height: 36px; line-height: 36px; border-left-width: 0; border-right-width: 0; border-bottom: 1px solid $light; 
+      &.selected { background-color: $secondary; color: white;
+        &:hover { background-color: $secondary-sub1;}
+      }
+      &.day-header { color: $gray5; text-transform: uppercase; border-top: 1px solid $light; border-bottom-color: $gray6;}
+     }
+    header .prev::after { border-right: 9px solid $secondary;}
+    header .next::after { border-left: 8px solid $secondary;}
+  }
+}
+
+.bib-tooltip { z-index: 100000 }
 
 @media screen and (max-width: 1600px) {
   .side-panel {

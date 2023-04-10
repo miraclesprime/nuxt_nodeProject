@@ -5,7 +5,7 @@
 
     <template v-if="gridType === 'list'">
       <!-- task list table -->
-      <drag-table :fields="tableFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" :key="templateKey" :componentKey="templateKey" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" :newTaskButton="newTaskButton" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow" @edit-field="updateTask" @edit-section="renameSection" @user-picker="showUserPicker" @date-picker="showDatePicker"></drag-table>
+      <drag-table :fields="tableFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" :key="templateKey" :componentKey="templateKey" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="markComplete" @new-task="toggleSidebar($event)" @table-sort="taskSort($event)" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" :newTaskButton="newTaskButton" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow" @edit-field="updateTask" @edit-section="renameSection" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker"></drag-table>
       <!-- table context menu -->
       <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closeContext" ref="task_menu" @item-click="contextItemClick"></table-context-menu>
     </template>
@@ -20,6 +20,9 @@
 
     <!-- date-picker for list and board view -->
     <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
+
+    <!-- status picker for list view -->
+    <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker>
     
     <loading :loading="loading"></loading>
     <!-- popup notification -->
@@ -71,8 +74,7 @@ export default {
       userPickerOpen: false,
       datePickerOpen: false,
       datepickerArgs: { label: "", field: ""},
-      /*contextCoords: {},
-      userPickerCoords: {},*/
+      statusPickerOpen: false,
       popupCoords: {},
       popupMessages: [],
       activeTask: {},
@@ -271,6 +273,14 @@ export default {
       this.activeTask = payload.task
       this.datepickerArgs.field = payload.field || 'dueDate'
       this.datepickerArgs.label = payload.label || 'Due date'
+    },
+    showStatusPicker(payload){
+      this.statusPickerOpen = true
+      this.userPickerOpen = false
+      this.datePickerOpen = false
+      this.taskContextMenu = false
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
     },
     taskSort($event) {
       // sort by title
@@ -613,7 +623,7 @@ export default {
         id: payload.task.id,
         data: { [payload.field]: payload.value },
         user,
-        text: `changed ${payload.field} to "${payload.label || payload.value}"`
+        text: `changed ${payload.label} to "${payload.historyText || payload.value}"`
       })
         .then(t => {
           // console.log(t)
@@ -695,24 +705,6 @@ export default {
       this.confirmMsg = "Are you sure "
       this.confirmModal = true
     },
-    /*deleteTask(task) {
-      // let del = confirm("Are you sure")
-      this.loading = true
-      // if (del) {
-      this.$store.dispatch("task/deleteTask", task).then(t => {
-        // console.log(t)
-        if (t.statusCode == 200) {
-          this.updateKey()
-          // console.warn(t.message);
-        } else {
-          console.warn(t.message);
-        }
-        this.loading = false
-      }).catch(e => {
-        this.loading = false
-        console.log(e)
-      })
-    },*/
 
     deleteSection(section) {
       // let sec = this.sections.find(s => s.id == section.id)

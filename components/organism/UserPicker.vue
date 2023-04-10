@@ -27,10 +27,7 @@ export default {
     return {
       // userPickerOpen: false,
       filterKey: "",
-      /*position: {
-        left: this.coordinates.left+'px',
-        top: this.coordinates.top+'px',
-      }*/
+      
     }
   },
   watch: {
@@ -67,19 +64,6 @@ export default {
       })
     },
     position() {
-      /*let left1 = this.coordinates.left || window.innerWidth/2
-      let top1 = this.coordinates.top || window.innerHeight/2
-
-      if (picker) {
-        let diff = window.innerHeight - (picker.offsetTop + picker.offsetHeight + 10)
-        if (window.innerHeight < (picker.offsetTop + picker.offsetHeight)) {
-          top += diff
-        } else {
-          top += 0
-        }
-      }
-      return { left: left1 + 'px', top: top1 + 'px' }*/
-      
       return this.coordinates
     },
   },

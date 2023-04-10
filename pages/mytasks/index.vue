@@ -8,7 +8,7 @@
         <div id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y">
           <template v-if="gridType == 'list'">
             <template v-if="todos.length">
-              <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete" @edit-field="updateTask" @edit-section="renameTodo" @date-picker="showDatePicker"></drag-table>
+              <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete" @edit-field="updateTask" @edit-section="renameTodo" @date-picker="showDatePicker" @status-picker="showStatusPicker"></drag-table>
               <!-- table context menu -->
               <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closePopups" @item-click="contextItemClick"></table-context-menu>
               <loading :loading="loading"></loading>
@@ -73,6 +73,9 @@
           
           <!-- date-picker for list and board view -->
           <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
+
+          <!-- status picker for list view -->
+          <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker>
         </div>
         
         <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
@@ -146,6 +149,7 @@ export default {
       userPickerOpen: false,
       datePickerOpen: false,
       datepickerArgs: { label: "", field: ""},
+      statusPickerOpen: false,
       confirmModal: false,
       confirmMsg: "",
       alertDialog: false,
@@ -292,6 +296,14 @@ export default {
       this.datepickerArgs.field = payload.field || 'dueDate'
       this.datepickerArgs.label = payload.label || 'Due date'
     },
+    showStatusPicker(payload){
+      this.statusPickerOpen = true
+      this.userPickerOpen = false
+      this.datePickerOpen = false
+      this.taskContextMenu = false
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
+    },
 
     // task context menu methods ----------------------------------------
 
@@ -352,7 +364,7 @@ export default {
         projectId: payload.task.project[0].projectId || payload.task.project[0].project.id,
         data: { [payload.field]: payload.value },
         user,
-        text: `changed ${payload.field} to "${payload.historyText || payload.value}"`
+        text: `changed ${payload.label} to "${payload.historyText || payload.value}"`
       })
         .then(t => {
           // console.log(t)
