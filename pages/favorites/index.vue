@@ -379,6 +379,32 @@ export default {
           this.key += 1
           break;
 
+        case 'department':
+          let deptArr = []
+          for (let i = 0; i < this.sortedProject.length; i++) {
+            if (this.sortedProject[i].departmentId) {
+              deptArr.unshift(this.sortedProject[i])
+            } else {
+              deptArr.push(this.sortedProject[i])
+            }
+          }
+
+          this.sortedProject = deptArr;
+
+          if (this.projOrder == "asc") {
+            this.sortedProject.sort((a, b) => {
+              if (a.department && b.department) { return a.department.title - b.department.title }
+            });
+            this.projOrder = "desc"
+          } else {
+            this.sortedProject.sort((a, b) => {
+              if (a.department && b.department) { return b.department.title - a.department.title }
+            });
+            this.projOrder = "asc"
+          }
+          this.key += 1
+          break;
+
         case 'userId':
           let uArr = []
           for (let i = 0; i < this.sortedProject.length; i++) {

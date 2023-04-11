@@ -92,6 +92,11 @@ export const PROJECT_FIELDS = [
   {
       key: "department",
       label: "Department",
+      header_icon: {
+        icon: 'swap-vertical',
+        event: 'table-sort',
+        isActive: false
+    }
   },
 ]
 
@@ -416,6 +421,7 @@ export const PROJECT_SORT = [
   { label: 'Assignee', key: 'owner' },
   { label: 'Status', key: 'status' },
   { label: 'Priority', key: 'priority' },
+  { label: 'Department', key: 'department' },
   { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },
   // { label: 'Tag', key: 'tag' },
@@ -450,6 +456,7 @@ export const FAVORITE_SORT = [
   { label: 'Name', key: 'title' },
   { label: 'Status', key: 'status' },
   { label: 'Priority', key: 'priority' },
+  { label: 'Department', key: 'department' },
   { label: 'Assignee', key: 'userId' },
   { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },
@@ -490,11 +497,11 @@ export const PROJECT_FAVORITES = [
   {
     label: 'Department',
     key: 'department',
-    /*header_icon: {
+    header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
       isActive: false
-    }*/
+    }
   },
   {
     label: 'Status',
@@ -805,7 +812,11 @@ export const USER_TASKS = [
   {
     label: 'Department',
     key: 'department',
-
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
   },
 ]
 
@@ -814,6 +825,7 @@ export const USER_TASK_SORT = [
   { label: 'Project', key: 'project' },
   { label: 'Priority', key: 'priority' },
   { label: 'Status', key: 'status' },
+  { label: 'Department', key: 'department' },
   { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },
 ]

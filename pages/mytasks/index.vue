@@ -174,7 +174,7 @@ export default {
         todo["tasks"] = todo.tasks.sort((a, b) => a.tOrder - b.tOrder);
       })
       this.localdata = todos
-    }
+    },
   },
 
   created() {
@@ -193,6 +193,14 @@ export default {
   },
 
   mounted() {
+
+    
+    for(let field of this.taskFields) {
+      if(field.header_icon) {
+        field.header_icon.isActive = false;
+      }
+    }
+
     this.loading = true
     this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
       if (res.statusCode == 200) {
@@ -203,6 +211,18 @@ export default {
   },
 
   methods: {
+
+    checkActive(sortName) {
+      for(let i=0; i<this.taskFields.length; i++) {
+          if(this.taskFields[i].header_icon) {
+            this.taskFields[i].header_icon.isActive = false
+          }
+
+          if(this.taskFields[i].header_icon && this.taskFields[i].key == sortName) {
+            this.taskFields[i].header_icon.isActive = true
+          } 
+      }
+    },
 
     taskRightClick(payload) {
       this.taskContextMenu = true
@@ -709,7 +729,31 @@ export default {
         }
       }
 
+
+      // sort by department
+      if ($event == "department") {
+        if (this.orderBy == "asc") {
+          this.localdata.forEach(function(todo) {
+            todo["tasks"] = todo.tasks.sort((a, b) => {
+              if(a.department && b.department) {
+                return a.department.title.localeCompare(b.priority.title)
+              }
+            });
+          })
+        } else {
+          this.localdata.forEach(function(todo) {
+            todo["tasks"] = todo.tasks.sort((a, b) =>  {
+              if(a.department && b.department) {
+                return b.department.title.localeCompare(a.priority.title)
+              }
+            });
+          })
+        }
+      }
+
+
       this.key += 1
+      this.checkActive($event)
       if (this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
