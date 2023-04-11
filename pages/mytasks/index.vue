@@ -8,7 +8,7 @@
         <div id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y">
           <template v-if="gridType == 'list'">
             <template v-if="todos.length">
-              <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete" @edit-field="updateTask" @edit-section="renameTodo" @date-picker="showDatePicker" @status-picker="showStatusPicker"></drag-table>
+              <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete" @edit-field="updateTask" @edit-section="renameTodo" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker"></drag-table>
               <!-- table context menu -->
               <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closePopups" @item-click="contextItemClick"></table-context-menu>
               <loading :loading="loading"></loading>
@@ -70,12 +70,12 @@
           
           <!-- user-picker for board view -->
           <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"></user-picker>
-          
           <!-- date-picker for list and board view -->
           <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
-
           <!-- status picker for list view -->
           <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker>
+          <!-- priority picker for list view -->
+          <priority-picker :show="priorityPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="priorityPickerOpen = false" ></priority-picker>
         </div>
         
         <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
@@ -150,6 +150,7 @@ export default {
       datePickerOpen: false,
       datepickerArgs: { label: "", field: ""},
       statusPickerOpen: false,
+      priorityPickerOpen: false,
       confirmModal: false,
       confirmMsg: "",
       alertDialog: false,
@@ -279,30 +280,40 @@ export default {
 
     showUserPicker(payload){
       // console.log(payload)
+      this.closeAllPickers()
       this.userPickerOpen = true
-      this.datePickerOpen = false
-      this.taskContextMenu = false
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
     },
     showDatePicker(payload){
       // console.log(payload)
       // payload consists of event, task, label, field
+      this.closeAllPickers()
       this.datePickerOpen = true
-      this.userPickerOpen = false
-      this.taskContextMenu = false
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
       this.datepickerArgs.field = payload.field || 'dueDate'
       this.datepickerArgs.label = payload.label || 'Due date'
     },
     showStatusPicker(payload){
+      this.closeAllPickers()
       this.statusPickerOpen = true
-      this.userPickerOpen = false
-      this.datePickerOpen = false
-      this.taskContextMenu = false
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
+    },
+    showPriorityPicker(payload){
+      this.closeAllPickers()
+      this.priorityPickerOpen = true
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
+    },
+    closeAllPickers(){
+      this.taskContextMenu = false
+      this.userPickerOpen = false
+      this.datePickerOpen = false
+      this.statusPickerOpen = false
+      this.priorityPickerOpen = false
+      this.activeTask = {}
     },
 
     // task context menu methods ----------------------------------------
@@ -364,7 +375,7 @@ export default {
         projectId: payload.task.project[0].projectId || payload.task.project[0].project.id,
         data: { [payload.field]: payload.value },
         user,
-        text: `changed ${payload.label} to "${payload.historyText || payload.value}"`
+        text: `changed ${payload.label} to ${payload.historyText || payload.value}`
       })
         .then(t => {
           // console.log(t)

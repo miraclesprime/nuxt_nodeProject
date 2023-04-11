@@ -44,13 +44,16 @@
             </span>
           </template>
           <template v-if="col.key == 'status'">
-            <div class="align-center justify-between" @click.stop="triggerStatusPicker(task, 'Status', 'statusId')">
+            <div class="align-center justify-between" @click.stop="triggerStatusPicker(task)">
               <status-comp :key="task.title+col.key+componentKey" :status="task[col.key]"></status-comp>
               <bib-icon icon="arrowhead-down" variant="gray4"></bib-icon>
             </div>
           </template>
           <template v-if="col.key == 'priority'">
-            <priority-comp :key="task.title+col.key+componentKey" :priority="task[col.key]"></priority-comp>
+            <div class="align-center justify-between" @click.stop="triggerPriorityPicker(task)">
+              <priority-comp :key="task.title+col.key+componentKey" :priority="task[col.key]"></priority-comp>
+              <bib-icon icon="arrowhead-down" variant="gray4"></bib-icon>
+            </div>
           </template>
           <!-- <template v-if="col.key == 'startDate' || col.key == 'dueDate'">
             <span v-if="task[col.key]" class="d-inline-flex align-center gap-05"><bib-icon icon="calendar" variant="gray4"></bib-icon><format-date :key="task.title+col.key+componentKey" :datetime="task[col.key]"></format-date></span>
@@ -112,14 +115,16 @@
             </span>
           </template>
           <template v-if="col.key == 'status'">
-            <div class="align-center justify-between" @click.stop="triggerStatusPicker(task, 'Status', 'statusId')">
+            <div class="align-center justify-between" @click.stop="triggerStatusPicker(task)">
               <status-comp :key="task.title+col.key+componentKey" :status="task[col.key]"></status-comp>
               <bib-icon icon="arrowhead-down" variant="gray4"></bib-icon>
             </div>
-            
           </template>
           <template v-if="col.key == 'priority'">
-            <priority-comp :key="task.title+col.key+componentKey" :priority="task[col.key]"></priority-comp>
+            <div class="align-center justify-between" @click.stop="triggerPriorityPicker(task)">
+              <priority-comp :key="task.title+col.key+componentKey" :priority="task[col.key]"></priority-comp>
+              <bib-icon icon="arrowhead-down" variant="gray4"></bib-icon>
+            </div>
           </template>
           <!-- <template v-if="col.key == 'startDate' || col.key == 'dueDate'">
             <span v-if="task[col.key]" class="d-inline-flex align-center gap-05"><bib-icon icon="calendar" variant="gray4"></bib-icon><format-date :key="task.title+col.key+componentKey" :datetime="task[col.key]"></format-date></span>
@@ -396,8 +401,11 @@ export default {
     triggerDatePicker(task, label, field){
       this.$emit("date-picker", { event, task, label, field })
     },
-    triggerStatusPicker(task, label, field){
+    triggerStatusPicker(task){
       this.$emit("status-picker", { event, task })
+    },
+    triggerPriorityPicker(task){
+      this.$emit("priority-picker", { event, task })
     },
     restoreField(){
       // console.log('restoreField', event.target)
