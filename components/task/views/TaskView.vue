@@ -379,18 +379,24 @@ export default {
           this.orderBy = "desc"
           this.localdata.forEach(function(sec) {
             sec["tasks"] = sec.tasks.sort((a, b) => {
-              return a.department.title.localeCompare(b.department.title)
+              if(a.departmentId && b.departmentId) {
+                return a.department.title.localeCompare(b.department.title)
+              }
             });
           })
         } else {
           this.orderBy = "asc"
           this.localdata.forEach(function(sec) {
             sec["tasks"] = sec.tasks.sort((a, b) => {
-              return b.department.title.localeCompare(a.department.title)
+              if(a.departmentId && b.departmentId) {
+                return b.department.title.localeCompare(a.department.title)
+              }
             });
           })
         }
         // this.templateKey += 1
+        this.sortName = 'department'
+        this.checkActive()
       }
 
       // sort By Start Date

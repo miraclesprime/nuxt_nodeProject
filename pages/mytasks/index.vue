@@ -746,7 +746,7 @@ export default {
         if (this.orderBy == "asc") {
           this.localdata.forEach(function(todo) {
             todo["tasks"] = todo.tasks.sort((a, b) => {
-              if(a.department && b.department) {
+              if(a.departmentId && b.departmentId) {
                 return a.department.title.localeCompare(b.priority.title)
               }
             });
@@ -754,7 +754,7 @@ export default {
         } else {
           this.localdata.forEach(function(todo) {
             todo["tasks"] = todo.tasks.sort((a, b) =>  {
-              if(a.department && b.department) {
+              if(a.departmentId && b.departmentId) {
                 return b.department.title.localeCompare(a.priority.title)
               }
             });

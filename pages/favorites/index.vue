@@ -437,12 +437,12 @@ export default {
 
           if (this.projOrder == "asc") {
             this.sortedProject.sort((a, b) => {
-              if (a.department && b.department) { return a.department.title.localeCompare(b.department.title) }
+              if (a.departmentId && b.departmentId) { return a.department.title.localeCompare(b.department.title) }
             });
             this.projOrder = "desc"
           } else {
             this.sortedProject.sort((a, b) => {
-              if (a.department && b.department) { return b.department.title.localeCompare(a.department.title) }
+              if (a.departmentId && b.departmentId) { return b.department.title.localeCompare(a.department.title) }
             });
             this.projOrder = "asc"
           }
