@@ -424,8 +424,8 @@ export default {
 
           if (this.taskOrder == "asc") {
             deptArr.sort((a, b) => {
-              if(a.department.title && b.department.title) {
-                console.log(a.department.title, b.department.title)
+              if(a.departmentId && b.departmentId) {
+                // console.log(a.department.title, b.department.title)
                 return a.department.title.localeCompare(b.department.title)
               }
             });
@@ -433,8 +433,8 @@ export default {
 
           } else {
             deptArr.sort((a, b) => {
-              if(a.department.title && b.department.title) {
-                console.log(a.department.title, b.department.title)
+              if(a.departmentId && b.departmentId) {
+                // console.log(a.department.title, b.department.title)
                 return b.department.title.localeCompare(a.department.title)
               }
             });

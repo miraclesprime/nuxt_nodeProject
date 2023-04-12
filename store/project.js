@@ -277,7 +277,7 @@ export const mutations = {
       }
 
       newArr.sort((a, b) => {
-        if (a.department && b.department) {
+        if (a.departmentId && b.departmentId) {
           return a.department.title.localeCompare(b.department.title);
         }
       });
@@ -297,7 +297,7 @@ export const mutations = {
       }
 
       newArr.sort((a, b) => {
-        if (a.department && b.department) {
+        if (a.departmentId && b.departmentId) {
           return b.department.title.localeCompare(a.department.title)
         }
       });
