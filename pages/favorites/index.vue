@@ -85,7 +85,8 @@ export default {
       loading: false,
       loading2: false,
       view: 'all',
-      sortName: '',
+      projSortName: '',
+      taskSortName: '',
       projOrder: 'asc',
       taskOrder: 'asc',
       projectContextItems: PROJECT_CONTEXT_MENU,
@@ -326,6 +327,28 @@ export default {
       }
 
     },
+
+    checkActive() {
+      for(let i=0; i<this.projectTableFields.length; i++) {
+          if(this.projectTableFields[i].header_icon) {
+            this.projectTableFields[i].header_icon.isActive = false
+          }
+
+          if(this.projectTableFields[i].header_icon && this.projectTableFields[i].key == this.projSortName) {
+            this.projectTableFields[i].header_icon.isActive = true
+          } 
+      }
+      for(let i=0; i<this.taskTableFields.length; i++) {
+          if(this.taskTableFields[i].header_icon) {
+            this.taskTableFields[i].header_icon.isActive = false
+          }
+
+          if(this.taskTableFields[i].header_icon && this.taskTableFields[i].key == this.taskSortName) {
+            this.taskTableFields[i].header_icon.isActive = true
+          } 
+      }
+    },
+
     sortProject(field) {
 
       switch (field) {
@@ -339,6 +362,8 @@ export default {
             this.projOrder = "asc"
           }
           this.key += 1
+          this.projSortName = 'title'
+          this.checkActive()
           break;
 
         case 'status':
@@ -366,6 +391,8 @@ export default {
           }
 
           this.key += 1
+          this.projSortName = 'status'
+          this.checkActive()
           break;
 
         case 'priority':
@@ -392,6 +419,8 @@ export default {
             this.projOrder = "asc"
           }
           this.key += 1
+          this.projSortName = 'priority'
+          this.checkActive()
           break;
 
         case 'department':
@@ -418,6 +447,8 @@ export default {
             this.projOrder = "asc"
           }
           this.key += 1
+          this.projSortName = 'department'
+          this.checkActive()
           break;
 
         case 'userId':
@@ -444,6 +475,8 @@ export default {
             this.projOrder = "asc"
           }
           this.key += 1
+          this.projSortName = 'userId'
+          this.checkActive()
           break;
 
         case 'dueDate':
@@ -469,6 +502,8 @@ export default {
             this.projOrder = "asc"
           }
           this.key += 1
+          this.projSortName = 'dueDate'
+          this.checkActive()
           break;
 
         case 'startDate':
@@ -495,6 +530,8 @@ export default {
             this.projOrder = "asc"
           }
           this.key += 1
+          this.projSortName = 'startDate'
+          this.checkActive()
           break;
 
         default:
@@ -516,6 +553,8 @@ export default {
             this.taskOrder = "asc"
           }
           this.key += 1
+          this.taskSortName = 'title'
+          this.checkActive()
           break;
 
         case 'status':
@@ -527,6 +566,8 @@ export default {
             this.taskOrder = "asc"
           }
           this.key += 1
+          this.taskSortName = 'status'
+          this.checkActive()
           break;
 
         case 'priority':
@@ -538,6 +579,8 @@ export default {
             this.taskOrder = "asc"
           }
           this.key += 1
+          this.taskSortName = 'priority'
+          this.checkActive()
           break;
         
         case 'department':
@@ -564,6 +607,8 @@ export default {
             this.taskOrder = "asc"
           }
           this.key += 1
+          this.taskSortName = 'userId'
+          this.checkActive()
           break;
 
         case 'dueDate':
@@ -579,6 +624,8 @@ export default {
             this.taskOrder = "asc"
           }
           this.key += 1
+          this.taskSortName = 'dueDate'
+          this.checkActive()
           break;
 
         case 'startDate':
@@ -594,6 +641,8 @@ export default {
             this.taskOrder = "asc"
           }
           this.key += 1
+          this.taskSortName = 'startDate'
+          this.checkActive()
           break;
 
         case "project":
@@ -613,6 +662,8 @@ export default {
           });
           this.sortedTask = newArr;
           this.key += 1
+          this.taskSortName = 'project'
+          this.checkActive()
           break;
 
         default:

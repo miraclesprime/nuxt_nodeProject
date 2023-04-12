@@ -179,7 +179,7 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'owner', order: 'asc'} ).then((res) => {
               this.orderBy = 'desc'
               this.templateKey += 1;
-              this.sortName = 'owner';
+              this.sortName = 'userId';
               this.checkActive()
             })
           }
@@ -188,7 +188,7 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'owner', order: 'desc'} ).then((res) => {
               this.orderBy = 'asc'
               this.templateKey += 1;
-              this.sortName = 'owner';
+              this.sortName = 'userId';
               this.checkActive()
             })
             
@@ -267,7 +267,7 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'startDate', order: 'asc'} ).then((res) => {
               this.orderBy = 'desc'
               this.templateKey += 1;
-              this.sortName = 'start date';
+              this.sortName = 'startDate';
               this.checkActive()
             })
           }
@@ -276,7 +276,7 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'startDate', order: 'desc'} ).then((res) => {
               this.orderBy = 'asc'
               this.templateKey += 1;
-              this.sortName = 'start date';
+              this.sortName = 'startDate';
               this.checkActive()
             })
             
@@ -289,7 +289,7 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'dueDate', order: 'asc'} ).then((res) => {
               this.orderBy = 'desc'
               this.templateKey += 1;
-              this.sortName = 'due date';
+              this.sortName = 'dueDate';
               this.checkActive()
             })
           }
@@ -298,7 +298,7 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'dueDate', order: 'desc'} ).then((res) => {
               this.orderBy = 'asc'
               this.templateKey += 1;
-              this.sortName = 'due date';
+              this.sortName = 'dueDate';
               this.checkActive()
             })
             

@@ -7,7 +7,7 @@
           <div class="align-center">
             <span> {{ field.label }} </span>
             <template v-if="field.header_icon">
-              <div class="ml-05 shape-rounded bg-hover-black width-105 height-105 d-flex justify-center align-center cursor-pointer" :class="{'bg-black': field.header_icon.isActive }" @click="$emit(field.header_icon.event, field.key)">
+              <div class="ml-05 shape-rounded bg-hover-black width-105 height-105 justify-center align-center cursor-pointer" :class="{'bg-black': field.header_icon.isActive }" @click="$emit(field.header_icon.event, field.key)">
                 <bib-icon :icon="field.header_icon.icon" :scale="1.1" variant="gray5" hoverVariant="white"></bib-icon>
               </div>
             </template>

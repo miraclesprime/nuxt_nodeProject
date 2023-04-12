@@ -352,6 +352,18 @@ export default {
     },
 
     // Sort By Action List
+    checkActive() {
+      for(let i=0; i<this.taskFields.length; i++) {
+          if(this.taskFields[i].header_icon) {
+            this.taskFields[i].header_icon.isActive = false
+          }
+
+          if(this.taskFields[i].header_icon && this.taskFields[i].key == this.sortName) {
+            this.taskFields[i].header_icon.isActive = true
+          } 
+      }
+    },
+
     sortBy($event) {
 
       switch ($event) {
@@ -364,6 +376,8 @@ export default {
             this.taskOrder = "asc"
           }
           this.key += 1
+          this.sortName = 'title';
+          this.checkActive()
           break;
 
         case 'status':
@@ -377,6 +391,8 @@ export default {
 
           }
           this.key += 1
+          this.sortName = 'status';
+          this.checkActive()
           break;
 
         case 'priority':
@@ -390,6 +406,8 @@ export default {
 
           }
           this.key += 1
+          this.sortName = 'priority';
+          this.checkActive()
           break;
 
         case 'department':
@@ -441,6 +459,8 @@ export default {
             this.taskOrder = "asc"
           }
           this.key += 1
+          this.sortName = 'userId';
+          this.checkActive()
           break;
 
         case 'dueDate':
@@ -469,6 +489,8 @@ export default {
 
           this.tasks = newArr;
           this.key += 1
+          this.sortName = 'dueDate';
+          this.checkActive()
           break;
 
         case 'startDate':
@@ -497,6 +519,8 @@ export default {
 
           this.tasks = newArr2;
           this.key += 1
+          this.sortName = 'startDate';
+          this.checkActive()
           break;
 
         case "project":
@@ -528,6 +552,8 @@ export default {
 
           this.tasks = newArr3;
           this.key += 1
+          this.sortName = 'project';
+          this.checkActive()
           break;
 
         default:

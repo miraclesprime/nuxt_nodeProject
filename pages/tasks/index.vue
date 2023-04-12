@@ -91,6 +91,7 @@ export default {
       viewName: "all",
       orderBy: 'desc',
       key: 100,
+      sortName: "",
       popupMessages: [],
       popupCoords: { },
       userPickerOpen: false,
@@ -429,12 +430,26 @@ export default {
 
     },
 
+    checkActive() {
+      for(let i=0; i<this.taskFields.length; i++) {
+          if(this.taskFields[i].header_icon) {
+            this.taskFields[i].header_icon.isActive = false
+          }
+
+          if(this.taskFields[i].header_icon && this.taskFields[i].key == this.sortName) {
+            this.taskFields[i].header_icon.isActive = true
+          } 
+      }
+    },
+
     // Sort By Action List
     sortBy($event) {
 
       if($event == 'title') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'name', order: this.orderBy }).then(() => {
           this.key += 1
+          this.sortName = 'title';
+          this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
@@ -443,6 +458,8 @@ export default {
       if($event == 'userId') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'userId', order: this.orderBy }).then(() => {
           this.key += 1
+          this.sortName = 'userId';
+          this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
@@ -451,6 +468,8 @@ export default {
       if($event == 'project') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'project', order: this.orderBy }).then(() => {
           this.key += 1
+          this.sortName = 'project';
+          this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
@@ -459,6 +478,8 @@ export default {
       if($event == 'status') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'status', order: this.orderBy }).then(() => {
           this.key += 1
+          this.sortName = 'status';
+          this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
@@ -467,6 +488,8 @@ export default {
       if($event == 'priority') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'priority', order: this.orderBy }).then(() => {
           this.key += 1
+          this.sortName = 'priority';
+          this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
@@ -475,6 +498,8 @@ export default {
       if($event == 'startDate') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'startDate', order: this.orderBy }).then(() => {
           this.key += 1
+          this.sortName = 'startDate';
+          this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
@@ -483,6 +508,8 @@ export default {
       if($event == 'dueDate') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'dueDate', order: this.orderBy }).then(() => {
           this.key += 1
+          this.sortName = 'dueDate';
+          this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
