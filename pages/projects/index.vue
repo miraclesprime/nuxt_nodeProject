@@ -1,13 +1,13 @@
 <template>
   <div id="projects-wrapper" class="projects-wrapper" >   
     <page-title title="Projects"></page-title>  
-    <project-actions @sortValue='sortName=$event' @viewValue='viewName=$event' v-on:loading="loading = $event" v-bind:sort="sortName" @search-projects="searchProjects" />
+    <project-actions @sortValue='sortName=$event' @viewValue='viewName=$event' v-on:loading="loading = $event" v-on:sort="sortProject" @search-projects="searchProjects" />
    
     <div id="projects-list-wrapper" class="projects-list-wrapper of-scroll-y position-relative" >
       <loading :loading="loading"></loading>
       <template v-if="projects.length">
 
-        <drag-table-simple :fields="tableFields" :tasks="projects" :titleIcon="{ icon: 'briefcase-solid', event: 'row-click'}" :componentKey="templateKey" :drag="false" :sectionTitle="'Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick" @edit-field="updateProject" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" ></drag-table-simple>
+        <drag-table-simple :fields="tableFields" :tasks="projects" :titleIcon="{ icon: 'briefcase-solid', event: 'row-click'}" :componentKey="templateKey" :drag="false" :sectionTitle="'Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick" @edit-field="updateProject" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" ></drag-table-simple>
         
         <!-- table context menu -->
         <table-context-menu :items="projectContextItems" :show="projectContextMenu" :coordinates="popupCoords" :activeItem="activeProject" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
@@ -20,6 +20,8 @@
 
         <!-- status picker for list view -->
         <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateProject({ task: activeProject, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker>
+        <!-- priority picker for list view -->
+        <priority-picker :show="priorityPickerOpen" :coordinates="popupCoords" @selected="updateProject({ task: activeProject, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="priorityPickerOpen = false" ></priority-picker>
       </template>
       <template v-else>
         <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
@@ -65,6 +67,7 @@ export default {
       datePickerOpen: false,
       datepickerArgs: { label: "", field: ""},
       statusPickerOpen: false,
+      priorityPickerOpen: false,
       popupCoords: {},
       activeProject: {},
       renameProjectData: {},
@@ -83,6 +86,13 @@ export default {
   },
 
   mounted() {
+
+    for(let field of this.tableFields) {
+      if(field.header_icon) {
+        field.header_icon.isActive = false;
+      }
+    }
+
     this.$store.dispatch('project/fetchProjects').then(() => { 
       this.templateKey += 1;
       this.newkey = parseInt( Math.random().toString().slice(-3) )
@@ -131,6 +141,7 @@ export default {
     },
 
     projectRightClick(payload) {
+      this.closeAllPickers()
       this.projectContextMenu = true;
       const { event, task } = payload
       this.activeProject = task;
@@ -146,8 +157,6 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'name', order: 'asc'} ).then((res) => {
               this.orderBy = 'desc'
               this.templateKey += 1;
-              this.sortName = 'title';
-              this.checkActive()
             })
           }
 
@@ -155,11 +164,10 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'name', order: 'desc'} ).then((res) => {
               this.orderBy = 'asc'
               this.templateKey += 1;
-              this.sortName = 'title';
-              this.checkActive()
             })
-            
           }
+          this.sortName = 'title';
+          this.checkActive()
       }
 
       if($event == 'userId') {
@@ -168,8 +176,6 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'owner', order: 'asc'} ).then((res) => {
               this.orderBy = 'desc'
               this.templateKey += 1;
-              this.sortName = 'owner';
-              this.checkActive()
             })
           }
 
@@ -177,11 +183,10 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'owner', order: 'desc'} ).then((res) => {
               this.orderBy = 'asc'
               this.templateKey += 1;
-              this.sortName = 'owner';
-              this.checkActive()
             })
-            
           }
+          this.sortName = 'userId';
+          this.checkActive()
       }
 
       if($event == 'status') {
@@ -190,8 +195,6 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'status', order: 'asc'} ).then((res) => {
               this.orderBy = 'desc'
               this.templateKey += 1;
-              this.sortName = 'status';
-              this.checkActive()
             })
           }
 
@@ -199,11 +202,11 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'status', order: 'desc'} ).then((res) => {
               this.orderBy = 'asc'
               this.templateKey += 1;
-              this.sortName = 'status';
-              this.checkActive()
             })
             
           }
+          this.sortName = 'status';
+          this.checkActive()
       }
 
       if($event == 'priority') {
@@ -212,8 +215,6 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'priority', order: 'asc'} ).then((res) => {
               this.orderBy = 'desc'
               this.templateKey += 1;
-              this.sortName = 'priority';
-              this.checkActive()
             })
           }
 
@@ -221,11 +222,29 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'priority', order: 'desc'} ).then((res) => {
               this.orderBy = 'asc'
               this.templateKey += 1;
-              this.sortName = 'priority';
-              this.checkActive()
             })
-            
           }
+          this.sortName = 'priority';
+          this.checkActive()
+      }
+
+      if($event == 'department') {
+
+          if(this.orderBy == 'asc') {
+            this.$store.dispatch('project/sortProjects', {key: 'department', order: 'asc'} ).then((res) => {
+              this.orderBy = 'desc'
+              this.templateKey += 1;
+            })
+          }
+
+          if(this.orderBy == 'desc') {
+            this.$store.dispatch('project/sortProjects', {key: 'department', order: 'desc'} ).then((res) => {
+              this.orderBy = 'asc'
+              this.templateKey += 1;
+            })
+          }
+          this.sortName = 'department';
+          this.checkActive()
       }
 
       if($event == 'startDate') {
@@ -234,8 +253,6 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'startDate', order: 'asc'} ).then((res) => {
               this.orderBy = 'desc'
               this.templateKey += 1;
-              this.sortName = 'start date';
-              this.checkActive()
             })
           }
 
@@ -243,11 +260,10 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'startDate', order: 'desc'} ).then((res) => {
               this.orderBy = 'asc'
               this.templateKey += 1;
-              this.sortName = 'start date';
-              this.checkActive()
             })
-            
           }
+          this.sortName = 'startDate';
+          this.checkActive()
       }
       
       if($event == 'dueDate') {
@@ -256,8 +272,6 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'dueDate', order: 'asc'} ).then((res) => {
               this.orderBy = 'desc'
               this.templateKey += 1;
-              this.sortName = 'due date';
-              this.checkActive()
             })
           }
 
@@ -265,11 +279,10 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'dueDate', order: 'desc'} ).then((res) => {
               this.orderBy = 'asc'
               this.templateKey += 1;
-              this.sortName = 'due date';
-              this.checkActive()
             })
-            
           }
+          this.sortName = 'dueDate';
+          this.checkActive()
       }
 
       this.templateKey += 1;
@@ -308,31 +321,42 @@ export default {
 
     showUserPicker(payload){
       // console.log(payload)
+      this.closeAllPickers()
       this.userPickerOpen = true
-      this.datePickerOpen = false
-      this.taskContextMenu = false
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeProject = payload.task
     },
     showDatePicker(payload){
       // console.log(payload)
       // payload consists of event, task, label, field
+      this.closeAllPickers()
       this.datePickerOpen = true
-      this.userPickerOpen = false
-      this.taskContextMenu = false
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeProject = payload.task
       this.datepickerArgs.field = payload.field || 'dueDate'
       this.datepickerArgs.label = payload.label || 'Due date'
     },
-
     showStatusPicker(payload){
+      this.closeAllPickers()
       this.statusPickerOpen = true
-      this.userPickerOpen = false
-      this.datePickerOpen = false
-      this.taskContextMenu = false
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeProject = payload.task
+    },
+    showPriorityPicker(payload){
+      this.closeAllPickers()
+      this.priorityPickerOpen = true
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeProject = payload.task
+    },
+
+    closeAllPickers(){
+      this.projectContextMenu = false
+      this.userPickerOpen = false
+      this.datePickerOpen = false
+      this.statusPickerOpen = false
+      this.priorityPickerOpen = false
+      this.activeProject = {}
+      // this.toggleSidebar()
     },
 
     setFavorite(project) {
@@ -363,15 +387,16 @@ export default {
     },
 
     updateProject(payload){
-      const { task, field, value } = payload
-      // console.log(task)
+      const { task, label, field, value, historyText } = payload
       let user = this.teamMembers.find(t => t.id == task.userId)
+      console.log(payload, user)
 
       this.$store.dispatch("project/updateProject", {
-        id: task.id,
+        // id: task.id,
+        id: this.activeProject.id,
         user,
         data: { [field]: value},
-        text: `changed ${field} to ${payload.historyText || value}`
+        text: `changed ${label} to ${historyText || value}`
       })
         .then(t => {
           // console.log(t)

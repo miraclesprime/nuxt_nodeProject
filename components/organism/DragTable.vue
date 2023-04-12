@@ -7,10 +7,10 @@
             <th width="3%">&nbsp;</th>
             <th v-for="(field, index) in fields" :key="field.key + index" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
               <div class="align-center">
-                <span class="flex-grow-1"> {{ field.label }} </span>
+                <span > {{ field.label }} </span>
                 <template v-if="field.header_icon">
-                  <div class="ml-05 shape-circle bg-light bg-hover-gray2 width-105 height-105 d-flex justify-center align-center cursor-pointer" :class="{'bg-black': field.header_icon.isActive }" @click="$emit(field.header_icon.event, field.key)">
-                    <bib-icon :icon="field.header_icon.icon" :scale="1" variant="gray5" hoverVariant="gray6"></bib-icon>
+                  <div class="ml-05 shape-rounded bg-hover-black width-105 height-105 justify-center align-center cursor-pointer" :class="{'bg-black': field.header_icon.isActive }" @click="$emit(field.header_icon.event, field.key)">
+                    <bib-icon :icon="field.header_icon.icon" :scale="1.1" variant="gray5" hoverVariant="white"></bib-icon>
                   </div>
                 </template>
               </div>
@@ -27,10 +27,10 @@
             <th width="3%">&nbsp;</th>
             <th v-for="(field, index) in fields" :key="field.key + index" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
               <div class="align-center">
-                <span class="flex-grow-1"> {{ field.label }} </span>
+                <span> {{ field.label }} </span>
                 <template v-if="field.header_icon">
-                  <div class="ml-05 shape-circle bg-light bg-hover-gray2 width-105 height-105 d-flex justify-center align-center cursor-pointer" :class="{'bg-black': field.header_icon.isActive }" @click="$emit(field.header_icon.event, field.key)">
-                    <bib-icon :icon="field.header_icon.icon" :scale="1" variant="gray5" hoverVariant="gray6"></bib-icon>
+                  <div class="ml-05 shape-rounded bg-hover-black width-105 height-105 justify-center align-center cursor-pointer" :class="{'bg-black': field.header_icon.isActive }" @click="$emit(field.header_icon.event, field.key)">
+                    <bib-icon :icon="field.header_icon.icon" :scale="1.1" variant="gray5" hoverVariant="white"></bib-icon>
                   </div>
                 </template>
               </div>
@@ -70,14 +70,18 @@
                 </span>
               </template>
               <template v-if="col.key == 'status'">
-                <div class="align-center justify-between" @click.stop="triggerStatusPicker(task, 'Status', 'statusId')">
+                <div class="align-center justify-between" @click.stop="triggerStatusPicker(task)">
                   <status-comp :key="componentKey" :status="task[col.key]"></status-comp>
                   <bib-icon icon="arrowhead-down" variant="gray4"></bib-icon>
                 </div>
                 <!-- <status-comp :key="componentKey" :status="task[col.key]"></status-comp> -->
               </template>
               <template v-if="col.key == 'priority'">
-                <priority-comp :key="componentKey" :priority="task[col.key]"></priority-comp>
+                <div class="align-center justify-between" @click.stop="triggerPriorityPicker(task)">
+                  <priority-comp :key="componentKey" :priority="task[col.key]"></priority-comp>
+                  <bib-icon icon="arrowhead-down" variant="gray4"></bib-icon>
+                </div>
+                <!-- <priority-comp :key="componentKey" :priority="task[col.key]"></priority-comp> -->
               </template>
               <template v-if="col.key == 'startDate'">
                 <span v-if="task[col.key]" class="d-inline-flex align-center gap-05 cursor-pointer ml-025" @click.stop="triggerDatePicker(task, 'Start date', 'startDate')">
@@ -323,6 +327,9 @@ export default {
     triggerStatusPicker(task, label, field){
       this.$emit("status-picker", { event, task })
     },
+    triggerPriorityPicker(task){
+      this.$emit("priority-picker", { event, task })
+    },
 
     restoreField(){
       // console.log('restoreField', event.target)
@@ -484,7 +491,7 @@ export default {
     }
 
     &__active {
-      border-color: $dark-sub1;
+      border-bottom-color: $dark-sub1 !important;
 
       span {
         color: $dark-sub1 !important;

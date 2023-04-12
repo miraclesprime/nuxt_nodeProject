@@ -6,7 +6,7 @@
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y" :class="{ 'bg-light': gridType != 'list'}">
         <template v-if="gridType == 'list'">
           <template v-if="tasks.length">
-            <drag-table-simple :key="key" :componentKey="key" :fields="taskFields" :tasks="localData" :sectionTitle="'Department'" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" ></drag-table-simple>
+            <drag-table-simple :key="key" :componentKey="key" :fields="taskFields" :tasks="localData" :sectionTitle="'Department'" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" ></drag-table-simple>
 
             <!-- table context menu -->
             <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
@@ -48,6 +48,9 @@
         
         <!-- status picker for list view -->
         <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker>
+        
+        <!-- priority picker for list view -->
+        <priority-picker :show="priorityPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="priorityPickerOpen = false" ></priority-picker>
 
         <loading :loading="loading"></loading>
         <!-- popup notification -->
@@ -88,12 +91,14 @@ export default {
       viewName: "all",
       orderBy: 'desc',
       key: 100,
+      sortName: "",
       popupMessages: [],
       popupCoords: { },
       userPickerOpen: false,
       datePickerOpen: false,
       datepickerArgs: { label: "", field: ""},
       statusPickerOpen: false,
+      priorityPickerOpen: false,
       confirmModal: false,
       confirmMsg: "",
       alertDialog: false,
@@ -144,32 +149,43 @@ export default {
   methods: {
     showUserPicker(payload){
       // console.log('userpicker', payload)
-      this.statusPickerOpen = false
+      this.closeAllPickers()
       this.userPickerOpen = true
-      this.datePickerOpen = false
-      this.taskContextMenu = false
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
     },
     showDatePicker(payload){
       // console.log('datepicker', payload)
       // payload consists of event, task, label, field
-      this.statusPickerOpen = false
+      this.closeAllPickers()
       this.datePickerOpen = true
-      this.userPickerOpen = false
-      this.taskContextMenu = false
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
       this.datepickerArgs.field = payload.field || 'dueDate'
       this.datepickerArgs.label = payload.label || 'Due date'
     },
     showStatusPicker(payload){
+      this.closeAllPickers()
       this.statusPickerOpen = true
-      this.userPickerOpen = false
-      this.datePickerOpen = false
-      this.taskContextMenu = false
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
+    },
+    showPriorityPicker(payload){
+      this.closeAllPickers()
+      this.priorityPickerOpen = true
+      /*this.userPickerOpen = false
+      this.datePickerOpen = false*/
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
+    },
+    closeAllPickers(){
+      this.taskContextMenu = false
+      this.userPickerOpen = false
+      this.datePickerOpen = false
+      this.statusPickerOpen = false
+      this.priorityPickerOpen = false
+      this.activeTask = {}
+      // this.toggleSidebar()
     },
     updateKey($event) {
       if ($event) {
@@ -258,7 +274,7 @@ export default {
         projectId,
         data: { [payload.field]: payload.value },
         user,
-        text: `changed ${payload.field} to "${payload.historyText || payload.value}"`
+        text: `changed ${payload.label} to "${payload.historyText || payload.value}"`
       })
         .then(t => {
           // console.log(t)
@@ -414,12 +430,26 @@ export default {
 
     },
 
+    checkActive() {
+      for(let i=0; i<this.taskFields.length; i++) {
+          if(this.taskFields[i].header_icon) {
+            this.taskFields[i].header_icon.isActive = false
+          }
+
+          if(this.taskFields[i].header_icon && this.taskFields[i].key == this.sortName) {
+            this.taskFields[i].header_icon.isActive = true
+          } 
+      }
+    },
+
     // Sort By Action List
     sortBy($event) {
 
       if($event == 'title') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'name', order: this.orderBy }).then(() => {
           this.key += 1
+          this.sortName = 'title';
+          this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
@@ -428,6 +458,8 @@ export default {
       if($event == 'userId') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'userId', order: this.orderBy }).then(() => {
           this.key += 1
+          this.sortName = 'userId';
+          this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
@@ -436,6 +468,8 @@ export default {
       if($event == 'project') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'project', order: this.orderBy }).then(() => {
           this.key += 1
+          this.sortName = 'project';
+          this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
@@ -444,6 +478,8 @@ export default {
       if($event == 'status') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'status', order: this.orderBy }).then(() => {
           this.key += 1
+          this.sortName = 'status';
+          this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
@@ -452,6 +488,8 @@ export default {
       if($event == 'priority') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'priority', order: this.orderBy }).then(() => {
           this.key += 1
+          this.sortName = 'priority';
+          this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
@@ -460,6 +498,8 @@ export default {
       if($event == 'startDate') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'startDate', order: this.orderBy }).then(() => {
           this.key += 1
+          this.sortName = 'startDate';
+          this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
@@ -468,6 +508,8 @@ export default {
       if($event == 'dueDate') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: 'dueDate', order: this.orderBy }).then(() => {
           this.key += 1
+          this.sortName = 'dueDate';
+          this.checkActive()
         }).catch((err) => {
           console.log(err)
         })

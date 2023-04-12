@@ -80,14 +80,14 @@ export default {
     },
 
     sortBy($event) {
-      if(this.orderBy == 'asc') {
+      /*if(this.orderBy == 'asc') {
         this.orderBy = 'desc'
       } else {
         this.orderBy = 'asc'
       }
       this.$store.dispatch('project/sortProjects', {key: $event, order: this.orderBy})
-      this.selectedSort = $event;
-      this.$emit('sortValue', $event)
+      this.selectedSort = $event;*/
+      this.$emit('sort', $event)
     }
   },
 };

@@ -5,33 +5,30 @@
       <favorite-actions v-on:change-viewing="changeView" v-on:change-sorting="changeSort"></favorite-actions>
       <div id="favorite-scroll-wrap" class="of-scroll-y position-relative">
         <!-- project table -->
-        <drag-table-simple :fields="projectTableFields" :tasks="sortedProject" :titleIcon="{icon:'briefcase'}" :componentKey="key" :drag="false" :sectionTitle="'Favorite Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick" @edit-field="renameProject" @user-picker="showProjUserpicker" @date-picker="showProjDatepicker" @status-picker="showProjectStatuspicker"></drag-table-simple>
-        
+        <drag-table-simple :fields="projectTableFields" :tasks="sortedProject" :titleIcon="{icon:'briefcase'}" :componentKey="key" :drag="false" :sectionTitle="'Favorite Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick" @edit-field="renameProject" @user-picker="showProjUserpicker" @date-picker="showProjDatepicker" @status-picker="showProjectStatuspicker" @priority-picker="showProjectPrioritypicker"></drag-table-simple>
         <!-- project context menu -->
         <table-context-menu :items="projectContextItems" :show="projectContextMenu" :coordinates="popupCoords" @close-context="closePopups" @item-click="projContextItemClick" ref="proj_menu"></table-context-menu>
-        
-        <!-- user-picker for project and task -->
+        <!-- user-picker for project -->
         <user-picker :show="projUserpickerOpen" :coordinates="popupCoords" @selected="updateProjAssignee('Assignee', 'userId', $event.id, $event.label)" @close="closePopups"></user-picker>
-        
-        <!-- date-picker for project and task -->
+        <!-- date-picker for project -->
         <inline-datepicker :show="projDatepickerOpen" :datetime="activeProject[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateProjDate" @close="closePopups"></inline-datepicker>
-
-        <!-- status picker for list view -->
+        <!-- status picker for project -->
         <status-picker :show="projStatuspickerOpen" :coordinates="popupCoords" @selected="renameProject({ task: activeProject, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="projStatuspickerOpen = false" ></status-picker>
+        <!-- priority picker for list view -->
+        <priority-picker :show="projPriorityPickerOpen" :coordinates="popupCoords" @selected="renameProject({ task: activeProject, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="projPriorityPickerOpen = false" ></priority-picker>
         
         <!-- task table -->
-        <drag-table-simple :fields="taskTableFields" :componentKey="key+1" :tasks="sortedTask" :sectionTitle="'Favorite Tasks'" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="openSidebar" v-on:table-sort="sortTask" @row-click="openSidebar" @row-context="taskRightClick" @edit-field="updateTask" @user-picker="showTaskUserpicker" @date-picker="showTaskDatepicker" @status-picker="showTaskStatusPicker"></drag-table-simple>
+        <drag-table-simple :fields="taskTableFields" :componentKey="key+1" :tasks="sortedTask" :sectionTitle="'Favorite Tasks'" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="openSidebar" v-on:table-sort="sortTask" @row-click="openSidebar" @row-context="taskRightClick" @edit-field="updateTask" @user-picker="showTaskUserpicker" @date-picker="showTaskDatepicker" @status-picker="showTaskStatusPicker" @priority-picker="showTaskPriorityPicker" ></drag-table-simple>
         <!-- task context menu -->
         <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" @close-context="closePopups" @item-click="taskContextItemClick" ref="task_menu"></table-context-menu>
-        
-        <!-- user-picker for project and task -->
+        <!-- user-picker for task -->
         <user-picker :show="taskUserpickerOpen" :coordinates="popupCoords" @selected="updateTaskAssignee('Assignee', 'userId', $event.id, $event.label)" @close="closePopups"></user-picker>
-        
-        <!-- date-picker for project and task -->
+        <!-- date-picker for task -->
         <inline-datepicker :show="taskDatepickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateTaskDate" @close="closePopups"></inline-datepicker>
-
-        <!-- status picker for list view -->
+        <!-- status picker for task -->
         <status-picker :show="taskStatuspickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeProject, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="taskStatuspickerOpen = false" ></status-picker>
+        <!-- priority picker for task -->
+        <priority-picker :show="taskPrioritypickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="taskPrioritypickerOpen = false" ></priority-picker>
 
         <loading :loading="loading"></loading>
       </div>
@@ -88,7 +85,8 @@ export default {
       loading: false,
       loading2: false,
       view: 'all',
-      sortName: '',
+      projSortName: '',
+      taskSortName: '',
       projOrder: 'asc',
       taskOrder: 'asc',
       projectContextItems: PROJECT_CONTEXT_MENU,
@@ -102,7 +100,9 @@ export default {
       datepickerArgs: { label: null, field: null },
       popupCoords: {},
       projStatuspickerOpen: false,
+      projPriorityPickerOpen: false,
       taskStatuspickerOpen: false,
+      taskPrioritypickerOpen: false,
       confirmModal: false,
       confirmMsg: "",
       alertDialog: false,
@@ -230,6 +230,12 @@ export default {
       this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
       this.activeProject = payload.task
     },
+    showProjectPrioritypicker(payload){
+      this.closePopups()
+      this.projPriorityPickerOpen = true
+      this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
+      this.activeProject = payload.task
+    },
 
     showTaskUserpicker(payload) {
       // console.log(payload)
@@ -258,15 +264,25 @@ export default {
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
     },
+    showTaskPriorityPicker(payload){
+      this.closePopups()
+      this.taskPrioritypickerOpen = true
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
+    },
 
     closePopups() {
+      // project
       this.projectContextMenu = false
-      this.taskContextMenu = false
       this.projUserpickerOpen = false
-      this.taskUserpickerOpen = false
       this.projDatepickerOpen = false
+      this.projStatuspickerOpen = false
+      // task
+      this.taskContextMenu = false
+      this.taskUserpickerOpen = false
       this.taskDatepickerOpen = false
       this.taskStatuspickerOpen = false
+      this.taskPrioritypickerOpen = false
       this.activeProject = {}
       this.activeTask = {}
       this.datepickerArgs = { label: null, field: null }
@@ -311,6 +327,28 @@ export default {
       }
 
     },
+
+    checkActive() {
+      for(let i=0; i<this.projectTableFields.length; i++) {
+          if(this.projectTableFields[i].header_icon) {
+            this.projectTableFields[i].header_icon.isActive = false
+          }
+
+          if(this.projectTableFields[i].header_icon && this.projectTableFields[i].key == this.projSortName) {
+            this.projectTableFields[i].header_icon.isActive = true
+          } 
+      }
+      for(let i=0; i<this.taskTableFields.length; i++) {
+          if(this.taskTableFields[i].header_icon) {
+            this.taskTableFields[i].header_icon.isActive = false
+          }
+
+          if(this.taskTableFields[i].header_icon && this.taskTableFields[i].key == this.taskSortName) {
+            this.taskTableFields[i].header_icon.isActive = true
+          } 
+      }
+    },
+
     sortProject(field) {
 
       switch (field) {
@@ -324,6 +362,8 @@ export default {
             this.projOrder = "asc"
           }
           this.key += 1
+          this.projSortName = 'title'
+          this.checkActive()
           break;
 
         case 'status':
@@ -351,6 +391,8 @@ export default {
           }
 
           this.key += 1
+          this.projSortName = 'status'
+          this.checkActive()
           break;
 
         case 'priority':
@@ -377,6 +419,36 @@ export default {
             this.projOrder = "asc"
           }
           this.key += 1
+          this.projSortName = 'priority'
+          this.checkActive()
+          break;
+
+        case 'department':
+          let deptArr = []
+          for (let i = 0; i < this.sortedProject.length; i++) {
+            if (this.sortedProject[i].departmentId) {
+              deptArr.unshift(this.sortedProject[i])
+            } else {
+              deptArr.push(this.sortedProject[i])
+            }
+          }
+
+          this.sortedProject = deptArr;
+
+          if (this.projOrder == "asc") {
+            this.sortedProject.sort((a, b) => {
+              if (a.departmentId && b.departmentId) { return a.department.title.localeCompare(b.department.title) }
+            });
+            this.projOrder = "desc"
+          } else {
+            this.sortedProject.sort((a, b) => {
+              if (a.departmentId && b.departmentId) { return b.department.title.localeCompare(a.department.title) }
+            });
+            this.projOrder = "asc"
+          }
+          this.key += 1
+          this.projSortName = 'department'
+          this.checkActive()
           break;
 
         case 'userId':
@@ -403,6 +475,8 @@ export default {
             this.projOrder = "asc"
           }
           this.key += 1
+          this.projSortName = 'userId'
+          this.checkActive()
           break;
 
         case 'dueDate':
@@ -428,6 +502,8 @@ export default {
             this.projOrder = "asc"
           }
           this.key += 1
+          this.projSortName = 'dueDate'
+          this.checkActive()
           break;
 
         case 'startDate':
@@ -454,6 +530,8 @@ export default {
             this.projOrder = "asc"
           }
           this.key += 1
+          this.projSortName = 'startDate'
+          this.checkActive()
           break;
 
         default:
@@ -475,6 +553,8 @@ export default {
             this.taskOrder = "asc"
           }
           this.key += 1
+          this.taskSortName = 'title'
+          this.checkActive()
           break;
 
         case 'status':
@@ -486,6 +566,8 @@ export default {
             this.taskOrder = "asc"
           }
           this.key += 1
+          this.taskSortName = 'status'
+          this.checkActive()
           break;
 
         case 'priority':
@@ -494,6 +576,19 @@ export default {
             this.taskOrder = "desc"
           } else {
             this.sortedTask.sort((a, b) => b.priority.id - a.priority.id);
+            this.taskOrder = "asc"
+          }
+          this.key += 1
+          this.taskSortName = 'priority'
+          this.checkActive()
+          break;
+        
+        case 'department':
+          if (this.taskOrder == "asc") {
+            this.sortedTask.sort((a, b) => a.department.title.localeCompare(b.department.title));
+            this.taskOrder = "desc"
+          } else {
+            this.sortedTask.sort((a, b) => b.department.title.localeCompare(a.department.title));
             this.taskOrder = "asc"
           }
           this.key += 1
@@ -512,6 +607,8 @@ export default {
             this.taskOrder = "asc"
           }
           this.key += 1
+          this.taskSortName = 'userId'
+          this.checkActive()
           break;
 
         case 'dueDate':
@@ -527,6 +624,8 @@ export default {
             this.taskOrder = "asc"
           }
           this.key += 1
+          this.taskSortName = 'dueDate'
+          this.checkActive()
           break;
 
         case 'startDate':
@@ -542,6 +641,8 @@ export default {
             this.taskOrder = "asc"
           }
           this.key += 1
+          this.taskSortName = 'startDate'
+          this.checkActive()
           break;
 
         case "project":
@@ -561,6 +662,8 @@ export default {
           });
           this.sortedTask = newArr;
           this.key += 1
+          this.taskSortName = 'project'
+          this.checkActive()
           break;
 
         default:
@@ -751,14 +854,12 @@ export default {
         taskId = this.activeTask.id
       }
 
-      console.info(projectId)
-
       this.$store.dispatch("task/updateTask", {
           id: taskId,
           projectId,
           data: {[field]: value},
           user,
-          text: `changed ${label} to "${historyText || value}"`
+          text: `changed ${label} to ${historyText || value}`
         }).then(t => {
           // console.log(t)
           this.updateKey()

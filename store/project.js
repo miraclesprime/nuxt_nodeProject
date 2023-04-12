@@ -263,6 +263,47 @@ export const mutations = {
       state.projects = newArr;
     }
 
+    // Sort By Department
+    if (payload.key == 'department' && payload.order == 'asc') {
+      let arr = JSON.parse(JSON.stringify(state.projects))
+      let newArr = []
+
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].departmentId) {
+          newArr.unshift(arr[i])
+        } else {
+          newArr.push(arr[i])
+        }
+      }
+
+      newArr.sort((a, b) => {
+        if (a.departmentId && b.departmentId) {
+          return a.department.title.localeCompare(b.department.title);
+        }
+      });
+      state.projects = newArr;
+    }
+
+    if (payload.key == 'department' && payload.order == 'desc') {
+      let arr = JSON.parse(JSON.stringify(state.projects))
+      let newArr = []
+
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].departmentId) {
+          newArr.unshift(arr[i])
+        } else {
+          newArr.push(arr[i])
+        }
+      }
+
+      newArr.sort((a, b) => {
+        if (a.departmentId && b.departmentId) {
+          return b.department.title.localeCompare(a.department.title)
+        }
+      });
+      state.projects = newArr;
+    }    
+
   },
 
   setProjectHistory(state, payload){

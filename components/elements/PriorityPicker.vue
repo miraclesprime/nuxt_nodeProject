@@ -4,11 +4,12 @@
       <!-- <input type="text" class="picker-input" ref="userFilterInput" v-model="filterKey" @keyup.esc="$emit('close')" autofocus> -->
       <div class="picker-list-wrap">
         <ul class="m-0 p-0 text-left">
-          <li v-for="st in statusList" :key="st.value+'stitem'" class="p-025 gap-05 align-center font-md cursor-pointer" @click.stop="onStatusChange(st)">
-            <div class="align-center justify-center shape-circle circle" :style="{'background-color': st.bgcolor}">
-              <span class="dot shape-circle" :style="{'background-color' : st.color}"></span>
+          <li v-for="pt in priorityList" :key="pt.value+'stitem'" class="p-025 gap-05 align-center font-md cursor-pointer" @click.stop="onStatusChange(pt)">
+            <div class="align-center justify-center shape-circle circle" :style="{'background-color': pt.bgcolor}">
+              <!-- <span class="dot shape-circle" :style="{'background-color' : pt.color}"></span> -->
+              <strong :style="{ color: pt.color}">!</strong>
             </div>
-            <span class="text-dark text-truncate">{{st.label}}</span>
+            <span class="text-dark text-truncate">{{pt.label}}</span>
           </li>
         </ul>
       </div>
@@ -16,17 +17,17 @@
   </div>
 </template>
 <script>
-import { STATUS } from '~/config/constants.js'
+import { PRIORITY } from '~/config/constants.js'
 export default {
 
-  name: 'StatusPicker',
+  name: 'PriorityPicker',
   props: {
     show: { type: Boolean, default: false },
     coordinates: Object,
   },
   data() {
     return {
-      status: STATUS,
+      priority: PRIORITY,
       // filterKey: "",
     }
   },
@@ -48,15 +49,15 @@ export default {
 
   computed: {
 
-    statusList() {
+    priorityList() {
       let status = []
-      this.status.forEach(st => {
-        if (st.value == "") status.push({ value: "", label: "", color: "", bgcolor: "" })
-        if (st.value == 1) status.push({ value: st.value, label: st.label, color: this.colors.ColorVariants.Secondary, bgcolor: this.hex2rgba(this.colors.ColorVariants.Secondary) })
-        if (st.value == 2) status.push({ value: st.value, label: st.label, color: this.colors.ColorVariants.Primary, bgcolor: this.hex2rgba(this.colors.ColorVariants.Primary) })
-        if (st.value == 3) status.push({ value: st.value, label: st.label, color: this.colors.ColorVariants.Orange, bgcolor: this.hex2rgba(this.colors.ColorVariants.Orange) })
-        if (st.value == 4) status.push({ value: st.value, label: st.label, color: this.colors.ColorVariants.Danger, bgcolor: this.hex2rgba(this.colors.ColorVariants.Danger) })
-        if (st.value == 5) status.push({ value: st.value, label: st.label, color: this.colors.ColorVariants.Success, bgcolor: this.hex2rgba(this.colors.ColorVariants.Success) })
+      this.priority.forEach(pt => {
+        if (pt.value == "") status.push({ value: "", label: "", color: "", bgcolor: "" })
+        if (pt.value == 1) status.push({ value: pt.value, label: pt.label, color: this.colors.ColorVariants.Danger, bgcolor: this.hex2rgba(this.colors.ColorVariants.Danger) })
+        if (pt.value == 2) status.push({ value: pt.value, label: pt.label, color: this.colors.ColorVariants.Orange, bgcolor: this.hex2rgba(this.colors.ColorVariants.Orange) })
+        if (pt.value == 3) status.push({ value: pt.value, label: pt.label, color: this.colors.ColorVariants.Success, bgcolor: this.hex2rgba(this.colors.ColorVariants.Success) })
+        if (pt.value == 4) status.push({ value: pt.value, label: pt.label, color: this.colors.ColorVariants.Primary, bgcolor: this.hex2rgba(this.colors.ColorVariants.Primary) })
+        if (pt.value == 5) status.push({ value: pt.value, label: pt.label, color: this.colors.ColorVariants.Secondary, bgcolor: this.hex2rgba(this.colors.ColorVariants.Secondary) })
       })
 
       return status

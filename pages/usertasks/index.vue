@@ -6,11 +6,13 @@
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
         <template v-if="gridType == 'list'">
           <template>
-            <drag-table-simple :key="key" :componentKey="key" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :fields="taskFields" :tasks="tasks" :sectionTitle="'Department'" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @status-picker="showStatusPicker"></drag-table-simple>
+            <drag-table-simple :key="key" :componentKey="key" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :fields="taskFields" :tasks="tasks" :sectionTitle="'Department'" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" ></drag-table-simple>
             <!-- table context menu -->
             <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick"></table-context-menu>
             <!-- status picker for list view -->
             <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker>
+            <!-- priority picker for list view -->
+            <priority-picker :show="priorityPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="priorityPickerOpen = false" ></priority-picker>
           </template>
         </template>
         <template v-else>
@@ -61,6 +63,7 @@ export default {
       taskFields: TaskFields,
       taskContextMenu: false,
       statusPickerOpen: false,
+      priorityPickerOpen: false,
       popupMessages: [],
       popupCoords: { },
       /*userPickerOpen: false,
@@ -168,29 +171,46 @@ export default {
     },
 
     openSidebar(task) {
+      this.closeAllPickers()
       this.$nuxt.$emit("open-sidebar", task);
     },
 
     taskRightClick(payload) {
+      this.closeAllPickers()
       this.taskContextMenu = true;
-      this.statusPickerOpen = false
       const { event, task } = payload
       this.activeTask = task;
       this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
     },
     showStatusPicker(payload){
+      this.closeAllPickers()
       this.statusPickerOpen = true
       /*this.userPickerOpen = false
       this.datePickerOpen = false*/
-      this.taskContextMenu = false
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
+    },
+
+    showPriorityPicker(payload){
+      this.closeAllPickers()
+      this.priorityPickerOpen = true
+      /*this.userPickerOpen = false
+      this.datePickerOpen = false*/
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
     },
 
     closeContext() {
-      this.statusPickerOpen = false
       this.taskContextMenu = false
       this.activeTask = {}
+    },
+
+    closeAllPickers(){
+      this.taskContextMenu = false
+      this.statusPickerOpen = false
+      this.priorityPickerOpen = false
+      this.activeTask = {}
+      // this.toggleSidebar()
     },
 
     contextItemClick(key) {
@@ -281,7 +301,7 @@ export default {
         projectId,
         data: { [payload.field]: payload.value },
         user,
-        text: `changed ${payload.field} to "${payload.historyText || payload.value}"`
+        text: `changed ${payload.label} to ${payload.historyText || payload.value}`
       })
         .then(t => {
           // console.log(t)
@@ -332,6 +352,18 @@ export default {
     },
 
     // Sort By Action List
+    checkActive() {
+      for(let i=0; i<this.taskFields.length; i++) {
+          if(this.taskFields[i].header_icon) {
+            this.taskFields[i].header_icon.isActive = false
+          }
+
+          if(this.taskFields[i].header_icon && this.taskFields[i].key == this.sortName) {
+            this.taskFields[i].header_icon.isActive = true
+          } 
+      }
+    },
+
     sortBy($event) {
 
       switch ($event) {
@@ -344,6 +376,8 @@ export default {
             this.taskOrder = "asc"
           }
           this.key += 1
+          this.sortName = 'title';
+          this.checkActive()
           break;
 
         case 'status':
@@ -357,6 +391,8 @@ export default {
 
           }
           this.key += 1
+          this.sortName = 'status';
+          this.checkActive()
           break;
 
         case 'priority':
@@ -369,6 +405,44 @@ export default {
             this.taskOrder = "asc"
 
           }
+          this.key += 1
+          this.sortName = 'priority';
+          this.checkActive()
+          break;
+
+        case 'department':
+
+          let deptArr = []
+
+          for (let i = 0; i < this.tasks.length; i++) {
+            if (this.tasks[i].department.title) {
+              deptArr.unshift(this.tasks[i])
+            } else {
+              deptArr.push(this.tasks[i])
+            }
+          }
+
+          if (this.taskOrder == "asc") {
+            deptArr.sort((a, b) => {
+              if(a.departmentId && b.departmentId) {
+                // console.log(a.department.title, b.department.title)
+                return a.department.title.localeCompare(b.department.title)
+              }
+            });
+            this.taskOrder = "desc"
+
+          } else {
+            deptArr.sort((a, b) => {
+              if(a.departmentId && b.departmentId) {
+                // console.log(a.department.title, b.department.title)
+                return b.department.title.localeCompare(a.department.title)
+              }
+            });
+            this.taskOrder = "asc"
+
+          }
+
+          this.tasks = deptArr;
           this.key += 1
           break;
 
@@ -385,6 +459,8 @@ export default {
             this.taskOrder = "asc"
           }
           this.key += 1
+          this.sortName = 'userId';
+          this.checkActive()
           break;
 
         case 'dueDate':
@@ -413,6 +489,8 @@ export default {
 
           this.tasks = newArr;
           this.key += 1
+          this.sortName = 'dueDate';
+          this.checkActive()
           break;
 
         case 'startDate':
@@ -441,6 +519,8 @@ export default {
 
           this.tasks = newArr2;
           this.key += 1
+          this.sortName = 'startDate';
+          this.checkActive()
           break;
 
         case "project":
@@ -472,6 +552,8 @@ export default {
 
           this.tasks = newArr3;
           this.key += 1
+          this.sortName = 'project';
+          this.checkActive()
           break;
 
         default:
