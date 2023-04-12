@@ -427,8 +427,8 @@ export const DREAM_VIEW_FILTER = [
 ]
 
 export const PROJECT_SORT = [
-  { label: 'Name', key: 'name' },
-  { label: 'Assignee', key: 'owner' },
+  { label: 'Name', key: 'title' },
+  { label: 'Assignee', key: 'userId' },
   { label: 'Status', key: 'status' },
   { label: 'Priority', key: 'priority' },
   { label: 'Department', key: 'department' },

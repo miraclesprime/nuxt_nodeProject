@@ -1,7 +1,7 @@
 <template>
   <div id="projects-wrapper" class="projects-wrapper" >   
     <page-title title="Projects"></page-title>  
-    <project-actions @sortValue='sortName=$event' @viewValue='viewName=$event' v-on:loading="loading = $event" v-bind:sort="sortName" @search-projects="searchProjects" />
+    <project-actions @sortValue='sortName=$event' @viewValue='viewName=$event' v-on:loading="loading = $event" v-on:sort="sortProject" @search-projects="searchProjects" />
    
     <div id="projects-list-wrapper" class="projects-list-wrapper of-scroll-y position-relative" >
       <loading :loading="loading"></loading>
@@ -157,8 +157,6 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'name', order: 'asc'} ).then((res) => {
               this.orderBy = 'desc'
               this.templateKey += 1;
-              this.sortName = 'title';
-              this.checkActive()
             })
           }
 
@@ -166,11 +164,10 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'name', order: 'desc'} ).then((res) => {
               this.orderBy = 'asc'
               this.templateKey += 1;
-              this.sortName = 'title';
-              this.checkActive()
             })
-            
           }
+          this.sortName = 'title';
+          this.checkActive()
       }
 
       if($event == 'userId') {
@@ -179,8 +176,6 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'owner', order: 'asc'} ).then((res) => {
               this.orderBy = 'desc'
               this.templateKey += 1;
-              this.sortName = 'userId';
-              this.checkActive()
             })
           }
 
@@ -188,11 +183,10 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'owner', order: 'desc'} ).then((res) => {
               this.orderBy = 'asc'
               this.templateKey += 1;
-              this.sortName = 'userId';
-              this.checkActive()
             })
-            
           }
+          this.sortName = 'userId';
+          this.checkActive()
       }
 
       if($event == 'status') {
@@ -201,8 +195,6 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'status', order: 'asc'} ).then((res) => {
               this.orderBy = 'desc'
               this.templateKey += 1;
-              this.sortName = 'status';
-              this.checkActive()
             })
           }
 
@@ -210,11 +202,11 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'status', order: 'desc'} ).then((res) => {
               this.orderBy = 'asc'
               this.templateKey += 1;
-              this.sortName = 'status';
-              this.checkActive()
             })
             
           }
+          this.sortName = 'status';
+          this.checkActive()
       }
 
       if($event == 'priority') {
@@ -223,8 +215,6 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'priority', order: 'asc'} ).then((res) => {
               this.orderBy = 'desc'
               this.templateKey += 1;
-              this.sortName = 'priority';
-              this.checkActive()
             })
           }
 
@@ -232,11 +222,10 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'priority', order: 'desc'} ).then((res) => {
               this.orderBy = 'asc'
               this.templateKey += 1;
-              this.sortName = 'priority';
-              this.checkActive()
             })
-            
           }
+          this.sortName = 'priority';
+          this.checkActive()
       }
 
       if($event == 'department') {
@@ -245,8 +234,6 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'department', order: 'asc'} ).then((res) => {
               this.orderBy = 'desc'
               this.templateKey += 1;
-              this.sortName = 'department';
-              this.checkActive()
             })
           }
 
@@ -254,11 +241,10 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'department', order: 'desc'} ).then((res) => {
               this.orderBy = 'asc'
               this.templateKey += 1;
-              this.sortName = 'department';
-              this.checkActive()
             })
-            
           }
+          this.sortName = 'department';
+          this.checkActive()
       }
 
       if($event == 'startDate') {
@@ -267,8 +253,6 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'startDate', order: 'asc'} ).then((res) => {
               this.orderBy = 'desc'
               this.templateKey += 1;
-              this.sortName = 'startDate';
-              this.checkActive()
             })
           }
 
@@ -276,11 +260,10 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'startDate', order: 'desc'} ).then((res) => {
               this.orderBy = 'asc'
               this.templateKey += 1;
-              this.sortName = 'startDate';
-              this.checkActive()
             })
-            
           }
+          this.sortName = 'startDate';
+          this.checkActive()
       }
       
       if($event == 'dueDate') {
@@ -289,8 +272,6 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'dueDate', order: 'asc'} ).then((res) => {
               this.orderBy = 'desc'
               this.templateKey += 1;
-              this.sortName = 'dueDate';
-              this.checkActive()
             })
           }
 
@@ -298,11 +279,10 @@ export default {
             this.$store.dispatch('project/sortProjects', {key: 'dueDate', order: 'desc'} ).then((res) => {
               this.orderBy = 'asc'
               this.templateKey += 1;
-              this.sortName = 'dueDate';
-              this.checkActive()
             })
-            
           }
+          this.sortName = 'dueDate';
+          this.checkActive()
       }
 
       this.templateKey += 1;
