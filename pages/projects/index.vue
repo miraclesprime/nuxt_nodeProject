@@ -86,6 +86,13 @@ export default {
   },
 
   mounted() {
+
+    for(let field of this.tableFields) {
+      if(field.header_icon) {
+        field.header_icon.isActive = false;
+      }
+    }
+
     this.$store.dispatch('project/fetchProjects').then(() => { 
       this.templateKey += 1;
       this.newkey = parseInt( Math.random().toString().slice(-3) )
@@ -226,6 +233,28 @@ export default {
               this.orderBy = 'asc'
               this.templateKey += 1;
               this.sortName = 'priority';
+              this.checkActive()
+            })
+            
+          }
+      }
+
+      if($event == 'department') {
+
+          if(this.orderBy == 'asc') {
+            this.$store.dispatch('project/sortProjects', {key: 'department', order: 'asc'} ).then((res) => {
+              this.orderBy = 'desc'
+              this.templateKey += 1;
+              this.sortName = 'department';
+              this.checkActive()
+            })
+          }
+
+          if(this.orderBy == 'desc') {
+            this.$store.dispatch('project/sortProjects', {key: 'department', order: 'desc'} ).then((res) => {
+              this.orderBy = 'asc'
+              this.templateKey += 1;
+              this.sortName = 'department';
               this.checkActive()
             })
             
