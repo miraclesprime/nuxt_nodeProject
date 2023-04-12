@@ -408,12 +408,12 @@ export default {
 
           if (this.projOrder == "asc") {
             this.sortedProject.sort((a, b) => {
-              if (a.department && b.department) { return a.department.title - b.department.title }
+              if (a.department && b.department) { return a.department.title.localeCompare(b.department.title) }
             });
             this.projOrder = "desc"
           } else {
             this.sortedProject.sort((a, b) => {
-              if (a.department && b.department) { return b.department.title - a.department.title }
+              if (a.department && b.department) { return b.department.title.localeCompare(a.department.title) }
             });
             this.projOrder = "asc"
           }
@@ -535,6 +535,17 @@ export default {
             this.taskOrder = "desc"
           } else {
             this.sortedTask.sort((a, b) => b.priority.id - a.priority.id);
+            this.taskOrder = "asc"
+          }
+          this.key += 1
+          break;
+        
+        case 'department':
+          if (this.taskOrder == "asc") {
+            this.sortedTask.sort((a, b) => a.department.title.localeCompare(b.department.title));
+            this.taskOrder = "desc"
+          } else {
+            this.sortedTask.sort((a, b) => b.department.title.localeCompare(a.department.title));
             this.taskOrder = "asc"
           }
           this.key += 1

@@ -112,6 +112,16 @@ export const TASK_FIELDS = [{
     event: "task-click",
   },
   {
+    key: "department",
+    label: "Department",
+    width: "10%",
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  },
+  {
     key: "status",
     label: "Status",
     width: "10%",
@@ -441,6 +451,7 @@ export const TASK_SORT = [
   { label: 'Assignee', key: 'userId' },
   { label: 'Priority', key: 'priority' },
   { label: 'Status', key: 'status' },
+  { label: 'Department', key: 'department' },
   { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },
 ]
@@ -577,6 +588,15 @@ export const TASK_FAVORITES = [
     },
   },
   {
+    label: "Department",
+    key: "department",
+    header_icon: {
+      icon: "swap-vertical",
+      event: "table-sort",
+      isActive: false,
+    },
+  },
+  {
     label: 'Status',
     key: 'status',
     width: '12%',
@@ -681,6 +701,15 @@ export const COMPANY_TASK_FIELDS = [
   {
     label: "Project",
     key: "project",
+    header_icon: {
+      icon: "swap-vertical",
+      event: "table-sort",
+      isActive: false,
+    },
+  },
+  {
+    label: "Department",
+    key: "department",
     header_icon: {
       icon: "swap-vertical",
       event: "table-sort",
@@ -851,6 +880,7 @@ export const COMPANY_TASK_SORT = [
   { label: 'Project', key: 'project' },
   { label: 'Status', key: 'status' },
   { label: 'Priority', key: 'priority' },
+  { label: 'Department', key: 'department' },
   { label: 'Assignee', key: 'userId' },
   { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },

@@ -392,6 +392,42 @@ export default {
           this.key += 1
           break;
 
+        case 'department':
+
+          let deptArr = []
+
+          for (let i = 0; i < this.tasks.length; i++) {
+            if (this.tasks[i].department.title) {
+              deptArr.unshift(this.tasks[i])
+            } else {
+              deptArr.push(this.tasks[i])
+            }
+          }
+
+          if (this.taskOrder == "asc") {
+            deptArr.sort((a, b) => {
+              if(a.department.title && b.department.title) {
+                console.log(a.department.title, b.department.title)
+                return a.department.title.localeCompare(b.department.title)
+              }
+            });
+            this.taskOrder = "desc"
+
+          } else {
+            deptArr.sort((a, b) => {
+              if(a.department.title && b.department.title) {
+                console.log(a.department.title, b.department.title)
+                return b.department.title.localeCompare(a.department.title)
+              }
+            });
+            this.taskOrder = "asc"
+
+          }
+
+          this.tasks = deptArr;
+          this.key += 1
+          break;
+
         case 'userId':
           if (this.taskOrder == "asc") {
             this.tasks.sort((a, b) => {

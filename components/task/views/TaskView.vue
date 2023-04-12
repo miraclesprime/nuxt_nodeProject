@@ -363,6 +363,28 @@ export default {
         }
         // this.templateKey += 1
       }
+
+      // Sort By Department
+      if ($event == "department") {
+
+        if (this.orderBy == "asc") {
+          this.orderBy = "desc"
+          this.localdata.forEach(function(sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => {
+              return a.department.title.localeCompare(b.department.title)
+            });
+          })
+        } else {
+          this.orderBy = "asc"
+          this.localdata.forEach(function(sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => {
+              return b.department.title.localeCompare(a.department.title)
+            });
+          })
+        }
+        // this.templateKey += 1
+      }
+
       // sort By Start Date
       if ($event == "startDate") {
         if (this.orderBy == "asc") {
