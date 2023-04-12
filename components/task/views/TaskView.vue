@@ -298,6 +298,8 @@ export default {
             sec["tasks"] = sec.tasks.sort((a, b) => b.title.localeCompare(a.title))
           })
         }
+        this.sortName = 'title'
+        this.checkActive()
         // this.templateKey += 1
         // console.log(this.key, this.orderBy)
       }
@@ -328,6 +330,8 @@ export default {
             });
           })
         }
+        this.sortName = 'userId'
+        this.checkActive()
         // this.templateKey += 1
         // console.log(this.key, this.orderBy)
       }
@@ -344,6 +348,8 @@ export default {
             sec["tasks"] = sec.tasks.sort((a, b) => b.status.text.localeCompare(a.status.text));
           })
         }
+        this.sortName = 'status'
+        this.checkActive()
         // this.templateKey += 1
         // console.log(this.key, this.orderBy)
       }
@@ -361,6 +367,8 @@ export default {
             sec["tasks"] = sec.tasks.sort((a, b) => b.priority.id - a.priority.id);
           })
         }
+        this.sortName = 'priority'
+        this.checkActive()
         // this.templateKey += 1
       }
       // sort By Start Date
@@ -377,6 +385,8 @@ export default {
           })
 
         }
+        this.sortName = 'startDate'
+        this.checkActive()
         // this.templateKey += 1
       }
 
@@ -393,6 +403,8 @@ export default {
             sec["tasks"] = sec.tasks.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate));
           })
         }
+        this.sortName = 'dueDate'
+        this.checkActive()
         // this.templateKey += 1
       }
 
