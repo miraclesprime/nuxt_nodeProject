@@ -7,7 +7,7 @@
       <loading :loading="loading"></loading>
       <template v-if="projects.length">
 
-        <drag-table-simple :fields="tableFields" :tasks="projects" :titleIcon="{ icon: 'briefcase-solid', event: 'row-click'}" :componentKey="templateKey" :drag="false" :sectionTitle="'Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick" @edit-field="updateProject" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" ></drag-table-simple>
+        <drag-table-simple :fields="tableFields" :tasks="projects" :titleIcon="{ icon: 'briefcase-solid', event: 'row-click'}" :componentKey="templateKey" :drag="false" :sectionTitle="'Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick" @edit-field="updateProject" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" ></drag-table-simple>
         
         <!-- table context menu -->
         <table-context-menu :items="projectContextItems" :show="projectContextMenu" :coordinates="popupCoords" :activeItem="activeProject" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
@@ -20,6 +20,8 @@
 
         <!-- status picker for list view -->
         <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateProject({ task: activeProject, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker>
+        <!-- priority picker for list view -->
+        <priority-picker :show="priorityPickerOpen" :coordinates="popupCoords" @selected="updateProject({ task: activeProject, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="priorityPickerOpen = false" ></priority-picker>
       </template>
       <template v-else>
         <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
@@ -65,6 +67,7 @@ export default {
       datePickerOpen: false,
       datepickerArgs: { label: "", field: ""},
       statusPickerOpen: false,
+      priorityPickerOpen: false,
       popupCoords: {},
       activeProject: {},
       renameProjectData: {},
@@ -138,6 +141,7 @@ export default {
     },
 
     projectRightClick(payload) {
+      this.closeAllPickers()
       this.projectContextMenu = true;
       const { event, task } = payload
       this.activeProject = task;
@@ -337,31 +341,42 @@ export default {
 
     showUserPicker(payload){
       // console.log(payload)
+      this.closeAllPickers()
       this.userPickerOpen = true
-      this.datePickerOpen = false
-      this.taskContextMenu = false
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeProject = payload.task
     },
     showDatePicker(payload){
       // console.log(payload)
       // payload consists of event, task, label, field
+      this.closeAllPickers()
       this.datePickerOpen = true
-      this.userPickerOpen = false
-      this.taskContextMenu = false
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeProject = payload.task
       this.datepickerArgs.field = payload.field || 'dueDate'
       this.datepickerArgs.label = payload.label || 'Due date'
     },
-
     showStatusPicker(payload){
+      this.closeAllPickers()
       this.statusPickerOpen = true
-      this.userPickerOpen = false
-      this.datePickerOpen = false
-      this.taskContextMenu = false
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeProject = payload.task
+    },
+    showPriorityPicker(payload){
+      this.closeAllPickers()
+      this.priorityPickerOpen = true
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeProject = payload.task
+    },
+
+    closeAllPickers(){
+      this.projectContextMenu = false
+      this.userPickerOpen = false
+      this.datePickerOpen = false
+      this.statusPickerOpen = false
+      this.priorityPickerOpen = false
+      this.activeProject = {}
+      // this.toggleSidebar()
     },
 
     setFavorite(project) {
@@ -392,15 +407,16 @@ export default {
     },
 
     updateProject(payload){
-      const { task, field, value } = payload
-      // console.log(task)
+      const { task, label, field, value, historyText } = payload
       let user = this.teamMembers.find(t => t.id == task.userId)
+      console.log(payload, user)
 
       this.$store.dispatch("project/updateProject", {
-        id: task.id,
+        // id: task.id,
+        id: this.activeProject.id,
         user,
         data: { [field]: value},
-        text: `changed ${field} to ${payload.historyText || value}`
+        text: `changed ${label} to ${historyText || value}`
       })
         .then(t => {
           // console.log(t)

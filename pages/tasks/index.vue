@@ -6,7 +6,7 @@
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y" :class="{ 'bg-light': gridType != 'list'}">
         <template v-if="gridType == 'list'">
           <template v-if="tasks.length">
-            <drag-table-simple :key="key" :componentKey="key" :fields="taskFields" :tasks="localData" :sectionTitle="'Department'" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" ></drag-table-simple>
+            <drag-table-simple :key="key" :componentKey="key" :fields="taskFields" :tasks="localData" :sectionTitle="'Department'" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" ></drag-table-simple>
 
             <!-- table context menu -->
             <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
@@ -48,6 +48,9 @@
         
         <!-- status picker for list view -->
         <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker>
+        
+        <!-- priority picker for list view -->
+        <priority-picker :show="priorityPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="priorityPickerOpen = false" ></priority-picker>
 
         <loading :loading="loading"></loading>
         <!-- popup notification -->
@@ -94,6 +97,7 @@ export default {
       datePickerOpen: false,
       datepickerArgs: { label: "", field: ""},
       statusPickerOpen: false,
+      priorityPickerOpen: false,
       confirmModal: false,
       confirmMsg: "",
       alertDialog: false,
@@ -144,32 +148,43 @@ export default {
   methods: {
     showUserPicker(payload){
       // console.log('userpicker', payload)
-      this.statusPickerOpen = false
+      this.closeAllPickers()
       this.userPickerOpen = true
-      this.datePickerOpen = false
-      this.taskContextMenu = false
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
     },
     showDatePicker(payload){
       // console.log('datepicker', payload)
       // payload consists of event, task, label, field
-      this.statusPickerOpen = false
+      this.closeAllPickers()
       this.datePickerOpen = true
-      this.userPickerOpen = false
-      this.taskContextMenu = false
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
       this.datepickerArgs.field = payload.field || 'dueDate'
       this.datepickerArgs.label = payload.label || 'Due date'
     },
     showStatusPicker(payload){
+      this.closeAllPickers()
       this.statusPickerOpen = true
-      this.userPickerOpen = false
-      this.datePickerOpen = false
-      this.taskContextMenu = false
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
+    },
+    showPriorityPicker(payload){
+      this.closeAllPickers()
+      this.priorityPickerOpen = true
+      /*this.userPickerOpen = false
+      this.datePickerOpen = false*/
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
+    },
+    closeAllPickers(){
+      this.taskContextMenu = false
+      this.userPickerOpen = false
+      this.datePickerOpen = false
+      this.statusPickerOpen = false
+      this.priorityPickerOpen = false
+      this.activeTask = {}
+      // this.toggleSidebar()
     },
     updateKey($event) {
       if ($event) {
@@ -258,7 +273,7 @@ export default {
         projectId,
         data: { [payload.field]: payload.value },
         user,
-        text: `changed ${payload.field} to "${payload.historyText || payload.value}"`
+        text: `changed ${payload.label} to "${payload.historyText || payload.value}"`
       })
         .then(t => {
           // console.log(t)
