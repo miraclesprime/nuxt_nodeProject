@@ -10,7 +10,7 @@
     </div>
     <div class="action-right d-flex gap-05" id="ta-action-right">
       <template>
-        <bib-input size="sm" type="text" v-model="searchText" name="name" @input="$emit('search-mytasks', searchText)" placeholder="Search Tasks..."></bib-input>
+        <bib-input size="sm" type="text" v-model="searchText" name="name" @input="$emit('search-mytasks', searchText)" placeholder="Search Tasks..." :variant="searchText.length > 50 ? 'alert': ''"></bib-input>
       </template>
       <ul class="actions" id="ta-action-right-actions">
         <li class="action" id="ta-action1" v-tooltip="'View'">

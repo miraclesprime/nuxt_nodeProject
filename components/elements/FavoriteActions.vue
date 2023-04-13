@@ -10,7 +10,10 @@
       </div>
     </div>
 
-    <div class="action-right" id="fa-action-right">
+    <div class="action-right d-flex gap-05" id="fa-action-right">
+      <template>
+        <bib-input size="sm" type="text" v-model="searchText" name="name" @input="$emit('search-projects-tasks', searchText)" placeholder="Search Projects or Tasks..." :variant="searchText.length > 50 ? 'alert': ''"></bib-input>
+      </template>
       <ul class="actions" id="fa-actions-list">
         <li class="action" id="fa-action-item1" v-tooltip="'View'">
           <sorting-comp :items="viewing" icon="eye-open" v-on:change-sort="$emit('change-viewing', $event)"></sorting-comp>
@@ -32,7 +35,8 @@ export default {
   data() {
     return {
       viewing: VIEW_FILTER,
-      sorting: FAVORITE_SORT
+      sorting: FAVORITE_SORT,
+      searchText: ""
     };
   }, 
   

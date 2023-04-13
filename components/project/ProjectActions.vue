@@ -7,7 +7,7 @@
     </div>
     <div class="action-right d-flex gap-05" id="pa-action-right">
       <template>
-        <bib-input size="sm" type="text" v-model="searchText" name="name" @input="$emit('search-projects', searchText)" placeholder="Search Projects..."></bib-input>
+        <bib-input size="sm" type="text" v-model="searchText" name="name" @input="$emit('search-projects', searchText)" placeholder="Search Projects..." :variant="searchText.length > 50 ? 'alert': ''"></bib-input>
       </template>
       <ul class="actions" id="pa-actions-list">
         <li class="action" id="pa-action-item1" v-tooltip="'View'">
