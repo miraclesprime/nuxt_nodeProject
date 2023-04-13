@@ -312,7 +312,7 @@ export default {
     },
 
     setFavorite() {
-      console.info(this.subtask.id, this.isFavorite.status)
+      // console.info(this.subtask.id, this.isFavorite.status)
 
       if (this.isFavorite.status) {
         this.$axios.delete("subtask/"+this.subtask.id+"/favorite", { 

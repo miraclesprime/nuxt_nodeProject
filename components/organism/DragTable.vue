@@ -118,9 +118,13 @@
                 <span class="width-105 height-105 align-center justify-center font-xs text-gray2 cursor-pointer bg-hover-gray2"><bib-icon icon="arrow-right" variant="gray2" hover-variant="gray6" ></bib-icon></span>
               </div>
               <template v-if="col.key == 'department'">
-                <span v-if="task[col.key]?.title" class="text-capitalize">
-                  {{ task[col.key].title }}
-                </span>
+                <div class="align-center justify-between" @click.stop="triggerDeptPicker(task)">
+                  <span v-if="task[col.key]?.title" class="text-capitalize">
+                    {{ task[col.key].title }}
+                  </span>
+                  <span v-else class="text-secondary">Select department</span>
+                  <bib-icon icon="arrowhead-down" variant="gray4"></bib-icon>
+                </div>
               </template>
             </td>
           </tr>
@@ -329,6 +333,9 @@ export default {
     },
     triggerPriorityPicker(task){
       this.$emit("priority-picker", { event, task })
+    },
+    triggerDeptPicker(task){
+      this.$emit("dept-picker", { event, task })
     },
 
     restoreField(){
