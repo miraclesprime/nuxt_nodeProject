@@ -2,11 +2,11 @@
   <client-only>
     <div id="task-page-wrapper" class="task-page-wrapper">
       <page-title :title="`${selectedUser.firstName} ${selectedUser.lastName}'s Tasks`"></page-title>
-      <user-name-task-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:new-task="toggleSidebar($event)"></user-name-task-actions>
+      <user-name-task-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:new-task="toggleSidebar($event)" @search-user-tasks="searchUserTasks"></user-name-task-actions>
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
         <template v-if="gridType == 'list'">
           <template>
-            <drag-table-simple :key="key" :componentKey="key" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :fields="taskFields" :tasks="tasks" :sectionTitle="'Department'" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" ></drag-table-simple>
+            <drag-table-simple :key="key" :componentKey="key" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :fields="taskFields" :tasks="localData" :sectionTitle="'Department'" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" ></drag-table-simple>
             <!-- table context menu -->
             <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick"></table-context-menu>
             <!-- status picker for list view -->
@@ -84,6 +84,7 @@ export default {
       selectedUser: {},
       alertDialog: false,
       alertMsg: "",
+      localData: []
     }
   },
   computed: {
@@ -105,7 +106,11 @@ export default {
         })
         this.fetchUserTasks()
       }
-    }
+    },
+
+    tasks(newVal) {
+        this.localData = _.cloneDeep(newVal)
+    },
   },
 
   created() {
@@ -425,7 +430,6 @@ export default {
           if (this.taskOrder == "asc") {
             deptArr.sort((a, b) => {
               if(a.departmentId && b.departmentId) {
-                // console.log(a.department.title, b.department.title)
                 return a.department.title.localeCompare(b.department.title)
               }
             });
@@ -434,7 +438,6 @@ export default {
           } else {
             deptArr.sort((a, b) => {
               if(a.departmentId && b.departmentId) {
-                // console.log(a.department.title, b.department.title)
                 return b.department.title.localeCompare(a.department.title)
               }
             });
@@ -572,7 +575,33 @@ export default {
       this.flag = !this.flag;
     },
 
-  },
+    searchUserTasks(text) {
+
+      let formattedText = text.toLowerCase().trim();
+      
+        let newArr = this.tasks.filter((t) => {
+          
+          if(t.description) {
+            if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText) || t.description.includes(formattedText) || t.description.toLowerCase().includes(formattedText)) {
+              return t
+            } 
+          } else {
+            if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
+              return t
+            } 
+          }
+
+        })
+
+        if(newArr.length >= 0) {
+          this.localData = newArr
+          this.key++;
+        } else {
+          this.localData = this.tasks;
+          this.key++;
+        }
+      }
+    }
 
 }
 

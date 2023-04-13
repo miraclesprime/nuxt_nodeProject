@@ -7,7 +7,7 @@
       <loading :loading="loading"></loading>
       <template v-if="projects.length">
 
-        <drag-table-simple :fields="tableFields" :tasks="projects" :titleIcon="{ icon: 'briefcase-solid', event: 'row-click'}" :componentKey="templateKey" :drag="false" :sectionTitle="'Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick" @edit-field="updateProject" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table-simple>
+        <drag-table-simple :key="templateKey" :fields="tableFields" :tasks="localData" :titleIcon="{ icon: 'briefcase-solid', event: 'row-click'}" :componentKey="templateKey" :drag="false" :sectionTitle="'Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick" @edit-field="updateProject" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table-simple>
         
         <!-- table context menu -->
         <table-context-menu :items="projectContextItems" :show="projectContextMenu" :coordinates="popupCoords" :activeItem="activeProject" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
@@ -399,7 +399,6 @@ export default {
     updateProject(payload){
       const { task, label, field, value, historyText } = payload
       let user = this.teamMembers.find(t => t.id == task.userId)
-      console.log(payload)
 
       this.$store.dispatch("project/updateProject", {
         // id: task.id,
@@ -543,10 +542,10 @@ export default {
 
       if(newArr.length >= 0) {
         this.localData = newArr
-        this.key++;
+        this.templateKey++;
       } else {
         this.localData = JSON.parse(JSON.stringify(this.projects));
-        this.key++;
+        this.templateKey++;
       }
     }
   },
