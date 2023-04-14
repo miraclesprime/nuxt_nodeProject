@@ -1,7 +1,9 @@
 export const state = () => ({
   companies: [],
   companyMembers: [],
-  companyTasks: []
+  companyTasks: [],
+  sortName: "title",
+  sortOrder: "asc",
 });
 
 export const getters = {
@@ -14,6 +16,12 @@ export const getters = {
   },
   getCompanyTasks(state) {
     return state.companyTasks;
+  },
+  getSortName(state){
+    return state.sortName
+  },
+  getSortOrder(state){
+    return state.sortOrder
   }
 
 };
@@ -32,14 +40,25 @@ export const mutations = {
     state.companyTasks = payload;
   },
 
+  setSortName(state, payload){
+    state.sortName = payload
+  },
+
+  setSortOrder(state, payload){
+    state.sortOrder = payload
+  },
+
   sortCompanyTasks(state, payload) {
+    console.log(payload)
+    state.sortName = payload.sName
+    state.sortOrder = payload.order
 
     // sort By Title
-    if (payload.sName == 'name' && payload.order == 'asc') {
+    if (payload.sName == 'title' && payload.order == 'asc') {
       state.companyTasks.sort((a, b) => a.title.localeCompare(b.title))
     }
 
-    if (payload.sName == 'name' && payload.order == 'desc') {
+    if (payload.sName == 'title' && payload.order == 'desc') {
       state.companyTasks.sort((a, b) => b.title.localeCompare(a.title))
     }
 
@@ -217,18 +236,20 @@ export const actions = {
     }
   },
   
-  async setCompanyTasks(ctx, payload) {
+  async fetchCompanyTasks(ctx, payload) {
     const res = await this.$axios.$get(`company/${payload.companyId}/tasks`, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
     });
 
     if (res.data) {
       ctx.commit('setCompanyTasks', res.data);
+      ctx.commit('sortCompanyTasks', { sName: ctx.state.sortName, order: ctx.state.sortOrder })
       return res.data
     }
   },
 
   sortCompanyTasks(ctx, payload) {
+    // console.log(payload)
     ctx.commit('sortCompanyTasks', payload)
   }
 };

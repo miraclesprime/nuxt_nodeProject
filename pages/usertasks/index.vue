@@ -2,17 +2,19 @@
   <client-only>
     <div id="task-page-wrapper" class="task-page-wrapper">
       <page-title :title="`${selectedUser.firstName} ${selectedUser.lastName}'s Tasks`"></page-title>
-      <user-name-task-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:new-task="toggleSidebar($event)"></user-name-task-actions>
+      <user-name-task-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:new-task="toggleSidebar($event)" @search-user-tasks="searchUserTasks"></user-name-task-actions>
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
         <template v-if="gridType == 'list'">
           <template>
-            <drag-table-simple :key="key" :componentKey="key" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :fields="taskFields" :tasks="tasks" :sectionTitle="'Department'" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" ></drag-table-simple>
+            <drag-table-simple :key="key" :componentKey="key" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :fields="taskFields" :tasks="localData" :sectionTitle="'Department'" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table-simple>
             <!-- table context menu -->
             <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick"></table-context-menu>
             <!-- status picker for list view -->
             <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker>
             <!-- priority picker for list view -->
             <priority-picker :show="priorityPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="priorityPickerOpen = false" ></priority-picker>
+            <!-- department-picker for list view -->
+            <dept-picker :show="deptPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Department', field:'departmentId', value: $event.value, historyText: $event.label })" @close="deptPickerOpen = false"></dept-picker>
           </template>
         </template>
         <template v-else>
@@ -64,6 +66,7 @@ export default {
       taskContextMenu: false,
       statusPickerOpen: false,
       priorityPickerOpen: false,
+      deptPickerOpen: false,
       popupMessages: [],
       popupCoords: { },
       /*userPickerOpen: false,
@@ -84,6 +87,7 @@ export default {
       selectedUser: {},
       alertDialog: false,
       alertMsg: "",
+      localData: []
     }
   },
   computed: {
@@ -105,7 +109,11 @@ export default {
         })
         this.fetchUserTasks()
       }
-    }
+    },
+
+    tasks(newVal) {
+        this.localData = _.cloneDeep(newVal)
+    },
   },
 
   created() {
@@ -190,12 +198,17 @@ export default {
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
     },
-
     showPriorityPicker(payload){
       this.closeAllPickers()
       this.priorityPickerOpen = true
       /*this.userPickerOpen = false
       this.datePickerOpen = false*/
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
+    },
+    showDeptPicker(payload){
+      this.closeAllPickers()
+      this.deptPickerOpen = true
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
     },
@@ -209,6 +222,7 @@ export default {
       this.taskContextMenu = false
       this.statusPickerOpen = false
       this.priorityPickerOpen = false
+      this.deptPickerOpen = false
       this.activeTask = {}
       // this.toggleSidebar()
     },
@@ -425,7 +439,6 @@ export default {
           if (this.taskOrder == "asc") {
             deptArr.sort((a, b) => {
               if(a.departmentId && b.departmentId) {
-                // console.log(a.department.title, b.department.title)
                 return a.department.title.localeCompare(b.department.title)
               }
             });
@@ -434,7 +447,6 @@ export default {
           } else {
             deptArr.sort((a, b) => {
               if(a.departmentId && b.departmentId) {
-                // console.log(a.department.title, b.department.title)
                 return b.department.title.localeCompare(a.department.title)
               }
             });
@@ -572,7 +584,33 @@ export default {
       this.flag = !this.flag;
     },
 
-  },
+    searchUserTasks(text) {
+
+      let formattedText = text.toLowerCase().trim();
+      
+        let newArr = this.tasks.filter((t) => {
+          
+          if(t.description) {
+            if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText) || t.description.includes(formattedText) || t.description.toLowerCase().includes(formattedText)) {
+              return t
+            } 
+          } else {
+            if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
+              return t
+            } 
+          }
+
+        })
+
+        if(newArr.length >= 0) {
+          this.localData = newArr
+          this.key++;
+        } else {
+          this.localData = this.tasks;
+          this.key++;
+        }
+      }
+    }
 
 }
 

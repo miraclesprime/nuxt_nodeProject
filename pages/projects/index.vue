@@ -7,7 +7,7 @@
       <loading :loading="loading"></loading>
       <template v-if="projects.length">
 
-        <drag-table-simple :fields="tableFields" :tasks="projects" :titleIcon="{ icon: 'briefcase-solid', event: 'row-click'}" :componentKey="templateKey" :drag="false" :sectionTitle="'Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick" @edit-field="updateProject" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" ></drag-table-simple>
+        <drag-table-simple :key="templateKey" :fields="tableFields" :tasks="localData" :titleIcon="{ icon: 'briefcase-solid', event: 'row-click'}" :componentKey="templateKey" :drag="false" :sectionTitle="'Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick" @edit-field="updateProject" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table-simple>
         
         <!-- table context menu -->
         <table-context-menu :items="projectContextItems" :show="projectContextMenu" :coordinates="popupCoords" :activeItem="activeProject" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
@@ -22,6 +22,8 @@
         <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateProject({ task: activeProject, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker>
         <!-- priority picker for list view -->
         <priority-picker :show="priorityPickerOpen" :coordinates="popupCoords" @selected="updateProject({ task: activeProject, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="priorityPickerOpen = false" ></priority-picker>
+        <!-- department-picker for list view -->
+        <dept-picker :show="deptPickerOpen" :coordinates="popupCoords" @selected="updateProject({ task: activeProject, label:'Department', field:'departmentId', value: $event.value, historyText: $event.label })" @close="deptPickerOpen = false"></dept-picker>
       </template>
       <template v-else>
         <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
@@ -68,6 +70,7 @@ export default {
       datepickerArgs: { label: "", field: ""},
       statusPickerOpen: false,
       priorityPickerOpen: false,
+      deptPickerOpen: false,
       popupCoords: {},
       activeProject: {},
       renameProjectData: {},
@@ -348,6 +351,12 @@ export default {
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeProject = payload.task
     },
+    showDeptPicker(payload){
+      this.closeAllPickers()
+      this.deptPickerOpen = true
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeProject = payload.task
+    },
 
     closeAllPickers(){
       this.projectContextMenu = false
@@ -355,6 +364,7 @@ export default {
       this.datePickerOpen = false
       this.statusPickerOpen = false
       this.priorityPickerOpen = false
+      this.deptPickerOpen = false
       this.activeProject = {}
       // this.toggleSidebar()
     },
@@ -389,7 +399,6 @@ export default {
     updateProject(payload){
       const { task, label, field, value, historyText } = payload
       let user = this.teamMembers.find(t => t.id == task.userId)
-      console.log(payload, user)
 
       this.$store.dispatch("project/updateProject", {
         // id: task.id,
@@ -533,10 +542,10 @@ export default {
 
       if(newArr.length >= 0) {
         this.localData = newArr
-        this.key++;
+        this.templateKey++;
       } else {
         this.localData = JSON.parse(JSON.stringify(this.projects));
-        this.key++;
+        this.templateKey++;
       }
     }
   },

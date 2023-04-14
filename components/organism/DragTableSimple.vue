@@ -93,9 +93,13 @@
             <!-- <span class="width-1 font-xs text-gray2">{{task['id']}}</span> -->
           </div>
           <template v-if="col.key == 'department'">
-            <span v-if="task[col.key]?.title" class="text-capitalize">
-              {{ task[col.key].title }}
-            </span>
+            <div class="align-center justify-between" @click.stop="triggerDeptPicker(task)">
+              <span v-if="task[col.key]?.title" class="text-capitalize" >
+                {{ task[col.key].title }}
+              </span>
+              <span v-else class="text-secondary">Select department</span>
+              <bib-icon icon="arrowhead-down" variant="gray4"></bib-icon>
+            </div>
           </template>
         </td>
       </tr>
@@ -167,9 +171,13 @@
             <!-- <span class="width-1 font-xs text-gray2">{{task['id']}}</span> -->
           </div>
           <template v-if="col.key == 'department'">
-            <span v-if="task[col.key]?.title" class="text-capitalize">
-              {{ task[col.key].title }}
-            </span>
+            <div class="align-center justify-between" @click.stop="triggerDeptPicker(task)">
+              <span v-if="task[col.key]?.title" class="text-capitalize" >
+                {{ task[col.key].title }}
+              </span>
+              <span v-else class="text-secondary">Select department</span>
+              <bib-icon icon="arrowhead-down" variant="gray4"></bib-icon>
+            </div>
             <!-- <department-comp :key="task.title+col.key+componentKey" :department="task[col.key]"></department-comp> -->
           </template>
         </td>
@@ -406,6 +414,9 @@ export default {
     },
     triggerPriorityPicker(task){
       this.$emit("priority-picker", { event, task })
+    },
+    triggerDeptPicker(task){
+      this.$emit("dept-picker", { event, task })
     },
     restoreField(){
       // console.log('restoreField', event.target)
