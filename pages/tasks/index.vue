@@ -6,7 +6,7 @@
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y" :class="{ 'bg-light': gridType != 'list'}">
         <template v-if="gridType == 'list'">
           <template v-if="tasks.length">
-            <drag-table-simple :key="key" :componentKey="key" :fields="taskFields" :tasks="localData" :sectionTitle="'Department'" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" ></drag-table-simple>
+            <drag-table-simple :key="key" :componentKey="key" :fields="taskFields" :tasks="localData" :sectionTitle="'Department'" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table-simple>
 
             <!-- table context menu -->
             <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
@@ -51,6 +51,8 @@
         
         <!-- priority picker for list view -->
         <priority-picker :show="priorityPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="priorityPickerOpen = false" ></priority-picker>
+        <!-- department-picker for list view -->
+        <dept-picker :show="deptPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Department', field:'departmentId', value: $event.value, historyText: $event.label })" @close="deptPickerOpen = false"></dept-picker>
 
         <loading :loading="loading"></loading>
         <!-- popup notification -->
@@ -90,7 +92,7 @@ export default {
       flag: false,
       viewName: "all",
       orderBy: 'desc',
-      key: 100,
+      key: 99,
       sortName: "",
       popupMessages: [],
       popupCoords: { },
@@ -99,6 +101,7 @@ export default {
       datepickerArgs: { label: "", field: ""},
       statusPickerOpen: false,
       priorityPickerOpen: false,
+      deptPickerOpen: false,
       confirmModal: false,
       confirmMsg: "",
       alertDialog: false,
@@ -117,33 +120,34 @@ export default {
 
   },
 
+  watch: {
+    tasks(newVal) {
+        this.localData = _.cloneDeep(newVal)
+        // console.log("watch ",this.sortName, this.orderBy)
+    },
+  },
+
   created() {
     if (process.client) {
-      /*this.$nuxt.$on('change-grid-type', (layout) => {
-        // console.log(layout)
-        this.gridType = layout;
-      })*/
-
+      // console.info("created hook")
       this.$nuxt.$on("update-key", (msg) => {
         let user = JSON.parse(localStorage.getItem("user"))
-        this.$store.dispatch('company/setCompanyTasks', { companyId: user.subb }).then(() => { this.key += 1 })
+        this.$store.dispatch('company/fetchCompanyTasks', { companyId: user.subb }).then(() => { this.key += 1 })
         if (msg) {
           this.popupMessages.push({text: msg, variant: 'success'})
         }
       })
       
-      this.loading = true
-      let compid = JSON.parse(localStorage.getItem("user")).subb;
-      this.$store.dispatch('company/setCompanyTasks', { companyId: compid, filter: 'all' }).then((res) => {
-        this.loading = false;
-      })
     }
   },
 
-  watch: {
-    tasks(newVal) {
-        this.localData = _.cloneDeep(newVal)
-    },
+  mounted(){
+    // console.info("mounted hook")
+    this.loading = true
+    let compid = JSON.parse(localStorage.getItem("user")).subb;
+    this.$store.dispatch('company/fetchCompanyTasks', { companyId: compid, filter: 'all' }).then((res) => {
+      this.loading = false;
+    })
   },
 
   methods: {
@@ -178,12 +182,19 @@ export default {
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
     },
+    showDeptPicker(payload){
+      this.closeAllPickers()
+      this.deptPickerOpen = true
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
+    },
     closeAllPickers(){
       this.taskContextMenu = false
       this.userPickerOpen = false
       this.datePickerOpen = false
       this.statusPickerOpen = false
       this.priorityPickerOpen = false
+      this.deptPickerOpen = false
       this.activeTask = {}
       // this.toggleSidebar()
     },
@@ -192,9 +203,12 @@ export default {
         this.popupMessages.push({ text: $event, variant: "success" })
       }
       let compid = JSON.parse(localStorage.getItem("user")).subb;
-      this.$store.dispatch("company/setCompanyTasks", { companyId: compid, filter: "all" }).then(() => {
-        this.key += 1
-      })
+      let tasks = this.$store.dispatch("company/fetchCompanyTasks", { companyId: compid, filter: "all", sort: this.sortName })
+        .then(() => {
+          this.key += 1
+        })
+      // let sorted = this.$store.dispatch("company/sortCompanyTasks", { sName: this.sortName, order: this.orderBy })
+      
     },
 
     openSidebar(task, scroll) {
@@ -406,21 +420,21 @@ export default {
       this.loading = true
       let compid = JSON.parse(localStorage.getItem("user")).subb;
       if ($event == 'complete') {
-        this.$store.dispatch('company/setCompanyTasks', { companyId: compid, filter: 'complete' }).then((res) => {
+        this.$store.dispatch('company/fetchCompanyTasks', { companyId: compid, filter: 'complete' }).then((res) => {
           this.key += 1;
           this.loading = false
         }).catch(e => console.log(e))
         this.viewName = 'complete'
       }
       if ($event == 'incomplete') {
-        this.$store.dispatch('company/setCompanyTasks', { companyId: compid, filter: 'incomplete' }).then((res) => {
+        this.$store.dispatch('company/fetchCompanyTasks', { companyId: compid, filter: 'incomplete' }).then((res) => {
           this.key += 1;
           this.loading = false
         }).catch(e => console.log(e))
         this.viewName = 'incomplete'
       }
       if ($event == 'all') {
-        this.$store.dispatch('company/setCompanyTasks', { companyId: compid, filter: 'all' }).then((res) => {
+        this.$store.dispatch('company/fetchCompanyTasks', { companyId: compid, filter: 'all' }).then((res) => {
           this.key += 1;
           this.loading = false
         }).catch(e => console.log(e))
@@ -444,72 +458,71 @@ export default {
 
     // Sort By Action List
     sortBy($event) {
-
+      // console.log("sort by",$event)
+      this.sortName = $event
       if($event == 'title') {
-        this.$store.dispatch('company/sortCompanyTasks', { sName: 'name', order: this.orderBy }).then(() => {
+        this.$store.dispatch('company/sortCompanyTasks', { sName: $event, order: this.orderBy }).then(() => {
           this.key += 1
-          this.sortName = 'title';
-          this.checkActive()
+          // this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
       }
 
       if($event == 'userId') {
-        this.$store.dispatch('company/sortCompanyTasks', { sName: 'userId', order: this.orderBy }).then(() => {
+        this.$store.dispatch('company/sortCompanyTasks', { sName: $event, order: this.orderBy }).then(() => {
           this.key += 1
-          this.sortName = 'userId';
-          this.checkActive()
+          // this.sortName = $event
+          // this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
       }
 
       if($event == 'project') {
-        this.$store.dispatch('company/sortCompanyTasks', { sName: 'project', order: this.orderBy }).then(() => {
+        this.$store.dispatch('company/sortCompanyTasks', { sName: $event, order: this.orderBy }).then(() => {
           this.key += 1
-          this.sortName = 'project';
-          this.checkActive()
+          // this.sortName = $event
+          // this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
       }
 
       if($event == 'status') {
-        this.$store.dispatch('company/sortCompanyTasks', { sName: 'status', order: this.orderBy }).then(() => {
+        this.$store.dispatch('company/sortCompanyTasks', { sName: $event, order: this.orderBy }).then(() => {
           this.key += 1
-          this.sortName = 'status';
-          this.checkActive()
+          // this.sortName = $event
+          // this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
       }
 
       if($event == 'priority') {
-        this.$store.dispatch('company/sortCompanyTasks', { sName: 'priority', order: this.orderBy }).then(() => {
+        this.$store.dispatch('company/sortCompanyTasks', { sName: $event, order: this.orderBy }).then(() => {
           this.key += 1
-          this.sortName = 'priority';
-          this.checkActive()
+          // this.sortName = $event
+          // this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
       }
 
       if($event == 'startDate') {
-        this.$store.dispatch('company/sortCompanyTasks', { sName: 'startDate', order: this.orderBy }).then(() => {
+        this.$store.dispatch('company/sortCompanyTasks', { sName: $event, order: this.orderBy }).then(() => {
           this.key += 1
-          this.sortName = 'startDate';
-          this.checkActive()
+          // this.sortName = $event
+          // this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
       }
 
       if($event == 'dueDate') {
-        this.$store.dispatch('company/sortCompanyTasks', { sName: 'dueDate', order: this.orderBy }).then(() => {
+        this.$store.dispatch('company/sortCompanyTasks', { sName: $event, order: this.orderBy }).then(() => {
           this.key += 1
-          this.sortName = 'dueDate';
-          this.checkActive()
+          // this.sortName = $event
         }).catch((err) => {
           console.log(err)
         })
@@ -521,6 +534,7 @@ export default {
         this.orderBy = 'asc'
       }
 
+      this.checkActive()
       this.key += 1
 
     },
@@ -578,7 +592,7 @@ export default {
 <style lang="scss" scoped>
 .task-page-wrapper {
   display: grid;
-  grid-template-rows: auto auto calc(100vh - 150px);
+  grid-template-rows: auto auto calc(100vh - 180px);
   grid-template-columns: 1fr;
 }
 
