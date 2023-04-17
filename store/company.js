@@ -49,7 +49,7 @@ export const mutations = {
   },
 
   sortCompanyTasks(state, payload) {
-    console.log(payload)
+    // console.log(payload)
     state.sortName = payload.sName
     state.sortOrder = payload.order
 
@@ -243,7 +243,7 @@ export const actions = {
 
     if (res.data) {
       ctx.commit('setCompanyTasks', res.data);
-      ctx.commit('sortCompanyTasks', { sName: ctx.state.sortName, order: ctx.state.sortOrder })
+      // ctx.commit('sortCompanyTasks', { sName: ctx.state.sortName, order: ctx.state.sortOrder })
       return res.data
     }
   },
