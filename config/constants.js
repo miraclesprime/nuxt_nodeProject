@@ -708,15 +708,6 @@ export const COMPANY_TASK_FIELDS = [
     },
   },
   {
-    label: "Department",
-    key: "department",
-    header_icon: {
-      icon: "swap-vertical",
-      event: "table-sort",
-      isActive: false,
-    },
-  },
-  {
     label: 'Status',
     key: 'status',
     width: '12%',
