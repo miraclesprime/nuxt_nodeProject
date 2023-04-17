@@ -320,30 +320,37 @@ export default {
 
     changeView($event) {
       if ($event == 'complete') {
+        this.projLocalData = JSON.parse(JSON.stringify(this.sortedProject));
+        this.taskLocalData = JSON.parse(JSON.stringify(this.sortedTask));
         this.fetchProjects().then(() => {
-          let com = this.sortedProject.filter(p => p.statusId == 5)
-          this.sortedProject = com
+          let com = this.projLocalData.filter(p => p.statusId == 5)
+          this.projLocalData = com
         })
         this.fetchTasks().then(() => {
-          let com = this.sortedTask.filter(t => t.statusId == 5)
-          this.sortedTask = com
+          let com = this.taskLocalData.filter(t => t.statusId == 5)
+          this.taskLocalData = com
         })
 
       }
+
       if ($event == 'incomplete') {
+        this.projLocalData = JSON.parse(JSON.stringify(this.sortedProject));
+        this.taskLocalData = JSON.parse(JSON.stringify(this.sortedTask));
         this.fetchProjects().then(() => {
-          let com = this.sortedProject.filter(p => p.statusId != 5)
-          this.sortedProject = com
+          let com = this.projLocalData.filter(p => p.statusId != 5)
+          this.projLocalData = com
         })
         this.fetchTasks().then(() => {
-          let com = this.sortedTask.filter(t => t.statusId != 5)
-          this.sortedTask = com
+          let com = this.taskLocalData.filter(t => t.statusId != 5)
+          this.taskLocalData = com
         })
       }
+
       if ($event == 'all') {
-        this.fetchProjects()
-        this.fetchTasks()
+        this.projLocalData = JSON.parse(JSON.stringify(this.sortedProject));
+        this.taskLocalData = JSON.parse(JSON.stringify(this.sortedTask));
       }
+
     },
     changeSort($event) {
       if (this.projOrder == this.taskOrder) {
@@ -385,10 +392,10 @@ export default {
 
         case 'title':
           if (this.projOrder == "asc") {
-            this.sortedProject.sort((a, b) => a.title.localeCompare(b.title))
+            this.projLocalData.sort((a, b) => a.title.localeCompare(b.title))
             this.projOrder = "desc"
           } else {
-            this.sortedProject.sort((a, b) => b.title.localeCompare(a.title))
+            this.projLocalData.sort((a, b) => b.title.localeCompare(a.title))
             this.projOrder = "asc"
           }
           this.key += 1
@@ -398,23 +405,23 @@ export default {
 
         case 'status':
           let sArr = []
-          for (let i = 0; i < this.sortedProject.length; i++) {
-            if (this.sortedProject[i].statusId) {
-              sArr.unshift(this.sortedProject[i])
+          for (let i = 0; i < this.projLocalData.length; i++) {
+            if (this.projLocalData[i].statusId) {
+              sArr.unshift(this.projLocalData[i])
             } else {
-              sArr.push(this.sortedProject[i])
+              sArr.push(this.projLocalData[i])
             }
           }
 
-          this.sortedProject = sArr;
+          this.projLocalData = sArr;
 
           if (this.projOrder == "asc") {
-            this.sortedProject.sort((a, b) => {
+            this.projLocalData.sort((a, b) => {
               if (a.status && b.status) { return a.status.text.localeCompare(b.status.text) }
             });
             this.projOrder = "desc"
           } else {
-            this.sortedProject.sort((a, b) => {
+            this.projLocalData.sort((a, b) => {
               if (a.status && b.status) { return b.status.text.localeCompare(a.status.text) }
             });
             this.projOrder = "asc"
@@ -427,23 +434,23 @@ export default {
 
         case 'priority':
           let pArr = []
-          for (let i = 0; i < this.sortedProject.length; i++) {
-            if (this.sortedProject[i].priorityId) {
-              pArr.unshift(this.sortedProject[i])
+          for (let i = 0; i < this.projLocalData.length; i++) {
+            if (this.projLocalData[i].priorityId) {
+              pArr.unshift(this.projLocalData[i])
             } else {
-              pArr.push(this.sortedProject[i])
+              pArr.push(this.projLocalData[i])
             }
           }
 
-          this.sortedProject = pArr;
+          this.projLocalData = pArr;
 
           if (this.projOrder == "asc") {
-            this.sortedProject.sort((a, b) => {
+            this.projLocalData.sort((a, b) => {
               if (a.priority && b.priority) { return a.priority.id - b.priority.id }
             });
             this.projOrder = "desc"
           } else {
-            this.sortedProject.sort((a, b) => {
+            this.projLocalData.sort((a, b) => {
               if (a.priority && b.priority) { return b.priority.id - a.priority.id }
             });
             this.projOrder = "asc"
@@ -455,23 +462,23 @@ export default {
 
         case 'department':
           let deptArr = []
-          for (let i = 0; i < this.sortedProject.length; i++) {
-            if (this.sortedProject[i].departmentId) {
-              deptArr.unshift(this.sortedProject[i])
+          for (let i = 0; i < this.projLocalData.length; i++) {
+            if (this.projLocalData[i].departmentId) {
+              deptArr.unshift(this.projLocalData[i])
             } else {
-              deptArr.push(this.sortedProject[i])
+              deptArr.push(this.projLocalData[i])
             }
           }
 
-          this.sortedProject = deptArr;
+          this.projLocalData = deptArr;
 
           if (this.projOrder == "asc") {
-            this.sortedProject.sort((a, b) => {
+            this.projLocalData.sort((a, b) => {
               if (a.departmentId && b.departmentId) { return a.department.title.localeCompare(b.department.title) }
             });
             this.projOrder = "desc"
           } else {
-            this.sortedProject.sort((a, b) => {
+            this.projLocalData.sort((a, b) => {
               if (a.departmentId && b.departmentId) { return b.department.title.localeCompare(a.department.title) }
             });
             this.projOrder = "asc"
@@ -483,23 +490,23 @@ export default {
 
         case 'userId':
           let uArr = []
-          for (let i = 0; i < this.sortedProject.length; i++) {
-            if (this.sortedProject[i].userId) {
-              uArr.unshift(this.sortedProject[i])
+          for (let i = 0; i < this.projLocalData.length; i++) {
+            if (this.projLocalData[i].userId) {
+              uArr.unshift(this.projLocalData[i])
             } else {
-              uArr.push(this.sortedProject[i])
+              uArr.push(this.projLocalData[i])
             }
           }
 
-          this.sortedProject = uArr;
+          this.projLocalData = uArr;
 
           if (this.projOrder == "asc") {
-            this.sortedProject.sort((a, b) => {
+            this.projLocalData.sort((a, b) => {
               if (a.user && b.user) { return a.user.firstName.localeCompare(b.user.firstName) }
             });
             this.projOrder = "desc"
           } else {
-            this.sortedProject.sort((a, b) => {
+            this.projLocalData.sort((a, b) => {
               if (a.user && b.user) { b.user.firstName.localeCompare(a.user.firstName) }
             });
             this.projOrder = "asc"
@@ -511,22 +518,22 @@ export default {
 
         case 'dueDate':
           let dArr = []
-          for (let i = 0; i < this.sortedProject.length; i++) {
-            if (this.sortedProject[i].userId) {
-              dArr.unshift(this.sortedProject[i])
+          for (let i = 0; i < this.projLocalData.length; i++) {
+            if (this.projLocalData[i].dueDate) {
+              dArr.unshift(this.projLocalData[i])
             } else {
-              dArr.push(this.sortedProject[i])
+              dArr.push(this.projLocalData[i])
             }
           }
 
-          this.sortedProject = dArr;
+          this.projLocalData = dArr;
           if (this.projOrder == "asc") {
-            this.sortedProject.sort((a, b) => {
+            this.projLocalData.sort((a, b) => {
               if (a.dueDate && b.dueDate) { return new Date(a.dueDate) - new Date(b.dueDate) }
             });
             this.projOrder = "desc"
           } else {
-            this.sortedProject.sort((a, b) => {
+            this.projLocalData.sort((a, b) => {
               if (a.dueDate && b.dueDate) { return new Date(b.dueDate) - new Date(a.dueDate) }
             });
             this.projOrder = "asc"
@@ -539,22 +546,22 @@ export default {
         case 'startDate':
           let dArr2 = []
 
-          for (let i = 0; i < this.sortedProject.length; i++) {
-            if (this.sortedProject[i].userId) {
-              dArr2.unshift(this.sortedProject[i])
+          for (let i = 0; i < this.projLocalData.length; i++) {
+            if (this.projLocalData[i].startDate) {
+              dArr2.unshift(this.projLocalData[i])
             } else {
-              dArr2.push(this.sortedProject[i])
+              dArr2.push(this.projLocalData[i])
             }
           }
 
-          this.sortedProject = dArr2;
+          this.projLocalData = dArr2;
           if (this.projOrder == "asc") {
-            this.sortedProject.sort((a, b) => {
+            this.projLocalData.sort((a, b) => {
               if (a.startDate && b.startDate) { return new Date(a.startDate) - new Date(b.startDate) }
             });
             this.projOrder = "desc"
           } else {
-            this.sortedProject.sort((a, b) => {
+            this.projLocalData.sort((a, b) => {
               if (a.startDate && b.startDate) { return new Date(b.startDate) - new Date(a.startDate) }
             });
             this.projOrder = "asc"
@@ -576,10 +583,10 @@ export default {
 
         case 'title':
           if (this.taskOrder == "asc") {
-            this.sortedTask.sort((a, b) => a.title.localeCompare(b.title))
+            this.taskLocalData.sort((a, b) => a.title.localeCompare(b.title))
             this.taskOrder = "desc"
           } else {
-            this.sortedTask.sort((a, b) => b.title.localeCompare(a.title))
+            this.taskLocalData.sort((a, b) => b.title.localeCompare(a.title))
             this.taskOrder = "asc"
           }
           this.key += 1
@@ -588,11 +595,22 @@ export default {
           break;
 
         case 'status':
+          let taskStArr = []
+          for (let i = 0; i < this.taskLocalData.length; i++) {
+            if (this.taskLocalData[i].statusId) {
+              taskStArr.unshift(this.taskLocalData[i])
+            } else {
+              taskStArr.push(this.taskLocalData[i])
+            }
+          }
+
+          this.taskLocalData = taskStArr;
+
           if (this.taskOrder == "asc") {
-            this.sortedTask.sort((a, b) => a.status.text.localeCompare(b.status.text));
+            this.taskLocalData.sort((a, b) => a.status.text.localeCompare(b.status.text));
             this.taskOrder = "desc"
           } else {
-            this.sortedTask.sort((a, b) => b.status.text.localeCompare(a.status.text));
+            this.taskLocalData.sort((a, b) => b.status.text.localeCompare(a.status.text));
             this.taskOrder = "asc"
           }
           this.key += 1
@@ -601,11 +619,22 @@ export default {
           break;
 
         case 'priority':
+          let taskPrArr = []
+          for (let i = 0; i < this.taskLocalData.length; i++) {
+            if (this.taskLocalData[i].priorityId) {
+              taskPrArr.unshift(this.taskLocalData[i])
+            } else {
+              taskPrArr.push(this.taskLocalData[i])
+            }
+          }
+
+          this.taskLocalData = taskPrArr;
+
           if (this.taskOrder == "asc") {
-            this.sortedTask.sort((a, b) => a.priority.id - b.priority.id);
+            this.taskLocalData.sort((a, b) => a.priority.id - b.priority.id);
             this.taskOrder = "desc"
           } else {
-            this.sortedTask.sort((a, b) => b.priority.id - a.priority.id);
+            this.taskLocalData.sort((a, b) => b.priority.id - a.priority.id);
             this.taskOrder = "asc"
           }
           this.key += 1
@@ -614,24 +643,46 @@ export default {
           break;
         
         case 'department':
+          let taskDeptArr = []
+          for (let i = 0; i < this.taskLocalData.length; i++) {
+            if (this.taskLocalData[i].departmentId) {
+              taskDeptArr.unshift(this.taskLocalData[i])
+            } else {
+              taskDeptArr.push(this.taskLocalData[i])
+            }
+          }
+
+          this.taskLocalData = taskDeptArr;
+
           if (this.taskOrder == "asc") {
-            this.sortedTask.sort((a, b) => a.department.title.localeCompare(b.department.title));
+            this.taskLocalData.sort((a, b) => a.department.title.localeCompare(b.department.title));
             this.taskOrder = "desc"
           } else {
-            this.sortedTask.sort((a, b) => b.department.title.localeCompare(a.department.title));
+            this.taskLocalData.sort((a, b) => b.department.title.localeCompare(a.department.title));
             this.taskOrder = "asc"
           }
           this.key += 1
           break;
 
         case 'userId':
+          let taskUserArr = []
+          for (let i = 0; i < this.taskLocalData.length; i++) {
+            if (this.taskLocalData[i].userId) {
+              taskUserArr.unshift(this.taskLocalData[i])
+            } else {
+              taskUserArr.push(this.taskLocalData[i])
+            }
+          }
+
+          this.taskLocalData = taskUserArr;
+
           if (this.taskOrder == "asc") {
-            this.sortedTask.sort((a, b) => {
+            this.taskLocalData.sort((a, b) => {
               if (a.user && b.user) { return a.user.firstName.localeCompare(b.user.firstName) }
             });
             this.taskOrder = "desc"
           } else {
-            this.sortedTask.sort((a, b) => {
+            this.taskLocalData.sort((a, b) => {
               if (a.user && b.user) { return b.user.firstName.localeCompare(a.user.firstName) }
             });
             this.taskOrder = "asc"
@@ -642,13 +693,23 @@ export default {
           break;
 
         case 'dueDate':
+          let taskDArr = []
+          for (let i = 0; i < this.taskLocalData.length; i++) {
+            if (this.taskLocalData[i].dueDate) {
+              taskDArr.unshift(this.taskLocalData[i])
+            } else {
+              taskDArr.push(this.taskLocalData[i])
+            }
+          }
+
+          this.taskLocalData = taskDArr;
           if (this.taskOrder == "asc") {
-            this.sortedTask.sort((a, b) => {
+            this.taskLocalData.sort((a, b) => {
               if (a.dueDate && b.dueDate) { return new Date(a.dueDate) - new Date(b.dueDate) }
             });
             this.taskOrder = "desc"
           } else {
-            this.sortedTask.sort((a, b) => {
+            this.taskLocalData.sort((a, b) => {
               if (a.dueDate && b.dueDate) { return new Date(b.dueDate) - new Date(a.dueDate) }
             });
             this.taskOrder = "asc"
@@ -659,13 +720,23 @@ export default {
           break;
 
         case 'startDate':
+          let taskSArr = []
+          for (let i = 0; i < this.taskLocalData.length; i++) {
+            if (this.taskLocalData[i].startDate) {
+              taskSArr.unshift(this.taskLocalData[i])
+            } else {
+              taskSArr.push(this.taskLocalData[i])
+            }
+          }
+
+          this.taskLocalData = taskSArr;
           if (this.taskOrder == "asc") {
-            this.sortedTask.sort((a, b) => {
+            this.taskLocalData.sort((a, b) => {
               if (a.startDate && b.startDate) { return new Date(a.startDate) - new Date(b.startDate) }
             });
             this.taskOrder = "desc"
           } else {
-            this.sortedTask.sort((a, b) => {
+            this.taskLocalData.sort((a, b) => {
               if (a.startDate && b.startDate) { return new Date(b.startDate) - new Date(a.startDate) }
             });
             this.taskOrder = "asc"
@@ -677,11 +748,11 @@ export default {
 
         case "project":
           let newArr = []
-          for (let i = 0; i < this.sortedTask.length; i++) {
-            if (this.sortedTask[i].project[0]) {
-              newArr.unshift(this.sortedTask[i])
+          for (let i = 0; i < this.taskLocalData.length; i++) {
+            if (this.taskLocalData[i].project[0]) {
+              newArr.unshift(this.taskLocalData[i])
             } else {
-              newArr.push(this.sortedTask[i])
+              newArr.push(this.taskLocalData[i])
             }
           }
 
@@ -690,7 +761,7 @@ export default {
               return a.project[0].project.title.localeCompare(b.project[0].project.title);
             }
           });
-          this.sortedTask = newArr;
+          this.taskLocalData = newArr;
           this.key += 1
           this.taskSortName = 'project'
           this.checkActive()
@@ -859,7 +930,7 @@ export default {
 
     updateTask(payload) {
       const { task, label, field, value, historyText} = payload
-      console.log(task, label, field, value, historyText, this.activeTask)
+      // console.log(task, label, field, value, historyText, this.activeTask)
       // payload consists of task, field, value
 
       let user

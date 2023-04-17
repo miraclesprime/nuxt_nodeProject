@@ -203,6 +203,7 @@ export default {
         this.popupMessages.push({ text: $event, variant: "success" })
       }
       let compid = JSON.parse(localStorage.getItem("user")).subb;
+      
       let tasks = this.$store.dispatch("company/fetchCompanyTasks", { companyId: compid, filter: "all", sort: this.sortName })
         .then(() => {
           this.key += 1
@@ -267,6 +268,12 @@ export default {
       }
     },
 
+    updateSingleRow(taskData){
+      let replaceIndex = this.localData.findIndex(lt => lt.id == taskData.id)
+      this.localData.splice(replaceIndex, 1, taskData)
+      this.key += 1
+    },
+
     updateTask(payload) {
       // console.log(payload)
       // alert("in progress. Updated value => " + payload.value)
@@ -291,8 +298,9 @@ export default {
         text: `changed ${payload.label} to "${payload.historyText || payload.value}"`
       })
         .then(t => {
-          // console.log(t)
-          this.updateKey()
+          // console.log(t.data)
+          this.updateSingleRow(t.data)
+          // this.updateKey()
         })
         .catch(e => console.warn(e))
     },
@@ -317,7 +325,8 @@ export default {
       })
         .then(t => {
           // console.log(t)
-          this.updateKey()
+          this.updateSingleRow(t.data)
+          // this.updateKey()
         })
         .catch(e => console.warn(e))
     },
@@ -335,7 +344,8 @@ export default {
       })
         .then(t => {
           // console.log(t)
-          this.updateKey()
+          this.updateSingleRow(t.data)
+          // this.updateKey()
         })
         .catch(e => console.warn(e))
     },
