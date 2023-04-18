@@ -344,7 +344,7 @@ export default {
           user,
           "text": `task "${this.form.title}" created`,
         }).then((task) => {
-          console.log(task.data)
+          // console.log(task.data)
           this.$store.dispatch("task/setSingleTask", task.data)
           this.$emit("update-key")
           this.$nuxt.$emit("update-key")

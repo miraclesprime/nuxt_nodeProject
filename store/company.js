@@ -243,7 +243,9 @@ export const actions = {
 
     if (res.data) {
       ctx.commit('setCompanyTasks', res.data);
-      // ctx.commit('sortCompanyTasks', { sName: ctx.state.sortName, order: ctx.state.sortOrder })
+      if (payload.sort) {
+        ctx.commit('sortCompanyTasks', { sName: ctx.state.sortName, order: ctx.state.sortOrder })
+      }
       return res.data
     }
   },

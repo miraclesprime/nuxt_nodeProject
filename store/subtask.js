@@ -152,6 +152,7 @@ export const actions = {
     }).then(fvsub => {
       // console.log(fvsub.data.data)
       ctx.commit("setFavSubtasks", fvsub.data.data)
+      return fvsub.data
     }).catch(e => console.warn(e))
   },
 

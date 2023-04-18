@@ -83,6 +83,7 @@ export default {
       sortedProject: [],
       renameModal: false,
       sortedTask: [],
+      sortedSubtask: [],
       activeProject: {},
       currentProject: {},
       activeTask: {},
@@ -125,6 +126,7 @@ export default {
     ...mapGetters({
       favProjects: 'project/getFavoriteProjects',
       favTasks: 'task/getFavTasks',
+      favSubtasks: "subtask/getFavSubtasks",
       teamMembers: "user/getTeamMembers",
     })
   },
@@ -156,6 +158,7 @@ export default {
     this.$store.dispatch('task/getFavTasks').then(() => {
       this.fetchTasks()
     })
+    this.$store.dispatch("subtask/fetchFavorites").then((sb) => { console.log(sb)})
   },
 
   watch: {
@@ -196,6 +199,15 @@ export default {
       this.sortedTask = sortedArray
       this.key += 1
       this.loading = false
+    },
+
+    async fetchSubtasks(){
+      const favsub = _.cloneDeep(this.favSubtasks)
+      let sorted = await favsub.sort((a, b) => a.subtasks.title.localeCompare(b.subtasks.title))
+      let sortedArray = []
+      sorted.forEach(t => { sortedArray.push(t.task) })
+      this.sortedTask.push(...sortedArray)
+      this.key += 1
     },
 
     projectRoute(project) {

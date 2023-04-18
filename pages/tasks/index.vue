@@ -116,6 +116,8 @@ export default {
         favTasks: 'task/getFavTasks',
         currentTask: 'task/getSelectedTask',
         teamMembers: "user/getTeamMembers",
+        sName: "company/getSortName",
+        sOrder: "company/getSortOrder",
     }),
 
   },
@@ -131,8 +133,15 @@ export default {
     if (process.client) {
       // console.info("created hook")
       this.$nuxt.$on("update-key", (msg) => {
+        console.info("on update-key")
+        this.loading = true
         let user = JSON.parse(localStorage.getItem("user"))
-        this.$store.dispatch('company/fetchCompanyTasks', { companyId: user.subb }).then(() => { this.key += 1 })
+        this.$store.dispatch('company/fetchCompanyTasks', { companyId: user.subb, sort: true })
+          .then(() => {
+            this.loading = false
+            this.checkActive()
+            // this.key += 1
+          })
         if (msg) {
           this.popupMessages.push({text: msg, variant: 'success'})
         }
@@ -548,7 +557,6 @@ export default {
       this.key += 1
 
     },
-
 
     toggleSidebar($event) {
       if (!$event) {
