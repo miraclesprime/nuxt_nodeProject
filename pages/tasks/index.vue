@@ -6,7 +6,7 @@
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y" :class="{ 'bg-light': gridType != 'list'}">
         <template v-if="gridType == 'list'">
           <template v-if="tasks.length">
-            <drag-table-simple :key="key" :componentKey="key" :fields="taskFields" :tasks="localData" :sectionTitle="'Department'" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table-simple>
+            <drag-table :key="key" :componentKey="key" drag-table :fields="taskFields" :sections="localData" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table>
 
             <!-- table context menu -->
             <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
@@ -137,7 +137,7 @@ export default {
         this.loading = true
         let user = JSON.parse(localStorage.getItem("user"))
         this.$store.dispatch('company/fetchCompanyTasks', { companyId: user.subb, sort: true })
-          .then(() => {
+          .then((data) => {
             this.loading = false
             this.checkActive()
             // this.key += 1
