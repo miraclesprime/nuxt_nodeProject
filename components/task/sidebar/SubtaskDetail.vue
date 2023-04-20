@@ -170,12 +170,12 @@ export default {
     ...mapGetters({
       user2: "user/getUser2",
       subtask: "subtask/getSelectedSubTask",
+      team: 'subtask/getSubtaskMembers',
       favsubtasks: "subtask/getFavSubtasks",
       subtaskComments: "subtask/getSubTaskComments",
       subtaskHistory: "subtask/getSubtaskHistory",
       teamMembers: "user/getTeamMembers",
       departments: "department/getAllDepartments",
-      team: 'subtask/getSubtaskMembers',
     }),
 
     orgUsers() {
@@ -255,6 +255,17 @@ export default {
         }
     },
   },
+  
+  watch: {
+    subtask (newVal, oldVal) {
+      if (newVal != oldVal) {
+        console.log('watch subtask change')
+        this.fetchSubtaskMembers(this.subtask)
+        this.fetchSubtaskComments(this.subtask)
+        this.fetchSubtaskHistory(this.subtask)
+      }
+    }
+  },
 
   created() {
     this.$nuxt.$on("edit-message", (msg) => {
@@ -283,6 +294,8 @@ export default {
 
     ...mapActions({
       fetchSubtaskMembers: "subtask/fetchSubtaskMembers",
+      fetchSubtaskComments: "subtask/fetchSubtaskComments",
+      fetchSubtaskHistory: "subtask/fetchSubtaskHistory",
     }),
 
     showAddTeamModal() {

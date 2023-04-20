@@ -20,12 +20,12 @@
         <dept-picker :show="projDeptPickerOpen" :coordinates="popupCoords" @selected="renameProject({ task: activeProject, label:'Department', field:'departmentId', value: $event.value, historyText: $event.label })" @close="projDeptPickerOpen = false"></dept-picker>
         <!-- task table -->
         <drag-table-simple :fields="taskTableFields" :componentKey="key+1" :tasks="taskSubtaskLocalData" :sectionTitle="'Favorite Tasks'" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="openSidebar" v-on:table-sort="sortTask" @row-click="openSidebar" @row-context="taskRightClick" @edit-field="updateTask" @user-picker="showTaskUserpicker" @date-picker="showTaskDatepicker" @status-picker="showTaskStatusPicker" @priority-picker="showTaskPriorityPicker" @dept-picker="showTaskDeptPicker"></drag-table-simple>
-        <ul>
+        <!-- <ul>
           <li class="font-w-600">All task and subtask </li>
-          <li v-for="(sub, index) in taskSubtaskLocalData" class="d-flex flex-wrap border-top-secondary">
-            <span v-for="(value, key) in sub" :class="['border-right-gray'+index, 'border-bottom-gray'+index]" class="px-05 ">{{key}} -> {{value}} </span>
+          <li v-for="(sub, index) in taskSubtaskLocalData" class="d-flex gap-025 flex-wrap border-top-secondary">
+            <span v-for="(value, key) in sub" style="background-image: linear-gradient(175deg, white 20%, lightgray 100%)" class="px-05 ">{{key}} -> {{value}} </span>
           </li>
-        </ul>
+        </ul> -->
         <!-- task context menu -->
         <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" @close-context="closePopups" @item-click="taskContextItemClick" ref="task_menu"></table-context-menu>
         <!-- user-picker for task -->
@@ -40,6 +40,15 @@
         <dept-picker :show="taskDeptpickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Department', field:'departmentId', value: $event.value, historyText: $event.label })" @close="taskDeptpickerOpen = false"></dept-picker>
         <loading :loading="loading"></loading>
       </div>
+
+      <!-- <subtask-detail></subtask-detail> -->
+      <transition name="drawer">
+        <article v-if="subPanel" id="sub-panel" class="side-panel" v-click-outside="closeSubPanel">
+          <keep-alive>
+            <subtask-detail @close-sidebar-detail="subPanel = false"></subtask-detail>
+          </keep-alive>
+        </article>
+      </transition>
       <!-- project rename modal -->
       <bib-modal-wrapper v-if="renameModal" title="Rename project" @close="renameModal = false">
         <template slot="content">
@@ -71,7 +80,7 @@
 <script>
 import _ from 'lodash'
 import { PROJECT_FAVORITES, TASK_FAVORITES, PROJECT_CONTEXT_MENU, TASK_CONTEXT_MENU } from '../../config/constants'
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import dayjs from 'dayjs'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
@@ -121,6 +130,7 @@ export default {
       projLocalData: [],
       taskLocalData: [],
       taskSubtaskLocalData: [],
+      subPanel: false,
     }
   },
 
@@ -178,7 +188,7 @@ export default {
     const fetchTask = this.$store.dispatch('task/getFavTasks')
     const fetchSubtask = this.$store.dispatch("subtask/fetchFavorites")
     Promise.all([fetchTask, fetchSubtask]).then((values) => {
-      console.log(values[0].data, values[1].data)
+      // console.log(values[0].data, values[1].data)
       values[0].data.forEach(d => { this.taskSubtaskLocalData.push(d.task)})
       values[1].data.forEach(d => { this.taskSubtaskLocalData.push({...d.subtasks, project: d.subtasks.task.project})})
       // this.taskSubtaskLocalData = [...values[0].data, ...values[1].data]
@@ -205,6 +215,14 @@ export default {
 
   methods: {
 
+    ...mapActions({
+      setSingleTask: "task/setSingleTask",
+    }),
+
+    closeSubPanel(){
+      this.subPanel = false
+    },
+
     async fetchProjects() {
       let favProj = await JSON.parse(JSON.stringify(this.favProjects))
       let sorted = await favProj.sort((a, b) => a.projects.title.localeCompare(b.projects.title))
@@ -216,11 +234,17 @@ export default {
     },
 
     async fetchTasks() {
-      let favTask = await JSON.parse(JSON.stringify(this.favTasks))
-      let sorted = await favTask.sort((a, b) => a.task.title.localeCompare(b.task.title))
+      // const favTask = await JSON.parse(JSON.stringify(this.favTasks))
+      const favTask = await _.cloneDeep(this.favTasks)
+      const favSubtask = await _.cloneDeep(this.favSubtasks)
+
+      let taskSubtask = [favTask, favSubtask]
+
+      console.log(taskSubtask)
+      /*let sortedTask = await taskSubtask.sort((a, b) => a.task.title.localeCompare(b.task.title))
       let sortedArray = []
       sorted.forEach(t => { sortedArray.push(t.task) })
-      this.sortedTask.push(...sortedArray)
+      this.sortedTask = sortedArray*/
       this.key += 1
       // this.loading = false
     },
@@ -255,8 +279,10 @@ export default {
     taskRightClick(payload) {
       this.taskContextMenu = true
       const { event, task } = payload
+      // console.log(task.task)
       this.activeTask = task;
-      this.$store.dispatch('task/setSingleTask', task)
+      // this.$store.dispatch('task/setSingleTask', task)
+      this.setSingleTask(task)
       this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
     },
 
@@ -810,7 +836,6 @@ export default {
       this.key += 1
     },
 
-
     projContextItemClick(key) {
       switch (key) {
         case 'fav-project':
@@ -955,9 +980,7 @@ export default {
     },
 
     copyTaskLink(task) {
-
       let url = window.location.host + `/tasks/${task.id}`;
-
       if (navigator.clipboard) {
         navigator.clipboard.writeText(url);
       } else {
@@ -968,8 +991,8 @@ export default {
     updateTask(payload) {
       const { task, label, field, value, historyText } = payload
       // console.log(task, label, field, value, historyText, this.activeTask)
-      // payload consists of task, field, value
-
+      // payload consists of task, label, field, value, historyText
+      console.log(this.activeTask.task)
       let user
       if (field == "userId" && value != '') {
         user = this.teamMembers.filter(t => t.id == value)
@@ -1022,28 +1045,45 @@ export default {
       }).catch(e => console.warn(e))
     },
 
-    updateTaskAssignee(label, field, value, historyValue) {
+    updateTaskAssignee(label, field, value, historyText) {
       let user
       if (field == "userId" && value != '') {
-        user = this.teamMembers.filter(t => t.id == value)
+        user = this.teamMembers.find(t => t.id == value)
       } else {
         user = null
       }
 
+      // console.log(this.activeTask.task)
+
+      if (this.activeTask.task) {
+        console.log('subtask selected')
+        this.$store.dispatch("subtask/updateSubtask", {
+          id: this.activeTask.id,
+          data: { [field]: value },
+          user,
+          text: `updated ${label} to ${historyText}`
+        })
+        .then(() => this.updateKey())
+        .catch(e => console.warn(e))
+      } else {
+        console.log('task selected')
+
+        this.$store.dispatch("task/updateTask", {
+            id: this.activeTask.id,
+            data: {
+              [field]: value
+            },
+            user,
+            text: `changed ${label} to ${historyText}`
+          })
+          .then(t => {
+            this.updateKey()
+          })
+          .catch(e => console.warn(e))
+      }
+
       this.taskUserpickerOpen = false
 
-      this.$store.dispatch("task/updateTask", {
-          id: this.activeTask.id,
-          data: {
-            [field]: value
-          },
-          user,
-          text: `changed ${label} to ${historyValue}`
-        })
-        .then(t => {
-          this.updateKey()
-        })
-        .catch(e => console.warn(e))
     },
 
     updateProjDate(value) {
@@ -1064,9 +1104,7 @@ export default {
     },
 
     updateTaskDate(value) {
-
       let newDate = dayjs(value).format("D MMM YYYY")
-
       this.$store.dispatch("task/updateTask", {
           id: this.activeTask.id,
           data: {
@@ -1122,12 +1160,14 @@ export default {
         .then((d) => {
           this.loading = false
           this.updateKey()
-          this.$store.dispatch("task/setSingleTask", d)
+          // this.$store.dispatch("task/setSingleTask", d)
+          this.setSingleTask(d)
         }).catch(e => {
           console.log(e)
           this.loading = false
         })
     },
+
     confirmDelete(state) {
       console.log(state, this.taskToDelete)
       this.confirmModal = false
@@ -1160,15 +1200,18 @@ export default {
       this.confirmModal = true
     },
 
-    updateKey($event) {
+    async updateKey($event) {
       if ($event) {
         this.popupMessages.push({ text: $event, variant: "success" })
       }
+
       this.$store.dispatch('project/fetchFavProjects').then(() => {
         this.fetchProjects()
       })
 
-      this.$store.dispatch('task/getFavTasks').then(() => {
+      const tsk = await this.$store.dispatch('task/getFavTasks')
+      const stsk = await this.$store.dispatch("subtask/fetchFavorites")
+      Promise.all([tsk, stsk]).then((values) => {
         this.fetchTasks()
       })
     },
@@ -1180,15 +1223,19 @@ export default {
         this.$nuxt.$emit("close-sidebar");
         return false
       }
-      this.$nuxt.$emit("open-sidebar", { ...task, scrollId: scroll });
+      // console.log(task.task)
+      if (task.task) {
+        this.$store.dispatch("subtask/setSelectedSubtask", task)
+        this.subPanel = true
+      } else {
+        this.$nuxt.$emit("open-sidebar", { ...task, scrollId: scroll });
+      }
     },
 
     searchProjectOrTasks(text) {
 
       let formattedText = text.toLowerCase().trim();
-
       let tArr = this.sortedTask.filter((t) => {
-
         if (t.description) {
           if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText) || t.description.includes(formattedText) || t.description.toLowerCase().includes(formattedText)) {
             return t
@@ -1198,11 +1245,9 @@ export default {
             return t
           }
         }
-
       })
 
       let pArr = this.sortedProject.filter((p) => {
-
         if (p.description) {
           if (p.title.includes(formattedText) || p.title.toLowerCase().includes(formattedText) || p.description.includes(formattedText) || p.description.toLowerCase().includes(formattedText)) {
             return p
@@ -1212,7 +1257,6 @@ export default {
             return p
           }
         }
-
       })
 
       if (pArr.length >= 0) {
