@@ -139,8 +139,9 @@ export default {
         this.$store.dispatch('company/fetchCompanyTasks', { companyId: user.subb, sort: true })
           .then((data) => {
             this.loading = false
+            this.localData = data;
             this.checkActive()
-            // this.key += 1
+            this.key += 1
           })
         if (msg) {
           this.popupMessages.push({text: msg, variant: 'success'})
@@ -155,6 +156,8 @@ export default {
     this.loading = true
     let compid = JSON.parse(localStorage.getItem("user")).subb;
     this.$store.dispatch('company/fetchCompanyTasks', { companyId: compid, filter: 'all' }).then((res) => {
+      this.localData = res;
+      this.key += 1;
       this.loading = false;
     })
   },
@@ -435,31 +438,40 @@ export default {
       this.confirmModal = true
     },
 
-    filterView($event) {
-      this.loading = true
-      let compid = JSON.parse(localStorage.getItem("user")).subb;
+    async filterView($event) {
+      
       if ($event == 'complete') {
-        this.$store.dispatch('company/fetchCompanyTasks', { companyId: compid, filter: 'complete' }).then((res) => {
-          this.key += 1;
-          this.loading = false
-        }).catch(e => console.log(e))
-        this.viewName = 'complete'
+        let viewData = await JSON.parse(JSON.stringify(this.tasks));
+        let newArr = []
+        await viewData.map((dept) => {
+          let tArr = dept.tasks.filter((t) => t.statusId == 5)
+          dept['tasks'] = tArr;
+          newArr.push(dept);
+        })
+
+        this.localData = newArr
+        this.key += 1;
       }
-      if ($event == 'incomplete') {
-        this.$store.dispatch('company/fetchCompanyTasks', { companyId: compid, filter: 'incomplete' }).then((res) => {
-          this.key += 1;
-          this.loading = false
-        }).catch(e => console.log(e))
-        this.viewName = 'incomplete'
+
+      if ($event == 'incomplete') {    
+        let viewData = await JSON.parse(JSON.stringify(this.tasks));
+        let newArr = []
+        await viewData.map((dept) => {
+          let tArr = dept.tasks.filter((t) => t.statusId != 5)
+          dept['tasks'] = tArr;
+          newArr.push(dept)
+        })
+
+        this.localData = newArr
+        this.key += 1;
       }
+
       if ($event == 'all') {
-        this.$store.dispatch('company/fetchCompanyTasks', { companyId: compid, filter: 'all' }).then((res) => {
-          this.key += 1;
-          this.loading = false
-        }).catch(e => console.log(e))
-        this.viewName = 'all'
+        let viewData = await JSON.parse(JSON.stringify(this.tasks));
+
+        this.localData = viewData
+        this.key += 1;
       }
-      this.loading = false
 
     },
 
