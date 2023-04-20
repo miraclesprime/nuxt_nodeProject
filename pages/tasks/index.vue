@@ -591,20 +591,30 @@ export default {
     searchTasks(text) {
 
       let formattedText = text.toLowerCase().trim();
-      
-      let newArr = this.tasks.filter((t) => {
-        
-        if(t.description) {
-          if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText) || t.description.includes(formattedText) || t.description.toLowerCase().includes(formattedText)) {
-            return t
-          } 
-        } else {
-          if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
-            return t
-          } 
-        }
 
+      let depts = JSON.parse(JSON.stringify(this.tasks))
+      
+      let newArr = depts.map((d) => {
+
+          let filtered = d.tasks.filter((t) => {
+          
+          if(t.description) {
+            if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText) || t.description.includes(formattedText) || t.description.toLowerCase().includes(formattedText)) {
+              return t
+            } 
+          } else {
+            if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
+              return t
+            } 
+          }
+
+        })
+
+        d['tasks'] = filtered
+        return d;
+      
       })
+
 
       if(newArr.length >= 0) {
         this.localData = newArr
