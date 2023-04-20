@@ -228,6 +228,7 @@ export default {
         } else {
           this.form.projectId = this.project.id
         }
+        this.reloadFiles += 1
         // console.info(this.$refs.topScroll)
       } else {
         this.form = {

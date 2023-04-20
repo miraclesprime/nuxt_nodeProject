@@ -144,6 +144,20 @@ export const actions = {
     }
   },
 
+  async removeFromFavorite(ctx, payload){
+    try {
+      const stf = await this.$axios.delete(`subtask/${payload.id}/favorite`, {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+        }
+      })
+      // console.log(stf.data)
+      return stf.data
+    } catch(e) {
+      console.warn(e);
+    }
+  },
+
   async fetchFavorites(ctx) {
     try {
       const favsub = await this.$axios.get("subtask/user/favorites", {
