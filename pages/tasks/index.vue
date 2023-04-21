@@ -19,26 +19,8 @@
           </div>
         </template>
         <template v-else>
-          <div class="d-flex">
-            <div class="task-grid-section">
-              <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
-                <div class="title text-gray">Department</div>
-                <div class="d-flex section-options">
-                  <div class="mr-1">
-                    <bib-icon icon="add" variant="success" :scale="1.2" />
-                  </div>
-                  <div>
-                    <bib-icon icon="elipsis" :scale="1.2" />
-                  </div>
-                </div>
-              </div>
-              <div class="task-section__body">
-                <div v-for="(task, index) in localData" :key="index + '-' + key" >
-                  <task-grid :task="task" :class="[ currentTask.id == task.id ? 'active' : '']" v-on:update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker" ></task-grid>
-                </div>
-              </div>
-            </div>
-          </div>
+          <task-grid-section :sections="localData" :activeTask="activeTask" :templateKey="key" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="taskSetFavorite" v-on:mark-complete="taskMarkComplete" v-on:delete-task="deleteTask">
+          </task-grid-section>
         </template>
         <!-- user-picker for list and board view -->
         <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"></user-picker>
@@ -281,8 +263,15 @@ export default {
     },
 
     updateSingleRow(taskData){
-      let replaceIndex = this.localData.findIndex(lt => lt.id == taskData.id)
-      this.localData.splice(replaceIndex, 1, taskData)
+
+      let depts = JSON.parse(JSON.stringify(this.tasks));
+
+      depts.map((dept) => {
+        let replaceIndex = dept.tasks.findIndex(lt => lt.id == taskData.id);
+        dept.tasks.splice(replaceIndex, 1, taskData)
+      })
+
+      this.localData = depts;
       this.key += 1
     },
 
@@ -302,6 +291,14 @@ export default {
         projectId = null
       }
 
+      if (payload.field == "statusId" && payload.value == 0) {
+        payload.value = null
+      }
+
+      if (payload.field == "priorityId" && payload.value == 0) {
+        payload.value = null
+      }
+
       this.$store.dispatch("task/updateTask", {
         id: payload.task.id,
         projectId,
@@ -310,9 +307,7 @@ export default {
         text: `changed ${payload.label} to "${payload.historyText || payload.value}"`
       })
         .then(t => {
-          // console.log(t.data)
           this.updateSingleRow(t.data)
-          // this.updateKey()
         })
         .catch(e => console.warn(e))
     },
@@ -489,12 +484,11 @@ export default {
 
     // Sort By Action List
     sortBy($event) {
-      // console.log("sort by",$event)
+
       this.sortName = $event
       if($event == 'title') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: $event, order: this.orderBy }).then(() => {
           this.key += 1
-          // this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
@@ -503,8 +497,6 @@ export default {
       if($event == 'userId') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: $event, order: this.orderBy }).then(() => {
           this.key += 1
-          // this.sortName = $event
-          // this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
@@ -513,8 +505,6 @@ export default {
       if($event == 'project') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: $event, order: this.orderBy }).then(() => {
           this.key += 1
-          // this.sortName = $event
-          // this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
@@ -523,8 +513,6 @@ export default {
       if($event == 'status') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: $event, order: this.orderBy }).then(() => {
           this.key += 1
-          // this.sortName = $event
-          // this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
@@ -533,8 +521,6 @@ export default {
       if($event == 'priority') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: $event, order: this.orderBy }).then(() => {
           this.key += 1
-          // this.sortName = $event
-          // this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
@@ -543,8 +529,6 @@ export default {
       if($event == 'startDate') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: $event, order: this.orderBy }).then(() => {
           this.key += 1
-          // this.sortName = $event
-          // this.checkActive()
         }).catch((err) => {
           console.log(err)
         })
@@ -553,7 +537,6 @@ export default {
       if($event == 'dueDate') {
         this.$store.dispatch('company/sortCompanyTasks', { sName: $event, order: this.orderBy }).then(() => {
           this.key += 1
-          // this.sortName = $event
         }).catch((err) => {
           console.log(err)
         })
@@ -620,7 +603,7 @@ export default {
         this.localData = newArr
         this.key++;
       } else {
-        this.localData = this.tasks;
+        this.localData = JSON.parse(JSON.stringify(this.tasks));
         this.key++;
       }
     }

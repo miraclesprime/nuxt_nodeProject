@@ -51,7 +51,7 @@ export default {
     statusList() {
       let status = []
       this.status.forEach(st => {
-        if (st.value == "") status.push({ value: "", label: "", color: "", bgcolor: "" })
+        if (st.value == 0) status.push({ value: 0, label: "----", color: "", bgcolor: "" })
         if (st.value == 1) status.push({ value: st.value, label: st.label, color: this.colors.ColorVariants.Secondary, bgcolor: this.hex2rgba(this.colors.ColorVariants.Secondary) })
         if (st.value == 2) status.push({ value: st.value, label: st.label, color: this.colors.ColorVariants.Primary, bgcolor: this.hex2rgba(this.colors.ColorVariants.Primary) })
         if (st.value == 3) status.push({ value: st.value, label: st.label, color: this.colors.ColorVariants.Orange, bgcolor: this.hex2rgba(this.colors.ColorVariants.Orange) })

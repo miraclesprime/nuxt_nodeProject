@@ -381,13 +381,23 @@ export default {
         })
       }
       if (taskData.name == 'Status') {
+
+        if(taskData.value == 0) {
+          taskData.value = null
+        }
+
         this.statusValues.find(s => {
           if (s.value == taskData.value) {
             updatedvalue = s.label
           }
         })
       }
+
       if (taskData.name == 'Priority') {
+        if(taskData.value == 0) {
+          taskData.value = null
+        }
+        
         this.priorityValues.find(p => {
           if (p.value == taskData.value) {
             updatedvalue = p.label

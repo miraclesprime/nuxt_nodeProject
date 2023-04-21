@@ -479,7 +479,7 @@ export const DEPARTMENT = [
   { label: 'Marketing', value: "marketing" },
 ]
 export const STATUS = [
-  { label: 'Select' },
+  { label: 'Select', value: 0 },
   { label: 'Not Started', value: '1' },
   { label: 'In-Progress', value: '2' },
   { label: 'Waiting', value: '3' },
@@ -487,7 +487,7 @@ export const STATUS = [
   { label: 'Done', value: '5' },
 ]
 export const PRIORITY = [
-  { label: 'Select' },
+  { label: 'Select', value: 0 },
   { label: 'Low', value: '3' },
   { label: 'Medium', value: '2' },
   { label: 'High', value: '1' },
@@ -871,7 +871,6 @@ export const COMPANY_TASK_SORT = [
   { label: 'Project', key: 'project' },
   { label: 'Status', key: 'status' },
   { label: 'Priority', key: 'priority' },
-  { label: 'Department', key: 'department' },
   { label: 'Assignee', key: 'userId' },
   { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },

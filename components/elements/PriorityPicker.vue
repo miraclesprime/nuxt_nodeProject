@@ -52,7 +52,7 @@ export default {
     priorityList() {
       let status = []
       this.priority.forEach(pt => {
-        if (pt.value == "") status.push({ value: "", label: "", color: "", bgcolor: "" })
+        if (pt.value == 0) status.push({ value: 0, label: "----", color: "", bgcolor: "" })
         if (pt.value == 1) status.push({ value: pt.value, label: pt.label, color: this.colors.ColorVariants.Danger, bgcolor: this.hex2rgba(this.colors.ColorVariants.Danger) })
         if (pt.value == 2) status.push({ value: pt.value, label: pt.label, color: this.colors.ColorVariants.Orange, bgcolor: this.hex2rgba(this.colors.ColorVariants.Orange) })
         if (pt.value == 3) status.push({ value: pt.value, label: pt.label, color: this.colors.ColorVariants.Success, bgcolor: this.hex2rgba(this.colors.ColorVariants.Success) })

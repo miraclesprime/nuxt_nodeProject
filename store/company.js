@@ -54,12 +54,20 @@ export const mutations = {
     state.sortOrder = payload.order
 
     // sort By Title
-    if (payload.sName == 'title' && payload.order == 'asc') {
-      state.companyTasks.sort((a, b) => a.title.localeCompare(b.title))
-    }
+    if (payload.sName == 'title') {
+      let arr = JSON.parse(JSON.stringify(state.companyTasks));
 
-    if (payload.sName == 'title' && payload.order == 'desc') {
-      state.companyTasks.sort((a, b) => b.title.localeCompare(a.title))
+      if(payload.order == 'asc') {
+        arr.map((dept) => {
+          dept.tasks.sort((a,b) => a.title.localeCompare(b.title))
+        })
+      } else {
+        arr.map((dept) => {
+          dept.tasks.sort((a,b) => b.title.localeCompare(a.title))
+        })
+      }
+
+      state.companyTasks = arr;
     }
 
     // sort By Status
@@ -68,71 +76,76 @@ export const mutations = {
       let newArr = []
 
       for (let i = 0; i < arr.length; i++) {
-        if (arr[i].status) {
-          newArr.unshift(arr[i])
-        } else {
-          newArr.push(arr[i])
+        let t = []
+        for(let j=0; j<arr[i].tasks.length; j++) {
+          if (arr[i].tasks[j].status) {
+            t.unshift(arr[i].tasks[j])
+          } else {
+            t.push(arr[i].tasks[j])
+          }
         }
+        arr[i].tasks = t;
+        newArr.push(arr[i]);
       }
 
       if (payload.order == "asc") {
-        newArr.sort((a, b) => {
-          if (a.status && b.status) {
-            return a.status.text.localeCompare(b.status.text);
-          }
+        newArr.map((dept) => {
+          dept.tasks.sort((a, b) => {
+            if (a.status && b.status) {
+              return a.status.text.localeCompare(b.status.text);
+            }
+          })
         })
       } else {
-        newArr.sort((a, b) => {
-          if (a.status && b.status) {
-            return b.status.text.localeCompare(a.status.text);
-          }
+        newArr.map((dept) => {
+          dept.tasks.sort((a, b) => {
+            if (a.status && b.status) {
+              return b.status.text.localeCompare(a.status.text);
+            }
+          })
         })
       }
 
       state.companyTasks = newArr;
     }
 
-    // sort by project
-    if (payload.sName == 'project' && payload.order == 'asc') {
+    // sort by priority
+    if (payload.sName == 'priority') {
 
       let arr = JSON.parse(JSON.stringify(state.companyTasks))
       let newArr = []
 
       for (let i = 0; i < arr.length; i++) {
-        if (arr[i].project[0]) {
-          newArr.unshift(arr[i])
-        } else {
-          newArr.push(arr[i])
+        let t = []
+        for(let j=0; j<arr[i].tasks.length; j++) {
+          if (arr[i].tasks[j].priority) {
+            t.unshift(arr[i].tasks[j])
+          } else {
+            t.push(arr[i].tasks[j])
+          }
         }
+        arr[i].tasks = t;
+        newArr.push(arr[i]);
       }
 
-      newArr.sort((a, b) => {
-        if (a.project[0] && b.project[0]) {
-          return a.project[0].project.title.localeCompare(b.project[0].project.title);
-        }
-      });
-      state.companyTasks = newArr;
-
-    }
-
-    if (payload.sName == 'project' && payload.order == 'desc') {
-
-      let arr = JSON.parse(JSON.stringify(state.companyTasks))
-      let newArr = []
-
-      for (let i = 0; i < arr.length; i++) {
-        if (arr[i].project[0]) {
-          newArr.unshift(arr[i])
-        } else {
-          newArr.push(arr[i])
-        }
+      if (payload.order == "asc") {
+        newArr.map((dept) => {
+          dept.tasks.sort((a, b) => {
+            if (a.priority && b.priority) {
+              return a.priority.id - b.priority.id;
+            }
+          })
+        })
+      } else {
+        newArr.map((dept) => {
+          dept.tasks.sort((a, b) => {
+            if (a.priority && b.priority) {
+              return b.priority.id - a.priority.id;
+            }
+          })
+        })
       }
 
-      newArr.sort((a, b) => {
-        if (a.project[0] && b.project[0]) {
-          return b.project[0].project.title.localeCompare(a.project[0].project.title);
-        }
-      });
       state.companyTasks = newArr;
 
     }
@@ -143,73 +156,155 @@ export const mutations = {
       let newArr = []
 
       for (let i = 0; i < arr.length; i++) {
-        if (arr[i].user) {
-          newArr.unshift(arr[i])
-        } else {
-          newArr.push(arr[i])
+        let t = []
+        for(let j=0; j<arr[i].tasks.length; j++) {
+          if (arr[i].tasks[j].user) {
+            t.unshift(arr[i].tasks[j])
+          } else {
+            t.push(arr[i].tasks[j])
+          }
         }
+        arr[i].tasks = t;
+        newArr.push(arr[i]);
       }
-      if (payload.order == 'asc') {
-        newArr.sort((a, b) => {
-          if (a.user && b.user) {
-            return a.user.firstName.localeCompare(b.user.firstName);
-          }
-        });
-        state.companyTasks = newArr;
+
+      if (payload.order == "asc") {
+        newArr.map((dept) => {
+          dept.tasks.sort((a, b) => {
+            if (a.user && b.user) {
+              return a.user.firstName.localeCompare(b.user.firstName);
+            }
+          })
+        })
       } else {
-        newArr.sort((a, b) => {
-          if (a.user && b.user) {
-            return b.user.firstName.localeCompare(a.user.firstName);
-          }
-        });
-        state.companyTasks = newArr;
+        newArr.map((dept) => {
+          dept.tasks.sort((a, b) => {
+            if (a.user && b.user) {
+              return b.user.firstName.localeCompare(a.user.firstName);
+            }
+          })
+        })
       }
 
+      state.companyTasks = newArr;
+
     }
 
     // sort by due date
-    if (payload.sName == 'startDate' && payload.order == 'asc') {
-      state.companyTasks.sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
-    }
-
-    if (payload.sName == 'startDate' && payload.order == 'desc') {
-      state.companyTasks.sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
-    }
-
-    // sort by due date
-    if (payload.sName == 'dueDate' && payload.order == 'asc') {
-      state.companyTasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
-    }
-
-    if (payload.sName == 'dueDate' && payload.order == 'desc') {
-      state.companyTasks.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate))
-    }
-
-    // sort by priority
-    if (payload.sName == "priority") {
+    if (payload.sName == 'startDate') {
       let arr = JSON.parse(JSON.stringify(state.companyTasks))
       let newArr = []
 
       for (let i = 0; i < arr.length; i++) {
-        if (arr[i].priority) {
-          newArr.unshift(arr[i])
-        } else {
-          newArr.push(arr[i])
+        let t = []
+        for(let j=0; j<arr[i].tasks.length; j++) {
+          if (arr[i].tasks[j].startDate) {
+            t.unshift(arr[i].tasks[j])
+          } else {
+            t.push(arr[i].tasks[j])
+          }
         }
+        arr[i].tasks = t;
+        newArr.push(arr[i]);
       }
+
       if (payload.order == "asc") {
-        newArr.sort((a, b) => {
-          if (a.priority && b.priority) {
-            return a.priority.id- b.priority.id;
-          }
-        });
+        newArr.map((dept) => {
+          dept.tasks.sort((a, b) => {
+            if (a.startDate && b.startDate) {
+              return new Date(a.startDate) - new Date(b.startDate);
+            }
+          })
+        })
       } else {
-        newArr.sort((a, b) => {
-          if (a.priority && b.priority) {
-            return b.priority.id- a.priority.id;
-          }
-        });
+        newArr.map((dept) => {
+          dept.tasks.sort((a, b) => {
+            if (a.startDate && b.startDate) {
+              return new Date(b.startDate) - new Date(a.startDate);
+            }
+          })
+        })
       }
+
+      state.companyTasks = newArr;
+    }
+
+    // sort by due date
+    if (payload.sName == 'dueDate') {
+      let arr = JSON.parse(JSON.stringify(state.companyTasks))
+      let newArr = []
+
+      for (let i = 0; i < arr.length; i++) {
+        let t = []
+        for(let j=0; j<arr[i].tasks.length; j++) {
+          if (arr[i].tasks[j].dueDate) {
+            t.unshift(arr[i].tasks[j])
+          } else {
+            t.push(arr[i].tasks[j])
+          }
+        }
+        arr[i].tasks = t;
+        newArr.push(arr[i]);
+      }
+
+      if (payload.order == "asc") {
+        newArr.map((dept) => {
+          dept.tasks.sort((a, b) => {
+            if (a.dueDate && b.dueDate) {
+              return new Date(a.dueDate) - new Date(b.dueDate);
+            }
+          })
+        })
+      } else {
+        newArr.map((dept) => {
+          dept.tasks.sort((a, b) => {
+            if (a.dueDate && b.dueDate) {
+              return new Date(b.dueDate) - new Date(a.dueDate);
+            }
+          })
+        })
+      }
+
+      state.companyTasks = newArr;
+    }
+
+    // sort by project
+    if (payload.sName == "project") {
+
+      let arr = JSON.parse(JSON.stringify(state.companyTasks))
+      let newArr = []
+
+      for (let i = 0; i < arr.length; i++) {
+        let t = []
+        for(let j=0; j<arr[i].tasks.length; j++) {
+          if (arr[i].tasks[j].project[0]) {
+            t.unshift(arr[i].tasks[j])
+          } else {
+            t.push(arr[i].tasks[j])
+          }
+        }
+        arr[i].tasks = t;
+        newArr.push(arr[i]);
+      }
+
+      if (payload.order == "asc") {
+        newArr.map((dept) => {
+          dept.tasks.sort((a, b) => {
+            if (a.project[0] && b.project[0]) {
+              return a.project[0].project.title.localeCompare(b.project[0].project.title);
+            }
+          })
+        })
+      } else {
+        newArr.map((dept) => {
+          dept.tasks.sort((a, b) => {
+            if (a.project[0] && b.project[0]) {
+              return b.project[0].project.title.localeCompare(a.project[0].project.title);
+            }
+          })
+        })
+      }
+
       state.companyTasks = newArr;
     }
   }
