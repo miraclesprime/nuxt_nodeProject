@@ -4,7 +4,7 @@
       <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" title="Close" @click="closeSidebarDetail">
         <bib-icon icon="page-last" class="m-auto"></bib-icon>
       </div>
-      <span class="text-underline cursor-pointer" @click="closeSidebarDetail">{{form?.task?.title}}</span>
+      <span v-show="showTaskTitle" class="text-underline cursor-pointer" @click="closeSidebarDetail">{{form?.task?.title}}</span>
       <div class="ml-auto d-flex align-center gap-05">
           <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="ts-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
             <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" ></bib-icon>
@@ -138,9 +138,10 @@ import _ from 'lodash'
 export default {
 
   name: 'SubtaskDetail',
-  /*props: {
-      subtask: Object,
-  },*/
+  props: {
+      // subtask: Object,
+    showTaskTitle: { type: Boolean, default: true },
+  },
   data() {
     return {
       statusValues: STATUS,

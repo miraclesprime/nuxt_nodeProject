@@ -1,7 +1,7 @@
 <template>
   <article id="side-panel" class="side-panel" v-click-outside="closeSidebar">
     <div class="side-panel__header" id="ts-header">
-      <div class="d-flex justify-between side-panel__header__actions mb-05" id="ts-side-panel">
+      <div class="d-flex justify-between side-panel__header__actions " id="ts-side-panel">
         <div class="d-flex align-center gap-05" id="ts-icon-close-Wrapper">
           <div id='ts-icon-close' class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" v-tooltip="'Close'" title="Close" @click="$nuxt.$emit('close-sidebar')">
             <bib-icon icon="page-last" class="m-auto"></bib-icon>

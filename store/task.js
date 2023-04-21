@@ -190,7 +190,7 @@ export const actions = {
         id: payload.id,
         projectId: ctx.rootState.project.selectedProject.id || payload.project[0].projectId || payload.project[0].project.id,
         data: { statusId: 5, isDone: true },
-        text: "Updated the status to Done"
+        text: "updated status to Done"
       }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
