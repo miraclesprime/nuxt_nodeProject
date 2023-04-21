@@ -42,11 +42,11 @@
         <loading :loading="loading"></loading>
       </div>
 
-      <!-- <subtask-detail></subtask-detail> -->
+      <!-- subtask panel -->
       <transition name="drawer">
         <article v-if="subPanel" id="sub-panel" class="side-panel" v-click-outside="closeSubPanel">
           <keep-alive>
-            <subtask-detail @close-sidebar-detail="subPanel = false"></subtask-detail>
+            <subtask-detail :showTaskTitle="false" @close-sidebar-detail="subPanel = false"></subtask-detail>
           </keep-alive>
         </article>
       </transition>
@@ -194,6 +194,13 @@ export default {
       this.fetchTasks()
     })
 
+    this.taskContextMenuItems.map(el => {
+      if (el.event == 'fav-task') {
+        el.label = 'Remove favorite'
+        el.iconVariant = 'orange'
+      }
+    })
+
     /*this.$store.dispatch("subtask/fetchFavorites")
       .then((sb) => {
         // this.fetchSubtasks()
@@ -214,7 +221,11 @@ export default {
     Promise.all([fetchTask, fetchSubtask]).then((values) => {
       // console.log(values[0].data, values[1].data)
       values[0].data.forEach(d => { this.taskSubtaskLocalData.push(d.task)})
-      values[1].data.forEach(d => { this.taskSubtaskLocalData.push({...d.subtasks, project: d.subtasks.task.project})})
+      values[1].data.forEach(d => {
+        if(d.subtasks){
+          this.taskSubtaskLocalData.push({...d.subtasks, project: d.subtasks.task.project})
+        }
+      })
       // this.taskSubtaskLocalData = [...values[0].data, ...values[1].data]
     })
   },
@@ -254,7 +265,9 @@ export default {
         if (el.hasOwnProperty('taskId')) {
           stsArr.push(el.task)
         } else {
-          stsArr.push({...el.subtasks, project: el.subtasks.task.project})
+          if (el.subtasks) {
+            stsArr.push({...el.subtasks, project: el.subtasks.task.project})
+          }
         }
       })
       // console.log(stsArr)
@@ -995,7 +1008,12 @@ export default {
     },
 
     copyTaskLink(task) {
-      let url = window.location.host + `/tasks/${task.id}`;
+      let url
+      if (task.task) {
+        url = window.location.host + `/subtask/${task.id}`;
+      } else {
+        url = window.location.host + `/tasks/${task.id}`;
+      }
       if (navigator.clipboard) {
         navigator.clipboard.writeText(url);
       } else {
@@ -1186,23 +1204,49 @@ export default {
     },
 
     taskMarkComplete(task) {
-      console.log(typeof task, this.activeTask)
-      this.loading = true
-      if (typeof task == "object" && Object.keys(task).length > 0) {
+      console.log(task)
+      // this.loading = true
+      /*if (typeof task == "object" && Object.keys(task).length > 0) {
         console.log(task)
       } else {
         task = this.activeTask
+      }*/
+
+      /*let user
+      if (field == "userId" && value != '') {
+        user = this.teamMembers.filter(t => t.id == value)
+      } else {
+        user = null
+      }*/
+
+      let data, historyText
+      if (task.statusId == 5) {
+        data = { statusId: 2, isDone: false }
+        historyText = "In-Progress"
+      } else {
+        data = { statusId: 5, isDone: true }
+        historyText = "Done"
       }
-      this.$store.dispatch('task/updateTaskStatus', task)
-        .then((d) => {
-          this.loading = false
-          this.updateKey()
-          // this.$store.dispatch("task/setSingleTask", d)
-          this.setSingleTask(d)
-        }).catch(e => {
-          console.log(e)
-          this.loading = false
+
+      if (task.task) {
+        console.log('subtask selected')
+        this.$store.dispatch("subtask/updateSubtask", {
+          id: task.id,
+          data,
+          // user: null,
+          text: `updated status to ${historyText}`
         })
+        .then(res => this.updateKey())
+        .catch(e => console.warn(e))
+      } else {
+        console.log('task selected')
+        this.$store.dispatch('task/updateTaskStatus', task)
+          .then((d) => {
+            this.updateKey()
+            this.setSingleTask(d)
+          })
+          .catch(e => console.warn(e))
+      }
     },
 
     confirmDelete(state) {
@@ -1210,20 +1254,28 @@ export default {
       this.confirmModal = false
       this.confirmMsg = ""
       if (state) {
-        this.$store.dispatch("task/deleteTask", this.taskToDelete)
-          .then(t => {
-            // console.log(t)
-            if (t.statusCode == 200) {
-              this.updateKey(t.message)
-              this.taskToDelete = {}
-            } else {
-              this.popupMessages.push({ text: t.message, variant: "orange" })
-              console.warn(t.message);
-            }
+        if (this.taskToDelete.task) {
+          console.log('subtask selected')
+          this.$store.dispatch("subtask/deleteSubtask", { ...this.taskToDelete, text: `deleted subtask "${this.taskToDelete.title}"` })
+          .then(st => {
+            this.taskToDelete = {}
+            this.updateKey(st.message)
           })
-          .catch(e => {
-            console.warn(e)
-          })
+          .catch(e => console.warn(e))
+        } else {
+          this.$store.dispatch("task/deleteTask", this.taskToDelete)
+            .then(t => {
+              // console.log(t)
+              if (t.statusCode == 200) {
+                this.taskToDelete = {}
+                this.updateKey(t.message)
+              } else {
+                this.popupMessages.push({ text: t.message, variant: "orange" })
+                console.warn(t.message);
+              }
+            })
+            .catch(e => console.warn(e))
+        }
       } else {
         this.popupMessages.push({ text: "Action cancelled", variant: "orange" })
         this.taskToDelete = {}
@@ -1250,6 +1302,8 @@ export default {
       const sbtsk = await this.$store.dispatch("subtask/fetchFavorites")
       Promise.all([tsk, sbtsk]).then((values) => {
         this.fetchTasks()
+        /*this.activeProject = null
+        this.activeTask = null*/
       })
     },
 
@@ -1262,10 +1316,12 @@ export default {
       }
       // console.log(task.task)
       if (task.task) {
+        this.$nuxt.$emit("close-sidebar");
         this.$store.dispatch("subtask/setSelectedSubtask", task)
         this.subPanel = true
       } else {
         this.$nuxt.$emit("open-sidebar", { ...task, scrollId: scroll });
+        this.subPanel = false
       }
     },
 
