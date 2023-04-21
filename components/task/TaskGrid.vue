@@ -23,8 +23,8 @@
         </div>
       </div>
       <div class="task-mid d-flex gap-05">
-        <status-badge :status="task.status"></status-badge>
-        <priority-badge :priority="task.priority"></priority-badge>
+        <status-badge v-if="task.status" :status="task.status"></status-badge>
+        <priority-badge v-if="task.priority" :priority="task.priority"></priority-badge>
         <!-- <priority-comp :priority="task.priority" :iconOnly="true"></priority-comp> -->
       </div>
       <div class="task-bottom " :id="'tg-bottom'+ task.id">

@@ -51,7 +51,7 @@
         </div>
       </div>
       <div class="task-grid-section " id="task-grid-section-blank-1">
-        <div class="section-title-wrapper d-flex justify-center flex-d-column p-05 mb-075" :class="{'active': sectionInput}" >
+        <div class="section-title-wrapper d-flex justify-center flex-d-column p-05 mb-075" :class="{'active': sectionInput}" v-if="pathBoolean">
           <div class="title pb-05" id="tgs-new-section">
             <div v-if="!sectionInput" class="pt-025 align-center position-relative">
               <span class="text-secondary cursor-pointer d-inline-block  " @click="sectionInput = true">Add section</span>
@@ -86,6 +86,7 @@ export default {
   data() {
     return {
       // sections: this.taskSections,
+      pathBoolean: true,
       localdata: [],
       flag: false,
       ordered: [],
@@ -140,20 +141,25 @@ export default {
   },
 
   mounted() {
-    this.loading = true
-    // this.localdata = _.cloneDeep(this.sections)
-    // console.info('mounted', this.project)
-    this.$store.dispatch("section/fetchProjectSections", { projectId: this.project.id })
-      .then((sections) => {
-        // let key = parseInt(Math.random().toString().slice(-2))
-        this.localdata = sections
-        this.loading = false
-        this.$emit("update-key")
-      })
-      .catch(e => {
-        console.log(e)
-        this.loading = false
-      })
+    if(this.$router.history.current.fullPath != "/tasks") {
+      this.loading = true
+      // this.localdata = _.cloneDeep(this.sections)
+      // console.info('mounted', this.project)
+      this.$store.dispatch("section/fetchProjectSections", { projectId: this.project.id })
+        .then((sections) => {
+          // let key = parseInt(Math.random().toString().slice(-2))
+          this.localdata = sections
+          this.loading = false
+          this.$emit("update-key")
+        })
+        .catch(e => {
+          console.log(e)
+          this.loading = false
+        })
+    } else {
+      this.localdata = JSON.parse(JSON.stringify(this.sections));
+      this.pathBoolean = false;
+    }
   },
 
   methods: {

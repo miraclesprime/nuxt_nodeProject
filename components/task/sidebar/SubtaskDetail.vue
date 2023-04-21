@@ -4,7 +4,7 @@
       <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" title="Close" @click="closeSidebarDetail">
         <bib-icon icon="page-last" class="m-auto"></bib-icon>
       </div>
-      <span class="text-underline cursor-pointer" @click="closeSidebarDetail">{{form?.task?.title}}</span>
+      <span v-show="showTaskTitle" class="text-underline cursor-pointer" @click="closeSidebarDetail">{{form?.task?.title}}</span>
       <div class="ml-auto d-flex align-center gap-05">
           <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="ts-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
             <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" ></bib-icon>
@@ -138,9 +138,10 @@ import _ from 'lodash'
 export default {
 
   name: 'SubtaskDetail',
-  /*props: {
-      subtask: Object,
-  },*/
+  props: {
+      // subtask: Object,
+    showTaskTitle: { type: Boolean, default: true },
+  },
   data() {
     return {
       statusValues: STATUS,
@@ -170,12 +171,12 @@ export default {
     ...mapGetters({
       user2: "user/getUser2",
       subtask: "subtask/getSelectedSubTask",
+      team: 'subtask/getSubtaskMembers',
       favsubtasks: "subtask/getFavSubtasks",
       subtaskComments: "subtask/getSubTaskComments",
       subtaskHistory: "subtask/getSubtaskHistory",
       teamMembers: "user/getTeamMembers",
       departments: "department/getAllDepartments",
-      team: 'subtask/getSubtaskMembers',
     }),
 
     orgUsers() {
@@ -255,6 +256,17 @@ export default {
         }
     },
   },
+  
+  watch: {
+    subtask (newVal, oldVal) {
+      if (newVal != oldVal) {
+        console.log('watch subtask change')
+        this.fetchSubtaskMembers(this.subtask)
+        this.fetchSubtaskComments(this.subtask)
+        this.fetchSubtaskHistory(this.subtask)
+      }
+    }
+  },
 
   created() {
     this.$nuxt.$on("edit-message", (msg) => {
@@ -283,6 +295,8 @@ export default {
 
     ...mapActions({
       fetchSubtaskMembers: "subtask/fetchSubtaskMembers",
+      fetchSubtaskComments: "subtask/fetchSubtaskComments",
+      fetchSubtaskHistory: "subtask/fetchSubtaskHistory",
     }),
 
     showAddTeamModal() {

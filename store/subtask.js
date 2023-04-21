@@ -21,7 +21,7 @@ export const getters = {
     return state.subtaskComments
   },
 
-  getSubtaskHistory(state){
+  getSubtaskHistory(state) {
     return state.subtaskHistory
   },
 
@@ -29,7 +29,7 @@ export const getters = {
     return state.favSubtasks
   },
 
-  getSubtaskMembers(state){
+  getSubtaskMembers(state) {
     return state.subtaskMembers
   }
 };
@@ -52,7 +52,7 @@ export const mutations = {
     state.favSubtasks = payload
   },
 
-  setSubtaskMembers(state, payload){
+  setSubtaskMembers(state, payload) {
     state.subtaskMembers = payload
   },
 
@@ -66,7 +66,7 @@ export const mutations = {
     state.subtaskComments.push(payload)
   },
 
-  setSubtaskHistory(state, payload){
+  setSubtaskHistory(state, payload) {
     state.subtaskHistory = payload
   },
 
@@ -144,18 +144,36 @@ export const actions = {
     }
   },
 
-  fetchFavorites(ctx) {
-    this.$axios.get("subtask/user/favorites", {
-      headers: {
-        "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-      }
-    }).then(fvsub => {
-      // console.log(fvsub.data.data)
-      ctx.commit("setFavSubtasks", fvsub.data.data)
-    }).catch(e => console.warn(e))
+  async removeFromFavorite(ctx, payload){
+    try {
+      const stf = await this.$axios.delete(`subtask/${payload.id}/favorite`, {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+        }
+      })
+      // console.log(stf.data)
+      return stf.data
+    } catch(e) {
+      console.warn(e);
+    }
   },
 
-  async addMembers(ctx, payload){
+  async fetchFavorites(ctx) {
+    try {
+      const favsub = await this.$axios.get("subtask/user/favorites", {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+        }
+      })
+      // console.log(favsub.data)
+      ctx.commit("setFavSubtasks", favsub.data.data)
+      return favsub.data
+    } catch (e) {
+      console.warn(e);
+    }
+  },
+
+  async addMembers(ctx, payload) {
     let data;
     if (ctx.getters.getSubtaskMembers.length < 1) {
       data = payload.team;
@@ -167,20 +185,20 @@ export const actions = {
       })
     }
     try {
-      const stm = await this.$axios.post("subtask/"+payload.id+"/members", { users: data, text: payload.text }, {
+      const stm = await this.$axios.post("subtask/" + payload.id + "/members", { users: data, text: payload.text }, {
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
         }
       })
       return stm.data
-    } catch(e) {
+    } catch (e) {
       console.warn(e);
     }
   },
 
   async fetchSubtaskMembers(ctx, payload) {
     // console.log("fetch sub members->",payload)
-    const st = await this.$axios.get("subtask/"+payload.id+"/members", {
+    const st = await this.$axios.get("subtask/" + payload.id + "/members", {
       headers: {
         "Authorization": "Bearer " + localStorage.getItem("accessToken"),
       }

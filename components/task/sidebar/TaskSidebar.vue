@@ -1,7 +1,7 @@
 <template>
   <article id="side-panel" class="side-panel" v-click-outside="closeSidebar">
     <div class="side-panel__header" id="ts-header">
-      <div class="d-flex justify-between side-panel__header__actions mb-05" id="ts-side-panel">
+      <div class="d-flex justify-between side-panel__header__actions " id="ts-side-panel">
         <div class="d-flex align-center gap-05" id="ts-icon-close-Wrapper">
           <div id='ts-icon-close' class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" v-tooltip="'Close'" title="Close" @click="$nuxt.$emit('close-sidebar')">
             <bib-icon icon="page-last" class="m-auto"></bib-icon>
@@ -228,6 +228,7 @@ export default {
         } else {
           this.form.projectId = this.project.id
         }
+        this.reloadFiles += 1
         // console.info(this.$refs.topScroll)
       } else {
         this.form = {
@@ -344,7 +345,7 @@ export default {
           user,
           "text": `task "${this.form.title}" created`,
         }).then((task) => {
-          console.log(task.data)
+          // console.log(task.data)
           this.$store.dispatch("task/setSingleTask", task.data)
           this.$emit("update-key")
           this.$nuxt.$emit("update-key")
@@ -380,13 +381,23 @@ export default {
         })
       }
       if (taskData.name == 'Status') {
+
+        if(taskData.value == 0) {
+          taskData.value = null
+        }
+
         this.statusValues.find(s => {
           if (s.value == taskData.value) {
             updatedvalue = s.label
           }
         })
       }
+
       if (taskData.name == 'Priority') {
+        if(taskData.value == 0) {
+          taskData.value = null
+        }
+        
         this.priorityValues.find(p => {
           if (p.value == taskData.value) {
             updatedvalue = p.label

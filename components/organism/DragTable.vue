@@ -498,7 +498,6 @@ export default {
     }
 
     &__active {
-      border-bottom-color: $dark-sub1 !important;
 
       span {
         color: $dark-sub1 !important;
