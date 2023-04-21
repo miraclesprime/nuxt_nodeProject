@@ -6,7 +6,7 @@
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y" :class="{ 'bg-light': gridType != 'list'}">
         <template v-if="gridType == 'list'">
           <template v-if="tasks.length">
-            <drag-table-simple :key="key" :componentKey="key" :fields="taskFields" :tasks="localData" :sectionTitle="'Department'" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table-simple>
+            <drag-table :key="key" :componentKey="key" drag-table :fields="taskFields" :sections="localData" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table>
 
             <!-- table context menu -->
             <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
@@ -137,10 +137,11 @@ export default {
         this.loading = true
         let user = JSON.parse(localStorage.getItem("user"))
         this.$store.dispatch('company/fetchCompanyTasks', { companyId: user.subb, sort: true })
-          .then(() => {
+          .then((data) => {
             this.loading = false
+            this.localData = data;
             this.checkActive()
-            // this.key += 1
+            this.key += 1
           })
         if (msg) {
           this.popupMessages.push({text: msg, variant: 'success'})
@@ -155,6 +156,8 @@ export default {
     this.loading = true
     let compid = JSON.parse(localStorage.getItem("user")).subb;
     this.$store.dispatch('company/fetchCompanyTasks', { companyId: compid, filter: 'all' }).then((res) => {
+      this.localData = res;
+      this.key += 1;
       this.loading = false;
     })
   },
@@ -435,31 +438,40 @@ export default {
       this.confirmModal = true
     },
 
-    filterView($event) {
-      this.loading = true
-      let compid = JSON.parse(localStorage.getItem("user")).subb;
+    async filterView($event) {
+      
       if ($event == 'complete') {
-        this.$store.dispatch('company/fetchCompanyTasks', { companyId: compid, filter: 'complete' }).then((res) => {
-          this.key += 1;
-          this.loading = false
-        }).catch(e => console.log(e))
-        this.viewName = 'complete'
+        let viewData = await JSON.parse(JSON.stringify(this.tasks));
+        let newArr = []
+        await viewData.map((dept) => {
+          let tArr = dept.tasks.filter((t) => t.statusId == 5)
+          dept['tasks'] = tArr;
+          newArr.push(dept);
+        })
+
+        this.localData = newArr
+        this.key += 1;
       }
-      if ($event == 'incomplete') {
-        this.$store.dispatch('company/fetchCompanyTasks', { companyId: compid, filter: 'incomplete' }).then((res) => {
-          this.key += 1;
-          this.loading = false
-        }).catch(e => console.log(e))
-        this.viewName = 'incomplete'
+
+      if ($event == 'incomplete') {    
+        let viewData = await JSON.parse(JSON.stringify(this.tasks));
+        let newArr = []
+        await viewData.map((dept) => {
+          let tArr = dept.tasks.filter((t) => t.statusId != 5)
+          dept['tasks'] = tArr;
+          newArr.push(dept)
+        })
+
+        this.localData = newArr
+        this.key += 1;
       }
+
       if ($event == 'all') {
-        this.$store.dispatch('company/fetchCompanyTasks', { companyId: compid, filter: 'all' }).then((res) => {
-          this.key += 1;
-          this.loading = false
-        }).catch(e => console.log(e))
-        this.viewName = 'all'
+        let viewData = await JSON.parse(JSON.stringify(this.tasks));
+
+        this.localData = viewData
+        this.key += 1;
       }
-      this.loading = false
 
     },
 
@@ -579,20 +591,30 @@ export default {
     searchTasks(text) {
 
       let formattedText = text.toLowerCase().trim();
-      
-      let newArr = this.tasks.filter((t) => {
-        
-        if(t.description) {
-          if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText) || t.description.includes(formattedText) || t.description.toLowerCase().includes(formattedText)) {
-            return t
-          } 
-        } else {
-          if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
-            return t
-          } 
-        }
 
+      let depts = JSON.parse(JSON.stringify(this.tasks))
+      
+      let newArr = depts.map((d) => {
+
+          let filtered = d.tasks.filter((t) => {
+          
+          if(t.description) {
+            if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText) || t.description.includes(formattedText) || t.description.toLowerCase().includes(formattedText)) {
+              return t
+            } 
+          } else {
+            if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
+              return t
+            } 
+          }
+
+        })
+
+        d['tasks'] = filtered
+        return d;
+      
       })
+
 
       if(newArr.length >= 0) {
         this.localData = newArr
