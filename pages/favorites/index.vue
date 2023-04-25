@@ -46,7 +46,7 @@
       <transition name="drawer">
         <article v-if="subPanel" id="sub-panel" class="side-panel" v-click-outside="closeSubPanel">
           <keep-alive>
-            <subtask-detail @close-sidebar-detail="subPanel = false"></subtask-detail>
+            <subtask-detail titleClick="task" @close-sidebar-detail="subPanel = false"></subtask-detail>
           </keep-alive>
         </article>
       </transition>
@@ -145,21 +145,21 @@ export default {
   },
 
   watch: {
-    favProjects(newVal) {
+    /*favProjects(newVal) {
       let favProj = JSON.parse(JSON.stringify(newVal))
       let sorted = favProj.sort((a, b) => a.projects.title.localeCompare(b.projects.title))
       let sortedArray = []
       sorted.forEach(p => { sortedArray.push(p.projects) })
       this.projLocalData = sortedArray
-    },
+    },*/
 
-    favTasks(newVal) {
+    /*favTasks(newVal) {
       let favTask = JSON.parse(JSON.stringify(newVal))
       let sorted = favTask.sort((a, b) => a.task.title.localeCompare(b.task.title))
       let sortedArray = []
       sorted.forEach(t => { sortedArray.push(t.task) })
       this.taskLocalData = sortedArray
-    }
+    }*/
   },
 
   created() {
@@ -187,7 +187,8 @@ export default {
     this.loading = true
     let user = JSON.parse(localStorage.getItem("user"))
     this.$store.dispatch("company/fetchCompanyMembers", user.subb)
-    this.$store.dispatch('project/fetchFavProjects').then(() => {
+    this.$store.dispatch('project/fetchFavProjects')
+    .then(() => {
       this.fetchProjects()
     })
     /*this.$store.dispatch('task/getFavTasks').then(() => {
@@ -244,11 +245,20 @@ export default {
 
     async fetchProjects() {
       let favProj = await JSON.parse(JSON.stringify(this.favProjects))
-      let sorted = await favProj.sort((a, b) => a.projects.title.localeCompare(b.projects.title))
-      let sortedArray = []
-      sorted.forEach(p => { sortedArray.push(p.projects) })
-      this.sortedProject = sortedArray
-      this.key += 1
+      // let sorted = await favProj.sort((a, b) => a.projects.title.localeCompare(b.projects.title))
+      let prArr = []
+      favProj.forEach(p => { prArr.push(p.projects) })
+      this.projLocalData = prArr
+      this.sortedProject = prArr
+      if (this.projOrder == 'asc') {
+        this.projOrder = 'desc'
+      } else {
+        this.projOrder = 'asc'
+      }
+      if (this.projSortName) {
+        this.sortProject(this.projSortName) //forever loop
+      }
+      // this.key += 1
       this.loading = false
     },
 
@@ -274,10 +284,12 @@ export default {
       this.taskSubtaskLocalData = stsArr
       this.sortedTask = stsArr
       if (this.taskOrder == 'asc') { this.taskOrder = 'desc'} else { this.taskOrder = 'asc'}
-      this.sortTask(this.taskSortName)
+      if (this.taskSortName) {
+        this.sortTask(this.taskSortName) //forever loop issue
+      }
       // this.sortedTask = await stsArr.sort((a, b) => a.title.localeCompare(b.title))
       // this.key += 1
-      // this.loading = false
+      this.loading = false
     },
 
     /*async fetchSubtasks(){
@@ -480,7 +492,9 @@ export default {
     },
 
     sortProject(field) {
-
+      
+      this.projSortName = field
+      console.log("field->",field, "sort name->",this.projSortName, this.projOrder)
       switch (field) {
 
         case 'title':
@@ -671,6 +685,7 @@ export default {
     },
 
     async sortTask(field) {
+      
       this.taskSortName = field
       console.log(field, this.taskSortName, this.taskOrder)
 
@@ -1307,7 +1322,7 @@ export default {
       const sbtsk = await this.$store.dispatch("subtask/fetchFavorites")
       Promise.all([tsk, sbtsk]).then((values) => {
         this.fetchTasks()
-        console.log(values)
+        // console.log(values)
         // this.key += 1
         /*this.activeProject = null
         this.activeTask = null*/
