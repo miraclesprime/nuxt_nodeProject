@@ -19,7 +19,7 @@
           </div>
         </template>
         <template v-else>
-          <task-grid-section :sections="localData" :activeTask="activeTask" :templateKey="key" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="taskSetFavorite" v-on:mark-complete="taskMarkComplete" v-on:delete-task="deleteTask">
+          <task-grid-section :sections="localData" :activeTask="activeTask" :templateKey="key" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="taskSetFavorite" v-on:mark-complete="taskMarkComplete" v-on:delete-task="deleteTask" sectionType="department">
           </task-grid-section>
         </template>
         <!-- user-picker for list and board view -->
