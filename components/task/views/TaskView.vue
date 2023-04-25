@@ -11,7 +11,7 @@
     </template>
 
     <template v-else>
-      <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" @create-section="createSection" @section-rename="renameSectionModal" @section-delete="deleteSection" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="setFavorite" v-on:mark-complete="markComplete" v-on:delete-task="deleteTask" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd">
+      <task-grid-section :sections="localdata" :activeTask="activeTask" :templateKey="templateKey" @create-section="createSection" @section-rename="renameSectionModal" @section-delete="deleteSection" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="setFavorite" v-on:mark-complete="markComplete" v-on:delete-task="deleteTask" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" sectionType='singleProject'>
       </task-grid-section>
     </template>
 

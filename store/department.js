@@ -8,7 +8,7 @@ export const state = () => ({
 export const getters = {
 
   getAllDepartments(state) {
-    let Depts = [{label: "Please Select a Department...", value: null}]
+    let Depts = [{label: "Choose department", value: null}]
     state.departments.map(d => {
         Depts.push({ label: d.title, value: d.id })
       })
