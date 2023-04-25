@@ -42,7 +42,7 @@
             <template v-for="task in section.tasks">
               <task-grid :task="task" :project="section.projectId" :key="task.title + templateKey + '-' + task.id" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="$emit('update-key')" @open-sidebar="openSidebar(task, section.projectId)" ></task-grid>
             </template>
-            <task-grid-blank :section="section" :key="'blankTaskGrid'+section.id" :ref="'blankTaskGrid'+section.id" @close-other="closeOtherBlankGrid"></task-grid-blank>
+            <task-grid-blank :projectSectionTask="singleProjectRoute" :section="section" :key="'blankTaskGrid'+section.id" :ref="'blankTaskGrid'+section.id" @close-other="closeOtherBlankGrid"></task-grid-blank>
             <!-- <div v-click-outside="closeNewTask">
               <div class="bg-success-sub6 shape-rounded cursor-pointer bg-hover-success-sub3 px-05 text-success text-center font-lg" @click.stop="showNewTask(section.id)" >+</div>
               <task-grid-blank :ref="'newTaskGrid'+section.id" :key="'newTaskGrid'+section.id" :sectionId="section.id" ></task-grid-blank>
@@ -51,7 +51,7 @@
         </div>
       </div>
       <div class="task-grid-section " id="task-grid-section-blank-1">
-        <div class="section-title-wrapper d-flex justify-center flex-d-column p-05 mb-075" :class="{'active': sectionInput}" v-if="pathBoolean">
+        <div class="section-title-wrapper d-flex justify-center flex-d-column p-05 mb-075" :class="{'active': sectionInput}" v-if="sectionType == 'singleProject'">
           <div class="title pb-05" id="tgs-new-section">
             <div v-if="!sectionInput" class="pt-025 align-center position-relative">
               <span class="text-secondary cursor-pointer d-inline-block  " @click="sectionInput = true">Add section</span>
@@ -86,7 +86,6 @@ export default {
   data() {
     return {
       // sections: this.taskSections,
-      pathBoolean: true,
       localdata: [],
       flag: false,
       ordered: [],
@@ -106,6 +105,7 @@ export default {
   props: {
     sections: { type: Array, required: true },
     templateKey: { default: 0 },
+    sectionType: { type: String }
     // activeTask: { type: Object },
     // tasks: { type: Array },
   },
@@ -141,7 +141,7 @@ export default {
   },
 
   mounted() {
-    if(this.$router.history.current.fullPath != "/tasks") {
+    if(this.sectionType == "singleProject") {
       this.loading = true
       // this.localdata = _.cloneDeep(this.sections)
       // console.info('mounted', this.project)
@@ -156,10 +156,11 @@ export default {
           console.log(e)
           this.loading = false
         })
-    } else {
+    } 
+    if(this.sectionType == "department") {
       this.localdata = JSON.parse(JSON.stringify(this.sections));
-      this.pathBoolean = false;
     }
+    
   },
 
   methods: {
