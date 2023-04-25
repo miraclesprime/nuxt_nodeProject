@@ -46,7 +46,7 @@
       <transition name="drawer">
         <article v-if="subPanel" id="sub-panel" class="side-panel" v-click-outside="closeSubPanel">
           <keep-alive>
-            <subtask-detail :showTaskTitle="false" @close-sidebar-detail="subPanel = false"></subtask-detail>
+            <subtask-detail @close-sidebar-detail="subPanel = false"></subtask-detail>
           </keep-alive>
         </article>
       </transition>
@@ -190,9 +190,9 @@ export default {
     this.$store.dispatch('project/fetchFavProjects').then(() => {
       this.fetchProjects()
     })
-    this.$store.dispatch('task/getFavTasks').then(() => {
+    /*this.$store.dispatch('task/getFavTasks').then(() => {
       this.fetchTasks()
-    })
+    })*/
 
     this.taskContextMenuItems.map(el => {
       if (el.event == 'fav-task') {
@@ -272,8 +272,11 @@ export default {
       })
       // console.log(stsArr)
       this.taskSubtaskLocalData = stsArr
-      this.sortedTask = await stsArr.sort((a, b) => a.title.localeCompare(b.title))
-      this.key += 1
+      this.sortedTask = stsArr
+      if (this.taskOrder == 'asc') { this.taskOrder = 'desc'} else { this.taskOrder = 'asc'}
+      this.sortTask(this.taskSortName)
+      // this.sortedTask = await stsArr.sort((a, b) => a.title.localeCompare(b.title))
+      // this.key += 1
       // this.loading = false
     },
 
@@ -668,6 +671,8 @@ export default {
     },
 
     async sortTask(field) {
+      this.taskSortName = field
+      console.log(field, this.taskSortName, this.taskOrder)
 
       switch (field) {
 
@@ -1049,7 +1054,7 @@ export default {
         taskId = this.activeTask.id
       }
 
-      console.log(user, projectId, taskId)
+      // console.log(user, projectId, taskId)
 
       if (this.activeTask.task) {
         // console.log('subtask selected')
@@ -1302,6 +1307,8 @@ export default {
       const sbtsk = await this.$store.dispatch("subtask/fetchFavorites")
       Promise.all([tsk, sbtsk]).then((values) => {
         this.fetchTasks()
+        console.log(values)
+        // this.key += 1
         /*this.activeProject = null
         this.activeTask = null*/
       })
