@@ -479,7 +479,7 @@ export const DEPARTMENT = [
   { label: 'Marketing', value: "marketing" },
 ]
 export const STATUS = [
-  { label: 'Select', value: 0 },
+  { label: 'Choose status', value: 0 },
   { label: 'Not Started', value: '1' },
   { label: 'In-Progress', value: '2' },
   { label: 'Waiting', value: '3' },
@@ -487,7 +487,7 @@ export const STATUS = [
   { label: 'Done', value: '5' },
 ]
 export const PRIORITY = [
-  { label: 'Select', value: 0 },
+  { label: 'Choose status', value: 0 },
   { label: 'Low', value: '3' },
   { label: 'Medium', value: '2' },
   { label: 'High', value: '1' },
