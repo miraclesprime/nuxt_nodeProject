@@ -571,6 +571,11 @@ export const TASK_FAVORITES = [
   {
     label: 'Task name',
     key: 'title',
+    icon: {
+      icon: '',
+      variant: '',
+      event: ''
+    },
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
