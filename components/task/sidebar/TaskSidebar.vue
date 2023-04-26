@@ -83,7 +83,7 @@
     </div>
 
     <div class="of-scroll-y d-grid" id="ts-of-scroll-y" style="grid-template-columns: none; align-items: start">
-      <sidebar-fields :task="currentTask" :loading="loading" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform" ></sidebar-fields>
+      <sidebar-fields :task="currentTask" :loading="loading" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform" :departmentId="departmentId"></sidebar-fields>
       <!-- <template v-if="currentTask.id"> -->
         <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" ></sidebar-subtask>
         <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
@@ -127,6 +127,7 @@ export default {
   props: {
     sectionIdActive: Number,
     scrollId: {type: String, default: "sidebar-inner-wrap"},
+    departmentId: {type: Number}
   },
   data: function() {
     return {
@@ -239,7 +240,7 @@ export default {
           dueDate: "",
           userId: "",
           sectionId: "",
-          departmentId: 1,
+          departmentId: this.departmentId || 1,
           projectId: "",
           statusId: 1,
           priorityId: 2,

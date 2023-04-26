@@ -130,6 +130,7 @@
                 v-show="openSidebar"
                 :sectionIdActive="sectionPreselect"
                 :scrollId="scrollId"
+                :departmentId="departmentId"
               ></task-sidebar>
             </transition>
           </div>
@@ -297,6 +298,7 @@ export default {
       scrollId: "",
       isAdmin: false,
       btnText: "Upgrade",
+      departmentId: null
     };
   },
   created() {
@@ -341,6 +343,11 @@ export default {
         this.$store.dispatch("task/setSingleTask", payload);
         this.$store.dispatch("task/fetchTeamMember", { id: payload.id });
       }
+
+      if(payload.department) {
+        this.departmentId = payload.department;
+      }
+
     });
     this.$root.$on("close-sidebar", () => {
       // console.info('close-sidebar event')

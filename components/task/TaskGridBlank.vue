@@ -47,7 +47,8 @@ import _ from 'lodash'
 export default {
   name: "TaskGridBlank",
   props: {
-    section: Object,
+    section: { type: Object },
+    sectionType: { type: String }
   },
   data() {
     return {
@@ -110,29 +111,57 @@ export default {
       })*/
     },
     debounceCreate: _.debounce(function() {
-      // console.info(this.taskTitle)
-      // this.$refs.newtaskInput.classList.add("loading")
-      this.loading = true
-      this.$store.dispatch("task/createTask", {
-        sectionId: this.section.id,
-        title: this.taskTitle,
-        description: "",
-        statusId: 1,
-        dueDate: "",
-        priorityId: 3,
-        projectId: this.section.projectId,
-        budget: 0,
-        text: `task "${this.taskTitle}" created`,
-      }).then(t => {
-        // console.log(t)
-        if (t.statusCode == 200) {
-          // this.$emit("update-key")
-          this.$nuxt.$emit("update-key")
-        }
-        this.taskTitle = ""
-        this.newTask = false
-        this.loading = false
-      }).catch(e => console.warn(e))
+      
+      if(this.sectionType == 'department') {
+
+        this.loading = true
+        this.$store.dispatch("task/createTask", {
+          title: this.taskTitle,
+          description: "",
+          departmentId: this.section.id,
+          statusId: 1,
+          dueDate: "",
+          priorityId: 3,
+          budget: 0,
+          text: `task "${this.taskTitle}" created`,
+        }).then(t => {
+          // console.log(t)
+          if (t.statusCode == 200) {
+            // this.$emit("update-key")
+            this.$nuxt.$emit("update-key")
+          }
+          this.taskTitle = ""
+          this.newTask = false
+          this.loading = false
+        }).catch(e => console.warn(e))
+
+      } else {
+
+        this.loading = true
+        this.$store.dispatch("task/createTask", {
+          sectionId: this.section.id,
+          title: this.taskTitle,
+          description: "",
+          statusId: 1,
+          dueDate: "",
+          priorityId: 3,
+          projectId: this.section.projectId,
+          budget: 0,
+          text: `task "${this.taskTitle}" created`,
+        }).then(t => {
+          // console.log(t)
+          if (t.statusCode == 200) {
+            // this.$emit("update-key")
+            this.$nuxt.$emit("update-key")
+          }
+          this.taskTitle = ""
+          this.newTask = false
+          this.loading = false
+        }).catch(e => console.warn(e))
+      
+      }
+
+
     }, 1200),
   },
 };

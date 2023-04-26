@@ -6,7 +6,7 @@
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y" :class="{ 'bg-light': gridType != 'list'}">
         <template v-if="gridType == 'list'">
           <template v-if="tasks.length">
-            <drag-table :key="key" :componentKey="key" drag-table :fields="taskFields" :sections="localData" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table>
+            <drag-table :key="key" :componentKey="key" drag-table :fields="taskFields" :sections="localData" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" @section-dragend="sectionDragEnd"></drag-table>
 
             <!-- table context menu -->
             <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
@@ -19,7 +19,7 @@
           </div>
         </template>
         <template v-else>
-          <task-grid-section :sections="localData" :activeTask="activeTask" :templateKey="key" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="taskSetFavorite" v-on:mark-complete="taskMarkComplete" v-on:delete-task="deleteTask" sectionType="department">
+          <task-grid-section :sections="localData" :activeTask="activeTask" :templateKey="key" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="taskSetFavorite" v-on:mark-complete="taskMarkComplete" v-on:delete-task="deleteTask" @section-dragend="sectionDragEnd" sectionType="department">
           </task-grid-section>
         </template>
         <!-- user-picker for list and board view -->
@@ -554,10 +554,13 @@ export default {
     },
 
     toggleSidebar($event) {
-      if (!$event) {
-        this.$nuxt.$emit("open-sidebar", $event)
-      }
       this.flag = !this.flag;
+      // this.$emit("open-sidebar", $event);
+      if ($event.id) {
+        this.$nuxt.$emit("open-sidebar", $event.id)
+      } else {
+        this.$nuxt.$emit("open-sidebar", {department: $event});
+      }
     },
 
     copyTaskLink(task) {
@@ -606,7 +609,39 @@ export default {
         this.localData = JSON.parse(JSON.stringify(this.tasks));
         this.key++;
       }
-    }
+    },
+
+    sectionDragEnd: _.debounce(async function(payload) {
+
+      this.loading = true
+
+      // console.log(payload)
+      let clone = _.cloneDeep(payload)
+      clone.forEach((el, i) => {
+        el.order = i
+      })
+
+      // console.log("ordered sections =>", clone)
+
+      let sectionDnD = await this.$axios.$put("/department/dragdrop", { data: clone }, {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+          "Content-Type": "application/json"
+        }
+      })
+
+      // console.log(sectionDnD.message)
+
+      if (sectionDnD.statusCode == 200) {
+        let user = JSON.parse(localStorage.getItem("user"))
+        this.$store.dispatch("company/fetchCompanyTasks", { companyId: user.subb }).then(() => {
+          this.key++;
+        })
+      }
+
+      this.loading = false
+
+    }, 600),
   },
 
 }
