@@ -22,14 +22,14 @@
                       <bib-icon icon="add"></bib-icon>
                       <span class="ml-05" :id="'tgs-list-span'+section.id">Add task</span>
                     </div>
-                  </span><span class="list__item" :id="'tgs-list-2'+section.id" v-on:click="$emit('section-rename',{id: section.id, title: section.title })">
+                  </span><span v-if="sectionType != 'department'" class="list__item" :id="'tgs-list-2'+section.id" v-on:click="$emit('section-rename',{id: section.id, title: section.title })">
                     <div class="d-flex align-center" :id="'tgs-list-flex-2'+section.id">
                       <bib-icon icon="pencil"></bib-icon>
                       <span class="ml-05" :id="'tgs-list-span'+section.id">Rename</span>
                     </div>
                   </span>
-                  <hr>
-                  <span class="list__item list__item__danger" :id="'tgs-list-3'+section.id" v-on:click="$emit('section-delete',{id: section.id, title: section.title, projectId: section.projectId })">
+                  <hr v-if="sectionType != 'department'">
+                  <span v-if="sectionType != 'department'" class="list__item list__item__danger" :id="'tgs-list-3'+section.id" v-on:click="$emit('section-delete',{id: section.id, title: section.title, projectId: section.projectId })">
                     Delete section
                   </span>
                 </div>
@@ -42,7 +42,7 @@
             <template v-for="task in section.tasks">
               <task-grid :task="task" :project="section.projectId" :key="task.title + templateKey + '-' + task.id" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="$emit('update-key')" @open-sidebar="openSidebar(task, section.projectId)" ></task-grid>
             </template>
-            <task-grid-blank :projectSectionTask="singleProjectRoute" :section="section" :key="'blankTaskGrid'+section.id" :ref="'blankTaskGrid'+section.id" @close-other="closeOtherBlankGrid"></task-grid-blank>
+            <task-grid-blank :sectionType="sectionType" :section="section" :key="'blankTaskGrid'+section.id" :ref="'blankTaskGrid'+section.id" @close-other="closeOtherBlankGrid"></task-grid-blank>
             <!-- <div v-click-outside="closeNewTask">
               <div class="bg-success-sub6 shape-rounded cursor-pointer bg-hover-success-sub3 px-05 text-success text-center font-lg" @click.stop="showNewTask(section.id)" >+</div>
               <task-grid-blank :ref="'newTaskGrid'+section.id" :key="'newTaskGrid'+section.id" :sectionId="section.id" ></task-grid-blank>
@@ -112,7 +112,6 @@ export default {
 
   computed: {
     ...mapGetters({
-      token: "token/getToken",
       project: "project/getSingleProject",
       currentTask: 'task/getSelectedTask',
       // sections: "section/getProjectSections",
@@ -141,13 +140,11 @@ export default {
   },
 
   mounted() {
+
     if(this.sectionType == "singleProject") {
       this.loading = true
-      // this.localdata = _.cloneDeep(this.sections)
-      // console.info('mounted', this.project)
       this.$store.dispatch("section/fetchProjectSections", { projectId: this.project.id })
         .then((sections) => {
-          // let key = parseInt(Math.random().toString().slice(-2))
           this.localdata = sections
           this.loading = false
           this.$emit("update-key")
@@ -157,6 +154,7 @@ export default {
           this.loading = false
         })
     } 
+    
     if(this.sectionType == "department") {
       this.localdata = JSON.parse(JSON.stringify(this.sections));
     }
