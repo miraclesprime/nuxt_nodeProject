@@ -6,7 +6,7 @@
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y" :class="{ 'bg-light': gridType != 'list'}">
         <template v-if="gridType == 'list'">
           <template v-if="tasks.length">
-            <drag-table :key="key" :componentKey="key" drag-table :fields="taskFields" :sections="localData" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" @section-dragend="sectionDragEnd"></drag-table>
+            <drag-table :key="key" :componentKey="key" drag-table :fields="taskFields" :sections="localData" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd"></drag-table>
 
             <!-- table context menu -->
             <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
@@ -642,6 +642,38 @@ export default {
       this.loading = false
 
     }, 600),
+
+    taskDragEnd: _.debounce(async function(payload) {
+      // console.log('task dragend =>', payload)
+      // this.highlight = null
+      this.loading = true
+      let tasks = _.cloneDeep(payload.tasks)
+
+      tasks.forEach((el, i) => {
+        el.dOrder = i
+      })
+
+      // console.log("sorted->", tasks)
+
+      let taskDnD = await this.$axios.$put("/department/crossDepartmentDragDrop", { data: tasks, departmentId: payload.sectionId }, {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+          "Content-Type": "application/json"
+        }
+      })
+
+      // console.log(taskDnD.message)
+      if (taskDnD.statusCode == 200) {
+          let user = JSON.parse(localStorage.getItem("user"))
+          this.$store.dispatch("company/fetchCompanyTasks", { companyId: user.subb }).then(() => {
+            this.key++;
+          })
+      } else {
+        console.warn(taskDnD.message)
+      }
+      this.loading = false
+    }, 600),
+
   },
 
 }
