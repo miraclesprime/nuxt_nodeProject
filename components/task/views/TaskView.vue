@@ -127,7 +127,6 @@ export default {
   },
   computed: {
     ...mapGetters({
-      token: "token/getToken",
       user: "user/getUser",
       teamMembers: "user/getTeamMembers",
       task: "task/getSelectedTask",

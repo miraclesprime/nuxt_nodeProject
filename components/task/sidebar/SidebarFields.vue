@@ -63,6 +63,9 @@ export default {
     loading: {
         type: Boolean,
         default: false
+    },
+    departmentId: {
+      type: Number
     }
   },
 
@@ -162,7 +165,7 @@ export default {
           userId: "",
           sectionId: "_section" + this.project.id,
           projectId: this.project.id || "",
-          departmentId: 1,
+          departmentId: this.departmentId || 1,
           statusId: 1,
           priorityId: 2,
           description: '',

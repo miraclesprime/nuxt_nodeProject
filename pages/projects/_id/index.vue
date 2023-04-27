@@ -158,7 +158,6 @@ export default {
   computed: {
 
     ...mapGetters({
-        token: 'token/getToken',
         project: 'project/getSingleProject',
         projects: 'project/getAllProjects',
         team: "project/getProjectMembers",
@@ -272,21 +271,6 @@ export default {
       this.projectModalTitle = title
       this.projectModalContent = content
     },
-
-    /*async fetchProject() {
-      const proj = await this.$axios.$get(`project/${this.$route.params.id}`, {
-        headers: { 'Authorization': `Bearer ${this.token}` }
-      })
-      if (proj) {
-        this.$store.dispatch('project/setSingleProject', proj.data)
-      }
-      const sec = await this.$axios.$get(`section/project/${this.$route.params.id}`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-      })
-      if (sec) {
-        this.sections = sec.data
-      }
-    },*/
 
     setFavorite() {
       this.favLoading = true

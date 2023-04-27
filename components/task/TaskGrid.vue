@@ -69,8 +69,8 @@ import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 export default {
   name: "TaskGrid",
   props: {
-    task: Object,
-    project: Number,
+    task: { type: Object },
+    project: { type: Number }
   },
   data() {
     return {
