@@ -571,17 +571,98 @@ export const TASK_FAVORITES = [
   {
     label: 'Task name',
     key: 'title',
-    icon: {
-      icon: '',
-      variant: '',
-      event: ''
-    },
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
       isActive: false
     },
     event: "task-click",
+  },
+  {
+    label: "Project",
+    key: "project",
+    header_icon: {
+      icon: "swap-vertical",
+      event: "table-sort",
+      isActive: false,
+    },
+  },
+  {
+    label: "Department",
+    key: "department",
+    header_icon: {
+      icon: "swap-vertical",
+      event: "table-sort",
+      isActive: false,
+    },
+  },
+  {
+    label: 'Status',
+    key: 'status',
+    width: '12%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  },
+  {
+    label: 'Priority',
+    key: 'priority',
+    width: '12%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  },
+  {
+    label: 'Assignee',
+    key: 'userId',
+    width: '15%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  },
+  {
+    label: 'Start Date',
+    key: 'startDate',
+    width: '10%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  },
+  {
+    label: 'Due Date',
+    key: 'dueDate',
+    width: '10%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  }
+]
+
+export const DEMO_TABLE = [
+  {
+    label: 'Task name',
+    key: 'title',
+    icon: {
+      icon: 'check-circle-solid',
+      variant: 'gray2',
+      event: 'title-icon-click'
+    },
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    },
+    event: "title-click",
   },
   {
     label: "Project",

@@ -2,16 +2,23 @@
   <client-only>
     <div id="page" class="h-100">
       <page-title title="Favorite subtask"></page-title>
-      <favorite-actions v-on:change-viewing="changeView" v-on:change-sorting="changeSort" ></favorite-actions>
-      <div id="subtask-favorite-wrap" class="of-scroll-y position-relative content-wrap">
-        <advance-table :tableFields="tableFields" :tableData="subtasks"></advance-table>
+      <favorite-actions v-on:change-viewing="changeView" v-on:change-sorting="changeSort"></favorite-actions>
+      <div id="subtask-favorite-wrap" class=" position-relative content-wrap" :style="{ 'width': contentWidth }">
+        <advance-table :tableFields="tableFields" :tableData="subtasks" @title-click="openSubPanel" ></advance-table>
       </div>
+      <transition name="drawer">
+        <article v-if="subPanel" id="sub-panel" class="side-panel" v-click-outside="closeSubPanel">
+          <keep-alive>
+            <subtask-detail titleClick="task" @close-sidebar-detail="subPanel = false"></subtask-detail>
+          </keep-alive>
+        </article>
+      </transition>
     </div>
   </client-only>
 </template>
 <script>
 import _ from 'lodash'
-import { TASK_FAVORITES, TASK_CONTEXT_MENU } from '~/config/constants'
+import { DEMO_TABLE, TASK_CONTEXT_MENU } from '~/config/constants'
 import { mapGetters, mapActions } from 'vuex';
 export default {
 
@@ -20,7 +27,9 @@ export default {
   data() {
     return {
       subtasks: [],
-      tableFields: TASK_FAVORITES,
+      tableFields: DEMO_TABLE,
+      subPanel: false,
+      contentWidth: "100%",
     }
   },
 
@@ -30,23 +39,60 @@ export default {
       favTasks: 'task/getFavTasks',*/
       favSubtasks: "subtask/getFavSubtasks",
       teamMembers: "user/getTeamMembers",
-    })
+    }),
+    /*contentWidth(){
+      const page = document.getElementById("page")
+      console.log(page)
+      if (this.subPanel) {
+        return (page.scrollWidth - 730) + 'px'
+      } else {
+        return page.scrollWidth + 'px'
+      }
+    }*/
   },
 
-  mounted(){
+  watch: {
+    subPanel(){
+      const page = document.getElementById("page")
+      if (this.subPanel) {
+        this.contentWidth = (page.scrollWidth - 730) + 'px'
+      } else {
+        this.contentWidth = page.scrollWidth + 'px'
+      }
+    }
+  },
+
+  mounted() {
     this.$store.dispatch("subtask/fetchFavorites")
-    .then(res => {
-      console.log(res)
-      res.data.forEach(d => {
-        if(d.subtasks){
-          this.subtasks.push({...d.subtasks, project: d.subtasks.task.project})
-        }
+      .then(res => {
+        // console.log(res)
+        res.data.forEach(d => {
+          if (d.subtasks) {
+            this.subtasks.push({ ...d.subtasks, project: d.subtasks.task.project || [{}] })
+          }
+        })
+
+        /*const page = document.getElementById("page")
+        console.log(page)
+        if (this.subPanel) {
+          this.contentWidth = (page.scrollWidth - 730) + 'px'
+        } else {
+          this.contentWidth = page.scrollWidth + 'px'
+        }*/
       })
-    })
 
   },
 
   methods: {
+    openSubPanel($event) {
+      // this.$nuxt.$emit("close-sidebar");
+      console.log($event)
+      this.$store.dispatch("subtask/setSelectedSubtask", $event)
+      this.subPanel = true
+    },
+    closeSubPanel() {
+      this.subPanel = false
+    },
     changeView($event) {
       console.log($event)
       if ($event == 'complete') {
@@ -99,6 +145,16 @@ export default {
 
 </script>
 <style lang="scss" scoped>
-#page { display: grid; grid-template-rows: 1fr 1fr 11fr; grid-template-columns: 1fr; }
-.content-wrap { /*max-height: calc(100vh - 150px);*/}
+#page {
+  display: grid;
+  grid-template-rows: 1fr 1fr 11fr;
+  grid-template-columns: 1fr;
+}
+
+.content-wrap {
+  /*max-height: calc(100vh - 150px);*/
+  transition: margin 200ms ease-out;
+  &.squeeze { width: calc(100% - $sidebar-width); }
+}
+
 </style>
