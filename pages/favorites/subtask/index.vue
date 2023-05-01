@@ -54,11 +54,15 @@ export default {
   watch: {
     subPanel(){
       const page = document.getElementById("page")
-      if (this.subPanel) {
-        this.contentWidth = (page.scrollWidth - 730) + 'px'
-      } else {
-        this.contentWidth = page.scrollWidth + 'px'
-      }
+      process.nextTick(() => {
+        const sub = document.getElementById("sub-panel")
+        console.log(page.scrollWidth, sub.scrollWidth)
+        if (this.subPanel) {
+          this.contentWidth = (page.scrollWidth - sub.scrollWidth) + 'px'
+        } else {
+          this.contentWidth = page.scrollWidth + 'px'
+        }
+      });
     }
   },
 
@@ -86,7 +90,7 @@ export default {
   methods: {
     openSubPanel($event) {
       // this.$nuxt.$emit("close-sidebar");
-      console.log($event)
+      // console.log($event)
       this.$store.dispatch("subtask/setSelectedSubtask", $event)
       this.subPanel = true
     },
@@ -147,7 +151,7 @@ export default {
 <style lang="scss" scoped>
 #page {
   display: grid;
-  grid-template-rows: 1fr 1fr 11fr;
+  grid-template-rows: 1fr 1fr 15fr;
   grid-template-columns: 1fr;
 }
 

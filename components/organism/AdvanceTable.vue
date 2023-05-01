@@ -1,14 +1,18 @@
 <template>
   <div class="adv-table-wrapper position-relative">
-    <div class="adv-table bg-white" :style="{'width': tableWidth}">
-      <div class="thead">
-        <div class="tr">
-          <div v-for="(field, index) in tableFields" :key="field+index" class="th" :style="{ width: field.width}">{{field.label}}</div>
+    <div class="adv-table bg-white" :style="{'width': tableWidth}" role="table">
+      <!-- <div class="zero" :style="{ width: tableFields[0].width}">
+        <div class="align-center gap-05">{{tableFields[0].label}} <span v-if="tableFields[0].header_icon" class="height-1" @click="$emit(tableFields[0].header_icon.event)"><bib-icon :icon="tableFields[0].header_icon.icon" :variant="tableFields[0].header_icon.isActive ? 'gray1' : 'gray4'"></bib-icon></span></div>
+      </div> -->
+        <div class="tr" role="row">
+          <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{ width: field.width}">
+            <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1" @click="$emit(field.header_icon.event)"><bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'gray1' : 'gray4'"></bib-icon></span></div>
+          </div>
           <!-- <div class="th">owner</div>
         <div class="th">due date</div> -->
         </div>
-      </div>
-      <div class="tbody">
+      <!-- <div class="thead">
+      </div> -->
         <div v-for="item in tableData" :key="item.id" class="tr" role="row">
           <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell">
             <div v-if="field.key == 'title'" class="align-center ">
@@ -21,7 +25,7 @@
               <span v-else class="flex-grow-1">
                 {{item[field.key]}}
               </span>
-              <span v-if="field.event" class="width-105 height-105 align-center justify-center cursor-pointer bg-hover-light" @click.stop="$emit(`${field.event}`, item)">
+              <span v-if="field.event" class="width-105 height-105 align-center justify-center flex-shrink-0 cursor-pointer bg-hover-light" @click.stop="$emit(`${field.event}`, item)">
                 <bib-icon icon="arrow-right" variant="gray4" hover-variant="gray5"></bib-icon>
               </span>
             </div>
@@ -42,12 +46,9 @@
           <!-- <div class="td">asdf</div>
         <div class="td">asdf</div> -->
         </div>
-        <!-- <div class="tr">
-        <div class="td">asdf</div>
-        <div class="td">asdf</div>
-        <div class="td">asdf</div>
+      <!-- <div class="tbody">
+        
       </div> -->
-      </div>
       <!-- <div class="tfoot">
       <div class="tr">
         <div class="td">foot asdf</div>
@@ -78,78 +79,136 @@ export default {
   },
 
   computed: {
-    tableWidth(){
+    tableWidth() {
       const main = document.getElementById("main-content")
-      console.log(main.clientWidth, main.offsetWidth, main.scrollWidth )
-      return main.scrollWidth+'px'
+      console.log(main.clientWidth, main.offsetWidth, main.scrollWidth)
+      let w = main.scrollWidth
+      
+      return w + 'px'
     },
   },
 
-  methods: {
-    methodName() {
+  mounted() {
+    const sub = document.getElementById("sub-panel")
+  },
 
-    }
+  methods: {
+
   }
 }
 
 </script>
 <style lang="scss" scoped>
-  *::-webkit-scrollbar {
+* {
+  scrollbar-width: auto;
+  scrollbar-height: auto;
+}
+*::-webkit-scrollbar {
+  width: auto;
+  height: auto;
+}
+
+::-webkit-scrollbar {
     width: auto;
     height: auto;
-  }
+}
+
+*::-webkit-scrollbar-track {
+  border-radius: 0;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 0;
+  /*border: 0 none;*/
+}
 
 .adv-table-wrapper {
   overflow: auto;
-  scrollbar-width: auto;
   height: calc(100vh - 200px);
 }
+
 .adv-table {
   display: table;
   min-width: 100%;
-  /*border-collapse: collapse;*/
-  position: relative;
   font-size: $base-size;
-  border-top: 1px solid $gray2;
-
-  .thead {
-    position: sticky;
-    top: 0;
-    background-color: $white;
-    border-bottom: 1px solid $gray2;
-
-    .th {
-      display: table-cell;
-    }
-  }
 
   .thead,
   .tbody,
   .tfoot {
     display: table-row-group;
   }
-}
-
-.tr {
-  display: table-row;
-}
-
-.th,
-.td {
-  display: table-cell;
-  border-left: 1px solid $light;
-  border-bottom: 1px solid $light;
-  padding: 0.25rem;
-  /*resize: horizontal;*/
-  vertical-align: middle;
-  min-width: fit-content;
-  white-space: nowrap;
-
-  &::first-child {
-    position: sticky;
-    left: 0;
+  
+  .th,
+  .td {
+    display: table-cell;
+    border-bottom: 1px solid $light;
+    padding: 0.25rem;
+    vertical-align: middle;
+    min-width: fit-content;
+    white-space: nowrap;
+    &:not(:last-child){
+      border-right: 1px solid $light;
+    }
   }
+
+  
+  .tr {
+    display: table-row;
+    
+    .th:first-child,
+    .td:first-child {
+      position: sticky;
+      width: 100px;
+      left: 0;
+      z-index: 10;
+      background: #fff;
+    }
+
+    .th {
+      position: sticky;
+      top: 0;
+      z-index: 9;
+      background: $gray9;
+      &:first-child {
+        z-index: 11;
+      }
+    }
+  }
+  
+  
+    
+  
+  /*.thead {
+    border-bottom: 1px solid $gray2;
+    .tr {
+      background-color: $gray9;
+      position: sticky;
+      top: 0;
+      z-index: 11;
+    }
+    .th {
+      display: table-cell;
+      position: relative;
+      z-index: 5;
+      &:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 15;
+      }
+    }
+  }*/
+  /*.zero { position: sticky; z-index: 15; left: 0; top: 0; background-color: $gray9; padding: 0.25rem; }*/
+  /*.tbody {
+    .td:first-child {
+      background-color: $white;
+      position: sticky;
+      left: 0;
+      z-index: 1;
+    }
+  }*/
 }
+
+
 
 .editable-input {
   font-size: $base-size;
