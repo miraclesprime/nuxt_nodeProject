@@ -40,25 +40,21 @@ export default {
       favSubtasks: "subtask/getFavSubtasks",
       teamMembers: "user/getTeamMembers",
     }),
-    /*contentWidth(){
-      const page = document.getElementById("page")
-      console.log(page)
-      if (this.subPanel) {
-        return (page.scrollWidth - 730) + 'px'
-      } else {
-        return page.scrollWidth + 'px'
-      }
-    }*/
+
   },
 
   watch: {
     subPanel(){
       const page = document.getElementById("page")
-      if (this.subPanel) {
-        this.contentWidth = (page.scrollWidth - 730) + 'px'
-      } else {
-        this.contentWidth = page.scrollWidth + 'px'
-      }
+      process.nextTick(() => {
+        const sub = document.getElementById("sub-panel")
+        console.log(page.scrollWidth, sub.scrollWidth)
+        if (this.subPanel) {
+          this.contentWidth = (page.scrollWidth - sub.scrollWidth) + 'px'
+        } else {
+          this.contentWidth = '100%'
+        }
+      });
     }
   },
 
@@ -80,13 +76,12 @@ export default {
           this.contentWidth = page.scrollWidth + 'px'
         }*/
       })
-
   },
 
   methods: {
     openSubPanel($event) {
       // this.$nuxt.$emit("close-sidebar");
-      console.log($event)
+      // console.log($event)
       this.$store.dispatch("subtask/setSelectedSubtask", $event)
       this.subPanel = true
     },
@@ -147,12 +142,12 @@ export default {
 <style lang="scss" scoped>
 #page {
   display: grid;
-  grid-template-rows: 1fr 1fr 11fr;
+  grid-template-rows: 55px 55px auto;
   grid-template-columns: 1fr;
 }
 
 .content-wrap {
-  /*max-height: calc(100vh - 150px);*/
+  max-height: calc(100vh - 175px);
   transition: margin 200ms ease-out;
   &.squeeze { width: calc(100% - $sidebar-width); }
 }

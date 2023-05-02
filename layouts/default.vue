@@ -446,16 +446,16 @@ export default {
         this.$store.dispatch("user/setUser", user);
 
         this.$axios
-          .get(`${process.env.USER_API_URL}/${user.sub}`, {
+          .get(`${process.env.USER_API_ENDPOINT}/${user.sub}`, {
             headers: {
               Authorization: `Bearer ${jwt}`,
             },
           })
           .then((res) => {
-            let firstName = res.data[0].FirstName;
-            let lastName = res.data[0].LastName;
+            let firstName = res.data.FirstName;
+            let lastName = res.data.LastName;
 
-            this.$store.dispatch("user/setUser2", res.data[0]);
+            this.$store.dispatch("user/setUser2", res.data);
 
             this.$axios
               .$post(
