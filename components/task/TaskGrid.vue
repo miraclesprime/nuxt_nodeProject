@@ -44,7 +44,7 @@
           <bib-icon icon="calendar" variant="gray4" class="events-none"></bib-icon>
         </div>
       </div>
-      <loading2 :loading="loading" text="wait..."></loading2>
+      <!-- <loading2 :loading="loading" text="wait..."></loading2> -->
       <!-- popup notification -->
       <bib-popup-notification-wrapper>
         <template #wrapper>
@@ -167,7 +167,7 @@ export default {
     }, 1200),
 
     updateTask(label, field, value, historyText) {
-      this.loading = true
+      // this.loading = true
       this.userPickerOpen = false
       const project = () => {
         if (this.task.project.length > 0) {

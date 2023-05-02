@@ -73,12 +73,12 @@ export default {
   mounted() {
     
     if (this.user) {
-      this.$axios.get(`${process.env.USER_API_URL}/${this.user.sub}`, {
+      this.$axios.get(`${process.env.USER_API_ENDPOINT}/${this.user.sub}`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
           }
         }).then((res) => {
-          this.owner = {id: res.data[0].Id, firstName: res.data[0].FirstName, lastName: res.data[0].LastName, avatar: res.data[0].Photo, email: res.data[0].Email};
+          this.owner = {id: res.data.Id, firstName: res.data.FirstName, lastName: res.data.LastName, avatar: res.data.Photo, email: res.data.Email};
         })
     }
 
