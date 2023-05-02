@@ -652,6 +652,7 @@ export const DEMO_TABLE = [
   {
     label: 'Task name',
     key: 'title',
+    width: '22%',
     icon: {
       icon: 'check-circle-solid',
       variant: 'gray2',
@@ -676,6 +677,7 @@ export const DEMO_TABLE = [
   {
     label: "Department",
     key: "department",
+    width: '10%',
     header_icon: {
       icon: "swap-vertical",
       event: "table-sort",
@@ -685,7 +687,7 @@ export const DEMO_TABLE = [
   {
     label: 'Status',
     key: 'status',
-    width: '12%',
+    width: '10%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -695,7 +697,7 @@ export const DEMO_TABLE = [
   {
     label: 'Priority',
     key: 'priority',
-    width: '12%',
+    width: '10%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -705,7 +707,7 @@ export const DEMO_TABLE = [
   {
     label: 'Assignee',
     key: 'userId',
-    width: '15%',
+    width: '12%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -715,7 +717,7 @@ export const DEMO_TABLE = [
   {
     label: 'Start Date',
     key: 'startDate',
-    width: '10%',
+    width: '8%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -725,7 +727,7 @@ export const DEMO_TABLE = [
   {
     label: 'Due Date',
     key: 'dueDate',
-    width: '10%',
+    width: '8%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',

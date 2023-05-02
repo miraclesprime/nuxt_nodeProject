@@ -40,15 +40,7 @@ export default {
       favSubtasks: "subtask/getFavSubtasks",
       teamMembers: "user/getTeamMembers",
     }),
-    /*contentWidth(){
-      const page = document.getElementById("page")
-      console.log(page)
-      if (this.subPanel) {
-        return (page.scrollWidth - 730) + 'px'
-      } else {
-        return page.scrollWidth + 'px'
-      }
-    }*/
+
   },
 
   watch: {
@@ -60,7 +52,7 @@ export default {
         if (this.subPanel) {
           this.contentWidth = (page.scrollWidth - sub.scrollWidth) + 'px'
         } else {
-          this.contentWidth = page.scrollWidth + 'px'
+          this.contentWidth = '100%'
         }
       });
     }
@@ -84,7 +76,6 @@ export default {
           this.contentWidth = page.scrollWidth + 'px'
         }*/
       })
-
   },
 
   methods: {
@@ -151,12 +142,12 @@ export default {
 <style lang="scss" scoped>
 #page {
   display: grid;
-  grid-template-rows: 1fr 1fr 15fr;
+  grid-template-rows: 55px 55px auto;
   grid-template-columns: 1fr;
 }
 
 .content-wrap {
-  /*max-height: calc(100vh - 150px);*/
+  max-height: calc(100vh - 175px);
   transition: margin 200ms ease-out;
   &.squeeze { width: calc(100% - $sidebar-width); }
 }
