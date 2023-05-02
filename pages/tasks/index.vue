@@ -6,10 +6,10 @@
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y" :class="{ 'bg-light': gridType != 'list'}">
         <template v-if="gridType == 'list'">
           <template v-if="tasks.length">
-            <drag-table :key="key" :componentKey="key" drag-table :fields="taskFields" :sections="localData" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd"></drag-table>
+            <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localData" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" @row-rightclick="taskRightClick" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" :newTaskButton="newTaskButton" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" ></drag-table>
 
             <!-- table context menu -->
-            <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
+            <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick"></table-context-menu>
 
           </template>
           <div v-else>
@@ -22,6 +22,7 @@
           <task-grid-section :sections="localData" :activeTask="activeTask" :templateKey="key" v-on:update-key="updateKey" v-on:create-task="toggleSidebar($event)" v-on:set-favorite="taskSetFavorite" v-on:mark-complete="taskMarkComplete" v-on:delete-task="deleteTask" @section-dragend="sectionDragEnd" sectionType="department">
           </task-grid-section>
         </template>
+
         <!-- user-picker for list and board view -->
         <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"></user-picker>
         
@@ -88,7 +89,26 @@ export default {
       confirmMsg: "",
       alertDialog: false,
       alertMsg: "",
-      localData: []
+      localData: [],
+      newTaskButton: {
+        show: true,
+        label: "New Task",
+        icon: "add",
+      },
+      newRow: {
+        id: "",
+        sectionId: "",
+        title: "",
+        userId: "",
+        statusId: 1,
+        priorityId: 3,
+        startDate: "",
+        dueDate: "",
+        department: "",
+        description: "",
+        budget: "",
+        text: "",
+      }
     }
   },
   computed: {
@@ -129,7 +149,20 @@ export default {
           this.popupMessages.push({text: msg, variant: 'success'})
         }
       })
+
+       this.$nuxt.$on("update-key", () => {
+          // console.log('update key event capture')
+          this.updateKey()
+        })
       
+      this.$nuxt.$on("user-picker", (payload) => {
+        // emitted from <task-grid>
+        this.showUserPicker(payload)
+      })
+      this.$nuxt.$on("date-picker", (payload) => {
+        // emitted from <task-grid>
+        this.showDatePicker(payload)
+      })
     }
   },
 
@@ -198,7 +231,7 @@ export default {
       }
       let compid = JSON.parse(localStorage.getItem("user")).subb;
       
-      let tasks = this.$store.dispatch("company/fetchCompanyTasks", { companyId: compid, filter: "all", sort: this.sortName })
+      this.$store.dispatch("company/fetchCompanyTasks", { companyId: compid, filter: "all", sort: this.sortName })
         .then(() => {
           this.key += 1
         })
@@ -332,7 +365,11 @@ export default {
       })
         .then(t => {
           // console.log(t)
-          this.updateSingleRow(t.data)
+          if(this.gridType == 'list') {
+            this.updateSingleRow(t.data)
+          } else {
+            this.updateKey()
+          }
           // this.updateKey()
         })
         .catch(e => console.warn(e))
@@ -351,7 +388,11 @@ export default {
       })
         .then(t => {
           // console.log(t)
-          this.updateSingleRow(t.data)
+          if(this.gridType == 'list') {
+            this.updateSingleRow(t.data)
+          } else {
+            this.updateKey()
+          }
           // this.updateKey()
         })
         .catch(e => console.warn(e))
@@ -673,6 +714,35 @@ export default {
       }
       this.loading = false
     }, 600),
+
+    createNewTask(payload) {
+      this.$store.dispatch("task/createTask", { ...payload, departmentId: payload.sectionId, text: `task "${payload.title}" created` })
+        .then(t => {          
+          this.resetNewRow()
+          this.updateKey()
+        })
+        .catch(e => {
+          console.warn(e)
+        })
+    },
+
+    resetNewRow() {
+      this.newRow = {
+        id: "",
+        sectionId: "",
+        title: "",
+        userId: "",
+        statusId: 1,
+        priorityId: 3,
+        startDate: "",
+        dueDate: "",
+        department: "",
+        description: "",
+        budget: "",
+        text: "",
+      }
+      this.userPickerOpen = false
+    },
 
   },
 

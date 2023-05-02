@@ -206,7 +206,7 @@ export const actions = {
   },
 
   async setTeamMembers(ctx) {
-    const members = await this.$axios.$get(`${process.env.ORG_API_URL}/${ctx.rootState.user.user.subb}/users`, {
+    const members = await this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${ctx.rootState.user.user.subb}/users`, {
       headers: {
         "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
       }
