@@ -21,12 +21,7 @@
 
         <!-- task table -->
         <drag-table-simple :fields="taskTableFields" :componentKey="key+1" :tasks="taskSubtaskLocalData" :sectionTitle="'Favorite Tasks'" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :drag="false" v-on:new-task="openSidebar" v-on:table-sort="sortTask" @row-click="openSidebar" @row-context="taskRightClick" @edit-field="updateTask" @user-picker="showTaskUserpicker" @date-picker="showTaskDatepicker" @status-picker="showTaskStatusPicker" @priority-picker="showTaskPriorityPicker" @dept-picker="showTaskDeptPicker"></drag-table-simple>
-        <!-- <ul>
-          <li class="font-w-600">All task and subtask </li>
-          <li v-for="(sub, index) in sortedTask" :key="key+1" class="d-flex gap-025 flex-wrap py-025 border-top-secondary">
-            <span v-for="(value, key) in sub" style="background-image: linear-gradient(175deg, white 20%, lightgray 100%); " class="px-05 border-light">{{key}} -> {{value}} </span>
-          </li>
-        </ul> -->
+        
         <!-- task context menu -->
         <table-context-menu :items="taskContextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" @close-context="closePopups" @item-click="taskContextItemClick" ref="task_menu"></table-context-menu>
         <!-- user-picker for task -->
