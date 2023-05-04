@@ -661,7 +661,7 @@ export const DEMO_TABLE = [
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
-      isActive: true,
+      isActive: false,
     },
     event: "title-click",
   },
