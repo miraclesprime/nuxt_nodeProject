@@ -48,7 +48,7 @@ export default {
       const page = document.getElementById("page")
       process.nextTick(() => {
         const sub = document.getElementById("sub-panel")
-        console.log(page.scrollWidth, sub.scrollWidth)
+        console.log(page.scrollWidth - sub.scrollWidth)
         if (this.subPanel) {
           this.contentWidth = (page.scrollWidth - sub.scrollWidth) + 'px'
         } else {
