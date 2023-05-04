@@ -35,7 +35,7 @@
           <format-date :datetime="new Date().toString()" variant="gray5"></format-date>
         </div>
       </div>
-      <loading2 :loading="loading" text="creating..."></loading2>
+      <!-- <loading2 :loading="loading" text="creating..."></loading2> -->
     </div>
     <div class="bg-success-sub6 shape-rounded cursor-pointer bg-hover-success-sub3 px-05 text-success text-center font-lg" @click.stop="showNewTask">+</div>
   </div>
