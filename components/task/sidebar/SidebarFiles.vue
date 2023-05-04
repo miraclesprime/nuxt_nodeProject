@@ -124,26 +124,6 @@ export default {
     },*/
   },
   watch: {
-    /*task(newValue, oldValue) {
-      // console.log(newValue.id, newValue.title)
-      if (newValue.id && newValue.id != oldValue.id) {
-        // console.log(newValue.id, oldValue.id)
-        this.getFiles()
-      } else {
-        this.dbFiles = []
-        this.oldfilesCount = 0
-      }
-    },*/
-
-    /*subtask(newValue, oldValue) {
-      if (newValue.id && newValue.id != oldValue.id) {
-        // console.log(newValue.id, oldValue.id)
-        this.getFiles()
-      } else {
-        this.dbFiles = []
-        this.oldfilesCount = 0
-      }
-    },*/
 
     reloadFiles(newValue, oldValue) {
       if (newValue != oldValue) {
@@ -219,6 +199,7 @@ export default {
 
       let obj1
       this.mode == "task" ? obj1 = { taskId: this.task.id } : obj1 = { subTaskId: this.subtask.id }
+      console.log(obj1)
 
       this.$axios.get("file/db/all", {
           // timeout: 2500,
@@ -233,15 +214,6 @@ export default {
             this.dbFiles = f.data.data
             this.showPlaceholder = false
             this.fileKey += 1;
-            // this.$nuxt.$emit("refresh-history")
-            // console.info('old files->', this.oldfilesCount, 'new files->', this.dbFiles.length)
-            // if (this.ffcount <= 1 && this.oldfilesCount == this.dbFiles.length) {
-            //   _.delay(() => {
-            //     this.ffcount += 1
-            //     this.getFiles()
-            //   }, 5000)
-            //   // console.log('Same files count! Hit api again to fetch updated files')
-            // }
           }
         })
         .catch(e => {
