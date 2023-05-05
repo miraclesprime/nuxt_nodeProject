@@ -33,8 +33,9 @@
           </div>
           <template v-if="field.key == 'project'">{{item[field.key][0].project.title}}</template>
           <template v-if="field.key == 'userId'">
+            <user-select :key="item.id+'user'+index" :userId="item[field.key]" @change="updateAssignee($event, item)"></user-select>
             <!-- <user-info :userId="item[field.key]"></user-info> -->
-            <bib-select :options="teamOptions" placeholder="Owner" @change="updateAssignee($event, item)" ></bib-select>
+            <!-- <bib-select :options="teamOptions" placeholder="Owner" @change="updateAssignee($event, item)" ></bib-select> -->
             <!-- <div class="picker-content">
               <input type="text" class="picker-input" ref="userFilterInput" v-model="userFilterKey" autofocus >
               <div class="mt-05" style="max-height: 12rem; overflow-y: auto">
@@ -117,11 +118,11 @@ export default {
     ...mapGetters({
       teamMembers: "user/getTeamMembers",
     }),
-    teamOptions(){
+    /*teamOptions(){
       return this.teamMembers.map(t => {
         return { value : t.id, label: t.label }
       })
-    },
+    },*/
     /*filterTeam() {
       let regex = new RegExp(this.filterKey, 'g\i')
       return this.teamMembers.filter((u) => {
@@ -167,9 +168,9 @@ export default {
       // console.log(item)
       this.$emit("update-title", { id: item.id, field: "title", value: value, label: "Title", historyText: value })
     }, 800),
-    updateAssignee(value, item){
-      console.log(value, item)
-      this.$emit("update-field", { id: item.id, field: "userId", value: value, label: "Assignee", historyText: value })
+    updateAssignee(user, item){
+      console.log(user, item)
+      this.$emit("update-field", { id: item.id, field: "userId", value: user.id, label: "Assignee", historyText: user.label })
     },
     updateDate(date){
       console.log(date)
@@ -180,27 +181,38 @@ export default {
 </script>
 <style lang="scss" scoped>
 * {
-  scrollbar-width: auto;
-  scrollbar-height: auto;
+  scrollbar-width: unset;
+  scrollbar-height: unset;
+  scrollbar-gutter: unset;
 }
 
 *::-webkit-scrollbar {
-  width: auto;
-  height: auto;
+  width: unset;
+  height: unset;
 }
 
 ::-webkit-scrollbar {
-  width: auto;
-  height: auto;
+  width: unset;
+  height: unset;
 }
 
 *::-webkit-scrollbar-track {
-  border-radius: 0;
+  border-radius: unset;
+  background-color: initial;
 }
 
 *::-webkit-scrollbar-thumb {
-  border-radius: 0;
+  border-radius: unset;
+  background-color: initial;
   /*border: 0 none;*/
+}
+
+::-webkit-scrollbar {
+    all:unset;
+}
+
+::-webkit-scrollbar-thumb {
+    all:unset;
 }
 
 .adv-table-wrapper {
