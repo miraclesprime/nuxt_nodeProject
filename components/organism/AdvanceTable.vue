@@ -6,7 +6,7 @@
       </div> -->
       <div class="tr" role="row">
         <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{ width: field.width}">
-          <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1" @click="$emit(field.header_icon.event)">
+          <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer" @click="$emit(field.header_icon.event, field)">
               <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'gray1' : 'gray4'"></bib-icon>
             </span></div>
         </div>
@@ -15,14 +15,14 @@
       </div>
       <!-- <div class="thead">
       </div> -->
-      <div v-for="item in tableData" :key="item.id" class="tr" role="row">
+      <div v-for="item in tableData" :key="item.id" class="tr" role="row" @click.right.prevent="contextOpen($event, item)">
         <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell">
           <div v-if="field.key == 'title'" class="align-center ">
             <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}">
               <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="field.icon.variant" hover-variant="success"></bib-icon>
             </span>
             <span v-if="field.event" class=" flex-grow-1" style=" line-height:1.25;">
-              <input type="text" class="editable-input" :value="item[field.key]">
+              <input type="text" class="editable-input" :value="item[field.key]" @input="debounceTitle($event.target.value, item)">
             </span>
             <span v-else class="flex-grow-1">
               {{item[field.key]}}
@@ -33,7 +33,18 @@
           </div>
           <template v-if="field.key == 'project'">{{item[field.key][0].project.title}}</template>
           <template v-if="field.key == 'userId'">
-            <user-info :userId="item[field.key]"></user-info>
+            <!-- <user-info :userId="item[field.key]"></user-info> -->
+            <bib-select :options="teamOptions" placeholder="Owner" @change="updateAssignee($event, item)" ></bib-select>
+            <!-- <div class="picker-content">
+              <input type="text" class="picker-input" ref="userFilterInput" v-model="userFilterKey" autofocus >
+              <div class="mt-05" style="max-height: 12rem; overflow-y: auto">
+                <ul class="m-0 p-0 text-left">
+                  <li v-for="user in filterTeam" :key="user.id" class="p-025 font-md cursor-pointer" @click.stop="selected(user)">
+                    <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
+                  </li>
+                </ul>
+              </div>
+            </div> -->
           </template>
           <template v-if="field.key == 'status'">
             <status-comp :status="item[field.key]"></status-comp>
@@ -42,7 +53,10 @@
             <priority-comp :priority="item[field.key]"></priority-comp>
           </template>
           <template v-if="field.key == 'department'">{{item[field.key].title}}</template>
-          <template v-if="field.key.includes('Date')" class="date-cell">{{$formatDate(item[field.key])}}</template>
+          <template v-if="field.key.includes('Date')" class="date-cell">
+            <!-- {{$formatDate(item[field.key])}} -->
+             <bib-datetime-picker :value="item[field.key]" format="DD MM YYYY" placeholder="" @input="updateDate" ></bib-datetime-picker>
+          </template>
           <!-- {{item[field.key]}} -->
         </div>
         <!-- <div class="td">asdf</div>
@@ -59,9 +73,24 @@
       </div>
     </div> -->
     </div>
+    <template v-if="contextItems">
+      <table-context-menu :items="contextItems" :show="contextVisible" :coordinates="popupCoords" @close-context="closePopups" @item-click="taskContextItemClick" ref="task_menu"></table-context-menu>
+    </template>
+    <!-- user-picker for task -->
+    <!-- <user-picker :show="userPicker" :coordinates="popupCoords" @selected="updateTaskAssignee('Assignee', 'userId', $event.id, $event.label)" @close="closePopups"></user-picker> -->
+    <!-- date-picker for task -->
+    <!-- <inline-datepicker :show="taskDatepickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateTaskDate" @close="closePopups"></inline-datepicker> -->
+    <!-- status picker for task -->
+    <!-- <status-picker :show="taskStatuspickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="taskStatuspickerOpen = false"></status-picker> -->
+    <!-- priority picker for task -->
+    <!-- <priority-picker :show="taskPrioritypickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="taskPrioritypickerOpen = false"></priority-picker> -->
+    <!-- department-picker for list view -->
+    <!-- <dept-picker :show="taskDeptpickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Department', field:'departmentId', value: $event.value, historyText: $event.label })" @close="taskDeptpickerOpen = false"></dept-picker> -->
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
+import _ from 'lodash'
 import dayjs from 'dayjs'
 export default {
 
@@ -71,17 +100,36 @@ export default {
     tableFields: { type: Array, required: true, default: () => [] },
     tableData: { type: Array, required: true, default: () => [] },
     dataType: { type: String, default: 'nested' },
+    contextItems: { type: Array },
     draggable: { type: Boolean, default: true },
     // height: { type: String, default: '100%' }
   },
 
   data() {
     return {
-
+      contextVisible: false,
+      popupCoords: {left: 0, top: 0},
+      userFilterKey: "",
     }
   },
 
   computed: {
+    ...mapGetters({
+      teamMembers: "user/getTeamMembers",
+    }),
+    teamOptions(){
+      return this.teamMembers.map(t => {
+        return { value : t.id, label: t.label }
+      })
+    },
+    /*filterTeam() {
+      let regex = new RegExp(this.filterKey, 'g\i')
+      return this.teamMembers.filter((u) => {
+        if (regex.test(u.label) || regex.test(u.email)) {
+          return u
+        }
+      })
+    },*/
     tableWidth() {
       const main = document.getElementById("main-content")
       // console.log(main.clientWidth, main.offsetWidth, main.scrollWidth)
@@ -108,7 +156,24 @@ export default {
   },
 
   methods: {
-
+    contextOpen($event, item){
+      this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
+      this.contextVisible = true
+    },
+    closePopups(){
+      this.contextVisible = false
+    },
+    debounceTitle: _.debounce(function(value, item) {
+      // console.log(item)
+      this.$emit("update-title", { id: item.id, field: "title", value: value, label: "Title", historyText: value })
+    }, 800),
+    updateAssignee(value, item){
+      console.log(value, item)
+      this.$emit("update-field", { id: item.id, field: "userId", value: value, label: "Assignee", historyText: value })
+    },
+    updateDate(date){
+      console.log(date)
+    },
   }
 }
 
@@ -200,6 +265,15 @@ export default {
 .editable-input {
   font-size: $base-size;
   font-weight: normal;
+}
+::v-deep {
+  .bib-select { line-height: normal;
+    .select__real { margin: 0 !important; }
+    .select__btn { background-color: transparent !important; line-height: normal;}
+  }
+  .vdpComponent__input { margin: 0; min-height: 2rem; border-color: transparent;
+    &:hover { border-color: transparent;}
+  }
 }
 
 </style>

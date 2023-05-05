@@ -163,6 +163,7 @@ export default {
     created() {
         
         if (process.client) {
+            this.$store.dispatch('user/setTeamMembers')
 
             this.tId = this.$route.params.id;
 
@@ -190,7 +191,7 @@ export default {
     },
 
     mounted() {
-        this.$store.dispatch("company/fetchCompanyMembers", JSON.parse(localStorage.getItem("user")).subb)
+        // this.$store.dispatch("company/fetchCompanyMembers", JSON.parse(localStorage.getItem("user")).subb)
     },
 
     methods: {

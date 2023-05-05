@@ -4,7 +4,7 @@
       <page-title title="Favorite subtask"></page-title>
       <favorite-actions v-on:change-viewing="changeView" v-on:change-sorting="changeSort"></favorite-actions>
       <div id="subtask-favorite-wrap" class=" position-relative content-wrap" :style="{ 'width': contentWidth }">
-        <advance-table :tableFields="tableFields" :tableData="subtasks" @title-click="openSubPanel" ></advance-table>
+        <advance-table :tableFields="tableFields" :tableData="subtasks" @table-sort="sortTask" @title-click="openSubPanel" @update-title="updateTitle" ></advance-table>
       </div>
       <transition name="drawer">
         <article v-if="subPanel" id="sub-panel" class="side-panel" v-click-outside="closeSubPanel">
@@ -48,7 +48,7 @@ export default {
       const page = document.getElementById("page")
       process.nextTick(() => {
         const sub = document.getElementById("sub-panel")
-        console.log(page.scrollWidth, sub.scrollWidth)
+        console.log(page.scrollWidth - sub.scrollWidth)
         if (this.subPanel) {
           this.contentWidth = (page.scrollWidth - sub.scrollWidth) + 'px'
         } else {
@@ -134,6 +134,12 @@ export default {
         this.sortTask($event)
       }*/
       console.log($event)
+    },
+    sortTask(payload){
+      console.log(payload)
+    },
+    updateTitle(payload){
+      console.log(payload)
     },
   }
 }
