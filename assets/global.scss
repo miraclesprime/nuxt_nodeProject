@@ -1,21 +1,26 @@
 @import '@/assets/variable.scss';
+
 html,
 body {
   font-family: $font-family;
 }
+
 .bg {
   &-orange {
     &-sub1 {
       background-color: rgba($orange, 0.35);
     }
+
     &-sub2 {
       background-color: rgba($orange, 0.25);
     }
+
     &-sub3 {
       background-color: rgba($orange, 0.15);
     }
   }
 }
+
 .sidebar select,
 .sidebar input {
   font-size: 14px;
@@ -62,11 +67,12 @@ ul {
   }
 }
 
-.flex{
-  &-shrink-0{
+.flex {
+  &-shrink-0 {
     flex-shrink: 0;
   }
-  &-shrink-1{
+
+  &-shrink-1 {
     flex-shrink: 1;
   }
 }
@@ -89,8 +95,13 @@ ul {
 }
 
 @keyframes slidein-right {
-  from { transform: translateX(100%);}
-  to { transform: translateX(0);}
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
 }
 
 .side-panel {
@@ -135,14 +146,42 @@ ul {
   border-style: solid;
   border-color: transparent;
   border-radius: 0.25rem;
-  &:hover { border-color: $gray4;}
-  &:focus { outline: none; border-color: $dark; box-shadow: 0 0 3px $dark-sub4; }
-  &.error { border-color: $danger-sub1; color: $danger;
-    &:focus { border-color: $danger-sub1; box-shadow: 0 0 3px $danger-sub2;}
+
+  &:hover {
+    border-color: $gray4;
   }
-  &.sm { padding: 0.125rem 0.2rem; font-weight: normal; font-size: $font-size-sm; border-radius: 0.1rem; }
-  &.loading { background-image: url('./static/spinner.svg'); background-position: right center; background-repeat: no-repeat; background-size: contain;}
+
+  &:focus {
+    outline: none;
+    border-color: $dark;
+    box-shadow: 0 0 3px $dark-sub4;
+  }
+
+  &.error {
+    border-color: $danger-sub1;
+    color: $danger;
+
+    &:focus {
+      border-color: $danger-sub1;
+      box-shadow: 0 0 3px $danger-sub2;
+    }
+  }
+
+  &.sm {
+    padding: 0.125rem 0.2rem;
+    font-weight: normal;
+    font-size: $font-size-sm;
+    border-radius: 0.1rem;
+  }
+
+  &.loading {
+    background-image: url('./static/spinner.svg');
+    background-position: right center;
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
 }
+
 // task bundle
 .task-bundle {
   display: flex;
@@ -259,6 +298,7 @@ ul {
   &-capitalize {
     text-transform: capitalize;
   }
+
   &-truncate {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -313,7 +353,11 @@ ul {
 }
 
 .msg__content {
-  a { color: $primary; text-decoration: underline; display: initial; }
+  a {
+    color: $primary;
+    text-decoration: underline;
+    display: initial;
+  }
 }
 
 .mention {
@@ -329,53 +373,94 @@ ul {
   pointer-events: none;
 }
 
-@keyframes placeHolderShimmer{
-    0%{
-        background-position: -880px 0
-    }
-    100%{
-        background-position: 880px 0
-    }
+@keyframes placeHolderShimmer {
+  0% {
+    background-position: -880px 0
+  }
+
+  100% {
+    background-position: 880px 0
+  }
 }
 
 .animated-background {
-    animation-duration: 2.5s;
-    animation-fill-mode: forwards;
-    animation-iteration-count: infinite;
-    animation-name: placeHolderShimmer;
-    animation-timing-function: linear;
-    background: $gray2;
-    background: linear-gradient(to right, #eeeeee 10%, #dddddd 18%, #eeeeee 33%);
-    background-size: 880px 220px;
-    height: 1rem;
-    position: relative;
+  animation-duration: 2.5s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: placeHolderShimmer;
+  animation-timing-function: linear;
+  background: $gray2;
+  background: linear-gradient(to right, #eeeeee 10%, #dddddd 18%, #eeeeee 33%);
+  background-size: 880px 220px;
+  height: 1rem;
+  position: relative;
 }
 
 .gap {
-  &-025 { gap: 0.25rem; }
-  &-01 { gap: 0.1rem; }
+  &-025 {
+    gap: 0.25rem;
+  }
+
+  &-01 {
+    gap: 0.1rem;
+  }
 }
 
 .bib-datepicker,
 .vdp-datepicker {
   &.align-right {
-    .vdp-datepicker__calendar { right: 0;}
+    .vdp-datepicker__calendar {
+      right: 0;
+    }
   }
+
   .vdp-datepicker__calendar {
     width: 290px;
     font-size: $base-size;
-    header span { height: 36px; line-height: 36px;}
+
+    header span {
+      height: 36px;
+      line-height: 36px;
+    }
+
     .cell:not(.blank):not(.disabled).day:hover,
     .cell:not(.blank):not(.disabled).month:hover,
-    .cell:not(.blank):not(.disabled).year:hover { border-color: transparent; background-color: $secondary-sub2; }
-    .cell { height: 36px; line-height: 36px; border-left-width: 0; border-right-width: 0; border-bottom: 1px solid $light; 
-      &.selected { background-color: $secondary; color: white;
-        &:hover { background-color: $secondary-sub1;}
+    .cell:not(.blank):not(.disabled).year:hover {
+      border-color: transparent;
+      background-color: $secondary-sub2;
+    }
+
+    .cell {
+      height: 36px;
+      line-height: 36px;
+      border-left-width: 0;
+      border-right-width: 0;
+      border-bottom: 1px solid $light;
+
+      &.selected {
+        background-color: $secondary;
+        color: white;
+
+        &:hover {
+          background-color: $secondary-sub1;
+        }
       }
-      &.day-header { color: $gray5; text-transform: uppercase; border-top: 1px solid $light; border-bottom-color: $gray6;}
-     }
-    header .prev::after { border-right: 9px solid $secondary;}
-    header .next::after { border-left: 8px solid $secondary;}
+
+      &.day-header {
+        color: $gray5;
+        text-transform: uppercase;
+        border-top: 1px solid $light;
+        border-bottom-color: $gray6;
+      }
+    }
+
+    header .prev::after {
+      border-right: 9px solid $secondary;
+    }
+
+    header .next::after {
+      border-left: 8px solid $secondary;
+    }
   }
 }
 
@@ -386,4 +471,9 @@ ul {
     max-width: $sidebar-width - 160px;
     width: 35rem;
   }
+}
+
+.ProseMirror-focused {
+  outline: none !important;
+
 }
