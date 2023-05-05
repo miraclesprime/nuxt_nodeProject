@@ -22,11 +22,11 @@
       </div> -->
     </div>
     <div id="task-files" class="files py-05">
-      <div v-if="showPlaceholder" class="placeholder d-inline-flex align-center gap-1 p-025 border-gray3 bg-white">
+      <!-- <div v-if="showPlaceholder" class="placeholder d-inline-flex align-center gap-1 p-025 border-gray3 bg-white">
         <div class="animated-background width-2 height-2 shape-circle"></div>
         <div class="animated-background  height-105" style="width:9rem;"></div>
-      </div>
-      <template v-else>
+      </div> -->
+      <template>
         <file-comp v-for="file in files" :key="file.key + fileKey" :property="file" @delete-file="deleteFile" @preview-file="showPreviewModal(file)"></file-comp>
       </template>
     </div>
@@ -198,8 +198,7 @@ export default {
       }
 
       let obj1
-      this.mode == "task" ? obj1 = { taskId: this.task.id } : obj1 = { subTaskId: this.subtask.id }
-      console.log(obj1)
+      this.mode == "task" ? obj1 = { taskId: this.task.id } : obj1 = { subTaskId: this.subtask.id || this.$route.params.id }
 
       this.$axios.get("file/db/all", {
           // timeout: 2500,
@@ -212,15 +211,14 @@ export default {
           if (f.data.statusCode == 200) {
             // let oldfilesCount = this.filesCount
             this.dbFiles = f.data.data
-            this.showPlaceholder = false
             this.fileKey += 1;
-          }
+          } 
         })
         .catch(e => {
           console.error(e)
-          this.showPlaceholder = false
           this.dbFiles = []
         })
+        this.showPlaceholder = false
     },
 
     downloadFile(file) {
