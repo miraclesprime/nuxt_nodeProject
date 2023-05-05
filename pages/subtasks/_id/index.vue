@@ -128,8 +128,7 @@ export default {
 
   name: 'SubtaskDetail',
   props: {
-    showTaskTitle: { type: Boolean, default: true },
-    titleClick: { type: String, default: "close" }
+    showTaskTitle: { type: Boolean, default: true }
   },
   data() {
     return {
@@ -244,6 +243,7 @@ export default {
   },
 
   created() {
+    this.$store.dispatch('user/setTeamMembers')
     this.$nuxt.$on("edit-message", (msg) => {
       this.editMessage = msg
     })
@@ -386,11 +386,7 @@ export default {
     },
 
     gotoParent(){
-      if (this.titleClick == "task") {
-        window.open('/tasks/'+this.form.task?.id)
-      } else {
-        this.closeSidebarDetail()
-      }
+        window.open('/tasks/'+this.form.task?.id, "_blank")
     },
 
     debounceUpdateField: _.debounce(function(data) {

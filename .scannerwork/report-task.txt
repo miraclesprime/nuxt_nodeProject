@@ -1,0 +1,6 @@
+projectKey=bib_project_task_app
+serverUrl=http://13.234.146.222:9000
+serverVersion=8.9.9.56886
+dashboardUrl=http://13.234.146.222:9000/dashboard?id=bib_project_task_app
+ceTaskId=AYflg0ey-FyRUQuaHt4N
+ceTaskUrl=http://13.234.146.222:9000/api/ce/task?id=AYflg0ey-FyRUQuaHt4N
