@@ -55,7 +55,7 @@
           <template v-if="field.key == 'department'">{{item[field.key].title}}</template>
           <template v-if="field.key.includes('Date')" class="date-cell">
             <!-- {{$formatDate(item[field.key])}} -->
-             <bib-datetime-picker :value="item[field.key]" format="DD MMM YYYY" placeholder="" @input="updateDate" ></bib-datetime-picker>
+             <bib-datetime-picker :value="item[field.key]" format="DD MM YYYY" placeholder="" @input="updateDate" ></bib-datetime-picker>
           </template>
           <!-- {{item[field.key]}} -->
         </div>
