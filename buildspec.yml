@@ -17,7 +17,7 @@ phases:
       - echo installing dependencies  
       - echo nove version
       - node -v
-      - npm ci
+      - npm install
       - echo Building the Front End distro...
       - npm run generate --fail-on-error
   post_build:
