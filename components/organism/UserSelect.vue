@@ -1,5 +1,5 @@
 <template>
-  <div id="userSelect" ref="userSelect" class="picker-wrapper" v-click-outside="onClickOutside">
+  <div id="userSelect" class="picker-wrapper" v-click-outside="onClickOutside">
     <button type="button" class="user-data cursor-pointer height-2 w-100 align-center justify-between" @click.stop="triggerOpen">
       <span v-if="user">
         <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
@@ -10,7 +10,7 @@
       <input type="text" class="picker-input" ref="userFilterInput" v-model="filterKey" @keyup.esc="$emit('close')" autofocus>
       <div class="mt-05" style="max-height: 12rem; overflow-y: auto">
         <ul class="m-0 p-0 text-left">
-          <li v-for="user in filterTeam" :key="user.id" class="p-025 font-md cursor-pointer" @click.stop="selected(user)">
+          <li v-for="user in filterTeam" :key="user.id" class="py-025 font-md cursor-pointer" @click.stop="selected(user)">
             <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
           </li>
         </ul>
@@ -54,7 +54,7 @@ export default {
         return this.teamMembers.find(t => t.id == this.localUser)
       },
       set: function(value) {
-        console.log(value)
+        // console.log(value)
         this.localUser = value.id
         // this.userLabel = this.$userInfo(value.id).Name
       }
@@ -68,9 +68,9 @@ export default {
       })
     },
   },
-  mounted() {
+  /*mounted() {
     console.log(this.localUser)
-  },
+  },*/
   methods: {
     triggerOpen() {
       this.open = !this.open
@@ -95,7 +95,6 @@ export default {
 .picker-wrapper {
   background-color: $white;
   position: relative;
-  /*width: 15rem;*/
 
   .user-data {
     border: 0 none;
@@ -107,16 +106,14 @@ export default {
     z-index: 55;
     left: 0;
     top: 0;
-    /*right: 0;*/
     min-height: fit-content;
     max-height: 30rem;
+    min-width: 100%;
     background-color: $white;
     border: 1px solid $gray4;
     padding: 0.5rem;
     border-radius: 0.25rem;
     box-shadow: 0 2px 10px rgba(100, 100, 100, 0.25);
-    /*transition: left 300ms ease-out, top 200ms ease-out;
-    will-change: top, left;*/
   }
 
   .picker-input {

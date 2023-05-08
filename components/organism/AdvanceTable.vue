@@ -48,10 +48,12 @@
             </div> -->
           </template>
           <template v-if="field.key == 'status'">
-            <status-comp :status="item[field.key]"></status-comp>
+            <!-- <status-comp :status="item[field.key]"></status-comp> -->
+            <status-select ref="'st-'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" ></status-select>
           </template>
           <template v-if="field.key == 'priority'">
-            <priority-comp :priority="item[field.key]"></priority-comp>
+            <!-- <priority-comp :priority="item[field.key]"></priority-comp> -->
+            <priority-select :value="item[field.key]" @change="updatePriority($event, item)"></priority-select>
           </template>
           <template v-if="field.key == 'department'">{{item[field.key].title}}</template>
           <template v-if="field.key.includes('Date')" class="date-cell">
@@ -168,6 +170,12 @@ export default {
       // console.log(item)
       this.$emit("update-title", { id: item.id, field: "title", value: value, label: "Title", historyText: value })
     }, 800),
+    updateStatus(status, item){
+      console.log(status, item)
+    },
+    updatePriority(priority, item){
+      console.log(priority, item)
+    },
     updateAssignee(user, item){
       console.log(user, item)
       this.$emit("update-field", { id: item.id, field: "userId", value: user.id, label: "Assignee", historyText: user.label })
@@ -180,6 +188,7 @@ export default {
 
 </script>
 <style lang="scss" scoped>
+/*
 * {
   scrollbar-width: unset;
   scrollbar-height: unset;
@@ -204,7 +213,6 @@ export default {
 *::-webkit-scrollbar-thumb {
   border-radius: unset;
   background-color: initial;
-  /*border: 0 none;*/
 }
 
 ::-webkit-scrollbar {
@@ -214,6 +222,7 @@ export default {
 ::-webkit-scrollbar-thumb {
     all:unset;
 }
+*/
 
 .adv-table-wrapper {
   overflow: auto;
