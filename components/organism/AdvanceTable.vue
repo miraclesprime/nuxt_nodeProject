@@ -1,6 +1,6 @@
 <template>
-  <div class="adv-table-wrapper position-relative">
-    <div class="adv-table bg-white" :style="{'width': tableWidth}" role="table">
+  <div id="adv-table-wrapper" class="adv-table-wrapper position-relative">
+    <div id="adv-table" class="adv-table bg-white" :style="{'width': tableWidth}" role="table">
       <!-- <div class="zero" :style="{ width: tableFields[0].width}">
         <div class="align-center gap-05">{{tableFields[0].label}} <span v-if="tableFields[0].header_icon" class="height-1" @click="$emit(tableFields[0].header_icon.event)"><bib-icon :icon="tableFields[0].header_icon.icon" :variant="tableFields[0].header_icon.isActive ? 'gray1' : 'gray4'"></bib-icon></span></div>
       </div> -->
@@ -49,7 +49,7 @@
           </template>
           <template v-if="field.key == 'status'">
             <!-- <status-comp :status="item[field.key]"></status-comp> -->
-            <status-select ref="'st-'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" ></status-select>
+            <status-select ref="'st-'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)"></status-select>
           </template>
           <template v-if="field.key == 'priority'">
             <!-- <priority-comp :priority="item[field.key]"></priority-comp> -->
@@ -58,7 +58,7 @@
           <template v-if="field.key == 'department'">{{item[field.key].title}}</template>
           <template v-if="field.key.includes('Date')" class="date-cell">
             <!-- {{$formatDate(item[field.key])}} -->
-             <bib-datetime-picker :value="item[field.key]" format="DD MM YYYY" placeholder="" @input="updateDate" ></bib-datetime-picker>
+            <bib-datetime-picker :value="item[field.key]" format="DD MM YYYY" placeholder="" @input="updateDate"></bib-datetime-picker>
           </template>
           <!-- {{item[field.key]}} -->
         </div>
@@ -111,8 +111,9 @@ export default {
   data() {
     return {
       contextVisible: false,
-      popupCoords: {left: 0, top: 0},
+      popupCoords: { left: 0, top: 0 },
       userFilterKey: "",
+      resizableTables: [],
     }
   },
 
@@ -159,28 +160,43 @@ export default {
   },
 
   methods: {
-    contextOpen($event, item){
+    resizableColumns() {
+      // var tables = document.getElementsByTagName('table');
+      var tables = document.getElementsByClassName("adv-table");
+      // console.log(tables)
+      for (var i = 0; tables.item(i); i++) {
+        if (tables[i].className.match(/resizable/)) {
+          // generate id
+          // if (!tables[i].id) tables[i].id = 'table' + (i + 1);
+          // make table resizable
+          this.resizableTables[resizableTables.length] = new ColumnResize(tables[i]);
+        }
+      }
+      //  alert(resizableTables.length + ' tables was added.');
+    },
+
+    contextOpen($event, item) {
       this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
       this.contextVisible = true
     },
-    closePopups(){
+    closePopups() {
       this.contextVisible = false
     },
     debounceTitle: _.debounce(function(value, item) {
       // console.log(item)
       this.$emit("update-title", { id: item.id, field: "title", value: value, label: "Title", historyText: value })
     }, 800),
-    updateStatus(status, item){
+    updateStatus(status, item) {
       console.log(status, item)
     },
-    updatePriority(priority, item){
+    updatePriority(priority, item) {
       console.log(priority, item)
     },
-    updateAssignee(user, item){
+    updateAssignee(user, item) {
       console.log(user, item)
       this.$emit("update-field", { id: item.id, field: "userId", value: user.id, label: "Assignee", historyText: user.label })
     },
-    updateDate(date){
+    updateDate(date) {
       console.log(date)
     },
   }
@@ -287,13 +303,29 @@ export default {
   font-size: $base-size;
   font-weight: normal;
 }
+
 ::v-deep {
-  .bib-select { line-height: normal;
-    .select__real { margin: 0 !important; }
-    .select__btn { background-color: transparent !important; line-height: normal;}
+  .bib-select {
+    line-height: normal;
+
+    .select__real {
+      margin: 0 !important;
+    }
+
+    .select__btn {
+      background-color: transparent !important;
+      line-height: normal;
+    }
   }
-  .vdpComponent__input { margin: 0; min-height: 2rem; border-color: transparent;
-    &:hover { border-color: transparent;}
+
+  .vdpComponent__input {
+    margin: 0;
+    min-height: 2rem;
+    border-color: transparent;
+
+    &:hover {
+      border-color: transparent;
+    }
   }
 }
 
