@@ -104,11 +104,11 @@ export default {
   .picker-content {
     position: absolute;
     z-index: 55;
-    left: 0;
-    top: 0;
+    left: -5px;
+    top: -5px;
     min-height: fit-content;
     max-height: 30rem;
-    min-width: 100%;
+    min-width: calc(100% + 10px);
     background-color: $white;
     border: 1px solid $gray4;
     padding: 0.5rem;
