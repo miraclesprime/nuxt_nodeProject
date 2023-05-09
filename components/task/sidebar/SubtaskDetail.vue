@@ -218,20 +218,24 @@ export default {
     startDateInput: {
       get() {
         if (!this.form.startDate) {
-          return new Date()
+          return null
         } else {
           return new Date(this.form.startDate)
         }
       },
       set(newValue) {
+        if(!newValue)this.form.startDate="";
+        else
         this.form.startDate = new Date(newValue)
       }
     },
     dueDateInput: {
       get() {
         if (!this.form.dueDate) {
-          return new Date()
+          return null
         } else {
+          if(!newValue)this.form.dueDate="";
+        else
           return new Date(this.form.dueDate)
         }
       },
@@ -378,8 +382,23 @@ export default {
             histvalue = pr.label
         }
         if ( data.name == "Department"){
-            let dp = this.departments.find(d => d.value == data.value)
-            histvalue = dp.label
+            let dp = this.departments.find(d => {
+              if(data.value == undefined) {
+                return null;
+              } 
+              if(d.value == data.value) {
+                return d;
+              }
+            })
+
+            console.log(dp)
+            if(dp == undefined) {
+              updata = { [data.field]: null}
+              histvalue = "not assigned"
+            } else {
+              histvalue = dp.label
+            }
+
         }
         if (data.name == "Due date" || data.name == "Start date") {
           histvalue = dayjs(data.value).format('DD MMM YYYY')

@@ -115,6 +115,7 @@ export const actions = {
 
   // update subtask
   async updateSubtask(ctx, payload) {
+    console.log("111", payload)
     const res = await this.$axios.$put("/subtask", payload, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
@@ -144,7 +145,7 @@ export const actions = {
     }
   },
 
-  async removeFromFavorite(ctx, payload){
+  async removeFromFavorite(ctx, payload) {
     try {
       const stf = await this.$axios.delete(`subtask/${payload.id}/favorite`, {
         headers: {
@@ -153,7 +154,7 @@ export const actions = {
       })
       // console.log(stf.data)
       return stf.data
-    } catch(e) {
+    } catch (e) {
       console.warn(e);
     }
   },

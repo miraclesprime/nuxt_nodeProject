@@ -27,36 +27,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-if="newSubtask" class="new">
-          <td>
-            <div class="d-flex gap-05 align-center">
-              <bib-icon icon="check-circle-solid" variant="white" :scale="1.25"></bib-icon>
-              <input class="sub-input" ref="subtaskNameInput" type="text" v-model.trim="title" :disabled="loading" pattern="[a-zA-Z0-9-_ ]+" @input="validateInput" @keyup.enter="validateInput" required placeholder="Enter text...">
-            </div>
-          </td>
-          <td>
-            <div class="d-flex align-center gap-05">
-              <bib-avatar size="1.25rem"></bib-avatar>
-              <span>Assign to...</span>
-            </div>
-            <!-- <bib-select size="sm" :options="orgUsers" v-model="assignee" v-on:change="changeAssignee"></bib-select> -->
-            <!-- <bib-input type="text" size="sm" avatar-left="" v-model="assignee" placeholder="Assign to..."></bib-input> -->
-          </td>
-          <td>
-            <div class="d-flex align-center gap-025">
-              <bib-icon icon="calendar" variant="gray4"></bib-icon>
-              <span>Set due...</span>
-            </div>
-            <!-- <bib-input type="date" size="sm" icon-left="calendar" v-model="date" placeholder="Set date..."></bib-input> -->
-            <!-- <bib-datepicker v-model="date" size="sm" class="align-right" format="dd MMM yyyy" placeholder="Set date..."></bib-datepicker> -->
-          </td>
-          <!-- <td>
-            <div class="d-flex gap-05">
-              <bib-icon icon="trash" variant="gray5" v-on:click="newSubtask = false"></bib-icon>
-              <bib-icon icon="tick" variant="success" v-on:click="createSubtask"></bib-icon>
-            </div>
-          </td> -->
-        </tr>
+      
         <tr class="table-row" v-for="sub in localSubTasks" :key="sub.id + subkey" @click.right.prevent="subtaskRightClick($event, sub)" v-click-outside="closeContext">
           <!-- <td>{{sub.key}}</td> -->
           <td>
@@ -84,6 +55,36 @@
               <span v-show="sub.canDelete" class="cursor-pointer shape-rounded width-105 height-105 align-center justify-center bg-hover-light" v-tooltip="'Delete'" @click="deleteSubtask(sub)">
                 <bib-icon icon="trash-solid" :scale="1" variant="gray5"></bib-icon>
               </span>
+            </div>
+          </td> -->
+        </tr>
+        <tr v-if="newSubtask" class="new">
+          <td>
+            <div class="d-flex gap-05 align-center">
+              <bib-icon icon="check-circle-solid" variant="white" :scale="1.25"></bib-icon>
+              <input class="sub-input" ref="subtaskNameInput" type="text" v-model.trim="title" :disabled="loading" pattern="[a-zA-Z0-9-_ ]+" @input="validateInput" @keyup.enter="validateInput" required placeholder="Enter text...">
+            </div>
+          </td>
+          <td>
+            <div class="d-flex align-center gap-05">
+              <bib-avatar size="1.25rem"></bib-avatar>
+              <span>Assign to...</span>
+            </div>
+            <!-- <bib-select size="sm" :options="orgUsers" v-model="assignee" v-on:change="changeAssignee"></bib-select> -->
+            <!-- <bib-input type="text" size="sm" avatar-left="" v-model="assignee" placeholder="Assign to..."></bib-input> -->
+          </td>
+          <td>
+            <div class="d-flex align-center gap-025">
+              <bib-icon icon="calendar" variant="gray4"></bib-icon>
+              <span>Set due...</span>
+            </div>
+            <!-- <bib-input type="date" size="sm" icon-left="calendar" v-model="date" placeholder="Set date..."></bib-input> -->
+            <!-- <bib-datepicker v-model="date" size="sm" class="align-right" format="dd MMM yyyy" placeholder="Set date..."></bib-datepicker> -->
+          </td>
+          <!-- <td>
+            <div class="d-flex gap-05">
+              <bib-icon icon="trash" variant="gray5" v-on:click="newSubtask = false"></bib-icon>
+              <bib-icon icon="tick" variant="success" v-on:click="createSubtask"></bib-icon>
             </div>
           </td> -->
         </tr>
@@ -292,7 +293,7 @@ export default {
           lastName: this.user?.lastName || this.user2.LastName,
           email: this.user?.email || this.user2.Email,
         },
-        departmentId: 1,
+        departmentId: null,
         description: "",
         startDate: "",
         dueDate: "",

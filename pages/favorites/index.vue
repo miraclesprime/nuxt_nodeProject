@@ -1025,7 +1025,7 @@ export default {
     copyTaskLink(task) {
       let url
       if (task.task) {
-        url = window.location.host + `/subtask/${task.id}`;
+        url = window.location.host + `/subtasks/${task.id}`;
       } else {
         url = window.location.host + `/tasks/${task.id}`;
       }

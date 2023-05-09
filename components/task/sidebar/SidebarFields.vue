@@ -118,27 +118,29 @@ export default {
     startDateInput: {
       get() {
         if (!this.form.startDate) {
-          return new Date()
+          return null
         } else {
           return new Date(this.form.startDate)
         }
       },
       set(newValue) {
+        if(!newValue)this.form.startDate="";
+        else
         this.form.startDate = new Date(newValue)
       }
     },
     dueDateInput: {
       get() {
-        let nd
         if (!this.form.dueDate) {
-          nd = new Date()
-          return new Date()
+          return null
         } else {
-          nd = new Date(this.form.dueDate)
+       
           return new Date(this.form.dueDate)
         }
       },
       set(newValue) {
+        if(!newValue)this.form.dueDate="";
+        else
         this.form.dueDate = new Date(newValue)
       }
     },

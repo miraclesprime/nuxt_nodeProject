@@ -1,0 +1,135 @@
+<template>
+  <div id="userSelect" class="picker-wrapper" v-click-outside="onClickOutside">
+    <button type="button" class="user-data cursor-pointer height-2 w-100 align-center justify-between" @click.stop="triggerOpen">
+      <span v-if="user">
+        <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
+      </span>
+      <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
+    </button>
+    <div v-show="open" class="picker-content">
+      <input type="text" class="picker-input" ref="userFilterInput" v-model="filterKey" @keyup.esc="$emit('close')" autofocus>
+      <div class="mt-05" style="max-height: 12rem; overflow-y: auto">
+        <ul class="m-0 p-0 text-left">
+          <li v-for="user in filterTeam" :key="user.id" class="py-025 font-md cursor-pointer" @click.stop="selected(user)">
+            <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import { mapGetters } from 'vuex'
+export default {
+
+  name: 'UserSelect',
+
+  props: {
+    userId: { type: String },
+  },
+
+  data() {
+    return {
+      localUser: this.userId,
+      filterKey: "",
+      open: false,
+    }
+  },
+  watch: {
+    open(newValue) {
+      if (newValue) {
+        this.$nextTick(() => {
+          // console.log(this.$refs.userFilterInput)
+          this.$refs.userFilterInput.focus()
+        });
+      }
+    }
+  },
+  computed: {
+    ...mapGetters({
+      teamMembers: "user/getTeamMembers",
+    }),
+    user: {
+      get: function() {
+        return this.teamMembers.find(t => t.id == this.localUser)
+      },
+      set: function(value) {
+        // console.log(value)
+        this.localUser = value.id
+        // this.userLabel = this.$userInfo(value.id).Name
+      }
+    },
+    filterTeam() {
+      let regex = new RegExp(this.filterKey, 'g\i')
+      return this.teamMembers.filter((u) => {
+        if (regex.test(u.label) || regex.test(u.email)) {
+          return u
+        }
+      })
+    },
+  },
+  /*mounted() {
+    console.log(this.localUser)
+  },*/
+  methods: {
+    triggerOpen() {
+      this.open = !this.open
+    },
+    selected(user) {
+      // console.log(user)
+      // this.userLabel = this.$userInfo(user.id).Name
+      this.user = user
+      this.open = false
+      this.$emit("change", user)
+      // this.$emit("close")
+    },
+    onClickOutside() {
+      this.open = false
+      // this.$emit('close')
+    },
+  }
+}
+
+</script>
+<style lang="scss" scoped>
+.picker-wrapper {
+  background-color: $white;
+  position: relative;
+
+  .user-data {
+    border: 0 none;
+    background-color: $white;
+  }
+
+  .picker-content {
+    position: absolute;
+    z-index: 55;
+    left: 0;
+    top: 0;
+    min-height: fit-content;
+    max-height: 30rem;
+    min-width: 100%;
+    background-color: $white;
+    border: 1px solid $gray4;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 10px rgba(100, 100, 100, 0.25);
+  }
+
+  .picker-input {
+    font-size: $font-size-sm;
+    border-radius: 0.2rem;
+    border: 1px solid $gray2;
+    width: 100%;
+    margin: 0.3rem 0;
+    padding: 0.3rem 0.4rem;
+
+    &:focus {
+      outline: none;
+      border-color: $gray6;
+      box-shadow: 0 0 5px $gray5;
+    }
+  }
+}
+
+</style>
