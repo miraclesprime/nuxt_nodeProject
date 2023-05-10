@@ -164,7 +164,8 @@ export default {
       formdata.append('text', `uploaded file(s) "${filelist.join(", ")}" to ${this.mode}`)
       formdata.append('isHidden', true)
 
-      if (this.mode == "task" && this.task.hasOwnProperty('project')) {
+      if (this.mode == "task" && this.task.hasOwnProperty('project') && this.task.project.length > 0) {
+        console.log(this.task)
         formdata.append('projectId', this.task.project[0].projectId)
       }
 
