@@ -479,18 +479,18 @@ export const DEPARTMENT = [
   { label: 'Marketing', value: "marketing" },
 ]
 export const STATUS = [
-  { label: 'Choose status', value: 0 },
-  { label: 'Not Started', value: '1' },
-  { label: 'In-Progress', value: '2' },
-  { label: 'Waiting', value: '3' },
-  { label: 'Delayed', value: '4' },
-  { label: 'Done', value: '5' },
+  { label: 'Choose status', value: 0, color: "" },
+  { label: 'Not Started', value: '1', color: "secondary" },
+  { label: 'In-Progress', value: '2', color: "primary" },
+  { label: 'Waiting', value: '3', color: "orange" },
+  { label: 'Delayed', value: '4', color: "danger" },
+  { label: 'Done', value: '5', color: "success" },
 ]
 export const PRIORITY = [
-  { label: 'Choose status', value: 0 },
-  { label: 'Low', value: '3' },
-  { label: 'Medium', value: '2' },
-  { label: 'High', value: '1' },
+  { label: 'Choose priority', value: 0, color: "" },
+  { label: 'Low', value: '3', color: "success" },
+  { label: 'Medium', value: '2', color: "orange" },
+  { label: 'High', value: '1', color: "danger" },
 ]
 
 export const PROJECT_FAVORITES = [

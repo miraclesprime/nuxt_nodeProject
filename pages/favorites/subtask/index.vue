@@ -4,7 +4,7 @@
       <page-title title="Favorite subtask"></page-title>
       <favorite-actions v-on:change-viewing="changeView" v-on:change-sorting="changeSort"></favorite-actions>
       <div id="subtask-favorite-wrap" class=" position-relative content-wrap" :style="{ 'width': contentWidth }">
-        <advance-table :tableFields="tableFields" :tableData="subtasks" @table-sort="sortTask" @title-click="openSubPanel" @update-title="updateTitle" ></advance-table>
+        <advance-table :tableFields="subtaskTableFields" :tableData="subtasks" :contextItems="contextItems" @context-item-event="contextItemClick" @table-sort="sortTask" @title-click="openSubPanel" @update-title="updateTitle" ></advance-table>
       </div>
       <transition name="drawer">
         <article v-if="subPanel" id="sub-panel" class="side-panel" v-click-outside="closeSubPanel">
@@ -27,7 +27,8 @@ export default {
   data() {
     return {
       subtasks: [],
-      tableFields: DEMO_TABLE,
+      subtaskTableFields: DEMO_TABLE,
+      contextItems: TASK_CONTEXT_MENU,
       subPanel: false,
       contentWidth: "100%",
     }
@@ -64,9 +65,20 @@ export default {
         // console.log(res)
         res.data.forEach(d => {
           if (d.subtasks) {
-            this.subtasks.push({ ...d.subtasks, project: d.subtasks.task.project || [{}] })
+            // console.log(d.subtasks.task?.project)
+            if (d.subtasks.task) {
+              this.subtasks.push({ ...d.subtasks, project: project(d.subtasks.task?.project) })
+            }
           }
         })
+
+        function project (argument) {
+          if (argument.length == 0) {
+            return [{ project:{} }]
+          } else {
+            return argument
+          }
+        }
 
         /*const page = document.getElementById("page")
         console.log(page)
@@ -140,6 +152,9 @@ export default {
     },
     updateTitle(payload){
       console.log(payload)
+    },
+    contextItemClick(eventName, item){
+      console.log(eventName, item)
     },
   }
 }
