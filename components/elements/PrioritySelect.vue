@@ -65,7 +65,6 @@ export default {
     },
 
     onClickOutside() {
-      // this.$emit('close')
       this.show = false
     },
 
@@ -73,7 +72,6 @@ export default {
       this.localValue = status
       this.$emit("change", status)
       this.show = false
-      // this.$emit("close")
     },
   }
 }
