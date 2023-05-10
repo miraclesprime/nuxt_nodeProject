@@ -218,25 +218,29 @@ export default {
     startDateInput: {
       get() {
         if (!this.form.startDate) {
-          return new Date()
+          return null
         } else {
           return new Date(this.form.startDate)
         }
       },
       set(newValue) {
+        if(!newValue)this.form.startDate="";
+        else
         this.form.startDate = new Date(newValue)
       }
     },
     dueDateInput: {
       get() {
-        if (!this.form.dueDate) {
-          return new Date()
+        if (!this.form.startDate) {
+          return null
         } else {
-          return new Date(this.form.dueDate)
+          return new Date(this.form.startDate)
         }
       },
       set(newValue) {
-        this.form.dueDate = new Date(newValue)
+        if(!newValue)this.form.startDate="";
+        else
+        this.form.startDate = new Date(newValue)
       }
     },
     sortedData() {
