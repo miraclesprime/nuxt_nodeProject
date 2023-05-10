@@ -408,6 +408,7 @@ ul {
 
 .bib-datepicker,
 .vdp-datepicker {
+  white-space: normal;
   &.align-right {
     .vdp-datepicker__calendar {
       right: 0;
