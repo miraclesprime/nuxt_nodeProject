@@ -27,7 +27,7 @@
         </tr>
       </thead>
       <tbody>
-      
+       
         <tr class="table-row" v-for="sub in localSubTasks" :key="sub.id + subkey" @click.right.prevent="subtaskRightClick($event, sub)" v-click-outside="closeContext">
           <!-- <td>{{sub.key}}</td> -->
           <td>

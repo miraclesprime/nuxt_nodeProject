@@ -8,10 +8,10 @@ export const state = () => ({
 export const getters = {
 
   getAllDepartments(state) {
-    let Depts = [{ label: "Choose department", value: null }]
+    let Depts = [{label: "Choose department", value: null}]
     state.departments.map(d => {
-      Depts.push({ label: d.title, value: d.id })
-    })
+        Depts.push({ label: d.title, value: d.id })
+      })
     return Depts
   },
 
@@ -37,7 +37,7 @@ export const actions = {
 
   async fetchDepartments(ctx) {
     const res = await this.$axios.$get('/department', {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`}
     });
 
     if (res.statusCode == 200) {
@@ -49,7 +49,7 @@ export const actions = {
 
   async fetchDepartmentDetail(ctx, payload) {
     const res = await this.$axios.$get(`/department/${payload.id}`, {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`}
     });
 
     if (res.statusCode == 200) {

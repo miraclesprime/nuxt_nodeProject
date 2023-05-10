@@ -231,16 +231,16 @@ export default {
     },
     dueDateInput: {
       get() {
-        if (!this.form.dueDate) {
+        if (!this.form.startDate) {
           return null
         } else {
-          if(!newValue)this.form.dueDate="";
-        else
-          return new Date(this.form.dueDate)
+          return new Date(this.form.startDate)
         }
       },
       set(newValue) {
-        this.form.dueDate = new Date(newValue)
+        if(!newValue)this.form.startDate="";
+        else
+        this.form.startDate = new Date(newValue)
       }
     },
     sortedData() {
