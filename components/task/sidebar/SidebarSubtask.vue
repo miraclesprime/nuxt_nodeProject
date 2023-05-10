@@ -20,10 +20,10 @@
     <table class="table ">
       <thead v-if="localSubTasks.length > 0">
         <tr>
-          <th>Subtasks</th>
-          <th>Assignee</th>
-          <th width="150">Due date</th>
-          <th></th>
+          <th id="ss-h1">Subtasks</th>
+          <th id="ss-h2">Assignee</th>
+          <th id="ss-h3" width="150">Due date</th>
+          <th id="ss-h4"></th>
         </tr>
       </thead>
       <tbody>

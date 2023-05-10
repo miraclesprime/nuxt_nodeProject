@@ -36,7 +36,6 @@ export default {
       // console.log(val)
       let options = {
         root: document.querySelector('#main-content'),
-        root: null,
         rootMargin: '0px',
         threshold: 1.0
       }
