@@ -51,7 +51,7 @@
           </template>
           <template v-if="field.key.includes('Date')" class="date-cell">
             <!-- {{$formatDate(item[field.key])}} -->
-            <bib-datetime-picker v-model="item[field.key]" displayFormat="D MMM YYYY" placeholder="" @input="updateDate"></bib-datetime-picker>
+            <bib-datetime-picker v-model="item[field.key]" placeholder="" @input="updateDate"></bib-datetime-picker>
           </template>
           <!-- {{item[field.key]}} -->
         </div>
@@ -79,6 +79,8 @@
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
 import dayjs from 'dayjs'
+import fecha, { format } from "fecha";
+
 export default {
 
   name: 'AdvanceTable',
@@ -98,6 +100,7 @@ export default {
       popupCoords: { left: 0, top: 0 },
       activeItem: {},
       resizableTables: [],
+      format: "DD MMM YYYY",
     }
   },
 
@@ -145,6 +148,15 @@ export default {
   },
 
   methods: {
+    parseDate(dateString, format) {
+      // console.log(dayjs(dateString, "DD MMM YYYY").isValid())
+      return fecha.parse(dateString, this.format);
+    },
+
+    formatDate(dateObj, format) {
+      return fecha.format(dateObj, this.format);
+    },
+    
     // main class prototype
     columnResize(table) {
       // console.log(table.rows[0].cells)
