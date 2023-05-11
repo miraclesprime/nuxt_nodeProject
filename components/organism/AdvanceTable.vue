@@ -33,32 +33,25 @@
           </div>
           <template v-if="field.key == 'project'">{{item[field.key][0].project.title}}</template>
           <template v-if="field.key == 'userId'">
-            <user-select :key="item.id+'user'+index" :userId="item[field.key]" @change="updateAssignee($event, item)"></user-select>
+            <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
             <!-- <user-info :userId="item[field.key]"></user-info> -->
             <!-- <bib-select :options="teamOptions" placeholder="Owner" @change="updateAssignee($event, item)" ></bib-select> -->
-            <!-- <div class="picker-content">
-              <input type="text" class="picker-input" ref="userFilterInput" v-model="userFilterKey" autofocus >
-              <div class="mt-05" style="max-height: 12rem; overflow-y: auto">
-                <ul class="m-0 p-0 text-left">
-                  <li v-for="user in filterTeam" :key="user.id" class="p-025 font-md cursor-pointer" @click.stop="selected(user)">
-                    <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
-                  </li>
-                </ul>
-              </div>
-            </div> -->
           </template>
           <template v-if="field.key == 'status'">
             <!-- <status-comp :status="item[field.key]"></status-comp> -->
-            <status-select ref="'st-'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)"></status-select>
+            <status-select :ref="'stausSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('stausSelect'+item.id)"></status-select>
           </template>
           <template v-if="field.key == 'priority'">
             <!-- <priority-comp :priority="item[field.key]"></priority-comp> -->
-            <priority-select :value="item[field.key]" @change="updatePriority($event, item)"></priority-select>
+            <priority-select :ref="'prioritySelect'+item.id" :value="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
           </template>
-          <template v-if="field.key == 'department'">{{item[field.key]?.title}}</template>
+          <template v-if="field.key == 'department'">
+            <!-- {{item[field.key]?.title}} -->
+            <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
+          </template>
           <template v-if="field.key.includes('Date')" class="date-cell">
             <!-- {{$formatDate(item[field.key])}} -->
-            <bib-datetime-picker :value="item[field.key]" format="DD MM YYYY" placeholder="" @input="updateDate"></bib-datetime-picker>
+            <bib-datetime-picker v-model="item[field.key]" displayFormat="D MMM YYYY" placeholder="" @input="updateDate"></bib-datetime-picker>
           </template>
           <!-- {{item[field.key]}} -->
         </div>
@@ -77,18 +70,9 @@
     </div> -->
     </div>
     <template v-if="contextItems">
-      <table-context-menu :items="contextItems" :show="contextVisible" :coordinates="popupCoords" @close-context="closePopups" @item-click="taskContextItemClick" ref="task_menu"></table-context-menu>
+      <table-context-menu :items="contextItems" :show="contextVisible" :coordinates="popupCoords" @close-context="closePopups" @item-click="contextItemClick" ></table-context-menu>
     </template>
-    <!-- user-picker for task -->
-    <!-- <user-picker :show="userPicker" :coordinates="popupCoords" @selected="updateTaskAssignee('Assignee', 'userId', $event.id, $event.label)" @close="closePopups"></user-picker> -->
-    <!-- date-picker for task -->
-    <!-- <inline-datepicker :show="taskDatepickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateTaskDate" @close="closePopups"></inline-datepicker> -->
-    <!-- status picker for task -->
-    <!-- <status-picker :show="taskStatuspickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="taskStatuspickerOpen = false"></status-picker> -->
-    <!-- priority picker for task -->
-    <!-- <priority-picker :show="taskPrioritypickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="taskPrioritypickerOpen = false"></priority-picker> -->
-    <!-- department-picker for list view -->
-    <!-- <dept-picker :show="taskDeptpickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Department', field:'departmentId', value: $event.value, historyText: $event.label })" @close="taskDeptpickerOpen = false"></dept-picker> -->
+    
   </div>
 </template>
 <script>
@@ -112,7 +96,7 @@ export default {
     return {
       contextVisible: false,
       popupCoords: { left: 0, top: 0 },
-      userFilterKey: "",
+      activeItem: {},
       resizableTables: [],
     }
   },
@@ -337,9 +321,19 @@ export default {
     contextOpen($event, item) {
       this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
       this.contextVisible = true
+      this.activeItem = item
     },
-    closePopups() {
+    contextItemClick($event){
+      // console.log($event)
+      this.$emit("context-item-event", $event, this.activeItem)
+    },
+    closePopups(id) {
       this.contextVisible = false
+      // console.log(this.$refs, id)
+      for (let ref in this.$refs) {
+        // console.log(ref)
+        if(ref != id) this.$refs[ref][0].show = false
+      }
     },
     debounceTitle: _.debounce(function(value, item) {
       // console.log(item)
@@ -350,6 +344,9 @@ export default {
     },
     updatePriority(priority, item) {
       console.log(priority, item)
+    },
+    updateDept(dept, item){
+      console.log(dept, item)
     },
     updateAssignee(user, item) {
       console.log(user, item)

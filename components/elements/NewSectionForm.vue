@@ -71,12 +71,10 @@ export default {
     createSection() {
       this.debounceCreate();
     },
+
     debounceCreate: _.debounce(function () {
       this.$emit("create-section", this.newSectionName);
     }, 800),
-    /*escape(){
-      this.$emit("toggle-newsection", false)
-    },*/
   },
 };
 </script>

@@ -6,7 +6,7 @@
       </span>
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
     </button>
-    <div v-show="open" class="picker-content">
+    <div v-show="show" class="picker-content">
       <input type="text" class="picker-input" ref="userFilterInput" v-model="filterKey" @keyup.esc="$emit('close')" autofocus>
       <div class="mt-05" style="max-height: 12rem; overflow-y: auto">
         <ul class="m-0 p-0 text-left">
@@ -32,11 +32,11 @@ export default {
     return {
       localUser: this.userId,
       filterKey: "",
-      open: false,
+      show: false,
     }
   },
   watch: {
-    open(newValue) {
+    show(newValue) {
       if (newValue) {
         this.$nextTick(() => {
           // console.log(this.$refs.userFilterInput)
@@ -73,19 +73,19 @@ export default {
   },*/
   methods: {
     triggerOpen() {
-      this.open = !this.open
+      this.show = !this.show
+      this.$emit('close-other')
     },
     selected(user) {
       // console.log(user)
       // this.userLabel = this.$userInfo(user.id).Name
       this.user = user
-      this.open = false
+      this.show = false
       this.$emit("change", user)
       // this.$emit("close")
     },
     onClickOutside() {
-      this.open = false
-      // this.$emit('close')
+      this.show = false
     },
   }
 }
