@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loading" id="loading-comp" class="position-absolute align-center justify-center comp-loading text-secondary-sub1">
+  <div v-if="loading" id="loading-comp-2" class="position-absolute align-center justify-center comp-loading text-secondary-sub1">
     {{text}}
   </div>
 </template>
@@ -7,13 +7,6 @@
 export default {
 
   name: 'Loading2',
-
-  data() {
-    return {
-
-
-    }
-  },
   props: {
     loading: { type: Boolean, default: true },
     text: String,

@@ -1,15 +1,11 @@
 <template>
   <div :id="'status-badge-'+compId" class="status-badge d-flex gap-05 align-center shape-rounded px-05" :style="{'background-color': hex2rgba(statusOutput.color)}">
     <div :id="'status-dot-'+compId" class="dot shape-circle" :style="{'background-color': statusOutput.color}"></div>
-    <!-- <div v-if="statusOutput.text" :id="'status-dot-'+compId " class="shape-circle " :class="'bg-' + statusOutput.color" >
-    </div> -->
     <span v-if="statusOutput.text && !iconOnly" :id="'status-text-'+compId " class="font-xs text-truncate" :style="{'color': statusOutput.color}">{{ statusOutput.text }}</span>
   </div>
 </template>
+
 <script>
-// import { ColorVariants } from '~/node_modules/@bizinbox/bib-ui-lib/dist/library'
-// import { ColorVariants } from '~/../bib-shared/js/colors'
-// import { hex2rgba } from '~/utils/color'
 export default {
 
   name: 'StatusBadge',

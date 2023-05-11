@@ -1,21 +1,20 @@
 <template>
-  <div v-show="show" ref="statusPicker" class="picker-wrapper" :style="position" v-click-outside="onClickOutside">
-    <div class="picker-content">
-      <!-- <input type="text" class="picker-input" ref="userFilterInput" v-model="filterKey" @keyup.esc="$emit('close')" autofocus> -->
-      <div class="picker-list-wrap">
-        <ul class="m-0 p-0 text-left">
-          <li v-for="pt in priorityList" :key="pt.value+'stitem'" class="p-025 gap-05 align-center font-md cursor-pointer" @click.stop="onStatusChange(pt)">
-            <div class="align-center justify-center shape-circle circle" :style="{'background-color': pt.bgcolor}">
-              <!-- <span class="dot shape-circle" :style="{'background-color' : pt.color}"></span> -->
-              <strong :style="{ color: pt.color}">!</strong>
+  <div v-show="show" ref="statusPicker" id="priority-picker-wrapper" class="picker-wrapper" :style="position" v-click-outside="onClickOutside">
+    <div class="picker-content" id="priority-picker-content">
+      <div class="picker-list-wrap" id="priority-picker-list-wrap">
+        <ul class="m-0 p-0 text-left" id="priority-picker-ul">
+          <li v-for="pt in priorityList" :key="pt.value+'stitem'" :id="'pp-'+ pt.value" class="p-025 gap-05 align-center font-md cursor-pointer" @click.stop="onStatusChange(pt)">
+            <div class="align-center justify-center shape-circle circle" :id="'pp-'+ pt.bgcolor" :style="{'background-color': pt.bgcolor}">
+              <strong :id="'pp-'+pt.color" :style="{ color: pt.color}">!</strong>
             </div>
-            <span class="text-dark text-truncate">{{pt.label}}</span>
+            <span :id="'pp-'+pt.label" class="text-dark text-truncate">{{pt.label}}</span>
           </li>
         </ul>
       </div>
     </div>
   </div>
 </template>
+
 <script>
 import { PRIORITY } from '~/config/constants.js'
 export default {

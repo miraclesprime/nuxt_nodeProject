@@ -17,5 +17,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  /*iframe { aspect-ratio: 5 / 7}*/
 </style>
