@@ -1,6 +1,6 @@
 <template>
   <div>
-    <iframe width="100%" height="460px" name="plugin" :src="pdfsrc" ></iframe>
+    <iframe title="pdfPreview" width="100%" height="460px" name="plugin" :src="pdfsrc" ></iframe>
   </div>
 </template>
 

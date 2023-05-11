@@ -2,7 +2,7 @@
   <client-only>
     <div class="file-wrap d-flex ">
       <figure class="position-relative w-100" v-tooltip="`${property.name}`">
-        <img :src="filePreview" class="shape-rounded d-block">
+        <img :src="filePreview" class="shape-rounded d-block" alt="filePreview">
         <div class="file-overlay d-flex align-center justify-center cursor-pointer" @click="$emit('file-click')">
           <fa :icon="faMagnifyingGlassPlus" class="width-2 height-2"></fa>
         </div>
@@ -33,11 +33,11 @@
           <table class="table">
             <tr v-for="file in fileDetail">
               <template v-if="file.key == 'size'">
-                <th class="text-right font-w-400">{{file.key}}:</th>
+                <th id="mfd-h1" class="text-right font-w-400">{{file.key}}:</th>
                 <td class="text-left text-gray6 pl-1">{{$formatBytes(file.value)}}</td>
               </template>
               <template v-else>
-                <th class="text-right font-w-400">{{file.key}}:</th>
+                <th id="mfd-h2" class="text-right font-w-400">{{file.key}}:</th>
                 <td class="text-left text-gray6 pl-1">{{file.value}}</td>
               </template>
             </tr>

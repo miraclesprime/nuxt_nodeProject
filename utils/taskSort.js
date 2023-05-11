@@ -46,8 +46,7 @@ export const sortTaskUtil = (data, field, order) => {
             break;
 
         default:
-            return sortedTask
-            break;
+            return sortedTask;
     }
 
     return sortedTask

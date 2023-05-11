@@ -4,8 +4,8 @@
       <table class="table">
         <thead>
           <tr class="table__hrow">
-            <th width="3%">&nbsp;</th>
-            <th v-for="(field, index) in fields" :key="field.key + index" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
+            <th id="dt-h1" width="3%">&nbsp;</th>
+            <th :id="'dt-h2-' + index" v-for="(field, index) in fields" :key="field.key + index" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
               <div class="align-center">
                 <span > {{ field.label }} </span>
                 <template v-if="field.header_icon">
@@ -24,8 +24,8 @@
       <table v-for="(section, index) in localdata" :key="section.id + templateKey" v-click-outside="unselectAll" class="table" :class="{ 'table__headless': index>=1 }">
         <thead>
           <tr class="table__hrow">
-            <th width="3%">&nbsp;</th>
-            <th v-for="(field, index) in fields" :key="field.key + index" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
+            <th id="dt-h3" width="3%">&nbsp;</th>
+            <th :id="'dt-h4-' + index" v-for="(field, index) in fields" :key="field.key + index" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
               <div class="align-center">
                 <span> {{ field.label }} </span>
                 <template v-if="field.header_icon">
@@ -440,7 +440,7 @@ export default {
       // console.log(sectionId)
       // this.newRow.show = true
       this.newRow.sectionId = sectionId
-      this.unselectAll
+      this.unselectAll()
     },
     newRowCreate: _.debounce(function() {
       // console.table([this.newRow.sectionId, this.newRow.title]);

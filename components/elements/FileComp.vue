@@ -23,11 +23,11 @@
         <table class="table">
           <tr v-for="file in fileDetail">
             <template v-if="file.key == 'size'">
-              <th class="text-right font-w-400">{{file.key}}:</th>
+              <th id="fd-h1" class="text-right font-w-400">{{file.key}}:</th>
               <td class="text-left text-gray6 pl-1">{{$formatBytes(file.value)}}</td>
             </template>
             <template v-else>
-              <th class="text-right font-w-400">{{file.key}}:</th>
+              <th fd-h2 class="text-right font-w-400">{{file.key}}:</th>
               <td class="text-left text-gray6 pl-1">{{file.value}}</td>
             </template>
           </tr>

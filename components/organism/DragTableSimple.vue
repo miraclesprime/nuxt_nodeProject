@@ -2,8 +2,8 @@
   <table v-click-outside="unselectAll" class="table">
     <thead v-if="!headless">
       <tr class="table__hrow">
-        <th v-if="drag" width="3%">&nbsp;</th>
-        <th v-for="(field, index) in fields" :key="field.key + index" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
+        <th id="dts-h1" v-if="drag" width="3%">&nbsp;</th>
+        <th :id="'dts-h2-' + index" v-for="(field, index) in fields" :key="field.key + index" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
           <div class="align-center">
             <span> {{ field.label }} </span>
             <template v-if="field.header_icon">
@@ -465,7 +465,7 @@ export default {
     newRowClick() {
       // console.log(sectionId)
       // this.newRow.sectionId = sectionId
-      this.unselectAll
+      this.unselectAll()
       this.newRow.show = true
       // this.$refs['newRow'+sectionId].style.visibility = 'visible'
     },
