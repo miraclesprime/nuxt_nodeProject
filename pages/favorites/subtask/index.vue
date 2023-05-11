@@ -4,7 +4,7 @@
       <page-title title="Favorite subtask"></page-title>
       <favorite-actions v-on:change-viewing="changeView" v-on:change-sorting="changeSort"></favorite-actions>
       <div id="subtask-favorite-wrap" class=" position-relative content-wrap" :style="{ 'width': contentWidth }">
-        <advance-table :tableFields="subtaskTableFields" :tableData="subtasks" :contextItems="contextItems" @context-item-event="contextItemClick" @table-sort="sortTask" @title-click="openSubPanel" @update-title="updateTitle" ></advance-table>
+        <advance-table :tableFields="subtaskTableFields" :tableData="subtasks" :contextItems="contextItems" @context-item-event="contextItemClick" @row-click ="openSubPanel" @table-sort="sortTask" @title-click="openSubPanel" @update-title="updateTitle" ></advance-table>
       </div>
       <transition name="drawer">
         <article v-if="subPanel" id="sub-panel" class="side-panel" v-click-outside="closeSubPanel">
@@ -47,11 +47,11 @@ export default {
   watch: {
     subPanel(){
       const page = document.getElementById("page")
-      process.nextTick(() => {
+      this.$nextTick(() => {
         const sub = document.getElementById("sub-panel")
-        console.log(page.scrollWidth - sub.scrollWidth)
+        console.log("page width="+page.offsetWidth+", panel width="+sub.offsetWidth)
         if (this.subPanel) {
-          this.contentWidth = (page.scrollWidth - sub.scrollWidth) + 'px'
+          this.contentWidth = (page.offsetWidth - sub.offsetWidth) + 'px'
         } else {
           this.contentWidth = '100%'
         }

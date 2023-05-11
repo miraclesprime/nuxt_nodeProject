@@ -107,7 +107,7 @@ export default {
 <style lang="scss" scoped>
 
 .picker-wrapper {
-  background-color: $white;
+  /*background-color: $white;*/
   position: relative;
 
   .picker-content {
@@ -127,7 +127,7 @@ export default {
 
   .user-data {
     border: 0 none;
-    background-color: $white;
+    background-color: transparent;
     padding: 0;
   }
 
