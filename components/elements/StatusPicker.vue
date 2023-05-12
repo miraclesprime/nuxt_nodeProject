@@ -1,20 +1,20 @@
 <template>
-  <div v-show="show" ref="statusPicker" class="picker-wrapper" :style="position" v-click-outside="onClickOutside">
-    <div class="picker-content">
-      <!-- <input type="text" class="picker-input" ref="userFilterInput" v-model="filterKey" @keyup.esc="$emit('close')" autofocus> -->
-      <div class="picker-list-wrap">
-        <ul class="m-0 p-0 text-left">
-          <li v-for="st in statusList" :key="st.value+'stitem'" class="p-025 gap-05 align-center font-md cursor-pointer" @click.stop="onStatusChange(st)">
-            <div class="align-center justify-center shape-circle circle" :style="{'background-color': st.bgcolor}">
-              <span class="dot shape-circle" :style="{'background-color' : st.color}"></span>
+  <div v-show="show" ref="statusPicker" id="status-picker-wrapper" class="picker-wrapper" :style="position" v-click-outside="onClickOutside">
+    <div class="picker-content" id="status-picker-content">
+      <div class="picker-list-wrap" id="status-picker-list-wrap">
+        <ul class="m-0 p-0 text-left" id="status-picker-list">
+          <li v-for="st in statusList" :key="st.value+'stitem'" :id="'status-picker-list-item-'+st.value" class="p-025 gap-05 align-center font-md cursor-pointer" @click.stop="onStatusChange(st)">
+            <div class="align-center justify-center shape-circle circle" :id="'status-picker-list-item-'+st.bgcolor" :style="{'background-color': st.bgcolor}">
+              <span class="dot shape-circle" :id="'status-picker-list-item-'+st.color" :style="{'background-color' : st.color}"></span>
             </div>
-            <span class="text-dark text-truncate">{{st.label}}</span>
+            <span class="text-dark text-truncate" :id="'status-picker-list-item-'+st.label">{{st.label}}</span>
           </li>
         </ul>
       </div>
     </div>
   </div>
 </template>
+
 <script>
 import { STATUS } from '~/config/constants.js'
 export default {
@@ -27,15 +27,12 @@ export default {
   data() {
     return {
       status: STATUS,
-      // filterKey: "",
     }
   },
   watch: {
     coordinates(val, oldVal) {
-      // console.log(val)
       let options = {
         root: document.querySelector('#main-content'),
-        root: null,
         rootMargin: '0px',
         threshold: 1.0
       }
@@ -85,7 +82,6 @@ export default {
     callback(entries, observer) {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) {
-          // console.log(entry.target, 'no')
           if (entry.boundingClientRect.right > entry.rootBounds.width) {
             this.position.left = (entry.rootBounds.width - entry.boundingClientRect.width) - 10 + 'px'
           }

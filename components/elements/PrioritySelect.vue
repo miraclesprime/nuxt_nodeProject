@@ -1,31 +1,30 @@
 <template>
-  <div class="picker-wrapper" v-click-outside="onClickOutside">
-    <button type="button" class="user-data cursor-pointer height-2 w-100 align-center justify-between" @click.stop="triggerOpen">
-      <span class="align-center flex-grow-1 gap-025">
-        <div class="d-flex align-center justify-center shape-circle circle" :style="{'background-color': $hex2rgba(localValue.color, colors)}"><strong :class="'text-'+localValue.color" >!</strong>
+  <div class="picker-wrapper" id="priority-select-wrapper" v-click-outside="onClickOutside">
+    <button type="button" id="priority-select-button" class="user-data cursor-pointer height-2 w-100 align-center justify-between" @click.stop="triggerOpen">
+      <span id="priority-select-inner-wrap" class="align-center flex-grow-1 gap-025">
+        <div id="priority-select-shape-circle" class="d-flex align-center justify-center shape-circle circle" :style="{'background-color': $hex2rgba(localValue.color, colors)}"><strong id="priority-select-localValue-color" :class="'text-'+localValue.color" >!</strong>
         </div>
-        <span class="text-capitalize" >
+        <span class="text-capitalize" id="priority-select-localValue-label" >
           {{ localValue.label }}
         </span>
       </span>
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
     </button>
-    <div v-show="show" class="picker-content">
-      <!-- <input type="text" class="picker-input" ref="userFilterInput" v-model="filterKey" @keyup.esc="$emit('close')" autofocus> -->
-      <div class="picker-list-wrap">
-        <ul class="m-0 p-0 text-left">
-          <li v-for="pt in priorityList" :key="pt.value+'stitem'" class="p-025 gap-05 align-center font-md cursor-pointer" @click.stop="onStatusChange(pt)">
-            <div class="align-center justify-center shape-circle circle" :style="{'background-color': pt.bgcolor}">
-              <!-- <span class="dot shape-circle" :style="{'background-color' : pt.color}"></span> -->
-              <strong :class="'text-' + pt.color">!</strong>
+    <div v-show="show" class="picker-content" id="priority-select-content"> 
+      <div class="picker-list-wrap" id="priority-select-list-wrap">
+        <ul class="m-0 p-0 text-left" id="priority-select-list">
+          <li v-for="pt in priorityList" :key="pt.value+'stitem'" :id="'ps-'+pt.value" class="p-025 gap-05 align-center font-md cursor-pointer" @click.stop="onStatusChange(pt)">
+            <div class="align-center justify-center shape-circle circle" :id="'ps-'+pt.bgcolor" :style="{'background-color': pt.bgcolor}">
+              <strong :id="'ps-'+pt.color" :class="'text-' + pt.color">!</strong>
             </div>
-            <span class="text-dark text-truncate">{{pt.label}}</span>
+            <span :id="'ps-'+pt.label" class="text-dark text-truncate">{{pt.label}}</span>
           </li>
         </ul>
       </div>
     </div>
   </div>
 </template>
+
 <script>
 import { PRIORITY } from '~/config/constants.js'
 export default {
@@ -79,7 +78,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .picker-wrapper {
-  background-color: $white;
+  /*background-color: $white;*/
   position: relative;
 
   .picker-content {
@@ -99,7 +98,7 @@ export default {
 
   .user-data {
     border: 0 none;
-    background-color: $white;
+    background-color: transparent;
     padding: 0;
   }
 

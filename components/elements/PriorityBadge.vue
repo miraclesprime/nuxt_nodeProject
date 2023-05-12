@@ -1,15 +1,13 @@
 <template>
   <div :id="'priority-badge-'+compId" class="priority-badge d-flex gap-05 align-center px-05 shape-rounded" :style="{ 'background-color': hex2rgba(priorityOutput.color)}">
-    <!-- <bib-icon v-if="priorityOutput.icon" icon="urgent-solid" :scale="1" :variant="priorityOutput.color"></bib-icon> -->
     <strong :id="'priority-icon-'+compId" class="icon text-center " :style="{'color': priorityOutput.color}">!</strong>
     <span v-if="priorityOutput.text && !iconOnly" :id="'priority-text'+compId" class="text-capitalize font-xs" :style="{'color': priorityOutput.color}">
       {{ priorityOutput.text }}
     </span>
   </div>
 </template>
+
 <script>
-// import { ColorVariants } from '~/node_modules/@bizinbox/bib-ui-lib/dist/library'
-// import { ColorVariants } from '~/../bib-shared/js/colors'
 export default {
 
   name: 'PriorityBadge',
@@ -57,5 +55,4 @@ export default {
   min-height: 24px;
   strong { width:8px; line-height: 16px;}
 }
-/*.bg-orange-sub3 { background-color: rgba($orange, 0.2);}*/
 </style>

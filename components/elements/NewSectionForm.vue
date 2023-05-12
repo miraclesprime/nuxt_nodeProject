@@ -2,8 +2,8 @@
   <section v-show="showNewsection" id="new-section-container">
     <div id="new-section-input-wrapper" class="d-flex align-center p-05 bg-light">
       <input id="new-section-input" type="text" class="new-section-input" ref="newsectioninput" v-model.trim="newSectionName" v-on:blur="onClickOutside" v-on:keyup.enter="$emit('create-section', newSectionName)" @keyup.esc="onClickOutside(true)" placeholder="Enter section name">
-      <small v-if="showError" class="text-danger ml-05">{{showError}}</small>
-      <div v-show="showLoading" class="d-flex align-center">
+      <small v-if="showError" class="text-danger ml-05" id="nsf-show-error">{{showError}}</small>
+      <div id="nsf-showloading" v-show="showLoading" class="d-flex align-center">
         <bib-spinner :scale="2"></bib-spinner> <span class="text-secondary">Creating section ...</span>
       </div>
       <bib-icon icon="close" class="ml-auto"></bib-icon>
@@ -11,54 +11,54 @@
   </section>
 </template>
 <script>
+import _ from "lodash";
 export default {
-
-  name: 'NewSectionForm',
+  name: "NewSectionForm",
   props: {
     showNewsection: Boolean,
     showLoading: Boolean,
-    showError: {type: String, default: ""},
+    showError: { type: String, default: "" },
   },
   data() {
     return {
       newSectionName: null,
-      // sectionLoading: false,
-      // sectionError: false,
     }
   },
   watch: {
     showNewsection(newVal) {
       if (newVal) {
         this.$nextTick(() => {
-          // console.log('nextTick', this.$refs.newsectioninput)
           this.$refs.newsectioninput.focus()
         })
       } else {
-        this.newSectionName = null
+        this.newSectionName = null;
       }
-    }
+    },
   },
   methods: {
     onClickOutside(escape) {
       if (escape) {
-        this.newSectionName = null
-        this.$emit("toggle-newsection", false)
-        return false
+        this.newSectionName = null;
+        this.$emit("toggle-newsection", false);
+        return false;
       }
       if (!this.newSectionName) {
         this.newSectionName = null
-        // this.newSection = false
         this.$emit("toggle-newsection", false)
       } else {
-        this.$emit("create-section", this.newSectionName)
+        this.$emit("create-section", this.newSectionName);
       }
     },
-    /*escape(){
-      this.$emit("toggle-newsection", false)
-    },*/
-  }
-}
 
+    createSection() {
+      this.debounceCreate();
+    },
+
+    debounceCreate: _.debounce(function () {
+      this.$emit("create-section", this.newSectionName);
+    }, 800),
+  },
+};
 </script>
 <style lang="scss" scoped>
 .task-view-wrapper {
@@ -78,5 +78,4 @@ export default {
     border-radius: 0;
   }
 }
-
 </style>

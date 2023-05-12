@@ -195,7 +195,7 @@ export const mutations = {
 
       newArr.sort((a, b) => {
         if (a.dueDate && b.dueDate) {
-          new Date(a.dueDate) - new Date(b.dueDate)
+          return new Date(a.dueDate) - new Date(b.dueDate)
         }
       });
       state.projects = newArr;
@@ -216,7 +216,7 @@ export const mutations = {
 
       newArr.sort((a, b) => {
         if (a.dueDate && b.dueDate) {
-          new Date(b.dueDate) - new Date(a.dueDate)
+          return new Date(b.dueDate) - new Date(a.dueDate)
         }
       });
       state.projects = newArr;

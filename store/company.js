@@ -90,7 +90,7 @@ export const mutations = {
 
       if (payload.order == "asc") {
         newArr.map((dept) => {
-          dept.tasks.sort((a, b) => {
+          return dept.tasks.sort((a, b) => {
             if (a.status && b.status) {
               return a.status.text.localeCompare(b.status.text);
             }
@@ -98,7 +98,7 @@ export const mutations = {
         })
       } else {
         newArr.map((dept) => {
-          dept.tasks.sort((a, b) => {
+          return dept.tasks.sort((a, b) => {
             if (a.status && b.status) {
               return b.status.text.localeCompare(a.status.text);
             }
@@ -130,7 +130,7 @@ export const mutations = {
 
       if (payload.order == "asc") {
         newArr.map((dept) => {
-          dept.tasks.sort((a, b) => {
+          return dept.tasks.sort((a, b) => {
             if (a.priority && b.priority) {
               return a.priority.id - b.priority.id;
             }
@@ -138,7 +138,7 @@ export const mutations = {
         })
       } else {
         newArr.map((dept) => {
-          dept.tasks.sort((a, b) => {
+          return dept.tasks.sort((a, b) => {
             if (a.priority && b.priority) {
               return b.priority.id - a.priority.id;
             }
@@ -170,7 +170,7 @@ export const mutations = {
 
       if (payload.order == "asc") {
         newArr.map((dept) => {
-          dept.tasks.sort((a, b) => {
+          return dept.tasks.sort((a, b) => {
             if (a.user && b.user) {
               return a.user.firstName.localeCompare(b.user.firstName);
             }
@@ -178,7 +178,7 @@ export const mutations = {
         })
       } else {
         newArr.map((dept) => {
-          dept.tasks.sort((a, b) => {
+          return dept.tasks.sort((a, b) => {
             if (a.user && b.user) {
               return b.user.firstName.localeCompare(a.user.firstName);
             }
@@ -210,7 +210,7 @@ export const mutations = {
 
       if (payload.order == "asc") {
         newArr.map((dept) => {
-          dept.tasks.sort((a, b) => {
+          return dept.tasks.sort((a, b) => {
             if (a.startDate && b.startDate) {
               return new Date(a.startDate) - new Date(b.startDate);
             }
@@ -218,7 +218,7 @@ export const mutations = {
         })
       } else {
         newArr.map((dept) => {
-          dept.tasks.sort((a, b) => {
+          return dept.tasks.sort((a, b) => {
             if (a.startDate && b.startDate) {
               return new Date(b.startDate) - new Date(a.startDate);
             }
@@ -249,7 +249,7 @@ export const mutations = {
 
       if (payload.order == "asc") {
         newArr.map((dept) => {
-          dept.tasks.sort((a, b) => {
+          return dept.tasks.sort((a, b) => {
             if (a.dueDate && b.dueDate) {
               return new Date(a.dueDate) - new Date(b.dueDate);
             }
@@ -257,7 +257,7 @@ export const mutations = {
         })
       } else {
         newArr.map((dept) => {
-          dept.tasks.sort((a, b) => {
+          return dept.tasks.sort((a, b) => {
             if (a.dueDate && b.dueDate) {
               return new Date(b.dueDate) - new Date(a.dueDate);
             }
@@ -289,7 +289,7 @@ export const mutations = {
 
       if (payload.order == "asc") {
         newArr.map((dept) => {
-          dept.tasks.sort((a, b) => {
+          return dept.tasks.sort((a, b) => {
             if (a.project[0] && b.project[0]) {
               return a.project[0].project.title.localeCompare(b.project[0].project.title);
             }
@@ -297,7 +297,7 @@ export const mutations = {
         })
       } else {
         newArr.map((dept) => {
-          dept.tasks.sort((a, b) => {
+          return dept.tasks.sort((a, b) => {
             if (a.project[0] && b.project[0]) {
               return b.project[0].project.title.localeCompare(a.project[0].project.title);
             }

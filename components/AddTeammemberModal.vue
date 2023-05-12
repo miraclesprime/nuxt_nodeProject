@@ -2,9 +2,8 @@
   <div id="create-team-modal-wrapper">
     <bib-modal-wrapper @close="showTeamCreateModal = false" v-show="showTeamCreateModal" title="Assign people to project/task " id="create-team" @keypress.native="bindEnter($event, 'create-team-btn')">
       <template v-slot:content>
-        <div style="height: 10rem;">
+        <div style="height: 10rem;" id="ctm-inner-wrap">
           <label id="create-team-modal-heading" class="text-gray6">Participants</label>
-          <!-- <bib-input type="select" :options="memberOptions" v-model="member" v-on:change.native="selectTeam"></bib-input> -->
           <bib-button test_id="create-team-dd1" dropdown1="add" label="Type name or email" v-model="member" v-on:input-change="teamInputChange" v-on:input-keydown="teamInputKeydown" class="mt-05 mb-05">
             <template v-slot:menu>
               <ul id="atm-fields" class="border-gray1" style="border-radius: 0 !important; border: 1px solid var(--bib-gray1);">
@@ -19,8 +18,8 @@
             <template v-for="t in team">
               <email-chip :key="t.id" :email="t.email" :name="t.label" :avatar="t.avatar" class="mt-05" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
             </template>
-            <small v-show="team.length == 0" class="text-danger">Select at least 1 team member.</small>
-            <p v-if="message" v-text="message" class="font-sm mt-025 text-orange"></p>
+            <small v-show="team.length == 0" class="text-danger" id="ctm-alert-1">Select at least 1 team member.</small>
+            <p v-if="message" v-text="message" class="font-sm mt-025 text-orange" id="ctm-alert-else"></p>
           </div>
           <loading :loading="loading"></loading>
         </div>
@@ -71,7 +70,6 @@ export default {
       let regex = new RegExp(this.filterKey, 'g\i')
       return this.teamMembers.filter((u) => {
         if (regex.test(u.label) || regex.test(u.email)) {
-          // if (u.email.indexOf(this.filterKey) >= 0) {
           return u
         }
       })
@@ -86,17 +84,13 @@ export default {
       console.log('team input change')
     },
     teamInputKeydown($event) {
-      // console.log('dropdown input keydown', $event)
       this.filterKey = $event
     },
     teamItemClick(tm) {
-      // console.log(tm)
       let existing = this.projectMembers.filter(ex => ex.id == tm.id)
-      // console.log(existing)
       if (existing.length == 0) {
         this.message = ""
         let m = this.teamMembers.filter(t => t.id == tm.id)
-        // console.log(m[0])
         if (this.team.some(el => el.id == m[0].id)) {
           return false
         }
@@ -105,13 +99,11 @@ export default {
         this.message = "User already exists"
       }
     },
-    // dropdownFooterAction(){},
+
     inviteViaEmail() {
       console.log('inviteViaEmail')
     },
     removeMember(tm) {
-      // console.log(tm)
-      // let rm = this.team.filter(t=>t.id == tm.id)
       let rm = this.team.map(t => t.id == tm.id)
       console.log(rm.indexOf(true))
       this.team.splice(rm.indexOf(true), 1)
@@ -122,14 +114,6 @@ export default {
         return false;
       }
     },
-    /*selectTeam(){
-      let m = this.teammate.filter(t=>t.id == this.member)
-      // console.log(m[0])
-      if (this.team.some(el=>el.id == m[0].id)) {
-        return false
-      }
-      this.team.push(m[0])
-    },*/
     addTeamMember() {
       this.loading = true
 
@@ -155,7 +139,6 @@ export default {
     copyUrl() {
 
       navigator.clipboard.writeText(this.projectUrl).then(() => {
-        // console.log('success')
         this.popupMessages.push({ text: "Copied successfully", variant: "success" })
       }, () => {
         this.popupMessages.push({ text: "Failed to copy", variant: "danger" })
