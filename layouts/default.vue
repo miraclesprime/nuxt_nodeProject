@@ -298,7 +298,7 @@ export default {
       scrollId: "",
       isAdmin: false,
       btnText: "Upgrade",
-      departmentId: null
+      departmentId: null,
     };
   },
   created() {
@@ -344,10 +344,9 @@ export default {
         this.$store.dispatch("task/fetchTeamMember", { id: payload.id });
       }
 
-      if(payload.department) {
+      if (payload.department) {
         this.departmentId = payload.department;
       }
-
     });
     this.$root.$on("close-sidebar", () => {
       // console.info('close-sidebar event')
@@ -529,8 +528,7 @@ export default {
     },
 
     goToRoute(event, item) {
-
-      this.appMembers.map((u) => u.selected = false)
+      this.appMembers.map((u) => (u.selected = false));
       this.navKey++;
 
       for (let i = 0; i < this.navItems1.length; i++) {
@@ -561,33 +559,33 @@ export default {
       this.$router.push("/projects/" + item.id);
 
       for (let i = 0; i < this.navItems1.length; i++) {
-          this.navItems1[i].selected = false;
+        this.navItems1[i].selected = false;
       }
 
       for (let i = 0; i < this.navItems2.length; i++) {
-            this.navItems2[i].selected = false;
+        this.navItems2[i].selected = false;
       }
 
-      this.navItems2[1].selected = true;    
+      this.navItems2[1].selected = true;
     },
 
     goToUsertask($event, item) {
       this.teammate.find((u) => u.email == item.email);
-      
+
       this.appMembers.map((u) => {
-        if(u.email == item.email) {
+        if (u.email == item.email) {
           u.selected = true;
         } else {
           u.selected = false;
         }
-      })
+      });
 
       for (let i = 0; i < this.navItems1.length; i++) {
-          this.navItems1[i].selected = false;
+        this.navItems1[i].selected = false;
       }
 
       for (let i = 0; i < this.navItems2.length; i++) {
-          this.navItems2[i].selected = false;
+        this.navItems2[i].selected = false;
       }
 
       this.navKey++;
