@@ -4,7 +4,7 @@
       <!-- <div class="zero" :style="{ width: tableFields[0].width}">
         <div class="align-center gap-05">{{tableFields[0].label}} <span v-if="tableFields[0].header_icon" class="height-1" @click="$emit(tableFields[0].header_icon.event)"><bib-icon :icon="tableFields[0].header_icon.icon" :variant="tableFields[0].header_icon.isActive ? 'gray1' : 'gray4'"></bib-icon></span></div>
       </div> -->
-      <draggable v-if="drag" class="task-draggable adv-table resizable bg-white" handle=".drag-handle" :style="{'width': tableWidth}" role="table" @start="rowDragStart" @end="rowDragEnd" >
+      <draggable v-if="drag" class="task-draggable adv-table resizable bg-white" handle=".drag-handle" :style="{'width': tableWidth}" role="table" @start="rowDragStart" @end="rowDragEnd" :move="moveTask" >
           <div slot="header" class="tr" role="row">
             <div v-if="drag" class="width-2 th" role="cell"></div>
             <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{ width: field.width}">
@@ -100,7 +100,7 @@ export default {
       activeItem: {},
       resizableTables: [],
       format: "DD MMM YYYY",
-      highlight: false,
+      // highlight: false,
     }
   },
 
@@ -330,14 +330,18 @@ export default {
       //  alert(resizableTables.length + ' tables was added.');
     },
     rowDragStart(e) {
-      // console.warn(e.to.classList.add("highlight"));
-      this.highlight = true
+      console.log(e.type, e);
+      // this.highlight = true
     },
     rowDragEnd(e) {
-      // console.log(e)
-      this.highlight = false
+      console.log(e.type, e)
+      // this.highlight = false
       // let sectionData = this.localdata.filter(s => s.id == e.to.dataset.section)
       // this.$emit('task-dragend', sectionData[0].tasks)
+    },
+    moveTask(e) {
+      console.log("move event", e)
+      // this.taskMoveSection = +e.to.dataset.section
     },
     rowClick($event, item) {
       // console.log($event.target)
@@ -476,6 +480,11 @@ export default {
     }
   }
 
+  /*&.highlight {
+    .tr {
+      background-color: skyblue;
+    }
+  }*/
 
   .tr {
     display: table-row;
