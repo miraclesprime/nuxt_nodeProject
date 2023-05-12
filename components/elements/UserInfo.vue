@@ -8,12 +8,9 @@
       <bib-avatar :src="userInfo.avatar" :size="avatarSize"></bib-avatar>
       <span :id="'user-info-'+ random" class="user-name " :class="[ 'text-'+color, 'font-w-'+weight ]">{{userInfo.label}}</span>
     </template>
-    <!-- <template v-else>
-      <span :id="'user-info-'+ random" class="user-name text-dark pl-025 pr-025">{{ user.firstName + '' + user.lastName }} </span>
-    </template> -->
-    <!-- <bib-spinner :scale="1.5"></bib-spinner> -->
   </span>
 </template>
+
 <script>
 import { mapGetters } from 'vuex';
 
@@ -43,27 +40,13 @@ export default {
     }),
   },
 
-  /*created() {
-    if (this.userId) {
-      this.members.filter((el) => {
-        if (el.id === this.userId) {
-          this.userName = el.firstName + ' ' + el.lastName;
-          this.pic = el.avatar
-        }
-      });
-    }
-  },*/
-
   mounted() {
-    // console.log(this.members)
     this.random = Math.floor(Math.random() * (898) + 100);
 
     if (this.user?.id) {
       this.userName = `${this.user.firstName} ${this.user.lastName}`
       let m = this.members.find(el => el.id == this.user.id )
-      // console.log(m)
       this.pic = m?.avatar
-      // this.userName = m?.label
       return
     } 
 

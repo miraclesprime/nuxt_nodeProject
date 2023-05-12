@@ -6,7 +6,7 @@
     <template v-else>
       <bib-avatar :text="email[0].toUpperCase()" size="1.25rem" class="mr-025"></bib-avatar>
     </template>
-    <strong v-if="name" class="px-025 font-sm">{{name}}</strong>
+    <strong v-if="name" class="px-025 font-sm" id="email-chip-strong">{{name}}</strong>
     <span id="email" class="px-025 font-sm">{{email}}</span>
     <template v-if="close">
       <bib-icon icon="close" variant="gray5" :scale="1" class="cursor-pointer ml-05" v-on:click="onClose" ></bib-icon>

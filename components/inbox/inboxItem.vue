@@ -1,60 +1,54 @@
 <template>
-  <div class="inbox-item border-bottom-gray2 py-1 px-3 position-relative cursor-pointer" :class="{'active': active == item.id}" @click="itemClick">
-    <div v-if="!status.markRead" class="new text-white font-xs position-absolute">New
-      <span class="triangle"></span>
+  <div class="inbox-item border-bottom-gray2 py-1 px-3 position-relative cursor-pointer" :class="{'active': active == item.id}" @click="itemClick" id="inbox-item-wrapper">
+    <div v-if="!status.markRead" class="new text-white font-xs position-absolute" id="inbox-item-new">New
+      <span class="triangle" id="inbox-item-triangle"></span>
     </div>
-    <div class="w-100 d-inline-flex align-center gap-05 pb-05 text-secondary font-md">
+    <div id="inbox-item-tile-wrapper" class="w-100 d-inline-flex align-center gap-05 pb-05 text-secondary font-md">
       <span>
         <user-info :userId="item.userId"></user-info>
       </span>
-      <span v-if="projTitle">
-        <!-- <strong>assigned a task to you in</strong> -->
+      <span v-if="projTitle" id="inbox-item-briefcase-icon">
         <bib-icon icon="briefcase" variant="gray5"></bib-icon> {{projTitle}}
       </span>
-      <!-- <span v-else><strong>{{item.text}}</strong></span> -->
       <div class="inbox-flags d-inline-flex align-center ml-auto">
-        <span class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Flag message'">
+        <span id="inbox-item-flag-racing-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Flag message'">
           <bib-icon icon="flag-racing" variant="gray5"></bib-icon>
         </span>
-        <span class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="readText" @click.stop="markRead">
+        <span  id="inbox-item-mail-solid-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="readText" @click.stop="markRead">
           <bib-icon icon="mail-solid" :variant="status.markRead ? 'gray6' : 'gray5'"></bib-icon>
         </span>
-        <span class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Archive'">
+        <span  id="inbox-item-file-multiple-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Archive'">
           <bib-icon icon="file-multiple" variant="gray5"></bib-icon>
         </span>
-        <span class="shape-rounded px-025 border-gray4 text-gray5 font-xs">{{item.id}}</span>
+        <span id="inbox-item-icon" class="shape-rounded px-025 border-gray4 text-gray5 font-xs">{{item.id}}</span>
       </div>
     </div>
-    <div class="d-flex align-center justify-between">
-      <h4>{{taskTitle || projTitle}}</h4>
-      <span class="duedate d-inline-flex align-center gap-05 text-secondary font-md">
+    <div class="d-flex align-center justify-between" id="inbox-item-project-task-title">
+      <h4 id="task-project-title">{{taskTitle || projTitle}}</h4>
+      <span id="calendar-date-wrapper" class="duedate d-inline-flex align-center gap-05 text-secondary font-md">
         <bib-icon icon="calendar" variant="gray5"></bib-icon>
         <format-date :datetime="item.updatedAt"></format-date>
       </span>
     </div>
-    <div class="content font-md py-05">
-      <div v-if="item.content || item.comment" class="inbox-item-content mb-05">
-        <template v-for="cn in item.content">
-          <div class="history">{{truncateText(cn.title)}}</div>
-          <div>@ {{cn.time}}</div>
+    <div class="content font-md py-05" id="ii-history-comment-wrap">
+      <div v-if="item.content || item.comment" id="ii-content" class="inbox-item-content mb-05">
+        <template v-for="(cn, i) in item.content">
+          <div class="history" :id="'ii-history-'+cn.title">{{truncateText(cn.title)}}</div>
+          <div :id="'ii-time-'+i">@ {{cn.time}}</div>
         </template>
-        <template v-for="cm in item.comment">
-          <div class="comment">{{truncateText(cm.comment)}}</div>
-          <div>@ {{$toTime(cm.updatedAt)}}</div>
+        <template v-for="(cm, i) in item.comment">
+          <div class="comment" :id="'ii-comment-'+cn.title">{{truncateText(cm.comment)}}</div>
+          <div :id="'ii-updatedAt-'+i">@ {{$toTime(cm.updatedAt)}}</div>
         </template>
       </div>
-      <!-- <drag-table-simple v-if="item.content" :fields="fields" :tasks="item.content" headless :titleIcon="{ icon: 'tick'}" :collapsible="false" :drag="false"></drag-table-simple> -->
       <span v-else v-html="item.text"><br></span>
-      <!-- <div v-html="taskComment.comment"></div>
-      <div v-html="projComment.comment"></div> -->
     </div>
     <div class="sent font-sm text-gray5">Sent
-      <!-- on Sept. 22, 2022 --> @ {{$toTime(item.updatedAt)}} </div>
+      @ {{$toTime(item.updatedAt)}} </div>
   </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'
-// import { DUMMY_TASKS } from '~/dummy/tasks'
 import _ from 'lodash'
 export default {
 
@@ -63,16 +57,7 @@ export default {
   props: {
     item: Object,
     active: Number,
-    /*status: {
-      type: Object,
-      default: function() {
-        return {
-          markRead: false,
-          markFlag: false,
-          markArchive: false,
-        }
-      }
-    },*/
+    
   },
 
   data() {
@@ -87,29 +72,13 @@ export default {
           label: "@",
         },
       ],
-      // tasks: DUMMY_TASKS,
       status: {
         markRead: false,
         markFlag: false,
         markArchive: false,
       },
-      // refreshKey: 0,
     }
   },
-  /*watch: {
-    userInbox: {
-      handler(newValue, oldValue) {
-        let st = newValue.find(it => it.historyId == this.item.id)
-        console.info('watched',st?.historyId)
-        if (st || this.refreshKey > 0) {
-          this.status = st
-        } else {
-          this.status = { markRead: false, markFlag: false, markArchive: false }
-        }
-      },
-      deep: true
-    },
-  },*/
   computed: {
     ...mapGetters({
       userInbox: "inbox/getInbox",
@@ -117,18 +86,11 @@ export default {
     taskTitle() {
       return this.item['task'] ? this.item.task.title : ''
     },
-    /*taskComment() {
-      return this.item['taskComment'] ? this.item.taskComment : ''
-    },*/
     projTitle() {
       return this.item['project'] ? this.item.project.title : ''
     },
-    /*projComment() {
-      return this.item['projectComment'] ? this.item.projectComment : ''
-    },*/
     inboxStatus() {
       let st = this.userInbox.find(it => it.historyId == this.item.id)
-      // console.info("computed ",st?.historyId)
       if (st) {
         this.status = st
         return st
@@ -149,12 +111,9 @@ export default {
       if (this.item.projectId) {
         this.$emit('project-click', { id: this.item.id, projectId: this.item.projectId })
       }
-      // this.markRead()
       this.$store.dispatch("inbox/createInboxEntry", { historyId: this.item.id, obj: { markRead: true, markFlag: false, markArchive: false } })
         .then(res => {
-          // console.log(res.data)
           if (res.statusCode == 200) {
-            // this.refreshKey += 1
           }
         })
 
@@ -170,12 +129,9 @@ export default {
       }
 
       this.$store.dispatch("inbox/createInboxEntry", { historyId: this.item.id, obj: obj1 }).then(res => {
-        // console.log(res.data)
         if (res.statusCode == 200) {
-          // this.refreshKey += 1
           this.$store.dispatch("inbox/fetchInboxEntry", { id: this.status.id })
             .then(res => {
-              // console.info(res.data)
               this.status = res.data
             })
         }
@@ -201,7 +157,6 @@ export default {
     background-color: white;
     display: grid;
     grid-template-columns: 1fr max-content;
-    /*gap: 0.25rem;*/
     border-top: 1px solid $light;
     border-right: 1px solid $light;
 

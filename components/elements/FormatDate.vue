@@ -20,9 +20,6 @@ export default {
       if (!this.datetime) {
         return ""
       }
-      /*let d = new Date(this.datetime)
-      let m = d.getMonth()
-      return `${d.getDate()} ${this.months[m]} ${d.getFullYear()}`*/
       return dayjs(this.datetime).format('D MMM YYYY')
     }
   },
