@@ -11,13 +11,13 @@
   </section>
 </template>
 <script>
+import _ from "lodash";
 export default {
-
-  name: 'NewSectionForm',
+  name: "NewSectionForm",
   props: {
     showNewsection: Boolean,
     showLoading: Boolean,
-    showError: {type: String, default: ""},
+    showError: { type: String, default: "" },
   },
   data() {
     return {
@@ -31,27 +31,34 @@ export default {
           this.$refs.newsectioninput.focus()
         })
       } else {
-        this.newSectionName = null
+        this.newSectionName = null;
       }
-    }
+    },
   },
   methods: {
     onClickOutside(escape) {
       if (escape) {
-        this.newSectionName = null
-        this.$emit("toggle-newsection", false)
-        return false
+        this.newSectionName = null;
+        this.$emit("toggle-newsection", false);
+        return false;
       }
       if (!this.newSectionName) {
         this.newSectionName = null
         this.$emit("toggle-newsection", false)
       } else {
-        this.$emit("create-section", this.newSectionName)
+        this.$emit("create-section", this.newSectionName);
       }
     },
-  }
-}
 
+    createSection() {
+      this.debounceCreate();
+    },
+
+    debounceCreate: _.debounce(function () {
+      this.$emit("create-section", this.newSectionName);
+    }, 800),
+  },
+};
 </script>
 <style lang="scss" scoped>
 .task-view-wrapper {
@@ -71,5 +78,4 @@ export default {
     border-radius: 0;
   }
 }
-
 </style>

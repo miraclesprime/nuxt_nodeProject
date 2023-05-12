@@ -1,74 +1,70 @@
 <template>
-  <div id="adv-table-wrapper" class="adv-table-wrapper position-relative">
-    <div class="adv-table resizable bg-white" :style="{'width': tableWidth}" role="table">
+  <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll">
+    <!-- <div class="adv-table resizable bg-white" :style="{'width': tableWidth}" role="table"> -->
       <!-- <div class="zero" :style="{ width: tableFields[0].width}">
         <div class="align-center gap-05">{{tableFields[0].label}} <span v-if="tableFields[0].header_icon" class="height-1" @click="$emit(tableFields[0].header_icon.event)"><bib-icon :icon="tableFields[0].header_icon.icon" :variant="tableFields[0].header_icon.isActive ? 'gray1' : 'gray4'"></bib-icon></span></div>
       </div> -->
-      <div class="tr" role="row">
-        <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{ width: field.width}">
-          <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer" @click="$emit(field.header_icon.event, field)">
-              <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'gray1' : 'gray4'"></bib-icon>
-            </span></div>
-        </div>
-        <!-- <div class="th">owner</div>
-        <div class="th">due date</div> -->
-      </div>
-      <!-- <div class="thead">
-      </div> -->
-      <div v-for="item in tableData" :key="item.id" class="tr" role="row" @click.right.prevent="contextOpen($event, item)">
-        <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell">
-          <div v-if="field.key == 'title'" class="align-center ">
-            <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}">
-              <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="field.icon.variant" hover-variant="success"></bib-icon>
-            </span>
-            <span v-if="field.event" class=" flex-grow-1" style=" line-height:1.25;">
-              <input type="text" class="editable-input" :value="item[field.key]" @input="debounceTitle($event.target.value, item)">
-            </span>
-            <span v-else class="flex-grow-1">
-              {{item[field.key]}}
-            </span>
-            <span v-if="field.event" class="width-105 height-105 align-center justify-center flex-shrink-0 cursor-pointer bg-hover-light" @click.stop="$emit(`${field.event}`, item)">
-              <bib-icon icon="arrow-right" variant="gray4" hover-variant="gray5"></bib-icon>
-            </span>
+      <draggable v-if="drag" class="task-draggable adv-table resizable bg-white" handle=".drag-handle" :style="{'width': tableWidth}" role="table" @start="rowDragStart" @end="rowDragEnd" :move="moveTask" >
+          <div slot="header" class="tr" role="row">
+            <div v-if="drag" class="width-2 th" role="cell"></div>
+            <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{ width: field.width}">
+              <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer" @click="$emit(field.header_icon.event, field)">
+                  <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'gray1' : 'gray4'"></bib-icon>
+                </span></div>
+            </div>
           </div>
-          <template v-if="field.key == 'project'">{{item[field.key][0].project.title}}</template>
-          <template v-if="field.key == 'userId'">
-            <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
-            <!-- <user-info :userId="item[field.key]"></user-info> -->
-            <!-- <bib-select :options="teamOptions" placeholder="Owner" @change="updateAssignee($event, item)" ></bib-select> -->
-          </template>
-          <template v-if="field.key == 'status'">
-            <!-- <status-comp :status="item[field.key]"></status-comp> -->
-            <status-select :ref="'stausSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('stausSelect'+item.id)"></status-select>
-          </template>
-          <template v-if="field.key == 'priority'">
-            <!-- <priority-comp :priority="item[field.key]"></priority-comp> -->
-            <priority-select :ref="'prioritySelect'+item.id" :value="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
-          </template>
-          <template v-if="field.key == 'department'">
-            <!-- {{item[field.key]?.title}} -->
-            <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
-          </template>
-          <template v-if="field.key.includes('Date')" class="date-cell">
-            <!-- {{$formatDate(item[field.key])}} -->
-            <bib-datetime-picker v-model="item[field.key]" placeholder="" @input="updateDate"></bib-datetime-picker>
-          </template>
-          <!-- {{item[field.key]}} -->
+
+        <div v-for="item in tableData" :key="item.id" class="tr" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
+          <div class="td" role="cell">
+            <div v-if="drag" class="drag-handle width-105 h-100" ><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
+              <rect fill="none" height="24" width="24" />
+              <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg>
+            </div>
+          </div>
+          <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell">
+            <div v-if="field.key == 'title'" class="align-center ">
+              <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}">
+                <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="field.icon.variant" hover-variant="success"></bib-icon>
+              </span>
+              <span v-if="field.event" class=" flex-grow-1" style="line-height:1.25;">
+                <input type="text" class="editable-input" :value="item[field.key]" @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
+              </span>
+              <span v-else class="flex-grow-1">
+                {{item[field.key]}}
+              </span>
+              <span v-if="field.event" class="width-105 height-105 align-center justify-center flex-shrink-0 cursor-pointer bg-hover-light" @click.stop="$emit(`${field.event}`, item)">
+                <bib-icon icon="arrow-right" variant="gray4" hover-variant="gray5"></bib-icon>
+              </span>
+            </div>
+            <template v-if="field.key == 'project'">{{item[field.key][0].project.title}}</template>
+            <template v-if="field.key == 'userId'">
+              <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
+              <!-- <user-info :userId="item[field.key]"></user-info> -->
+              <!-- <bib-select :options="teamOptions" placeholder="Owner" @change="updateAssignee($event, item)" ></bib-select> -->
+            </template>
+            <template v-if="field.key == 'status'">
+              <!-- <status-comp :status="item[field.key]"></status-comp> -->
+              <status-select :ref="'stausSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('stausSelect'+item.id)"></status-select>
+            </template>
+            <template v-if="field.key == 'priority'">
+              <!-- <priority-comp :priority="item[field.key]"></priority-comp> -->
+              <priority-select :ref="'prioritySelect'+item.id" :value="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
+            </template>
+            <template v-if="field.key == 'department'">
+              <!-- {{item[field.key]?.title}} -->
+              <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
+            </template>
+            <template v-if="field.key.includes('Date')" class="date-cell">
+              <!-- {{$formatDate(item[field.key])}} -->
+              <bib-datetime-picker v-model="item[field.key]" :format="format" placeholder="" @input.stop="updateDate"></bib-datetime-picker>
+            </template>
+            <!-- {{item[field.key]}} -->
+          </div>
+          <!-- <div class="td">asdf</div>
+          <div class="td">asdf</div> -->
         </div>
-        <!-- <div class="td">asdf</div>
-        <div class="td">asdf</div> -->
-      </div>
-      <!-- <div class="tbody">
-        
-      </div> -->
-      <!-- <div class="tfoot">
-      <div class="tr">
-        <div class="td">foot asdf</div>
-        <div class="td">foot asdf</div>
-        <div class="td">foot asdf</div>
-      </div>
-    </div> -->
-    </div>
+      </draggable>
+    <!-- </div> -->
     <template v-if="contextItems">
       <table-context-menu :items="contextItems" :show="contextVisible" :coordinates="popupCoords" @close-context="closePopups" @item-click="contextItemClick" ></table-context-menu>
     </template>
@@ -80,17 +76,20 @@ import { mapGetters } from 'vuex'
 import _ from 'lodash'
 import dayjs from 'dayjs'
 import fecha, { format } from "fecha";
+import draggable from 'vuedraggable'
 
 export default {
 
   name: 'AdvanceTable',
-
+  components: {
+    draggable
+  },
   props: {
     tableFields: { type: Array, required: true, default: () => [] },
     tableData: { type: Array, required: true, default: () => [] },
     dataType: { type: String, default: 'nested' },
     contextItems: { type: Array },
-    draggable: { type: Boolean, default: true },
+    drag: { type: Boolean, default: true },
     // height: { type: String, default: '100%' }
   },
 
@@ -101,6 +100,7 @@ export default {
       activeItem: {},
       resizableTables: [],
       format: "DD MMM YYYY",
+      // highlight: false,
     }
   },
 
@@ -305,7 +305,7 @@ export default {
       // prepare table header to be draggable
       // it runs during class creation
       for (var i = 0; i < dragColumns.length; i++) {
-        dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:5px;'>" +
+        dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'>" +
           "<div class='resize-drag-handle' style='"+
           "position:absolute;height:100%;width:4px;right:0;top:0px;cursor:w-resize;z-index:10; background-color: var(--bib-secondary-sub4)'>"+
           "</div>"+
@@ -329,15 +329,48 @@ export default {
       }
       //  alert(resizableTables.length + ' tables was added.');
     },
-
+    rowDragStart(e) {
+      console.log(e.type, e);
+      // this.highlight = true
+    },
+    rowDragEnd(e) {
+      console.log(e.type, e)
+      // this.highlight = false
+      // let sectionData = this.localdata.filter(s => s.id == e.to.dataset.section)
+      // this.$emit('task-dragend', sectionData[0].tasks)
+    },
+    moveTask(e) {
+      console.log("move event", e)
+      // this.taskMoveSection = +e.to.dataset.section
+    },
+    rowClick($event, item) {
+      // console.log($event.target)
+      this.unselectAll()
+        .then(r => {
+          $event.currentTarget.classList.add("active")
+        })
+      this.$emit("row-click", item)
+    },
     contextOpen($event, item) {
       this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
       this.contextVisible = true
       this.activeItem = item
+      $event.currentTarget.classList.add("active")
     },
     contextItemClick($event){
       // console.log($event)
       this.$emit("context-item-event", $event, this.activeItem)
+    },
+    async unselectAll() {
+      let rows = document.getElementsByClassName('tr');
+      for (let row of rows) {
+        row.classList.remove('active');
+      }
+      
+      // console.log('clicked outside drag-table-simple component')
+      // this.$emit("hide-newrow")
+      // this.$emit("close-context-menu")
+      return 'success'
     },
     closePopups(id) {
       this.contextVisible = false
@@ -347,6 +380,7 @@ export default {
         if(ref != id) this.$refs[ref][0].show = false
       }
     },
+
     debounceTitle: _.debounce(function(value, item) {
       // console.log(item)
       this.$emit("update-title", { id: item.id, field: "title", value: value, label: "Title", historyText: value })
@@ -377,6 +411,7 @@ export default {
   scrollbar-width: unset;
   scrollbar-height: unset;
   scrollbar-gutter: unset;
+  scrollbar-color: unset;
 }
 
 *::-webkit-scrollbar {
@@ -387,20 +422,17 @@ export default {
 ::-webkit-scrollbar {
   width: unset;
   height: unset;
+  all:unset;
 }
 
 *::-webkit-scrollbar-track {
   border-radius: unset;
-  background-color: initial;
+  background-color: unset;
 }
 
 *::-webkit-scrollbar-thumb {
   border-radius: unset;
-  background-color: initial;
-}
-
-::-webkit-scrollbar {
-    all:unset;
+  background-color: unset;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -408,9 +440,18 @@ export default {
 }
 */
 
+*::-webkit-scrollbar {
+  width: thin;
+  height: thin;
+}
+
+::-webkit-scrollbar {
+  width: thin;
+  height: thin;
+}
+
 .adv-table-wrapper {
   overflow: auto;
-  /*height: calc(100vh - 200px);*/
   height: 100%;
 }
 
@@ -439,14 +480,19 @@ export default {
     }
   }
 
+  /*&.highlight {
+    .tr {
+      background-color: skyblue;
+    }
+  }*/
 
   .tr {
     display: table-row;
 
-    .th:first-child,
-    .td:first-child {
+    .th:nth-child(2),
+    .td:nth-child(2) {
       position: sticky;
-      width: 100px;
+      min-width: 2rem;
       left: 0;
       z-index: 10;
       background: #fff;
@@ -457,9 +503,11 @@ export default {
       top: 0;
       z-index: 9;
       background: $gray9;
+      font-weight: bold;
+      color: $secondary;
       padding: 0;
 
-      &:first-child {
+      &:nth-child(2) {
         z-index: 11;
         background: $gray9;
       }
@@ -467,10 +515,37 @@ export default {
         .resize-drag-handle { background-color: $primary; }
       }
     }
+    &:hover {
+      .drag-handle {
+        opacity: 1;
+      }
+    }
+    &.active {
+      background-color: $secondary-sub3;
+      /*outline: 1px solid $gray4;*/
+      .td { background-color: $secondary-sub3; }
+    }
   }
 
   .resize-drag-handle {
     background-color: $secondary;
+  }
+  .drag-handle {
+    cursor: grab;
+    opacity: 0.35;
+    transition: all 300ms ease-in;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    svg {
+      fill: $secondary;
+    }
+  }
+
+  .sortable-chosen {
+    /*background-color: skyblue;*/
+    .td { background-color: $success-sub6; }
+    .td:nth-child(2) { background-color: $success-sub6; }
   }
 
 }
@@ -479,6 +554,8 @@ export default {
 .editable-input {
   font-size: $base-size;
   font-weight: normal;
+  background-color: transparent;
+  &:hover { background-color: $white; }
 }
 
 ::v-deep {

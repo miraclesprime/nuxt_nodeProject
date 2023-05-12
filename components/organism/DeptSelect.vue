@@ -8,7 +8,7 @@
     </button>
     <div v-show="show" class="picker-content">
       <!-- <input type="text" class="picker-input" ref="deptFilterInput" v-model="filterKey" @keyup.esc="$emit('close')" autofocus > -->
-      <div class="" style="max-height: 15rem; overflow-y: auto">
+      <div class="" style="max-height: 15rem; overflow-y: auto; overflow-x: clip; ">
         <ul class="m-0 p-0 text-left">
           <li v-for="dept in departments" :key="dept.value" class="p-025 font-md cursor-pointer" @click.stop="selected(dept)">
             {{dept.label}}
@@ -122,12 +122,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .picker-wrapper {
-  background-color: $white;
+  /*background-color: $white;*/
   position: relative;
 
   .user-data {
     border: 0 none;
-    background-color: $white;
+    background-color: transparent;
   }
 
   .picker-content {

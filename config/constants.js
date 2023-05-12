@@ -652,7 +652,7 @@ export const DEMO_TABLE = [
   {
     label: 'Task name',
     key: 'title',
-    width: '22%',
+    width: '20%',
     icon: {
       icon: 'check-circle-solid',
       variant: 'gray2',
@@ -687,7 +687,7 @@ export const DEMO_TABLE = [
   {
     label: 'Status',
     key: 'status',
-    width: '10%',
+    width: '9%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -697,7 +697,7 @@ export const DEMO_TABLE = [
   {
     label: 'Priority',
     key: 'priority',
-    width: '10%',
+    width: '9%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
