@@ -1,38 +1,38 @@
 <template>
 <client-only>
-  <div class="h-100 inbox-project">
-    <div class="d-flex gap-05 align-center justify-end position-relative border-bottom-light px-105 py-05" id="project-id-button-wraps">
+  <div class="h-100 inbox-project" id="inbox-project-wrapper">
+    <div class="d-flex gap-05 align-center justify-end position-relative border-bottom-light px-105 py-05" id="inbox-project-button-wraps">
 
-      <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item2" v-tooltip="'Conversation'">
+      <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="inbox-project-menu-item2" v-tooltip="'Conversation'">
         <bib-icon icon="comment-forum-solid" class="m-auto"></bib-icon>
       </div>
-      <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item3" v-tooltip="'Files'">
+      <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="inbox-project-menu-item3" v-tooltip="'Files'">
         <bib-icon icon="folder-solid" class="m-auto"></bib-icon>
       </div>
-      <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex align-center justify-center cursor-pointer" id="project-id-bookmark" @click="setFavorite" v-tooltip="isFavorite.text">
+      <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex align-center justify-center cursor-pointer" id="inbox-project-bookmark" @click="setFavorite" v-tooltip="isFavorite.text">
         <bib-icon icon="bookmark-solid" :variant="isFavorite.variant"></bib-icon>
       </div>
-      <div id="project-id-horizontal-dots-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center">
-        <bib-popup pop="horizontal-dots" id="project-id-horizontal-dots">
+      <div id="inbox-project-horizontal-dots-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center">
+        <bib-popup pop="horizontal-dots" id="inbox-project-horizontal-dots">
           <template v-slot:menu>
-            <div class="list" id="project-id-list">
-              <span class="list__item" id="project-id-list-item2" @click="setFavorite">
+            <div class="list" id="inbox-project-list">
+              <span class="list__item" id="inbox-project-list-item2" @click="setFavorite">
                 <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
               </span>
-              <span class="list__item" id="project-id-list-item3" @click="showAddTeamModal">
+              <span class="list__item" id="inbox-project-list-item3" @click="showAddTeamModal">
                 <bib-icon icon="user-group-solid" class="mr-075"></bib-icon> Team
               </span>
-              <span class="list__item" id="project-id-list-item3">
+              <span class="list__item" id="inbox-project-list-item3">
                 <bib-icon icon="comment-forum-solid" class="mr-075"></bib-icon> Conversation
               </span>
-              <span class="list__item" id="project-id-list-item3">
+              <span class="list__item" id="inbox-project-list-item3">
                 <bib-icon icon="folder-solid" class="mr-075"></bib-icon> Files
               </span>
-              <span class="list__item" id="project-id-list-item5" @click="reportModal = !reportModal">
+              <span class="list__item" id="inbox-project-list-item5" @click="reportModal = !reportModal">
                 <bib-icon icon="warning" class="mr-075"></bib-icon> Report
               </span>
-              <hr id="project-id-hr2">
-              <span v-if="cdp" class="list__item list__item__danger" id="project-id-list-item6" @click="deleteProject(project)">Delete </span>
+              <hr id="inbox-project-hr2">
+              <span v-if="cdp" class="list__item list__item__danger" id="inbox-project-list-item6" @click="deleteProject(project)">Delete </span>
             </div>
           </template>
         </bib-popup>
@@ -40,77 +40,77 @@
       <loading :loading="favLoading"></loading>
     </div>
 
-    <div class="d-flex align-center gap-05 px-105 py-025 border-bottom-light">
-      <div class="width-2 height-2 d-inline-flex align-center justify-center cursor-pointer">
+    <div class="d-flex align-center gap-05 px-105 py-025 border-bottom-light" id="ip-title-team-modal-wrap">
+      <div class="width-2 height-2 d-inline-flex align-center justify-center cursor-pointer" id="ip-check-circle-solid">
         <bib-icon icon="check-circle-solid" :variant="isComplete.variant" :scale="1.5"></bib-icon>
       </div>
-      <div class="flex-grow-1">
-        <input type="text" class="editable-input" ref="taskTitleInput" placeholder="Project name" v-model="activeProject.title" v-on:keyup="debounceUpdate('title', activeProject.title)">
+      <div class="flex-grow-1" id="ip-title-wrap">
+        <input type="text" class="editable-input" ref="taskTitleInput" placeholder="Project name" v-model="activeProject.title" v-on:keyup="debounceUpdate('title', activeProject.title)" id="taskTitleInput">
       </div>
       <team-avatar-list :team="team" ></team-avatar-list>
-      <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex align-center justify-center cursor-pointer" id="project-id-team-menu" v-tooltip="'Team'" @click="showAddTeamModal"> 
+      <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex align-center justify-center cursor-pointer" id="inbox-project-team-menu" v-tooltip="'Team'" @click="showAddTeamModal"> 
         <bib-icon icon="user-group-solid" ></bib-icon>
       </div>
     </div>
 
-    <div class="of-scroll-y position-relative px-2">
-      <div class="form-fields pt-05 pb-1">
-        <div id="proj-row2" class="row">
-          <div id="proj-row2-col1" class="col-6">
+    <div class="of-scroll-y position-relative px-2" id="ip-field-wrapper">
+      <div class="form-fields pt-05 pb-1" id="ip-field-inner-wrapper">
+        <div class="row" id="ip-project-row">
+          <div id="ip-proj-row2-col1" class="col-6">
             <bib-select label="Owner" test_id="po-owner-dd1" :options="filterUser" v-model="activeProject.userId" v-on:change="debounceUpdate('Owner', activeProject.userId)"></bib-select>
           </div>
-          <div id="proj-row2-col2" class="col-3">          
+          <div id="ip-proj-row2-col2" class="col-3">          
             <bib-datepicker test_id="date01" v-model="startDate" :value="startDate" :maxDate="dueDate" format="dd MMM yyyy" @input="debounceUpdate('Start date', startDate)" label="Start date" name="startDate" placeholder="Start date"></bib-datepicker>
           </div>
-          <div id="proj-row2-col3" class="col-3">
+          <div id="ip-proj-row2-col3" class="col-3">
             <bib-datepicker test_id="date02" class="align-right" v-model="dueDate" :value="dueDate" :minDate="startDate" format="dd MMM yyyy" @input="debounceUpdate('Due date', dueDate)" label="Due date" name="dueDate" placeholder="Due date"></bib-datepicker>
           </div>
         </div>
-        <div id="proj-row3" class="row">
+        <div id="ip-proj-row3" class="row">
           <div id="proj-row3-col2" class="col-12">
             <bib-input type="select" label="Department" :options="departments" v-model.number="activeProject.departmentId" v-on:change.native="debounceUpdate('Department', activeProject.departmentId)"></bib-input>
           </div>
         </div>
-        <div id="proj-row4" class="row">
-          <div id="proj-row4-col1" class="col-6">
+        <div id="ip-proj-row4" class="row">
+          <div id="ip-proj-row4-col1" class="col-6">
             <bib-input type="select" label="Priority" v-model.number="activeProject.priorityId" :options="priority" placeholder="Please select..." v-on:change.native="debounceUpdate('Priority', activeProject.priorityId)"></bib-input>
           </div>
-          <div id="proj-row4-col2" class="col-6">
+          <div id="ip-proj-row4-col2" class="col-6">
             <bib-input type="select" label="Status" v-model.number="activeProject.statusId" :options="status" placeholder="Please select..." v-on:change.native="debounceUpdate('Status', activeProject.statusId)"></bib-input>
           </div>
         </div>
-        <div id="proj-row5" class="row">
-          <div id="proj-row5-col1" class="col-4">
-            <label class="text-gray6">Time</label>
-            <div class="shape-rounded border-gray4 my-05 p-05">Hours {{time}}</div>
+        <div id="ip-proj-row5" class="row">
+          <div id="ip-proj-row5-col1" class="col-4">
+            <label id="ip-label-1" class="text-gray6">Time</label>
+            <div id="ip-hours" class="shape-rounded border-gray4 my-05 p-05">Hours {{time}}</div>
           </div>
-          <div id="proj-row5-col2" class="col-4">
+          <div id="ip-proj-row5-col2" class="col-4">
             <bib-input type="number" icon-left="currency-dollar" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="debounceUpdate('Budget', activeProject.budget)"></bib-input>
           </div>
-          <div id="proj-row5-col3" class="col-4">
-            <label class="text-gray6">Progress</label>
-            <div class="shape-rounded border-gray4 my-05 p-05">{{progress}}%</div>
+          <div id="ip-proj-row5-col3" class="col-4">
+            <label id="ip-label-2" class="text-gray6">Progress</label>
+            <div id="ip-progress" class="shape-rounded border-gray4 my-05 p-05">{{progress}}%</div>
           </div>
         </div>
-        <div id="proj-row6" class="row">
-          <div id="proj-row6-col1" class="col-12">
+        <div id="ip-proj-row6" class="row">
+          <div id="ip-proj-row6-col1" class="col-12">
             <bib-input type="textarea" label="Brief" v-model="activeProject.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate('Project brief', activeProject.description)"></bib-input>
           </div>
         </div>
         <loading :loading="loading"></loading>
       </div>
       
-      <div class="border-bottom-gray2 d-flex justify-between sub-title pb-05">
-        <p class="text-gray5 font-md">Conversation </p>
+      <div id="ip-conv-wrap" class="border-bottom-gray2 d-flex justify-between sub-title pb-05">
+        <p id="ip-coversation-para" class="text-gray5 font-md">Conversation </p>
       </div>
       <project-conversation :project="project" :key="'conv-'+project.id"></project-conversation>
       
-      <div class="border-bottom-gray2 d-flex justify-between sub-title pb-05">
-        <p class="text-gray5 font-md">Files </p>
+      <div id="ip-files-wrap" class="border-bottom-gray2 d-flex justify-between sub-title pb-05">
+        <p id="ip-files-para" class="text-gray5 font-md">Files </p>
       </div>
       <project-files :proj="project" :key="'files'+project.id"></project-files>
     </div>
-    <div id="project-message-input" class=" d-flex gap-1 border-top-light py-1 px-105">
+    <div id="inbox-project-message-input" class=" d-flex gap-1 border-top-light py-1 px-105">
       <bib-avatar :src="user2.Photo" size="2rem" class="flex-shrink-0"></bib-avatar>
       <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
     </div>
@@ -118,7 +118,7 @@
     <!-- project team -->
       <bib-modal-wrapper v-if="projectTeamModal" title="Team" size="lg" @close="projectTeamModal = false">
         <template slot="content">
-          <div style="height: 12rem;">
+          <div id="ip-bib-modal-project-team" style="height: 12rem;">
             <project-team-modal></project-team-modal>
           </div>
         </template>
@@ -356,7 +356,6 @@ export default {
         this.$store.dispatch("project/removeFromFavorite", { id: this.project.id })
           .then(msg => {
             this.popupMessages.push({ text: msg, variant: "orange" })
-            // alert(msg)
           })
           .catch(e => console.log(e))
           .then(() => this.favLoading = false)
@@ -364,16 +363,13 @@ export default {
         this.$store.dispatch("project/addToFavorite", { id: this.project.id })
           .then(msg => {
             this.popupMessages.push({ text: msg, variant: "success" })
-            // alert(msg)
           })
           .catch(e => console.log(e))
           .then(() => this.favLoading = false)
       }
-      // this.favLoading = false
     },
 
     showAddTeamModal() {
-      // this.$nuxt.$emit("add-member-to-task")
       this.projectTeamModal = true
     },
 
@@ -382,7 +378,6 @@ export default {
       this.$store.dispatch("project/deleteProject", project).then(p => {
 
         if (p.statusCode == 200) {
-          // this.popupMessages.push({ text: p.message, variant: "success" })
           this.$router.push('/projects')
         } else {
           this.popupMessages.push({ text: p.message, variant: "warning" })
@@ -397,18 +392,13 @@ export default {
     },
 
     canDeleteProject() {
-      // console.log(this.project.userId, JSON.parse(localStorage.getItem('user')).sub)
-      //  console.log(JSON.parse(localStorage.getItem('user')).subr)
       if (this.project.userId == JSON.parse(localStorage.getItem('user')).sub || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
         this.cdp = true
-        // return true;
       } else {
         this.cdp = false
       }
-      // return false
     },
     onFileInput(payload) {
-      // console.log(payload)
       this.value.files = payload.files
     },
     onsubmit(data) {
@@ -419,7 +409,6 @@ export default {
             this.uploadFile(this.value.files, this.editMessage)
             this.value.files = []
           }
-          // this.fetchProjectComments()
           this.$nuxt.$emit('refresh-list')
           this.editMessage = {}
 
@@ -428,12 +417,10 @@ export default {
       } else {
         this.$store.dispatch("project/createProjectComment", { id: this.project.id, comment: data.text })
           .then(res => {
-            // console.log("comment submit->", res.data)
             if (this.value.files.length > 0) {
               this.uploadFile(this.value.files, res.data)
               this.value.files = []
             }
-            // this.fetchProjectComments()
             this.$nuxt.$emit('refresh-list')
           })
           .catch(e => console.log(e))
@@ -457,9 +444,7 @@ export default {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
         }
       })
-      // console.log(fi.data)
       if (fi.data.statusCode == 200) {
-        // console.log("file upload->", fi.data)
         this.value.files = []
         this.$nuxt.$emit("get-msg-files")
       }

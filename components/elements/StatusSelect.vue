@@ -84,7 +84,6 @@ export default {
 <style lang="scss" scoped>
 
 .picker-wrapper {
-  /*background-color: $white;*/
   position: relative;
 
   .picker-content {
