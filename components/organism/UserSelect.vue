@@ -2,7 +2,7 @@
   <div id="userSelect" class="picker-wrapper" v-click-outside="onClickOutside">
     <button type="button" class="user-data cursor-pointer height-2 w-100 align-center justify-between" @click.stop="triggerOpen">
       <span v-if="user">
-        <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
+        <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> <span class="user-label text-truncate">{{user.label}}</span>
       </span>
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
     </button>
@@ -99,6 +99,7 @@ export default {
   .user-data {
     border: 0 none;
     background-color: transparent;
+    .user-label { max-width: 8rem; display: inline-block; }
   }
 
   .picker-content {
@@ -109,6 +110,7 @@ export default {
     min-height: fit-content;
     max-height: 30rem;
     min-width: calc(100% + 10px);
+    max-width: 15rem;
     background-color: $white;
     border: 1px solid $gray4;
     padding: 0.5rem;
