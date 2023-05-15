@@ -478,7 +478,7 @@ export default {
       }
       this.validTitle = ""
       this.$emit("create-newrow", this.newRow)
-    }, 1500),
+    }, 800),
   },
 };
 
