@@ -250,13 +250,11 @@ export default {
   watch: {
     tasks(newVal) {
       this.localData = _.cloneDeep(newVal);
-      // console.log("watch ",this.sortName, this.orderBy)
     },
   },
 
   created() {
     if (process.client) {
-      // console.info("created hook")
       this.$nuxt.$on("update-key", (msg) => {
         console.info("on update-key");
         this.loading = true;
@@ -278,7 +276,6 @@ export default {
       });
 
       this.$nuxt.$on("update-key", () => {
-        // console.log('update key event capture')
         this.updateKey();
       });
 
@@ -294,7 +291,6 @@ export default {
   },
 
   mounted() {
-    // console.info("mounted hook")
     this.loading = true;
     let compid = JSON.parse(localStorage.getItem("user")).subb;
     this.$store
@@ -311,7 +307,6 @@ export default {
 
   methods: {
     showUserPicker(payload) {
-      // console.log('userpicker', payload)
       this.closeAllPickers();
       this.userPickerOpen = true;
       this.popupCoords = {
@@ -321,7 +316,6 @@ export default {
       this.activeTask = payload.task;
     },
     showDatePicker(payload) {
-      // console.log('datepicker', payload)
       // payload consists of event, task, label, field
       this.closeAllPickers();
       this.datePickerOpen = true;
@@ -345,8 +339,6 @@ export default {
     showPriorityPicker(payload) {
       this.closeAllPickers();
       this.priorityPickerOpen = true;
-      /*this.userPickerOpen = false
-      this.datePickerOpen = false*/
       this.popupCoords = {
         left: event.clientX + "px",
         top: event.clientY + "px",
@@ -370,7 +362,6 @@ export default {
       this.priorityPickerOpen = false;
       this.deptPickerOpen = false;
       this.activeTask = {};
-      // this.toggleSidebar()
     },
     updateKey($event) {
       if ($event) {
@@ -387,7 +378,6 @@ export default {
         .then(() => {
           this.key += 1;
         });
-      // let sorted = this.$store.dispatch("company/sortCompanyTasks", { sName: this.sortName, order: this.orderBy })
     },
 
     openSidebar(task, scroll) {
@@ -439,7 +429,6 @@ export default {
           this.openSidebar(this.activeTask, "task_files");
           break;
         default:
-          // alert("no task assigned")
           this.alertDialog = true;
           this.alertMsg = "No task assigned";
           break;
@@ -460,8 +449,6 @@ export default {
     },
 
     updateTask(payload) {
-      // console.log(payload)
-      // alert("in progress. Updated value => " + payload.value)
       let user, projectId;
       if (payload.field == "userId" && payload.value != "") {
         user = this.teamMembers.find((t) => t.id == payload.value);
@@ -502,7 +489,6 @@ export default {
     },
 
     updateAssignee(label, field, value, historyText) {
-      // console.log(...arguments)
       let user;
       if (field == "userId" && value != "") {
         user = this.teamMembers.filter((t) => t.id == value);
@@ -515,43 +501,36 @@ export default {
       this.$store
         .dispatch("task/updateTask", {
           id: this.activeTask.id,
-          // projectId: this.$route.params.id,
           data: { [field]: value },
           user,
           text: `changed ${label} to ${historyText}`,
         })
         .then((t) => {
-          // console.log(t)
           if (this.gridType == "list") {
             this.updateSingleRow(t.data);
           } else {
             this.updateKey();
           }
-          // this.updateKey()
         })
         .catch((e) => console.warn(e));
     },
 
     updateDate(value) {
-      // console.log(...arguments, this.datepickerArgs)
       let newDate = dayjs(value).format("D MMM YYYY");
 
       this.$store
         .dispatch("task/updateTask", {
           id: this.activeTask.id,
-          // projectId: this.$route.params.id,
           data: { [this.datepickerArgs.field]: value },
           user: null,
           text: `changed ${this.datepickerArgs.label} to ${newDate}`,
         })
         .then((t) => {
-          // console.log(t)
           if (this.gridType == "list") {
             this.updateSingleRow(t.data);
           } else {
             this.updateKey();
           }
-          // this.updateKey()
         })
         .catch((e) => console.warn(e));
     },
@@ -586,7 +565,6 @@ export default {
     },
 
     taskMarkComplete(task) {
-      // this.loading = true
       if (typeof task == "object" && Object.keys(task).length > 0) {
         console.log(task);
       } else {
@@ -595,25 +573,21 @@ export default {
       this.$store
         .dispatch("task/updateTaskStatus", task)
         .then((d) => {
-          // this.loading = false
           this.$store.dispatch("task/setSingleTask", d).then(() => {
             this.updateKey();
           });
         })
         .catch((e) => {
           console.warn(e);
-          // this.loading = false
         });
     },
     confirmDelete(state) {
-      // console.log(state, this.taskToDelete)
       this.confirmModal = false;
       this.confirmMsg = "";
       if (state) {
         this.$store
           .dispatch("task/deleteTask", this.taskToDelete)
           .then((t) => {
-            // console.log(t)
             if (t.statusCode == 200) {
               this.updateKey(t.message);
               this.taskToDelete = {};
@@ -634,7 +608,6 @@ export default {
       }
     },
     deleteTask(task) {
-      // let del = confirm("Are you sure")
       this.taskToDelete = task;
       this.confirmMsg = "Are you sure ";
       this.confirmModal = true;
@@ -803,7 +776,6 @@ export default {
 
     toggleSidebar($event) {
       this.flag = !this.flag;
-      // this.$emit("open-sidebar", $event);
       if ($event.id) {
         this.$nuxt.$emit("open-sidebar", $event.id);
       } else {
@@ -863,13 +835,10 @@ export default {
     sectionDragEnd: _.debounce(async function (payload) {
       this.loading = true;
 
-      // console.log(payload)
       let clone = _.cloneDeep(payload);
       clone.forEach((el, i) => {
         el.order = i;
       });
-
-      // console.log("ordered sections =>", clone)
 
       let sectionDnD = await this.$axios.$put(
         "/department/dragdrop",
@@ -881,8 +850,6 @@ export default {
           },
         }
       );
-
-      // console.log(sectionDnD.message)
 
       if (sectionDnD.statusCode == 200) {
         let user = JSON.parse(localStorage.getItem("user"));
@@ -897,16 +864,12 @@ export default {
     }, 600),
 
     taskDragEnd: _.debounce(async function (payload) {
-      // console.log('task dragend =>', payload)
-      // this.highlight = null
       this.loading = true;
       let tasks = _.cloneDeep(payload.tasks);
 
       tasks.forEach((el, i) => {
         el.dOrder = i;
       });
-
-      // console.log("sorted->", tasks)
 
       let taskDnD = await this.$axios.$put(
         "/department/crossDepartmentDragDrop",
@@ -918,8 +881,6 @@ export default {
           },
         }
       );
-
-      // console.log(taskDnD.message)
       if (taskDnD.statusCode == 200) {
         let user = JSON.parse(localStorage.getItem("user"));
         this.$store

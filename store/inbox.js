@@ -17,7 +17,6 @@ export const state = () => ({
   export const mutations = {
     createInboxEntry(state, payload) {
         let ii = state.inbox.findIndex(inb => inb.historyId == payload.historyId )
-        // console.log('inbox index found', ii)
         if (ii >= 0) {
             state.inbox[ii] = payload
         } else {
@@ -41,7 +40,6 @@ export const state = () => ({
           headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
         });
 
-        // console.log(res.data)
         if (res.data.statusCode == 200) {
           ctx.commit('createInboxEntry', res.data.data);
         }
@@ -64,7 +62,6 @@ export const state = () => ({
           headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
         });
 
-        // console.log(res.data)
         if (res.data.statusCode == 200) {
           ctx.commit('setInbox', res.data.data);
         }

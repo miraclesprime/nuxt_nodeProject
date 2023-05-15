@@ -1,111 +1,94 @@
 <template>
   <section id="subtask-detail-wrapper" class="position-absolute subtask-detail-wrapper bg-white">
-    <div class="d-flex align-center gap-05 px-105 py-075">
-      <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" title="Close" @click="closeSidebarDetail">
+    <div class="d-flex align-center gap-05 px-105 py-075" id="subtask-detail-icons-wrapper">
+      <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="subtask-detail-page-last-icon" title="Close" @click="closeSidebarDetail">
         <bib-icon icon="page-last" class="m-auto"></bib-icon>
       </div>
-      <span v-show="showTaskTitle" class="text-underline cursor-pointer" @click="gotoParent">{{form?.task?.title}}</span>
-      <div class="ml-auto d-flex align-center gap-05">
-          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="ts-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
+      <span v-show="showTaskTitle" id="subtask-detail-goToParent" class="text-underline cursor-pointer" @click="gotoParent">{{form?.task?.title}}</span>
+      <div class="ml-auto d-flex align-center gap-05"  id="subtask-detail-icons-inner-wrap">
+          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="std-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
             <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" ></bib-icon>
           </div>
-          <div class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center">
-            <bib-button pop="horizontal-dots">
+          <div class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="std-icons">
+            <bib-button pop="horizontal-dostd">
               <template v-slot:menu>
-                <div class="list" id="ts-list">
-                  <span class="list__item" id="ts-list-item-1" @click="markComplete">
+                <div class="list" id="std-list">
+                  <span class="list__item" id="std-list-item-1" @click="markComplete">
                     <bib-icon icon="check-circle-solid" :variant="isComplete.variant" class="mr-075"></bib-icon> {{isComplete.text}}
                   </span>
-                  <span class="list__item" id="ts-list-item-2" @click="setFavorite">
+                  <span class="list__item" id="std-list-item-2" @click="setFavorite">
                     <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
                   </span>
-                  <!-- <span class="list__item" id="ts-list-item-4" @click="showAddTeamModal">
-                    <bib-icon icon="user-group-solid" variant="gray5" class="mr-075"></bib-icon> Team
-                  </span>
-                  <span class="list__item" id="ts-list-item-5" v-scroll-to="'#task_subtasks'">
-                    <bib-icon icon="check-square-solid" variant="gray5" class="mr-075" v-scroll-to=""></bib-icon> Subtasks
-                  </span>
-                  <span class="list__item" id="ts-list-item-7" v-scroll-to="'#task_conversation'">
-                    <bib-icon icon="comment-forum-solid" variant="gray5" class="mr-075"></bib-icon> Conversation
-                  </span>
-                  <span class="list__item" id="ts-list-item-3" v-scroll-to="'#task_files'">
-                    <bib-icon icon="folder-solid" variant="gray5" class="mr-075"></bib-icon> Files
-                  </span> -->
                   
                   <hr>
-                  <span class="list__item list__item__danger" id="ts-list-item-8" @click="$nuxt.$emit('delete-subtask', subtask)">Delete</span>
+                  <span class="list__item list__item__danger" id="std-list-item-8" @click="$nuxt.$emit('delete-subtask', subtask)">Delete</span>
                 </div>
               </template>
             </bib-button>
           </div>
       </div>
     </div>
-    <div class="border-top-gray3 border-bottom-gray3 position-relative px-105 py-025 mb-1">
-      <div class="d-flex align-center gap-05">
-        <div class="width-2 height-2 d-inline-flex align-center justify-center cursor-pointer" @click="markComplete">
+    <div class="border-top-gray3 border-bottom-gray3 position-relative px-105 py-025 mb-1" id="std-fields-wrap">
+      <div class="d-flex align-center gap-05" id="std-fields-inner-wrap">
+        <div class="width-2 height-2 d-inline-flex align-center justify-center cursor-pointer" id="std-markcomplete" @click="markComplete">
           <bib-icon icon="check-circle-solid" :variant="isComplete.variant" :scale="1.5"></bib-icon>
         </div>
-        <div class="flex-grow-1">
-          <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" v-model="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdateField({field: 'title', value: form.title, name: 'Title'})">
+        <div class="flex-grow-1" id="std-title-editable">
+          <input type="text"  id="std-title-editable-input" class="editable-input" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" v-model="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdateField({field: 'title', value: form.title, name: 'Title'})">
         </div>
-        <div>
+        <div id="std-team-avatar-list">
           <team-avatar-list :team="team"></team-avatar-list>
         </div>
-        <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light cursor-pointer" v-tooltip="'Team'" @click="showAddTeamModal">
+        <div id="std-show-add-team-modal" class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light cursor-pointer" v-tooltip="'Team'" @click="showAddTeamModal">
           <bib-icon icon="user-group-solid"></bib-icon>
         </div>
-        <!-- <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light cursor-pointer" :title="assignee.label">
-          <bib-avatar :src="assignee.avatar" size="1.5rem"></bib-avatar>
-        </div> -->
       </div>
-      <!-- <loading :loading="loading"></loading> -->
     </div>
     <!-- other fields -->
-    <div class="of-scroll-y px-105">
-      <div class="row">
-        <div class="col-4">
+    <div class="of-scroll-y px-105" id="std-other-fields">
+      <div class="row" id="std-other-fields-row">
+        <div class="col-4" id="std-other-fields-col-1">
           <bib-select label="Assignee" test_id="subtask_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="updateSubtask({field: 'userId', value: form.userId, name: 'User' })"></bib-select>
         </div>
-        <div class="col-4">
+        <div class="col-4" id="std-other-fields-col-2">
           <bib-datepicker v-model="startDateInput" :value="startDateInput" format="dd MMM yyyy" label="Start date" placeholder="Start date" @input="updateSubtask({name: 'Start date', field: 'startDate', value: form.startDate})"></bib-datepicker>
         </div>
-        <div class="col-4">
+        <div class="col-4" id="std-other-fields-col-3">
           <bib-datepicker class="align-right" v-model="dueDateInput" :value="dueDateInput" format="dd MMM yyyy" label="Due date" placeholder="Due date" @input="updateSubtask({field: 'dueDate', value: form.dueDate, name: 'Due date'})"></bib-datepicker>
         </div>
         <!-- <div class="col-6"></div> -->
       </div>
-      <div class="row ">
-        <div class="col-4">
+      <div class="row "  id="std-other-fields-rpw-2">
+        <div class="col-4"  id="std-other-fields-col-4">
           <bib-input type="select" label="Priority" v-model.number="form.priorityId" :options="priorityValues" placeholder="Please select..." v-on:change.native="updateSubtask({field: 'priorityId', value: form.priorityId, name: 'Priority'})"></bib-input>
         </div>
-        <div class="col-4">
+        <div class="col-4" id="std-other-fields-col-5">
           <bib-input type="select" label="Status" v-model.number="form.statusId" :options="statusValues" placeholder="Please select..." v-on:change.native="updateSubtask({field: 'statusId', value: form.statusId, name: 'Status'})"></bib-input>
         </div>
-        <div class="col-4" >
+        <div class="col-4"  id="std-other-fields-col-6">
           <bib-input type="select" label="Department" :options="departments" v-model.number="form.departmentId" v-on:change.native="updateSubtask({name:'Department', field: 'departmentId', value: form.departmentId})"></bib-input>
         </div>
       </div>
-      <div class="row ">
-        <div class="col-12">
+      <div class="row "  id="std-other-fields-row-3">
+        <div class="col-12"  id="std-other-fields-col-7">
           <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter subtask description..." label="Description" v-on:keyup.native="debounceUpdateField({field: 'description', value: form.description, name: 'Description'})"></bib-input>
         </div>
       </div>
-      <div class="py-05 ">
-        <div class="d-flex justify-between sub-title pb-05 mb-05 border-bottom-gray2 ">
-          <p class="text-gray5 font-md ">Conversation </p>
+      <div class="py-05 " id="std-conv-wrap">
+        <div class="d-flex justify-between sub-title pb-05 mb-05 border-bottom-gray2 " id="std-conv-heading">
+          <p class="text-gray5 font-md " id="std-conv-para-text">Conversation </p>
         </div>
-        <div v-if="loadingComments" class="my-05">
-          <div class="d-inline-flex gap-05 align-center ">
-            <div class="shape-circle width-2 height-2 animated-background"></div>
+        <div v-if="loadingComments" class="my-05" id="std-loading-comments">
+          <div class="d-inline-flex gap-05 align-center " id="std-loading-comments-inner">
+            <div class="shape-circle width-2 height-2 animated-background" id="std-shape-circle"></div>
             <div>
-              <div class="animated-background width-10 mb-025" style="height: 0.8rem"></div>
-              <div class="animated-background width-7" style="height:0.6rem"></div>
+              <div class="animated-background width-10 mb-025" id="std-animated-bg-w10" style="height: 0.8rem"></div>
+              <div class="animated-background width-7" id="std-animated-bg-w7" style="height:0.6rem"></div>
             </div>
           </div>
         </div>
         <template v-else-if="sortedData.length > 0">
-          <div v-for="item in sortedData">
-            <!-- <task-message v-if="item.comment" :msg="item" @delete-message="onDeleteMessage"></task-message> -->
+          <div v-for="(item, index) in sortedData" :id="'std-sortedData-'+index" :key="index">
             <message v-if="item.comment" :msg="item" fieldkey="subtask" @delete-message="onDeleteMessage"></message>
             <task-history v-if="item.text && !item.isHidden" :history="item"></task-history>
           </div>
@@ -116,20 +99,21 @@
       </div>
     </div>
     <!-- message input -->
-    <div class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-105">
+    <div class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-105" id="std-avatar-mi-wrap">
       <bib-avatar :src="user2.Photo" size="2rem" class="flex-shrink-0"></bib-avatar>
       <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
     </div>
 
     <bib-modal-wrapper v-if="taskTeamModal" title="Team" size="lg" @close="taskTeamModal = false">
       <template slot="content">
-        <div style="min-height: 12rem;">
+        <div style="min-height: 12rem;" id="std-task-team">
           <task-team :task="subtask" mode="subtask" ></task-team>
         </div>
       </template>
     </bib-modal-wrapper>
   </section>
 </template>
+
 <script>
 import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 import { mapGetters, mapActions } from 'vuex'
@@ -139,7 +123,6 @@ export default {
 
   name: 'SubtaskDetail',
   props: {
-      // subtask: Object,
     showTaskTitle: { type: Boolean, default: true },
     titleClick: { type: String, default: "close" }
   },
@@ -147,23 +130,13 @@ export default {
     return {
       statusValues: STATUS,
       priorityValues: PRIORITY,
-      /*form: {
-        title: '',
-
-      },*/
       error: '',
       loading: false,
       loadingComments: false,
-      // comments: [],
       value: {
-        files: [
-          /*{ id: 156, name: 'thefile.png' },
-          { id: 282, name: 'anotherfile.jpg' },*/
-        ]
+        files: []
       },
       editMessage: {},
-      // isFavorite: { variant: "gray5", text: "Add to favorites", status: false },
-      // subkey: 0,
       reloadFiles: 0,
       taskTeamModal: false,
     }
@@ -193,8 +166,6 @@ export default {
         return _.cloneDeep(this.subtask)
       },
       set(newValue) {
-        // console.log(newValue)
-        // this.title = newValue.title
       }
     },
 
@@ -207,8 +178,6 @@ export default {
     },
 
     assignee() {
-      // return this.$userInfo(this.form.userId)
-      // const team = store.state.user.teamMembers
       if (this.teamMembers.length > 0 && this.form.userId) {
         return this.teamMembers.find((m) => m.id == this.form.userId)
       } else {
@@ -244,7 +213,6 @@ export default {
       }
     },
     sortedData() {
-      // let s = [ ...this.history, ...this.comments]
       let s = [...this.subtaskComments, ...this.subtaskHistory]
       if (s.length > 0) {
         return s.sort((a, b) => new Date(a.updatedAt) - new Date(b.updatedAt));
@@ -275,13 +243,11 @@ export default {
 
   created() {
     this.$nuxt.$on("edit-message", (msg) => {
-      // console.log(msg)
       this.editMessage = msg
     })
   },
 
   mounted() {
-    // console.log('mounted subtask detail')
     this.$store.dispatch("subtask/fetchSubTask", this.subtask)
     this.$store.dispatch("subtask/fetchSubtaskMembers", this.subtask)
     this.$store.dispatch("subtask/fetchFavorites")
@@ -305,7 +271,6 @@ export default {
     }),
 
     showAddTeamModal() {
-      // this.$refs.taskTeamModal.showTaskTeamModal = true
       this.taskTeamModal = true
     },
     fetchComments() {
@@ -318,7 +283,6 @@ export default {
         })
     },
     markComplete() {
-      // let sub = subtask
       if (this.form.isDone) {
         this.form.statusId = 1
         this.form.isDone = false
@@ -326,12 +290,10 @@ export default {
         this.form.isDone = true
         this.form.statusId = 5
       }
-      // console.info(this.form.id, this.form.statusId, this.form.isDone)
       this.updateSubtask({ field: 'statusId', value: this.form.statusId, name: 'Status', isDone: this.form.isDone })
     },
 
     setFavorite() {
-      // console.info(this.subtask.id, this.isFavorite.status)
 
       if (this.isFavorite.status) {
         this.$axios.delete("subtask/"+this.subtask.id+"/favorite", { 
@@ -360,7 +322,6 @@ export default {
     },
 
     async updateSubtask(data) {
-      // console.log(data.dueDate, this.form.dueDate)
         let updata = {[data.field]: data.value}
         let userobj = {}
         let sub
@@ -408,14 +369,11 @@ export default {
             let user = { id: userobj.Id, email: userobj.Email, firstName: userobj.FirstName, lastName: userobj.LastName }
             sub = await this.$store.dispatch("subtask/updateSubtask", { id: this.form.id, data: updata, user, text: `updated ${data.name} to ${userobj.Name}` })
         } else {
-            // console.log(data, userobj, updata)
             sub = await this.$store.dispatch("subtask/updateSubtask", { id: this.form.id, data: updata, text: `updated ${data.name} to ${histvalue}` })
         }
-        // console.log(sub.data)
         if (sub.statusCode == 200) {
             this.$store.dispatch("subtask/setSelectedSubtask", sub.data)
             this.$store.dispatch('subtask/fetchSubTask', sub.data).then((res) => {
-              // console.log(res)
               this.form = res;
             })
             this.$store.dispatch("subtask/fetchSubtaskHistory", this.subtask)
@@ -437,28 +395,21 @@ export default {
     },
 
     debounceUpdateField: _.debounce(function(data) {
-      // console.log(name, field, value)
       if (this.form?.id) {
-        // this.$emit("update-field", { name: name, field: field, value: value })
-        // console.log(name, field, value)
-        // console.log(this.form, data)
         this.updateSubtask(data)
       }
     }, 800),
 
     onFileInput(payload) {
-      // console.log(payload)
       this.value.files = payload.files
     },
 
     onsubmit(data) {
-      // console.log(data, this.editMessage?.id)
       let trimComment = _.truncate(data.text.slice(3, -4), { length: 128 })
 
       if (this.editMessage?.id) {
         this.$store.dispatch("subtask/updateSubtaskComment", { subtaskId: this.subtask.id, commentId: this.editMessage.id, comment: data.text, text: `updated comment ${trimComment}` })
           .then(res => {
-            // console.log('update comment', res)
             this.editMessage = {}
           })
           .catch(e => console.log(e))
@@ -469,53 +420,22 @@ export default {
 
             }
             if (this.value.files.length > 0) {
-              // console.log(this.value.files, res.data)
               this.uploadFiles(this.value.files, res.data)
             }
-            // console.log('create comment', res)
           })
           .catch(e => console.log(e))
       }
     },
 
-    /*async uploadFiles(files, commentRes) {
-      let filelist = []
-
-      let formdata = new FormData()
-      files.forEach(file => {
-        formdata.append('files', file)
-        filelist.push(file.name)
-      })
-      formdata.append('subtaskId', commentRes.taskId)
-      formdata.append('taskCommentId', commentRes.id)
-      formdata.append('text', `uploaded file(s) "${filelist.join(", ")}" to task`)
-
-      const fi = await this.$axios.post("/file/upload", formdata, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-        }
-      })
-      
-      if (fi.data.statusCode == 200) {
-        this.reloadFiles += 1;
-        this.value.files = []
-      }
-    },*/
-
     async onDeleteMessage(payload) {
       console.log(payload)
       this.loadingComments = true
-      // let data = {taskId: this.task.id, commentId: payload.msgId }
       const del = await this.$store.dispatch("subtask/deleteSubtaskComment", { ...payload, subtaskId: this.subtask.id, text: "subtask comment deleted" });
       if (del.statusCode == 200) {
-        // this.$emit("refresh-list")
         this.fetchComments()
       } else {
         console.warn(del.message)
       }
-      // this.msgLoading = false
-      // console.log(del)
     },
   }
 }

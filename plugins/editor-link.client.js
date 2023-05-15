@@ -3,8 +3,6 @@ import Link from '@tiptap/extension-link';
 import { VueRenderer } from '@tiptap/vue-2';
 import { getAttributes } from '@tiptap/core';
 import { Plugin, PluginKey } from 'prosemirror-state';
-// import { autolink } from '@tiptap/extension-link/src/helpers/autolink';
-// import { pasteHandler } from '@tiptap/extension-link/src/helpers/pasteHandler';
 
 import LinkTippy from '~/components/message/LinkTippy.vue';
 
@@ -29,7 +27,6 @@ export const ChatLink = Link.extend({
     };
   },
   addProseMirrorPlugins() {
-    // console.log(this);
 
     return [
       new Plugin({
@@ -62,12 +59,6 @@ export const ChatLink = Link.extend({
           },
         },
       }),
-      /*autolink({
-        type: this.type,
-      }),
-      pasteHandler({
-        type: this.type,
-      }),*/
     ];
   },
 });

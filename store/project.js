@@ -369,7 +369,6 @@ export const actions = {
   },
 
   async updateProject(ctx, payload) {
-    // console.log('update project-> ', payload)
     let res = await this.$axios.$put("/project", {
       id: payload.id,
       user: payload.user,
@@ -378,7 +377,6 @@ export const actions = {
     }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
-    // console.log(proj.data)
     if (res.statusCode == 200) {
       ctx.commit("setSingleProject", res.data)
     }

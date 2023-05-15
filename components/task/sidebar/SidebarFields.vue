@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <div class="task-info position-relative px-105" id="task-input-wrap">
+    <div class="task-info position-relative px-105" id="sbf-task-input-wrap">
       <div class="row mx-0" id="sidebar-row-1">
         <div class="col-4" id="sidebar-col-1">
           <bib-select
@@ -12,7 +12,7 @@
             v-on:change="debounceUpdateField('Assignee', 'userId', form.userId)"
           ></bib-select>
         </div>
-        <div class="col-4">
+        <div class="col-4" id="sidebar-col-2">
           <bib-datepicker
             v-model="startDateInput"
             :value="startDateInput"
@@ -23,9 +23,8 @@
               debounceUpdateField('Start date', 'startDate', startDateInput)
             "
           ></bib-datepicker>
-          <!-- <datepicker v-model="startDateInput" :value="startDateInput" format="dd MMM yyyy"></datepicker> -->
         </div>
-        <div class="col-4">
+        <div class="col-4" id="sidebar-col-3">
           <bib-datepicker
             class="align-right"
             v-model="dueDateInput"
@@ -38,7 +37,7 @@
         </div>
       </div>
       <div class="row mx-0" id="sidebar-row-2">
-        <div class="col-4" id="sidebar-col-2">
+        <div class="col-4" id="sidebar-col-4">
           <bib-input
             type="select"
             label="Project"
@@ -47,7 +46,7 @@
             v-on:change.native="changeProject"
           ></bib-input>
         </div>
-        <div class="col-4">
+        <div class="col-4" id="sidebar-col-5">
           <bib-input
             type="select"
             label="Section"
@@ -60,7 +59,7 @@
             :disabled="!form.projectId"
           ></bib-input>
         </div>
-        <div class="col-4" id="sidebar-col-3">
+        <div class="col-4" id="sidebar-col-6">
           <bib-input
             type="select"
             label="Department"
@@ -77,7 +76,7 @@
         </div>
       </div>
       <div class="row mx-0" id="sidebar-row-3">
-        <div class="col-4" id="sidebar-col-4">
+        <div class="col-4" id="sidebar-col-7">
           <bib-input
             type="select"
             label="Priority"
@@ -89,7 +88,7 @@
             "
           ></bib-input>
         </div>
-        <div class="col-4" id="sidebar-col-5">
+        <div class="col-4" id="sidebar-col-8">
           <bib-input
             type="select"
             label="Status"
@@ -103,7 +102,7 @@
         </div>
       </div>
       <div class="row mx-0" id="sidebar-row-4">
-        <div class="col-12" id="sidebar-col-6">
+        <div class="col-12" id="sidebar-col-9">
           <bib-input
             type="textarea"
             v-model.trim="form.description"
@@ -119,24 +118,16 @@
           ></bib-input>
         </div>
       </div>
-      <!-- <div class="py-05 px-05" id="sidebar-btn-wrapper">
-        <bib-button v-show="!task.id" label="Create Task" variant="primary" v-on:click="createTask"></bib-button>
-      </div> -->
-      <!-- <loading :loading="loading2 || loading"></loading> -->
     </div>
   </client-only>
 </template>
+
 <script>
 import { STATUS, PRIORITY } from "~/config/constants.js";
 import { mapGetters } from "vuex";
-import dayjs from "dayjs";
 import _ from "lodash";
-// import Datepicker from 'vuejs-datepicker';
 export default {
   name: "SidebarFields",
-  /*components: {
-    Datepicker
-  },*/
   props: {
     task: {
       type: Object,
@@ -181,7 +172,6 @@ export default {
       return completeData;
     },
     companyProjects() {
-      // console.log("new project", this.project.id, this.project.title)
       let data = this.projects.map((p) => {
         return { label: p.title, value: p.id };
       });
@@ -229,7 +219,6 @@ export default {
   watch: {
     task() {
       if (Object.keys(this.task).length) {
-        // this.form = JSON.parse(JSON.stringify(this.task));
         this.form = _.cloneDeep(this.task);
         if (this.task.project?.length) {
           this.form.projectId =
@@ -241,12 +230,10 @@ export default {
         } else {
           this.form.projectId = this.project.id;
         }
-        // console.info(this.$refs.topScroll)
       } else {
         this.form = {
           id: "",
           title: "",
-          // createdAt: "",
           startDate: "",
           dueDate: "",
           userId: "",
@@ -275,8 +262,6 @@ export default {
         this.form.projectId = null;
         this.form.sectionId = null;
         if (this.form.id) {
-          // this.updateTask('removed from project', this.form.projectId)
-          // this.debounceUpdateField("Project", "projectId", this.form.projectId)
           this.debounceProjectUpdateField(
             "Project",
             "projectId",
@@ -286,10 +271,8 @@ export default {
             this.form.sectionId,
             this.task.project[0].projectId
           );
-          // this.$emit("update-field", { name: "Project", field: 'projectId', value: this.form.projectId })
           return false;
         }
-        // this.$emit("newtask-fields", this.form)
         return false;
       }
       this.loading2 = true;
@@ -298,16 +281,13 @@ export default {
         (!this.form.sectionId || this.form.sectionId == "")
       ) {
         this.form.sectionId = "_section" + this.form.projectId;
-        // this.$emit("newtask-fields", this.form)
       }
-      // console.log(this.form, this.form.projectId)
       this.$store
         .dispatch("section/fetchProjectSections", {
           projectId: this.form.projectId,
           filter: "all",
         })
         .then((sections) => {
-          // console.log(sections)
           if (!this.form.id || this.form.id == "") {
             this.loading2 = false;
             return false;
@@ -316,15 +296,12 @@ export default {
           let proj = this.companyProjects.find(
             (p) => p.value == this.form.projectId
           );
-          // console.warn(sec);
           if (!sec) {
-            // this.form.sectionId = null
             this.form.sectionId = "_section" + this.form.projectId;
           } else {
             this.form.sectionId = sec.id;
           }
           this.loading2 = false;
-          // this.debounceUpdateField("Project", "projectId", this.form.projectId)
           this.debounceProjectUpdateField(
             "Project",
             "projectId",
@@ -337,12 +314,9 @@ export default {
         });
     },
     debounceUpdateField: _.debounce(function (name, field, value) {
-      // console.log(name, field, value)
       if (this.form?.id) {
         this.$emit("update-field", { name: name, field: field, value: value });
-      } /*else {
-        this.$emit("newtask-fields", this.form)
-      }*/
+      } 
     }, 1000),
     debounceProjectUpdateField: _.debounce(function (
       pName,
@@ -353,7 +327,6 @@ export default {
       sValue,
       oldProjValue
     ) {
-      // console.log(name, field, value)
       if (this.form?.id) {
         this.$emit("update-project-field", {
           projName: pName,
@@ -367,9 +340,6 @@ export default {
       }
     },
     500),
-    /*createTask(){
-      this.$emit("create-task", this.form)
-    },*/
   },
 };
 </script>

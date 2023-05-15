@@ -68,10 +68,7 @@ export default {
       priorityPickerOpen: false,
       deptPickerOpen: false,
       popupMessages: [],
-      popupCoords: { },
-      /*userPickerOpen: false,
-      datePickerOpen: false,
-      datepickerArgs: { label: "", field: ""},*/
+      popupCoords: {},
       activeTask: {},
       contextMenuItems: TASK_CONTEXT_MENU,
       loading: false,
@@ -79,8 +76,6 @@ export default {
       viewName: "all",
       orderBy: 'desc',
       key: 100,
-      /*popupMessages: [],
-      contextCoords: {},*/
       userfortask: "",
       tasks: [],
       taskOrder: 'asc',
@@ -193,16 +188,12 @@ export default {
     showStatusPicker(payload){
       this.closeAllPickers()
       this.statusPickerOpen = true
-      /*this.userPickerOpen = false
-      this.datePickerOpen = false*/
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
     },
     showPriorityPicker(payload){
       this.closeAllPickers()
       this.priorityPickerOpen = true
-      /*this.userPickerOpen = false
-      this.datePickerOpen = false*/
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
     },
@@ -224,7 +215,6 @@ export default {
       this.priorityPickerOpen = false
       this.deptPickerOpen = false
       this.activeTask = {}
-      // this.toggleSidebar()
     },
 
     contextItemClick(key) {
@@ -242,7 +232,6 @@ export default {
         case 'assign-task':
           break;
         default:
-          // alert("no task assigned")
           this.alertDialog = true
           this.alertMsg = "no task assigned"
           break;
@@ -296,7 +285,6 @@ export default {
         })
     },
     updateTask(payload) {
-      // console.log(payload)
       let user, projectId
       if (payload.field == "userId" && payload.value != '') {
         user = this.teamMembers.find(t => t.id == payload.value)
@@ -318,16 +306,13 @@ export default {
         text: `changed ${payload.label} to ${payload.historyText || payload.value}`
       })
         .then(t => {
-          // console.log(t)
           this.updateKey()
         })
         .catch(e => console.warn(e))
     },
 
     deleteTask(task) {
-      // let del = confirm("Are you sure")
       this.loading = true
-      // if (del) {
         this.$store.dispatch("task/deleteTask", task).then(t => {
 
           if (t.statusCode == 200) {
@@ -340,9 +325,6 @@ export default {
           this.loading = false
           console.log(e)
         })
-      // } else {
-      //   this.loading = false
-      // }
     },
 
     async filterView($event) {

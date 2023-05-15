@@ -25,17 +25,14 @@
       <div class="task-mid d-flex gap-05">
         <status-badge v-if="task.status" :status="task.status"></status-badge>
         <priority-badge v-if="task.priority" :priority="task.priority"></priority-badge>
-        <!-- <priority-comp :priority="task.priority" :iconOnly="true"></priority-comp> -->
       </div>
       <div class="task-bottom " :id="'tg-bottom'+ task.id">
-        <!-- <span :name="'user'+task.id"> -->
         <span v-if="task.userId" class="user-info" @click.stop="showUserPicker(task)">
           <user-info :userId="task.userId" class="events-none"></user-info>
         </span>
         <span v-else class="user-name-blank user-info bg-white shape-circle align-center justify-center" @click.stop="showUserPicker(task)">
           <bib-icon icon="user" variant="gray4" class="events-none"></bib-icon>
         </span>
-        <!-- </span> -->
         <div v-if="task.dueDate" class="align-center gap-025 ml-auto" @click.stop="showDatePicker(task)">
           <bib-icon icon="calendar" :variant="overdue" class="events-none"></bib-icon>
           <format-date :datetime="task.dueDate" variant="gray5" class="events-none"></format-date>
@@ -44,7 +41,6 @@
           <bib-icon icon="calendar" variant="gray4" class="events-none"></bib-icon>
         </div>
       </div>
-      <!-- <loading2 :loading="loading" text="wait..."></loading2> -->
       <!-- popup notification -->
       <bib-popup-notification-wrapper>
         <template #wrapper>
@@ -74,7 +70,6 @@ export default {
   },
   data() {
     return {
-      // flag: false,
       contextMenuItems: TASK_CONTEXT_MENU,
       filterKey: "",
       loading: false,
@@ -101,53 +96,39 @@ export default {
     },
     overdue() {
       return (new Date(this.task.dueDate) < new Date() && this.task.statusId != 5) ? 'danger-sub1' : 'gray4';
-      // return (new Date(this.task.dueDate) < new Date()) ? false : true
     },
     form() {
       return _.cloneDeep(this.task)
     },
     
   },
-  /*mounted() {
-    console.log('mounted', this.form.title)
-  },*/
   updated() {
     let ht = this.$refs.titleInput.scrollHeight
-    // console.info('scroll height -> ', ht, this.form.title)
     this.$refs.titleInput.style.height = ht + 2 + 'px'
   },
   methods: {
 
     showUserPicker(task) {
-      // console.log(event, task)
       this.$nuxt.$emit("user-picker", { event, task })
       this.$emit("user-picker", { event, task })
     },
     showDatePicker(task) {
-      // console.log(event, task)
       this.$nuxt.$emit("date-picker", { event, task })
       this.$emit("date-picker", { event, task })
-      // this.datePickerOpen = !this.datePickerOpen
     },
 
     openSidebar(task, scroll) {
-      // console.log(task)
-      // this.$emit("open-sidebar", { ...task, scrollId: scroll });
       this.$nuxt.$emit("open-sidebar", { ...task, scrollId: scroll });
     },
 
     restoreField(){
-      // console.log('restoreField', event.target)
-      // event.target.blur()
       if (event.target.value == "") {
         event.target.value = this.form.title
         event.target.classList.remove("error")
       }
-      // this.unselectAll()
     },
 
     debounceUpdate: _.debounce(function(label, field, value, $event) {
-      // console.log(...arguments)
       let historyText;
 
       if (label == "Due date" || label == "Start date") {
@@ -159,15 +140,12 @@ export default {
         console.warn(field + ' cannot be left blank')
       } else {
         $event.target.classList.remove('error')
-        // this.$emit('edit-field', {task: task, field, value})
         this.updateTask(label, field, value, historyText)
       }
 
-      // this.updateTask(label, field, value, historyText)
     }, 1200),
 
     updateTask(label, field, value, historyText) {
-      // this.loading = true
       this.userPickerOpen = false
       const project = () => {
         if (this.task.project.length > 0) {
@@ -186,10 +164,8 @@ export default {
         user = null
       }
 
-      // console.info(project(), this.task.project.length, historyText, user)
       this.$store.dispatch("task/updateTask", {
           id: this.task.id,
-          // projectId: project(),
           data: {
             [field]: value
           },
@@ -197,7 +173,6 @@ export default {
           text: `changed ${label} to ${historyText ?? value}`
         })
         .then(res => {
-          // console.info(res)
           this.loading = false
           this.$nuxt.$emit("update-key")
         })
@@ -205,14 +180,11 @@ export default {
     },
 
     addToFavorites(task) {
-      // console.info("to be fav task", task)
       let isFav = this.favTasks.some((f) => f.taskId == task.id)
-      // console.log(isFav)
 
       if (isFav) {
         this.$store.dispatch("task/removeFromFavorite", { id: task.id })
           .then(msg => {
-            // console.log(msg)
             this.$emit("update-key", msg)
           })
           .catch(e => {
@@ -221,7 +193,6 @@ export default {
       } else {
         this.$store.dispatch("task/addToFavorite", { id: task.id })
           .then(msg => {
-            // console.log(msg)
             this.$emit("update-key", msg)
           })
           .catch(e => {
@@ -230,10 +201,8 @@ export default {
       }
     },
     markComplete(task) {
-      // console.log(this.currentTask)
       this.$store.dispatch('task/updateTaskStatus', task)
         .then((d) => {
-          // console.log(d)
           this.$nuxt.$emit("update-key")
           this.$store.dispatch("task/setSingleTask", d)
         }).catch(e => {
@@ -241,13 +210,11 @@ export default {
         })
     },
     confirmDelete(state){
-      // console.log(state, this.taskToDelete)
       this.confirmModal = false
       this.confirmMsg = ""
       if (state) {
         this.$store.dispatch("task/deleteTask", this.taskToDelete)
         .then(t => {
-          // console.log(t)
           if (t.statusCode == 200) {
             this.popupMessages.push({ text: t.message, variant: "success" })
             this.$emit("update-key", t.message)
@@ -266,7 +233,6 @@ export default {
       }
     },
     deleteTask(task) {
-      // let del = confirm("Are you sure")
       this.taskToDelete = task
       this.confirmMsg = "Are you sure "
       this.confirmModal = true
@@ -280,16 +246,12 @@ export default {
       }
       if (item.label.includes('Favorites')) {
         let fata = this.favTasks.some(ft => ft.taskId == this.task.id)
-        // console.log(fata, fapo)
         return fata ? 'orange' : 'gray5'
       }
     },
     contextItemClick(item) {
-      // event.stopImmediatePropagation()
-      // console.log(item)
       switch (item.event) {
         case 'done-task':
-          // statements_1
           this.markComplete(this.task)
           break;
         case 'fav-task':
@@ -314,7 +276,6 @@ export default {
           this.openSidebar(this.task, 'task_files')
           break;
         default:
-          // alert("no task assigned")
           this.alertDialog = true
           this.alertMsg = "no task assigned"
           break;
@@ -381,10 +342,6 @@ export default {
     padding: 8px;
   }
 
-  /*.task-top {
-    margin-bottom: 0.5rem;
-  }*/
-
   .task-mid {
     padding: 4px 8px;
   }
@@ -392,10 +349,6 @@ export default {
   .task-bottom {
     align-items: center;
     color: $gray5;
-
-    /*span {
-      font-size: 13px;
-    }*/
   }
 
 }

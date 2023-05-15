@@ -1,16 +1,16 @@
 <template>
-  <div id="userSelect" class="picker-wrapper" v-click-outside="onClickOutside">
-    <button type="button" class="user-data cursor-pointer height-2 w-100 align-center justify-between" @click.stop="triggerOpen">
-      <span v-if="user">
+  <div id="user-select-wrapper" class="picker-wrapper" v-click-outside="onClickOutside">
+    <button type="button" id="user-select-trigger-open" class="user-data cursor-pointer height-2 w-100 align-center justify-between" @click.stop="triggerOpen">
+      <span v-if="user" id="user-select-user-avatar">
         <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
       </span>
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
     </button>
-    <div v-show="show" class="picker-content">
-      <input type="text" class="picker-input" ref="userFilterInput" v-model="filterKey" @keyup.esc="$emit('close')" autofocus>
-      <div class="mt-05" style="max-height: 12rem; overflow-y: auto">
-        <ul class="m-0 p-0 text-left">
-          <li v-for="user in filterTeam" :key="user.id" class="py-025 font-md cursor-pointer" @click.stop="selected(user)">
+    <div v-show="show" class="picker-content" id="user-select-content">
+      <input type="text" class="picker-input" id="user-select-input" ref="userFilterInput" v-model="filterKey" @keyup.esc="$emit('close')" autofocus>
+      <div class="mt-05" style="max-height: 12rem; overflow-y: auto" id="user-select-user-avatar-list-wrapper">
+        <ul class="m-0 p-0 text-left" id="user-select-user-avatar-list">
+          <li v-for="(user, index) in filterTeam" :key="user.id"  :id="'user-select-user-avatar-'+index" class="py-025 font-md cursor-pointer" @click.stop="selected(user)">
             <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
           </li>
         </ul>
@@ -18,6 +18,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
 export default {
@@ -39,7 +40,6 @@ export default {
     show(newValue) {
       if (newValue) {
         this.$nextTick(() => {
-          // console.log(this.$refs.userFilterInput)
           this.$refs.userFilterInput.focus()
         });
       }
@@ -54,9 +54,7 @@ export default {
         return this.teamMembers.find(t => t.id == this.localUser)
       },
       set: function(value) {
-        // console.log(value)
         this.localUser = value.id
-        // this.userLabel = this.$userInfo(value.id).Name
       }
     },
     filterTeam() {
@@ -68,21 +66,15 @@ export default {
       })
     },
   },
-  /*mounted() {
-    console.log(this.localUser)
-  },*/
   methods: {
     triggerOpen() {
       this.show = !this.show
       this.$emit('close-other')
     },
     selected(user) {
-      // console.log(user)
-      // this.userLabel = this.$userInfo(user.id).Name
       this.user = user
       this.show = false
       this.$emit("change", user)
-      // this.$emit("close")
     },
     onClickOutside() {
       this.show = false
@@ -93,7 +85,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .picker-wrapper {
-  /*background-color: $white;*/
   position: relative;
 
   .user-data {

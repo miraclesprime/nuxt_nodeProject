@@ -134,7 +134,6 @@ export default {
     projectRoute(project) {
       let fwd = this.$donotCloseSidebar(event.target.classList)
       if (!fwd) {
-        // this.$nuxt.$emit("close-sidebar");
         this.closeContext()
         this.userPickerOpen = false
         this.datePickerOpen = false
@@ -315,7 +314,6 @@ export default {
         case 'report-project':
           break;
         default:
-          // alert("no project assigned")
           this.alertDialog = true
           this.alertMsg = "no task assigned"
           break;
@@ -323,14 +321,12 @@ export default {
     },
 
     showUserPicker(payload){
-      // console.log(payload)
       this.closeAllPickers()
       this.userPickerOpen = true
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeProject = payload.task
     },
     showDatePicker(payload){
-      // console.log(payload)
       // payload consists of event, task, label, field
       this.closeAllPickers()
       this.datePickerOpen = true
@@ -366,7 +362,6 @@ export default {
       this.priorityPickerOpen = false
       this.deptPickerOpen = false
       this.activeProject = {}
-      // this.toggleSidebar()
     },
 
     setFavorite(project) {
@@ -401,14 +396,12 @@ export default {
       let user = this.teamMembers.find(t => t.id == task.userId)
 
       this.$store.dispatch("project/updateProject", {
-        // id: task.id,
         id: this.activeProject.id,
         user,
         data: { [field]: value},
         text: `changed ${label} to ${historyText || value}`
       })
         .then(t => {
-          // console.log(t)
           if (t.statusCode == 200) {
             this.updateKey()
           } else {
@@ -419,7 +412,6 @@ export default {
     },
 
     updateAssignee(label, field, value, historyText){
-      // console.log(...arguments)
 
       this.userPickerOpen = false
       let user = this.teamMembers.find(t => t.id == value)
@@ -431,7 +423,6 @@ export default {
         text: `changed ${label} to ${historyText}`
       })
         .then(t => {
-          // console.log(t)
           if (t.statusCode == 200) {
             this.updateKey()
           } else {
@@ -442,7 +433,6 @@ export default {
     },
 
     updateDate(value){
-      // console.log(...arguments, this.datepickerArgs)
       let user = this.teamMembers.find(tm => tm.id == this.activeProject.userId)
       let newDate = dayjs(value).format("D MMM YYYY")
 
@@ -453,7 +443,6 @@ export default {
         text: `changed ${this.datepickerArgs.label} to ${newDate}`
       })
         .then(t => {
-          // console.log(t)
           if (t.statusCode == 200) {
             this.updateKey()
           } else {
@@ -497,7 +486,6 @@ export default {
       })
       
       if (proj.data.statusCode == 200) {
-        // this.$store.dispatch("project/setSingleProject", proj.data.data)
         this.updateKey()
         this.renameModal = false
       }
@@ -517,7 +505,6 @@ export default {
 
     updateKey() {
       this.$store.dispatch("project/fetchProjects").then(() => {
-        // console.log('fetched again')
         this.templateKey += 1;
       })
     },

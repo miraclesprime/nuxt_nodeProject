@@ -47,7 +47,6 @@ export default {
   data() {
     return {
       showTeamCreateModal: false,
-      // assignee: {},
       member: "",
       team: [],
       filterKey: "",

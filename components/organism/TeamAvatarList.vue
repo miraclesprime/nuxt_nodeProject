@@ -1,5 +1,5 @@
 <template>
-  <div class="team-avatar-list d-inline-flex align-center px-05">
+  <div class="team-avatar-list d-inline-flex align-center px-05" id="team-avatar-list-wrapper">
     <tippy arrow v-for="(team, index) in teammates.main" :key="team.id + index" :style="{ 'margin-left': -2*index+'px'}">
       <template v-slot:trigger>
         <bib-avatar :src="team.avatar" size="2rem" class="border-gray2"></bib-avatar>
@@ -8,17 +8,16 @@
     </tippy>
     <tippy v-if="teammates.extra.length" arrow placement="left" >
       <template v-slot:trigger>
-        <span class="extra">+{{teammates.extra.length}}</span>
+        <span class="extra" id="team-avatar-list-extra">+{{teammates.extra.length}}</span>
       </template>
       {{extraNames}}
     </tippy>
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
-import tippy from 'tippy.js';
-import VueTippy, { TippyComponent } from "vue-tippy";
-// import "~/assets/tippy-theme.scss";
+import { TippyComponent } from "vue-tippy";
 export default {
 
   name: 'TeamAvatarList',
@@ -37,14 +36,10 @@ export default {
   },
   computed: {
     ...mapGetters({
-      // team: 'task/getTaskMembers',
       teamMembers: "user/getTeamMembers",
     }),
     teammates() {
       let tm = { main: [], extra: [], all: [] }
-      /*if (Object.keys(this.task).length == 0) {
-        return tm
-      }*/
       this.teamMembers.filter(u => {
         this.team.forEach((t, index) => {
           if (t.id == u.id) {

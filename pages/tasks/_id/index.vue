@@ -190,10 +190,6 @@ export default {
         }
     },
 
-    mounted() {
-        // this.$store.dispatch("company/fetchCompanyMembers", JSON.parse(localStorage.getItem("user")).subb)
-    },
-
     methods: {
         markComplete() {
             this.loading = true

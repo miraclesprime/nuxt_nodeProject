@@ -1,7 +1,5 @@
 let eventGuid = 0
 let todayStr = new Date().toISOString().replace(/T.*$/, '') // YYYY-MM-DD of today
-// let endStr = new Date('22/11/2021').toISOString().replace(/T.*$/, '')
-// console.log(todayStr)
 
 export const SAMPLE_EVENTS = [
   {
@@ -10,7 +8,6 @@ export const SAMPLE_EVENTS = [
     dueDate: 'Nov 30, 2021',
     completed: false,
     start: todayStr,
-    // end: '2021-11-22'
   },
   {
     id: createEventId(),

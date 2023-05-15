@@ -13,7 +13,6 @@ export default {
   },
   data() {
     return {
-      // projectTitle: null,
     }
   },
 
@@ -30,27 +29,6 @@ export default {
     }
   },
 
-  /*created() {
-    // console.log('created project info', this.projectId, this.projects.length)
-    if (this.projectId) {
-      this.projects.filter((el) => {
-        if(el.id == this.projectId) {
-          this.projectTitle = el.title;
-        }
-      })
-    }
-  },*/
-
-  mounted() {
-    // console.log("mounted project info,", this.projectId, this.projects.length)
-    /*if (this.projectId) {
-      this.projects.filter((el) => {
-        if (el.id == this.projectId) {
-          this.projectTitle = el.title;
-        }
-      })
-    }*/
-  }
 }
 
 </script>

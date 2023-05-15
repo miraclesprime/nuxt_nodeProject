@@ -1,26 +1,22 @@
 <template>
   <div id="project-files-wrapper" class="project-files-wrapper mb-105">
     <div id="project-file-actions-wrapper" class="file-actions d-flex align-center py-025 ">
-      <div class="action-left d-flex " id="file-action-left">
-        <div class="d-flex gap-05 cursor-pointer shape-rounded bg-success-sub6 bg-hover-success-sub3 py-025 px-05 text-success " id="file-upload-button" @click="uploadModal = true">
-          <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="file-upload-text" class="">Upload File</span>
+      <div class="action-left d-flex " id="pf-file-action-left">
+        <div class="d-flex gap-05 cursor-pointer shape-rounded bg-success-sub6 bg-hover-success-sub3 py-025 px-05 text-success " id="pf-file-upload-button" @click="uploadModal = true">
+          <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="pf-file-upload-text" class="">Upload File</span>
         </div>
-        <!-- <div class="d-flex gap-05 ml-1 cursor-pointer text-secondary text-hover-dark" id="file-add-section-button" >
-          <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="file-add-section-text" class="">New Section</span>
-        </div> -->
       </div>
-      <div class="action-right d-flex gap-05" id="file-action-right">
-        <div class="d-flex width-2 height-2 align-center justify-center bg-light bg-hover-gray4 shape-circle p-025 cursor-pointer" id="file-action5-link">
+      <div class="action-right d-flex gap-05" id="pf-file-action-right">
+        <div class="d-flex width-2 height-2 align-center justify-center bg-light bg-hover-gray4 shape-circle p-025 cursor-pointer" id="pf-file-action5-link">
           <bib-icon v-if="displayType == 'list'" icon="table" variant="gray6" @click.native="displayType = 'grid'"></bib-icon>
           <bib-icon v-if="displayType == 'grid'" icon="list" variant="gray6" @click.native="displayType = 'list'"></bib-icon>
         </div>
       </div>
     </div>
-    <!-- <div id="project-files"> -->
       <template v-if="displayType == 'list'">
         <bib-table :fields="tableFields" :sections="dbFiles" :key="tempKey" :hide-no-column="true">
           <template #cell(name)="data">
-            <div class="d-flex align-center text-left gap-05 cursor-pointer" @click="showPreviewModal(data.value)">
+            <div class="d-flex align-center text-left gap-05 cursor-pointer" id="pf-file-extensions" @click="showPreviewModal(data.value)">
               <bib-avatar v-if="imageType(data.value)" shape="rounded" :src="data.value.url" size="1.5rem">
               </bib-avatar>
               <bib-icon v-else-if="data.value.extension == '.docx'" icon="word" :scale="1.25"></bib-icon>
@@ -28,18 +24,18 @@
               <bib-icon v-else-if="data.value.extension == '.pptx'" icon="powerpoint" :scale="1.25"></bib-icon>
               <bib-icon v-else-if="data.value.extension == '.pdf'" icon="pdf" :scale="1.25"></bib-icon>
               <bib-icon v-else icon="file-text-solid" variant="gray4" :scale="1.25"></bib-icon>
-              <span class="text-gray1">
+              <span class="text-gray1" id="pf-file-data-name">
                 {{ data.value.name }}
               </span>
             </div>
           </template>
           <template #cell(type)="data">
-            <div class=" text-gray1">
+            <div class=" text-gray1" id="pf-file-data-ext">
               {{ data.value.extension }}
             </div>
           </template>
           <template #cell(size)="data">
-            <div class="text-truncate text-gray1">
+            <div class="text-truncate text-gray1" id="pf-file-data-size">
               {{ $formatBytes(data.value.size) }}
             </div>
           </template>
@@ -50,69 +46,55 @@
             <format-date :datetime="data.value.updatedAt"></format-date>
           </template>
           <template #cell_action="data">
-            <div class="shape-circle bg-light bg-hover-gray4 width-2 height-2 d-flex justify-center align-center file-menu">
+            <div class="shape-circle bg-light bg-hover-gray4 width-2 height-2 d-flex justify-center align-center file-menu" id="pf-file-shape-circle">
               <bib-button pop="horizontal-dots" :scale="1">
                 <template v-slot:menu>
-                  <div class="list ">
-                    <span class="list__item" v-if="canPreview(data.value)" @click="showPreviewModal(data.value)">Preview</span>
-                    <span class="list__item">Open</span>
-                    <span class="list__item" @click.stop="openFileDetail(data.value)">Detail</span>
-                    <span class="list__item" @click.stop="downloadFile(data.value)">Download File</span>
+                  <div class="list " id="pf-file-list">
+                    <span class="list__item"  id="pf-file-list-item-1" v-if="canPreview(data.value)" @click="showPreviewModal(data.value)">Preview</span>
+                    <span class="list__item"  id="pf-file-list-item-2">Open</span>
+                    <span class="list__item"  id="pf-file-list-item-3" @click.stop="openFileDetail(data.value)">Detail</span>
+                    <span class="list__item"  id="pf-file-list-item-4" @click.stop="downloadFile(data.value)">Download File</span>
                     <hr>
-                    <span class="list__item list__item__danger" @click.stop="deleteFile(data.value)">Delete</span>
+                    <span class="list__item list__item__danger"  id="pf-file-list-item-5" @click.stop="deleteFile(data.value)">Delete</span>
                   </div>
                 </template>
               </bib-button>
             </div>
-            <!-- <div class="d-flex">
-              <div class="shape-rounded width-105 height-105 d-flex justify-center align-center cursor-pointer bg-hover-gray4" @click="downloadFile(data.value)">
-                <bib-icon icon="align-bottom"></bib-icon>
-              </div>
-              <div class="shape-rounded width-105 height-105 d-flex justify-center align-center cursor-pointer bg-hover-gray4" @click="deleteFile(data.value)">
-                <bib-icon icon="trash" variant="danger"></bib-icon>
-              </div>
-            </div> -->
           </template>
         </bib-table>
       </template>
       <template v-if="displayType == 'grid'">
-        <div class="files d-grid gap-1 py-1">
+        <div class="files d-grid gap-1 py-1"  id="pf-file-message-files">
           <message-files v-for="file in files" :property="file" :key="file.key" @file-click="showPreviewModal(file)" ></message-files>
         </div>
       </template>
       <loading :loading="loading"></loading>
-      
-    <!-- </div> -->
     
     <bib-modal-wrapper v-if="uploadModal" title="Select file(s)" @close="uploadModal = false">
       <template slot="content">
-        <div style="margin-left: -1rem; margin-right: -1rem;">
+        <div style="margin-left: -1rem; margin-right: -1rem;"  id="pf-file-select-files-modal">
           <bib-input type="file" ref="files" @files-dropped="handleChangeFile" variant="accepted" iconLeft="upload" placeholder="Upload from device"></bib-input>
         </div>
         <loading :loading="fileLoader"></loading>
       </template>
       <template slot="footer">
-        <div class="d-flex">
-          <bib-button label="Cancel" variant="light" pill @click="uploadModal = false"></bib-button>
-          <bib-button label="Upload" variant="success" class="ml-auto" pill @click="uploadFiles"></bib-button>
+        <div class="d-flex"  id="pf-file-select-files-btns">
+          <bib-button label="Cancel"  id="pf-file-cancel-btn" variant="light" pill @click="uploadModal = false"></bib-button>
+          <bib-button label="Upload"  id="pf-file-upload-btn" variant="success" class="ml-auto" pill @click="uploadFiles"></bib-button>
         </div>
       </template>
     </bib-modal-wrapper>
     <!-- file preview modal -->
     <bib-modal-wrapper v-if="previewModal" title="Preview" size="xl" @close="closePreviewModal">
       <template slot="content">
-        <!-- <div v-if="!filePreview" class="text-center">
-          <bib-spinner class="mx-auto" ></bib-spinner>
-        </div> -->
-        <div class="text-center">
-          <!-- <img :src="filePreview" class="w-fit" style="max-width:100%;" alt="preview"> -->
-          <img v-if="imgPreview" :src="imgPreview" class="w-fit" style="max-width:100%;" alt="preview">
+        <div class="text-center"  id="pf-file-close-preview-content">
+          <img v-if="imgPreview"  id="pf-file-img-tag" :src="imgPreview" class="w-fit" style="max-width:100%;" alt="preview">
           <pdf-preview v-else-if="pdfPreview" :pdfsrc="pdfPreview"></pdf-preview>
           <bib-spinner v-else class="mx-auto" ></bib-spinner>
         </div>
       </template>
       <template slot="footer">
-        <div class="text-center">
+        <div class="text-center"  id="pf-file-closePreviewModal">
           <bib-button label="Close" variant="light" pill @click="closePreviewModal"></bib-button>
         </div>
       </template>
@@ -121,22 +103,21 @@
     <bib-modal-wrapper v-if="fileDetailModal" title="File Details" @close="fileDetailModal = false">
         <template slot="content">
           <table class="table">
-            <tr v-for="file in fileDetail">
+            <tr v-for="(file, index) in fileDetail" :id="'pf-file-table-row-'+index" :key="index">
               <template v-if="file.key == 'size'">
-                <th id="pf-h1" class="text-right font-w-400">{{file.key}}:</th>
-                <td class="text-left text-gray6 pl-1">{{$formatBytes(file.value)}}</td>
+                <th id="pf-th1" class="text-right font-w-400">{{file.key}}:</th>
+                <td class="text-left text-gray6 pl-1" id="pf-td1">{{$formatBytes(file.value)}}</td>
               </template>
               <template v-else>
-                <th id="pf-h2" class="text-right font-w-400">{{file.key}}:</th>
-                <td class="text-left text-gray6 pl-1">{{file.value}}</td>
+                <th id="pf-th2" class="text-right font-w-400">{{file.key}}:</th>
+                <td class="text-left text-gray6 pl-1" id="pf-td2">{{file.value}}</td>
               </template>
             </tr>
           </table>
         </template>
         <template slot="footer">
-          <div class="d-flex justify-end">
+          <div class="d-flex justify-end" id="pf-file-footer">
             <bib-button label="Close" variant="light" pill @click="fileDetailModal = false"></bib-button>
-            <!-- <bib-button label="Create" variant="success" class="ml-auto" pill></bib-button> -->
           </div>
         </template>
       </bib-modal-wrapper>
@@ -159,17 +140,6 @@ export default {
       displayType: 'grid',
       tableFields: FILE_FIELDS,
       loading: false,
-      /*files: [{
-          name: "https://loremflickr.com/640/360?random=1",
-          variant: "success",
-          preview: "https://loremflickr.com/640/360?random=1",
-          extension: "png",
-          type: "Image",
-          size: "234",
-          owner: "dfskh45",
-          updatedAt: "2022-08-22T22:40:21",
-        }
-      ],*/
       isFileFavorite: false,
       uploadModal: false,
       fileLoader: false,
@@ -207,35 +177,15 @@ export default {
 
   },
   mounted() {
-    // console.log('mounted, project id->', this.project.id || this.proj.id)
     this.getFiles()
-    /*let obj1 = { projectId: this.project.id }
-    this.$axios.get("file/db/all", {
-      headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-          'obj': JSON.stringify(obj1)
-        }
-    }).then(f=>{
-      console.log(f.data)
-      if (f.data.statusCode == 200) {
-        this.dbFiles = f.data.data
-      }
-    })*/
   },
   methods: {
-    /*uploadFileModal() {
-      this.uploadModal = true
-    },*/
     imageType(data) {
-      // data.extension == '.png'
-      // console.log(data)
       if (data.type.indexOf("image/") == 0) {
         return true
       } else { return false }
     },
     handleChangeFile(files, event) {
-      // console.info(this.$refs.files.filesUploaded)
-      // console.log(files, event.target.files)
     },
     async uploadFiles() {
       this.fileLoader = true
@@ -244,7 +194,6 @@ export default {
 
       let formdata = new FormData()
       myfiles.forEach(file => {
-        // console.info(file.name)
         filelist.push(file.name)
         formdata.append('files', file)
       })
@@ -258,11 +207,8 @@ export default {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
         }
       })
-      // console.log(fi.data)
       if (fi.data.statusCode == 200) {
-        // console.log(fi.data)
         _.delay(() => {
-          // console.log('delay->', fi.data);
           this.getFiles()
         }, 2000);
       }
@@ -278,7 +224,6 @@ export default {
           'obj': JSON.stringify(obj1)
         }
       }).then(f => {
-        // console.log(f.data)
         if (f.data.statusCode == 200) {
           this.loading = false
           this.dbFiles = f.data.data
@@ -291,7 +236,6 @@ export default {
     },
     async showPreviewModal(file){
       this.previewModal = true
-      // console.info(file)
 
       if (file.type.indexOf('image/') == 0 && "url" in file) {
         let imgtype = file.type.split("/")[1]
@@ -317,7 +261,6 @@ export default {
       } else { 
         this.downloadFile(file)
         this.previewModal = false
-        // this.filePreview = "https://via.placeholder.com/200x160/f0f0f0/6f6f79?text="+file.extension
       }
     
     },
@@ -327,8 +270,6 @@ export default {
       this.previewModal = false
     },
     downloadFile(file) {
-      // console.log(file.key)
-      // let key = file.key.split('.')
       this.$axios.get("file/" + file.key, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
@@ -339,8 +280,6 @@ export default {
             const a = document.createElement('a');
             a.style.display = 'none';
             a.href = f.data.data;
-            // the filename you want
-            // a.download = 'todo-1.json';
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(f.data.data);
@@ -350,7 +289,6 @@ export default {
         .catch(e => console.error(e))
     },
     deleteFile(file) {
-      // console.info(file)
       let del = window.confirm("Are you sure want to delete " + file.name + "?")
       if (del) {
         this.$axios.delete("file/" + file.key, {
@@ -366,7 +304,6 @@ export default {
             if (f.data.statusCode == 200) {
               alert(f.data.message);
               _.delay(() => {
-                // console.log('delay->', fi.data);
                 this.getFiles()
               }, 2000);
             }
@@ -378,19 +315,16 @@ export default {
       let arr = []
       if (file.hasOwnProperty("key")) {
         Object.entries(file).map(([key, value]) => {
-          // if (value) {
             if (key == 'name' || key == "extension" || key == "size") {
               arr.push({ value: value, key: key })
             }
             if (key == "createdAt" || key == "updatedAt") {
               arr.push({ key: key, value: dayjs(value).format('DD MMM YYYY')})
             }
-          // }
         })
       }
       this.fileDetail = arr
       this.fileDetailModal = true
-      // return arr
     },
     canPreview(file) {
       if (file.type.indexOf('image/') == 0 || file.type.indexOf('pdf') > 0) {
@@ -437,7 +371,6 @@ export default {
 .files {
   grid-template-columns: repeat(3, 1fr);
   .file {
-    /*flex: 0 0 18rem;*/
     border-radius: 0.5rem;
 
     img {

@@ -2,24 +2,24 @@
   <client-only>
     <div id="proj-overview-wrapper" class="row ">
       <div id="proj-overview-inner" class="overview-wrapper mx-auto position-relative">
-        <div class="d-flex align-center gap-05" >
-          <div class="width-2 height-2 d-inline-flex align-center justify-center cursor-pointer" >
+        <div class="d-flex align-center gap-05" id="proj-overview-bib-avatar-wrap">
+          <div class="width-2 height-2 d-inline-flex align-center justify-center cursor-pointer" id="proj-overview-bib-avatar-inner-wrap">
             <bib-avatar></bib-avatar>
           </div>
-          <div class="flex-grow-1">
-            <input type="text" class="editable-input" ref="taskTitleInput" placeholder="Project name" v-model="activeProject.title" v-on:keyup="debounceUpdate('title', 'title', activeProject.title)" >
+          <div class="flex-grow-1" id="proj-overview-proj-title-input-wrap">
+            <input type="text" class="editable-input" id="proj-overview-proj-title-input" ref="taskTitleInput" placeholder="Project name" v-model="activeProject.title" v-on:keyup="debounceUpdate('title', 'title', activeProject.title)" >
           </div>
         </div>
-        <div id="proj-row1" class="row my-1">
-          <div id="proj-row1-col1" class="col-4">
-            <div id="proj-progress-wrap1" class="bg-light shape-rounded text-center px-05 py-1 h-100">
-              <p id="proj-progress-title1" class="text-left text-gray5">Progress</p>
+        <div id="proj-overview-row1" class="row my-1">
+          <div id="proj-overview-row1-col1" class="col-4">
+            <div id="proj-overview-progress-wrap1" class="bg-light shape-rounded text-center px-05 py-1 h-100">
+              <p id="proj-overview-progress-title1" class="text-left text-gray5">Progress</p>
               <progress-circle variant="success" :radius="55" :progress="progress" class="mx-auto mt-1"></progress-circle>
             </div>
           </div>
-          <div id="proj-row1-col2" class="col-4">
-            <div id="proj-progress-wrap2" class="bg-light shape-rounded text-center px-05 py-1 h-100">
-              <p id="proj-progress-title2" class="text-left text-gray5">Tasks</p>
+          <div id="proj-overview-row1-col2" class="col-4">
+            <div id="proj-overview-progress-wrap2" class="bg-light shape-rounded text-center px-05 py-1 h-100">
+              <p id="proj-overview-progress-title2" class="text-left text-gray5">Tasks</p>
               <div id="proj-progress-in" class="px-1 py-05">
                 <progress-bar label="Past due" background='danger' :value="taskOverdue" :total="totalTasks.length" class="my-05"></progress-bar>
                 <progress-bar label="Due soon" background='warning' :value="taskDuesoon" :total="totalTasks.length" class="my-05"></progress-bar>
@@ -28,50 +28,50 @@
               </div>
             </div>
           </div>
-          <div id="proj-row1-col3" class="col-4">
-            <div id="proj-progress-wrap3" class="bg-light shape-rounded text-center px-05 py-1 h-100">
+          <div id="proj-overview-row1-col3" class="col-4">
+            <div id="proj-overview-progress-wrap3" class="bg-light shape-rounded text-center px-05 py-1 h-100">
             </div>
           </div>
         </div>
-        <div id="proj-row2" class="row">
-          <div id="proj-row2-col1" class="col-6">
+        <div id="proj-overview-row2" class="row">
+          <div id="proj-overview-row2-col1" class="col-6">
             <bib-select label="Owner" test_id="po-owner-dd1" :options="filterUser" v-model="activeProject.userId" v-on:change="debounceUpdate('Owner', 'userId', activeProject.userId)"></bib-select>
           </div>
-          <div id="proj-row2-col2" class="col-3">
+          <div id="proj-overview-row2-col2" class="col-3">
             <bib-datepicker test_id="date01" v-model="startDate" :value="startDate" :maxDate="dueDate" format="dd MMM yyyy" @input="debounceUpdate('Start date', 'startDate', startDate)" label="Start date" name="startDate" placeholder="Start date" ></bib-datepicker>
           </div>
-          <div id="proj-row2-col3" class="col-3">
+          <div id="proj-overview-row2-col3" class="col-3">
             <bib-datepicker test_id="date02" v-model="dueDate" :value="dueDate" :minDate="startDate" format="dd MMM yyyy" @input="debounceUpdate('Due date', 'dueDate', dueDate)" label="Due date" name="dueDate" class="align-right" placeholder="Due date"></bib-datepicker>
           </div>
         </div>
-        <div id="proj-row3" class="row">
-          <div id="proj-row3-col2" class="col-12">
+        <div id="proj-overview-row3" class="row">
+          <div id="proj-overview-row3-col2" class="col-12">
             <bib-input type="select" label="Department" v-model="activeProject.departmentId" :options="departments" size="md"  v-on:change.native="debounceUpdate('Department', 'departmentId', activeProject.departmentId)"></bib-input>
           </div>
         </div>
-        <div id="proj-row4" class="row">
-          <div id="proj-row4-col1" class="col-6">
+        <div id="proj-overview-row4" class="row">
+          <div id="proj-overview-row4-col1" class="col-6">
             <bib-input type="select" label="Priority" v-model.number="activeProject.priorityId" :options="priority" placeholder="Please select..." v-on:change.native="debounceUpdate('Priority', 'priorityId', activeProject.priorityId)"></bib-input>
           </div>
-          <div id="proj-row4-col2" class="col-6">
+          <div id="proj-overview-row4-col2" class="col-6">
             <bib-input type="select" label="Status" v-model.number="activeProject.statusId" :options="status" placeholder="Please select..." v-on:change.native="debounceUpdate('Status', 'statusId', activeProject.statusId)"></bib-input>
           </div>
         </div>
-        <div id="proj-row5" class="row">
-          <div id="proj-row5-col1" class="col-4">
-            <label class="text-gray6">Time</label>
-            <div class="shape-rounded border-gray4 my-05 p-05">Hours {{time}}</div>
+        <div id="proj-overview-row5" class="row">
+          <div id="proj-overview-row5-col1" class="col-4">
+            <label class="text-gray6" id="proj-overview-span1">Time</label>
+            <div class="shape-rounded border-gray4 my-05 p-05" id="proj-overview-div1">Hours {{time}}</div>
           </div>
-          <div id="proj-row5-col2" class="col-4">
+          <div id="proj-overview-row5-col2" class="col-4">
             <bib-input type="number" icon-left="currency-dollar" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="debounceUpdate('Budget', 'budget', activeProject.budget)"></bib-input>
           </div>
-          <div id="proj-row5-col3" class="col-4">
-            <label class="text-gray6">Progress</label>
-            <div class="shape-rounded border-gray4 my-05 p-05">{{progress}}%</div>
+          <div id="proj-overview-row5-col3" class="col-4">
+            <label class="text-gray6" id="proj-overview-label1">Progress</label>
+            <div class="shape-rounded border-gray4 my-05 p-05" id="proj-overview-div2">{{progress}}%</div>
           </div>
         </div>
-        <div id="proj-row6" class="row">
-          <div id="proj-row6-col1" class="col-12">
+        <div id="proj-overview-row6" class="row">
+          <div id="proj-overview-row6-col1" class="col-12">
             <bib-input type="textarea" label="Brief" v-model="activeProject.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate('Project brief', 'description', activeProject.description)"></bib-input>
           </div>
         </div>
@@ -198,16 +198,11 @@ export default {
 
     startDate: {
       get() {
-        // let nd
         if (!this.activeProject.startDate) {
-          // nd = new Date()
           return new Date()
         } else {
-          // nd = new Date(this.activeProject.startDate)
           return new Date(this.activeProject.startDate)
         }
-        // return nd
-        // return dayjs(nd).format('DD-MM-YYYY')
       },
       set(newValue) {
         this.activeProject.startDate = new Date(newValue)
@@ -216,17 +211,12 @@ export default {
 
     dueDate: {
       get() {
-        // let nd
         if (!this.activeProject.dueDate) {
-          // nd = new Date()
           return new Date()
         } else {
-          // nd = new Date(this.activeProject.dueDate)
           return new Date(this.activeProject.dueDate)
         }
         
-        // return nd
-        // return dayjs(nd).format('DD-MM-YYYY')
       },
       set(newValue) {
         this.activeProject.dueDate = new Date(newValue)
@@ -249,7 +239,6 @@ export default {
   mounted() {
     if (process.client) {
       this.loading = true
-      // let user = JSON.parse(localStorage.getItem("user"))
       this.$axios.$get(`project/${this.$route.params.id}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       }).then((res) => {
@@ -260,14 +249,12 @@ export default {
       }).catch(err => {
         console.warn(err);
       })
-      // this.$store.dispatch('section/fetchProjectSections', { projectId: this.$route.params.id, filter: 'all' })
     }
   },
 
   methods: {
 
     debounceUpdate: _.debounce(function(label, field, value) {
-      // console.log('Debounce ', label, value)
 
       let updatedvalue = value
       if (label == "Owner") {
@@ -315,7 +302,6 @@ export default {
         this.activeProject.status = null
         this.activeProject.statusId = null
       }
-      // this.updateProject(`changed ${label} to ${updatedvalue}`)
       this.$store.dispatch("project/updateProject", {
         id: this.project.id,
         user: this.owner,

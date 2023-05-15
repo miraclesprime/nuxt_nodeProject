@@ -285,7 +285,6 @@ export default {
 
   created() {
     this.$nuxt.$on("update-key", () => {
-      // console.log('update key event capture')
       this.updateKey();
     });
     this.$nuxt.$on("user-picker", (payload) => {
@@ -313,7 +312,6 @@ export default {
           s.tasks = t;
           return s;
         });
-        // console.log("sorted =>", sorted)
         this.localdata = sorted;
         this.templateKey += 1;
         this.loading = false;
@@ -330,10 +328,8 @@ export default {
         s.tasks = t;
         return s;
       });
-      // console.log("sorted =>", sorted)
       this.localdata = sorted;
       this.templateKey += 1;
-      // this.$nuxt.$emit("update-key", this.key)
     },
     taskRightClick(payload) {
       this.projectContextMenu = false;
@@ -344,17 +340,14 @@ export default {
 
       this.popupCoords = { left: event.pageX + "px", top: event.pageY + "px" };
       this.activeTask = task;
-      // console.log(task)
     },
     closeContext() {
       this.taskContextMenu = false;
       this.activeTask = {};
     },
     contextItemClick(key) {
-      // console.log(key)
       switch (key) {
         case "done-task":
-          // statements_1
           this.markComplete(this.activeTask);
           break;
         case "fav-task":
@@ -379,17 +372,14 @@ export default {
           this.openSidebar(this.activeTask, "task_files");
           break;
         case "assign-task":
-          // statements_1
           break;
         default:
-          // alert("no task assigned")
           this.alertDialog = true;
           this.alertMsg = "no task assigned";
           break;
       }
     },
     showUserPicker(payload) {
-      // console.log(payload)
       this.closeAllPickers();
       this.userPickerOpen = true;
       this.popupCoords = {
@@ -399,7 +389,6 @@ export default {
       this.activeTask = payload.task;
     },
     showDatePicker(payload) {
-      // console.log(payload)
       // payload consists of event, task, label, field
       this.closeAllPickers();
       this.datePickerOpen = true;
@@ -446,12 +435,9 @@ export default {
       this.priorityPickerOpen = false;
       this.deptPickerOpen = false;
       this.activeTask = {};
-      // this.toggleSidebar()
     },
 
     taskSort($event) {
-      // sort by title
-      // console.log('sort key->', $event, 'sort-order->', this.orderBy)
       if ($event == "title") {
         // var orderBy = "asc"
         if (this.orderBy == "asc") {
@@ -471,16 +457,11 @@ export default {
         }
         this.sortName = "title";
         this.checkActive();
-        // this.templateKey += 1
-        // console.log(this.key, this.orderBy)
       }
       // Sort By owner
       if ($event == "userId") {
         if (this.orderBy == "asc") {
           this.orderBy = "desc";
-          /*this.localdata.forEach(function(sec, index) {
-            sec["tasks"] = sec.tasks.sort((a, b) => a.user.firstName.localeCompare(b.user.firstName));
-          })*/
           this.localdata.forEach(function (sec) {
             sec["tasks"] = sec.tasks.sort((a, b) => {
               if (a.user && b.user) {
@@ -490,9 +471,6 @@ export default {
           });
         } else {
           this.orderBy = "asc";
-          /*this.localdata.forEach(function(sec) {
-            sec["tasks"] = sec.tasks.sort((a, b) => b.user.firstName.localeCompare(a.user.firstName));
-          })*/
           this.localdata.forEach(function (sec) {
             sec["tasks"] = sec.tasks.sort((a, b) => {
               if (a.user && b.user) {
@@ -503,8 +481,6 @@ export default {
         }
         this.sortName = "userId";
         this.checkActive();
-        // this.templateKey += 1
-        // console.log(this.key, this.orderBy)
       }
       // sort By Status
       if ($event == "status") {
@@ -525,12 +501,9 @@ export default {
         }
         this.sortName = "status";
         this.checkActive();
-        // this.templateKey += 1
-        // console.log(this.key, this.orderBy)
       }
       // Sort By Priotity
       if ($event == "priority") {
-        // console.log('sort priority',$event)
         if (this.orderBy == "asc") {
           this.orderBy = "desc";
           this.localdata.forEach(function (sec) {
@@ -548,7 +521,6 @@ export default {
         }
         this.sortName = "priority";
         this.checkActive();
-        // this.templateKey += 1
       }
 
       // Sort By Department
@@ -572,7 +544,6 @@ export default {
             });
           });
         }
-        // this.templateKey += 1
         this.sortName = "department";
         this.checkActive();
       }
@@ -596,7 +567,6 @@ export default {
         }
         this.sortName = "startDate";
         this.checkActive();
-        // this.templateKey += 1
       }
 
       // sort By DueDate
@@ -618,7 +588,6 @@ export default {
         }
         this.sortName = "dueDate";
         this.checkActive();
-        // this.templateKey += 1
       }
 
       this.templateKey += 1;
@@ -627,7 +596,6 @@ export default {
       console.log($event);
     },
     updateKey() {
-      // console.log("update-key event received", this.templateKey)
       this.userPickerOpen = false;
       this.taskContextMenu = false;
       this.$store
@@ -641,10 +609,8 @@ export default {
     },
 
     toggleSidebar($event) {
-      // console.log("taskview => ",$event)
 
       this.flag = !this.flag;
-      // this.$emit("open-sidebar", $event);
       if ($event.id) {
         this.$nuxt.$emit("open-sidebar", $event.id);
       } else {
@@ -670,7 +636,6 @@ export default {
     },
 
     createNewTask(payload) {
-      // this.loading = true
       this.$store
         .dispatch("task/createTask", {
           ...payload,
@@ -678,13 +643,11 @@ export default {
           text: `task "${payload.title}" created`,
         })
         .then((t) => {
-          // this.loading = false
           this.resetNewRow();
           this.updateKey();
         })
         .catch((e) => {
           console.warn(e);
-          // this.loading = false
         });
     },
 
@@ -732,9 +695,6 @@ export default {
 
     renameSectionModal($event) {
       console.log($event);
-      /*this.renameModal = true
-      this.sectionId = $event.id
-      this.sectionTitle = $event.title*/
     },
 
     async renameSection(payload) {
@@ -746,9 +706,7 @@ export default {
         },
         text: `renamed section to "${this.sectionTitle || payload.title}"`,
       });
-      // console.log("rename section output", sec)
       if ((sec.statusCode = 200)) {
-        // this.renameModal = false
         this.updateKey();
       }
     },
@@ -807,16 +765,13 @@ export default {
     },
 
     setFavorite(task) {
-      // console.info("to be fav task", task)
       this.loading = true;
       let isFav = this.favTasks.some((f) => f.taskId == task.id);
-      // console.log(isFav)
 
       if (isFav) {
         this.$store
           .dispatch("task/removeFromFavorite", { id: task.id })
           .then((msg) => {
-            // console.log(msg)
             this.updateKey();
             this.loading = false;
           })
@@ -828,7 +783,6 @@ export default {
         this.$store
           .dispatch("task/addToFavorite", { id: task.id })
           .then((msg) => {
-            // console.log(msg)
             this.updateKey();
             this.loading = false;
           })
@@ -840,20 +794,15 @@ export default {
     },
 
     markComplete(task) {
-      // console.log(typeof task, this.task)
       this.loading = true;
       if (typeof task == "object" && Object.keys(task).length > 0) {
-        // console.log(task)
       } else {
-        // alert("no task selected")
         task = this.activeTask;
       }
       this.$store
         .dispatch("task/updateTaskStatus", task)
         .then((d) => {
-          // console.log(d)
           this.loading = false;
-          // this.$nuxt.$emit("update-key")
           this.updateKey();
           this.$store.dispatch("task/setSingleTask", d);
         })
@@ -864,7 +813,6 @@ export default {
     },
 
     updateTask(payload) {
-      // console.log(payload)
       let user;
       if (payload.field == "userId" && payload.value != "") {
         user = this.teamMembers.filter((t) => t.id == payload.value);
@@ -882,14 +830,12 @@ export default {
           }`,
         })
         .then((t) => {
-          // console.log(t)
           this.updateKey();
         })
         .catch((e) => console.warn(e));
     },
 
     updateAssignee(label, field, value, historyValue) {
-      // console.log(...arguments)
       let user;
       if (field == "userId" && value != "") {
         user = this.teamMembers.filter((t) => t.id == value);
@@ -902,46 +848,39 @@ export default {
       this.$store
         .dispatch("task/updateTask", {
           id: this.activeTask.id,
-          // projectId: this.$route.params.id,
           data: { [field]: value },
           user,
           text: `changed ${label} to ${historyValue}`,
         })
         .then((t) => {
-          // console.log(t)
           this.updateKey();
         })
         .catch((e) => console.warn(e));
     },
 
     updateDate(value) {
-      // console.log(...arguments, this.datepickerArgs)
       let newDate = dayjs(value).format("D MMM YYYY");
 
       this.$store
         .dispatch("task/updateTask", {
           id: this.activeTask.id,
-          // projectId: this.$route.params.id,
           data: { [this.datepickerArgs.field]: value },
           user: null,
           text: `changed ${this.datepickerArgs.label} to ${newDate}`,
         })
         .then((t) => {
-          // console.log(t)
           this.updateKey();
         })
         .catch((e) => console.warn(e));
     },
 
     confirmDelete(state) {
-      // console.log(state, this.taskToDelete)
       this.confirmModal = false;
       this.confirmMsg = "";
       if (state) {
         this.$store
           .dispatch("task/deleteTask", this.taskToDelete)
           .then((t) => {
-            // console.log(t)
             if (t.statusCode == 200) {
               this.updateKey(t.message);
               this.taskToDelete = {};
@@ -962,15 +901,12 @@ export default {
       }
     },
     deleteTask(task) {
-      // let del = confirm("Are you sure")
       this.taskToDelete = task;
       this.confirmMsg = "Are you sure ";
       this.confirmModal = true;
     },
 
     deleteSection(section) {
-      // let sec = this.sections.find(s => s.id == section.id)
-      // console.log('section->',section, sec.title)
       this.loading = true;
       let del = confirm("Are you sure?");
       if (del) {
@@ -996,13 +932,10 @@ export default {
     sectionDragEnd: _.debounce(async function (payload) {
       this.loading = true;
 
-      // console.log(payload)
       let clone = _.cloneDeep(payload);
       clone.forEach((el, i) => {
         el.order = i;
       });
-
-      // console.log("ordered sections =>", clone)
 
       let sectionDnD = await this.$axios.$put(
         "/section/dragdrop",
@@ -1014,8 +947,6 @@ export default {
           },
         }
       );
-
-      // console.log(sectionDnD.message)
 
       if (sectionDnD.statusCode == 200) {
         this.$store
@@ -1031,16 +962,12 @@ export default {
     }, 600),
 
     taskDragEnd: _.debounce(async function (payload) {
-      // console.log('task dragend =>', payload)
-      // this.highlight = null
       this.loading = true;
       let tasks = _.cloneDeep(payload.tasks);
 
       tasks.forEach((el, i) => {
         el.order = i;
       });
-
-      // console.log("sorted->", tasks)
 
       let taskDnD = await this.$axios.$put(
         "/section/crossSectionDragDrop",
@@ -1053,7 +980,6 @@ export default {
         }
       );
 
-      // console.log(taskDnD.message)
       if (taskDnD.statusCode == 200) {
         this.$emit("update-key");
       } else {
