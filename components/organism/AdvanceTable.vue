@@ -66,9 +66,10 @@
                 <!-- {{item[field.key]?.title}} -->
                 <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
               </template>
-              <template v-if="field.key.includes('Date')" class="date-cell">
+              <template v-if="field.key.includes('Date')" class="date-cell" @click.stop>
                 <!-- {{$formatDate(item[field.key])}} -->
-                <bib-datetime-picker v-model="item[field.key]" :format="format" placeholder="" @input.stop="updateDate"></bib-datetime-picker>
+                <bib-datepicker :value="new Date(item[field.key])" format="dd MMM YYYY" @click.native.stop="" @input="updateDate"></bib-datepicker>
+                <!-- <bib-datetime-picker v-model="item[field.key]" :format="format" placeholder="" @input="updateDate"></bib-datetime-picker> -->
               </template>
               <!-- {{item[field.key]}} -->
             </div>
@@ -228,8 +229,12 @@ export default {
       return fecha.parse(dateString, this.format);
     },
 
-    formatDate(dateObj, format) {
-      return fecha.format(dateObj, this.format);
+    formatInputDate(dateObj, format) {
+      if (dateObj) {
+        return fecha.format(dateObj, this.format);
+      } else {
+        return ""
+      }
     },
     
     // main class prototype
