@@ -1,10 +1,9 @@
 <template>
-  <div v-show="show" id="deptPicker" ref="deptPicker" class="picker-wrapper" v-click-outside="onClickOutside" :style="position">
-    <div class="picker-content">
-      <!-- <input type="text" class="picker-input" ref="deptFilterInput" v-model="filterKey" @keyup.esc="$emit('close')" autofocus > -->
-      <div class="" style="max-height: 15rem; overflow-y: auto">
-        <ul class="m-0 p-0 text-left">
-          <li v-for="dept in departments" :key="dept.value" class="p-025 font-md cursor-pointer" @click.stop="selected(dept)">
+  <div v-show="show" id="dept-picker-wrapper" ref="deptPicker" class="picker-wrapper" v-click-outside="onClickOutside" :style="position">
+    <div class="picker-content" id="dept-picker-content">
+      <div class="" id="dept-picker-inner-content-wrap" style="max-height: 15rem; overflow-y: auto">
+        <ul class="m-0 p-0 text-left" id="confirm-dialogue-list">
+          <li v-for="(dept, index) in departments" :key="dept.value" :id="'confirm-dialogue-list-item-'+index" class="p-025 font-md cursor-pointer" @click.stop="selected(dept)">
             {{dept.label}}
           </li>
         </ul>
@@ -12,6 +11,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
 export default {
@@ -31,36 +31,20 @@ export default {
   watch: {
     coordinates (newValue) {
       let options = {
-        // root: document.querySelector('#main-content'),
         root: null,
         rootMargin: '0px',
         threshold: 1.0
       }
 
       let observer = new IntersectionObserver(this.callback, options);
-      // let target = document.querySelector('#deptPicker');
       let target = this.$refs.deptPicker
       observer.observe(target);
     },
-    /*show(newValue){
-      this.$nextTick(() => {
-        // console.log(this.$refs.deptFilterInput)
-        this.$refs.deptFilterInput.focus()
-      });
-    }*/
   },
   computed: {
     ...mapGetters({
       departments: "department/getAllDepartments",
     }),
-    /*filterDept() {
-      let regex = new RegExp(this.filterKey, 'g\i')
-      return this.departments.filter((u) => {
-        if (regex.test(u.label)) {
-          return u
-        }
-      })
-    },*/
     position() {
       return this.coordinates
     },
@@ -69,7 +53,6 @@ export default {
     callback(entries, observer) {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) {
-          // console.log(entry.target, 'no')
           if (entry.boundingClientRect.right > entry.rootBounds.width) {
             this.position.left = (entry.rootBounds.width - entry.boundingClientRect.width) - 10 + 'px'
           }

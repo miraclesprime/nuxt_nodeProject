@@ -36,15 +36,15 @@
         <div class="editor-wrapper" id="message-input-editor-container-wrapper">
           <div v-if="value.files.length > 0" class="files" id="message-input-files-wrapper">
             <div v-for="(file, idx) in value.files" :key="idx" class="file" :id="'message-input-'+idx">
-              <div class="file-thumbnail">
+              <div class="file-thumbnail" id="message-input-fafile">
                 <fa :icon="faFile"></fa>
               </div>
-              <div class="file-info">
-                <div class="file-name">
+              <div class="file-info" id="message-input-file-info">
+                <div class="file-name" id="message-input-file-name">
                   {{ snipFileName(file.name) }}
                 </div>
               </div>
-              <button type="button" class="file-close" @click="() => removeAttachment(file.id)">
+              <button type="button" id="message-input-file-close" class="file-close" @click="() => removeAttachment(file.id)">
                 <fa :icon="faTimes"></fa>
               </button>
             </div>
@@ -52,20 +52,20 @@
           <editor-content :editor="editor" class="editor" />
         </div>
       </div>
-      <div class="toolbar-bottom d-flex justify-between" @click.stop>
-        <div class="d-flex gap-025">
-          <div class="toolbar-icon" @click="onAttachmentClick">
+      <div class="toolbar-bottom d-flex justify-between" id="message-input-mi-wrap" @click.stop>
+        <div class="d-flex gap-025"  id="message-input-mi-inner-wrap">
+          <div class="toolbar-icon" @click="onAttachmentClick"  id="message-input-toolbar-icon1">
             <fa :icon="faPaperclip"></fa>
-            <input ref="file" multiple type="file" class="attachment-input" @change="onFilesSelect" />
+            <input ref="file" multiple type="file" id="message-input-attachment-input" class="attachment-input" @change="onFilesSelect" />
           </div>
           <tippy arrow trigger="click" theme="light-border p-0" interactive :animate-fill="false" :distance="10" placement="top-start" >
-            <div slot="trigger" class="toolbar-icon">
+            <div slot="trigger" class="toolbar-icon"  id="message-input-toolbar-icon-2">
               <fa :icon="faGrin"></fa>
             </div>
             <v-emoji-picker @select="selectEmoji" ></v-emoji-picker>
           </tippy>
         </div>
-        <button class="send-btn" type="button" @click="sendMessage"> Send
+        <button class="send-btn"  id="message-input-send-btn" type="button" @click="sendMessage"> Send
           <fa :icon="faPaperPlane"></fa>
         </button>
       </div>
@@ -73,9 +73,9 @@
     <bib-modal-wrapper v-if="isLinkModalShown" title="Link URL" @close="isLinkModalShown = false">
       <template slot="content">
         <bib-input label="URL" v-model="linkUrl" />
-        <div class="d-flex">
-          <bib-button label="Cancel" variant="light" pill @click="closeAndResetLinkModal" ></bib-button>
-          <bib-button label="Set Link" variant="success" class="ml-auto" pill @click="setLink" ></bib-button>
+        <div class="d-flex"  id="message-input-closemodal-setlink-wrap">
+          <bib-button label="Cancel"  id="message-input-cancel-btn" variant="light" pill @click="closeAndResetLinkModal" ></bib-button>
+          <bib-button label="Set Link"  id="message-input-set-link-btn" variant="success" class="ml-auto" pill @click="setLink" ></bib-button>
         </div>
       </template>
     </bib-modal-wrapper>

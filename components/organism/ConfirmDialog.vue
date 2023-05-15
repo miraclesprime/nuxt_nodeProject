@@ -1,17 +1,17 @@
 <template>
-  <div class="dialog-wrapper">
+  <div class="dialog-wrapper" id="confirm-dialogue-wrapper">
     <transition name="fade" appear>
-      <div class="dialog shape-rounded" :class="[`bg-${variant}`]" :style="computedStyle">
+      <div class="dialog shape-rounded" id="confirm-dialogue-shape-rounded" :class="[`bg-${variant}`]" :style="computedStyle">
         <!-- message -->
-        <div class="d-flex gap-05">
+        <div class="d-flex gap-05" id="confirm-dialogue-warning-wrap">
           <bib-icon icon="warning" :variant="iconVariant" :scale="1.2" />
-          <div class="dialog__item " :class="[textVariant]" v-html="message">
+          <div class="dialog__item " id="confirm-dialogue-item" :class="[textVariant]" v-html="message">
           </div>
         </div>
         <!-- buttons -->
-        <div class="d-flex justify-between pt-105">
-          <bib-button label="Cancel" variant="secondary" pill @click.native.stop="close(false)"></bib-button>
-          <bib-button label="Ok" variant="primary" pill @click.native.stop="close(true)"></bib-button>
+        <div class="d-flex justify-between pt-105" id="confirm-dialogue-cancel-ok-btn-wrap">
+          <bib-button label="Cancel" id="confirm-dialogue-cancel-btn" variant="secondary" pill @click.native.stop="close(false)"></bib-button>
+          <bib-button label="Ok" id="confirm-dialogue-ok-btn" variant="primary" pill @click.native.stop="close(true)"></bib-button>
         </div>
       </div>
     </transition>
@@ -42,8 +42,6 @@ export default {
   },
   data() {
     return {
-      // showArray: [],
-      // show: false,
       timeoutName: `popupNotificationMsgTimeout_${Math.floor(Math.random() * Date.now())}`
     };
   },
@@ -81,9 +79,6 @@ export default {
 .dialog-wrapper {
   position: fixed;
   inset: 0;
-  /*width: fit-content;
-  max-width: 100%;
-  height: fit-content;*/
   overflow-x: hidden;
   overflow-y: auto;
   z-index: 101;

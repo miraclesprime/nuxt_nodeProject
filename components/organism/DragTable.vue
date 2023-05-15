@@ -441,21 +441,12 @@ import { STATUS, PRIORITY, TASK_FIELDS } from "~/config/constants.js";
 import { mapGetters } from "vuex";
 import draggable from "vuedraggable";
 import _ from "lodash";
-// import tippy from 'tippy.js';
-// import VueTippy, { TippyComponent } from 'vue-tippy';
 export default {
   name: "DragTable",
   components: {
     draggable,
-    // tippy: TippyComponent,
   },
   props: {
-    /*headless: {
-      type: Boolean,
-      default () {
-        return false;
-      },
-    },*/
     fields: {
       type: Array,
       default() {
@@ -523,17 +514,13 @@ export default {
   data() {
     return {
       cols: [],
-      // item: {},
       templateKey: 11,
-      // isCollapsed: this.collapseObj ? this.collapseObj.collapsed : false,
       localdata: [],
       taskMoveSection: null,
       highlight: false,
       status: STATUS,
       priority: PRIORITY,
       tableFields: TASK_FIELDS,
-      // userPickerOpen: false,
-      // filterKey: "",
       validTitle: "",
     };
   },
@@ -560,14 +547,11 @@ export default {
     },
   },
   created() {
-    // console.info('created lifecycle', this.cols.length)
     this.cols = this.fields.map((field) => {
       return { key: field.key, event: field.event };
     });
-    // this.cols.shift();
   },
   mounted() {
-    // console.info('mounted lifecycle', this.sections.length);
     this.localdata = this.sections
       ? JSON.parse(JSON.stringify(this.sections))
       : [];
@@ -578,7 +562,6 @@ export default {
       this.$emit("user-picker", { event, task });
     },
     triggerDatePicker(task, label, field) {
-      // console.log(event, task, field)
       this.$emit("date-picker", { event, task, label, field });
     },
     triggerStatusPicker(task, label, field) {
@@ -592,14 +575,12 @@ export default {
     },
 
     restoreField() {
-      // console.log('restoreField', event.target)
       event.target.blur();
       event.target.classList.remove("error");
       this.unselectAll();
     },
 
     debounceUpdate: _.debounce(function (task, label, field, value, $event) {
-      // console.log(task.id, field, _.trim(value))
       if (_.trim(value) == "") {
         $event.target.classList.add("error");
         console.warn(field + " cannot be left blank");
@@ -610,7 +591,6 @@ export default {
     }, 1200),
 
     debounceRenameSection: _.debounce(function (id, event) {
-      // console.log(id, event.target.value)
       if (_.trim(event.target.value) == "") {
         event.target.classList.add("error");
         console.warn("section title cannot be left blank");
@@ -624,7 +604,6 @@ export default {
       let elem = this.$refs[refId][0].$el;
       let tar = event.target;
 
-      // console.log(event.target, elem)
       if (elem.style.visibility == "collapse") {
         elem.style.visibility = "visible";
         tar.firstChild.style.transform = "rotate(0deg)";
@@ -641,7 +620,6 @@ export default {
       }
     },
     updateTaskStatus(task) {
-      // this.$emit('task-checkmark-click', task)
       this.$emit(this.titleIcon.event, task);
     },
 
@@ -649,11 +627,9 @@ export default {
       this.unselectAll().then((r) => {
         $event.currentTarget.classList.add("active");
       });
-      // console.log($event.currentTarget)
       this.$emit("row-click", task);
     },
     rowRightClick($event, task) {
-      // this.$emit("close-context-menu")
       this.unselectAll().then((r) => {
         $event.currentTarget.classList.add("active");
       });
@@ -666,18 +642,14 @@ export default {
       for (let row of rows) {
         row.classList.remove("active");
       }
-      // console.log('unselectall', event)
 
       this.$emit("hide-newrow");
-      // this.$emit("close-context-menu")
       return "success";
     },
     taskDragStart(e) {
-      // console.warn(e.to.classList.add("highlight"));
       this.highlight = true;
     },
     taskDragEnd(e) {
-      // console.log(e)
       this.highlight = false;
       let sectionData = this.localdata.filter(
         (s) => s.id == e.to.dataset.section
@@ -691,13 +663,10 @@ export default {
       this.taskMoveSection = +e.to.dataset.section;
     },
     newRowClick(sectionId) {
-      // console.log(sectionId)
-      // this.newRow.show = true
       this.newRow.sectionId = sectionId
       this.unselectAll()
     },
     newRowCreate: _.debounce(function () {
-      // console.table([this.newRow.sectionId, this.newRow.title]);
       if (!this.newRow.title) {
         console.warn("new row title is required");
         this.validTitle = "alert";
@@ -726,7 +695,6 @@ export default {
   td {
     padding-left: 8px;
     padding-right: 6px;
-    /*background-color: white;*/
   }
 
   &__hrow {
@@ -811,13 +779,11 @@ export default {
 
     &:active {
       cursor: default;
-      /*background-color: #f6f6f6;*/
       outline: 1px solid $dark;
       box-shadow: 0 0 4px $primary-sub3;
     }
 
     &.active {
-      /*background-color: #f6f6f6;*/
       outline: 1px solid $dark;
       box-shadow: 0 0 4px $primary-sub3;
     }
@@ -863,7 +829,6 @@ export default {
   .new-button {
     background-color: $success-sub6;
     color: $success;
-    /*padding: 2px 2px;*/
     span {
       max-width: 0;
       overflow: hidden;

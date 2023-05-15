@@ -3,6 +3,7 @@
     v-if="showPicker"
     v-click-outside="() => (showPicker = false)"
     :style="{ position: 'fixed', top: `${top}px`, left: `${left}px` }"
+    id="reaction-picker-wrapper"
   >
     <v-emoji-picker @select="(emoji) => $emit('select', emoji, message)" />
   </div>
