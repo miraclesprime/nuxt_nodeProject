@@ -51,7 +51,7 @@
         <bib-icon icon="check-circle-solid" :variant="isComplete.variant" :scale="1.5"></bib-icon>
       </div>
       <div class="flex-grow-1" id="it-editable-input">
-        <input type="text" class="editable-input" ref="taskTitleInput" v-model="form.title" placeholder="Enter task name..." v-on:keyup="debounceUpdate('Title', 'title', form.title)">
+        <input type="text" class="editable-input" ref="taskTitleInput" v-model="form.title" placeholder="Enter task name..." v-on:keyup="debounceUpdate('Title', 'title', form.title)" id="it-taskTitleInput">
       </div>
       <div>
         <team-avatar-list :team="team"></team-avatar-list>

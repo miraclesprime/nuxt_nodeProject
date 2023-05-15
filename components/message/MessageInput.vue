@@ -1,41 +1,41 @@
 <template>
   <client-only>
-  <div v-if="editor" class="wrapper" @click.stop>
-    <div class="container">
-      <div class="toolbar-top">
-        <div class="toolbar-icon" :class="{ 'is-active': editor.isActive('bold') }" @click="editor.chain().focus().toggleBold().run()">
+  <div id="message-input-wrapper" v-if="editor" class="wrapper" @click.stop>
+    <div class="container"  id="message-input-container">
+      <div class="toolbar-top"  id="message-input-toolbar-top">
+        <div class="toolbar-icon"  id="message-input-toolbar-icon-1" :class="{ 'is-active': editor.isActive('bold') }" @click="editor.chain().focus().toggleBold().run()">
           <fa :icon="faBold"></fa>
         </div>
-        <div class="toolbar-icon" :class="{ 'is-active': editor.isActive('italic') }" @click="editor.chain().focus().toggleItalic().run()">
+        <div class="toolbar-icon"  id="message-input-toolbar-icon-2" :class="{ 'is-active': editor.isActive('italic') }" @click="editor.chain().focus().toggleItalic().run()">
           <fa :icon="faItalic"></fa>
         </div>
-        <div class="toolbar-icon" :class="{ 'is-active': editor.isActive('underline') }" @click="editor.chain().focus().toggleUnderline().run()">
+        <div class="toolbar-icon"  id="message-input-toolbar-icon-3" :class="{ 'is-active': editor.isActive('underline') }" @click="editor.chain().focus().toggleUnderline().run()">
           <fa :icon="faUnderline"></fa>
         </div>
-        <div class="toolbar-icon" :class="{ 'is-active': editor.isActive('strike') }" @click="editor.chain().focus().toggleStrike().run()">
+        <div class="toolbar-icon"  id="message-input-toolbar-icon-4" :class="{ 'is-active': editor.isActive('strike') }" @click="editor.chain().focus().toggleStrike().run()">
           <fa :icon="faStrikethrough"></fa>
         </div>
-        <div class="toolbar-separator"></div>
-        <div class="toolbar-icon" :class="{ 'is-active': editor.isActive('link') }" @click="toggleLink">
+        <div class="toolbar-separator"  id="message-input-toolbar-separator"></div>
+        <div class="toolbar-icon"  id="message-input-toolbar-icon-5" :class="{ 'is-active': editor.isActive('link') }" @click="toggleLink">
           <fa :icon="faLink"></fa>
         </div>
-        <div class="toolbar-separator"></div>
-        <div class="toolbar-icon" :class="{ 'is-active': editor.isActive('bulletList') }" @click="editor.chain().focus().toggleBulletList().run()">
+        <div class="toolbar-separator"  id="message-input-toolbar-separator-2"></div>
+        <div class="toolbar-icon"  id="message-input-toolbar-icon-6" :class="{ 'is-active': editor.isActive('bulletList') }" @click="editor.chain().focus().toggleBulletList().run()">
           <fa :icon="faListUl"></fa>
         </div>
-        <div class="toolbar-icon" :class="{ 'is-active': editor.isActive('orderedList') }" @click="editor.chain().focus().toggleOrderedList().run()">
+        <div class="toolbar-icon"  id="message-input-toolbar-icon-7" :class="{ 'is-active': editor.isActive('orderedList') }" @click="editor.chain().focus().toggleOrderedList().run()">
           <fa :icon="faListOl"></fa>
         </div>
-        <div class="toolbar-separator"></div>
+        <div class="toolbar-separator"  id="message-input-toolbar-separator-3"></div>
         <mention-popup @select="mentionUser"></mention-popup>
-        <div class="toolbar-button d-inline-flex align-center ml-auto">
-          <button type="button" class="cursor-pointer text-secondary text-underline border-none bg-white text-hover-dark" @click.stop="cancelMessage">Cancel</button> 
+        <div class="toolbar-button d-inline-flex align-center ml-auto"  id="message-input-toolbar-btn-wrap">
+          <button type="button" id="message-input-toolbar-btn" class="cursor-pointer text-secondary text-underline border-none bg-white text-hover-dark" @click.stop="cancelMessage">Cancel</button> 
         </div>
       </div>
-      <div class="editor-container">
-        <div class="editor-wrapper">
-          <div v-if="value.files.length > 0" class="files">
-            <div v-for="(file, idx) in value.files" :key="idx" class="file">
+      <div class="editor-container" id="message-input-editor-container">
+        <div class="editor-wrapper" id="message-input-editor-container-wrapper">
+          <div v-if="value.files.length > 0" class="files" id="message-input-files-wrapper">
+            <div v-for="(file, idx) in value.files" :key="idx" class="file" :id="'message-input-'+idx">
               <div class="file-thumbnail">
                 <fa :icon="faFile"></fa>
               </div>
@@ -49,48 +49,6 @@
               </button>
             </div>
           </div>
-          <!-- <div v-if="value.voices.length" class="voices">
-            <div v-for="(voice, idx) in value.voices" :key="idx" class="voice">
-              <div class="voice-thumbnail">
-                <fa :icon="faMicrophone" ></fa>
-              </div>
-
-              <div class="voice-bars">
-                <div
-                  v-for="(bar, idx) in voice.volumes"
-                  class="bar"
-                  :key="idx"
-                  :style="`height: ${bar + 5}%`"
-                />
-              </div>
-
-              <button type="button" class="file-close" @click="() => removeVoice(idx)">
-                <fa :icon="faTimes"></fa>
-              </button>
-            </div>
-          </div>
-        
-      </div> -->
-          <!-- <div v-if="value.videos.length" class="videos">
-            <div v-for="(video, idx) in value.videos" :key="idx" class="video">
-              <div class="video-thumbnail">
-                <fa :icon="faVideo" />
-              </div>
-
-              <button type="button" class="file-close" @click="() => removeVideo(idx)">
-                <fa :icon="faTimes"></fa>
-              </button>
-            </div>
-          </div> -->
-          <!-- <div v-if="value.images.length" class="images">
-            <div v-for="(image, idx) in value.images" :key="idx" class="image">
-              <img :src="image.url" />
-
-              <button type="button" class="file-close" @click="() => removeImage(idx)">
-                <fa :icon="faTimes"></fa>
-              </button>
-            </div>
-          </div> -->
           <editor-content :editor="editor" class="editor" />
         </div>
       </div>
@@ -106,17 +64,12 @@
             </div>
             <v-emoji-picker @select="selectEmoji" ></v-emoji-picker>
           </tippy>
-          <!-- <audio-recorder @record="addVoice" />
-          <video-recorder @record="addVideo" />
-          <image-capturer @capture="addImage" /> -->
         </div>
         <button class="send-btn" type="button" @click="sendMessage"> Send
           <fa :icon="faPaperPlane"></fa>
-          <!-- <bib-icon icon="send-solid" ></bib-icon> -->
         </button>
       </div>
     </div>
-    <!-- <div class="hint"><b>Shift + Enter</b> to send</div> -->
     <bib-modal-wrapper v-if="isLinkModalShown" title="Link URL" @close="isLinkModalShown = false">
       <template slot="content">
         <bib-input label="URL" v-model="linkUrl" />
@@ -160,11 +113,9 @@ import {
 import { v4 as uuidV4 } from 'uuid';
 import { mapGetters } from 'vuex';
 import tippy from 'tippy.js';
-import VueTippy, { TippyComponent } from 'vue-tippy';
+import { TippyComponent } from 'vue-tippy';
 import { VEmojiPicker } from 'v-emoji-picker';
 import { snipFileName } from '~/utils/file';
-// import { ChannelPlugin } from '~/plugins/editor-channel';
-// import { ChatLink } from '~/plugins/editor-link';
 import "~/assets/tippy-theme.scss";
 
 import MentionList from '~/components/message/MessageMentionList.vue';
@@ -188,7 +139,6 @@ export default {
   },
 
   computed: {
-    // ...mapGetters(['contacts', 'groupChats', 'getChannelById']),
     ...mapGetters({
       contacts: "user/getTeamMembers"
     }),
@@ -229,14 +179,6 @@ export default {
       content: '',
       extensions: [
         StarterKit,
-
-        /*ChatLink.configure({
-          onEdit: (link) => {
-            this.linkUrl = link.href;
-            this.isLinkModalShown = true;
-          },
-          onRemove: () => this.editor.chain().focus().unsetLink().run(),
-        }),*/
         Link.configure({
           openOnClick: false,
         }),
@@ -258,8 +200,6 @@ export default {
             class: 'mention',
           },
           renderLabel: ({ node }) => {
-            // console.log(node)
-            // const user = this.contacts[node.attrs.id];
             const user = this.contacts.find(c => c.id == node.attrs.id)
             return `@${user.firstName} ${user.lastName}`;
           },
@@ -357,7 +297,6 @@ export default {
       this.$emit('input', { ...this.value, files: [...this.value.files, ...newFiles] });
     },
     selectEmoji(emoji) {
-      // e.stopPropagation()
       const transaction = this.editor.state.tr.insertText(emoji.data);
       this.editor.view.dispatch(transaction);
     },
@@ -372,18 +311,11 @@ export default {
     },
     toggleLink() {
       if (this.editor.isActive('link')) {
-        // unset link
         this.editor.chain().focus().unsetLink().run();
       } else {
-        // show link modal
-        // this.isLinkModalShown = true;
         this.setLink()
       }
     },
-    /*setLink() {
-      this.editor.chain().focus().extendMarkRange('link').setLink({ href: this.linkUrl }).run();
-      this.closeAndResetLinkModal();
-    },*/
     closeAndResetLinkModal() {
       this.isLinkModalShown = false;
       this.linkUrl = '';
@@ -479,9 +411,7 @@ export default {
 
 </script>
 <style lang="scss" scoped>
-.wrapper {
-  /*padding: 0.5rem 0;*/
-}
+.wrapper {}
 
 .container {
   width: auto;
@@ -489,7 +419,6 @@ export default {
   border-radius: 6px;
   overflow: hidden;
   padding: 0;
-  /*box-shadow: 0 2px 7px rgba(0, 0, 0, 0.1);*/
   display: flex;
   flex-direction: column;
 }
@@ -522,10 +451,8 @@ export default {
 }
 
 .editor {
-  /*display: flex;*/
 
   .ProseMirror {
-    /*flex-grow: 1;*/
     font-size: 1rem;
   }
 
@@ -547,13 +474,11 @@ export default {
   color: #fff;
   border: 0;
   cursor: pointer;
-  /*width: 100px;*/
   padding: 0.35rem 1rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  /*line-height: 15px;*/
   background-color: transparent;
   color: rgba(43, 160, 38, 1);
   background-color: rgba(43, 160, 38, .16);
@@ -761,7 +686,6 @@ export default {
   gap: 0.25rem;
   font-size: 0.9rem;
   padding: 6px 5px 5px;
-  /*background-color: #f7f7f9;*/
 }
 
 ::v-deep .toolbar-icon {

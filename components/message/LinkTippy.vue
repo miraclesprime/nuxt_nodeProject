@@ -1,12 +1,12 @@
 <template>
-    <div class="container">
-      <div class="text">{{ text }}</div>
-      <div class="link">
-        <a :href="href" target="_blank">{{ href }}</a>
+    <div class="container" id="link-trippy-wrapper">
+      <div class="text" id="link-trippy-text">{{ text }}</div>
+      <div class="link" id="link-trippy-link-wrap">
+        <a :href="href" target="_blank" id="link-trippy-link">{{ href }}</a>
       </div>
-      <div class="buttons-container">
-        <bib-button label="Edit" variant="primary--light" @click="$emit('edit')" ></bib-button>
-        <bib-button label="Remove" variant="danger" @click="$emit('remove')" ></bib-button>
+      <div class="buttons-container" id="link-trippy-button-container">
+        <bib-button label="Edit" variant="primary--light" @click="$emit('edit')" id="link-trippy-edit-btn"></bib-button>
+        <bib-button label="Remove" variant="danger" @click="$emit('remove')" id="link-trippy-remove-btn"></bib-button>
       </div>
     </div>
 </template>

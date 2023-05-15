@@ -1,10 +1,10 @@
 <template>
   <tippy ref="tippy" theme="light-border p-0" :animate-fill="false" interactive placement="top-right" trigger="click">
-    <div slot="trigger" class="toolbar-icon">
+    <div slot="trigger" class="toolbar-icon" id="mpu-toolbar-icon">
       <fa :icon="faAddressCard" />
     </div>
 
-    <div class="container">
+    <div class="container" id="mpu-container">
       <bib-input
         type="text"
         v-model="filter"
@@ -12,10 +12,10 @@
         label="Search for someone to mention"
         size="md"
       />
-      <div class="list">
-        <div class="item" v-for="user in users" :key="user.id" @click="selectUser(user)">
+      <div class="list" id="mpu-list">
+        <div class="item" :id="'mpu-'+index" v-for="(user, index) in users" :key="user.id" @click="selectUser(user)">
           <bib-avatar size="1.7rem" :src="user.avatar" />
-          <div class="name">{{ user.firstName }} {{ user.lastName }}</div>
+          <div class="name" id="mpu-name">{{ user.firstName }} {{ user.lastName }}</div>
         </div>
       </div>
     </div>
@@ -26,8 +26,7 @@
 import { mapGetters } from 'vuex';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faAddressCard } from '@fortawesome/free-solid-svg-icons';
-import tippy from 'tippy.js';
-import VueTippy, { TippyComponent } from 'vue-tippy';
+import { TippyComponent } from 'vue-tippy';
 
 export default {
   components: {
@@ -76,9 +75,6 @@ export default {
   box-shadow: 0 1px 7px rgba(0, 0, 0, 0.15);
   padding: 15px 15px 0 15px;
 
-  /*& > :first-child {
-    flex: 0 1 auto;
-  }*/
   .input {}
 }
 
