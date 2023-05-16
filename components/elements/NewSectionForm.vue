@@ -1,12 +1,36 @@
 <template>
   <section v-show="showNewsection" id="new-section-container">
-    <div id="new-section-input-wrapper" class="d-flex align-center p-05 bg-light">
-      <input id="new-section-input" type="text" class="new-section-input" ref="newsectioninput" v-model.trim="newSectionName" v-on:blur="onClickOutside" v-on:keyup.enter="$emit('create-section', newSectionName)" @keyup.esc="onClickOutside(true)" placeholder="Enter section name">
-      <small v-if="showError" class="text-danger ml-05" id="nsf-show-error">{{showError}}</small>
-      <div id="nsf-showloading" v-show="showLoading" class="d-flex align-center">
-        <bib-spinner :scale="2"></bib-spinner> <span class="text-secondary">Creating section ...</span>
+    <div
+      id="new-section-input-wrapper"
+      class="d-flex align-center p-05 bg-light"
+    >
+      <!-- ******updated by @wen 5.11****** -->
+      <!-- v-on:input="createSection" -->
+      <input
+        id="new-section-input"
+        type="text"
+        class="new-section-input"
+        ref="newsectioninput"
+        v-model.trim="newSectionName"
+        v-on:blur="onClickOutside"
+
+        v-on:input="createSection"
+
+        v-on:keyup.enter="$emit('create-section', newSectionName)"
+        @keyup.esc="onClickOutside(true)"
+        placeholder="Enter section name"
+      />
+      <small v-if="showError" class="text-danger ml-05" id="nsf-show-error">{{
+        showError
+      }}</small>
+      <div
+        id="nsf-showloading"
+        v-show="showLoading"
+        class="d-flex align-center"
+      >
+        <bib-spinner :scale="2"></bib-spinner>
+        <span class="text-secondary">Creating section ...</span>
       </div>
-      <bib-icon icon="close" class="ml-auto"></bib-icon>
     </div>
   </section>
 </template>
@@ -49,7 +73,7 @@ export default {
         this.$emit("create-section", this.newSectionName);
       }
     },
-
+    // ************created by @wen************
     createSection() {
       this.debounceCreate();
     },
@@ -57,6 +81,7 @@ export default {
     debounceCreate: _.debounce(function () {
       this.$emit("create-section", this.newSectionName);
     }, 800),
+    // ************created by @wen************
   },
 };
 </script>
@@ -71,7 +96,9 @@ export default {
   font-size: $font-size-sm;
   border-radius: 0.18rem;
   border: 1px solid var(--bib-gray4);
-
+  // Updated by @wen
+  width: 100% !important;
+  
   &:focus {
     outline: none;
     border: 2px solid var(--bib-gray6);

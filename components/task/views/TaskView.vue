@@ -9,22 +9,26 @@
       @group="taskGroup($event)"
       @search-projectTasks="searchTasks"
     ></task-actions>
-    <new-section-form
+    <!-- updated by @wen -->
+    <!-- <new-section-form
       :showNewsection="newSection"
       :showLoading="sectionLoading"
       :showError="sectionError"
       v-on:toggle-newsection="newSection = $event"
       v-on:create-section="createSection"
-    ></new-section-form>
+    ></new-section-form> -->
 
     <template v-if="gridType === 'list'">
       <!-- task list table -->
+      <!-- updated by @wen -->
       <drag-table
         :fields="tableFields"
         :sections="localdata"
         :titleIcon="{ icon: 'check-circle-solid', event: 'task-icon-click' }"
         :key="templateKey"
         :componentKey="templateKey"
+        :newSection="newSection"
+        @create-section="createSection"
         @row-click="openSidebar"
         @row-rightclick="taskRightClick"
         @task-icon-click="markComplete"
@@ -713,12 +717,16 @@ export default {
     },
 
     async createSection($event) {
+      //updated by @wen
+      this.newSection = $event.newSection;
+      this.sectionLoading = $event.sectionLoading;
+      this.sectionError = $event.sectionError;
       this.sectionLoading = true;
       const res = await this.$store.dispatch("section/createSection", {
         projectId: this.project.id,
-        title: $event,
+        title: $event.title,
         isDeleted: false,
-        text: `section '${$event}' created`,
+        text: `section '${$event.title}' created`,
       });
       if (res.statusCode == 200) {
         this.updateKey();

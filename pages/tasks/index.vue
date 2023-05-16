@@ -451,8 +451,7 @@ export default {
 
       depts.map((dept) => {
         let replaceIndex = dept.tasks.findIndex((lt) => lt.id == taskData.id);
-        // *************updated by @Wen 5.11**********
-        if (replaceIndex >= 0) dept.tasks.splice(replaceIndex, 1, taskData);
+        dept.tasks.splice(replaceIndex, 1, taskData);
       });
 
       this.localData = depts;
