@@ -4,7 +4,7 @@
       <!-- <div class="zero" :style="{ width: tableFields[0].width}">
         <div class="align-center gap-05">{{tableFields[0].label}} <span v-if="tableFields[0].header_icon" class="height-1" @click="$emit(tableFields[0].header_icon.event)"><bib-icon :icon="tableFields[0].header_icon.icon" :variant="tableFields[0].header_icon.isActive ? 'gray1' : 'gray4'"></bib-icon></span></div>
       </div> -->
-      <draggable v-if="drag" class="task-draggable adv-table resizable bg-white" handle=".drag-handle" :style="{'width': tableWidth}" role="table" @start="rowDragStart" @end="rowDragEnd" :move="moveTask" >
+      <draggable class="task-draggable adv-table resizable bg-white" handle=".drag-handle" :style="{'width': tableWidth}" role="table" @start="rowDragStart" @end="rowDragEnd" :move="moveTask" >
         <div slot="header" class="tr" role="row">
           <div v-if="drag" class="width-2 th" role="cell"></div>
           <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{ width: field.width}">
@@ -14,9 +14,9 @@
           </div>
         </div>
 
-        <div class="tr position-relative height-2">
+        <div class="tr position-relative height-205">
           <div class="position-absolute" style="inset: 0; border-bottom: 1px solid var(--bib-light);">
-            <div class="section-header d-flex align-center gap-05 height-2 px-1" >
+            <div class="section-header d-flex align-center gap-05 height-205 px-1" >
               <bib-icon icon="arrow-down" :scale="0.5" :style="{transform: iconRotate}"></bib-icon> 
               <span class="font-w-700 cursor-pointer" @click.stop="isCollapsed = !isCollapsed">
                 {{sectionTitle}}
@@ -68,7 +68,7 @@
               </template>
               <template v-if="field.key.includes('Date')" class="date-cell" @click.stop>
                 <!-- {{$formatDate(item[field.key])}} -->
-                <bib-datepicker :value="new Date(item[field.key])" format="dd MMM YYYY" @click.native.stop="" @input="updateDate"></bib-datepicker>
+                <bib-datepicker class="align-right" :value="new Date(item[field.key])" format="dd MMM YYYY" @click.native.stop="" @input="updateDate"></bib-datepicker>
                 <!-- <bib-datetime-picker v-model="item[field.key]" :format="format" placeholder="" @input="updateDate"></bib-datetime-picker> -->
               </template>
               <!-- {{item[field.key]}} -->

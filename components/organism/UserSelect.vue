@@ -1,7 +1,7 @@
 <template>
   <div id="userSelect" class="picker-wrapper" v-click-outside="onClickOutside">
     <button type="button" class="user-data cursor-pointer height-2 w-100 align-center justify-between" @click.stop="triggerOpen">
-      <span v-if="user">
+      <span v-if="user" class="align-center gap-025">
         <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> <span class="user-label text-truncate">{{user.label}}</span>
       </span>
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
@@ -10,8 +10,8 @@
       <input type="text" class="picker-input" ref="userFilterInput" v-model="filterKey" @keyup.esc="$emit('close')" autofocus>
       <div class="mt-05" style="max-height: 12rem; overflow-y: auto">
         <ul class="m-0 p-0 text-left">
-          <li v-for="user in filterTeam" :key="user.id" class="py-025 font-md cursor-pointer" @click.stop="selected(user)">
-            <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> {{user.label}}
+          <li v-for="user in filterTeam" :key="user.id" class="py-025 font-md align-center gap-025 cursor-pointer" @click.stop="selected(user)">
+            <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> <span class="user-label text-truncate">{{user.label}}</span>
           </li>
         </ul>
       </div>
@@ -99,8 +99,8 @@ export default {
   .user-data {
     border: 0 none;
     background-color: transparent;
-    .user-label { max-width: 8rem; display: inline-block; }
   }
+  .user-label { max-width: 8rem; display: inline-block; }
 
   .picker-content {
     position: absolute;

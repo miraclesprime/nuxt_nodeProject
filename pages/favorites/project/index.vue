@@ -37,7 +37,6 @@
         :contextItems="contextMenuItems"
         @row-click="openSidebar"
         @context-item-event="contextItemClick"
-        
         :newTaskButton="newTaskButton"
         :newRow="newRow"
         
@@ -108,6 +107,22 @@ export default {
         budget: "",
         text: "",
       },
+      subPanel: false,
+    }
+  },
+
+  watch: {
+    subPanel(){
+      const page = document.getElementById("page")
+      this.$nextTick(() => {
+        const sub = document.getElementById("sub-panel")
+        console.log("page width="+page.offsetWidth+", panel width="+sub.offsetWidth)
+        if (this.subPanel) {
+          this.contentWidth = (page.offsetWidth - sub.offsetWidth) + 'px'
+        } else {
+          this.contentWidth = '100%'
+        }
+      });
     }
   },
 
@@ -193,6 +208,7 @@ export default {
 
   methods: {
     openSidebar(task) {
+      console.log(task)
       let fwd = this.$donotCloseSidebar(event.target.classList);
       if (!fwd) {
         this.$nuxt.$emit("close-sidebar");
