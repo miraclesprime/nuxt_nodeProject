@@ -55,7 +55,11 @@ export default {
     },
   },
   mounted() {
-    this.localValue = this.priorityItems.find( pt => pt.value == this.value.id )
+    if (this.value) {
+      this.localValue = this.priorityItems.find( pt => pt.value == this.value.id )
+    } else {
+      this.localValue = { label: 'Choose priority', value: 0, color: "dark" }
+    }
   },
   methods: {
     triggerOpen() {

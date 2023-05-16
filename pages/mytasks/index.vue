@@ -6,12 +6,14 @@
       <div>
         <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form>
         <div id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y">
-          <template v-if="gridType == 'list'">
+          <template>
             <template v-if="todos.length">
+              <div v-show="gridType == 'list'">
               <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete" @edit-field="updateTask" @edit-section="renameTodo" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table>
               <!-- table context menu -->
               <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closePopups" @item-click="contextItemClick"></table-context-menu>
               <loading :loading="loading"></loading>
+              </div>
             </template>
             <div v-else>
               <span id="projects-0" class="d-inline-flex gap-05 align-center m-1 text-gray5">
@@ -19,8 +21,8 @@
               </span>
             </div>
           </template>
-          <template v-else>
-            <div id="tgs-scroll" class="bg-light h-100 of-scroll-x position-relative">
+          <template>
+            <div id="tgs-scroll" class="bg-light h-100 of-scroll-x position-relative" v-show="gridType == 'grid'">
               <draggable :list="localdata" class="d-flex h-100" :move="moveTodo" v-on:end="todoDragEnd" handle=".section-drag-handle">
                 <div class="task-grid-section" v-for="(todo, index) in localdata" :key="index + viewName + '-' + key">
                   <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">

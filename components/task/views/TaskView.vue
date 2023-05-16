@@ -17,8 +17,9 @@
       v-on:create-section="createSection"
     ></new-section-form>
 
-    <template v-if="gridType === 'list'">
+    <template>
       <!-- task list table -->
+      <div v-show="gridType === 'list'">
       <drag-table
         :fields="tableFields"
         :sections="localdata"
@@ -54,9 +55,11 @@
         ref="task_menu"
         @item-click="contextItemClick"
       ></table-context-menu>
+      </div>
     </template>
 
-    <template v-else>
+    <template>
+      <div v-show="gridType == 'grid'">
       <task-grid-section
         :sections="localdata"
         :activeTask="activeTask"
@@ -74,6 +77,7 @@
         sectionType="singleProject"
       >
       </task-grid-section>
+      </div>
     </template>
 
     <!-- user-picker for list and board view -->

@@ -242,54 +242,6 @@ export const TEAMMATES = [{
   }
 ];
 
-// project index page constants -----
-
-export const PROJECT_TABS = [
-  
-  {
-    key: "tasks",
-    value: "tasks",
-    title: "Tasks"
-  },
-  {
-    key: "team",
-    value: "team",
-    title: "Team"
-  },
-  {
-    key: "conversations",
-    value: "conversations",
-    title: "Conversations"
-  },
-  {
-    key: "files",
-    value: "files",
-    title: "Files"
-  },
-  {
-    key: "history",
-    value: "history",
-    title: "History",
-  }
-];
-
-export const PROJECT_DEFAULT_TAB = {
-  key: "tasks",
-  value: "tasks",
-  title: "Tasks"
-};
-
-export const PROJECT_TAB_TITLES = {
-  overview: "overview",
-  tasks: "tasks",
-  timeline: "timeline",
-  calendar: "calendar",
-  team: "team",
-  conversations: "conversations",
-  files: "files",
-  history: "history",
-};
-
 // dream index page constants -----
 
 export const DREAM_TABS = [{
@@ -630,6 +582,95 @@ export const TASK_FAVORITES = [
 ]
 
 export const DEMO_TABLE = [
+  {
+    label: 'Task name',
+    key: 'title',
+    width: '20%',
+    icon: {
+      icon: 'check-circle-solid',
+      variant: 'gray2',
+      event: 'title-icon-click'
+    },
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false,
+    },
+    event: "title-click",
+  },
+  {
+    label: "Project",
+    key: "project",
+    header_icon: {
+      icon: "swap-vertical",
+      event: "table-sort",
+      isActive: false,
+    },
+  },
+  {
+    label: "Department",
+    key: "department",
+    width: '10%',
+    header_icon: {
+      icon: "swap-vertical",
+      event: "table-sort",
+      isActive: false,
+    },
+  },
+  {
+    label: 'Status',
+    key: 'status',
+    width: '9%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  },
+  {
+    label: 'Priority',
+    key: 'priority',
+    width: '9%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  },
+  {
+    label: 'Assignee',
+    key: 'userId',
+    width: '12%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  },
+  {
+    label: 'Start Date',
+    key: 'startDate',
+    width: '8%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  },
+  {
+    label: 'Due Date',
+    key: 'dueDate',
+    width: '8%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  }
+]
+
+
+export const DEMO_TASK = [
   {
     label: 'Task name',
     key: 'title',
