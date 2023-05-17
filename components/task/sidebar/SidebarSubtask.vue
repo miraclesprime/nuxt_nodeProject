@@ -1,92 +1,71 @@
 <template>
   <client-only>
-  <div class="task-group w-100 position-relative py-05 px-2" id="task-group-main-wrapper">
-    <div id="task-group-title-wrapper" class="border-bottom-gray2 d-flex justify-between sub-title pb-05">
-      <p id="task-group-title" class="text-gray5 font-md">Subtasks </p>
-      <!-- <sorting-comp :items="sortingItems" icon="swap-vertical"></sorting-comp> -->
+  <div class="task-group w-100 position-relative py-05 px-2" id="sbs-task-group-main-wrapper">
+    <div id="sbs-task-group-title-wrapper" class="border-bottom-gray2 d-flex justify-between sub-title pb-05">
+      <p id="sbs-task-group-title" class="text-gray5 font-md">Subtasks </p>
     </div>
-    <div id="subtask-title-wrapper" class="section-title w-100 py-025">
-      <div v-if="newSubtask" class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded bg-success-sub6 bg-hover-success-sub3 text-success  cursor-pointer" @click="newSubtask = false">
+    <div id="sbs-subtask-title-wrapper" class="section-title w-100 py-025">
+      <div v-if="newSubtask" class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded bg-success-sub6 bg-hover-success-sub3 text-success  cursor-pointer" id="sbs-newSubtask" @click="newSubtask = false">
         <bib-icon icon="close" variant="success" :scale="1.2"></bib-icon>
-        <span>Cancel</span>
+        <span id="sbs-cancel">Cancel</span>
       </div>
-      <div v-else class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded bg-success-sub6 bg-hover-success-sub3 text-success  cursor-pointer" @click="openCreateSubtask">
+      <div v-else id="sbs-openCreateSubtask" class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded bg-success-sub6 bg-hover-success-sub3 text-success  cursor-pointer" @click="openCreateSubtask">
         <bib-icon icon="add" variant="success" :scale="1.2"></bib-icon>
-        <span>Add Subtask</span>
+        <span id="sbs-addSubtask">Add Subtask</span>
       </div>
     </div>
-    <div class="position-relative">
+    <div class="position-relative" id="sbs-table-wrapper">
       
     <table class="table ">
       <thead v-if="localSubTasks.length > 0">
-        <tr>
-          <th id="ss-h1">Subtasks</th>
-          <th id="ss-h2">Assignee</th>
-          <th id="ss-h3" width="150">Due date</th>
-          <th id="ss-h4"></th>
+        <tr id="sbs-table-row">
+          <th id="sbs-h1">Subtasks</th>
+          <th id="sbs-h2">Assignee</th>
+          <th id="sbs-h3" width="150">Due date</th>
+          <th id="sbs-h4"></th>
         </tr>
       </thead>
       <tbody>
        
-        <tr class="table-row" v-for="sub in localSubTasks" :key="sub.id + subkey" @click.right.prevent="subtaskRightClick($event, sub)" v-click-outside="closeContext">
-          <!-- <td>{{sub.key}}</td> -->
-          <td>
-            <div class="d-flex gap-05 align-center">
-              <span class="cursor-pointer" style="width:20px; height:20px" @click="markComplete(sub)"><bib-icon icon="check-circle-solid" :scale="1.25" :variant="sub.isDone ? 'success' : 'gray4'"></bib-icon></span>
-              <input type="text" class="editable-input sm" v-model="sub.title" @input="debounceUpdate(sub, {field: 'title', value: sub.title, name: 'Title'})">
-              <span class="cursor-pointer shape-rounded width-105 height-105 align-center justify-center bg-hover-light" v-tooltip="'Detail'" @click="$emit('view-subtask', sub)" >
+        <tr class="table-row" v-for="(sub, index) in localSubTasks" :id="'sbs-'+index" :key="sub.id + subkey" @click.right.prevent="subtaskRightClick($event, sub)" v-click-outside="closeContext">
+          <td id="sbs-table-row-2">
+            <div class="d-flex gap-05 align-center" id="sbs-icons">
+              <span class="cursor-pointer" id="sbs-check-circle-solid" style="width:20px; height:20px" @click="markComplete(sub)"><bib-icon icon="check-circle-solid" :scale="1.25" :variant="sub.isDone ? 'success' : 'gray4'"></bib-icon></span>
+              <input type="text" class="editable-input sm" id="sbs-editable-input-1" v-model="sub.title" @input="debounceUpdate(sub, {field: 'title', value: sub.title, name: 'Title'})">
+              <span class="cursor-pointer shape-rounded width-105 height-105 align-center justify-center bg-hover-light" id="sbs-detail" v-tooltip="'Detail'" @click="$emit('view-subtask', sub)" >
                 <bib-icon icon="arrow-right" :scale="1" variant="gray5" ></bib-icon>
               </span>
             </div>
           </td>
-          <td>
+          <td id="sbs-td-1">
             <bib-select :key="subkey" :options="orgUsers" v-model="sub.userId" size="sm" class="bg-white" v-on:change="updateSubtask(sub, {field: 'userId', value: sub.userId, name: 'User'})"></bib-select>
-            <!-- <user-info :userId="sub.userId"></user-info> -->
           </td>
-          <td>
+          <td id="sbs-td-2">
             <div class="d-inline-flex align-center gap-025 position-relative" >
               <bib-icon icon="calendar" variant="gray4"></bib-icon>
-              <!-- <bib-datepicker size="sm" v-model="sub.dueDate" format="dd MM YYYY" @input="updateSubtask(sub, {field: 'dueDate', value: sub.dueDate, name: 'Due date'})" placeholder="Select date..." class="align-right" ></bib-datepicker> -->
               <datepicker v-model="sub.dueDate" format="dd MMM yyyy" @input="updateSubtask(sub, {field: 'dueDate', value: sub.dueDate, name: 'Due date'})" placeholder="Select date..." class="align-right" ></datepicker>
             </div>            
           </td>
-          <!-- <td>
-            <div class="d-flex align-center justify-end gap-025">
-              <span v-show="sub.canDelete" class="cursor-pointer shape-rounded width-105 height-105 align-center justify-center bg-hover-light" v-tooltip="'Delete'" @click="deleteSubtask(sub)">
-                <bib-icon icon="trash-solid" :scale="1" variant="gray5"></bib-icon>
-              </span>
-            </div>
-          </td> -->
         </tr>
-        <tr v-if="newSubtask" class="new">
-          <td>
-            <div class="d-flex gap-05 align-center">
+        <tr v-if="newSubtask" class="new" id="sbs-tr-2">
+          <td id="sbs-td-3">
+            <div class="d-flex gap-05 align-center" id="sbs-white-check-circle-solid">
               <bib-icon icon="check-circle-solid" variant="white" :scale="1.25"></bib-icon>
-              <input class="sub-input" ref="subtaskNameInput" type="text" v-model.trim="title" :disabled="loading" pattern="[a-zA-Z0-9-_ ]+" @input="validateInput" @keyup.enter="validateInput" required placeholder="Enter text...">
+              <input class="sub-input" ref="subtaskNameInput" type="text" v-model.trim="title" id="sbs-subtaskNameInput" :disabled="loading" pattern="[a-zA-Z0-9-_ ]+" @input="validateInput" @keyup.enter="validateInput" required placeholder="Enter text...">
             </div>
           </td>
-          <td>
-            <div class="d-flex align-center gap-05">
+          <td id="sbs-td-4">
+            <div class="d-flex align-center gap-05" id="sbs-assign-to-wrapper">
               <bib-avatar size="1.25rem"></bib-avatar>
-              <span>Assign to...</span>
+              <span id="sbs-assign-to">Assign to...</span>
             </div>
-            <!-- <bib-select size="sm" :options="orgUsers" v-model="assignee" v-on:change="changeAssignee"></bib-select> -->
-            <!-- <bib-input type="text" size="sm" avatar-left="" v-model="assignee" placeholder="Assign to..."></bib-input> -->
           </td>
-          <td>
-            <div class="d-flex align-center gap-025">
+          <td id="sbs-td-5">
+            <div class="d-flex align-center gap-025" id="sbs-setdue-wrapper">
               <bib-icon icon="calendar" variant="gray4"></bib-icon>
-              <span>Set due...</span>
+              <span id="sbs-setdue">Set due...</span>
             </div>
-            <!-- <bib-input type="date" size="sm" icon-left="calendar" v-model="date" placeholder="Set date..."></bib-input> -->
-            <!-- <bib-datepicker v-model="date" size="sm" class="align-right" format="dd MMM yyyy" placeholder="Set date..."></bib-datepicker> -->
           </td>
-          <!-- <td>
-            <div class="d-flex gap-05">
-              <bib-icon icon="trash" variant="gray5" v-on:click="newSubtask = false"></bib-icon>
-              <bib-icon icon="tick" variant="success" v-on:click="createSubtask"></bib-icon>
-            </div>
-          </td> -->
         </tr>
       </tbody>
     </table>
@@ -97,7 +76,7 @@
 
     <bib-modal-wrapper v-if="taskTeamModal" title="Team" size="lg" @close="taskTeamModal = false">
       <template slot="content">
-        <div style="min-height: 12rem;">
+        <div style="min-height: 12rem;" id="sbs-task-team">
           <task-team :task="activeSubtask" mode="subtask" ></task-team>
         </div>
       </template>
@@ -106,31 +85,19 @@
   </div>
 </client-only>
 </template>
+
 <script>
-import { DEPARTMENT, STATUS, PRIORITY, SUBTASK_CONTEXT_MENU } from '~/config/constants.js'
+import {  STATUS, PRIORITY, SUBTASK_CONTEXT_MENU } from '~/config/constants.js'
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
 import _ from 'lodash'
-// import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-// import { faCalendar } from '@fortawesome/free-regular-svg-icons';
-// import Datepicker from 'vue-datepicker'
 export default {
   name: "SidebarSubtask",
-  /*props: {
-    reloadSubtask: Number
-  },*/
 
   data: function() {
     return {
       statusValues: STATUS,
       priorityValues: PRIORITY,
-      // faCalendar,
-      /*sortingItems: [
-        { label: "Name", value: "name" },
-        { label: "Assignee", value: "assignee" },
-        { label: "Due Date", value: "dueDate" },
-        // { label: "Status", value:"status" },
-      ],*/
       subtaskContextMenu: SUBTASK_CONTEXT_MENU,
       showContext: false,
       popupCoords: {},
@@ -141,15 +108,6 @@ export default {
       title: "",
       assignee: "",
       date: "",
-      /*taskSections: [{
-        key: 1,
-        id: 199,
-        title: "Remind me what time it is",
-        userId: "DKgl9av2NwnaG1vz",
-        dueDate: "22 Jan 2022",
-        // isDone: false,
-        options: "elipsis",
-      }, ],*/
       user: {},
       flag: false,
       loading: false,
@@ -190,14 +148,11 @@ export default {
   },
   watch: {
     currentTask(newVal) {
-      // console.log(newVal)
       if (Object.keys(newVal).length > 0) {
         this.loading = true
         this.user = this.teamMembers.find(t => t.id == this.currentTask.userId)
-        // this.user = usr[0]
         this.$store.dispatch("subtask/fetchSubtasks", this.currentTask)
           .then(() => {
-            // console.log('subtask fetched')
             this.subkey++;
             this.loading = false
           })
@@ -210,11 +165,6 @@ export default {
       }
     },
   },
-  /*mounted(){
-    console.info('mouted task-group');
-    // this.user = this.teamMembers.filter(t => t.id == this.currentTask.userId)
-    // this.user = _.cloneDeep(this.user2)
-  },*/
   created(){
     this.newSubtask = false
     this.$nuxt.$on("delete-subtask", (subtask) => {
@@ -230,7 +180,6 @@ export default {
       this.showContext = true
       this.userPickerOpen = false
       this.datePickerOpen = false
-      // console.log($event)
 
       this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
       this.activeSubtask = subtask
@@ -254,18 +203,10 @@ export default {
           this.copyLink(this.activeSubtask)
           break;
         case 'gotoTeam':
-          // this.$nuxt.$emit('add-member-to-subtask')
           this.taskTeamModal = true
           break;
-        /*case 'gotoComment':
-          this.openSidebar(this.activeSubtask)
-          break;
-        case 'gotoFiles':
-          this.openSidebar(this.activeSubtask)
-          break;*/
         
         default:
-          // alert("no task assigned")
           this.alertDialog = true
           this.alertMsg = "no task assigned"
           break;
@@ -277,10 +218,6 @@ export default {
         this.$refs.subtaskNameInput.focus()
       })
     },
-    /*changeAssignee() {
-      let usr = this.teamMembers.filter(t => t.id == this.assignee)
-      this.user = usr[0]
-    },*/
     createSubtask() {
 
       this.loading = true
@@ -305,10 +242,8 @@ export default {
 
       if (this.title) {}
 
-      // console.log(subData)
       this.$store.dispatch("subtask/createSubtask", subData)
         .then(t => {
-          // console.log(t)
           this.newSubtask = false
           this.title = ""
           this.assignee = ""
@@ -322,19 +257,15 @@ export default {
     },
 
     validateInput(){
-      // let sb = _.trim(this.title)
       if (this.$refs.subtaskNameInput.validity.valid && this.title != "") {
-        // console.info('valid input');
         this.$refs.subtaskNameInput.classList.remove("error")
         this.debounceCreate()
       } else {
-        // console.log('invalid input')
         this.$refs.subtaskNameInput.classList.add("error")
       }
     },
 
     debounceCreate: _.debounce(function() {
-      // console.warn("debounceCreate fired")
       this.createSubtask()
     }, 800),
 
@@ -343,7 +274,6 @@ export default {
     }, 800),
 
     markComplete(subtask){
-      // let sub = subtask
       if (subtask.isDone) {
         subtask.statusId = 1
         subtask.isDone = false
@@ -351,7 +281,6 @@ export default {
         subtask.isDone = true
         subtask.statusId = 5
       }
-      // console.log(subtask.id, subtask.statusId, subtask.isDone)
 
       this.updateSubtask(subtask, {field: 'statusId', value: subtask.statusId, name: 'Status'})
     },
@@ -396,14 +325,12 @@ export default {
             text: `updated ${data.name} to ${userobj.Name}`
           })
       } else {
-          // console.log(data, userobj, updata)
           sub = await this.$store.dispatch("subtask/updateSubtask", {
             id: subtask.id,
             data: updata,
             text: `updated ${data.name} to ${histvalue}`
           })
       }
-      // console.log(sub.data)
       if (sub.statusCode == 200) {
           this.$store.dispatch("subtask/setSelectedSubtask", sub.data)
           this.$store.dispatch('subtask/fetchSubtasks', this.currentTask).then(() => {
@@ -415,15 +342,12 @@ export default {
     },
 
     async deleteSubtask(subtask) {
-      // this.loading = true
       const delsub = await this.$store.dispatch("subtask/deleteSubtask", { ...subtask, text: `deleted subtask "${subtask.title}"` });
       if (delsub.statusCode == 200) {
         this.$store.dispatch("subtask/fetchSubtasks", this.currentTask)
-        // this.$nuxt.$emit("refresh-history")
         this.$emit('close-sidebar-detail')
         this.$store.dispatch("subtask/setSelectedSubtask", "")
       }
-      // this.loading = false
     },
 
     copyLink(subtask) {
@@ -561,10 +485,5 @@ export default {
     }
   }
 }
-
-/*.bib-select {
-  width: 8rem;
-  .select__btn { background-color: transparent;}
-}*/
 
 </style>

@@ -1,24 +1,21 @@
 <template>
   <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll">
-    <!-- <div class="adv-table resizable bg-white" :style="{'width': tableWidth}" role="table"> -->
-      <!-- <div class="zero" :style="{ width: tableFields[0].width}">
-        <div class="align-center gap-05">{{tableFields[0].label}} <span v-if="tableFields[0].header_icon" class="height-1" @click="$emit(tableFields[0].header_icon.event)"><bib-icon :icon="tableFields[0].header_icon.icon" :variant="tableFields[0].header_icon.isActive ? 'gray1' : 'gray4'"></bib-icon></span></div>
-      </div> -->
-      <draggable class="task-draggable adv-table resizable bg-white" handle=".drag-handle" :style="{'width': tableWidth}" role="table" @start="rowDragStart" @end="rowDragEnd" :move="moveTask" >
-        <div slot="header" class="tr" role="row">
-          <div v-if="drag" class="width-2 th" role="cell"></div>
-          <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{ width: field.width}">
-            <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer" @click="$emit(field.header_icon.event, field)">
+
+      <draggable v-if="drag" class="task-draggable adv-table resizable bg-white" handle=".drag-handle" :style="{'width': tableWidth}" role="table" @start="rowDragStart" @end="rowDragEnd" :move="moveTask" >
+        <div slot="header" class="tr" role="row" id="adv-table-row1">
+          <div v-if="drag" class="width-2 th" id="adv-table-cell1" role="cell"></div>
+          <div v-for="(field, index) in tableFields" :key="field+index" class="th" id="adv-table-th1" role="cell" :style="{ width: field.width}">
+            <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer" @click="$emit(field.header_icon.event, field)" id="adv-table-header-icon">
                 <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'gray1' : 'gray4'"></bib-icon>
               </span></div>
           </div>
         </div>
 
-        <div class="tr position-relative height-205">
-          <div class="position-absolute" style="inset: 0; border-bottom: 1px solid var(--bib-light);">
-            <div class="section-header d-flex align-center gap-05 height-205 px-1" >
+        <div class="tr position-relative height-2" id="adv-table-tr1">
+          <div class="position-absolute" id="adv-table-section-header-wrapper" style="inset: 0; border-bottom: 1px solid var(--bib-light);">
+            <div class="section-header d-flex align-center gap-05 height-2 px-1" id="adv-table-section-header">
               <bib-icon icon="arrow-down" :scale="0.5" :style="{transform: iconRotate}"></bib-icon> 
-              <span class="font-w-700 cursor-pointer" @click.stop="isCollapsed = !isCollapsed">
+              <span class="font-w-700 cursor-pointer" id="adv-table-section-title" @click.stop="isCollapsed = !isCollapsed">
                 {{sectionTitle}}
               </span>
             </div>
@@ -26,76 +23,69 @@
         </div>
 
         <template v-if="!isCollapsed">
-          <div v-for="item in tableData" :key="item.id" class="tr" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
-            <div class="td" role="cell">
-              <div v-if="drag" class="drag-handle width-105 h-100" ><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
+          <div v-for="(item, index) in tableData" :key="item.id" class="tr" :id="'adv-table-table-data-'+index" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
+            <div class="td" role="cell" id="adv-table-td">
+              <div v-if="drag" class="drag-handle width-105 h-100" id="adv-table-drag-handle"><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
                 <rect fill="none" height="24" width="24" />
                 <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg>
               </div>
             </div>
-            <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell">
-              <div v-if="field.key == 'title'" class="align-center ">
-                <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}">
+            <div v-for="(field, index) in tableFields" :id="'adv-table-table-fields-'+index" :key="field+index" class="td" role="cell">
+              <div v-if="field.key == 'title'" class="align-center " id="adv-table-title-field">
+                <span v-if="field.icon" class="width-105 height-105 align-center justify-center" id="adv-table-field-icon" :class="{'cursor-pointer': field.icon.event}">
                   <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="field.icon.variant" hover-variant="success"></bib-icon>
                 </span>
-                <span v-if="field.event" class=" flex-grow-1" style="line-height:1.25;">
-                  <input type="text" class="editable-input" :value="item[field.key]" @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
+                <span v-if="field.event" class=" flex-grow-1" style="line-height:1.25;" id="adv-table-field-event">
+                  <input type="text" class="editable-input" id="adv-table-editable-input" :value="item[field.key]" @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
                 </span>
-                <span v-else class="flex-grow-1">
+                <span v-else class="flex-grow-1" id="adv-table-item-field-key">
                   {{item[field.key]}}
                 </span>
-                <span v-if="field.event" class="width-105 height-105 align-center justify-center flex-shrink-0 cursor-pointer bg-hover-light" @click.stop="$emit(`${field.event}`, item)">
+                <span v-if="field.event" class="width-105 height-105 align-center justify-center flex-shrink-0 cursor-pointer bg-hover-light" id="adv-table-field-event-arrow-right" @click.stop="$emit(`${field.event}`, item)">
                   <bib-icon icon="arrow-right" variant="gray4" hover-variant="gray5"></bib-icon>
                 </span>
               </div>
               <template v-if="field.key == 'project'">{{item[field.key][0].project.title}}</template>
               <template v-if="field.key == 'userId'">
                 <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
-                <!-- <user-info :userId="item[field.key]"></user-info> -->
-                <!-- <bib-select :options="teamOptions" placeholder="Owner" @change="updateAssignee($event, item)" ></bib-select> -->
               </template>
               <template v-if="field.key == 'status'">
-                <!-- <status-comp :status="item[field.key]"></status-comp> -->
                 <status-select :ref="'stausSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('stausSelect'+item.id)"></status-select>
               </template>
               <template v-if="field.key == 'priority'">
-                <!-- <priority-comp :priority="item[field.key]"></priority-comp> -->
                 <priority-select :ref="'prioritySelect'+item.id" :value="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
               </template>
               <template v-if="field.key == 'department'">
-                <!-- {{item[field.key]?.title}} -->
                 <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
               </template>
               <template v-if="field.key.includes('Date')" class="date-cell" @click.stop>
                 <!-- {{$formatDate(item[field.key])}} -->
                 <bib-datepicker class="align-right" :value="new Date(item[field.key])" format="dd MMM YYYY" @click.native.stop="" @input="updateDate"></bib-datepicker>
                 <!-- <bib-datetime-picker v-model="item[field.key]" :format="format" placeholder="" @input="updateDate"></bib-datetime-picker> -->
+
               </template>
-              <!-- {{item[field.key]}} -->
             </div>
-            <!-- <div class="td">asdf</div>
-            <div class="td">asdf</div> -->
           </div>
 
-          <div v-if="!newRow.show" class="tr" role="row" style="border-bottom: var(--bib-light)">
-            <div class="td " role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
-            <div class="td" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
-              <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick()">
+          <div v-if="!newRow.show" class="tr" role="row" style="border-bottom: var(--bib-light)" id="adv-table-newRow-wrapper">
+            <div class="td " id="adv-table-newRow-td1" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
+            <div class="td" id="adv-table-newRow-td2" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
+              <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" id="adv-table-newRow-newTaskBtn" v-on:click.stop="newRowClick()">
                 <bib-icon :icon="newTaskButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{newTaskButton.label}}</span>
               </div>
             </div>
-            <div v-for="n in tableFields.length-1" class="td" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
+            <div v-for="n in tableFields.length-1" class="td" id="adv-table-newRow-td3" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
           </div>
 
-          <div v-show="newRow.show" class="tr" role="row">
-            <div v-if="drag" class="td text-center" role="cell">
-              <span class="d-inline-flex align-center height-105 bg-primary-sub1 shape-rounded"><bib-icon icon="drag" variant="light"></bib-icon></span>
+          <div v-show="newRow.show" class="tr" role="row" id="adv-table-newRow-2">
+            <div v-if="drag" class="td text-center" id="adv-table-newRow2-td" role="cell">
+              <span class="d-inline-flex align-center height-105 bg-primary-sub1 shape-rounded" id="adv-table-newRow2-drag"><bib-icon icon="drag" variant="light"></bib-icon></span>
             </div>
-            <template v-for="td in tableFields">
-              <div v-if="td.key == 'title'" class="td" role="cell">
-                <input type="text" ref="newrowInput" class="editable-input" v-model="newRow.title" :class="{'error': validTitle}" @input="newRowCreate" @blur="newRowCreate" required placeholder="Enter title...">
+            <template v-for="(td,index) in tableFields">
+              <div v-if="td.key == 'title'" class="td" role="cell" :id="'adv-table-newRow2-td-'+index">
+                <input type="text" ref="newrowInput" class="editable-input" :id="'adv-table-editable-input-2-'+index" v-model="newRow.title" :class="{'error': validTitle}" @input="newRowCreate" @blur="newRowCreate" required placeholder="Enter title...">
               </div>
-              <div v-else class="td" role="cell"></div>
+              <div v-else class="td" role="cell" :id="'adv-table-else-td-'+index"></div>
             </template>
           </div>
         </template>
@@ -128,7 +118,6 @@ export default {
     sectionTitle: { type: String, default: "Section" },
     contextItems: { type: Array },
     drag: { type: Boolean, default: true },
-    // height: { type: String, default: '100%' }
     newTaskButton: {
       type: Object,
       default () {
@@ -167,7 +156,6 @@ export default {
       activeItem: {},
       resizableTables: [],
       format: "DD MMM YYYY",
-      // highlight: false,
       validTitle: false,
     }
   },
@@ -184,48 +172,21 @@ export default {
         return 'rotate(0deg)'
       }
     },
-    /*teamOptions(){
-      return this.teamMembers.map(t => {
-        return { value : t.id, label: t.label }
-      })
-    },*/
-    /*filterTeam() {
-      let regex = new RegExp(this.filterKey, 'g\i')
-      return this.teamMembers.filter((u) => {
-        if (regex.test(u.label) || regex.test(u.email)) {
-          return u
-        }
-      })
-    },*/
     tableWidth() {
       const main = document.getElementById("main-content")
-      // console.log(main.clientWidth, main.offsetWidth, main.scrollWidth)
       let w = main.scrollWidth
 
       return w + "px"
-
-      /*const resizeObserver = new ResizeObserver((entries) => {
-        console.log(entries[0])
-        if (entries[0].contentRect) {
-          return entries[0].contentRect.width + "px"
-        } else {
-          return main.scrollWidth + "px"
-        }
-      });
-
-      resizeObserver.observe(main);*/
 
     },
   },
 
   mounted() {
-    // const sub = document.getElementById("sub-panel")
     this.resizableColumns()
   },
 
   methods: {
     parseDate(dateString, format) {
-      // console.log(dayjs(dateString, "DD MMM YYYY").isValid())
       return fecha.parse(dateString, this.format);
     },
 
@@ -239,16 +200,12 @@ export default {
     
     // main class prototype
     columnResize(table) {
-      // console.log(table.rows[0].cells)
-      // if (table.tagName != 'TABLE') return;
       this.id = table.id;
 
       // ============================================================
       // private data
       var self = this;
 
-      // console.log(table.children[0].children)
-      // var dragColumns  = table.rows[0].cells; // first row columns, used for changing of width
       var dragColumns = table.children[0].children
       console.log(dragColumns)
       if (!dragColumns) return; // return if no table exists or no one row exists
@@ -353,10 +310,7 @@ export default {
 
         // remember dragging object
         var dragEl = (e.target || e.srcElement).offsetParent.parentElement
-        // dragColumnNo = (e.target || e.srcElement).parentNode.parentNode;
         dragColumnNo = Array.from(dragEl.parentElement.children).indexOf(dragEl);
-        // console.log(dragEl, dragColumnNo)
-        // dragColumnNo = (e.target || e.srcElement).parentNode.parentNode.cellIndex;
         dragX = e.clientX || e.pageX;
 
         // set up current columns widths in their particular attributes
@@ -396,9 +350,7 @@ export default {
       }
     },
     resizableColumns() {
-      // var tables = document.getElementsByTagName('table');
       var tables = document.getElementsByClassName("adv-table");
-      // console.log(tables)
       for (let i = 0; tables.item(i); i++) {
         if (tables[i].className.match(/resizable/)) {
           // generate id
@@ -407,24 +359,17 @@ export default {
           this.resizableTables[this.resizableTables.length] = this.columnResize(tables[i]);
         }
       }
-      //  alert(resizableTables.length + ' tables was added.');
     },
     rowDragStart(e) {
       console.log(e.type, e);
-      // this.highlight = true
     },
     rowDragEnd(e) {
       console.log(e.type, e)
-      // this.highlight = false
-      // let sectionData = this.localdata.filter(s => s.id == e.to.dataset.section)
-      // this.$emit('task-dragend', sectionData[0].tasks)
     },
     moveTask(e) {
       console.log("move event", e)
-      // this.taskMoveSection = +e.to.dataset.section
     },
     rowClick($event, item) {
-      // console.log($event.target)
       this.unselectAll()
         .then(r => {
           $event.currentTarget.classList.add("active")
@@ -438,7 +383,6 @@ export default {
       $event.currentTarget.classList.add("active")
     },
     contextItemClick($event){
-      // console.log($event)
       this.$emit("context-item-event", $event, this.activeItem)
       this.unselectAll()
     },
@@ -448,33 +392,24 @@ export default {
         row.classList.remove('active');
       }
       this.newRow.show = false
-      // console.log('clicked outside drag-table-simple component')
-      // this.$emit("hide-newrow")
-      // this.$emit("close-context-menu")
       return 'success'
     },
     closePopups(id) {
       this.contextVisible = false
-      // console.log(this.$refs, id)
       for (let ref in this.$refs) {
-        // console.log(ref)
         if(ref != id) this.$refs[ref][0].show = false
       }
     },
 
     newRowClick() {
-      // console.log(sectionId)
-      // this.newRow.sectionId = sectionId
       this.unselectAll()
       this.newRow.show = true
       process.nextTick(() => {
         this.$refs.newrowInput[0].focus()
       });
-      // this.$refs['newRow'+sectionId].style.visibility = 'visible'
     },
 
     newRowCreate: _.debounce(function() {
-      // console.table([this.newRow.sectionId, this.newRow.title]);
       if (!this.newRow.title) {
         console.warn("title is required")
         this.validTitle = "alert"
@@ -486,7 +421,6 @@ export default {
     }, 800),
 
     debounceTitle: _.debounce(function(value, item) {
-      // console.log(item)
       this.$emit("update-title", { id: item.id, field: "title", value: value, label: "Title", historyText: value })
     }, 800),
     updateStatus(status, item) {
@@ -510,39 +444,6 @@ export default {
 
 </script>
 <style lang="scss" scoped>
-/*
-* {
-  scrollbar-width: unset;
-  scrollbar-height: unset;
-  scrollbar-gutter: unset;
-  scrollbar-color: unset;
-}
-
-*::-webkit-scrollbar {
-  width: unset;
-  height: unset;
-}
-
-::-webkit-scrollbar {
-  width: unset;
-  height: unset;
-  all:unset;
-}
-
-*::-webkit-scrollbar-track {
-  border-radius: unset;
-  background-color: unset;
-}
-
-*::-webkit-scrollbar-thumb {
-  border-radius: unset;
-  background-color: unset;
-}
-
-::-webkit-scrollbar-thumb {
-    all:unset;
-}
-*/
 
 *::-webkit-scrollbar {
   width: thin;
@@ -621,7 +522,6 @@ export default {
     }
     &.active {
       background-color: $secondary-sub3;
-      /*outline: 1px solid $gray4;*/
       .td { background-color: $secondary-sub3; }
     }
   }
@@ -642,7 +542,6 @@ export default {
   }
 
   .sortable-chosen {
-    /*background-color: skyblue;*/
     .td { background-color: $success-sub6; }
     .td:nth-child(2) { background-color: $success-sub6; }
   }

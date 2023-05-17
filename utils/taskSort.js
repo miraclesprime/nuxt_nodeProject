@@ -2,8 +2,6 @@ export const sortTaskUtil = (data, field, order) => {
 
     let sortedTask = data
 
-    console.log(sortedTask)
-
     switch (field) {
         case 'name':
             if (order == "asc") {

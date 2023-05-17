@@ -90,7 +90,6 @@
         </div>
         <template v-else-if="sortedData.length > 0">
           <div v-for="item in sortedData">
-            <!-- <task-message v-if="item.comment" :msg="item" @delete-message="onDeleteMessage"></task-message> -->
             <message v-if="item.comment" :msg="item" fieldkey="subtask" @delete-message="onDeleteMessage"></message>
             <task-history v-if="item.text && !item.isHidden" :history="item"></task-history>
           </div>
@@ -213,7 +212,6 @@ export default {
       }
     },
     sortedData() {
-      // let s = [ ...this.history, ...this.comments]
       let s = [...this.subtaskComments, ...this.subtaskHistory]
       if (s.length > 0) {
         return s.sort((a, b) => new Date(a.updatedAt) - new Date(b.updatedAt));

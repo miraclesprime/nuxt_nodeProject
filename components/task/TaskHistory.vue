@@ -1,17 +1,17 @@
 <template>
-  <div class="d-inline-flex align-center flex-wrap my-025 task-history position-relative">
+  <div class="d-inline-flex align-center flex-wrap my-025 task-history position-relative" id="task-history-wrapper">
     <figure class="user-avatar">
       <bib-avatar :src="user.Photo" size="2rem" ></bib-avatar>
     </figure>
-    <div>
-      <span class="font-w-600">{{user.Name}}</span>
-      <span class="mx-05 ">{{history.text}}</span>
-      <span class="text-gray6 ">{{$displayDate(history.updatedAt)}}</span>
+    <div id="task-history-titles-wrapper">
+      <span class="font-w-600" id="th-username">{{user.Name}}</span>
+      <span class="mx-05 " id="th-historytext">{{history.text}}</span>
+      <span class="text-gray6 " id="th-historyupdatedat">{{$displayDate(history.updatedAt)}}</span>
     </div>
   </div>
 </template>
+
 <script>
-import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
 var relativeTime = require('dayjs/plugin/relativeTime')
 dayjs.extend(relativeTime)

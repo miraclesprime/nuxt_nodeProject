@@ -73,6 +73,7 @@
     </div>
   </client-only>
 </template>
+
 <script>
 import _ from 'lodash'
 import { PROJECT_FAVORITES, TASK_FAVORITES, PROJECT_CONTEXT_MENU, TASK_CONTEXT_MENU } from '../../config/constants'
@@ -139,37 +140,11 @@ export default {
     })
   },
 
-  watch: {
-    /*favProjects(newVal) {
-      let favProj = JSON.parse(JSON.stringify(newVal))
-      let sorted = favProj.sort((a, b) => a.projects.title.localeCompare(b.projects.title))
-      let sortedArray = []
-      sorted.forEach(p => { sortedArray.push(p.projects) })
-      this.projLocalData = sortedArray
-    },*/
-
-    /*favTasks(newVal) {
-      let favTask = JSON.parse(JSON.stringify(newVal))
-      let sorted = favTask.sort((a, b) => a.task.title.localeCompare(b.task.title))
-      let sortedArray = []
-      sorted.forEach(t => { sortedArray.push(t.task) })
-      this.taskLocalData = sortedArray
-    }*/
-  },
-
   created() {
     if (process.client) {
       this.$nuxt.$on("update-key", (msg) => {
         this.fetchFavProjects()
-        /*this.$store.dispatch('project/fetchFavProjects')
-        .then(() => {
-          this.fetchProjects()
-        })*/
         this.getFavTasks()
-        /*this.$store.dispatch('task/getFavTasks')
-        .then(() => {
-          this.fetchTasks()
-        })*/
         if (msg) {
           this.popupMessages.push({ text: msg, variant: 'success' })
         }
@@ -186,9 +161,6 @@ export default {
     .then(() => {
       this.fetchProjects()
     })
-    /*this.$store.dispatch('task/getFavTasks').then(() => {
-      this.fetchTasks()
-    })*/
 
     this.taskContextMenuItems.map(el => {
       if (el.event == 'fav-task') {
@@ -197,32 +169,15 @@ export default {
       }
     })
 
-    /*this.$store.dispatch("subtask/fetchFavorites")
-      .then((sb) => {
-        // this.fetchSubtasks()
-        // console.log(sb.data)
-        if (sb.statusCode == 200) {
-          const favsub = _.cloneDeep(this.favSubtasks)
-          let sorted = favsub.sort((a, b) => a.subtasks.title.localeCompare(b.subtasks.title))
-          let sortedArray = []
-          sorted.forEach(st => { sortedArray.push({...st.subtasks, project: st.subtasks.task.project }) })
-          console.log(sortedArray, this.taskLocalData)
-          // this.taskSubtaskLocalData = this.taskLocalData.concat(sortedArray)
-          this.taskSubtaskLocalData = [...this.taskLocalData, ...sortedArray]
-          
-        }
-      })*/
     const fetchTask = this.$store.dispatch('task/getFavTasks')
     const fetchSubtask = this.$store.dispatch("subtask/fetchFavorites")
     Promise.all([fetchTask, fetchSubtask]).then((values) => {
-      // console.log(values[0].data, values[1].data)
       values[0].data.forEach(d => { this.taskSubtaskLocalData.push(d.task)})
       values[1].data.forEach(d => {
         if(d.subtasks){
           this.taskSubtaskLocalData.push({...d.subtasks, project: d.subtasks.task.project})
         }
       })
-      // this.taskSubtaskLocalData = [...values[0].data, ...values[1].data]
     })
   },
 
@@ -240,7 +195,6 @@ export default {
 
     async fetchProjects() {
       let favProj = await JSON.parse(JSON.stringify(this.favProjects))
-      // let sorted = await favProj.sort((a, b) => a.projects.title.localeCompare(b.projects.title))
       let prArr = []
       favProj.forEach(p => { prArr.push(p.projects) })
       this.projLocalData = prArr
@@ -253,18 +207,15 @@ export default {
       if (this.projSortName) {
         this.sortProject(this.projSortName) //forever loop
       }
-      // this.key += 1
       this.loading = false
     },
 
     async fetchTasks() {
-      // const favTask = await JSON.parse(JSON.stringify(this.favTasks))
       const favTask = await _.cloneDeep(this.favTasks)
       const favSubtask = await _.cloneDeep(this.favSubtasks)
 
       let taskSubtask = [...favTask, ...favSubtask]
 
-      // console.log(taskSubtask)
       let stsArr = []
       taskSubtask.forEach(el => {
         if (el.hasOwnProperty('taskId')) {
@@ -275,31 +226,18 @@ export default {
           }
         }
       })
-      // console.log(stsArr)
       this.taskSubtaskLocalData = stsArr
       this.sortedTask = stsArr
       if (this.taskOrder == 'asc') { this.taskOrder = 'desc'} else { this.taskOrder = 'asc'}
       if (this.taskSortName) {
         this.sortTask(this.taskSortName) //forever loop issue
       }
-      // this.sortedTask = await stsArr.sort((a, b) => a.title.localeCompare(b.title))
-      // this.key += 1
       this.loading = false
     },
-
-    /*async fetchSubtasks(){
-      const favsub = _.cloneDeep(this.favSubtasks)
-      let sorted = await favsub.sort((a, b) => a.subtasks.title.localeCompare(b.subtasks.title))
-      let sortedArray = []
-      sorted.forEach(t => { sortedArray.push(t.subtask) })
-      this.sortedTask.push(...sortedArray)
-      this.key += 1
-    },*/
 
     projectRoute(project) {
       let fwd = this.$donotCloseSidebar(event.target.classList)
       if (!fwd) {
-        // this.$nuxt.$emit("close-sidebar");
         return false
       }
       this.$router.push('/projects/' + project.id)
@@ -317,15 +255,12 @@ export default {
     taskRightClick(payload) {
       this.taskContextMenu = true
       const { event, task } = payload
-      // console.log(task.task)
       this.activeTask = task;
-      // this.$store.dispatch('task/setSingleTask', task)
       this.setSingleTask(task)
       this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
     },
 
     showProjUserpicker(payload) {
-      // console.log(payload)
       // payload consists of event, task
       this.closePopups()
       this.projUserpickerOpen = true
@@ -333,7 +268,6 @@ export default {
       this.activeProject = payload.task
     },
     showProjDatepicker(payload) {
-      // console.log(payload)
       // payload consists of event, task, label, field
       this.closePopups()
       this.projDatepickerOpen = true
@@ -362,14 +296,12 @@ export default {
     },
 
     showTaskUserpicker(payload) {
-      // console.log(payload)
       this.closePopups()
       this.taskUserpickerOpen = true
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
     },
     showTaskDatepicker(payload) {
-      // console.log(payload)
       // payload consists of event, task, label, field
       this.closePopups()
       this.taskDatepickerOpen = true
@@ -931,7 +863,6 @@ export default {
           this.openSidebar(this.activeTask, 'task_files')
           break;
         default:
-          // alert("no task assigned")
           this.alertDialog = true
           this.alertMsg = "no task assigned"
           break;
@@ -989,7 +920,6 @@ export default {
     },
 
     renameProject(payload) {
-      // console.info(payload)
       // payload consists of task(row), field, value
 
       this.loading2 = true
@@ -1000,7 +930,6 @@ export default {
         user: this.currentProject.user || payload.task.user,
         text: `changed ${payload.label} to ${payload.historyText || payload.value}`
       }).then(res => {
-        // console.log(res)
         if (res.statusCode == 200) {
           this.$store.dispatch("project/setSingleProject", res.data)
           this.updateKey()
@@ -1038,10 +967,8 @@ export default {
 
     updateTask(payload) {
       const { task, label, field, value, historyText } = payload
-      // console.log(task, label, field, value, historyText, this.activeTask)
       // payload consists of task, label, field, value, historyText
       this.activeTask = task
-      // console.log(this.activeTask, task)
       let user
       if (field == "userId" && value != '') {
         user = this.teamMembers.filter(t => t.id == value)
@@ -1053,9 +980,6 @@ export default {
       if (this.activeTask.project?.length > 0) {
         projectId = this.activeTask.project[0].projectId
       }
-      /*else {
-             projectId = this.activeTask.project[0].projectId
-           }*/
 
       let taskId
       if (task?.id) {
@@ -1064,10 +988,7 @@ export default {
         taskId = this.activeTask.id
       }
 
-      // console.log(user, projectId, taskId)
-
       if (this.activeTask.task) {
-        // console.log('subtask selected')
         this.$store.dispatch("subtask/updateSubtask", {
           id: taskId,
           data: { [field]: value },
@@ -1121,10 +1042,7 @@ export default {
         projectId = this.activeTask.project[0].projectId
       }
 
-      // console.log(this.activeTask)
-
       if (this.activeTask.task) {
-        // console.log('udpate subtask assignee')
         this.$store.dispatch("subtask/updateSubtask", {
           id: this.activeTask.id,
           data: { [field]: value },
@@ -1134,7 +1052,6 @@ export default {
         .then(() => this.updateKey())
         .catch(e => console.warn(e))
       } else {
-        // console.log('update task assignee')
         this.$store.dispatch("task/updateTask", {
           id: this.activeTask.id,
           data: { [field]: value },
@@ -1195,7 +1112,6 @@ export default {
     // task context menu methods ----------------------------------------
 
     taskSetFavorite(task) {
-      // this.loading = true
       let isTaskFav = this.favTasks.some((f) => f.taskId == task.id)
       let isSubtaskFav = this.favSubtasks.some((f) => f.taskId == task.id)
 
@@ -1209,30 +1125,10 @@ export default {
         this.$store.dispatch("task/removeFromFavorite", { id: task.id })
           .then(msg => this.updateKey(msg))
           .catch(e => console.warn(e))
-        /*this.$store.dispatch("task/addToFavorite", { id: task.id })
-          .then(msg => {
-            this.updateKey()
-            this.loading = false
-          })
-          .catch(e => console.warn(e))*/
       }
     },
 
     taskMarkComplete(task) {
-      console.log(task)
-      // this.loading = true
-      /*if (typeof task == "object" && Object.keys(task).length > 0) {
-        console.log(task)
-      } else {
-        task = this.activeTask
-      }*/
-
-      /*let user
-      if (field == "userId" && value != '') {
-        user = this.teamMembers.filter(t => t.id == value)
-      } else {
-        user = null
-      }*/
 
       let data, historyText
       if (task.statusId == 5) {
@@ -1298,7 +1194,6 @@ export default {
     },
 
     deleteTask(task) {
-      // let del = confirm("Are you sure")
       this.taskToDelete = task
       this.confirmMsg = "Are you sure "
       this.confirmModal = true
@@ -1317,10 +1212,6 @@ export default {
       const sbtsk = await this.$store.dispatch("subtask/fetchFavorites")
       Promise.all([tsk, sbtsk]).then((values) => {
         this.fetchTasks()
-        // console.log(values)
-        // this.key += 1
-        /*this.activeProject = null
-        this.activeTask = null*/
       })
     },
 
@@ -1331,7 +1222,7 @@ export default {
         this.$nuxt.$emit("close-sidebar");
         return false
       }
-      // console.log(task.task)
+      
       if (task.task) {
         this.$nuxt.$emit("close-sidebar");
         this.$store.dispatch("subtask/setSelectedSubtask", task)

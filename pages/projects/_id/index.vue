@@ -27,7 +27,6 @@
               <template v-slot:menu>
                 <div class="list" id="project-id-list">
                   <span class="list__item" id="project-id-list-item1" @click="modalOpen('overview', 'Overview')">View details</span>
-                  <!-- <hr id="project-id-hr"> -->
                   <span class="list__item" id="project-id-list-item2" @click="setFavorite">
                     <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
                   </span>
@@ -198,7 +197,6 @@ export default {
         if((proj && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
             console.log('user has access!')
         } else {
-            // alert('You do not have access to this page!')
             this.alertDialog = true
             this.alertMsg = "You do not have access to this page!"
             this.$router.push('/projects')      
@@ -220,7 +218,6 @@ export default {
     })
 
     if (process.client) {
-      // console.log('created on client')
       this.$axios.$get(`project/${this.$route.params.id}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       }).then((res) => {

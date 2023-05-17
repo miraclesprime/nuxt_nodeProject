@@ -1,17 +1,15 @@
 <template>
   <div :id="'c_menu_'+id" class="table-context-menu" v-show="show" v-click-outside="onClickOutside" :style="position">
-    <div class="list">
-      <span v-for="(item, index) in items" :key="item.label+index" class="list__item cursor-pointer" :class=" ['list__item__'+item.variant] " v-on:click.stop="onItemClick(item)">
+    <div class="list" id="table-context-menu-list">
+      <span v-for="(item, index) in items" :key="item.label+index" class="list__item cursor-pointer" :class=" ['list__item__'+item.variant] " :id="'table-context-menu-'+index" v-on:click.stop="onItemClick(item)">
         <bib-icon v-if="item.icon" :icon="item.icon" :variant="activeVariant(item)" class="mr-05"></bib-icon> {{item.label}}
       </span>
-      <!-- <hr> -->
-      <!-- <span class="list__item list__item__danger">Delete Task</span> -->
     </div>
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex';
-
 export default {
 
   name: 'TableContextMenu',
@@ -40,7 +38,6 @@ export default {
   watch: {
     coordinates(newValue) {
       let options = {
-        // root: document.querySelector('#main-content'),
         root: null,
         rootMargin: '0px',
         threshold: 1.0
@@ -67,22 +64,12 @@ export default {
       this.$emit('close-context')
     },
     onClickOutside() {
-      // console.log('click outside context')
       this.$emit('close-context')
     },
     callback(entries, observer) {
       entries.forEach((entry) => {
-        // Each entry describes an intersection change for one observed target element:
-        //   entry.boundingClientRect
-        //   entry.intersectionRatio
-        //   entry.intersectionRect
-        //   entry.isIntersecting
-        //   entry.rootBounds
-        //   entry.target
-        //   entry.time
         
         if (!entry.isIntersecting) {
-          // console.log(entry.target, 'no')
           if (entry.boundingClientRect.right > entry.rootBounds.width) {
             this.position.left = (entry.rootBounds.width - entry.boundingClientRect.width) - 10 + 'px'
           }
@@ -103,7 +90,6 @@ export default {
         if (item.label.includes('Favorites')) {
           let fata = this.favTasks.some(ft=>ft.taskId == this.activeItem.id)
           let fapo = this.favProjects.some(fp=>fp.id == this.activeItem.id)
-          // console.log(fata, fapo)
           return fata ? 'orange': 'gray5'
         }
       }

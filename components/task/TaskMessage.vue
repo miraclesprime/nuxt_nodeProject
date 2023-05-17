@@ -4,26 +4,6 @@
       <figure class=" user-avatar " :class="{active: userCardVisible}">
         <bib-avatar size="2rem" :src="user1.Photo"></bib-avatar>
       </figure>
-      <!-- user info card on click -->
-      <!-- <div class="userA-card bg-white " :class="{active: userCardVisible}">
-      <div class="user-info">
-        <span class="d-inline-block user-name text-wrap of-hidden text-of-elipsis max-width-13">{{userInfo.name}} </span>
-        <span class="d-inline-block user-job text-wrap of-hidden text-of-elipsis max-width-13">{{userInfo.jobTitle}}</span>
-      </div>
-      <div class="user-btn d-flex justify-between ">
-        <button class="bg-gray3 bg-hover-gray4 btn min-width-6 py-05 px-2 cursor-pointer border-gray3 border-hover-gray4">Profile</button>
-        <button class="bg-gray3 bg-hover-gray4 btn min-width-6 py-05 px-2 cursor-pointer border-gray3 border-hover-gray4" @click="$nuxt.$emit('remove-member', userInfo)">Remove</button>
-      </div>
-      <div class="user-contact bg-gray3 p-05  font-sm">
-        <p class="mb-05">Contact details</p>
-        <div class="d-flex align-center">
-          <span class="width-2 flex-shrink-0">
-            <bib-icon icon="mail" :scale="1.25" variant="gray5"></bib-icon>
-          </span>
-          <div class="flex-grow-1 text-gray5 ">Email<br><span class="text-primary d-inline-block of-hidden text-of-elipsis max-width-13">{{userInfo.email}}</span></div>
-        </div>
-      </div>
-    </div> -->
       <!-- user info -->
       <div class="msg__owner ">{{user1.Name}} <span class="ml-05">{{$displayDate(msg.updatedAt)}}</span>
       </div>
@@ -55,9 +35,6 @@
     
     <!-- message action bar -->
     <div v-if="isActionBarShowing" class="actions-container" @click.stop>
-      <!-- <div class="action favorite" :class="{ favorited }" @click="changeFavorite">
-        <bib-icon :icon="favorited ? 'bookmark-solid' : 'bookmark'" :scale="1"></bib-icon>
-      </div> -->
       <div class="action" @click.stop="onLikeClick">
         <fa :icon="faThumbsUp" />
       </div>
@@ -71,9 +48,6 @@
           <v-emoji-picker @select="onReactionClick" />
         </div>
       </tippy>
-      <!-- <div class="action" @click="replyMessage">
-        <fa :icon="faComment" />
-      </div> -->
       <tippy :visible="isMenuOpen" theme="light-border p-0" :animate-fill="false" :distance="6" interactive placement="bottom-end" trigger="manual" :onHide="() => defer(() => (isMenuOpen = false))">
         <template slot="trigger">
           <div v-if="msg.userId == user.Id" class="action" :class="{ active: isMenuOpen }" @click="toggleMenu">
@@ -94,15 +68,6 @@
         </div>
       </tippy>
     </div>
-    <!-- submit reply modal -->
-    <!-- <bib-modal-wrapper v-if="replyModal" size="lg" title="Reply to..." @close="replyModal = false">
-      <template slot="content">
-        <div style="margin: -1rem -2rem -2rem; ">
-          <message-input :value="value" @input="onFileInput" @submit="onReplySubmit"></message-input>
-        </div>
-        <loading :loading="replyLoading"></loading>
-      </template>
-    </bib-modal-wrapper> -->
     <!-- file upload modal -->
     <bib-modal-wrapper v-if="uploadModal" title="Select file(s)" @close="uploadModal = false">
       <template slot="content">
@@ -121,9 +86,6 @@
     <!-- file preview modal -->
     <bib-modal-wrapper v-if="previewModal" title="Preview" size="lg" @close="closePreviewModal">
       <template slot="content">
-        <!-- <div v-if="!filePreview" class="text-center">
-          <bib-spinner class="mx-auto" ></bib-spinner>
-        </div> -->
         <div class="text-center">
           <img v-if="imgPreview" :src="imgPreview" class="w-fit" style="max-width:100%;" alt="preview">
           <pdf-preview v-else-if="pdfPreview" :pdfsrc="pdfPreview"></pdf-preview>
@@ -142,8 +104,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
-import tippy from 'tippy.js';
-import VueTippy, { TippyComponent } from 'vue-tippy';
+import { TippyComponent } from 'vue-tippy';
 import { VEmojiPicker } from 'v-emoji-picker';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
@@ -178,7 +139,6 @@ export default {
       isMenuOpen: false,
       isShowingDeleteConfirmModal: false,
       isReactionPickerOpen: false,
-      // replyModal: false,
       faFile,
       faThumbsUp,
       faSmile,
@@ -190,19 +150,9 @@ export default {
       showPlaceholder: true,
       userCardVisible: false,
       value: {
-        files: [
-          /*{ id: 156, name: 'thefile.png' },
-          { id: 282, name: 'anotherfile.jpg' },*/
-        ]
+        files: []
       },
-      files: [
-        // { name: "File Name", type: "image/png", size: "2340", preview: 'https://placeimg.com/200/300/tech' },
-        /*{ name: "ImageFile Name", type: "image/png", size: "2340", preview: 'https://placeimg.com/200/360/tech' },
-        { name: "ImageFile Name", type: "image/png", size: "2340", preview: 'https://placehold.jp/2ba026/ffffff/180x180.jpg' },
-        { name: "ImageFile Name", type: "image/png", size: "2340", preview: 'https://placehold.jp/24/1f42a2/ffffff/250x200.jpg?text=placeholder%20image' }*/
-      ],
-      
-      // replyLoading: false,
+      files: [],
       reactions: [],
       reactionKey: 1,
       reactionSpinner: false,
@@ -231,7 +181,6 @@ export default {
       } else {
         return false
       }
-      // return this.msg.reactions?.length ? true : false
     },
     reactionGroup() {
       let rg = []
@@ -239,7 +188,6 @@ export default {
         this.reactions.map(r => {
           let rindex = rg.findIndex((el) => el.reaction == r.reaction)
           let relem = rg.find((el, index) => el.reaction == r.reaction)
-          // console.log(relem, rindex)
           if (relem == undefined) {
             rg.push({ reaction: r.reaction, count: 1, data: [{ id: r.id, user: r.user }] })
           } else {
@@ -248,12 +196,10 @@ export default {
           }
         })
       }
-      // console.log(rg)
       this.reactionKey += 1
       return rg
     },
     canDeleteMessage() {
-      //  console.log(JSON.parse(localStorage.getItem('user')).subr)
       if (this.msg.userId == this.user.Id || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN' ) {
         return true;
       }
@@ -266,7 +212,6 @@ export default {
       _.delay(() => {
         this.getFiles()
       }, 2000)
-      // this.getFiles()
     })
   },
   mounted() {
@@ -282,7 +227,6 @@ export default {
           headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
         })
         .then(r => {
-          // console.log(r)
           if (r.data.statusCode == 200) {
             this.reactions = r.data.data
             this.reactionKey += 1
@@ -291,7 +235,6 @@ export default {
         .catch(e => console.log(e))
     },
     ownReaction(reaction) {
-      // console.log(reaction, this.user.Id)
       return { sent: reaction.data.some(d => d.user.id == this.user.Id) }
     },
     deleteOwnReaction(reaction) {
@@ -302,33 +245,15 @@ export default {
           data: { reactionId: react.id, userId: react.userId },
         })
         .then(d => {
-          // console.log(d.data)
           this.fetchReactions()
           this.reactionSpinner = false
         })
         .catch(e => console.log(e))
     },
     onFileInput(payload) {
-      // console.log(payload)
       this.value.files = payload.files
     },
-    /*onReplySubmit(data) {
-      // console.log(data)
-      this.replyLoading = true
-      this.$axios.post('/task/' + this.msg.id + "/reply", { taskCommentId: this.msg.id, comment: data.text }, {
-          headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
-        })
-        .then(rep => {
-          // console.log(rep.data)
-          this.replyLoading = false
-          this.$nuxt.$emit("refresh-list")
-          this.replyModal = false
-        })
-        .catch(e => {
-          this.replyLoading = false
-          console.warn(e)
-        })
-    },*/
+   
     onActionBarMouseLeave() {
       if (!(this.isMenuOpen || this.isReactionPickerOpen)) {
         this.isActionBarShowing = false;
@@ -351,13 +276,10 @@ export default {
       this.isMenuOpen = false;
     },
     onReactionClick({ data }) {
-      // console.log(data)
       this.isReactionPickerOpen = false;
       this.reactionSpinner = true
       let duplicateReaction = this.reactions.some(r => r.userId == this.user.Id && r.reaction == data)
-      // console.warn(duplicateReaction)
       if (duplicateReaction) {
-        // alert("Reaction already exists!")
         this.alertDialog = true
         this.alertMsg = "Reaction already exists"
         this.reactionSpinner = false
@@ -366,7 +288,6 @@ export default {
             headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
           })
           .then(d => {
-            // console.log(d.data)
             if (d.data.statusCode == 200) {
               this.fetchReactions()
               this.reactionSpinner = false
@@ -379,7 +300,6 @@ export default {
       this.reactionSpinner = true
       let duplicateReaction = this.reactions.some(r => r.userId == this.user.Id && r.reaction == "👍")
       if (duplicateReaction) {
-        // alert("Reaction already exists!")
         this.alertDialog = true
         this.alertMsg = "Reaction already exists"
         this.reactionSpinner = false
@@ -388,9 +308,7 @@ export default {
             headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
           })
           .then(d => {
-            // console.log(d.data)
             if (d.data.statusCode == 200) {
-              // this.reactions.push(d.data.data)
               this.fetchReactions()
               this.reactionSpinner = false
             }
@@ -406,7 +324,6 @@ export default {
       this.isMenuOpen = false;
     },
     deleteMessage() {
-      // console.log(this.msg)
       this.$emit('delete-message', {
         taskId: this.msg.taskId ? this.msg.taskId : null,
         commentId: this.msg.id,
@@ -414,17 +331,11 @@ export default {
       });
       this.isMenuOpen = false;
     },
-    /*toggleUserCard() {
-      this.userCardVisible = !this.userCardVisible
-    },*/
     attachFile() {
       this.uploadModal = true
       this.isMenuOpen = false;
-
-      // this.$emit("upload-file", this.msg)
     },
     handleChangeFile() {
-      // console.log(file)
     },
     async uploadFiles() {
       this.fileLoader = true
@@ -436,11 +347,9 @@ export default {
         formdata.append('files', file)
         filelist.push(file.name)
       })
-      // formdata.append('taskId', this.task.id)
       formdata.append('projectId', this.project.id)
       formdata.append('taskId', this.task.id)
       formdata.append('taskCommentId', this.msg.id)
-      // formdata.append('text', 'File added for task Comment');
       formdata.append('text', `uploaded file(s) "${filelist.join(", ")}" to comment`)
 
       const fi = await this.$axios.post("/file/upload", formdata, {
@@ -449,11 +358,8 @@ export default {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
         }
       })
-      // console.log(fi.data)
       if (fi.data.statusCode == 200) {
-        // console.log(fi.data)
         _.delay(() => {
-          // console.log('delay->', fi.data);
           this.getFiles()
           if (this.files.length < 1) {
             _.delay(() => {
@@ -466,7 +372,6 @@ export default {
       this.uploadModal = false
     },
     getFiles() {
-      // this.loading = true
       let obj1 = { taskCommentId: this.msg.id }
       this.$axios.get("file/db/all", {
         headers: {
@@ -474,21 +379,17 @@ export default {
           'obj': JSON.stringify(obj1)
         }
       }).then(f => {
-        // console.log(f.data)
         if (f.data.statusCode == 200) {
-          // this.loading = false
           this.files = f.data.data
           this.tempKey += 1
         }
       }).catch(e => {
         console.error(e)
-        // this.loading = false
       })
     },
 
     async showPreviewModal(file){
       this.previewModal = true
-      // console.info(file)
 
       if (file.type.indexOf('image/') == 0 && "url" in file) {
         let imgtype = file.type.split("/")[1]
@@ -515,7 +416,6 @@ export default {
       } else {
         this.downloadFile(file)
         this.previewModal = false
-        // this.filePreview = "https://via.placeholder.com/200x160/f0f0f0/6f6f79?text="+file.extension
       }
     
     },
@@ -538,7 +438,6 @@ export default {
   color: $text;
 
   &__owner {
-    /*color: $text;*/
     font-weight: 600;
 
     span {
@@ -548,8 +447,6 @@ export default {
   }
 
   &__content {
-    /*font-size: 1rem;*/
-    /*color: $gray6;*/
   }
 
   &__files {
@@ -599,14 +496,6 @@ export default {
   }
 }
 
-/*@keyframes open {
-  from { width: 0; min-width:0; height: 0; min-height: 0; }
-  to { width: 18rem; min-width:18rem; height: auto; min-height: 10rem; }
-}
-@keyframes paddingAnimate {
-  from { padding: 0; }
-  to { padding: 0.75rem; }
-}*/
 
 .user-avatar {
   position: absolute;
@@ -635,12 +524,6 @@ export default {
   user-select: none;
   pointer-events: none;
   opacity: 0;
-  /*animation-name: open, paddingAnimate;
-  animation-duration: 400ms, 100ms;
-  animation-timing-function: linear, linear;
-  animation-direction: reverse, reverse;
-  animation-fill-mode: forwards, forwards;*/
-  /*animation: open 400ms reverse forwards, paddingAnimate 100ms reverse forwards;*/
   transition: all 400ms ease;
 
   .user-info {
@@ -676,10 +559,6 @@ export default {
     pointer-events: all;
     height: auto;
     min-height: 10rem;
-
-    /*animation: open 400ms linear normal forwards, paddingAnimate 100ms normal linear forwards;*/
-    /*animation-name: open, paddingAnimate;
-    animation-direction: normal, normal;*/
   }
 }
 
