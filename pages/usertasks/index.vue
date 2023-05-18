@@ -53,6 +53,7 @@
     </div>
   </client-only>
 </template>
+
 <script>
 import { mapGetters } from "vuex";
 import _ from 'lodash'
@@ -113,7 +114,13 @@ export default {
     },
 
     tasks(newVal) {
-        this.localData = _.cloneDeep(newVal)
+        let data = _.cloneDeep(newVal)
+        let sortedData = data.sort((a,b) => {
+          if (a.priorityId && b.priorityId) {
+            return a.priorityId - b.priorityId
+          }
+        })
+        this.localData = sortedData;
     },
   },
 
@@ -158,9 +165,21 @@ export default {
         });
 
         if (res.data.statusCode == 200) {
-          let taskArr = res.data.data.sort((a, b) => {
-            if (a.dueDate && b.dueDate) {
-              return new Date(b.dueDate) - new Date(a.dueDate)
+
+          let userTasks = res.data.data;
+          let organizedArr = [];
+
+          for(let el of userTasks) {
+            if(el.priorityId) {
+              organizedArr.unshift(el);
+            } else {
+              organizedArr.push(el)
+            }
+          }
+
+          let taskArr = organizedArr.sort((a, b) => {
+            if (a.priorityId && b.priorityId) {
+              return a.priorityId - b.priorityId
             }
           });
           this.tasks = taskArr
@@ -175,7 +194,6 @@ export default {
       if ($event) {
         this.popupMessages.push({ text: $event, variant: "success" })
       }
-      let compid = JSON.parse(localStorage.getItem("user")).subb;
       this.fetchUserTasks()
     },
 

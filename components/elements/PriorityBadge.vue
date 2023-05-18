@@ -24,7 +24,7 @@ export default {
   computed: {
     priorityOutput() {
       if (this.priority == null) {
-        return { text: "", color: "" }
+        return { text: "", color: this.colors.ColorVariants.Secondary }
       }
       switch (this.priority.id) {
         case 1:
@@ -34,7 +34,7 @@ export default {
         case 3:
           return { text: this.priority.text, color: this.colors.ColorVariants.Success }
         default:
-          return { text: "", color: "" }
+          return { text: "", color: this.colors.ColorVariants.Secondary }
       }
     },
   	compId(){
