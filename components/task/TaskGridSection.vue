@@ -108,6 +108,7 @@ export default {
     sections(newVal) {
       this.localdata = newVal
     },
+    
     sectionInput(newVal){
       if (newVal) {
         this.$nextTick(()=>{

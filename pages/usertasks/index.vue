@@ -7,7 +7,7 @@
         <template>
           <div v-show="gridType == 'list'">
           <template>
-            <drag-table-simple :key="key" :componentKey="key" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :fields="taskFields" :tasks="localData" :sectionTitle="'Department'" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table-simple>
+            <drag-table-simple :key="key" :componentKey="key" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :fields="taskFields" :tasks="localData" :sectionTitle="'User Tasks'" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table-simple>
             <!-- table context menu -->
             <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick"></table-context-menu>
             <!-- status picker for list view -->
@@ -106,6 +106,10 @@ export default {
         })
         this.fetchUserTasks()
       }
+    },
+
+    gridType() {
+      this.key++;
     },
 
     tasks(newVal) {

@@ -15,7 +15,8 @@
         class="task-table-wrapper position-relative of-scroll-y"
         :class="{ 'bg-light': gridType != 'list' }"
       >
-        <template v-if="gridType == 'list'">
+        <template>
+          <div v-show="gridType === 'list'">
           <template v-if="tasks.length">
             <drag-table
               :key="key"
@@ -62,8 +63,12 @@
               <bib-icon icon="warning"></bib-icon> No records found
             </span>
           </div>
+          
+          </div>
         </template>
-        <template v-else>
+        
+        <template>
+          <div v-show="gridType == 'grid'">
           <task-grid-section
             :sections="localData"
             :activeTask="activeTask"
@@ -74,9 +79,11 @@
             v-on:mark-complete="taskMarkComplete"
             v-on:delete-task="deleteTask"
             @section-dragend="sectionDragEnd"
+            @task-dragend="taskDragEnd"
             sectionType="department"
           >
           </task-grid-section>
+          </div>
         </template>
 
         <!-- user-picker for list and board view -->
@@ -251,6 +258,10 @@ export default {
     tasks(newVal) {
       this.localData = _.cloneDeep(newVal);
     },
+
+    gridType() {
+      this.key++;
+    },
   },
 
   created() {
@@ -273,10 +284,6 @@ export default {
         if (msg) {
           this.popupMessages.push({ text: msg, variant: "success" });
         }
-      });
-
-      this.$nuxt.$on("update-key", () => {
-        this.updateKey();
       });
 
       this.$nuxt.$on("user-picker", (payload) => {
