@@ -18,7 +18,7 @@
       </ul> -->
 
       <div class=" adv-table resizable bg-white" :style="{'width': tableWidth}" role="table"  >
-        <div class="tr" role="row">
+        <div class="tr position-sticky" style="top: 0; z-index: 12;" role="row">
           <div v-if="drag" class="width-2 th" role="cell"></div>
           <div v-for="(field, index) in tableFields" :key="field+index" class="th" :class="{ 'flex-grow-1': !field.width }" role="cell" :style="{ width: field.width}" :ref="'th-'+field.key">
             <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer" @click="$emit(field.header_icon.event, field)">
@@ -33,24 +33,26 @@
             <!-- <template v-if="!isCollapsed"> -->
             <draggable class="task-draggable" handle=".drag-handle" :group="{ name: 'tasks' }">
               <div slot="header" class="tr position-relative height-205">
-                <div class="position-absolute" style="inset: 0; border-bottom: 1px solid var(--bib-light);">
+                <div class="position-absolute border-top-light border-bottom-light" style="inset: 0; ">
                   <div class="section-header d-flex align-center gap-05 height-205 " >
-                    <div class="section-drag-handle width-2 h-100" ><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
+                    <div class="section-drag-handle width-2 h-100" ><!-- <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
                       <rect fill="none" height="24" width="24" />
-                      <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg>
+                      <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg> --><bib-icon icon="drag" variant="gray5"></bib-icon>
                     </div>
-                    <bib-icon icon="arrow-down" :scale="0.5" :style="{transform: iconRotate}"></bib-icon> 
-                    <span class="font-w-700 cursor-pointer" @click.stop="isCollapsed = !isCollapsed">
-                      {{section.title}}
-                    </span>
+                    <div class="position-sticky" style="left: 0.5rem;">
+                      <bib-icon icon="arrow-down" :scale="0.5" :style="{transform: iconRotate}"></bib-icon> 
+                      <span class="font-w-700 cursor-pointer ml-025" @click.stop="isCollapsed = !isCollapsed">
+                        {{section.title}}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
               <div v-for="item in section.tasks" :key="item.id" class="tr" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
                 <div class="td" role="cell">
-                  <div v-if="drag" class="drag-handle width-105 h-100" ><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
+                  <div v-if="drag" class="drag-handle width-105 h-100" ><!-- <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
                     <rect fill="none" height="24" width="24" />
-                    <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg>
+                    <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg> --><bib-icon icon="drag" variant="gray5"></bib-icon>
                   </div>
                 </div>
                 <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell" :class="{'flex-grow-1': !field.width, 'date-cell': field.key.includes('Date')}" :style="`flex: ${field.width} 0 0;`" >
@@ -100,7 +102,7 @@
 
               <div v-show="newRow.show" class="tr" role="row">
                 <div v-if="drag" class="td text-center" role="cell">
-                  <span class="d-inline-flex align-center height-105 bg-primary-sub1 shape-rounded"><bib-icon icon="drag" variant="light"></bib-icon></span>
+                  <span class="d-inline-flex align-center height-105 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
                 </div>
                 <template v-for="td in tableFields">
                   <div v-if="td.key == 'title'" class="td" role="cell">
@@ -625,9 +627,9 @@ export default {
     }
 
     .th {
-      position: sticky;
+      /*position: sticky;
       top: 0;
-      z-index: 9;
+      z-index: 9;*/
       background: $gray9;
       font-weight: bold;
       color: $secondary;
@@ -669,6 +671,8 @@ export default {
       fill: $secondary;
     }
   }
+
+  /*.section-header { position: sticky; left: 0; }*/
 
   .sortable-chosen {
     /*background-color: skyblue;*/

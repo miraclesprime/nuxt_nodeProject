@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <div id="project-id-wrapper" class="project-id-wrapper ">
+    <div id="page" class="project-id-wrapper ">
       <nav id="project-id-nav" class="d-flex align-center gap-05 py-075 px-025 ">
         <button type="button" @click="$router.back()" class="d-flex cursor-pointer bg-white border-white">
           <bib-icon icon="arrowhead-left" :scale="1.5" variant="gray5"></bib-icon>
@@ -30,7 +30,7 @@
       </nav>
 
       <!-- Task View -->
-      <div id="project-id-tab-content" class="project-id-tab-content bg-light position-relative h-100 of-scroll-y">
+      <div id="project-id-tab-content" class="project-id-tab-content bg-light position-relative h-100 of-scroll-y" :style="{ 'width': contentWidth }">
         <adv-table-two
         :tableFields="tableFields"
         :tableData="localdata"
@@ -107,18 +107,18 @@ export default {
         budget: "",
         text: "",
       },
-      subPanel: false,
+      contentWidth: "100%",
     }
   },
 
   watch: {
-    subPanel(){
+    sidebar(newVal){
       const page = document.getElementById("page")
       this.$nextTick(() => {
-        const sub = document.getElementById("sub-panel")
-        console.log("page width="+page.offsetWidth+", panel width="+sub.offsetWidth)
-        if (this.subPanel) {
-          this.contentWidth = (page.offsetWidth - sub.offsetWidth) + 'px'
+        const panel = document.getElementById("side-panel-wrapper")
+        console.log("page width="+page.scrollWidth+", panel width="+panel.offsetWidth)
+        if (this.sidebar) {
+          this.contentWidth = (page.scrollWidth - panel.offsetWidth) + 'px'
         } else {
           this.contentWidth = '100%'
         }
@@ -137,6 +137,7 @@ export default {
         taskFields: "task/tableFields",
         favProjects: "project/getFavProjects",
         user2: "user/getUser2",
+        sidebar: "task/getSidebarVisible",
     }),
 
     projectName: {

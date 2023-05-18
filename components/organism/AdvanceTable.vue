@@ -25,9 +25,9 @@
         <template v-if="!isCollapsed">
           <div v-for="(item, index) in tableData" :key="item.id" class="tr" :id="'adv-table-table-data-'+index" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
             <div class="td" role="cell" id="adv-table-td">
-              <div v-if="drag" class="drag-handle width-105 h-100" id="adv-table-drag-handle"><svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
+              <div v-if="drag" class="drag-handle width-105 h-100" id="adv-table-drag-handle"><!-- <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
                 <rect fill="none" height="24" width="24" />
-                <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg>
+                <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg> --><bib-icon icon="drag" variant="gray5"></bib-icon>
               </div>
             </div>
             <div v-for="(field, index) in tableFields" :id="'adv-table-table-fields-'+index" :key="field+index" class="td" role="cell">
@@ -60,8 +60,8 @@
               </template>
               <template v-if="field.key.includes('Date')" class="date-cell" @click.stop>
                 <!-- {{$formatDate(item[field.key])}} -->
-                <bib-datepicker class="align-right" :value="new Date(item[field.key])" format="dd MMM YYYY" @click.native.stop="" @input="updateDate"></bib-datepicker>
-                <!-- <bib-datetime-picker v-model="item[field.key]" :format="format" placeholder="" @input="updateDate"></bib-datetime-picker> -->
+                <!-- <bib-datepicker class="align-right" :value="new Date(item[field.key])" format="dd MMM YYYY" @click.native.stop="" @input="updateDate"></bib-datepicker> -->
+                <bib-datetime-picker v-model="item[field.key]" format="DD MM YYYY" displayFormat="DD MM YYYY" placeholder="No date" @input="updateDate"></bib-datetime-picker>
 
               </template>
             </div>
@@ -79,7 +79,7 @@
 
           <div v-show="newRow.show" class="tr" role="row" id="adv-table-newRow-2">
             <div v-if="drag" class="td text-center" id="adv-table-newRow2-td" role="cell">
-              <span class="d-inline-flex align-center height-105 bg-primary-sub1 shape-rounded" id="adv-table-newRow2-drag"><bib-icon icon="drag" variant="light"></bib-icon></span>
+              <span class="d-inline-flex align-center height-105 bg-secondary-sub4 shape-rounded" id="adv-table-newRow2-drag"><bib-icon icon="drag" variant="white"></bib-icon></span>
             </div>
             <template v-for="(td,index) in tableFields">
               <div v-if="td.key == 'title'" class="td" role="cell" :id="'adv-table-newRow2-td-'+index">
