@@ -423,6 +423,18 @@ export default {
       }
     },
 
+    updateSingleRow(taskData) {
+      let depts = JSON.parse(JSON.stringify(this.tasks));
+
+      depts.map((dept) => {
+        let replaceIndex = dept.tasks.findIndex((lt) => lt.id == taskData.id);
+        dept.tasks.splice(replaceIndex, 1, taskData);
+      });
+
+      this.localData = depts;
+      this.key += 1;
+    },
+
     updateTask(payload) {
       let user, projectId;
       if (payload.field == "userId" && payload.value != "") {

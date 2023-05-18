@@ -12,7 +12,16 @@
         <thead>
           <tr class="table__hrow">
             <th id="dt-h1" width="3%">&nbsp;</th>
-            <th :id="'dt-h2-' + index" v-for="(field, index) in fields" :key="field.key + index" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
+            <th
+              :id="'dt-h2-' + index"
+              v-for="(field, index) in fields"
+              :key="field.key + index"
+              :style="`width: ${field.width};`"
+              :class="{
+                table__hrow__active:
+                  field.header_icon && field.header_icon.isActive,
+              }"
+            >
               <div class="align-center">
                 <span> {{ field.label }} </span>
                 <template v-if="field.header_icon">
@@ -54,8 +63,16 @@
         <thead>
           <tr class="table__hrow">
             <th id="dt-h3" width="3%">&nbsp;</th>
-            <th :id="'dt-h4-' + index" v-for="(field, index) in fields" :key="field.key + index" :style="`width: ${field.width};`" :class="{'table__hrow__active': field.header_icon && field.header_icon.isActive}">
-
+            <th
+              :id="'dt-h4-' + index"
+              v-for="(field, index) in fields"
+              :key="field.key + index"
+              :style="`width: ${field.width};`"
+              :class="{
+                table__hrow__active:
+                  field.header_icon && field.header_icon.isActive,
+              }"
+            >
               <div class="align-center">
                 <span> {{ field.label }} </span>
                 <template v-if="field.header_icon">
@@ -76,6 +93,31 @@
             </th>
           </tr>
         </thead>
+        <!-- Updated by @wen -->
+        <tr v-if="section.id == 1 && newSection1" class="table__newrow">
+          <td class="sectionRow">
+            <span
+              class="d-inline-flex align-center height-105 bg-primary shape-rounded"
+            >
+              <bib-icon icon="drag" variant="light"></bib-icon>
+            </span>
+          </td>
+          <td>
+            <new-section-form
+              :showNewsection="newSection1"
+              :showLoading="sectionLoading"
+              :showError="sectionError"
+              v-on:toggle-newsection="newSection = $event"
+              v-on:create-section="sendCreateSignal"
+            ></new-section-form>
+          </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
         <tr :style="{ width: '0rem' }" v-if="collapsible">
           <td :colspan="cols.length + 1" class="section">
             <div class="section-header d-flex align-center gap-05 text-gray6">
@@ -131,6 +173,7 @@
           :move="moveTask"
           @end="taskDragEnd"
         >
+         
           <tr
             v-for="(task, index) in section[tasksKey]"
             :key="task.id + section.title + index + templateKey"
@@ -173,7 +216,10 @@
                   class="user-name-blank user-info cursor-pointer shape-circle align-center justify-center"
                   @click.stop="triggerUserPicker(task)"
                 >
+                <!-- updated by @wen -->
+                  <user-info></user-info>
                   <bib-icon icon="user" variant="gray4"></bib-icon>
+                
                 </span>
               </template>
               <template v-if="col.key == 'status'">
@@ -510,6 +556,7 @@ export default {
     },
     componentKey: Number,
     default: 0,
+    newSection:Boolean //creatd by @wen
   },
   data() {
     return {
@@ -522,6 +569,9 @@ export default {
       priority: PRIORITY,
       tableFields: TASK_FIELDS,
       validTitle: "",
+      //created by @wen
+      sectionLoading: false,
+      sectionError: "",
     };
   },
   computed: {
@@ -529,6 +579,10 @@ export default {
       teamMembers: "user/getTeamMembers",
       departments: "department/getDepartments",
     }),
+    //created by @wen
+    newSection1() {
+      return this.newSection;
+    },
     activeClass() {
       return (keyI) => (this.sections[keyI].active ? "active" : "");
     },
@@ -552,12 +606,25 @@ export default {
     });
   },
   mounted() {
+    // console.log("this.section", this.sections);
+    // console.info('mounted lifecycle', this.sections.length);
     this.localdata = this.sections
       ? JSON.parse(JSON.stringify(this.sections))
       : [];
     this.templateKey += 1;
+    console.log("this.localdata", this.localdata);
   },
   methods: {
+    //created by @wen
+    sendCreateSignal($event) {
+      let obj = {
+        title: $event,
+        newSection: this.newSection1,
+        sectionLoading: this.sectionLoading,
+        sectionError: this.sectionError,
+      };
+      this.$emit("create-section", obj);
+    },
     triggerUserPicker(task) {
       this.$emit("user-picker", { event, task });
     },
@@ -679,6 +746,10 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+// Updated by @wen
+.sectionRow {
+  text-align: right;
+}
 .table {
   width: 100%;
   height: max-content;
