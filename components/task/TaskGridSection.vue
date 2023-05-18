@@ -106,8 +106,9 @@ export default {
 
   watch: {
     sections(newVal) {
-      this.localdata = newVal
+      this.localdata = JSON.parse(JSON.stringify(newVal))
     },
+    
     sectionInput(newVal){
       if (newVal) {
         this.$nextTick(()=>{
@@ -126,7 +127,7 @@ export default {
       this.loading = true
       this.$store.dispatch("section/fetchProjectSections", { projectId: this.project.id })
         .then((sections) => {
-          this.localdata = sections
+          this.localdata = JSON.parse(JSON.stringify(sections))
           this.loading = false
           this.$emit("update-key")
         })

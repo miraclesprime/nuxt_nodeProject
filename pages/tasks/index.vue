@@ -15,7 +15,8 @@
         class="task-table-wrapper position-relative of-scroll-y"
         :class="{ 'bg-light': gridType != 'list' }"
       >
-        <template v-if="gridType == 'list'">
+        <template>
+          <div v-show="gridType === 'list'">
           <template v-if="tasks.length">
             <drag-table
               :key="key"
@@ -62,8 +63,12 @@
               <bib-icon icon="warning"></bib-icon> No records found
             </span>
           </div>
+          
+          </div>
         </template>
-        <template v-else>
+        
+        <template>
+          <div v-show="gridType == 'grid'">
           <task-grid-section
             :sections="localData"
             :activeTask="activeTask"
@@ -74,9 +79,11 @@
             v-on:mark-complete="taskMarkComplete"
             v-on:delete-task="deleteTask"
             @section-dragend="sectionDragEnd"
+            @task-dragend="taskDragEnd"
             sectionType="department"
           >
           </task-grid-section>
+          </div>
         </template>
 
         <!-- user-picker for list and board view -->
@@ -251,32 +258,16 @@ export default {
     tasks(newVal) {
       this.localData = _.cloneDeep(newVal);
     },
+
+    gridType() {
+      this.key++;
+    },
   },
 
   created() {
     if (process.client) {
       this.$nuxt.$on("update-key", (msg) => {
-        console.info("on update-key");
-        this.loading = true;
-        let user = JSON.parse(localStorage.getItem("user"));
-        this.$store
-          .dispatch("company/fetchCompanyTasks", {
-            companyId: user.subb,
-            sort: true,
-          })
-          .then((data) => {
-            this.loading = false;
-            this.localData = data;
-            this.checkActive();
-            this.key += 1;
-          });
-        if (msg) {
-          this.popupMessages.push({ text: msg, variant: "success" });
-        }
-      });
-
-      this.$nuxt.$on("update-key", () => {
-        this.updateKey();
+        this.updateKey()
       });
 
       this.$nuxt.$on("user-picker", (payload) => {
@@ -295,11 +286,10 @@ export default {
     let compid = JSON.parse(localStorage.getItem("user")).subb;
     this.$store
       .dispatch("company/fetchCompanyTasks", {
-        companyId: compid,
-        filter: "all",
+        companyId: compid
       })
       .then((res) => {
-        this.localData = res;
+        this.localData = JSON.parse(JSON.stringify(res));
         this.key += 1;
         this.loading = false;
       });
@@ -372,8 +362,6 @@ export default {
       this.$store
         .dispatch("company/fetchCompanyTasks", {
           companyId: compid,
-          filter: "all",
-          sort: this.sortName,
         })
         .then(() => {
           this.key += 1;
@@ -435,19 +423,6 @@ export default {
       }
     },
 
-    updateSingleRow(taskData) {
-      let depts = JSON.parse(JSON.stringify(this.tasks));
-
-      depts.map((dept) => {
-        let replaceIndex = dept.tasks.findIndex((lt) => lt.id == taskData.id);
-        // *************updated by @Wen 5.11**********
-        if (replaceIndex >= 0) dept.tasks.splice(replaceIndex, 1, taskData);
-      });
-
-      this.localData = depts;
-      this.key += 1;
-    },
-
     updateTask(payload) {
       let user, projectId;
       if (payload.field == "userId" && payload.value != "") {
@@ -483,7 +458,7 @@ export default {
           }"`,
         })
         .then((t) => {
-          this.updateSingleRow(t.data);
+          this.updateKey()
         })
         .catch((e) => console.warn(e));
     },
@@ -506,11 +481,7 @@ export default {
           text: `changed ${label} to ${historyText}`,
         })
         .then((t) => {
-          if (this.gridType == "list") {
-            this.updateSingleRow(t.data);
-          } else {
-            this.updateKey();
-          }
+            this.updateKey()
         })
         .catch((e) => console.warn(e));
     },
@@ -526,11 +497,7 @@ export default {
           text: `changed ${this.datepickerArgs.label} to ${newDate}`,
         })
         .then((t) => {
-          if (this.gridType == "list") {
-            this.updateSingleRow(t.data);
-          } else {
             this.updateKey();
-          }
         })
         .catch((e) => console.warn(e));
     },
@@ -852,12 +819,7 @@ export default {
       );
 
       if (sectionDnD.statusCode == 200) {
-        let user = JSON.parse(localStorage.getItem("user"));
-        this.$store
-          .dispatch("company/fetchCompanyTasks", { companyId: user.subb })
-          .then(() => {
-            this.key++;
-          });
+        this.updateKey()
       }
 
       this.loading = false;
@@ -882,12 +844,7 @@ export default {
         }
       );
       if (taskDnD.statusCode == 200) {
-        let user = JSON.parse(localStorage.getItem("user"));
-        this.$store
-          .dispatch("company/fetchCompanyTasks", { companyId: user.subb })
-          .then(() => {
-            this.key++;
-          });
+        this.updateKey();
       } else {
         console.warn(taskDnD.message);
       }

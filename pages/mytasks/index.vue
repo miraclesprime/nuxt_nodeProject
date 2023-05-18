@@ -180,6 +180,10 @@ export default {
       })
       this.localdata = todos
     },
+
+    gridType() {
+      this.key++;
+    },
   },
 
   created() {

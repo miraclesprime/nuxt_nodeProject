@@ -285,6 +285,10 @@ export default {
     sections(newVal) {
       this.localdata = _.cloneDeep(newVal);
     },
+
+    gridType() {
+      this.templateKey++;
+    },
   },
 
   created() {
@@ -985,7 +989,7 @@ export default {
       );
 
       if (taskDnD.statusCode == 200) {
-        this.$emit("update-key");
+        this.updateKey()
       } else {
         console.warn(taskDnD.message);
       }
