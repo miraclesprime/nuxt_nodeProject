@@ -1,11 +1,12 @@
 <template>
-  <div class="items">
+  <div class="items" id="message-mention-list-wrapper">
     <button
       v-for="(item, index) in items"
       :key="index"
       class="item"
       :class="{ 'is-selected': index === selectedIndex }"
       @click="selectItem(index)"
+      :id="'message-mention-list-wrapper-'+index"
     >
       {{ item.firstName }} {{ item.lastName }}
     </button>

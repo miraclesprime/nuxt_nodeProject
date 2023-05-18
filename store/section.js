@@ -104,13 +104,6 @@ export const actions = {
     return res
   },
 
-  /*async renameSection(ctx, payload) {
-    const res = await this.$axios.$put("/section", payload, {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-    })
-    return res
-  },*/
-
   async deleteSection(ctx, payload){
    const res = await this.$axios.$delete("/section", {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` },

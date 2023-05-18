@@ -242,68 +242,6 @@ export const TEAMMATES = [{
   }
 ];
 
-// project index page constants -----
-
-export const PROJECT_TABS = [
-  /*{
-    key: "overview",
-    value: "overview",
-    title: "Overview"
-  },*/
-  {
-    key: "tasks",
-    value: "tasks",
-    title: "Tasks"
-  },
-  // {
-  //   key: "timeline",
-  //   value: "timeline",
-  //   title: "Timeline"
-  // },
-  // {
-  //   key: "calendar",
-  //   value: "calendar",
-  //   title: "Calendar"
-  // },
-  {
-    key: "team",
-    value: "team",
-    title: "Team"
-  },
-  {
-    key: "conversations",
-    value: "conversations",
-    title: "Conversations"
-  },
-  {
-    key: "files",
-    value: "files",
-    title: "Files"
-  },
-  {
-    key: "history",
-    value: "history",
-    title: "History",
-  }
-];
-
-export const PROJECT_DEFAULT_TAB = {
-  key: "tasks",
-  value: "tasks",
-  title: "Tasks"
-};
-
-export const PROJECT_TAB_TITLES = {
-  overview: "overview",
-  tasks: "tasks",
-  timeline: "timeline",
-  calendar: "calendar",
-  team: "team",
-  conversations: "conversations",
-  files: "files",
-  history: "history",
-};
-
 // dream index page constants -----
 
 export const DREAM_TABS = [{
@@ -434,16 +372,11 @@ export const PROJECT_SORT = [
   { label: 'Department', key: 'department' },
   { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },
-  // { label: 'Tag', key: 'tag' },
-  // { label: 'Department', key: 'department' },
 ]
 
 export const PROJECT_TEAM_FIELDS = [
   { label: '#', key: '' },
   { label: 'Name', key: 'name' },
-  // { label: 'Location', key: 'location' },
-  // { label: 'Position', key: 'position' },
-  // { label: 'Added/Modified', key: 'createdAt' } 
 ]
 
 export const TASK_SORT = [
@@ -736,9 +669,97 @@ export const DEMO_TABLE = [
   }
 ]
 
+
+export const DEMO_TASK = [
+  {
+    label: 'Task name',
+    key: 'title',
+    width: '20%',
+    icon: {
+      icon: 'check-circle-solid',
+      variant: 'gray2',
+      event: 'title-icon-click'
+    },
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false,
+    },
+    event: "title-click",
+  },
+  {
+    label: "Project",
+    key: "project",
+    header_icon: {
+      icon: "swap-vertical",
+      event: "table-sort",
+      isActive: false,
+    },
+  },
+  {
+    label: "Department",
+    key: "department",
+    width: '10%',
+    header_icon: {
+      icon: "swap-vertical",
+      event: "table-sort",
+      isActive: false,
+    },
+  },
+  {
+    label: 'Status',
+    key: 'status',
+    width: '9%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  },
+  {
+    label: 'Priority',
+    key: 'priority',
+    width: '9%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  },
+  {
+    label: 'Assignee',
+    key: 'userId',
+    width: '12%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  },
+  {
+    label: 'Start Date',
+    key: 'startDate',
+    width: '8%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  },
+  {
+    label: 'Due Date',
+    key: 'dueDate',
+    width: '8%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  }
+]
+
 export const PROJECT_CONTEXT_MENU = [
   { label: 'Add to Favorites', event: 'fav-project', variant: '', icon: 'bookmark-solid', iconVariant: 'gray5' },
-  /*{ label: 'Share with', event: 'share-project', variant: '', icon: 'user-add', iconVariant: 'gray5' },*/
   { label: 'Rename', event: 'rename-project', variant: '', icon: 'pencil', iconVariant: 'gray5' },
   { label: 'Copy Link', event: 'copy-project', variant: '', icon: 'duplicate', iconVariant: 'gray5' },
   { label: 'Report', event: 'report-project', variant: '', icon: 'warning', iconVariant: 'gray5' },
@@ -752,11 +773,6 @@ export const TASK_CONTEXT_MENU = [
   { label: 'SubTasks', event: 'gotoSubtask', variant: '', icon: 'check-square-solid', iconVariant: 'gray5' },
   { label: 'Conversation', event: 'gotoComment', variant: '', icon: 'comment-forum-solid', iconVariant: 'gray5' },
   { label: 'Files', event: 'gotoFiles', variant: '', icon: 'folder-solid', iconVariant: 'gray5' },
-  /*{ label: 'Attach file...', event: 'attach-file', variant: '', icon: 'upload', iconVariant: 'gray5' },
-  { label: 'Assign to...', event: 'assign-task', variant: '', icon: 'user-add', iconVariant: 'gray5' },
-  { label: 'Set as reminder', event: 'set-reminder', variant: '', icon: 'notification', iconVariant: 'gray5' },
-  { label: 'Copy', event: 'copy-task', variant: '', icon: 'duplicate', iconVariant: 'gray5' },
-  { label: 'Move', event: 'move-task', variant: '', icon: 'transfer', iconVariant: 'gray5' },*/
   { label: 'Copy Link', event: 'copy-task', variant: '', icon: 'duplicate', iconVariant: 'gray5' },
   { label: 'Report', event: 'report-task', variant: '', icon: 'warning', iconVariant: 'gray5' },
   { label: 'Delete', event: 'delete-task', variant: 'danger', icon: '', iconVariant: '' },
@@ -766,9 +782,6 @@ export const SUBTASK_CONTEXT_MENU = [
   { label: 'Mark Complete', event: 'done-subtask', variant: '', icon: 'check-circle-solid', iconVariant: 'gray5' },
   { label: 'View Details', event: 'view-subtask', variant: '', icon: 'eye-open', iconVariant: 'gray5' },
   { label: 'Team', event: 'gotoTeam', variant: '', icon: 'user-group-solid', iconVariant: 'gray5' },
-  // { label: 'SubTasks', event: 'gotoSubtask', variant: '', icon: 'check-square-solid', iconVariant: 'gray5' },
-  // { label: 'Conversation', event: 'gotoComment', variant: '', icon: 'comment-forum-solid', iconVariant: 'gray5' },
-  // { label: 'Files', event: 'gotoFiles', variant: '', icon: 'folder-solid', iconVariant: 'gray5' },
   { label: 'Copy Link', event: 'copy-subtask', variant: '', icon: 'duplicate', iconVariant: 'gray5' },
   { label: 'Report', event: 'report-subtask', variant: '', icon: 'warning', iconVariant: 'gray5' },
   { label: 'Delete', event: 'delete-subtask', variant: 'danger', icon: '', iconVariant: '' },

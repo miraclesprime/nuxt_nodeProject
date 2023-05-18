@@ -7,10 +7,13 @@ export const state = () => ({
   taskComments: [],
   singleTaskComment: {},
   taskHistory: [],
-
+  sidebarVisible: false,
 });
 
 export const getters = {
+  getSidebarVisible(state){
+    return state.sidebarVisible
+  },
   tasksForListView(state) {
     return state.tasks;
   },
@@ -47,6 +50,10 @@ export const getters = {
 };
 
 export const mutations = {
+  setSidebarVisible(state, payload){
+    state.sidebarVisible = payload
+  },
+
   initialize(state, list) {
     state.list = [...(list || [])];
   },
@@ -116,6 +123,10 @@ export const mutations = {
 };
 
 export const actions = {
+  setSidebarVisible(ctx, payload){
+    ctx.commit("setSidebarVisible", payload)
+  },
+
   // fetch all tasks
   async fetchTasks(ctx, payload) {
     const res = await this.$axios.$get('/task/project/' + payload.id, {
@@ -167,7 +178,6 @@ export const actions = {
 
   async updateTask(ctx, payload) {
     if(payload.title == "") {
-      // alert("Task can't have empty Value")
       throw new Error("Task can't have empty Value")
     }
     const res = await this.$axios.$put("/task", payload, {

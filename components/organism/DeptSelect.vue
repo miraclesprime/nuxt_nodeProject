@@ -1,16 +1,15 @@
 <template>
-  <div class="picker-wrapper" v-click-outside="onClickOutside" >
-    <button type="button" class="user-data cursor-pointer height-2 w-100 align-center justify-between" @click.stop="triggerOpen">
-      <span v-if="localDept">
+  <div class="picker-wrapper" id="dept-select-wrapper" v-click-outside="onClickOutside" >
+    <button type="button" id="dept-select-trigger-open" class="user-data cursor-pointer height-2 w-100 align-center justify-between" @click.stop="triggerOpen">
+      <span v-if="localDept" id="dept-select-local-dept-label">
          {{localDept.label}}
       </span>
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
     </button>
-    <div v-show="show" class="picker-content">
-      <!-- <input type="text" class="picker-input" ref="deptFilterInput" v-model="filterKey" @keyup.esc="$emit('close')" autofocus > -->
-      <div class="" style="max-height: 15rem; overflow-y: auto; overflow-x: clip; ">
-        <ul class="m-0 p-0 text-left">
-          <li v-for="dept in departments" :key="dept.value" class="p-025 font-md cursor-pointer" @click.stop="selected(dept)">
+    <div v-show="show" class="picker-content" id="dept-select-content">
+      <div class="" style="max-height: 15rem; overflow-y: auto; overflow-x: clip; " id="dept-select-dept-label-wrap">
+        <ul class="m-0 p-0 text-left" id="dept-select-dept-label-list">
+          <li v-for="(dept, index) in departments" :id="'dept-select-dept-label'+index" :key="dept.value" class="p-025 font-md cursor-pointer" @click.stop="selected(dept)">
             {{dept.label}}
           </li>
         </ul>
@@ -18,6 +17,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
 export default {
@@ -26,8 +26,6 @@ export default {
 
   props: {
     dept: { type: Object },
-    // show: {type: Boolean, default: false},
-    // coordinates: Object,
   },
 
   data() {
@@ -39,71 +37,15 @@ export default {
   },
   watch: {
     dept(newValue){
-      // if (this.dept) {
         this.localDept = this.departments.find( d => d.value == this.dept.id)
-      // }
     },
-    /*coordinates (newValue) {
-      let options = {
-        // root: document.querySelector('#main-content'),
-        root: null,
-        rootMargin: '0px',
-        threshold: 1.0
-      }
-
-      let observer = new IntersectionObserver(this.callback, options);
-      // let target = document.querySelector('#deptPicker');
-      let target = this.$refs.deptPicker
-      observer.observe(target);
-    },*/
-    /*show(newValue){
-      this.$nextTick(() => {
-        // console.log(this.$refs.deptFilterInput)
-        this.$refs.deptFilterInput.focus()
-      });
-    }*/
   },
   computed: {
     ...mapGetters({
       departments: "department/getAllDepartments",
     }),
-    /*localDept(){
-      if (this.dept) {
-        return this.departments.find( d => d.value == this.dept.id)
-      }
-      else {
-        return { value: null, label: "No department"}
-      }
-    },*/
-    /*filterDept() {
-      let regex = new RegExp(this.filterKey, 'g\i')
-      return this.departments.filter((u) => {
-        if (regex.test(u.label)) {
-          return u
-        }
-      })
-    },*/
-    /*position() {
-      return this.coordinates
-    },*/
-  },
-  mounted(){
-    // this.localDept = this.departments.find( d => d.id == this.dept.id)
   },
   methods: {
-    /*callback(entries, observer) {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) {
-          // console.log(entry.target, 'no')
-          if (entry.boundingClientRect.right > entry.rootBounds.width) {
-            this.position.left = (entry.rootBounds.width - entry.boundingClientRect.width) - 10 + 'px'
-          }
-          if (entry.boundingClientRect.bottom > entry.rootBounds.height) {
-            this.position.top = (entry.rootBounds.height - entry.boundingClientRect.height) - 10 + 'px'
-          }
-        } 
-      });
-    },*/
     triggerOpen() {
       this.show = !this.show
       this.$emit("close-other")
@@ -111,7 +53,6 @@ export default {
     selected(dept){
       this.$emit("change", dept)
       this.show = false
-      // this.$emit("close")
     },
     onClickOutside() {
       this.show = false
@@ -122,7 +63,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .picker-wrapper {
-  /*background-color: $white;*/
   position: relative;
 
   .user-data {

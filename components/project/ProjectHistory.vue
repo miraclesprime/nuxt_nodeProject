@@ -1,35 +1,33 @@
 <template>
-  <div class="position-relative ">
-    <div v-if="history.length == 0" class="placeholder mb-1 d-flex gap-05">
-      <div class="left">
-        <div class="shape-circle width-205 height-205 animated-background"></div>
+  <div class="position-relative " id="proj-history-wrapper">
+    <div v-if="history.length == 0" class="placeholder mb-1 d-flex gap-05"  id="proj-history-inner-wrap">
+      <div class="left"  id="proj-history-left">
+        <div class="shape-circle width-205 height-205 animated-background"  id="proj-history-shape-circle"></div>
       </div>
-      <div class="right">
-        <div class="animated-background width-4"></div>
-        <div class="animated-background width-5 mt-05"></div>
+      <div class="right"  id="proj-history-right">
+        <div class="animated-background width-4"  id="proj-history-animated-bg-w4"></div>
+        <div class="animated-background width-5 mt-05" id="proj-history-animated-bg-w10"></div>
       </div>
     </div>
     <template v-else>
-      <div v-for="hist in history" class="history">
+      <div v-for="(hist, index) in history" class="history"  :id="'proj-history-hist-'+index" :key="index">
         <figure class=" flex-shrink-0 flex-grow-0">
           <bib-avatar size="2.175rem" :src="$userInfo(hist.userId).Photo"></bib-avatar>
         </figure>
-        <div class="content">
-          <div class="info">
-            <span class="name">{{ $userInfo(hist.userId).FirstName }} {{ $userInfo(hist.userId).LastName }}</span>
-            <!-- <span class="name">{{ hist.userId }} </span> -->
-            <span class="time">{{ displayDate(hist.updatedAt) }}</span>
+        <div class="content"  id="proj-history-content">
+          <div class="info" id="proj-history-info">
+            <span class="name" id="proj-history-name">{{ $userInfo(hist.userId).FirstName }} {{ $userInfo(hist.userId).LastName }}</span>
+            <span class="time" id="proj-history-time">{{ displayDate(hist.updatedAt) }}</span>
           </div>
-          <div class="history-text">{{ hist.text }}</div>
-          <!-- {{$userInfo(hist.user.id)}} -->
+          <div class="history-text"  id="proj-history-text">{{ hist.text }}</div>
         </div>
       </div>
     </template>
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
-import { userInfo } from '@/utils/userInfo.client'
 import dayjs from 'dayjs'
 export default {
 
@@ -38,26 +36,7 @@ export default {
   data() {
     return {
       showPlaceholder: true,
-      history: [
-        /*{
-                  updatedAt: '2022-09-02T05:48:02.000Z',
-                  user: {
-                    id: "DKgl9av2NwnaG1vz",
-                    firstName: "Vishwajeet",
-                    lastName: "Mandal",
-                    email: "vishwajeet.mandal@qsstechnosoft.com"
-                  },
-                },
-                {
-                  updatedAt: '2022-09-02T05:48:02.000Z',
-                  user: {
-                    id: "k61YQdJ6J7ldOGpJ",
-                    firstName: "Dhruv",
-                    lastName: "Sharma",
-                    email: "dhruv.sharma@qsstechnosoft.com"
-                  },
-                }*/
-      ]
+      history: []
     }
   },
   computed: {
@@ -66,28 +45,17 @@ export default {
       members: 'user/getTeamMembers',
       project: "project/getSingleProject",
     }),
-
-    /*userInfo() {
-      if (this.members.length) {
-        let u = this.members.find((el) => el.id == this.msg.userId)
-        // console.log(u)
-        return { id: u.id, name: u.firstName + ' ' + u.lastName, email: u.email, pic: u.avatar, jobTitle: "Title/Company Name" }
-      }
-    },*/
   },
   mounted() {
     this.$store.dispatch("project/fetchHistory", this.project)
       .then(h => {
-        // console.log(h)
         this.history = h
       })
       .catch(e => console.error(e))
   },
   methods: {
     displayDate(date) {
-      // let d = new Date(date)
       let dd = dayjs(date).format('dddd, D MMM, YYYY @ HH:mm')
-      // return d.toDateString()
       return dd
     },
   }

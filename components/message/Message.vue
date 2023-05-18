@@ -1,121 +1,71 @@
 <template>
-  <div class="msg position-relative py-025" @mouseenter="isActionBarShowing = true" @mouseleave="onActionBarMouseLeave" v-click-outside="onActionBarClickOutside">
+  <div class="msg position-relative py-025" @mouseenter="isActionBarShowing = true" @mouseleave="onActionBarMouseLeave" v-click-outside="onActionBarClickOutside" id="message-wrapper">
     <figure class="width-3 user-avatar " :class="{active: userCardVisible}" @click="toggleUserCard">
       <bib-avatar size="2rem" :src="$userInfo(msg.userId).Photo"></bib-avatar>
     </figure>
 
-    <!-- user info card on click -->
-    <!-- <div class="user-card bg-white " :class="{active: userCardVisible}">
-      <div class="user-info">
-        <span class="d-inline-block user-name text-wrap of-hidden text-of-elipsis max-width-13">{{userInfo.name}} </span>
-        <span class="d-inline-block user-job text-wrap of-hidden text-of-elipsis max-width-13">{{userInfo.jobTitle}}</span>
-      </div>
-      <div class="user-btn d-flex justify-between ">
-        <button class="bg-gray3 bg-hover-gray4 btn min-width-6 py-05 px-2 cursor-pointer border-gray3 border-hover-gray4">Profile</button>
-        <button class="bg-gray3 bg-hover-gray4 btn min-width-6 py-05 px-2 cursor-pointer border-gray3 border-hover-gray4" @click="$nuxt.$emit('remove-member', userInfo)">Remove</button>
-      </div>
-      <div class="user-contact bg-gray3 p-05  font-sm">
-        <p class="mb-05">Contact details</p>
-        <div class="d-flex align-center">
-          <span class="width-2 flex-shrink-0">
-            <bib-icon icon="mail" :scale="1.25" variant="gray5"></bib-icon>
-          </span>
-          <div class="flex-grow-1 text-gray5 ">Email<br><span class="text-primary d-inline-block of-hidden text-of-elipsis max-width-13">{{userInfo.email}}</span></div>
-        </div>
-      </div>
-    </div> -->
-
     <!-- user info -->
-    <div class="msg__owner ">{{$userInfo(msg.userId).Name}} <span class="ml-1 font-sm">{{displayDate}}</span>
+    <div class="msg__owner " id="msg-owner">{{$userInfo(msg.userId).Name}} <span class="ml-1 font-sm">{{displayDate}}</span>
     </div>
 
     <!-- message content -->
-    <div class="msg__content pb-05" v-html="msg.comment">
+    <div class="msg__content pb-05" v-html="msg.comment" id="msg-content">
       <p>Lorem ipsum dolor sit amet consectetur 🙂, <a href="https://dev.proj-mgmt.biztree.com/">ipsum</a> adipisicing elit. Sit eum praesentium animi error delectus reprehenderit neque odit? Nesciunt facere quod ab veniam eligendi architecto vitae?</p>
     </div>
 
     <!-- message reactions -->
-    <div v-if="reactionsExist" class="reactions-section">
-      <div class="reactions">
-        <div v-for="react in reactionGroup" :key="reactionKey + react.reaction + msg.id" class="reaction " :class=" ownReaction(react) " name="reaction1" @click.stop="deleteOwnReaction(react)">
-          {{ react.reaction }} <span class="count">{{react.count}}</span>
+    <div v-if="reactionsExist" class="reactions-section" id="msg-reaction-section">
+      <div class="reactions" id="msg-reactions">
+        <div v-for="(react, index) in reactionGroup" :key="reactionKey + react.reaction + msg.id" class="reaction " :class=" ownReaction(react) " name="reaction1" @click.stop="deleteOwnReaction(react)" :id="'msg-'+index">
+          {{ react.reaction }} <span class="count" :id="'msg-count-'+index">{{react.count}}</span>
         </div>
         <bib-spinner v-if="reactionSpinner" :scale="2" variant="primary"></bib-spinner>
       </div>
     </div>
 
     <!-- message files -->
-    <div v-if="files.length > 0" class="msg-files pb-05">
-      <!-- <small>{{files.length}} files</small> -->
+    <div v-if="files.length > 0" class="msg-files pb-05" id="msg-file-content-wrapper">
       <message-collapsible-section>
         <template slot="title">Files ({{ files.length }})</template>
         <template slot="content">
-          <div class="d-flex align-start flex-wrap gap-1 mt-05 mb-075">
+          <div class="d-flex align-start flex-wrap gap-1 mt-05 mb-075" id="msg-files-wrap">
             <message-files v-for="file in files" :property="file" :key="file.key" @file-click="showPreviewModal(file)" ></message-files>
           </div>
         </template>
       </message-collapsible-section>
     </div>
 
-    <!-- <div v-show="showPlaceholder" class="placeholder mb-1 d-flex gap-05">
-      <div class="left">
-        <div class="shape-circle width-205 height-205 animated-background"></div>
-      </div>
-      <div class="right">
-        <div class="animated-background width-4"></div>
-        <div class="animated-background width-5 mt-05"></div>
-      </div>
-    </div> -->
-
     <!-- message action bar -->
-    <div v-if="isActionBarShowing" class="actions-container" @click.stop>
-      <!-- <div class="action favorite" :class="{ favorited }" @click="changeFavorite">
-        <bib-icon :icon="favorited ? 'bookmark-solid' : 'bookmark'" :scale="1"></bib-icon>
-      </div> -->
-      <div class="action" @click.stop="onLikeClick">
+    <div v-if="isActionBarShowing" class="actions-container" id="msg-action-container" @click.stop>
+      <div class="action" @click.stop="onLikeClick" id="msg-action">
         <fa :icon="faThumbsUp" />
       </div>
       <tippy :visible="isReactionPickerOpen" theme="light-border p-0" :animate-fill="false" :distance="6" interactive placement="bottom-end" trigger="manual" :onHide="() => defer(() => (isReactionPickerOpen = false))">
         <template slot="trigger">
-          <div class="action" :class="{ active: isReactionPickerOpen }" @click="toggleReactionPicker">
+          <div class="action" id="msg-toggle-reaction-picker" :class="{ active: isReactionPickerOpen }" @click="toggleReactionPicker">
             <fa :icon="faSmile" />
           </div>
         </template>
-        <div @click.stop>
+        <div id="msg-onReactionClick" @click.stop>
           <v-emoji-picker @select="onReactionClick" />
         </div>
       </tippy>
-      <!-- <div class="action" @click="replyMessage">
-        <fa :icon="faComment" />
-      </div> -->
       <tippy :visible="isMenuOpen" theme="light-border p-0" :animate-fill="false" :distance="6" interactive placement="bottom-end" trigger="manual" :onHide="() => defer(() => (isMenuOpen = false))">
         <template slot="trigger">
-          <div class="action" :class="{ active: isMenuOpen }" @click="toggleMenu">
+          <div id="msg-toggleMenu" class="action" :class="{ active: isMenuOpen }" @click="toggleMenu">
             <fa :icon="faEllipsisH" />
           </div>
         </template>
-        <div class="menu" :class="{ open: isMenuOpen }">
-          <!-- <div class="menu-item">
-            <a @click="replyMessage">Reply</a>
-          </div> -->
-          <!-- <div class="menu-item">
-            <a @click="markAsUnread">Mark unread</a>
-          </div> -->
-          <!-- <div class="menu-item">
-            <a @click="copyMessageLink">Copy link</a>
-          </div> -->
-          <!-- <div class="menu-item">
-              <a @click="showForwardModal">Share</a>
-            </div> -->
-          <div v-if="msg.userId == user.Id" class="menu-item">
-            <a @click="editMessage">Edit</a>
+        <div id="msg-isMenuOpen" class="menu" :class="{ open: isMenuOpen }">
+          <div id="msg-menu-item1" v-if="msg.userId == user.Id" class="menu-item">
+            <a id="msg-editMessage" @click="editMessage">Edit</a>
           </div>
-          <div v-if="msg.userId == user.Id" class="menu-item">
-            <a @click="attachFile">Attach file</a>
+          <div id="msg-menu-item2" v-if="msg.userId == user.Id" class="menu-item">
+            <a id="msg-attachFile" @click="attachFile">Attach file</a>
           </div>
-          <div class="menu-item-separator"></div>
-          <div v-if="canDeleteMessage" class="menu-item danger">
-            <a @click="deleteMessage">Delete</a>
+          <div id="msg-menu-item-separator" class="menu-item-separator"></div>
+          <div id="msg-canDeleteMessage" v-if="canDeleteMessage" class="menu-item danger">
+            <a id="msg-deleteMessage" @click="deleteMessage">Delete</a>
           </div>
         </div>
       </tippy>
@@ -125,13 +75,13 @@
     <!-- file upload modal -->
     <bib-modal-wrapper v-if="uploadModal" title="Select file(s)" @close="uploadModal = false">
       <template slot="content">
-        <div style="margin-left: -1rem; margin-right: -1rem;">
+        <div id="msg-handleChangeFile" style="margin-left: -1rem; margin-right: -1rem;">
           <bib-input type="file" ref="files" @files-dropped="handleChangeFile" variant="accepted" iconLeft="upload" placeholder="Upload from device"></bib-input>
         </div>
         <loading :loading="fileLoader"></loading>
       </template>
       <template slot="footer">
-        <div class="d-flex">
+        <div id="msg-upload-modals-wrapper" class="d-flex">
           <bib-button label="Cancel" variant="light" pill @click="uploadModal = false"></bib-button>
           <bib-button label="Upload" variant="success" class="ml-auto" pill @click="uploadFiles"></bib-button>
         </div>
@@ -141,17 +91,14 @@
     <!-- file preview modal -->
     <bib-modal-wrapper v-if="previewModal" title="Preview" size="lg" @close="closePreviewModal">
       <template slot="content">
-        <!-- <div v-if="!filePreview" class="text-center">
-          <bib-spinner class="mx-auto" ></bib-spinner>
-        </div> -->
-        <div class="text-center">
-          <img v-if="imgPreview" :src="imgPreview" class="w-fit" style="max-width:100%;" alt="preview">
+        <div id="msg-image-preview" class="text-center">
+          <img id="msg-img-preview" v-if="imgPreview" :src="imgPreview" class="w-fit" style="max-width:100%;" alt="preview">
           <pdf-preview v-else-if="pdfPreview" :pdfsrc="pdfPreview"></pdf-preview>
           <bib-spinner v-else class="mx-auto" ></bib-spinner>
         </div>
       </template>
       <template slot="footer">
-        <div class="text-center">
+        <div id="msg-close-button" class="text-center">
           <bib-button label="Close" variant="light" pill @click="closePreviewModal"></bib-button>
         </div>
       </template>
@@ -162,8 +109,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
-import tippy from 'tippy.js';
-import VueTippy, { TippyComponent } from 'vue-tippy';
+import { TippyComponent } from 'vue-tippy';
 import { VEmojiPicker } from 'v-emoji-picker';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
@@ -214,12 +160,7 @@ export default {
       showPlaceholder: true,
       userCardVisible: false,
       
-      files: [
-        // { name: "File Name", type: "image/png", size: "2340", preview: 'https://placeimg.com/200/300/tech' },
-        /*{ name: "ImageFile Name", type: "image/png", size: "2340", preview: 'https://placeimg.com/200/360/tech' },
-        { name: "ImageFile Name", type: "image/png", size: "2340", preview: 'https://placehold.jp/2ba026/ffffff/180x180.jpg' },
-        { name: "ImageFile Name", type: "image/png", size: "2340", preview: 'https://placehold.jp/24/1f42a2/ffffff/250x200.jpg?text=placeholder%20image' }*/
-      ],
+      files: [],
       previewModal: false,
       imgPreview: '',
       pdfPreview: '',
@@ -239,9 +180,6 @@ export default {
       members: 'user/getTeamMembers'
     }),
     displayDate() {
-      /*let d = new Date(this.msg.updatedAt)
-      let dd = dayjs(this.msg.updatedAt).format('dddd, D MMM, YYYY @ HH:mm')
-      return dd*/
       return dayjs(this.msg.updatedAt).fromNow()
     },
     
@@ -251,7 +189,6 @@ export default {
       } else {
         return false
       }
-      // return this.msg.reactions?.length ? true : false
     },
     reactionGroup() {
       let rg = []
@@ -259,7 +196,6 @@ export default {
         this.reactions.map(r => {
           let rindex = rg.findIndex((el) => el.reaction == r.reaction)
           let relem = rg.find((el, index) => el.reaction == r.reaction)
-          // console.log(relem, rindex)
           if (relem == undefined) {
             rg.push({ reaction: r.reaction, count: 1, data: [{ id: r.id, user: r.user }] })
           } else {
@@ -268,12 +204,10 @@ export default {
           }
         })
       }
-      // console.log(rg)
       this.reactionKey += 1
       return rg
     },
     canDeleteMessage() {
-      // console.log(JSON.parse(localStorage.getItem('user')).subr)
       if (this.msg.userId == this.user.Id || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
         return true;
       }
@@ -297,7 +231,6 @@ export default {
           headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
         })
         .then(r => {
-          // console.log(r)
           if (r.data.statusCode == 200) {
             this.reactions = r.data.data
             this.reactionKey += 1
@@ -306,7 +239,6 @@ export default {
         .catch(e => console.log(e))
     },
     ownReaction(reaction) {
-      // console.log(reaction, this.user.Id)
       return { sent: reaction.data.some(d => d.user.id == this.user.Id) }
     },
     deleteOwnReaction(reaction) {
@@ -317,16 +249,11 @@ export default {
           data: { reactionId: react.id, userId: react.userId },
         })
         .then(d => {
-          // console.log(d.data)
           this.fetchReactions()
           this.reactionSpinner = false
         })
         .catch(e => console.log(e))
     },
-    /*onFileInput(payload) {
-      // console.log(payload)
-      this.value.files = payload.files
-    },*/
     
     onActionBarMouseLeave() {
       if (!(this.isMenuOpen || this.isReactionPickerOpen)) {
@@ -350,14 +277,12 @@ export default {
       this.isMenuOpen = false;
     },
     onReactionClick({ data }) {
-      // console.log(data)
 
       this.isReactionPickerOpen = false;
       this.reactionSpinner = true
       let duplicateReaction = this.reactions.some(r => r.userId == this.user.Id && r.reaction == data)
       
       if (duplicateReaction) {
-        // alert("Reaction already exists!")
         this.alertDialog = true
         this.alertMsg = "Reaction already exists"
         this.reactionSpinner = false
@@ -367,7 +292,6 @@ export default {
             headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
           })
           .then(d => {
-            // console.log(d.data)
             if (d.data.statusCode == 200) {
               this.fetchReactions()
               this.reactionSpinner = false
@@ -380,7 +304,6 @@ export default {
       this.reactionSpinner = true
       let duplicateReaction = this.reactions.some(r => r.userId == this.user.Id && r.reaction == "👍")
       if (duplicateReaction) {
-        // alert("Reaction already exists!")
         this.alertDialog = true
         this.alertMsg = "Reaction already exists"
         this.reactionSpinner = false
@@ -389,9 +312,7 @@ export default {
             headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
           })
           .then(d => {
-            // console.log(d.data)
             if (d.data.statusCode == 200) {
-              // this.reactions.push(d.data.data)
               this.fetchReactions()
               this.reactionSpinner = false
             }
@@ -400,29 +321,13 @@ export default {
       }
     },
     replyMessage() {
-      // console.log('reply message action')
       this.replyModal = !this.replyModal
     },
-    /*copyMessageLink() {
-      navigator?.clipboard?.writeText?.(window.location.origin + this.link);
-      this.isMenuOpen = false;
-    },*/
+
     defer(func) {
       setTimeout(func, 0);
     },
-    /*async changeFavorite() {
-      console.log('favorite clicked')
-      if (this.favorited) {
-        await this.removeFavorite({ type: 'message', id: this.message._id });
-      } else {
-        await this.addFavorite({ type: 'message', id: this.message._id });
-      }
-    },*/
-    /*async markAsUnread() {
-      this.isMenuOpen = false;
-      // await this.setMessageAsUnread(this.message._id);
-      this.$emit('unread-message');
-    },*/
+
     editMessage() {
       this.$nuxt.$emit('edit-message', this.msg);
       this.isMenuOpen = false;
@@ -436,7 +341,6 @@ export default {
     },
     attachFile() {
       this.uploadModal = true
-      // this.$emit("upload-file", this.msg)
     },
     handleChangeFile(){
 
@@ -459,11 +363,8 @@ export default {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
         }
       })
-      // console.log(fi.data)
       if (fi.data.statusCode == 200) {
-        // console.log(fi.data)
         _.delay(() => {
-          // console.log('delay->', fi.data);
           this.getFiles()
           _.delay(() => {
               this.getFiles()
@@ -474,7 +375,6 @@ export default {
       this.uploadModal = false
     },
     getFiles() {
-      // this.loading = true
       let obj1 = { [`${this.fieldkey}CommentId`]: this.msg.id }
       this.$axios.get("file/db/all", {
         headers: {
@@ -482,15 +382,11 @@ export default {
           'obj': JSON.stringify(obj1)
         }
       }).then(f => {
-        // console.log(f.data)
         if (f.data.statusCode == 200) {
-          // this.loading = false
           this.files = f.data.data
-          // this.tempKey += 1
         }
       }).catch(e => {
         console.error(e)
-        // this.loading = false
       })
     },
     previewDownload(file){
@@ -500,7 +396,6 @@ export default {
 
     async showPreviewModal(file){
       this.previewModal = true
-      // console.info(file)
 
       if (file.type.indexOf('image/') == 0 && "url" in file) {
         let imgtype = file.type.split("/")[1]
@@ -526,7 +421,6 @@ export default {
       } else {
         this.downloadFile(file)
         this.previewModal = false
-        // this.filePreview = "https://via.placeholder.com/200x160/f0f0f0/6f6f79?text="+file.extension
       }
     
     },
@@ -546,18 +440,15 @@ export default {
 
   &__owner {
     color: $text;
-    /*font-size: 1rem;*/
     font-weight: 500;
 
     span {
-      /*font-size: $font-size-xs;*/
       color: $gray6;
       font-weight: normal;
     }
   }
 
   &__content {
-    /*font-size: 1rem;*/
     color: $gray6;
   }
 
@@ -635,12 +526,6 @@ export default {
   user-select: none;
   pointer-events: none;
   opacity: 0;
-  /*animation-name: open, paddingAnimate;
-  animation-duration: 400ms, 100ms;
-  animation-timing-function: linear, linear;
-  animation-direction: reverse, reverse;
-  animation-fill-mode: forwards, forwards;*/
-  /*animation: open 400ms reverse forwards, paddingAnimate 100ms reverse forwards;*/
   transition: all 400ms ease;
 
   .user-info {
@@ -676,10 +561,6 @@ export default {
     pointer-events: all;
     height: auto;
     min-height: 10rem;
-
-    /*animation: open 400ms linear normal forwards, paddingAnimate 100ms normal linear forwards;*/
-    /*animation-name: open, paddingAnimate;
-    animation-direction: normal, normal;*/
   }
 }
 

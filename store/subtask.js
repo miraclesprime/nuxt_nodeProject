@@ -3,7 +3,6 @@ export const state = () => ({
   selectedSubTask: {},
   subtaskComments: [],
   subtaskHistory: [],
-  // singleSubtaskComment: {},
   favSubtasks: [],
   subtaskMembers: [],
 });
@@ -118,7 +117,6 @@ export const actions = {
     const res = await this.$axios.$put("/subtask", payload, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
-    // console.log(res.data)
     if (res.statusCode == 200) {
       ctx.commit("updateSingleSubtask", res.data)
       ctx.commit("setSelectedSubtask", res.data)
@@ -151,7 +149,6 @@ export const actions = {
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
         }
       })
-      // console.log(stf.data)
       return stf.data
     } catch(e) {
       console.warn(e);
@@ -165,7 +162,6 @@ export const actions = {
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
         }
       })
-      // console.log(favsub.data)
       ctx.commit("setFavSubtasks", favsub.data.data)
       return favsub.data
     } catch (e) {
@@ -197,7 +193,6 @@ export const actions = {
   },
 
   async fetchSubtaskMembers(ctx, payload) {
-    // console.log("fetch sub members->",payload)
     const st = await this.$axios.get("subtask/" + payload.id + "/members", {
       headers: {
         "Authorization": "Bearer " + localStorage.getItem("accessToken"),
@@ -243,7 +238,6 @@ export const actions = {
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
         }
       })
-      // console.log(res.data)
       if (res.data.statusCode == 200) {
         ctx.commit("fetchSubtaskComments", res.data.data)
         return res.data;
@@ -328,7 +322,6 @@ export const actions = {
           'obj': JSON.stringify({ "subtaskId": payload.id })
         }
       })
-      // console.log(hist.data.data)
       if (hist.data.statusCode == 200) {
         ctx.commit("setSubtaskHistory", hist.data.data)
       }

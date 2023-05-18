@@ -1,20 +1,13 @@
 <template>
   <client-only>
-    <div v-show="show" ref="inlineDatepicker" class="picker-wrapper" v-click-outside="onClickOutside" :style="position">
-      <!-- <div v-if="localDate" class="align-center gap-05 cursor-pointer" @click.stop="triggerDatePicker">
-        <bib-icon icon="calendar" :variant="newOverdue ? 'gray5' : 'danger'" class="events-none"></bib-icon>
-        <format-date :datetime="localDate" :variant="newOverdue ? 'gray5' : 'danger'" class="events-none"></format-date>
-      </div>
-      <div v-else class="date-info-blank date-info shape-circle align-center justify-center cursor-pointer" @click.stop="triggerDatePicker">
-        <bib-icon icon="calendar" variant="gray4" class="events-none"></bib-icon> <span v-format-date="localDate"></span>
-      </div> -->
+    <div v-show="show" ref="inlineDatepicker" class="picker-wrapper" id="inline-date-picker-wrapper" v-click-outside="onClickOutside" :style="position">
       <!-- date picker -->
       <datepicker :value="datetime" v-model="localDate" :inline="true" @input="datePicked" @click.native.stop placeholder="Due date"></datepicker>
     </div>
   </client-only>
 </template>
+
 <script>
-import dayjs from 'dayjs'
 import _ from 'lodash'
 export default {
 
@@ -36,7 +29,6 @@ export default {
   watch: {
     coordinates (newValue) {
       let options = {
-        // root: document.querySelector('#main-content'),
         root: null,
         rootMargin: '0px',
         threshold: 1.0
@@ -56,14 +48,10 @@ export default {
       return this.coordinates
     },
   },
-  /*mounted() {
-    this.localDate = _.clone(this.datetime)
-  },*/
   methods: {
     callback(entries, observer) {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) {
-          // console.log(entry.target, 'no')
           if (entry.boundingClientRect.right > entry.rootBounds.width) {
             this.position.left = (entry.rootBounds.width - entry.boundingClientRect.width) - 10 + 'px'
           }
@@ -74,7 +62,6 @@ export default {
       });
     },
     datePicked() {
-      // console.log('date input-> ', this.localDate)
       this.$emit("date-updated", this.localDate)
       this.$emit('close')
     },

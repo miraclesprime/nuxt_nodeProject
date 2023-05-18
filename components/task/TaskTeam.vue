@@ -1,6 +1,5 @@
 <template>
   <div id="task-team-wrapper" class="task-group position-relative w-100">
-    <!-- <project-team-action ></project-team-action> -->
     <label id="create-team-modal-heading" class="text-gray6 font-md">Invite people </label>
     <bib-button test_id="teamlist-dd1" dropdown1="add1" label="Type name or email" v-model="member" v-on:input-keydown="teamInputKeydown" class="mt-05 mb-05">
       <template v-slot:menu>
@@ -67,6 +66,7 @@
     <loading :loading="loading"></loading>
   </div>
 </template>
+
 <script>
 import { PROJECT_TEAM_FIELDS } from "~/config/constants";
 import { mapGetters } from 'vuex';
@@ -117,7 +117,6 @@ export default {
 
   computed: {
     ...mapGetters({
-      // task: "task/getSelectedTask",
       taskMembers: 'task/getTaskMembers',
       teamMembers: "user/getTeamMembers",
       subtaskMembers: 'subtask/getSubtaskMembers',
@@ -134,8 +133,6 @@ export default {
   },
 
   mounted() {
-    // console.info('mounted task team->', this.task.title)
-    // this.loading = false
     if (this.mode == "task") {
       this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
     }
@@ -156,17 +153,13 @@ export default {
   },
   methods: {
     teamInputKeydown($event) {
-      // console.log('dropdown input keydown', $event)
       this.filterKey = $event
     },
     teamItemClick(tm) {
-      // console.log(tm)
       let existing = this.taskMembers.filter(ex => ex.id == tm.id)
-      // console.log(existing)
       if (existing.length == 0) {
         this.message = ""
         let m = this.teamMembers.filter(t => t.id == tm.id)
-        // console.log(m[0])
         if (this.team.some(el => el.id == m[0].id)) {
           return false
         }
@@ -176,10 +169,7 @@ export default {
       }
     },
     removeMember(tm) {
-      // console.log(tm)
-      // let rm = this.team.filter(t=>t.id == tm.id)
       let rm = this.team.map(t => t.id == tm.id)
-      // console.log(rm.indexOf(true))
       this.team.splice(rm.indexOf(true), 1)
     },
     addTeamMember() {
@@ -193,7 +183,6 @@ export default {
           return t.label
         })
         if (this.mode == "task") {
-          // console.log(teamtext.join(', '));
           this.$store.dispatch('task/addMember', { taskId: this.task.id, team: this.team, text: `added ${teamtext.join(', ')} to task` }).then(() => {
             this.loading = false;
             this.message = ""
@@ -201,7 +190,6 @@ export default {
             this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
           }).catch((err) => {
             this.loading = false;
-            // this.showTeamCreateModal = false
             this.message = ""
             this.team = []
             console.log(err)
@@ -225,15 +213,12 @@ export default {
       }
     },
     async deleteMember(member) {
-      // console.log(member)
       this.loading = true
       if (this.mode == "task") {
         await this.$store.dispatch("task/deleteMember", { taskId: this.task.id, memberId: member.id, text: `${member.name} removed from task` })
           .then((res) => {
-            // console.log(res)
             this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
             this.key += 1
-            // alert(res)
           })
           .catch(e => console.log(e))
         this.loading = false
@@ -241,10 +226,8 @@ export default {
       if (this.mode == "subtask") {
         await this.$store.dispatch("subtask/deleteMember", { id: this.task.id, memberId: member.id, text: `${member.name} removed from subtask` })
           .then((res) => {
-            // console.log(res)
             this.$store.dispatch('subtask/fetchSubtaskMembers', { id: this.task.id })
             this.key += 1
-            // alert(res)
           })
           .catch(e => console.log(e))
         this.loading = false

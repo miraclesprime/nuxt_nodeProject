@@ -23,7 +23,7 @@ export default {
     
     statusOutput() {
       if (this.status == null) {
-        return { text: "", color: "" }
+        return { text: "", color: this.colors.ColorVariants.Secondary }
       }
       switch (this.status.id) {
         case 1:
@@ -37,7 +37,7 @@ export default {
         case 5:
           return { text: this.status.text, color: this.colors.ColorVariants.Success }
         default:
-          return { text: "", color: "" }
+          return { text: "", color: this.colors.ColorVariants.Secondary }
       }
     },
     compId(){

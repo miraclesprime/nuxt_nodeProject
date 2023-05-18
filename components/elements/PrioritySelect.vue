@@ -4,7 +4,7 @@
       <span id="priority-select-inner-wrap" class="align-center flex-grow-1 gap-025">
         <div id="priority-select-shape-circle" class="d-flex align-center justify-center shape-circle circle" :style="{'background-color': $hex2rgba(localValue.color, colors)}"><strong id="priority-select-localValue-color" :class="'text-'+localValue.color" >!</strong>
         </div>
-        <span class="text-capitalize" id="priority-select-localValue-label" >
+        <span class="text-capitalize text-truncate" style="max-width: 5rem;" id="priority-select-localValue-label" >
           {{ localValue.label }}
         </span>
       </span>
@@ -45,7 +45,7 @@ export default {
     priorityList() {
       let prio = []
       this.priorityItems.forEach(pt => {
-        if (pt.value == 0) prio.push({ value: 0, label: "--", color: "secondary", bgcolor: "" })
+        if (pt.value == 0) prio.push({ value: 0, label: "Choose priority", color: "secondary", bgcolor: this.$hex2rgba(this.colors.ColorVariants.Secondary) })
         if (pt.value == 1) prio.push({ value: pt.value, label: pt.label, color: pt.color, bgcolor: this.$hex2rgba(this.colors.ColorVariants.Danger) })
         if (pt.value == 2) prio.push({ value: pt.value, label: pt.label, color: pt.color, bgcolor: this.$hex2rgba(this.colors.ColorVariants.Orange) })
         if (pt.value == 3) prio.push({ value: pt.value, label: pt.label, color: pt.color, bgcolor: this.$hex2rgba(this.colors.ColorVariants.Success) })
@@ -55,7 +55,11 @@ export default {
     },
   },
   mounted() {
-    this.localValue = this.priorityItems.find( pt => pt.value == this.value.id )
+    if (this.value) {
+      this.localValue = this.priorityItems.find( pt => pt.value == this.value.id )
+    } else {
+      this.localValue = { label: 'Choose priority', value: 0, color: "dark" }
+    }
   },
   methods: {
     triggerOpen() {

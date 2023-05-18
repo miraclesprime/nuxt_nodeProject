@@ -6,12 +6,14 @@
       <div>
         <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form>
         <div id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y">
-          <template v-if="gridType == 'list'">
+          <template>
             <template v-if="todos.length">
+              <div v-show="gridType == 'list'">
               <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete" @edit-field="updateTask" @edit-section="renameTodo" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table>
               <!-- table context menu -->
               <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closePopups" @item-click="contextItemClick"></table-context-menu>
               <loading :loading="loading"></loading>
+              </div>
             </template>
             <div v-else>
               <span id="projects-0" class="d-inline-flex gap-05 align-center m-1 text-gray5">
@@ -19,12 +21,11 @@
               </span>
             </div>
           </template>
-          <template v-else>
-            <div id="tgs-scroll" class="bg-light h-100 of-scroll-x position-relative">
+          <template>
+            <div id="tgs-scroll" class="bg-light h-100 of-scroll-x position-relative" v-show="gridType == 'grid'">
               <draggable :list="localdata" class="d-flex h-100" :move="moveTodo" v-on:end="todoDragEnd" handle=".section-drag-handle">
                 <div class="task-grid-section" v-for="(todo, index) in localdata" :key="index + viewName + '-' + key">
                   <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
-                    <!-- <div class="title section-drag-handle text-dark flex-grow-1">{{todo.title}}</div> -->
                     <task-grid-section-title :section="todo" @update-title="renameTodo"></task-grid-section-title>
                     <div class="d-flex align-center section-options" :id="'tg-section-options-'+todo.id">
                       <div class="cursor-pointer mx-05 d-flex align-center" :id="'tg-section-addtask-'+todo.id" v-on:click.stop="$nuxt.$emit('open-sidebar', todo.id)">
@@ -109,6 +110,7 @@
     </div>
   </client-only>
 </template>
+
 <script>
 import _ from 'lodash'
 import draggable from 'vuedraggable'
@@ -172,20 +174,20 @@ export default {
 
   watch: {
     todos(newVal) {
-      // let todos = JSON.parse(JSON.stringify(newVal))
       let todos = _.cloneDeep(newVal)
       todos.forEach(function(todo) {
         todo["tasks"] = todo.tasks.sort((a, b) => a.tOrder - b.tOrder);
       })
       this.localdata = todos
     },
+
+    gridType() {
+      this.key++;
+    },
   },
 
   created() {
     if (process.client) {
-      /*this.$nuxt.$on('change-grid-type', ($event) => {
-        this.gridType = $event;
-      })*/
       this.$nuxt.$on("update-key", (msg) => {
         this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then(() => { this.key += 1 })
         if (msg) {
@@ -239,7 +241,6 @@ export default {
     },
 
     openSidebar(task, scroll) {
-      // console.log(event.target)
       let fwd = this.$donotCloseSidebar(event.target.classList)
       if (!fwd) {
         this.$nuxt.$emit("close-sidebar");
@@ -249,8 +250,6 @@ export default {
 
       let el = document.getElementById("tgs-scroll")
       if (event.target.closest(".task-grid")) {
-        // let el = event.target.offsetParent
-        // let scrollAmt = event.target.offsetLeft - event.target.offsetWidth;
         let scrollAmt = event.target.closest(".task-grid").offsetLeft - event.target.offsetWidth;
         el.scrollTo({
           top: 0,
@@ -294,7 +293,6 @@ export default {
           this.openSidebar(this.activeTask, 'task_files')
           break;
         default:
-          // alert("no task assigned")
           this.alertDialog = true
           this.alertMsg = "no task assigned"
           break;
@@ -302,14 +300,12 @@ export default {
     },
 
     showUserPicker(payload){
-      // console.log(payload)
       this.closeAllPickers()
       this.userPickerOpen = true
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
     },
     showDatePicker(payload){
-      // console.log(payload)
       // payload consists of event, task, label, field
       this.closeAllPickers()
       this.datePickerOpen = true
@@ -392,7 +388,6 @@ export default {
     },
 
     updateTask(payload) {
-      // console.log(payload)
       let user
       if (payload.field == "userId" && payload.value != '') {
         user = this.teamMembers.filter(t => t.id == payload.value)
@@ -408,14 +403,12 @@ export default {
         text: `changed ${payload.label} to ${payload.historyText || payload.value}`
       })
         .then(t => {
-          // console.log(t)
           this.updateKey()
         })
         .catch(e => console.warn(e))
     },
 
     updateAssignee(label, field, value, historyValue){
-      // console.log(...arguments)
       let user
       if (field == "userId" && value != '') {
         user = this.teamMembers.filter(t => t.id == value)
@@ -427,31 +420,26 @@ export default {
 
       this.$store.dispatch("task/updateTask", {
         id: this.activeTask.id,
-        // projectId: this.$route.params.id,
         data: { [field]: value},
         user,
         text: `changed ${label} to ${historyValue}`
       })
         .then(t => {
-          // console.log(t)
           this.updateKey()
         })
         .catch(e => console.warn(e))
     },
 
     updateDate(value){
-      // console.log(...arguments, this.datepickerArgs)
       let newDate = dayjs(value).format("D MMM YYYY")
 
       this.$store.dispatch("task/updateTask", {
         id: this.activeTask.id,
-        // projectId: this.$route.params.id,
         data: { [this.datepickerArgs.field]: value},
         user: null,
         text: `changed ${this.datepickerArgs.label} to ${newDate}`
       })
         .then(t => {
-          // console.log(t)
           this.updateKey()
         })
         .catch(e => console.warn(e))
@@ -464,7 +452,6 @@ export default {
       if (state) {
         this.$store.dispatch("task/deleteTask", this.taskToDelete)
         .then(t => {
-          // console.log(t)
           if (t.statusCode == 200) {
             this.updateKey(t.message)
             this.taskToDelete = {}
@@ -483,7 +470,6 @@ export default {
     },
 
     deleteTask(task) {
-      // let del = confirm("Are you sure")
       this.taskToDelete = task
       this.confirmMsg = "Are you sure "
       this.confirmModal = true
@@ -493,12 +479,10 @@ export default {
       if ($event) {
         this.popupMessages.push({ text: $event, variant: "success" })
       }
-      // this.loading = true
       this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
         if (res.statusCode == 200) {
           this.key += 1
         }
-        // this.loading = false;
       })
     },
 
@@ -531,7 +515,6 @@ export default {
     },
 
     renameTodo(payload) {
-      // console.table(payload);
       this.$store.dispatch("todo/renameTodo", {
         id: payload.id,
         data: {
@@ -544,7 +527,6 @@ export default {
         } else { 
           this.alertDialog = true
           this.alertMsg = "Error -> "+ res.statusCode
-          // alert("Error -> "+ res.statusCode)
         }
       }).catch(e => console.warn(e))
     },
@@ -586,7 +568,6 @@ export default {
       if (taskDnD.statusCode != 200) {
         this.alertDialog = true
         this.alertMsg = taskDnD.message
-        // alert(taskDnD.message)
       }
 
       this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
@@ -607,8 +588,6 @@ export default {
         el.uOrder = i
       })
 
-      // console.log("ordered todos=>", todos)
-
       let todoDnD = await this.$axios.$put("/todo/dragdrop", { data: todos }, {
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
@@ -619,7 +598,6 @@ export default {
       if (todoDnD.statusCode != 200) {
         this.alertDialog = true
         this.alertMsg = taskDnD.message
-        // alert(taskDnD.message)
       }
 
       this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {

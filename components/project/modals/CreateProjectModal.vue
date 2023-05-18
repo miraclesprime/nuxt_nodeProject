@@ -2,10 +2,9 @@
   <div id="create-project-modal-wrapper">
     <bib-modal-wrapper @close="closeModal" v-show="showCreateProjectModal" title="Create Project" id="create-project" @keypress.native="bindEnter($event, 'create-project-btn')">
       <template v-slot:content>
-        <label class="text-gray6">Project name <span class="text-danger">*</span></label>
+        <label class="text-gray6" id="cpm-project-name">Project name <span class="text-danger">*</span></label>
         <bib-input v-model.trim="projectName" placeholder="Name your project"></bib-input>
-        <small class="text-danger mb-05" style="margin-top:-0.5rem; display:block;">{{projectName ? '' : 'Project name is required'}}</small>
-        <!-- <bib-input label="Department" v-model="department" placeholder="Type or select department name"></bib-input> -->
+        <small class="text-danger mb-05" id="cpm-project-name-alert" style="margin-top:-0.5rem; display:block;">{{projectName ? '' : 'Project name is required'}}</small>
         <template>
             <bib-input v-model="department" :options="departments" size="md" type="select"></bib-input>
         </template>
@@ -20,15 +19,14 @@
             </ul>
           </template>
         </bib-button>
-        <div id="project-team-members" class="d-flex pt-025">
+        <div id="cpm-project-team-members" class="d-flex pt-025">
           <email-chip v-if="Object.keys(owner).length > 0" :name="owner.label" :email="owner.email ? owner.email : owner.sube" :avatar="owner.avatar" v-bind:close="true" v-on:remove-email="owner = {}"></email-chip>
           <small v-else class="text-danger">Project owner is required</small>
         </div>
         <loading :loading="loading"></loading>
       </template>
       <template v-slot:footer>
-        <!-- <div v-if="error" class="shape-rounded border-danger px-075 py-05 text-danger font-sm">{{errorMsg}}</div> -->
-        <div class="m-auto pt-1 d-flex justify-between" id='tm-create-project-model'>
+        <div class="m-auto pt-1 d-flex justify-between" id='cpm-create-project-model'>
           <bib-button @click.native="closeModal" variant="light" size="lg" pill label="Cancel"></bib-button>
           <bib-button @click.native="createProject()" variant="success" size="lg" id="create-project-btn" pill label="Create"></bib-button>
         </div>
@@ -36,6 +34,7 @@
     </bib-modal-wrapper>
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
 
@@ -60,7 +59,6 @@ export default {
       user: "user/getUser",
       teamMembers: "user/getTeamMembers",
       departments: "department/getAllDepartments",
-      // companyUsers: "company/getCompanyMembers"
     }),
     filterUser() {
       return this.teamMembers.filter((u) => {
@@ -85,23 +83,16 @@ export default {
   },
   methods: {
     dropdownInputChange($event) {
-      // console.log('dropdownInputChange', e.target)
     },
     dropdownInputKeydown($event) {
-      // console.log('dropdown input keydown', $event)
       this.filterKey = $event
     },
     dd1ItemClick(tm) {
-      // console.log(tm)
-      // this.owner = `${tm.label} - ${tm.email}`
       this.owner = tm
     },
     inviteViaEmail() {
       console.log('inviteViaEmail')
     },
-    /*leadChange() {
-      console.log(this.owner)
-    },*/
     closeModal() {
       this.projectName = ''
       this.owner = {}
@@ -115,12 +106,8 @@ export default {
     },
     createProject() {
       this.loading = true
-      // console.log(this.projectName, this.owner)
-      // let ownerId = this.owner.sub || this.owner.id
-      // console.log(ownerId)
       if (this.projectName && this.owner.id) {
         this.$store.dispatch('project/createProject', { user: this.owner, title: this.projectName, departmentId: this.department }).then((res) => {
-          // console.log(res)
           this.loading = false
           if (res.statusCode == 200) {
             this.projectName = ''
@@ -135,21 +122,9 @@ export default {
       } else {
         this.loading = false
         console.error("required fields");
-        /*this.errorMsg = "Please fill required fields"
-        this.error = true*/
 
       }
-      // this.$emit("create-project")
     },
-    /*triggerModalAction(modal, payload, e = null) {
-      this.$emit(modal, payload, e);
-    },*/
-    /*removeEmail($event) {
-      // alert($event)
-      if ($event) {
-
-      }
-    },*/
   },
 
 };

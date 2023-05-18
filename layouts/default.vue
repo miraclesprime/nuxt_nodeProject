@@ -153,12 +153,6 @@ export default {
       openSidebar: false,
       flag: false,
       navKey: 0,
-      /*appCreateButton: {
-        label: this.$i18n.t("Create"),
-        event: "createbtn-click",
-        variant: "success",
-        icon: "add",
-      },*/
       appItems: [
         {
           img: "layers-solid",
@@ -249,25 +243,10 @@ export default {
           key: "project-route",
           selected: false,
         },
-        // { label: "Goals", icon: "flag-racing", key: 'goals', selected: false },
-        // { label: "Dream", icon: "star", key: 'dreams', selected: false },
       ],
-      /*favProjects: [
-        { label: "Project one", icon: "folder-solid" },
-        { label: "Project two", icon: "folder-solid" },
-      ],*/
-      // teammate: [
-      //   { label: "Person one", icon: "user" }
-      // ],
       collapseNavigation: false,
       lightThemeChecked: false,
       appHeaderActions: {
-        /*button: {
-          items: [
-            { label: "New Task", icon: "check-circle", iconVariant: "success", key: "new-task" },
-            { label: "New Project", icon: "briefcase", key: "new-project" },
-          ]
-        },*/
         select: {
           items: [
             {
@@ -303,12 +282,11 @@ export default {
   },
   created() {
     this.$root.$on("open-sidebar", (payload) => {
-      // console.log("root open-sidebar -> ", typeof(payload), payload)
       this.openSidebar = true;
+      this.$store.dispatch("task/setSidebarVisible", true)
       this.scrollId = payload.scrollId;
 
       if (!payload.id) {
-        // console.info(payload, typeof payload);
         if (typeof payload == "number") {
           this.sectionPreselect = payload;
         }
@@ -316,7 +294,6 @@ export default {
         this.$store.commit("task/fetchTeamMember", []);
       } else {
         if (payload.project.length > 0) {
-          // console.log(payload.project[0])
           this.$store.dispatch("section/fetchProjectSections", {
             projectId: payload.project[0].projectId,
             filter: "all",
@@ -334,12 +311,9 @@ export default {
               }
             })
             .catch((err) => console.log(err));
-          // this.$store.dispatch("project/setSingleProject", payload.project[0].project)
-          // this.$store.dispatch("task/setSingleTask", { ...payload, projectId: payload.project[0].projectId })
         } else {
           this.$store.dispatch("project/setSingleProject", {});
         }
-        // console.log(payload)
         this.$store.dispatch("task/setSingleTask", payload);
         this.$store.dispatch("task/fetchTeamMember", { id: payload.id });
       }
@@ -349,10 +323,9 @@ export default {
       }
     });
     this.$root.$on("close-sidebar", () => {
-      // console.info('close-sidebar event')
       this.openSidebar = false;
+      this.$store.dispatch("task/setSidebarVisible", false)
       this.$store.dispatch("task/setSingleTask", {});
-      // this.$store.dispatch('project/setSingleProject', {})
     });
     this.$root.$on("create-project-modal", () => {
       this.$refs.projectModals.showCreateProjectModal = true;
@@ -508,6 +481,7 @@ export default {
       teammate: "user/getTeamMembers",
       appMembers: "user/getAppMembers",
       user2: "user/getUser2",
+      sidebar: "task/getSidebarVisible",
     }),
   },
 

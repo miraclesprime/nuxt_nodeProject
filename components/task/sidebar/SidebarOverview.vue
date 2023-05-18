@@ -2,22 +2,22 @@
   <div v-show="showOverview" id="sidebar-overview-wrapper" class="sidebar-overview-wrapper py-05 px-105">
     
     <task-group title="Subtasks"></task-group>
-    <div  class="task-team" id="sidebar-team">
-      <div class="container" id="sidebar-container">
-        <div class="team-list w-100" id="sidebar-team-heading">
+    <div class="task-team" id="so-sidebar-team">
+      <div class="container" id="so-sidebar-container">
+        <div class="team-list w-100" id="so-sidebar-team-heading">
           Team
-          <div class="teammate active" id="sidebar-team-active">
+          <div class="teammate active" id="so-sidebar-team-active">
             <bib-avatar size="25px"></bib-avatar>
           </div>
           <template v-for="(item, index) in teammates">
-            <div class="teammate" :id="'teammate-' + index" v-if="index !== activeMate" :key="'teammate-' + index" :style="'z-index:' + (100 - index)">
+            <div class="teammate" :id="'so-teammate-' + index" v-if="index !== activeMate" :key="'teammate-' + index" :style="'z-index:' + (100 - index)">
               <bib-avatar size="25px"></bib-avatar>
             </div>
           </template>
-          <span class="teammates-count" id='sidebar-team-count'> + {{ teammates.length }} others </span>
-          <a href="#" class="ml-auto" id='sidebar-add-team'>Add a team member</a>
+          <span class="teammates-count" id='so-sidebar-team-count'> + {{ teammates.length }} others </span>
+          <a href="#" class="ml-auto" id='so-sidebar-add-team'>Add a team member</a>
         </div>
-        <div class="add-comment w-100" id='sidebar-add-comment'>
+        <div class="add-comment w-100" id='so-sidebar-add-comment'>
           <bib-avatar size="40px"></bib-avatar>
           <bib-input type="text" v-model="form.profile" placeholder="Add your comment..."></bib-input>
         </div>
@@ -25,17 +25,14 @@
     </div>
   </div>
 </template>
+
 <script>
 import { TEAMMATES } from '~/config/constants.js'
 import { mapGetters } from 'vuex';
 
 export default {
-  /*props: {
-    activeTask: Object,
-  },*/
   data() {
     return {
-      // loading: true,
       showOverview: true,
       
       isContentExpanded: false,
@@ -51,7 +48,6 @@ export default {
     ...mapGetters({
       currentTask: 'task/getSelectedTask',
       project: "project/getSingleProject",
-      // sections: "section/getProjectSections",
     }),
 
   },

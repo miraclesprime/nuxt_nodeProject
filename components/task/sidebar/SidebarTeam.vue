@@ -1,12 +1,12 @@
 <template>
-  <div class="py-05 px-105">
-    <div class="d-flex justify-between sub-title pb-05 border-bottom-gray2 ">
-      <p class="text-gray5 font-md">Team </p>
+  <div class="py-05 px-105" id="sbt-wrapper">
+    <div class="d-flex justify-between sub-title pb-05 border-bottom-gray2 " id="sbt-team-heading">
+      <p class="text-gray5 font-md" id="sbt-team-para">Team </p>
     </div>
-    <div class="section-title py-025">
-      <div class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded cursor-pointer bg-success-sub4 bg-hover-success-sub1 text-success text-hover-white" id="pta-add-teammate-button" v-on:click="showAddTeamModal">
+    <div class="section-title py-025" id="sbt-show-add-team-modal-wrap">
+      <div class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded cursor-pointer bg-success-sub4 bg-hover-success-sub1 text-success text-hover-white" id="sbt-add-teammate-button" v-on:click="showAddTeamModal">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon>
-        <span>New Teammate</span>
+        <span id="sbt-new-teamMate">New Teammate</span>
       </div>
     </div>
     <template v-if="team.length">
@@ -15,7 +15,7 @@
           <user-info v-if="data.value.id" :userId="data.value.id"></user-info>
         </template>
         <template #cell(delete)="data">
-          <span class="cursor-pointer shape-circle d-inline-flex align-center justify-center width-105 height-105 " v-on:click="deleteMember(data.value)">
+          <span id="sbt-deleteMember" class="cursor-pointer shape-circle d-inline-flex align-center justify-center width-105 height-105 " v-on:click="deleteMember(data.value)">
             <bib-icon icon="trash" variant="danger"></bib-icon>
           </span>
         </template>
@@ -23,7 +23,6 @@
     </template>
     
     <loading :loading="loading"></loading>
-    <!-- <add-teammember-modal ref="teamMemberModal"></add-teammember-modal> -->
     <add-member-to-task ref="taskTeamModal"></add-member-to-task>
   </div>
 </template>
@@ -36,7 +35,6 @@ export default {
 
   data() {
     return {
-      // team: [],
       index: 0,
       norecord: false,
       tableFields: TaskTeamFields,
@@ -47,37 +45,13 @@ export default {
     team: { type: Array },
   },
 
-  watch: {
-    /*team() {
-      if (this.teammates.length == 0) {
-        this.loading = false
-        this.team = this.teammates
-      } else {
-        this.team = []
-        this.loading = false
-      }
-    }*/
-  },
-
   computed: {
     ...mapGetters({
-      // teammates: 'task/getTaskMembers',
       task: 'task/getSelectedTask'
     }),
-    /*team(){
-      if (Object.keys(this.task).length == 0) {
-        return []
-      }
-      if(this.teammates.length == 0) {
-        return []
-      } else {
-        return this.teammates
-      }
-    }*/
   },
 
   mounted() {
-    // console.log("SidebarTeam mounted-> ",this.task.id)
     this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
   },
 
@@ -91,10 +65,8 @@ export default {
       if (confirmDelete) {
         await this.$store.dispatch("task/deleteMember", { memberId: member.id, text: `removed "${member.name}" from task` })
           .then((res) => {
-            // console.log(res)
             this.key += 1
             this.$nuxt.$emit("refresh-history")
-            // console.log(res)
           })
           .catch(e => console.log(e))
         this.loading = false
@@ -113,10 +85,6 @@ export default {
   &:first-child {
     border-top: 1px solid $gray6;
   }
-}
-
-.teammate-name {
-  /*font-weight: 400;*/
 }
 
 </style>

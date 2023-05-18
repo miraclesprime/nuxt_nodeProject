@@ -27,12 +27,10 @@ export default {
   data() {
     return {
       priority: PRIORITY,
-      // filterKey: "",
     }
   },
   watch: {
     coordinates(val, oldVal) {
-      // console.log(val)
       let options = {
         root: document.querySelector('#main-content'),
         rootMargin: '0px',
@@ -84,7 +82,6 @@ export default {
     callback(entries, observer) {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) {
-          // console.log(entry.target, 'no')
           if (entry.boundingClientRect.right > entry.rootBounds.width) {
             this.position.left = (entry.rootBounds.width - entry.boundingClientRect.width) - 10 + 'px'
           }

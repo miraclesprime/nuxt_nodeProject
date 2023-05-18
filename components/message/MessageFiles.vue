@@ -1,33 +1,24 @@
 <template>
   <client-only>
-    <div class="file-wrap d-flex ">
+    <div class="file-wrap d-flex " id="msg-file-wrapper">
       <figure class="position-relative w-100" v-tooltip="`${property.name}`">
-        <img :src="filePreview" class="shape-rounded d-block" alt="filePreview">
-        <div class="file-overlay d-flex align-center justify-center cursor-pointer" @click="$emit('file-click')">
+        <img id="msg-file-filePreview" :src="filePreview" class="shape-rounded d-block" alt="filePreview">
+        <div id="msg-file-file-click" class="file-overlay d-flex align-center justify-center cursor-pointer" @click="$emit('file-click')">
           <fa :icon="faMagnifyingGlassPlus" class="width-2 height-2"></fa>
         </div>
-        <div class="shape-circle bg-gray4 width-2 height-2 d-flex justify-center align-center file-menu">
+        <div id="msg-file-list-wrapper" class="shape-circle bg-gray4 width-2 height-2 d-flex justify-center align-center file-menu">
           <bib-button pop="elipsis" :scale="1">
             <template v-slot:menu>
-              <div class="list ">
-                <!-- <span class="list__item file-name ">{{property.name}}</span> -->
-                <!-- <hr> -->
-                <span class="list__item" v-if="canPreview" @click="$emit('file-click')">Preview</span>
-                <span class="list__item">Open</span>
-                <span class="list__item" @click.stop="fileDetailModal = true">Detail</span>
-                <span class="list__item" @click.stop="downloadFile">Download File</span>
-                <!-- <span class="list__item">
-                <bib-icon icon="duplicate" :scale="1.1" variant="gray5" class="mr-075"></bib-icon> Copy
-              </span> -->
-                <!-- <hr>
-                <span class="list__item list__item__danger">Delete</span> -->
+              <div id="msg-file-list" class="list ">
+                <span id="msg-file-list-item-1" class="list__item" v-if="canPreview" @click="$emit('file-click')">Preview</span>
+                <span id="msg-file-list-item-2" class="list__item">Open</span>
+                <span id="msg-file-list-item-3" class="list__item" @click.stop="fileDetailModal = true">Detail</span>
+                <span id="msg-file-list-item-4" class="list__item" @click.stop="downloadFile">Download File</span>
               </div>
             </template>
           </bib-button>
         </div>
       </figure>
-      <!-- <figure class="position-relative"><img src="https://placeimg.com/200/360/tech" class="shape-rounded" alt="img1"></figure>
-      <figure class="position-relative"><img src="https://placeimg.com/150/200/tech" class="shape-rounded" alt="img1"></figure> -->
       <bib-modal-wrapper v-if="fileDetailModal" title="File Details" @close="fileDetailModal = false">
         <template slot="content">
           <table class="table">
@@ -44,15 +35,15 @@
           </table>
         </template>
         <template slot="footer">
-          <div class="d-flex justify-end">
+          <div id="msg-file-file-detail-modal" class="d-flex justify-end">
             <bib-button label="Close" variant="light" pill @click="fileDetailModal = false"></bib-button>
-            <!-- <bib-button label="Create" variant="success" class="ml-auto" pill></bib-button> -->
           </div>
         </template>
       </bib-modal-wrapper>
     </div>
   </client-only>
 </template>
+
 <script>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
@@ -113,7 +104,6 @@ export default {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           }
         })
-        // console.log(prev.data.data)
         this.filePreview = `data:image/${imgtype};base64,${prev.data.data}`
       } else {
         this.filePreview = "https://via.placeholder.com/200x160/f0f0f0/6f6f79?text=" + this.property.extension
@@ -131,12 +121,9 @@ export default {
             const a = document.createElement('a');
             a.style.display = 'none';
             a.href = f.data.data;
-            // the filename you want
-            // a.download = 'todo-1.json';
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(f.data.data);
-            // alert('your file has downloaded!');
           }
         })
         .catch(e => console.error(e))

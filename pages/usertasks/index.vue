@@ -4,9 +4,10 @@
       <page-title :title="`${selectedUser.firstName} ${selectedUser.lastName}'s Tasks`"></page-title>
       <user-name-task-actions :gridType="gridType" v-on:filterView="filterView" v-on:sort="sortBy" v-on:new-task="toggleSidebar($event)" @search-user-tasks="searchUserTasks"></user-name-task-actions>
       <div id="task-table-wrapper" class="task-table-wrapper position-relative of-scroll-y">
-        <template v-if="gridType == 'list'">
+        <template>
+          <div v-show="gridType == 'list'">
           <template>
-            <drag-table-simple :key="key" :componentKey="key" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :fields="taskFields" :tasks="localData" :sectionTitle="'Department'" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table-simple>
+            <drag-table-simple :key="key" :componentKey="key" :titleIcon="{icon:'check-circle', event:'task-icon-click'}" @task-icon-click="taskMarkComplete" :fields="taskFields" :tasks="localData" :sectionTitle="'User Tasks'" :drag="false" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-context="taskRightClick" @row-click="openSidebar" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table-simple>
             <!-- table context menu -->
             <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closeContext" @item-click="contextItemClick"></table-context-menu>
             <!-- status picker for list view -->
@@ -16,9 +17,10 @@
             <!-- department-picker for list view -->
             <dept-picker :show="deptPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Department', field:'departmentId', value: $event.value, historyText: $event.label })" @close="deptPickerOpen = false"></dept-picker>
           </template>
+          </div>
         </template>
-        <template v-else>
-          <div class="d-flex">
+        <template>
+          <div class="d-flex" v-show="gridType == 'grid'">
             <div class="task-grid-section">
               <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
                 <div class="title text-gray">Department</div>
@@ -51,6 +53,7 @@
     </div>
   </client-only>
 </template>
+
 <script>
 import { mapGetters } from "vuex";
 import _ from 'lodash'
@@ -68,10 +71,7 @@ export default {
       priorityPickerOpen: false,
       deptPickerOpen: false,
       popupMessages: [],
-      popupCoords: { },
-      /*userPickerOpen: false,
-      datePickerOpen: false,
-      datepickerArgs: { label: "", field: ""},*/
+      popupCoords: {},
       activeTask: {},
       contextMenuItems: TASK_CONTEXT_MENU,
       loading: false,
@@ -79,8 +79,6 @@ export default {
       viewName: "all",
       orderBy: 'desc',
       key: 100,
-      /*popupMessages: [],
-      contextCoords: {},*/
       userfortask: "",
       tasks: [],
       taskOrder: 'asc',
@@ -111,8 +109,18 @@ export default {
       }
     },
 
+    gridType() {
+      this.key++;
+    },
+
     tasks(newVal) {
-        this.localData = _.cloneDeep(newVal)
+        let data = _.cloneDeep(newVal)
+        let sortedData = data.sort((a,b) => {
+          if (a.priorityId && b.priorityId) {
+            return a.priorityId - b.priorityId
+          }
+        })
+        this.localData = sortedData;
     },
   },
 
@@ -157,9 +165,21 @@ export default {
         });
 
         if (res.data.statusCode == 200) {
-          let taskArr = res.data.data.sort((a, b) => {
-            if (a.dueDate && b.dueDate) {
-              return new Date(b.dueDate) - new Date(a.dueDate)
+
+          let userTasks = res.data.data;
+          let organizedArr = [];
+
+          for(let el of userTasks) {
+            if(el.priorityId) {
+              organizedArr.unshift(el);
+            } else {
+              organizedArr.push(el)
+            }
+          }
+
+          let taskArr = organizedArr.sort((a, b) => {
+            if (a.priorityId && b.priorityId) {
+              return a.priorityId - b.priorityId
             }
           });
           this.tasks = taskArr
@@ -174,7 +194,6 @@ export default {
       if ($event) {
         this.popupMessages.push({ text: $event, variant: "success" })
       }
-      let compid = JSON.parse(localStorage.getItem("user")).subb;
       this.fetchUserTasks()
     },
 
@@ -193,16 +212,12 @@ export default {
     showStatusPicker(payload){
       this.closeAllPickers()
       this.statusPickerOpen = true
-      /*this.userPickerOpen = false
-      this.datePickerOpen = false*/
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
     },
     showPriorityPicker(payload){
       this.closeAllPickers()
       this.priorityPickerOpen = true
-      /*this.userPickerOpen = false
-      this.datePickerOpen = false*/
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
     },
@@ -224,7 +239,6 @@ export default {
       this.priorityPickerOpen = false
       this.deptPickerOpen = false
       this.activeTask = {}
-      // this.toggleSidebar()
     },
 
     contextItemClick(key) {
@@ -242,7 +256,6 @@ export default {
         case 'assign-task':
           break;
         default:
-          // alert("no task assigned")
           this.alertDialog = true
           this.alertMsg = "no task assigned"
           break;
@@ -296,7 +309,6 @@ export default {
         })
     },
     updateTask(payload) {
-      // console.log(payload)
       let user, projectId
       if (payload.field == "userId" && payload.value != '') {
         user = this.teamMembers.find(t => t.id == payload.value)
@@ -318,16 +330,13 @@ export default {
         text: `changed ${payload.label} to ${payload.historyText || payload.value}`
       })
         .then(t => {
-          // console.log(t)
           this.updateKey()
         })
         .catch(e => console.warn(e))
     },
 
     deleteTask(task) {
-      // let del = confirm("Are you sure")
       this.loading = true
-      // if (del) {
         this.$store.dispatch("task/deleteTask", task).then(t => {
 
           if (t.statusCode == 200) {
@@ -340,9 +349,6 @@ export default {
           this.loading = false
           console.log(e)
         })
-      // } else {
-      //   this.loading = false
-      // }
     },
 
     async filterView($event) {

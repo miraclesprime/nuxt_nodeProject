@@ -10,14 +10,6 @@
             </div>
           </div>
           <div class="action-right" id="pa-action-right">
-            <!-- <ul class="actions" id="pa-actions-list">
-            <li class="action" id="pa-action-item1">
-              <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="viewProjects($event)"></sorting-comp>
-            </li>
-            <li class="action" id="pa-action-item3">
-              <sorting-comp label="Sorted by" :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy($event)"></sorting-comp>
-            </li>
-          </ul> -->
           </div>
         </nav>
         <div class="position-relative h-100 of-scroll-y" >
@@ -28,7 +20,6 @@
             </template>
           </div>
           <div ref="infinitescrolltrigger" v-show="currentPage <= pageCount" class="align-center justify-center text-gray5"> <bib-spinner variant="gray5"></bib-spinner> </div>
-          <!-- <loading :loading="loading"></loading> -->
         </div>
       </main>
       <aside class="position-relative bg-white border-left-gray4">
@@ -37,7 +28,6 @@
         <figure v-if="taskProject == ''" class="position-absolute d-flex align-center justify-center" style="inset:45%; z-index: 5;">
           <bib-icon icon="bib-logo" variant="light" :scale="3"></bib-icon>
         </figure>
-        <!-- <loading :loading="loading2"></loading> -->
       </aside>
     </div>
   </client-only>
@@ -54,22 +44,16 @@ export default {
   data() {
     return {
       loading: false,
-      // loading2: false,
       inbox: [],
       task: {},
       project: {},
       active: 0,
       taskProject: '',
-      // inboxStatus: [],
       currentPage: -1,
       pageCount: 1,
     }
   },
   computed: {
-    ...mapGetters({
-      // token: "token/getToken",
-      // inboxStatus: "inbox/getInbox",
-    }),
     combinedInbox() {
       let today = [],
         yesterday = [],
@@ -78,10 +62,8 @@ export default {
       let inbox2 = { today: today, yesterday: yesterday, older: older }
 
       this.inbox.forEach((item, index) => {
-        // let ud = new Date(item.updatedAt).getTime()
         let timeDiff = new Date().getTime() - new Date(item.updatedAt).getTime()
         let daysDiff = Math.round(timeDiff / (1000 * 60 * 60 * 24))
-        // console.info(item.id, daysDiff)
 
         if (daysDiff >= 0 && daysDiff < 1) {
           today.push(item)
@@ -105,7 +87,6 @@ export default {
 
         let prIndex = t2.findIndex(a => a.userId == o.userId && a?.projectId == o?.projectId)
         let taIndex = t2.findIndex(a => a.userId == o.userId && a?.taskId == o?.taskId)
-        // console.log('index->', prIndex, taIndex)
 
         if (prIndex >= 0) {
           if (!t2[prIndex]?.content) {
@@ -180,7 +161,6 @@ export default {
 
       older.forEach(o => {
         let o2last = o2.slice(-1)[0]
-        // console.log(o2.length, i.taskId, i.projectId, i.userId)
         if (o2.length == 0) {
           o2.push(o)
           return
@@ -208,37 +188,7 @@ export default {
       return { today: t2, yesterday: y2, older: o2 }
     }
   },
-  /*fetch() {
-    this.$axios.get('user/user-history', {
-      headers: {
-        "page": 1,
-        "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-      }
-    }).then(i => {
-      this.inbox = i.data.data
-      this.pageCount = i.data.totalPage
-      // this.loading = false
-      this.switchTaskProject()
-    }).catch(e => {
-      console.warn(e)
-      // this.loading = false
-    })
-  },*/
   mounted() {
-    // this.loading = true
-
-    /*this.$axios.get('user/user-history', {
-      headers: {
-        "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-      }
-    }).then(i => {
-      this.inbox = i.data.data
-      this.loading = false
-      this.switchTaskProject()
-    }).catch(e => {
-      console.warn(e)
-      this.loading = false
-    })*/
 
     this.$store.dispatch("inbox/fetchInboxEntries").then(res => {
       this.loading = false
@@ -256,13 +206,9 @@ export default {
         entries.forEach(entry => {
           if(entry.intersectionRatio > 0 && this.currentPage <= this.pageCount) {
             console.log(this.currentPage, " of ", this.pageCount)
-            /*const newdata = _.throttle( () => {
-              console.log('throttle trigger')
-            }, 1000)*/
 
             const newdata = _.debounce(() => {
               this.$store.dispatch("user/fetchUserHistory", { page: this.currentPage + 1}).then(h => {
-                // console.log(h.data)
                 if (h.data.statusCode == 200) {
                   this.pageCount = h.data.totalPage
                   this.currentPage++
@@ -287,64 +233,46 @@ export default {
     },
     switchTaskProject() {
       this.active = this.inbox[0].id
-      // console.log('active->', this.inbox[0].id)
       if (this.inbox[0].taskId) {
-        // console.log('taskId->', this.inbox[0].taskId);
         this.taskProject = "task"
         this.fetchTask({ id: this.inbox[0].id, taskId: this.inbox[0].taskId })
       }
       if (this.inbox[0].projectId) {
-        // console.log('projectId->', this.inbox[0].projectId);
         this.taskProject = "project"
         this.fetchProject({ id: this.inbox[0].id, projectId: this.inbox[0].projectId })
       }
     },
     fetchTask(payload) {
-      // console.info(payload)
       if (payload.id) {
         this.active = payload.id
       }
       this.project = {}
-      // console.log(payload)
-      // this.loading2 = true
       this.taskProject = "task"
       this.$store.dispatch("task/fetchSingleTask", payload.taskId)
         .then(i => {
-          // console.log('inbox task->',i.data)
           this.task = i.data
-          // this.loading2 = false
         })
         .catch(e => {
           console.warn(e)
-          // this.loading2 = false
         })
     },
     fetchProject(payload) {
-      // console.info(payload)
       this.active = payload.id
       this.task = {}
-      // this.loading2 = true
       this.taskProject = "project"
       console.log(payload.projectId)
       this.$store.dispatch("project/fetchSingleProject", payload.projectId)
         .then(p => {
-          // console.log(p)
           this.project = p.data
-          // this.loading2 = false
         })
         .catch(e => {
           console.warn(e)
-          // this.loading2 = false
         })
     },
 
     refreshTask(task) {
       this.task = task
     }
-
-    /*inboxItemStatus(inbox){
-      return this.inboxStatus.find(item => item.historyId == inbox.id)
-    },*/
   },
 }
 

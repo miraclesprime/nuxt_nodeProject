@@ -1,14 +1,14 @@
 <template>
-  <div class="dialog-wrapper">
+  <div class="dialog-wrapper" id="alert-dialogue-wrapper">
     <transition name="fade" appear>
-      <div class="dialog shape-rounded" :class="[`bg-${variant}`]" :style="computedStyle">
+      <div class="dialog shape-rounded" :class="[`bg-${variant}`]" id="alert-dialogue-shape-rounded" :style="computedStyle">
         <!-- message -->
-        <div class="d-flex gap-05">
+        <div class="d-flex gap-05" id="alert-dialogue-warning-wrap">
           <bib-icon icon="warning" :variant="iconVariant" :scale="1.2" />
-          <div class="dialog__item " :class="[textVariant]" v-html="message">
+          <div class="dialog__item " id="alert-dialogue-item" :class="[textVariant]" v-html="message">
           </div>
         </div>
-        <div class="d-flex justify-end pt-105">
+        <div class="d-flex justify-end pt-105" id="alert-dialogue-close-btn">
           <bib-button label="Ok" variant="primary" pill @click.native.stop="$emit('close')"></bib-button>
         </div>
       </div>
@@ -32,17 +32,10 @@ export default {
       default: 'Alert'
     },
     position: { type: String, default: "center" },
-    // autohide: { default: 2000 },
     variant: {
       type: String,
       default: 'white'
     },
-  },
-  data() {
-    return {
-      // showArray: [],
-      // show: false,
-    };
   },
 
   computed: {
@@ -112,7 +105,6 @@ export default {
 
 .fade-enter-to,
 .fade-leave {
-  /*opacity: 1;*/
   margin-top: 2rem;
 }
 

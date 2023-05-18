@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <div id="project-id-wrapper" class="project-id-wrapper ">
+    <div id="page" class="project-id-wrapper ">
       <nav id="project-id-nav" class="d-flex align-center gap-05 py-075 px-025 ">
         <button type="button" @click="$router.back()" class="d-flex cursor-pointer bg-white border-white">
           <bib-icon icon="arrowhead-left" :scale="1.5" variant="gray5"></bib-icon>
@@ -23,87 +23,26 @@
             <bib-icon class="m-auto" icon="bookmark-solid" :variant="isFavorite.variant"></bib-icon>
           </div>
           <div id="project-id-horizontal-dots-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center">
-            <bib-popup pop="horizontal-dots" id="project-id-horizontal-dots">
-              <template v-slot:menu>
-                <div class="list" id="project-id-list">
-                  <span class="list__item" id="project-id-list-item1" @click="modalOpen('overview', 'Overview')">View details</span>
-                  <span class="list__item" id="project-id-list-item2" @click="setFavorite">
-                    <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
-                  </span>
-                  <span class="list__item" id="project-id-list-item3">
-                    <bib-icon icon="user-group-solid" class="mr-075"></bib-icon> Team
-                  </span>
-                  <span class="list__item" id="project-id-list-item3" @click="conversationModal = true">
-                    <bib-icon icon="comment-forum-solid" class="mr-075"></bib-icon> Conversation
-                  </span>
-                  <span class="list__item" id="project-id-list-item3" @click="modalOpen('files', 'Files')">
-                    <bib-icon icon="folder-solid" class="mr-075"></bib-icon> Files
-                  </span>
-                  <span class="list__item" id="project-id-list-item3" @click="copyProjectLink">
-                    <bib-icon icon="duplicate" class="mr-075"></bib-icon> Copy Link
-                  </span>
-                  <span class="list__item" id="project-id-list-item5" @click="reportModal = !reportModal">
-                    <bib-icon icon="warning" class="mr-075"></bib-icon> Report
-                  </span>
-                  <hr id="project-id-hr2">
-                  <span v-if="cdp" class="list__item list__item__danger" id="project-id-list-item6" @click="deleteProject(project)">Delete </span>
-                </div>
-              </template>
-            </bib-popup>
+            
           </div>
           <loading :loading="favLoading"></loading>
         </div>
       </nav>
 
       <!-- Task View -->
-      <div id="project-id-tab-content" class="project-id-tab-content bg-light position-relative h-100 of-scroll-y">
-        <task-view :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType"></task-view>
+      <div id="project-id-tab-content" class="project-id-tab-content bg-light position-relative h-100 of-scroll-y" :style="{ 'width': contentWidth }">
+        <adv-table-two
+        :tableFields="tableFields"
+        :tableData="localdata"
+        :contextItems="contextMenuItems"
+        @row-click="openSidebar"
+        @context-item-event="contextItemClick"
+        :newTaskButton="newTaskButton"
+        :newRow="newRow"
+        
+      ></adv-table-two>
       </div>
-
-      <!-- project modals -->
-      <bib-modal-wrapper v-if="projectModal" :title="projectModalTitle" size="xl" @close="projectModal = false">
-        <template slot="content">
-          <project-overview v-if="projectModalContent == 'overview'" :sections="projectSections" ></project-overview>
-          <project-files v-if="projectModalContent == 'files'"></project-files>
-        </template>
-      </bib-modal-wrapper>
-
-      <!-- conversation modal -->
-      <bib-modal-wrapper v-if="conversationModal" title="Conversation" size="xl" @close="conversationModal = false" >
-        <template slot="content">
-          <project-conversation :project="project"></project-conversation>
-        </template>
-        <template slot="footer">
-          <div class="message-input-wrapper d-flex gap-1">
-            <bib-avatar :src="user2.Photo" size="2rem" class="flex-shrink-0" ></bib-avatar>
-            <message-input class="flex-grow-1" :value="value" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
-          </div>
-        </template>
-      </bib-modal-wrapper>
-
-      <!-- project team -->
-      <bib-modal-wrapper v-if="projectTeamModal" title="Team" size="lg" @close="projectTeamModal = false">
-        <template slot="content">
-          <div style="height: 12rem;">
-            <project-team-modal></project-team-modal>
-          </div>
-        </template>
-      </bib-modal-wrapper>
-
-      <!-- report modal -->
-      <bib-modal-wrapper v-if="reportModal" title="Report" size="sm" @close="reportModal = false">
-        <template slot="content">
-          <bib-input type="text" label="Subject" v-model.trim="reportSubj" placeholder="enter subject"></bib-input>
-          <bib-input type="textarea" label="Message" v-model.trim="reportText" placeholder="enter text"></bib-input>
-          <loading :loading="loading"></loading>
-        </template>
-        <template slot="footer">
-          <div class="text-center d-flex justify-between">
-            <bib-button label="Cancel" variant="light" pill v-on:click="reportModal = false"></bib-button>
-            <bib-button label="Send" variant="success" pill v-on:click="submitReport"></bib-button>
-          </div>
-        </template>
-      </bib-modal-wrapper>
+      
       <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
 
       <!-- notification -->
@@ -119,23 +58,25 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { TABLE_FIELDS } from "config/constants";
+import { DEMO_TASK, TASK_CONTEXT_MENU } from "config/constants";
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
 export default {
-  name: 'ProjectId',
+  // name: 'ProjectTask',
   data() {
     return {
-      projectModal: false,
+      tableFields: DEMO_TASK,
+      // projectModal: false,
+      localdata: [],
+      contextMenuItems: TASK_CONTEXT_MENU,
       conversationModal: false,
       value: {
         files: []
       },
       editMessage: {},
-      projectModalTitle: '',
-      projectModalContent: '',
-      projectTeamModal: false,      
-      gridType: "list",
+      // projectModalTitle: '',
+      // projectModalContent: '',
+      projectTeamModal: false,
       renameModal: false,
       projectTitle: "",
       reportModal: false,
@@ -146,7 +87,42 @@ export default {
       popupMessages: [],
       alertDialog: false,
       alertMsg:"",
-      cdp: false
+      cdp: false,
+      newTaskButton: {
+        show: true,
+        label: "New Task",
+        icon: "add",
+      },
+      newRow: {
+        id: "",
+        sectionId: "",
+        title: "",
+        userId: "",
+        statusId: 1,
+        priorityId: 3,
+        startDate: "",
+        dueDate: "",
+        department: "",
+        description: "",
+        budget: "",
+        text: "",
+      },
+      contentWidth: "100%",
+    }
+  },
+
+  watch: {
+    sidebar(newVal){
+      const page = document.getElementById("page")
+      this.$nextTick(() => {
+        const panel = document.getElementById("side-panel-wrapper")
+        console.log("page width="+page.scrollWidth+", panel width="+panel.offsetWidth)
+        if (this.sidebar) {
+          this.contentWidth = (page.scrollWidth - panel.offsetWidth) + 'px'
+        } else {
+          this.contentWidth = '100%'
+        }
+      });
     }
   },
 
@@ -156,11 +132,12 @@ export default {
         project: 'project/getSingleProject',
         projects: 'project/getAllProjects',
         team: "project/getProjectMembers",
-        projectSections: 'section/getProjectSections',
+        sections: "section/getProjectSections",
         projectTasks: "task/tasksForListView",
         taskFields: "task/tableFields",
         favProjects: "project/getFavProjects",
         user2: "user/getUser2",
+        sidebar: "task/getSidebarVisible",
     }),
 
     projectName: {
@@ -185,30 +162,6 @@ export default {
 
   created() {
 
-    if(this.projects.length == 0) {
-
-      this.$store.dispatch('project/fetchProjects').then((res) => {
-        let proj = res.find((p) => {
-          if(p.id == this.$route.params.id) {
-            return p;
-          } 
-        })
-
-        if((proj && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
-            console.log('user has access!')
-        } else {
-            this.alertDialog = true
-            this.alertMsg = "You do not have access to this page!"
-            this.$router.push('/projects')      
-        }
-
-      });
-    }
-
-    this.$nuxt.$on("change-grid-type", (type) => {
-      this.gridType = type;
-    });
-
     this.$nuxt.$on("set-active-task", (task) => {
       this.activeTask = task;
     });
@@ -217,38 +170,35 @@ export default {
       this.editMessage = msg
     })
 
-    if (process.client) {
-      this.$axios.$get(`project/${this.$route.params.id}`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-      }).then((res) => {
-        if (res) {
-          if (!res.data || res.data.isDeleted) {
-            this.$router.push("/notfound")
-          } else {
-            this.$store.dispatch('project/setSingleProject', res.data)
-            this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
-            this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
-            this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id })
-            this.validating = false
-          }
-        } else {
-          this.$router.push("/notfound")
-        }
-      }).catch(err => {
-        console.log("There was an issue in project API", err);
-        this.validating = false
-      })
-
-    }
-
   },
   mounted() {
     if (process.client) {
-      this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
-      this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
-      this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id }).then(() => {
+      // this.$store.dispatch("section/fetchProjectSections", { projectId: 1, filter: 'all' })
+      this.$store.dispatch("section/fetchProjectSections", {
+        projectId: 1,
+        filter: "all",
+      })
+      .then((res) => {
+        console.log(res.data)
+        this.localdata = JSON.parse(JSON.stringify(this.sections));
+
+        let sorted = this.localdata.map((s) => {
+          let t = s.tasks.sort((a, b) => a.order - b.order);
+          s.tasks = t;
+          return s;
+        });
+        // console.log("sorted =>", sorted)
+        this.localdata = sorted;
+        this.templateKey += 1;
+        this.loading = false;
+      })
+      .catch((e) => console.log(e));
+
+      this.$store.dispatch("task/fetchTasks", { id: 1, filter: 'all' })
+      this.$store.dispatch("project/fetchTeamMember", { projectId: 1 }).then(() => {
         this.canDeleteProject();
       })
+
     }
   },
 
@@ -258,24 +208,44 @@ export default {
   },
 
   methods: {
+    openSidebar(task) {
+      console.log(task)
+      let fwd = this.$donotCloseSidebar(event.target.classList);
+      if (!fwd) {
+        this.$nuxt.$emit("close-sidebar");
+        return false;
+      }
 
+      let project = [
+        {
+          projectId: this.project.id,
+          project: {
+            id: this.project.id,
+          },
+        },
+      ];
+      this.$nuxt.$emit("open-sidebar", { ...task, project: project });
+    },
+    contextItemClick(event, activeItem){
+      console.log(...arguments)
+    },
     modalOpen(content, title) {
-      this.projectModal = true
-      this.projectModalTitle = title
-      this.projectModalContent = content
+      // this.projectModal = true
+      // this.projectModalTitle = title
+      // this.projectModalContent = content
     },
 
     setFavorite() {
       this.favLoading = true
       if (this.isFavorite.status) {
-        this.$store.dispatch("project/removeFromFavorite", { id: this.$route.params.id })
+        this.$store.dispatch("project/removeFromFavorite", { id: 1 })
           .then(msg => {
             this.popupMessages.push({ text: msg, variant: "orange" })
           })
           .catch(e => console.log(e))
           .then(() => this.favLoading = false)
       } else {
-        this.$store.dispatch("project/addToFavorite", { id: this.$route.params.id })
+        this.$store.dispatch("project/addToFavorite", { id: 1 })
           .then(msg => {
             this.popupMessages.push({ text: msg, variant: "success" })
           })
