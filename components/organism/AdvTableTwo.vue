@@ -20,7 +20,7 @@
       <div class=" adv-table resizable bg-white" :style="{'width': tableWidth}" role="table"  >
         <div class="tr" role="row">
           <div v-if="drag" class="width-2 th" role="cell"></div>
-          <div v-for="(field, index) in tableFields" :key="field+index" class="th" :class="{ 'flex-grow-1': !field.width }" role="cell" :style="{ width: field.width}">
+          <div v-for="(field, index) in tableFields" :key="field+index" class="th" :class="{ 'flex-grow-1': !field.width }" role="cell" :style="{ width: field.width}" :ref="'th-'+field.key">
             <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer" @click="$emit(field.header_icon.event, field)">
                 <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'gray1' : 'gray4'"></bib-icon>
               </span></div>
@@ -31,7 +31,7 @@
           <template v-for="section in tableData">
 
             <!-- <template v-if="!isCollapsed"> -->
-            <draggable :list="section.tasks" class="task-draggable" handle=".drag-handle" :group="{ name: 'tasks' }">
+            <draggable class="task-draggable" handle=".drag-handle" :group="{ name: 'tasks' }">
               <div slot="header" class="tr position-relative height-205">
                 <div class="position-absolute" style="inset: 0; border-bottom: 1px solid var(--bib-light);">
                   <div class="section-header d-flex align-center gap-05 height-205 " >
@@ -53,7 +53,7 @@
                     <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg>
                   </div>
                 </div>
-                <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell" :class="{'flex-grow-1': !field.width}" :style="`flex: ${field.width} 0 0;`" >
+                <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell" :class="{'flex-grow-1': !field.width, 'date-cell': field.key.includes('Date')}" :style="`flex: ${field.width} 0 0;`" >
                   <div v-if="field.key == 'title'" class="align-center ">
                     <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}">
                       <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="field.icon.variant" hover-variant="success"></bib-icon>
@@ -82,8 +82,9 @@
                     <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
                   </template>
                   <template v-if="field.key.includes('Date')" >
-                    {{$formatDate(item[field.key])}}
+                    <!-- {{$formatDate(item[field.key])}} -->
                     <!-- <bib-datepicker class="align-right" size="sm" :value="new Date(item[field.key])" format="dd MMM YYYY" @click.native.stop="" @input="updateDate"></bib-datepicker> -->
+                    <bib-datetime-picker v-model="item[field.key]" format="DD MM YYYY" displayFormat="DD MM YYYY" placeholder="No date" :style="{ width: datecell('th-'+field.key)}" @click.native.stop="" @input="updateDate"></bib-datetime-picker>
                   </template>
                 </div>
               </div>
@@ -184,6 +185,7 @@ export default {
       format: "DD MMM YYYY",
       // highlight: false,
       validTitle: false,
+      localData: _.cloneDeep(this.tableData),
     }
   },
 
@@ -231,6 +233,7 @@ export default {
       resizeObserver.observe(main);*/
 
     },
+
   },
 
   mounted() {
@@ -399,7 +402,10 @@ export default {
 
       // prepare table header to be draggable
       // it runs during class creation
-      for (var i = 0; i < dragColumns.length; i++) {
+      for (var i = 1; i < dragColumns.length; i++) {
+        let clientw = dragColumns[i].clientWidth
+        dragColumns[i].style.width = clientw + 'px'
+        // console.log(dragColumns[i], clientw)
         dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'>" +
           "<div class='resize-drag-handle' style='"+
           "position:absolute;height:100%;width:4px;right:0;top:0px;cursor:w-resize;z-index:10; background-color: var(--bib-secondary-sub4)'>"+
@@ -423,6 +429,12 @@ export default {
         }
       }
       //  alert(resizableTables.length + ' tables was added.');
+    },
+    datecell(refname){
+      // console.log(refname)
+      // console.log(this.$refs[`${refname}`][0].clientWidth)
+      
+      return (this.$refs[`${refname}`][0].clientWidth - 8) + 'px'
     },
     rowDragStart(e) {
       console.log(e.type, e);
