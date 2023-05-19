@@ -655,7 +655,7 @@ export default {
         $event.target.classList.remove("error");
         this.$emit("edit-field", { task, label, field, value });
       }
-    }, 1200),
+    }, 800),
 
     debounceRenameSection: _.debounce(function (id, event) {
       if (_.trim(event.target.value) == "") {
@@ -665,7 +665,7 @@ export default {
         event.target.classList.remove("error");
         this.$emit("edit-section", { id, title: event.target.value });
       }
-    }, 1200),
+    }, 800),
 
     collapseItem(event, refId) {
       let elem = this.$refs[refId][0].$el;
