@@ -205,7 +205,6 @@ export default {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if(entry.intersectionRatio > 0 && this.currentPage <= this.pageCount) {
-            console.log(this.currentPage, " of ", this.pageCount)
 
             const newdata = _.debounce(() => {
               this.$store.dispatch("user/fetchUserHistory", { page: this.currentPage + 1}).then(h => {
@@ -260,7 +259,6 @@ export default {
       this.active = payload.id
       this.task = {}
       this.taskProject = "project"
-      console.log(payload.projectId)
       this.$store.dispatch("project/fetchSingleProject", payload.projectId)
         .then(p => {
           this.project = p.data
