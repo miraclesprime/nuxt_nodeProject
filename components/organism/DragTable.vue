@@ -606,13 +606,10 @@ export default {
     });
   },
   mounted() {
-    // console.log("this.section", this.sections);
-    // console.info('mounted lifecycle', this.sections.length);
     this.localdata = this.sections
       ? JSON.parse(JSON.stringify(this.sections))
       : [];
     this.templateKey += 1;
-    console.log("this.localdata", this.localdata);
   },
   methods: {
     //created by @wen
@@ -655,7 +652,7 @@ export default {
         $event.target.classList.remove("error");
         this.$emit("edit-field", { task, label, field, value });
       }
-    }, 1200),
+    }, 800),
 
     debounceRenameSection: _.debounce(function (id, event) {
       if (_.trim(event.target.value) == "") {
@@ -665,7 +662,7 @@ export default {
         event.target.classList.remove("error");
         this.$emit("edit-section", { id, title: event.target.value });
       }
-    }, 1200),
+    }, 800),
 
     collapseItem(event, refId) {
       let elem = this.$refs[refId][0].$el;

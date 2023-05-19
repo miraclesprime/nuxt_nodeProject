@@ -80,6 +80,7 @@ export default {
     } else {
       this.showPlaceholder = true
       this.$store.dispatch("project/fetchProjectComments", { id: this.selectedProject.id }).then(c => {
+        console.log(c)
         this.comments = c.data
         this.fetchHistory()
         this.showPlaceholder = false

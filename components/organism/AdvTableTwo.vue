@@ -20,7 +20,7 @@
       <div class=" adv-table resizable bg-white" :style="{'width': tableWidth}" role="table"  >
         <div class="tr position-sticky" style="top: 0; z-index: 12;" role="row">
           <div v-if="drag" class="width-2 th" role="cell"></div>
-          <div v-for="(field, index) in tableFields" :key="field+index" class="th" :class="{ 'flex-grow-1': !field.width }" role="cell" :style="{ width: field.width}" :ref="'th-'+field.key">
+          <div v-for="(field, index) in tableFields" :key="field+index" class="th" :class="{ 'flex-grow-1': !field.width }" role="cell" :style="{ width: field.width}" :ref="'th'+field.key">
             <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer" @click="$emit(field.header_icon.event, field)">
                 <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'gray1' : 'gray4'"></bib-icon>
               </span></div>
@@ -39,78 +39,83 @@
                       <rect fill="none" height="24" width="24" />
                       <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg> --><bib-icon icon="drag" variant="gray5"></bib-icon>
                     </div>
-                    <div class="position-sticky" style="left: 0.5rem;">
-                      <bib-icon icon="arrow-down" :scale="0.5" :style="{transform: iconRotate}"></bib-icon> 
-                      <span class="font-w-700 cursor-pointer ml-025" @click.stop="isCollapsed = !isCollapsed">
-                        {{section.title}}
+                    <div class="position-sticky align-center" style="left: 0.5rem;" >
+                      <bib-icon icon="arrow-down" :scale="0.5" :ref="'sectionIcon'+section.id"></bib-icon> 
+                      <span class="font-w-700 cursor-pointer ml-025" @click.self="collapseItem('sectionContent' + section.id, 'sectionIcon'+section.id)" >
+                        <!-- {{section.title}} -->
+                        <input type="text" class="editable-input section-title" :value="section.title.includes('_section') ? 'Untitled section'
+                      : section.title" @input="debounceRenameSection(section.id, $event)" @blur="restoreField" />
                       </span>
                     </div>
                   </div>
                 </div>
               </div>
-              <div v-for="item in section.tasks" :key="item.id" class="tr" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
-                <div class="td" role="cell">
-                  <div v-if="drag" class="drag-handle width-105 h-100" ><!-- <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
-                    <rect fill="none" height="24" width="24" />
-                    <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg> --><bib-icon icon="drag" variant="gray5"></bib-icon>
+              <div :ref="'sectionContent' + section.id">
+                <div v-for="item in section.tasks" :key="item.id" class="tr" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
+                  <div class="td" role="cell">
+                    <div v-if="drag" class="drag-handle width-105 h-100" ><!-- <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
+                      <rect fill="none" height="24" width="24" />
+                      <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg> --><bib-icon icon="drag" variant="gray5"></bib-icon>
+                    </div>
+                  </div>
+                  <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell" :class="{'flex-grow-1': !field.width, 'date-cell': field.key.includes('Date')}" :style="`flex: ${field.width} 0 0;`" >
+                    <div v-if="field.key == 'title'" class="align-center ">
+                      <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}">
+                        <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="field.icon.variant" hover-variant="success"></bib-icon>
+                      </span>
+                      <span v-if="field.event" class=" flex-grow-1" style="line-height:1.25;">
+                        <input type="text" class="editable-input" :value="item[field.key]" @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
+                      </span>
+                      <span v-else class="flex-grow-1">
+                        {{item[field.key]}}
+                      </span>
+                      <span v-if="field.event" class="width-105 height-105 align-center justify-center flex-shrink-0 cursor-pointer bg-hover-light" @click.stop="$emit(`${field.event}`, item)">
+                        <bib-icon icon="arrow-right" variant="gray4" hover-variant="gray5"></bib-icon>
+                      </span>
+                    </div>
+                    <!-- <template v-if="field.key == 'project'">{{item[field.key][0].project.title}}</template> -->
+                    <template v-if="field.key == 'userId'">
+                      <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
+                    </template>
+                    <template v-if="field.key == 'status'">
+                      <status-select :ref="'stausSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('stausSelect'+item.id)"></status-select>
+                    </template>
+                    <template v-if="field.key == 'priority'">
+                      <priority-select :ref="'prioritySelect'+item.id" :value="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
+                    </template>
+                    <template v-if="field.key == 'department'">
+                      <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
+                    </template>
+                    <template v-if="field.key.includes('Date')" >
+                      <!-- {{$formatDate(item[field.key])}} -->
+                      <!-- <bib-datepicker class="align-right" size="sm" :value="new Date(item[field.key])" format="dd MMM YYYY" @click.native.stop="" @input="updateDate"></bib-datepicker> -->
+                      <bib-datetime-picker v-model="item[field.key]" format="DD MM YYYY" displayFormat="DD MM YYYY" placeholder="No date" :style="datecell('th'+field.key)" @click.native.stop="" @input="updateDate"></bib-datetime-picker>
+                    </template>
                   </div>
                 </div>
-                <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell" :class="{'flex-grow-1': !field.width, 'date-cell': field.key.includes('Date')}" :style="`flex: ${field.width} 0 0;`" >
-                  <div v-if="field.key == 'title'" class="align-center ">
-                    <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}">
-                      <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="field.icon.variant" hover-variant="success"></bib-icon>
-                    </span>
-                    <span v-if="field.event" class=" flex-grow-1" style="line-height:1.25;">
-                      <input type="text" class="editable-input" :value="item[field.key]" @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
-                    </span>
-                    <span v-else class="flex-grow-1">
-                      {{item[field.key]}}
-                    </span>
-                    <span v-if="field.event" class="width-105 height-105 align-center justify-center flex-shrink-0 cursor-pointer bg-hover-light" @click.stop="$emit(`${field.event}`, item)">
-                      <bib-icon icon="arrow-right" variant="gray4" hover-variant="gray5"></bib-icon>
-                    </span>
+                <div v-if="localNewrow.sectionId != section.id" class="tr" role="row" style="border-bottom: var(--bib-light)">
+                  <div class="td " role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
+                  <div class="td" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
+                    <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
+                      <bib-icon :icon="plusButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{plusButton.label}}</span>
+                    </div>
                   </div>
-                  <!-- <template v-if="field.key == 'project'">{{item[field.key][0].project.title}}</template> -->
-                  <template v-if="field.key == 'userId'">
-                    <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
-                  </template>
-                  <template v-if="field.key == 'status'">
-                    <status-select :ref="'stausSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('stausSelect'+item.id)"></status-select>
-                  </template>
-                  <template v-if="field.key == 'priority'">
-                    <priority-select :ref="'prioritySelect'+item.id" :value="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
-                  </template>
-                  <template v-if="field.key == 'department'">
-                    <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
-                  </template>
-                  <template v-if="field.key.includes('Date')" >
-                    <!-- {{$formatDate(item[field.key])}} -->
-                    <!-- <bib-datepicker class="align-right" size="sm" :value="new Date(item[field.key])" format="dd MMM YYYY" @click.native.stop="" @input="updateDate"></bib-datepicker> -->
-                    <bib-datetime-picker v-model="item[field.key]" format="DD MM YYYY" displayFormat="DD MM YYYY" placeholder="No date" :style="{ width: datecell('th-'+field.key)}" @click.native.stop="" @input="updateDate"></bib-datetime-picker>
-                  </template>
+                  <!-- <div v-for="n in tableFields.length-1" class="td" style="border-bottom-color: transparent; border-right-color: transparent;"></div> -->
                 </div>
-              </div>
-              <div v-if="!newRow.show" class="tr" role="row" style="border-bottom: var(--bib-light)">
-                <div class="td " role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
-                <div class="td" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
-                  <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick()">
-                    <bib-icon :icon="newTaskButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{newTaskButton.label}}</span>
+
+                <div v-show="localNewrow.sectionId == section.id" class="tr" role="row" @click.self="unselectAll">
+                  <div v-if="drag" class="td text-center " role="cell">
+                    <span class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
                   </div>
+                  <!-- <template v-for="td in tableFields"> -->
+                    <div class="td" role="cell">
+                      <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate" @blur="newRowCreate" required placeholder="Enter title...">
+                    </div>
+                    <!-- <div v-else class="td" role="cell"></div> -->
+                  <!-- </template> -->
                 </div>
-                <!-- <div v-for="n in tableFields.length-1" class="td" style="border-bottom-color: transparent; border-right-color: transparent;"></div> -->
               </div>
 
-              <div v-show="newRow.show" class="tr" role="row">
-                <div v-if="drag" class="td text-center" role="cell">
-                  <span class="d-inline-flex align-center height-105 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
-                </div>
-                <template v-for="td in tableFields">
-                  <div v-if="td.key == 'title'" class="td" role="cell">
-                    <input type="text" ref="newrowInput" class="editable-input" v-model="newRow.title" :class="{'error': validTitle}" @input="newRowCreate" @blur="newRowCreate" required placeholder="Enter title...">
-                  </div>
-                  <div v-else class="td" role="cell"></div>
-                </template>
-              </div>
             </draggable>
 
             <!-- </template> -->
@@ -147,7 +152,7 @@ export default {
     contextItems: { type: Array },
     drag: { type: Boolean, default: true },
     // height: { type: String, default: '100%' }
-    newTaskButton: {
+    plusButton: {
       type: Object,
       default () {
         return {
@@ -160,7 +165,6 @@ export default {
       type: Object,
       default () {
         return {
-          show: false,
           sectionId: "",
           title: "",
           userId: "",
@@ -179,7 +183,7 @@ export default {
 
   data() {
     return {
-      isCollapsed: false,
+      // isCollapsed: false,
       contextVisible: false,
       popupCoords: { left: 0, top: 0 },
       activeItem: {},
@@ -188,6 +192,7 @@ export default {
       // highlight: false,
       validTitle: false,
       localData: _.cloneDeep(this.tableData),
+      localNewrow: _.cloneDeep(this.newRow)
     }
   },
 
@@ -196,13 +201,7 @@ export default {
       teamMembers: "user/getTeamMembers",
     }),
 
-    iconRotate(){
-      if (this.isCollapsed) {
-        return 'rotate(-90deg)'
-      } else {
-        return 'rotate(0deg)'
-      }
-    },
+    
     /*teamOptions(){
       return this.teamMembers.map(t => {
         return { value : t.id, label: t.label }
@@ -256,6 +255,29 @@ export default {
         return ""
       }
     },
+
+    collapseItem(refId, refIcon) {
+      let elem = this.$refs[refId][0]
+      let icon = this.$refs[refIcon][0].$el
+      // let tar = event.target;
+
+      // console.log(elem, icon, tar,)
+      if (elem.style.display == "none") {
+        elem.style.display = "block";
+        icon.style.transform = "rotate(0deg)";
+      } else {
+        elem.style.display = "none";
+        icon.style.transform = "rotate(-90deg)";
+      }
+    },
+
+    /*iconRotate(expanded){
+      if (expanded) {
+        return {'transform': 'rotate(-90deg)'}
+      } else {
+        return {"transform": 'rotate(0deg)'}
+      }
+    },*/
     
     // main class prototype
     columnResize(table) {
@@ -317,7 +339,7 @@ export default {
         dragColumns[no].style.width = parseInt(dragColumns[no].style.width) + w + 'px';
         if (dragColumns[no + 1])
           dragColumns[no + 1].style.width = parseInt(dragColumns[no + 1].style.width) - w + 'px';
-
+        console.log(dragColumns[no].style.width, dragColumns[no + 1].style.width)
         return true;
       }
 
@@ -334,6 +356,7 @@ export default {
         dragX = X;
         // prevent other event handling
         self.preventEvent(e);
+        // console.log(dragColumnNo, X, dragX)
         return false;
       }
 
@@ -355,6 +378,7 @@ export default {
           colWidth += separator + parseInt(self.getWidth(dragColumns[i]));
           separator = '+';
         }
+        // console.log(colWidth)
         /*var expire = new Date();
         expire.setDate(expire.getDate() + 365); // year
         document.cookie = self.id + '-width=' + colWidth +
@@ -375,10 +399,10 @@ export default {
         var dragEl = (e.target || e.srcElement).offsetParent.parentElement
         // dragColumnNo = (e.target || e.srcElement).parentNode.parentNode;
         dragColumnNo = Array.from(dragEl.parentElement.children).indexOf(dragEl);
-        // console.log(dragEl, dragColumnNo)
         // dragColumnNo = (e.target || e.srcElement).parentNode.parentNode.cellIndex;
         dragX = e.clientX || e.pageX;
 
+        // console.log(dragEl, dragColumnNo, dragX)
         // set up current columns widths in their particular attributes
         // do it in two steps to avoid jumps on page!
         var colWidth = new Array();
@@ -433,10 +457,14 @@ export default {
       //  alert(resizableTables.length + ' tables was added.');
     },
     datecell(refname){
-      // console.log(refname)
-      // console.log(this.$refs[`${refname}`][0].clientWidth)
+      // console.log(this.$refs)
+      // console.log(this.$refs[refname])
+      if (this.$refs[refname]) {
+        return {'width': (this.$refs[refname][0].clientWidth - 8) + 'px'}
+      } else {
+        return {"width": "120px"}
+      }
       
-      return (this.$refs[`${refname}`][0].clientWidth - 8) + 'px'
     },
     rowDragStart(e) {
       console.log(e.type, e);
@@ -476,8 +504,9 @@ export default {
       for (let row of rows) {
         row.classList.remove('active');
       }
-      this.newRow.show = false
-      // console.log('clicked outside drag-table-simple component')
+      this.localNewrow.sectionId = ""
+      this.localNewrow.title = ""
+      // console.log('unselect all ')
       // this.$emit("hide-newrow")
       // this.$emit("close-context-menu")
       return 'success'
@@ -491,27 +520,29 @@ export default {
       }
     },
 
-    newRowClick() {
+    newRowClick(sectionId) {
       // console.log(sectionId)
-      // this.newRow.sectionId = sectionId
-      this.unselectAll()
-      this.newRow.show = true
+      this.unselectAll().then(()=>{
+        this.localNewrow.sectionId = sectionId
+        this.localNewrow.title = ""
+      })
+      // this.newRow.show = true
       process.nextTick(() => {
-        this.$refs.newrowInput[0].focus()
+        this.$refs['newrowInput'+sectionId][0].focus()
       });
       // this.$refs['newRow'+sectionId].style.visibility = 'visible'
     },
 
     newRowCreate: _.debounce(function() {
       // console.table([this.newRow.sectionId, this.newRow.title]);
-      if (!this.newRow.title) {
+      if (!this.localNewrow.title) {
         console.warn("title is required")
         this.validTitle = "alert"
         return false
       }
       this.validTitle = ""
-      console.info("valid input->", this.newRow.title)
-      this.$emit("create-row", this.newRow)
+      // console.info("valid input->", this.localNewrow.title)
+      this.$emit("create-row", this.localNewrow)
     }, 800),
 
     debounceTitle: _.debounce(function(value, item) {
@@ -533,6 +564,20 @@ export default {
     },
     updateDate(date) {
       console.log(date)
+    },
+    debounceRenameSection: _.debounce(function (id, event) {
+      if (_.trim(event.target.value) == "") {
+        event.target.classList.add("error");
+        console.warn("section title cannot be blank");
+      } else {
+        event.target.classList.remove("error");
+        this.$emit("edit-section", { id, title: event.target.value });
+      }
+    }, 800),
+    restoreField() {
+      event.target.blur();
+      event.target.classList.remove("error");
+      this.unselectAll();
     },
   }
 }
@@ -699,6 +744,7 @@ export default {
   font-weight: normal;
   background-color: transparent;
   &:hover { background-color: $white; }
+  &.section-title { font-weight: bold; }
 }
 
 ::v-deep {

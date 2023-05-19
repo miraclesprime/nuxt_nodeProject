@@ -37,9 +37,10 @@
         :contextItems="contextMenuItems"
         @row-click="openSidebar"
         @context-item-event="contextItemClick"
-        :newTaskButton="newTaskButton"
+        :plusButton="plusButton"
         :newRow="newRow"
-        
+        @create-row="createRow"
+        @edit-section="editSection"
       ></adv-table-two>
       </div>
       
@@ -88,7 +89,7 @@ export default {
       alertDialog: false,
       alertMsg:"",
       cdp: false,
-      newTaskButton: {
+      plusButton: {
         show: true,
         label: "New Task",
         icon: "add",
@@ -102,7 +103,7 @@ export default {
         priorityId: 3,
         startDate: "",
         dueDate: "",
-        department: "",
+        departmentId: "",
         description: "",
         budget: "",
         text: "",
@@ -228,6 +229,12 @@ export default {
     },
     contextItemClick(event, activeItem){
       console.log(...arguments)
+    },
+    createRow($event){
+      console.log($event)
+    },
+    editSection($event){
+      console.log($event)
     },
     modalOpen(content, title) {
       // this.projectModal = true

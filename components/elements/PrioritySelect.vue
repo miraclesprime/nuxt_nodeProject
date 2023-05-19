@@ -32,7 +32,7 @@ export default {
   name: 'PrioritySelect',
 
   props: {
-    value: { type: Object },
+    value: { type: Number },
   },
   data() {
     return {
