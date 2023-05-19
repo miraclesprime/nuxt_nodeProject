@@ -59,7 +59,9 @@ export default {
   },
 
   mounted(){
-    this.localStatus = this.statusItems.find( st => st.value == this.status.id )
+    if(this.status) {
+      this.localStatus = this.statusItems.find( st => st.value == this.status.id )
+    }
   },
 
   methods: {

@@ -606,13 +606,10 @@ export default {
     });
   },
   mounted() {
-    // console.log("this.section", this.sections);
-    // console.info('mounted lifecycle', this.sections.length);
     this.localdata = this.sections
       ? JSON.parse(JSON.stringify(this.sections))
       : [];
     this.templateKey += 1;
-    console.log("this.localdata", this.localdata);
   },
   methods: {
     //created by @wen

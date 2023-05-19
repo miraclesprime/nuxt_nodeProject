@@ -125,7 +125,7 @@ export default {
 
     if(this.sectionType == "singleProject") {
       this.loading = true
-      this.$store.dispatch("section/fetchProjectSections", { projectId: this.project.id })
+      this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id })
         .then((sections) => {
           this.localdata = JSON.parse(JSON.stringify(sections))
           this.loading = false

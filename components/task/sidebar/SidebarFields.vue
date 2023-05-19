@@ -137,7 +137,7 @@ export default {
       default: false,
     },
     departmentId: {
-      type: Number,
+      type: Object,
     },
   },
 
