@@ -40,6 +40,8 @@
               <user-info :key="componentKey+task['id']" :userId="task[col.key]" :user="task['user']" ></user-info>
             </span>
             <span v-else class="user-name-blank user-info cursor-pointer shape-circle align-center justify-center" @click.stop="triggerUserPicker(task)">
+	      <!-- //updated by @wen -->
+              <user-info></user-info>
               <bib-icon icon="user" variant="gray4" ></bib-icon>
             </span>
           </template>
@@ -115,6 +117,7 @@
               <user-info :key="componentKey+task['id']" :userId="task[col.key]" :user="task['user']" ></user-info>
             </span>
             <span v-else class="user-name-blank user-info cursor-pointer shape-circle align-center justify-center" @click.stop="triggerUserPicker(task)">
+		<user-info></user-info>
               <bib-icon icon="user" variant="gray4" ></bib-icon>
             </span>
           </template>

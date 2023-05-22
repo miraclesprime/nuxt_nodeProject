@@ -6,7 +6,8 @@
     >
       <!-- ******updated by @wen 5.11****** -->
       <!-- v-on:input="createSection" -->
-      <input
+      <bib-input
+      autofocus
         id="new-section-input"
         type="text"
         class="new-section-input"
@@ -18,8 +19,9 @@
 
         v-on:keyup.enter="$emit('create-section', newSectionName)"
         @keyup.esc="onClickOutside(true)"
-        placeholder="Enter section name"
-      />
+        placeholder="Enter section name">
+      </bib-input>
+      
       <small v-if="showError" class="text-danger ml-05" id="nsf-show-error">{{
         showError
       }}</small>
@@ -52,7 +54,8 @@ export default {
     showNewsection(newVal) {
       if (newVal) {
         this.$nextTick(() => {
-          this.$refs.newsectioninput.focus()
+          // updated by @wen
+          this.$refs.newsectioninput[0].focus()
         })
       } else {
         this.newSectionName = null;
@@ -68,7 +71,8 @@ export default {
       }
       if (!this.newSectionName) {
         this.newSectionName = null
-        this.$emit("toggle-newsection", false)
+        this.$emit("toggle-newsection", false);
+        return false
       } else {
         this.$emit("create-section", this.newSectionName);
       }
@@ -95,7 +99,6 @@ export default {
   padding: 0 0.5rem;
   font-size: $font-size-sm;
   border-radius: 0.18rem;
-  border: 1px solid var(--bib-gray4);
   // Updated by @wen
   width: 100% !important;
   
