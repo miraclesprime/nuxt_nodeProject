@@ -60,8 +60,8 @@
                   </div>
                   <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell" :class="{'flex-grow-1': !field.width, 'date-cell': field.key.includes('Date')}" :style="`flex: ${field.width} 0 0;`" >
                     <div v-if="field.key == 'title'" class="align-center ">
-                      <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}">
-                        <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="field.icon.variant" hover-variant="success"></bib-icon>
+                      <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}" @click.stop="markComplete($event, item)">
+                        <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success"></bib-icon>
                       </span>
                       <span v-if="field.event" class=" flex-grow-1" style="line-height:1.25;">
                         <input type="text" class="editable-input" :value="item[field.key]" @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
@@ -73,7 +73,7 @@
                         <bib-icon icon="arrow-right" variant="gray4" hover-variant="gray5"></bib-icon>
                       </span>
                     </div>
-                    <!-- <template v-if="field.key == 'project'">{{item[field.key][0].project.title}}</template> -->
+                    <template v-if="field.key == 'project'">{{item[field.key][0]?.project.title}}</template>
                     <template v-if="field.key == 'userId'">
                       <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
                     </template>
@@ -89,7 +89,7 @@
                     <template v-if="field.key.includes('Date')" >
                       <!-- {{$formatDate(item[field.key])}} -->
                       <!-- <bib-datepicker class="align-right" size="sm" :value="new Date(item[field.key])" format="dd MMM YYYY" @click.native.stop="" @input="updateDate"></bib-datepicker> -->
-                      <bib-datetime-picker v-model="item[field.key]" format="DD MM YYYY" displayFormat="DD MM YYYY" placeholder="No date" :style="datecell('th'+field.key)" @click.native.stop="" @input="updateDate"></bib-datetime-picker>
+                      <bib-datetime-picker v-model="item[field.key]" format="MM/DD/YYYY" placeholder="No date" :style="datecell('th'+field.key)" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                     </template>
                   </div>
                 </div>
@@ -488,6 +488,7 @@ export default {
         })
       this.$emit("row-click", item)
     },
+    
     contextOpen($event, item) {
       this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
       this.contextVisible = true
@@ -547,23 +548,36 @@ export default {
 
     debounceTitle: _.debounce(function(value, item) {
       // console.log(item)
-      this.$emit("update-title", { id: item.id, field: "title", value: value, label: "Title", historyText: value })
+      this.$emit("update-field", { id: item.id, field: "title", value: value, label: "Title", historyText: `changed Title to ${value}`, item })
     }, 800),
+    markComplete($event, item){
+      // console.log($event, item.statusId)
+      if (item.statusId == 5) {
+        this.$emit("update-field", { id: item.id, field: "statusId", value: 1, label: "Status", historyText: "changed Status to Not Started" })
+      } else {
+        this.$emit("update-field", { id: item.id, field: "statusId", value: 5, label: "Status", historyText: "changed Status to Done" })
+      }
+    },
     updateStatus(status, item) {
-      console.log(status, item)
+      // console.log(status, item)
+      this.$emit("update-field", { id: item.id, field: "statusId", value: status.value, label: "Status", historyText: `changed Status to ${status.label}`, item })
     },
     updatePriority(priority, item) {
-      console.log(priority, item)
+      // console.log(priority, item)
+      this.$emit("update-field", { id: item.id, field: "priorityId", value: priority.value, label: "Priority", historyText: `changed Priority to ${priority.label}`, item })
     },
     updateDept(dept, item){
-      console.log(dept, item)
+      // console.log(dept, item)
+      this.$emit("update-field", { id: item.id, field: "departmentId", value: dept.value, label: "Department", historyText: `changed Department to ${dept.label}`, item })
     },
     updateAssignee(user, item) {
-      console.log(user, item)
-      this.$emit("update-field", { id: item.id, field: "userId", value: user.id, label: "Assignee", historyText: user.label })
+      // console.log(user, item)
+      this.$emit("update-field", { id: item.id, field: "userId", value: user.id, label: "Assignee", historyText: `changed Assignee to ${user.label}`, item })
     },
-    updateDate(date) {
-      console.log(date)
+    updateDate(d, item, field, label) {
+      // console.log(...arguments)
+      // let d = new Date(date)
+      this.$emit("update-field", { id: item.id, field, value: new Date(d), label, historyText: `Changed ${label} to ${dayjs(d).format('DD MMM YYYY')}`, item: item})
     },
     debounceRenameSection: _.debounce(function (id, event) {
       if (_.trim(event.target.value) == "") {
