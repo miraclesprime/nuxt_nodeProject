@@ -94,7 +94,7 @@
           </tr>
         </thead>
         <!-- Updated by @wen -->
-        <tr v-if="section.id == 1 && newSection1" class="table__newrow">
+        <tr v-if="index == 0 && newSection1" class="table__newrow">
           <td class="sectionRow">
             <span
               class="d-inline-flex align-center height-105 bg-primary shape-rounded"
@@ -107,7 +107,7 @@
               :showNewsection="newSection1"
               :showLoading="sectionLoading"
               :showError="sectionError"
-              v-on:toggle-newsection="newSection = $event"
+              v-on:toggle-newsection="newSection1 = $event"
               v-on:create-section="sendCreateSignal"
             ></new-section-form>
           </td>
@@ -580,8 +580,13 @@ export default {
       departments: "department/getDepartments",
     }),
     //created by @wen
-    newSection1() {
-      return this.newSection;
+    newSection1:{
+      get:function (){
+        return this.newSection;
+      },
+      set:function(value){
+      this.$emit("change-section",value)
+      }
     },
     activeClass() {
       return (keyI) => (this.sections[keyI].active ? "active" : "");
@@ -727,8 +732,9 @@ export default {
       this.taskMoveSection = +e.to.dataset.section;
     },
     newRowClick(sectionId) {
-      this.newRow.sectionId = sectionId
-      this.unselectAll()
+      this.newRow.sectionId = sectionId;
+      // updated by @wen //not working +button
+      // this.unselectAll();
     },
     newRowCreate: _.debounce(function () {
       if (!this.newRow.title) {
