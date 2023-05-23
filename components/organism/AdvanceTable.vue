@@ -47,16 +47,16 @@
               </div>
               <template v-if="field.key == 'project'">{{item[field.key][0].project.title}}</template>
               <template v-if="field.key == 'userId'">
-                <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
+                <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" ></user-select>
               </template>
               <template v-if="field.key == 'status'">
-                <status-select :ref="'stausSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('stausSelect'+item.id)"></status-select>
+                <status-select :ref="'stausSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)"></status-select>
               </template>
               <template v-if="field.key == 'priority'">
-                <priority-select :ref="'prioritySelect'+item.id" :value="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
+                <priority-select :ref="'prioritySelect'+item.id" :value="item[field.key]" @change="updatePriority($event, item)"></priority-select>
               </template>
               <template v-if="field.key == 'department'">
-                <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
+                <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)"></dept-select>
               </template>
               <template v-if="field.key.includes('Date')" class="date-cell">
                 <!-- {{$formatDate(item[field.key])}} -->
@@ -93,7 +93,7 @@
       </draggable>
     <!-- </div> -->
     <template v-if="contextItems">
-      <table-context-menu :items="contextItems" :show="contextVisible" :coordinates="popupCoords" @close-context="closePopups" @item-click="contextItemClick" ></table-context-menu>
+      <table-context-menu :items="contextItems" :show="contextVisible" :coordinates="popupCoords" @item-click="contextItemClick" ></table-context-menu>
     </template>
     
   </div>
@@ -393,12 +393,6 @@ export default {
       }
       this.newRow.show = false
       return 'success'
-    },
-    closePopups(id) {
-      this.contextVisible = false
-      for (let ref in this.$refs) {
-        if(ref != id) this.$refs[ref][0].show = false
-      }
     },
 
     newRowClick() {
