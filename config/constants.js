@@ -913,7 +913,7 @@ export const USER_TASKS = [
   {
     label: 'Start Date',
     key: 'startDate',
-    width: '8%',
+    width: '9%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -923,7 +923,7 @@ export const USER_TASKS = [
   {
     label: 'Due Date',
     key: 'dueDate',
-    width: '8%',
+    width: '9%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',

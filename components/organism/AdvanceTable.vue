@@ -341,7 +341,7 @@ export default {
       for (var i = 0; i < dragColumns.length; i++) {
         dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'>" +
           "<div class='resize-drag-handle' style='"+
-          "position:absolute;height:100%;width:4px;right:0;top:0px;cursor:w-resize;z-index:10; background-color: var(--bib-secondary-sub4)'>"+
+          "position:absolute;height:100%;width:4px;right:0;top:0px;cursor:w-resize;z-index:4; background-color: var(--bib-secondary-sub4)'>"+
           "</div>"+
           dragColumns[i].innerHTML +
           "</div>";
@@ -499,14 +499,14 @@ export default {
       position: sticky;
       min-width: 2rem;
       left: 0;
-      z-index: 10;
+      z-index: 5;
       background: #fff;
     }
 
     .th {
       position: sticky;
       top: 0;
-      z-index: 9;
+      z-index: 2;
       background: $gray9;
       font-weight: bold;
       color: $secondary;
@@ -514,7 +514,7 @@ export default {
       border-bottom-color: $gray2;
 
       &:nth-child(2) {
-        z-index: 11;
+        z-index: 3;
         background: $gray9;
       }
       &:hover {
