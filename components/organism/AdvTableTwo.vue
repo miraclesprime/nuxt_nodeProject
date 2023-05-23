@@ -18,7 +18,7 @@
       </ul> -->
 
       <div class=" adv-table resizable bg-white" :style="{'width': tableWidth}" role="table"  >
-        <div class="tr position-sticky" style="top: 0; z-index: 12;" role="row">
+        <div class="tr position-sticky" style="top: 0; z-index: 2;" role="row">
           <div v-if="drag" class="width-2 th" role="cell"></div>
           <div v-for="(field, index) in tableFields" :key="field+index" class="th" :class="{ 'flex-grow-1': !field.width }" role="cell" :style="{ width: field.width}" :ref="'th'+field.key">
             <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer" @click="$emit(field.header_icon.event, field)">
@@ -59,7 +59,7 @@
                     </div>
                   </div>
                   <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell" :class="{'flex-grow-1': !field.width, 'date-cell': field.key.includes('Date')}" :style="`flex: ${field.width} 0 0;`" >
-                    <div v-if="field.key == 'title'" class="align-center ">
+                    <div v-if="field.key == 'title'" class="align-center w-100">
                       <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}" @click.stop="markComplete($event, item)">
                         <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success"></bib-icon>
                       </span>
@@ -75,16 +75,16 @@
                     </div>
                     <template v-if="field.key == 'project'">{{item[field.key][0]?.project.title}}</template>
                     <template v-if="field.key == 'userId'">
-                      <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
+                      <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" class="flex-grow-1" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
                     </template>
                     <template v-if="field.key == 'status'">
-                      <status-select :ref="'stausSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('stausSelect'+item.id)"></status-select>
+                      <status-select :ref="'stausSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" class="flex-grow-1" @change="updateStatus($event, item)" @close-other="closePopups('stausSelect'+item.id)"></status-select>
                     </template>
                     <template v-if="field.key == 'priority'">
-                      <priority-select :ref="'prioritySelect'+item.id" :value="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
+                      <priority-select :ref="'prioritySelect'+item.id" :value="item[field.key]" class="flex-grow-1" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
                     </template>
                     <template v-if="field.key == 'department'">
-                      <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
+                      <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" class="flex-grow-1" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
                     </template>
                     <template v-if="field.key.includes('Date')" >
                       <!-- {{$formatDate(item[field.key])}} -->
@@ -434,7 +434,7 @@ export default {
         // console.log(dragColumns[i], clientw)
         dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'>" +
           "<div class='resize-drag-handle' style='"+
-          "position:absolute;height:100%;width:4px;right:0;top:0px;cursor:w-resize;z-index:10; background-color: var(--bib-secondary-sub4)'>"+
+          "position:absolute;height:100%;width:4px;right:0;top:0px;cursor:w-resize;z-index:4; background-color: var(--bib-secondary-sub4)'>"+
           "</div>"+
           dragColumns[i].innerHTML +
           "</div>";
@@ -490,9 +490,11 @@ export default {
     },
     
     contextOpen($event, item) {
+      this.unselectAll()
       this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
       this.contextVisible = true
       this.activeItem = item
+      this.$emit("context-open", item)
       $event.currentTarget.classList.add("active")
     },
     contextItemClick($event){
@@ -661,6 +663,7 @@ export default {
   .th,
   .td {
     /*display: table-cell;*/
+    display: inline-flex;
     border-bottom: 1px solid $light;
     padding: 0.25rem;
     vertical-align: middle;
@@ -681,7 +684,7 @@ export default {
       position: sticky;
       min-width: 2rem;
       left: 0;
-      z-index: 10;
+      z-index: 1;
       background: #fff;
     }
 
@@ -696,7 +699,7 @@ export default {
       border-bottom-color: $gray2;
 
       &:nth-child(2) {
-        z-index: 11;
+        z-index: 5;
         background: $gray9;
       }
       &:hover {

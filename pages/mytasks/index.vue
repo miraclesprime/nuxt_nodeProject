@@ -11,7 +11,7 @@
               <!-- <div v-show="gridType == 'list'"> -->
               <!-- <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete" @edit-field="updateTask" @edit-section="renameTodo" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table> -->
               <!-- table context menu -->
-              <adv-table-two :tableFields="taskFields" :tableData="localdata" :contextItems="contextMenuItems" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @update-field="updateField"></adv-table-two>
+              <adv-table-two :tableFields="taskFields" :tableData="localdata" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @update-field="updateField"></adv-table-two>
               <!-- <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closePopups" @item-click="contextItemClick"></table-context-menu> -->
               <loading :loading="loading"></loading>
               <!-- </div> -->
@@ -281,32 +281,35 @@ export default {
       this.datePickerOpen = false
       this.activeTask = {}
     },
-
-    contextItemClick(key) {
+    contextOpen(item){
+      this.$store.dispatch("task/setSingleTask", item)
+    },
+    contextItemClick(key, item) {
+      // console.log(...arguments)
       switch (key) {
         case 'done-task':
-          this.taskMarkComplete(this.activeTask)
+          this.taskMarkComplete(item)
           break;
         case 'fav-task':
-          this.taskSetFavorite(this.activeTask)
+          this.taskSetFavorite(item)
           break;
         case 'delete-task':
-          this.deleteTask(this.activeTask)
+          this.deleteTask(item)
           break;
         case 'copy-task':
-          this.copyTaskLink(this.activeTask);
+          this.copyTaskLink(item);
           break;
         case 'gotoTeam':
           this.$nuxt.$emit('add-member-to-task')
           break;
         case 'gotoComment':
-          this.openSidebar(this.activeTask, 'task_conversation')
+          this.openSidebar(item, 'task_conversation')
           break;
         case 'gotoSubtask':
-          this.openSidebar(this.activeTask, 'task_subtasks')
+          this.openSidebar(item, 'task_subtasks')
           break;
         case 'gotoFiles':
-          this.openSidebar(this.activeTask, 'task_files')
+          this.openSidebar(item, 'task_files')
           break;
         default:
           this.alertDialog = true
@@ -410,18 +413,21 @@ export default {
     },
 
     taskMarkComplete(task) {
-      this.loading = true
-      if (typeof task == "object" && Object.keys(task).length > 0) {} else {
+      // this.loading = true
+      /*if (typeof task == "object" && Object.keys(task).length > 0) {
+
+      } else {
         task = this.activeTask
-      }
+      }*/
+      console.log(task)
       this.$store.dispatch('task/updateTaskStatus', task)
         .then((d) => {
-          this.loading = false
-          this.updateKey()
+          // this.loading = false
+          this.updateKey("Marked as complete")
           this.$store.dispatch("task/setSingleTask", d)
         }).catch(e => {
           console.log(e)
-          this.loading = false
+          // this.loading = false
         })
     },
 
@@ -808,9 +814,7 @@ export default {
     },
 
     copyTaskLink(task) {
-      
         let url = window.location.host + `/tasks/${task.id}`;
-        
         if (navigator.clipboard) { 
           navigator.clipboard.writeText(url);
         } else { 

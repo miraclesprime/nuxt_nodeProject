@@ -2,7 +2,7 @@
   <div class="picker-wrapper" id="dept-select-wrapper" v-click-outside="onClickOutside" >
     <button type="button" id="dept-select-trigger-open" class="user-data cursor-pointer height-2 w-100 align-center justify-between" @click.stop="triggerOpen">
       <span v-if="localDept" id="dept-select-local-dept-label">
-         {{localDept.label}}
+         {{localDept.label || localDept.title}}
       </span>
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
     </button>
@@ -20,6 +20,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import _ from 'lodash'
 export default {
 
   name: 'DeptSelect',
@@ -31,13 +32,14 @@ export default {
   data() {
     return {
       show: false,
-      localDept: { value: null, label: "No department" },
-      filterKey: "",      
+      // localDept: { value: null, label: "No department" },
+      localDept: _.cloneDeep(this.dept),
+      // filterKey: "",      
     }
   },
   watch: {
     dept(newValue){
-        this.localDept = this.departments.find( d => d.value == this.dept.id)
+      this.localDept = this.departments.find( d => d.value == this.dept.id)
     },
   },
   computed: {
@@ -51,6 +53,7 @@ export default {
       this.$emit("close-other")
     },
     selected(dept){
+      this.localDept = dept
       this.$emit("change", dept)
       this.show = false
     },
