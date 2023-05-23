@@ -302,11 +302,11 @@ export const mutations = {
         }
       });
       state.projects = newArr;
-    }    
+    }
 
   },
 
-  setProjectHistory(state, payload){
+  setProjectHistory(state, payload) {
     state.projectHistory = payload
   }
 
@@ -389,7 +389,7 @@ export const actions = {
       data: { id: payload.id, project: payload, text: `project "${payload.title}" deleted` }
     })
     return res
-    
+
   },
 
   async fetchFavProjects(ctx) {
@@ -413,14 +413,14 @@ export const actions = {
   async fetchTeamMember(ctx, payload) {
 
     await this.$axios.get(`/project/${payload.projectId}/members`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      })
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      },
+    })
       .then((res) => {
         let team = res.data.data.members;
         let data = team.map((el) => {
-          if(ctx.state.selectedProject.userId == el.user.id) {
+          if (ctx.state.selectedProject.userId == el.user.id) {
             el.isOwner = true
           } else {
             el.isOwner = false
@@ -459,8 +459,8 @@ export const actions = {
     }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
-    
-    if(res.data.statusCode == 200) {
+
+    if (res.data.statusCode == 200) {
       ctx.commit('addMember', names);
     }
 
@@ -493,7 +493,7 @@ export const actions = {
   },
 
   async addToFavorite(ctx, payload) {
-    
+
     try {
       let fav = await this.$axios.post(`/project/${payload.id}/favorite`, {}, {
         headers: {
@@ -502,14 +502,14 @@ export const actions = {
         }
       })
 
-      if(fav.data.statusCode == 200) {
+      if (fav.data.statusCode == 200) {
         ctx.dispatch("setFavProjects")
         return fav.data.message
       } else {
         return fav.data.message
       }
 
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
   },
@@ -523,13 +523,13 @@ export const actions = {
         }
       })
 
-      if(fav.data.statusCode == 200) {
+      if (fav.data.statusCode == 200) {
         ctx.dispatch("setFavProjects")
         return fav.data.message
       } else {
         return fav.data.message
       }
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
   },
@@ -543,11 +543,11 @@ export const actions = {
         }
       })
 
-      if(res.data.statusCode == 200) {
+      if (res.data.statusCode == 200) {
         ctx.commit("fetchProjectComments", res.data.data)
-      } 
+      }
       return res.data;
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
   },
@@ -568,7 +568,7 @@ export const actions = {
       } else {
         return res
       }
-    }catch(e) {
+    } catch (e) {
       console.log(e)
     }
   },
@@ -577,7 +577,7 @@ export const actions = {
 
     try {
       let trimComment = _.truncate(payload.comment.slice(3, -4), { length: 128 })
-      const res = await this.$axios.$put(`/project/${payload.projectId}/comments/${payload.commentId}`,{
+      const res = await this.$axios.$put(`/project/${payload.projectId}/comments/${payload.commentId}`, {
         comment: payload.comment,
         text: `updated comment ${trimComment}`,
         isHidden: true,
@@ -585,22 +585,22 @@ export const actions = {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
       if (res.statusCode == 200) {
-        ctx.dispatch("fetchProjectComments", {id: payload.projectId})
+        ctx.dispatch("fetchProjectComments", { id: payload.projectId })
         return res
       } else {
         return res
       }
 
-    }catch(e) {
+    } catch (e) {
       console.log(e)
     }
   },
 
   async deleteProjectComment(ctx, payload) {
-    
+
     try {
-      const res = await this.$axios.$delete(`/project/${payload.projectId}/comments/${payload.commentId}`,{
-        headers: { 
+      const res = await this.$axios.$delete(`/project/${payload.projectId}/comments/${payload.commentId}`, {
+        headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           'text': "deleted comment",
           'isHidden': true,
@@ -608,13 +608,13 @@ export const actions = {
         }
       });
       if (res.statusCode == 200) {
-        ctx.dispatch("fetchProjectComments", {id: payload.projectId})
+        ctx.dispatch("fetchProjectComments", { id: payload.projectId })
         return res
       } else {
         return res
       }
 
-    }catch(e) {
+    } catch (e) {
       console.log(e)
     }
   },
@@ -632,7 +632,7 @@ export const actions = {
         return res
       }
 
-    }catch(e) {
+    } catch (e) {
       console.log(e)
     }
   },
@@ -642,15 +642,15 @@ export const actions = {
       const hist = await this.$axios.$get("/history/all", {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-          'obj': JSON.stringify( {"projectId": payload.id} )
+          'obj': JSON.stringify({ "projectId": payload.id })
         }
       })
-      
+
       if (hist.statusCode == 200) {
         ctx.commit("setProjectHistory", hist.data)
       }
       return hist.data
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
   }

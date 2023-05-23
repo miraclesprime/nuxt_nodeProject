@@ -67,6 +67,13 @@ ul {
   }
 }
 
+.app-wrapper{
+  &__content,
+  .of-scroll-y {
+    scrollbar-gutter: unset !important;
+  }
+}
+
 .flex {
   &-shrink-0 {
     flex-shrink: 0;
@@ -106,7 +113,7 @@ ul {
 
 .side-panel {
   position: fixed;
-  z-index: 11;
+  z-index: 15;
   right: 0;
   width: $sidebar-width;
   // max-width: $sidebar-width;

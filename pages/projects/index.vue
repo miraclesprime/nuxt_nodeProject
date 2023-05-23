@@ -7,23 +7,26 @@
       <loading :loading="loading"></loading>
       <template v-if="projects.length">
 
-        <drag-table-simple :key="templateKey" :fields="tableFields" :tasks="localData" :titleIcon="{ icon: 'briefcase-solid', event: 'row-click'}" :componentKey="templateKey" :drag="false" :sectionTitle="'Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick" @edit-field="updateProject" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table-simple>
+        <!-- <drag-table-simple :key="templateKey" :fields="tableFields" :tasks="localData" :titleIcon="{ icon: 'briefcase-solid', event: 'row-click'}" :componentKey="templateKey" :drag="false" :sectionTitle="'Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick" @edit-field="updateProject" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table-simple> -->
+        <!-- <div id="subtask-favorite-wrap" class=" position-relative content-wrap" :style="{ 'width': contentWidth }"> -->
+          <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" ></advance-table>
+        <!-- </div> -->
         
         <!-- table context menu -->
-        <table-context-menu :items="projectContextItems" :show="projectContextMenu" :coordinates="popupCoords" :activeItem="activeProject" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu>
+        <!-- <table-context-menu :items="projectContextItems" :show="projectContextMenu" :coordinates="popupCoords" :activeItem="activeProject" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu> -->
 
         <!-- user-picker for list and board view -->
-        <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"></user-picker>
+        <!-- <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"></user-picker> -->
 
         <!-- date-picker for list and board view -->
-        <inline-datepicker :show="datePickerOpen" :datetime="activeProject[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
+        <!-- <inline-datepicker :show="datePickerOpen" :datetime="activeProject[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker> -->
 
         <!-- status picker for list view -->
-        <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateProject({ task: activeProject, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker>
+        <!-- <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateProject({ task: activeProject, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker> -->
         <!-- priority picker for list view -->
-        <priority-picker :show="priorityPickerOpen" :coordinates="popupCoords" @selected="updateProject({ task: activeProject, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="priorityPickerOpen = false" ></priority-picker>
+        <!-- <priority-picker :show="priorityPickerOpen" :coordinates="popupCoords" @selected="updateProject({ task: activeProject, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="priorityPickerOpen = false" ></priority-picker> -->
         <!-- department-picker for list view -->
-        <dept-picker :show="deptPickerOpen" :coordinates="popupCoords" @selected="updateProject({ task: activeProject, label:'Department', field:'departmentId', value: $event.value, historyText: $event.label })" @close="deptPickerOpen = false"></dept-picker>
+        <!-- <dept-picker :show="deptPickerOpen" :coordinates="popupCoords" @selected="updateProject({ task: activeProject, label:'Department', field:'departmentId', value: $event.value, historyText: $event.label })" @close="deptPickerOpen = false"></dept-picker> -->
       </template>
       <template v-else>
         <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
@@ -392,14 +395,15 @@ export default {
     },
 
     updateProject(payload){
-      const { task, label, field, value, historyText } = payload
-      let user = this.teamMembers.find(t => t.id == task.userId)
+      const { item, label, field, value, historyText } = payload
+      
+      let user = this.teamMembers.find(t => t.id == item.userId)
 
       this.$store.dispatch("project/updateProject", {
-        id: this.activeProject.id,
+        id: item.id,
         user,
         data: { [field]: value},
-        text: `changed ${label} to ${historyText || value}`
+        text: historyText
       })
         .then(t => {
           if (t.statusCode == 200) {

@@ -1,28 +1,30 @@
 <template>
   <client-only>
-    <div id="my-tasks-page-wrapper" class="mytask-page-wrapper ">
+    <div id="page" class="mytask-page-wrapper ">
       <page-title title="My Tasks"></page-title>
       <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="showNewTodo" @change-grid-type="($event)=>gridType = $event" @search-mytasks="searchTasks"></user-tasks-actions>
-      <div>
-        <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form>
-        <div id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y">
-          <template>
-            <template v-if="todos.length">
-              <div v-show="gridType == 'list'">
-              <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete" @edit-field="updateTask" @edit-section="renameTodo" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table>
+      <!-- <div> -->
+        <!-- <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form> -->
+        <div v-show="gridType == 'list'" id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y" :style="{ 'width': contentWidth }">
+          <!-- <template> -->
+            <!-- <template v-if="todos.length"> -->
+              <!-- <div v-show="gridType == 'list'"> -->
+              <!-- <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete" @edit-field="updateTask" @edit-section="renameTodo" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table> -->
               <!-- table context menu -->
-              <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closePopups" @item-click="contextItemClick"></table-context-menu>
+              <adv-table-two :tableFields="taskFields" :tableData="localdata" :contextItems="contextMenuItems" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @update-field="updateField"></adv-table-two>
+              <!-- <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closePopups" @item-click="contextItemClick"></table-context-menu> -->
               <loading :loading="loading"></loading>
-              </div>
-            </template>
+              <!-- </div> -->
+            <!-- </template>
             <div v-else>
               <span id="projects-0" class="d-inline-flex gap-05 align-center m-1 text-gray5">
                 <bib-icon icon="warning" variant="orange"></bib-icon> No records found
               </span>
-            </div>
-          </template>
-          <template>
-            <div id="tgs-scroll" class="bg-light h-100 of-scroll-x position-relative" v-show="gridType == 'grid'">
+            </div> -->
+          <!-- </template> -->
+        </div>
+          <!-- <template> -->
+            <div v-show="gridType == 'grid'" id="tgs-scroll" class="bg-light h-100 of-scroll-x position-relative" >
               <draggable :list="localdata" class="d-flex h-100" :move="moveTodo" v-on:end="todoDragEnd" handle=".section-drag-handle">
                 <div class="task-grid-section" v-for="(todo, index) in localdata" :key="index + viewName + '-' + key">
                   <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
@@ -67,7 +69,7 @@
                 <div class="task-grid-section " id="task-grid-section-blank-4" style="border-left-color: transparent;"></div>
               </draggable>
             </div>
-          </template>
+          <!-- </template> -->
           
           <!-- user-picker for board view -->
           <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"></user-picker>
@@ -79,7 +81,7 @@
           <priority-picker :show="priorityPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="priorityPickerOpen = false" ></priority-picker>
           <!-- department-picker for list view -->
           <dept-picker :show="deptPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Department', field:'departmentId', value: $event.value, historyText: $event.label })" @close="deptPickerOpen = false"></dept-picker>
-        </div>
+
         
         <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
 
@@ -106,7 +108,7 @@
         </bib-popup-notification-wrapper>
 
         <confirm-dialog v-if="confirmModal" :message="confirmMsg" @close="confirmDelete"></confirm-dialog>
-      </div>
+      <!-- </div> -->
     </div>
   </client-only>
 </template>
@@ -160,6 +162,7 @@ export default {
       confirmMsg: "",
       alertDialog: false,
       alertMsg:"",
+      contentWidth: "100%",
     }
   },
 
@@ -169,6 +172,7 @@ export default {
       favTasks: 'task/getFavTasks',
       currentTask: 'task/getSelectedTask',
       teamMembers: "user/getTeamMembers",
+      sidebar: "task/getSidebarVisible",
     })
   },
 
@@ -184,6 +188,18 @@ export default {
     gridType() {
       this.key++;
     },
+    sidebar(newVal){
+      const page = document.getElementById("page")
+      this.$nextTick(() => {
+        const panel = document.getElementById("side-panel-wrapper")
+        console.log("page width="+page.scrollWidth+", panel width="+panel.offsetWidth)
+        if (this.sidebar) {
+          this.contentWidth = (page.scrollWidth - panel.offsetWidth) + 'px'
+        } else {
+          this.contentWidth = '100%'
+        }
+      });
+    }
   },
 
   created() {
@@ -371,6 +387,28 @@ export default {
       }
     },
 
+    updateField(payload){
+      console.log(payload)
+
+      /*let user
+      if (payload.field == "userId" && payload.value != '') {
+        user = this.teamMembers.filter(t => t.id == payload.value)
+      } else {
+        user = null
+      }*/
+
+      this.$store.dispatch("task/updateTask", {
+        id: payload.id,
+        projectId: payload.item.project[0].projectId || payload.item.project[0].project.id,
+        data: { [payload.field]: payload.value },
+        text: payload.historyText
+      })
+        .then(t => {
+          this.updateKey()
+        })
+        .catch(e => console.warn(e))
+    },
+
     taskMarkComplete(task) {
       this.loading = true
       if (typeof task == "object" && Object.keys(task).length > 0) {} else {
@@ -388,6 +426,7 @@ export default {
     },
 
     updateTask(payload) {
+      // console.log(payload)
       let user
       if (payload.field == "userId" && payload.value != '') {
         user = this.teamMembers.filter(t => t.id == payload.value)
@@ -822,9 +861,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .mytask-page-wrapper {
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  /*display: grid;
   grid-template-rows: auto auto calc(100vh - 150px);
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr;*/
 }
 
 .highlight {

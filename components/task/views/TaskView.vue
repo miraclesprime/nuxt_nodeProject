@@ -20,6 +20,8 @@
 
     <template>
       <!-- task list table -->
+
+      <!-- updated by @wen -->
       <div v-show="gridType === 'list'">
 
       <drag-table
@@ -48,6 +50,7 @@
         @status-picker="showStatusPicker"
         @priority-picker="showPriorityPicker"
         @dept-picker="showDeptPicker"
+ 	 @change-section="changeSection"
       ></drag-table>
       <!-- table context menu -->
       <table-context-menu
@@ -332,6 +335,9 @@ export default {
   },
 
   methods: {
+    changeSection($event){
+      this.newSection=$event
+    },
     taskByOrder() {
       this.localdata = JSON.parse(JSON.stringify(this.sections));
 
@@ -700,7 +706,22 @@ export default {
         text: `section '${$event.title}' created`,
       });
       if (res.statusCode == 200) {
-        this.updateKey();
+        this.$store
+          .dispatch("section/fetchProjectSections", {
+            projectId: this.$route.params.id,
+            filter: "all",
+          })
+          .then(() => {
+            this.taskByOrder();
+
+            let tmp = [];
+            tmp.push(this.localdata[this.localdata.length - 1]);
+            let i;
+            for (i = 1; i < this.localdata.length; ++i)
+              tmp.push(this.localdata[i - 1]);
+            this.localdata = tmp;
+            this.sectionDragEnd(this.localdata);
+          });
         this.newSection = false;
         this.sectionLoading = false;
       } else {
