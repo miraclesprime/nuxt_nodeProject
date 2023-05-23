@@ -421,7 +421,7 @@ export default {
     }, 800),
 
     debounceTitle: _.debounce(function(value, item) {
-      this.$emit("update-field", { id: item.id, field: "title", value: item.title, label: "Title", historyText: value, item: item })
+      this.$emit("update-field", { id: item.id, field: "title", value: value, label: "Title", historyText: `Changed Title to ${value}`, item: item })
     }, 800),
     updateStatus(status, item) {
       this.$emit("update-field", { id: item.id, field: "statusId", value: status.value, label: "Status", historyText: `changed Status to ${status.label}`, item: item })
@@ -433,11 +433,17 @@ export default {
       this.$emit("update-field", { id: item.id, field: "departmentId", value: dept.value, label: "Department", historyText: `changed department to ${dept.label}`, item: item })
     },
     updateAssignee(user, item) { 
-      this.$emit("update-field", { id: item.id, field: "userId", value: user.id, label: "Assignee", historyText: user.label, item: item })
+      this.$emit("update-field", { id: item.id, field: "userId", value: user.id, label: "Assignee", historyText: `Changed Assignee To ${user.label}`, item: item })
     },
     updateDate(d, item, field) {
       let date = new Date(d);
-      this.$emit("update-field", { id: item.id, field: `${field}`, value: date, label: "Date", historyText: `Changed date to ${dayjs(d).format('DD MMM YYYY')}`, item: item})
+      let dateFieldText = '';
+      if(field == 'startDate') {
+        dateFieldText = 'Start Date'
+      } else {
+        dateFieldText = 'Due Date'
+      }
+      this.$emit("update-field", { id: item.id, field: `${field}`, value: date, label: "Date", historyText: `Changed ${dateFieldText} to ${dayjs(d).format('DD MMM YYYY')}`, item: item})
     },
   }
 }
