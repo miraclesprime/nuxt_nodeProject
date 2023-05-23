@@ -26,60 +26,70 @@ export const TABLE_FIELDS = [{
 
 export const PROJECT_FIELDS = [
   {
-      key: "title",
-      label: "Project name",
-      width: '30%',
-      header_icon: {
-          icon: 'swap-vertical',
-          event: 'table-sort',
-          isActive: false
-      },
-      event: "task-click",
+    label: 'Project name',
+    key: 'title',
+    width: '20%',
+    icon: {
+      icon: 'check-circle-solid',
+      variant: 'gray2',
+      event: 'title-icon-click'
+    },
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false,
+    },
+    event: "title-click",
   },
   {
-      key: "userId",
-      label: "Assignee",
-      header_icon: {
-          icon: 'swap-vertical',
-          event: 'table-sort',
-          isActive: false
-      }
+    label: 'Status',
+    key: 'status',
+    width: '9%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
   },
   {
-      key: "status",
-      label: "Status",
-      header_icon: {
-          icon: 'swap-vertical',
-          event: 'table-sort',
-          isActive: false
-      }
+    label: 'Priority',
+    key: 'priority',
+    width: '9%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
   },
   {
-      key: "startDate",
-      label: "Start Date",
-      header_icon: {
-          icon: 'swap-vertical',
-          event: 'table-sort',
-          isActive: false
-      }
+    label: 'Assignee',
+    key: 'userId',
+    width: '12%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
   },
   {
-      key: "dueDate",
-      label: "Due Date",
-      header_icon: {
-          icon: 'swap-vertical',
-          event: 'table-sort',
-          isActive: false
-      }
+    label: 'Start Date',
+    key: 'startDate',
+    width: '8%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
   },
   {
-      key: "priority",
-      label: "Priority",
-      header_icon: {
-          icon: 'swap-vertical',
-          event: 'table-sort',
-          isActive: false
-      }
+    label: 'Due Date',
+    key: 'dueDate',
+    width: '8%',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
   },
   {
       key: "tag",

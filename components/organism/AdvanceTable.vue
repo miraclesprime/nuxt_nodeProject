@@ -58,10 +58,10 @@
               <template v-if="field.key == 'department'">
                 <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
               </template>
-              <template v-if="field.key.includes('Date')" class="date-cell" @click.stop>
+              <template v-if="field.key.includes('Date')" class="date-cell">
                 <!-- {{$formatDate(item[field.key])}} -->
                 <!-- <bib-datepicker class="align-right" :value="new Date(item[field.key])" format="dd MMM YYYY" @click.native.stop="" @input="updateDate"></bib-datepicker> -->
-                <bib-datetime-picker v-model="item[field.key]" format="DD MM YYYY" displayFormat="DD MM YYYY" placeholder="No date" @input="updateDate"></bib-datetime-picker>
+                <bib-datetime-picker v-model="item[field.key]" format="MM/DD/YYYY" placeholder="No date" @input="updateDate($event, item, field.key)" @click.native.stop></bib-datetime-picker>
 
               </template>
             </div>
@@ -207,7 +207,7 @@ export default {
       var self = this;
 
       var dragColumns = table.children[0].children
-      console.log(dragColumns)
+      // console.log(dragColumns)
       if (!dragColumns) return; // return if no table exists or no one row exists
 
       var dragColumnNo; // current dragging column
@@ -421,23 +421,23 @@ export default {
     }, 800),
 
     debounceTitle: _.debounce(function(value, item) {
-      this.$emit("update-title", { id: item.id, field: "title", value: value, label: "Title", historyText: value })
+      this.$emit("update-field", { id: item.id, field: "title", value: item.title, label: "Title", historyText: value, item: item })
     }, 800),
     updateStatus(status, item) {
-      console.log(status, item)
+      this.$emit("update-field", { id: item.id, field: "statusId", value: status.value, label: "Status", historyText: `changed Status to ${status.label}`, item: item })
     },
     updatePriority(priority, item) {
-      console.log(priority, item)
+      this.$emit("update-field", { id: item.id, field: "priorityId", value: priority.value, label: "Priority", historyText: `changed priority to ${priority.label}`, item: item })
     },
     updateDept(dept, item){
-      console.log(dept, item)
+      this.$emit("update-field", { id: item.id, field: "departmentId", value: dept.value, label: "Department", historyText: `changed department to ${dept.label}`, item: item })
     },
-    updateAssignee(user, item) {
-      console.log(user, item)
-      this.$emit("update-field", { id: item.id, field: "userId", value: user.id, label: "Assignee", historyText: user.label })
+    updateAssignee(user, item) { 
+      this.$emit("update-field", { id: item.id, field: "userId", value: user.id, label: "Assignee", historyText: user.label, item: item })
     },
-    updateDate(date) {
-      console.log(date)
+    updateDate(d, item, field) {
+      let date = new Date(d);
+      this.$emit("update-field", { id: item.id, field: `${field}`, value: date, label: "Date", historyText: `Changed date to ${dayjs(d).format('DD MMM YYYY')}`, item: item})
     },
   }
 }
