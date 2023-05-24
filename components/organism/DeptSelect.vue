@@ -33,19 +33,29 @@ export default {
     return {
       show: false,
       // localDept: { value: null, label: "No department" },
-      localDept: _.cloneDeep(this.dept),
+      localDept: {},
       // filterKey: "",      
     }
   },
   watch: {
-    dept(newValue){
+    /*dept(newValue){
+      this.localDept = this.departments.find( d => d.value == newValue.id)
+    },*/
+    departments(newValue){
       this.localDept = this.departments.find( d => d.value == this.dept.id)
-    },
+    }
   },
   computed: {
     ...mapGetters({
       departments: "department/getAllDepartments",
     }),
+  },
+  mounted() {
+    if (this.dept) {
+      this.localDept = this.departments.find( d => d.value == this.dept.id)
+    } else {
+      this.localDept = { label: 'No department', value: 0 }
+    }
   },
   methods: {
     triggerOpen() {
