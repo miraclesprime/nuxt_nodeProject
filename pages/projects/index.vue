@@ -3,7 +3,7 @@
     <page-title title="Projects"></page-title>  
     <project-actions @sortValue='sortName=$event' @viewValue='viewName=$event' v-on:loading="loading = $event" v-on:sort="sortProject" @search-projects="searchProjects" />
    
-    <div id="projects-list-wrapper" class="projects-list-wrapper of-scroll-y position-relative" >
+    <div id="projects-list-wrapper" class="projects-list-wrapper position-relative" >
       <loading :loading="loading"></loading>
       <template v-if="projects.length">
 
@@ -423,7 +423,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .projects-wrapper { display: flex; flex-direction: column; height: 100%; }
-
+.projects-list-wrapper { overflow: auto; }
 details {
   summary::-webkit-details-marker {
     display: none;
