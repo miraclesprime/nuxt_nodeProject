@@ -20,8 +20,8 @@
       <div class=" adv-table resizable bg-white" :style="{'width': tableWidth}" role="table"  >
         <div class="tr position-sticky" style="top: 0; z-index: 2;" role="row">
           <div v-if="drag" class="width-2 th" role="cell"></div>
-          <div v-for="(field, index) in tableFields" :key="field+index" class="th" :class="{ 'flex-grow-1': !field.width }" role="cell" :style="{ width: field.width}" :ref="'th'+field.key">
-            <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer" @click="$emit(field.header_icon.event, field)">
+          <div v-for="(field, index) in tableFields" :key="field+index" class="th" :class="{ 'flex-grow-1': !field.width }" role="cell" :style="{ width: field.width}" :ref="'th'+field.key" @click="$emit(field.header_icon.event, field.key)">
+            <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer" >
                 <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'gray1' : 'gray4'"></bib-icon>
               </span></div>
           </div>
@@ -40,7 +40,7 @@
                       <bib-icon icon="arrow-down" :scale="0.5" style="transform: rotate(-90deg);" ></bib-icon> 
                       <span class="font-w-700 cursor-pointer ml-025" >
                         <!-- {{section.title}} -->
-                        <input type="text" class="editable-input section-title" placeholder="Enter title..." @input="debounceNewSection($event.target.value, $event)" @blur="restoreField" />
+                        <input type="text" class="editable-input section-title" placeholder="Enter title..." @input="debounceNewSection($event.target.value, $event)" ref="newsectionInput" @blur="restoreField" />
                       </span>
                     </div>
                   </div>
@@ -219,16 +219,21 @@ export default {
       // highlight: false,
       validTitle: false,
       localData: _.cloneDeep(this.tableData),
-      localNewrow: _.cloneDeep(this.newRow)
+      localNewrow: _.cloneDeep(this.newRow),
     }
   },
+
+  /*watch: {
+    showNewsection(newVal){
+      
+    },
+  },*/
 
   computed: {
     ...mapGetters({
       teamMembers: "user/getTeamMembers",
     }),
 
-    
     /*teamOptions(){
       return this.teamMembers.map(t => {
         return { value : t.id, label: t.label }
@@ -242,6 +247,7 @@ export default {
         }
       })
     },*/
+
     tableWidth() {
       const main = document.getElementById("main-content")
       console.log(main.clientWidth, main.offsetWidth, main.scrollWidth)
@@ -536,7 +542,7 @@ export default {
       }
       this.localNewrow.sectionId = ""
       this.localNewrow.title = ""
-      this.showNewsection = false
+      this.$emit("toggle-newsection", false)
       // console.log('unselect all ')
       // this.$emit("hide-newrow")
       // this.$emit("close-context-menu")

@@ -286,7 +286,7 @@ export default {
         // remember columns widths in cookies for server side
         var colWidth = '';
         var separator = '';
-        for (var i = 0; i < dragColumns.length; i++) {
+        for (var i = 1; i < dragColumns.length; i++) {
           colWidth += separator + parseInt(self.getWidth(dragColumns[i]));
           separator = '+';
         }
