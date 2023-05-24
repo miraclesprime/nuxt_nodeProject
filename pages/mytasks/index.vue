@@ -5,13 +5,13 @@
       <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="showNewTodo" @change-grid-type="($event)=>gridType = $event" @search-mytasks="searchTasks"></user-tasks-actions>
       <!-- <div> -->
         <!-- <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form> -->
-        <div v-show="gridType == 'list'" id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y" :style="{ 'width': contentWidth }">
+        <div v-show="gridType == 'list'" id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative " :style="{ 'width': contentWidth }">
           <!-- <template> -->
             <!-- <template v-if="todos.length"> -->
               <!-- <div v-show="gridType == 'list'"> -->
               <!-- <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete" @edit-field="updateTask" @edit-section="renameTodo" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table> -->
               <!-- table context menu -->
-              <adv-table-two :tableFields="taskFields" :tableData="localdata" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @update-field="updateField" ></adv-table-two>
+              <adv-table-two :tableFields="taskFields" :tableData="localdata" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @create-section="createTodo" ></adv-table-two>
               <!-- <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closePopups" @item-click="contextItemClick"></table-context-menu> -->
               <loading :loading="loading"></loading>
               <!-- </div> -->
@@ -41,12 +41,13 @@
                                 <bib-icon icon="add"></bib-icon>
                                 <span class="ml-05" :id="'tgs-list-span'+todo.id">Add task</span>
                               </div>
-                            </span><span class="list__item" :id="'tgs-list-2'+todo.id" v-on:click="showRenameModal(todo)">
+                            </span>
+                            <!-- <span class="list__item" :id="'tgs-list-2'+todo.id" v-on:click="showRenameModal(todo)">
                               <div class="d-flex align-center" :id="'tgs-list-flex-2'+todo.id">
                                 <bib-icon icon="pencil"></bib-icon>
                                 <span class="ml-05" :id="'tgs-list-span'+todo.id">Rename</span>
                               </div>
-                            </span>
+                            </span> -->
                             <hr>
                             <span class="list__item danger" :id="'tgs-list-3'+todo.id" v-on:click="deleteTodo(todo)">
                               Delete section
@@ -86,7 +87,7 @@
         <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
 
         <!-- rename section modal -->
-        <bib-modal-wrapper v-if="renameModal" title="Rename section" @close="renameModal = false">
+        <!-- <bib-modal-wrapper v-if="renameModal" title="Rename section" @close="renameModal = false">
           <template slot="content">
             <div>
               <bib-input type="text" v-model.trim="todoTitle" placeholder="Enter name..."></bib-input>
@@ -99,7 +100,7 @@
               <bib-button label="Rename" variant="success" pill v-on:click="renameTodo"></bib-button>
             </div>
           </template>
-        </bib-modal-wrapper>
+        </bib-modal-wrapper> -->
         <bib-popup-notification-wrapper>
           <template #wrapper>
             <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" autohide="3500">
@@ -556,7 +557,7 @@ export default {
 
     async createTodo($event) {
       console.log('create-todo', $event)
-      this.sectionLoading = true
+      // this.sectionLoading = true
       const todo = await this.$store.dispatch("todo/createTodo", {
         userId: JSON.parse(localStorage.getItem("user")).sub,
         title: $event,
@@ -565,18 +566,19 @@ export default {
       if (todo.statusCode == 200) {
         this.updateKey()
         this.newSection = false
-        this.sectionLoading = false
+        // this.sectionLoading = false
       } else {
-        this.sectionError = todo.message
-        this.sectionLoading = false
+        // this.sectionError = todo.message
+        // this.sectionLoading = false
+        console.log(todo)
       }
     },
 
-    showRenameModal(todo) {
+    /*showRenameModal(todo) {
       this.todoTitle = todo.title
       this.todoId = todo.id
       this.renameModal = true
-    },
+    },*/
 
     renameTodo(payload) {
       this.$store.dispatch("todo/renameTodo", {
@@ -883,7 +885,9 @@ export default {
   grid-template-rows: auto auto calc(100vh - 150px);
   grid-template-columns: 1fr;*/
 }
-
+.mytask-table-wrapper {
+  overflow: auto;
+}
 .highlight {
   outline: 2px skyblue dashed;
   background-color: azure;

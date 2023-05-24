@@ -28,7 +28,25 @@
         </div>
 
         <draggable v-model="tableData" class="section-draggable" handle=".section-drag-handle">
-
+          <template v-if="showNewsection">
+            <div class="tr position-relative height-205">
+              <div class="position-absolute border-top-light border-bottom-light" style="inset: 0; ">
+                  <div class="section-header d-flex align-center gap-05 height-205 " >
+                    <div class="section-drag-handle width-2 h-100" ><!-- <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
+                      <rect fill="none" height="24" width="24" />
+                      <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg> --><bib-icon icon="drag" variant="gray5"></bib-icon>
+                    </div>
+                    <div class="position-sticky align-center" style="left: 0.5rem;" >
+                      <bib-icon icon="arrow-down" :scale="0.5" style="transform: rotate(-90deg);" ></bib-icon> 
+                      <span class="font-w-700 cursor-pointer ml-025" >
+                        <!-- {{section.title}} -->
+                        <input type="text" class="editable-input section-title" placeholder="Enter title..." @input="debounceNewSection($event.target.value, $event)" @blur="restoreField" />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </template>
           <template v-for="section in tableData">
 
             <!-- <template v-if="!isCollapsed"> -->
@@ -187,6 +205,7 @@ export default {
         }
       }
     },
+    showNewsection: { type: Boolean, default: false },
   },
 
   data() {
@@ -225,8 +244,8 @@ export default {
     },*/
     tableWidth() {
       const main = document.getElementById("main-content")
-      // console.log(main.clientWidth, main.offsetWidth, main.scrollWidth)
-      let w = main.scrollWidth
+      console.log(main.clientWidth, main.offsetWidth, main.scrollWidth)
+      let w = main.scrollWidth - 18
 
       return w + "px"
 
@@ -517,6 +536,7 @@ export default {
       }
       this.localNewrow.sectionId = ""
       this.localNewrow.title = ""
+      this.showNewsection = false
       // console.log('unselect all ')
       // this.$emit("hide-newrow")
       // this.$emit("close-context-menu")
@@ -589,6 +609,16 @@ export default {
       // let d = new Date(date)
       this.$emit("update-field", { id: item.id, field, value: new Date(d), label, historyText: `Changed ${label} to ${dayjs(d).format('DD MMM YYYY')}`, item: item})
     },
+    debounceNewSection: _.debounce(function(value, event) {
+      if (value) {
+        // console.log(...arguments)
+        event.target.classList.remove("error")
+        this.$emit("create-section", value)
+      } else {
+        console.warn("Title cannot be left blank")
+        event.target.classList.add("error")
+      }
+    }, 800),
     debounceRenameSection: _.debounce(function (id, event) {
       if (_.trim(event.target.value) == "") {
         event.target.classList.add("error");

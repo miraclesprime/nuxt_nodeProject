@@ -1,7 +1,7 @@
 <template>
   <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll">
 
-      <draggable v-if="drag" class="task-draggable adv-table resizable bg-white" handle=".drag-handle" :style="{'width': tableWidth}" role="table" @start="rowDragStart" @end="rowDragEnd" :move="moveTask" >
+      <draggable class="task-draggable adv-table resizable bg-white" handle=".drag-handle" :style="{'width': tableWidth}" role="table" @start="rowDragStart" @end="rowDragEnd" :move="moveTask" >
         <div slot="header" class="tr" role="row" id="adv-table-row1">
           <div v-if="drag" class="width-2 th" id="adv-table-cell1" role="cell"></div>
           <div v-for="(field, index) in tableFields" :key="field+index" class="th" id="adv-table-th1" role="cell" :style="{ width: field.width}">
@@ -174,10 +174,8 @@ export default {
     },
     tableWidth() {
       const main = document.getElementById("main-content")
-      let w = main.scrollWidth
-
+      let w = main.scrollWidth - 18
       return w + "px"
-
     },
   },
 
