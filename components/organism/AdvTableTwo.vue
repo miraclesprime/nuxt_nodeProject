@@ -28,10 +28,12 @@
         </div>
 
         <draggable v-model="tableData" class="section-draggable" handle=".section-drag-handle">
+
           <template v-for="section in tableData">
 
             <!-- <template v-if="!isCollapsed"> -->
             <draggable class="task-draggable" handle=".drag-handle" :group="{ name: 'tasks' }">
+
               <div slot="header" class="tr position-relative height-205">
                 <div class="position-absolute border-top-light border-bottom-light" style="inset: 0; ">
                   <div class="section-header d-flex align-center gap-05 height-205 " >
@@ -61,7 +63,7 @@
                   <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell" :class="{'flex-grow-1': !field.width, 'date-cell': field.key.includes('Date')}" :style="`flex: ${field.width} 0 0;`" >
                     <div v-if="field.key == 'title'" class="align-center w-100">
                       <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}" @click.stop="markComplete($event, item)">
-                        <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success"></bib-icon>
+                        <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success-sub4"></bib-icon>
                       </span>
                       <span v-if="field.event" class=" flex-grow-1" style="line-height:1.25;">
                         <input type="text" class="editable-input" :value="item[field.key]" @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
@@ -73,7 +75,9 @@
                         <bib-icon icon="arrow-right" variant="gray4" hover-variant="gray5"></bib-icon>
                       </span>
                     </div>
-                    <template v-if="field.key == 'project'">{{item[field.key][0]?.project.title}}</template>
+                    <template v-if="field.key == 'project'">
+                      <div class="align-center height-2">{{item[field.key][0]?.project.title}}</div>
+                    </template>
                     <template v-if="field.key == 'userId'">
                       <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" class="flex-grow-1" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
                     </template>
@@ -93,27 +97,31 @@
                     </template>
                   </div>
                 </div>
-                <div v-if="localNewrow.sectionId != section.id" class="tr" role="row" style="border-bottom: var(--bib-light)">
-                  <div class="td " role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
-                  <div class="td" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
-                    <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
-                      <bib-icon :icon="plusButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{plusButton.label}}</span>
-                    </div>
-                  </div>
-                  <!-- <div v-for="n in tableFields.length-1" class="td" style="border-bottom-color: transparent; border-right-color: transparent;"></div> -->
-                </div>
 
-                <div v-show="localNewrow.sectionId == section.id" class="tr" role="row" @click.self="unselectAll">
-                  <div v-if="drag" class="td text-center " role="cell">
-                    <span class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
-                  </div>
-                  <!-- <template v-for="td in tableFields"> -->
-                    <div class="td" role="cell">
-                      <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate" @blur="newRowCreate" required placeholder="Enter title...">
+                <template v-if="plusButton">
+                  <div  class="tr" role="row" style="border-bottom: var(--bib-light)">
+                    <div class="td " role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
+                    <div class="td" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
+                      <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
+                        <bib-icon :icon="plusButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{plusButton.label}}</span>
+                      </div>
                     </div>
-                    <!-- <div v-else class="td" role="cell"></div> -->
-                  <!-- </template> -->
-                </div>
+                    <!-- <div v-for="n in tableFields.length-1" class="td" style="border-bottom-color: transparent; border-right-color: transparent;"></div> -->
+                  </div>
+
+                  <div v-show="localNewrow.sectionId == section.id" class="tr" role="row" @click.self="unselectAll">
+                    <div v-if="drag" class="td text-center " role="cell">
+                      <span class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
+                    </div>
+                    <!-- <template v-for="td in tableFields"> -->
+                      <div class="td" role="cell">
+                        <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate" @blur="newRowCreate" required placeholder="Enter title...">
+                      </div>
+                      <!-- <div v-else class="td" role="cell"></div> -->
+                    <!-- </template> -->
+                  </div>
+                </template>
+
               </div>
 
             </draggable>
@@ -153,7 +161,7 @@ export default {
     drag: { type: Boolean, default: true },
     // height: { type: String, default: '100%' }
     plusButton: {
-      type: Object,
+      type: [Object, Boolean],
       default () {
         return {
           label: "New Task",
@@ -162,17 +170,17 @@ export default {
       }
     },
     newRow: {
-      type: Object,
+      type: [Object, Boolean],
       default () {
         return {
           sectionId: "",
           title: "",
-          userId: "",
+          user: [],
           statusId: 1,
           priorityId: 3,
           startDate: "",
           dueDate: "",
-          departmentId: "",
+          departmentId: null,
           description: "",
           budget: "",
           text: "",
@@ -778,6 +786,7 @@ export default {
     }
   }
 
+  .vdpComponent__calendar-icon { z-index: 0 }
   .vdpComponent__input {
     margin: 0;
     min-height: 2rem;

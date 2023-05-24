@@ -580,7 +580,7 @@ export default {
       line-height: normal;
     }
   }
-
+  .vdpComponent__calendar-icon { z-index: 0 }
   .vdpComponent__input {
     margin: 0;
     min-height: 2rem;

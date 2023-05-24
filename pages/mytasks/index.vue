@@ -11,7 +11,7 @@
               <!-- <div v-show="gridType == 'list'"> -->
               <!-- <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete" @edit-field="updateTask" @edit-section="renameTodo" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table> -->
               <!-- table context menu -->
-              <adv-table-two :tableFields="taskFields" :tableData="localdata" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @update-field="updateField"></adv-table-two>
+              <adv-table-two :tableFields="taskFields" :tableData="localdata" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @update-field="updateField" ></adv-table-two>
               <!-- <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closePopups" @item-click="contextItemClick"></table-context-menu> -->
               <loading :loading="loading"></loading>
               <!-- </div> -->
@@ -102,7 +102,7 @@
         </bib-modal-wrapper>
         <bib-popup-notification-wrapper>
           <template #wrapper>
-            <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
+            <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" autohide="3500">
             </bib-popup-notification>
           </template>
         </bib-popup-notification-wrapper>
@@ -173,6 +173,7 @@ export default {
       currentTask: 'task/getSelectedTask',
       teamMembers: "user/getTeamMembers",
       sidebar: "task/getSidebarVisible",
+      loggedUser: "user/getUser2",
     })
   },
 
@@ -370,7 +371,7 @@ export default {
       if (isFav) {
         this.$store.dispatch("task/removeFromFavorite", { id: task.id })
           .then(msg => {
-            this.updateKey()
+            this.updateKey("Removed favorite")
             this.loading = false
           })
           .catch(e => {
@@ -380,7 +381,7 @@ export default {
       } else {
         this.$store.dispatch("task/addToFavorite", { id: task.id })
           .then(msg => {
-            this.updateKey()
+            this.updateKey("Added to favorite")
             this.loading = false
           })
           .catch(e => {
@@ -419,7 +420,7 @@ export default {
       } else {
         task = this.activeTask
       }*/
-      console.log(task)
+      // console.log(task)
       this.$store.dispatch('task/updateTaskStatus', task)
         .then((d) => {
           // this.loading = false
@@ -491,7 +492,7 @@ export default {
     },
 
     confirmDelete(state){
-      console.log(state, this.taskToDelete)
+      // console.log(state, this.taskToDelete)
       this.confirmModal = false
       this.confirmMsg = ""
       if (state) {
@@ -518,6 +519,24 @@ export default {
       this.taskToDelete = task
       this.confirmMsg = "Are you sure "
       this.confirmModal = true
+    },
+
+    createTask(item){
+      let taskdata = item
+
+      taskdata.user = [{
+        id: this.loggedUser.Id,
+        email: this.loggedUser.Email,
+        firstName: this.loggedUser.FirstName,
+        lastName: this.loggedUser.LastName
+      }]
+      console.log(taskdata)
+      this.$store.dispatch("task/createTask", taskdata)
+      .then(t => {
+        console.log(t)
+        this.updateKey()
+      })
+      .catch(e => console.warn(e))
     },
 
     updateKey($event) {
@@ -823,15 +842,10 @@ export default {
     },
 
     searchTasks(text) {
-
       let formattedText = text.toLowerCase().trim();
-
       let Ts = JSON.parse(JSON.stringify(this.todos))
-      
       let newArr = Ts.map((todo) => {
-
           let filtered = todo.tasks.filter((t) => {
-          
           if(t.description) {
             if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText) || t.description.includes(formattedText) || t.description.toLowerCase().includes(formattedText)) {
               return t
@@ -843,11 +857,8 @@ export default {
           }
 
         })
-
         todo.tasks = filtered
-
         return todo;
-      
       })
 
       if(newArr.length >= 0) {
