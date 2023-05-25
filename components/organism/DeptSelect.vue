@@ -2,7 +2,7 @@
   <div class="picker-wrapper" id="dept-select-wrapper" v-click-outside="onClickOutside" >
     <button type="button" id="dept-select-trigger-open" class="user-data cursor-pointer height-2 w-100 align-center justify-between" @click.stop="triggerOpen">
       <span v-if="localDept" id="dept-select-local-dept-label">
-         {{localDept.label || localDept.title}}
+         {{localDept.label}}
       </span>
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
     </button>
@@ -33,19 +33,33 @@ export default {
     return {
       show: false,
       // localDept: { value: null, label: "No department" },
-      localDept: _.cloneDeep(this.dept),
+      localDept: {},
       // filterKey: "",      
     }
   },
   watch: {
-    dept(newValue){
+    /*dept(newValue){
       this.localDept = this.departments.find( d => d.value == newValue.id)
-    },
+    },*/
+    departments(newValue){
+      if (this.dept) {
+        this.localDept = newValue.find( d => d.value == this.dept.id)
+      } else {
+        this.localDept = { label: 'No department', value: 0 }
+      }
+    }
   },
   computed: {
     ...mapGetters({
       departments: "department/getAllDepartments",
     }),
+  },
+  mounted() {
+    if (this.dept) {
+      this.localDept = this.departments.find( d => d.value == this.dept.id)
+    } else {
+      this.localDept = { label: 'No department', value: 0 }
+    }
   },
   methods: {
     triggerOpen() {

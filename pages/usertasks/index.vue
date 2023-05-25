@@ -269,16 +269,16 @@ export default {
       this.$nuxt.$emit("open-sidebar", { ...task, scrollId: scroll });
     },
 
-    contextItemClick(key) {
+    contextItemClick(key, item) {
       switch (key) {
         case "done-task":
-          this.taskMarkComplete(this.activeTask);
+          this.taskMarkComplete(item);
           break;
         case "fav-task":
-          this.taskSetFavorite(this.activeTask);
+          this.taskSetFavorite(item);
           break;
         case "delete-task":
-          this.deleteTask(this.activeTask);
+          this.deleteTask(item);
           break;
         case "assign-task":
           break;
@@ -349,25 +349,23 @@ export default {
       }
       if(payload.field==="title"){
         this.localData=this.localData.map((task)=>{
-          if(task.id===payload.task.id)
+          if(task.id===payload.item.id)
           task.title=payload.value
           return task
         })
       }
-      if (payload.task.project.length > 0) {
-        projectId =
-          payload.task.project[0].projectId ||
-          payload.task.project[0].project.id;
+      if (payload.item.project.length > 0) {
+        projectId = payload.item.project[0].projectId || payload.item.project[0].project.id;
       } else {
         projectId = null;
       }
 
       this.$store
         .dispatch("task/updateTask", {
-          id: payload.task.id,
+          id: payload.item.id,
           projectId,
           data: { [payload.field]: payload.value },
-          user,
+          user: [user],
           text: `changed ${payload.label} to ${
             payload.historyText || payload.value
           }`,

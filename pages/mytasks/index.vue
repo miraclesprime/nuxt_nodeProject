@@ -11,7 +11,7 @@
               <!-- <div v-show="gridType == 'list'"> -->
               <!-- <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete" @edit-field="updateTask" @edit-section="renameTodo" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table> -->
               <!-- table context menu -->
-              <adv-table-two :tableFields="taskFields" :tableData="localdata" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @create-section="createTodo" ></adv-table-two>
+              <adv-table-two :tableFields="taskFields" :tableData="localdata" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createTodo" ></adv-table-two>
               <!-- <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closePopups" @item-click="contextItemClick"></table-context-menu> -->
               <loading :loading="loading"></loading>
               <!-- </div> -->
@@ -716,104 +716,257 @@ export default {
       }
 
       // sort By Project
-      if ($event == 'project' && this.orderBy == 'asc') {
+      if ($event == 'project') {
+      
+          let newArr1 = [];
 
-        this.localdata.forEach(function(todo) {
-          todo["tasks"] = todo.tasks.sort((a, b) => {
-            if (a.project && b.project) {
-              return a.project[0].project.title.localeCompare(b.project[0].project.title)
+          for (let i = 0; i < this.localdata.length; i++) {
+            newArr1.push(this.localdata[i]);
+            let tNewArr = []
+            for(let j=0; j<this.localdata[i].tasks.length; j++) {
+              if (this.localdata[i].tasks[j].project.length > 0) {
+                tNewArr.unshift(this.localdata[i].tasks[j])
+              } else {
+                tNewArr.push(this.localdata[i].tasks[j])
+              }
             }
-          });
-        })
+            newArr1[i]["tasks"] = tNewArr;
+          }
 
+          if (this.orderBy == "asc") {
+
+              newArr1.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.project.length > 0 && b.project.length > 0) {
+                    return a.project[0].project.title.localeCompare(b.project[0].project.title)
+                  }
+                })
+              })
+
+          } else {
+
+            newArr1.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.project.length > 0 && b.project.length > 0) {
+                    return b.project[0].project.title.localeCompare(a.project[0].project.title)
+                  }
+                })
+              })
+          }
+
+          this.localdata = newArr1;  
       }
 
-      if ($event == 'project' && this.orderBy == 'desc') {
-        this.localdata.forEach(function(todo) {
-          todo["tasks"] = todo.tasks.sort((a, b) => {
-            if (a.project && b.project) {
-              return b.project[0].project.title.localeCompare(a.project[0].project.title)
-            }
-          });
-        })
-      }
 
       // sort By Status
       if ($event == "status") {
 
-        if (this.orderBy == "asc") {
-          this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) => a.status.text.localeCompare(b.status.text));
-          })
-        } else {
-          this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) => b.status.text.localeCompare(a.status.text));
-          })
-        }
+          let newArr2 = [];
+
+          for (let i = 0; i < this.localdata.length; i++) {
+            newArr2.push(this.localdata[i]);
+            let tNewArr = []
+            for(let j=0; j<this.localdata[i].tasks.length; j++) {
+              if (this.localdata[i].tasks[j].statusId) {
+                tNewArr.unshift(this.localdata[i].tasks[j])
+              } else {
+                tNewArr.push(this.localdata[i].tasks[j])
+              }
+            }
+            newArr2[i]["tasks"] = tNewArr;
+          }
+
+          if (this.orderBy == "asc") {
+
+              newArr2.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.statusId && b.statusId) {
+                    return a.status.text.localeCompare(b.status.text)
+                  }
+                })
+              })
+
+          } else {
+
+            newArr2.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.statusId && b.statusId) {
+                    return b.status.text.localeCompare(a.status.text)
+                  }
+                })
+              })
+          }
+
+          this.localdata = newArr2;
 
       }
 
       // sort by create date
       if ($event == 'startDate') {
-        if (this.orderBy == "asc") {
-          this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
-          })
-        } else {
-          this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
-          })
+
+        let newArr3 = [];
+
+        for (let i = 0; i < this.localdata.length; i++) {
+          newArr3.push(this.localdata[i]);
+          let tNewArr = []
+          for(let j=0; j<this.localdata[i].tasks.length; j++) {
+            if (this.localdata[i].tasks[j].startDate) {
+              tNewArr.unshift(this.localdata[i].tasks[j])
+            } else {
+              tNewArr.push(this.localdata[i].tasks[j])
+            }
+          }
+          newArr3[i]["tasks"] = tNewArr;
         }
+
+        if (this.orderBy == "asc") {
+
+            newArr3.forEach(todo => {
+              todo["tasks"] = todo.tasks.sort((a, b) => {
+                if (a.startDate && b.startDate) {
+                  return new Date(a.startDate) - new Date(b.startDate)
+                }
+              })
+            })
+
+        } else {
+
+          newArr3.forEach(todo => {
+              todo["tasks"] = todo.tasks.sort((a, b) => {
+                if (a.startDate && b.startDate) {
+                  return new Date(b.startDate) - new Date(a.startDate)
+                }
+              })
+            })
+        }
+
+        this.localdata = newArr3;
       }
 
 
       // sort by due date
       if ($event == 'dueDate') {
-        if (this.orderBy == "asc") {
-          this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
-          })
-        } else {
-          this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate));
-          })
+        let newArr4 = [];
+
+        for (let i = 0; i < this.localdata.length; i++) {
+          newArr4.push(this.localdata[i]);
+          let tNewArr = []
+          for(let j=0; j<this.localdata[i].tasks.length; j++) {
+            if (this.localdata[i].tasks[j].dueDate) {
+              tNewArr.unshift(this.localdata[i].tasks[j])
+            } else {
+              tNewArr.push(this.localdata[i].tasks[j])
+            }
+          }
+          newArr4[i]["tasks"] = tNewArr;
         }
+
+        if (this.orderBy == "asc") {
+
+            newArr4.forEach(todo => {
+              todo["tasks"] = todo.tasks.sort((a, b) => {
+                if (a.dueDate && b.dueDate) {
+                  return new Date(a.dueDate) - new Date(b.dueDate)
+                }
+              })
+            })
+
+        } else {
+
+          newArr4.forEach(todo => {
+              todo["tasks"] = todo.tasks.sort((a, b) => {
+                if (a.dueDate && b.dueDate) {
+                  return new Date(b.dueDate) - new Date(a.dueDate)
+                }
+              })
+            })
+        }
+
+        this.localdata = newArr4;
       }
 
 
       // sort by priority
       if ($event == "priority") {
-        if (this.orderBy == "asc") {
-          this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) => a.priority.id - b.priority.id);
-          })
-        } else {
-          this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) => b.priority.id - a.priority.id);
-          })
-        }
+        let newArr5 = [];
+
+          for (let i = 0; i < this.localdata.length; i++) {
+            newArr5.push(this.localdata[i]);
+            let tNewArr = []
+            for(let j=0; j<this.localdata[i].tasks.length; j++) {
+              if (this.localdata[i].tasks[j].priorityId) {
+                tNewArr.unshift(this.localdata[i].tasks[j])
+              } else {
+                tNewArr.push(this.localdata[i].tasks[j])
+              }
+            }
+            newArr5[i]["tasks"] = tNewArr;
+          }
+
+          if (this.orderBy == "asc") {
+
+              newArr5.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.priorityId && b.priorityId) {
+                    return a.priorityId - b.priorityId
+                  }
+                })
+              })
+
+          } else {
+
+            newArr5.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.priorityId && b.priorityId) {
+                    return b.priorityId - a.priorityId
+                  }
+                })
+              })
+          }
+
+          this.localdata = newArr5;
       }
 
 
       // sort by department
       if ($event == "department") {
-        if (this.orderBy == "asc") {
-          this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) => {
-              if(a.departmentId && b.departmentId) {
-                return a.department.title.localeCompare(b.priority.title)
+        let newArr6 = [];
+
+          for (let i = 0; i < this.localdata.length; i++) {
+            newArr6.push(this.localdata[i]);
+            let tNewArr = []
+            for(let j=0; j<this.localdata[i].tasks.length; j++) {
+              if (this.localdata[i].tasks[j].departmentId) {
+                tNewArr.unshift(this.localdata[i].tasks[j])
+              } else {
+                tNewArr.push(this.localdata[i].tasks[j])
               }
-            });
-          })
-        } else {
-          this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) =>  {
-              if(a.departmentId && b.departmentId) {
-                return b.department.title.localeCompare(a.priority.title)
-              }
-            });
-          })
-        }
+            }
+            newArr6[i]["tasks"] = tNewArr;
+          }
+
+          if (this.orderBy == "asc") {
+
+              newArr6.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.departmentId && b.departmentId) {
+                    return a.department.title.localeCompare(b.department.title)
+                  }
+                })
+              })
+
+          } else {
+
+            newArr6.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.departmentId && b.departmentId) {
+                    return b.department.title.localeCompare(a.department.title)
+                  }
+                })
+              })
+          }
+
+          this.localdata = newArr6;
       }
 
 
