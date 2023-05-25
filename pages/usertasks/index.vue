@@ -18,50 +18,11 @@
         <template>
           <div v-show="gridType == 'list'">
             <template>
-              <drag-table-simple
-                :key="key"
-                :componentKey="key"
-                :titleIcon="{ icon: 'check-circle', event: 'task-icon-click' }"
-                @task-icon-click="taskMarkComplete"
-                :fields="taskFields"
-                :tasks="localData"
-                :sectionTitle="'User Tasks'"
-                :drag="false"
-                v-on:new-task="toggleSidebar($event)"
-                @table-sort="sortBy"
-                @row-context="taskRightClick"
-                @row-click="openSidebar"
-                @status-picker="showStatusPicker"
-                @priority-picker="showPriorityPicker"
-                @dept-picker="showDeptPicker"
-                @edit-field="updateTask"
-                @user-picker="showUserPicker"
-                @date-picker="showDatePicker"
-              ></drag-table-simple>
-              <!-- table context menu -->
-              <table-context-menu
-                :items="contextMenuItems"
-                :show="taskContextMenu"
-                :coordinates="popupCoords"
-                :activeItem="activeTask"
-                @close-context="closeContext"
-                @item-click="contextItemClick"
-              ></table-context-menu>
-              <!-- status picker for list view -->
-              <status-picker
-                :show="statusPickerOpen"
-                :coordinates="popupCoords"
-                @selected="
-                  updateTask({
-                    task: activeTask,
-                    label: 'Status',
-                    field: 'statusId',
-                    value: $event.value,
-                    historyText: $event.label,
-                  })
-                "
-                @close="statusPickerOpen = false"
-              ></status-picker>
+             <div class="task-page-table-wrapper h-100 mytask-table-wrapper position-relative " :style="{ 'width': contentWidth }">
+
+              <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" ></advance-table>
+             </div>
+              
               <!-- date-picker for list and board view -->
               <!-- user-picker for list and board view -->
               <user-picker
@@ -79,36 +40,8 @@
                 @date-updated="updateDate"
                 @close="datePickerOpen = false"
               ></inline-datepicker>
-              <!-- priority picker for list view -->
-              <priority-picker
-                :show="priorityPickerOpen"
-                :coordinates="popupCoords"
-                @selected="
-                  updateTask({
-                    task: activeTask,
-                    label: 'Priority',
-                    field: 'priorityId',
-                    value: $event.value,
-                    historyText: $event.label,
-                  })
-                "
-                @close="priorityPickerOpen = false"
-              ></priority-picker>
-              <!-- department-picker for list view -->
-              <dept-picker
-                :show="deptPickerOpen"
-                :coordinates="popupCoords"
-                @selected="
-                  updateTask({
-                    task: activeTask,
-                    label: 'Department',
-                    field: 'departmentId',
-                    value: $event.value,
-                    historyText: $event.label,
-                  })
-                "
-                @close="deptPickerOpen = false"
-              ></dept-picker>
+              
+              
             </template>
           </div>
         </template>
@@ -198,6 +131,7 @@ export default {
       alertDialog: false,
       alertMsg: "",
       localData: [],
+      contentWidth: "100%"
     };
   },
   computed: {
@@ -299,7 +233,7 @@ export default {
               return a.priorityId - b.priorityId;
             }
           });
-          this.tasks = taskArr;
+          this.localData = taskArr;
         } else {
           console.error(e);
         }
@@ -333,76 +267,6 @@ export default {
         return false;
       }
       this.$nuxt.$emit("open-sidebar", { ...task, scrollId: scroll });
-    },
-
-    taskRightClick(payload) {
-      this.closeAllPickers();
-      this.taskContextMenu = true;
-      const { event, task } = payload;
-      this.activeTask = task;
-      this.popupCoords = { left: event.pageX + "px", top: event.pageY + "px" };
-    },
-    showStatusPicker(payload) {
-      this.closeAllPickers();
-      this.statusPickerOpen = true;
-      this.popupCoords = {
-        left: event.clientX + "px",
-        top: event.clientY + "px",
-      };
-      this.activeTask = payload.task;
-    },
-    showPriorityPicker(payload) {
-      this.closeAllPickers();
-      this.priorityPickerOpen = true;
-      this.popupCoords = {
-        left: event.clientX + "px",
-        top: event.clientY + "px",
-      };
-      this.activeTask = payload.task;
-    },
-    showUserPicker(payload) {
-      this.closeAllPickers();
-      this.userPickerOpen = true;
-      this.popupCoords = {
-        left: event.clientX + "px",
-        top: event.clientY + "px",
-      };
-      this.activeTask = payload.task;
-    },
-    showDatePicker(payload) {
-      this.closeAllPickers();
-      this.datePickerOpen = true;
-      this.popupCoords = {
-        left: event.clientX + "px",
-        top: event.clientY + "px",
-      };
-      this.activeTask = payload.task;
-      this.datepickerArgs.field = payload.field || "dueDate";
-      this.datepickerArgs.label = payload.label || "Due date";
-    },
-    showDeptPicker(payload) {
-      this.closeAllPickers();
-      this.deptPickerOpen = true;
-      this.popupCoords = {
-        left: event.clientX + "px",
-        top: event.clientY + "px",
-      };
-      this.activeTask = payload.task;
-    },
-
-    closeContext() {
-      this.taskContextMenu = false;
-      this.activeTask = {};
-    },
-
-    closeAllPickers() {
-      this.taskContextMenu = false;
-      this.statusPickerOpen = false;
-      this.userPickerOpen = false;
-      this.datePickerOpen = false;
-      this.priorityPickerOpen = false;
-      this.deptPickerOpen = false;
-      this.activeTask = {};
     },
 
     contextItemClick(key) {
@@ -618,25 +482,25 @@ export default {
       switch ($event) {
         case "title":
           if (this.taskOrder == "asc") {
-            this.tasks.sort((a, b) => a.title.localeCompare(b.title));
+            this.localData.sort((a, b) => a.title.localeCompare(b.title));
             this.taskOrder = "desc";
           } else {
-            this.tasks.sort((a, b) => b.title.localeCompare(a.title));
+            this.localData.sort((a, b) => b.title.localeCompare(a.title));
             this.taskOrder = "asc";
           }
-          this.key += 1;
+          // this.key += 1;
           this.sortName = "title";
-          this.checkActive();
+          // this.checkActive();
           break;
 
         case "status":
           if (this.taskOrder == "asc") {
-            this.tasks.sort((a, b) =>
+            this.localData.sort((a, b) =>
               a.status.text.localeCompare(b.status.text)
             );
             this.taskOrder = "desc";
           } else {
-            this.tasks.sort((a, b) =>
+            this.localData.sort((a, b) =>
               b.status.text.localeCompare(a.status.text)
             );
             this.taskOrder = "asc";
@@ -648,10 +512,10 @@ export default {
 
         case "priority":
           if (this.taskOrder == "asc") {
-            this.tasks.sort((a, b) => a.priority.id - b.priority.id);
+            this.localData.sort((a, b) => a.priority.id - b.priority.id);
             this.taskOrder = "desc";
           } else {
-            this.tasks.sort((a, b) => b.priority.id - a.priority.id);
+            this.localData.sort((a, b) => b.priority.id - a.priority.id);
             this.taskOrder = "asc";
           }
           this.key += 1;
@@ -662,11 +526,11 @@ export default {
         case "department":
           let deptArr = [];
 
-          for (let i = 0; i < this.tasks.length; i++) {
-            if (this.tasks[i].department.title) {
-              deptArr.unshift(this.tasks[i]);
+          for (let i = 0; i < this.localData.length; i++) {
+            if (this.localData[i].department.title) {
+              deptArr.unshift(this.localData[i]);
             } else {
-              deptArr.push(this.tasks[i]);
+              deptArr.push(this.localData[i]);
             }
           }
 
@@ -686,33 +550,39 @@ export default {
             this.taskOrder = "asc";
           }
 
-          this.tasks = deptArr;
+          this.localData = deptArr;
           this.key += 1;
           break;
 
         case "userId":
+
+          let userArr = [];
+
+          for(let i=0; i<this.localData.length; i++) {
+            if(this.localData[i].userId) {
+              userArr.unshift(this.localData[i])
+            } else {
+              userArr.push(this.localData[i])
+            }
+          }
+
           if (this.taskOrder == "asc") {
-            this.tasks.sort((a, b) => {
-              if (
-                Object.keys(a.user).length > 0 &&
-                Object.keys(b.user).length > 0
-              ) {
+            userArr.sort((a, b) => {
+              if (a.userId && b.userId) {
                 return a.user.firstName.localeCompare(b.user.firstName);
               }
             });
             this.taskOrder = "desc";
           } else {
-            this.tasks.sort((a, b) => {
-              if (
-                Object.keys(a.user).length > 0 &&
-                Object.keys(b.user).length > 0
-              ) {
+            userArr.sort((a, b) => {
+              if (a.userId && b.userId) {
                 return b.user.firstName.localeCompare(a.user.firstName);
               }
             });
             this.taskOrder = "asc";
           }
           this.key += 1;
+          this.localData = userArr;
           this.sortName = "userId";
           this.checkActive();
           break;
@@ -720,11 +590,11 @@ export default {
         case "dueDate":
           let newArr = [];
 
-          for (let i = 0; i < this.tasks.length; i++) {
-            if (this.tasks[i].dueDate) {
-              newArr.unshift(this.tasks[i]);
+          for (let i = 0; i < this.localData.length; i++) {
+            if (this.localData[i].dueDate) {
+              newArr.unshift(this.localData[i]);
             } else {
-              newArr.push(this.tasks[i]);
+              newArr.push(this.localData[i]);
             }
           }
 
@@ -744,7 +614,7 @@ export default {
             this.taskOrder = "asc";
           }
 
-          this.tasks = newArr;
+          this.localData = newArr;
           this.key += 1;
           this.sortName = "dueDate";
           this.checkActive();
@@ -753,11 +623,11 @@ export default {
         case "startDate":
           let newArr2 = [];
 
-          for (let i = 0; i < this.tasks.length; i++) {
-            if (this.tasks[i].startDate) {
-              newArr2.unshift(this.tasks[i]);
+          for (let i = 0; i < this.localData.length; i++) {
+            if (this.localData[i].startDate) {
+              newArr2.unshift(this.localData[i]);
             } else {
-              newArr2.push(this.tasks[i]);
+              newArr2.push(this.localData[i]);
             }
           }
 
@@ -777,7 +647,7 @@ export default {
             this.taskOrder = "asc";
           }
 
-          this.tasks = newArr2;
+          this.localData = newArr2;
           this.key += 1;
           this.sortName = "startDate";
           this.checkActive();
@@ -786,35 +656,31 @@ export default {
         case "project":
           let newArr3 = [];
 
-          for (let i = 0; i < this.tasks.length; i++) {
-            if (this.tasks[i].project[0]) {
-              newArr3.unshift(this.tasks[i]);
+          for (let i = 0; i < this.localData.length; i++) {
+            if (this.localData[i].project[0].project.title != null) {
+              newArr3.unshift(this.localData[i]);
             } else {
-              newArr3.push(this.tasks[i]);
+              newArr3.push(this.localData[i]);
             }
           }
 
           if (this.taskOrder == "asc") {
             newArr3.sort((a, b) => {
-              if (a.project[0].length > 0 && b.project[0].length > 0) {
-                return a.project[0].project.title.localeCompare(
-                  b.project[0].project.title
-                );
+              if (a.project[0].project.title != null && b.project[0].project.title != null) {
+                return a.project[0].project.title.localeCompare(b.project[0].project.title);
               }
             });
             this.taskOrder = "desc";
           } else {
             newArr3.sort((a, b) => {
-              if (a.project[0].length > 0 && b.project[0].length > 0) {
-                return b.project[0].project.title.localeCompare(
-                  a.project[0].project.title
-                );
+              if (a.project[0].project.title != null && b.project[0].project.title != null) {
+                return b.project[0].project.title.localeCompare(a.project[0].project.title);
               }
             });
             this.taskOrder = "asc";
           }
 
-          this.tasks = newArr3;
+          this.localData = newArr3;
           this.key += 1;
           this.sortName = "project";
           this.checkActive();
@@ -871,9 +737,13 @@ export default {
 </script>
 <style lang="scss" scoped>
 .task-page-wrapper {
-  display: grid;
-  grid-template-rows: auto auto calc(100vh - 150px);
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.task-page-table-wrapper {
+  overflow: auto;
 }
 
 .section-options {

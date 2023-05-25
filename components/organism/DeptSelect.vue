@@ -39,7 +39,7 @@ export default {
   },
   watch: {
     dept(newValue){
-      this.localDept = this.departments.find( d => d.value == this.dept.id)
+      this.localDept = this.departments.find( d => d.value == newValue.id)
     },
   },
   computed: {

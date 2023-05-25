@@ -798,16 +798,21 @@ export const SUBTASK_CONTEXT_MENU = [
 ]
 
 export const COMPANY_TASK_FIELDS = [
-
   {
     label: 'Task name',
     key: 'title',
+    width: '20%',
+    icon: {
+      icon: 'check-circle-solid',
+      variant: 'gray2',
+      event: 'title-icon-click'
+    },
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
-      isActive: false
+      isActive: false,
     },
-    event: "task-click",
+    event: "title-click",
   },
   {
     label: "Project",
