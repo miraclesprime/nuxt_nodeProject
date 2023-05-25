@@ -20,48 +20,45 @@
       <div class=" adv-table resizable bg-white" :style="{'width': tableWidth}" role="table"  >
         <div class="tr position-sticky" style="top: 0; z-index: 2;" role="row">
           <div v-if="drag" class="width-2 th" role="cell"></div>
-          <div v-for="(field, index) in tableFields" :key="field+index" class="th" :class="{ 'flex-grow-1': !field.width }" role="cell" :style="{ width: field.width}" :ref="'th'+field.key" @click="$emit(field.header_icon.event, field.key)">
+          <div v-for="(field, index) in tableFields" :key="field+index" class="th" :class="{ 'flex-grow-1': !field.width }" role="cell" :style="{ width: field.width}" :ref="'th'+field.key" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
             <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer" >
                 <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'gray1' : 'gray4'"></bib-icon>
               </span></div>
           </div>
         </div>
 
-        <draggable v-model="tableData" class="section-draggable" handle=".section-drag-handle">
+        <draggable v-modal="localData" class="section-draggable" handle=".section-drag-handle">
           <template v-if="showNewsection">
             <div class="tr position-relative height-205">
-              <div class="position-absolute border-top-light border-bottom-light" style="inset: 0; ">
+              <div class="position-absolute border-bottom-light" style="inset: 0; ">
                   <div class="section-header d-flex align-center gap-05 height-205 " >
-                    <div class="section-drag-handle width-2 h-100" ><!-- <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
-                      <rect fill="none" height="24" width="24" />
-                      <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg> --><bib-icon icon="drag" variant="gray5"></bib-icon>
+                    <div class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                     </div>
                     <div class="position-sticky align-center" style="left: 0.5rem;" >
                       <bib-icon icon="arrow-down" :scale="0.5" style="transform: rotate(-90deg);" ></bib-icon> 
                       <span class="font-w-700 cursor-pointer ml-025" >
                         <!-- {{section.title}} -->
-                        <input type="text" class="editable-input section-title" placeholder="Enter title..." @input="debounceNewSection($event.target.value, $event)" ref="newsectionInput" @blur="restoreField" />
+                        <input type="text" class="editable-input section-title" placeholder="Enter title..." @input="debounceNewSection($event.target.value, $event)" @blur="restoreField" />
                       </span>
                     </div>
                   </div>
                 </div>
             </div>
           </template>
-          <template v-for="section in tableData">
 
-            <!-- <template v-if="!isCollapsed"> -->
-            <draggable class="task-draggable" handle=".drag-handle" :group="{ name: 'tasks' }">
+          <template v-for="section in localData">
+            <draggable class="task-draggable" :list="section[tasksKey]" handle=".drag-handle" :group="{ name: 'tasks' }">
 
               <div slot="header" class="tr position-relative height-205">
-                <div class="position-absolute border-top-light border-bottom-light" style="inset: 0; ">
+                <div class="position-absolute border-bottom-light" style="inset: 0; ">
                   <div class="section-header d-flex align-center gap-05 height-205 " >
-                    <div class="section-drag-handle width-2 h-100" ><!-- <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
-                      <rect fill="none" height="24" width="24" />
-                      <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg> --><bib-icon icon="drag" variant="gray5"></bib-icon>
+                    <div class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                     </div>
                     <div class="position-sticky align-center" style="left: 0.5rem;" >
-                      <bib-icon icon="arrow-down" :scale="0.5" :ref="'sectionIcon'+section.id"></bib-icon> 
-                      <span class="font-w-700 cursor-pointer ml-025" @click.self="collapseItem('sectionContent' + section.id, 'sectionIcon'+section.id)" >
+                      <span class="width-1 cursor-pointer" @click.stop="collapseItem('sectionContent' + section.id, 'sectionIcon'+section.id)">
+                        <bib-icon icon="arrow-down" :scale="0.5" :ref="'sectionIcon'+section.id"></bib-icon> 
+                      </span>
+                      <span class="font-w-700 cursor-pointer ml-025" >
                         <!-- {{section.title}} -->
                         <input type="text" class="editable-input section-title" :value="section.title.includes('_section') ? 'Untitled section'
                       : section.title" @input="debounceRenameSection(section.id, $event)" @blur="restoreField" />
@@ -70,15 +67,16 @@
                   </div>
                 </div>
               </div>
-              <div :ref="'sectionContent' + section.id">
-                <div v-for="item in section.tasks" :key="item.id" class="tr" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
+
+              <div class="tbody" :ref="'sectionContent' + section.id">
+                <div v-for="item in section[tasksKey]" :key="item.id" class="tr" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
                   <div class="td" role="cell">
                     <div v-if="drag" class="drag-handle width-105 h-100" ><!-- <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
                       <rect fill="none" height="24" width="24" />
                       <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg> --><bib-icon icon="drag" variant="gray5"></bib-icon>
                     </div>
                   </div>
-                  <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell" :class="{'flex-grow-1': !field.width, 'date-cell': field.key.includes('Date')}" :style="`flex: ${field.width} 0 0;`" >
+                  <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell" :class="{'flex-grow-1': !field.width, 'date-cell': field.key.includes('Date')}" :style="`flex: ${field.width} 0 0;`" :data-key="field.key" >
                     <div v-if="field.key == 'title'" class="align-center w-100">
                       <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}" @click.stop="markComplete($event, item)">
                         <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success-sub4"></bib-icon>
@@ -144,7 +142,6 @@
 
             </draggable>
 
-            <!-- </template> -->
           </template>
 
         </draggable>
@@ -178,6 +175,12 @@ export default {
     contextItems: { type: Array },
     drag: { type: Boolean, default: true },
     // height: { type: String, default: '100%' }
+    tasksKey: {
+      type: String,
+      default() {
+        return "tasks";
+      },
+    },
     plusButton: {
       type: [Object, Boolean],
       default () {
@@ -218,16 +221,19 @@ export default {
       format: "DD MMM YYYY",
       // highlight: false,
       validTitle: false,
-      localData: _.cloneDeep(this.tableData),
+      localData: [],
       localNewrow: _.cloneDeep(this.newRow),
     }
   },
 
-  /*watch: {
-    showNewsection(newVal){
+  watch: {
+    /*showNewsection(newVal){
       
-    },
-  },*/
+    },*/
+    tableData(newValue){
+      this.localData = _.cloneDeep(newValue)
+    }
+  },
 
   computed: {
     ...mapGetters({
@@ -250,7 +256,7 @@ export default {
 
     tableWidth() {
       const main = document.getElementById("main-content")
-      console.log(main.clientWidth, main.offsetWidth, main.scrollWidth)
+      // console.log(main.clientWidth, main.offsetWidth, main.scrollWidth)
       let w = main.scrollWidth - 18
 
       return w + "px"
@@ -272,6 +278,7 @@ export default {
 
   mounted() {
     // const sub = document.getElementById("sub-panel")
+    this.localData = _.cloneDeep(this.tableData)
     this.resizableColumns()
   },
 
@@ -372,7 +379,19 @@ export default {
         dragColumns[no].style.width = parseInt(dragColumns[no].style.width) + w + 'px';
         if (dragColumns[no + 1])
           dragColumns[no + 1].style.width = parseInt(dragColumns[no + 1].style.width) - w + 'px';
-        console.log(dragColumns[no].style.width, dragColumns[no + 1].style.width)
+        // console.log(dragColumns[no].dataset.key, dragColumns[no + 1].dataset.key)
+        console.log(dragColumns[no].clientWidth, dragColumns[no + 1].clientWidth)
+        // resizeObserver.observe(dragColumns[no]);
+        // resizeObserver.observe(dragColumns[no + 1]);
+        let col1key = dragColumns[no].dataset.key
+        let col2key = dragColumns[no + 1].dataset.key
+        let col1 = document.querySelectorAll(`.td[data-key="${col1key}"]`)
+        let col2 = document.querySelectorAll(`.td[data-key="${col2key}"]`)
+        for (var i = 0; i < col1.length; i++) {
+          // console.log(col1[i])
+          col1[i].style.flexBasis = dragColumns[no].clientWidth + "px"
+          col2[i].style.flexBasis = dragColumns[no + 1].clientWidth + "px"
+        }
         return true;
       }
 
@@ -396,6 +415,10 @@ export default {
       // ============================================================
       // stops column dragging
       this.stopColumnDrag = function(e) {
+        
+        console.log(e, e.bubbles)
+        e.stopPropagation()
+        console.log("after stopPropagation",e.bubbles)
         var e = e || window.event;
         if (!dragColumns) return;
 
@@ -423,6 +446,7 @@ export default {
       // ============================================================
       // init data and start dragging
       this.startColumnDrag = function(e) {
+        // console.log(e)
         var e = e || window.event;
 
         // if not first button was clicked
@@ -474,6 +498,26 @@ export default {
         // BUGBUG: calculate real border width instead of 5px!!!
         dragColumns[i].firstChild.firstChild.onmousedown = this.startColumnDrag;
       }
+
+      // const headElems = document.querySelector(".th:nth-child(2)")
+      const col1 = document.querySelectorAll(".td:nth-child(2)")
+      const col2 = document.querySelectorAll(".td:nth-child(3)")
+
+      const resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          // console.log(entry)
+          console.log("width",entry.contentRect.width)
+          for (var i = 0; i < col1.length; i++) {
+            // console.log(col1[i])
+            // col1[i].style.width = entry.contentRect.width+"px"
+            col1[i].style.flexBasis = entry.contentRect.width+"px"
+          }
+          // entry.target.style.width = entry.contentBoxSize[0].inlineSize + "px";
+        }
+      });
+
+      // resizeObserver.observe(headElems);
+
     },
     resizableColumns() {
       // var tables = document.getElementsByTagName('table');
@@ -698,11 +742,11 @@ export default {
   min-width: 100%;
   font-size: $base-size;
 
-  .thead,
+  /*.thead,
   .tbody,
   .tfoot {
     display: table-row-group;
-  }
+  }*/
 
   .th,
   .td {

@@ -38,9 +38,6 @@ export default {
     }
   },
   watch: {
-    /*dept(newValue){
-      this.localDept = this.departments.find( d => d.value == newValue.id)
-    },*/
     departments(newValue){
       if (this.dept) {
         this.localDept = newValue.find( d => d.value == this.dept.id)
@@ -85,6 +82,7 @@ export default {
   .user-data {
     border: 0 none;
     background-color: transparent;
+    font-size: $base-size;
   }
 
   .picker-content {

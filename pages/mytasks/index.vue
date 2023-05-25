@@ -11,7 +11,7 @@
               <!-- <div v-show="gridType == 'list'"> -->
               <!-- <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete" @edit-field="updateTask" @edit-section="renameTodo" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table> -->
               <!-- table context menu -->
-              <adv-table-two :tableFields="taskFields" :tableData="localdata" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createTodo" ></adv-table-two>
+              <adv-table-two :tableFields="taskFields" :tableData="localdata" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createTodo" @edit-section="renameTodo" ></adv-table-two>
               <!-- <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closePopups" @item-click="contextItemClick"></table-context-menu> -->
               <loading :loading="loading"></loading>
               <!-- </div> -->
@@ -393,7 +393,7 @@ export default {
     },
 
     updateField(payload){
-      console.log(payload)
+      // console.log(payload)
 
       /*let user
       if (payload.field == "userId" && payload.value != '') {
@@ -404,7 +404,7 @@ export default {
 
       this.$store.dispatch("task/updateTask", {
         id: payload.id,
-        projectId: payload.item.project[0].projectId || payload.item.project[0].project.id,
+        projectId: payload.item.project[0]?.projectId || null,
         data: { [payload.field]: payload.value },
         text: payload.historyText
       })
@@ -570,7 +570,7 @@ export default {
       } else {
         // this.sectionError = todo.message
         // this.sectionLoading = false
-        console.log(todo)
+        console.warn(todo)
       }
     },
 
@@ -703,16 +703,32 @@ export default {
     // Sort By Action List
     sortBy($event) {
       // sort by title
-      if ($event == 'title' && this.orderBy == 'asc') {
-        this.localdata.forEach(function(todo, index) {
-          todo["tasks"] = todo.tasks.sort((a, b) => a.title.localeCompare(b.title))
-        })
-      }
+      if ($event == 'title') {
 
-      if ($event == 'title' && this.orderBy == 'desc') {
-        this.localdata.forEach(function(todo, index) {
-          todo["tasks"] = todo.tasks.sort((a, b) => b.title.localeCompare(a.title))
-        })
+          let newArr = JSON.parse(JSON.stringify(this.localdata))
+       
+          if (this.orderBy == "asc") {
+
+              newArr.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.title && b.title) {
+                    return a.title.localeCompare(b.title)
+                  }
+                })
+              })
+
+          } else {
+
+            newArr.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.title && b.title) {
+                    return b.title.localeCompare(a.title)
+                  }
+                })
+              })
+          }
+
+          this.localdata = newArr; 
       }
 
       // sort By Project

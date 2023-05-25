@@ -104,6 +104,7 @@ export default {
     border: 0 none;
     background-color: transparent;
     padding: 0;
+    font-size: $base-size;
   }
 
   .picker-list-wrap {}

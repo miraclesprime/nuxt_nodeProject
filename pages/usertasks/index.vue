@@ -101,6 +101,8 @@ import {
   TASK_CONTEXT_MENU,
 } from "../../config/constants";
 import dayjs from "dayjs";
+import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
+
 export default {
   name: "UserTasks",
   data() {
@@ -280,7 +282,20 @@ export default {
         case "delete-task":
           this.deleteTask(item);
           break;
-        case "assign-task":
+        case 'copy-task':
+          this.copyTaskLink(item);
+          break;
+        case 'gotoTeam':
+          this.$nuxt.$emit('add-member-to-task')
+          break;
+        case 'gotoComment':
+          this.openSidebar(item, 'task_conversation')
+          break;
+        case 'gotoSubtask':
+          this.openSidebar(item, 'task_subtasks')
+          break;
+        case 'gotoFiles':
+          this.openSidebar(item, 'task_files')
           break;
         default:
           this.alertDialog = true;
@@ -290,6 +305,15 @@ export default {
     },
 
     // task context menu methods ----------------------------------------
+
+    copyTaskLink(task) {
+        let url = window.location.host + `/tasks/${task.id}`;
+        if (navigator.clipboard) { 
+          navigator.clipboard.writeText(url);
+        } else { 
+          unsecuredCopyToClipboard(url);
+        }
+    },
 
     taskSetFavorite(task) {
       this.loading = true;
@@ -322,10 +346,7 @@ export default {
 
     taskMarkComplete(task) {
       this.loading = true;
-      if (typeof task == "object" && Object.keys(task).length > 0) {
-      } else {
-        task = this.activeTask;
-      }
+  
       this.$store
         .dispatch("task/updateTaskStatus", task)
         .then((d) => {
