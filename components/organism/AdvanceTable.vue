@@ -390,6 +390,7 @@ export default {
         row.classList.remove('active');
       }
       this.newRow.show = false
+      this.contextVisible = false
       return 'success'
     },
 
@@ -491,7 +492,7 @@ export default {
       position: sticky;
       min-width: 2rem;
       left: 0;
-      z-index: 5;
+      z-index: 2;
       background: #fff;
     }
 

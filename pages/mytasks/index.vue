@@ -194,7 +194,7 @@ export default {
       const page = document.getElementById("page")
       this.$nextTick(() => {
         const panel = document.getElementById("side-panel-wrapper")
-        console.log("page width="+page.scrollWidth+", panel width="+panel.offsetWidth)
+        // console.log("page width="+page.scrollWidth+", panel width="+panel.offsetWidth)
         if (this.sidebar) {
           this.contentWidth = (page.scrollWidth - panel.offsetWidth) + 'px'
         } else {

@@ -27,7 +27,7 @@
           </div>
         </div>
 
-        <draggable v-modal="localData" class="section-draggable" handle=".section-drag-handle">
+        <draggable :list="localData" class="section-draggable" handle=".section-drag-handle">
           <template v-if="showNewsection">
             <div class="tr position-relative height-205">
               <div class="position-absolute border-bottom-light" style="inset: 0; ">
@@ -46,7 +46,7 @@
             </div>
           </template>
 
-          <template v-for="section in localData">
+          <template v-for="(section, index) in localData">
             <draggable class="task-draggable" :list="section[tasksKey]" handle=".drag-handle" :group="{ name: 'tasks' }">
 
               <div slot="header" class="tr position-relative height-205">
@@ -824,11 +824,10 @@ export default {
 
   /*.section-header { position: sticky; left: 0; }*/
 
-  .sortable-chosen {
-    /*background-color: skyblue;*/
+  /*.sortable-chosen {
     .td { background-color: $success-sub6; }
     .td:nth-child(2) { background-color: $success-sub6; }
-  }
+  }*/
 
   .new-button {
     background-color: $success-sub6;
