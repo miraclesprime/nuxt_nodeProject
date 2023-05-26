@@ -81,7 +81,8 @@
     </div>
 
     <div class="of-scroll-y d-grid" id="tsb-of-scroll-y" style="grid-template-columns: none; align-items: start">
-      <sidebar-fields :task="currentTask" :loading="loading" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform" :departmentId="departmentId"></sidebar-fields>
+      <!-- updated by @wen 5.25 -->
+      <sidebar-fields :task="currentTask" :loading="loading" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform" :departmentId="departmentId" :visible="visible"></sidebar-fields>
         <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" ></sidebar-subtask>
         <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
         <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
@@ -119,7 +120,8 @@ export default {
   props: {
     sectionIdActive: Number,
     scrollId: {type: String, default: "sidebar-inner-wrap"},
-    departmentId: {type: Object}
+    departmentId: {type: Object},
+    visible: Boolean,//updated by @wen 5.25
   },
   data: function() {
     return {

@@ -32,6 +32,18 @@
           </div>
         </template>
       </bib-modal-wrapper>
+      <bib-popup-notification-wrapper>
+          <template #wrapper>
+            <bib-popup-notification
+              v-for="(msg, index) in popupMessages"
+              :key="index"
+              :message="msg.text"
+              :variant="msg.variant"
+              :autohide="5000"
+            >
+            </bib-popup-notification>
+          </template>
+        </bib-popup-notification-wrapper>
     </div>
   </div>
 </template>
@@ -50,6 +62,7 @@ export default {
       viewName: '',
       projectContextItems: PROJECT_CONTEXT_MENU,
       datepickerArgs: { label: "", field: ""},
+      popupMessages: [],
       renameProjectData: {},
       renameModal: false,
       projectName: "",
@@ -315,10 +328,37 @@ export default {
       
       let user = this.teamMembers.find(t => t.id == item.userId)
 
+      let data={ [payload.field]: payload.value }
+      // let before=this.beforeLocal.filter((item)=>item.id===payload.item.id)
+    
+      if(payload.field==="dueDate")
+        {
+          if(new Date(payload.value).toISOString().slice(0, 10)>new Date(payload.item.startDate).toISOString().slice(0, 10))
+            {
+              
+                data={ [payload.field]: payload.value }
+            }
+            else{
+              data={ [payload.field]: null }
+              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+            }
+        }
+        if(payload.field==="startDate")
+        {
+          if(new Date(payload.value).toISOString().slice(0, 10)<new Date(payload.item.dueDate).toISOString().slice(0, 10))
+            {
+              data={ [payload.field]: payload.value }
+            }
+            else {
+              data={ [payload.field]: null }
+              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+            }
+          
+        }
       this.$store.dispatch("project/updateProject", {
         id: item.id,
         user,
-        data: { [field]: value},
+        data: data,
         text: historyText
       })
         .then(t => {

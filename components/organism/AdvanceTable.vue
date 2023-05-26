@@ -114,7 +114,7 @@ export default {
   props: {
     tableFields: { type: Array, required: true, default: () => [] },
     tableData: { type: Array, required: true, default: () => [] },
-    dataType: { type: String, default: 'nested' },
+    dataType: { type: String, default: 'nested' },  
     sectionTitle: { type: String, default: "Section" },
     contextItems: { type: Array },
     drag: { type: Boolean, default: true },

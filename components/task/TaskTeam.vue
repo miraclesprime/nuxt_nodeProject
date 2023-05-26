@@ -1,5 +1,6 @@
 <template>
   <div id="task-team-wrapper" class="task-group position-relative w-100">
+    <div class="bg-light p-1 shape-rounded">
     <label id="create-team-modal-heading" class="text-gray6 font-md">Invite people </label>
     <bib-button test_id="teamlist-dd1" dropdown1="add1" label="Type name or email" v-model="member" v-on:input-keydown="teamInputKeydown" class="mt-05 mb-05">
       <template v-slot:menu>
@@ -18,19 +19,36 @@
       <small v-show="team.length == 0" class="text-danger">Select at least 1 team member.</small>
       <p v-if="message" v-text="message" class="font-sm mt-025 text-orange"></p>
     </div>
-    <div v-show="team.length > 0" class="pt-05 pb-1">
-      <bib-button label="Add" variant="primary" pill @click="addTeamMember"></bib-button>
-    </div>
+     </div>
+      <div class="bg-light p-1 mt-05 shape-rounded">
     <label class="text-gray6 font-md">Team</label>
     <template v-if="taskMembers.length && mode == 'task'">
-      <bib-table :key="'tt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="taskMembers" :hide-no-column="true" headless>
+      <bib-table :key="'tt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="this.teamMembers.filter(item=>this.taskMembers.some(value=>value.id===item.id)).filter(item1=>!this.newTeam.some(val=>val.id===item1.id))" :hide-no-column="true" headless>
         <template #cell(name)="data">
           <div class="d-flex gap-05">
-            <bib-avatar class="mt-auto mb-auto" size="1.5rem">
-            </bib-avatar>
-            <span class="text-dark">
-              {{ data.value.name }} <span v-if="data.value.isOwner">(Owner)</span>
-            </span>
+            <bib-avatar :src="data.value.avatar" class="mt-auto mb-auto" size="1.5rem"></bib-avatar>
+            <!-- <bib-avatar class="mt-auto mb-auto" size="1.5rem"> -->
+            <!-- </bib-avatar> -->
+              <strong class="text-dark px-025 font-sm" >{{ data.value.label }}</strong>
+              <span class=" text-black px-025 font-sm">{{ data.value.email }}</span>
+          </div>
+        </template>
+        <template #cell_action="data">
+          <div class="cursor-pointer shape-circle" v-on:click="deleteMember(data.value)">
+            <bib-icon icon="trash-solid" variant="gray5"></bib-icon>
+          </div>
+        </template>
+      </bib-table>
+      <!-- <div v-show="this.newTeam.length >0 " class="border-top-success" ></div> -->
+       <bib-table :key="'ttt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="this.teamMembers.filter(item=>this.newTeam.some(value=>value.id===item.id))" :hide-no-column="true" headless>
+        <template #cell(name)="data">
+          <div class="d-flex gap-05">
+            <bib-avatar :src="data.value.avatar" class="mt-auto mb-auto" size="1.5rem"></bib-avatar>
+
+            <!-- <bib-avatar class="mt-auto mb-auto" size="1.5rem">
+            </bib-avatar> -->
+               <strong class="text-dark px-025 font-sm" >{{ data.value.label }}</strong>
+              <span class=" text-black px-025 font-sm">{{ data.value.email }}</span>
           </div>
         </template>
         <template #cell_action="data">
@@ -63,6 +81,10 @@
         <bib-icon icon="warning" variant="gray4"></bib-icon> No records found
       </span>
     </template>
+      </div>
+    <div v-show="team.length > 0" class="pt-05 pb-1 justify-end">
+      <bib-button label="Add" variant="success" class="w-20" @click="addTeamMember"></bib-button>
+    </div>
     <loading :loading="loading"></loading>
   </div>
 </template>
@@ -80,6 +102,7 @@ export default {
     return {
       member: "",
       team: [],
+      newTeam:[],//updated by @wen 5.25
       filterKey: "",
       message: "",
       tableFields: PROJECT_TEAM_FIELDS,
@@ -182,6 +205,11 @@ export default {
         let teamtext = this.team.map(t => {
           return t.label
         })
+        //updated by @wen 5.25
+      this.team.map((index)=>{
+          let newObj={id:index.id,name:index.label}
+          this.newTeam.push(newObj)
+        })
         if (this.mode == "task") {
           this.$store.dispatch('task/addMember', { taskId: this.task.id, team: this.team, text: `added ${teamtext.join(', ')} to task` }).then(() => {
             this.loading = false;
@@ -213,6 +241,8 @@ export default {
       }
     },
     async deleteMember(member) {
+      //updated by @wen 5.25
+      this.newTeam = this.newTeam.filter((item)=>item.id!==member.id);
       this.loading = true
       if (this.mode == "task") {
         await this.$store.dispatch("task/deleteMember", { taskId: this.task.id, memberId: member.id, text: `${member.name} removed from task` })
