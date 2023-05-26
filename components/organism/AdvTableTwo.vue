@@ -27,26 +27,28 @@
           </div>
         </div>
 
-        <draggable :list="localData" class="section-draggable" handle=".section-drag-handle">
-          <template v-if="showNewsection">
-            <div class="tr position-relative height-205">
-              <div class="position-absolute border-bottom-light" style="inset: 0; ">
-                  <div class="section-header d-flex align-center gap-05 height-205 " >
-                    <div class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
-                    </div>
-                    <div class="position-sticky align-center" style="left: 0.5rem;" >
-                      <bib-icon icon="arrow-down" :scale="0.5" style="transform: rotate(-90deg);" ></bib-icon> 
-                      <span class="font-w-700 cursor-pointer ml-025" >
-                        <!-- {{section.title}} -->
-                        <input type="text" class="editable-input section-title" placeholder="Enter title..." @input="debounceNewSection($event.target.value, $event)" @blur="restoreField" />
-                      </span>
-                    </div>
+        <template v-if="showNewsection">
+          <div slot="header" class="tr position-relative height-205">
+            <div class="position-absolute border-bottom-light" style="inset: 0; ">
+                <div class="section-header d-flex align-center gap-05 height-205 " >
+                  <div class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
+                  </div>
+                  <div class="position-sticky align-center" style="left: 0.5rem;" >
+                    <bib-icon icon="arrow-down" :scale="0.5" style="transform: rotate(-90deg);" ></bib-icon> 
+                    <span class="font-w-700 cursor-pointer ml-025" >
+                      <!-- {{section.title}} -->
+                      <input type="text" class="editable-input section-title" placeholder="Enter title..." @input="debounceNewSection($event.target.value, $event)" @blur="restoreField" />
+                    </span>
                   </div>
                 </div>
-            </div>
-          </template>
+              </div>
+          </div>
+        </template>
+
+        <draggable v-model="localData" class="section-draggable-wrapper" handle=".section-drag-handle">
 
           <template v-for="(section, index) in localData">
+
             <draggable class="task-draggable" :list="section[tasksKey]" handle=".drag-handle" :group="{ name: 'tasks' }">
 
               <div slot="header" class="tr position-relative height-205">
@@ -79,7 +81,7 @@
                   <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell" :class="{'flex-grow-1': !field.width, 'date-cell': field.key.includes('Date')}" :style="`flex: ${field.width} 0 0;`" :data-key="field.key" >
                     <div v-if="field.key == 'title'" class="align-center w-100">
                       <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}" @click.stop="markComplete($event, item)">
-                        <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success-sub4"></bib-icon>
+                        <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success-sub3"></bib-icon>
                       </span>
                       <span v-if="field.event" class=" flex-grow-1" style="line-height:1.25;">
                         <input type="text" class="editable-input" :value="item[field.key]" @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
