@@ -11,7 +11,7 @@
           </div>
         </div>
 
-        <div class="tr position-relative height-2" id="adv-table-tr1">
+        <div class="tr position-relative height-2" id="adv-table-tr1" v-if="sectionTitle">
           <div class="position-absolute" id="adv-table-section-header-wrapper" style="inset: 0; border-bottom: 1px solid var(--bib-light);">
             <div class="section-header d-flex align-center gap-05 height-2 px-1" id="adv-table-section-header">
               <bib-icon icon="arrow-down" :scale="0.5" :style="{transform: iconRotate}"></bib-icon> 

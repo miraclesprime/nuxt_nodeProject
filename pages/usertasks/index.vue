@@ -20,7 +20,7 @@
             <template>
              <div class="task-page-table-wrapper h-100 mytask-table-wrapper position-relative " :style="{ 'width': contentWidth }">
 
-              <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" ></advance-table>
+              <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" sectionTitle=""></advance-table>
              </div>
               
               <!-- date-picker for list and board view -->
