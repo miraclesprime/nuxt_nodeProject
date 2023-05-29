@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <div id="task-page-wrapper" class="task-page-wrapper">
+    <div id="page" class="task-page-wrapper">
       <page-title
         :title="`${selectedUser.firstName} ${selectedUser.lastName}'s Tasks`"
       ></page-title>
@@ -11,65 +11,46 @@
         v-on:new-task="toggleSidebar($event)"
         @search-user-tasks="searchUserTasks"
       ></user-name-task-actions>
-      <div
-        id="task-table-wrapper"
-        class="task-table-wrapper position-relative of-scroll-y"
-      >
-        <template>
-          <div v-show="gridType == 'list'">
-            <template>
-             <div class="task-page-table-wrapper h-100 mytask-table-wrapper position-relative " :style="{ 'width': contentWidth }">
+      <div v-show="gridType == 'list'" id="task-table-wrapper" class="listview h-100 position-relative" :style="{ 'width': contentWidth }">
+        <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" ></advance-table>
+          
+        <user-picker
+          :show="userPickerOpen"
+          :coordinates="popupCoords"
+          @selected="
+            updateAssignee('Assignee', 'userId', $event.id, $event.label)
+          "
+          @close="userPickerOpen = false"
+        ></user-picker>
+        <inline-datepicker
+          :show="datePickerOpen"
+          :datetime="activeTask[datepickerArgs.field]"
+          :coordinates="popupCoords"
+          @date-updated="updateDate"
+          @close="datePickerOpen = false"
+        ></inline-datepicker>
+      </div>
 
-              <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" sectionTitle=""></advance-table>
-             </div>
-              
-              <!-- date-picker for list and board view -->
-              <!-- user-picker for list and board view -->
-              <user-picker
-                :show="userPickerOpen"
-                :coordinates="popupCoords"
-                @selected="
-                  updateAssignee('Assignee', 'userId', $event.id, $event.label)
-                "
-                @close="userPickerOpen = false"
-              ></user-picker>
-              <inline-datepicker
-                :show="datePickerOpen"
-                :datetime="activeTask[datepickerArgs.field]"
-                :coordinates="popupCoords"
-                @date-updated="updateDate"
-                @close="datePickerOpen = false"
-              ></inline-datepicker>
-              
-              
-            </template>
-          </div>
-        </template>
-        <template>
-          <div class="d-flex" v-show="gridType == 'grid'">
-            <div class="task-grid-section">
-              <div
-                class="w-100 d-flex justify-between"
-                style="margin-bottom: 10px"
-              >
-                <div class="title text-gray">Department</div>
-                <div class="d-flex section-options">
-                  <div class="mr-1">
-                    <bib-icon icon="add" variant="success" :scale="1.2" />
-                  </div>
-                  <div>
-                    <bib-icon icon="elipsis" :scale="1.2" />
-                  </div>
-                </div>
+      <div v-show="gridType == 'grid'" id="task-grid-wrapper" class="d-flex gridview h-100" >
+        <div class="task-grid-section">
+          <div class="w-100 d-flex justify-between" style="margin-bottom: 10px" >
+            <div class="title text-gray">Department</div>
+            <div class="d-flex section-options">
+              <div class="mr-1">
+                <bib-icon icon="add" variant="success" :scale="1.2" />
               </div>
-              <div class="task-section__body">
-                <div v-for="(item, index) in tasks" :key="index + '-' + key">
-                  <task-grid :task="item" v-on:update-key="updateKey" />
-                </div>
+              <div>
+                <bib-icon icon="elipsis" :scale="1.2" />
               </div>
             </div>
           </div>
-        </template>
+          <div class="task-section__body">
+            <div v-for="(item, index) in tasks" :key="index + '-' + key">
+              <task-grid :task="item" v-on:update-key="updateKey" />
+            </div>
+          </div>
+        </div>
+      </div>
         <alert-dialog
           v-show="alertDialog"
           :message="alertMsg"
@@ -88,7 +69,6 @@
             </bib-popup-notification>
           </template>
         </bib-popup-notification-wrapper>
-      </div>
     </div>
   </client-only>
 </template>
@@ -140,6 +120,7 @@ export default {
     ...mapGetters({
       user: "user/getUser",
       teamMembers: "user/getTeamMembers",
+      sidebar: "task/getSidebarVisible",
     }),
   },
 
@@ -170,6 +151,19 @@ export default {
       });
       this.localData = sortedData;
     },
+    sidebar(newVal){
+      const page = document.getElementById("page")
+      this.$nextTick(() => {
+        const panel = document.getElementById("side-panel-wrapper")
+        // console.log("page width="+page.scrollWidth+", panel width="+panel.offsetWidth)
+        if (this.sidebar) {
+          this.contentWidth = (page.scrollWidth - panel.offsetWidth) + 'px'
+          this.contentWidth = (page.scrollWidth - panel.offsetWidth) + 'px'
+        } else {
+          this.contentWidth = '100%'
+        }
+      });
+    }
   },
 
   created() {
@@ -761,7 +755,8 @@ export default {
   height: 100%;
 }
 
-.task-page-table-wrapper {
+.listview,
+.gridview {
   overflow: auto;
 }
 
