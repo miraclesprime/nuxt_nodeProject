@@ -336,7 +336,7 @@ export default {
     },
 
     updateTask(taskData) {
-
+      let updata={[taskData.field]: taskData.value}
       let updatedvalue = taskData.value
       let projectId = null
       if (taskData.name == 'Assignee') {
@@ -375,11 +375,23 @@ export default {
         })
       }
       if (taskData.name == 'Department') {
-        this.departments.find(d => {
-          if (d.value == taskData.value) {
-            updatedvalue = d.label
-          }
-        })
+
+        let dp = this.departments.find(d => {
+              if(taskData.value == undefined) {
+                return null;
+              } 
+              if(d.value == taskData.value) {
+                return d.label;
+              }
+            })
+            console.log(dp)
+            if(dp == undefined) {
+              updata = { [taskData.field]: null}
+              updatedvalue = "not assigned"
+            } else {
+              updatedvalue = dp.label
+            }
+
       }
       if (taskData.name == "Due date" || taskData.name == "Start date") {
         updatedvalue = dayjs(taskData.value).format('DD MMM YYYY')
@@ -391,10 +403,10 @@ export default {
       } else {
         user = null
       }
-
-      this.$store.dispatch("task/updateTask", {
+      
+          this.$store.dispatch("task/updateTask", {
         id: this.form.id,
-        data: { [taskData.field]: taskData.value },
+        data: updata,
         user,
         projectId: projectId ? projectId : null,
         text: `changed ${taskData.name} to ${updatedvalue}`,
@@ -406,6 +418,8 @@ export default {
         .catch(e => {
           console.log(e)
         })
+      
+    
 
     },
 
