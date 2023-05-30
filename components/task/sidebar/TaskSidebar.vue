@@ -376,7 +376,7 @@ export default {
       }
       if (taskData.name == 'Department') {
 // updated by @wen 5.29
-        let dp = this.departments.find(d => {
+let dp = this.departments.find(d => {
               if(taskData.value == undefined) {
                 return null;
               } 
@@ -391,7 +391,6 @@ export default {
             } else {
               updatedvalue = dp.label
             }
-
       }
       if (taskData.name == "Due date" || taskData.name == "Start date") {
         updatedvalue = dayjs(taskData.value).format('DD MMM YYYY')
