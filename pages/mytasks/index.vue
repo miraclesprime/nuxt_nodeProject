@@ -12,19 +12,13 @@
               <!-- <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete" @edit-field="updateTask" @edit-section="renameTodo" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table> -->
               <!-- table context menu -->
 
-              <draggable v-model="localdata" tag="section" class="sortable-list bg-warning-sub3"  >
+              <!-- <draggable v-model="localdata" class="sortable-list bg-warning-sub3"  >
                 <div v-for="(section, index) in localdata" :key="section.id" class="sortable border-top-warning border-bottom-warning my-05 bg-secondary-sub4" >
                   <div class="handle1 height-2 align-center gap-05">
                     <bib-icon icon="drag" variant="gray5"></bib-icon>
                     {{section.title}}
                   </div>
-                  <draggable :list="section.tasks" tag="ul" draggable=".item" :group="{ name: 'tasks' }" class="">
-                    <!-- <li slot="header" role="group" class="bg-warning">
-                      <div class="p-025 text-primary align-center justify-start gap-05">
-                        <span class="bg-primary-sub3 shape-round py-025 px-05">{{section.id}}</span> <input type="text" :value="section.title" class="editable-input w-25">
-                      <h5>Draggable header slot</h5>
-                      </div>
-                    </li> -->
+                  <draggable :list="section[tasksKey]" tag="ul" draggable=".item" :group="{ name: 'tasks' }" class="">
                     <template v-for="item in section.tasks">
                       <li :key="item.title" class="height-2 item border-top-light align-center gap-05 font-md">
                         <div class="handle2 width-2 height-2 align-center justify-center gap-025">
@@ -34,15 +28,11 @@
                         {{ item.title }}
                       </li>
                     </template>
-                    <!-- <li slot="footer" role="group" class="p-025 align-center gap-05 bg-primary-sub3 border-top-light">
-                      <bib-button label="+" variant="primary--outline" size="sm" ></bib-button>
-                      <h5>Draggable footer slot</h5>
-                    </li> -->
                   </draggable>
                 </div>
-              </draggable>
+              </draggable> -->
 
-              <adv-table-two :tableFields="taskFields" :tableData="localdata" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createTodo" @edit-section="renameTodo" ></adv-table-two>
+              <adv-table-two :tableFields="taskFields" :tableData="localdata" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createTodo" @edit-section="renameTodo" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd"></adv-table-two>
               <!-- <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closePopups" @item-click="contextItemClick"></table-context-menu> -->
               <loading :loading="loading"></loading>
               <!-- </div> -->
@@ -195,6 +185,7 @@ export default {
       alertDialog: false,
       alertMsg:"",
       contentWidth: "100%",
+      tasksKey: 'tasks'
     }
   },
 
@@ -649,9 +640,9 @@ export default {
     taskDragEnd: _.debounce(async function(payload) {
 
       this.highlight = null
-      console.log(payload.tasks)
+      console.log(payload)
 
-      payload.tasks.forEach((e, i) => {
+      /*payload.tasks.forEach((e, i) => {
         e.tOrder = i
       })
 
@@ -665,26 +656,27 @@ export default {
       if (taskDnD.statusCode != 200) {
         this.alertDialog = true
         this.alertMsg = taskDnD.message
-      }
+      }*/
 
-      this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
+      /*this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
         if (res.statusCode == 200) {
           this.key += 1
         }
         this.loading = false;
-      })
-    }, 600),
+      })*/
+    }, 400),
 
     moveTodo(e) {
       this.highlight = +e.to.dataset.section
     },
 
     todoDragEnd: _.debounce(async function(todos) {
-
       todos.forEach((el, i) => {
         el.uOrder = i
+        // console.log(el.uOrder, el.title)
       })
 
+      // console.log(todos)
       let todoDnD = await this.$axios.$put("/todo/dragdrop", { data: todos }, {
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
@@ -697,14 +689,14 @@ export default {
         this.alertMsg = taskDnD.message
       }
 
-      this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
+      /*this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
         if (res.statusCode == 200) {
           this.key += 1
         }
         this.loading = false;
-      })
+      })*/
 
-    }, 600),
+    }, 400),
 
     filterView($event) {
       this.loading = true
