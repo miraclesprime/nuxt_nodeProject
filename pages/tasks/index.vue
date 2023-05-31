@@ -380,6 +380,21 @@ export default {
           companyId: compid,
         })
         .then((res) => {
+          // let tasksort=res.filter((item)=>item.title===value)
+          // let organizedArr = [];
+          // for (let el of tasksort[0].tasks) {
+          //   if (el.priorityId) {
+          //     organizedArr.unshift(el);
+          //   } else {
+          //     organizedArr.push(el);
+          //   }
+          // }
+          // let taskArr = organizedArr.sort((a, b) => {
+          //   if (a.priorityId && b.priorityId) {
+          //     return a.priorityId - b.priorityId;
+          //   }
+          // });
+          // this.localData[tasksort[0].order].tasks = taskArr;
 
           this.key += 1;
         });
