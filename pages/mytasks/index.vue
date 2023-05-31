@@ -46,10 +46,16 @@
           <!-- </template> -->
         </div>
           <!-- <template> -->
-            <div v-show="gridType == 'grid'" id="tgs-scroll" class="bg-light h-100 of-scroll-x position-relative" >
-              <draggable :list="localdata" class="d-flex h-100" :move="moveTodo" v-on:end="todoDragEnd" handle=".section-drag-handle">
-                <div class="task-grid-section" v-for="(todo, index) in localdata" :key="index + viewName + '-' + key">
+            <div v-show="gridType == 'grid'" id="tgs-scroll" class="bg-light grid-wrapper h-100 position-relative" >
+              <draggable v-model="localdata" class="d-flex grid-content" :move="moveTodo" @end="gridSectionDragend" handle=".section-drag-handle">
+                <div v-if="newSection" class="task-grid-section">
                   <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
+                    <!-- <task-grid-section-title section="{title: '', id: ''}" ></task-grid-section-title> -->
+                    <input type="text" ref="newsectioninput" class="editable-input" placeholder="Enter title" @input="debounceNewSection($event.target.value, $event)" @focus.stop="">
+                  </div>
+                </div>
+                <div class="task-grid-section" v-for="(todo, index) in localdata" :key="index + viewName + '-' + key">
+                  <div class="w-100 d-flex justify-between bg-light" style="margin-bottom: 10px; position: sticky; top: 0; z-index: 2;">
                     <task-grid-section-title :section="todo" @update-title="renameTodo"></task-grid-section-title>
                     <div class="d-flex align-center section-options" :id="'tg-section-options-'+todo.id">
                       <div class="cursor-pointer mx-05 d-flex align-center" :id="'tg-section-addtask-'+todo.id" v-on:click.stop="$nuxt.$emit('open-sidebar', todo.id)">
@@ -80,7 +86,7 @@
                     </div>
                   </div>
                   <div class="task-section__body h-100">
-                    <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
+                    <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="gridTaskDragend" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
                       <template v-for="(task, index) in todo.tasks">
                         <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker"></task-grid>
                       </template>
@@ -125,7 +131,7 @@
         </bib-modal-wrapper> -->
         <bib-popup-notification-wrapper>
           <template #wrapper>
-            <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" autohide="3500">
+            <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" autohide="5000">
             </bib-popup-notification>
           </template>
         </bib-popup-notification-wrapper>
@@ -203,11 +209,11 @@ export default {
 
   watch: {
     todos(newVal) {
-      let todos = _.cloneDeep(newVal)
-      todos.forEach(function(todo) {
-        todo["tasks"] = todo.tasks.sort((a, b) => a.tOrder - b.tOrder);
+      let localTodos = _.cloneDeep(newVal)
+      localTodos.forEach(function(todo) {
+        todo["tasks"] = todo.tasks?.sort((a, b) => a.tOrder - b.tOrder);
       })
-      this.localdata = todos
+      this.localdata = localTodos
     },
 
     gridType() {
@@ -241,19 +247,20 @@ export default {
 
   mounted() {
 
-    
     for(let field of this.taskFields) {
       if(field.header_icon) {
         field.header_icon.isActive = false;
       }
     }
 
-    this.loading = true
+    // this.loading = true
     this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
       if (res.statusCode == 200) {
+        // console.log(res.data)
+        this.localdata = _.cloneDeep(res.data)
         this.key += 1
       }
-      this.loading = false;
+      // this.loading = false;
     })
   },
 
@@ -576,7 +583,22 @@ export default {
 
     showNewTodo() {
       this.newSection = true
+      process.nextTick(() => {
+        this.$refs.newsectioninput.focus()
+      });
     },
+
+    debounceNewSection: _.debounce(function(value, event) {
+      if (value) {
+        // console.log(...arguments)
+        event.target.classList.remove("error")
+        // this.$emit("create-section", value)
+        this.createTodo(value)
+      } else {
+        console.warn("Title cannot be left blank")
+        event.target.classList.add("error")
+      }
+    }, 800),
 
     async createTodo($event) {
       console.log('create-todo', $event)
@@ -587,9 +609,22 @@ export default {
       })
 
       if (todo.statusCode == 200) {
-        this.updateKey()
+        // this.updateKey()
         this.newSection = false
         // this.sectionLoading = false
+        this.$store.dispatch("todo/fetchTodos", { filter: 'all' })
+        .then((res) => {
+          if (res.statusCode == 200) {
+            // this.key += 1
+            let tmp = [];
+            tmp.push(this.localdata[this.localdata.length - 1]);
+            let i;
+            for (i = 1; i < this.localdata.length; ++i)
+              tmp.push(this.localdata[i - 1]);
+            this.localdata = tmp;
+            this.todoDragEnd(this.localdata);
+          }
+        })
       } else {
         // this.sectionError = todo.message
         // this.sectionLoading = false
@@ -624,6 +659,7 @@ export default {
       this.$store.dispatch("todo/deleteTodo", todo)
         .then((d) => {
           this.updateKey()
+          this.popupMessages.push({ text: t.message, variant: "orange" })
         })
         .catch(e => console.log(e))
     },
@@ -635,15 +671,25 @@ export default {
     moveTask(e) {
       this.taskDnDsectionId = +e.to.dataset.section
       this.highlight = +e.to.dataset.section
+    },
 
+    gridTaskDragend(e){
+      let sectionData = this.localdata.filter(
+        (s) => s.id == e.to.dataset.section
+      );
+      // console.log(e.to, sectionData[0].tasks)
+      this.taskDragEnd({
+        tasks: sectionData[0].tasks,
+        sectionId: e.to.dataset.section,
+      });
     },
 
     taskDragEnd: _.debounce(async function(payload) {
 
       this.highlight = null
-      console.log(payload)
+      // console.log(payload)
 
-      /*payload.tasks.forEach((e, i) => {
+      payload.tasks.forEach((e, i) => {
         e.tOrder = i
       })
 
@@ -657,18 +703,24 @@ export default {
       if (taskDnD.statusCode != 200) {
         this.alertDialog = true
         this.alertMsg = taskDnD.message
-      }*/
+      }
 
-      /*this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
+      this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
         if (res.statusCode == 200) {
           this.key += 1
         }
-        this.loading = false;
-      })*/
+        // this.loading = false;
+      })
     }, 400),
 
     moveTodo(e) {
       this.highlight = +e.to.dataset.section
+    },
+
+    gridSectionDragend(e){
+      // console.log(this.localdata)
+      this.todoDragEnd(this.localdata)
+      // this.localdata.forEach(d => console.log(d.uOrder, d.title ))
     },
 
     todoDragEnd: _.debounce(async function(todos) {
@@ -690,12 +742,12 @@ export default {
         this.alertMsg = taskDnD.message
       }
 
-      /*this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
+      this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
         if (res.statusCode == 200) {
           this.key += 1
         }
-        this.loading = false;
-      })*/
+        // this.loading = false;
+      })
 
     }, 400),
 
@@ -1074,6 +1126,12 @@ export default {
 }
 .mytask-table-wrapper {
   overflow: auto;
+}
+.grid-wrapper {
+  overflow: auto;
+  .grid-content {
+    height: calc(100% - 18px);
+  }
 }
 .highlight {
   outline: 2px skyblue dashed;

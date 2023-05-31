@@ -111,7 +111,7 @@
                       </span>
                     </div>
                     <template v-if="field.key == 'project'">
-                      <div class="align-center height-2">{{item[field.key][0]?.project.title}}</div>
+                      <div class="align-center height-2">{{item[field.key][0]?.project?.title}}</div>
                     </template>
                     <template v-if="field.key == 'userId'">
                       <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" class="flex-grow-1" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
@@ -322,13 +322,7 @@ export default {
 
       console.log(elem.style.height)
       elem.classList.toggle("collapsed")
-      /*if (elem.style.height == "0px") {
-        elem.style.height = "auto";
-        // icon.style.transform = "rotate(0deg)";
-      } else {
-        elem.style.height = 0;
-        // icon.style.transform = "rotate(-90deg)";
-      }*/
+      
     },
 
     /*iconRotate(expanded){
@@ -569,12 +563,13 @@ export default {
     },
     rowDragEnd(e) {
       // this.highlight = false;
-      // console.log("row drag end ", e)
       let sectionData = this.localData.filter(
         (s) => s.id == e.to.dataset.section
       );
+
+      // console.log("row drag end ", e, sectionData[0][this.tasksKey])
       this.$emit("row-dragend", {
-        [tasksKey]: sectionData[0][tasksKey],
+        [this.tasksKey]: sectionData[0][this.tasksKey],
         sectionId: e.to.dataset.section,
       });
     },
