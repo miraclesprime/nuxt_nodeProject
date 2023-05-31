@@ -256,7 +256,18 @@ export default {
 
   watch: {
     tasks(newVal) {
-      this.localData = _.cloneDeep(newVal);
+      // this.localData = _.cloneDeep(newVal);
+      let data = _.cloneDeep(newVal);
+      let sortedData=data.map((item,index)=>{
+            let taskArr = item.tasks.sort((a, b) => {
+              if (a.priorityId && b.priorityId) {
+                return a.priorityId - b.priorityId;
+              }
+            });
+            item.tasks=taskArr
+            return item
+        })
+        this.localData = _.cloneDeep(sortedData);
     },
 
     gridType() {
@@ -283,13 +294,16 @@ export default {
 
   mounted() {
     this.loading = true;
+    // this.updateKey()
     let compid = JSON.parse(localStorage.getItem("user")).subb;
     this.$store
       .dispatch("company/fetchCompanyTasks", {
         companyId: compid
       })
       .then((res) => {
+
         this.localData = JSON.parse(JSON.stringify(res));
+
         this.key += 1;
         this.loading = false;
       });
@@ -353,19 +367,38 @@ export default {
       this.deptPickerOpen = false;
       this.activeTask = {};
     },
-    updateKey($event) {
-      if ($event) {
-        this.popupMessages.push({ text: $event, variant: "success" });
+    updateKey(value) {
+      // if ($event) {
+      //   this.popupMessages.push({ text: $event, variant: "success" });
+      // }
+      if (value) {
+        this.popupMessages.push({ text: "success", variant: "success" });
       }
       let compid = JSON.parse(localStorage.getItem("user")).subb;
-
       this.$store
         .dispatch("company/fetchCompanyTasks", {
           companyId: compid,
         })
-        .then(() => {
+        .then((res) => {
+          let tasksort=res.filter((item)=>item.title===value)
+          let organizedArr = [];
+          for (let el of tasksort[0].tasks) {
+            if (el.priorityId) {
+              organizedArr.unshift(el);
+            } else {
+              organizedArr.push(el);
+            }
+          }
+          let taskArr = organizedArr.sort((a, b) => {
+            if (a.priorityId && b.priorityId) {
+              return a.priorityId - b.priorityId;
+            }
+          });
+          this.localData[tasksort[0].order].tasks = taskArr;
+
           this.key += 1;
         });
+       
     },
 
     openSidebar(task, scroll) {
@@ -470,7 +503,7 @@ export default {
           }"`,
         })
         .then((t) => {
-          this.updateKey()
+          this.updateKey(t.data.department.title)
         })
         .catch((e) => console.warn(e));
     },

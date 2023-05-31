@@ -376,7 +376,7 @@ export default {
       }
       if (taskData.name == 'Department') {
 // updated by @wen 5.29
-let dp = this.departments.find(d => {
+          let dp = this.departments.find(d => {
               if(taskData.value == undefined) {
                 return null;
               } 

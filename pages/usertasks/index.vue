@@ -205,6 +205,7 @@ export default {
           },
         });
         if (res.data.statusCode == 200) {
+          console.log("usertask",res)
           let userTasks = res.data.data;
           let organizedArr = [];
 
