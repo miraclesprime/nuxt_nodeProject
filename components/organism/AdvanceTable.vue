@@ -83,7 +83,7 @@
             </div>
             <template v-for="(td,index) in tableFields">
               <div v-if="td.key == 'title'" class="td" role="cell" :id="'adv-table-newRow2-td-'+index">
-                <input type="text" ref="newrowInput" class="editable-input" :id="'adv-table-editable-input-2-'+index" v-model="newRow.title" :class="{'error': validTitle}" @input="newRowCreate" @blur="newRowCreate" required placeholder="Enter title...">
+                <input type="text" ref="newrowInput" class="editable-input" :id="'adv-table-editable-input-2-'+index" v-model="newRow.title" :class="{'error': validTitle}" @input="newRowCreate" required placeholder="Enter title...">
               </div>
               <div v-else class="td" role="cell" :id="'adv-table-else-td-'+index"></div>
             </template>
@@ -135,8 +135,8 @@ export default {
           sectionId: "",
           title: "",
           userId: "",
-          statusId: 1,
-          priorityId: 3,
+          statusId: null,
+          priorityId: null,
           startDate: "",
           dueDate: "",
           departmentId: "",

@@ -312,9 +312,9 @@ export default {
           userId: "",
           sectionId: "_section" + this.project.id,
           projectId: this.project.id || "",
-          departmentId: this.departmentId || 1,
-          statusId: 1,
-          priorityId: 2,
+          departmentId: this.departmentId || null,
+          statusId: null,
+          priorityId: null,
           description: "",
           budget: 0,
         };

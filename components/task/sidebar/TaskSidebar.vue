@@ -229,10 +229,10 @@ export default {
           dueDate: "",
           userId: "",
           sectionId: "",
-          departmentId: this.departmentId || 1,
+          departmentId: this.departmentId || null,
           projectId: "",
-          statusId: 1,
-          priorityId: 2,
+          statusId: null,
+          priorityId: null,
           description: '',
           budget: 0,
         }

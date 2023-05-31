@@ -347,10 +347,10 @@ export const actions = {
   // create project 
   async createProject(ctx, payload) {
     const res = await this.$axios.$post('/project', {
-      user: payload.user,
+      user: payload.user || null,
       title: payload.title,
       statusId: null,
-      departmentId: payload.departmentId,
+      departmentId: payload.departmentId || null,
       description: null,
       startDate: null,
       dueDate: null,
