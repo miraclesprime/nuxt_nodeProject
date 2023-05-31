@@ -112,6 +112,7 @@ export default {
     ...mapGetters({
       user: "user/getUser",
       teamMembers: "user/getTeamMembers",
+      sidebar: "task/getSidebarVisible",
     }),
   },
 
