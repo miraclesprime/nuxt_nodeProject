@@ -395,15 +395,9 @@ export default {
       
       let newArr = this.projects.filter((p) => {
        
-       if(p.description) {
-          if(p.title.includes(formattedText) || p.title.toLowerCase().includes(formattedText) || p.description.includes(formattedText) || p.description.toLowerCase().includes(formattedText)) {
-            return p
-          } 
-        } else {
-          if(p.title.includes(formattedText) || p.title.toLowerCase().includes(formattedText)) {
-            return p
-          } 
-        }
+       if(p.title.includes(formattedText) || p.title.toLowerCase().includes(formattedText)) {
+          return p
+       } 
 
       })
 

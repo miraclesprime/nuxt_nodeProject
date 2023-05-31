@@ -14,6 +14,7 @@
 
               <!-- <draggable v-model="localdata" class="sortable-list bg-warning-sub3"  >
                 <div v-for="(section, index) in localdata" :key="section.id" class="sortable border-top-warning border-bottom-warning my-05 bg-secondary-sub4" >
+
                   <div class="handle1 height-2 align-center gap-05">
                     <bib-icon icon="drag" variant="gray5"></bib-icon>
                     {{section.title}}
@@ -1039,18 +1040,12 @@ export default {
       let formattedText = text.toLowerCase().trim();
       let Ts = JSON.parse(JSON.stringify(this.todos))
       let newArr = Ts.map((todo) => {
-          let filtered = todo.tasks.filter((t) => {
-          if(t.description) {
-            if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText) || t.description.includes(formattedText) || t.description.toLowerCase().includes(formattedText)) {
+        let filtered = todo.tasks.filter((t) => {
+          if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
               return t
             } 
-          } else {
-            if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
-              return t
-            } 
-          }
+          })
 
-        })
         todo.tasks = filtered
         return todo;
       })
