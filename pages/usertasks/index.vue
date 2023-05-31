@@ -718,23 +718,9 @@ export default {
       let formattedText = text.toLowerCase().trim();
 
       let newArr = this.tasks.filter((t) => {
-        if (t.description) {
-          if (
-            t.title.includes(formattedText) ||
-            t.title.toLowerCase().includes(formattedText) ||
-            t.description.includes(formattedText) ||
-            t.description.toLowerCase().includes(formattedText)
-          ) {
+        if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
             return t;
           }
-        } else {
-          if (
-            t.title.includes(formattedText) ||
-            t.title.toLowerCase().includes(formattedText)
-          ) {
-            return t;
-          }
-        }
       });
 
       if (newArr.length >= 0) {

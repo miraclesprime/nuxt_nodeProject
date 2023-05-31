@@ -1012,26 +1012,14 @@ export default {
 
       let formattedText = text.toLowerCase().trim();
       let tArr = this.sortedTask.filter((t) => {
-        if (t.description) {
-          if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText) || t.description.includes(formattedText) || t.description.toLowerCase().includes(formattedText)) {
-            return t
-          }
-        } else {
-          if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
-            return t
-          }
+        if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
+          return t
         }
       })
 
       let pArr = this.sortedProject.filter((p) => {
-        if (p.description) {
-          if (p.title.includes(formattedText) || p.title.toLowerCase().includes(formattedText) || p.description.includes(formattedText) || p.description.toLowerCase().includes(formattedText)) {
-            return p
-          }
-        } else {
-          if (p.title.includes(formattedText) || p.title.toLowerCase().includes(formattedText)) {
-            return p
-          }
+        if (p.title.includes(formattedText) || p.title.toLowerCase().includes(formattedText)) {
+          return p
         }
       })
 
