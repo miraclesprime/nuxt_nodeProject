@@ -1059,23 +1059,9 @@ export default {
 
       let newArr = secs.map((s) => {
         let filtered = s.tasks.filter((t) => {
-          if (t.description) {
-            if (
-              t.title.includes(formattedText) ||
-              t.title.toLowerCase().includes(formattedText) ||
-              t.description.includes(formattedText) ||
-              t.description.toLowerCase().includes(formattedText)
-            ) {
+          if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
               return t;
             }
-          } else {
-            if (
-              t.title.includes(formattedText) ||
-              t.title.toLowerCase().includes(formattedText)
-            ) {
-              return t;
-            }
-          }
         });
 
         s.tasks = filtered;

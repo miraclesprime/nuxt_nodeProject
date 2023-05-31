@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <div id="task-page-wrapper" class="task-page-wrapper">
+    <div id="page" class="task-page-wrapper">
       <page-title
         :title="`${selectedUser.firstName} ${selectedUser.lastName}'s Tasks`"
       ></page-title>
@@ -11,24 +11,13 @@
         v-on:new-task="toggleSidebar($event)"
         @search-user-tasks="searchUserTasks"
       ></user-name-task-actions>
-      <div
-        id="task-table-wrapper"
-        class="task-table-wrapper position-relative of-scroll-y"
-      >
-        <template>
-          <div v-show="gridType == 'list'">
-            <template>
-             <div class="task-page-table-wrapper h-100 mytask-table-wrapper position-relative " :style="{ 'width': contentWidth }">
-
+    
+          <div v-show="gridType == 'list'" id="task-table-wrapper" class="listview h-100 position-relative" :style="{ 'width': contentWidth }">  
               <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" ></advance-table>
-             </div>
               
-            
-            </template>
           </div>
-        </template>
-        <template>
-          <div class="d-flex" v-show="gridType == 'grid'">
+        
+          <div v-show="gridType == 'grid'" id="task-grid-wrapper" class="d-flex gridview h-100" >
             <div class="task-grid-section">
               <div
                 class="w-100 d-flex justify-between"
@@ -51,7 +40,7 @@
               </div>
             </div>
           </div>
-        </template>
+        
         <alert-dialog
           v-show="alertDialog"
           :message="alertMsg"
@@ -70,7 +59,7 @@
             </bib-popup-notification>
           </template>
         </bib-popup-notification-wrapper>
-      </div>
+      
     </div>
   </client-only>
 </template>
@@ -156,6 +145,19 @@ export default {
       });
       this.localData = sortedData;
     },
+    sidebar(newVal){
+      const page = document.getElementById("page")
+      this.$nextTick(() => {
+        const panel = document.getElementById("side-panel-wrapper")
+        // console.log("page width="+page.scrollWidth+", panel width="+panel.offsetWidth)
+        if (this.sidebar) {
+          this.contentWidth = (page.scrollWidth - panel.offsetWidth) + 'px'
+          this.contentWidth = (page.scrollWidth - panel.offsetWidth) + 'px'
+        } else {
+          this.contentWidth = '100%'
+        }
+      });
+    }
   },
 
   created() {
@@ -205,7 +207,6 @@ export default {
           },
         });
         if (res.data.statusCode == 200) {
-          console.log("usertask",res)
           let userTasks = res.data.data;
           let organizedArr = [];
 
@@ -241,7 +242,7 @@ export default {
           filter: "all",
           sort: this.sortName,
         })
-        .then((t) => {
+        .then(() => {
           this.key += 1;
         });
       this.fetchUserTasks();
@@ -692,23 +693,8 @@ export default {
       let formattedText = text.toLowerCase().trim();
 
       let newArr = this.tasks.filter((t) => {
-        if (t.description) {
-          if (
-            t.title.includes(formattedText) ||
-            t.title.toLowerCase().includes(formattedText) ||
-            t.description.includes(formattedText) ||
-            t.description.toLowerCase().includes(formattedText)
-          ) {
+        if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
             return t;
-          }
-        } else {
-          if (
-            t.title.includes(formattedText) ||
-            t.title.toLowerCase().includes(formattedText)
-          ) {
-            return t;
-          }
-        }
       });
 
       if (newArr.length >= 0) {
@@ -729,7 +715,8 @@ export default {
   height: 100%;
 }
 
-.task-page-table-wrapper {
+.listview,
+.gridview {
   overflow: auto;
 }
 
