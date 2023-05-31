@@ -25,7 +25,7 @@
         ></confirm-dialog>
       <template v-if="projects.length">
 
-        <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" sectionTitle=""></advance-table>
+        <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle=""></advance-table>
 
       </template>
       <template v-else>
@@ -120,6 +120,7 @@ export default {
         projects: 'project/getAllProjects',
         favProjects: 'project/getFavProjects',
         teamMembers: "user/getTeamMembers",
+        user: "user/getUser2"
     })
   },
 
@@ -434,27 +435,6 @@ export default {
       this.confirmModal = true;
     },
 
-    // deleteTask(project) {
-    //   let del = confirm("Are you sure")
-    //   this.loading = true
-    //   if (del) {
-    //     this.$store.dispatch("project/deleteProject", project).then(t => {
-
-    //       if (t.statusCode == 200) {
-    //         this.updateKey()
-    //       } else {
-    //         console.warn(t.message);
-    //       }
-    //       this.loading = false
-    //     }).catch(e => {
-    //       this.loading = false
-    //       console.log(e)
-    //     })
-    //   } else {
-    //     this.loading = false
-    //   }
-    // },
-
     async renameProject() {
       this.loading = true
       const proj = await this.$axios.put("/project", {
@@ -474,6 +454,23 @@ export default {
       }
       this.renameProjectData = {}
       this.loading = false
+    },
+
+    async createProject(proj) {
+      let u = {
+        id: this.user.Id,
+        firstName: this.user.FirstName,
+        lastName: this.user.LastName,
+        email: this.user.Email
+      }
+      proj.departmentId = null;
+      proj.budget = 0;
+      proj.dueDate = null;
+      proj.startDate = null;
+      proj.user = u;
+      delete proj.show;
+      delete proj.sectionId;
+      this.$store.dispatch('project/createProject', proj);
     },
 
     copyProjectLink(proj) {
