@@ -20,6 +20,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import _ from 'lodash'
 export default {
 
   name: 'DeptSelect',
@@ -31,19 +32,31 @@ export default {
   data() {
     return {
       show: false,
-      localDept: { value: null, label: "No department" },
-      filterKey: "",      
+      // localDept: { value: null, label: "No department" },
+      localDept: {},
+      // filterKey: "",      
     }
   },
   watch: {
-    dept(newValue){
-        this.localDept = this.departments.find( d => d.value == this.dept.id)
-    },
+    departments(newValue){
+      if (this.dept) {
+        this.localDept = newValue.find( d => d.value == this.dept.id)
+      } else {
+        this.localDept = { label: 'No department', value: 0 }
+      }
+    }
   },
   computed: {
     ...mapGetters({
       departments: "department/getAllDepartments",
     }),
+  },
+  mounted() {
+    if (this.dept) {
+      this.localDept = this.departments.find( d => d.value == this.dept.id)
+    } else {
+      this.localDept = { label: 'No department', value: 0 }
+    }
   },
   methods: {
     triggerOpen() {
@@ -51,6 +64,7 @@ export default {
       this.$emit("close-other")
     },
     selected(dept){
+      this.localDept = dept
       this.$emit("change", dept)
       this.show = false
     },
@@ -68,6 +82,7 @@ export default {
   .user-data {
     border: 0 none;
     background-color: transparent;
+    font-size: $base-size;
   }
 
   .picker-content {

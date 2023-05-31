@@ -1,17 +1,17 @@
 <template>
   <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll">
 
-      <draggable v-if="drag" class="task-draggable adv-table resizable bg-white" handle=".drag-handle" :style="{'width': tableWidth}" role="table" @start="rowDragStart" @end="rowDragEnd" :move="moveTask" >
+      <draggable class="task-draggable adv-table resizable bg-white" handle=".drag-handle" :style="{'width': tableWidth}" role="table" @start="rowDragStart" @end="rowDragEnd" :move="moveTask" >
         <div slot="header" class="tr" role="row" id="adv-table-row1">
           <div v-if="drag" class="width-2 th" id="adv-table-cell1" role="cell"></div>
-          <div v-for="(field, index) in tableFields" :key="field+index" class="th" id="adv-table-th1" role="cell" :style="{ width: field.width}">
-            <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer" @click="$emit(field.header_icon.event, field)" id="adv-table-header-icon">
+          <div v-for="(field, index) in tableFields" :key="field+'-'+index" class="th" id="adv-table-th1" role="cell" :style="{ width: field.width}" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
+            <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer"  id="adv-table-header-icon">
                 <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'gray1' : 'gray4'"></bib-icon>
               </span></div>
           </div>
         </div>
 
-        <div class="tr position-relative height-2" id="adv-table-tr1">
+        <div class="tr position-relative height-2" id="adv-table-tr1" v-if="sectionTitle">
           <div class="position-absolute" id="adv-table-section-header-wrapper" style="inset: 0; border-bottom: 1px solid var(--bib-light);">
             <div class="section-header d-flex align-center gap-05 height-2 px-1" id="adv-table-section-header">
               <bib-icon icon="arrow-down" :scale="0.5" :style="{transform: iconRotate}"></bib-icon> 
@@ -23,7 +23,7 @@
         </div>
 
         <template v-if="!isCollapsed">
-          <div v-for="(item, index) in tableData" :key="item.id" class="tr" :id="'adv-table-table-data-'+index" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
+          <div v-for="(item, index) in tableData" :key="item.id+'-'+index" class="tr" :id="'adv-table-table-data-'+index" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
             <div class="td" role="cell" id="adv-table-td">
               <div v-if="drag" class="drag-handle width-105 h-100" id="adv-table-drag-handle"><!-- <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
                 <rect fill="none" height="24" width="24" />
@@ -33,7 +33,7 @@
             <div v-for="(field, index) in tableFields" :id="'adv-table-table-fields-'+index" :key="field+index" class="td" role="cell">
               <div v-if="field.key == 'title'" class="align-center " id="adv-table-title-field">
                 <span v-if="field.icon" class="width-105 height-105 align-center justify-center" id="adv-table-field-icon" :class="{'cursor-pointer': field.icon.event}">
-                  <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="field.icon.variant" hover-variant="success"></bib-icon>
+                  <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="field.icon.variant" hover-variant="success-sub3"></bib-icon>
                 </span>
                 <span v-if="field.event" class=" flex-grow-1" style="line-height:1.25;" id="adv-table-field-event">
                   <input type="text" class="editable-input" id="adv-table-editable-input" :value="item[field.key]" @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
@@ -47,16 +47,16 @@
               </div>
               <template v-if="field.key == 'project'">{{item[field.key][0].project.title}}</template>
               <template v-if="field.key == 'userId'">
-                <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
+                <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" ></user-select>
               </template>
               <template v-if="field.key == 'status'">
-                <status-select :ref="'stausSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('stausSelect'+item.id)"></status-select>
+                <status-select :ref="'stausSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)"></status-select>
               </template>
               <template v-if="field.key == 'priority'">
-                <priority-select :ref="'prioritySelect'+item.id" :value="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
+                <priority-select :ref="'prioritySelect'+item.id" :value="item[field.key]" @change="updatePriority($event, item)"></priority-select>
               </template>
               <template v-if="field.key == 'department'">
-                <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
+                <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)"></dept-select>
               </template>
               <template v-if="field.key.includes('Date')" class="date-cell">
                 <!-- {{$formatDate(item[field.key])}} -->
@@ -83,7 +83,7 @@
             </div>
             <template v-for="(td,index) in tableFields">
               <div v-if="td.key == 'title'" class="td" role="cell" :id="'adv-table-newRow2-td-'+index">
-                <input type="text" ref="newrowInput" class="editable-input" :id="'adv-table-editable-input-2-'+index" v-model="newRow.title" :class="{'error': validTitle}" @input="newRowCreate" @blur="newRowCreate" required placeholder="Enter title...">
+                <input type="text" ref="newrowInput" class="editable-input" :id="'adv-table-editable-input-2-'+index" v-model="newRow.title" :class="{'error': validTitle}" @input="newRowCreate" required placeholder="Enter title...">
               </div>
               <div v-else class="td" role="cell" :id="'adv-table-else-td-'+index"></div>
             </template>
@@ -93,7 +93,7 @@
       </draggable>
     <!-- </div> -->
     <template v-if="contextItems">
-      <table-context-menu :items="contextItems" :show="contextVisible" :coordinates="popupCoords" @close-context="closePopups" @item-click="contextItemClick" ></table-context-menu>
+      <table-context-menu :items="contextItems" :show="contextVisible" :coordinates="popupCoords" @item-click="contextItemClick" ></table-context-menu>
     </template>
     
   </div>
@@ -114,7 +114,7 @@ export default {
   props: {
     tableFields: { type: Array, required: true, default: () => [] },
     tableData: { type: Array, required: true, default: () => [] },
-    dataType: { type: String, default: 'nested' },
+    dataType: { type: String, default: 'nested' },  
     sectionTitle: { type: String, default: "Section" },
     contextItems: { type: Array },
     drag: { type: Boolean, default: true },
@@ -135,8 +135,8 @@ export default {
           sectionId: "",
           title: "",
           userId: "",
-          statusId: 1,
-          priorityId: 3,
+          statusId: null,
+          priorityId: null,
           startDate: "",
           dueDate: "",
           departmentId: "",
@@ -174,10 +174,8 @@ export default {
     },
     tableWidth() {
       const main = document.getElementById("main-content")
-      let w = main.scrollWidth
-
+      let w = main.scrollWidth - 18
       return w + "px"
-
     },
   },
 
@@ -288,7 +286,7 @@ export default {
         // remember columns widths in cookies for server side
         var colWidth = '';
         var separator = '';
-        for (var i = 0; i < dragColumns.length; i++) {
+        for (var i = 1; i < dragColumns.length; i++) {
           colWidth += separator + parseInt(self.getWidth(dragColumns[i]));
           separator = '+';
         }
@@ -341,7 +339,7 @@ export default {
       for (var i = 0; i < dragColumns.length; i++) {
         dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'>" +
           "<div class='resize-drag-handle' style='"+
-          "position:absolute;height:100%;width:4px;right:0;top:0px;cursor:w-resize;z-index:10; background-color: var(--bib-secondary-sub4)'>"+
+          "position:absolute;height:100%;width:4px;right:0;top:0px;cursor:w-resize;z-index:4; background-color: var(--bib-secondary-sub4)'>"+
           "</div>"+
           dragColumns[i].innerHTML +
           "</div>";
@@ -392,13 +390,8 @@ export default {
         row.classList.remove('active');
       }
       this.newRow.show = false
-      return 'success'
-    },
-    closePopups(id) {
       this.contextVisible = false
-      for (let ref in this.$refs) {
-        if(ref != id) this.$refs[ref][0].show = false
-      }
+      return 'success'
     },
 
     newRowClick() {
@@ -421,7 +414,7 @@ export default {
     }, 800),
 
     debounceTitle: _.debounce(function(value, item) {
-      this.$emit("update-field", { id: item.id, field: "title", value: item.title, label: "Title", historyText: value, item: item })
+      this.$emit("update-field", { id: item.id, field: "title", value: value, label: "Title", historyText: `Changed Title to ${value}`, item: item })
     }, 800),
     updateStatus(status, item) {
       this.$emit("update-field", { id: item.id, field: "statusId", value: status.value, label: "Status", historyText: `changed Status to ${status.label}`, item: item })
@@ -433,11 +426,17 @@ export default {
       this.$emit("update-field", { id: item.id, field: "departmentId", value: dept.value, label: "Department", historyText: `changed department to ${dept.label}`, item: item })
     },
     updateAssignee(user, item) { 
-      this.$emit("update-field", { id: item.id, field: "userId", value: user.id, label: "Assignee", historyText: user.label, item: item })
+      this.$emit("update-field", { id: item.id, field: "userId", value: user.id, label: "Assignee", historyText: `Changed Assignee To ${user.label}`, item: item })
     },
     updateDate(d, item, field) {
       let date = new Date(d);
-      this.$emit("update-field", { id: item.id, field: `${field}`, value: date, label: "Date", historyText: `Changed date to ${dayjs(d).format('DD MMM YYYY')}`, item: item})
+      let dateFieldText = '';
+      if(field == 'startDate') {
+        dateFieldText = 'Start Date'
+      } else {
+        dateFieldText = 'Due Date'
+      }
+      this.$emit("update-field", { id: item.id, field: `${field}`, value: date, label: "Date", historyText: `Changed ${dateFieldText} to ${dayjs(d).format('DD MMM YYYY')}`, item: item})
     },
   }
 }
@@ -493,14 +492,14 @@ export default {
       position: sticky;
       min-width: 2rem;
       left: 0;
-      z-index: 10;
+      z-index: 2;
       background: #fff;
     }
 
     .th {
       position: sticky;
       top: 0;
-      z-index: 9;
+      z-index: 2;
       background: $gray9;
       font-weight: bold;
       color: $secondary;
@@ -508,7 +507,7 @@ export default {
       border-bottom-color: $gray2;
 
       &:nth-child(2) {
-        z-index: 11;
+        z-index: 3;
         background: $gray9;
       }
       &:hover {
@@ -580,7 +579,7 @@ export default {
       line-height: normal;
     }
   }
-
+  .vdpComponent__calendar-icon { z-index: 0 }
   .vdpComponent__input {
     margin: 0;
     min-height: 2rem;

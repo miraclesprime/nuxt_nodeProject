@@ -3,30 +3,30 @@
     <page-title title="Projects"></page-title>  
     <project-actions @sortValue='sortName=$event' @viewValue='viewName=$event' v-on:loading="loading = $event" v-on:sort="sortProject" @search-projects="searchProjects" />
    
-    <div id="projects-list-wrapper" class="projects-list-wrapper of-scroll-y position-relative" >
+    <div id="projects-list-wrapper" class="projects-list-wrapper position-relative" >
       <loading :loading="loading"></loading>
+      <!-- popup notification -->
+      <bib-popup-notification-wrapper>
+          <template #wrapper>
+            <bib-popup-notification
+              v-for="(msg, index) in popupMessages"
+              :key="index"
+              :message="msg.text"
+              :variant="msg.variant"
+            >
+            </bib-popup-notification>
+          </template>
+        </bib-popup-notification-wrapper>
+        <!-- confirm delete task -->
+        <confirm-dialog
+          v-if="confirmModal"
+          :message="confirmMsg"
+          @close="confirmDelete"
+        ></confirm-dialog>
       <template v-if="projects.length">
 
-        <!-- <drag-table-simple :key="templateKey" :fields="tableFields" :tasks="localData" :titleIcon="{ icon: 'briefcase-solid', event: 'row-click'}" :componentKey="templateKey" :drag="false" :sectionTitle="'Projects'" @row-click="projectRoute" v-on:table-sort="sortProject" @row-context="projectRightClick" @edit-field="updateProject" @user-picker="showUserPicker" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table-simple> -->
-        <!-- <div id="subtask-favorite-wrap" class=" position-relative content-wrap" :style="{ 'width': contentWidth }"> -->
-          <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" ></advance-table>
-        <!-- </div> -->
-        
-        <!-- table context menu -->
-        <!-- <table-context-menu :items="projectContextItems" :show="projectContextMenu" :coordinates="popupCoords" :activeItem="activeProject" @close-context="closeContext" @item-click="contextItemClick" ></table-context-menu> -->
+        <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle=""></advance-table>
 
-        <!-- user-picker for list and board view -->
-        <!-- <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"></user-picker> -->
-
-        <!-- date-picker for list and board view -->
-        <!-- <inline-datepicker :show="datePickerOpen" :datetime="activeProject[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker> -->
-
-        <!-- status picker for list view -->
-        <!-- <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateProject({ task: activeProject, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker> -->
-        <!-- priority picker for list view -->
-        <!-- <priority-picker :show="priorityPickerOpen" :coordinates="popupCoords" @selected="updateProject({ task: activeProject, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="priorityPickerOpen = false" ></priority-picker> -->
-        <!-- department-picker for list view -->
-        <!-- <dept-picker :show="deptPickerOpen" :coordinates="popupCoords" @selected="updateProject({ task: activeProject, label:'Department', field:'departmentId', value: $event.value, historyText: $event.label })" @close="deptPickerOpen = false"></dept-picker> -->
       </template>
       <template v-else>
         <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
@@ -50,6 +50,18 @@
           </div>
         </template>
       </bib-modal-wrapper>
+      <bib-popup-notification-wrapper>
+          <template #wrapper>
+            <bib-popup-notification
+              v-for="(msg, index) in popupMessages"
+              :key="index"
+              :message="msg.text"
+              :variant="msg.variant"
+              :autohide="5000"
+            >
+            </bib-popup-notification>
+          </template>
+        </bib-popup-notification-wrapper>
     </div>
   </div>
 </template>
@@ -67,15 +79,8 @@ export default {
       sortName: '',
       viewName: '',
       projectContextItems: PROJECT_CONTEXT_MENU,
-      projectContextMenu: false,
-      userPickerOpen: false,
-      datePickerOpen: false,
       datepickerArgs: { label: "", field: ""},
-      statusPickerOpen: false,
-      priorityPickerOpen: false,
-      deptPickerOpen: false,
-      popupCoords: {},
-      activeProject: {},
+      popupMessages: [],
       renameProjectData: {},
       renameModal: false,
       projectName: "",
@@ -87,7 +92,11 @@ export default {
       newkey: "",
       alertDialog: false,
       alertMsg:"",
-      localData: []
+      localData: [],
+      popupMessages: [],
+      confirmModal: false,
+      confirmMsg: "",
+      taskToDelete: {}
     }
   },
 
@@ -111,6 +120,7 @@ export default {
         projects: 'project/getAllProjects',
         favProjects: 'project/getFavProjects',
         teamMembers: "user/getTeamMembers",
+        user: "user/getUser2"
     })
   },
 
@@ -137,21 +147,9 @@ export default {
     projectRoute(project) {
       let fwd = this.$donotCloseSidebar(event.target.classList)
       if (!fwd) {
-        this.closeContext()
-        this.userPickerOpen = false
-        this.datePickerOpen = false
         return false
       }
       this.$router.push('/projects/' + project.id)
-    },
-
-    projectRightClick(payload) {
-      this.closeAllPickers()
-      this.projectContextMenu = true;
-      const { event, task } = payload
-      this.activeProject = task;
-      this.renameProjectData = JSON.parse(JSON.stringify(task));
-      this.popupCoords = { left: event.pageX+'px', top: event.pageY+'px' }
     },
 
     sortProject($event) {
@@ -293,24 +291,21 @@ export default {
       this.templateKey += 1;
     },
 
-    closeContext() {
-      this.projectContextMenu = false
-      this.activeProject = {}
-    },
 
-    contextItemClick(key){
+    contextItemClick(key, item){
       switch (key) {
         case 'fav-project':
-          this.setFavorite(this.activeProject)
+          this.setFavorite(item)
           break;
         case 'rename-project':
+          this.renameProjectData = item;
           this.renameModal = true
           break;
         case 'delete-project':
-          this.deleteTask(this.activeProject)
+          this.deleteTask(item)
           break;
         case 'copy-project':
-          this.copyProjectLink(this.activeProject)
+          this.copyProjectLink(item)
           break;
         case 'share-project':
           break;
@@ -323,49 +318,6 @@ export default {
       }
     },
 
-    showUserPicker(payload){
-      this.closeAllPickers()
-      this.userPickerOpen = true
-      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
-      this.activeProject = payload.task
-    },
-    showDatePicker(payload){
-      // payload consists of event, task, label, field
-      this.closeAllPickers()
-      this.datePickerOpen = true
-      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
-      this.activeProject = payload.task
-      this.datepickerArgs.field = payload.field || 'dueDate'
-      this.datepickerArgs.label = payload.label || 'Due date'
-    },
-    showStatusPicker(payload){
-      this.closeAllPickers()
-      this.statusPickerOpen = true
-      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
-      this.activeProject = payload.task
-    },
-    showPriorityPicker(payload){
-      this.closeAllPickers()
-      this.priorityPickerOpen = true
-      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
-      this.activeProject = payload.task
-    },
-    showDeptPicker(payload){
-      this.closeAllPickers()
-      this.deptPickerOpen = true
-      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
-      this.activeProject = payload.task
-    },
-
-    closeAllPickers(){
-      this.projectContextMenu = false
-      this.userPickerOpen = false
-      this.datePickerOpen = false
-      this.statusPickerOpen = false
-      this.priorityPickerOpen = false
-      this.deptPickerOpen = false
-      this.activeProject = {}
-    },
 
     setFavorite(project) {
       this.loading = true
@@ -399,10 +351,37 @@ export default {
       
       let user = this.teamMembers.find(t => t.id == item.userId)
 
+      let data={ [payload.field]: payload.value }
+      // let before=this.beforeLocal.filter((item)=>item.id===payload.item.id)
+    
+      if(payload.field==="dueDate")
+        {
+          if(new Date(payload.value).toISOString().slice(0, 10)>new Date(payload.item.startDate).toISOString().slice(0, 10))
+            {
+              
+                data={ [payload.field]: payload.value }
+            }
+            else{
+              data={ [payload.field]: null }
+              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+            }
+        }
+        if(payload.field==="startDate")
+        {
+          if(new Date(payload.value).toISOString().slice(0, 10)<new Date(payload.item.dueDate).toISOString().slice(0, 10))
+            {
+              data={ [payload.field]: payload.value }
+            }
+            else {
+              data={ [payload.field]: null }
+              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+            }
+          
+        }
       this.$store.dispatch("project/updateProject", {
         id: item.id,
         user,
-        data: { [field]: value},
+        data: data,
         text: historyText
       })
         .then(t => {
@@ -415,66 +394,45 @@ export default {
         .catch(e => console.warn(e))
     },
 
-    updateAssignee(label, field, value, historyText){
-
-      this.userPickerOpen = false
-      let user = this.teamMembers.find(t => t.id == value)
-
-      this.$store.dispatch("project/updateProject", {
-        id: this.activeProject.id,
-        user,
-        data: { [field]: value},
-        text: `changed ${label} to ${historyText}`
-      })
-        .then(t => {
-          if (t.statusCode == 200) {
-            this.updateKey()
-          } else {
-            console.warn(t)
-          }
-        })
-        .catch(e => console.warn(e))
-    },
-
-    updateDate(value){
-      let user = this.teamMembers.find(tm => tm.id == this.activeProject.userId)
-      let newDate = dayjs(value).format("D MMM YYYY")
-
-      this.$store.dispatch("project/updateProject", {
-        id: this.activeProject.id,
-        user,
-        data: { [this.datepickerArgs.field]: value},
-        text: `changed ${this.datepickerArgs.label} to ${newDate}`
-      })
-        .then(t => {
-          if (t.statusCode == 200) {
-            this.updateKey()
-          } else {
-            console.warn(t)
-          }
-        })
-        .catch(e => console.warn(e))
+    confirmDelete(state) {
+      this.confirmModal = false;
+      this.confirmMsg = "";
+      if (state) {
+        this.loading = true
+        this.$store
+          .dispatch("project/deleteProject", this.taskToDelete)
+          .then((t) => {
+            if (t.statusCode == 200) {
+              this.popupMessages.push({ text: t.message, variant: "success" });
+              this.updateKey();
+              this.taskToDelete = {};
+              
+             this.loading = false;
+            } else {
+              this.popupMessages.push({ text: t.message, variant: "orange" });
+              console.warn(t.message);
+              
+        this.loading = false;
+            }
+          })
+          .catch((e) => {
+            console.warn(e);
+            
+        this.loading = false;
+          });
+      } else {
+        this.popupMessages.push({
+          text: "Action cancelled",
+          variant: "orange",
+        });
+        this.taskToDelete = {};
+      }
     },
 
     deleteTask(project) {
-      let del = confirm("Are you sure")
-      this.loading = true
-      if (del) {
-        this.$store.dispatch("project/deleteProject", project).then(t => {
-
-          if (t.statusCode == 200) {
-            this.updateKey()
-          } else {
-            console.warn(t.message);
-          }
-          this.loading = false
-        }).catch(e => {
-          this.loading = false
-          console.log(e)
-        })
-      } else {
-        this.loading = false
-      }
+      this.taskToDelete = project;
+      this.confirmMsg = "Are you sure ";
+      this.confirmModal = true;
     },
 
     async renameProject() {
@@ -484,7 +442,8 @@ export default {
         data: {
           title: this.renameProjectData.title
         },
-        user: this.renameProjectData.user
+        user: this.renameProjectData.user,
+        text: `Changed Project Name to ${this.renameProjectData.title}`
       }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       })
@@ -495,6 +454,23 @@ export default {
       }
       this.renameProjectData = {}
       this.loading = false
+    },
+
+    async createProject(proj) {
+      let u = {
+        id: this.user.Id,
+        firstName: this.user.FirstName,
+        lastName: this.user.LastName,
+        email: this.user.Email
+      }
+      proj.departmentId = null;
+      proj.budget = 0;
+      proj.dueDate = null;
+      proj.startDate = null;
+      proj.user = u;
+      delete proj.show;
+      delete proj.sectionId;
+      this.$store.dispatch('project/createProject', proj);
     },
 
     copyProjectLink(proj) {
@@ -519,15 +495,9 @@ export default {
       
       let newArr = this.projects.filter((p) => {
        
-       if(p.description) {
-          if(p.title.includes(formattedText) || p.title.toLowerCase().includes(formattedText) || p.description.includes(formattedText) || p.description.toLowerCase().includes(formattedText)) {
-            return p
-          } 
-        } else {
-          if(p.title.includes(formattedText) || p.title.toLowerCase().includes(formattedText)) {
-            return p
-          } 
-        }
+       if(p.title.includes(formattedText) || p.title.toLowerCase().includes(formattedText)) {
+          return p
+       } 
 
       })
 
@@ -547,7 +517,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .projects-wrapper { display: flex; flex-direction: column; height: 100%; }
-
+.projects-list-wrapper { overflow: auto; }
 details {
   summary::-webkit-details-marker {
     display: none;

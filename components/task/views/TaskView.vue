@@ -10,14 +10,6 @@
       @search-projectTasks="searchTasks"
     ></task-actions>
     <!-- updated by @wen -->
-    <!-- <new-section-form
-      :showNewsection="newSection"
-      :showLoading="sectionLoading"
-      :showError="sectionError"
-      v-on:toggle-newsection="newSection = $event"
-      v-on:create-section="createSection"
-    ></new-section-form> -->
-
     <template>
       <!-- task list table -->
 
@@ -266,8 +258,9 @@ export default {
         sectionId: "",
         title: "",
         userId: "",
-        statusId: 1,
-        priorityId: 3,
+        statusId: null,
+        priorityId: null,
+        departmentId: null,
         startDate: "",
         dueDate: "",
         department: "",
@@ -675,8 +668,9 @@ export default {
         sectionId: "",
         title: "",
         userId: "",
-        statusId: 1,
-        priorityId: 3,
+        statusId: null,
+        priorityId: null,
+        departmentId: null,
         startDate: "",
         dueDate: "",
         department: "",
@@ -895,20 +889,45 @@ export default {
         .catch((e) => console.warn(e));
     },
 
-    updateDate(value) {
-      let newDate = dayjs(value).format("D MMM YYYY");
-
-      this.$store
-        .dispatch("task/updateTask", {
-          id: this.activeTask.id,
-          data: { [this.datepickerArgs.field]: value },
-          user: null,
-          text: `changed ${this.datepickerArgs.label} to ${newDate}`,
-        })
-        .then((t) => {
-          this.updateKey();
-        })
-        .catch((e) => console.warn(e));
+ // updated by @wen 5.24
+     updateDate(value) {
+      if(this.datepickerArgs.field==="dueDate")
+        {
+          if(new Date(value).toISOString().slice(0, 10)>new Date(this.activeTask.startDate).toISOString().slice(0, 10))
+            {
+                this.changeDate(value)
+            }
+            else{
+              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+            }
+        }
+        else
+        {
+          if(new Date(value).toISOString().slice(0, 10)<new Date(this.activeTask.dueDate).toISOString().slice(0, 10))
+            {
+                this.changeDate(value)
+            }
+            else {
+              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+            }
+          
+        }
+        
+      
+    },
+    changeDate(value){
+        let newDate = dayjs(value).format("D MMM YYYY");
+          this.$store
+            .dispatch("task/updateTask", {
+              id: this.activeTask.id,
+              data: { [this.datepickerArgs.field]: value },
+              user: null,
+              text: `changed ${this.datepickerArgs.label} to ${newDate}`,
+            })
+            .then((t) => {
+                this.updateKey();
+            })
+            .catch((e) => console.warn(e));
     },
 
     confirmDelete(state) {
@@ -1042,23 +1061,9 @@ export default {
 
       let newArr = secs.map((s) => {
         let filtered = s.tasks.filter((t) => {
-          if (t.description) {
-            if (
-              t.title.includes(formattedText) ||
-              t.title.toLowerCase().includes(formattedText) ||
-              t.description.includes(formattedText) ||
-              t.description.toLowerCase().includes(formattedText)
-            ) {
+          if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
               return t;
             }
-          } else {
-            if (
-              t.title.includes(formattedText) ||
-              t.title.toLowerCase().includes(formattedText)
-            ) {
-              return t;
-            }
-          }
         });
 
         s.tasks = filtered;

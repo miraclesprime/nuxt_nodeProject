@@ -18,50 +18,87 @@
       </ul> -->
 
       <div class=" adv-table resizable bg-white" :style="{'width': tableWidth}" role="table"  >
-        <div class="tr position-sticky" style="top: 0; z-index: 12;" role="row">
+        <div class="tr position-sticky" style="top: 0; z-index: 2;" role="row">
           <div v-if="drag" class="width-2 th" role="cell"></div>
-          <div v-for="(field, index) in tableFields" :key="field+index" class="th" :class="{ 'flex-grow-1': !field.width }" role="cell" :style="{ width: field.width}" :ref="'th'+field.key">
-            <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer" @click="$emit(field.header_icon.event, field)">
+          <div v-for="(field, index) in tableFields" :key="field+index" class="th" :class="{ 'flex-grow-1': !field.width }" role="cell" :style="{ width: field.width}" :ref="'th'+field.key" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
+            <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer" >
                 <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'gray1' : 'gray4'"></bib-icon>
               </span></div>
           </div>
         </div>
 
-        <draggable v-model="tableData" class="section-draggable" handle=".section-drag-handle">
-          <template v-for="section in tableData">
+        <template v-if="showNewsection">
+          <div slot="header" class="tr position-relative height-205">
+            <div class="position-absolute border-bottom-light" style="inset: 0; ">
+                <div class="section-header d-flex align-center gap-05 height-205 " >
+                  <div class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
+                  </div>
+                  <div class="position-sticky align-center" style="left: 0.5rem;" >
+                    <bib-icon icon="arrow-down" :scale="0.5" style="transform: rotate(-90deg);" ></bib-icon> 
+                    <span class="font-w-700 cursor-pointer ml-025" >
+                      <!-- {{section.title}} -->
+                      <input type="text" class="editable-input section-title" placeholder="Enter title..." @input="debounceNewSection($event.target.value, $event)" @blur="restoreField" />
+                    </span>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </template>
 
-            <!-- <template v-if="!isCollapsed"> -->
-            <draggable class="task-draggable" handle=".drag-handle" :group="{ name: 'tasks' }">
-              <div slot="header" class="tr position-relative height-205">
-                <div class="position-absolute border-top-light border-bottom-light" style="inset: 0; ">
+        <draggable v-model="localData" class="section-draggable-wrapper sortable-list" @end="$emit('section-dragend', localData)">
+
+          <section v-for="(section, index) in localData">
+
+            <div class="tr position-relative height-205">
+              <div class="position-absolute border-bottom-light" style="inset: 0; ">
+                <div class="section-header d-flex align-center gap-05 height-205 " >
+                  <div class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
+                  </div>
+                  <div class="position-sticky align-center" style="left: 0.5rem;" >
+                    <span class="width-1 cursor-pointer" @click.stop="collapseItem('sectionContent' + section.id)">
+                      <bib-icon icon="arrow-down" :scale="0.5" ></bib-icon> 
+                    </span>
+                    <span class="font-w-700 cursor-pointer ml-025" >
+                      <input type="text" class="editable-input section-title" :value="section.title.includes('_section') ? 'Untitled section'
+                    : section.title" @input="debounceRenameSection(section.id, $event)" @blur="restoreField" />
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <draggable class="section-content" tag="article" :list="section[tasksKey]" :group="{ name: 'tasks' }" :data-section="section.id" :ref="'sectionContent' + section.id" @start="rowDragStart" :move="moveRow" @end="rowDragEnd">
+
+              <!-- <div slot="header" class="tr position-relative height-205">
+                <div class="position-absolute border-bottom-light" style="inset: 0; ">
                   <div class="section-header d-flex align-center gap-05 height-205 " >
-                    <div class="section-drag-handle width-2 h-100" ><!-- <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
-                      <rect fill="none" height="24" width="24" />
-                      <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg> --><bib-icon icon="drag" variant="gray5"></bib-icon>
+                    <div class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                     </div>
                     <div class="position-sticky align-center" style="left: 0.5rem;" >
-                      <bib-icon icon="arrow-down" :scale="0.5" :ref="'sectionIcon'+section.id"></bib-icon> 
-                      <span class="font-w-700 cursor-pointer ml-025" @click.self="collapseItem('sectionContent' + section.id, 'sectionIcon'+section.id)" >
-                        <!-- {{section.title}} -->
+                      <span class="width-1 cursor-pointer" @click.stop="collapseItem('sectionContent' + section.id, 'sectionIcon'+section.id)">
+                        <bib-icon icon="arrow-down" :scale="0.5" :ref="'sectionIcon'+section.id"></bib-icon> 
+                      </span>
+                      <span class="font-w-700 cursor-pointer ml-025" >
                         <input type="text" class="editable-input section-title" :value="section.title.includes('_section') ? 'Untitled section'
                       : section.title" @input="debounceRenameSection(section.id, $event)" @blur="restoreField" />
                       </span>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div :ref="'sectionContent' + section.id">
-                <div v-for="item in section.tasks" :key="item.id" class="tr" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
+              </div> -->
+
+              <!-- <div class="section-content" > -->
+                <div v-for="item in section[tasksKey]" :key="item.id" class="tr sortable drag-item" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
                   <div class="td" role="cell">
                     <div v-if="drag" class="drag-handle width-105 h-100" ><!-- <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
                       <rect fill="none" height="24" width="24" />
                       <path d="M20,9H4v2h16V9z M4,15h16v-2H4V15z" /></svg> --><bib-icon icon="drag" variant="gray5"></bib-icon>
                     </div>
                   </div>
-                  <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell" :class="{'flex-grow-1': !field.width, 'date-cell': field.key.includes('Date')}" :style="`flex: ${field.width} 0 0;`" >
-                    <div v-if="field.key == 'title'" class="align-center ">
+                  <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell" :class="{'flex-grow-1': !field.width, 'date-cell': field.key.includes('Date')}" :style="`flex: ${field.width} 0 0;`" :data-key="field.key" >
+                    <div v-if="field.key == 'title'" class="align-center w-100">
                       <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}" @click.stop="markComplete($event, item)">
-                        <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success"></bib-icon>
+                        <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success-sub3"></bib-icon>
                       </span>
                       <span v-if="field.event" class=" flex-grow-1" style="line-height:1.25;">
                         <input type="text" class="editable-input" :value="item[field.key]" @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
@@ -73,18 +110,20 @@
                         <bib-icon icon="arrow-right" variant="gray4" hover-variant="gray5"></bib-icon>
                       </span>
                     </div>
-                    <template v-if="field.key == 'project'">{{item[field.key][0]?.project.title}}</template>
+                    <template v-if="field.key == 'project'">
+                      <div class="align-center height-2">{{item[field.key][0]?.project?.title}}</div>
+                    </template>
                     <template v-if="field.key == 'userId'">
-                      <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
+                      <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" class="flex-grow-1" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
                     </template>
                     <template v-if="field.key == 'status'">
-                      <status-select :ref="'stausSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('stausSelect'+item.id)"></status-select>
+                      <status-select :ref="'stausSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" class="flex-grow-1" @change="updateStatus($event, item)" @close-other="closePopups('stausSelect'+item.id)"></status-select>
                     </template>
                     <template v-if="field.key == 'priority'">
-                      <priority-select :ref="'prioritySelect'+item.id" :value="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
+                      <priority-select :ref="'prioritySelect'+item.id" :value="item[field.key]" class="flex-grow-1" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
                     </template>
                     <template v-if="field.key == 'department'">
-                      <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
+                      <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" class="flex-grow-1" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
                     </template>
                     <template v-if="field.key.includes('Date')" >
                       <!-- {{$formatDate(item[field.key])}} -->
@@ -93,33 +132,36 @@
                     </template>
                   </div>
                 </div>
-                <div v-if="localNewrow.sectionId != section.id" class="tr" role="row" style="border-bottom: var(--bib-light)">
-                  <div class="td " role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
-                  <div class="td" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
-                    <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
-                      <bib-icon :icon="plusButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{plusButton.label}}</span>
-                    </div>
-                  </div>
-                  <!-- <div v-for="n in tableFields.length-1" class="td" style="border-bottom-color: transparent; border-right-color: transparent;"></div> -->
-                </div>
 
-                <div v-show="localNewrow.sectionId == section.id" class="tr" role="row" @click.self="unselectAll">
-                  <div v-if="drag" class="td text-center " role="cell">
-                    <span class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
-                  </div>
-                  <!-- <template v-for="td in tableFields"> -->
-                    <div class="td" role="cell">
-                      <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate" @blur="newRowCreate" required placeholder="Enter title...">
+                <template v-if="plusButton">
+                  <div  class="tr" role="row" style="border-bottom: var(--bib-light)">
+                    <div class="td " role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
+                    <div class="td" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
+                      <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
+                        <bib-icon :icon="plusButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{plusButton.label}}</span>
+                      </div>
                     </div>
-                    <!-- <div v-else class="td" role="cell"></div> -->
-                  <!-- </template> -->
-                </div>
-              </div>
+                    <!-- <div v-for="n in tableFields.length-1" class="td" style="border-bottom-color: transparent; border-right-color: transparent;"></div> -->
+                  </div>
+
+                  <div v-show="localNewrow.sectionId == section.id" class="tr" role="row" @click.self="unselectAll">
+                    <div v-if="drag" class="td text-center " role="cell">
+                      <span class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
+                    </div>
+                    <!-- <template v-for="td in tableFields"> -->
+                      <div class="td" role="cell">
+                        <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate" @blur="newRowCreate" required placeholder="Enter title...">
+                      </div>
+                      <!-- <div v-else class="td" role="cell"></div> -->
+                    <!-- </template> -->
+                  </div>
+                </template>
+
+              <!-- </div> -->
 
             </draggable>
 
-            <!-- </template> -->
-          </template>
+          </section>
 
         </draggable>
 
@@ -152,8 +194,14 @@ export default {
     contextItems: { type: Array },
     drag: { type: Boolean, default: true },
     // height: { type: String, default: '100%' }
+    tasksKey: {
+      type: String,
+      default() {
+        return "tasks";
+      },
+    },
     plusButton: {
-      type: Object,
+      type: [Object, Boolean],
       default () {
         return {
           label: "New Task",
@@ -162,23 +210,24 @@ export default {
       }
     },
     newRow: {
-      type: Object,
+      type: [Object, Boolean],
       default () {
         return {
           sectionId: "",
           title: "",
-          userId: "",
-          statusId: 1,
-          priorityId: 3,
+          user: [],
+          statusId: null,
+          priorityId: null,
           startDate: "",
           dueDate: "",
-          departmentId: "",
+          departmentId: null,
           description: "",
           budget: "",
           text: "",
         }
       }
     },
+    showNewsection: { type: Boolean, default: false },
   },
 
   data() {
@@ -191,8 +240,17 @@ export default {
       format: "DD MMM YYYY",
       // highlight: false,
       validTitle: false,
-      localData: _.cloneDeep(this.tableData),
-      localNewrow: _.cloneDeep(this.newRow)
+      localData: [],
+      localNewrow: _.cloneDeep(this.newRow),
+    }
+  },
+
+  watch: {
+    /*showNewsection(newVal){
+      
+    },*/
+    tableData(newValue){
+      this.localData = _.cloneDeep(newValue)
     }
   },
 
@@ -201,7 +259,6 @@ export default {
       teamMembers: "user/getTeamMembers",
     }),
 
-    
     /*teamOptions(){
       return this.teamMembers.map(t => {
         return { value : t.id, label: t.label }
@@ -215,10 +272,11 @@ export default {
         }
       })
     },*/
+
     tableWidth() {
       const main = document.getElementById("main-content")
       // console.log(main.clientWidth, main.offsetWidth, main.scrollWidth)
-      let w = main.scrollWidth
+      let w = main.scrollWidth - 18
 
       return w + "px"
 
@@ -239,6 +297,7 @@ export default {
 
   mounted() {
     // const sub = document.getElementById("sub-panel")
+    this.localData = _.cloneDeep(this.tableData)
     this.resizableColumns()
   },
 
@@ -257,18 +316,13 @@ export default {
     },
 
     collapseItem(refId, refIcon) {
-      let elem = this.$refs[refId][0]
-      let icon = this.$refs[refIcon][0].$el
+      let elem = this.$refs[refId][0].$el
+      // let icon = this.$refs[refIcon][0].$el
       // let tar = event.target;
 
-      // console.log(elem, icon, tar,)
-      if (elem.style.display == "none") {
-        elem.style.display = "block";
-        icon.style.transform = "rotate(0deg)";
-      } else {
-        elem.style.display = "none";
-        icon.style.transform = "rotate(-90deg)";
-      }
+      console.log(elem.style.height)
+      elem.classList.toggle("collapsed")
+      
     },
 
     /*iconRotate(expanded){
@@ -339,7 +393,19 @@ export default {
         dragColumns[no].style.width = parseInt(dragColumns[no].style.width) + w + 'px';
         if (dragColumns[no + 1])
           dragColumns[no + 1].style.width = parseInt(dragColumns[no + 1].style.width) - w + 'px';
-        console.log(dragColumns[no].style.width, dragColumns[no + 1].style.width)
+        // console.log(dragColumns[no].dataset.key, dragColumns[no + 1].dataset.key)
+        console.log(dragColumns[no].clientWidth, dragColumns[no + 1].clientWidth)
+        // resizeObserver.observe(dragColumns[no]);
+        // resizeObserver.observe(dragColumns[no + 1]);
+        let col1key = dragColumns[no].dataset.key
+        let col2key = dragColumns[no + 1].dataset.key
+        let col1 = document.querySelectorAll(`.td[data-key="${col1key}"]`)
+        let col2 = document.querySelectorAll(`.td[data-key="${col2key}"]`)
+        for (var i = 0; i < col1.length; i++) {
+          // console.log(col1[i])
+          col1[i].style.flexBasis = dragColumns[no].clientWidth + "px"
+          col2[i].style.flexBasis = dragColumns[no + 1].clientWidth + "px"
+        }
         return true;
       }
 
@@ -363,6 +429,10 @@ export default {
       // ============================================================
       // stops column dragging
       this.stopColumnDrag = function(e) {
+        
+        console.log(e, e.bubbles)
+        e.stopPropagation()
+        console.log("after stopPropagation",e.bubbles)
         var e = e || window.event;
         if (!dragColumns) return;
 
@@ -390,6 +460,7 @@ export default {
       // ============================================================
       // init data and start dragging
       this.startColumnDrag = function(e) {
+        // console.log(e)
         var e = e || window.event;
 
         // if not first button was clicked
@@ -434,13 +505,33 @@ export default {
         // console.log(dragColumns[i], clientw)
         dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'>" +
           "<div class='resize-drag-handle' style='"+
-          "position:absolute;height:100%;width:4px;right:0;top:0px;cursor:w-resize;z-index:10; background-color: var(--bib-secondary-sub4)'>"+
+          "position:absolute;height:100%;width:4px;right:0;top:0px;cursor:w-resize;z-index:4; background-color: var(--bib-secondary-sub4)'>"+
           "</div>"+
           dragColumns[i].innerHTML +
           "</div>";
         // BUGBUG: calculate real border width instead of 5px!!!
         dragColumns[i].firstChild.firstChild.onmousedown = this.startColumnDrag;
       }
+
+      // const headElems = document.querySelector(".th:nth-child(2)")
+      const col1 = document.querySelectorAll(".td:nth-child(2)")
+      const col2 = document.querySelectorAll(".td:nth-child(3)")
+
+      const resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          // console.log(entry)
+          console.log("width",entry.contentRect.width)
+          for (var i = 0; i < col1.length; i++) {
+            // console.log(col1[i])
+            // col1[i].style.width = entry.contentRect.width+"px"
+            col1[i].style.flexBasis = entry.contentRect.width+"px"
+          }
+          // entry.target.style.width = entry.contentBoxSize[0].inlineSize + "px";
+        }
+      });
+
+      // resizeObserver.observe(headElems);
+
     },
     resizableColumns() {
       // var tables = document.getElementsByTagName('table');
@@ -467,17 +558,23 @@ export default {
       
     },
     rowDragStart(e) {
-      console.log(e.type, e);
+      // console.log("row drag start ", e);
       // this.highlight = true
     },
     rowDragEnd(e) {
-      console.log(e.type, e)
-      // this.highlight = false
-      // let sectionData = this.localdata.filter(s => s.id == e.to.dataset.section)
-      // this.$emit('task-dragend', sectionData[0].tasks)
+      // this.highlight = false;
+      let sectionData = this.localData.filter(
+        (s) => s.id == e.to.dataset.section
+      );
+
+      // console.log("row drag end ", e, sectionData[0][this.tasksKey])
+      this.$emit("row-dragend", {
+        [this.tasksKey]: sectionData[0][this.tasksKey],
+        sectionId: e.to.dataset.section,
+      });
     },
-    moveTask(e) {
-      console.log("move event", e)
+    moveRow(e) {
+      // console.log("move row ", e)
       // this.taskMoveSection = +e.to.dataset.section
     },
     rowClick($event, item) {
@@ -490,9 +587,11 @@ export default {
     },
     
     contextOpen($event, item) {
+      this.unselectAll()
       this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
       this.contextVisible = true
       this.activeItem = item
+      this.$emit("context-open", item)
       $event.currentTarget.classList.add("active")
     },
     contextItemClick($event){
@@ -507,6 +606,7 @@ export default {
       }
       this.localNewrow.sectionId = ""
       this.localNewrow.title = ""
+      this.$emit("toggle-newsection", false)
       // console.log('unselect all ')
       // this.$emit("hide-newrow")
       // this.$emit("close-context-menu")
@@ -579,6 +679,16 @@ export default {
       // let d = new Date(date)
       this.$emit("update-field", { id: item.id, field, value: new Date(d), label, historyText: `Changed ${label} to ${dayjs(d).format('DD MMM YYYY')}`, item: item})
     },
+    debounceNewSection: _.debounce(function(value, event) {
+      if (value) {
+        // console.log(...arguments)
+        event.target.classList.remove("error")
+        this.$emit("create-section", value)
+      } else {
+        console.warn("Title cannot be left blank")
+        event.target.classList.add("error")
+      }
+    }, 800),
     debounceRenameSection: _.debounce(function (id, event) {
       if (_.trim(event.target.value) == "") {
         event.target.classList.add("error");
@@ -652,15 +762,16 @@ export default {
   min-width: 100%;
   font-size: $base-size;
 
-  .thead,
+  /*.thead,
   .tbody,
   .tfoot {
     display: table-row-group;
-  }
+  }*/
 
   .th,
   .td {
     /*display: table-cell;*/
+    display: inline-flex;
     border-bottom: 1px solid $light;
     padding: 0.25rem;
     vertical-align: middle;
@@ -681,7 +792,7 @@ export default {
       position: sticky;
       min-width: 2rem;
       left: 0;
-      z-index: 10;
+      z-index: 1;
       background: #fff;
     }
 
@@ -696,7 +807,7 @@ export default {
       border-bottom-color: $gray2;
 
       &:nth-child(2) {
-        z-index: 11;
+        z-index: 5;
         background: $gray9;
       }
       &:hover {
@@ -733,10 +844,13 @@ export default {
 
   /*.section-header { position: sticky; left: 0; }*/
 
-  .sortable-chosen {
-    /*background-color: skyblue;*/
+  /*.sortable-chosen {
     .td { background-color: $success-sub6; }
     .td:nth-child(2) { background-color: $success-sub6; }
+  }*/
+
+  .section-content {
+    &.collapsed { height: 0; overflow: hidden; }
   }
 
   .new-button {
@@ -775,6 +889,7 @@ export default {
     }
   }
 
+  .vdpComponent__calendar-icon { z-index: 0 }
   .vdpComponent__input {
     margin: 0;
     min-height: 2rem;

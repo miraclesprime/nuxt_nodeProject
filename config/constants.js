@@ -780,9 +780,9 @@ export const TASK_CONTEXT_MENU = [
   { label: 'Mark Complete', event: 'done-task', variant: '', icon: 'check-circle-solid', iconVariant: 'gray5' },
   { label: 'Add to Favorites', event: 'fav-task', variant: '', icon: 'bookmark-solid', iconVariant: 'gray5' },
   { label: 'Team', event: 'gotoTeam', variant: '', icon: 'user-group-solid', iconVariant: 'gray5' },
-  { label: 'SubTasks', event: 'gotoSubtask', variant: '', icon: 'check-square-solid', iconVariant: 'gray5' },
-  { label: 'Conversation', event: 'gotoComment', variant: '', icon: 'comment-forum-solid', iconVariant: 'gray5' },
-  { label: 'Files', event: 'gotoFiles', variant: '', icon: 'folder-solid', iconVariant: 'gray5' },
+  // { label: 'SubTasks', event: 'gotoSubtask', variant: '', icon: 'check-square-solid', iconVariant: 'gray5' },
+  // { label: 'Conversation', event: 'gotoComment', variant: '', icon: 'comment-forum-solid', iconVariant: 'gray5' },
+  // { label: 'Files', event: 'gotoFiles', variant: '', icon: 'folder-solid', iconVariant: 'gray5' },
   { label: 'Copy Link', event: 'copy-task', variant: '', icon: 'duplicate', iconVariant: 'gray5' },
   { label: 'Report', event: 'report-task', variant: '', icon: 'warning', iconVariant: 'gray5' },
   { label: 'Delete', event: 'delete-task', variant: 'danger', icon: '', iconVariant: '' },
@@ -798,16 +798,21 @@ export const SUBTASK_CONTEXT_MENU = [
 ]
 
 export const COMPANY_TASK_FIELDS = [
-
   {
     label: 'Task name',
     key: 'title',
+    width: '20%',
+    icon: {
+      icon: 'check-circle-solid',
+      variant: 'gray2',
+      event: 'title-icon-click'
+    },
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
-      isActive: false
+      isActive: false,
     },
-    event: "task-click",
+    event: "title-click",
   },
   {
     label: "Project",
@@ -913,7 +918,7 @@ export const USER_TASKS = [
   {
     label: 'Start Date',
     key: 'startDate',
-    width: '8%',
+    width: '9%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -923,7 +928,7 @@ export const USER_TASKS = [
   {
     label: 'Due Date',
     key: 'dueDate',
-    width: '8%',
+    width: '9%',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',

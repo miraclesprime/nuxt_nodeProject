@@ -5,13 +5,35 @@
       <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="showNewTodo" @change-grid-type="($event)=>gridType = $event" @search-mytasks="searchTasks"></user-tasks-actions>
       <!-- <div> -->
         <!-- <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form> -->
-        <div v-show="gridType == 'list'" id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative of-scroll-y" :style="{ 'width': contentWidth }">
+        <div v-show="gridType == 'list'" id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative " :style="{ 'width': contentWidth }">
           <!-- <template> -->
             <!-- <template v-if="todos.length"> -->
               <!-- <div v-show="gridType == 'list'"> -->
               <!-- <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete" @edit-field="updateTask" @edit-section="renameTodo" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table> -->
               <!-- table context menu -->
-              <adv-table-two :tableFields="taskFields" :tableData="localdata" :contextItems="contextMenuItems" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @update-field="updateField"></adv-table-two>
+
+              <!-- <draggable v-model="localdata" class="sortable-list bg-warning-sub3"  >
+                <div v-for="(section, index) in localdata" :key="section.id" class="sortable border-top-warning border-bottom-warning my-05 bg-secondary-sub4" >
+
+                  <div class="handle1 height-2 align-center gap-05">
+                    <bib-icon icon="drag" variant="gray5"></bib-icon>
+                    {{section.title}}
+                  </div>
+                  <draggable :list="section[tasksKey]" tag="ul" draggable=".item" :group="{ name: 'tasks' }" class="">
+                    <template v-for="item in section.tasks">
+                      <li :key="item.title" class="height-2 item border-top-light align-center gap-05 font-md">
+                        <div class="handle2 width-2 height-2 align-center justify-center gap-025">
+                          <bib-icon icon="drag" :variant="item.priorityId == 1 ? 'danger' : 'gray5'"></bib-icon>
+                          <bib-icon icon="check-circle-solid" :variant="item.statusId == 5 ? 'success' : 'gray5'"></bib-icon>
+                        </div>
+                        {{ item.title }}
+                      </li>
+                    </template>
+                  </draggable>
+                </div>
+              </draggable> -->
+
+              <adv-table-two :tableFields="taskFields" :tableData="localdata" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createTodo" @edit-section="renameTodo" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd"></adv-table-two>
               <!-- <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closePopups" @item-click="contextItemClick"></table-context-menu> -->
               <loading :loading="loading"></loading>
               <!-- </div> -->
@@ -24,10 +46,16 @@
           <!-- </template> -->
         </div>
           <!-- <template> -->
-            <div v-show="gridType == 'grid'" id="tgs-scroll" class="bg-light h-100 of-scroll-x position-relative" >
-              <draggable :list="localdata" class="d-flex h-100" :move="moveTodo" v-on:end="todoDragEnd" handle=".section-drag-handle">
-                <div class="task-grid-section" v-for="(todo, index) in localdata" :key="index + viewName + '-' + key">
+            <div v-show="gridType == 'grid'" id="tgs-scroll" class="bg-light grid-wrapper h-100 position-relative" >
+              <draggable v-model="localdata" class="d-flex grid-content" :move="moveTodo" @end="gridSectionDragend" handle=".section-drag-handle">
+                <div v-if="newSection" class="task-grid-section">
                   <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
+                    <!-- <task-grid-section-title section="{title: '', id: ''}" ></task-grid-section-title> -->
+                    <input type="text" ref="newsectioninput" class="editable-input" placeholder="Enter title" @input="debounceNewSection($event.target.value, $event)" @focus.stop="">
+                  </div>
+                </div>
+                <div class="task-grid-section" v-for="(todo, index) in localdata" :key="index + viewName + '-' + key">
+                  <div class="w-100 d-flex justify-between bg-light" style="margin-bottom: 10px; position: sticky; top: 0; z-index: 2;">
                     <task-grid-section-title :section="todo" @update-title="renameTodo"></task-grid-section-title>
                     <div class="d-flex align-center section-options" :id="'tg-section-options-'+todo.id">
                       <div class="cursor-pointer mx-05 d-flex align-center" :id="'tg-section-addtask-'+todo.id" v-on:click.stop="$nuxt.$emit('open-sidebar', todo.id)">
@@ -41,12 +69,13 @@
                                 <bib-icon icon="add"></bib-icon>
                                 <span class="ml-05" :id="'tgs-list-span'+todo.id">Add task</span>
                               </div>
-                            </span><span class="list__item" :id="'tgs-list-2'+todo.id" v-on:click="showRenameModal(todo)">
+                            </span>
+                            <!-- <span class="list__item" :id="'tgs-list-2'+todo.id" v-on:click="showRenameModal(todo)">
                               <div class="d-flex align-center" :id="'tgs-list-flex-2'+todo.id">
                                 <bib-icon icon="pencil"></bib-icon>
                                 <span class="ml-05" :id="'tgs-list-span'+todo.id">Rename</span>
                               </div>
-                            </span>
+                            </span> -->
                             <hr>
                             <span class="list__item danger" :id="'tgs-list-3'+todo.id" v-on:click="deleteTodo(todo)">
                               Delete section
@@ -57,7 +86,7 @@
                     </div>
                   </div>
                   <div class="task-section__body h-100">
-                    <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
+                    <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="gridTaskDragend" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
                       <template v-for="(task, index) in todo.tasks">
                         <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker"></task-grid>
                       </template>
@@ -86,7 +115,7 @@
         <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
 
         <!-- rename section modal -->
-        <bib-modal-wrapper v-if="renameModal" title="Rename section" @close="renameModal = false">
+        <!-- <bib-modal-wrapper v-if="renameModal" title="Rename section" @close="renameModal = false">
           <template slot="content">
             <div>
               <bib-input type="text" v-model.trim="todoTitle" placeholder="Enter name..."></bib-input>
@@ -99,10 +128,10 @@
               <bib-button label="Rename" variant="success" pill v-on:click="renameTodo"></bib-button>
             </div>
           </template>
-        </bib-modal-wrapper>
+        </bib-modal-wrapper> -->
         <bib-popup-notification-wrapper>
           <template #wrapper>
-            <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
+            <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" autohide="5000">
             </bib-popup-notification>
           </template>
         </bib-popup-notification-wrapper>
@@ -163,6 +192,7 @@ export default {
       alertDialog: false,
       alertMsg:"",
       contentWidth: "100%",
+      tasksKey: 'tasks'
     }
   },
 
@@ -173,16 +203,17 @@ export default {
       currentTask: 'task/getSelectedTask',
       teamMembers: "user/getTeamMembers",
       sidebar: "task/getSidebarVisible",
+      loggedUser: "user/getUser2",
     })
   },
 
   watch: {
     todos(newVal) {
-      let todos = _.cloneDeep(newVal)
-      todos.forEach(function(todo) {
-        todo["tasks"] = todo.tasks.sort((a, b) => a.tOrder - b.tOrder);
+      let localTodos = _.cloneDeep(newVal)
+      localTodos.forEach(function(todo) {
+        todo["tasks"] = todo.tasks?.sort((a, b) => a.tOrder - b.tOrder);
       })
-      this.localdata = todos
+      this.localdata = localTodos
     },
 
     gridType() {
@@ -192,7 +223,7 @@ export default {
       const page = document.getElementById("page")
       this.$nextTick(() => {
         const panel = document.getElementById("side-panel-wrapper")
-        console.log("page width="+page.scrollWidth+", panel width="+panel.offsetWidth)
+        // console.log("page width="+page.scrollWidth+", panel width="+panel.offsetWidth)
         if (this.sidebar) {
           this.contentWidth = (page.scrollWidth - panel.offsetWidth) + 'px'
         } else {
@@ -216,19 +247,20 @@ export default {
 
   mounted() {
 
-    
     for(let field of this.taskFields) {
       if(field.header_icon) {
         field.header_icon.isActive = false;
       }
     }
 
-    this.loading = true
+    // this.loading = true
     this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
       if (res.statusCode == 200) {
+        // console.log(res.data)
+        this.localdata = _.cloneDeep(res.data)
         this.key += 1
       }
-      this.loading = false;
+      // this.loading = false;
     })
   },
 
@@ -281,32 +313,35 @@ export default {
       this.datePickerOpen = false
       this.activeTask = {}
     },
-
-    contextItemClick(key) {
+    contextOpen(item){
+      this.$store.dispatch("task/setSingleTask", item)
+    },
+    contextItemClick(key, item) {
+      // console.log(...arguments)
       switch (key) {
         case 'done-task':
-          this.taskMarkComplete(this.activeTask)
+          this.taskMarkComplete(item)
           break;
         case 'fav-task':
-          this.taskSetFavorite(this.activeTask)
+          this.taskSetFavorite(item)
           break;
         case 'delete-task':
-          this.deleteTask(this.activeTask)
+          this.deleteTask(item)
           break;
         case 'copy-task':
-          this.copyTaskLink(this.activeTask);
+          this.copyTaskLink(item);
           break;
         case 'gotoTeam':
           this.$nuxt.$emit('add-member-to-task')
           break;
         case 'gotoComment':
-          this.openSidebar(this.activeTask, 'task_conversation')
+          this.openSidebar(item, 'task_conversation')
           break;
         case 'gotoSubtask':
-          this.openSidebar(this.activeTask, 'task_subtasks')
+          this.openSidebar(item, 'task_subtasks')
           break;
         case 'gotoFiles':
-          this.openSidebar(this.activeTask, 'task_files')
+          this.openSidebar(item, 'task_files')
           break;
         default:
           this.alertDialog = true
@@ -367,7 +402,7 @@ export default {
       if (isFav) {
         this.$store.dispatch("task/removeFromFavorite", { id: task.id })
           .then(msg => {
-            this.updateKey()
+            this.updateKey("Removed favorite")
             this.loading = false
           })
           .catch(e => {
@@ -377,7 +412,7 @@ export default {
       } else {
         this.$store.dispatch("task/addToFavorite", { id: task.id })
           .then(msg => {
-            this.updateKey()
+            this.updateKey("Added to favorite")
             this.loading = false
           })
           .catch(e => {
@@ -388,7 +423,7 @@ export default {
     },
 
     updateField(payload){
-      console.log(payload)
+      // console.log(payload)
 
       /*let user
       if (payload.field == "userId" && payload.value != '') {
@@ -399,7 +434,7 @@ export default {
 
       this.$store.dispatch("task/updateTask", {
         id: payload.id,
-        projectId: payload.item.project[0].projectId || payload.item.project[0].project.id,
+        projectId: payload.item.project[0]?.projectId || null,
         data: { [payload.field]: payload.value },
         text: payload.historyText
       })
@@ -410,18 +445,21 @@ export default {
     },
 
     taskMarkComplete(task) {
-      this.loading = true
-      if (typeof task == "object" && Object.keys(task).length > 0) {} else {
+      // this.loading = true
+      /*if (typeof task == "object" && Object.keys(task).length > 0) {
+
+      } else {
         task = this.activeTask
-      }
+      }*/
+      // console.log(task)
       this.$store.dispatch('task/updateTaskStatus', task)
         .then((d) => {
-          this.loading = false
-          this.updateKey()
+          // this.loading = false
+          this.updateKey("Marked as complete")
           this.$store.dispatch("task/setSingleTask", d)
         }).catch(e => {
           console.log(e)
-          this.loading = false
+          // this.loading = false
         })
     },
 
@@ -485,7 +523,7 @@ export default {
     },
 
     confirmDelete(state){
-      console.log(state, this.taskToDelete)
+      // console.log(state, this.taskToDelete)
       this.confirmModal = false
       this.confirmMsg = ""
       if (state) {
@@ -514,6 +552,24 @@ export default {
       this.confirmModal = true
     },
 
+    createTask(item){
+      let taskdata = item
+
+      taskdata.user = [{
+        id: this.loggedUser.Id,
+        email: this.loggedUser.Email,
+        firstName: this.loggedUser.FirstName,
+        lastName: this.loggedUser.LastName
+      }]
+      console.log(taskdata)
+      this.$store.dispatch("task/createTask", taskdata)
+      .then(t => {
+        console.log(t)
+        this.updateKey()
+      })
+      .catch(e => console.warn(e))
+    },
+
     updateKey($event) {
       if ($event) {
         this.popupMessages.push({ text: $event, variant: "success" })
@@ -527,31 +583,60 @@ export default {
 
     showNewTodo() {
       this.newSection = true
+      process.nextTick(() => {
+        this.$refs.newsectioninput.focus()
+      });
     },
+
+    debounceNewSection: _.debounce(function(value, event) {
+      if (value) {
+        // console.log(...arguments)
+        event.target.classList.remove("error")
+        // this.$emit("create-section", value)
+        this.createTodo(value)
+      } else {
+        console.warn("Title cannot be left blank")
+        event.target.classList.add("error")
+      }
+    }, 800),
 
     async createTodo($event) {
       console.log('create-todo', $event)
-      this.sectionLoading = true
+      // this.sectionLoading = true
       const todo = await this.$store.dispatch("todo/createTodo", {
         userId: JSON.parse(localStorage.getItem("user")).sub,
         title: $event,
       })
 
       if (todo.statusCode == 200) {
-        this.updateKey()
+        // this.updateKey()
         this.newSection = false
-        this.sectionLoading = false
+        // this.sectionLoading = false
+        this.$store.dispatch("todo/fetchTodos", { filter: 'all' })
+        .then((res) => {
+          if (res.statusCode == 200) {
+            // this.key += 1
+            let tmp = [];
+            tmp.push(this.localdata[this.localdata.length - 1]);
+            let i;
+            for (i = 1; i < this.localdata.length; ++i)
+              tmp.push(this.localdata[i - 1]);
+            this.localdata = tmp;
+            this.todoDragEnd(this.localdata);
+          }
+        })
       } else {
-        this.sectionError = todo.message
-        this.sectionLoading = false
+        // this.sectionError = todo.message
+        // this.sectionLoading = false
+        console.warn(todo)
       }
     },
 
-    showRenameModal(todo) {
+    /*showRenameModal(todo) {
       this.todoTitle = todo.title
       this.todoId = todo.id
       this.renameModal = true
-    },
+    },*/
 
     renameTodo(payload) {
       this.$store.dispatch("todo/renameTodo", {
@@ -574,6 +659,7 @@ export default {
       this.$store.dispatch("todo/deleteTodo", todo)
         .then((d) => {
           this.updateKey()
+          this.popupMessages.push({ text: t.message, variant: "orange" })
         })
         .catch(e => console.log(e))
     },
@@ -585,13 +671,23 @@ export default {
     moveTask(e) {
       this.taskDnDsectionId = +e.to.dataset.section
       this.highlight = +e.to.dataset.section
+    },
 
+    gridTaskDragend(e){
+      let sectionData = this.localdata.filter(
+        (s) => s.id == e.to.dataset.section
+      );
+      // console.log(e.to, sectionData[0].tasks)
+      this.taskDragEnd({
+        tasks: sectionData[0].tasks,
+        sectionId: e.to.dataset.section,
+      });
     },
 
     taskDragEnd: _.debounce(async function(payload) {
 
       this.highlight = null
-      console.log(payload.tasks)
+      // console.log(payload)
 
       payload.tasks.forEach((e, i) => {
         e.tOrder = i
@@ -613,20 +709,27 @@ export default {
         if (res.statusCode == 200) {
           this.key += 1
         }
-        this.loading = false;
+        // this.loading = false;
       })
-    }, 600),
+    }, 400),
 
     moveTodo(e) {
       this.highlight = +e.to.dataset.section
     },
 
-    todoDragEnd: _.debounce(async function(todos) {
+    gridSectionDragend(e){
+      // console.log(this.localdata)
+      this.todoDragEnd(this.localdata)
+      // this.localdata.forEach(d => console.log(d.uOrder, d.title ))
+    },
 
+    todoDragEnd: _.debounce(async function(todos) {
       todos.forEach((el, i) => {
         el.uOrder = i
+        // console.log(el.uOrder, el.title)
       })
 
+      // console.log(todos)
       let todoDnD = await this.$axios.$put("/todo/dragdrop", { data: todos }, {
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
@@ -643,10 +746,10 @@ export default {
         if (res.statusCode == 200) {
           this.key += 1
         }
-        this.loading = false;
+        // this.loading = false;
       })
 
-    }, 600),
+    }, 400),
 
     filterView($event) {
       this.loading = true
@@ -676,117 +779,286 @@ export default {
     // Sort By Action List
     sortBy($event) {
       // sort by title
-      if ($event == 'title' && this.orderBy == 'asc') {
-        this.localdata.forEach(function(todo, index) {
-          todo["tasks"] = todo.tasks.sort((a, b) => a.title.localeCompare(b.title))
-        })
-      }
+      if ($event == 'title') {
 
-      if ($event == 'title' && this.orderBy == 'desc') {
-        this.localdata.forEach(function(todo, index) {
-          todo["tasks"] = todo.tasks.sort((a, b) => b.title.localeCompare(a.title))
-        })
+          let newArr = JSON.parse(JSON.stringify(this.localdata))
+       
+          if (this.orderBy == "asc") {
+
+              newArr.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.title && b.title) {
+                    return a.title.localeCompare(b.title)
+                  }
+                })
+              })
+
+          } else {
+
+            newArr.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.title && b.title) {
+                    return b.title.localeCompare(a.title)
+                  }
+                })
+              })
+          }
+
+          this.localdata = newArr; 
       }
 
       // sort By Project
-      if ($event == 'project' && this.orderBy == 'asc') {
+      if ($event == 'project') {
+      
+          let newArr1 = [];
 
-        this.localdata.forEach(function(todo) {
-          todo["tasks"] = todo.tasks.sort((a, b) => {
-            if (a.project && b.project) {
-              return a.project[0].project.title.localeCompare(b.project[0].project.title)
+          for (let i = 0; i < this.localdata.length; i++) {
+            newArr1.push(this.localdata[i]);
+            let tNewArr = []
+            for(let j=0; j<this.localdata[i].tasks.length; j++) {
+              if (this.localdata[i].tasks[j].project.length > 0) {
+                tNewArr.unshift(this.localdata[i].tasks[j])
+              } else {
+                tNewArr.push(this.localdata[i].tasks[j])
+              }
             }
-          });
-        })
+            newArr1[i]["tasks"] = tNewArr;
+          }
 
+          if (this.orderBy == "asc") {
+
+              newArr1.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.project.length > 0 && b.project.length > 0) {
+                    return a.project[0].project.title.localeCompare(b.project[0].project.title)
+                  }
+                })
+              })
+
+          } else {
+
+            newArr1.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.project.length > 0 && b.project.length > 0) {
+                    return b.project[0].project.title.localeCompare(a.project[0].project.title)
+                  }
+                })
+              })
+          }
+
+          this.localdata = newArr1;  
       }
 
-      if ($event == 'project' && this.orderBy == 'desc') {
-        this.localdata.forEach(function(todo) {
-          todo["tasks"] = todo.tasks.sort((a, b) => {
-            if (a.project && b.project) {
-              return b.project[0].project.title.localeCompare(a.project[0].project.title)
-            }
-          });
-        })
-      }
 
       // sort By Status
       if ($event == "status") {
 
-        if (this.orderBy == "asc") {
-          this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) => a.status.text.localeCompare(b.status.text));
-          })
-        } else {
-          this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) => b.status.text.localeCompare(a.status.text));
-          })
-        }
+          let newArr2 = [];
+
+          for (let i = 0; i < this.localdata.length; i++) {
+            newArr2.push(this.localdata[i]);
+            let tNewArr = []
+            for(let j=0; j<this.localdata[i].tasks.length; j++) {
+              if (this.localdata[i].tasks[j].statusId) {
+                tNewArr.unshift(this.localdata[i].tasks[j])
+              } else {
+                tNewArr.push(this.localdata[i].tasks[j])
+              }
+            }
+            newArr2[i]["tasks"] = tNewArr;
+          }
+
+          if (this.orderBy == "asc") {
+
+              newArr2.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.statusId && b.statusId) {
+                    return a.status.text.localeCompare(b.status.text)
+                  }
+                })
+              })
+
+          } else {
+
+            newArr2.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.statusId && b.statusId) {
+                    return b.status.text.localeCompare(a.status.text)
+                  }
+                })
+              })
+          }
+
+          this.localdata = newArr2;
 
       }
 
       // sort by create date
       if ($event == 'startDate') {
-        if (this.orderBy == "asc") {
-          this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
-          })
-        } else {
-          this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
-          })
+
+        let newArr3 = [];
+
+        for (let i = 0; i < this.localdata.length; i++) {
+          newArr3.push(this.localdata[i]);
+          let tNewArr = []
+          for(let j=0; j<this.localdata[i].tasks.length; j++) {
+            if (this.localdata[i].tasks[j].startDate) {
+              tNewArr.unshift(this.localdata[i].tasks[j])
+            } else {
+              tNewArr.push(this.localdata[i].tasks[j])
+            }
+          }
+          newArr3[i]["tasks"] = tNewArr;
         }
+
+        if (this.orderBy == "asc") {
+
+            newArr3.forEach(todo => {
+              todo["tasks"] = todo.tasks.sort((a, b) => {
+                if (a.startDate && b.startDate) {
+                  return new Date(a.startDate) - new Date(b.startDate)
+                }
+              })
+            })
+
+        } else {
+
+          newArr3.forEach(todo => {
+              todo["tasks"] = todo.tasks.sort((a, b) => {
+                if (a.startDate && b.startDate) {
+                  return new Date(b.startDate) - new Date(a.startDate)
+                }
+              })
+            })
+        }
+
+        this.localdata = newArr3;
       }
 
 
       // sort by due date
       if ($event == 'dueDate') {
-        if (this.orderBy == "asc") {
-          this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
-          })
-        } else {
-          this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate));
-          })
+        let newArr4 = [];
+
+        for (let i = 0; i < this.localdata.length; i++) {
+          newArr4.push(this.localdata[i]);
+          let tNewArr = []
+          for(let j=0; j<this.localdata[i].tasks.length; j++) {
+            if (this.localdata[i].tasks[j].dueDate) {
+              tNewArr.unshift(this.localdata[i].tasks[j])
+            } else {
+              tNewArr.push(this.localdata[i].tasks[j])
+            }
+          }
+          newArr4[i]["tasks"] = tNewArr;
         }
+
+        if (this.orderBy == "asc") {
+
+            newArr4.forEach(todo => {
+              todo["tasks"] = todo.tasks.sort((a, b) => {
+                if (a.dueDate && b.dueDate) {
+                  return new Date(a.dueDate) - new Date(b.dueDate)
+                }
+              })
+            })
+
+        } else {
+
+          newArr4.forEach(todo => {
+              todo["tasks"] = todo.tasks.sort((a, b) => {
+                if (a.dueDate && b.dueDate) {
+                  return new Date(b.dueDate) - new Date(a.dueDate)
+                }
+              })
+            })
+        }
+
+        this.localdata = newArr4;
       }
 
 
       // sort by priority
       if ($event == "priority") {
-        if (this.orderBy == "asc") {
-          this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) => a.priority.id - b.priority.id);
-          })
-        } else {
-          this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) => b.priority.id - a.priority.id);
-          })
-        }
+        let newArr5 = [];
+
+          for (let i = 0; i < this.localdata.length; i++) {
+            newArr5.push(this.localdata[i]);
+            let tNewArr = []
+            for(let j=0; j<this.localdata[i].tasks.length; j++) {
+              if (this.localdata[i].tasks[j].priorityId) {
+                tNewArr.unshift(this.localdata[i].tasks[j])
+              } else {
+                tNewArr.push(this.localdata[i].tasks[j])
+              }
+            }
+            newArr5[i]["tasks"] = tNewArr;
+          }
+
+          if (this.orderBy == "asc") {
+
+              newArr5.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.priorityId && b.priorityId) {
+                    return a.priorityId - b.priorityId
+                  }
+                })
+              })
+
+          } else {
+
+            newArr5.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.priorityId && b.priorityId) {
+                    return b.priorityId - a.priorityId
+                  }
+                })
+              })
+          }
+
+          this.localdata = newArr5;
       }
 
 
       // sort by department
       if ($event == "department") {
-        if (this.orderBy == "asc") {
-          this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) => {
-              if(a.departmentId && b.departmentId) {
-                return a.department.title.localeCompare(b.priority.title)
+        let newArr6 = [];
+
+          for (let i = 0; i < this.localdata.length; i++) {
+            newArr6.push(this.localdata[i]);
+            let tNewArr = []
+            for(let j=0; j<this.localdata[i].tasks.length; j++) {
+              if (this.localdata[i].tasks[j].departmentId) {
+                tNewArr.unshift(this.localdata[i].tasks[j])
+              } else {
+                tNewArr.push(this.localdata[i].tasks[j])
               }
-            });
-          })
-        } else {
-          this.localdata.forEach(function(todo) {
-            todo["tasks"] = todo.tasks.sort((a, b) =>  {
-              if(a.departmentId && b.departmentId) {
-                return b.department.title.localeCompare(a.priority.title)
-              }
-            });
-          })
-        }
+            }
+            newArr6[i]["tasks"] = tNewArr;
+          }
+
+          if (this.orderBy == "asc") {
+
+              newArr6.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.departmentId && b.departmentId) {
+                    return a.department.title.localeCompare(b.department.title)
+                  }
+                })
+              })
+
+          } else {
+
+            newArr6.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.departmentId && b.departmentId) {
+                    return b.department.title.localeCompare(a.department.title)
+                  }
+                })
+              })
+          }
+
+          this.localdata = newArr6;
       }
 
 
@@ -808,9 +1080,7 @@ export default {
     },
 
     copyTaskLink(task) {
-      
         let url = window.location.host + `/tasks/${task.id}`;
-        
         if (navigator.clipboard) { 
           navigator.clipboard.writeText(url);
         } else { 
@@ -819,31 +1089,17 @@ export default {
     },
 
     searchTasks(text) {
-
       let formattedText = text.toLowerCase().trim();
-
       let Ts = JSON.parse(JSON.stringify(this.todos))
-      
       let newArr = Ts.map((todo) => {
-
-          let filtered = todo.tasks.filter((t) => {
-          
-          if(t.description) {
-            if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText) || t.description.includes(formattedText) || t.description.toLowerCase().includes(formattedText)) {
+        let filtered = todo.tasks.filter((t) => {
+          if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
               return t
             } 
-          } else {
-            if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
-              return t
-            } 
-          }
-
-        })
+          })
 
         todo.tasks = filtered
-
         return todo;
-      
       })
 
       if(newArr.length >= 0) {
@@ -868,7 +1124,15 @@ export default {
   grid-template-rows: auto auto calc(100vh - 150px);
   grid-template-columns: 1fr;*/
 }
-
+.mytask-table-wrapper {
+  overflow: auto;
+}
+.grid-wrapper {
+  overflow: auto;
+  .grid-content {
+    height: calc(100% - 18px);
+  }
+}
 .highlight {
   outline: 2px skyblue dashed;
   background-color: azure;

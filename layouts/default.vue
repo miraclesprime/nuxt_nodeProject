@@ -128,6 +128,7 @@
             <transition name="drawer">
               <task-sidebar
                 v-show="openSidebar"
+                :visible="openSidebar" 
                 :sectionIdActive="sectionPreselect"
                 :scrollId="scrollId"
                 :departmentId="departmentId"

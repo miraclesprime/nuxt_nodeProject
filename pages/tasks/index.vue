@@ -231,11 +231,11 @@ export default {
         sectionId: "",
         title: "",
         userId: "",
-        statusId: 1,
-        priorityId: 3,
+        statusId: null,
+        priorityId: null,
         startDate: "",
         dueDate: "",
-        department: "",
+        departmentId: null,
         description: "",
         budget: "",
         text: "",
@@ -256,7 +256,18 @@ export default {
 
   watch: {
     tasks(newVal) {
-      this.localData = _.cloneDeep(newVal);
+      // this.localData = _.cloneDeep(newVal);
+      let data = _.cloneDeep(newVal);
+      let sortedData=data.map((item,index)=>{
+            let taskArr = item.tasks.sort((a, b) => {
+              if (a.priorityId && b.priorityId) {
+                return a.priorityId - b.priorityId;
+              }
+            });
+            item.tasks=taskArr
+            return item
+        })
+        this.localData = _.cloneDeep(sortedData);
     },
 
     gridType() {
@@ -283,13 +294,16 @@ export default {
 
   mounted() {
     this.loading = true;
+    // this.updateKey()
     let compid = JSON.parse(localStorage.getItem("user")).subb;
     this.$store
       .dispatch("company/fetchCompanyTasks", {
         companyId: compid
       })
       .then((res) => {
+
         this.localData = JSON.parse(JSON.stringify(res));
+
         this.key += 1;
         this.loading = false;
       });
@@ -353,19 +367,23 @@ export default {
       this.deptPickerOpen = false;
       this.activeTask = {};
     },
-    updateKey($event) {
-      if ($event) {
-        this.popupMessages.push({ text: $event, variant: "success" });
+    updateKey(value) {
+      // if ($event) {
+      //   this.popupMessages.push({ text: $event, variant: "success" });
+      // }
+      if (value) {
+        this.popupMessages.push({ text: "success", variant: "success" });
       }
       let compid = JSON.parse(localStorage.getItem("user")).subb;
-
       this.$store
         .dispatch("company/fetchCompanyTasks", {
           companyId: compid,
         })
-        .then(() => {
+        .then((res) => {
+
           this.key += 1;
         });
+       
     },
 
     openSidebar(task, scroll) {
@@ -470,7 +488,7 @@ export default {
           }"`,
         })
         .then((t) => {
-          this.updateKey()
+          this.updateKey(t.data.department.title)
         })
         .catch((e) => console.warn(e));
     },
@@ -497,21 +515,45 @@ export default {
         })
         .catch((e) => console.warn(e));
     },
-
+// updated by @wen 5.24
     updateDate(value) {
-      let newDate = dayjs(value).format("D MMM YYYY");
-
-      this.$store
-        .dispatch("task/updateTask", {
-          id: this.activeTask.id,
-          data: { [this.datepickerArgs.field]: value },
-          user: null,
-          text: `changed ${this.datepickerArgs.label} to ${newDate}`,
-        })
-        .then((t) => {
-            this.updateKey();
-        })
-        .catch((e) => console.warn(e));
+      if(this.datepickerArgs.field==="dueDate")
+        {
+          if(new Date(value).toISOString().slice(0, 10)>new Date(this.activeTask.startDate).toISOString().slice(0, 10))
+            {
+                this.changeDate(value)
+            }
+            else{
+              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+            }
+        }
+        else
+        {
+          if(new Date(value).toISOString().slice(0, 10)<new Date(this.activeTask.dueDate).toISOString().slice(0, 10))
+            {
+                this.changeDate(value)
+            }
+            else {
+              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+            }
+          
+        }
+        
+      
+    },
+    changeDate(value){
+        let newDate = dayjs(value).format("D MMM YYYY");
+          this.$store
+            .dispatch("task/updateTask", {
+              id: this.activeTask.id,
+              data: { [this.datepickerArgs.field]: value },
+              user: null,
+              text: `changed ${this.datepickerArgs.label} to ${newDate}`,
+            })
+            .then((t) => {
+                this.updateKey();
+            })
+            .catch((e) => console.warn(e));
     },
 
     taskSetFavorite(task) {
@@ -779,22 +821,8 @@ export default {
 
       let newArr = depts.map((d) => {
         let filtered = d.tasks.filter((t) => {
-          if (t.description) {
-            if (
-              t.title.includes(formattedText) ||
-              t.title.toLowerCase().includes(formattedText) ||
-              t.description.includes(formattedText) ||
-              t.description.toLowerCase().includes(formattedText)
-            ) {
-              return t;
-            }
-          } else {
-            if (
-              t.title.includes(formattedText) ||
-              t.title.toLowerCase().includes(formattedText)
-            ) {
-              return t;
-            }
+          if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
+            return t;
           }
         });
 
@@ -885,11 +913,11 @@ export default {
         sectionId: "",
         title: "",
         userId: "",
-        statusId: 1,
-        priorityId: 3,
+        statusId: null,
+        priorityId: null,
         startDate: "",
         dueDate: "",
-        department: "",
+        departmentId: null,
         description: "",
         budget: "",
         text: "",
