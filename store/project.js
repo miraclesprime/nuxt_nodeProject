@@ -350,7 +350,7 @@ export const actions = {
       user: payload.user,
       title: payload.title,
       statusId: null,
-      departmentId: payload.departmentId,
+      departmentId: payload.departmentId || null,
       description: null,
       startDate: null,
       dueDate: null,

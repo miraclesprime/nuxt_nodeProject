@@ -234,8 +234,8 @@ export default {
         description: "",
         startDate: "",
         dueDate: "",
-        priorityId: 2,
-        statusId: 1,
+        priorityId: null,
+        statusId: null,
         budget: 0,
         text: `added subtask "${this.title}"`,
       }

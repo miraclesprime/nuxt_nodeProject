@@ -45,13 +45,31 @@
           </div>
         </template>
 
-        <draggable v-model="localData" class="section-draggable-wrapper" handle=".section-drag-handle">
+        <draggable v-model="localData" class="section-draggable-wrapper sortable-list" @end="$emit('section-dragend', localData)">
 
-          <template v-for="(section, index) in localData">
+          <section v-for="(section, index) in localData">
 
-            <draggable class="task-draggable" :list="section[tasksKey]" handle=".drag-handle" :group="{ name: 'tasks' }">
+            <div class="tr position-relative height-205">
+              <div class="position-absolute border-bottom-light" style="inset: 0; ">
+                <div class="section-header d-flex align-center gap-05 height-205 " >
+                  <div class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
+                  </div>
+                  <div class="position-sticky align-center" style="left: 0.5rem;" >
+                    <span class="width-1 cursor-pointer" @click.stop="collapseItem('sectionContent' + section.id)">
+                      <bib-icon icon="arrow-down" :scale="0.5" ></bib-icon> 
+                    </span>
+                    <span class="font-w-700 cursor-pointer ml-025" >
+                      <input type="text" class="editable-input section-title" :value="section.title.includes('_section') ? 'Untitled section'
+                    : section.title" @input="debounceRenameSection(section.id, $event)" @blur="restoreField" />
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-              <div slot="header" class="tr position-relative height-205">
+            <draggable class="section-content" tag="article" :list="section[tasksKey]" :group="{ name: 'tasks' }" :data-section="section.id" :ref="'sectionContent' + section.id" @start="rowDragStart" :move="moveRow" @end="rowDragEnd">
+
+              <!-- <div slot="header" class="tr position-relative height-205">
                 <div class="position-absolute border-bottom-light" style="inset: 0; ">
                   <div class="section-header d-flex align-center gap-05 height-205 " >
                     <div class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
@@ -61,17 +79,16 @@
                         <bib-icon icon="arrow-down" :scale="0.5" :ref="'sectionIcon'+section.id"></bib-icon> 
                       </span>
                       <span class="font-w-700 cursor-pointer ml-025" >
-                        <!-- {{section.title}} -->
                         <input type="text" class="editable-input section-title" :value="section.title.includes('_section') ? 'Untitled section'
                       : section.title" @input="debounceRenameSection(section.id, $event)" @blur="restoreField" />
                       </span>
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
-              <div class="tbody" :ref="'sectionContent' + section.id">
-                <div v-for="item in section[tasksKey]" :key="item.id" class="tr" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
+              <!-- <div class="section-content" > -->
+                <div v-for="item in section[tasksKey]" :key="item.id" class="tr sortable drag-item" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
                   <div class="td" role="cell">
                     <div v-if="drag" class="drag-handle width-105 h-100" ><!-- <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
                       <rect fill="none" height="24" width="24" />
@@ -140,11 +157,11 @@
                   </div>
                 </template>
 
-              </div>
+              <!-- </div> -->
 
             </draggable>
 
-          </template>
+          </section>
 
         </draggable>
 
@@ -199,8 +216,8 @@ export default {
           sectionId: "",
           title: "",
           user: [],
-          statusId: 1,
-          priorityId: 3,
+          statusId: null,
+          priorityId: null,
           startDate: "",
           dueDate: "",
           departmentId: null,
@@ -299,18 +316,19 @@ export default {
     },
 
     collapseItem(refId, refIcon) {
-      let elem = this.$refs[refId][0]
-      let icon = this.$refs[refIcon][0].$el
+      let elem = this.$refs[refId][0].$el
+      // let icon = this.$refs[refIcon][0].$el
       // let tar = event.target;
 
-      // console.log(elem, icon, tar,)
-      if (elem.style.display == "none") {
-        elem.style.display = "block";
-        icon.style.transform = "rotate(0deg)";
+      console.log(elem.style.height)
+      elem.classList.toggle("collapsed")
+      /*if (elem.style.height == "0px") {
+        elem.style.height = "auto";
+        // icon.style.transform = "rotate(0deg)";
       } else {
-        elem.style.display = "none";
-        icon.style.transform = "rotate(-90deg)";
-      }
+        elem.style.height = 0;
+        // icon.style.transform = "rotate(-90deg)";
+      }*/
     },
 
     /*iconRotate(expanded){
@@ -546,17 +564,22 @@ export default {
       
     },
     rowDragStart(e) {
-      console.log(e.type, e);
+      // console.log("row drag start ", e);
       // this.highlight = true
     },
     rowDragEnd(e) {
-      console.log(e.type, e)
-      // this.highlight = false
-      // let sectionData = this.localdata.filter(s => s.id == e.to.dataset.section)
-      // this.$emit('task-dragend', sectionData[0].tasks)
+      // this.highlight = false;
+      // console.log("row drag end ", e)
+      let sectionData = this.localData.filter(
+        (s) => s.id == e.to.dataset.section
+      );
+      this.$emit("row-dragend", {
+        [tasksKey]: sectionData[0][tasksKey],
+        sectionId: e.to.dataset.section,
+      });
     },
-    moveTask(e) {
-      console.log("move event", e)
+    moveRow(e) {
+      // console.log("move row ", e)
       // this.taskMoveSection = +e.to.dataset.section
     },
     rowClick($event, item) {
@@ -830,6 +853,10 @@ export default {
     .td { background-color: $success-sub6; }
     .td:nth-child(2) { background-color: $success-sub6; }
   }*/
+
+  .section-content {
+    &.collapsed { height: 0; overflow: hidden; }
+  }
 
   .new-button {
     background-color: $success-sub6;
