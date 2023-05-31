@@ -11,46 +11,36 @@
         v-on:new-task="toggleSidebar($event)"
         @search-user-tasks="searchUserTasks"
       ></user-name-task-actions>
-      <div v-show="gridType == 'list'" id="task-table-wrapper" class="listview h-100 position-relative" :style="{ 'width': contentWidth }">
-        <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" ></advance-table>
-          
-        <user-picker
-          :show="userPickerOpen"
-          :coordinates="popupCoords"
-          @selected="
-            updateAssignee('Assignee', 'userId', $event.id, $event.label)
-          "
-          @close="userPickerOpen = false"
-        ></user-picker>
-        <inline-datepicker
-          :show="datePickerOpen"
-          :datetime="activeTask[datepickerArgs.field]"
-          :coordinates="popupCoords"
-          @date-updated="updateDate"
-          @close="datePickerOpen = false"
-        ></inline-datepicker>
-      </div>
-
-      <div v-show="gridType == 'grid'" id="task-grid-wrapper" class="d-flex gridview h-100" >
-        <div class="task-grid-section">
-          <div class="w-100 d-flex justify-between" style="margin-bottom: 10px" >
-            <div class="title text-gray">Department</div>
-            <div class="d-flex section-options">
-              <div class="mr-1">
-                <bib-icon icon="add" variant="success" :scale="1.2" />
+    
+          <div v-show="gridType == 'list'" id="task-table-wrapper" class="listview h-100 position-relative" :style="{ 'width': contentWidth }">  
+              <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" ></advance-table>
+              
+          </div>
+        
+          <div v-show="gridType == 'grid'" id="task-grid-wrapper" class="d-flex gridview h-100" >
+            <div class="task-grid-section">
+              <div
+                class="w-100 d-flex justify-between"
+                style="margin-bottom: 10px"
+              >
+                <div class="title text-gray">Department</div>
+                <div class="d-flex section-options">
+                  <div class="mr-1">
+                    <bib-icon icon="add" variant="success" :scale="1.2" />
+                  </div>
+                  <div>
+                    <bib-icon icon="elipsis" :scale="1.2" />
+                  </div>
+                </div>
               </div>
-              <div>
-                <bib-icon icon="elipsis" :scale="1.2" />
+              <div class="task-section__body">
+                <div v-for="(item, index) in tasks" :key="index + '-' + key">
+                  <task-grid :task="item" v-on:update-key="updateKey" />
+                </div>
               </div>
             </div>
           </div>
-          <div class="task-section__body">
-            <div v-for="(item, index) in tasks" :key="index + '-' + key">
-              <task-grid :task="item" v-on:update-key="updateKey" />
-            </div>
-          </div>
-        </div>
-      </div>
+        
         <alert-dialog
           v-show="alertDialog"
           :message="alertMsg"
@@ -69,6 +59,7 @@
             </bib-popup-notification>
           </template>
         </bib-popup-notification-wrapper>
+      
     </div>
   </client-only>
 </template>
@@ -91,6 +82,7 @@ export default {
       gridType: "list",
       taskFields: TaskFields,
       taskContextMenu: false,
+      beforeLocal:[],
       statusPickerOpen: false,
       priorityPickerOpen: false,
       deptPickerOpen: false,
@@ -125,6 +117,9 @@ export default {
   },
 
   watch: {
+    localData(newValue, oldValue) {
+      this.beforeLocal=oldValue
+    },
     "$route.query": {
       immediate: true,
       handler(newVal) {
@@ -168,8 +163,9 @@ export default {
 
   created() {
     if (process.client) {
-      this.$nuxt.$on("update-key", () => {
-        this.fetchUserTasks();
+      this.$nuxt.$on("update-key", async () => {
+        await this.fetchUserTasks();
+        this.beforeLocal=this.localData
       });
       this.$nuxt.$on("user-picker", (payload) => {
         // emitted from <task-grid>
@@ -211,7 +207,6 @@ export default {
             userid: this.userfortask ? this.userfortask.id : "",
           },
         });
-
         if (res.data.statusCode == 200) {
           let userTasks = res.data.data;
           let organizedArr = [];
@@ -356,36 +351,58 @@ export default {
         });
     },
     updateTask(payload) {
+      
       let user, projectId;
       if (payload.field == "userId" && payload.value != "") {
-        user = this.teamMembers.find((t) => t.id == payload.value);
+        user = [this.teamMembers.find((t) => t.id == payload.value)];
       } else {
         user = null;
       }
-      if(payload.field==="title"){
-        this.localData=this.localData.map((task)=>{
-          if(task.id===payload.item.id)
-          task.title=payload.value
-          return task
-        })
-      }
+  
       if (payload.item.project.length > 0) {
         projectId = payload.item.project[0].projectId || payload.item.project[0].project.id;
       } else {
         projectId = null;
       }
-
-      this.$store
+      let data={ [payload.field]: payload.value }
+      let before=this.beforeLocal.filter((item)=>item.id===payload.item.id)
+    
+      if(payload.field==="dueDate")
+        {
+          if(new Date(payload.value).toISOString().slice(0, 10)>new Date(payload.item.startDate).toISOString().slice(0, 10))
+            {
+              
+                data={ [payload.field]: payload.value }
+            }
+            else{
+              data={ [payload.field]: null }
+              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+            }
+        }
+        if(payload.field==="startDate")
+        {
+          if(new Date(payload.value).toISOString().slice(0, 10)<new Date(payload.item.dueDate).toISOString().slice(0, 10))
+            {
+              data={ [payload.field]: payload.value }
+            }
+            else {
+              data={ [payload.field]: null }
+              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+            }
+          
+        }
+        this.$store
         .dispatch("task/updateTask", {
           id: payload.item.id,
           projectId,
-          data: { [payload.field]: payload.value },
-          user: [user],
+          data: data,
+          user,
           text: `changed ${payload.label} to ${
             payload.historyText || payload.value
           }`,
         })
         .then(async (t) => {
+          console.log("tt",t)
           if (t.statusCode == 200) {
             this.updateKey();
           } else {
@@ -393,50 +410,9 @@ export default {
           }
         })
         .catch((e) => console.warn(e));
+     
     },
 
-    updateAssignee(label, field, value, historyText) {
-      let user;
-      if (field == "userId" && value != "") {
-        user = this.teamMembers.filter((t) => t.id == value);
-      } else {
-        user = null;
-      }
-      this.userPickerOpen = false;
-      this.$store
-        .dispatch("task/updateTask", {
-          id: this.activeTask.id,
-          data: { [field]: value },
-          user,
-          text: `changed ${label} to ${historyText}`,
-        })
-        .then((t) => {
-          this.updateKey();
-        })
-        .catch((e) => console.warn(e));
-    },
-
-    updateDate(value) {
-      let user = this.teamMembers.find((tm) => tm.id == this.activeTask.userId);
-      let newDate = dayjs(value).format("D MMM YYYY");
-
-      this.$store
-        .dispatch("task/updateTask", {
-          id: this.activeTask.id,
-          user,
-          data: { [this.datepickerArgs.field]: value },
-          user: null,
-          text: `changed ${this.datepickerArgs.label} to ${newDate}`,
-        })
-        .then((t) => {
-          if (t.statusCode == 200) {
-            this.updateKey();
-          } else {
-            console.warn(t);
-          }
-        })
-        .catch((e) => console.warn(e));
-    },
     deleteTask(task) {
       this.loading = true;
       this.$store
@@ -501,9 +477,9 @@ export default {
             this.localData.sort((a, b) => b.title.localeCompare(a.title));
             this.taskOrder = "asc";
           }
-          // this.key += 1;
+          this.key += 1;
           this.sortName = "title";
-          // this.checkActive();
+          this.checkActive();
           break;
 
         case "status":
@@ -720,7 +696,7 @@ export default {
       let newArr = this.tasks.filter((t) => {
         if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
             return t;
-          }
+        }
       });
 
       if (newArr.length >= 0) {

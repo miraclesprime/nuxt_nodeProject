@@ -81,7 +81,8 @@
     </div>
 
     <div class="of-scroll-y d-grid" id="tsb-of-scroll-y" style="grid-template-columns: none; align-items: start">
-      <sidebar-fields :task="currentTask" :loading="loading" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform" :departmentId="departmentId"></sidebar-fields>
+      <!-- updated by @wen 5.25 -->
+      <sidebar-fields :task="currentTask" :loading="loading" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform" :departmentId="departmentId" :visible="visible"></sidebar-fields>
         <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" ></sidebar-subtask>
         <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
         <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
@@ -119,7 +120,8 @@ export default {
   props: {
     sectionIdActive: Number,
     scrollId: {type: String, default: "sidebar-inner-wrap"},
-    departmentId: {type: Object}
+    departmentId: {type: Object},
+    visible: Boolean,//updated by @wen 5.25
   },
   data: function() {
     return {
@@ -227,10 +229,10 @@ export default {
           dueDate: "",
           userId: "",
           sectionId: "",
-          departmentId: this.departmentId || 1,
+          departmentId: this.departmentId || null,
           projectId: "",
-          statusId: 1,
-          priorityId: 2,
+          statusId: null,
+          priorityId: null,
           description: '',
           budget: 0,
         }
@@ -334,7 +336,7 @@ export default {
     },
 
     updateTask(taskData) {
-
+      let updata={[taskData.field]: taskData.value}
       let updatedvalue = taskData.value
       let projectId = null
       if (taskData.name == 'Assignee') {
@@ -373,11 +375,22 @@ export default {
         })
       }
       if (taskData.name == 'Department') {
-        this.departments.find(d => {
-          if (d.value == taskData.value) {
-            updatedvalue = d.label
-          }
-        })
+// updated by @wen 5.29
+          let dp = this.departments.find(d => {
+              if(taskData.value == undefined) {
+                return null;
+              } 
+              if(d.value == taskData.value) {
+                return d.label;
+              }
+            })
+            console.log(dp)
+            if(dp == undefined) {
+              updata = { [taskData.field]: null}
+              updatedvalue = "not assigned"
+            } else {
+              updatedvalue = dp.label
+            }
       }
       if (taskData.name == "Due date" || taskData.name == "Start date") {
         updatedvalue = dayjs(taskData.value).format('DD MMM YYYY')
@@ -389,10 +402,10 @@ export default {
       } else {
         user = null
       }
-
-      this.$store.dispatch("task/updateTask", {
+      
+          this.$store.dispatch("task/updateTask", {
         id: this.form.id,
-        data: { [taskData.field]: taskData.value },
+        data: updata,
         user,
         projectId: projectId ? projectId : null,
         text: `changed ${taskData.name} to ${updatedvalue}`,
@@ -404,6 +417,8 @@ export default {
         .catch(e => {
           console.log(e)
         })
+      
+    
 
     },
 

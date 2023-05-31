@@ -19,6 +19,7 @@
             format="dd MMM yyyy"
             label="Start date"
             placeholder="Start date"
+            ref="startDate"
             @input="
               debounceUpdateField('Start date', 'startDate', startDateInput)
             "
@@ -32,6 +33,7 @@
             format="dd MMM yyyy"
             label="Due date"
             placeholder="Due date"
+            ref="dueDate"
             @input="debounceUpdateField('Due date', 'dueDate', dueDateInput)"
           ></bib-datepicker>
         </div>
@@ -118,6 +120,17 @@
           ></bib-input>
         </div>
       </div>
+      <bib-popup-notification-wrapper>
+          <template #wrapper>
+            <bib-popup-notification
+              v-for="(msg, index) in popupMessages"
+              :key="index"
+              :message="msg.text"
+              :variant="msg.variant"
+            >
+            </bib-popup-notification>
+          </template>
+        </bib-popup-notification-wrapper>
     </div>
   </client-only>
 </template>
@@ -139,6 +152,7 @@ export default {
     departmentId: {
       type: Object,
     },
+    visible: Boolean,
   },
 
   data() {
@@ -149,6 +163,7 @@ export default {
       form: {},
       loading2: false,
       randomKey: 0,
+      popupMessages: [],
     };
   },
   computed: {
@@ -189,7 +204,7 @@ export default {
       });
       return sec;
     },
-    startDateInput: {
+    startDateInput: {  
       get() {
         if (!this.form.startDate) {
           return null;
@@ -197,11 +212,35 @@ export default {
           return new Date(this.form.startDate);
         }
       },
-      set(newValue) {
+      set(newValue) { //updated by @Wen 5.25
+        this.$refs.startDate.variant = null;
         if (!newValue) this.form.startDate = "";
-        else this.form.startDate = new Date(newValue);
+        else {
+          const newStartDate = new Date(newValue);
+          if (
+            this.dueDateInput &&
+            newStartDate.toISOString().slice(0, 10) >
+              this.dueDateInput.toISOString().slice(0, 10)
+          ) {
+            this.popupMessages.push({ text:"Invalid date", variant: "danger" });
+            this.dueDateInput = "";
+            this.$nextTick(() => {
+              this.$refs.dueDate.$emit("input");
+            });
+            this.$refs.startDate.variant = "alert";
+          } else {
+            if (this.$refs.dueDate.variant) this.$refs.dueDate.variant = null;
+          }
+          this.form.startDate = new Date(newValue);
+          this.$emit("update-field", {
+            name: "Start date",
+            field: "startDate",
+            value: newStartDate,
+          });
+        }
       },
     },
+    // updated by @wen 5.24
     dueDateInput: {
       get() {
         if (!this.form.dueDate) {
@@ -210,13 +249,47 @@ export default {
           return new Date(this.form.dueDate);
         }
       },
-      set(newValue) {
-        if (!newValue) this.form.dueDate = "";
-        else this.form.dueDate = new Date(newValue);
+      set(newValue) { //updated by @Wen 5.25
+        this.$refs.dueDate.variant = null;
+        if (!newValue) {
+          this.form.dueDate = "";
+        } else {
+          const newDueDate = new Date(newValue);
+          if (
+            this.startDateInput &&
+            newDueDate.toISOString().slice(0, 10) <
+              this.startDateInput.toISOString().slice(0, 10)
+          ) {
+            this.popupMessages.push({ text:"Invalid date", variant: "danger" });
+
+            this.startDateInput = "";
+            this.$nextTick(() => {
+              this.$refs.startDate.$emit("input");
+            });
+            this.$refs.dueDate.variant = "alert";
+          } else {
+            if (this.$refs.startDate.variant)
+              this.$refs.startDate.variant = null;
+          }
+          this.form.dueDate = newDueDate;
+          this.$emit("update-field", {
+            name: "Due date",
+            field: "dueDate",
+            value: newDueDate,
+          });
+        }
       },
     },
   },
   watch: {
+     //updated by @Wen 5.25
+    visible(newValue, oldValue) {
+      if (!newValue) {
+        if (!!this.$refs.startDate.variant) this.$refs.startDate.variant = null;
+        if (!!this.$refs.dueDate.variant) this.$refs.dueDate.variant = null;
+      }
+    },
+
     task() {
       if (Object.keys(this.task).length) {
         this.form = _.cloneDeep(this.task);
@@ -239,9 +312,9 @@ export default {
           userId: "",
           sectionId: "_section" + this.project.id,
           projectId: this.project.id || "",
-          departmentId: this.departmentId || 1,
-          statusId: 1,
-          priorityId: 2,
+          departmentId: this.departmentId || null,
+          statusId: null,
+          priorityId: null,
           description: "",
           budget: 0,
         };

@@ -51,10 +51,10 @@
           <bib-select label="Assignee" test_id="subtask_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="updateSubtask({field: 'userId', value: form.userId, name: 'User' })"></bib-select>
         </div>
         <div class="col-4" id="std-other-fields-col-2">
-          <bib-datepicker v-model="startDateInput" :value="startDateInput" format="dd MMM yyyy" label="Start date" placeholder="Start date" @input="updateSubtask({name: 'Start date', field: 'startDate', value: form.startDate})"></bib-datepicker>
+          <bib-datepicker v-model="startDateInput" :value="startDateInput" format="dd MMM yyyy"  ref="startDate" label="Start date" placeholder="Start date" @input="updateSubtask({name: 'Start date', field: 'startDate', value: form.startDate})"></bib-datepicker>
         </div>
         <div class="col-4" id="std-other-fields-col-3">
-          <bib-datepicker class="align-right" v-model="dueDateInput" :value="dueDateInput" format="dd MMM yyyy" label="Due date" placeholder="Due date" @input="updateSubtask({field: 'dueDate', value: form.dueDate, name: 'Due date'})"></bib-datepicker>
+          <bib-datepicker class="align-right" v-model="dueDateInput" :value="dueDateInput" format="dd MMM yyyy"   ref="dueDate" label="Due date" placeholder="Due date" @input="updateSubtask({field: 'dueDate', value: form.dueDate, name: 'Due date'})"></bib-datepicker>
         </div>
         <!-- <div class="col-6"></div> -->
       </div>
@@ -111,6 +111,17 @@
         </div>
       </template>
     </bib-modal-wrapper>
+    <bib-popup-notification-wrapper>
+          <template #wrapper>
+            <bib-popup-notification
+              v-for="(msg, index) in popupMessages"
+              :key="index"
+              :message="msg.text"
+              :variant="msg.variant"
+            >
+            </bib-popup-notification>
+          </template>
+        </bib-popup-notification-wrapper>
   </section>
 </template>
 
@@ -139,6 +150,7 @@ export default {
       editMessage: {},
       reloadFiles: 0,
       taskTeamModal: false,
+      popupMessages: [],
     }
   },
   computed: {
@@ -193,24 +205,70 @@ export default {
         }
       },
       set(newValue) {
-        if(!newValue)this.form.startDate="";
-        else
-        this.form.startDate = new Date(newValue)
-      }
+        this.$refs.startDate.variant = null;
+        if (!newValue) this.form.startDate = "";
+        else {
+          const newStartDate = new Date(newValue);
+          if (
+            this.dueDateInput &&
+            newStartDate.toISOString().slice(0, 10) >
+              this.dueDateInput.toISOString().slice(0, 10)
+          ) {
+            this.popupMessages.push({ text:"Invalid date", variant: "danger" });
+            this.dueDateInput = "";
+            this.$nextTick(() => {
+              this.$refs.dueDate.$emit("input");
+            });
+            this.$refs.startDate.variant = "alert";
+          } else {
+            if (this.$refs.dueDate.variant) this.$refs.dueDate.variant = null;
+          }
+          this.form.startDate = new Date(newValue);
+          this.$emit("update-field", {
+            name: "Start date",
+            field: "startDate",
+            value: newStartDate,
+          });
+        }
+      },
     },
     dueDateInput: {
       get() {
-        if (!this.form.startDate) {
+        if (!this.form.dueDate) {
           return null
         } else {
-          return new Date(this.form.startDate)
+          return new Date(this.form.dueDate)
         }
       },
       set(newValue) {
-        if(!newValue)this.form.startDate="";
-        else
-        this.form.startDate = new Date(newValue)
-      }
+        this.$refs.dueDate.variant = null;
+        if (!newValue) {
+          this.form.dueDate = "";
+        } else {
+          const newDueDate = new Date(newValue);
+          if (
+            this.startDateInput &&
+            newDueDate.toISOString().slice(0, 10) <
+              this.startDateInput.toISOString().slice(0, 10)
+          ) {
+            this.popupMessages.push({ text:"Invalid date", variant: "danger" });
+            this.startDateInput = "";
+            this.$nextTick(() => {
+              this.$refs.startDate.$emit("input");
+            });
+            this.$refs.dueDate.variant = "alert";
+          } else {
+            if (this.$refs.startDate.variant)
+              this.$refs.startDate.variant = null;
+          }
+          this.form.dueDate = newDueDate;
+          this.$emit("update-field", {
+            name: "Due date",
+            field: "dueDate",
+            value: newDueDate,
+          });
+        }
+      },
     },
     sortedData() {
       let s = [...this.subtaskComments, ...this.subtaskHistory]

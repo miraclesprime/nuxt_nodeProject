@@ -5,9 +5,27 @@
    
     <div id="projects-list-wrapper" class="projects-list-wrapper position-relative" >
       <loading :loading="loading"></loading>
+      <!-- popup notification -->
+      <bib-popup-notification-wrapper>
+          <template #wrapper>
+            <bib-popup-notification
+              v-for="(msg, index) in popupMessages"
+              :key="index"
+              :message="msg.text"
+              :variant="msg.variant"
+            >
+            </bib-popup-notification>
+          </template>
+        </bib-popup-notification-wrapper>
+        <!-- confirm delete task -->
+        <confirm-dialog
+          v-if="confirmModal"
+          :message="confirmMsg"
+          @close="confirmDelete"
+        ></confirm-dialog>
       <template v-if="projects.length">
 
-        <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" sectionTitle=""></advance-table>
+        <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle=""></advance-table>
 
       </template>
       <template v-else>
@@ -32,6 +50,18 @@
           </div>
         </template>
       </bib-modal-wrapper>
+      <bib-popup-notification-wrapper>
+          <template #wrapper>
+            <bib-popup-notification
+              v-for="(msg, index) in popupMessages"
+              :key="index"
+              :message="msg.text"
+              :variant="msg.variant"
+              :autohide="5000"
+            >
+            </bib-popup-notification>
+          </template>
+        </bib-popup-notification-wrapper>
     </div>
   </div>
 </template>
@@ -50,6 +80,7 @@ export default {
       viewName: '',
       projectContextItems: PROJECT_CONTEXT_MENU,
       datepickerArgs: { label: "", field: ""},
+      popupMessages: [],
       renameProjectData: {},
       renameModal: false,
       projectName: "",
@@ -61,7 +92,11 @@ export default {
       newkey: "",
       alertDialog: false,
       alertMsg:"",
-      localData: []
+      localData: [],
+      popupMessages: [],
+      confirmModal: false,
+      confirmMsg: "",
+      taskToDelete: {}
     }
   },
 
@@ -85,6 +120,7 @@ export default {
         projects: 'project/getAllProjects',
         favProjects: 'project/getFavProjects',
         teamMembers: "user/getTeamMembers",
+        user: "user/getUser2"
     })
   },
 
@@ -315,10 +351,37 @@ export default {
       
       let user = this.teamMembers.find(t => t.id == item.userId)
 
+      let data={ [payload.field]: payload.value }
+      // let before=this.beforeLocal.filter((item)=>item.id===payload.item.id)
+    
+      if(payload.field==="dueDate")
+        {
+          if(new Date(payload.value).toISOString().slice(0, 10)>new Date(payload.item.startDate).toISOString().slice(0, 10))
+            {
+              
+                data={ [payload.field]: payload.value }
+            }
+            else{
+              data={ [payload.field]: null }
+              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+            }
+        }
+        if(payload.field==="startDate")
+        {
+          if(new Date(payload.value).toISOString().slice(0, 10)<new Date(payload.item.dueDate).toISOString().slice(0, 10))
+            {
+              data={ [payload.field]: payload.value }
+            }
+            else {
+              data={ [payload.field]: null }
+              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+            }
+          
+        }
       this.$store.dispatch("project/updateProject", {
         id: item.id,
         user,
-        data: { [field]: value},
+        data: data,
         text: historyText
       })
         .then(t => {
@@ -331,25 +394,45 @@ export default {
         .catch(e => console.warn(e))
     },
 
-    deleteTask(project) {
-      let del = confirm("Are you sure")
-      this.loading = true
-      if (del) {
-        this.$store.dispatch("project/deleteProject", project).then(t => {
-
-          if (t.statusCode == 200) {
-            this.updateKey()
-          } else {
-            console.warn(t.message);
-          }
-          this.loading = false
-        }).catch(e => {
-          this.loading = false
-          console.log(e)
-        })
+    confirmDelete(state) {
+      this.confirmModal = false;
+      this.confirmMsg = "";
+      if (state) {
+        this.loading = true
+        this.$store
+          .dispatch("project/deleteProject", this.taskToDelete)
+          .then((t) => {
+            if (t.statusCode == 200) {
+              this.popupMessages.push({ text: t.message, variant: "success" });
+              this.updateKey();
+              this.taskToDelete = {};
+              
+             this.loading = false;
+            } else {
+              this.popupMessages.push({ text: t.message, variant: "orange" });
+              console.warn(t.message);
+              
+        this.loading = false;
+            }
+          })
+          .catch((e) => {
+            console.warn(e);
+            
+        this.loading = false;
+          });
       } else {
-        this.loading = false
+        this.popupMessages.push({
+          text: "Action cancelled",
+          variant: "orange",
+        });
+        this.taskToDelete = {};
       }
+    },
+
+    deleteTask(project) {
+      this.taskToDelete = project;
+      this.confirmMsg = "Are you sure ";
+      this.confirmModal = true;
     },
 
     async renameProject() {
@@ -371,6 +454,23 @@ export default {
       }
       this.renameProjectData = {}
       this.loading = false
+    },
+
+    async createProject(proj) {
+      let u = {
+        id: this.user.Id,
+        firstName: this.user.FirstName,
+        lastName: this.user.LastName,
+        email: this.user.Email
+      }
+      proj.departmentId = null;
+      proj.budget = 0;
+      proj.dueDate = null;
+      proj.startDate = null;
+      proj.user = u;
+      delete proj.show;
+      delete proj.sectionId;
+      this.$store.dispatch('project/createProject', proj);
     },
 
     copyProjectLink(proj) {
