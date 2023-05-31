@@ -695,6 +695,7 @@ export default {
       let newArr = this.tasks.filter((t) => {
         if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
             return t;
+        }
       });
 
       if (newArr.length >= 0) {
