@@ -53,7 +53,7 @@
                 <status-select :ref="'stausSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)"></status-select>
               </template>
               <template v-if="field.key == 'priority'">
-                <priority-select :ref="'prioritySelect'+item.id" :value="item[field.key]" @change="updatePriority($event, item)"></priority-select>
+                <priority-select :ref="'prioritySelect'+item.id" :priority="item[field.key]" @change="updatePriority($event, item)"></priority-select>
               </template>
               <template v-if="field.key == 'department'">
                 <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)"></dept-select>
