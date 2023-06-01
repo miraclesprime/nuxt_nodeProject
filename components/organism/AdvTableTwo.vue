@@ -117,7 +117,7 @@
                       <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" class="flex-grow-1" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
                     </template>
                     <template v-if="field.key == 'status'">
-                      <status-select :ref="'stausSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" class="flex-grow-1" @change="updateStatus($event, item)" @close-other="closePopups('stausSelect'+item.id)"></status-select>
+                      <status-select :ref="'statusSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" class="flex-grow-1" @change="updateStatus($event, item)" @close-other="closePopups('statusSelect'+item.id)"></status-select>
                     </template>
                     <template v-if="field.key == 'priority'">
                       <priority-select :ref="'prioritySelect'+item.id" :value="item[field.key]" class="flex-grow-1" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>

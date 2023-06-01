@@ -13,7 +13,7 @@
       ></user-name-task-actions>
     
           <div v-show="gridType == 'list'" id="task-table-wrapper" class="listview h-100 position-relative" :style="{ 'width': contentWidth }">  
-              <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" ></advance-table>
+              <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" ></advance-table>
               
           </div>
         
@@ -121,6 +121,7 @@ export default {
       user: "user/getUser",
       teamMembers: "user/getTeamMembers",
       sidebar: "task/getSidebarVisible",
+      user: "user/getUser2"
     }),
   },
 
@@ -310,6 +311,21 @@ export default {
         } else { 
           unsecuredCopyToClipboard(url);
         }
+    },
+
+    createTask(task) {
+      task.departmentId = null;
+      task.budget = 0;
+      task.dueDate = null;
+      task.startDate = null;
+      task.sectionId = null;
+      task.user = [this.selectedUser];
+      task.text = `Created a task ${task.title}`
+      delete task.show;
+      delete task.userId;
+      this.$store.dispatch('task/createTask', task).then(() => {
+        this.updateKey();
+      });
     },
 
     taskSetFavorite(task) {
