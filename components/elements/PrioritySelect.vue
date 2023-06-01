@@ -32,7 +32,7 @@ export default {
   name: 'PrioritySelect',
 
   props: {
-    value: { type: Object },
+    priority: { type: Object },
   },
   data() {
     return {
@@ -55,10 +55,10 @@ export default {
     },
   },
   mounted() {
-    if (this.value) {
-      this.localValue = this.priorityItems.find( pt => pt.value == this.value.id )
+    if (this.priority && this.priority.id) {
+      this.localValue = this.priorityItems.find( pt => pt.value == this.priority.id )
     } else {
-      this.localValue = { label: 'Choose priority', value: 0, color: "dark" }
+      this.localValue = { label: 'Choose priority', value: 0, color: "dark", bgcolor: "secondary" }
     }
   },
   methods: {

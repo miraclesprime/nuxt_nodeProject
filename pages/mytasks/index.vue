@@ -601,19 +601,27 @@ export default {
     }, 800),
 
     async createTodo($event) {
-      console.log('create-todo', $event)
+      // console.log('create-todo', $event)
       // this.sectionLoading = true
+      let tempTodos = this.localdata.map((el, index) => {
+        el.uOrder = index+1
+        return el
+      })
+      tempTodos.unshift({title: $event, userId: JSON.parse(localStorage.getItem("user")).sub, uOrder: 0 })
+
       const todo = await this.$store.dispatch("todo/createTodo", {
         userId: JSON.parse(localStorage.getItem("user")).sub,
         title: $event,
+        data: tempTodos,
       })
 
       if (todo.statusCode == 200) {
         // this.updateKey()
         this.newSection = false
+        // this.updateKey()
         // this.sectionLoading = false
         this.$store.dispatch("todo/fetchTodos", { filter: 'all' })
-        .then((res) => {
+        /*.then((res) => {
           if (res.statusCode == 200) {
             // this.key += 1
             let tmp = [];
@@ -624,7 +632,7 @@ export default {
             this.localdata = tmp;
             this.todoDragEnd(this.localdata);
           }
-        })
+        })*/
       } else {
         // this.sectionError = todo.message
         // this.sectionLoading = false
@@ -709,7 +717,6 @@ export default {
         if (res.statusCode == 200) {
           this.key += 1
         }
-        // this.loading = false;
       })
     }, 400),
 
@@ -720,13 +727,11 @@ export default {
     gridSectionDragend(e){
       // console.log(this.localdata)
       this.todoDragEnd(this.localdata)
-      // this.localdata.forEach(d => console.log(d.uOrder, d.title ))
     },
 
     todoDragEnd: _.debounce(async function(todos) {
       todos.forEach((el, i) => {
         el.uOrder = i
-        // console.log(el.uOrder, el.title)
       })
 
       // console.log(todos)
@@ -746,7 +751,6 @@ export default {
         if (res.statusCode == 200) {
           this.key += 1
         }
-        // this.loading = false;
       })
 
     }, 400),
