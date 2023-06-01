@@ -601,19 +601,27 @@ export default {
     }, 800),
 
     async createTodo($event) {
-      console.log('create-todo', $event)
+      // console.log('create-todo', $event)
       // this.sectionLoading = true
+      let tempTodos = this.localdata.map((el, index) => {
+        el.uOrder = index+1
+        return el
+      })
+      tempTodos.unshift({title: $event.title, userId: JSON.parse(localStorage.getItem("user")).sub, uOrder: 0 })
+
       const todo = await this.$store.dispatch("todo/createTodo", {
         userId: JSON.parse(localStorage.getItem("user")).sub,
         title: $event,
+        data: tempTodos,
       })
 
       if (todo.statusCode == 200) {
         // this.updateKey()
         this.newSection = false
+        this.updateKey()
         // this.sectionLoading = false
-        this.$store.dispatch("todo/fetchTodos", { filter: 'all' })
-        .then((res) => {
+        // this.$store.dispatch("todo/fetchTodos", { filter: 'all' })
+        /*.then((res) => {
           if (res.statusCode == 200) {
             // this.key += 1
             let tmp = [];
@@ -624,7 +632,7 @@ export default {
             this.localdata = tmp;
             this.todoDragEnd(this.localdata);
           }
-        })
+        })*/
       } else {
         // this.sectionError = todo.message
         // this.sectionLoading = false
