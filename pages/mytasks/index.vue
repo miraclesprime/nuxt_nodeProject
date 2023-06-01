@@ -717,7 +717,6 @@ export default {
         if (res.statusCode == 200) {
           this.key += 1
         }
-        // this.loading = false;
       })
     }, 400),
 
@@ -728,13 +727,11 @@ export default {
     gridSectionDragend(e){
       // console.log(this.localdata)
       this.todoDragEnd(this.localdata)
-      // this.localdata.forEach(d => console.log(d.uOrder, d.title ))
     },
 
     todoDragEnd: _.debounce(async function(todos) {
       todos.forEach((el, i) => {
         el.uOrder = i
-        // console.log(el.uOrder, el.title)
       })
 
       // console.log(todos)
@@ -754,7 +751,6 @@ export default {
         if (res.statusCode == 200) {
           this.key += 1
         }
-        // this.loading = false;
       })
 
     }, 400),
