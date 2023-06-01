@@ -688,15 +688,21 @@ export default {
     },
 
     async createSection($event) {
-      //updated by @wen
       this.newSection = $event.newSection;
-      this.sectionLoading = $event.sectionLoading;
+      // this.sectionLoading = $event.sectionLoading;
       this.sectionError = $event.sectionError;
-      this.sectionLoading = true;
+      // this.sectionLoading = true;
+      let tempSections = this.localdata.map((el, index) => {
+        el.order = index+1
+        return el
+      })
+      tempSections.unshift({title: $event.title, projectId: this.project.id, order: 0 })
+      console.log(tempSections)
       const res = await this.$store.dispatch("section/createSection", {
         projectId: this.project.id,
         title: $event.title,
         isDeleted: false,
+        data: tempSections,
         text: `section '${$event.title}' created`,
       });
       if (res.statusCode == 200) {
@@ -708,19 +714,19 @@ export default {
           .then(() => {
             this.taskByOrder();
 
-            let tmp = [];
+            /*let tmp = [];
             tmp.push(this.localdata[this.localdata.length - 1]);
             let i;
             for (i = 1; i < this.localdata.length; ++i)
               tmp.push(this.localdata[i - 1]);
             this.localdata = tmp;
-            this.sectionDragEnd(this.localdata);
+            this.sectionDragEnd(this.localdata);*/
           });
         this.newSection = false;
-        this.sectionLoading = false;
+        // this.sectionLoading = false;
       } else {
         this.sectionError = res.message;
-        this.sectionLoading = false;
+        // this.sectionLoading = false;
       }
     },
 

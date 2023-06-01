@@ -3,7 +3,7 @@
     <div id="favorite_wrapper">
       <page-title title="Favorites"></page-title>
       <favorite-actions v-on:change-viewing="changeView" v-on:change-sorting="changeSort" @search-projects-tasks="searchProjectOrTasks"></favorite-actions>
-      <div id="favorite-scroll-wrap" class="of-scroll-y position-relative">
+      <div id="favorite-scroll-wrap" class="d-flex position-relative" style="flex-direction: column;">
 
         <!-- project table -->
          <advance-table :tableFields="projectTableFields" :tableData="projLocalData" :contextItems="projectContextItems" @context-item-event="projContextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" sectionTitle="Favorite Projects"></advance-table>

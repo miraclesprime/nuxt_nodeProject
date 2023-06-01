@@ -64,7 +64,6 @@ export default {
     }else {
       this.localStatus = { label: 'Choose Status', value: 0, color: "secondary", bgcolor: "secondary" }
     }
-    console.log(this.status, this.localStatus)
   },
 
   methods: {
