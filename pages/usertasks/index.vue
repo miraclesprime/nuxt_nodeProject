@@ -311,11 +311,13 @@ export default {
       task.dueDate = null;
       task.startDate = null;
       task.sectionId = null;
-      task.user = this.selectedUser;
+      task.user = [this.selectedUser];
       task.text = `Created a task ${task.title}`
       delete task.show;
       delete task.userId;
-      this.$store.dispatch('task/createTask', task);
+      this.$store.dispatch('task/createTask', task).then(() => {
+        this.updateKey();
+      });
     },
 
     taskSetFavorite(task) {
