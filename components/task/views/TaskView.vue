@@ -697,7 +697,7 @@ export default {
         return el
       })
       tempSections.unshift({title: $event.title, projectId: this.project.id, order: 0 })
-      console.log(tempSections)
+      // console.log(tempSections)
       const res = await this.$store.dispatch("section/createSection", {
         projectId: this.project.id,
         title: $event.title,

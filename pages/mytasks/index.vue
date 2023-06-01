@@ -607,7 +607,7 @@ export default {
         el.uOrder = index+1
         return el
       })
-      tempTodos.unshift({title: $event.title, userId: JSON.parse(localStorage.getItem("user")).sub, uOrder: 0 })
+      tempTodos.unshift({title: $event, userId: JSON.parse(localStorage.getItem("user")).sub, uOrder: 0 })
 
       const todo = await this.$store.dispatch("todo/createTodo", {
         userId: JSON.parse(localStorage.getItem("user")).sub,
@@ -618,9 +618,9 @@ export default {
       if (todo.statusCode == 200) {
         // this.updateKey()
         this.newSection = false
-        this.updateKey()
+        // this.updateKey()
         // this.sectionLoading = false
-        // this.$store.dispatch("todo/fetchTodos", { filter: 'all' })
+        this.$store.dispatch("todo/fetchTodos", { filter: 'all' })
         /*.then((res) => {
           if (res.statusCode == 200) {
             // this.key += 1
