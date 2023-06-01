@@ -388,7 +388,12 @@ export const PROJECT_TEAM_FIELDS = [
   { label: '#', key: '' },
   { label: 'Name', key: 'name' },
 ]
-
+export const Project_GROUP = [
+  { label: 'Title', key:'title' },
+  { label: 'Priority', key:'priority' },
+  { label: 'Status', key:'status' },
+  { label: 'Due Date', key:'dueDate' },
+]
 export const TASK_SORT = [
   { label: 'Name', key: 'title' },
   { label: 'Assignee', key: 'userId' },

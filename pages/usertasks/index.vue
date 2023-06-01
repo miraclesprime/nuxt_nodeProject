@@ -59,8 +59,13 @@
             </bib-popup-notification>
           </template>
         </bib-popup-notification-wrapper>
-      
-    </div>
+        <!-- confirm delete task -->
+        <!-- <confirm-dialog
+          v-if="confirmModal"
+          :message="confirmMsg"
+          @close="confirmDelete"
+        ></confirm-dialog> -->
+      </div>
   </client-only>
 </template>
 
@@ -105,7 +110,10 @@ export default {
       alertDialog: false,
       alertMsg: "",
       localData: [],
-      contentWidth: "100%"
+      contentWidth: "100%",
+      // confirmModal: false,
+      // confirmMsg: "",
+      taskToDelete: {},
     };
   },
   computed: {
@@ -413,22 +421,64 @@ export default {
      
     },
 
+  //  confirmDelete(state) {
+  //     // this.confirmModal = false;
+  //     this.confirmMsg = "";
+  //     if (state) {
+  //       this.loading = true;
+  //       console.log(this.taskToDelete);
+  //       this.$store
+  //         .dispatch("task/deleteTask", this.taskToDelete)
+  //         .then((t) => {
+  //           if (t.statusCode == 200) {
+  //             this.updateKey(t.message);
+  //           } else {
+  //             // this.popupMessages.push({ text: t.message, variant: "orange" });
+  //             console.warn(t.message);
+  //           }
+  //           this.loading = false;
+  //         })
+  //         .catch((e) => {
+  //           console.warn(e);
+  //           this.loading = false;
+  //         });
+  //     } else {
+  //       this.popupMessages.push({
+  //         text: "Action cancelled",
+  //         variant: "orange",
+  //       });
+  //       this.taskToDelete = {};
+  //     }
+  //   },
     deleteTask(task) {
-      this.loading = true;
-      this.$store
-        .dispatch("task/deleteTask", task)
-        .then((t) => {
-          if (t.statusCode == 200) {
-            this.updateKey();
-          } else {
-            console.warn(t.message);
-          }
-          this.loading = false;
-        })
-        .catch((e) => {
-          this.loading = false;
-          console.log(e);
+      if (task) {
+        this.loading = true;
+        // console.log(this.taskToDelete);
+        this.$store
+          .dispatch("task/deleteTask", task)
+          .then((t) => {
+            if (t.statusCode == 200) {
+              this.updateKey(t.message);
+            } else {
+              this.popupMessages.push({ text: t.message, variant: "orange" });
+              console.warn(t.message);
+            }
+            this.loading = false;
+          })
+          .catch((e) => {
+            console.warn(e);
+            this.loading = false;
+          });
+      } else {
+        this.popupMessages.push({
+          text: "Action cancelled",
+          variant: "orange",
         });
+        // this.taskToDelete = {};
+      }
+      // this.taskToDelete = task;
+      // this.confirmMsg = "Are you sure ";
+      // this.confirmModal = true;
     },
 
     async filterView($event) {

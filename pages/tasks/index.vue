@@ -166,11 +166,11 @@
           </template>
         </bib-popup-notification-wrapper>
         <!-- confirm delete task -->
-        <confirm-dialog
+        <!-- <confirm-dialog
           v-if="confirmModal"
           :message="confirmMsg"
           @close="confirmDelete"
-        ></confirm-dialog>
+        ></confirm-dialog> -->
         <alert-dialog
           v-show="alertDialog"
           :message="alertMsg"
@@ -216,8 +216,8 @@ export default {
       statusPickerOpen: false,
       priorityPickerOpen: false,
       deptPickerOpen: false,
-      confirmModal: false,
-      confirmMsg: "",
+      // confirmModal: false,
+      // confirmMsg: "",
       alertDialog: false,
       alertMsg: "",
       localData: [],
@@ -617,16 +617,41 @@ export default {
           console.warn(e);
         });
     },
-    confirmDelete(state) {
-      this.confirmModal = false;
-      this.confirmMsg = "";
-      if (state) {
+    // confirmDelete(state) {
+    //   this.confirmModal = false;
+    //   this.confirmMsg = "";
+    //   if (state) {
+    //     this.$store
+    //       .dispatch("task/deleteTask", this.taskToDelete)
+    //       .then((t) => {
+    //         if (t.statusCode == 200) {
+    //           this.updateKey(t.message);
+    //           this.taskToDelete = {};
+    //         } else {
+    //           this.popupMessages.push({ text: t.message, variant: "orange" });
+    //           console.warn(t.message);
+    //         }
+    //       })
+    //       .catch((e) => {
+    //         console.warn(e);
+    //       });
+    //   } else {
+    //     this.popupMessages.push({
+    //       text: "Action cancelled",
+    //       variant: "orange",
+    //     });
+    //     this.taskToDelete = {};
+    //   }
+    // },
+    deleteTask(task) {
+      if (task) {
         this.$store
-          .dispatch("task/deleteTask", this.taskToDelete)
+          .dispatch("task/deleteTask", task)
           .then((t) => {
             if (t.statusCode == 200) {
+              
               this.updateKey(t.message);
-              this.taskToDelete = {};
+              // this.taskToDelete = {};
             } else {
               this.popupMessages.push({ text: t.message, variant: "orange" });
               console.warn(t.message);
@@ -640,13 +665,11 @@ export default {
           text: "Action cancelled",
           variant: "orange",
         });
-        this.taskToDelete = {};
+        // this.taskToDelete = {};
       }
-    },
-    deleteTask(task) {
-      this.taskToDelete = task;
-      this.confirmMsg = "Are you sure ";
-      this.confirmModal = true;
+      // this.taskToDelete = task;
+      // this.confirmMsg = "Are you sure ";
+      // this.confirmModal = true;
     },
 
     async filterView($event) {
