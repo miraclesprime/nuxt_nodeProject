@@ -102,7 +102,7 @@
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
 import dayjs from 'dayjs'
-import fecha, { format } from "fecha";
+// import fecha, { format } from "fecha";
 import draggable from 'vuedraggable'
 
 export default {
@@ -184,17 +184,17 @@ export default {
   },
 
   methods: {
-    parseDate(dateString, format) {
+    /*parseDate(dateString, format) {
       return fecha.parse(dateString, this.format);
-    },
+    },*/
 
-    formatInputDate(dateObj, format) {
+    /*formatInputDate(dateObj, format) {
       if (dateObj) {
         return fecha.format(dateObj, this.format);
       } else {
         return ""
       }
-    },
+    },*/
     
     // main class prototype
     columnResize(table) {
