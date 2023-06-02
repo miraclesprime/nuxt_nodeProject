@@ -94,7 +94,7 @@
       <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
     </div>
 
-    <confirm-dialog v-if="confirmModal" :message="confirmMsg" @close="confirmDelete"></confirm-dialog>
+    <!-- <confirm-dialog v-if="confirmModal" :message="confirmMsg" @close="confirmDelete"></confirm-dialog> -->
     <bib-modal-wrapper v-if="taskTeamModal" title="Team" size="lg" @close="taskTeamModal = false">
       <template slot="content">
         <div style="min-height: 12rem;">
@@ -141,8 +141,8 @@ export default {
       taskTeamModal: false,
       showSubtaskDetail: false,
       taskToDelete: {},
-      confirmModal: false,
-      confirmMsg: "",
+      // confirmModal: false,
+      // confirmMsg: "",
     };
   },
 
@@ -503,16 +503,35 @@ export default {
           this.loading = false
         })
     },
-    confirmDelete(state){
-      this.confirmModal = false
-      this.confirmMsg = ""
-      if (state) {
-        this.$store.dispatch("task/deleteTask", this.taskToDelete)
+    // confirmDelete(state){
+    //   this.confirmModal = false
+    //   this.confirmMsg = ""
+    //   if (state) {
+    //     this.$store.dispatch("task/deleteTask", this.taskToDelete)
+    //     .then(t => {
+    //       if (t.statusCode == 200) {
+    //         this.$nuxt.$emit("close-sidebar");
+    //         this.$nuxt.$emit("update-key", t.message)
+    //         this.taskToDelete = {}
+    //       } else {
+    //         console.warn(t.message);
+    //       }
+    //     })
+    //     .catch(e => {
+    //       console.warn(e)
+    //     })
+    //   } else {
+    //     this.taskToDelete = {}
+    //   }
+    // },
+    deleteTask(task) {
+      if (task) {
+        this.$store.dispatch("task/deleteTask", task)
         .then(t => {
           if (t.statusCode == 200) {
             this.$nuxt.$emit("close-sidebar");
             this.$nuxt.$emit("update-key", t.message)
-            this.taskToDelete = {}
+            // this.taskToDelete = {}
           } else {
             console.warn(t.message);
           }
@@ -521,13 +540,11 @@ export default {
           console.warn(e)
         })
       } else {
-        this.taskToDelete = {}
+        // this.taskToDelete = {}
       }
-    },
-    deleteTask(task) {
-      this.taskToDelete = task
-      this.confirmMsg = "Are you sure "
-      this.confirmModal = true
+      // this.taskToDelete = task
+      // this.confirmMsg = "Are you sure "
+      // this.confirmModal = true
     },
     onFileInput(payload) {
       this.value.files = payload.files

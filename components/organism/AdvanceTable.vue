@@ -45,18 +45,18 @@
                   <bib-icon icon="arrow-right" variant="gray4" hover-variant="gray5"></bib-icon>
                 </span>
               </div>
-              <template v-if="field.key == 'project'">{{item[field.key][0].project.title}}</template>
+              <template v-if="field.key == 'project'">{{item[field.key][0]?.project?.title}}</template>
               <template v-if="field.key == 'userId'">
-                <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" ></user-select>
+                <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
               </template>
               <template v-if="field.key == 'status'">
-                <status-select :ref="'stausSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)"></status-select>
+                <status-select :ref="'statusSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('statusSelect'+item.id)"></status-select>
               </template>
               <template v-if="field.key == 'priority'">
-                <priority-select :ref="'prioritySelect'+item.id" :priority="item[field.key]" @change="updatePriority($event, item)"></priority-select>
+                <priority-select :ref="'prioritySelect'+item.id" :priority="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
               </template>
               <template v-if="field.key == 'department'">
-                <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)"></dept-select>
+                <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
               </template>
               <template v-if="field.key.includes('Date')" class="date-cell">
                 <!-- {{$formatDate(item[field.key])}} -->
@@ -93,7 +93,7 @@
       </draggable>
     <!-- </div> -->
     <template v-if="contextItems">
-      <table-context-menu :items="contextItems" :show="contextVisible" :coordinates="popupCoords" @item-click="contextItemClick" ></table-context-menu>
+      <table-context-menu :items="contextItems" :show="contextVisible" :coordinates="popupCoords" @close-context="closePopups" @item-click="contextItemClick" ></table-context-menu>
     </template>
     
   </div>
@@ -102,7 +102,7 @@
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
 import dayjs from 'dayjs'
-import fecha, { format } from "fecha";
+// import fecha, { format } from "fecha";
 import draggable from 'vuedraggable'
 
 export default {
@@ -184,17 +184,17 @@ export default {
   },
 
   methods: {
-    parseDate(dateString, format) {
+    /*parseDate(dateString, format) {
       return fecha.parse(dateString, this.format);
-    },
+    },*/
 
-    formatInputDate(dateObj, format) {
+    /*formatInputDate(dateObj, format) {
       if (dateObj) {
         return fecha.format(dateObj, this.format);
       } else {
         return ""
       }
-    },
+    },*/
     
     // main class prototype
     columnResize(table) {
@@ -392,6 +392,16 @@ export default {
       this.newRow.show = false
       this.contextVisible = false
       return 'success'
+    },
+
+    closePopups(id) {
+      // this.contextVisible = false
+      this.unselectAll()
+      // console.log(this.$refs, id)
+      for (let ref in this.$refs) {
+        // console.log(ref)
+        if(ref != id) this.$refs[ref][0].show = false
+      }
     },
 
     newRowClick() {

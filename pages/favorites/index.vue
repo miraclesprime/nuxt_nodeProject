@@ -45,7 +45,7 @@
         </template>
       </bib-popup-notification-wrapper>
       <!-- confirm delete task -->
-      <confirm-dialog v-if="confirmModal" :message="confirmMsg" @close="confirmDelete"></confirm-dialog>
+      <!-- <confirm-dialog v-if="confirmModal" :message="confirmMsg" @close="confirmDelete"></confirm-dialog> -->
       <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
     </div>
   </client-only>
@@ -97,8 +97,8 @@ export default {
       taskStatuspickerOpen: false,
       taskPrioritypickerOpen: false,
       taskDeptpickerOpen: false,
-      confirmModal: false,
-      confirmMsg: "",
+      // confirmModal: false,
+      // confirmMsg: "",
       alertDialog: false,
       alertMsg: "",
       projLocalData: [],
@@ -773,9 +773,9 @@ export default {
     },
 
     projDelete(project) {
-      let del = confirm("Are you sure")
+      // let del = confirm("Are you sure")
       this.loading = true
-      if (del) {
+      if (project) {
         this.$store.dispatch("project/deleteProject", project).then(t => {
 
           if (t.statusCode == 200) {
@@ -935,25 +935,55 @@ export default {
       }
     },
 
-    confirmDelete(state) {
-      console.log(state, this.taskToDelete)
-      this.confirmModal = false
-      this.confirmMsg = ""
-      if (state) {
-        if (this.taskToDelete.task) {
+    // confirmDelete(state) {
+    //   console.log(state, this.taskToDelete)
+    //   this.confirmModal = false
+    //   this.confirmMsg = ""
+    //   if (state) {
+    //     if (this.taskToDelete.task) {
+    //       console.log('subtask selected')
+    //       this.$store.dispatch("subtask/deleteSubtask", { ...this.taskToDelete, text: `deleted subtask "${this.taskToDelete.title}"` })
+    //       .then(st => {
+    //         this.taskToDelete = {}
+    //         this.updateKey(st.message)
+    //       })
+    //       .catch(e => console.warn(e))
+    //     } else {
+    //       this.$store.dispatch("task/deleteTask", this.taskToDelete)
+    //         .then(t => {
+    //           // console.log(t)
+    //           if (t.statusCode == 200) {
+    //             this.taskToDelete = {}
+    //             this.updateKey(t.message)
+    //           } else {
+    //             this.popupMessages.push({ text: t.message, variant: "orange" })
+    //             console.warn(t.message);
+    //           }
+    //         })
+    //         .catch(e => console.warn(e))
+    //     }
+    //   } else {
+    //     this.popupMessages.push({ text: "Action cancelled", variant: "orange" })
+    //     this.taskToDelete = {}
+    //   }
+    // },
+
+    deleteTask(task) {
+      if (task) {
+        if (task.task) {
           console.log('subtask selected')
-          this.$store.dispatch("subtask/deleteSubtask", { ...this.taskToDelete, text: `deleted subtask "${this.taskToDelete.title}"` })
+          this.$store.dispatch("subtask/deleteSubtask", { ...task, text: `deleted subtask "${task.title}"` })
           .then(st => {
-            this.taskToDelete = {}
+            // this.taskToDelete = {}
             this.updateKey(st.message)
           })
           .catch(e => console.warn(e))
         } else {
-          this.$store.dispatch("task/deleteTask", this.taskToDelete)
+          this.$store.dispatch("task/deleteTask", task)
             .then(t => {
               // console.log(t)
               if (t.statusCode == 200) {
-                this.taskToDelete = {}
+                // this.taskToDelete = {}
                 this.updateKey(t.message)
               } else {
                 this.popupMessages.push({ text: t.message, variant: "orange" })
@@ -964,14 +994,11 @@ export default {
         }
       } else {
         this.popupMessages.push({ text: "Action cancelled", variant: "orange" })
-        this.taskToDelete = {}
+        // this.taskToDelete = {}
       }
-    },
-
-    deleteTask(task) {
-      this.taskToDelete = task
-      this.confirmMsg = "Are you sure "
-      this.confirmModal = true
+      // this.taskToDelete = task
+      // this.confirmMsg = "Are you sure "
+      // this.confirmModal = true
     },
 
     async updateKey($event) {
