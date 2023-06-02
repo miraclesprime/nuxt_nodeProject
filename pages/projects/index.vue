@@ -1,7 +1,7 @@
 <template>
   <div id="projects-wrapper" class="projects-wrapper" >   
     <page-title title="Projects"></page-title>  
-    <project-actions @sortValue='sortName=$event' @viewValue='viewName=$event' v-on:loading="loading = $event" v-on:sort="sortProject" @search-projects="searchProjects" />
+    <project-actions @sortValue='sortName=$event' @groupValue="ProjectGroup($event)" @viewValue='viewName=$event' v-on:loading="loading = $event" v-on:sort="sortProject" @search-projects="searchProjects" />
    
     <div id="projects-list-wrapper" class="projects-list-wrapper position-relative" >
       <loading :loading="loading"></loading>
@@ -24,7 +24,6 @@
           @close="confirmDelete"
         ></confirm-dialog> -->
       <template v-if="projects.length">
-
         <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :newTaskButton="{label: 'New Project', icon: 'add'}"></advance-table>
 
       </template>
@@ -78,6 +77,7 @@ export default {
     return {
       sortName: '',
       viewName: '',
+      groupName:'',
       projectContextItems: PROJECT_CONTEXT_MENU,
       datepickerArgs: { label: "", field: ""},
       popupMessages: [],
@@ -152,8 +152,26 @@ export default {
       this.$router.push('/projects/' + project.id)
     },
 
+    sortName($event){
+      console.log("sdfds",$event)
+    },
+    ProjectGroup($event){
+
+      if($event=='Assignee'){
+
+      }
+      if($event=='Status'){
+
+      }
+      if($event=='priority'){
+
+      }
+      if($event=='Department'){
+        
+      }
+    },
     sortProject($event) {
-      
+      console.log("4444444444444",$event)
       if($event == 'title') {
 
           if(this.orderBy == 'asc') {

@@ -150,7 +150,7 @@ export default {
       default: false,
     },
     departmentId: {
-      type: Object,
+      type: Number,
     },
     visible: Boolean,
   },

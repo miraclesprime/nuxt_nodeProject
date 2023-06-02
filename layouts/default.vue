@@ -320,7 +320,7 @@ export default {
       }
 
       if (payload.department) {
-        this.departmentId = payload.department;
+        this.departmentId = payload.department.id;
       }
     });
     this.$root.$on("close-sidebar", () => {

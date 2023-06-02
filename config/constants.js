@@ -388,7 +388,7 @@ export const PROJECT_TEAM_FIELDS = [
   { label: '#', key: '' },
   { label: 'Name', key: 'name' },
 ]
-export const Project_GROUP = [
+export const PROJECT_GROUP = [
   { label: 'Assignee', key:'assignee' },
   { label: 'Status', key:'status' },
   { label: 'Priority', key:'priority' },
