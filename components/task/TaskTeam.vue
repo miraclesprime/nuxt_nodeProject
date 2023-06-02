@@ -29,8 +29,8 @@
             <bib-avatar :src="data.value.avatar" class="mt-auto mb-auto" size="1.5rem"></bib-avatar>
             <!-- <bib-avatar class="mt-auto mb-auto" size="1.5rem"> -->
             <!-- </bib-avatar> -->
-              <strong class="text-dark px-025 font-sm" >{{ data.value.label }}</strong>
-              <span class=" text-black px-025 font-sm">{{ data.value.email }}</span>
+              <strong class="text-dark px-030 font-sm" >{{ data.value.label }}</strong>
+              <span class=" text-black px-030 font-sm">{{ data.value.email }}</span>
           </div>
         </template>
         <template #cell_action="data">
@@ -47,8 +47,8 @@
 
             <!-- <bib-avatar class="mt-auto mb-auto" size="1.5rem">
             </bib-avatar> -->
-               <strong class="text-dark px-025 font-sm" >{{ data.value.label }}</strong>
-              <span class=" text-black px-025 font-sm">{{ data.value.email }}</span>
+               <strong class="text-dark px-030 font-sm" >{{ data.value.label }}</strong>
+              <span class=" text-black px-030 font-sm">{{ data.value.email }}</span>
           </div>
         </template>
         <template #cell_action="data">
