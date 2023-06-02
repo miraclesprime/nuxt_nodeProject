@@ -310,7 +310,7 @@ export default {
               if (res) {
                 this.$store.dispatch("project/setSingleProject", res.data);
               }
-            })
+          })
             .catch((err) => console.log(err));
         } else {
           this.$store.dispatch("project/setSingleProject", {});

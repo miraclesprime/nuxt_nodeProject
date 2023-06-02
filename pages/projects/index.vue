@@ -1,7 +1,7 @@
 <template>
   <div id="projects-wrapper" class="projects-wrapper" >   
     <page-title title="Projects"></page-title>  
-    <project-actions @sortValue='sortName=$event' @groupValue="ProjectGroup($event)" @viewValue='viewName=$event' v-on:loading="loading = $event" v-on:sort="sortProject" @search-projects="searchProjects" />
+    <project-actions  @sortValue='sortName=$event' @groupValue="ProjectGroup($event)" @viewValue='viewName=$event' v-on:loading="loading = $event" v-on:sort="sortProject" @search-projects="searchProjects" />
    
     <div id="projects-list-wrapper" class="projects-list-wrapper position-relative" >
       <loading :loading="loading"></loading>
@@ -77,7 +77,6 @@ export default {
     return {
       sortName: '',
       viewName: '',
-      groupName:'',
       projectContextItems: PROJECT_CONTEXT_MENU,
       datepickerArgs: { label: "", field: ""},
       popupMessages: [],
@@ -152,13 +151,15 @@ export default {
       this.$router.push('/projects/' + project.id)
     },
 
-    sortName($event){
-      console.log("sdfds",$event)
-    },
+    // sortName($event){
+    //   console.log("sdfds",$event)
+    // },
     ProjectGroup($event){
 
       if($event=='Assignee'){
-
+        this.$store.dispatch('project/groupProjects',{key:$event}).then(()=>{
+          this
+        })
       }
       if($event=='Status'){
 
@@ -171,7 +172,7 @@ export default {
       }
     },
     sortProject($event) {
-      console.log("4444444444444",$event)
+      
       if($event == 'title') {
 
           if(this.orderBy == 'asc') {
