@@ -10,8 +10,8 @@
         <bib-input size="sm" type="text" v-model="searchText" name="name" @input="$emit('search-projects', searchText)" placeholder="Search Projects..." :variant="searchText.length > 50 ? 'alert': ''"></bib-input>
       </template>
       <ul class="actions" id="pa-actions-list">
-        <li class="action" id="ta-action3" title="Group by"  v-tooltip="'Group By'">
-          <sorting-comp label="Group by" :items="groupby" icon="accessibility-braille-solid" v-on:change-sort="groupBy"></sorting-comp>
+        <li class="action" id="pa-action3" title="Group by"  v-tooltip="'Group By'">
+          <sorting-comp label="Group by" :items="groupBy" icon="accessibility-braille-solid" v-on:change-sort="groupBy"></sorting-comp>
         </li>
         <li class="action" id="pa-action-item1" v-tooltip="'View'">
           <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="viewProjects($event)"></sorting-comp>
@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { VIEW_FILTER, PROJECT_SORT } from 'config/constants.js'
+import { VIEW_FILTER, PROJECT_SORT ,Project_GROUP} from 'config/constants.js'
 
 export default {
   props: {
@@ -41,6 +41,7 @@ export default {
       selectedView: 'All',
       selectedSort: null,
       orderBy: '',
+      groupBy:Project_GROUP,
       viewing: VIEW_FILTER,
       sorting: PROJECT_SORT,
       searchText: ""

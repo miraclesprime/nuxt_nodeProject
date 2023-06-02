@@ -773,9 +773,9 @@ export default {
     },
 
     projDelete(project) {
-      let del = confirm("Are you sure")
+      // let del = confirm("Are you sure")
       this.loading = true
-      if (del) {
+      if (project) {
         this.$store.dispatch("project/deleteProject", project).then(t => {
 
           if (t.statusCode == 200) {
@@ -969,7 +969,6 @@ export default {
     // },
 
     deleteTask(task) {
-      console.log("favourite",task)
       if (task) {
         if (task.task) {
           console.log('subtask selected')
