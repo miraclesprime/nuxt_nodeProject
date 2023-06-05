@@ -3,20 +3,17 @@
     <task-actions
       :gridType="gridType"
       v-on:create-task="toggleSidebar($event)"
-      v-on:show-newsection="showNewsection"
       v-on:filterView="filterView"
       v-on:sort="taskSort($event)"
       @group="taskGroup($event)"
       @search-projectTasks="searchTasks"
+      v-on:add-section="showNewSection"
     ></task-actions>
-    <!-- updated by @wen -->
     <template>
-      <!-- task list table -->
 
-      <!-- updated by @wen -->
       <div v-show="gridType === 'list'">
 
-      <drag-table
+      <!-- <drag-table
         :fields="tableFields"
         :sections="localdata"
         :titleIcon="{ icon: 'check-circle-solid', event: 'task-icon-click' }"
@@ -43,9 +40,11 @@
         @priority-picker="showPriorityPicker"
         @dept-picker="showDeptPicker"
  	 @change-section="changeSection"
-      ></drag-table>
+      ></drag-table> -->
+
+      <adv-table-two :tableFields="tableFields" :tableData="localdata" :plusButton="false" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort($event)" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd"></adv-table-two>
       <!-- table context menu -->
-      <table-context-menu
+      <!-- <table-context-menu
         :items="taskContextMenuItems"
         :show="taskContextMenu"
         :coordinates="popupCoords"
@@ -53,7 +52,7 @@
         @close-context="closeContext"
         ref="task_menu"
         @item-click="contextItemClick"
-      ></table-context-menu>
+      ></table-context-menu> -->
       </div>
     </template>
 
@@ -97,7 +96,7 @@
     ></inline-datepicker>
 
     <!-- status picker for list view -->
-    <status-picker
+    <!-- <status-picker
       :show="statusPickerOpen"
       :coordinates="popupCoords"
       @selected="
@@ -110,10 +109,10 @@
         })
       "
       @close="statusPickerOpen = false"
-    ></status-picker>
+    ></status-picker> -->
 
     <!-- priority picker for list view -->
-    <priority-picker
+    <!-- <priority-picker
       :show="priorityPickerOpen"
       :coordinates="popupCoords"
       @selected="
@@ -126,9 +125,9 @@
         })
       "
       @close="priorityPickerOpen = false"
-    ></priority-picker>
+    ></priority-picker> -->
     <!-- department-picker for list view -->
-    <dept-picker
+    <!-- <dept-picker
       :show="deptPickerOpen"
       :coordinates="popupCoords"
       @selected="
@@ -141,7 +140,7 @@
         })
       "
       @close="deptPickerOpen = false"
-    ></dept-picker>
+    ></dept-picker> -->
 
     <loading :loading="loading"></loading>
     <!-- popup notification -->
@@ -157,11 +156,11 @@
       </template>
     </bib-popup-notification-wrapper>
     <!-- confirm delete task -->
-    <confirm-dialog
+    <!-- <confirm-dialog
       v-if="confirmModal"
       :message="confirmMsg"
       @close="confirmDelete"
-    ></confirm-dialog>
+    ></confirm-dialog> -->
     <alert-dialog
       v-show="alertDialog"
       :message="alertMsg"
@@ -242,8 +241,8 @@ export default {
       templateKey: 0,
       orderBy: "asc",
       renameModal: false,
-      confirmModal: false,
-      confirmMsg: "",
+      // confirmModal: false,
+      // confirmMsg: "",
       alertDialog: false,
       alertMsg: "",
       sectionId: null,
@@ -606,6 +605,10 @@ export default {
     taskGroup($event) {
       console.log($event);
     },
+
+    contextOpen(item){
+      this.$store.dispatch("task/setSingleTask", item)
+    },
     updateKey() {
       this.userPickerOpen = false;
       this.taskContextMenu = false;
@@ -681,9 +684,10 @@ export default {
       this.userPickerOpen = false;
     },
 
-    showNewsection() {
-      this.$nextTick(() => {
-        this.newSection = true;
+    showNewSection() {
+      this.newSection = true
+      process.nextTick(() => {
+        this.$refs.newsectioninput.focus()
       });
     },
 
@@ -700,10 +704,10 @@ export default {
       // console.log(tempSections)
       const res = await this.$store.dispatch("section/createSection", {
         projectId: this.project.id,
-        title: $event.title,
+        title: $event.title || $event,
         isDeleted: false,
         data: tempSections,
-        text: `section '${$event.title}' created`,
+        text: `section '${$event.title || $event}' created`,
       });
       if (res.statusCode == 200) {
         this.$store
@@ -850,19 +854,12 @@ export default {
     },
 
     updateTask(payload) {
-      let user;
-      if (payload.field == "userId" && payload.value != "") {
-        user = this.teamMembers.filter((t) => t.id == payload.value);
-      } else {
-        user = null;
-      }
 
       this.$store
         .dispatch("task/updateTask", {
-          id: payload.task.id,
+          id: payload.id,
           data: { [payload.field]: payload.value },
-          user,
-          text: `changed ${payload.label} to ${
+          text: `${
             payload.historyText || payload.value
           }`,
         })
@@ -895,7 +892,7 @@ export default {
         .catch((e) => console.warn(e));
     },
 
- // updated by @wen 5.24
+
      updateDate(value) {
       if(this.datepickerArgs.field==="dueDate")
         {
@@ -936,16 +933,40 @@ export default {
             .catch((e) => console.warn(e));
     },
 
-    confirmDelete(state) {
-      this.confirmModal = false;
-      this.confirmMsg = "";
-      if (state) {
+    // confirmDelete(state) {
+    //   this.confirmModal = false;
+    //   this.confirmMsg = "";
+    //   if (state) {
+    //     this.$store
+    //       .dispatch("task/deleteTask", this.taskToDelete)
+    //       .then((t) => {
+    //         if (t.statusCode == 200) {
+    //           this.updateKey(t.message);
+    //           this.taskToDelete = {};
+    //         } else {
+    //           this.popupMessages.push({ text: t.message, variant: "orange" });
+    //           console.warn(t.message);
+    //         }
+    //       })
+    //       .catch((e) => {
+    //         console.warn(e);
+    //       });
+    //   } else {
+    //     this.popupMessages.push({
+    //       text: "Action cancelled",
+    //       variant: "orange",
+    //     });
+    //     this.taskToDelete = {};
+    //   }
+    // },
+    deleteTask(task) {
+      if (task) {
         this.$store
-          .dispatch("task/deleteTask", this.taskToDelete)
+          .dispatch("task/deleteTask", task)
           .then((t) => {
             if (t.statusCode == 200) {
               this.updateKey(t.message);
-              this.taskToDelete = {};
+              // this.taskToDelete = {};
             } else {
               this.popupMessages.push({ text: t.message, variant: "orange" });
               console.warn(t.message);
@@ -959,13 +980,11 @@ export default {
           text: "Action cancelled",
           variant: "orange",
         });
-        this.taskToDelete = {};
+        // this.taskToDelete = {};
       }
-    },
-    deleteTask(task) {
-      this.taskToDelete = task;
-      this.confirmMsg = "Are you sure ";
-      this.confirmModal = true;
+      // this.taskToDelete = task;
+      // this.confirmMsg = "Are you sure ";
+      // this.confirmModal = true;
     },
 
     deleteSection(section) {

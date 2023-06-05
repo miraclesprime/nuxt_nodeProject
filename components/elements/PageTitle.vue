@@ -1,11 +1,13 @@
 <template>
   <nav :id="id+'-title-wrapper'" class="bg-white d-flex align-center gap-05 py-075 px-025">
     <!-- updated by @wen 5.29 -->
-    <button type="button" @click="$router.back(-1)" class="d-flex cursor-pointer bg-white border-white" id="pt-button">
+    
+    <button type="button" v-show="$route.path !== '/projects'" @click="$router.back()" class="d-flex cursor-pointer bg-white border-white" id="pt-button">
       <bib-icon  icon="arrowhead-left" :scale="1.5" variant="gray5"></bib-icon>
     </button>
     <bib-avatar v-if="avatar" :src="avatar"></bib-avatar>
-    <span class=" ml-2 title-text" :id="id+'-title-text'">{{title}}</span>
+    <span v-show="$route.path !== '/projects'" class=" mr-1 title-text" :id="id+'-title-text'">{{title}}</span>
+    <span v-show="$route.path === '/projects'" class=" ml-2 title-text" :id="id+'-title-text'">{{title}}</span>
   </nav>
 </template>
 <script>
@@ -28,7 +30,10 @@ export default {
 
     }
   },
+  methods:{
+  },
   computed: {
+  
     id() {
       return this.title.replace(" ", "_").toLowerCase()
     }
