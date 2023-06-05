@@ -446,7 +446,7 @@ export const PROJECT_FAVORITES = [
       event: 'table-sort',
       isActive: false
     },
-    event: "project-click"
+    event: "title-click"
   },
   {
     label: 'Department',
@@ -519,7 +519,7 @@ export const TASK_FAVORITES = [
       event: 'table-sort',
       isActive: false
     },
-    event: "task-click",
+    event: "title-click",
   },
   {
     label: "Project",
