@@ -6,13 +6,13 @@
       <div id="favorite-scroll-wrap" class="favorite-tables position-relative " >
 
         <!-- project table -->
-        <div>
-         <advance-table :tableFields="projectTableFields" :tableData="projLocalData" :contextItems="projectContextItems" @context-item-event="projContextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" sectionTitle="Favorite Projects"></advance-table>
+        <div style="overflow: auto;">
+          <advance-table :tableFields="projectTableFields" :tableData="projLocalData" :contextItems="projectContextItems" @context-item-event="projContextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" sectionTitle="Favorite Projects" :newTaskButton="false"></advance-table>
         </div>
 
         <!-- task table -->
-        <div>
-        <advance-table :tableFields="taskTableFields" :tableData="taskSubtaskLocalData" :contextItems="taskContextMenuItems" @context-item-event="taskContextItemClick" @row-click ="openSidebar" @table-sort="sortTask" @title-click="openSidebar" @update-field="updateTask" sectionTitle="Favorite Tasks"></advance-table>
+        <div style="overflow: auto;">
+          <advance-table :tableFields="taskTableFields" :tableData="taskSubtaskLocalData" :contextItems="taskContextMenuItems" @context-item-event="taskContextItemClick" @row-click ="openSidebar" @table-sort="sortTask" @title-click="openSidebar" @update-field="updateTask" sectionTitle="Favorite Tasks" :newTaskButton="false"></advance-table>
         </div>
       
         <loading :loading="loading"></loading>
@@ -1023,7 +1023,7 @@ export default {
 
     // task context menu methods ------------------------------------------
     openSidebar(task, scroll) {
-      // console.log(task)
+      // console.log(...arguments)
       let fwd = this.$donotCloseSidebar(event.target.classList)
       if (!fwd) {
         this.$nuxt.$emit("close-sidebar");
@@ -1084,7 +1084,7 @@ export default {
 }
 .favorite-tables {
   display: flex;
-  height: 100%;
+  height: calc(100% - 110px);
   flex-direction: column;
 }
 </style>

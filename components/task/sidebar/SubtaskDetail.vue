@@ -10,7 +10,7 @@
             <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" ></bib-icon>
           </div>
           <div class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="std-icons">
-            <bib-button pop="horizontal-dostd">
+            <bib-button dropdown="horizontal-dots">
               <template v-slot:menu>
                 <div class="list" id="std-list">
                   <span class="list__item" id="std-list-item-1" @click="markComplete">

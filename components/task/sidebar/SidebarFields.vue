@@ -241,7 +241,6 @@ export default {
         }
       },
     },
-    // updated by @wen 5.24
     dueDateInput: {
       get() {
         if (!this.form.dueDate) {
@@ -282,7 +281,6 @@ export default {
     },
   },
   watch: {
-     //updated by @Wen 5.25
     visible(newValue, oldValue) {
       if (!newValue) {
         if (!!this.$refs.startDate.variant) this.$refs.startDate.variant = null;
