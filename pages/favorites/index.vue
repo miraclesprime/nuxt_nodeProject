@@ -1,15 +1,19 @@
 <template>
   <client-only>
-    <div id="favorite_wrapper">
+    <div id="favorite_wrapper" class="favorite-wrapper h-100">
       <page-title title="Favorites"></page-title>
       <favorite-actions v-on:change-viewing="changeView" v-on:change-sorting="changeSort" @search-projects-tasks="searchProjectOrTasks"></favorite-actions>
-      <div id="favorite-scroll-wrap" class="d-flex position-relative" style="flex-direction: column;">
+      <div id="favorite-scroll-wrap" class="favorite-tables position-relative " >
 
         <!-- project table -->
+        <div>
          <advance-table :tableFields="projectTableFields" :tableData="projLocalData" :contextItems="projectContextItems" @context-item-event="projContextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" sectionTitle="Favorite Projects"></advance-table>
+        </div>
 
         <!-- task table -->
+        <div>
         <advance-table :tableFields="taskTableFields" :tableData="taskSubtaskLocalData" :contextItems="taskContextMenuItems" @context-item-event="taskContextItemClick" @row-click ="openSidebar" @table-sort="sortTask" @title-click="openSidebar" @update-field="updateTask" sectionTitle="Favorite Tasks"></advance-table>
+        </div>
       
         <loading :loading="loading"></loading>
       </div>
@@ -1019,6 +1023,7 @@ export default {
 
     // task context menu methods ------------------------------------------
     openSidebar(task, scroll) {
+      // console.log(task)
       let fwd = this.$donotCloseSidebar(event.target.classList)
       if (!fwd) {
         this.$nuxt.$emit("close-sidebar");
@@ -1072,8 +1077,14 @@ export default {
 
 </script>
 <style lang="scss" scoped>
-// #favorite-scroll-wrap {
-//   max-height: calc(100vh - 180px);
-// }
+.favorite-wrapper {
+  display: flex;
+  flex-direction: column;
 
+}
+.favorite-tables {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
 </style>

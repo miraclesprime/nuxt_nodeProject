@@ -1,8 +1,13 @@
 <template>
   <div id="user-select-wrapper" class="picker-wrapper" v-click-outside="onClickOutside">
     <button type="button" id="user-select-trigger-open" class="user-data cursor-pointer height-2 w-100 align-center justify-between" @click.stop="triggerOpen">
-      <span v-if="user" id="user-select-user-avatar">
+      <span v-if="user" id="user-select-user-avatar" class="align-center gap-025">
         <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> <span class="user-label text-truncate">{{user.label}}</span>
+      </span>
+      <span v-else id="user-select-user-avatar">
+        <span class="shape-circle d-inline-flex width-105 height-105 ">
+          <bib-avatar size="1.5rem"></bib-avatar>
+        </span>
       </span>
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
     </button>
