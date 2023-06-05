@@ -154,6 +154,7 @@ export default {
       openSidebar: false,
       flag: false,
       navKey: 0,
+      historyLength: 2,
       appItems: [
         {
           img: "layers-solid",
@@ -339,6 +340,7 @@ export default {
     });
   },
   mounted() {
+    window.addEventListener("popstate", this.handleStateChange);
     if (process.client) {
       if (this.$router.history.current.fullPath == "/dashboard") {
         this.navItems1[0].selected = true;
@@ -475,7 +477,12 @@ export default {
       }
     }
   },
-
+  watch: {
+    $route: function () {
+      this.$store.commit("project/setArrowVisible", this.historyLength + 1);
+      this.historyLength = this.historyLength + 1;
+    },
+  },
   computed: {
     ...mapGetters({
       favProjects: "project/getFavProjects",
@@ -487,6 +494,10 @@ export default {
   },
 
   methods: {
+    handleStateChange() {
+      this.$store.commit("project/setArrowVisible", this.historyLength - 2);
+      this.historyLength = this.historyLength - 2;
+    },
     isRouteActive(id) {
       if (this.$route.path.includes(id)) {
         return true;

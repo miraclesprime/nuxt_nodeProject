@@ -10,20 +10,41 @@
               </span></div>
           </div>
         </div>
+        <draggable v-model="tableData" class="section-draggable-wrapper sortable-list" @end="$emit('section-dragend', tableData)">
 
-        <div class="tr position-relative height-2" id="adv-table-tr1" v-if="sectionTitle">
+<section v-for="(section, index) in tableData">
+
+  <!-- <div class="tr position-relative height-205">
+    <div class="position-absolute border-bottom-light" style="inset: 0; ">
+      <div class="section-header d-flex align-center gap-05 height-205 " >
+        <div class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
+        </div>
+        <div class="position-sticky align-center" style="left: 0.5rem;" >
+          <span class="width-1 cursor-pointer" @click.stop="collapseItem('sectionContent' + section.id)">
+            <bib-icon icon="arrow-down" :scale="0.5" ></bib-icon> 
+          </span>
+          <span class="font-w-700 cursor-pointer ml-025" >
+            {{ section.title }}
+        </span>
+        </div>
+      </div>
+    </div>
+  </div> -->
+  <div class="tr position-relative height-2" id="adv-table-tr1">
           <div class="position-absolute" id="adv-table-section-header-wrapper" style="inset: 0; border-bottom: 1px solid var(--bib-light);">
             <div class="section-header d-flex align-center gap-05 height-2 px-1" id="adv-table-section-header">
               <bib-icon icon="arrow-down" :scale="0.5" :style="{transform: iconRotate}"></bib-icon> 
-              <span class="font-w-700 cursor-pointer" id="adv-table-section-title" @click.stop="isCollapsed = !isCollapsed">
-                {{sectionTitle}}
+              <span class="font-w-700 cursor-pointer" id="adv-table-section-title" @click.stop="collapseItem('sectionContent' + section.id)">
+                {{ section.title }}
               </span>
             </div>
           </div>
         </div>
 
-        <template v-if="!isCollapsed">
-          <div v-for="(item, index) in tableData" :key="item.id+'-'+index" class="tr" :id="'adv-table-table-data-'+index" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
+  <!-- <draggable class="section-content" tag="article" :list="section['tasks']" :group="{ name: 'tasks' }" :data-section="section.id" :ref="'sectionContent' + section.id" @start="rowDragStart" :move="moveRow" @end="rowDragEnd"> -->
+
+    <!-- <div class="section-content" > -->
+      <div v-for="(item, index) in section['tasks']" :key="item.id+'-'+index" class="tr" :id="'adv-table-table-data-'+index" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
             <div class="td" role="cell" id="adv-table-td">
               <div v-if="drag" class="drag-handle width-105 h-100" id="adv-table-drag-handle"><!-- <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24">
                 <rect fill="none" height="24" width="24" />
@@ -67,28 +88,12 @@
             </div>
           </div>
 
-          <div v-if="!newRow.show" class="tr" role="row" style="border-bottom: var(--bib-light)" id="adv-table-newRow-wrapper">
-            <div class="td " id="adv-table-newRow-td1" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
-            <div class="td" id="adv-table-newRow-td2" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
-              <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" id="adv-table-newRow-newTaskBtn" v-on:click.stop="newRowClick()">
-                <bib-icon :icon="newTaskButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{newTaskButton.label}}</span>
-              </div>
-            </div>
-            <div v-for="n in tableFields.length-1" class="td" id="adv-table-newRow-td3" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
-          </div>
+  <!-- </draggable> -->
 
-          <div v-show="newRow.show" class="tr" role="row" id="adv-table-newRow-2">
-            <div v-if="drag" class="td text-center" id="adv-table-newRow2-td" role="cell">
-              <span class="d-inline-flex align-center height-105 bg-secondary-sub4 shape-rounded" id="adv-table-newRow2-drag"><bib-icon icon="drag" variant="white"></bib-icon></span>
-            </div>
-            <template v-for="(td,index) in tableFields">
-              <div v-if="td.key == 'title'" class="td" role="cell" :id="'adv-table-newRow2-td-'+index">
-                <input type="text" ref="newrowInput" class="editable-input" :id="'adv-table-editable-input-2-'+index" v-model="newRow.title" :class="{'error': validTitle}" @input="newRowCreate" required placeholder="Enter title...">
-              </div>
-              <div v-else class="td" role="cell" :id="'adv-table-else-td-'+index"></div>
-            </template>
-          </div>
-        </template>
+</section>
+
+</draggable>
+        
 
       </draggable>
     <!-- </div> -->
@@ -115,7 +120,7 @@ export default {
     tableFields: { type: Array, required: true, default: () => [] },
     tableData: { type: Array, required: true, default: () => [] },
     dataType: { type: String, default: 'nested' },  
-    sectionTitle: { type: String, default: "Section" },
+    // sectionTitle: { type: String, default: "Section" },
     contextItems: { type: Array },
     drag: { type: Boolean, default: true },
     newTaskButton: {
