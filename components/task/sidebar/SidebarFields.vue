@@ -13,34 +13,29 @@
           ></bib-select>
         </div>
         <div class="col-4" id="sidebar-col-2">
-             <!-- <bib-datetime-picker v-model="item[field.key]" format="MM/DD/YYYY" placeholder="No date" @input="updateDate($event, item, field.key)" @click.native.stop></bib-datetime-picker> -->
-          <bib-datetime-picker
+          <bib-datepicker
             v-model="startDateInput"
             :value="startDateInput"
-            :format="format"
-            :parseDate="parseDate"
-            :formatDate="formatDate"
+            format="dd MMM yyyy"
             label="Start date"
             placeholder="Start date"
             ref="startDate"
             @input="
               debounceUpdateField('Start date', 'startDate', startDateInput)
             "
-          ></bib-datetime-picker>
+          ></bib-datepicker>
         </div>
         <div class="col-4" id="sidebar-col-3">
-          <bib-datetime-picker
+          <bib-datepicker
             class="align-right"
             v-model="dueDateInput"
             :value="dueDateInput"
-            :format="format"
-            :parseDate="parseDate"
-            :formatDate="formatDate"
+            format="dd MMM yyyy"
             label="Due date"
             placeholder="Due date"
             ref="dueDate"
             @input="debounceUpdateField('Due date', 'dueDate', dueDateInput)"
-          ></bib-datetime-picker>
+          ></bib-datepicker>
         </div>
       </div>
       <div class="row mx-0" id="sidebar-row-2">
@@ -144,7 +139,6 @@
 import { STATUS, PRIORITY } from "~/config/constants.js";
 import { mapGetters } from "vuex";
 import _ from "lodash";
- import fecha, { format } from "fecha";
 export default {
   name: "SidebarFields",
   props: {
@@ -156,7 +150,7 @@ export default {
       default: false,
     },
     departmentId: {
-      type: Object,
+      type: Number,
     },
     visible: Boolean,
   },
@@ -170,7 +164,6 @@ export default {
       loading2: false,
       randomKey: 0,
       popupMessages: [],
-      format: "DD MMM YYYY",
     };
   },
   computed: {
@@ -211,16 +204,15 @@ export default {
       });
       return sec;
     },
-    startDateInput: {  
+    startDateInput: {
       get() {
         if (!this.form.startDate) {
-          return null;
+          return null
         } else {
-        return format(new Date(this.form.startDate), this.format);
-          // return this.parseDate(new Date(this.form.startDate));
+          return new Date(this.form.startDate)
         }
       },
-      set(newValue) { //updated by @Wen 5.25
+      set(newValue) {
         this.$refs.startDate.variant = null;
         if (!newValue) this.form.startDate = "";
         else {
@@ -228,7 +220,7 @@ export default {
           if (
             this.dueDateInput &&
             newStartDate.toISOString().slice(0, 10) >
-              new Date(this.dueDateInput).toISOString().slice(0, 10)
+              this.dueDateInput.toISOString().slice(0, 10)
           ) {
             this.popupMessages.push({ text:"Invalid date", variant: "danger" });
             this.dueDateInput = "";
@@ -239,11 +231,11 @@ export default {
           } else {
             if (this.$refs.dueDate.variant) this.$refs.dueDate.variant = null;
           }
-          this.form.startDate = format(newStartDate,this.format);
+          this.form.startDate = new Date(newValue);
           this.$emit("update-field", {
             name: "Start date",
             field: "startDate",
-            value: format(newStartDate,this.format),
+            value: newStartDate,
           });
         }
       },
@@ -252,12 +244,12 @@ export default {
     dueDateInput: {
       get() {
         if (!this.form.dueDate) {
-          return null;
+          return null
         } else {
-          return format(new Date(this.form.dueDate), this.format);
+          return new Date(this.form.dueDate)
         }
       },
-      set(newValue) { //updated by @Wen 5.25
+      set(newValue) {
         this.$refs.dueDate.variant = null;
         if (!newValue) {
           this.form.dueDate = "";
@@ -266,10 +258,9 @@ export default {
           if (
             this.startDateInput &&
             newDueDate.toISOString().slice(0, 10) <
-              new Date(this.startDateInput).toISOString().slice(0, 10)
+              this.startDateInput.toISOString().slice(0, 10)
           ) {
             this.popupMessages.push({ text:"Invalid date", variant: "danger" });
-
             this.startDateInput = "";
             this.$nextTick(() => {
               this.$refs.startDate.$emit("input");
@@ -279,12 +270,11 @@ export default {
             if (this.$refs.startDate.variant)
               this.$refs.startDate.variant = null;
           }
-          this.form.startDate = format(newDueDate,this.format);
-          // this.form.dueDate = newDueDate;
+          this.form.dueDate = newDueDate;
           this.$emit("update-field", {
             name: "Due date",
             field: "dueDate",
-            value: format(newDueDate,this.format),
+            value: newDueDate,
           });
         }
       },
@@ -339,12 +329,6 @@ export default {
     },
   },
   methods: {
-       parseDate(dateString, format) {
-              return fecha.parse(dateString, format);
-          },
-          formatDate(dateObj, format) {
-              return fecha.format(dateObj, format);
-          },
     changeProject() {
       if (!this.form.projectId || this.form.projectId == "") {
         this.form.projectId = null;

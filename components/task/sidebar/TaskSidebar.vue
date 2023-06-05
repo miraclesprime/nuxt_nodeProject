@@ -120,7 +120,7 @@ export default {
   props: {
     sectionIdActive: Number,
     scrollId: {type: String, default: "sidebar-inner-wrap"},
-    departmentId: {type: Object},
+    departmentId: {type: Number},
     visible: Boolean,//updated by @wen 5.25
   },
   data: function() {

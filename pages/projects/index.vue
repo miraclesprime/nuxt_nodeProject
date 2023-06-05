@@ -1,7 +1,7 @@
 <template>
   <div id="projects-wrapper" class="projects-wrapper" >   
     <page-title title="Projects"></page-title>  
-    <project-actions @sortValue='sortName=$event' @viewValue='viewName=$event' v-on:loading="loading = $event" v-on:sort="sortProject" @search-projects="searchProjects" />
+    <project-actions  @sortValue='sortName=$event' @groupValue="ProjectGroup($event)" @viewValue='viewName=$event' v-on:loading="loading = $event" v-on:sort="sortProject" @search-projects="searchProjects" />
    
     <div id="projects-list-wrapper" class="projects-list-wrapper position-relative" >
       <loading :loading="loading"></loading>
@@ -24,8 +24,17 @@
           @close="confirmDelete"
         ></confirm-dialog> -->
       <template v-if="projects.length">
+        <div v-if="groupVisible">
+        <!-- <advance-table-group :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" :newTaskButton="{label: 'New Project', icon: 'add'}"></advance-table-group> -->
+        <loading :loading="loading"></loading>
+
+        <adv-table-three :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @table-sort="sortProject($event)" @row-click="projectRoute" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject"  sectionTitle=" Medium (section 2)" :newTaskButton="{label: 'New Project', icon: 'add'}"   ></adv-table-three>
+        </div>
+       <div v-else="groupVisible">
+        <loading :loading="loading"></loading>
 
         <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :newTaskButton="{label: 'New Project', icon: 'add'}"></advance-table>
+      </div> 
 
       </template>
       <template v-else>
@@ -94,6 +103,7 @@ export default {
       alertMsg:"",
       localData: [],
       popupMessages: [],
+      groupVisible:false
       // confirmModal: false,
       // confirmMsg: "",
       // taskToDelete: {}
@@ -127,6 +137,7 @@ export default {
   watch: {
     projects(newVal) {
         this.localData = _.cloneDeep(newVal)
+        console.log("***************",this.localData)
     },
   },
 
@@ -152,10 +163,18 @@ export default {
       this.$router.push('/projects/' + project.id)
     },
 
+    // sortName($event){
+    //   console.log("sdfds",$event)
+    // },
+    ProjectGroup($event){
+      this.$store.dispatch('project/groupProjects', {key: $event} ).then((res) => {
+          this.groupVisible=true
+          this.templateKey += 1;
+            })
+    },
     sortProject($event) {
       
       if($event == 'title') {
-
           if(this.orderBy == 'asc') {
             this.$store.dispatch('project/sortProjects', {key: 'name', order: 'asc'} ).then((res) => {
               this.orderBy = 'desc'
@@ -345,7 +364,8 @@ export default {
           })
       }
     },
-
+    
+    
     updateProject(payload){
       const { item, label, field, value, historyText } = payload
       
@@ -385,8 +405,10 @@ export default {
         text: historyText
       })
         .then(t => {
+          console.log("111111111",t)
           if (t.statusCode == 200) {
-            this.updateKey()
+            
+            this.updateKey("priority")
           } else {
             console.warn(t)
           }
@@ -481,6 +503,7 @@ export default {
       
       if (proj.data.statusCode == 200) {
         this.updateKey()
+        this.loading=false
         this.renameModal = false
       }
       this.renameProjectData = {}
@@ -514,10 +537,17 @@ export default {
         }
     },
 
-    updateKey() {
-      this.$store.dispatch("project/fetchProjects").then(() => {
+    updateKey($event) {
+      // this.loading=true
+      if($event){
+        this.$store.dispatch("project/groupProjects", {key: $event}).then(() => {
         this.templateKey += 1;
       })
+      }
+      this.$store.dispatch("project/groupProjects",).then(() => {
+        this.templateKey += 1;
+      })
+      
     },
 
     searchProjects(text) {
