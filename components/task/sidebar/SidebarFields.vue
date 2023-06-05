@@ -18,8 +18,6 @@
             v-model="startDateInput"
             :value="startDateInput"
             :format="format"
-            :parseDate="parseDate"
-            :formatDate="formatDate"
             label="Start date"
             placeholder="Start date"
             ref="startDate"
@@ -34,8 +32,6 @@
             v-model="dueDateInput"
             :value="dueDateInput"
             :format="format"
-            :parseDate="parseDate"
-            :formatDate="formatDate"
             label="Due date"
             placeholder="Due date"
             ref="dueDate"
@@ -144,7 +140,7 @@
 import { STATUS, PRIORITY } from "~/config/constants.js";
 import { mapGetters } from "vuex";
 import _ from "lodash";
- import fecha, { format } from "fecha";
+// import fecha, { format } from "fecha";
 export default {
   name: "SidebarFields",
   props: {
@@ -339,12 +335,12 @@ export default {
     },
   },
   methods: {
-       parseDate(dateString, format) {
+       /*parseDate(dateString, format) {
               return fecha.parse(dateString, format);
           },
           formatDate(dateObj, format) {
               return fecha.format(dateObj, format);
-          },
+          },*/
     changeProject() {
       if (!this.form.projectId || this.form.projectId == "") {
         this.form.projectId = null;
