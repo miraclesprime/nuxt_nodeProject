@@ -56,6 +56,7 @@ export default {
   },
   methods: {
     changeGridType($event) {
+      this.$emit("change-grid-type", $event);
       this.$nuxt.$emit("change-grid-type", $event);
     },
     showCreateTaskModal() {

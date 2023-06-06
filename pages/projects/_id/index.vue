@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <div id="project-id-wrapper" class="project-id-wrapper ">
+    <div id="page" class="project-id-wrapper ">
       <nav id="project-id-nav" class="d-flex align-center gap-05 py-075 px-025 "> 
         <bib-avatar></bib-avatar>
         <span id="project-id-project-title" class=" font-w-700  mr-1 " style="font-size: 1.25rem;">{{project ? project.title : ''}}</span>
@@ -53,9 +53,10 @@
       </nav>
 
       <!-- Task View -->
-      <div id="project-id-tab-content" class="project-id-tab-content bg-light position-relative h-100 of-scroll-y">
-        <task-view :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType"></task-view>
-      </div>
+      <!-- <div id="project-id-content" class="project-id-content bg-light position-relative h-100 ">
+      </div> -->
+      
+      <task-view :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType"></task-view>
 
       <!-- project modals -->
       <bib-modal-wrapper v-if="projectModal" :title="projectModalTitle" size="xl" @close="projectModal = false">
@@ -106,7 +107,7 @@
       <!-- notification -->
       <bib-popup-notification-wrapper>
         <template #wrapper>
-          <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
+          <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" autohide="3500">
           </bib-popup-notification>
         </template>
       </bib-popup-notification-wrapper>
@@ -192,7 +193,7 @@ export default {
         })
 
         if((proj && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
-            console.log('user has access!')
+            // console.log('user has access!')
         } else {
             this.alertDialog = true
             this.alertMsg = "You do not have access to this page!"
@@ -380,6 +381,10 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
+}
+
+.project-id-content {
+
 }
 
 #project-id-nav {

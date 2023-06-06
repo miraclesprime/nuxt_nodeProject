@@ -1,5 +1,5 @@
 <template>
-  <div id="task-view-wrapper" class="task-view-wrapper position-relative">
+  <div id="task-view-wrapper" class="task-view-wrapper position-relative ">
     <task-actions
       :gridType="gridType"
       v-on:create-task="toggleSidebar($event)"
@@ -9,23 +9,18 @@
       @search-projectTasks="searchTasks"
       v-on:add-section="showNewSection"
     ></task-actions>
-    <template>
-
-      <div v-show="gridType === 'list'">
+    <div v-show="gridType === 'list'" class="calc-height " :style="{ 'width': contentWidth }">
 
       <adv-table-two :tableFields="tableFields" :tableData="localdata" :plusButton="false" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd"></adv-table-two>
 
-      </div>
-    </template>
+    </div>
 
-    <template>
-      <div v-show="gridType == 'grid'">
+    <div v-show="gridType == 'grid'" class="calc-height " >
       <task-grid-section
         :sections="localdata"
         :activeTask="activeTask"
         :templateKey="templateKey"
         @create-section="createSection"
-        @section-rename="renameSectionModal"
         @section-delete="deleteSection"
         v-on:update-key="updateKey"
         v-on:create-task="toggleSidebar($event)"
@@ -37,8 +32,7 @@
         sectionType="singleProject"
       >
       </task-grid-section>
-      </div>
-    </template>
+    </div>
 
     <!-- user-picker for list and board view -->
     <user-picker
@@ -175,6 +169,7 @@ export default {
         budget: "",
         text: "",
       },
+      contentWidth: "100%",
     };
   },
   computed: {
@@ -185,6 +180,7 @@ export default {
       favTasks: "task/getFavTasks",
       project: "project/getSingleProject",
       sections: "section/getProjectSections",
+      sidebar: "task/getSidebarVisible",
     }),
   },
 
@@ -196,6 +192,18 @@ export default {
     gridType() {
       this.templateKey++;
     },
+    sidebar(newVal){
+      const page = document.getElementById("page")
+      this.$nextTick(() => {
+        const panel = document.getElementById("side-panel-wrapper")
+        // console.log("page width="+page.scrollWidth+", panel width="+panel.offsetWidth)
+        if (this.sidebar) {
+          this.contentWidth = (page.scrollWidth - panel.offsetWidth) + 'px'
+        } else {
+          this.contentWidth = '100%'
+        }
+      });
+    }
   },
 
   created() {
@@ -959,8 +967,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .task-view-wrapper {
-  min-height: 5rem;
-  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 57px);
+  .calc-height {
+    height: calc(100% - 57px);
+  }
 }
 
 .new-section-input {

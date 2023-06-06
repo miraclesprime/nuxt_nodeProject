@@ -406,10 +406,11 @@ export default {
       // this.contextVisible = false
       this.unselectAll()
       // console.log(this.$refs, id)
-      console.log("this.$refs",this.$refs)
-      for (let ref in this.$refs) {
-        
-        if(ref != id) this.$refs[ref][0].show = false
+      // console.log("this.$refs",this.$refs)
+      if (id) {
+        for (let ref in this.$refs) {
+          if(ref != id) this.$refs[ref][0].show = false
+        }
       }
     },
 
