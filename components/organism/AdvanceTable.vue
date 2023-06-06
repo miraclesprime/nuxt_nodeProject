@@ -67,7 +67,7 @@
           </div>
         </div>
 
-        <div v-if="!newRow.show" class="tr" role="row" style="border-bottom: var(--bib-light)" id="adv-table-newRow-wrapper">
+        <div v-if="!newRow.show && newTaskButton" class="tr" role="row" style="border-bottom: var(--bib-light)" id="adv-table-newRow-wrapper">
           <div class="td " id="adv-table-newRow-td1" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
           <div class="td" id="adv-table-newRow-td2" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
             <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" id="adv-table-newRow-newTaskBtn" v-on:click.stop="newRowClick()">
@@ -119,7 +119,7 @@ export default {
     contextItems: { type: Array },
     drag: { type: Boolean, default: true },
     newTaskButton: {
-      type: Object,
+      type: [Object, Boolean],
       default () {
         return {
           label: "New Task",

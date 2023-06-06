@@ -26,7 +26,7 @@
                         <span class="list__item" id="ts-list-item-2" @click="setFavorite">
                             <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
                         </span>
-                        <span class="list__item" id="ts-list-item-4" @click="showAddTeamModal">
+                        <!-- <span class="list__item" id="ts-list-item-4" @click="showAddTeamModal">
                             <bib-icon icon="user-group-solid" variant="gray5" class="mr-075"></bib-icon> Team
                         </span>
                         <span class="list__item" id="ts-list-item-5" v-scroll-to="'#task_subtasks'">
@@ -37,7 +37,7 @@
                         </span>
                         <span class="list__item" id="ts-list-item-3" v-scroll-to="'#task_files'">
                             <bib-icon icon="folder-solid" variant="gray5" class="mr-075"></bib-icon> Files
-                        </span>
+                        </span> -->
                         <span class="list__item" id="project-id-list-item3" @click="copyTaskLink">
                             <bib-icon icon="duplicate" class="mr-075"></bib-icon> Copy Link
                         </span>
