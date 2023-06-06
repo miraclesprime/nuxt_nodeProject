@@ -137,10 +137,7 @@ export default {
   watch: {
     projects(newVal) {
         this.localData = _.cloneDeep(newVal)
-<<<<<<< HEAD
-        // console.log("***************",this.localData)
-=======
->>>>>>> f983106d6a254bf7e873c0fc9684e392259c9de8
+
     },
   },
 
