@@ -19,7 +19,9 @@ export const mutations = {
   },
 
   createTodo(state, payload) {
-    state.todos.unshift(payload)
+    let ns = payload
+    ns.tasks = []
+    state.todos.unshift(ns);
   },
 
   setTodos(state, payload) {
