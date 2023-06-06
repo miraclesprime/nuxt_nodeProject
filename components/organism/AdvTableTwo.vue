@@ -639,9 +639,11 @@ export default {
     closePopups(id) {
       this.contextVisible = false
       // console.log(this.$refs, id)
-      for (let ref in this.$refs) {
-        // console.log(ref)
-        if(ref != id) this.$refs[ref][0].show = false
+      if (id) {
+        for (let ref in this.$refs) {
+          // console.log(ref)
+          if(ref != id) this.$refs[ref][0].show = false
+        }
       }
     },
 
