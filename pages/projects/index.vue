@@ -28,7 +28,7 @@
         <!-- <advance-table-group :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" :newTaskButton="{label: 'New Project', icon: 'add'}"></advance-table-group> -->
         <loading :loading="loading"></loading>
 
-        <adv-table-three :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @table-sort="sortProject($event)" @row-click="projectRoute" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject"  sectionTitle=" Medium (section 2)" :newTaskButton="{label: 'New Project', icon: 'add'}"   ></adv-table-three>
+        <adv-table-two :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @title-click="projectRoute" @update-field="updateProject" :isProject = "true"></adv-table-two>
         </div>
        <div v-else="groupVisible">
         <loading :loading="loading"></loading>
@@ -137,7 +137,10 @@ export default {
   watch: {
     projects(newVal) {
         this.localData = _.cloneDeep(newVal)
+<<<<<<< HEAD
         // console.log("***************",this.localData)
+=======
+>>>>>>> f983106d6a254bf7e873c0fc9684e392259c9de8
     },
   },
 
@@ -407,8 +410,11 @@ export default {
         .then(t => {
           console.log("111111111",t)
           if (t.statusCode == 200) {
-            
-            this.updateKey("priority")
+            if(groupVisible){
+              this.updateKey("priority")
+            }else{
+              this.updateKey()
+            }
           } else {
             console.warn(t)
           }
@@ -544,9 +550,12 @@ export default {
         this.templateKey += 1;
       })
       }
-      this.$store.dispatch("project/groupProjects",).then(() => {
+      else{
+        this.$store.dispatch("project/fetchProjects",).then(() => {
         this.templateKey += 1;
       })
+      }
+      
       
     },
 
