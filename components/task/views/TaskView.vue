@@ -1,70 +1,26 @@
 <template>
-  <div id="task-view-wrapper" class="task-view-wrapper position-relative">
+  <div id="task-view-wrapper" class="task-view-wrapper position-relative ">
     <task-actions
       :gridType="gridType"
       v-on:create-task="toggleSidebar($event)"
-      v-on:show-newsection="showNewsection"
       v-on:filterView="filterView"
       v-on:sort="taskSort($event)"
       @group="taskGroup($event)"
       @search-projectTasks="searchTasks"
+      v-on:add-section="showNewSection"
     ></task-actions>
-    <!-- updated by @wen -->
-    <template>
-      <!-- task list table -->
+    <div v-show="gridType === 'list'" class="calc-height " :style="{ 'width': contentWidth }">
 
-      <!-- updated by @wen -->
-      <div v-show="gridType === 'list'">
+      <adv-table-two :tableFields="tableFields" :tableData="localdata" :plusButton="false" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd"></adv-table-two>
 
-      <drag-table
-        :fields="tableFields"
-        :sections="localdata"
-        :titleIcon="{ icon: 'check-circle-solid', event: 'task-icon-click' }"
-        :key="templateKey"
-        :componentKey="templateKey"
-        :newSection="newSection"
-        @create-section="createSection"
-        @row-click="openSidebar"
-        @row-rightclick="taskRightClick"
-        @task-icon-click="markComplete"
-        @new-task="toggleSidebar($event)"
-        @table-sort="taskSort($event)"
-        @section-dragend="sectionDragEnd"
-        @task-dragend="taskDragEnd"
-        :newTaskButton="newTaskButton"
-        :newRow="newRow"
-        @create-newrow="createNewTask"
-        @hide-newrow="resetNewRow"
-        @edit-field="updateTask"
-        @edit-section="renameSection"
-        @user-picker="showUserPicker"
-        @date-picker="showDatePicker"
-        @status-picker="showStatusPicker"
-        @priority-picker="showPriorityPicker"
-        @dept-picker="showDeptPicker"
- 	 @change-section="changeSection"
-      ></drag-table>
-      <!-- table context menu -->
-      <table-context-menu
-        :items="taskContextMenuItems"
-        :show="taskContextMenu"
-        :coordinates="popupCoords"
-        :activeItem="activeTask"
-        @close-context="closeContext"
-        ref="task_menu"
-        @item-click="contextItemClick"
-      ></table-context-menu>
-      </div>
-    </template>
+    </div>
 
-    <template>
-      <div v-show="gridType == 'grid'">
+    <div v-show="gridType == 'grid'" class="calc-height " >
       <task-grid-section
         :sections="localdata"
         :activeTask="activeTask"
         :templateKey="templateKey"
         @create-section="createSection"
-        @section-rename="renameSectionModal"
         @section-delete="deleteSection"
         v-on:update-key="updateKey"
         v-on:create-task="toggleSidebar($event)"
@@ -76,8 +32,7 @@
         sectionType="singleProject"
       >
       </task-grid-section>
-      </div>
-    </template>
+    </div>
 
     <!-- user-picker for list and board view -->
     <user-picker
@@ -96,52 +51,6 @@
       @close="datePickerOpen = false"
     ></inline-datepicker>
 
-    <!-- status picker for list view -->
-    <status-picker
-      :show="statusPickerOpen"
-      :coordinates="popupCoords"
-      @selected="
-        updateTask({
-          task: activeTask,
-          label: 'Status',
-          field: 'statusId',
-          value: $event.value,
-          historyText: $event.label,
-        })
-      "
-      @close="statusPickerOpen = false"
-    ></status-picker>
-
-    <!-- priority picker for list view -->
-    <priority-picker
-      :show="priorityPickerOpen"
-      :coordinates="popupCoords"
-      @selected="
-        updateTask({
-          task: activeTask,
-          label: 'Priority',
-          field: 'priorityId',
-          value: $event.value,
-          historyText: $event.label,
-        })
-      "
-      @close="priorityPickerOpen = false"
-    ></priority-picker>
-    <!-- department-picker for list view -->
-    <dept-picker
-      :show="deptPickerOpen"
-      :coordinates="popupCoords"
-      @selected="
-        updateTask({
-          task: activeTask,
-          label: 'Department',
-          field: 'departmentId',
-          value: $event.value,
-          historyText: $event.label,
-        })
-      "
-      @close="deptPickerOpen = false"
-    ></dept-picker>
 
     <loading :loading="loading"></loading>
     <!-- popup notification -->
@@ -156,12 +65,6 @@
         </bib-popup-notification>
       </template>
     </bib-popup-notification-wrapper>
-    <!-- confirm delete task -->
-    <confirm-dialog
-      v-if="confirmModal"
-      :message="confirmMsg"
-      @close="confirmDelete"
-    ></confirm-dialog>
     <alert-dialog
       v-show="alertDialog"
       :message="alertMsg"
@@ -242,8 +145,6 @@ export default {
       templateKey: 0,
       orderBy: "asc",
       renameModal: false,
-      confirmModal: false,
-      confirmMsg: "",
       alertDialog: false,
       alertMsg: "",
       sectionId: null,
@@ -268,6 +169,7 @@ export default {
         budget: "",
         text: "",
       },
+      contentWidth: "100%",
     };
   },
   computed: {
@@ -278,6 +180,7 @@ export default {
       favTasks: "task/getFavTasks",
       project: "project/getSingleProject",
       sections: "section/getProjectSections",
+      sidebar: "task/getSidebarVisible",
     }),
   },
 
@@ -289,6 +192,18 @@ export default {
     gridType() {
       this.templateKey++;
     },
+    sidebar(newVal){
+      const page = document.getElementById("page")
+      this.$nextTick(() => {
+        const panel = document.getElementById("side-panel-wrapper")
+        // console.log("page width="+page.scrollWidth+", panel width="+panel.offsetWidth)
+        if (this.sidebar) {
+          this.contentWidth = (page.scrollWidth - panel.offsetWidth) + 'px'
+        } else {
+          this.contentWidth = '100%'
+        }
+      });
+    }
   },
 
   created() {
@@ -342,45 +257,31 @@ export default {
       this.localdata = sorted;
       this.templateKey += 1;
     },
-    taskRightClick(payload) {
-      this.projectContextMenu = false;
-      this.taskContextMenu = true;
-      this.userPickerOpen = false;
-      this.datePickerOpen = false;
-      const { event, task } = payload;
-
-      this.popupCoords = { left: event.pageX + "px", top: event.pageY + "px" };
-      this.activeTask = task;
-    },
-    closeContext() {
-      this.taskContextMenu = false;
-      this.activeTask = {};
-    },
-    contextItemClick(key) {
+    contextItemClick(key, item) {
       switch (key) {
         case "done-task":
-          this.markComplete(this.activeTask);
+          this.markComplete(item);
           break;
         case "fav-task":
-          this.setFavorite(this.activeTask);
+          this.setFavorite(item);
           break;
         case "delete-task":
-          this.deleteTask(this.activeTask);
+          this.deleteTask(item);
           break;
         case "copy-task":
-          this.copyTaskLink(this.activeTask);
+          this.copyTaskLink(item);
           break;
         case "gotoTeam":
           this.$nuxt.$emit("add-member-to-task");
           break;
         case "gotoComment":
-          this.openSidebar(this.activeTask, "task_conversation");
+          this.openSidebar(item, "task_conversation");
           break;
         case "gotoSubtask":
-          this.openSidebar(this.activeTask, "task_subtasks");
+          this.openSidebar(item, "task_subtasks");
           break;
         case "gotoFiles":
-          this.openSidebar(this.activeTask, "task_files");
+          this.openSidebar(item, "task_files");
           break;
         case "assign-task":
           break;
@@ -411,69 +312,44 @@ export default {
       this.datepickerArgs.field = payload.field || "dueDate";
       this.datepickerArgs.label = payload.label || "Due date";
     },
-    showStatusPicker(payload) {
-      this.closeAllPickers();
-      this.statusPickerOpen = true;
-      this.popupCoords = {
-        left: event.clientX + "px",
-        top: event.clientY + "px",
-      };
-      this.activeTask = payload.task;
-    },
-    showPriorityPicker(payload) {
-      this.closeAllPickers();
-      this.priorityPickerOpen = true;
-      this.popupCoords = {
-        left: event.clientX + "px",
-        top: event.clientY + "px",
-      };
-      this.activeTask = payload.task;
-    },
-    showDeptPicker(payload) {
-      this.closeAllPickers();
-      this.deptPickerOpen = true;
-      this.popupCoords = {
-        left: event.clientX + "px",
-        top: event.clientY + "px",
-      };
-      this.activeTask = payload.task;
-    },
     closeAllPickers() {
-      this.taskContextMenu = false;
       this.userPickerOpen = false;
       this.datePickerOpen = false;
-      this.statusPickerOpen = false;
-      this.priorityPickerOpen = false;
-      this.deptPickerOpen = false;
       this.activeTask = {};
     },
 
     taskSort($event) {
+      let newData = JSON.parse(JSON.stringify(this.localdata));
       if ($event == "title") {
         // var orderBy = "asc"
         if (this.orderBy == "asc") {
           this.orderBy = "desc";
-          this.localdata.forEach(function (sec, index) {
-            sec["tasks"] = sec.tasks.sort((a, b) =>
-              a.title.localeCompare(b.title)
-            );
+          newData.forEach(function (sec, index) {
+            sec["tasks"] = sec.tasks.sort((a, b) => {
+              if(a.title && b.title) {
+                return a.title.localeCompare(b.title)
+              }
+            });
           });
         } else {
           this.orderBy = "asc";
-          this.localdata.forEach(function (sec, index) {
-            sec["tasks"] = sec.tasks.sort((a, b) =>
-              b.title.localeCompare(a.title)
-            );
+          newData.forEach(function (sec, index) {
+            sec["tasks"] = sec.tasks.sort((a, b) => {
+              if(a.title && b.title) {
+                return b.title.localeCompare(a.title)
+              }
+            });
           });
         }
         this.sortName = "title";
+        this.localdata = newData;
         this.checkActive();
       }
       // Sort By owner
       if ($event == "userId") {
         if (this.orderBy == "asc") {
           this.orderBy = "desc";
-          this.localdata.forEach(function (sec) {
+          newData.forEach(function (sec) {
             sec["tasks"] = sec.tasks.sort((a, b) => {
               if (a.user && b.user) {
                 return a.user.firstName.localeCompare(b.user.firstName);
@@ -482,7 +358,7 @@ export default {
           });
         } else {
           this.orderBy = "asc";
-          this.localdata.forEach(function (sec) {
+          newData.forEach(function (sec) {
             sec["tasks"] = sec.tasks.sort((a, b) => {
               if (a.user && b.user) {
                 return b.user.firstName.localeCompare(a.user.firstName);
@@ -491,46 +367,57 @@ export default {
           });
         }
         this.sortName = "userId";
+        this.localdata = newData
         this.checkActive();
       }
       // sort By Status
       if ($event == "status") {
         if (this.orderBy == "asc") {
           this.orderBy = "desc";
-          this.localdata.forEach(function (sec) {
-            sec["tasks"] = sec.tasks.sort((a, b) =>
-              a.status.text.localeCompare(b.status.text)
-            );
+          newData.forEach(function (sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => {
+              if(a.statusId && b.statusId) {
+                return a.status.text.localeCompare(b.status.text)
+              }
+            });
           });
         } else {
           this.orderBy = "asc";
-          this.localdata.forEach(function (sec) {
-            sec["tasks"] = sec.tasks.sort((a, b) =>
-              b.status.text.localeCompare(a.status.text)
-            );
+          newData.forEach(function (sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => {
+              if(a.statusId && b.statusId) {
+                return b.status.text.localeCompare(a.status.text)
+              }
+            });
           });
         }
         this.sortName = "status";
+        this.localdata = newData
         this.checkActive();
       }
       // Sort By Priotity
       if ($event == "priority") {
         if (this.orderBy == "asc") {
           this.orderBy = "desc";
-          this.localdata.forEach(function (sec) {
-            sec["tasks"] = sec.tasks.sort(
-              (a, b) => a.priority.id - b.priority.id
-            );
+          newData.forEach(function (sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => {
+              if(a.priorityId && b.priorityId) {
+                return a.priority.id.localeCompare(b.priority.id)
+              }
+            });
           });
         } else {
           this.orderBy = "asc";
-          this.localdata.forEach(function (sec) {
-            sec["tasks"] = sec.tasks.sort(
-              (a, b) => b.priority.id - a.priority.id
-            );
+          newData.forEach(function (sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => {
+              if(a.priorityId && b.priorityId) {
+                return b.priority.id.localeCompare(a.priority.id)
+              }
+            });
           });
         }
         this.sortName = "priority";
+        this.localdata = newData
         this.checkActive();
       }
 
@@ -538,7 +425,7 @@ export default {
       if ($event == "department") {
         if (this.orderBy == "asc") {
           this.orderBy = "desc";
-          this.localdata.forEach(function (sec) {
+          newData.forEach(function (sec) {
             sec["tasks"] = sec.tasks.sort((a, b) => {
               if (a.departmentId && b.departmentId) {
                 return a.department.title.localeCompare(b.department.title);
@@ -547,7 +434,7 @@ export default {
           });
         } else {
           this.orderBy = "asc";
-          this.localdata.forEach(function (sec) {
+          newData.forEach(function (sec) {
             sec["tasks"] = sec.tasks.sort((a, b) => {
               if (a.departmentId && b.departmentId) {
                 return b.department.title.localeCompare(a.department.title);
@@ -556,6 +443,7 @@ export default {
           });
         }
         this.sortName = "department";
+        this.localdata = newData
         this.checkActive();
       }
 
@@ -563,20 +451,25 @@ export default {
       if ($event == "startDate") {
         if (this.orderBy == "asc") {
           this.orderBy = "desc";
-          this.localdata.forEach(function (sec) {
-            sec["tasks"] = sec.tasks.sort(
-              (a, b) => new Date(a.startDate) - new Date(b.startDate)
-            );
+          newData.forEach(function (sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => {
+              if(a.startDate && b.startDate) {
+                return new Date(a.startDate) - new Date(b.startDate)
+              }
+            });
           });
         } else {
           this.orderBy = "asc";
-          this.localdata.forEach(function (sec) {
-            sec["tasks"] = sec.tasks.sort(
-              (a, b) => new Date(b.startDate) - new Date(a.startDate)
-            );
+          newData.forEach(function (sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => {
+              if(a.startDate && b.startDate) {
+                return new Date(b.startDate) - new Date(a.startDate)
+              }
+            });
           });
         }
         this.sortName = "startDate";
+        this.localdata = newData
         this.checkActive();
       }
 
@@ -584,20 +477,25 @@ export default {
       if ($event == "dueDate") {
         if (this.orderBy == "asc") {
           this.orderBy = "desc";
-          this.localdata.forEach(function (sec) {
-            sec["tasks"] = sec.tasks.sort(
-              (a, b) => new Date(a.dueDate) - new Date(b.dueDate)
-            );
+          newData.forEach(function (sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => {
+              if(a.dueDate && b.dueDate) {
+                return new Date(a.dueDate) - new Date(b.dueDate)
+              }
+            });
           });
         } else {
           this.orderBy = "asc";
-          this.localdata.forEach(function (sec) {
-            sec["tasks"] = sec.tasks.sort(
-              (a, b) => new Date(b.dueDate) - new Date(a.dueDate)
-            );
+          newData.forEach(function (sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => {
+              if(a.dueDate && b.dueDate) {
+                return new Date(b.dueDate) - new Date(a.dueDate)
+              }
+            });
           });
         }
         this.sortName = "dueDate";
+        this.localdata = newData
         this.checkActive();
       }
 
@@ -605,6 +503,10 @@ export default {
     },
     taskGroup($event) {
       console.log($event);
+    },
+
+    contextOpen(item){
+      this.$store.dispatch("task/setSingleTask", item)
     },
     updateKey() {
       this.userPickerOpen = false;
@@ -681,9 +583,10 @@ export default {
       this.userPickerOpen = false;
     },
 
-    showNewsection() {
-      this.$nextTick(() => {
-        this.newSection = true;
+    showNewSection() {
+      this.newSection = true
+      process.nextTick(() => {
+        this.$refs.newsectioninput.focus()
       });
     },
 
@@ -700,10 +603,10 @@ export default {
       // console.log(tempSections)
       const res = await this.$store.dispatch("section/createSection", {
         projectId: this.project.id,
-        title: $event.title,
+        title: $event.title || $event,
         isDeleted: false,
         data: tempSections,
-        text: `section '${$event.title}' created`,
+        text: `section '${$event.title || $event}' created`,
       });
       if (res.statusCode == 200) {
         this.$store
@@ -713,14 +616,6 @@ export default {
           })
           .then(() => {
             this.taskByOrder();
-
-            /*let tmp = [];
-            tmp.push(this.localdata[this.localdata.length - 1]);
-            let i;
-            for (i = 1; i < this.localdata.length; ++i)
-              tmp.push(this.localdata[i - 1]);
-            this.localdata = tmp;
-            this.sectionDragEnd(this.localdata);*/
           });
         this.newSection = false;
         // this.sectionLoading = false;
@@ -728,10 +623,6 @@ export default {
         this.sectionError = res.message;
         // this.sectionLoading = false;
       }
-    },
-
-    renameSectionModal($event) {
-      console.log($event);
     },
 
     async renameSection(payload) {
@@ -850,19 +741,12 @@ export default {
     },
 
     updateTask(payload) {
-      let user;
-      if (payload.field == "userId" && payload.value != "") {
-        user = this.teamMembers.filter((t) => t.id == payload.value);
-      } else {
-        user = null;
-      }
 
       this.$store
         .dispatch("task/updateTask", {
-          id: payload.task.id,
+          id: payload.id,
           data: { [payload.field]: payload.value },
-          user,
-          text: `changed ${payload.label} to ${
+          text: `${
             payload.historyText || payload.value
           }`,
         })
@@ -895,7 +779,7 @@ export default {
         .catch((e) => console.warn(e));
     },
 
- // updated by @wen 5.24
+
      updateDate(value) {
       if(this.datepickerArgs.field==="dueDate")
         {
@@ -936,16 +820,14 @@ export default {
             .catch((e) => console.warn(e));
     },
 
-    confirmDelete(state) {
-      this.confirmModal = false;
-      this.confirmMsg = "";
-      if (state) {
+    deleteTask(task) {
+      if (task) {
         this.$store
-          .dispatch("task/deleteTask", this.taskToDelete)
+          .dispatch("task/deleteTask", task)
           .then((t) => {
             if (t.statusCode == 200) {
               this.updateKey(t.message);
-              this.taskToDelete = {};
+              // this.taskToDelete = {};
             } else {
               this.popupMessages.push({ text: t.message, variant: "orange" });
               console.warn(t.message);
@@ -959,13 +841,8 @@ export default {
           text: "Action cancelled",
           variant: "orange",
         });
-        this.taskToDelete = {};
+        // this.taskToDelete = {};
       }
-    },
-    deleteTask(task) {
-      this.taskToDelete = task;
-      this.confirmMsg = "Are you sure ";
-      this.confirmModal = true;
     },
 
     deleteSection(section) {
@@ -1090,8 +967,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .task-view-wrapper {
-  min-height: 5rem;
-  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 57px);
+  .calc-height {
+    height: calc(100% - 57px);
+  }
 }
 
 .new-section-input {

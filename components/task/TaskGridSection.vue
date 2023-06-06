@@ -1,5 +1,5 @@
 <template>
-  <div id="tgs-scroll" class="of-scroll-x position-relative" style="min-height: 30rem;">
+  <div id="tgs-scroll" class="overflow-x-auto h-100 position-relative" style="min-height: 30rem;">
     <draggable :list="localdata" class="d-flex " :move="moveSection" v-on:end="$emit('section-dragend', localdata)" handle=".section-drag-handle">
       <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${templateKey}${section.title}${section.id}`">
         <div class="w-100 d-flex align-center section-title-wrapper border-bottom-gray2 mb-075" :id="'tgs-inner-wrap-'+section.id" :class="{'active': sectionEdit}" >

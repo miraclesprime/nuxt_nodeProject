@@ -18,42 +18,9 @@
         <template>
           <div v-show="gridType === 'list'">
           <template v-if="tasks.length">
-            <drag-table
-              :key="key"
-              :componentKey="key"
-              :fields="taskFields"
-              :sections="localData"
-              :titleIcon="{
-                icon: 'check-circle-solid',
-                event: 'task-icon-click',
-              }"
-              @task-icon-click="taskMarkComplete"
-              @row-rightclick="taskRightClick"
-              v-on:new-task="toggleSidebar($event)"
-              @table-sort="sortBy"
-              @row-click="openSidebar"
-              @edit-field="updateTask"
-              @user-picker="showUserPicker"
-              @date-picker="showDatePicker"
-              @status-picker="showStatusPicker"
-              @priority-picker="showPriorityPicker"
-              :newTaskButton="newTaskButton"
-              :newRow="newRow"
-              @create-newrow="createNewTask"
-              @hide-newrow="resetNewRow"
-              @section-dragend="sectionDragEnd"
-              @task-dragend="taskDragEnd"
-            ></drag-table>
 
-            <!-- table context menu -->
-            <table-context-menu
-              :items="contextMenuItems"
-              :show="taskContextMenu"
-              :coordinates="popupCoords"
-              :activeItem="activeTask"
-              @close-context="closeContext"
-              @item-click="contextItemClick"
-            ></table-context-menu>
+            <adv-table-two :tableFields="taskFields" :tableData="localData" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd"></adv-table-two>
+
           </template>
           <div v-else>
             <span
@@ -105,53 +72,6 @@
           @close="datePickerOpen = false"
         ></inline-datepicker>
 
-        <!-- status picker for list view -->
-        <status-picker
-          :show="statusPickerOpen"
-          :coordinates="popupCoords"
-          @selected="
-            updateTask({
-              task: activeTask,
-              label: 'Status',
-              field: 'statusId',
-              value: $event.value,
-              historyText: $event.label,
-            })
-          "
-          @close="statusPickerOpen = false"
-        ></status-picker>
-
-        <!-- priority picker for list view -->
-        <priority-picker
-          :show="priorityPickerOpen"
-          :coordinates="popupCoords"
-          @selected="
-            updateTask({
-              task: activeTask,
-              label: 'Priority',
-              field: 'priorityId',
-              value: $event.value,
-              historyText: $event.label,
-            })
-          "
-          @close="priorityPickerOpen = false"
-        ></priority-picker>
-        <!-- department-picker for list view -->
-        <dept-picker
-          :show="deptPickerOpen"
-          :coordinates="popupCoords"
-          @selected="
-            updateTask({
-              task: activeTask,
-              label: 'Department',
-              field: 'departmentId',
-              value: $event.value,
-              historyText: $event.label,
-            })
-          "
-          @close="deptPickerOpen = false"
-        ></dept-picker>
-
         <loading :loading="loading"></loading>
         <!-- popup notification -->
         <bib-popup-notification-wrapper>
@@ -165,12 +85,6 @@
             </bib-popup-notification>
           </template>
         </bib-popup-notification-wrapper>
-        <!-- confirm delete task -->
-        <confirm-dialog
-          v-if="confirmModal"
-          :message="confirmMsg"
-          @close="confirmDelete"
-        ></confirm-dialog>
         <alert-dialog
           v-show="alertDialog"
           :message="alertMsg"
@@ -216,8 +130,6 @@ export default {
       statusPickerOpen: false,
       priorityPickerOpen: false,
       deptPickerOpen: false,
-      confirmModal: false,
-      confirmMsg: "",
       alertDialog: false,
       alertMsg: "",
       localData: [],
@@ -331,46 +243,17 @@ export default {
       this.datepickerArgs.field = payload.field || "dueDate";
       this.datepickerArgs.label = payload.label || "Due date";
     },
-    showStatusPicker(payload) {
-      this.closeAllPickers();
-      this.statusPickerOpen = true;
-      this.popupCoords = {
-        left: event.clientX + "px",
-        top: event.clientY + "px",
-      };
-      this.activeTask = payload.task;
-    },
-    showPriorityPicker(payload) {
-      this.closeAllPickers();
-      this.priorityPickerOpen = true;
-      this.popupCoords = {
-        left: event.clientX + "px",
-        top: event.clientY + "px",
-      };
-      this.activeTask = payload.task;
-    },
-    showDeptPicker(payload) {
-      this.closeAllPickers();
-      this.deptPickerOpen = true;
-      this.popupCoords = {
-        left: event.clientX + "px",
-        top: event.clientY + "px",
-      };
-      this.activeTask = payload.task;
-    },
+    
     closeAllPickers() {
       this.taskContextMenu = false;
       this.userPickerOpen = false;
       this.datePickerOpen = false;
-      this.statusPickerOpen = false;
-      this.priorityPickerOpen = false;
-      this.deptPickerOpen = false;
       this.activeTask = {};
     },
+    contextOpen(item){
+      this.$store.dispatch("task/setSingleTask", item)
+    },
     updateKey(value) {
-      // if ($event) {
-      //   this.popupMessages.push({ text: $event, variant: "success" });
-      // }
       if (value) {
         this.popupMessages.push({ text: "success", variant: "success" });
       }
@@ -379,8 +262,7 @@ export default {
         .dispatch("company/fetchCompanyTasks", {
           companyId: compid,
         })
-        .then((res) => {
-
+        .then(() => {
           this.key += 1;
         });
        
@@ -395,44 +277,36 @@ export default {
       this.$nuxt.$emit("open-sidebar", { ...task, scrollId: scroll });
     },
 
-    taskRightClick(payload) {
-      this.taskContextMenu = true;
-      const { event, task } = payload;
-      this.activeTask = task;
-      this.$store.dispatch("task/setSingleTask", task);
-      this.popupCoords = { left: event.pageX + "px", top: event.pageY + "px" };
-    },
-
     closeContext() {
       this.taskContextMenu = false;
       this.activeTask = {};
     },
 
-    contextItemClick(key) {
+    contextItemClick(key, item) {
       switch (key) {
         case "done-task":
-          this.taskMarkComplete(this.activeTask);
+          this.taskMarkComplete(item);
           break;
         case "fav-task":
-          this.taskSetFavorite(this.activeTask);
+          this.taskSetFavorite(item);
           break;
         case "delete-task":
-          this.deleteTask(this.activeTask);
+          this.deleteTask(item);
           break;
         case "copy-task":
-          this.copyTaskLink(this.activeTask);
+          this.copyTaskLink(item);
           break;
         case "gotoTeam":
           this.$nuxt.$emit("add-member-to-task");
           break;
         case "gotoComment":
-          this.openSidebar(this.activeTask, "task_conversation");
+          this.openSidebar(item, "task_conversation");
           break;
         case "gotoSubtask":
-          this.openSidebar(this.activeTask, "task_subtasks");
+          this.openSidebar(item, "task_subtasks");
           break;
         case "gotoFiles":
-          this.openSidebar(this.activeTask, "task_files");
+          this.openSidebar(item, "task_files");
           break;
         default:
           this.alertDialog = true;
@@ -461,10 +335,10 @@ export default {
         user = null;
       }
 
-      if (payload.task.project.length > 0) {
+      if (payload.item.project.length > 0) {
         projectId =
-          payload.task.project[0].projectId ||
-          payload.task.project[0].project.id;
+          payload.item.project[0].projectId ||
+          payload.item.project[0].project.id;
       } else {
         projectId = null;
       }
@@ -479,13 +353,13 @@ export default {
 
       this.$store
         .dispatch("task/updateTask", {
-          id: payload.task.id,
+          id: payload.item.id,
           projectId,
           data: { [payload.field]: payload.value },
           user,
-          text: `changed ${payload.label} to "${
+          text: `${
             payload.historyText || payload.value
-          }"`,
+          }`,
         })
         .then((t) => {
           this.updateKey(t.data.department.title)
@@ -493,29 +367,29 @@ export default {
         .catch((e) => console.warn(e));
     },
 
-    updateAssignee(label, field, value, historyText) {
-      let user;
-      if (field == "userId" && value != "") {
-        user = this.teamMembers.filter((t) => t.id == value);
-      } else {
-        user = null;
-      }
+//     updateAssignee(label, field, value, historyText) {
+//       let user;
+//       if (field == "userId" && value != "") {
+//         user = this.teamMembers.filter((t) => t.id == value);
+//       } else {
+//         user = null;
+//       }
 
-      this.userPickerOpen = false;
+//       this.userPickerOpen = false;
 
-      this.$store
-        .dispatch("task/updateTask", {
-          id: this.activeTask.id,
-          data: { [field]: value },
-          user,
-          text: `changed ${label} to ${historyText}`,
-        })
-        .then((t) => {
-            this.updateKey()
-        })
-        .catch((e) => console.warn(e));
-    },
-// updated by @wen 5.24
+//       this.$store
+//         .dispatch("task/updateTask", {
+//           id: this.activeTask.id,
+//           data: { [field]: value },
+//           user,
+//           text: `changed ${label} to ${historyText}`,
+//         })
+//         .then((t) => {
+//             this.updateKey()
+//         })
+//         .catch((e) => console.warn(e));
+//     },
+
     updateDate(value) {
       if(this.datepickerArgs.field==="dueDate")
         {
@@ -541,20 +415,21 @@ export default {
         
       
     },
-    changeDate(value){
-        let newDate = dayjs(value).format("D MMM YYYY");
-          this.$store
-            .dispatch("task/updateTask", {
-              id: this.activeTask.id,
-              data: { [this.datepickerArgs.field]: value },
-              user: null,
-              text: `changed ${this.datepickerArgs.label} to ${newDate}`,
-            })
-            .then((t) => {
-                this.updateKey();
-            })
-            .catch((e) => console.warn(e));
-    },
+
+//     changeDate(value){
+//         let newDate = dayjs(value).format("D MMM YYYY");
+//           this.$store
+//             .dispatch("task/updateTask", {
+//               id: this.activeTask.id,
+//               data: { [this.datepickerArgs.field]: value },
+//               user: null,
+//               text: `changed ${this.datepickerArgs.label} to ${newDate}`,
+//             })
+//             .then((t) => {
+//                 this.updateKey();
+//             })
+//             .catch((e) => console.warn(e));
+//     },
 
     taskSetFavorite(task) {
       this.loading = true;
@@ -602,16 +477,41 @@ export default {
           console.warn(e);
         });
     },
-    confirmDelete(state) {
-      this.confirmModal = false;
-      this.confirmMsg = "";
-      if (state) {
+    // confirmDelete(state) {
+    //   this.confirmModal = false;
+    //   this.confirmMsg = "";
+    //   if (state) {
+    //     this.$store
+    //       .dispatch("task/deleteTask", this.taskToDelete)
+    //       .then((t) => {
+    //         if (t.statusCode == 200) {
+    //           this.updateKey(t.message);
+    //           this.taskToDelete = {};
+    //         } else {
+    //           this.popupMessages.push({ text: t.message, variant: "orange" });
+    //           console.warn(t.message);
+    //         }
+    //       })
+    //       .catch((e) => {
+    //         console.warn(e);
+    //       });
+    //   } else {
+    //     this.popupMessages.push({
+    //       text: "Action cancelled",
+    //       variant: "orange",
+    //     });
+    //     this.taskToDelete = {};
+    //   }
+    // },
+    deleteTask(task) {
+      if (task) {
         this.$store
-          .dispatch("task/deleteTask", this.taskToDelete)
+          .dispatch("task/deleteTask", task)
           .then((t) => {
             if (t.statusCode == 200) {
+              
               this.updateKey(t.message);
-              this.taskToDelete = {};
+              // this.taskToDelete = {};
             } else {
               this.popupMessages.push({ text: t.message, variant: "orange" });
               console.warn(t.message);
@@ -625,13 +525,11 @@ export default {
           text: "Action cancelled",
           variant: "orange",
         });
-        this.taskToDelete = {};
+        // this.taskToDelete = {};
       }
-    },
-    deleteTask(task) {
-      this.taskToDelete = task;
-      this.confirmMsg = "Are you sure ";
-      this.confirmModal = true;
+      // this.taskToDelete = task;
+      // this.confirmMsg = "Are you sure ";
+      // this.confirmModal = true;
     },
 
     async filterView($event) {

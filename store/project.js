@@ -6,9 +6,14 @@ export const state = () => ({
   projectComments: [],
   singleProjComment: {},
   projectHistory: [],
+  arrowVisible: 2,
 });
 
 export const getters = {
+  //get arrow-visible
+  getArrowVisible(state) {
+    return state.arrowVisible;
+  },
 
   // get projects
   getAllProjects(state) {
@@ -49,6 +54,10 @@ export const getters = {
 };
 
 export const mutations = {
+  //To set a arrow-visible
+  setArrowVisible(state, payload) {
+    state.arrowVisible = payload;
+  },
 
   // To fetch all projects
   fetchProjects(state, payload) {
@@ -88,7 +97,69 @@ export const mutations = {
   addMember(state, payload) {
     state.projectMembers.push(...payload)
   },
+  groupProjects(state,payload){
+    let arr=JSON.parse(JSON.stringify(state.projects));
+    let arrIndex
+    if(payload.key=="priority"){
+       arrIndex="priorityId"
+    }
+    if(payload.key=="department"){
+      arrIndex="departmentId"
+   }
+   if(payload.key=="assignee"){
+    arrIndex="userId"
+  }
+   if(payload.key=="status"){
+    arrIndex="statusId"
+  }
+    let b = [...new Set(arr.map(item => item[arrIndex]))].map((items, index) => {
 
+     let groupTitle
+     if(payload.key=="priority"){
+      if(items===null){
+        groupTitle="no priority"
+      }
+      if(items===1){
+        groupTitle="Low (section 1)"
+      }
+      if(items===2){
+        groupTitle="Medium (section 2)"
+      }
+      if(items===3){
+        groupTitle="High (section 3)"
+      }
+     }
+    //  if(payload.key=="status"){
+    //   if(items===null){
+    //     groupTitle="no status"
+    //   }
+    //   if(items===1){
+    //     groupTitle="Not started (section 1)"
+    //   }
+    //   if(items===2){
+    //     groupTitle="In-Progress (section 2)"
+    //   }
+    //   if(items===3){
+    //     groupTitle="Waiting (section 3)"
+    //   }
+    //   if(items===4){
+    //     groupTitle="Delayed (section 4)"
+    //   }
+    //   if(items===5){
+    //     groupTitle="Done (section 5)"
+    //   }
+    //  }
+      
+      return {
+        id: index,
+        title: groupTitle,
+        tasks: arr.filter(item => item[arrIndex] === items)
+      };
+    });
+   console.log("result",b)
+    state.projects=b
+
+  },
   sortProjects(state, payload) {
 
     // sort By Project Name
@@ -465,7 +536,10 @@ export const actions = {
     }
 
   },
+groupProjects(ctx,payload){
+  ctx.commit('groupProjects', payload)
 
+},
   sortProjects(ctx, payload) {
     ctx.commit('sortProjects', payload)
   },

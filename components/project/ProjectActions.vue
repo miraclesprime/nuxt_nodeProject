@@ -10,6 +10,9 @@
         <bib-input size="sm" type="text" v-model="searchText" name="name" @input="$emit('search-projects', searchText)" placeholder="Search Projects..." :variant="searchText.length > 50 ? 'alert': ''"></bib-input>
       </template>
       <ul class="actions" id="pa-actions-list">
+        <li class="action" id="pa-action3" title="Group by"  v-tooltip="'Group By'">
+          <sorting-comp label="Group by" :items="groupBy" icon="accessibility-braille-solid" v-on:change-sort="groupProjects($event)"></sorting-comp>
+        </li>
         <li class="action" id="pa-action-item1" v-tooltip="'View'">
           <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="viewProjects($event)"></sorting-comp>
         </li>
@@ -22,7 +25,7 @@
 </template>
 
 <script>
-import { VIEW_FILTER, PROJECT_SORT } from 'config/constants.js'
+import { VIEW_FILTER, PROJECT_SORT ,PROJECT_GROUP} from 'config/constants.js'
 
 export default {
   props: {
@@ -38,6 +41,7 @@ export default {
       selectedView: 'All',
       selectedSort: null,
       orderBy: '',
+      groupBy:PROJECT_GROUP,
       viewing: VIEW_FILTER,
       sorting: PROJECT_SORT,
       searchText: ""
@@ -78,9 +82,16 @@ export default {
       this.selectedView = $event;
       this.$emit('viewValue', $event)
     },
-
+    groupProjects($event) {
+      console.log("1111111111",$event)
+      // this.$emit("loading", true)
+      // this.$store.dispatch('project/fetchProjects', $event).then(() => { this.$emit("loading", false) })
+      this.$emit("groupValue", $event)
+    },
     sortBy($event) {
-      this.$emit('sort', $event)
+      // this.$emit("loading", true)
+      // this.$store.dispatch('project/fetchProjects', $event).then(() => { this.$emit("loading", false) })
+      this.$emit('sortValue', $event)
     }
   },
 };

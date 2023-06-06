@@ -139,6 +139,7 @@
 import { STATUS, PRIORITY } from "~/config/constants.js";
 import { mapGetters } from "vuex";
 import _ from "lodash";
+// import fecha, { format } from "fecha";
 export default {
   name: "SidebarFields",
   props: {
@@ -150,7 +151,7 @@ export default {
       default: false,
     },
     departmentId: {
-      type: Object,
+      type: Number,
     },
     visible: Boolean,
   },
@@ -204,15 +205,15 @@ export default {
       });
       return sec;
     },
-    startDateInput: {  
+    startDateInput: {
       get() {
         if (!this.form.startDate) {
-          return null;
+          return null
         } else {
-          return new Date(this.form.startDate);
+          return new Date(this.form.startDate)
         }
       },
-      set(newValue) { //updated by @Wen 5.25
+      set(newValue) {
         this.$refs.startDate.variant = null;
         if (!newValue) this.form.startDate = "";
         else {
@@ -240,16 +241,15 @@ export default {
         }
       },
     },
-    // updated by @wen 5.24
     dueDateInput: {
       get() {
         if (!this.form.dueDate) {
-          return null;
+          return null
         } else {
-          return new Date(this.form.dueDate);
+          return new Date(this.form.dueDate)
         }
       },
-      set(newValue) { //updated by @Wen 5.25
+      set(newValue) {
         this.$refs.dueDate.variant = null;
         if (!newValue) {
           this.form.dueDate = "";
@@ -261,7 +261,6 @@ export default {
               this.startDateInput.toISOString().slice(0, 10)
           ) {
             this.popupMessages.push({ text:"Invalid date", variant: "danger" });
-
             this.startDateInput = "";
             this.$nextTick(() => {
               this.$refs.startDate.$emit("input");
@@ -282,7 +281,6 @@ export default {
     },
   },
   watch: {
-     //updated by @Wen 5.25
     visible(newValue, oldValue) {
       if (!newValue) {
         if (!!this.$refs.startDate.variant) this.$refs.startDate.variant = null;
@@ -330,6 +328,13 @@ export default {
     },
   },
   methods: {
+       /*parseDate(dateString, format) {
+              return fecha.parse(dateString, format);
+          },
+          formatDate(dateObj, format) {
+              return fecha.format(dateObj, format);
+          },*/
+
     changeProject() {
       if (!this.form.projectId || this.form.projectId == "") {
         this.form.projectId = null;
