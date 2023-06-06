@@ -1,10 +1,7 @@
 <template>
   <client-only>
     <div id="project-id-wrapper" class="project-id-wrapper ">
-      <nav id="project-id-nav" class="d-flex align-center gap-05 py-075 px-025 ">
-        <button type="button" @click="$router.back()" class="d-flex cursor-pointer bg-white border-white">
-          <bib-icon icon="arrowhead-left" :scale="1.5" variant="gray5"></bib-icon>
-        </button>
+      <nav id="project-id-nav" class="d-flex align-center gap-05 py-075 px-025 "> 
         <bib-avatar></bib-avatar>
         <span id="project-id-project-title" class=" font-w-700  mr-1 " style="font-size: 1.25rem;">{{project ? project.title : ''}}</span>
         <div class="ml-auto d-flex gap-05 align-center position-relative" id="project-id-button-wraps">
@@ -84,7 +81,7 @@
       <!-- project team -->
       <bib-modal-wrapper v-if="projectTeamModal" title="Team" size="lg" @close="projectTeamModal = false">
         <template slot="content">
-          <div style="height: 12rem;">
+          <div style="min-height: 12rem;">
             <project-team-modal></project-team-modal>
           </div>
         </template>

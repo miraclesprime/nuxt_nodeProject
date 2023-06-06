@@ -1,5 +1,6 @@
 <template>
-  <div id="ptm-task-team-wrapper" class="task-group w-100">
+  <div id="ptm-task-team-wrapper" class="task-group position-relative w-100">
+    <div class="bg-light p-1 shape-rounded">
     <label id="ptm-create-team-modal-heading" class="text-gray6 font-md">Invite people </label>
     <bib-button test_id="teamlist-dd1" dropdown1="add1" label="Type name or email" v-model="member" v-on:input-keydown="teamInputKeydown" class="mt-05 mb-05">
       <template v-slot:menu>
@@ -18,19 +19,41 @@
       <small v-show="team.length == 0" class="text-danger" id="ptm-team-length">Select at least 1 team member.</small>
       <p v-if="message" v-text="message" class="font-sm mt-025 text-orange" id="ptm-message"></p>
     </div>
-    <div v-show="team.length > 0" class="pt-05 pb-1" id="ptm-addIteamMember">
-      <bib-button label="Add" variant="primary" pill @click="addTeamMember"></bib-button>
-    </div>
+  </div> 
+  <div class="bg-light p-1 mt-05 shape-rounded">
+  
     <label class="text-gray6 font-md" id="ptm-team-label">Team</label>
     <template v-if="projectMembers.length">
-      <bib-table :key="'tt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="projectMembers" :hide-no-column="true" headless>
+      <bib-table :key="'tt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="this.teamMembers.filter(item=>this.projectMembers.some(value=>value.id===item.id)).filter(item1=>!this.newTeam.some(val=>val.id===item1.id))"  :hide-no-column="true" headless>
         <template #cell(name)="data">
           <div class="d-flex gap-05" id="ptm-owner-text">
-            <bib-avatar class="mt-auto mb-auto" size="1.5rem">
-            </bib-avatar>
-            <span class="text-dark" id="ptm-dark-owner">
+            <bib-avatar :src="data.value.avatar" class="mt-auto mb-auto" size="1.5rem"></bib-avatar>
+            <!-- <bib-avatar class="mt-auto mb-auto" size="1.5rem">
+            </bib-avatar> -->
+            <!-- <span class="text-dark" id="ptm-dark-owner">
               {{ data.value.name }} <span v-if="data.value.isOwner" id="ptm-owner-show">(Owner)</span>
-            </span>
+            </span> -->
+            <strong class="text-dark px-030 font-sm" >{{ data.value.label }}</strong>
+              <span class=" text-black px-030 font-sm">{{ data.value.email }}</span>
+          </div>
+        </template>
+        <template #cell_action="data">
+          <div v-if="!data.value.isOwner" id="ptm-trash-solid" class="cursor-pointer shape-circle" v-on:click="deleteMember(data.value)">
+            <bib-icon icon="trash-solid" variant="gray5"></bib-icon>
+          </div>
+        </template>
+      </bib-table>
+      <bib-table :key="'ttt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="this.teamMembers.filter(item=>this.newTeam.some(value=>value.id===item.id))" :hide-no-column="true" headless>
+        <template #cell(name)="data">
+          <div class="d-flex gap-05" id="ptm-owner-text">
+            <bib-avatar :src="data.value.avatar" class="mt-auto mb-auto" size="1.5rem"></bib-avatar>
+            <!-- <bib-avatar class="mt-auto mb-auto" size="1.5rem">
+            </bib-avatar> -->
+            <!-- <span class="text-dark" id="ptm-dark-owner">
+              {{ data.value.name }} <span v-if="data.value.isOwner" id="ptm-owner-show">(Owner)</span>
+            </span> -->
+            <strong class="text-dark px-030 font-sm" >{{ data.value.label }}</strong>
+              <span class=" text-black px-030 font-sm">{{ data.value.email }}</span>
           </div>
         </template>
         <template #cell_action="data">
@@ -45,6 +68,10 @@
         <bib-icon icon="warning"></bib-icon> No records found
       </span>
     </template>
+    </div>
+    <div v-show="team.length > 0" class="pt-05 pb-1 justify-end" id="ptm-addIteamMember">
+      <bib-button label="Add" variant="success" class="w-20"  @click="addTeamMember"></bib-button>
+    </div>
     <loading :loading="loading"></loading>
   </div>
 </template>
@@ -58,6 +85,7 @@ export default {
     return {
       member: "",
       team: [],
+      newTeam:[],//updated by @wen 5.25
       filterKey: "",
       message: "",
       tableFields: PROJECT_TEAM_FIELDS,
@@ -99,6 +127,7 @@ export default {
   mounted() {
     this.loading = true
     this.$store.dispatch('project/fetchTeamMember', { projectId: this.$route.params.id || this.project.id})
+    console.log("sdsd",this.projectMembers)
   },
 
   created() {
@@ -132,11 +161,16 @@ export default {
     },
     addTeamMember() {
       this.loading = true
-
+   
       if (this.team.length == 0) {
         this.loading = false
         return false
       } else {
+        this.team.map((index)=>{
+          let newObj={id:index.id,name:index.label}
+          this.newTeam.push(newObj)
+        })
+        console.log("1111",this.newTeam)
         this.$store.dispatch('project/addMember', { projectId: this.project.id, team: this.team }).then(() => {
           this.loading = false;
           this.message = ""
@@ -151,15 +185,16 @@ export default {
     },
     async deleteMember(member) {
       this.loading = true
-      let confirmDelete = window.confirm("Are you sure want to delete " + member.name + "!")
-      if (confirmDelete) {
+      this.newTeam = this.newTeam.filter((item)=>item.id!==member.id);
+      // let confirmDelete = window.confirm("Are you sure want to delete " + member.name + "!")
+      // if (confirmDelete) {
         await this.$store.dispatch("project/deleteMember", { projectId: this.$route.params.id || this.project.id, member: member })
           .then((res) => {
             this.key += 1
           })
           .catch(e => console.log(e))
         this.loading = false
-      }
+      // }
     },
   }
 };

@@ -98,7 +98,6 @@ export const mutations = {
     state.projectMembers.push(...payload)
   },
   groupProjects(state,payload){
-    console.log("^^^^",payload.key)
     let arr=JSON.parse(JSON.stringify(state.projects));
     let arrIndex
     if(payload.key=="priority"){
@@ -109,13 +108,14 @@ export const mutations = {
    }
    if(payload.key=="assignee"){
     arrIndex="userId"
- }
- if(payload.key=="status"){
-  arrIndex="statusId"
-}
+  }
+   if(payload.key=="status"){
+    arrIndex="statusId"
+  }
     let b = [...new Set(arr.map(item => item[arrIndex]))].map((items, index) => {
 
      let groupTitle
+     if(payload.key=="priority"){
       if(items===null){
         groupTitle="no priority"
       }
@@ -128,6 +128,27 @@ export const mutations = {
       if(items===3){
         groupTitle="High (section 3)"
       }
+     }
+    //  if(payload.key=="status"){
+    //   if(items===null){
+    //     groupTitle="no status"
+    //   }
+    //   if(items===1){
+    //     groupTitle="Not started (section 1)"
+    //   }
+    //   if(items===2){
+    //     groupTitle="In-Progress (section 2)"
+    //   }
+    //   if(items===3){
+    //     groupTitle="Waiting (section 3)"
+    //   }
+    //   if(items===4){
+    //     groupTitle="Delayed (section 4)"
+    //   }
+    //   if(items===5){
+    //     groupTitle="Done (section 5)"
+    //   }
+    //  }
       
       return {
         id: index,
@@ -135,7 +156,7 @@ export const mutations = {
         tasks: arr.filter(item => item[arrIndex] === items)
       };
     });
-   
+   console.log("result",b)
     state.projects=b
 
   },
