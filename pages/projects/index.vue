@@ -80,6 +80,7 @@ import { PROJECT_CONTEXT_MENU, PROJECT_FIELDS } from '../../config/constants';
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
+import { combineTransactionSteps } from '@tiptap/core';
 
 export default {
   name: "Projects",
@@ -103,7 +104,7 @@ export default {
       alertMsg:"",
       localData: [],
       popupMessages: [],
-      groupVisible:false
+      groupVisible:false,
       // confirmModal: false,
       // confirmMsg: "",
       // taskToDelete: {}
@@ -111,7 +112,6 @@ export default {
   },
 
   mounted() {
-
     for(let field of this.tableFields) {
       if(field.header_icon) {
         field.header_icon.isActive = false;
@@ -123,7 +123,7 @@ export default {
       this.newkey = parseInt( Math.random().toString().slice(-3) )
       this.loading = false 
     })
-    
+    console.log("this.projects",this.projects)
   },
   computed: {
     ...mapGetters({
@@ -167,6 +167,8 @@ export default {
     //   console.log("sdfds",$event)
     // },
     ProjectGroup($event){
+    
+      console.log("aaaaaaaaaa",this.localData)
       this.$store.dispatch('project/groupProjects', {key: $event} ).then((res) => {
           this.groupVisible=true
           this.templateKey += 1;
@@ -405,9 +407,9 @@ export default {
         text: historyText
       })
         .then(t => {
-          console.log("111111111",t)
+          console.log("update----------",t)
           if (t.statusCode == 200) {
-            if(groupVisible){
+            if(this.groupVisible){
               this.updateKey("priority")
             }else{
               this.updateKey()
@@ -542,16 +544,16 @@ export default {
 
     updateKey($event) {
       // this.loading=true
-      if($event){
-        this.$store.dispatch("project/groupProjects", {key: $event}).then(() => {
+      // if($event){
+      //   this.$store.dispatch("project/groupProjects", {key: $event}).then(() => {
+      //   this.templateKey += 1;
+      // })
+      // }
+      // else{
+        this.$store.dispatch("project/fetchProjects",{key: $event}).then(() => {
         this.templateKey += 1;
       })
-      }
-      else{
-        this.$store.dispatch("project/fetchProjects",).then(() => {
-        this.templateKey += 1;
-      })
-      }
+      // }
       
       
     },

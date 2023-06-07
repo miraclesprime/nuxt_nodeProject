@@ -112,53 +112,88 @@ export const mutations = {
    if(payload.key=="status"){
     arrIndex="statusId"
   }
-    let b = [...new Set(arr.map(item => item[arrIndex]))].map((items, index) => {
+  //is not structure
+  if(!arr[0].tasks){
+    //sort
+    if(payload.key=="priority"){
+         arr.sort((a,b)=>{
+          if (a.priorityId === null && b.priorityId !== null) {
+            return 1;
+          }
+          if (b.priorityId === null && a.priorityId !== null) {
+            return -1;
+          }
+          if (a.priorityId === null && b.priorityId === null) {
+            return 0;
+          }
+          return a.priorityId - b.priorityId;
+        })
+    }
+    if(payload.key=="status"){
+      arr.sort((a,b)=>{
+       if (a.statusId === null && b.statusId !== null) {
+         return 1;
+       }
+       if (b.statusId === null && a.statusId !== null) {
+         return -1;
+       }
+       if (a.statusId === null && b.statusId === null) {
+         return 0;
+       }
+       return a.statusId - b.statusId;
+     })
+ }
+   
+  }
+  else {
+    arr=  arr.flatMap(obj => obj.tasks.map(task => task))
+  }
+  
+  let b = [...new Set(arr.map(item => item[arrIndex]))].map((items, index) => {
 
-     let groupTitle
-     if(payload.key=="priority"){
-      if(items===null){
-        groupTitle="no priority"
-      }
-      if(items===1){
-        groupTitle="Low (section 1)"
-      }
-      if(items===2){
-        groupTitle="Medium (section 2)"
-      }
-      if(items===3){
-        groupTitle="High (section 3)"
-      }
+    let groupTitle
+    if(payload.key=="priority"){
+     if(items===null){
+       groupTitle="no priority"
      }
-    //  if(payload.key=="status"){
-    //   if(items===null){
-    //     groupTitle="no status"
-    //   }
-    //   if(items===1){
-    //     groupTitle="Not started (section 1)"
-    //   }
-    //   if(items===2){
-    //     groupTitle="In-Progress (section 2)"
-    //   }
-    //   if(items===3){
-    //     groupTitle="Waiting (section 3)"
-    //   }
-    //   if(items===4){
-    //     groupTitle="Delayed (section 4)"
-    //   }
-    //   if(items===5){
-    //     groupTitle="Done (section 5)"
-    //   }
-    //  }
-      
-      return {
-        id: index,
-        title: groupTitle,
-        tasks: arr.filter(item => item[arrIndex] === items)
-      };
-    });
-   console.log("result",b)
-    state.projects=b
-
+     if(items===3){
+       groupTitle="Low (section 1)"
+     }
+     if(items===2){
+       groupTitle="Medium (section 2)"
+     }
+     if(items===1){
+       groupTitle="High (section 3)"
+     }
+    }
+    if(payload.key=="status"){
+     if(items===null){
+       groupTitle="no status"
+     }
+     if(items===1){
+       groupTitle="Not started (section 1)"
+     }
+     if(items===2){
+       groupTitle="In-Progress (section 2)"
+     }
+     if(items===3){
+       groupTitle="Waiting (section 3)"
+     }
+     if(items===4){
+       groupTitle="Delayed (section 4)"
+     }
+     if(items===5){
+       groupTitle="Done (section 5)"
+     }
+    }
+     
+     return {
+       id: index,
+       title: groupTitle,
+       tasks: arr.filter(item => item[arrIndex] === items)
+     };
+   });
+  state.projects=b
   },
   sortProjects(state, payload) {
 
@@ -393,7 +428,6 @@ export const actions = {
         'Filter': payload ? payload : 'all'
       }
     });
-
     ctx.commit('fetchProjects', res.data);
     return res.data;
   },

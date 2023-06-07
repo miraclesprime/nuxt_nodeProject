@@ -121,7 +121,7 @@
                       <status-select :ref="'statusSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" class="flex-grow-1" @change="updateStatus($event, item)" @close-other="closePopups('statusSelect'+item.id)"></status-select>
                     </template>
                     <template v-if="field.key == 'priority'">
-                      <priority-select :ref="'prioritySelect'+item.id" :value="item[field.key]" class="flex-grow-1" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
+                      <priority-select :ref="'prioritySelect'+item.id" :priority="item[field.key]" class="flex-grow-1" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
                     </template>
                     <template v-if="field.key == 'department'">
                       <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" class="flex-grow-1" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
@@ -165,25 +165,31 @@
           </section>
           
 
-          <div v-show="newRow.show" class="tr" role="row" @click.self="unselectAll" >
-            <div v-if="drag" class="td text-center " role="cell">
-              <span class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
-            </div>
-            <div class="td" role="cell">
-              <input type="text" :ref="newrowInput" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate" @blur="newRowCreate" required placeholder="Enter title...">
-            </div>
+        <div v-show="localNewrow.show" class="tr" role="row" @click.self="unselectAll">
+          <div v-if="drag" class="td text-center " role="cell">
+            <span
+              class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon
+                icon="drag" variant="white"></bib-icon></span>
           </div>
-          <template v-if="isProject">
-            <div  class="tr section-content"  role="row" style="border-bottom: var(--bib-light)">
-              <div class="td " role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
-              <div class="td" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
-                <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick()">
-                  <bib-icon :icon="plusButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">New Project</span>
-                </div>
+          <div class="td" role="cell">
+            <input type="text" ref="newrowInput" class="editable-input" v-model="localNewrow.title"
+              :class="{ 'error': validTitle }" @input="newRowCreate" @blur="newRowCreate" required
+              placeholder="Enter title..." @keyup.esc="unselectAll" v-click-outside="unselectAll">
+          </div>
+        </div>
+        <template v-if="isProject && !localNewrow.show">
+          <div class="tr section-content" role="row" style="border-bottom: var(--bib-light)">
+            <div class="td " role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
+            <div class="td" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
+              <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded"
+                v-on:click.stop="newRowClick()">
+                <bib-icon :icon="plusButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span
+                  class="text-truncate">New Project</span>
               </div>
             </div>
-          </template>
-        </draggable>
+          </div>
+        </template>
+      </draggable>
 
       </div>
     <!-- </div> -->
@@ -623,13 +629,14 @@ export default {
       this.$emit("context-item-event", $event, this.activeItem)
       this.unselectAll()
     },
-    async unselectAll() {
+    unselectAll() {
       let rows = document.getElementsByClassName('tr');
       for (let row of rows) {
         row.classList.remove('active');
       }
       this.localNewrow.sectionId = ""
       this.localNewrow.title = ""
+      this.localNewrow.show = false;
       this.$emit("toggle-newsection", false)
       // console.log('unselect all ')
       // this.$emit("hide-newrow")
@@ -649,7 +656,16 @@ export default {
 
     newRowClick(sectionId) {
       // console.log(sectionId)
-      this.unselectAll().then(()=>{
+
+      if (!sectionId) {
+        this.unselectAll()
+        this.localNewrow.show = true
+        process.nextTick(() => {
+          this.$refs.newrowInput.focus()
+        });
+        return;
+      }
+      this.unselectAll().then(() => {
         this.localNewrow.sectionId = sectionId
         this.localNewrow.title = ""
       })
@@ -659,13 +675,6 @@ export default {
       });
       // this.$refs['newRow'+sectionId].style.visibility = 'visible'
 
-      if (!sectionId) {
-        this.unselectAll()
-        this.newRow.show = true
-        process.nextTick(() => {
-          this.$refs.newrowInput[0].focus()
-        });
-      }
     },
 
     newRowCreate: _.debounce(function() {
