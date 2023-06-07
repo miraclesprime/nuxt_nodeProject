@@ -6,14 +6,9 @@ export const state = () => ({
   projectComments: [],
   singleProjComment: {},
   projectHistory: [],
-  arrowVisible: 2,
 });
 
 export const getters = {
-  //get arrow-visible
-  getArrowVisible(state) {
-    return state.arrowVisible;
-  },
 
   // get projects
   getAllProjects(state) {
@@ -54,10 +49,6 @@ export const getters = {
 };
 
 export const mutations = {
-  //To set a arrow-visible
-  setArrowVisible(state, payload) {
-    state.arrowVisible = payload;
-  },
 
   // To fetch all projects
   fetchProjects(state, payload) {

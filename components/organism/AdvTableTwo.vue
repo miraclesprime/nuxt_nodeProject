@@ -327,8 +327,7 @@ export default {
     // const sub = document.getElementById("sub-panel")
     this.localData = _.cloneDeep(this.tableData)
     this.resizableColumns()
-    console.log("^^^^^^^^^^^^^",this.localData)
-
+    // console.log("^^^^^^^^^^^^^",this.localData)
   },
 
   methods: {
