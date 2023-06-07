@@ -165,6 +165,7 @@ export default {
       loading2: false,
       randomKey: 0,
       popupMessages: [],
+      validationDate:false
     };
   },
   computed: {
@@ -225,19 +226,23 @@ export default {
           ) {
             this.popupMessages.push({ text:"Invalid date", variant: "danger" });
             this.dueDateInput = "";
-            this.$nextTick(() => {
-              this.$refs.dueDate.$emit("input");
-            });
+            this.validationDate=false
+            // this.$nextTick(() => {
+            //   this.$refs.dueDate.$emit("input");
+            // });
             this.$refs.startDate.variant = "alert";
           } else {
             if (this.$refs.dueDate.variant) this.$refs.dueDate.variant = null;
+            this.validationDate=true
+            this.form.startDate = new Date(newValue); 
+          //    this.$emit("update-field", {
+          //   name: "Start date",
+          //   field: "startDate",
+          //   value: newStartDate,
+          // });
           }
-          this.form.startDate = new Date(newValue);
-          this.$emit("update-field", {
-            name: "Start date",
-            field: "startDate",
-            value: newStartDate,
-          });
+          
+        
         }
       },
     },
@@ -262,20 +267,24 @@ export default {
           ) {
             this.popupMessages.push({ text:"Invalid date", variant: "danger" });
             this.startDateInput = "";
-            this.$nextTick(() => {
-              this.$refs.startDate.$emit("input");
-            });
+            this.validationDate=false
+            // this.$nextTick(() => {
+            //   this.$refs.startDate.$emit("input");
+            // });
             this.$refs.dueDate.variant = "alert";
           } else {
             if (this.$refs.startDate.variant)
               this.$refs.startDate.variant = null;
+               this.form.dueDate = newDueDate;
+               this.validationDate=true 
+              //  this.$emit("update-field", {
+              //   name: "Due date",
+              //   field: "dueDate",
+              //   value: newDueDate,
+              // });
           }
-          this.form.dueDate = newDueDate;
-          this.$emit("update-field", {
-            name: "Due date",
-            field: "dueDate",
-            value: newDueDate,
-          });
+           
+         
         }
       },
     },
@@ -393,6 +402,7 @@ export default {
     },
     debounceUpdateField: _.debounce(function (name, field, value) {
       if (this.form?.id) {
+        if((field==="startDate"||field==="dueDate")&&!this.validationDate) return;
         this.$emit("update-field", { name: name, field: field, value: value });
       } 
     }, 1000),

@@ -126,7 +126,7 @@ export const mutations = {
           if (a.priorityId === null && b.priorityId === null) {
             return 0;
           }
-          return a.priorityId - b.priorityId;
+          return b.priorityId - a.priorityId;
         })
     }
     if(payload.key=="status"){
@@ -140,7 +140,7 @@ export const mutations = {
        if (a.statusId === null && b.statusId === null) {
          return 0;
        }
-       return a.statusId - b.statusId;
+       return b.statusId - a.statusId;
      })
  }
    
@@ -154,36 +154,36 @@ export const mutations = {
     let groupTitle
     if(payload.key=="priority"){
      if(items===null){
-       groupTitle="no priority"
+       groupTitle="Unassigned"
      }
      if(items===3){
-       groupTitle="Low (section 1)"
+       groupTitle="Low"
      }
      if(items===2){
-       groupTitle="Medium (section 2)"
+       groupTitle="Medium"
      }
      if(items===1){
-       groupTitle="High (section 3)"
+       groupTitle="High"
      }
     }
     if(payload.key=="status"){
      if(items===null){
-       groupTitle="no status"
+       groupTitle="Unassigned"
      }
      if(items===1){
-       groupTitle="Not started (section 1)"
+       groupTitle="Not started"
      }
      if(items===2){
-       groupTitle="In-Progress (section 2)"
+       groupTitle="In-Progress"
      }
      if(items===3){
-       groupTitle="Waiting (section 3)"
+       groupTitle="Waiting"
      }
      if(items===4){
-       groupTitle="Delayed (section 4)"
+       groupTitle="Delayed"
      }
      if(items===5){
-       groupTitle="Done (section 5)"
+       groupTitle="Done"
      }
     }
      

@@ -544,16 +544,16 @@ export default {
 
     updateKey($event) {
       // this.loading=true
-      // if($event){
-      //   this.$store.dispatch("project/groupProjects", {key: $event}).then(() => {
-      //   this.templateKey += 1;
-      // })
-      // }
-      // else{
+      if($event){
+        this.$store.dispatch("project/groupProjects", {key: $event}).then(() => {
+        this.templateKey += 1;
+      })
+      }
+      else{
         this.$store.dispatch("project/fetchProjects",{key: $event}).then(() => {
         this.templateKey += 1;
       })
-      // }
+      }
       
       
     },
