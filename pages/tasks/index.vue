@@ -367,28 +367,28 @@ export default {
         .catch((e) => console.warn(e));
     },
 
-//     updateAssignee(label, field, value, historyText) {
-//       let user;
-//       if (field == "userId" && value != "") {
-//         user = this.teamMembers.filter((t) => t.id == value);
-//       } else {
-//         user = null;
-//       }
+    updateAssignee(label, field, value, historyText) {
+      let user;
+      if (field == "userId" && value != "") {
+        user = this.teamMembers.filter((t) => t.id == value);
+      } else {
+        user = null;
+      }
 
-//       this.userPickerOpen = false;
+      this.userPickerOpen = false;
 
-//       this.$store
-//         .dispatch("task/updateTask", {
-//           id: this.activeTask.id,
-//           data: { [field]: value },
-//           user,
-//           text: `changed ${label} to ${historyText}`,
-//         })
-//         .then((t) => {
-//             this.updateKey()
-//         })
-//         .catch((e) => console.warn(e));
-//     },
+      this.$store
+        .dispatch("task/updateTask", {
+          id: this.activeTask.id,
+          data: { [field]: value },
+          user,
+          text: `changed ${label} to ${historyText}`,
+        })
+        .then((t) => {
+            this.updateKey()
+        })
+        .catch((e) => console.warn(e));
+    },
 
     updateDate(value) {
       if(this.datepickerArgs.field==="dueDate")
@@ -416,20 +416,20 @@ export default {
       
     },
 
-//     changeDate(value){
-//         let newDate = dayjs(value).format("D MMM YYYY");
-//           this.$store
-//             .dispatch("task/updateTask", {
-//               id: this.activeTask.id,
-//               data: { [this.datepickerArgs.field]: value },
-//               user: null,
-//               text: `changed ${this.datepickerArgs.label} to ${newDate}`,
-//             })
-//             .then((t) => {
-//                 this.updateKey();
-//             })
-//             .catch((e) => console.warn(e));
-//     },
+    changeDate(value){
+        let newDate = dayjs(value).format("D MMM YYYY");
+          this.$store
+            .dispatch("task/updateTask", {
+              id: this.activeTask.id,
+              data: { [this.datepickerArgs.field]: value },
+              user: null,
+              text: `changed ${this.datepickerArgs.label} to ${newDate}`,
+            })
+            .then((t) => {
+                this.updateKey();
+            })
+            .catch((e) => console.warn(e));
+    },
 
     taskSetFavorite(task) {
       this.loading = true;
@@ -591,12 +591,6 @@ export default {
             sName: $event,
             order: this.orderBy,
           })
-          .then(() => {
-            this.key += 1;
-          })
-          .catch((err) => {
-            console.log(err);
-          });
       }
 
       if ($event == "userId") {
@@ -605,12 +599,6 @@ export default {
             sName: $event,
             order: this.orderBy,
           })
-          .then(() => {
-            this.key += 1;
-          })
-          .catch((err) => {
-            console.log(err);
-          });
       }
 
       if ($event == "project") {
@@ -619,12 +607,6 @@ export default {
             sName: $event,
             order: this.orderBy,
           })
-          .then(() => {
-            this.key += 1;
-          })
-          .catch((err) => {
-            console.log(err);
-          });
       }
 
       if ($event == "status") {
@@ -633,12 +615,6 @@ export default {
             sName: $event,
             order: this.orderBy,
           })
-          .then(() => {
-            this.key += 1;
-          })
-          .catch((err) => {
-            console.log(err);
-          });
       }
 
       if ($event == "priority") {
@@ -647,12 +623,6 @@ export default {
             sName: $event,
             order: this.orderBy,
           })
-          .then(() => {
-            this.key += 1;
-          })
-          .catch((err) => {
-            console.log(err);
-          });
       }
 
       if ($event == "startDate") {
@@ -661,12 +631,6 @@ export default {
             sName: $event,
             order: this.orderBy,
           })
-          .then(() => {
-            this.key += 1;
-          })
-          .catch((err) => {
-            console.log(err);
-          });
       }
 
       if ($event == "dueDate") {
@@ -675,12 +639,6 @@ export default {
             sName: $event,
             order: this.orderBy,
           })
-          .then(() => {
-            this.key += 1;
-          })
-          .catch((err) => {
-            console.log(err);
-          });
       }
 
       if (this.orderBy == "asc") {
