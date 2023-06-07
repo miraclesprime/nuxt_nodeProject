@@ -14,7 +14,7 @@
       </template>
       <ul class="actions" id="ta-action-right-actions">
         <li class="action" id="ta-action1" title="Viewing"  v-tooltip="'View'">
-          <sorting-comp label="Viewing" :items="viewing" icon="eye-open" v-on:change-sort="changeViewName"></sorting-comp>
+          <sorting-comp label="Viewing" :items="viewing" icon="eye-open" activeIcon="tick" v-on:change-sort="changeViewName"></sorting-comp>
         </li>
         <li class="action" id="ta-action3" title="Group by"  v-tooltip="'Group By'">
           <sorting-comp label="Group by" :items="groupby" icon="accessibility-braille-solid" v-on:change-sort="groupBy"></sorting-comp>
@@ -99,6 +99,7 @@ export default {
     },
 
     changeViewName($event){
+      // console.log($event)
       this.$emit("filterView", $event)
     }
 
