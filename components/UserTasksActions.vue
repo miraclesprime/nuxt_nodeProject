@@ -14,7 +14,7 @@
       </template>
       <ul class="actions" id="ta-action-right-actions">
         <li class="action" id="ta-action1" v-tooltip="'View'">
-          <sorting-comp :items="viewing" icon="eye-open" v-on:change-sort="changeViewName"></sorting-comp>
+          <sorting-comp :items="viewing" icon="eye-open" activeIcon="tick" v-on:change-sort="changeViewName"></sorting-comp>
         </li>
         <li class="action" id="ta-action2" v-tooltip="'Sort By'">
           <sorting-comp :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy"></sorting-comp>
