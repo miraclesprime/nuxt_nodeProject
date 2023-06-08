@@ -168,7 +168,7 @@ export default {
     //   console.log("sdfds",$event)
     // },
     ProjectGroup($event) {
-      if (this.groupBy === $event) {
+      if ($event ==="default" ) {
         this.groupVisible = false;
         this.groupBy = '';
         this.$store.commit('project/flatProjects');
@@ -414,15 +414,15 @@ export default {
         groupBy: this.groupBy,
       })
         .then(t => {
-          if (t.statusCode == 200) {
-            if(this.groupVisible){
-              this.updateKey("priority")
-            }else{
-              this.updateKey()
-            }
-          } else {
-            console.warn(t)
-          }
+          // if (t.statusCode == 200) {
+          //   if(this.groupVisible){
+          //     this.updateKey("group")
+          //   }else{
+          //     this.updateKey()
+          //   }
+          // } else {
+          //   console.warn(t)
+          // }
         })
         .catch(e => console.warn(e))
     },
@@ -550,18 +550,11 @@ export default {
         }
     },
 
-    updateKey($event) {
+    updateKey() {
       // this.loading=true
-      if($event){
-        this.$store.dispatch("project/groupProjects", {key: $event}).then(() => {
-        this.templateKey += 1;
-      })
-      }
-      else {
         this.$store.dispatch("project/fetchProjects",).then(() => {
           this.templateKey += 1;
         })
-      }
       
       
     },

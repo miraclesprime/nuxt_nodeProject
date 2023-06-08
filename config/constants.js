@@ -400,6 +400,7 @@ export const PROJECT_GROUP = [
   { label: 'Status', key:'status' },
   { label: 'Assignee', key:'assignee' },
   { label: 'Department', key:'department' },
+  { label: 'Default', key:'default' },
   
 ]
 export const TASK_SORT = [
