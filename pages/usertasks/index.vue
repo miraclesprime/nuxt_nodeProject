@@ -537,44 +537,83 @@ export default {
       switch ($event) {
         case "title":
           if (this.taskOrder == "asc") {
-            this.localData.sort((a, b) => a.title.localeCompare(b.title));
+            this.localData.sort((a, b) => {
+              if(a.title && b.title) {
+                return a.title.localeCompare(b.title)
+              }
+            });
             this.taskOrder = "desc";
           } else {
-            this.localData.sort((a, b) => b.title.localeCompare(a.title));
+            this.localData.sort((a, b) => {
+              if(a.title && b.title) {
+                return b.title.localeCompare(a.title)
+              }
+            });
             this.taskOrder = "asc";
           }
-          this.key += 1;
           this.sortName = "title";
           this.checkActive();
           break;
 
         case "status":
+          let statusArr = [];
+
+          for (let i = 0; i < this.localData.length; i++) {
+            if (this.localData[i].startDate) {
+              statusArr.unshift(this.localData[i]);
+            } else {
+              statusArr.push(this.localData[i]);
+            }
+          }
+
           if (this.taskOrder == "asc") {
-            this.localData.sort((a, b) =>
-              a.status.text.localeCompare(b.status.text)
-            );
+            statusArr.sort((a, b) => {
+              if(a.statusId && b.statusId) {
+                return a.status.text.localeCompare(b.status.text)
+              }
+            });
             this.taskOrder = "desc";
           } else {
-            this.localData.sort((a, b) =>
-              b.status.text.localeCompare(a.status.text)
-            );
+            statusArr.sort((a, b) => {
+              if(a.statusId && b.statusId) {
+                return b.status.text.localeCompare(a.status.text)
+              }
+            });
             this.taskOrder = "asc";
           }
-          this.key += 1;
           this.sortName = "status";
+          this.localData = statusArr;
           this.checkActive();
           break;
 
         case "priority":
+          let priorityArr = [];
+
+          for (let i = 0; i < this.localData.length; i++) {
+            if (this.localData[i].startDate) {
+              priorityArr.unshift(this.localData[i]);
+            } else {
+              priorityArr.push(this.localData[i]);
+            }
+          }
+
           if (this.taskOrder == "asc") {
-            this.localData.sort((a, b) => a.priority.id - b.priority.id);
+            priorityArr.sort((a, b) => {
+              if(a.priorityId && b.priorityId) {
+                return a.priority.id - b.priority.id
+              }
+            });
             this.taskOrder = "desc";
           } else {
-            this.localData.sort((a, b) => b.priority.id - a.priority.id);
+            priorityArr.sort((a, b) => {
+              if(a.priorityId && b.priorityId) {
+                return b.priority.id - a.priority.id
+              }
+            });
             this.taskOrder = "asc";
           }
-          this.key += 1;
           this.sortName = "priority";
+          this.localData = priorityArr;
           this.checkActive();
           break;
 
@@ -606,7 +645,6 @@ export default {
           }
 
           this.localData = deptArr;
-          this.key += 1;
           break;
 
         case "userId":
@@ -636,7 +674,6 @@ export default {
             });
             this.taskOrder = "asc";
           }
-          this.key += 1;
           this.localData = userArr;
           this.sortName = "userId";
           this.checkActive();
@@ -670,7 +707,6 @@ export default {
           }
 
           this.localData = newArr;
-          this.key += 1;
           this.sortName = "dueDate";
           this.checkActive();
           break;
@@ -703,7 +739,6 @@ export default {
           }
 
           this.localData = newArr2;
-          this.key += 1;
           this.sortName = "startDate";
           this.checkActive();
           break;
@@ -736,7 +771,6 @@ export default {
           }
 
           this.localData = newArr3;
-          this.key += 1;
           this.sortName = "project";
           this.checkActive();
           break;
