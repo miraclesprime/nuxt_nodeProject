@@ -120,26 +120,6 @@ export const mutations = {
         groupTitle="High (section 3)"
       }
      }
-    //  if(payload.key=="status"){
-    //   if(items===null){
-    //     groupTitle="no status"
-    //   }
-    //   if(items===1){
-    //     groupTitle="Not started (section 1)"
-    //   }
-    //   if(items===2){
-    //     groupTitle="In-Progress (section 2)"
-    //   }
-    //   if(items===3){
-    //     groupTitle="Waiting (section 3)"
-    //   }
-    //   if(items===4){
-    //     groupTitle="Delayed (section 4)"
-    //   }
-    //   if(items===5){
-    //     groupTitle="Done (section 5)"
-    //   }
-    //  }
       
       return {
         id: index,
@@ -568,7 +548,8 @@ groupProjects(ctx,payload){
       })
 
       if (fav.data.statusCode == 200) {
-        ctx.dispatch("setFavProjects")
+        console.log(fav.data)
+        ctx.dispatch("fetchFavProjects")
         return fav.data.message
       } else {
         return fav.data.message
@@ -589,7 +570,8 @@ groupProjects(ctx,payload){
       })
 
       if (fav.data.statusCode == 200) {
-        ctx.dispatch("setFavProjects")
+        console.log(fav.data)
+        ctx.dispatch("fetchFavProjects")
         return fav.data.message
       } else {
         return fav.data.message
