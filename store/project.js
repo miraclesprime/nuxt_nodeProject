@@ -108,19 +108,19 @@ export const mutations = {
     state.projectMembers.push(...payload)
   },
 
+
   flatProjects(state, payload) {
     let arr = JSON.parse(JSON.stringify(state.projects));
     let _arr = [];
     arr.forEach((ele) => {
       _arr = _arr.concat(ele.tasks);
-    });
+    })
     arr = _arr;
     state.projects = arr;
   },
 
   groupProjects(state, payload) {
     let arr = JSON.parse(JSON.stringify(state.projects));
-    console.log(arr)
     if (payload.isGrouped != undefined && payload.isGrouped != "") {
       let _arr = [];
       arr.forEach((ele) => {
@@ -684,7 +684,8 @@ groupProjects(ctx,payload){
       })
 
       if (fav.data.statusCode == 200) {
-        ctx.dispatch("setFavProjects")
+        console.log(fav.data)
+        ctx.dispatch("fetchFavProjects")
         return fav.data.message
       } else {
         return fav.data.message
@@ -705,7 +706,8 @@ groupProjects(ctx,payload){
       })
 
       if (fav.data.statusCode == 200) {
-        ctx.dispatch("setFavProjects")
+        console.log(fav.data)
+        ctx.dispatch("fetchFavProjects")
         return fav.data.message
       } else {
         return fav.data.message
