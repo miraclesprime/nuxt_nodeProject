@@ -121,7 +121,7 @@
                       <status-select :ref="'statusSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" class="flex-grow-1" @change="updateStatus($event, item)" @close-other="closePopups('statusSelect'+item.id)"></status-select>
                     </template>
                     <template v-if="field.key == 'priority'">
-                      <priority-select :ref="'prioritySelect'+item.id" :value="item[field.key]" class="flex-grow-1" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
+                      <priority-select :ref="'prioritySelect'+item.id" :priority="item[field.key]" class="flex-grow-1" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
                     </template>
                     <template v-if="field.key == 'department'">
                       <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" class="flex-grow-1" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
