@@ -104,7 +104,8 @@ export default {
       alertMsg:"",
       localData: [],
       popupMessages: [],
-      groupVisible:false,
+      groupVisible: false,
+      groupBy: '',
       // confirmModal: false,
       // confirmMsg: "",
       // taskToDelete: {}
@@ -123,7 +124,7 @@ export default {
       this.newkey = parseInt( Math.random().toString().slice(-3) )
       this.loading = false 
     })
-    console.log("this.projects",this.projects)
+
   },
   computed: {
     ...mapGetters({
@@ -166,13 +167,18 @@ export default {
     // sortName($event){
     //   console.log("sdfds",$event)
     // },
-    ProjectGroup($event){
-    
-      console.log("aaaaaaaaaa",this.localData)
-      this.$store.dispatch('project/groupProjects', {key: $event} ).then((res) => {
-          this.groupVisible=true
-          this.templateKey += 1;
-            })
+    ProjectGroup($event) {
+      if (this.groupBy === $event) {
+        this.groupVisible = false;
+        this.groupBy = '';
+        this.$store.commit('project/flatProjects');
+        return;
+      }
+      this.groupBy = $event;
+      this.$store.dispatch('project/groupProjects', { key: $event, isGrouped: this.groupVisible }).then((res) => {
+        this.groupVisible = true
+        this.templateKey += 1;
+      })
     },
     sortProject($event) {
       
@@ -404,10 +410,10 @@ export default {
         id: item.id,
         user,
         data: data,
-        text: historyText
+        text: historyText,
+        groupBy: this.groupBy,
       })
         .then(t => {
-          console.log("update----------",t)
           if (t.statusCode == 200) {
             if(this.groupVisible){
               this.updateKey("priority")
@@ -529,7 +535,9 @@ export default {
       proj.user = u;
       delete proj.show;
       delete proj.sectionId;
-      this.$store.dispatch('project/createProject', proj);
+      proj.groupBy = this.groupBy;
+      this.$store.dispatch('project/createProject', proj).then(res => {
+      });
     },
 
     copyProjectLink(proj) {
@@ -549,10 +557,10 @@ export default {
         this.templateKey += 1;
       })
       }
-      else{
-        this.$store.dispatch("project/fetchProjects",{key: $event}).then(() => {
-        this.templateKey += 1;
-      })
+      else {
+        this.$store.dispatch("project/fetchProjects",).then(() => {
+          this.templateKey += 1;
+        })
       }
       
       

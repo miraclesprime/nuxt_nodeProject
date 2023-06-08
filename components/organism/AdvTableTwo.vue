@@ -327,7 +327,6 @@ export default {
     // const sub = document.getElementById("sub-panel")
     this.localData = _.cloneDeep(this.tableData)
     this.resizableColumns()
-    // console.log("^^^^^^^^^^^^^",this.localData)
   },
 
   methods: {
@@ -609,9 +608,9 @@ export default {
     rowClick($event, item) {
       // console.log($event.target)
       this.unselectAll()
-        .then(r => {
+        // .then(r => {
           $event.currentTarget.classList.add("active")
-        })
+        // })
       this.$emit("row-click", item)
     },
     
@@ -644,11 +643,10 @@ export default {
     },
     closePopups(id) {
       this.contextVisible = false
-      // console.log(this.$refs, id)
       if (id) {
         for (let ref in this.$refs) {
           // console.log(ref)
-          if(ref != id) this.$refs[ref][0].show = false
+          if (ref != id && ref !== 'newrowInput') this.$refs[ref][0].show = false
         }
       }
     },

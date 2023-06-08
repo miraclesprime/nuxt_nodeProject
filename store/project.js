@@ -56,13 +56,32 @@ export const mutations = {
   },
 
   // To set a single project
-  setSingleProject(state, currentProject) {
+  setSingleProject(state, { currentProject, isGrouped }) {
     state.selectedProject = currentProject;
+
+    if (isGrouped !== undefined) {
+      let sectionID, taskID;
+      state.projects.forEach((section, section_idx) => {
+        section.tasks.forEach((task, task_idx) => {
+          if (task.id === currentProject.id) {
+            sectionID = section_idx;
+            taskID = task_idx;
+          }
+        });
+      });
+      state.projects[sectionID].tasks[taskID] = currentProject;
+    }
   },
 
   // To create project
   createProject(state, payload) {
     state.projects.push(payload)
+  },
+
+  createProjectForGroup(state, payload) {
+    let obj = [...state.projects];
+    obj[0].tasks.push(payload);
+    state.projects = obj;
   },
 
   createProjectComment(state, payload) {
@@ -88,103 +107,156 @@ export const mutations = {
   addMember(state, payload) {
     state.projectMembers.push(...payload)
   },
-  groupProjects(state,payload){
-    let arr=JSON.parse(JSON.stringify(state.projects));
-    let arrIndex
-    if(payload.key=="priority"){
-       arrIndex="priorityId"
-    }
-    if(payload.key=="department"){
-      arrIndex="departmentId"
-   }
-   if(payload.key=="assignee"){
-    arrIndex="userId"
-  }
-   if(payload.key=="status"){
-    arrIndex="statusId"
-  }
-  //is not structure
-  if(!arr[0].tasks){
-    //sort
-    if(payload.key=="priority"){
-         arr.sort((a,b)=>{
-          if (a.priorityId === null && b.priorityId !== null) {
-            return 1;
-          }
-          if (b.priorityId === null && a.priorityId !== null) {
-            return -1;
-          }
-          if (a.priorityId === null && b.priorityId === null) {
-            return 0;
-          }
-          return b.priorityId - a.priorityId;
-        })
-    }
-    if(payload.key=="status"){
-      arr.sort((a,b)=>{
-       if (a.statusId === null && b.statusId !== null) {
-         return 1;
-       }
-       if (b.statusId === null && a.statusId !== null) {
-         return -1;
-       }
-       if (a.statusId === null && b.statusId === null) {
-         return 0;
-       }
-       return b.statusId - a.statusId;
-     })
- }
-   
-  }
-  else {
-    arr=  arr.flatMap(obj => obj.tasks.map(task => task))
-  }
-  
-  let b = [...new Set(arr.map(item => item[arrIndex]))].map((items, index) => {
 
-    let groupTitle
-    if(payload.key=="priority"){
-     if(items===null){
-       groupTitle="Unassigned"
-     }
-     if(items===3){
-       groupTitle="Low"
-     }
-     if(items===2){
-       groupTitle="Medium"
-     }
-     if(items===1){
-       groupTitle="High"
-     }
+  flatProjects(state, payload) {
+    let arr = JSON.parse(JSON.stringify(state.projects));
+    let _arr = [];
+    arr.forEach((ele) => {
+      _arr = _arr.concat(ele.tasks);
+    });
+    arr = _arr;
+    state.projects = arr;
+  },
+
+  groupProjects(state, payload) {
+    let arr = JSON.parse(JSON.stringify(state.projects));
+    console.log(arr)
+    if (payload.isGrouped != undefined && payload.isGrouped != "") {
+      let _arr = [];
+      arr.forEach((ele) => {
+        _arr = _arr.concat(ele.tasks);
+      });
+      arr = _arr;
     }
-    if(payload.key=="status"){
-     if(items===null){
-       groupTitle="Unassigned"
-     }
-     if(items===1){
-       groupTitle="Not started"
-     }
-     if(items===2){
-       groupTitle="In-Progress"
-     }
-     if(items===3){
-       groupTitle="Waiting"
-     }
-     if(items===4){
-       groupTitle="Delayed"
-     }
-     if(items===5){
-       groupTitle="Done"
-     }
+    let arrIndex;
+    let _projects;
+    if (payload.key == "priority") {
+      arrIndex = "priority";
+      let items = [];
+
+      arr.sort((a,b)=>{
+        if (a.priorityId === null && b.priorityId !== null) {
+          return 1;
+        }
+        if (b.priorityId === null && a.priorityId !== null) {
+          return -1;
+        }
+        if (a.priorityId === null && b.priorityId === null) {
+          return 0;
+        }
+        return b.priorityId - a.priorityId;
+      })
+
+      arr.forEach((ele) => {
+        let title = ele.priority !== null ? ele.priority.text : "Unassigned";
+        if (!items.includes(title)) items.push(title);
+      });
+      _projects = items.map((item, idx) => {
+        return {
+          id: idx,
+          title: item !== null ? item : "Unassigned",
+          tasks: arr.filter(
+            (_item) =>
+              (_item[arrIndex] !== null ? _item[arrIndex].text : null) ===
+              (item === "Unassigned" ? null : item)
+          ),
+        };
+      });
     }
-     
-     return {
-       id: index,
-       title: groupTitle,
-       tasks: arr.filter(item => item[arrIndex] === items)
-     };
-   });
-  state.projects=b
+    if (payload.key == "department") {
+      arrIndex = "department";
+      let items = [];
+      arr.sort((a,b)=>{
+        if (a.departmentId === null && b.departmentId !== null) {
+          return 1;
+        }
+        if (b.departmentId === null && a.departmentId !== null) {
+          return -1;
+        }
+        if (a.departmentId === null && b.departmentId === null) {
+          return 0;
+        }
+        return a.departmentId - b.departmentId;
+      })  
+      
+
+      arr.forEach((ele) => {
+        let title =
+          ele.department !== null ? ele.department.title : "Unassigned";
+        if (!items.includes(title)) items.push(title);
+      });
+      _projects = items.map((item, idx) => {
+        return {
+          id: idx,
+          title: item !== null ? item : "Unassigned",
+          tasks: arr.filter(
+            (_item) =>
+              (_item[arrIndex] !== null ? _item[arrIndex].title : null) ===
+              (item === "Unassigned" ? null : item)
+          ),
+        };
+      });
+    }
+    if (payload.key == "assignee") {
+      arrIndex = "user";
+      let items = [];
+      arr.sort((a,b)=>{
+        return a.id - b.id;
+      })  
+
+      arr.forEach((ele) => {
+        let title =
+          ele.user !== null
+            ? ele.user.firstName + " " + ele.user.lastName
+            : "Unassigned";
+        if (!items.includes(title)) items.push(title);
+      });
+      _projects = items.map((item, idx) => {
+        return {
+          id: idx,
+          title: item !== null ? item : "Unassigned",
+          tasks: arr.filter(
+            (_item) =>
+              (_item[arrIndex] !== null
+                ? _item[arrIndex].firstName + " " + _item[arrIndex].lastName
+                : null) === (item === "Unassigned" ? null : item)
+          ),
+        };
+      });
+    }
+    if (payload.key == "status") {
+      arrIndex = "status";
+      let items = [];
+      
+        arr.sort((a,b)=>{
+        if (a.statusId === null && b.statusId !== null) {
+          return 1;
+        }
+        if (b.statusId === null && a.statusId !== null) {
+          return -1;
+        }
+        if (a.statusId === null && b.statusId === null) {
+          return 0;
+        }
+        return a.statusId - b.statusId;
+      })   
+      arr.forEach((ele) => {
+        let title = ele.status !== null ? ele.status.text : "Unassigned";
+        if (!items.includes(title)) items.push(title);
+      });
+      _projects = items.map((item, idx) => {
+        return {
+          id: idx,
+          title: item !== null ? item : "Unassigned",
+          tasks: arr.filter(
+            (_item) =>
+              (_item[arrIndex] !== null ? _item[arrIndex].text : null) ===
+              (item === "Unassigned" ? null : item)
+          ),
+        };
+      });
+    }
+    state.projects = _projects;
   },
   sortProjects(state, payload) {
 
@@ -457,8 +529,12 @@ export const actions = {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
     if (res.statusCode == 200) {
-      ctx.commit('createProject', res.data);
-      return res
+      if (payload.groupBy != undefined && payload.groupBy != "") {
+        ctx.commit("createProjectForGroup", res.data);
+      } else {
+        ctx.commit("createProject", res.data);
+      }
+      return res;
     } else {
       return res
     }
@@ -474,7 +550,13 @@ export const actions = {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
     if (res.statusCode == 200) {
-      ctx.commit("setSingleProject", res.data)
+      ctx.commit("setSingleProject", {
+        currentProject: res.data,
+        isGrouped: true,
+      });
+      if (payload.groupBy !== undefined && payload.groupBy !== "") {
+        ctx.commit("groupProjects", { key: payload.groupBy, isGrouped: true });
+      }
     }
     return res
   },
