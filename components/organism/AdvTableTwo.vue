@@ -417,7 +417,7 @@ export default {
         if (dragColumns[no + 1])
           dragColumns[no + 1].style.width = parseInt(dragColumns[no + 1].style.width) - w + 'px';
         // console.log(dragColumns[no].dataset.key, dragColumns[no + 1].dataset.key)
-        console.log(dragColumns[no].clientWidth, dragColumns[no + 1].clientWidth)
+        // console.log(dragColumns[no].clientWidth, dragColumns[no + 1].clientWidth)
         // resizeObserver.observe(dragColumns[no]);
         // resizeObserver.observe(dragColumns[no + 1]);
         let col1key = dragColumns[no].dataset.key
@@ -536,24 +536,44 @@ export default {
         dragColumns[i].firstChild.firstChild.onmousedown = this.startColumnDrag;
       }
 
-      // const headElems = document.querySelector(".th:nth-child(2)")
-      const col1 = document.querySelectorAll(".td:nth-child(2)")
-      const col2 = document.querySelectorAll(".td:nth-child(3)")
+      const headElems = document.querySelectorAll(".th")
+      const cells = document.querySelectorAll('.td')
+      /*const col1 = document.querySelectorAll(".td:nth-child(2)")
+      const col2 = document.querySelectorAll(".td:nth-child(3)")*/
 
       const resizeObserver = new ResizeObserver((entries) => {
         for (const entry of entries) {
           // console.log(entry)
-          console.log("width",entry.contentRect.width)
-          for (var i = 0; i < col1.length; i++) {
-            // console.log(col1[i])
-            // col1[i].style.width = entry.contentRect.width+"px"
-            col1[i].style.flexBasis = entry.contentRect.width+"px"
-          }
+          console.log(entry.target.dataset.key, entry.contentRect.width)
+          /*for (var i = 0; i < cells.length; i++) {
+            // console.log(cells[i])
+            // console.log(cells[i].dataset.key, cells[i].style.width)
+            // cells[i].style.flexBasis = entry.contentRect.width+"px"
+          }*/
           // entry.target.style.width = entry.contentBoxSize[0].inlineSize + "px";
         }
       });
+      for (var i = 0; i < headElems.length; i++) {
+        // console.log(headElems[i].dataset.key)
+        // let col = document.querySelectorAll("[data-key='"+headElems[i].dataset.key+"']")
+        // console.log(col)
+        // resizeObserver.observe(headElems[i]);
+        if (headElems[i].dataset.key == 'title') {
+          resizeTd(headElems[i].dataset.key)
+        }
+      }
 
-      // resizeObserver.observe(headElems);
+      function resizeTd(key) {
+        // console.log(key)
+        let col = document.querySelectorAll(".td[data-key="+key+"]")
+        console.log(col)
+        /*for (var i = 0; i < cells.length; i++) {
+          console.log(cells[i].dataset.key)
+          if (cells[i].dataset.key = key) {
+            console.log(cells[i].style.width)
+          }
+        }*/
+      }
 
     },
     resizableColumns() {
@@ -637,11 +657,10 @@ export default {
     },
     closePopups(id) {
       this.contextVisible = false
-      console.log(this.$refs, id)
+      // console.log(this.$refs, id)
       if (id) {
         for (let ref in this.$refs) {
-          // console.log(ref)
-          if(ref != id) this.$refs[ref][0].show = false
+          if(ref != id && this.$refs[ref][0]) this.$refs[ref][0].show = false
         }
       }
     },

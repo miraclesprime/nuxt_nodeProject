@@ -2,7 +2,7 @@
   <client-only>
     <div id="page" class="project-id-wrapper ">
       <nav id="project-id-nav" class="d-flex align-center gap-05 py-075 px-025 "> 
-        <button type="button" @click="$router.back()" class="d-flex cursor-pointer bg-white border-white">
+        <button type="button" @click="$router.push('/projects')" class="d-flex cursor-pointer bg-white border-white">
           <bib-icon icon="arrowhead-left" :scale="1.5" variant="gray5"></bib-icon>
         </button>
         <bib-avatar></bib-avatar>
