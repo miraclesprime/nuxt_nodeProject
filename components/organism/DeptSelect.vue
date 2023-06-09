@@ -55,7 +55,7 @@ export default {
     if (this.dept) {
       this.localDept = this.departments.find( d => d.value == this.dept.id)
     } else {
-      this.localDept = { label: 'No department', value: 0 }
+      this.localDept = { label: 'No department', value: null }
     }
   },
   methods: {

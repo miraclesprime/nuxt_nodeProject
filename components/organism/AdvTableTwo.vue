@@ -657,7 +657,6 @@ export default {
     },
     closePopups(id) {
       this.contextVisible = false
-      // console.log(this.$refs, id)
       if (id) {
         for (let ref in this.$refs) {
           if(ref != id && this.$refs[ref][0]) this.$refs[ref][0].show = false
