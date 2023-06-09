@@ -1,7 +1,7 @@
 <template>
   <div id="user-select-wrapper" class="picker-wrapper" v-click-outside="onClickOutside">
     <button type="button" id="user-select-trigger-open" class="user-data cursor-pointer height-2 w-100 align-center justify-between" @click.stop="triggerOpen">
-      <span v-if="user" id="user-select-user-avatar" class="align-center gap-025">
+      <span v-if="user" id="user-select-user-avatar" class="align-center gap-025 flex-grow-1">
         <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> <span class="user-label text-truncate">{{user.label}}</span>
       </span>
       <span v-else id="user-select-user-avatar">
@@ -16,7 +16,7 @@
       <input type="text" class="picker-input" id="user-select-input" ref="userFilterInput" v-model="filterKey" @keyup.esc="$emit('close')" autofocus>
       <div class="mt-05" style="max-height: 12rem; overflow-y: auto" id="user-select-user-avatar-list-wrapper">
         <ul class="m-0 p-0 text-left" id="user-select-user-avatar-list">
-          <li v-for="(user, index) in filterTeam" :key="user.id"  :id="'user-select-user-avatar-'+index" class="py-025 font-md cursor-pointer" @click.stop="selected(user)">
+          <li v-for="(user, index) in filterTeam" :key="user.id"  :id="'user-select-user-avatar-'+index" class="py-025 align-center gap-025 font-md cursor-pointer" @click.stop="selected(user)">
             <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> <span class="user-label text-truncate">{{user.label}}</span>
           </li>
         </ul>
@@ -97,7 +97,7 @@ export default {
     border: 0 none;
     background-color: transparent;
   }
-  .user-label { max-width: 8rem; display: inline-block; }
+  .user-label { max-width: 80%; display: inline-block; }
 
   .picker-content {
     position: absolute;
