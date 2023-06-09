@@ -1,7 +1,7 @@
 <template>
   <div id="projects-wrapper" class="projects-wrapper" >   
     <page-title title="Projects"></page-title>  
-    <project-actions  @sortValue='sortName=$event' @groupValue="ProjectGroup($event)" @viewValue='viewName=$event' v-on:loading="loading = $event" v-on:sort="sortProject" @search-projects="searchProjects" />
+    <project-actions  @sortValue='sortProject($event)' @groupValue="ProjectGroup($event)" @viewValue='viewName=$event' v-on:loading="loading = $event" v-on:sort="sortProject" @search-projects="searchProjects" />
    
     <div id="projects-list-wrapper" class="projects-list-wrapper position-relative" >
       <loading :loading="loading"></loading>
@@ -28,9 +28,9 @@
         <!-- <advance-table-group :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" :newTaskButton="{label: 'New Project', icon: 'add'}"></advance-table-group> -->
         <loading :loading="loading"></loading>
 
-        <adv-table-two :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @title-click="projectRoute" @update-field="updateProject" :isProject = "true"></adv-table-two>
+        <adv-table-two :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @title-click="projectRoute" @update-field="updateProject" :isProject="true" @create-row="createProject"></adv-table-two>
         </div>
-       <div v-else="groupVisible">
+       <div v-else>
         <loading :loading="loading"></loading>
 
         <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :newTaskButton="{label: 'New Project', icon: 'add'}"></advance-table>
@@ -80,6 +80,7 @@ import { PROJECT_CONTEXT_MENU, PROJECT_FIELDS } from '../../config/constants';
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
+import { combineTransactionSteps } from '@tiptap/core';
 
 export default {
   name: "Projects",
@@ -103,7 +104,8 @@ export default {
       alertMsg:"",
       localData: [],
       popupMessages: [],
-      groupVisible:false
+      groupVisible: false,
+      groupBy: '',
       // confirmModal: false,
       // confirmMsg: "",
       // taskToDelete: {}
@@ -111,7 +113,6 @@ export default {
   },
 
   mounted() {
-
     for(let field of this.tableFields) {
       if(field.header_icon) {
         field.header_icon.isActive = false;
@@ -123,7 +124,7 @@ export default {
       this.newkey = parseInt( Math.random().toString().slice(-3) )
       this.loading = false 
     })
-    
+
   },
   computed: {
     ...mapGetters({
@@ -166,11 +167,18 @@ export default {
     // sortName($event){
     //   console.log("sdfds",$event)
     // },
-    ProjectGroup($event){
-      this.$store.dispatch('project/groupProjects', {key: $event} ).then((res) => {
-          this.groupVisible=true
-          this.templateKey += 1;
-            })
+    ProjectGroup($event) {
+      if ($event ==="default" ) {
+        this.groupVisible = false;
+        this.groupBy = '';
+        this.$store.commit('project/flatProjects');
+        return;
+      }
+      this.groupBy = $event;
+      this.$store.dispatch('project/groupProjects', { key: $event, isGrouped: this.groupVisible }).then((res) => {
+        this.groupVisible = true
+        this.templateKey += 1;
+      })
     },
     sortProject($event) {
       
@@ -402,19 +410,19 @@ export default {
         id: item.id,
         user,
         data: data,
-        text: historyText
+        text: historyText,
+        groupBy: this.groupBy,
       })
         .then(t => {
-          console.log("111111111",t)
-          if (t.statusCode == 200) {
-            if(groupVisible){
-              this.updateKey("priority")
-            }else{
-              this.updateKey()
-            }
-          } else {
-            console.warn(t)
-          }
+          // if (t.statusCode == 200) {
+          //   if(this.groupVisible){
+          //     this.updateKey("group")
+          //   }else{
+          //     this.updateKey()
+          //   }
+          // } else {
+          //   console.warn(t)
+          // }
         })
         .catch(e => console.warn(e))
     },
@@ -527,7 +535,9 @@ export default {
       proj.user = u;
       delete proj.show;
       delete proj.sectionId;
-      this.$store.dispatch('project/createProject', proj);
+      proj.groupBy = this.groupBy;
+      this.$store.dispatch('project/createProject', proj).then(res => {
+      });
     },
 
     copyProjectLink(proj) {
@@ -540,18 +550,11 @@ export default {
         }
     },
 
-    updateKey($event) {
+    updateKey() {
       // this.loading=true
-      if($event){
-        this.$store.dispatch("project/groupProjects", {key: $event}).then(() => {
-        this.templateKey += 1;
-      })
-      }
-      else{
         this.$store.dispatch("project/fetchProjects",).then(() => {
-        this.templateKey += 1;
-      })
-      }
+          this.templateKey += 1;
+        })
       
       
     },

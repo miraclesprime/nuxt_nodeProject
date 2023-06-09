@@ -3,115 +3,79 @@
     <div id="page" class="mytask-page-wrapper ">
       <page-title title="My Tasks"></page-title>
       <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="showNewTodo" @change-grid-type="($event)=>gridType = $event" @search-mytasks="searchTasks"></user-tasks-actions>
-      <!-- <div> -->
         <!-- <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form> -->
         <div v-show="gridType == 'list'" id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative " :style="{ 'width': contentWidth }">
-          <!-- <template> -->
-            <!-- <template v-if="todos.length"> -->
-              <!-- <div v-show="gridType == 'list'"> -->
-              <!-- <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localdata" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:section-dragend="todoDragEnd" v-on:task-dragend="taskDragEnd" @table-sort="sortBy" @row-click="openSidebar" @row-rightclick="taskRightClick" @task-icon-click="taskMarkComplete" @edit-field="updateTask" @edit-section="renameTodo" @date-picker="showDatePicker" @status-picker="showStatusPicker" @priority-picker="showPriorityPicker" @dept-picker="showDeptPicker" ></drag-table> -->
-              <!-- table context menu -->
-
-              <!-- <draggable v-model="localdata" class="sortable-list bg-warning-sub3"  >
-                <div v-for="(section, index) in localdata" :key="section.id" class="sortable border-top-warning border-bottom-warning my-05 bg-secondary-sub4" >
-
-                  <div class="handle1 height-2 align-center gap-05">
-                    <bib-icon icon="drag" variant="gray5"></bib-icon>
-                    {{section.title}}
-                  </div>
-                  <draggable :list="section[tasksKey]" tag="ul" draggable=".item" :group="{ name: 'tasks' }" class="">
-                    <template v-for="item in section.tasks">
-                      <li :key="item.title" class="height-2 item border-top-light align-center gap-05 font-md">
-                        <div class="handle2 width-2 height-2 align-center justify-center gap-025">
-                          <bib-icon icon="drag" :variant="item.priorityId == 1 ? 'danger' : 'gray5'"></bib-icon>
-                          <bib-icon icon="check-circle-solid" :variant="item.statusId == 5 ? 'success' : 'gray5'"></bib-icon>
-                        </div>
-                        {{ item.title }}
-                      </li>
-                    </template>
-                  </draggable>
-                </div>
-              </draggable> -->
-
-              <adv-table-two :tableFields="taskFields" :tableData="localdata" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createTodo" @edit-section="renameTodo" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd"></adv-table-two>
-              <!-- <table-context-menu :items="contextMenuItems" :show="taskContextMenu" :coordinates="popupCoords" :activeItem="activeTask" @close-context="closePopups" @item-click="contextItemClick"></table-context-menu> -->
-              <loading :loading="loading"></loading>
-              <!-- </div> -->
-            <!-- </template>
-            <div v-else>
-              <span id="projects-0" class="d-inline-flex gap-05 align-center m-1 text-gray5">
-                <bib-icon icon="warning" variant="orange"></bib-icon> No records found
-              </span>
-            </div> -->
-          <!-- </template> -->
-        </div>
-          <!-- <template> -->
-            <div v-show="gridType == 'grid'" id="tgs-scroll" class="bg-light grid-wrapper h-100 position-relative" >
-              <draggable v-model="localdata" class="d-flex grid-content" :move="moveTodo" @end="gridSectionDragend" handle=".section-drag-handle">
-                <div v-if="newSection" class="task-grid-section">
-                  <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
-                    <!-- <task-grid-section-title section="{title: '', id: ''}" ></task-grid-section-title> -->
-                    <input type="text" ref="newsectioninput" class="editable-input" placeholder="Enter title" @input="debounceNewSection($event.target.value, $event)" @focus.stop="">
-                  </div>
-                </div>
-                <div class="task-grid-section" v-for="(todo, index) in localdata" :key="index + viewName + '-' + key">
-                  <div class="w-100 d-flex justify-between bg-light" style="margin-bottom: 10px; position: sticky; top: 0; z-index: 2;">
-                    <task-grid-section-title :section="todo" @update-title="renameTodo"></task-grid-section-title>
-                    <div class="d-flex align-center section-options" :id="'tg-section-options-'+todo.id">
-                      <div class="cursor-pointer mx-05 d-flex align-center" :id="'tg-section-addtask-'+todo.id" v-on:click.stop="$nuxt.$emit('open-sidebar', todo.id)">
-                        <bib-icon icon="add" variant="gray5" :scale="1.25"></bib-icon>
-                      </div>
-                      <bib-popup pop="elipsis" icon-variant="gray5" :scale="1.1">
-                        <template v-slot:menu>
-                          <div :id="'tgs-list'+todo.id" class="list">
-                            <span class="list__item" :id="'tgs-list-1'+todo.id" v-on:click.stop="$nuxt.$emit('open-sidebar', todo.id)">
-                              <div class="d-flex align-center" :id="'tgs-list-flex-1'+todo.id">
-                                <bib-icon icon="add"></bib-icon>
-                                <span class="ml-05" :id="'tgs-list-span'+todo.id">Add task</span>
-                              </div>
-                            </span>
-                            <!-- <span class="list__item" :id="'tgs-list-2'+todo.id" v-on:click="showRenameModal(todo)">
-                              <div class="d-flex align-center" :id="'tgs-list-flex-2'+todo.id">
-                                <bib-icon icon="pencil"></bib-icon>
-                                <span class="ml-05" :id="'tgs-list-span'+todo.id">Rename</span>
-                              </div>
-                            </span> -->
-                            <hr>
-                            <span class="list__item danger" :id="'tgs-list-3'+todo.id" v-on:click="deleteTodo(todo)">
-                              Delete section
-                            </span>
-                          </div>
-                        </template>
-                      </bib-popup>
-                    </div>
-                  </div>
-                  <div class="task-section__body h-100">
-                    <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="gridTaskDragend" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
-                      <template v-for="(task, index) in todo.tasks">
-                        <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker"></task-grid>
-                      </template>
-                    </draggable>
-                  </div>
-                </div>
-                <div class="task-grid-section " id="task-grid-section-blank-2"></div>
-                <div class="task-grid-section " id="task-grid-section-blank-3"></div>
-                <div class="task-grid-section " id="task-grid-section-blank-4" style="border-left-color: transparent;"></div>
-              </draggable>
-            </div>
-          <!-- </template> -->
           
-          <!-- user-picker for board view -->
-          <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"></user-picker>
-          <!-- date-picker for list and board view -->
-          <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
-          <!-- status picker for list view -->
-          <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker>
-          <!-- priority picker for list view -->
-          <priority-picker :show="priorityPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="priorityPickerOpen = false" ></priority-picker>
-          <!-- department-picker for list view -->
-          <dept-picker :show="deptPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Department', field:'departmentId', value: $event.value, historyText: $event.label })" @close="deptPickerOpen = false"></dept-picker>
+          <adv-table-two :tableFields="taskFields" :tableData="localdata" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createTodo" @edit-section="renameTodo" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd"></adv-table-two>
+              
+          <loading :loading="loading"></loading>
+            
+        </div>
 
-        
+        <div v-show="gridType == 'grid'" id="tgs-scroll" class="bg-light grid-wrapper h-100 position-relative" >
+          <draggable v-model="localdata" class="d-flex grid-content" :move="moveTodo" @end="gridSectionDragend" handle=".section-drag-handle">
+            <div v-if="newSection" class="task-grid-section">
+              <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
+                <!-- <task-grid-section-title section="{title: '', id: ''}" ></task-grid-section-title> -->
+                <input type="text" ref="newsectioninput" class="editable-input" placeholder="Enter title" @input="debounceNewSection($event.target.value, $event)" @focus.stop="">
+              </div>
+            </div>
+            <div class="task-grid-section" v-for="(todo, index) in localdata" :key="index + viewName + '-' + key">
+              <div class="w-100 d-flex justify-between bg-light" style="margin-bottom: 10px; position: sticky; top: 0; z-index: 2;">
+                <task-grid-section-title :section="todo" @update-title="renameTodo"></task-grid-section-title>
+                <div class="d-flex align-center section-options" :id="'tg-section-options-'+todo.id">
+                  <div class="cursor-pointer mx-05 d-flex align-center" :id="'tg-section-addtask-'+todo.id" v-on:click.stop="$nuxt.$emit('open-sidebar', todo.id)">
+                    <bib-icon icon="add" variant="gray5" :scale="1.25"></bib-icon>
+                  </div>
+                  <bib-popup pop="elipsis" icon-variant="gray5" :scale="1.1">
+                    <template v-slot:menu>
+                      <div :id="'tgs-list'+todo.id" class="list">
+                        <span class="list__item" :id="'tgs-list-1'+todo.id" v-on:click.stop="$nuxt.$emit('open-sidebar', todo.id)">
+                          <div class="d-flex align-center" :id="'tgs-list-flex-1'+todo.id">
+                            <bib-icon icon="add"></bib-icon>
+                            <span class="ml-05" :id="'tgs-list-span'+todo.id">Add task</span>
+                          </div>
+                        </span>
+                        <!-- <span class="list__item" :id="'tgs-list-2'+todo.id" v-on:click="showRenameModal(todo)">
+                          <div class="d-flex align-center" :id="'tgs-list-flex-2'+todo.id">
+                            <bib-icon icon="pencil"></bib-icon>
+                            <span class="ml-05" :id="'tgs-list-span'+todo.id">Rename</span>
+                          </div>
+                        </span> -->
+                        <hr>
+                        <span class="list__item danger" :id="'tgs-list-3'+todo.id" v-on:click="deleteTodo(todo)">
+                          Delete section
+                        </span>
+                      </div>
+                    </template>
+                  </bib-popup>
+                </div>
+              </div>
+              <div class="task-section__body h-100">
+                <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="gridTaskDragend" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
+                  <template v-for="(task, index) in todo.tasks">
+                    <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker"></task-grid>
+                  </template>
+                </draggable>
+              </div>
+            </div>
+            <div class="task-grid-section " id="task-grid-section-blank-2"></div>
+            <div class="task-grid-section " id="task-grid-section-blank-3"></div>
+            <div class="task-grid-section " id="task-grid-section-blank-4" style="border-left-color: transparent;"></div>
+          </draggable>
+        </div>
+          
+        <!-- user-picker for board view -->
+        <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"></user-picker>
+        <!-- date-picker for list and board view -->
+        <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
+        <!-- status picker for list view -->
+        <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker>
+        <!-- priority picker for list view -->
+        <priority-picker :show="priorityPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="priorityPickerOpen = false" ></priority-picker>
+        <!-- department-picker for list view -->
+        <dept-picker :show="deptPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Department', field:'departmentId', value: $event.value, historyText: $event.label })" @close="deptPickerOpen = false"></dept-picker>
+
         <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
 
         <!-- rename section modal -->

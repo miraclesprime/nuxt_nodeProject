@@ -20,7 +20,7 @@
         <span  id="inbox-item-file-multiple-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Archive'">
           <bib-icon icon="file-multiple" variant="gray5"></bib-icon>
         </span>
-        <span id="inbox-item-icon" class="shape-rounded px-025 border-gray4 text-gray5 font-xs">{{item.id}}</span>
+        <!-- <span id="inbox-item-icon" class="shape-rounded px-025 border-gray4 text-gray5 font-xs">{{item.id}}</span> -->
       </div>
     </div>
     <div class="d-flex align-center justify-between" id="inbox-item-project-task-title">

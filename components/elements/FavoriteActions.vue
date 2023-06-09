@@ -16,7 +16,7 @@
       </template>
       <ul class="actions" id="fa-actions-list">
         <li class="action" id="fa-action-item1" v-tooltip="'View'">
-          <sorting-comp :items="viewing" icon="eye-open" v-on:change-sort="$emit('change-viewing', $event)"></sorting-comp>
+          <sorting-comp :items="viewing" icon="eye-open" activeIcon="tick" v-on:change-sort="$emit('change-viewing', $event)"></sorting-comp>
         </li>
         <li class="action" id="fa-action-item2" v-tooltip="'Sort By'">
           <sorting-comp :items="sorting" icon="swap-vertical" v-on:change-sort="$emit('change-sorting', $event)"></sorting-comp>

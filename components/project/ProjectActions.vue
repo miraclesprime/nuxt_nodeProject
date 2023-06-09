@@ -83,7 +83,6 @@ export default {
       this.$emit('viewValue', $event)
     },
     groupProjects($event) {
-      console.log("1111111111",$event)
       // this.$emit("loading", true)
       // this.$store.dispatch('project/fetchProjects', $event).then(() => { this.$emit("loading", false) })
       this.$emit("groupValue", $event)

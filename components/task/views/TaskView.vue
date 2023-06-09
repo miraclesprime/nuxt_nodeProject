@@ -11,7 +11,7 @@
     ></task-actions>
     <div v-show="gridType === 'list'" class="calc-height " :style="{ 'width': contentWidth }">
 
-      <adv-table-two :tableFields="tableFields" :tableData="localdata" :plusButton="false" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd"></adv-table-two>
+      <adv-table-two :tableFields="tableFields" :tableData="localdata" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd"></adv-table-two>
 
     </div>
 
@@ -113,6 +113,7 @@ import { mapGetters } from "vuex";
 import _ from "lodash";
 import dayjs from "dayjs";
 import { unsecuredCopyToClipboard } from "~/utils/copy-util.js";
+import { liftTarget } from '@tiptap/pm/transform';
 
 export default {
   props: {
@@ -187,6 +188,14 @@ export default {
   watch: {
     sections(newVal) {
       this.localdata = _.cloneDeep(newVal);
+
+       let sorted = this.localdata.map((s) => {
+        let t = s.tasks.sort((a, b) => a.order - b.order);
+        s.tasks = t;
+        return s;
+      });
+      this.localdata = sorted;
+      this.templateKey += 1;
     },
 
     gridType() {
@@ -220,27 +229,27 @@ export default {
     });
   },
 
-  mounted() {
-    this.loading = true;
-    this.$store
-      .dispatch("section/fetchProjectSections", {
-        projectId: this.$route.params.id,
-        filter: "all",
-      })
-      .then((res) => {
-        this.localdata = JSON.parse(JSON.stringify(this.sections));
+  // mounted() {
+    // this.loading = true;
+    // this.$store
+    //   .dispatch("section/fetchProjectSections", {
+    //     projectId: this.$route.params.id,
+    //     filter: "all",
+    //   })
+    //   .then((res) => {
+    //     console.log(res);
+    //     this.localdata = JSON.parse(JSON.stringify(this.sections));
 
-        let sorted = this.localdata.map((s) => {
-          let t = s.tasks.sort((a, b) => a.order - b.order);
-          s.tasks = t;
-          return s;
-        });
-        this.localdata = sorted;
-        this.templateKey += 1;
-        this.loading = false;
-      })
-      .catch((e) => console.log(e));
-  },
+    //     let sorted = this.localdata.map((s) => {
+    //       let t = s.tasks.sort((a, b) => a.order - b.order);
+    //       s.tasks = t;
+    //       return s;
+    //     });
+    //     this.localdata = sorted;
+    //     this.loading = false;
+    //   })
+    //   .catch((e) => console.log(e));
+  // },
 
   methods: {
     changeSection($event){
@@ -321,7 +330,6 @@ export default {
     taskSort($event) {
       let newData = JSON.parse(JSON.stringify(this.localdata));
       if ($event == "title") {
-        // var orderBy = "asc"
         if (this.orderBy == "asc") {
           this.orderBy = "desc";
           newData.forEach(function (sec, index) {
@@ -347,9 +355,25 @@ export default {
       }
       // Sort By owner
       if ($event == "userId") {
+
+        let userArr = [];
+
+        for (let i = 0; i < newData.length; i++) {
+          let t = []
+          for(let j=0; j<newData[i].tasks.length; j++) {
+            if (newData[i].tasks[j].userId) {
+              t.unshift(newData[i].tasks[j])
+            } else {
+              t.push(newData[i].tasks[j])
+            }
+          }
+          newData[i].tasks = t;
+          userArr.push(newData[i]);
+        }
+
         if (this.orderBy == "asc") {
           this.orderBy = "desc";
-          newData.forEach(function (sec) {
+          userArr.forEach(function (sec) {
             sec["tasks"] = sec.tasks.sort((a, b) => {
               if (a.user && b.user) {
                 return a.user.firstName.localeCompare(b.user.firstName);
@@ -358,7 +382,7 @@ export default {
           });
         } else {
           this.orderBy = "asc";
-          newData.forEach(function (sec) {
+          userArr.forEach(function (sec) {
             sec["tasks"] = sec.tasks.sort((a, b) => {
               if (a.user && b.user) {
                 return b.user.firstName.localeCompare(a.user.firstName);
@@ -367,14 +391,30 @@ export default {
           });
         }
         this.sortName = "userId";
-        this.localdata = newData
+        this.localdata = userArr
         this.checkActive();
       }
       // sort By Status
       if ($event == "status") {
+
+        let statusArr = [];
+
+        for (let i = 0; i < newData.length; i++) {
+          let t = []
+          for(let j=0; j<newData[i].tasks.length; j++) {
+            if (newData[i].tasks[j].statusId) {
+              t.unshift(newData[i].tasks[j])
+            } else {
+              t.push(newData[i].tasks[j])
+            }
+          }
+          newData[i].tasks = t;
+          statusArr.push(newData[i]);
+        }
+
         if (this.orderBy == "asc") {
           this.orderBy = "desc";
-          newData.forEach(function (sec) {
+          statusArr.forEach(function (sec) {
             sec["tasks"] = sec.tasks.sort((a, b) => {
               if(a.statusId && b.statusId) {
                 return a.status.text.localeCompare(b.status.text)
@@ -383,7 +423,7 @@ export default {
           });
         } else {
           this.orderBy = "asc";
-          newData.forEach(function (sec) {
+          statusArr.forEach(function (sec) {
             sec["tasks"] = sec.tasks.sort((a, b) => {
               if(a.statusId && b.statusId) {
                 return b.status.text.localeCompare(a.status.text)
@@ -392,40 +432,72 @@ export default {
           });
         }
         this.sortName = "status";
-        this.localdata = newData
+        this.localdata = statusArr
         this.checkActive();
       }
       // Sort By Priotity
       if ($event == "priority") {
+
+        let priorityArr = [];
+
+        for (let i = 0; i < newData.length; i++) {
+          let t = []
+          for(let j=0; j<newData[i].tasks.length; j++) {
+            if (newData[i].tasks[j].priorityId) {
+              t.unshift(newData[i].tasks[j])
+            } else {
+              t.push(newData[i].tasks[j])
+            }
+          }
+          newData[i].tasks = t;
+          priorityArr.push(newData[i]);
+        }
+
         if (this.orderBy == "asc") {
           this.orderBy = "desc";
-          newData.forEach(function (sec) {
+          priorityArr.forEach(function (sec) {
             sec["tasks"] = sec.tasks.sort((a, b) => {
               if(a.priorityId && b.priorityId) {
-                return a.priority.id.localeCompare(b.priority.id)
+                return a.priority.id - b.priority.id
               }
             });
           });
         } else {
           this.orderBy = "asc";
-          newData.forEach(function (sec) {
+          priorityArr.forEach(function (sec) {
             sec["tasks"] = sec.tasks.sort((a, b) => {
               if(a.priorityId && b.priorityId) {
-                return b.priority.id.localeCompare(a.priority.id)
+                return b.priority.id - a.priority.id
               }
             });
           });
         }
         this.sortName = "priority";
-        this.localdata = newData
+        this.localdata = priorityArr
         this.checkActive();
       }
 
       // Sort By Department
       if ($event == "department") {
+
+        let deptArr = [];
+
+        for (let i = 0; i < newData.length; i++) {
+          let t = []
+          for(let j=0; j<newData[i].tasks.length; j++) {
+            if (newData[i].tasks[j].departmentId) {
+              t.unshift(newData[i].tasks[j])
+            } else {
+              t.push(newData[i].tasks[j])
+            }
+          }
+          newData[i].tasks = t;
+          deptArr.push(newData[i]);
+        }
+
         if (this.orderBy == "asc") {
           this.orderBy = "desc";
-          newData.forEach(function (sec) {
+          deptArr.forEach(function (sec) {
             sec["tasks"] = sec.tasks.sort((a, b) => {
               if (a.departmentId && b.departmentId) {
                 return a.department.title.localeCompare(b.department.title);
@@ -434,7 +506,7 @@ export default {
           });
         } else {
           this.orderBy = "asc";
-          newData.forEach(function (sec) {
+          deptArr.forEach(function (sec) {
             sec["tasks"] = sec.tasks.sort((a, b) => {
               if (a.departmentId && b.departmentId) {
                 return b.department.title.localeCompare(a.department.title);
@@ -443,15 +515,31 @@ export default {
           });
         }
         this.sortName = "department";
-        this.localdata = newData
+        this.localdata = deptArr
         this.checkActive();
       }
 
       // sort By Start Date
       if ($event == "startDate") {
+
+        let sdArr = [];
+
+        for (let i = 0; i < newData.length; i++) {
+          let t = []
+          for(let j=0; j<newData[i].tasks.length; j++) {
+            if (newData[i].tasks[j].startDate) {
+              t.unshift(newData[i].tasks[j])
+            } else {
+              t.push(newData[i].tasks[j])
+            }
+          }
+          newData[i].tasks = t;
+          sdArr.push(newData[i]);
+        }
+
         if (this.orderBy == "asc") {
           this.orderBy = "desc";
-          newData.forEach(function (sec) {
+          sdArr.forEach(function (sec) {
             sec["tasks"] = sec.tasks.sort((a, b) => {
               if(a.startDate && b.startDate) {
                 return new Date(a.startDate) - new Date(b.startDate)
@@ -460,7 +548,7 @@ export default {
           });
         } else {
           this.orderBy = "asc";
-          newData.forEach(function (sec) {
+          sdArr.forEach(function (sec) {
             sec["tasks"] = sec.tasks.sort((a, b) => {
               if(a.startDate && b.startDate) {
                 return new Date(b.startDate) - new Date(a.startDate)
@@ -469,15 +557,31 @@ export default {
           });
         }
         this.sortName = "startDate";
-        this.localdata = newData
+        this.localdata = sdArr
         this.checkActive();
       }
 
       // sort By DueDate
       if ($event == "dueDate") {
+
+        let ddArr = [];
+
+        for (let i = 0; i < newData.length; i++) {
+          let t = []
+          for(let j=0; j<newData[i].tasks.length; j++) {
+            if (newData[i].tasks[j].dueDate) {
+              t.unshift(newData[i].tasks[j])
+            } else {
+              t.push(newData[i].tasks[j])
+            }
+          }
+          newData[i].tasks = t;
+          ddArr.push(newData[i]);
+        }
+
         if (this.orderBy == "asc") {
           this.orderBy = "desc";
-          newData.forEach(function (sec) {
+          ddArr.forEach(function (sec) {
             sec["tasks"] = sec.tasks.sort((a, b) => {
               if(a.dueDate && b.dueDate) {
                 return new Date(a.dueDate) - new Date(b.dueDate)
@@ -486,7 +590,7 @@ export default {
           });
         } else {
           this.orderBy = "asc";
-          newData.forEach(function (sec) {
+          ddArr.forEach(function (sec) {
             sec["tasks"] = sec.tasks.sort((a, b) => {
               if(a.dueDate && b.dueDate) {
                 return new Date(b.dueDate) - new Date(a.dueDate)
@@ -495,7 +599,7 @@ export default {
           });
         }
         this.sortName = "dueDate";
-        this.localdata = newData
+        this.localdata = ddArr
         this.checkActive();
       }
 

@@ -45,7 +45,7 @@ export default {
     priorityList() {
       let prio = []
       this.priorityItems.forEach(pt => {
-        if (pt.value == 0) prio.push({ value: 0, label: "Choose priority", color: "secondary", bgcolor: this.$hex2rgba(this.colors.ColorVariants.Secondary) })
+        if (pt.value == 0) prio.push({ value: null, label: "Choose priority", color: "secondary", bgcolor: this.$hex2rgba(this.colors.ColorVariants.Secondary) })
         if (pt.value == 1) prio.push({ value: pt.value, label: pt.label, color: pt.color, bgcolor: this.$hex2rgba(this.colors.ColorVariants.Danger) })
         if (pt.value == 2) prio.push({ value: pt.value, label: pt.label, color: pt.color, bgcolor: this.$hex2rgba(this.colors.ColorVariants.Orange) })
         if (pt.value == 3) prio.push({ value: pt.value, label: pt.label, color: pt.color, bgcolor: this.$hex2rgba(this.colors.ColorVariants.Success) })

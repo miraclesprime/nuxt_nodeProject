@@ -340,7 +340,7 @@ export default {
     });
   },
   mounted() {
-    window.addEventListener("popstate", this.handleStateChange);
+    // window.addEventListener("popstate", this.handleStateChange);
     if (process.client) {
       if (this.$router.history.current.fullPath == "/dashboard") {
         this.navItems1[0].selected = true;
@@ -377,6 +377,8 @@ export default {
       // }
 
       // Dhruv (admin)
+
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4MjMxNDk5MjM1NywiZXhwIjoxNjkwMDkwOTkyMzU3LCJqdGkiOiIxODkxMjg1Ni00ZDIyLTQzMDQtODI4My1kNzAzMDMzOTQ2NTYifQ.7NKaoTwlgkwho6DzjV96ohKvQznbASt846ZA1KRCtN0";
 
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4NTk0OTcwNTYwMSwiZXhwIjoxNjkzNzI1NzA1NjAxLCJqdGkiOiJlNTYxMzc1ZC05MjdiLTQxYmQtOWNkNS05ZTQ0MWZmYjkzNGIifQ.iLVUiKPRiDNN7c9GYD20azlUxGoAFHYr-E65n_R_Byw";
 
@@ -478,12 +480,12 @@ export default {
       }
     }
   },
-  watch: {
+  /*watch: {
     $route: function () {
       this.$store.commit("project/setArrowVisible", this.historyLength + 1);
       this.historyLength = this.historyLength + 1;
     },
-  },
+  },*/
   computed: {
     ...mapGetters({
       favProjects: "project/getFavProjects",
@@ -495,10 +497,10 @@ export default {
   },
 
   methods: {
-    handleStateChange() {
+    /*handleStateChange() {
       this.$store.commit("project/setArrowVisible", this.historyLength - 2);
       this.historyLength = this.historyLength - 2;
-    },
+    },*/
     isRouteActive(id) {
       if (this.$route.path.includes(id)) {
         return true;

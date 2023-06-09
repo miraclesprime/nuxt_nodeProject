@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <div id="task-page-wrapper" class="task-page-wrapper">
+    <div id="page" class="task-page-wrapper">
       <page-title title="Tasks"></page-title>
       <company-tasks-actions
         :gridType="gridType"
@@ -10,18 +10,14 @@
         @change-grid-type="($event) => (gridType = $event)"
         @search-tasks="searchTasks"
       ></company-tasks-actions>
-      <div
-        id="task-table-wrapper"
-        class="task-table-wrapper position-relative of-scroll-y"
-        :class="{ 'bg-light': gridType != 'list' }"
-      >
+      <div id="task-table-wrapper" class="task-table-wrapper position-relative " :class="{ 'bg-light': gridType != 'list' }" :style="{ 'width': contentWidth }">
         <template>
-          <div v-show="gridType === 'list'">
-          <template v-if="tasks.length">
+          <div v-show="gridType === 'list'" class="h-100">
+            <template v-if="tasks.length">
 
-            <adv-table-two :tableFields="taskFields" :tableData="localData" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd"></adv-table-two>
+              <adv-table-two :tableFields="taskFields" :tableData="localData" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd"></adv-table-two>
 
-          </template>
+            </template>
           <div v-else>
             <span
               id="projects-0"
@@ -97,10 +93,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import {
-  COMPANY_TASK_FIELDS as TaskFields,
-  TASK_CONTEXT_MENU,
-} from "../../config/constants";
+import { COMPANY_TASK_FIELDS, TASK_CONTEXT_MENU } from "../../config/constants";
 import dayjs from "dayjs";
 import { unsecuredCopyToClipboard } from "~/utils/copy-util.js";
 import _ from "lodash";
@@ -111,7 +104,7 @@ export default {
     return {
       title: "Tasks",
       gridType: "list",
-      taskFields: TaskFields,
+      taskFields: COMPANY_TASK_FIELDS,
       taskContextMenu: false,
       activeTask: {},
       taskToDelete: {},
@@ -152,6 +145,7 @@ export default {
         budget: "",
         text: "",
       },
+      contentWidth: "100%",
     };
   },
   computed: {
@@ -163,6 +157,7 @@ export default {
       teamMembers: "user/getTeamMembers",
       sName: "company/getSortName",
       sOrder: "company/getSortOrder",
+      sidebar: "task/getSidebarVisible",
     }),
   },
 
@@ -181,10 +176,21 @@ export default {
         })
         this.localData = _.cloneDeep(sortedData);
     },
-
     gridType() {
       this.key++;
     },
+    sidebar(newVal){
+      const page = document.getElementById("page")
+      this.$nextTick(() => {
+        const panel = document.getElementById("side-panel-wrapper")
+        // console.log("page width="+page.scrollWidth+", panel width="+panel.offsetWidth)
+        if (this.sidebar) {
+          this.contentWidth = (page.scrollWidth - panel.offsetWidth) + 'px'
+        } else {
+          this.contentWidth = '100%'
+        }
+      });
+    }
   },
 
   created() {
@@ -367,28 +373,28 @@ export default {
         .catch((e) => console.warn(e));
     },
 
-//     updateAssignee(label, field, value, historyText) {
-//       let user;
-//       if (field == "userId" && value != "") {
-//         user = this.teamMembers.filter((t) => t.id == value);
-//       } else {
-//         user = null;
-//       }
+    updateAssignee(label, field, value, historyText) {
+      let user;
+      if (field == "userId" && value != "") {
+        user = this.teamMembers.filter((t) => t.id == value);
+      } else {
+        user = null;
+      }
 
-//       this.userPickerOpen = false;
+      this.userPickerOpen = false;
 
-//       this.$store
-//         .dispatch("task/updateTask", {
-//           id: this.activeTask.id,
-//           data: { [field]: value },
-//           user,
-//           text: `changed ${label} to ${historyText}`,
-//         })
-//         .then((t) => {
-//             this.updateKey()
-//         })
-//         .catch((e) => console.warn(e));
-//     },
+      this.$store
+        .dispatch("task/updateTask", {
+          id: this.activeTask.id,
+          data: { [field]: value },
+          user,
+          text: `changed ${label} to ${historyText}`,
+        })
+        .then((t) => {
+            this.updateKey()
+        })
+        .catch((e) => console.warn(e));
+    },
 
     updateDate(value) {
       if(this.datepickerArgs.field==="dueDate")
@@ -416,20 +422,20 @@ export default {
       
     },
 
-//     changeDate(value){
-//         let newDate = dayjs(value).format("D MMM YYYY");
-//           this.$store
-//             .dispatch("task/updateTask", {
-//               id: this.activeTask.id,
-//               data: { [this.datepickerArgs.field]: value },
-//               user: null,
-//               text: `changed ${this.datepickerArgs.label} to ${newDate}`,
-//             })
-//             .then((t) => {
-//                 this.updateKey();
-//             })
-//             .catch((e) => console.warn(e));
-//     },
+    changeDate(value){
+        let newDate = dayjs(value).format("D MMM YYYY");
+          this.$store
+            .dispatch("task/updateTask", {
+              id: this.activeTask.id,
+              data: { [this.datepickerArgs.field]: value },
+              user: null,
+              text: `changed ${this.datepickerArgs.label} to ${newDate}`,
+            })
+            .then((t) => {
+                this.updateKey();
+            })
+            .catch((e) => console.warn(e));
+    },
 
     taskSetFavorite(task) {
       this.loading = true;
@@ -591,12 +597,6 @@ export default {
             sName: $event,
             order: this.orderBy,
           })
-          .then(() => {
-            this.key += 1;
-          })
-          .catch((err) => {
-            console.log(err);
-          });
       }
 
       if ($event == "userId") {
@@ -605,12 +605,6 @@ export default {
             sName: $event,
             order: this.orderBy,
           })
-          .then(() => {
-            this.key += 1;
-          })
-          .catch((err) => {
-            console.log(err);
-          });
       }
 
       if ($event == "project") {
@@ -619,12 +613,6 @@ export default {
             sName: $event,
             order: this.orderBy,
           })
-          .then(() => {
-            this.key += 1;
-          })
-          .catch((err) => {
-            console.log(err);
-          });
       }
 
       if ($event == "status") {
@@ -633,12 +621,6 @@ export default {
             sName: $event,
             order: this.orderBy,
           })
-          .then(() => {
-            this.key += 1;
-          })
-          .catch((err) => {
-            console.log(err);
-          });
       }
 
       if ($event == "priority") {
@@ -647,12 +629,6 @@ export default {
             sName: $event,
             order: this.orderBy,
           })
-          .then(() => {
-            this.key += 1;
-          })
-          .catch((err) => {
-            console.log(err);
-          });
       }
 
       if ($event == "startDate") {
@@ -661,12 +637,6 @@ export default {
             sName: $event,
             order: this.orderBy,
           })
-          .then(() => {
-            this.key += 1;
-          })
-          .catch((err) => {
-            console.log(err);
-          });
       }
 
       if ($event == "dueDate") {
@@ -675,12 +645,6 @@ export default {
             sName: $event,
             order: this.orderBy,
           })
-          .then(() => {
-            this.key += 1;
-          })
-          .catch((err) => {
-            console.log(err);
-          });
       }
 
       if (this.orderBy == "asc") {
