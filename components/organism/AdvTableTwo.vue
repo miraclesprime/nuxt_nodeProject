@@ -129,15 +129,15 @@
                     <template v-if="field.key.includes('Date')" >
                       <!-- {{$formatDate(item[field.key])}} -->
                       <!-- <bib-datepicker class="align-right" size="sm" :value="new Date(item[field.key])" format="dd MMM YYYY" @click.native.stop="" @input="updateDate"></bib-datepicker> -->
-                      <bib-datetime-picker v-model="item[field.key]" format="MM/DD/YYYY" placeholder="No date" :style="datecell('th'+field.key)" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+                      <bib-datetime-picker v-model="item[field.key]" format="DD/MM/YYYY" placeholder="No date" :style="datecell('th'+field.key)" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                     </template>
                   </div>
                 </div>
 
-                <template v-if="plusButton && !isProject">
-                  <div  class="tr" role="row" style="border-bottom: var(--bib-light)">
-                    <div class="td " role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
-                    <div class="td" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
+                <template v-if="plusButton">
+                  <div v-show="localNewrow.sectionId != section.id"  class="tr" style="border-bottom: var(--bib-light)">
+                    <div class="td width-2" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
+                    <div class="td" style="border-bottom-color: transparent; border-right-color: transparent; width: 360px;">
                       <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
                         <bib-icon :icon="plusButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{plusButton.label}}</span>
                       </div>
@@ -145,12 +145,12 @@
                     <!-- <div v-for="n in tableFields.length-1" class="td" style="border-bottom-color: transparent; border-right-color: transparent;"></div> -->
                   </div>
 
-                  <div v-show="localNewrow.sectionId == section.id" class="tr" role="row" @click.self="unselectAll">
-                    <div v-if="drag" class="td text-center " role="cell">
+                  <div v-show="localNewrow.sectionId == section.id" class="tr" @click.self="unselectAll">
+                    <div v-if="drag" class="td text-center ">
                       <span class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
                     </div>
                     <!-- <template v-for="td in tableFields"> -->
-                      <div class="td" role="cell">
+                      <div class="td">
                         <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate" @blur="newRowCreate" required placeholder="Enter title...">
                       </div>
                       <!-- <div v-else class="td" role="cell"></div> -->
@@ -170,10 +170,10 @@
               <span class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
             </div>
             <div class="td" role="cell">
-              <input type="text" :ref="newrowInput" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate" @blur="newRowCreate" required placeholder="Enter title...">
+              <input type="text" ref="newrowInput" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate" @blur="newRowCreate" required placeholder="Enter title...">
             </div>
           </div>
-          <template v-if="isProject">
+          <!-- <template v-if="isProject">
             <div  class="tr section-content"  role="row" style="border-bottom: var(--bib-light)">
               <div class="td " role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
               <div class="td" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
@@ -182,7 +182,7 @@
                 </div>
               </div>
             </div>
-          </template>
+          </template> -->
         </draggable>
 
       </div>
@@ -249,7 +249,7 @@ export default {
       }
     },
     showNewsection: { type: Boolean, default: false},
-    isProject: { type: Boolean, default: false},
+    // isProject: { type: Boolean, default: false},
   },
 
   data() {
@@ -637,7 +637,7 @@ export default {
     },
     closePopups(id) {
       this.contextVisible = false
-      // console.log(this.$refs, id)
+      console.log(this.$refs, id)
       if (id) {
         for (let ref in this.$refs) {
           // console.log(ref)
@@ -658,13 +658,6 @@ export default {
       });
       // this.$refs['newRow'+sectionId].style.visibility = 'visible'
 
-      if (!sectionId) {
-        this.unselectAll()
-        this.newRow.show = true
-        process.nextTick(() => {
-          this.$refs.newrowInput[0].focus()
-        });
-      }
     },
 
     newRowCreate: _.debounce(function() {

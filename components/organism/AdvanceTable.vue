@@ -405,7 +405,7 @@ export default {
     closePopups(id) {
       // this.contextVisible = false
       this.unselectAll()
-      // console.log(this.$refs, id)
+      console.log(this.$refs, id)
       // console.log("this.$refs",this.$refs)
       if (id) {
         for (let ref in this.$refs) {

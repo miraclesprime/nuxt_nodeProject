@@ -127,7 +127,7 @@ export default {
   mounted() {
     this.loading = true
     this.$store.dispatch('project/fetchTeamMember', { projectId: this.$route.params.id || this.project.id})
-    console.log("sdsd",this.projectMembers)
+    // console.log("sdsd",this.projectMembers)
   },
 
   created() {
@@ -156,7 +156,7 @@ export default {
     },
     removeMember(tm) {
       let rm = this.team.map(t => t.id == tm.id)
-      console.log(rm.indexOf(true))
+      // console.log(rm.indexOf(true))
       this.team.splice(rm.indexOf(true), 1)
     },
     addTeamMember() {
@@ -170,7 +170,7 @@ export default {
           let newObj={id:index.id,name:index.label}
           this.newTeam.push(newObj)
         })
-        console.log("1111",this.newTeam)
+        // console.log("1111",this.newTeam)
         this.$store.dispatch('project/addMember', { projectId: this.project.id, team: this.team }).then(() => {
           this.loading = false;
           this.message = ""
@@ -179,7 +179,7 @@ export default {
           this.loading = false;
           this.message = ""
           this.team = []
-          console.log(err)
+          console.warn(err)
         })
       }
     },
@@ -192,7 +192,7 @@ export default {
           .then((res) => {
             this.key += 1
           })
-          .catch(e => console.log(e))
+          .catch(e => console.warn(e))
         this.loading = false
       // }
     },
