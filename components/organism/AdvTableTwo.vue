@@ -134,7 +134,7 @@
                   </div>
                 </div>
 
-                <template v-if="plusButton">
+                <template v-if="plusButton && !isProject">
                   <div v-show="localNewrow.sectionId != section.id"  class="tr" style="border-bottom: var(--bib-light)">
                     <div class="td width-2" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
                     <div class="td" style="border-bottom-color: transparent; border-right-color: transparent; width: 360px;">
@@ -165,25 +165,31 @@
           </section>
           
 
-          <div v-show="newRow.show" class="tr" role="row" @click.self="unselectAll" >
-            <div v-if="drag" class="td text-center " role="cell">
-              <span class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
-            </div>
-            <div class="td" role="cell">
-              <input type="text" ref="newrowInput" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate" @blur="newRowCreate" required placeholder="Enter title...">
-            </div>
+        <div v-show="localNewrow.show" class="tr" role="row" @click.self="unselectAll">
+          <div v-if="drag" class="td text-center " role="cell">
+            <span
+              class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon
+                icon="drag" variant="white"></bib-icon></span>
           </div>
-          <!-- <template v-if="isProject">
-            <div  class="tr section-content"  role="row" style="border-bottom: var(--bib-light)">
-              <div class="td " role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
-              <div class="td" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
-                <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick()">
-                  <bib-icon :icon="plusButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">New Project</span>
-                </div>
+          <div class="td" role="cell">
+            <input type="text" ref="newrowInput" class="editable-input" v-model="localNewrow.title"
+              :class="{ 'error': validTitle }" @input="newRowCreate" @blur="newRowCreate" required
+              placeholder="Enter title..." @keyup.esc="unselectAll" v-click-outside="unselectAll">
+          </div>
+        </div>
+        <template v-if="isProject && !localNewrow.show">
+          <div class="tr section-content" role="row" style="border-bottom: var(--bib-light)">
+            <div class="td " role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
+            <div class="td" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
+              <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded"
+                v-on:click.stop="newRowClick()">
+                <bib-icon :icon="plusButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span
+                  class="text-truncate">New Project</span>
               </div>
             </div>
-          </template> -->
-        </draggable>
+          </div>
+        </template>
+      </draggable>
 
       </div>
     <!-- </div> -->
@@ -249,7 +255,7 @@ export default {
       }
     },
     showNewsection: { type: Boolean, default: false},
-    // isProject: { type: Boolean, default: false},
+    isProject: { type: Boolean, default: false},
   },
 
   data() {
@@ -321,7 +327,6 @@ export default {
     // const sub = document.getElementById("sub-panel")
     this.localData = _.cloneDeep(this.tableData)
     this.resizableColumns()
-    // console.log("^^^^^^^^^^^^^",this.localData)
   },
 
   methods: {
@@ -623,9 +628,9 @@ export default {
     rowClick($event, item) {
       // console.log($event.target)
       this.unselectAll()
-        .then(r => {
+        // .then(r => {
           $event.currentTarget.classList.add("active")
-        })
+        // })
       this.$emit("row-click", item)
     },
     
@@ -642,13 +647,14 @@ export default {
       this.$emit("context-item-event", $event, this.activeItem)
       this.unselectAll()
     },
-    async unselectAll() {
+    unselectAll() {
       let rows = document.getElementsByClassName('tr');
       for (let row of rows) {
         row.classList.remove('active');
       }
       this.localNewrow.sectionId = ""
       this.localNewrow.title = ""
+      this.localNewrow.show = false;
       this.$emit("toggle-newsection", false)
       // console.log('unselect all ')
       // this.$emit("hide-newrow")
@@ -666,7 +672,16 @@ export default {
 
     newRowClick(sectionId) {
       // console.log(sectionId)
-      this.unselectAll().then(()=>{
+
+      if (!sectionId) {
+        this.unselectAll()
+        this.localNewrow.show = true
+        process.nextTick(() => {
+          this.$refs.newrowInput.focus()
+        });
+        return;
+      }
+      this.unselectAll().then(() => {
         this.localNewrow.sectionId = sectionId
         this.localNewrow.title = ""
       })
