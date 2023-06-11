@@ -80,6 +80,12 @@ export default {
       });
     },
     activeVariant(item){
+      if (item.label.includes('Completed')) {
+          return this.variant='success'
+        }
+        if (item.label=='Favorite') {
+          return this.variant='warning'
+        }
       if (this.activeItem) {
         if (item.label.includes('Complete')) {
           return this.activeItem.statusId == 5 ? 'success': 'gray5'

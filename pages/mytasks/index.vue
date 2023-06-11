@@ -278,6 +278,18 @@ export default {
       this.activeTask = {}
     },
     contextOpen(item){
+      if(this.$CheckFavTask(item.id)){
+       this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Favorite"} : item);
+      }
+      else{
+        this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Favorite" ? { ...item, label: "Add to Favorites"} : item);
+      }
+      if(item.statusId==5){
+       this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Mark Complete" ? { ...item, label: "Completed"} : item);
+      }
+      else {
+         this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Completed" ? { ...item, label: "Mark Complete"} : item);
+      }
       this.$store.dispatch("task/setSingleTask", item)
     },
     contextItemClick(key, item) {

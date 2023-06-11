@@ -13,7 +13,7 @@
       ></user-name-task-actions>
     
           <div v-show="gridType == 'list'" id="task-table-wrapper" class="listview h-100 position-relative" :style="{ 'width': contentWidth }">  
-              <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" ></advance-table>
+              <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" ></advance-table>
               
           </div>
         
@@ -240,7 +240,21 @@ export default {
         this.loading = false;
       }
     },
-
+    contextOpen(item){
+      if(this.$CheckFavTask(item.id)){
+       this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Favorite"} : item);
+      }
+      else{
+        this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Favorite" ? { ...item, label: "Add to Favorites"} : item);
+      }
+      if(item.statusId==5){
+       this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Mark Complete" ? { ...item, label: "Completed"} : item);
+      }
+      else {
+         this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Completed" ? { ...item, label: "Mark Complete"} : item);
+      }
+      this.$store.dispatch("task/setSingleTask", item)
+    },
     updateKey($event) {
       if ($event) {
         this.popupMessages.push({ text: $event, variant: "success" });
