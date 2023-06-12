@@ -11,7 +11,7 @@
             <textarea class="editable-input" ref="titleInput" @input="debounceUpdate('Title', 'title', $event.target.value, $event)" rows="1" @blur="restoreField">{{form.title}}</textarea></span>
         </div>
         <div class="shape-circle bg-light width-2 height-2 d-flex flex-shrink-0 justify-center align-center">
-          <bib-popup pop="elipsis" icon="elipsis" icon-variant="gray5" icon-hover-variant="dark">
+          <bib-popup pop="elipsis" icon="elipsis" icon-variant="gray5" icon-hover-variant="dark" @click="openContextMenu()">
             <template v-slot:menu>
               <div class="list" :id="'task-list'+task.id">
                 <span v-for="(item, index) in contextMenuItems" :key="item.label+index" class="list__item cursor-pointer" :class=" ['list__item__'+item.variant] " @click.stop="contextItemClick(item)">
@@ -61,6 +61,7 @@ import { mapGetters } from 'vuex'
 import dayjs from 'dayjs'
 import { TASK_CONTEXT_MENU } from "../../config/constants";
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
+import { conditionalExpression } from '@babel/types';
 
 export default {
   name: "TaskGrid",
@@ -86,14 +87,14 @@ export default {
       favTasks: "task/getFavTasks",
       teamMembers: "user/getTeamMembers",
     }),
-    isFavorite() {
-      let fav = this.favTasks.some(t => t.task.id == this.task.id)
-      if (fav) {
-        return { variant: "orange", text: "Remove favorite", status: true }
-      } else {
-        return { variant: "gray5", text: "Add to favorites", status: false }
-      }
-    },
+    // isFavorite() {
+    //   let fav = this.favTasks.some(t => t.task.id == this.task.id)
+    //   if (fav) {
+    //     return { variant: "orange", text: "Remove favorite", status: true }
+    //   } else {
+    //     return { variant: "gray5", text: "Add to favorites", status: false }
+    //   }
+    // },
     overdue() {
       return (new Date(this.task.dueDate) < new Date() && this.task.statusId != 5) ? 'danger-sub1' : 'gray4';
     },
@@ -107,6 +108,13 @@ export default {
     this.$refs.titleInput.style.height = ht + 2 + 'px'
   },
   methods: {
+
+    openContextMenu() {
+      let isFav = this.favTasks.some((f) => f.taskId == this.task.id)
+      if (isFav) {
+          this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Remove favorite"} : item);
+      }
+    },
 
     showUserPicker(task) {
       this.$nuxt.$emit("user-picker", { event, task })
@@ -186,6 +194,8 @@ export default {
         this.$store.dispatch("task/removeFromFavorite", { id: task.id })
           .then(msg => {
             this.$emit("update-key", msg)
+            this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Remove favorite" ? { ...item, label: "Add to Favorites"} : item);
+          
           })
           .catch(e => {
             console.log(e)
@@ -194,6 +204,7 @@ export default {
         this.$store.dispatch("task/addToFavorite", { id: task.id })
           .then(msg => {
             this.$emit("update-key", msg)
+            this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Remove favorite"} : item);
           })
           .catch(e => {
             console.log(e)
@@ -257,24 +268,37 @@ export default {
       // this.confirmModal = true
     },
     activeVariant(item) {
+      if (item.label.includes('Completed')) {
+          return this.variant='success'
+        }
+        if (item.label=='Remove favorite') {
+          return this.variant='warning'
+        }
       if (item.label.includes('Complete')) {
         return this.task.statusId == 5 ? 'success' : 'gray5'
       }
       if (item.label.includes('Delete')) {
         return 'danger'
       }
-      if (item.label.includes('Favorites')) {
-        let fata = this.favTasks.some(ft => ft.taskId == this.task.id)
-        return fata ? 'orange' : 'gray5'
-      }
+      // if (item.label.includes('Favorites')) {
+      //   let fata = this.favTasks.some(ft => ft.taskId == this.task.id)
+      //   return fata ? 'orange' : 'gray5'
+      // }
     },
     contextItemClick(item) {
       switch (item.event) {
         case 'done-task':
           this.markComplete(this.task)
+          if(item.label=="Mark Complete"){
+        this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Mark Complete" ? { ...item, label: "Completed"} : item);
+        }
+      if(item.label=="Completed"){
+        this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Completed" ? { ...item, label: "Mark Complete"} : item);
+      }
           break;
         case 'fav-task':
           this.addToFavorites(this.task)
+      
           break;
         case 'delete-task':
           this.deleteTask(this.task)
