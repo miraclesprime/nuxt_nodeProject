@@ -56,21 +56,21 @@ export const mutations = {
   },
 
   // To set a single project
-  setSingleProject(state, { currentProject, isGrouped }) {
+  setSingleProject(state, { currentProject }) {
     state.selectedProject = currentProject;
-
-    if (isGrouped !== undefined) {
-      let sectionID, taskID;
-      state.projects.forEach((section, section_idx) => {
-        section.tasks.forEach((task, task_idx) => {
-          if (task.id === currentProject.id) {
-            sectionID = section_idx;
-            taskID = task_idx;
-          }
+    let projectData=state.projects
+      if(projectData[0].tasks){
+        let sectionID, taskID;
+        state.projects.forEach((section, section_idx) => {
+            section.tasks.forEach((task, task_idx) => {
+            if (task.id === currentProject.id) {
+              sectionID = section_idx;
+              taskID = task_idx;
+            }
+          });   
         });
-      });
-      state.projects[sectionID].tasks[taskID] = currentProject;
-    }
+        state.projects[sectionID].tasks[taskID] = currentProject;
+      }
   },
 
   // To create project
@@ -129,7 +129,7 @@ export const mutations = {
 
   groupProjects(state, payload) {
     let arr = JSON.parse(JSON.stringify(state.projects));
-    if (payload.isGrouped != undefined && payload.isGrouped != "") {
+    if(arr[0].tasks){
       let _arr = [];
       arr.forEach((ele) => {
         _arr = _arr.concat(ele.tasks);
@@ -804,6 +804,7 @@ export const actions = {
 
   // for dispatch fetching projects
   async fetchProjects(ctx, payload) {
+    console.log(JSON.parse(window.localStorage.getItem('user')).subb)
     const res = await this.$axios.$get(`/project/company/${JSON.parse(window.localStorage.getItem('user')).subb}`, {
       headers: {
         'Authorization': `Bearer ${window.localStorage.getItem('accessToken')}`,
@@ -860,6 +861,7 @@ export const actions = {
   },
 
   async updateProject(ctx, payload) {
+
     let res = await this.$axios.$put("/project", {
       id: payload.id,
       user: payload.user,
@@ -869,12 +871,12 @@ export const actions = {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
     if (res.statusCode == 200) {
+      
       ctx.commit("setSingleProject", {
         currentProject: res.data,
-        isGrouped: true,
       });
-      if (payload.groupBy !== undefined && payload.groupBy !== "") {
-        ctx.commit("groupProjects", { key: payload.groupBy, isGrouped: true });
+      if (payload.groupBy !== '' && payload.groupBy !== "default") {
+        ctx.commit("groupProjects", { key: payload.groupBy});
       }
     }
     return res

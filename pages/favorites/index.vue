@@ -7,12 +7,12 @@
 
         <!-- project table -->
         <div style="overflow: auto;">
-          <advance-table :tableFields="projectTableFields" :tableData="projLocalData" :contextItems="projectContextItems" @context-item-event="projContextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" sectionTitle="Favorite Projects" :newTaskButton="false"></advance-table>
+          <advance-table :tableFields="projectTableFields" :tableData="projLocalData" :contextItems="projectContextItems" @context-item-event="projContextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @context-open="projectContextOpen" @title-click="projectRoute" @update-field="updateProject" sectionTitle="Favorite Projects" :newTaskButton="false"></advance-table>
         </div>
 
         <!-- task table -->
         <div style="overflow: auto;">
-          <advance-table :tableFields="taskTableFields" :tableData="taskSubtaskLocalData" :contextItems="taskContextMenuItems" @context-item-event="taskContextItemClick" @row-click ="openSidebar" @table-sort="sortTask" @title-click="openSidebar" @update-field="updateTask" sectionTitle="Favorite Tasks" :newTaskButton="false"></advance-table>
+          <advance-table :tableFields="taskTableFields" :tableData="taskSubtaskLocalData" :contextItems="taskContextMenuItems" @context-item-event="taskContextItemClick" @row-click ="openSidebar" @table-sort="sortTask" @context-open="taskContextOpen"  @title-click="openSidebar" @update-field="updateTask" sectionTitle="Favorite Tasks" :newTaskButton="false"></advance-table>
         </div>
       
         <loading :loading="loading"></loading>
@@ -118,7 +118,8 @@ export default {
       favTasks: 'task/getFavTasks',
       favSubtasks: "subtask/getFavSubtasks",
       teamMembers: "user/getTeamMembers",
-    })
+    }),
+
   },
 
   created() {
@@ -143,12 +144,12 @@ export default {
       this.fetchProjects()
     })
 
-    this.taskContextMenuItems.map(el => {
-      if (el.event == 'fav-task') {
-        el.label = 'Remove favorite'
-        el.iconVariant = 'orange'
-      }
-    })
+    // this.taskContextMenuItems.map(el => {
+    //   if (el.event == 'fav-task') {
+    //     el.label = 'Remove favorite'
+    //     el.iconVariant = 'orange'
+    //   }
+    // })
 
     const fetchTask = this.$store.dispatch('task/getFavTasks')
     const fetchSubtask = this.$store.dispatch("subtask/fetchFavorites")
@@ -219,7 +220,28 @@ export default {
       }
       this.loading = false
     },
-
+    projectContextOpen(item){
+      if(this.$CheckFavProject(item.id)){
+       this.projectContextItems=this.projectContextItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Favorite"} : item);
+      }
+      else{
+        this.projectContextItems=this.projectContextItems.map(item => item.label === "Favorite" ? { ...item, label: "Add to Favorites"} : item);
+      }
+    },
+    taskContextOpen(item){
+      if(this.$CheckFavTask(item.id)){
+       this.taskContextMenuItems=this.taskContextMenuItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Favorite"} : item);
+      }
+      else{
+        this.taskContextMenuItems=this.taskContextMenuItems.map(item => item.label === "Favorite" ? { ...item, label: "Add to Favorites"} : item);
+      }
+      if(item.statusId==5){
+       this.taskContextMenuItems=this.taskContextMenuItems.map(item => item.label === "Mark Complete" ? { ...item, label: "Completed"} : item);
+      }
+      else {
+         this.taskContextMenuItems=this.taskContextMenuItems.map(item => item.label === "Completed" ? { ...item, label: "Mark Complete"} : item);
+      }
+    },
     projectRoute(project) {
       let fwd = this.$donotCloseSidebar(event.target.classList)
       if (!fwd) {
