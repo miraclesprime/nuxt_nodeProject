@@ -17,7 +17,7 @@
         </li>
       </ul> -->
 
-      <div class=" adv-table resizable bg-white" :style="{'width': tableWidth}" role="table"  >
+      <div :id="'advTableTwo-'+componentKey" class=" adv-table resizable bg-white" :style="{'width': tableWidth}" role="table"  >
         <div class="tr position-sticky" style="top: 0; z-index: 2;" role="row">
           <div v-if="drag" class="width-2 th" role="cell"></div>
           <div v-for="(field, index) in tableFields" :key="field+index" class="th" :class="{ 'flex-grow-1': !field.width }" role="cell" :style="{ width: field.width}" :ref="'th'+field.key" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
@@ -300,6 +300,9 @@ export default {
         }
       })
     },*/
+    componentKey(){
+      return Math.floor((Math.random() * 999))
+    },
 
     tableWidth() {
       const main = document.getElementById("main-content")
@@ -327,6 +330,31 @@ export default {
     // const sub = document.getElementById("sub-panel")
     this.localData = _.cloneDeep(this.tableData)
     this.resizableColumns()
+
+    const headElems = document.querySelectorAll(".th")
+    const cells = document.querySelectorAll('.td')
+
+    for (var i = 0; i < headElems.length; i++) {
+      // console.log(headElems[i].dataset.key)
+      // let col = document.querySelectorAll("[data-key='"+headElems[i].dataset.key+"']")
+      // console.log(col)
+      // resizeObserver.observe(headElems[i]);
+      if (headElems[i].dataset.key == 'title') {
+        resizeTd(headElems[i].dataset.key)
+      }
+    }
+
+    function resizeTd(key) {
+      console.log(key, cells)
+      let col = document.querySelectorAll(`.td[data-key='${key}'`)
+      console.log(col)
+      /*for (var i = 0; i < cells.length; i++) {
+        console.log(cells[i].dataset.key)
+        if (cells[i].dataset.key = key) {
+          console.log(cells[i].style.width)
+        }
+      }*/
+    }
   },
 
   methods: {
@@ -558,42 +586,24 @@ export default {
           // entry.target.style.width = entry.contentBoxSize[0].inlineSize + "px";
         }
       });
-      for (var i = 0; i < headElems.length; i++) {
-        // console.log(headElems[i].dataset.key)
-        // let col = document.querySelectorAll("[data-key='"+headElems[i].dataset.key+"']")
-        // console.log(col)
-        // resizeObserver.observe(headElems[i]);
-        if (headElems[i].dataset.key == 'title') {
-          resizeTd(headElems[i].dataset.key)
-        }
-      }
-
-      function resizeTd(key) {
-        // console.log(key)
-        let col = document.querySelectorAll(".td[data-key="+key+"]")
-        console.log(col)
-        /*for (var i = 0; i < cells.length; i++) {
-          console.log(cells[i].dataset.key)
-          if (cells[i].dataset.key = key) {
-            console.log(cells[i].style.width)
-          }
-        }*/
-      }
 
     },
     resizableColumns() {
       // var tables = document.getElementsByTagName('table');
-      var tables = document.getElementsByClassName("adv-table");
+      // var table = document.getElementsByClassName("adv-table");
+      var table = document.getElementById(`advTableTwo-${this.componentKey}`);
       // console.log(tables)
-      for (let i = 0; tables.item(i); i++) {
+      if (table.className.match(/resizable/)) {
+        this.resizableTables = this.columnResize(table);
+      }
+      /*for (let i = 0; tables.item(i); i++) {
         if (tables[i].className.match(/resizable/)) {
           // generate id
           if (!tables[i].id) tables[i].id = 'advtable' + (i + 1);
           // make table resizable
           this.resizableTables[this.resizableTables.length] = this.columnResize(tables[i]);
         }
-      }
-      //  alert(resizableTables.length + ' tables was added.');
+      }*/
     },
     datecell(refname){
       // console.log(this.$refs)

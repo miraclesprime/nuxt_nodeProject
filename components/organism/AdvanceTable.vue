@@ -357,14 +357,6 @@ export default {
       if (table.className.match(/resizable/)) {
         this.resizableTables = this.columnResize(table);
       }
-      /*for (let i = 0; tables.item(i); i++) {
-        if (tables[i].className.match(/resizable/)) {
-          // generate id
-          if (!tables[i].id) tables[i].id = 'advtable' + (i + 1);
-          // make table resizable
-          this.resizableTables[this.resizableTables.length] = this.columnResize(tables[i]);
-        }
-      }*/
     },
     rowDragStart(e) {
       console.log(e.type, e);
