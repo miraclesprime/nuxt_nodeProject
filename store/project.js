@@ -78,6 +78,11 @@ export const mutations = {
     state.projects.push(payload)
   },
 
+  // to set project on project single page.
+    setProject(state, payload) {
+      state.selectedProject = payload;
+    },
+
   createProjectForGroup(state, payload) {
     let obj = [...state.projects];
     obj[0].tasks.push(payload);
@@ -912,11 +917,20 @@ export const actions = {
       .then((res) => {
         let team = res.data.data.members;
         let data = team.map((el) => {
-          if (ctx.state.selectedProject.userId == el.user.id) {
-            el.isOwner = true
-          } else {
-            el.isOwner = false
+          if(ctx.state.selectedProject) {
+            if (ctx.state.selectedProject.userId == el.user.id) {
+              el.isOwner = true
+            } else {
+              el.isOwner = false
+            }
+          }else {
+            if (payload.userId == el.user.id) {
+              el.isOwner = true
+            } else {
+              el.isOwner = false
+            }
           }
+
           return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName, isOwner: el.isOwner };
         });
         ctx.commit('fetchTeamMember', data)
@@ -1150,6 +1164,10 @@ export const actions = {
     } catch (e) {
       console.log(e);
     }
+  },
+
+  setProject(ctx, payload) {
+    ctx.commit("setProject", payload);
   }
 
 }

@@ -571,7 +571,7 @@ export default {
       function resizeTd(key) {
         // console.log(key)
         let col = document.querySelectorAll(".td[data-key="+key+"]")
-        console.log(col)
+        // console.log(col)
         /*for (var i = 0; i < cells.length; i++) {
           console.log(cells[i].dataset.key)
           if (cells[i].dataset.key = key) {
