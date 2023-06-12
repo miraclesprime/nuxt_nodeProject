@@ -183,6 +183,12 @@ export default {
 
       this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
       this.activeSubtask = subtask
+      if(subtask.statusId==5){
+       this.subtaskContextMenu=this.subtaskContextMenu.map(item => item.label === "Mark Complete" ? { ...item, label: "Completed"} : item);
+      }
+      else {
+         this.subtaskContextMenu=this.subtaskContextMenu.map(item => item.label === "Completed" ? { ...item, label: "Mark Complete"} : item);
+      }
     },
     closeContext(){
       this.showContext = false

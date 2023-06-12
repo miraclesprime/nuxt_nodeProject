@@ -158,7 +158,6 @@ export default {
     },
 
     projectRoute(project) {
-      console.log("&&&&&&&&&&&&&&&&&&&&&&&&",project)
       let fwd = this.$donotCloseSidebar(event.target.classList)
       if (!fwd) {
         return false
@@ -168,10 +167,10 @@ export default {
 
     contextOpen(item){
       if(this.$CheckFavProject(item.id)){
-       this.projectContextItems=this.projectContextItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Favorite"} : item);
+       this.projectContextItems=this.projectContextItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Remove favorite"} : item);
       }
       else{
-        this.projectContextItems=this.projectContextItems.map(item => item.label === "Favorite" ? { ...item, label: "Add to Favorites"} : item);
+        this.projectContextItems=this.projectContextItems.map(item => item.label === "Remove favorite" ? { ...item, label: "Add to Favorites"} : item);
       }
    
       this.$store.dispatch("task/setSingleTask", item)

@@ -7,7 +7,7 @@
 
         <!-- project table -->
         <div style="overflow: auto;">
-          <advance-table :tableFields="projectTableFields" :tableData="projLocalData" :contextItems="projectContextItems" @context-item-event="projContextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @context-open="projectContextOpen" @title-click="projectRoute" @update-field="updateProject" sectionTitle="Favorite Projects" :newTaskButton="false"></advance-table>
+          <advance-table :tableFields="projectTableFields" :tableData="projLocalData" :contextItems="projectContextItems" @context-item-event="projContextItemClick" @row-click ="projectRoute" @table-sort="sortProject"  @context-open="projectContextOpen" @title-click="projectRoute" @update-field="updateProject" sectionTitle="Favorite Projects" :newTaskButton="false"></advance-table>
         </div>
 
         <!-- task table -->
@@ -150,7 +150,13 @@ export default {
     //     el.iconVariant = 'orange'
     //   }
     // })
-
+    // this.projectContextItems.map(el => {
+    //   console.log("el",el)
+    //   if (el.event == 'fav-project') {
+    //     el.label = 'Remove favorite'
+    //     el.iconVariant = 'orange'
+    //   }
+    // })
     const fetchTask = this.$store.dispatch('task/getFavTasks')
     const fetchSubtask = this.$store.dispatch("subtask/fetchFavorites")
     Promise.all([fetchTask, fetchSubtask]).then((values) => {
@@ -222,18 +228,18 @@ export default {
     },
     projectContextOpen(item){
       if(this.$CheckFavProject(item.id)){
-       this.projectContextItems=this.projectContextItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Favorite"} : item);
+       this.projectContextItems=this.projectContextItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Remove favorite"} : item);
       }
       else{
-        this.projectContextItems=this.projectContextItems.map(item => item.label === "Favorite" ? { ...item, label: "Add to Favorites"} : item);
+        this.projectContextItems=this.projectContextItems.map(item => item.label === "Remove favorite" ? { ...item, label: "Add to Favorites"} : item);
       }
     },
     taskContextOpen(item){
       if(this.$CheckFavTask(item.id)){
-       this.taskContextMenuItems=this.taskContextMenuItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Favorite"} : item);
+       this.taskContextMenuItems=this.taskContextMenuItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Remove favorite"} : item);
       }
       else{
-        this.taskContextMenuItems=this.taskContextMenuItems.map(item => item.label === "Favorite" ? { ...item, label: "Add to Favorites"} : item);
+        this.taskContextMenuItems=this.taskContextMenuItems.map(item => item.label === "Remove favorite" ? { ...item, label: "Add to Favorites"} : item);
       }
       if(item.statusId==5){
        this.taskContextMenuItems=this.taskContextMenuItems.map(item => item.label === "Mark Complete" ? { ...item, label: "Completed"} : item);

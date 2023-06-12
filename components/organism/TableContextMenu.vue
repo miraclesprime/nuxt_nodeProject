@@ -83,7 +83,7 @@ export default {
       if (item.label.includes('Completed')) {
           return this.variant='success'
         }
-        if (item.label=='Favorite') {
+        if (item.label=='Remove favorite') {
           return this.variant='warning'
         }
       if (this.activeItem) {

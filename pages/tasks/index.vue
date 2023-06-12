@@ -258,10 +258,10 @@ export default {
     },
     contextOpen(item){
       if(this.$CheckFavTask(item.id)){
-       this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Favorite"} : item);
+       this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Remove favorite"} : item);
       }
       else{
-        this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Favorite" ? { ...item, label: "Add to Favorites"} : item);
+        this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Remove favorite" ? { ...item, label: "Add to Favorites"} : item);
       }
       if(item.statusId==5){
        this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Mark Complete" ? { ...item, label: "Completed"} : item);
