@@ -147,14 +147,14 @@ export default {
       popupMessages: [],
       alertDialog: false,
       alertMsg:"",
-      cdp: false
+      cdp: false,
+      project: {}
     }
   },
 
   computed: {
 
     ...mapGetters({
-        project: 'project/getSingleProject',
         projects: 'project/getAllProjects',
         team: "project/getProjectMembers",
         projectSections: 'section/getProjectSections',
@@ -186,11 +186,37 @@ export default {
 
   created() {
 
+    if (process.client) {
+      this.$axios.$get(`project/${this.$route.params.id}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      }).then((res) => {
+        if (res) {
+          this.project = res.data;
+          if (!res.data || res.data.isDeleted) {
+            this.$router.push("/notfound")
+          } else {
+            this.$store.dispatch('project/setProject', res.data)
+            this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
+            this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
+            this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id, data: res.data })
+            this.validating = false
+          }
+        } else {
+          this.$router.push("/notfound")
+        }
+      }).catch(err => {
+        console.log("There was an issue in project API", err);
+        this.validating = false
+      })
+
+    }
+
     if(this.projects.length == 0) {
 
       this.$store.dispatch('project/fetchProjects').then((res) => {
         let proj = res.find((p) => {
           if(p.id == this.$route.params.id) {
+            // console.log(p)
             return p;
           } 
         })
@@ -217,30 +243,6 @@ export default {
     this.$nuxt.$on("edit-message", (msg) => {
       this.editMessage = msg
     })
-
-    if (process.client) {
-      this.$axios.$get(`project/${this.$route.params.id}`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-      }).then((res) => {
-        if (res) {
-          if (!res.data || res.data.isDeleted) {
-            this.$router.push("/notfound")
-          } else {
-            this.$store.dispatch('project/setSingleProject', res.data)
-            this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
-            this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
-            this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id })
-            this.validating = false
-          }
-        } else {
-          this.$router.push("/notfound")
-        }
-      }).catch(err => {
-        console.log("There was an issue in project API", err);
-        this.validating = false
-      })
-
-    }
 
   },
   mounted() {

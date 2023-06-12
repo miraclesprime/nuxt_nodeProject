@@ -33,7 +33,7 @@
        <div v-else>
         <loading :loading="loading"></loading>
 
-        <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :newTaskButton="{label: 'New Project', icon: 'add'}"></advance-table>
+        <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @context-open="contextOpen" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :newTaskButton="{label: 'New Project', icon: 'add'}"></advance-table>
       </div> 
 
       </template>
@@ -113,15 +113,16 @@ export default {
   },
 
   mounted() {
+    this.loading = true;
+
     for(let field of this.tableFields) {
       if(field.header_icon) {
         field.header_icon.isActive = false;
       }
     }
-
-    this.$store.dispatch('project/fetchProjects').then(() => { 
+    this.$store.dispatch('project/fetchProjects').then((res) => { 
       this.templateKey += 1;
-      this.newkey = parseInt( Math.random().toString().slice(-3) )
+      // this.newkey = parseInt( Math.random().toString().slice(-3) )
       this.loading = false 
     })
 
@@ -157,6 +158,7 @@ export default {
     },
 
     projectRoute(project) {
+      console.log("&&&&&&&&&&&&&&&&&&&&&&&&",project)
       let fwd = this.$donotCloseSidebar(event.target.classList)
       if (!fwd) {
         return false
@@ -164,6 +166,16 @@ export default {
       this.$router.push('/projects/' + project.id)
     },
 
+    contextOpen(item){
+      if(this.$CheckFavProject(item.id)){
+       this.projectContextItems=this.projectContextItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Favorite"} : item);
+      }
+      else{
+        this.projectContextItems=this.projectContextItems.map(item => item.label === "Favorite" ? { ...item, label: "Add to Favorites"} : item);
+      }
+   
+      this.$store.dispatch("task/setSingleTask", item)
+    },
     // sortName($event){
     //   console.log("sdfds",$event)
     // },
@@ -414,15 +426,12 @@ export default {
         groupBy: this.groupBy,
       })
         .then(t => {
-          // if (t.statusCode == 200) {
-          //   if(this.groupVisible){
-          //     this.updateKey("group")
-          //   }else{
-          //     this.updateKey()
-          //   }
-          // } else {
-          //   console.warn(t)
-          // }
+          if(t.statusCode==200){
+            if(this.groupBy==''||this.groupBy=='default'){
+            this.updateKey()
+            }
+          }
+       
         })
         .catch(e => console.warn(e))
     },

@@ -272,7 +272,7 @@ export default {
       localNewrow: _.cloneDeep(this.newRow),
     }
   },
-
+  
   watch: {
     /*showNewsection(newVal){
       
@@ -643,7 +643,7 @@ export default {
         // })
       this.$emit("row-click", item)
     },
-    
+   
     contextOpen($event, item) {
       this.unselectAll()
       this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
@@ -722,9 +722,9 @@ export default {
     markComplete($event, item){
       // console.log($event, item.statusId)
       if (item.statusId == 5) {
-        this.$emit("update-field", { id: item.id, field: "statusId", value: 1, label: "Status", historyText: "changed Status to Not Started" })
+        this.$emit("update-field", { id: item.id, field: "statusId", value: 1, label: "Status", historyText: "changed Status to Not Started" ,item})
       } else {
-        this.$emit("update-field", { id: item.id, field: "statusId", value: 5, label: "Status", historyText: "changed Status to Done" })
+        this.$emit("update-field", { id: item.id, field: "statusId", value: 5, label: "Status", historyText: "changed Status to Done",item })
       }
     },
     updateStatus(status, item) {

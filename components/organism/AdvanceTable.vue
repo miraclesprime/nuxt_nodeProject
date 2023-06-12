@@ -32,8 +32,8 @@
           </div>
           <div v-for="(field, index) in tableFields" :id="'adv-table-table-fields-'+index" :key="field+index" class="td" role="cell">
             <div v-if="field.key == 'title'" class="align-center " id="adv-table-title-field">
-              <span v-if="field.icon" class="width-105 height-105 align-center justify-center" id="adv-table-field-icon" :class="{'cursor-pointer': field.icon.event}">
-                <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="field.icon.variant" hover-variant="success-sub3"></bib-icon>
+                <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}" @click.stop="markComplete($event, item)">
+                        <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success-sub3"></bib-icon>
               </span>
               <span v-if="field.event" class=" flex-grow-1" style="line-height:1.25;" id="adv-table-field-event">
                 <input type="text" class="editable-input" id="adv-table-editable-input" :value="item[field.key]" @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
@@ -378,6 +378,7 @@ export default {
       this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
       this.contextVisible = true
       this.activeItem = item
+      this.$emit("context-open", item)
       $event.currentTarget.classList.add("active")
     },
     contextItemClick($event){
@@ -427,6 +428,14 @@ export default {
     debounceTitle: _.debounce(function(value, item) {
       this.$emit("update-field", { id: item.id, field: "title", value: value, label: "Title", historyText: `Changed Title to ${value}`, item: item })
     }, 800),
+    markComplete($event, item){
+      // console.log($event, item.statusId)
+      if (item.statusId == 5) {
+        this.$emit("update-field", { id: item.id, field: "statusId", value: 1, label: "Status", historyText: "changed Status to Not Started" ,item: item} )
+      } else {
+        this.$emit("update-field", { id: item.id, field: "statusId", value: 5, label: "Status", historyText: "changed Status to Done" ,item: item})
+      }
+    },
     updateStatus(status, item) {
       this.$emit("update-field", { id: item.id, field: "statusId", value: status.value, label: "Status", historyText: `changed Status to ${status.label}`, item: item })
     },
