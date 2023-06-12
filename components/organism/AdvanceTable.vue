@@ -3,7 +3,7 @@
 
     <draggable class="task-draggable adv-table resizable bg-white" :id="'advTable-'+componentKey" handle=".drag-handle" :style="{'width': tableWidth}" role="table" @start="rowDragStart" @end="rowDragEnd" :move="moveTask" >
       <div slot="header" class="tr" role="row" id="adv-table-row1">
-        <div v-if="drag" class="width-2 th" id="adv-table-cell1" role="cell"></div>
+        <div v-show="drag" class="width-2 th" id="adv-table-cell1" role="cell"></div>
         <div v-for="(field, index) in tableFields" :key="field+'-'+index" class="th" id="adv-table-th1" role="cell" :style="{ width: field.width}" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
           <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer"  id="adv-table-header-icon">
               <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'gray1' : 'gray4'"></bib-icon>
@@ -26,8 +26,8 @@
 
       <template v-if="!isCollapsed">
         <div v-for="(item, index) in tableData" :key="item.id+'-'+index" class="tr" :id="'adv-table-table-data-'+index" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
-          <div class="td" role="cell" id="adv-table-td">
-            <div v-if="drag" class="drag-handle width-105 h-100" id="adv-table-drag-handle"><bib-icon icon="drag" variant="gray5"></bib-icon>
+          <div v-show="drag" class="td" role="cell" :id="'adv-table-td-'+index">
+            <div v-show="drag" class="drag-handle width-105 h-100" id="adv-table-drag-handle"><bib-icon icon="drag" variant="gray5"></bib-icon>
             </div>
           </div>
           <div v-for="(field, index) in tableFields" :id="'adv-table-table-fields-'+index" :key="field+index" class="td" role="cell">
@@ -68,7 +68,7 @@
         </div>
 
         <div v-if="!newRow.show && newTaskButton" class="tr" role="row" style="border-bottom: var(--bib-light)" id="adv-table-newRow-wrapper">
-          <div class="td " id="adv-table-newRow-td1" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
+          <div v-show="drag" class="td " id="adv-table-newRow-td1" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
           <div class="td" id="adv-table-newRow-td2" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
             <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" id="adv-table-newRow-newTaskBtn" v-on:click.stop="newRowClick()">
               <bib-icon :icon="newTaskButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{newTaskButton.label}}</span>
@@ -78,7 +78,7 @@
         </div>
 
         <div v-show="newRow.show" class="tr" role="row" id="adv-table-newRow-2">
-          <div v-if="drag" class="td text-center" id="adv-table-newRow2-td" role="cell">
+          <div v-show="drag" class="td text-center" id="adv-table-newRow2-td" role="cell">
             <span class="d-inline-flex align-center height-105 bg-secondary-sub4 shape-rounded" id="adv-table-newRow2-drag"><bib-icon icon="drag" variant="white"></bib-icon></span>
           </div>
           <template v-for="(td,index) in tableFields">
