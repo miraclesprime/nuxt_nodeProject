@@ -198,7 +198,7 @@ export const actions = {
     if (payload.statusId !== 5) {
       const res = await this.$axios.$put('/task', {
         id: payload.id,
-        projectId: ctx.rootState.project.selectedProject.id || payload.project[0].projectId || payload.project[0].project.id,
+        projectId:  payload.project[0].projectId || payload.project[0].project.id,
         data: { statusId: 5, isDone: true },
         text: "updated status to Done"
       }, {
@@ -211,7 +211,7 @@ export const actions = {
     if (payload.statusId == 5) {
       const res = await this.$axios.$put('/task', {
         id: payload.id,
-        projectId: ctx.rootState.project.selectedProject.id || payload.project[0].projectId || payload.project[0].project.id,
+        projectId:  payload.project[0].projectId || payload.project[0].project.id,
         data: { statusId: 2, isDone: false },
         text: 'Updated the status to In-progress'
       }, {
