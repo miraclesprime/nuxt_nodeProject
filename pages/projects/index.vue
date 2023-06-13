@@ -158,6 +158,7 @@ export default {
     },
 
     projectRoute(project) {
+
       let fwd = this.$donotCloseSidebar(event.target.classList)
       if (!fwd) {
         return false
