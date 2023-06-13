@@ -112,16 +112,16 @@
                       <div class="align-center height-2">{{item[field.key][0]?.project?.title}}</div>
                     </template>
                     <template v-if="field.key == 'userId'">
-                      <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" class="flex-grow-1" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
+                      <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
                     </template>
                     <template v-if="field.key == 'status'">
-                      <status-select :ref="'statusSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" class="flex-grow-1" @change="updateStatus($event, item)" @close-other="closePopups('statusSelect'+item.id)"></status-select>
+                      <status-select :ref="'statusSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('statusSelect'+item.id)"></status-select>
                     </template>
                     <template v-if="field.key == 'priority'">
-                      <priority-select :ref="'prioritySelect'+item.id" :priority="item[field.key]" class="flex-grow-1" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
+                      <priority-select :ref="'prioritySelect'+item.id" :priority="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
                     </template>
                     <template v-if="field.key == 'department'">
-                      <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" class="flex-grow-1" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
+                      <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
                     </template>
                     <template v-if="field.key.includes('Date')" >
                       <!-- {{$formatDate(item[field.key])}} -->
@@ -131,7 +131,7 @@
                   </div>
                 </div>
 
-                <template v-if="plusButton && !isProject">
+                <template v-if="plusButton">
                   <div v-show="localNewrow.sectionId != section.id"  class="tr" style="border-bottom: var(--bib-light)">
                     <div class="td width-2" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
                     <div class="td" style="border-bottom-color: transparent; border-right-color: transparent; width: 360px;">
@@ -146,12 +146,10 @@
                     <div v-show="drag" class="td text-center ">
                       <span class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
                     </div>
-                    <!-- <template v-for="td in tableFields"> -->
-                      <div class="td">
-                        <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate" @blur="newRowCreate" required placeholder="Enter title...">
-                      </div>
+                    <div class="td">
+                      <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate" required placeholder="Enter title...">
+                    </div>
                       <!-- <div v-else class="td" ></div> -->
-                    <!-- </template> -->
                   </div>
                 </template>
 
@@ -162,7 +160,7 @@
           </section>
           
 
-        <div v-show="localNewrow.show" class="tr" role="row" @click.self="unselectAll">
+        <!-- <div v-show="localNewrow.show" class="tr" role="row" @click.self="unselectAll">
           <div v-show="drag" class="td text-center " >
             <span
               class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon
@@ -170,11 +168,11 @@
           </div>
           <div class="td" >
             <input type="text" ref="newrowInput" class="editable-input" v-model="localNewrow.title"
-              :class="{ 'error': validTitle }" @input="newRowCreate" @blur="newRowCreate" required
+              :class="{ 'error': validTitle }" @input="newRowCreate" required
               placeholder="Enter title..." @keyup.esc="unselectAll" v-click-outside="unselectAll">
           </div>
-        </div>
-        <template v-if="isProject && !localNewrow.show">
+        </div> -->
+        <!-- <template v-if="!localNewrow.show">
           <div class="tr section-content" role="row" style="border-bottom: var(--bib-light)">
             <div class="td "  style="border-bottom-color: transparent; border-right-color: transparent;"></div>
             <div class="td"  style="border-bottom-color: transparent; border-right-color: transparent;">
@@ -185,7 +183,7 @@
               </div>
             </div>
           </div>
-        </template>
+        </template> -->
       </draggable>
 
       </div>
@@ -252,7 +250,7 @@ export default {
       }
     },
     showNewsection: { type: Boolean, default: false},
-    isProject: { type: Boolean, default: false},
+    // isProject: { type: Boolean, default: false},
   },
 
   data() {
@@ -646,7 +644,7 @@ export default {
       this.$emit("context-item-event", $event, this.activeItem)
       this.unselectAll()
     },
-    unselectAll() {
+    async unselectAll() {
       let rows = document.getElementsByClassName('tr');
       for (let row of rows) {
         row.classList.remove('active');

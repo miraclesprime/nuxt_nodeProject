@@ -1,14 +1,14 @@
 <template>
-  <div class="picker-wrapper" id="status-select-wrapper" v-click-outside="onClickOutside">
-    <button type="button" id="status-select-button" class="user-data cursor-pointer height-2 w-100 align-center justify-between" @click.stop="triggerOpen">
-      <span class="align-center flex-grow-1 gap-025" id="status-select-span-wrap">
+  <div class="picker-wrapper w-100" id="status-select-wrapper" v-click-outside="onClickOutside">
+    <div id="status-select-button" class="user-data cursor-pointer height-2 align-center justify-between" @click.stop="triggerOpen">
+      <div class="align-center flex-grow-1 gap-025" id="status-select-span-wrap">
         <div class="align-center justify-center shape-circle circle" id="status-select-shape-circle" :style="{ 'background-color': $hex2rgba(localStatus.color, colors) }" >
           <span class="dot shape-circle" :id="'status-select-'+localStatus.color" :class="[ 'bg-'+localStatus.color ]" ></span>
         </div>
         {{localStatus.label}}
-      </span>
+      </div>
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
-    </button>
+    </div>
     <div v-show="show" class="picker-content" id="status-select-content">
       <div class="picker-list-wrap" id="status-select-list-wrap">
         <ul class="m-0 p-0 text-left" id="status-select-list">

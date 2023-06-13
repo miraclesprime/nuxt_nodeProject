@@ -910,7 +910,7 @@ export const USER_TASKS = [
       isActive: false
     },
     /*width: "20%",*/
-    event: "task-click",
+    event: "title-click",
   },
   {
     label: 'Project',

@@ -1,11 +1,11 @@
 <template>
-  <div class="picker-wrapper" id="dept-select-wrapper" v-click-outside="onClickOutside" >
-    <button type="button" id="dept-select-trigger-open" class="user-data cursor-pointer height-2 w-100 align-center justify-between" @click.stop="triggerOpen">
-      <span v-if="localDept" id="dept-select-local-dept-label">
+  <div class="picker-wrapper w-100" id="dept-select-wrapper" v-click-outside="onClickOutside" >
+    <div id="dept-select-trigger-open" class="user-data cursor-pointer height-2 align-center justify-between" @click.stop="triggerOpen">
+      <span v-if="localDept" id="dept-select-local-dept-label" class="text-truncate" style="max-width: 7rem;">
          {{localDept.label}}
       </span>
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
-    </button>
+    </div>
     <div v-show="show" class="picker-content" id="dept-select-content">
       <div class="" style="max-height: 15rem; overflow-y: auto; overflow-x: clip; " id="dept-select-dept-label-wrap">
         <ul class="m-0 p-0 text-left" id="dept-select-dept-label-list">

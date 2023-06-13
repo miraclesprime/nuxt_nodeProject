@@ -1,16 +1,16 @@
 <template>
-  <div id="user-select-wrapper" class="picker-wrapper" v-click-outside="onClickOutside">
-    <button type="button" id="user-select-trigger-open" class="user-data cursor-pointer height-2 w-100 align-center justify-between" @click.stop="triggerOpen">
-      <span v-if="user" id="user-select-user-avatar" class="align-center gap-025 flex-grow-1">
+  <div id="user-select-wrapper" class="picker-wrapper w-100" v-click-outside="onClickOutside">
+    <div id="user-select-trigger-open" class="user-data cursor-pointer height-2 align-center justify-between" @click.stop="triggerOpen">
+      <div v-if="user" id="user-select-user-avatar" class="align-center gap-025  ">
         <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> <span class="user-label text-truncate">{{user.label}}</span>
-      </span>
-      <span v-else id="user-select-user-avatar">
+      </div>
+      <div v-else id="user-select-user-avatar">
         <span class="shape-circle d-inline-flex width-105 height-105 ">
           <bib-avatar size="1.5rem"></bib-avatar>
         </span>
-      </span>
+      </div>
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
-    </button>
+    </div>
 
     <div v-show="show" class="picker-content" id="user-select-content">
       <input type="text" class="picker-input" id="user-select-input" ref="userFilterInput" v-model="filterKey" @keyup.esc="$emit('close')" autofocus>
@@ -97,7 +97,7 @@ export default {
     border: 0 none;
     background-color: transparent;
   }
-  .user-label { max-width: 80%; display: inline-block; }
+  .user-label { max-width: 7rem; display: inline-block; }
 
   .picker-content {
     position: absolute;
