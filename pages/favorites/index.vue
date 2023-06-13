@@ -160,6 +160,7 @@ export default {
         })
       values[1].data.forEach(d => {
         if(d.subtasks){
+          console.log(d.subtasks.task)
           this.taskSubtaskLocalData.push({...d.subtasks, project: d.subtasks.task.project})
           this.sortedTask.push({...d.subtasks, project: d.subtasks.task.project})
         }
@@ -751,6 +752,7 @@ export default {
           this.copyTaskLink(item)
           break;
         case 'gotoTeam':
+          this.$store.dispatch('task/setSingleTask', item)
           this.$nuxt.$emit('add-member-to-task')
           break;
         case 'gotoComment':
