@@ -137,21 +137,21 @@
                     <div class="td" style="border-bottom-color: transparent; border-right-color: transparent; width: 360px;">
                       <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
                         <bib-icon :icon="plusButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{plusButton.label}}</span>
-                      </div>
-                    </div>
-                    <!-- <div v-for="n in tableFields.length-1" class="td" style="border-bottom-color: transparent; border-right-color: transparent;"></div> -->
                   </div>
+                </div>
+                <!-- <div v-for="n in tableFields.length-1" class="td" style="border-bottom-color: transparent; border-right-color: transparent;"></div> -->
+              </div>
 
                   <div v-show="localNewrow.sectionId == section.id" class="tr" @click.self="unselectAll">
                     <div v-show="drag" class="td text-center ">
                       <span class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
-                    </div>
+                </div>
                     <div class="td">
                       <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate" required placeholder="Enter title...">
-                    </div>
+                </div>
                       <!-- <div v-else class="td" ></div> -->
-                  </div>
-                </template>
+              </div>
+            </template>
 
               <!-- </div> -->
 
