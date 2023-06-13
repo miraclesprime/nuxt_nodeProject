@@ -158,7 +158,7 @@ export default {
     },
 
     projectRoute(project) {
-      console.log("&&&&&&&&&&&&&&&&&&&&&&&&",project)
+      // console.log("&&&&&&&&&&&&&&&&&&&&&&&&",project)
       let fwd = this.$donotCloseSidebar(event.target.classList)
       if (!fwd) {
         return false
