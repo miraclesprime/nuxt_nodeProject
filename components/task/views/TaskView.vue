@@ -610,6 +610,18 @@ export default {
     },
 
     contextOpen(item){
+      if(this.$CheckFavTask(item.id)){
+       this.taskContextMenuItems=this.taskContextMenuItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Remove favorite"} : item);
+      }
+      else{
+        this.taskContextMenuItems=this.taskContextMenuItems.map(item => item.label === "Remove favorite" ? { ...item, label: "Add to Favorites"} : item);
+      }
+      if(item.statusId==5){
+       this.taskContextMenuItems=this.taskContextMenuItems.map(item => item.label === "Mark Complete" ? { ...item, label: "Completed"} : item);
+      }
+      else {
+         this.taskContextMenuItems=this.taskContextMenuItems.map(item => item.label === "Completed" ? { ...item, label: "Mark Complete"} : item);
+      }
       this.$store.dispatch("task/setSingleTask", item)
     },
     updateKey() {
@@ -1074,9 +1086,9 @@ export default {
   display: flex;
   flex-direction: column;
   height: calc(100% - 57px);
-  .calc-height {
+  /*.calc-height {
     height: calc(100% - 57px);
-  }
+  }*/
 }
 
 .new-section-input {

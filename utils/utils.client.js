@@ -17,7 +17,24 @@ export default ({ store, app, context }, inject) => {
       return { variant: "gray5", text: "Add to favorites", status: false }
     }
   });
-
+  inject('CheckFavTask', (idx) => {
+    const favtasks = store.state.task.favTasks
+    let fav = favtasks.some(t => t.taskId == idx)
+    if (fav) {
+      return true
+    } else {
+      return false
+    }
+  });
+  inject('CheckFavProject', (idx) => {
+    const favprojects = store.state.project.favProjects
+    let fav = favprojects.some(p => p.projectId == idx)
+    if (fav) {
+      return true
+    } else {
+      return false
+    }
+  });
   inject('donotCloseSidebar', (classes) => {
     const cl = ['editable-input', 'user-info', 'date-info']
     let out = true

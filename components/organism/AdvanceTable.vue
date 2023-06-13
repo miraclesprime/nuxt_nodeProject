@@ -3,7 +3,7 @@
 
     <draggable class="task-draggable adv-table resizable bg-white" :id="'advTable-'+componentKey" handle=".drag-handle" :style="{'width': tableWidth}" role="table" @start="rowDragStart" @end="rowDragEnd" :move="moveTask" >
       <div slot="header" class="tr" role="row" id="adv-table-row1">
-        <div v-if="drag" class="width-2 th" id="adv-table-cell1" role="cell"></div>
+        <div v-show="drag" class="width-2 th" id="adv-table-cell1" role="cell"></div>
         <div v-for="(field, index) in tableFields" :key="field+'-'+index" class="th" id="adv-table-th1" role="cell" :style="{ width: field.width}" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
           <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer"  id="adv-table-header-icon">
               <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'gray1' : 'gray4'"></bib-icon>
@@ -26,14 +26,14 @@
 
       <template v-if="!isCollapsed">
         <div v-for="(item, index) in tableData" :key="item.id+'-'+index" class="tr" :id="'adv-table-table-data-'+index" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
-          <div class="td" role="cell" id="adv-table-td">
-            <div v-if="drag" class="drag-handle width-105 h-100" id="adv-table-drag-handle"><bib-icon icon="drag" variant="gray5"></bib-icon>
+          <div v-show="drag" class="td" role="cell" :id="'adv-table-td-'+index">
+            <div v-show="drag" class="drag-handle width-105 h-100" id="adv-table-drag-handle"><bib-icon icon="drag" variant="gray5"></bib-icon>
             </div>
           </div>
           <div v-for="(field, index) in tableFields" :id="'adv-table-table-fields-'+index" :key="field+index" class="td" role="cell">
             <div v-if="field.key == 'title'" class="align-center " id="adv-table-title-field">
-              <span v-if="field.icon" class="width-105 height-105 align-center justify-center" id="adv-table-field-icon" :class="{'cursor-pointer': field.icon.event}">
-                <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="field.icon.variant" hover-variant="success-sub3"></bib-icon>
+                <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}" @click.stop="markComplete($event, item)">
+                        <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success-sub3"></bib-icon>
               </span>
               <span v-if="field.event" class=" flex-grow-1" style="line-height:1.25;" id="adv-table-field-event">
                 <input type="text" class="editable-input" id="adv-table-editable-input" :value="item[field.key]" @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
@@ -68,7 +68,7 @@
         </div>
 
         <div v-if="!newRow.show && newTaskButton" class="tr" role="row" style="border-bottom: var(--bib-light)" id="adv-table-newRow-wrapper">
-          <div class="td " id="adv-table-newRow-td1" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
+          <div v-show="drag" class="td " id="adv-table-newRow-td1" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
           <div class="td" id="adv-table-newRow-td2" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
             <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" id="adv-table-newRow-newTaskBtn" v-on:click.stop="newRowClick()">
               <bib-icon :icon="newTaskButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{newTaskButton.label}}</span>
@@ -78,7 +78,7 @@
         </div>
 
         <div v-show="newRow.show" class="tr" role="row" id="adv-table-newRow-2">
-          <div v-if="drag" class="td text-center" id="adv-table-newRow2-td" role="cell">
+          <div v-show="drag" class="td text-center" id="adv-table-newRow2-td" role="cell">
             <span class="d-inline-flex align-center height-105 bg-secondary-sub4 shape-rounded" id="adv-table-newRow2-drag"><bib-icon icon="drag" variant="white"></bib-icon></span>
           </div>
           <template v-for="(td,index) in tableFields">
@@ -357,14 +357,6 @@ export default {
       if (table.className.match(/resizable/)) {
         this.resizableTables = this.columnResize(table);
       }
-      /*for (let i = 0; tables.item(i); i++) {
-        if (tables[i].className.match(/resizable/)) {
-          // generate id
-          if (!tables[i].id) tables[i].id = 'advtable' + (i + 1);
-          // make table resizable
-          this.resizableTables[this.resizableTables.length] = this.columnResize(tables[i]);
-        }
-      }*/
     },
     rowDragStart(e) {
       console.log(e.type, e);
@@ -386,6 +378,7 @@ export default {
       this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
       this.contextVisible = true
       this.activeItem = item
+      this.$emit("context-open", item)
       $event.currentTarget.classList.add("active")
     },
     contextItemClick($event){
@@ -435,6 +428,14 @@ export default {
     debounceTitle: _.debounce(function(value, item) {
       this.$emit("update-field", { id: item.id, field: "title", value: value, label: "Title", historyText: `Changed Title to ${value}`, item: item })
     }, 800),
+    markComplete($event, item){
+      // console.log($event, item.statusId)
+      if (item.statusId == 5) {
+        this.$emit("update-field", { id: item.id, field: "statusId", value: 1, label: "Status", historyText: "changed Status to Not Started" ,item: item} )
+      } else {
+        this.$emit("update-field", { id: item.id, field: "statusId", value: 5, label: "Status", historyText: "changed Status to Done" ,item: item})
+      }
+    },
     updateStatus(status, item) {
       this.$emit("update-field", { id: item.id, field: "statusId", value: status.value, label: "Status", historyText: `changed Status to ${status.label}`, item: item })
     },
