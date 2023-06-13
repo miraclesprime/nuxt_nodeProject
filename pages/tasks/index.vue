@@ -15,7 +15,7 @@
           <div v-show="gridType === 'list'" class="h-100">
             <template v-if="tasks.length">
 
-              <adv-table-two :tableFields="taskFields" :tableData="localData" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd"></adv-table-two>
+              <adv-table-two :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask"></adv-table-two>
 
             </template>
           <div v-else>
@@ -31,21 +31,21 @@
         </template>
         
         <template>
-          <div v-show="gridType == 'grid'">
-          <task-grid-section
-            :sections="localData"
-            :activeTask="activeTask"
-            :templateKey="key"
-            v-on:update-key="updateKey"
-            v-on:create-task="toggleSidebar($event)"
-            v-on:set-favorite="taskSetFavorite"
-            v-on:mark-complete="taskMarkComplete"
-            v-on:delete-task="deleteTask"
-            @section-dragend="sectionDragEnd"
-            @task-dragend="taskDragEnd"
-            sectionType="department"
-          >
-          </task-grid-section>
+          <div v-show="gridType == 'grid'" class="h-100">
+            <task-grid-section
+              :sections="localData"
+              :activeTask="activeTask"
+              :templateKey="key"
+              v-on:update-key="updateKey"
+              v-on:create-task="toggleSidebar($event)"
+              v-on:set-favorite="taskSetFavorite"
+              v-on:mark-complete="taskMarkComplete"
+              v-on:delete-task="deleteTask"
+              @section-dragend="sectionDragEnd"
+              @task-dragend="taskDragEnd"
+              sectionType="department"
+            >
+            </task-grid-section>
           </div>
         </template>
 
@@ -126,12 +126,13 @@ export default {
       alertDialog: false,
       alertMsg: "",
       localData: [],
-      newTaskButton: {
+      plusButton: {
         show: true,
         label: "New Task",
         icon: "add",
       },
       newRow: {
+        show: false,
         id: "",
         sectionId: "",
         title: "",
@@ -273,7 +274,7 @@ export default {
     },
     updateKey(value) {
       if (value) {
-        this.popupMessages.push({ text: "success", variant: "success" });
+        this.popupMessages.push({ text: value, variant: "success" });
       }
       let compid = JSON.parse(localStorage.getItem("user")).subb;
       this.$store
@@ -766,11 +767,11 @@ export default {
     }, 600),
 
     createNewTask(payload) {
-      this.$store
-        .dispatch("task/createTask", {
+      // console.log(payload)
+      this.$store.dispatch("task/createTask", {
           ...payload,
           departmentId: payload.sectionId,
-          text: `task "${payload.title}" created`,
+          text: `created task ${payload.title}`,
         })
         .then((t) => {
           this.resetNewRow();
@@ -783,6 +784,7 @@ export default {
 
     resetNewRow() {
       this.newRow = {
+        show: false,
         id: "",
         sectionId: "",
         title: "",
@@ -803,9 +805,13 @@ export default {
 </script>
 <style lang="scss" scoped>
 .task-page-wrapper {
-  display: grid;
-  grid-template-rows: auto auto calc(100vh - 180px);
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.task-table-wrapper {
+  height: calc(100% - 110px);
 }
 
 .section-options {

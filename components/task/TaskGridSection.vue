@@ -79,7 +79,7 @@ export default {
       ordered: [],
       loading: false,
       drag: false,
-      highlight: null,
+      highlight: "",
       taskDnDlist: [],
       taskDnDsectionId: null,
       sectionInput: false,
@@ -265,6 +265,10 @@ export default {
   max-width: 280px;
   border-radius: 0.35rem;
   border: 1px dashed transparent;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: var(--bib-light);
   &.active {
     background-color: white;
     border-color: var(--bib-gray4);

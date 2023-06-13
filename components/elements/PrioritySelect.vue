@@ -1,15 +1,15 @@
 <template>
-  <div class="picker-wrapper" id="priority-select-wrapper" v-click-outside="onClickOutside">
-    <button type="button" id="priority-select-button" class="user-data cursor-pointer height-2 w-100 align-center justify-between" @click.stop="triggerOpen">
-      <span id="priority-select-inner-wrap" class="align-center flex-grow-1 gap-025">
+  <div class="picker-wrapper w-100" id="priority-select-wrapper" v-click-outside="onClickOutside">
+    <div id="priority-select-button" class="user-data cursor-pointer height-2 align-center justify-between" @click.stop="triggerOpen">
+      <div id="priority-select-inner-wrap" class="align-center flex-grow-1 gap-025">
         <div id="priority-select-shape-circle" class="d-flex align-center justify-center shape-circle circle" :style="{'background-color': $hex2rgba(localValue.color, colors)}"><strong id="priority-select-localValue-color" :class="'text-'+localValue.color" >!</strong>
         </div>
-        <span class="text-capitalize text-truncate" style="max-width: 5rem;" id="priority-select-localValue-label" >
+        <span class="text-capitalize text-truncate" style="max-width: 7rem;" id="priority-select-localValue-label" >
           {{ localValue.label }}
         </span>
-      </span>
+      </div>
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
-    </button>
+    </div>
     <div v-show="show" class="picker-content" id="priority-select-content"> 
       <div class="picker-list-wrap" id="priority-select-list-wrap">
         <ul class="m-0 p-0 text-left" id="priority-select-list">

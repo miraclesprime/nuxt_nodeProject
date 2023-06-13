@@ -1086,9 +1086,9 @@ export default {
   display: flex;
   flex-direction: column;
   height: calc(100% - 57px);
-  .calc-height {
+  /*.calc-height {
     height: calc(100% - 57px);
-  }
+  }*/
 }
 
 .new-section-input {
