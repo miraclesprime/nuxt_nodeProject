@@ -10,6 +10,9 @@
         <bib-input size="sm" type="text" v-model="searchText" name="name" @input="$emit('search-user-tasks', searchText)" placeholder="Search User Tasks..." :variant="searchText.length > 50 ? 'alert': ''"></bib-input>
       </template>
       <ul class="actions" id="ta-action-right-actions">
+        <li class="action" id="ta-action3" title="Group by"  v-tooltip="'Group By'">
+          <sorting-comp label="Group by" :items="groupBy" icon="accessibility-braille-solid" v-on:change-sort="groupTasks($event)"></sorting-comp>
+        </li>
         <li class="action" id="ta-action1" v-tooltip="'View'">
           <sorting-comp :items="viewing" icon="eye-open" activeIcon="tick" v-on:change-sort="changeViewName"></sorting-comp>
         </li>
@@ -24,7 +27,7 @@
 </template>
 
 <script>
-import { VIEW_FILTER, COMPANY_TASK_SORT } from 'config/constants.js'
+import { VIEW_FILTER, COMPANY_TASK_SORT,PROJECT_GROUP } from 'config/constants.js'
 export default {
   props: {
     gridType: {
@@ -38,6 +41,7 @@ export default {
       searchText: '',
       selectInfo: null,
       sortName: '',
+      groupBy:PROJECT_GROUP,
       viewing: VIEW_FILTER,
       sorting: COMPANY_TASK_SORT
     };
@@ -51,8 +55,11 @@ export default {
     },
 
 
+    groupTasks($event) {
+      this.$emit("userTaskGroup", $event)
+    },
     sortBy($event) {
-      this.$emit("sort", $event)
+      this.$emit("userTaskSort", $event)
     },
 
     changeViewName($event){

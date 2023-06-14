@@ -5,7 +5,8 @@
       <company-tasks-actions
         :gridType="gridType"
         v-on:filterView="filterView"
-        v-on:sort="sortBy"
+        @taskSortValue="sortBy($event)"
+        @taskGroupValue="taskGroup($event)"
         v-on:new-task="toggleSidebar($event)"
         @change-grid-type="($event) => (gridType = $event)"
         @search-tasks="searchTasks"
@@ -131,6 +132,7 @@ export default {
         label: "New Task",
         icon: "add",
       },
+      group:"department",
       newRow: {
         show: false,
         id: "",
@@ -166,7 +168,7 @@ export default {
     tasks(newVal) {
       // this.localData = _.cloneDeep(newVal);
       let data = _.cloneDeep(newVal);
-      let sortedData=data.map((item,index)=>{
+         let sortedData=data.map((item,index)=>{
             let taskArr = item.tasks.sort((a, b) => {
               if (a.priorityId && b.priorityId) {
                 return a.priorityId - b.priorityId;
@@ -176,6 +178,7 @@ export default {
             return item
         })
         this.localData = _.cloneDeep(sortedData);
+     
     },
     gridType() {
       this.key++;
@@ -217,7 +220,8 @@ export default {
     let compid = JSON.parse(localStorage.getItem("user")).subb;
     this.$store
       .dispatch("company/fetchCompanyTasks", {
-        companyId: compid
+        companyId: compid,
+        key:this.group
       })
       .then((res) => {
 
@@ -280,6 +284,7 @@ export default {
       this.$store
         .dispatch("company/fetchCompanyTasks", {
           companyId: compid,
+          key:this.group
         })
         .then(() => {
           this.key += 1;
@@ -381,7 +386,7 @@ export default {
           }`,
         })
         .then((t) => {
-          this.updateKey(t.data.department.title)
+          this.updateKey("success")
         })
         .catch((e) => console.warn(e));
     },
@@ -393,7 +398,6 @@ export default {
       } else {
         user = null;
       }
-
       this.userPickerOpen = false;
 
       this.$store
@@ -404,7 +408,7 @@ export default {
           text: `changed ${label} to ${historyText}`,
         })
         .then((t) => {
-            this.updateKey()
+            this.updateKey("success")
         })
         .catch((e) => console.warn(e));
     },
@@ -489,7 +493,7 @@ export default {
         .dispatch("task/updateTaskStatus", task)
         .then((d) => {
           this.$store.dispatch("task/setSingleTask", d).then(() => {
-            this.updateKey();
+            this.updateKey("success");
           });
         })
         .catch((e) => {
@@ -600,7 +604,17 @@ export default {
         }
       }
     },
+    //group by
+    taskGroup($event) {
+      this.group=$event
+        this.$store
+          .dispatch("company/groupTasks", {
+            key:$event
+          })
+          .then((res) => {
+          });
 
+      },
     // Sort By Action List
     sortBy($event) {
       this.sortName = $event;
@@ -767,7 +781,6 @@ export default {
     }, 600),
 
     createNewTask(payload) {
-      // console.log(payload)
       this.$store.dispatch("task/createTask", {
           ...payload,
           departmentId: payload.sectionId,

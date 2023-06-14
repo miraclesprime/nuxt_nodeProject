@@ -209,7 +209,7 @@ export const actions = {
     }
 
     if (payload.statusId == 5) {
-      const res = await this.$axios.$put('/task', {
+      const res = await this.$axios.$put('/task', { 
         id: payload.id,
         projectId:  payload.project[0].projectId || payload.project[0].project.id,
         data: { statusId: 2, isDone: false },
@@ -218,7 +218,7 @@ export const actions = {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
       
-      return res.data
+    return res.data
     }
 
   },

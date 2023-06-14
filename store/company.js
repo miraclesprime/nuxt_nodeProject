@@ -47,7 +47,146 @@ export const mutations = {
   setSortOrder(state, payload){
     state.sortOrder = payload
   },
+  groupTasks(state, payload) {
+    let arr = JSON.parse(JSON.stringify(state.companyTasks));
+    if(arr[0].tasks){
+      let _arr = [];
+      arr.forEach((ele) => {
+        _arr = _arr.concat(ele.tasks);
+      });
+      arr = _arr;
+    }
+    let arrIndex;
+    let _tasks;
+    if (payload.sName == "priority") {
+      arrIndex = "priority";
+      let items = [];
 
+      arr.sort((a,b)=>{
+        if (a.priorityId === null && b.priorityId !== null) {
+          return 1;
+        }
+        if (b.priorityId === null && a.priorityId !== null) {
+          return -1;
+        }
+        if (a.priorityId === null && b.priorityId === null) {
+          return 0;
+        }
+        return b.priorityId - a.priorityId;
+      })
+
+      arr.forEach((ele) => {
+        let title = ele.priorityId !== null ? ele.priority.text : "Unassigned";
+        if (!items.includes(title)) items.push(title);
+      });
+      _tasks = items.map((item, idx) => {
+        return {
+          id: idx,
+          title: item !== null ? item : "Unassigned",
+          tasks: arr.filter(
+            (_item) =>
+              (_item[arrIndex] !== null ? _item[arrIndex].text : null) ===
+              (item === "Unassigned" ? null : item)
+          ),
+        };
+      });
+    }
+    if (payload.sName == "department") {
+      arrIndex = "department";
+      let items = [];
+      arr.sort((a,b)=>{
+        if (a.departmentId === null && b.departmentId !== null) {
+          return 1;
+        }
+        if (b.departmentId === null && a.departmentId !== null) {
+          return -1;
+        }
+        if (a.departmentId === null && b.departmentId === null) {
+          return 0;
+        }
+        return a.departmentId - b.departmentId;
+      })  
+      
+
+      arr.forEach((ele) => {
+        let title =
+          ele.departmentId !== null ? ele.department.title : "Unassigned";
+        if (!items.includes(title)) items.push(title);
+      });
+      _tasks = items.map((item, idx) => {
+        return {
+          id: idx,
+          title: item !== null ? item : "Unassigned",
+          tasks: arr.filter(
+            (_item) =>
+              (_item[arrIndex] !== null ? _item[arrIndex].title : null) ===
+              (item === "Unassigned" ? null : item)
+          ),
+        };
+      });
+    }
+    if (payload.sName == "assignee") {
+      arrIndex = "user";
+      let items = [];
+      arr.sort((a,b)=>{
+        return a.id - b.id;
+      })  
+
+      arr.forEach((ele) => {
+        let title =
+          ele.userId !== null&&ele.userId!==undefined
+            ? ele.user.firstName + " " + ele.user.lastName
+            : "Unassigned";
+        if (!items.includes(title)) items.push(title);
+      });
+      _tasks = items.map((item, idx) => {
+        return {
+          id: idx,
+          title: item !== null ? item : "Unassigned",
+          tasks: arr.filter(
+            (_item) =>
+              (
+                _item[arrIndex] !== null&&_item[arrIndex] !== undefined
+                ? _item[arrIndex].firstName + " " + _item[arrIndex].lastName
+                : null) === (item === "Unassigned" ? null : item)
+          ),
+        };
+      });
+    }
+    if (payload.sName == "status") {
+      arrIndex = "status";
+      let items = [];
+      
+        arr.sort((a,b)=>{
+        if (a.statusId === null && b.statusId !== null) {
+          return 1;
+        }
+        if (b.statusId === null && a.statusId !== null) {
+          return -1;
+        }
+        if (a.statusId === null && b.statusId === null) {
+          return 0;
+        }
+        return a.statusId - b.statusId;
+      })   
+      arr.forEach((ele) => {
+        let title = ele.statusId !== null ? ele.status.text : "Unassigned";
+        if (!items.includes(title)) items.push(title);
+      });
+      _tasks = items.map((item, idx) => {
+        return {
+          id: idx,
+          title: item !== null ? item : "Unassigned",
+          tasks: arr.filter(
+            (_item) =>
+              (_item[arrIndex] !== null ? _item[arrIndex].text : null) ===
+              (item === "Unassigned" ? null : item)
+          ),
+        };
+      });
+    }
+    state.companyTasks = _tasks;
+  },
   sortCompanyTasks(state, payload) {
     state.sortName = payload.sName
     state.sortOrder = payload.order
@@ -90,7 +229,7 @@ export const mutations = {
       if (payload.order == "asc") {
         newArr.map((dept) => {
           return dept.tasks.sort((a, b) => {
-            if (a.status && b.status) {
+            if (a.statusId && b.statusId) {
               return a.status.text.localeCompare(b.status.text);
             }
           })
@@ -98,7 +237,7 @@ export const mutations = {
       } else {
         newArr.map((dept) => {
           return dept.tasks.sort((a, b) => {
-            if (a.status && b.status) {
+            if (a.statusId && b.statusId) {
               return b.status.text.localeCompare(a.status.text);
             }
           })
@@ -130,7 +269,7 @@ export const mutations = {
       if (payload.order == "asc") {
         newArr.map((dept) => {
           return dept.tasks.sort((a, b) => {
-            if (a.priority && b.priority) {
+            if (a.priorityId && b.priorityId) {
               return a.priority.id - b.priority.id;
             }
           })
@@ -138,7 +277,7 @@ export const mutations = {
       } else {
         newArr.map((dept) => {
           return dept.tasks.sort((a, b) => {
-            if (a.priority && b.priority) {
+            if (a.priorityId && b.priorityId) {
               return b.priority.id - a.priority.id;
             }
           })
@@ -170,7 +309,7 @@ export const mutations = {
       if (payload.order == "asc") {
         newArr.map((dept) => {
           return dept.tasks.sort((a, b) => {
-            if (a.user && b.user) {
+            if (a.userId && b.userId) {
               return a.user.firstName.localeCompare(b.user.firstName);
             }
           })
@@ -178,7 +317,7 @@ export const mutations = {
       } else {
         newArr.map((dept) => {
           return dept.tasks.sort((a, b) => {
-            if (a.user && b.user) {
+            if (a.userId && b.userId) {
               return b.user.firstName.localeCompare(a.user.firstName);
             }
           })
@@ -329,19 +468,26 @@ export const actions = {
       return res
     }
   },
-  
-  async fetchCompanyTasks(ctx, payload) {
-    const res = await this.$axios.$get(`company/${payload.companyId}/tasks`, {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
-    });
+  async groupTasks(ctx,payload){
+    ctx.commit('groupTasks', payload)
 
-    if (res.data) {
-      ctx.commit('setCompanyTasks', res.data);
-      if (payload.sort) {
-        ctx.commit('sortCompanyTasks', { sName: ctx.state.sortName, order: ctx.state.sortOrder })
-      }
-      return res.data
-    }
+},
+  async fetchCompanyTasks(ctx, payload) {
+
+          const res = await this.$axios.$get(`company/${payload.companyId}/tasks`, {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
+          });
+
+          if (res.data) {
+             ctx.commit('setCompanyTasks', res.data);
+            ctx.commit('groupTasks', payload)
+            if (payload.sort) {
+              ctx.commit('sortCompanyTasks', { sName: ctx.state.sortName, order: ctx.state.sortOrder })
+            }
+            return res.data
+          }
+    
+
   },
 
   sortCompanyTasks(ctx, payload) {
