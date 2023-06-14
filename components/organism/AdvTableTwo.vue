@@ -88,7 +88,7 @@
               </div> -->
 
               <!-- <div class="section-content" > -->
-                <div v-for="item in section[tasksKey]" :key="item.id" class="tr sortable drag-item" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
+                <div v-for="item in section[tasksKey]" :key="item.id" ref="trdata" class="tr sortable drag-item" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
                   <div v-show="drag" class="td" >
                     <div class="drag-handle width-105 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                     </div>
@@ -323,22 +323,21 @@ export default {
     },
 
     resizeCol() {
-      // console.log('data length',this.localData.length)
-      if (this.localData.length) {
+      console.log('data length',this.localData.length)
+      if (this.localData) {
 
         const headElems = document.getElementsByClassName("th")
-        const row = document.querySelectorAll('.sortable')
-
-        /*for (let ref in this.$refs) {
-          console.log(this.$refs[ref][0], )
-        }*/
+        // const row = document.querySelectorAll('.sortable')
+        const rows = this.$refs.trdata
         
-        // console.log(row)
-        for (var i = 0; i < row.length; i++) {
-          // console.log(row[i].children)
-          let childtd = row[i].children
-          for (var j = 0; j < childtd.length; j++) {
-            childtd[j].style.flex = `0 0 ${headElems[j].clientWidth}px`
+        // console.log(rows)
+        if (rows) {
+          for (var i = 0; i < rows.length; i++) {
+            // console.log(rows[i])
+            let childtd = rows[i].children
+            for (var j = 0; j < childtd.length; j++) {
+              childtd[j].style.flex = `0 0 ${headElems[j].clientWidth}px`
+            }
           }
         }
         return "true"
