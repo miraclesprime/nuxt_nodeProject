@@ -49,6 +49,7 @@ export const mutations = {
   },
   groupTasks(state, payload) {
     let arr = JSON.parse(JSON.stringify(state.companyTasks));
+    console.log("$$$$$$$$$$$",arr)
     if(arr[0].tasks){
       let _arr = [];
       arr.forEach((ele) => {
@@ -185,6 +186,7 @@ export const mutations = {
         };
       });
     }
+    console.log("343434",_tasks)
     state.companyTasks = _tasks;
   },
   sortCompanyTasks(state, payload) {
@@ -473,13 +475,14 @@ export const actions = {
 
 },
   async fetchCompanyTasks(ctx, payload) {
+    console.log("payload121",payload)
 
           const res = await this.$axios.$get(`company/${payload.companyId}/tasks`, {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
           });
 
           if (res.data) {
-             ctx.commit('setCompanyTasks', res.data);
+            ctx.commit('setCompanyTasks', res.data);
             ctx.commit('groupTasks', payload)
             if (payload.sort) {
               ctx.commit('sortCompanyTasks', { sName: ctx.state.sortName, order: ctx.state.sortOrder })

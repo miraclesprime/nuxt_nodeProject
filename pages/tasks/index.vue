@@ -168,7 +168,7 @@ export default {
     tasks(newVal) {
       // this.localData = _.cloneDeep(newVal);
       let data = _.cloneDeep(newVal);
-         let sortedData=data.map((item,index)=>{
+      let sortedData=data.map((item,index)=>{
             let taskArr = item.tasks.sort((a, b) => {
               if (a.priorityId && b.priorityId) {
                 return a.priorityId - b.priorityId;
@@ -178,7 +178,6 @@ export default {
             return item
         })
         this.localData = _.cloneDeep(sortedData);
-     
     },
     gridType() {
       this.key++;
@@ -215,16 +214,16 @@ export default {
   },
 
   mounted() {
+
     this.loading = true;
     // this.updateKey()
     let compid = JSON.parse(localStorage.getItem("user")).subb;
     this.$store
       .dispatch("company/fetchCompanyTasks", {
         companyId: compid,
-        key:this.group
+        sName:this.group
       })
       .then((res) => {
-
         this.localData = JSON.parse(JSON.stringify(res));
 
         this.key += 1;
@@ -284,7 +283,7 @@ export default {
       this.$store
         .dispatch("company/fetchCompanyTasks", {
           companyId: compid,
-          key:this.group
+          sName:this.group
         })
         .then(() => {
           this.key += 1;
@@ -609,7 +608,7 @@ export default {
       this.group=$event
         this.$store
           .dispatch("company/groupTasks", {
-            key:$event
+            sName:$event
           })
           .then((res) => {
           });
