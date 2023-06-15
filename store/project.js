@@ -59,7 +59,7 @@ export const mutations = {
   setSingleProject(state, { currentProject }) {
     state.selectedProject = currentProject;
     let projectData=state.projects
-      if(projectData[0].tasks){
+      if(projectData[0]){
         let sectionID, taskID;
         state.projects.forEach((section, section_idx) => {
             section.tasks.forEach((task, task_idx) => {

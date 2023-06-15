@@ -428,17 +428,13 @@ export const mutations = {
       if (payload.order == "asc") {
         newArr.map((dept) => {
           return dept.tasks.sort((a, b) => {
-            if (a.project[0] && b.project[0]) {
-              return a.project[0].project.title.localeCompare(b.project[0].project.title);
-            }
+            return a.project[0]?.project?.title?.localeCompare(b.project[0]?.project?.title);
           })
         })
       } else {
         newArr.map((dept) => {
           return dept.tasks.sort((a, b) => {
-            if (a.project[0] && b.project[0]) {
-              return b.project[0].project.title.localeCompare(a.project[0].project.title);
-            }
+            return b.project[0]?.project?.title?.localeCompare(a.project[0]?.project?.title);
           })
         })
       }
