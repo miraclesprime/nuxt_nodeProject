@@ -308,7 +308,7 @@ export default {
             filter: "all",
           });
         } else {
-          this.form.projectId = this.project.id;
+          this.form.projectId = this.project?.id;
         }
       } else {
         this.form = {
