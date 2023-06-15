@@ -395,12 +395,12 @@ export const PROJECT_TEAM_FIELDS = [
   { label: 'Name', key: 'name' },
 ]
 export const PROJECT_GROUP = [
-  
+  { label: 'Default', key:'default' },
   { label: 'Priority', key:'priority' },
   { label: 'Status', key:'status' },
   { label: 'Assignee', key:'assignee' },
   { label: 'Department', key:'department' },
-  { label: 'Default', key:'default' },
+  
   
 ]
 export const TASK_SORT = [

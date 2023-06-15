@@ -49,7 +49,6 @@ export const mutations = {
   },
   groupTasks(state, payload) {
     let arr = JSON.parse(JSON.stringify(state.companyTasks));
-    console.log("$$$$$$$$$$$",arr)
     if(arr[0].tasks){
       let _arr = [];
       arr.forEach((ele) => {
@@ -186,7 +185,6 @@ export const mutations = {
         };
       });
     }
-    console.log("343434",_tasks)
     state.companyTasks = _tasks;
   },
   sortCompanyTasks(state, payload) {

@@ -217,7 +217,8 @@ export default {
         if (this.currentTask.project?.length) {
           this.form.projectId = this.currentTask.project[0].projectId || this.currentTask.project[0].project.id
         } else {
-          this.form.projectId = this.project.id
+          console.log("this.project",this.project)
+          this.form.projectId = this.project?.id || ""
         }
         this.reloadFiles += 1
       } else {
