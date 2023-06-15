@@ -125,13 +125,12 @@ export const TASK_FIELDS = [
       event: 'table-sort',
       isActive: false
     },
-    width: "25%",
     event: "title-click",
   },
   {
     key: "department",
     label: "Department",
-    width: "18%",
+    width: "160px",
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -141,7 +140,7 @@ export const TASK_FIELDS = [
   {
     key: "status",
     label: "Status",
-    width: "9%",
+    width: "160px",
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -151,7 +150,7 @@ export const TASK_FIELDS = [
   {
     key: "priority",
     label: "Priority",
-    width: "9%",
+    width: "160px",
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -161,7 +160,7 @@ export const TASK_FIELDS = [
   {
     key: "userId",
     label: "Assignee",
-    width: "20%",
+    width: "160px",
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -171,7 +170,7 @@ export const TASK_FIELDS = [
   {
     key: "startDate",
     label: "Start Date",
-    width: "9%",
+    width: "160px",
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -181,7 +180,7 @@ export const TASK_FIELDS = [
   {
     key: "dueDate",
     label: "Due Date",
-    width: "9%",
+    width: "160px",
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',

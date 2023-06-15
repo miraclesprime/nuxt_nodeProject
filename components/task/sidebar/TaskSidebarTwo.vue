@@ -1,10 +1,10 @@
 <template>
   <article id="side-panel-wrapper" class="side-panel" v-click-outside="closeSidebar">
     <div class="side-panel__header" id="tsb-header">
-      <div class="d-flex justify-between side-panel__header__actions " id="ts-side-panel">
+      <div class="d-flex justify-between pt-105 px-105 pb-05" id="ts-side-panel">
         <div class="d-flex align-center gap-05" id="tsb-mark-button-wrapper">
-          <div class="width-2 height-2 d-inline-flex align-center justify-center cursor-pointer" @click="markComplete">
-            <bib-icon icon="check-circle-solid" :variant="isComplete.variant" :scale="1.5"></bib-icon>
+          <div class="bg-light shape-rounded px-1 height-2 d-inline-flex gap-05 align-center justify-center cursor-pointer" @click="markComplete">
+            <bib-icon icon="check-circle-solid" :variant="isComplete.variant" :scale="1"></bib-icon> <span class="font-md text-secondary">{{isComplete.text}}</span>
           </div>
         </div>
         <div class="d-flex gap-05 align-center" id="tsb-icons-wrapper">
@@ -65,24 +65,33 @@
           </div>
         </div>
       </div>
-      <div class="border-top-gray3 border-bottom-gray3 position-relative px-105 py-025 mb-1" id="tsb-row">
-        <div class="d-flex align-center gap-05" id="tsb-col-1">
-          <div class="flex-grow-1">
-            <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="taskTitleInput" v-model.trim="form.title" placeholder="Write a Task Name" v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" >
+      <div class=" border-bottom-gray3 position-relative px-105 pt-05 pb-105 mb-1" id="tsb-row">
+        <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="taskTitleInput" v-model.trim="form.title" placeholder="Write a Task Name" v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" >
+      </div>
+      
+    </div>
+
+    <div class="overflow-y-auto d-grid" id="tsb-of-scroll-y" style="grid-template-columns: none; align-items: start">
+      <div class="border-bottom-gray3 px-105 py-05">
+        <div class="align-center gap-05" >
+          <span style="white-space: nowrap;">Assigned to</span> 
+          <div style="flex-basis: 8rem;">
+            <user-select :userId="currentTask.userId"></user-select> <!-- <bib-avatar></bib-avatar> -->
           </div>
-          <div>
+          <!-- <div class="d-inline-flex align-center">
+          </div> -->
+        
+          <div class="align-center height-2 cursor-pointer" @click="showAddTeamModal"> 
+            <div class="width-2 height-2 bg-success-sub6 align-center justify-center shape-circle">
+              <bib-icon icon="add" variant="success"></bib-icon>
+            </div>
             <team-avatar-list :team="team"></team-avatar-list>
-          </div>
-          <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light cursor-pointer" v-tooltip="'Team'" @click="showAddTeamModal">
-            <bib-icon icon="user-group-solid"></bib-icon>
+            <!-- <bib-icon icon="user-group-solid"></bib-icon> -->
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="of-scroll-y d-grid" id="tsb-of-scroll-y" style="grid-template-columns: none; align-items: start">
-      <!-- updated by @wen 5.25 -->
-      <sidebar-fields :task="currentTask" :loading="loading" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform" ></sidebar-fields>
+      <!-- <sidebar-fields :task="currentTask" :loading="loading" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform" ></sidebar-fields> -->
       <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" ></sidebar-subtask>
       <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
       <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
@@ -95,13 +104,13 @@
     </div>
 
     <!-- <confirm-dialog v-if="confirmModal" :message="confirmMsg" @close="confirmDelete"></confirm-dialog> -->
-    <bib-modal-wrapper v-if="taskTeamModal" title="Team" size="lg" @close="taskTeamModal = false">
+    <!-- <bib-modal-wrapper v-if="taskTeamModal" title="Team" size="lg" @close="taskTeamModal = false">
       <template slot="content">
         <div style="min-height: 12rem;">
           <task-team :task="currentTask"></task-team>
         </div>
       </template>
-    </bib-modal-wrapper>
+    </bib-modal-wrapper> -->
     
     <subtask-detail v-if="showSubtaskDetail" @close-sidebar-detail="showSubtaskDetail = false"></subtask-detail>
 
@@ -138,7 +147,7 @@ export default {
       reloadComments: 1,
       reloadHistory: 1,
       reloadFiles: 1,
-      taskTeamModal: false,
+      // taskTeamModal: false,
       showSubtaskDetail: false,
       taskToDelete: {},
       // confirmModal: false,
@@ -271,7 +280,8 @@ export default {
 
   methods: {
     showAddTeamModal() {
-      this.taskTeamModal = true
+      // this.taskTeamModal = true
+      console.info("clicked to open team modal")
     },
     closeSidebar(event) {
       let main = document.getElementById("main-content").className
@@ -619,7 +629,10 @@ export default {
 .side-panel {
   display: grid;
   grid-template-rows: 1fr minmax(70%, auto) 1fr;
+  color: var(--bib-secondary);
 }
+
+.editable-input { border-color: var(--bib-light)}
 
 .row {
   padding: 0 1rem;
