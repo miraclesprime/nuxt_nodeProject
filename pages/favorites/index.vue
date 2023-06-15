@@ -144,19 +144,6 @@ export default {
       this.fetchProjects()
     })
 
-    // this.taskContextMenuItems.map(el => {
-    //   if (el.event == 'fav-task') {
-    //     el.label = 'Remove favorite'
-    //     el.iconVariant = 'orange'
-    //   }
-    // })
-    // this.projectContextItems.map(el => {
-    //   console.log("el",el)
-    //   if (el.event == 'fav-project') {
-    //     el.label = 'Remove favorite'
-    //     el.iconVariant = 'orange'
-    //   }
-    // })
     const fetchTask = this.$store.dispatch('task/getFavTasks')
     const fetchSubtask = this.$store.dispatch("subtask/fetchFavorites")
     Promise.all([fetchTask, fetchSubtask]).then((values) => {
@@ -166,11 +153,28 @@ export default {
         })
       values[1].data.forEach(d => {
         if(d.subtasks){
-          console.log(d.subtasks.task)
-          this.taskSubtaskLocalData.push({...d.subtasks, project: d.subtasks.task.project})
-          this.sortedTask.push({...d.subtasks, project: d.subtasks.task.project})
+          this.taskSubtaskLocalData.push({...d.subtasks, project: d.subtasks.task?.project || {}})
+          this.sortedTask.push({...d.subtasks, project: d.subtasks.task?.project || {}})
         }
       })
+
+      let newArr = []
+
+      for(let i=0; i < this.taskSubtaskLocalData.length; i++) {
+        if(this.taskSubtaskLocalData[i].priorityId) {
+          newArr.unshift(this.taskSubtaskLocalData[i])
+        } else {
+          newArr.push(this.taskSubtaskLocalData[i])
+        }
+      }
+
+      newArr.sort((a,b) => {
+        if(a.priorityId && b.priorityId) {
+          return a.priorityId - b.priorityId
+        }
+      })
+
+      this.taskSubtaskLocalData = newArr;
     })
   },
 
@@ -189,9 +193,27 @@ export default {
     async fetchProjects() {
       let favProj = await JSON.parse(JSON.stringify(this.favProjects))
       let prArr = []
+      let newArr = []
+
       favProj.forEach(p => { prArr.push(p.projects) })
-      this.projLocalData = prArr
-      this.sortedProject = prArr
+
+      for(let i=0; i < prArr.length; i++) {
+          if(prArr[i].priorityId) {
+            newArr.unshift(prArr[i])
+          } else {
+            newArr.push(prArr[i])
+          }
+        }
+
+      newArr.sort((a,b) => {
+        if(a.priorityId && b.priorityId) {
+          return a.priorityId - b.priorityId
+        }
+      })
+
+        
+      this.projLocalData = newArr
+      this.sortedProject = newArr
       if (this.projOrder == 'asc') {
         this.projOrder = 'desc'
       } else {

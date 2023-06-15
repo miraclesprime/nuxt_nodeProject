@@ -157,9 +157,7 @@ export default {
       this.editMessage = msg
     })
   },
-  mounted() {
 
-  },
   methods: {
     markComplete() {
       this.loading = true
