@@ -14,18 +14,16 @@
       ></user-name-task-actions>
     
           <div v-show="gridType == 'list'" id="task-table-wrapper" class="listview h-100 position-relative" :style="{ 'width': contentWidth }">  
-              <div v-if="groupVisible">
+              <div v-if="groupVisible" class="h-100">
                   <loading :loading="loading"></loading>
 
                   <adv-table-two :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" :isProject="true" @create-row="createTask"></adv-table-two>
               
               </div>
-              <div v-else>
+              <div v-else class="h-100">
                 <loading :loading="loading"></loading>                
-                <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" ></advance-table>
-                <!-- <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="contextMenuItems" @context-item-event="contextItemClick" @row-click ="openSidebar" @context-open="contextOpen" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" sectionTitle="" :newTaskButton="{label: 'New Project', icon: 'add'}"></advance-table> -->
+                <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" sectionTitle="Section"></advance-table>
               </div> 
-              
           </div>
         
           <div v-show="gridType == 'grid'" id="task-grid-wrapper" class="d-flex gridview h-100" >
@@ -222,9 +220,10 @@ export default {
   methods: {
     UserTaskGroup($event) {
       if ($event ==="default" ) {
-        this.fetchUserTasks()
         this.groupVisible = false;
         this.groupBy = '';
+        this.$store.commit('user/flatTasks');
+        this.localData=this.userTasks
         return;
       }
       this.groupBy = $event;

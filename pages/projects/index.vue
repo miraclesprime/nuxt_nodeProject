@@ -4,7 +4,7 @@
     <project-actions  @sortValue='sortProject($event)' @groupValue="ProjectGroup($event)" @viewValue='viewName=$event' v-on:loading="loading = $event" v-on:sort="sortProject" @search-projects="searchProjects" />
    
     <div id="projects-list-wrapper" class="projects-list-wrapper position-relative" >
-      <!-- <loading :loading="loading"></loading> -->
+      <loading :loading="loading"></loading>
       <!-- popup notification -->
       <bib-popup-notification-wrapper>
           <template #wrapper>
@@ -24,17 +24,16 @@
           @close="confirmDelete"
         ></confirm-dialog> -->
       <template v-if="projects.length">
-        <div v-if="groupVisible" class="h-100">
-          
-          <loading :loading="loading"></loading>
+        <div v-if="groupVisible">
+        <loading :loading="loading"></loading>
 
-          <adv-table-two :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @title-click="projectRoute" @update-field="updateProject" :isProject="true" @create-row="createProject"></adv-table-two>
+        <adv-table-two :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @title-click="projectRoute" @update-field="updateProject" :isProject="true" @create-row="createProject"></adv-table-two>
         </div>
-        <div v-else class="h-100">
-          <loading :loading="loading"></loading>
+       <div v-else>
+        <loading :loading="loading"></loading>
 
-          <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @context-open="contextOpen" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :newTaskButton="{label: 'New Project', icon: 'add'}"></advance-table>
-        </div> 
+        <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @context-open="contextOpen" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :newTaskButton="{label: 'New Project', icon: 'add'}"></advance-table>
+      </div> 
 
       </template>
       <template v-else>
@@ -596,7 +595,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .projects-wrapper { display: flex; flex-direction: column; height: 100%; }
-.projects-list-wrapper { height: calc(100% - 110px); }
+.projects-list-wrapper { overflow: auto; }
 details {
   summary::-webkit-details-marker {
     display: none;

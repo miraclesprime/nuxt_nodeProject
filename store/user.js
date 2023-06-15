@@ -38,6 +38,17 @@ export const getters = {
 };
 
 export const mutations = {
+  flatTasks(state, payload) {
+    let arr = JSON.parse(JSON.stringify(state.userTasks));
+    if(arr[0].tasks){
+      let _arr = [];
+    arr.forEach((ele) => {
+      _arr = _arr.concat(ele.tasks);
+    })
+    arr = _arr;
+    }
+    state.userTasks = arr;
+  },
   getUserTasks(state,payload){
     let arr = JSON.parse(JSON.stringify(state.userTasks));
     if(arr[0].tasks){
