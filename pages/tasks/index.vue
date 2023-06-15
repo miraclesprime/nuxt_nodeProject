@@ -379,7 +379,7 @@ export default {
           id: payload.item.id,
           projectId,
           data: { [payload.field]: payload.value },
-          user,
+          user: [user],
           text: `${
             payload.historyText || payload.value
           }`,
@@ -403,7 +403,7 @@ export default {
         .dispatch("task/updateTask", {
           id: this.activeTask.id,
           data: { [field]: value },
-          user,
+          user: [user],
           text: `changed ${label} to ${historyText}`,
         })
         .then((t) => {

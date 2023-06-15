@@ -217,7 +217,7 @@ export default {
     },
     getFiles() {
       this.loading = true
-      let obj1 = { projectId: this.project.id || this.proj.id }
+      let obj1 = { projectId: this.project?.id || this.proj?.id }
       this.$axios.get("file/db/all", {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,

@@ -1244,6 +1244,10 @@ export const actions = {
 
   setProject(ctx, payload) {
     ctx.commit("setProject", payload);
+  },
+
+  setProjects(ctx, payload) {
+    ctx.commit('fetchProjects', payload)
   }
 
 }

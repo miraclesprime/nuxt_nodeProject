@@ -105,9 +105,6 @@ export default {
       popupMessages: [],
       groupVisible: false,
       groupBy: '',
-      // confirmModal: false,
-      // confirmMsg: "",
-      // taskToDelete: {}
     }
   },
 
@@ -120,9 +117,25 @@ export default {
       }
     }
     this.$store.dispatch('project/fetchProjects').then((res) => { 
-      this.templateKey += 1;
-      // this.newkey = parseInt( Math.random().toString().slice(-3) )
-      this.loading = false 
+      
+      let newArr = [];
+
+        for(let i=0; i<res.length; i++) {
+          if(res[i].priorityId) {
+            newArr.unshift(res[i])
+          } else {
+            newArr.push(res[i])
+          }
+        }
+
+        newArr.sort((a,b) => {
+          if(a.priorityId && b.priorityId) {
+            return a.priorityId - b.priorityId
+          }
+        })
+        this.localData = newArr;
+        this.$store.dispatch('project/setProjects', newArr);
+        this.loading = false;
     })
 
   },
@@ -133,13 +146,6 @@ export default {
         teamMembers: "user/getTeamMembers",
         user: "user/getUser2"
     })
-  },
-
-  watch: {
-    projects(newVal) {
-        this.localData = _.cloneDeep(newVal)
-
-    },
   },
 
   methods: {
@@ -175,9 +181,6 @@ export default {
    
       this.$store.dispatch("task/setSingleTask", item)
     },
-    // sortName($event){
-    //   console.log("sdfds",$event)
-    // },
     ProjectGroup($event) {
       if ($event ==="default" ) {
         this.groupVisible = false;
@@ -560,7 +563,7 @@ export default {
 
     updateKey() {
       // this.loading=true
-        this.$store.dispatch("project/fetchProjects",).then(() => {
+        this.$store.dispatch("project/fetchProjects").then(() => {
           this.templateKey += 1;
         })
       
