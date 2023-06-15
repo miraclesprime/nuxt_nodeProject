@@ -147,7 +147,11 @@ export default {
         user: "user/getUser2"
     })
   },
-
+  watch: {
+    projects(newVal) {
+        this.localData = _.cloneDeep(newVal)
+    },
+  },
   methods: {
     
     checkActive() {

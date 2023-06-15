@@ -59,7 +59,7 @@ export const mutations = {
   setSingleProject(state, { currentProject }) {
     state.selectedProject = currentProject;
     let projectData=state.projects
-      if(projectData[0]?.tasks){
+      if(projectData[0]?.tasks&&currentProject){
         let sectionID, taskID;
         state.projects.forEach((section, section_idx) => {
             section.tasks.forEach((task, task_idx) => {
@@ -264,6 +264,8 @@ export const mutations = {
         };
       });
     }
+    console.log("323",_projects)
+
     state.projects = _projects;
   },
   sortProjects(state, payload) {
