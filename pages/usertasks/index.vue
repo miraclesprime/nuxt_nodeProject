@@ -17,7 +17,7 @@
               <div v-if="groupVisible" class="h-100">
                   <loading :loading="loading"></loading>
 
-                  <adv-table-two :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" :isProject="true" @create-row="createTask"></adv-table-two>
+                  <adv-table-two :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" :isProject="true" @create-row="createTask"></adv-table-two>
               
               </div>
               <div v-else class="h-100">
@@ -905,18 +905,35 @@ export default {
 
     searchUserTasks(text) {
       let formattedText = text.toLowerCase().trim();
+      let newArr
+      console.log("formattedText",formattedText)
+      console.log("dfdfformattedText",this.userTasks)
+      if(this.userTasks[0]?.tasks){
+              newArr = this.userTasks.map((item) => {
+            const filteredTasks = item.tasks.filter((ele) => {
+              if (ele.title.includes(formattedText) || ele.title.toLowerCase().includes(formattedText)) {
+                console.log("Found matching task:", ele);
+                return ele;
+              } 
+            })
+            return { ...item, tasks: filteredTasks };
+          })
+      }
+      else {
+          newArr = this.userTasks.filter((t) => {
+                if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
+                    return t;
+                }
+              });
+      }
 
-      let newArr = this.tasks.filter((t) => {
-        if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
-            return t;
-        }
-      });
+ 
 
       if (newArr.length >= 0) {
         this.localData = newArr;
         this.key++;
       } else {
-        this.localData = this.tasks;
+        this.localData = this.userTasks;
         this.key++;
       }
     },
