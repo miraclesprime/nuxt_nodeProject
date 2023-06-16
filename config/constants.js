@@ -715,6 +715,7 @@ export const DEMO_TASK = [
   {
     label: "Project",
     key: "project",
+    width: '200px',
     header_icon: {
       icon: "swap-vertical",
       event: "table-sort",

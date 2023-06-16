@@ -23,7 +23,7 @@
           <!-- <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='tsb-icon-5' v-scroll-to="'#task_files'">
             <bib-icon icon="folder-solid" variant="gray5" ></bib-icon>
           </div> -->
-          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="tsb-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
+          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="tsb-icon-6" @click="setFavorite">
             <bib-spinner v-if="favProcess" :scale="2" ></bib-spinner>
             <bib-icon v-else icon="bookmark-solid" :variant="isFavorite.variant" ></bib-icon>
           </div>
@@ -66,7 +66,7 @@
         </div>
       </div>
       <div class=" border-bottom-gray3 position-relative px-105 pt-05 pb-105 mb-1" id="tsb-row">
-        <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="taskTitleInput" v-model.trim="form.title" placeholder="Write a Task Name" v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" >
+        <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="taskTitleInput" v-model.trim="form.title" placeholder="Enter Task Name ..." v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" >
       </div>
       
     </div>
@@ -91,7 +91,7 @@
         </div>
       </div>
 
-      <!-- <sidebar-fields :task="currentTask" :loading="loading" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform" ></sidebar-fields> -->
+      <sidebar-fields-two :task="currentTask" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform" ></sidebar-fields-two>
       <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" ></sidebar-subtask>
       <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
       <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>

@@ -34,8 +34,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import dayjs from 'dayjs'
 import _ from 'lodash'
 export default {
 

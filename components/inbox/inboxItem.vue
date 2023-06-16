@@ -47,19 +47,18 @@
       @ {{$toTime(item.updatedAt)}} </div>
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
+
 export default {
-
   name: 'InboxItem',
-
   props: {
     item: Object,
     active: Number,
     
   },
-
   data() {
     return {
       fields: [{

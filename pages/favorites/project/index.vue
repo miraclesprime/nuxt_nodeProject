@@ -26,10 +26,10 @@
         </div>
       </nav>
 
-      <task-actions :gridType="gridType" @change-grid-type="changeGridType" @add-section="showNewSection"></task-actions>
+      <task-actions :gridType="gridType" @change-grid-type="changeGridType" @create-task="openSidebar" @add-section="toggleNewsection"></task-actions>
 
       <!-- Task View -->
-      <div id="project-id-tab-content" class="project-id-tab-content bg-light position-relative h-100 of-scroll-y" :style="{ 'width': contentWidth }">
+      <div id="project-id-content" class="project-id-content bg-light position-relative " :style="{ 'width': contentWidth }">
         <template v-if="gridType == 'list'">
           
           <adv-table-three
@@ -43,7 +43,8 @@
           :newRow="newRow"
           @create-row="createRow"
           :showNewsection="newSection"
-          @toggle-newsection="newSection = $event"
+          @toggle-newsection="toggleNewsection"
+          @create-section="() => alert($event)"
           @edit-section="editSection"
         ></adv-table-three>
         </template>
@@ -222,11 +223,10 @@ export default {
     changeGridType(type){
       this.gridType = type
     },
-    showNewSection() {
-      this.newSection = true
-      process.nextTick(() => {
-        this.$refs.newsectioninput.focus()
-      });
+    toggleNewsection(flag) {
+      // console.log(flag)
+      this.newSection = flag ? false : true
+
     },
     openSidebar(task) {
       // console.log(task)
@@ -384,7 +384,7 @@ export default {
 #project-id-nav {
   border-bottom: 1px solid var(--bib-light);
 }
-
+.project-id-content { height: calc(100% - 110px); }
 .shape-circle {
   .menu {
     margin-left: auto;

@@ -16,7 +16,7 @@
           <div v-show="gridType === 'list'" class="h-100">
             <template v-if="tasks.length">
 
-              <adv-table-two :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask"></adv-table-two>
+              <adv-table-two :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable"></adv-table-two>
 
             </template>
           <div v-else>
@@ -149,6 +149,7 @@ export default {
         text: "",
       },
       contentWidth: "100%",
+      dragTable: true
     };
   },
   computed: {
@@ -168,16 +169,30 @@ export default {
     tasks(newVal) {
       // this.localData = _.cloneDeep(newVal);
       let data = _.cloneDeep(newVal);
-      let sortedData=data.map((item,index)=>{
-            let taskArr = item.tasks.sort((a, b) => {
-              if (a.priorityId && b.priorityId) {
-                return a.priorityId - b.priorityId;
-              }
-            });
-            item.tasks=taskArr
-            return item
+      let newArr = [];
+
+      for (let i = 0; i < data.length; i++) {
+        newArr.push(data[i]);
+        let tNewArr = []
+        for(let j=0; j<data[i].tasks.length; j++) {
+          if (data[i].tasks[j].priorityId) {
+            tNewArr.unshift(data[i].tasks[j])
+          } else {
+            tNewArr.push(data[i].tasks[j])
+          }
+        }
+        newArr[i]["tasks"] = tNewArr;
+      }
+
+      newArr.forEach(dept => {
+        dept["tasks"] = dept.tasks.sort((a, b) => {
+          if (a.priorityId && b.priorityId) {
+            return a.priorityId - b.priorityId
+          }
         })
-        this.localData = _.cloneDeep(sortedData);
+      })
+
+      this.localData = newArr;
     },
     gridType() {
       this.key++;
@@ -224,9 +239,7 @@ export default {
         sName:this.group
       })
       .then((res) => {
-        this.localData = JSON.parse(JSON.stringify(res));
-
-        this.key += 1;
+        this.taskGroup('department');
         this.loading = false;
       });
   },
@@ -379,7 +392,7 @@ export default {
           id: payload.item.id,
           projectId,
           data: { [payload.field]: payload.value },
-          user: [user],
+          user: user ? [user] : null,
           text: `${
             payload.historyText || payload.value
           }`,
@@ -403,7 +416,7 @@ export default {
         .dispatch("task/updateTask", {
           id: this.activeTask.id,
           data: { [field]: value },
-          user: [user],
+          user: user ? [user] : null,
           text: `changed ${label} to ${historyText}`,
         })
         .then((t) => {
@@ -606,6 +619,11 @@ export default {
     //group by
     taskGroup($event) {
       this.group=$event
+      if($event != 'department') {
+        this.dragTable = false;
+      } else {
+        this.dragTable = true;
+      }
         this.$store
           .dispatch("company/groupTasks", {
             sName:$event
