@@ -11,7 +11,7 @@
     ></task-actions>
     <div v-show="gridType === 'list'" class="calc-height " :style="{ 'width': contentWidth }">
 
-      <adv-table-two :tableFields="tableFields" :tableData="localdata" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd"></adv-table-two>
+      <adv-table-two :tableFields="tableFields" :tableData="localdata" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd"></adv-table-two>
 
     </div>
 
@@ -665,11 +665,11 @@ export default {
     },
 
     createNewTask(payload) {
-      this.$store
-        .dispatch("task/createTask", {
+      console.log(payload)
+      this.$store.dispatch("task/createTask", {
           ...payload,
           projectId: this.$route.params.id,
-          text: `task "${payload.title}" created`,
+          text: `created task ${payload.title}`,
         })
         .then((t) => {
           this.resetNewRow();
@@ -682,6 +682,7 @@ export default {
 
     resetNewRow() {
       this.newRow = {
+        show: false,
         id: "",
         sectionId: "",
         title: "",
@@ -1086,9 +1087,9 @@ export default {
   display: flex;
   flex-direction: column;
   height: calc(100% - 57px);
-  /*.calc-height {
+  .calc-height {
     height: calc(100% - 57px);
-  }*/
+  }
 }
 
 .new-section-input {

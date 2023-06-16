@@ -1,23 +1,14 @@
 <template>
   <client-only>
     <div class="task-info position-relative px-105" id="sbf-task-input-wrap">
-      <div class="row mx-0" id="sidebar-row-1">
-        <div class="col-4" id="sidebar-col-1">
-          <bib-select
-            :key="randomKey"
-            label="Assignee"
-            test_id="task_assignee_select"
-            :options="orgUsers"
-            v-model="form.userId"
-            v-on:change="debounceUpdateField('Assignee', 'userId', form.userId)"
-          ></bib-select>
-        </div>
-        <div class="col-4" id="sidebar-col-2">
+      <div class="row " >
+        <div class="col-2"><label>Start Date</label></div>
+        <div class="col-6" >
           <bib-datepicker
             v-model="startDateInput"
             :value="startDateInput"
             format="dd MMM yyyy"
-            label="Start date"
+            label=""
             placeholder="Start date"
             ref="startDate"
             @input="
@@ -25,33 +16,40 @@
             "
           ></bib-datepicker>
         </div>
-        <div class="col-4" id="sidebar-col-3">
+      </div>
+      <div class="row " >
+        <div class="col-2"><label>Due Date</label></div>
+        <div class="col-6" >
           <bib-datepicker
             class="align-right"
             v-model="dueDateInput"
             :value="dueDateInput"
             format="dd MMM yyyy"
-            label="Due date"
+            label=""
             placeholder="Due date"
             ref="dueDate"
             @input="debounceUpdateField('Due date', 'dueDate', dueDateInput)"
           ></bib-datepicker>
         </div>
       </div>
-      <div class="row mx-0" id="sidebar-row-2">
-        <div class="col-4" id="sidebar-col-4">
+      <div class="row " >
+        <div class="col-2"><label>Project</label></div>
+        <div class="col-6" >
           <bib-input
             type="select"
-            label="Project"
+            label=""
             :options="companyProjects"
             v-model.number="form.projectId"
             v-on:change.native="changeProject"
           ></bib-input>
         </div>
-        <div class="col-4" id="sidebar-col-5">
+      </div>
+      <div class="row " >
+        <div class="col-2"><label>Section</label></div>
+        <div class="col-6" >
           <bib-input
             type="select"
-            label="Section"
+            label=""
             :options="sectionOpts"
             v-model.number="form.sectionId"
             placeholder="Please select ..."
@@ -61,10 +59,13 @@
             :disabled="!form.projectId"
           ></bib-input>
         </div>
-        <div class="col-4" id="sidebar-col-6">
+      </div>
+      <div class="row " >
+        <div class="col-2"><label>Department</label></div>
+        <div class="col-6" >
           <bib-input
             type="select"
-            label="Department"
+            label=""
             :options="departments"
             v-model.number="form.departmentId"
             v-on:change.native="
@@ -77,11 +78,12 @@
           ></bib-input>
         </div>
       </div>
-      <div class="row mx-0" id="sidebar-row-3">
-        <div class="col-4" id="sidebar-col-7">
+      <div class="row " >
+        <div class="col-2"><label>Priority</label></div>
+        <div class="col-6" >
           <bib-input
             type="select"
-            label="Priority"
+            label=""
             v-model.number="form.priorityId"
             :options="priorityValues"
             placeholder="Please select..."
@@ -90,10 +92,13 @@
             "
           ></bib-input>
         </div>
-        <div class="col-4" id="sidebar-col-8">
+      </div>
+      <div class="row " >
+        <div class="col-2"><label>Status</label></div>
+        <div class="col-6" >
           <bib-input
             type="select"
-            label="Status"
+            label=""
             v-model.number="form.statusId"
             :options="statusValues"
             placeholder="Please select..."
@@ -103,8 +108,8 @@
           ></bib-input>
         </div>
       </div>
-      <div class="row mx-0" id="sidebar-row-4">
-        <div class="col-12" id="sidebar-col-9">
+      <div class="row " >
+        <div class="col-12" >
           <bib-input
             type="textarea"
             v-model.trim="form.description"
@@ -141,15 +146,12 @@ import { mapGetters } from "vuex";
 import _ from "lodash";
 // import fecha, { format } from "fecha";
 export default {
-  name: "SidebarFields",
+  name: "SidebarFieldsTwo",
   props: {
     task: {
       type: Object,
     },
-    loading: {
-      type: Boolean,
-      default: false,
-    },
+    
     departmentId: {
       type: Number,
     },
@@ -189,10 +191,7 @@ export default {
       return completeData;
     },
     companyProjects() {
-      if(!this.projects) {
-        return []
-      }
-      let data = this.projects?.map((p) => {
+      let data = this.projects.map((p) => {
         return { label: p.title, value: p.id };
       });
       return [{ label: "Please select...", value: null }, ...data];
@@ -311,7 +310,7 @@ export default {
             filter: "all",
           });
         } else {
-          this.form.projectId = this.project?.id;
+          this.form.projectId = this.project.id;
         }
       } else {
         this.form = {

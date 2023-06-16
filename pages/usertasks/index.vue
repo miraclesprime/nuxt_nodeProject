@@ -6,15 +6,24 @@
       ></page-title>
       <user-name-task-actions
         :gridType="gridType"
+        @userTaskGroup="UserTaskGroup($event)"
         v-on:filterView="filterView"
-        v-on:sort="sortBy"
+        v-on:userTaskSort="sortBy"
         v-on:new-task="toggleSidebar($event)"
         @search-user-tasks="searchUserTasks"
       ></user-name-task-actions>
     
           <div v-show="gridType == 'list'" id="task-table-wrapper" class="listview h-100 position-relative" :style="{ 'width': contentWidth }">  
-              <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" ></advance-table>
+              <div v-if="groupVisible" class="h-100">
+                  <loading :loading="loading"></loading>
+
+                  <adv-table-two :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" :isProject="true" @create-row="createTask" :drag="false"></adv-table-two>
               
+              </div>
+              <div v-else class="h-100">
+                <loading :loading="loading"></loading>                
+                <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" sectionTitle="Section" :drag="false"></advance-table>
+              </div> 
           </div>
         
           <div v-show="gridType == 'grid'" id="task-grid-wrapper" class="d-flex gridview h-100" >
@@ -46,7 +55,6 @@
           :message="alertMsg"
           @close="alertDialog = false"
         ></alert-dialog>
-        <loading :loading="loading"></loading>
         <bib-popup-notification-wrapper>
           <template #wrapper>
             <bib-popup-notification
@@ -111,6 +119,8 @@ export default {
       alertMsg: "",
       localData: [],
       contentWidth: "100%",
+      groupVisible: false,
+      groupBy:'',
       // confirmModal: false,
       // confirmMsg: "",
       taskToDelete: {},
@@ -118,6 +128,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      userTasks:'user/getUserTasks',
       user: "user/getUser",
       teamMembers: "user/getTeamMembers",
       sidebar: "task/getSidebarVisible",
@@ -207,38 +218,64 @@ export default {
   },
 
   methods: {
-    async fetchUserTasks() {
+    UserTaskGroup($event) {
+      if ($event ==="default" ) {
+        this.groupVisible = false;
+        this.groupBy = '';
+        this.$store.commit('user/flatTasks');
+        this.localData=this.userTasks
+        return;
+      }
+      this.groupBy = $event;
+      this.groupVisible = true
+      this.fetchUserTasks()
+     
+    },
+    async fetchUserTasks($event) {
       if (process.client) {
         this.loading = true;
-        const res = await this.$axios.get("user/user-tasks", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            Filter: "all",
-            userid: this.userfortask ? this.userfortask.id : "",
-          },
-        });
-        if (res.data.statusCode == 200) {
-          let userTasks = res.data.data;
-          let organizedArr = [];
-
-          for (let el of userTasks) {
-            if (el.priorityId) {
-              organizedArr.unshift(el);
-            } else {
-              organizedArr.push(el);
-            }
-          }
-
-          let taskArr = organizedArr.sort((a, b) => {
-            if (a.priorityId && b.priorityId) {
-              return a.priorityId - b.priorityId;
-            }
-          });
-          this.localData = taskArr;
-        } else {
-          console.error(e);
+        let filterData="all"
+        if($event){
+          filterData=$event
         }
-        this.loading = false;
+
+        this.$store.dispatch("user/getUserTasks", {
+          userId:this.userfortask ? this.userfortask.id : "",
+          filter: filterData,
+          key:this.groupBy
+      })
+        .then(res=> {
+          if (res.data.statusCode == 200) {
+            if(this.groupBy!==''){
+                this.$store.commit('user/getUserTasks',{data:res.data.data,key:this.groupBy})
+                this.localData=this.userTasks
+            }
+            else {
+                 let eachUserTasks = res.data.data;
+                let organizedArr = [];
+                for (let el of eachUserTasks) {
+                  if (el.priorityId) {
+                    organizedArr.unshift(el);
+                  } else {
+                    organizedArr.push(el);
+                  }
+                }
+
+                let taskArr = organizedArr.sort((a, b) => {
+                  if (a.priorityId && b.priorityId) {
+                    return a.priorityId - b.priorityId;
+                  }
+                });
+                this.localData = taskArr;
+            }
+             
+              } else {
+                console.error(e);
+              }
+              this.loading = false;
+       
+        })
+   
       }
     },
     contextOpen(item){
@@ -452,35 +489,6 @@ export default {
      
     },
 
-  //  confirmDelete(state) {
-  //     // this.confirmModal = false;
-  //     this.confirmMsg = "";
-  //     if (state) {
-  //       this.loading = true;
-  //       console.log(this.taskToDelete);
-  //       this.$store
-  //         .dispatch("task/deleteTask", this.taskToDelete)
-  //         .then((t) => {
-  //           if (t.statusCode == 200) {
-  //             this.updateKey(t.message);
-  //           } else {
-  //             // this.popupMessages.push({ text: t.message, variant: "orange" });
-  //             console.warn(t.message);
-  //           }
-  //           this.loading = false;
-  //         })
-  //         .catch((e) => {
-  //           console.warn(e);
-  //           this.loading = false;
-  //         });
-  //     } else {
-  //       this.popupMessages.push({
-  //         text: "Action cancelled",
-  //         variant: "orange",
-  //       });
-  //       this.taskToDelete = {};
-  //     }
-  //   },
     deleteTask(task) {
       if (task) {
         this.loading = true;
@@ -511,25 +519,30 @@ export default {
       // this.confirmMsg = "Are you sure ";
       // this.confirmModal = true;
     },
-
     async filterView($event) {
-      this.loading = true;
-      let compid = JSON.parse(localStorage.getItem("user")).subb;
-      const res = await this.$axios.get("user/user-tasks", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          Filter: $event,
-          userid: this.userfortask ? this.userfortask.id : "",
-        },
-      });
-      if (res.data.statusCode == 200) {
-        this.tasks = res.data.data;
-        this.key += 1;
-      } else {
-        console.error(e);
+      if(this.groupVisible){
+        this.fetchUserTasks($event)
       }
-      this.viewName = $event;
-      this.loading = false;
+      else {
+             this.loading = true;
+              let compid = JSON.parse(localStorage.getItem("user")).subb;
+              const res = await this.$axios.get("user/user-tasks", {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                  Filter: $event,
+                  userid: this.userfortask ? this.userfortask.id : "",
+                },
+              });
+              if (res.data.statusCode == 200) {
+                this.tasks = res.data.data;
+                this.key += 1;
+              } else {
+                console.error(e);
+              }
+              this.viewName = $event;
+              this.loading = false;
+      }
+    
     },
 
     // Sort By Action List
@@ -547,256 +560,74 @@ export default {
         }
       }
     },
-
     sortBy($event) {
-      switch ($event) {
-        case "title":
-          if (this.taskOrder == "asc") {
-            this.localData.sort((a, b) => {
-              if(a.title && b.title) {
-                return a.title.localeCompare(b.title)
-              }
-            });
-            this.taskOrder = "desc";
-          } else {
-            this.localData.sort((a, b) => {
-              if(a.title && b.title) {
-                return b.title.localeCompare(a.title)
-              }
-            });
-            this.taskOrder = "asc";
-          }
-          this.sortName = "title";
-          this.checkActive();
-          break;
-
-        case "status":
-          let statusArr = [];
-
-          for (let i = 0; i < this.localData.length; i++) {
-            if (this.localData[i].startDate) {
-              statusArr.unshift(this.localData[i]);
-            } else {
-              statusArr.push(this.localData[i]);
-            }
-          }
-
-          if (this.taskOrder == "asc") {
-            statusArr.sort((a, b) => {
-              if(a.statusId && b.statusId) {
-                return a.status.text.localeCompare(b.status.text)
-              }
-            });
-            this.taskOrder = "desc";
-          } else {
-            statusArr.sort((a, b) => {
-              if(a.statusId && b.statusId) {
-                return b.status.text.localeCompare(a.status.text)
-              }
-            });
-            this.taskOrder = "asc";
-          }
-          this.sortName = "status";
-          this.localData = statusArr;
-          this.checkActive();
-          break;
-
-        case "priority":
-          let priorityArr = [];
-
-          for (let i = 0; i < this.localData.length; i++) {
-            if (this.localData[i].startDate) {
-              priorityArr.unshift(this.localData[i]);
-            } else {
-              priorityArr.push(this.localData[i]);
-            }
-          }
-
-          if (this.taskOrder == "asc") {
-            priorityArr.sort((a, b) => {
-              if(a.priorityId && b.priorityId) {
-                return a.priority.id - b.priority.id
-              }
-            });
-            this.taskOrder = "desc";
-          } else {
-            priorityArr.sort((a, b) => {
-              if(a.priorityId && b.priorityId) {
-                return b.priority.id - a.priority.id
-              }
-            });
-            this.taskOrder = "asc";
-          }
-          this.sortName = "priority";
-          this.localData = priorityArr;
-          this.checkActive();
-          break;
-
-        case "department":
-          let deptArr = [];
-
-          for (let i = 0; i < this.localData.length; i++) {
-            if (this.localData[i].department.title) {
-              deptArr.unshift(this.localData[i]);
-            } else {
-              deptArr.push(this.localData[i]);
-            }
-          }
-
-          if (this.taskOrder == "asc") {
-            deptArr.sort((a, b) => {
-              if (a.departmentId && b.departmentId) {
-                return a.department.title.localeCompare(b.department.title);
-              }
-            });
-            this.taskOrder = "desc";
-          } else {
-            deptArr.sort((a, b) => {
-              if (a.departmentId && b.departmentId) {
-                return b.department.title.localeCompare(a.department.title);
-              }
-            });
-            this.taskOrder = "asc";
-          }
-
-          this.localData = deptArr;
-          break;
-
-        case "userId":
-
-          let userArr = [];
-
-          for(let i=0; i<this.localData.length; i++) {
-            if(this.localData[i].userId) {
-              userArr.unshift(this.localData[i])
-            } else {
-              userArr.push(this.localData[i])
-            }
-          }
-
-          if (this.taskOrder == "asc") {
-            userArr.sort((a, b) => {
-              if (a.userId && b.userId) {
-                return a.user.firstName.localeCompare(b.user.firstName);
-              }
-            });
-            this.taskOrder = "desc";
-          } else {
-            userArr.sort((a, b) => {
-              if (a.userId && b.userId) {
-                return b.user.firstName.localeCompare(a.user.firstName);
-              }
-            });
-            this.taskOrder = "asc";
-          }
-          this.localData = userArr;
-          this.sortName = "userId";
-          this.checkActive();
-          break;
-
-        case "dueDate":
-          let newArr = [];
-
-          for (let i = 0; i < this.localData.length; i++) {
-            if (this.localData[i].dueDate) {
-              newArr.unshift(this.localData[i]);
-            } else {
-              newArr.push(this.localData[i]);
-            }
-          }
-
-          if (this.taskOrder == "asc") {
-            newArr.sort((a, b) => {
-              if (a.dueDate && b.dueDate) {
-                return new Date(a.dueDate) - new Date(b.dueDate);
-              }
-            });
-            this.taskOrder = "desc";
-          } else {
-            newArr.sort((a, b) => {
-              if (a.dueDate && b.dueDate) {
-                return new Date(b.dueDate) - new Date(a.dueDate);
-              }
-            });
-            this.taskOrder = "asc";
-          }
-
-          this.localData = newArr;
-          this.sortName = "dueDate";
-          this.checkActive();
-          break;
-
-        case "startDate":
-          let newArr2 = [];
-
-          for (let i = 0; i < this.localData.length; i++) {
-            if (this.localData[i].startDate) {
-              newArr2.unshift(this.localData[i]);
-            } else {
-              newArr2.push(this.localData[i]);
-            }
-          }
-
-          if (this.taskOrder == "asc") {
-            newArr2.sort((a, b) => {
-              if (a.startDate && b.startDate) {
-                return new Date(a.startDate) - new Date(b.startDate);
-              }
-            });
-            this.taskOrder = "desc";
-          } else {
-            newArr2.sort((a, b) => {
-              if (a.startDate && b.startDate) {
-                return new Date(b.startDate) - new Date(a.startDate);
-              }
-            });
-            this.taskOrder = "asc";
-          }
-
-          this.localData = newArr2;
-          this.sortName = "startDate";
-          this.checkActive();
-          break;
-
-        case "project":
-          let newArr3 = [];
-
-          for (let i = 0; i < this.localData.length; i++) {
-            if (this.localData[i].project[0].project.title != null) {
-              newArr3.unshift(this.localData[i]);
-            } else {
-              newArr3.push(this.localData[i]);
-            }
-          }
-
-          if (this.taskOrder == "asc") {
-            newArr3.sort((a, b) => {
-              if (a.project[0].project.title != null && b.project[0].project.title != null) {
-                return a.project[0].project.title.localeCompare(b.project[0].project.title);
-              }
-            });
-            this.taskOrder = "desc";
-          } else {
-            newArr3.sort((a, b) => {
-              if (a.project[0].project.title != null && b.project[0].project.title != null) {
-                return b.project[0].project.title.localeCompare(a.project[0].project.title);
-              }
-            });
-            this.taskOrder = "asc";
-          }
-
-          this.localData = newArr3;
-          this.sortName = "project";
-          this.checkActive();
-          break;
-
-        default:
-          this.fetchUserTasks();
-          break;
+      this.sortName = $event;
+      if ($event == "title") {
+        this.$store
+          .dispatch("user/sortUserTasks", {
+            key: $event,
+            order: this.orderBy,
+          })
       }
 
+      if ($event == "userId") {
+        this.$store
+          .dispatch("user/sortUserTasks", {
+            key: $event,
+            order: this.orderBy,
+          })
+      }
+
+      if ($event == "project") {
+        this.$store
+          .dispatch("user/sortUserTasks", {
+            key: $event,
+            order: this.orderBy,
+          })
+      }
+
+      if ($event == "status") {
+        this.$store
+          .dispatch("user/sortUserTasks", {
+            key: $event,
+            order: this.orderBy,
+          })
+      }
+
+      if ($event == "priority") {
+        this.$store
+          .dispatch("user/sortUserTasks", {
+            key: $event,
+            order: this.orderBy,
+          })
+      }
+
+      if ($event == "startDate") {
+        this.$store
+          .dispatch("user/sortUserTasks", {
+            key: $event,
+            order: this.orderBy,
+          })
+      }
+
+      if ($event == "dueDate") {
+        this.$store
+          .dispatch("user/sortUserTasks", {
+            key: $event,
+            order: this.orderBy,
+          })
+      }
+
+      if (this.orderBy == "asc") {
+        this.orderBy = "desc";
+      } else {
+        this.orderBy = "asc";
+      }
+      this.localData=this.userTasks
+      this.checkActive();
       this.key += 1;
     },
+  
 
     toggleSidebar($event) {
       if (!$event) {
@@ -807,18 +638,35 @@ export default {
 
     searchUserTasks(text) {
       let formattedText = text.toLowerCase().trim();
+      let newArr
+      console.log("formattedText",formattedText)
+      console.log("dfdfformattedText",this.userTasks)
+      if(this.userTasks[0]?.tasks){
+              newArr = this.userTasks.map((item) => {
+            const filteredTasks = item.tasks.filter((ele) => {
+              if (ele.title.includes(formattedText) || ele.title.toLowerCase().includes(formattedText)) {
+                console.log("Found matching task:", ele);
+                return ele;
+              } 
+            })
+            return { ...item, tasks: filteredTasks };
+          })
+      }
+      else {
+          newArr = this.userTasks.filter((t) => {
+                if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
+                    return t;
+                }
+              });
+      }
 
-      let newArr = this.tasks.filter((t) => {
-        if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
-            return t;
-        }
-      });
+ 
 
       if (newArr.length >= 0) {
         this.localData = newArr;
         this.key++;
       } else {
-        this.localData = this.tasks;
+        this.localData = this.userTasks;
         this.key++;
       }
     },

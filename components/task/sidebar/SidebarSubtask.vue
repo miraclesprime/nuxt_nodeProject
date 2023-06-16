@@ -27,7 +27,7 @@
       </thead>
       <tbody>
        
-        <tr class="table-row" v-for="(sub, index) in localSubTasks" :id="'sbs-'+index" :key="sub.id + subkey" @click.right.prevent="subtaskRightClick($event, sub)" v-click-outside="closeContext">
+        <tr class="table-row" v-for="(sub, index) in localSubTasks" :id="'sbs-'+index" :key="sub.id + subkey" v-bind:class="{'selectedSubRow':rowIsSelected(sub.id)}" @click.prevent= "selectSubTaskRow($event,sub)" @click.right.prevent="subtaskRightClick($event, sub)" v-click-outside="closeContext">
           <td id="sbs-table-row-2">
             <div class="d-flex gap-05 align-center" id="sbs-icons">
               <span class="cursor-pointer" id="sbs-check-circle-solid" style="width:20px; height:20px" @click="markComplete(sub)"><bib-icon icon="check-circle-solid" :scale="1.25" :variant="sub.isDone ? 'success' : 'gray4'"></bib-icon></span>
@@ -115,6 +115,7 @@ export default {
       alertDialog: false,
       alertMsg:"",
       taskTeamModal: false,
+      ctrlSelectedRows: [],
     };
   },
   computed: {
@@ -166,6 +167,7 @@ export default {
     },
   },
   created(){
+    this.ctrlSelectedRows=[]
     this.newSubtask = false
     this.$nuxt.$on("delete-subtask", (subtask) => {
       if (subtask.id) {
@@ -270,6 +272,22 @@ export default {
         this.$refs.subtaskNameInput.classList.add("error")
       }
     },
+    selectSubTaskRow($event,sub){
+          if (event.ctrlKey || event.metaKey) {
+            const subTaskIndex = this.ctrlSelectedRows.findIndex(item => item.id === sub.id);
+            if (subTaskIndex === -1) {
+              this.ctrlSelectedRows.push(sub);
+            } else {
+              this.ctrlSelectedRows.splice(subTaskIndex, 1);
+            }
+          } else {
+            this.ctrlSelectedRows=[]
+          }
+        
+    },
+    rowIsSelected(index){
+      return  this.ctrlSelectedRows.some(item => item.id === index);
+    },
 
     debounceCreate: _.debounce(function() {
       this.createSubtask()
@@ -348,12 +366,18 @@ export default {
     },
 
     async deleteSubtask(subtask) {
-      const delsub = await this.$store.dispatch("subtask/deleteSubtask", { ...subtask, text: `deleted subtask "${subtask.title}"` });
-      if (delsub.statusCode == 200) {
-        this.$store.dispatch("subtask/fetchSubtasks", this.currentTask)
-        this.$emit('close-sidebar-detail')
-        this.$store.dispatch("subtask/setSelectedSubtask", "")
+      let delSub
+      if(this.ctrlSelectedRows.length>0){
+        delSub= await this.$store.dispatch("subtask/deleteSubtask", { delData:this.ctrlSelectedRows, text: `deleted Multisubtask"`,key:"multi"});
       }
+      else {
+        delSub = await this.$store.dispatch("subtask/deleteSubtask", { ...subtask, text: `deleted subtask "${subtask.title}"`,key:"single" })
+      }
+      if (delSub.statusCode == 200) {
+              this.$store.dispatch("subtask/fetchSubtasks", this.currentTask)
+              this.$emit('close-sidebar-detail')
+              this.$store.dispatch("subtask/setSelectedSubtask", "")
+            }
     },
 
     copyLink(subtask) {
@@ -395,7 +419,10 @@ export default {
     border-color: $danger;
   }
 }
-
+.selectedSubRow {
+  background-color:#fbf2f2
+  // color: black;
+}
 .table {
   width: 100%;
   border: 1px solid transparent;

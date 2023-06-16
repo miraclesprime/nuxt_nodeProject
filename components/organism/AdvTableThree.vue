@@ -1,9 +1,6 @@
 <template>
   <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll">
-    <!-- <div class="adv-table resizable bg-white" :style="{'width': tableWidth}" role="table"> -->
-      <!-- <div class="zero" :style="{ width: tableFields[0].width}">
-        <div class="align-center gap-05">{{tableFields[0].label}} <span v-if="tableFields[0].header_icon" class="height-1" @click="$emit(tableFields[0].header_icon.event)"><bib-icon :icon="tableFields[0].header_icon.icon" :variant="tableFields[0].header_icon.isActive ? 'gray1' : 'gray4'"></bib-icon></span></div>
-      </div> -->
+      
       <!-- <ul class="border-success">
         <li v-for="section in tableData" >
           <p>{{section.title}}</p>
@@ -17,54 +14,74 @@
         </li>
       </ul> -->
 
-      <div :id="'advTableTwo-'+componentKey" class=" adv-table resizable bg-white" :style="{'width': tableWidth}"  >
-        <div class="tr position-sticky" style="top: 0; z-index: 2;">
+      <div :id="'advTableTwo-'+componentKey" class=" adv-table  bg-white" :style="{'width': tableWidth}"  >
+        <!-- <div class="tr position-sticky" style="top: 0; z-index: 2;">
           <div v-show="drag" class="width-2 th" ></div>
           <div v-for="(field, index) in tableFields" :key="field+index" class="th" :class="{ 'flex-grow-1': !field.width }"  :style="{ width: field.width}" :ref="'th'+field.key" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
             <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer" >
                 <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'gray1' : 'gray4'"></bib-icon>
               </span></div>
           </div>
-        </div>
+        </div> -->
 
-        <template v-if="showNewsection">
-          <div slot="header" class="tr position-relative height-205">
-            <div class="position-absolute border-bottom-light" style="inset: 0; ">
-                <div class="section-header d-flex align-center gap-05 height-205 " >
-                  <div v-show="drag" class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
-                  </div>
-                  <div class="position-sticky align-center" style="left: 0.5rem;" >
-                    <bib-icon icon="arrow-down" :scale="0.5" style="transform: rotate(-90deg);" ></bib-icon> 
-                    <span class="font-w-700 cursor-pointer ml-025" >
-                      <input type="text" class="editable-input section-title" placeholder="Enter title..." @input="debounceNewSection($event.target.value, $event)" @blur="restoreField" />
-                    </span>
-                  </div>
+
+        <draggable v-model="localData" id="mainDraggable" class="section-draggable-wrapper sortable-list position-relative" @end="$emit('section-dragend', localData)">
+          <div class="table resizable w-100 position-sticky" ref="headrow" style="top: 0; z-index:2;">
+            <div class="tr " role="row" >
+              <div v-show="drag" class="width-2 th" role="cell" ></div>
+              <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{ width: field.width}" :ref="'th'+field.key" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
+                <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer" >
+                    <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'gray1' : 'gray4'"></bib-icon>
+                  </span>
                 </div>
               </div>
+            </div>
+            
+            <template v-if="showNewsection">
+              <div slot="header" class="tr position-relative height-205">
+                <div class="position-absolute border-bottom-light" style="inset: 0; ">
+                    <div class="section-header d-flex align-center gap-05 height-205 bg-white" >
+                      <div v-show="drag" class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
+                      </div>
+                      <div class="position-sticky align-center gap-05" style="left: 0.5rem;" >
+                        <bib-icon icon="arrow-down" :scale="0.5" style="transform: rotate(-90deg);" ></bib-icon> 
+                        <span class="font-w-700 cursor-pointer ml-025" >
+                          <input type="text" class="editable-input section-title" placeholder="Enter title..." @input="debounceNewSection($event.target.value, $event)" @blur="restoreField" />
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+            </template>
           </div>
-        </template>
+          <section v-for="(section, index) in localData" class="resizable w-100">
+            <div class="thead">
+              
+              <div class="tr hidden" role="row" >
+                <div v-show="drag" class="width-2 th" role="cell" ></div>
+                <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :data-key="field.key" :style="{ width: field.width}" >
+                  <!-- <div class="align-center gap-05">{{field.label}} </div> -->
+                </div>
+              </div>
 
-        <draggable v-model="localData" class="section-draggable-wrapper sortable-list" @end="$emit('section-dragend', localData)">
-
-          <section v-for="(section, index) in localData">
-
-            <div class="tr position-relative height-205">
-              <div class="position-absolute border-bottom-light" style="inset: 0; ">
-                <div class="section-header d-flex align-center gap-05 height-205 " >
-                  <div v-show="drag" class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
-                  </div>
-                  <div class="position-sticky align-center" style="left: 0.5rem;" >
-                    <span class="width-1 cursor-pointer" @click.stop="collapseItem('sectionContent' + section.id)">
-                      <bib-icon icon="arrow-down" :scale="0.5" ></bib-icon> 
-                    </span>
-                    <span class="font-w-700 cursor-pointer ml-025" >
-                      <input type="text" class="editable-input section-title" :value="section.title.includes('_section') ? 'Untitled section'
-                    : section.title" @input="debounceRenameSection(section.id, $event)" @blur="restoreField" />
-                    </span>
-                    <span class="text-white">{{resizeCol}}</span>
+              <div class="tr position-relative height-205" role="row">
+                <div class="position-absolute border-bottom-light" style="inset: 0; ">
+                  <div class="section-header d-flex align-center gap-05 height-205 " >
+                    <div v-show="drag" class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
+                    </div>
+                    <div class="position-sticky align-center" style="left: 0.5rem;" >
+                      <span class="width-1 cursor-pointer" @click.stop="collapseItem('sectionContent' + section.id)">
+                        <bib-icon icon="arrow-down" :scale="0.5" ></bib-icon> 
+                      </span>
+                      <span class="font-w-700 cursor-pointer ml-025" >
+                        <input type="text" class="editable-input section-title" :value="section.title.includes('_section') ? 'Untitled section'
+                      : section.title" @input="debounceRenameSection(section.id, $event)" @blur="restoreField" />
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
+
             </div>
 
             <draggable class="section-content" tag="article" :list="section[tasksKey]" :group="{ name: 'tasks' }" :data-section="section.id" :ref="'sectionContent' + section.id" @start="rowDragStart" :move="moveRow" @end="rowDragEnd">
@@ -87,13 +104,12 @@
                 </div>
               </div> -->
 
-              <!-- <div class="section-content" > -->
-                <div v-for="item in section[tasksKey]" :key="item.id" ref="trdata" class="tr sortable drag-item" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
-                  <div v-show="drag" class="td" >
+                <div v-for="item in section[tasksKey]" :key="item.id" ref="trdata" role="row" class="tr sortable drag-item" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
+                  <div v-show="drag" class="td" role="cell" >
                     <div class="drag-handle width-105 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                     </div>
                   </div>
-                  <div v-for="(field, index) in tableFields" :key="field+index" class="td"  :class="{'flex-grow-1': !field.width, 'date-cell': field.key.includes('Date')}" :style="`flex: ${field.width} 0 0;`" :ref="'td'+field.key" :data-key="field.key" >
+                  <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell" :class="{ 'date-cell': field.key.includes('Date')}" >
                     <div v-if="field.key == 'title'" class="align-center w-100">
                       <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}" @click.stop="markComplete($event, item)">
                         <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success-sub3"></bib-icon>
@@ -126,64 +142,35 @@
                     <template v-if="field.key.includes('Date')" >
                       <!-- {{$formatDate(item[field.key])}} -->
                       <!-- <bib-datepicker class="align-right" size="sm" :value="new Date(item[field.key])" format="dd MMM YYYY" @click.native.stop="" @input="updateDate"></bib-datepicker> -->
-                      <bib-datetime-picker v-model="item[field.key]" format="DD/MM/YYYY" placeholder="No date" :style="datecell('th'+field.key)" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+                      <bib-datetime-picker v-model="item[field.key]" format="DD/MM/YYYY" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                     </template>
                   </div>
                 </div>
 
                 <template v-if="plusButton">
-                  <div v-show="localNewrow.sectionId != section.id"  class="tr" style="border-bottom: var(--bib-light)">
-                    <div class="td width-2" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
-                    <div class="td" style="border-bottom-color: transparent; border-right-color: transparent; width: 360px;">
+                  <div v-show="localNewrow.sectionId != section.id" class="tr" role="row" style="border-bottom: var(--bib-light)">
+                    <div class="td width-2" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
+                    <div class="td" role="cell" style="border-bottom-color: transparent; border-right-color: transparent; width: 360px;">
                       <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
                         <bib-icon :icon="plusButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{plusButton.label}}</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <!-- <div v-for="n in tableFields.length-1" class="td" style="border-bottom-color: transparent; border-right-color: transparent;"></div> -->
-              </div>
 
-                  <div v-show="localNewrow.sectionId == section.id" class="tr" @click.self="unselectAll">
-                    <div v-show="drag" class="td text-center ">
+                  <div v-show="localNewrow.sectionId == section.id" class="tr" role="row" @click.self="unselectAll">
+                    <div v-show="drag" class="td text-center " role="cell">
                       <span class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
-                </div>
-                    <div class="td">
-                      <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate" required placeholder="Enter title...">
-                </div>
-                      <!-- <div v-else class="td" ></div> -->
-              </div>
-            </template>
-
-              <!-- </div> -->
+                    </div>
+                    <div class="td" role="cell">
+                      <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate" @blur="unselectAll" required placeholder="Enter title...">
+                    </div>
+                  </div>
+                </template>
 
             </draggable>
 
           </section>
           
-
-        <!-- <div v-show="localNewrow.show" class="tr" role="row" @click.self="unselectAll">
-          <div v-show="drag" class="td text-center " >
-            <span
-              class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon
-                icon="drag" variant="white"></bib-icon></span>
-          </div>
-          <div class="td" >
-            <input type="text" ref="newrowInput" class="editable-input" v-model="localNewrow.title"
-              :class="{ 'error': validTitle }" @input="newRowCreate" required
-              placeholder="Enter title..." @keyup.esc="unselectAll" v-click-outside="unselectAll">
-          </div>
-        </div> -->
-        <!-- <template v-if="!localNewrow.show">
-          <div class="tr section-content" role="row" style="border-bottom: var(--bib-light)">
-            <div class="td "  style="border-bottom-color: transparent; border-right-color: transparent;"></div>
-            <div class="td"  style="border-bottom-color: transparent; border-right-color: transparent;">
-              <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded"
-                v-on:click.stop="newRowClick()">
-                <bib-icon :icon="plusButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span
-                  class="text-truncate">New Project</span>
-              </div>
-            </div>
-          </div>
-        </template> -->
       </draggable>
 
       </div>
@@ -203,7 +190,7 @@ import draggable from 'vuedraggable'
 
 export default {
 
-  name: 'AdvTableTwo',
+  name: 'AdvTableThree',
   components: {
     draggable
   },
@@ -322,30 +309,6 @@ export default {
 
     },
 
-    resizeCol() {
-      console.log('data length',this.localData.length)
-      if (this.localData) {
-
-        const headElems = document.getElementsByClassName("th")
-        // const row = document.querySelectorAll('.sortable')
-        const rows = this.$refs.trdata
-        
-        // console.log(rows)
-        if (rows) {
-          for (var i = 0; i < rows.length; i++) {
-            // console.log(rows[i])
-            let childtd = rows[i].children
-            for (var j = 0; j < childtd.length; j++) {
-              childtd[j].style.flex = `0 0 ${headElems[j].clientWidth}px`
-            }
-          }
-        }
-        return "true"
-      } else {
-        return "false"
-      }
-    },
-
   },
 
   mounted() {
@@ -353,6 +316,18 @@ export default {
     this.localData = _.cloneDeep(this.tableData)
     this.resizableColumns()
 
+  },
+
+  updated () {
+    this.$nextTick( () => {
+      // Code that will run only after the
+      // entire view has been re-rendered
+      // this.resizableColumns()
+      
+      // let headrow = document.importNode(this.$refs.headrow0[0], true)
+      // document.getElementById("mainDraggable").appendChild(headrow)
+      // document.getElementById("mainDraggable").insertBefore(headrow, null)
+    })
   },
 
   methods: {
@@ -435,18 +410,16 @@ export default {
         dragColumns[no].style.width = parseInt(dragColumns[no].style.width) + w + 'px';
         if (dragColumns[no + 1])
           dragColumns[no + 1].style.width = parseInt(dragColumns[no + 1].style.width) - w + 'px';
-        // console.log(dragColumns[no].dataset.key, dragColumns[no + 1].dataset.key)
-        // console.log(dragColumns[no].clientWidth, dragColumns[no + 1].clientWidth)
-        // resizeObserver.observe(dragColumns[no]);
-        // resizeObserver.observe(dragColumns[no + 1]);
+        
         let col1key = dragColumns[no].dataset.key
         let col2key = dragColumns[no + 1].dataset.key
-        let col1 = document.querySelectorAll(`.td[data-key="${col1key}"]`)
-        let col2 = document.querySelectorAll(`.td[data-key="${col2key}"]`)
+        let col1 = document.querySelectorAll(`.th[data-key="${col1key}"]`)
+        let col2 = document.querySelectorAll(`.th[data-key="${col2key}"]`)
+        // console.log(col1, col2)
         for (var i = 0; i < col1.length; i++) {
           // console.log(col1[i])
-          col1[i].style.flexBasis = dragColumns[no].clientWidth + "px"
-          col2[i].style.flexBasis = dragColumns[no + 1].clientWidth + "px"
+          col1[i].style.width = dragColumns[no].clientWidth + "px"
+          col2[i].style.width = dragColumns[no + 1].clientWidth + "px"
         }
         return true;
       }
@@ -471,11 +444,11 @@ export default {
       // ============================================================
       // stops column dragging
       this.stopColumnDrag = function(e) {
-        
-        console.log(e, e.bubbles)
-        e.stopPropagation()
-        console.log("after stopPropagation",e.bubbles)
+        console.log(e.target, e.bubbles)
+
         var e = e || window.event;
+        e.stopPropagation()
+
         if (!dragColumns) return;
 
         // restore handlers & cursor
@@ -491,10 +464,6 @@ export default {
           separator = '+';
         }
         // console.log(colWidth)
-        /*var expire = new Date();
-        expire.setDate(expire.getDate() + 365); // year
-        document.cookie = self.id + '-width=' + colWidth +
-          '; expires=' + expire.toGMTString();*/
 
         self.preventEvent(e);
       }
@@ -577,19 +546,12 @@ export default {
     resizableColumns() {
       // var tables = document.getElementsByTagName('table');
       // var table = document.getElementsByClassName("adv-table");
-      var table = document.getElementById(`advTableTwo-${this.componentKey}`);
-      // console.log(tables)
+      // var table = document.getElementById(`advTableTwo-${this.componentKey}`);
+      var table = this.$refs.headrow
+      // console.log(table)
       if (table.className.match(/resizable/)) {
         this.resizableTables = this.columnResize(table);
       }
-      /*for (let i = 0; tables.item(i); i++) {
-        if (tables[i].className.match(/resizable/)) {
-          // generate id
-          if (!tables[i].id) tables[i].id = 'advtable' + (i + 1);
-          // make table resizable
-          this.resizableTables[this.resizableTables.length] = this.columnResize(tables[i]);
-        }
-      }*/
     },
     datecell(refname){
       // console.log(this.$refs)
@@ -651,7 +613,7 @@ export default {
       this.localNewrow.sectionId = ""
       this.localNewrow.title = ""
       this.localNewrow.show = false;
-      this.$emit("toggle-newsection", false)
+      this.$emit("toggle-newsection", 'hide') //send any string to hide
       // console.log('unselect all ')
       // this.$emit("hide-newrow")
       // this.$emit("close-context-menu")
@@ -758,44 +720,12 @@ export default {
       event.target.classList.remove("error");
       this.unselectAll();
     },
-  }
+  },
+  
 }
 
 </script>
 <style lang="scss" scoped>
-/*
-* {
-  scrollbar-width: unset;
-  scrollbar-height: unset;
-  scrollbar-gutter: unset;
-  scrollbar-color: unset;
-}
-
-*::-webkit-scrollbar {
-  width: unset;
-  height: unset;
-}
-
-::-webkit-scrollbar {
-  width: unset;
-  height: unset;
-  all:unset;
-}
-
-*::-webkit-scrollbar-track {
-  border-radius: unset;
-  background-color: unset;
-}
-
-*::-webkit-scrollbar-thumb {
-  border-radius: unset;
-  background-color: unset;
-}
-
-::-webkit-scrollbar-thumb {
-    all:unset;
-}
-*/
 
 *::-webkit-scrollbar {
   width: thin;
@@ -817,16 +747,19 @@ export default {
   min-width: 100%;
   font-size: $base-size;
 
-  /*.thead,
+  .table, section { display: table; table-layout: fixed; }
+  article { display: table-row-group; }
+  
+  .thead,
   .tbody,
   .tfoot {
     display: table-row-group;
-  }*/
+  }
 
   .th,
   .td {
-    /*display: table-cell;*/
-    display: inline-flex;
+    display: table-cell;
+    /*display: inline-flex;*/
     border-bottom: 1px solid $light;
     padding: 0.25rem;
     vertical-align: middle;
@@ -839,8 +772,8 @@ export default {
   }
 
   .tr {
-    /*display: table-row;*/
-    display: flex;
+    display: table-row;
+    /*display: flex;*/
 
     .th:nth-child(2),
     .td:nth-child(2) {
@@ -850,6 +783,9 @@ export default {
       z-index: 1;
       background: #fff;
     }
+    &.hidden { visibility: hidden;
+      .th { height: 2px; padding: 0;}
+    }
 
     .th {
       /*position: sticky;
@@ -858,12 +794,16 @@ export default {
       background: $gray9;
       font-weight: bold;
       color: $secondary;
+      /*padding: 0.325rem 0.25rem;*/
       padding: 0;
       border-bottom-color: $gray2;
 
       &:nth-child(2) {
         z-index: 5;
         background: $gray9;
+      }
+      &:not(:last-child) {
+        border-right: 1px solid $gray8;
       }
       &:hover {
         .resize-drag-handle { background-color: $primary; }
@@ -905,7 +845,7 @@ export default {
   }*/
 
   .section-content {
-    &.collapsed { height: 0; overflow: hidden; }
+    &.collapsed { /*height: 0; overflow: hidden;*/ /*visibility: hidden;*/ }
   }
 
   .new-button {

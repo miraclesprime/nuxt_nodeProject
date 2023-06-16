@@ -1,17 +1,17 @@
 <template>
-  <div id="tgs-scroll" class="overflow-x-auto h-100 position-relative" style="min-height: 30rem;">
+  <div id="tgs-scroll" class="overflow-x-auto h-100 position-relative bg-light" style="min-height: 30rem;">
     <draggable :list="localdata" class="d-flex " :move="moveSection" v-on:end="$emit('section-dragend', localdata)" handle=".section-drag-handle">
       <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${templateKey}${section.title}${section.id}`">
         <div class="w-100 d-flex align-center section-title-wrapper border-bottom-gray2 mb-075" :id="'tgs-inner-wrap-'+section.id" :class="{'active': sectionEdit}" >
           <task-grid-section-title :section="section" @update-title="renameSection"></task-grid-section-title>
           <div class="d-flex align-center section-options" :id="'tgs-section-options-'+section.id">
-            <div class="cursor-pointer shape-rounded bg-hover-gray2 mx-05 align-center" v-on:click.stop="showCreateTaskModal(section.id)">
+            <div class="cursor-pointer shape-rounded bg-hover-gray2 mx-05 align-center" v-on:click.stop="showBlankTask(section.id)">
               <bib-icon icon="add" variant="gray5" :scale="1.25"></bib-icon>
             </div>
             <bib-popup pop="elipsis" icon-variant="gray5" class="bg-hover-gray2" :scale="1">
               <template v-slot:menu>
                 <div :id="'tgs-list'+section.id" class="list">
-                  <span class="list__item" :id="'tgs-list-1'+section.id" v-on:click.stop="showCreateTaskModal(section.id)">
+                  <span class="list__item" :id="'tgs-list-1'+section.id" v-on:click.stop="showBlankTask(section.id)">
                     <div class="d-flex align-center" :id="'tgs-list-flex-1'+section.id">
                       <bib-icon icon="add"></bib-icon>
                       <span class="ml-05" :id="'tgs-list-span'+section.id">Add task</span>
@@ -159,9 +159,11 @@ export default {
         return { icon: "bookmark-solid", variant: "gray5", text: "Add to favorites", status: false }
       }
     },
-    showCreateTaskModal(sectionId) {
-      this.$emit("create-task", sectionId) //event will be captured by parent only
-      this.$nuxt.$emit("create-task", sectionId) //event will be available to all
+    showBlankTask(sectionId) {
+      // this.$emit("create-task", sectionId) //event will be captured by parent only
+      // this.$nuxt.$emit("create-task", sectionId) //event will be available to all
+      // console.log(sectionId)
+      this.$refs[`blankTaskGrid${sectionId}`][0].showNewTask()
     },
     taskDragStart(e) {
       this.drag = true

@@ -5,7 +5,8 @@
       <company-tasks-actions
         :gridType="gridType"
         v-on:filterView="filterView"
-        v-on:sort="sortBy"
+        @taskSortValue="sortBy($event)"
+        @taskGroupValue="taskGroup($event)"
         v-on:new-task="toggleSidebar($event)"
         @change-grid-type="($event) => (gridType = $event)"
         @search-tasks="searchTasks"
@@ -15,7 +16,7 @@
           <div v-show="gridType === 'list'" class="h-100">
             <template v-if="tasks.length">
 
-              <adv-table-two :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask"></adv-table-two>
+              <adv-table-two :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable"></adv-table-two>
 
             </template>
           <div v-else>
@@ -131,6 +132,7 @@ export default {
         label: "New Task",
         icon: "add",
       },
+      group:"department",
       newRow: {
         show: false,
         id: "",
@@ -147,6 +149,7 @@ export default {
         text: "",
       },
       contentWidth: "100%",
+      dragTable: true
     };
   },
   computed: {
@@ -166,16 +169,30 @@ export default {
     tasks(newVal) {
       // this.localData = _.cloneDeep(newVal);
       let data = _.cloneDeep(newVal);
-      let sortedData=data.map((item,index)=>{
-            let taskArr = item.tasks.sort((a, b) => {
-              if (a.priorityId && b.priorityId) {
-                return a.priorityId - b.priorityId;
-              }
-            });
-            item.tasks=taskArr
-            return item
+      let newArr = [];
+
+      for (let i = 0; i < data.length; i++) {
+        newArr.push(data[i]);
+        let tNewArr = []
+        for(let j=0; j<data[i].tasks.length; j++) {
+          if (data[i].tasks[j].priorityId) {
+            tNewArr.unshift(data[i].tasks[j])
+          } else {
+            tNewArr.push(data[i].tasks[j])
+          }
+        }
+        newArr[i]["tasks"] = tNewArr;
+      }
+
+      newArr.forEach(dept => {
+        dept["tasks"] = dept.tasks.sort((a, b) => {
+          if (a.priorityId && b.priorityId) {
+            return a.priorityId - b.priorityId
+          }
         })
-        this.localData = _.cloneDeep(sortedData);
+      })
+
+      this.localData = newArr;
     },
     gridType() {
       this.key++;
@@ -212,18 +229,17 @@ export default {
   },
 
   mounted() {
+
     this.loading = true;
     // this.updateKey()
     let compid = JSON.parse(localStorage.getItem("user")).subb;
     this.$store
       .dispatch("company/fetchCompanyTasks", {
-        companyId: compid
+        companyId: compid,
+        sName:this.group
       })
       .then((res) => {
-
-        this.localData = JSON.parse(JSON.stringify(res));
-
-        this.key += 1;
+        this.taskGroup('department');
         this.loading = false;
       });
   },
@@ -280,6 +296,7 @@ export default {
       this.$store
         .dispatch("company/fetchCompanyTasks", {
           companyId: compid,
+          sName:this.group
         })
         .then(() => {
           this.key += 1;
@@ -375,13 +392,13 @@ export default {
           id: payload.item.id,
           projectId,
           data: { [payload.field]: payload.value },
-          user,
+          user: user ? [user] : null,
           text: `${
             payload.historyText || payload.value
           }`,
         })
         .then((t) => {
-          this.updateKey(t.data.department.title)
+          this.updateKey("success")
         })
         .catch((e) => console.warn(e));
     },
@@ -393,18 +410,17 @@ export default {
       } else {
         user = null;
       }
-
       this.userPickerOpen = false;
 
       this.$store
         .dispatch("task/updateTask", {
           id: this.activeTask.id,
           data: { [field]: value },
-          user,
+          user: user ? [user] : null,
           text: `changed ${label} to ${historyText}`,
         })
         .then((t) => {
-            this.updateKey()
+            this.updateKey("success")
         })
         .catch((e) => console.warn(e));
     },
@@ -489,7 +505,7 @@ export default {
         .dispatch("task/updateTaskStatus", task)
         .then((d) => {
           this.$store.dispatch("task/setSingleTask", d).then(() => {
-            this.updateKey();
+            this.updateKey("success");
           });
         })
         .catch((e) => {
@@ -600,7 +616,22 @@ export default {
         }
       }
     },
+    //group by
+    taskGroup($event) {
+      this.group=$event
+      if($event != 'department') {
+        this.dragTable = false;
+      } else {
+        this.dragTable = true;
+      }
+        this.$store
+          .dispatch("company/groupTasks", {
+            sName:$event
+          })
+          .then((res) => {
+          });
 
+      },
     // Sort By Action List
     sortBy($event) {
       this.sortName = $event;
@@ -694,6 +725,18 @@ export default {
 
       let depts = JSON.parse(JSON.stringify(this.tasks));
 
+      // if(this.projects[0]?.tasks){
+      //         newArr = this.projects.map((item) => {
+      //       const filteredTasks = item.tasks.filter((ele) => {
+      //         if (ele.title.includes(formattedText) || ele.title.toLowerCase().includes(formattedText)) {
+      //           console.log("Found matching task:", ele);
+      //           return ele;
+      //         } 
+      //       })
+      //       return { ...item, tasks: filteredTasks };
+      //     })
+      // }
+
       let newArr = depts.map((d) => {
         let filtered = d.tasks.filter((t) => {
           if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
@@ -767,7 +810,6 @@ export default {
     }, 600),
 
     createNewTask(payload) {
-      // console.log(payload)
       this.$store.dispatch("task/createTask", {
           ...payload,
           departmentId: payload.sectionId,

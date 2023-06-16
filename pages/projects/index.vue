@@ -1,7 +1,7 @@
 <template>
   <div id="projects-wrapper" class="projects-wrapper" >   
     <page-title title="Projects"></page-title>  
-    <project-actions  @sortValue='sortProject($event)' @groupValue="ProjectGroup($event)" @viewValue='viewName=$event' v-on:loading="loading = $event" v-on:sort="sortProject" @search-projects="searchProjects" />
+    <project-actions  @sortValue='sortProject($event)' @groupValue="ProjectGroup($event)" @viewValue='ProjectView($event)' v-on:loading="loading = $event" v-on:sort="sortProject" @search-projects="searchProjects" />
    
     <div id="projects-list-wrapper" class="projects-list-wrapper position-relative" >
       <loading :loading="loading"></loading>
@@ -25,15 +25,14 @@
         ></confirm-dialog> -->
       <template v-if="projects.length">
         <div v-if="groupVisible">
-        <!-- <advance-table-group :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" :newTaskButton="{label: 'New Project', icon: 'add'}"></advance-table-group> -->
         <loading :loading="loading"></loading>
 
-        <adv-table-two :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @title-click="projectRoute" @update-field="updateProject" :isProject="true" @create-row="createProject"></adv-table-two>
+        <adv-table-two :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" :isProject="true" @create-row="createProject" :drag="false"></adv-table-two>
         </div>
        <div v-else>
         <loading :loading="loading"></loading>
 
-        <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @context-open="contextOpen" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :newTaskButton="{label: 'New Project', icon: 'add'}"></advance-table>
+        <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @context-open="contextOpen" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :newTaskButton="{label: 'New Project', icon: 'add'}" :drag="false"></advance-table>
       </div> 
 
       </template>
@@ -81,6 +80,7 @@ import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 import { combineTransactionSteps } from '@tiptap/core';
+import { conditionalExpression } from '@babel/types';
 
 export default {
   name: "Projects",
@@ -106,9 +106,6 @@ export default {
       popupMessages: [],
       groupVisible: false,
       groupBy: '',
-      // confirmModal: false,
-      // confirmMsg: "",
-      // taskToDelete: {}
     }
   },
 
@@ -121,9 +118,25 @@ export default {
       }
     }
     this.$store.dispatch('project/fetchProjects').then((res) => { 
-      this.templateKey += 1;
-      // this.newkey = parseInt( Math.random().toString().slice(-3) )
-      this.loading = false 
+      
+      let newArr = [];
+
+        for(let i=0; i<res.length; i++) {
+          if(res[i].priorityId) {
+            newArr.unshift(res[i])
+          } else {
+            newArr.push(res[i])
+          }
+        }
+
+        newArr.sort((a,b) => {
+          if(a.priorityId && b.priorityId) {
+            return a.priorityId - b.priorityId
+          }
+        })
+        this.localData = newArr;
+        this.$store.dispatch('project/setProjects', newArr);
+        this.loading = false;
     })
 
   },
@@ -135,14 +148,11 @@ export default {
         user: "user/getUser2"
     })
   },
-
   watch: {
     projects(newVal) {
         this.localData = _.cloneDeep(newVal)
-
     },
   },
-
   methods: {
     
     checkActive() {
@@ -176,9 +186,6 @@ export default {
    
       this.$store.dispatch("task/setSingleTask", item)
     },
-    // sortName($event){
-    //   console.log("sdfds",$event)
-    // },
     ProjectGroup($event) {
       if ($event ==="default" ) {
         this.groupVisible = false;
@@ -191,6 +198,15 @@ export default {
         this.groupVisible = true
         this.templateKey += 1;
       })
+    },
+    ProjectView($event){
+      this.$store.dispatch('project/fetchProjects', $event).then(() => { 
+        if(this.groupVisible){
+              this.$store.dispatch('project/groupProjects', { key: this.groupBy}).then((res) => {
+          })
+        }
+       
+       })
     },
     sortProject($event) {
       
@@ -561,7 +577,7 @@ export default {
 
     updateKey() {
       // this.loading=true
-        this.$store.dispatch("project/fetchProjects",).then(() => {
+        this.$store.dispatch("project/fetchProjects").then(() => {
           this.templateKey += 1;
         })
       
@@ -569,24 +585,37 @@ export default {
     },
 
     searchProjects(text) {
-
-      let formattedText = text.toLowerCase().trim();;
-      
-      let newArr = this.projects.filter((p) => {
+      let newArr
+      let formattedText = text.toLowerCase().trim();
+      if(this.projects[0]?.tasks){
+              newArr = this.projects.map((item) => {
+            const filteredTasks = item.tasks.filter((ele) => {
+              if (ele.title.includes(formattedText) || ele.title.toLowerCase().includes(formattedText)) {
+                console.log("Found matching task:", ele);
+                return ele;
+              } 
+            })
+            return { ...item, tasks: filteredTasks };
+          })
+      }
+    else {
+        newArr = this.projects.filter((p) => {
        
        if(p.title.includes(formattedText) || p.title.toLowerCase().includes(formattedText)) {
           return p
        } 
-
+     
       })
-
-      if(newArr.length >= 0) {
+    }
+    if(newArr.length >= 0) {
         this.localData = newArr
         this.templateKey++;
       } else {
         this.localData = JSON.parse(JSON.stringify(this.projects));
         this.templateKey++;
       }
+
+    
     }
   },
 
