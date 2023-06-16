@@ -126,8 +126,8 @@
           >
             <Nuxt />
             <transition name="drawer">
-              <task-sidebar v-show="openSidebar" :visible="openSidebar" :sectionIdActive="sectionPreselect" :scrollId="scrollId" :departmentId="departmentId" ></task-sidebar>
-              <!-- <task-sidebar-two v-show="openSidebar" ></task-sidebar-two> -->
+              <!-- <task-sidebar v-show="openSidebar" :visible="openSidebar" :sectionIdActive="sectionPreselect" :scrollId="scrollId" :departmentId="departmentId" ></task-sidebar> -->
+              <task-sidebar-two v-show="openSidebar" ></task-sidebar-two>
             </transition>
           </div>
         </template>
