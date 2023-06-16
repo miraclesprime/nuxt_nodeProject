@@ -114,6 +114,12 @@ export default {
       if (isFav) {
           this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Remove favorite"} : item);
       }
+           if(this.task.statusId==5){
+        this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Mark Complete" ? { ...item, label: "Completed"} : item);
+        }
+      else{
+        this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Completed" ? { ...item, label: "Mark Complete"} : item);
+      }
     },
 
     showUserPicker(task) {
@@ -194,8 +200,6 @@ export default {
         this.$store.dispatch("task/removeFromFavorite", { id: task.id })
           .then(msg => {
             this.$emit("update-key", msg)
-            this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Remove favorite" ? { ...item, label: "Add to Favorites"} : item);
-          
           })
           .catch(e => {
             console.log(e)
@@ -204,7 +208,6 @@ export default {
         this.$store.dispatch("task/addToFavorite", { id: task.id })
           .then(msg => {
             this.$emit("update-key", msg)
-            this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Remove favorite"} : item);
           })
           .catch(e => {
             console.log(e)
@@ -289,12 +292,6 @@ export default {
       switch (item.event) {
         case 'done-task':
           this.markComplete(this.task)
-          if(item.label=="Mark Complete"){
-        this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Mark Complete" ? { ...item, label: "Completed"} : item);
-        }
-      if(item.label=="Completed"){
-        this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Completed" ? { ...item, label: "Mark Complete"} : item);
-      }
           break;
         case 'fav-task':
           this.addToFavorites(this.task)

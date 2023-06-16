@@ -237,7 +237,7 @@ export default {
           stsArr.push(el.task)
         } else {
           if (el.subtasks) {
-            stsArr.push({...el.subtasks, project: el.subtasks.task.project})
+            stsArr.push({...el.subtasks, project: el.subtasks.task?.project})
           }
         }
       })
@@ -981,7 +981,6 @@ export default {
         .then(res => this.updateKey())
         .catch(e => console.warn(e))
       } else {
-        console.log('task selected')
         this.$store.dispatch('task/updateTaskStatus', task)
           .then((d) => {
             this.updateKey()

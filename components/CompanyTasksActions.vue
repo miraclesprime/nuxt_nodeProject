@@ -13,6 +13,9 @@
         <li class="action" id="ta-action1" v-tooltip="'View'">
           <sorting-comp :items="viewing" icon="eye-open" activeIcon="tick" v-on:change-sort="changeViewName"></sorting-comp>
         </li>
+        <li class="action" id="ta-action3" title="Group by"  v-tooltip="'Group By'">
+          <sorting-comp label="Group by" :items="groupBy" icon="accessibility-braille-solid" v-on:change-sort="groupTasks($event)"></sorting-comp>
+        </li>
         <li class="action" id="ta-action2" v-tooltip="'Sort By'">
           <sorting-comp :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy"></sorting-comp>
         </li>
@@ -30,7 +33,7 @@
 </template>
 
 <script>
-import { VIEW_FILTER, COMPANY_TASK_SORT } from 'config/constants.js'
+import { VIEW_FILTER, COMPANY_TASK_SORT,TASK_GROUP } from 'config/constants.js'
 export default {
   props: {
     gridType: {
@@ -44,6 +47,7 @@ export default {
       selectInfo: null,
       sortName: '',
       searchText: '',
+      groupBy:TASK_GROUP,
       viewing: VIEW_FILTER,
       sorting: COMPANY_TASK_SORT
     };
@@ -59,9 +63,11 @@ export default {
       console.log(task);
     },
 
-
+    groupTasks($event) {
+      this.$emit("taskGroupValue", $event)
+    },
     sortBy($event) {
-      this.$emit("sort", $event)
+      this.$emit("taskSortValue", $event)
     },
 
     changeViewName($event){

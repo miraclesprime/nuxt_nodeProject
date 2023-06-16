@@ -59,7 +59,7 @@ export const mutations = {
   setSingleProject(state, { currentProject }) {
     state.selectedProject = currentProject;
     let projectData=state.projects
-      if(projectData[0]?.tasks){
+      if(projectData[0]?.tasks&&currentProject){
         let sectionID, taskID;
         state.projects.forEach((section, section_idx) => {
             section.tasks.forEach((task, task_idx) => {
@@ -190,7 +190,7 @@ export const mutations = {
 
       arr.forEach((ele) => {
         let title =
-          ele.department !== null ? ele.department.title : "Unassigned";
+          ele.departmentId !== null ? ele.department.title : "Unassigned";
         if (!items.includes(title)) items.push(title);
       });
       _projects = items.map((item, idx) => {
@@ -214,7 +214,7 @@ export const mutations = {
 
       arr.forEach((ele) => {
         let title =
-          ele.user !== null
+          ele.userId !== null&&ele.userId!==undefined 
             ? ele.user.firstName + " " + ele.user.lastName
             : "Unassigned";
         if (!items.includes(title)) items.push(title);
@@ -225,7 +225,7 @@ export const mutations = {
           title: item !== null ? item : "Unassigned",
           tasks: arr.filter(
             (_item) =>
-              (_item[arrIndex] !== null
+              (_item[arrIndex] !== null&&_item[arrIndex] !== undefined
                 ? _item[arrIndex].firstName + " " + _item[arrIndex].lastName
                 : null) === (item === "Unassigned" ? null : item)
           ),
@@ -249,7 +249,7 @@ export const mutations = {
         return a.statusId - b.statusId;
       })   
       arr.forEach((ele) => {
-        let title = ele.status !== null ? ele.status.text : "Unassigned";
+        let title = ele.statusId !== null ? ele.status.text : "Unassigned";
         if (!items.includes(title)) items.push(title);
       });
       _projects = items.map((item, idx) => {
@@ -264,6 +264,8 @@ export const mutations = {
         };
       });
     }
+    console.log("323",_projects)
+
     state.projects = _projects;
   },
   sortProjects(state, payload) {
@@ -299,27 +301,101 @@ export const mutations = {
     // Sort By Project Owner Name
     if (payload.key == 'owner' && payload.order == 'asc') {
       if(arr[0].tasks){
-      arr.forEach((ele)=>{
-        ele.tasks.sort((a,b)=>a.user.firstName.localeCompare(b.user.firstName))
-        return ele
-      })
+        arr.map((ele)=>{
+          let newArr=[]
+          ele.tasks.forEach((item) => {
+            if (item.userId!==null&&item.userId!==undefined) {
+              newArr.unshift(item)
+            } else {
+              newArr.push(item)
+            }
+          });
+          newArr.sort((a,b)=>{
+            if (a.userId && b.userId) {
+              return a.user.firstName.localeCompare(b.user.firstName)
+            }
+          });
+          ele.tasks=newArr
+          return ele
+        })
+        state.projects = arr;
+      // arr.forEach((ele)=>{
+      //   ele.tasks.sort((a,b)=>a.user.firstName.localeCompare(b.user.firstName))
+      //   return ele
+      // })
     }
     else {
-      arr.sort((a, b) => a.user.firstName.localeCompare(b.user.firstName));
+      // arr.sort((a, b) => a.user.firstName.localeCompare(b.user.firstName));
+      let newArr = []
+
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].userId!==null&&arr[i].userId!==undefined) {
+          newArr.unshift(arr[i])
+        } else {
+          newArr.push(arr[i])
+          
+        }
+      }
+      
+      newArr.sort((a, b) => {
+        if (a.userId && b.userId) {
+          return a.user.firstName.localeCompare(b.user.firstName)
+        }
+      });
+      
+      state.projects = newArr;
     }
-      state.projects = arr;
+      // state.projects = arr;
     }
 
     if (payload.key == 'owner' && payload.order == 'desc') {
       if(arr[0].tasks){
-      arr.forEach((ele)=>{
-        ele.tasks.sort((a,b)=>b.user.firstName.localeCompare(a.user.firstName))
-        return ele
-      })
+        arr.map((ele)=>{
+          let newArr=[]
+          ele.tasks.forEach((item) => {
+            if (item.userId!==null&&item.userId!==undefined) {
+              newArr.unshift(item)
+            } else {
+              newArr.push(item)
+            }
+          });
+          newArr.sort((a,b)=>{
+            if (a.userId && b.userId) {
+              return b.user.firstName.localeCompare(a.user.firstName)
+            }
+          });
+          ele.tasks=newArr
+          return ele
+        })
+        state.projects = arr;
+      // arr.forEach((ele)=>{
+      //   ele.tasks.sort((a,b)=>b.user.firstName.localeCompare(a.user.firstName))
+      //   return ele
+      // })
     }else {
-      arr.sort((a, b) => b.user.firstName.localeCompare(a.user.firstName));
+      
+      let newArr = []
+
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].userId!==null&&arr[i].userId!==undefined) {
+          newArr.unshift(arr[i])
+        } else {
+          newArr.push(arr[i])
+          
+        }
+      }
+      
+      newArr.sort((a, b) => {
+        if (a.userId && b.userId) {
+          return b.user.firstName.localeCompare(a.user.firstName)
+        }
+      });
+      
+      state.projects = newArr;
+
+      // arr.sort((a, b) => b.user.firstName.localeCompare(a.user.firstName));
     }
-      state.projects = arr;
+    
     }
 
     // Sort By Status
@@ -335,7 +411,7 @@ export const mutations = {
             }
           });
           newArr.sort((a,b)=>{
-            if (a.status && b.status) {
+            if (a.statusId && b.statusId) {
               return a.status.text.localeCompare(b.status.text)
             }
           });
@@ -359,7 +435,7 @@ export const mutations = {
       }
       
       newArr.sort((a, b) => {
-        if (a.status && b.status) {
+        if (a.statusId && b.statusId) {
           return a.status.text.localeCompare(b.status.text)
         }
       });
@@ -381,7 +457,7 @@ export const mutations = {
             }
           });
           newArr.sort((a,b)=>{
-            if (a.status && b.status) {
+            if (a.statusId && b.statusId) {
               return b.status.text.localeCompare(a.status.text)
             }
           });
@@ -404,7 +480,7 @@ export const mutations = {
               }
 
               newArr.sort((a, b) => {
-                if (a.status && b.status) {
+                if (a.statusId && b.statusId) {
                   return b.status.text.localeCompare(a.status.text)
                 }
               });
@@ -637,7 +713,7 @@ export const mutations = {
             }
       
             newArr.sort((a, b) => {
-              if (a.priority && b.priority) {
+              if (a.priorityId && b.priorityId) {
                 return a.priority.id - b.priority.id;
               }
             });
@@ -685,7 +761,7 @@ export const mutations = {
             }
       
             newArr.sort((a, b) => {
-              if (a.priority && b.priority) {
+              if (a.priorityId && b.priorityId) {
                 return b.priority.id - a.priority.id
               }
             });
