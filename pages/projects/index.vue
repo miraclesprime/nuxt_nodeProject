@@ -27,7 +27,7 @@
         <div v-if="groupVisible">
         <loading :loading="loading"></loading>
 
-        <adv-table-two :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @title-click="projectRoute" @update-field="updateProject" :isProject="true" @create-row="createProject" :drag="false"></adv-table-two>
+        <adv-table-two :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" :isProject="true" @create-row="createProject" :drag="false"></adv-table-two>
         </div>
        <div v-else>
         <loading :loading="loading"></loading>
@@ -80,6 +80,7 @@ import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 import { combineTransactionSteps } from '@tiptap/core';
+import { conditionalExpression } from '@babel/types';
 
 export default {
   name: "Projects",
@@ -575,24 +576,37 @@ export default {
     },
 
     searchProjects(text) {
-
-      let formattedText = text.toLowerCase().trim();;
-      
-      let newArr = this.projects.filter((p) => {
+      let newArr
+      let formattedText = text.toLowerCase().trim();
+      if(this.projects[0]?.tasks){
+              newArr = this.projects.map((item) => {
+            const filteredTasks = item.tasks.filter((ele) => {
+              if (ele.title.includes(formattedText) || ele.title.toLowerCase().includes(formattedText)) {
+                console.log("Found matching task:", ele);
+                return ele;
+              } 
+            })
+            return { ...item, tasks: filteredTasks };
+          })
+      }
+    else {
+        newArr = this.projects.filter((p) => {
        
        if(p.title.includes(formattedText) || p.title.toLowerCase().includes(formattedText)) {
           return p
        } 
-
+     
       })
-
-      if(newArr.length >= 0) {
+    }
+    if(newArr.length >= 0) {
         this.localData = newArr
         this.templateKey++;
       } else {
         this.localData = JSON.parse(JSON.stringify(this.projects));
         this.templateKey++;
       }
+
+    
     }
   },
 
