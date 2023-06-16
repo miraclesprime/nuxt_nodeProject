@@ -367,8 +367,12 @@ export default {
 
     async deleteSubtask(subtask) {
       let delSub
+      let MultiData=[]
       if(this.ctrlSelectedRows.length>0){
-        delSub= await this.$store.dispatch("subtask/deleteSubtask", { delData:this.ctrlSelectedRows, text: `deleted Multisubtask"`,key:"multi"});
+        this.ctrlSelectedRows.map((item)=>{
+          MultiData = [...MultiData, { id: item.id, userId: item.userId }];
+        })
+        delSub= await this.$store.dispatch("subtask/deleteSubtask", { delData:MultiData, text: `deleted Multisubtask"`,key:"multi"});
       }
       else {
         delSub = await this.$store.dispatch("subtask/deleteSubtask", { ...subtask, text: `deleted subtask "${subtask.title}"`,key:"single" })
