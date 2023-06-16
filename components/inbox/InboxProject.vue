@@ -103,12 +103,12 @@
       <div id="ip-conv-wrap" class="border-bottom-gray2 d-flex justify-between sub-title pb-05">
         <p id="ip-coversation-para" class="text-gray5 font-md">Conversation </p>
       </div>
-      <project-conversation :project="project" :key="'conv-'+project.id"></project-conversation>
+      <project-conversation :project="activeProject" :key="'conv-'+activeProject.id"></project-conversation>
       
       <div id="ip-files-wrap" class="border-bottom-gray2 d-flex justify-between sub-title pb-05">
         <p id="ip-files-para" class="text-gray5 font-md">Files </p>
       </div>
-      <project-files :proj="project" :key="'files'+project.id"></project-files>
+      <project-files :proj="activeProject" :key="'files'+activeProject.id"></project-files>
     </div>
     <div id="inbox-project-message-input" class=" d-flex gap-1 border-top-light py-1 px-105">
       <bib-avatar :src="user2.Photo" size="2rem" class="flex-shrink-0"></bib-avatar>
@@ -173,6 +173,8 @@ export default {
   watch: {
     project(newVal) {
         this.activeProject = _.cloneDeep(newVal)
+        this.$store.dispatch("project/setProject", JSON.parse(JSON.stringify(this.activeProject)))
+        this.$store.dispatch("project/fetchTeamMember", {projectId: this.activeProject.id})
         this.owner = this.teamMembers.filter(tm => tm.id == newVal.userId)
     },
   },
@@ -195,7 +197,7 @@ export default {
       return tasks
     },
     isComplete() {
-      if (this.project.statusId == 5) {
+      if (this.activeProject.statusId == 5) {
         return { variant: "success" }
       } else {
         return { variant: "gray5" }
@@ -248,7 +250,7 @@ export default {
       }
     },
     isFavorite() {
-      let fav = this.favProjects.some(t => t.id == this.project.id)
+      let fav = this.favProjects.some(t => t.id == this.activeProject.id)
       if (fav) {
         return { variant: "orange", text: "Remove favorite", status: true }
       } else {
@@ -276,13 +278,13 @@ export default {
     })
   },
 
-  mounted() {
-    setTimeout(() => {
-      this.$store.dispatch("project/fetchTeamMember", { projectId: this.project.id }).then(() => {
-        this.canDeleteProject();
-      })
-    }, 2500)
-  },
+  // mounted() {
+  //   setTimeout(() => {
+  //     this.$store.dispatch("project/fetchTeamMember", { projectId: this.activeProject?.id }).then(() => {
+  //       this.canDeleteProject();
+  //     })
+  //   }, 2500)
+  // },
 
   methods: {
     debounceUpdate: _.debounce(function(name, value) {
@@ -332,7 +334,7 @@ export default {
         this.activeProject.statusId = null
       }
       this.updateProject(`changed ${name} to ${updatedvalue}`)
-    }, 1200),
+    }, 800),
 
     async updateProject(text) {
 
@@ -353,14 +355,14 @@ export default {
     setFavorite() {
       this.favLoading = true
       if (this.isFavorite.status) {
-        this.$store.dispatch("project/removeFromFavorite", { id: this.project.id })
+        this.$store.dispatch("project/removeFromFavorite", { id: this.activeProject.id })
           .then(msg => {
             this.popupMessages.push({ text: msg, variant: "orange" })
           })
           .catch(e => console.log(e))
           .then(() => this.favLoading = false)
       } else {
-        this.$store.dispatch("project/addToFavorite", { id: this.project.id })
+        this.$store.dispatch("project/addToFavorite", { id: this.activeProject.id })
           .then(msg => {
             this.popupMessages.push({ text: msg, variant: "success" })
           })
@@ -392,7 +394,7 @@ export default {
     },
 
     canDeleteProject() {
-      if (this.project.userId == JSON.parse(localStorage.getItem('user')).sub || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
+      if (this.activeProject.userId == JSON.parse(localStorage.getItem('user')).sub || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
         this.cdp = true
       } else {
         this.cdp = false
@@ -403,7 +405,7 @@ export default {
     },
     onsubmit(data) {
       if (this.editMessage?.id) {
-        this.$store.dispatch("project/updateProjectComment", { projectId: this.project.id, commentId: this.editMessage.id, comment: data.text })
+        this.$store.dispatch("project/updateProjectComment", { projectId: this.activeProject.id, commentId: this.editMessage.id, comment: data.text })
         .then(res => {
           if (this.value.files.length > 0) {
             this.uploadFile(this.value.files, this.editMessage)
@@ -415,7 +417,7 @@ export default {
         })
         .catch(e => console.log(e))
       } else {
-        this.$store.dispatch("project/createProjectComment", { id: this.project.id, comment: data.text })
+        this.$store.dispatch("project/createProjectComment", { id: this.activeProject.id, comment: data.text })
           .then(res => {
             if (this.value.files.length > 0) {
               this.uploadFile(this.value.files, res.data)
@@ -434,7 +436,7 @@ export default {
         formdata.append('files', file)
         filelist.push(file.name)
       })
-      formdata.append('projectId', this.project.id)
+      formdata.append('projectId', this.activeProject.id)
       formdata.append('projCommentId', data.id)
       formdata.append('text', `uploaded file(s) "${filelist.join(", ")}" to comment`)
 
