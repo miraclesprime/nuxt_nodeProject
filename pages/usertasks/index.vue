@@ -231,12 +231,17 @@ export default {
       this.fetchUserTasks()
      
     },
-    async fetchUserTasks() {
+    async fetchUserTasks($event) {
       if (process.client) {
         this.loading = true;
+        let filterData="all"
+        if($event){
+          filterData=$event
+        }
+
         this.$store.dispatch("user/getUserTasks", {
           userId:this.userfortask ? this.userfortask.id : "",
-          filter: "all",
+          filter: filterData,
           key:this.groupBy
       })
         .then(res=> {
@@ -514,25 +519,30 @@ export default {
       // this.confirmMsg = "Are you sure ";
       // this.confirmModal = true;
     },
-
     async filterView($event) {
-      this.loading = true;
-      let compid = JSON.parse(localStorage.getItem("user")).subb;
-      const res = await this.$axios.get("user/user-tasks", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          Filter: $event,
-          userid: this.userfortask ? this.userfortask.id : "",
-        },
-      });
-      if (res.data.statusCode == 200) {
-        this.tasks = res.data.data;
-        this.key += 1;
-      } else {
-        console.error(e);
+      if(this.groupVisible){
+        this.fetchUserTasks($event)
       }
-      this.viewName = $event;
-      this.loading = false;
+      else {
+             this.loading = true;
+              let compid = JSON.parse(localStorage.getItem("user")).subb;
+              const res = await this.$axios.get("user/user-tasks", {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                  Filter: $event,
+                  userid: this.userfortask ? this.userfortask.id : "",
+                },
+              });
+              if (res.data.statusCode == 200) {
+                this.tasks = res.data.data;
+                this.key += 1;
+              } else {
+                console.error(e);
+              }
+              this.viewName = $event;
+              this.loading = false;
+      }
+    
     },
 
     // Sort By Action List

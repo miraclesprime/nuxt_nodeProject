@@ -1,7 +1,7 @@
 <template>
   <div id="projects-wrapper" class="projects-wrapper" >   
     <page-title title="Projects"></page-title>  
-    <project-actions  @sortValue='sortProject($event)' @groupValue="ProjectGroup($event)" @viewValue='viewName=$event' v-on:loading="loading = $event" v-on:sort="sortProject" @search-projects="searchProjects" />
+    <project-actions  @sortValue='sortProject($event)' @groupValue="ProjectGroup($event)" @viewValue='ProjectView($event)' v-on:loading="loading = $event" v-on:sort="sortProject" @search-projects="searchProjects" />
    
     <div id="projects-list-wrapper" class="projects-list-wrapper position-relative" >
       <loading :loading="loading"></loading>
@@ -198,6 +198,15 @@ export default {
         this.groupVisible = true
         this.templateKey += 1;
       })
+    },
+    ProjectView($event){
+      this.$store.dispatch('project/fetchProjects', $event).then(() => { 
+        if(this.groupVisible){
+              this.$store.dispatch('project/groupProjects', { key: this.groupBy}).then((res) => {
+          })
+        }
+       
+       })
     },
     sortProject($event) {
       
