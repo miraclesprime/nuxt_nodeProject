@@ -877,7 +877,7 @@ export const actions = {
     const res = await this.$axios.get("user/user-tasks", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        Filter: "all",
+        Filter: payload.filter,
         userid: payload.userId,
       },
     });

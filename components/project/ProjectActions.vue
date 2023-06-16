@@ -78,9 +78,9 @@ export default {
     },
 
     viewProjects($event) {
-      this.$emit("loading", true)
-      this.$store.dispatch('project/fetchProjects', $event).then(() => { this.$emit("loading", false) })
-      this.selectedView = $event;
+      // this.$emit("loading", true)
+      // this.$store.dispatch('project/fetchProjects', $event).then(() => { this.$emit("loading", false) })
+      // this.selectedView = $event;
       this.$emit('viewValue', $event)
     },
     groupProjects($event) {
