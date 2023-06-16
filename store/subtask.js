@@ -127,10 +127,10 @@ export const actions = {
   // delete subtask
   async deleteSubtask(ctx, payload) {
     if(payload.key=="multi"){
-      const delMulsub = await this.$axios.$delete("/MulSubtask/", {
+      const delMulsub = await this.$axios.$delete("/subtask/"+ payload.delData, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-          "subtasks":payload.delData
+          "subtasks":JSON.stringify(payload.delData)
         }
       })
       return delMulsub
