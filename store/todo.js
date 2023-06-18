@@ -1,3 +1,4 @@
+
 export const strict = false;
 
 export const state = () => ({
@@ -89,7 +90,7 @@ export const mutations = {
       }) 
       arr.forEach((ele) => {
         const title = ele.project?.[0]?.project?.title ?? "Unassigned";
-        items.push(title);
+        if (!items.includes(title))  items.push(title);
       });
       _tasks = items.map((item, idx) => {
         return {

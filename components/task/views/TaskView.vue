@@ -633,7 +633,7 @@ export default {
       else {
          this.taskContextMenuItems=this.taskContextMenuItems.map(item => item.label === "Completed" ? { ...item, label: "Mark Complete"} : item);
       }
-      this.$store.dispatch("task/setSingleTask", item)
+       this.$store.dispatch("task/setSingleTask", item)
     },
     updateKey() {
       this.userPickerOpen = false;
@@ -642,6 +642,7 @@ export default {
         .dispatch("section/fetchProjectSections", {
           projectId: this.$route.params.id,
           filter: "all",
+          sName:this.groupby
         })
         .then(() => {
           this.taskByOrder();
@@ -863,7 +864,7 @@ export default {
         .then((d) => {
           this.loading = false;
           this.updateKey();
-          this.$store.dispatch("task/setSingleTask", d);
+          // this.$store.dispatch("task/setSingleTask", d);
         })
         .catch((e) => {
           console.log(e);

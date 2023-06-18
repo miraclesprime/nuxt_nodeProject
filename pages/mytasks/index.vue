@@ -574,7 +574,8 @@ export default {
       if ($event) {
         this.popupMessages.push({ text: $event, variant: "success" })
       }
-      this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
+      
+      this.$store.dispatch("todo/fetchTodos", { filter: 'all',sName:this.groupby}).then((res) => {
         if (res.statusCode == 200) {
           this.key += 1
         }
