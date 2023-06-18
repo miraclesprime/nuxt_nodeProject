@@ -414,6 +414,7 @@ export const TASK_SORT = [
 ]
 
 export const TASK_GROUP = [
+  { label: 'Default', key:'default' },
   { label: 'Priority', key:'priority' },
   { label: 'Status', key:'status' },
   { label: 'Assignee', key:'assignee' },

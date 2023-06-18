@@ -197,7 +197,7 @@ export default {
         filelist.push(file.name)
         formdata.append('files', file)
       })
-      formdata.append('projectId', this.project.id || this.proj.id)
+      formdata.append('projectId', this.project?.id || this.proj.id)
       formdata.append('text', `file(s) [${filelist.join(", ")}] uploaded to project`)
       formdata.append('isHidden', true)
 

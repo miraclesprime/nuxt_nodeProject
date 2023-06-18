@@ -171,6 +171,7 @@ export default {
         text: "",
       },
       contentWidth: "100%",
+      groupby:''
     };
   },
   computed: {
@@ -606,7 +607,17 @@ export default {
       this.templateKey += 1;
     },
     SingleProjectGroup($event) {
-      console.log($event);
+      this.groupby = $event;
+      this.$store
+        .dispatch("section/fetchProjectSections", {
+          projectId: this.$route.params.id,
+          filter: "all",
+          sName:this.groupby
+        })
+        .then(() => {
+          // this.taskByOrder();
+        });
+    
     },
 
     contextOpen(item){
@@ -655,9 +666,9 @@ export default {
 
       let project = [
         {
-          projectId: this.project.id,
+          projectId: this.project?.id,
           project: {
-            id: this.project.id,
+            id: this.project?.id,
           },
         },
       ];
@@ -716,10 +727,10 @@ export default {
         el.order = index+1
         return el
       })
-      tempSections.unshift({title: $event.title, projectId: this.project.id, order: 0 })
+      tempSections.unshift({title: $event.title, projectId: this.project?.id, order: 0 })
       // console.log(tempSections)
       const res = await this.$store.dispatch("section/createSection", {
-        projectId: this.project.id,
+        projectId: this.project?.id,
         title: $event.title || $event,
         isDeleted: false,
         data: tempSections,
@@ -763,6 +774,7 @@ export default {
           .dispatch("section/fetchProjectSections", {
             projectId: this.$route.params.id,
             filter: "complete",
+            sName:this.groupby
           })
           .then(() => {
             this.taskByOrder();
@@ -774,6 +786,7 @@ export default {
           .dispatch("section/fetchProjectSections", {
             projectId: this.$route.params.id,
             filter: "incomplete",
+            sName:this.groupby
           })
           .then(() => {
             this.taskByOrder();
@@ -785,6 +798,7 @@ export default {
           .dispatch("section/fetchProjectSections", {
             projectId: this.$route.params.id,
             filter: "all",
+            sName:this.groupby
           })
           .then(() => {
             this.taskByOrder();
@@ -995,7 +1009,7 @@ export default {
 
       let sectionDnD = await this.$axios.$put(
         "/section/dragdrop",
-        { projectId: this.project.id, data: clone },
+        { projectId: this.project?.id, data: clone },
         {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("accessToken"),

@@ -304,13 +304,13 @@ export default {
         this.form = _.cloneDeep(this.task);
         if (this.task.project?.length) {
           this.form.projectId =
-            this.task.project[0].projectId || this.task.project[0].project.id;
+            this.task.project?.[0]?.projectId || this.task.project?.[0]?.project?.id;
           this.$store.dispatch("section/fetchProjectSections", {
             projectId: this.form.projectId,
             filter: "all",
           });
         } else {
-          this.form.projectId = this.project.id;
+          this.form.projectId = this.project?.id;
         }
       } else {
         this.form = {

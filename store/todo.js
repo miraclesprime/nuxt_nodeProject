@@ -28,7 +28,7 @@ export const mutations = {
     state.todos = payload;
   },
  
-  groupMyTasks(state, payload,rootState) {
+  groupMyTasks(state, payload) {
     let arr = JSON.parse(JSON.stringify(state.todos));
     let arrIndex;
     let _tasks;
