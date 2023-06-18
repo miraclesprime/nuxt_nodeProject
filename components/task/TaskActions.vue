@@ -95,7 +95,7 @@ export default {
     },
 
     groupBy($event) {
-      this.$emit("group", $event)
+      this.$emit("SingleProjectGroup", $event)
     },
 
     changeViewName($event){

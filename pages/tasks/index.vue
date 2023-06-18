@@ -619,7 +619,7 @@ export default {
     //group by
     taskGroup($event) {
       this.group=$event
-      if($event != 'department') {
+      if($event != 'default') {
         this.dragTable = false;
       } else {
         this.dragTable = true;

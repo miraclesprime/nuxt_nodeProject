@@ -5,7 +5,7 @@
       v-on:create-task="toggleSidebar($event)"
       v-on:filterView="filterView"
       v-on:sort="taskSort($event)"
-      @group="taskGroup($event)"
+      @SingleProjectGroup="SingleProjectGroup($event)"
       @search-projectTasks="searchTasks"
       v-on:add-section="showNewSection"
     ></task-actions>
@@ -605,7 +605,7 @@ export default {
 
       this.templateKey += 1;
     },
-    taskGroup($event) {
+    SingleProjectGroup($event) {
       console.log($event);
     },
 

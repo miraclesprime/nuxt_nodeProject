@@ -2,7 +2,7 @@
   <client-only>
     <div id="page" class="mytask-page-wrapper ">
       <page-title title="My Tasks"></page-title>
-      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="showNewTodo" @change-grid-type="($event)=>gridType = $event" @search-mytasks="searchTasks"></user-tasks-actions>
+      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView"  @MyTaskGroup="MyTaskGroup($event)" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="showNewTodo" @change-grid-type="($event)=>gridType = $event" @search-mytasks="searchTasks"></user-tasks-actions>
         <!-- <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form> -->
         <div v-show="gridType == 'list'" id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative " :style="{ 'width': contentWidth }">
           
@@ -156,7 +156,8 @@ export default {
       alertDialog: false,
       alertMsg:"",
       contentWidth: "100%",
-      tasksKey: 'tasks'
+      tasksKey: 'tasks',
+      groupby:""
     }
   },
 
@@ -220,7 +221,6 @@ export default {
     // this.loading = true
     this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
       if (res.statusCode == 200) {
-        // console.log(res.data)
         this.localdata = _.cloneDeep(res.data)
         this.key += 1
       }
@@ -229,7 +229,13 @@ export default {
   },
 
   methods: {
-
+    //group by
+    MyTaskGroup($event) {
+        this.groupby = $event;
+        this.$store.dispatch("todo/fetchTodos", { filter: 'all',sName:this.groupby }).then((res) => {
+      })
+   
+      },
     checkActive(sortName) {
       for(let i=0; i<this.taskFields.length; i++) {
           if(this.taskFields[i].header_icon) {
@@ -752,21 +758,21 @@ export default {
     filterView($event) {
       this.loading = true
       if ($event == 'complete') {
-        this.$store.dispatch('todo/fetchTodos', { filter: 'complete' }).then((res) => {
+        this.$store.dispatch('todo/fetchTodos', { filter: 'complete',sName:this.groupby }).then((res) => {
           this.viewName = 'complete'
           this.key += 1;
           this.loading = false
         }).catch(e => console.log(e))
       }
       if ($event == 'incomplete') {
-        this.$store.dispatch('todo/fetchTodos', { filter: 'incomplete' }).then((res) => {
+        this.$store.dispatch('todo/fetchTodos', { filter: 'incomplete',sName:this.groupby }).then((res) => {
           this.viewName = 'incomplete'
           this.key += 1;
           this.loading = false
         }).catch(e => console.log(e))
       }
       if ($event == 'all') {
-        this.$store.dispatch('todo/fetchTodos', { filter: 'all' }).then((res) => {
+        this.$store.dispatch('todo/fetchTodos', { filter: 'all',sName:this.groupby }).then((res) => {
           this.viewName = 'all'
           this.key += 1;
           this.loading = false

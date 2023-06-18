@@ -134,7 +134,7 @@ export const mutations = {
 
       arr.forEach((ele) => {
         let title =
-          ele.userId !== null&&ele.userId!==undefined
+          ele.user !== null&&ele.user!==undefined
             ? ele.user.firstName + " " + ele.user.lastName
             : "Unassigned";
         if (!items.includes(title)) items.push(title);
