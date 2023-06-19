@@ -224,7 +224,7 @@ export default {
       if (Object.keys(this.currentTask).length) {
         this.form = _.cloneDeep(this.currentTask);
         if (this.currentTask.project?.length) {
-          this.form.projectId = this.currentTask.project[0].projectId || this.currentTask.project[0].project.id
+          this.form.projectId = this.currentTask.project[0]?.projectId || this.currentTask.project[0].project?.id
         } else {
           this.form.projectId = this.project?.id
         }

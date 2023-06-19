@@ -45,7 +45,7 @@
       </div>
     </div>
     <!-- other fields -->
-    <div class="of-scroll-y px-105" id="std-other-fields">
+    <div class="overflow-y-auto px-105" id="std-other-fields">
       <div class="row" id="std-other-fields-row">
         <div class="col-4" id="std-other-fields-col-1">
           <bib-select label="Assignee" test_id="subtask_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="updateSubtask({field: 'userId', value: form.userId, name: 'User' })"></bib-select>

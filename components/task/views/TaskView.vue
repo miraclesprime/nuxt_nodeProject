@@ -7,11 +7,12 @@
       v-on:sort="taskSort($event)"
       @group="taskGroup($event)"
       @search-projectTasks="searchTasks"
-      v-on:add-section="showNewSection"
+      v-on:add-section="toggleNewsection"
     ></task-actions>
     <div v-show="gridType === 'list'" class="calc-height " :style="{ 'width': contentWidth }">
 
-      <adv-table-two :tableFields="tableFields" :tableData="localdata" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd"></adv-table-two>
+      <!-- <adv-table-two :tableFields="tableFields" :tableData="localdata" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd"></adv-table-two> -->
+      <adv-table-three :tableFields="tableFields" :tableData="localdata" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd"></adv-table-three>
 
     </div>
 
@@ -253,7 +254,12 @@ export default {
 
   methods: {
     changeSection($event){
-      this.newSection=$event
+      this.newSection = $event
+    },
+    toggleNewsection(flag) {
+      // console.log(flag)
+      this.newSection = flag ? false : true
+
     },
     taskByOrder() {
       this.localdata = JSON.parse(JSON.stringify(this.sections));
@@ -655,9 +661,9 @@ export default {
 
       let project = [
         {
-          projectId: this.project.id,
+          projectId: this.project?.id,
           project: {
-            id: this.project.id,
+            id: this.project?.id,
           },
         },
       ];
