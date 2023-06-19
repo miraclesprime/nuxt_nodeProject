@@ -590,17 +590,21 @@ export default {
     //group by
     taskGroup($event) {
       this.group=$event
-        this.$store
-          .dispatch("company/groupTasks", {
-            sName:$event
-          })
-          .then(() => {
-            if($event != 'default') {
-              this.dragTable = false;
-            } else {
-              this.dragTable = true;
-            }
-          });
+      if($event != 'default') {
+        this.dragTable = false;
+      } else {
+        this.group=''
+        this.dragTable = true;
+      }
+      let compid = JSON.parse(localStorage.getItem("user")).subb;
+      this.$store
+        .dispatch("company/fetchCompanyTasks", {
+          companyId: compid,
+          sName:this.group
+        })
+        .then(() => {
+          this.key += 1;
+        });
 
       },
     // Sort By Action List

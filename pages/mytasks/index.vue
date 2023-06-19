@@ -2,10 +2,15 @@
   <client-only>
     <div id="page" class="mytask-page-wrapper ">
       <page-title title="My Tasks"></page-title>
-      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView"  @MyTaskGroup="MyTaskGroup($event)" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="showNewTodo" @change-grid-type="($event)=>gridType = $event" @search-mytasks="searchTasks"></user-tasks-actions>
+
+      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView"  @myTaskGroup="myTaskGroup($event)" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="toggleNewsection" @change-grid-type="($event)=>gridType = $event" @search-mytasks="searchTasks"></user-tasks-actions>
+
+        <!-- <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form> -->
         <div v-show="gridType == 'list'" id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative " :style="{ 'width': contentWidth }">
           
-          <adv-table-two :tableFields="taskFields" :tableData="localdata" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @title-click="openSidebar" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createTodo" @edit-section="renameTodo" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd" :drag="dragTable"></adv-table-two>
+          <!-- <adv-table-two :tableFields="taskFields" :tableData="localdata" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @title-click="openSidebar" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createTodo" @edit-section="renameTodo" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd" :drag="dragTable"></adv-table-two> -->
+
+          <adv-table-three :tableFields="taskFields" :tableData="localdata" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @title-click="openSidebar" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createTodo" @edit-section="renameTodo" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd" :drag="dragTable"></adv-table-three>
               
           <loading :loading="loading"></loading>
             
@@ -201,7 +206,7 @@ export default {
 
   methods: {
     //group by
-    MyTaskGroup($event) {
+    myTaskGroup($event) {
         this.groupby = $event;
         this.$store.dispatch("todo/fetchTodos", { filter: 'all',sName:this.groupby }).then(() => {
           if($event != 'default') {
@@ -510,11 +515,17 @@ export default {
       })
     },
 
-    showNewTodo() {
+    /*showNewTodo() {
       this.newSection = true
       process.nextTick(() => {
         this.$refs.newsectioninput.focus()
       });
+    },*/
+    
+    toggleNewsection(flag) {
+      // console.log(flag)
+      this.newSection = flag ? false : true
+
     },
 
     debounceNewSection: _.debounce(function(value, event) {

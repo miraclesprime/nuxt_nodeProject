@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { VIEW_FILTER, USER_TASK_SORT,MYTASK_GROUP} from 'config/constants.js'
+import { VIEW_FILTER, USER_TASK_SORT,MY_TASK_GROUP} from 'config/constants.js'
 
 export default {
   props: {
@@ -51,7 +51,7 @@ export default {
       selectInfo: null,
       sortName: '',
       viewing: VIEW_FILTER,
-      groupBy:MYTASK_GROUP,
+      groupBy:MY_TASK_GROUP,
       sorting: USER_TASK_SORT,
       searchText: ""
     };
@@ -65,7 +65,7 @@ export default {
       this.$nuxt.$emit("create-task", false) //event will be available to all
     },
     groupMyTasks($event) {
-      this.$emit("MyTaskGroup", $event)
+      this.$emit("myTaskGroup", $event)
     },
     addSection(){
       this.$emit("add-section")
