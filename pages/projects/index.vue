@@ -79,8 +79,8 @@ import { PROJECT_CONTEXT_MENU, PROJECT_FIELDS } from '../../config/constants';
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
-import { combineTransactionSteps } from '@tiptap/core';
-import { conditionalExpression } from '@babel/types';
+// import { combineTransactionSteps } from '@tiptap/core';
+// import { conditionalExpression } from '@babel/types';
 
 export default {
   name: "Projects",
@@ -547,6 +547,7 @@ export default {
     },
 
     async createProject(proj) {
+      console.log("sfsdfsdfsd",proj)
       let u = {
         id: this.user.Id,
         firstName: this.user.FirstName,
@@ -558,8 +559,8 @@ export default {
       proj.dueDate = null;
       proj.startDate = null;
       proj.user = u;
-      delete proj.show;
-      delete proj.sectionId;
+      // delete proj.show;
+      // delete proj.sectionId;
       proj.groupBy = this.groupBy;
       this.$store.dispatch('project/createProject', proj).then(res => {
       });

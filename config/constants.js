@@ -415,16 +415,17 @@ export const TASK_SORT = [
 
 export const TASK_GROUP = [
   { label: 'Default', key:'default' },
+  { label: 'Project', key:'project' },
   { label: 'Priority', key:'priority' },
   { label: 'Status', key:'status' },
   { label: 'Assignee', key:'assignee' },
   { label: 'Department', key:'department' },
+  { label: 'Due Date', key:'dueDate' },
 ]
-export const MYTASK_GROUP = [
+export const MY_TASK_GROUP = [
   { label: 'Default', key:'default' },
   { label: 'Project', key:'project' },
   { label: 'Department', key:'department' },
-  { label: 'Assignee', key:'assignee' },
   { label: 'Priority', key:'priority' },
   { label: 'Status', key:'status' },
   { label: 'Due Date', key:'dueDate' },

@@ -677,7 +677,6 @@ export default {
     },
 
     createNewTask(payload) {
-      console.log(payload)
       this.$store.dispatch("task/createTask", {
           ...payload,
           projectId: this.$route.params.id,

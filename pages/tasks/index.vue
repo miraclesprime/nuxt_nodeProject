@@ -622,14 +622,18 @@ export default {
       if($event != 'default') {
         this.dragTable = false;
       } else {
+        this.group=''
         this.dragTable = true;
       }
-        this.$store
-          .dispatch("company/groupTasks", {
-            sName:$event
-          })
-          .then((res) => {
-          });
+      let compid = JSON.parse(localStorage.getItem("user")).subb;
+      this.$store
+        .dispatch("company/fetchCompanyTasks", {
+          companyId: compid,
+          sName:this.group
+        })
+        .then(() => {
+          this.key += 1;
+        });
 
       },
     // Sort By Action List
