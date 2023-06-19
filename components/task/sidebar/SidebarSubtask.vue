@@ -16,7 +16,7 @@
     </div>
     <div class="position-relative" id="sbs-table-wrapper">
       
-    <table class="table ">
+    <table class="table " v-click-outside="removeSelection">
       <thead v-if="localSubTasks.length > 0">
         <tr id="sbs-table-row">
           <th id="sbs-h1">Subtasks</th>
@@ -27,7 +27,7 @@
       </thead>
       <tbody>
        
-        <tr class="table-row" v-for="(sub, index) in localSubTasks" :id="'sbs-'+index" :key="sub.id + subkey" v-bind:class="{'selectedSubRow':rowIsSelected(sub.id)}" @click.prevent= "selectSubTaskRow($event,sub)" @click.right.prevent="subtaskRightClick($event, sub)" v-click-outside="closeContext">
+        <tr class="table-row" v-for="(sub, index) in localSubTasks" :id="'sbs-'+index" :key="sub.id + subkey" v-bind:class="{'selectedSubRow':rowIsSelected(sub.id)}" @click.prevent= "selectSubTaskRow($event,sub)" @click.right.prevent="subtaskRightClick($event, sub)" v-click-outside="closeContext" :ref="'sbs_' + index">
           <td id="sbs-table-row-2">
             <div class="d-flex gap-05 align-center" id="sbs-icons">
               <span class="cursor-pointer" id="sbs-check-circle-solid" style="width:20px; height:20px" @click="markComplete(sub)"><bib-icon icon="check-circle-solid" :scale="1.25" :variant="sub.isDone ? 'success' : 'gray4'"></bib-icon></span>
@@ -178,6 +178,13 @@ export default {
     })
   },
   methods: {
+    removeSelection() {
+      let i;
+      this.localSubTasks.forEach((ele, idx) => {
+        this.$refs['sbs_' + idx][0].classList.remove('selectedSubRow');
+      });
+    }, 
+
     subtaskRightClick($event, subtask) {
       this.showContext = true
       this.userPickerOpen = false
@@ -367,8 +374,12 @@ export default {
 
     async deleteSubtask(subtask) {
       let delSub
+      let MultiData=[]
       if(this.ctrlSelectedRows.length>0){
-        delSub= await this.$store.dispatch("subtask/deleteSubtask", { delData:this.ctrlSelectedRows, text: `deleted Multisubtask"`,key:"multi"});
+        this.ctrlSelectedRows.map((item)=>{
+          MultiData = [...MultiData, { id: item.id, userId: item.userId }];
+        })
+        delSub= await this.$store.dispatch("subtask/deleteSubtask", { delData:MultiData, text: `deleted Multisubtask"`,key:"multi"});
       }
       else {
         delSub = await this.$store.dispatch("subtask/deleteSubtask", { ...subtask, text: `deleted subtask "${subtask.title}"`,key:"single" })

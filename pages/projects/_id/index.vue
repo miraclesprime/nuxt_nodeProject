@@ -174,7 +174,7 @@ export default {
     },
 
     isFavorite() {
-      let fav = this.favProjects.some(t => t.id == this.project.id)
+      let fav = this.favProjects.some(t => t.id == this.project?.id)
       if (fav) {
         return { variant: "orange", text: "Remove favorite", status: true }
       } else {
@@ -330,7 +330,7 @@ export default {
 
     onsubmit(data) {
       if (this.editMessage?.id) {
-        this.$store.dispatch("project/updateProjectComment", { projectId: this.project.id, commentId: this.editMessage.id, comment: data.text })
+        this.$store.dispatch("project/updateProjectComment", { projectId: this.project?.id, commentId: this.editMessage.id, comment: data.text })
         .then(res => {
           if (this.value.files.length > 0) {
             this.uploadFile(this.value.files, this.editMessage)
@@ -342,7 +342,7 @@ export default {
         })
         .catch(e => console.log(e))
       } else {
-        this.$store.dispatch("project/createProjectComment", { id: this.project.id, comment: data.text })
+        this.$store.dispatch("project/createProjectComment", { id: this.project?.id, comment: data.text })
           .then(res => {
             if (this.value.files.length > 0) {
               this.uploadFile(this.value.files, res.data)
@@ -361,7 +361,7 @@ export default {
         formdata.append('files', file)
         filelist.push(file.name)
       })
-      formdata.append('projectId', this.project.id)
+      formdata.append('projectId', this.project?.id)
       formdata.append('projCommentId', data.id)
       formdata.append('text', `uploaded file(s) "${filelist.join(", ")}" to comment`)
 

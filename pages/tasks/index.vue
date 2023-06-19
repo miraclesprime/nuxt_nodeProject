@@ -619,7 +619,7 @@ export default {
     //group by
     taskGroup($event) {
       this.group=$event
-      if($event != 'department') {
+      if($event != 'default') {
         this.dragTable = false;
       } else {
         this.dragTable = true;
@@ -725,17 +725,7 @@ export default {
 
       let depts = JSON.parse(JSON.stringify(this.tasks));
 
-      // if(this.projects[0]?.tasks){
-      //         newArr = this.projects.map((item) => {
-      //       const filteredTasks = item.tasks.filter((ele) => {
-      //         if (ele.title.includes(formattedText) || ele.title.toLowerCase().includes(formattedText)) {
-      //           console.log("Found matching task:", ele);
-      //           return ele;
-      //         } 
-      //       })
-      //       return { ...item, tasks: filteredTasks };
-      //     })
-      // }
+     
 
       let newArr = depts.map((d) => {
         let filtered = d.tasks.filter((t) => {

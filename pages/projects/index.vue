@@ -27,7 +27,7 @@
         <div v-if="groupVisible">
         <loading :loading="loading"></loading>
 
-        <adv-table-two :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" :isProject="true" @create-row="createProject" :drag="false"></adv-table-two>
+        <adv-table-two :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @context-open="contextOpen" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" :isProject="true" @create-row="createProject" :drag="false"></adv-table-two>
         </div>
        <div v-else>
         <loading :loading="loading"></loading>
@@ -578,6 +578,10 @@ export default {
     updateKey() {
       // this.loading=true
         this.$store.dispatch("project/fetchProjects").then(() => {
+          if(this.groupVisible){
+              this.$store.dispatch('project/groupProjects', { key: this.groupBy}).then((res) => {
+          })
+        }
           this.templateKey += 1;
         })
       

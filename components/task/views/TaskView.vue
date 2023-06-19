@@ -5,7 +5,7 @@
       v-on:create-task="toggleSidebar($event)"
       v-on:filterView="filterView"
       v-on:sort="taskSort($event)"
-      @group="taskGroup($event)"
+      @SingleProjectGroup="SingleProjectGroup($event)"
       @search-projectTasks="searchTasks"
       v-on:add-section="toggleNewsection"
     ></task-actions>
@@ -172,6 +172,7 @@ export default {
         text: "",
       },
       contentWidth: "100%",
+      groupby:''
     };
   },
   computed: {
@@ -611,8 +612,18 @@ export default {
 
       this.templateKey += 1;
     },
-    taskGroup($event) {
-      console.log($event);
+    SingleProjectGroup($event) {
+      this.groupby = $event;
+      this.$store
+        .dispatch("section/fetchProjectSections", {
+          projectId: this.$route.params.id,
+          filter: "all",
+          sName:this.groupby
+        })
+        .then(() => {
+          // this.taskByOrder();
+        });
+    
     },
 
     contextOpen(item){
@@ -628,7 +639,7 @@ export default {
       else {
          this.taskContextMenuItems=this.taskContextMenuItems.map(item => item.label === "Completed" ? { ...item, label: "Mark Complete"} : item);
       }
-      this.$store.dispatch("task/setSingleTask", item)
+       this.$store.dispatch("task/setSingleTask", item)
     },
     updateKey() {
       this.userPickerOpen = false;
@@ -637,6 +648,7 @@ export default {
         .dispatch("section/fetchProjectSections", {
           projectId: this.$route.params.id,
           filter: "all",
+          sName:this.groupby
         })
         .then(() => {
           this.taskByOrder();
@@ -722,10 +734,10 @@ export default {
         el.order = index+1
         return el
       })
-      tempSections.unshift({title: $event.title, projectId: this.project.id, order: 0 })
+      tempSections.unshift({title: $event.title, projectId: this.project?.id, order: 0 })
       // console.log(tempSections)
       const res = await this.$store.dispatch("section/createSection", {
-        projectId: this.project.id,
+        projectId: this.project?.id,
         title: $event.title || $event,
         isDeleted: false,
         data: tempSections,
@@ -769,6 +781,7 @@ export default {
           .dispatch("section/fetchProjectSections", {
             projectId: this.$route.params.id,
             filter: "complete",
+            sName:this.groupby
           })
           .then(() => {
             this.taskByOrder();
@@ -780,6 +793,7 @@ export default {
           .dispatch("section/fetchProjectSections", {
             projectId: this.$route.params.id,
             filter: "incomplete",
+            sName:this.groupby
           })
           .then(() => {
             this.taskByOrder();
@@ -791,6 +805,7 @@ export default {
           .dispatch("section/fetchProjectSections", {
             projectId: this.$route.params.id,
             filter: "all",
+            sName:this.groupby
           })
           .then(() => {
             this.taskByOrder();
@@ -855,7 +870,7 @@ export default {
         .then((d) => {
           this.loading = false;
           this.updateKey();
-          this.$store.dispatch("task/setSingleTask", d);
+          // this.$store.dispatch("task/setSingleTask", d);
         })
         .catch((e) => {
           console.log(e);
@@ -1001,7 +1016,7 @@ export default {
 
       let sectionDnD = await this.$axios.$put(
         "/section/dragdrop",
-        { projectId: this.project.id, data: clone },
+        { projectId: this.project?.id, data: clone },
         {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("accessToken"),

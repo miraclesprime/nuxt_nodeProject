@@ -414,10 +414,20 @@ export const TASK_SORT = [
 ]
 
 export const TASK_GROUP = [
+  { label: 'Default', key:'default' },
   { label: 'Priority', key:'priority' },
   { label: 'Status', key:'status' },
   { label: 'Assignee', key:'assignee' },
   { label: 'Department', key:'department' },
+]
+export const MYTASK_GROUP = [
+  { label: 'Default', key:'default' },
+  { label: 'Project', key:'project' },
+  { label: 'Department', key:'department' },
+  { label: 'Assignee', key:'assignee' },
+  { label: 'Priority', key:'priority' },
+  { label: 'Status', key:'status' },
+  { label: 'Due Date', key:'dueDate' },
 ]
 
 export const FAVORITE_SORT = [

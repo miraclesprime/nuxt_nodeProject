@@ -91,7 +91,7 @@ export default {
   },
   methods: {
     fetchComments() {
-      this.$store.dispatch("project/fetchProjectComments", { id: this.project.id })
+      this.$store.dispatch("project/fetchProjectComments", { id: this.project?.id })
       .then(c => {
         this.comments = c.data
         this.fetchHistory()
