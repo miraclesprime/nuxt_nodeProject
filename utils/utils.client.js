@@ -38,7 +38,10 @@ export default ({ store, app, context }, inject) => {
   inject('CalDate', (idx) => {
               const oneDay = 24 * 60 * 60 * 1000; // one week in milliseconds
               const today = new Date();
+              const todayTime=new Date (today.toISOString().substring(0, 10))
+              todayTime.setHours(0, 0, 0, 0)
               today.setHours(0, 0, 0, 0);
+              
               const lastSunday = new Date(today - today.getDay() * oneDay); // get date of last Sunday
               const nextSunday = new Date(lastSunday.getTime() + 7 * oneDay); // get date of next Sunday
               const nextNextSunday = new Date(nextSunday.getTime() + 7 * oneDay); // get date of Sunday after next
@@ -46,8 +49,11 @@ export default ({ store, app, context }, inject) => {
               const selectedDate = new Date(changeDueDate.toISOString().substring(0, 10));
               selectedDate.setHours(0, 0, 0, 0);
               if (selectedDate < lastSunday ) {
-                return  "Past week";
-              } else if (selectedDate < nextSunday) {
+                return  "Past Due";
+              } else if(todayTime.getTime() === selectedDate.getTime()){
+                return  "Today";
+              } else
+              if (selectedDate < nextSunday) {
                 return  "This week";
               } else if (selectedDate < nextNextSunday) {
                 return  "Next week";

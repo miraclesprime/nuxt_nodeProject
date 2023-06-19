@@ -167,7 +167,6 @@ export default {
 
   watch: {
     tasks(newVal) {
-      console.log(newVal)
       let data = _.cloneDeep(newVal);
       let newArr = [];
 
@@ -777,7 +776,8 @@ export default {
     createNewTask(payload) {
       this.$store.dispatch("task/createTask", {
           ...payload,
-          departmentId: payload.sectionId,
+          sectionId:payload.sectionId!==""?payload.sectionId:null,
+          departmentId: payload.sectionId!==""?payload.sectionId:null,
           text: `created task ${payload.title}`,
         })
         .then((t) => {
@@ -793,7 +793,7 @@ export default {
       this.newRow = {
         show: false,
         id: "",
-        sectionId: "",
+        sectionId: null,
         title: "",
         userId: "",
         statusId: null,

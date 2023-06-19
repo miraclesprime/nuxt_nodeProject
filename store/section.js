@@ -194,6 +194,41 @@ export const mutations = {
         };
       });
     }
+    if(payload.sName=="dueDate"){
+      arrIndex = "dueDate";
+      let items = [];
+      arr.sort((a,b)=>{
+        if (a.dueDate === null && b.dueDate !== null) {
+          return 1;
+        }
+        if (b.dueDate === null && a.dueDate !== null) {
+          return -1;
+        }
+   
+        return new Date(a.dueDate) - new Date(b.dueDate);
+      })
+      arr.forEach((ele) => {
+        let title
+        if(ele.dueDate!==null){
+          title =this.$CalDate(ele.dueDate)
+        }
+        else {
+          title="Unassigned"
+        }
+        if (!items.includes(title)) items.push(title);
+      });
+      _tasks = items.map((item, idx) => {
+        return {
+          id: idx,
+          title: item !== null ? item : "Unassigned",
+          tasks: arr.filter(
+            (_item) =>
+              (_item[arrIndex] !== null ? this.$CalDate(_item[arrIndex]) : null) ===
+              (item === "Unassigned" ? null : item)
+          ),
+        };
+      });
+}
     state.projectSections = _tasks;
   },
 

@@ -135,7 +135,7 @@
                   <div v-show="localNewrow.sectionId != section.id"  class="tr" style="border-bottom: var(--bib-light)">
                     <div class="td width-2" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
                     <div class="td" style="border-bottom-color: transparent; border-right-color: transparent; width: 360px;">
-                      <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section)">
+                      <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
                         <bib-icon :icon="plusButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{plusButton.label}}</span>
                   </div>
                 </div>
@@ -147,7 +147,7 @@
                       <span class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
                 </div>
                     <div class="td">
-                      <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate" required placeholder="Enter title...">
+                      <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate(section)" required placeholder="Enter title...">
                 </div>
                       <!-- <div v-else class="td" ></div> -->
               </div>
@@ -323,7 +323,7 @@ export default {
     },
 
     resizeCol() {
-      console.log('data length',this.localData.length)
+      // console.log('data length',this.localData.length)
       if (this.localData) {
 
         const headElems = document.getElementsByClassName("th")
@@ -667,7 +667,6 @@ export default {
     },
 
     newRowClick(sectionId) {
-      console.log(sectionId)
 
       if (!sectionId) {
         this.unselectAll()
@@ -678,18 +677,18 @@ export default {
         return;
       }
       this.unselectAll().then(() => {
-        this.localNewrow.sectionId = sectionId.id
+        this.localNewrow.sectionId = sectionId
         this.localNewrow.title = ""
       })
       // this.newRow.show = true
       process.nextTick(() => {
-        this.$refs['newrowInput'+sectionId.id][0].focus()
+        this.$refs['newrowInput'+sectionId][0].focus()
       });
       // this.$refs['newRow'+sectionId].style.visibility = 'visible'
 
     },
 
-    newRowCreate: _.debounce(function() {
+    newRowCreate: _.debounce(function(section) {
       // console.table([this.newRow.sectionId, this.newRow.title]);
       if (!this.localNewrow.title) {
         console.warn("title is required")
@@ -698,7 +697,7 @@ export default {
       }
       this.validTitle = ""
       // console.info("valid input->", this.localNewrow.title)
-      this.$emit("create-row", this.localNewrow)
+      this.$emit("create-row", this.localNewrow,section)
     }, 800),
 
     debounceTitle: _.debounce(function(value, item) {

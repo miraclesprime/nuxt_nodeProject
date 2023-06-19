@@ -264,8 +264,41 @@ export const mutations = {
         };
       });
     }
-    console.log("323",_projects)
-
+    if(payload.key=="dueDate"){
+      arrIndex = "dueDate";
+      let items = [];
+      arr.sort((a,b)=>{
+        if (a.dueDate === null && b.dueDate !== null) {
+          return 1;
+        }
+        if (b.dueDate === null && a.dueDate !== null) {
+          return -1;
+        }
+   
+        return new Date(a.dueDate) - new Date(b.dueDate);
+      })
+      arr.forEach((ele) => {
+        let title
+        if(ele.dueDate!==null){
+          title =this.$CalDate(ele.dueDate)
+        }
+        else {
+          title="Unassigned"
+        }
+        if (!items.includes(title)) items.push(title);
+      });
+      _projects = items.map((item, idx) => {
+        return {
+          id: idx,
+          title: item !== null ? item : "Unassigned",
+          tasks: arr.filter(
+            (_item) =>
+              (_item[arrIndex] !== null ? this.$CalDate(_item[arrIndex]) : null) ===
+              (item === "Unassigned" ? null : item)
+          ),
+        };
+      });
+}
     state.projects = _projects;
   },
   sortProjects(state, payload) {
@@ -913,12 +946,15 @@ export const actions = {
     const res = await this.$axios.$post('/project', {
       user: payload.user || null,
       title: payload.title,
-      statusId: null,
+      statusId: payload.statusId||null,
+      status:payload.status||null,
       departmentId: payload.departmentId || null,
+      department: payload.department || null,
       description: null,
       startDate: null,
       dueDate: null,
-      priority: null,
+      priority: payload.priority||null,
+      priorityId: payload.priorityId||null,
       budget: null,
       text: `created new project "${payload.title}"`,
     }, {
@@ -927,6 +963,7 @@ export const actions = {
     if (res.statusCode == 200) {
       if (payload.groupBy != undefined && payload.groupBy != "") {
         ctx.commit("createProjectForGroup", res.data);
+        ctx.commit("groupProjects", { key: payload.groupBy});
       } else {
         ctx.commit("createProject", res.data);
       }

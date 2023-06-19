@@ -400,6 +400,7 @@ export const PROJECT_GROUP = [
   { label: 'Status', key:'status' },
   { label: 'Assignee', key:'assignee' },
   { label: 'Department', key:'department' },
+  { label: 'Due Date', key: 'dueDate' },
   
   
 ]
@@ -418,7 +419,6 @@ export const TASK_GROUP = [
   { label: 'Project', key:'project' },
   { label: 'Priority', key:'priority' },
   { label: 'Status', key:'status' },
-  { label: 'Assignee', key:'assignee' },
   { label: 'Department', key:'department' },
   { label: 'Due Date', key:'dueDate' },
 ]
