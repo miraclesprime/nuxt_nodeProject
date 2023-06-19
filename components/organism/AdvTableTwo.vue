@@ -135,7 +135,7 @@
                   <div v-show="localNewrow.sectionId != section.id"  class="tr" style="border-bottom: var(--bib-light)">
                     <div class="td width-2" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
                     <div class="td" style="border-bottom-color: transparent; border-right-color: transparent; width: 360px;">
-                      <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
+                      <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section)">
                         <bib-icon :icon="plusButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{plusButton.label}}</span>
                   </div>
                 </div>
@@ -667,7 +667,7 @@ export default {
     },
 
     newRowClick(sectionId) {
-      // console.log(sectionId)
+      console.log(sectionId)
 
       if (!sectionId) {
         this.unselectAll()
@@ -678,12 +678,12 @@ export default {
         return;
       }
       this.unselectAll().then(() => {
-        this.localNewrow.sectionId = sectionId
+        this.localNewrow.sectionId = sectionId.id
         this.localNewrow.title = ""
       })
       // this.newRow.show = true
       process.nextTick(() => {
-        this.$refs['newrowInput'+sectionId][0].focus()
+        this.$refs['newrowInput'+sectionId.id][0].focus()
       });
       // this.$refs['newRow'+sectionId].style.visibility = 'visible'
 

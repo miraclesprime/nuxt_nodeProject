@@ -135,6 +135,7 @@ export default {
           }
         })
         this.localData = newArr;
+        console.log("this.localData",this.localData)
         this.$store.dispatch('project/setProjects', newArr);
         this.loading = false;
     })
