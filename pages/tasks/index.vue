@@ -167,7 +167,7 @@ export default {
 
   watch: {
     tasks(newVal) {
-      // this.localData = _.cloneDeep(newVal);
+      console.log(newVal)
       let data = _.cloneDeep(newVal);
       let newArr = [];
 
@@ -512,32 +512,7 @@ export default {
           console.warn(e);
         });
     },
-    // confirmDelete(state) {
-    //   this.confirmModal = false;
-    //   this.confirmMsg = "";
-    //   if (state) {
-    //     this.$store
-    //       .dispatch("task/deleteTask", this.taskToDelete)
-    //       .then((t) => {
-    //         if (t.statusCode == 200) {
-    //           this.updateKey(t.message);
-    //           this.taskToDelete = {};
-    //         } else {
-    //           this.popupMessages.push({ text: t.message, variant: "orange" });
-    //           console.warn(t.message);
-    //         }
-    //       })
-    //       .catch((e) => {
-    //         console.warn(e);
-    //       });
-    //   } else {
-    //     this.popupMessages.push({
-    //       text: "Action cancelled",
-    //       variant: "orange",
-    //     });
-    //     this.taskToDelete = {};
-    //   }
-    // },
+
     deleteTask(task) {
       if (task) {
         this.$store
@@ -560,11 +535,7 @@ export default {
           text: "Action cancelled",
           variant: "orange",
         });
-        // this.taskToDelete = {};
       }
-      // this.taskToDelete = task;
-      // this.confirmMsg = "Are you sure ";
-      // this.confirmModal = true;
     },
 
     async filterView($event) {
@@ -619,16 +590,16 @@ export default {
     //group by
     taskGroup($event) {
       this.group=$event
-      if($event != 'default') {
-        this.dragTable = false;
-      } else {
-        this.dragTable = true;
-      }
         this.$store
           .dispatch("company/groupTasks", {
             sName:$event
           })
-          .then((res) => {
+          .then(() => {
+            if($event != 'default') {
+              this.dragTable = false;
+            } else {
+              this.dragTable = true;
+            }
           });
 
       },

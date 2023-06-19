@@ -11,7 +11,7 @@
     ></task-actions>
     <div v-show="gridType === 'list'" class="calc-height " :style="{ 'width': contentWidth }">
 
-      <adv-table-two :tableFields="tableFields" :tableData="localdata" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd"></adv-table-two>
+      <adv-table-two :tableFields="tableFields" :tableData="localdata" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :drag="dragTable"></adv-table-two>
 
     </div>
 
@@ -171,7 +171,8 @@ export default {
         text: "",
       },
       contentWidth: "100%",
-      groupby:''
+      groupby:'',
+      dragTable: true
     };
   },
   computed: {
@@ -229,28 +230,6 @@ export default {
       this.showDatePicker(payload);
     });
   },
-
-  // mounted() {
-    // this.loading = true;
-    // this.$store
-    //   .dispatch("section/fetchProjectSections", {
-    //     projectId: this.$route.params.id,
-    //     filter: "all",
-    //   })
-    //   .then((res) => {
-    //     console.log(res);
-    //     this.localdata = JSON.parse(JSON.stringify(this.sections));
-
-    //     let sorted = this.localdata.map((s) => {
-    //       let t = s.tasks.sort((a, b) => a.order - b.order);
-    //       s.tasks = t;
-    //       return s;
-    //     });
-    //     this.localdata = sorted;
-    //     this.loading = false;
-    //   })
-    //   .catch((e) => console.log(e));
-  // },
 
   methods: {
     changeSection($event){
@@ -608,15 +587,19 @@ export default {
     },
     SingleProjectGroup($event) {
       this.groupby = $event;
+      console.log($event)
       this.$store
         .dispatch("section/fetchProjectSections", {
           projectId: this.$route.params.id,
           filter: "all",
           sName:this.groupby
+        }).then(() => {
+          if($event != 'default') {
+            this.dragTable = false;
+          } else {
+            this.dragTable = true;
+          }
         })
-        .then(() => {
-          // this.taskByOrder();
-        });
     
     },
 

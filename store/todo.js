@@ -241,7 +241,7 @@ export const mutations = {
         };
       });
     }
-console.log("_tasks",_tasks)
+    
     state.todos = _tasks;
   },
 };
