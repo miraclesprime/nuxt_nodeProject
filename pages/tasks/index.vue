@@ -772,7 +772,6 @@ export default {
 
     createNewTask(proj,section) {
       proj.group = this.group;
-      if(this.group==""){
           proj.status=null
           proj.statusId=null
           proj.priority=null
@@ -781,49 +780,30 @@ export default {
           proj.department = null;
           proj.user=null
           proj.userId=null
-      }
+          proj.projectId=null
+      
       if(this.group=="priority"){
         proj.priority=section.tasks[0]?.priority
         proj.priorityId=section.tasks[0]?.priorityId
-        proj.status=null
-        proj.statusId=null
-        proj.departmentId = null;
-        proj.department = null;
-        proj.user=null
-        proj.userId=null
      
       }
       if(this.group=="status"){
         proj.status=section.tasks[0]?.status
         proj.statusId=section.tasks[0]?.statusId
-        proj.departmentId = null;
-        proj.department = null;
-        proj.priority=null
-        proj.priorityId=null
-        proj.user=null
-        proj.userId=null
       }
       if(this.group=="assignee"){
-        proj.status=null
-        proj.statusId=null
-        proj.priority=null
-        proj.priorityId=null
-        proj.departmentId = null;
-        proj.department = null;
         proj.user=section.tasks[0]?.user
         proj.userId=section.tasks[0]?.userId
       }
       if(this.group=="department"){
         proj.department=section.tasks[0]?.department
         proj.departmentId=section.tasks[0]?.departmentId
-        proj.status=null
-        proj.statusId=null
-        proj.priority=null
-        proj.priorityId=null
-        proj.user=null
-        proj.userId=null
+      }
+      if(this.group=="project"){
+        proj.projectId=section.tasks[0]?.project?.[0].project?.id||null 
       }
       delete proj.show
+      delete proj.sectionId
       this.$store.dispatch("task/createTask", {
           ...proj,
           text: `created task ${proj.title}`,
@@ -847,6 +827,7 @@ export default {
         userId: null,
         statusId: null,
         priorityId: null,
+        projectId:null,
         startDate: "",
         dueDate: "",
         departmentId: null,
