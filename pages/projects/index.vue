@@ -563,6 +563,8 @@ export default {
           proj.priorityId=null
           proj.departmentId = null;
           proj.department = null;
+          // proj.user=null
+          // proj.userId=null
       }
       if(this.groupBy=="priority"){
         proj.priority=section.tasks[0]?.priority
@@ -571,6 +573,8 @@ export default {
         proj.statusId=null
         proj.departmentId = null;
         proj.department = null;
+        // proj.user=null
+        // proj.userId=null
      
       }
       if(this.groupBy=="status"){
@@ -580,9 +584,18 @@ export default {
         proj.department = null;
         proj.priority=null
         proj.priorityId=null
+        // proj.user=null
+        // proj.userId=null
       }
       if(this.groupBy=="assignee"){
-        
+        proj.status=null
+        proj.statusId=null
+        proj.priority=null
+        proj.priorityId=null
+        proj.departmentId = null;
+        proj.department = null;
+        proj.user=section.tasks[0]?.user
+        proj.userId=section.tasks[0]?.userId
       }
       if(this.groupBy=="department"){
         proj.department=section.tasks[0]?.department
@@ -591,6 +604,8 @@ export default {
         proj.statusId=null
         proj.priority=null
         proj.priorityId=null
+        // proj.user=null
+        // proj.userId=null
       }
     
       delete proj.show;
