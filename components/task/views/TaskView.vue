@@ -5,13 +5,14 @@
       v-on:create-task="toggleSidebar($event)"
       v-on:filterView="filterView"
       v-on:sort="taskSort($event)"
-      @group="taskGroup($event)"
+      @SingleProjectGroup="SingleProjectGroup($event)"
       @search-projectTasks="searchTasks"
-      v-on:add-section="showNewSection"
+      v-on:add-section="toggleNewsection"
     ></task-actions>
     <div v-show="gridType === 'list'" class="calc-height " :style="{ 'width': contentWidth }">
 
-      <adv-table-two :tableFields="tableFields" :tableData="localdata" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd"></adv-table-two>
+      <!-- <adv-table-two :tableFields="tableFields" :tableData="localdata" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :drag="dragTable"></adv-table-two> -->
+      <adv-table-three :tableFields="tableFields" :tableData="localdata" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :drag="dragTable"></adv-table-three>
 
     </div>
 
@@ -171,6 +172,8 @@ export default {
         text: "",
       },
       contentWidth: "100%",
+      groupby:'',
+      dragTable: true
     };
   },
   computed: {
@@ -229,31 +232,14 @@ export default {
     });
   },
 
-  // mounted() {
-    // this.loading = true;
-    // this.$store
-    //   .dispatch("section/fetchProjectSections", {
-    //     projectId: this.$route.params.id,
-    //     filter: "all",
-    //   })
-    //   .then((res) => {
-    //     console.log(res);
-    //     this.localdata = JSON.parse(JSON.stringify(this.sections));
-
-    //     let sorted = this.localdata.map((s) => {
-    //       let t = s.tasks.sort((a, b) => a.order - b.order);
-    //       s.tasks = t;
-    //       return s;
-    //     });
-    //     this.localdata = sorted;
-    //     this.loading = false;
-    //   })
-    //   .catch((e) => console.log(e));
-  // },
-
   methods: {
     changeSection($event){
-      this.newSection=$event
+      this.newSection = $event
+    },
+    toggleNewsection(flag) {
+      // console.log(flag)
+      this.newSection = flag ? false : true
+
     },
     taskByOrder() {
       this.localdata = JSON.parse(JSON.stringify(this.sections));
@@ -605,8 +591,22 @@ export default {
 
       this.templateKey += 1;
     },
-    taskGroup($event) {
-      console.log($event);
+    SingleProjectGroup($event) {
+      this.groupby = $event;
+      console.log($event)
+      this.$store
+        .dispatch("section/fetchProjectSections", {
+          projectId: this.$route.params.id,
+          filter: "all",
+          sName:this.groupby
+        }).then(() => {
+          if($event != 'default') {
+            this.dragTable = false;
+          } else {
+            this.dragTable = true;
+          }
+        })
+    
     },
 
     contextOpen(item){
@@ -622,7 +622,7 @@ export default {
       else {
          this.taskContextMenuItems=this.taskContextMenuItems.map(item => item.label === "Completed" ? { ...item, label: "Mark Complete"} : item);
       }
-      this.$store.dispatch("task/setSingleTask", item)
+       this.$store.dispatch("task/setSingleTask", item)
     },
     updateKey() {
       this.userPickerOpen = false;
@@ -631,6 +631,7 @@ export default {
         .dispatch("section/fetchProjectSections", {
           projectId: this.$route.params.id,
           filter: "all",
+          sName:this.groupby
         })
         .then(() => {
           this.taskByOrder();
@@ -655,9 +656,9 @@ export default {
 
       let project = [
         {
-          projectId: this.project.id,
+          projectId: this.project?.id,
           project: {
-            id: this.project.id,
+            id: this.project?.id,
           },
         },
       ];
@@ -665,7 +666,6 @@ export default {
     },
 
     createNewTask(payload) {
-      console.log(payload)
       this.$store.dispatch("task/createTask", {
           ...payload,
           projectId: this.$route.params.id,
@@ -716,10 +716,10 @@ export default {
         el.order = index+1
         return el
       })
-      tempSections.unshift({title: $event.title, projectId: this.project.id, order: 0 })
+      tempSections.unshift({title: $event.title, projectId: this.project?.id, order: 0 })
       // console.log(tempSections)
       const res = await this.$store.dispatch("section/createSection", {
-        projectId: this.project.id,
+        projectId: this.project?.id,
         title: $event.title || $event,
         isDeleted: false,
         data: tempSections,
@@ -763,6 +763,7 @@ export default {
           .dispatch("section/fetchProjectSections", {
             projectId: this.$route.params.id,
             filter: "complete",
+            sName:this.groupby
           })
           .then(() => {
             this.taskByOrder();
@@ -774,6 +775,7 @@ export default {
           .dispatch("section/fetchProjectSections", {
             projectId: this.$route.params.id,
             filter: "incomplete",
+            sName:this.groupby
           })
           .then(() => {
             this.taskByOrder();
@@ -785,6 +787,7 @@ export default {
           .dispatch("section/fetchProjectSections", {
             projectId: this.$route.params.id,
             filter: "all",
+            sName:this.groupby
           })
           .then(() => {
             this.taskByOrder();
@@ -849,7 +852,7 @@ export default {
         .then((d) => {
           this.loading = false;
           this.updateKey();
-          this.$store.dispatch("task/setSingleTask", d);
+          // this.$store.dispatch("task/setSingleTask", d);
         })
         .catch((e) => {
           console.log(e);
@@ -995,7 +998,7 @@ export default {
 
       let sectionDnD = await this.$axios.$put(
         "/section/dragdrop",
-        { projectId: this.project.id, data: clone },
+        { projectId: this.project?.id, data: clone },
         {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("accessToken"),

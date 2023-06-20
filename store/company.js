@@ -125,6 +125,63 @@ export const mutations = {
         };
       });
     }
+    if (payload.sName == "project") {
+      arrIndex = "project";
+      let items = [];
+      arr.sort((a,b)=>{
+        return a.id - b.id;
+      }) 
+      arr.forEach((ele) => {
+        const title = ele.project?.[0]?.project?.title ?? "Unassigned";
+        if (!items.includes(title))  items.push(title);
+      });
+      _tasks = items.map((item, idx) => {
+        return {
+          id: idx,
+          title: item !== null ? item : "Unassigned",
+          tasks: arr.filter(
+            (_item) =>
+              (_item[arrIndex] !== null ? _item[arrIndex][0]?.project?.title : null) ===
+              (item === "Unassigned" ? null : item)
+          ),
+        };
+      });
+    }
+    if(payload.sName=="dueDate"){
+      arrIndex = "dueDate";
+      let items = [];
+      arr.sort((a,b)=>{
+        if (a.dueDate === null && b.dueDate !== null) {
+          return 1;
+        }
+        if (b.dueDate === null && a.dueDate !== null) {
+          return -1;
+        }
+   
+        return new Date(a.dueDate) - new Date(b.dueDate);
+      })
+      arr.forEach((ele) => {
+        let title
+        if(ele.dueDate!==null){
+          title =this.$CalDate(ele.dueDate)
+        }
+        else {
+          title="Unassigned"
+        }
+        if (!items.includes(title)) items.push(title);
+      });
+      _tasks = items.map((item, idx) => {
+        return {
+          id: idx,
+          title: item !== null ? item : "Unassigned",
+          tasks: arr.filter(
+            (_item) =>
+              (_item[arrIndex] !== null ? this.$CalDate(_item[arrIndex]) : null) ===
+              (item === "Unassigned" ? null : item)
+          ),
+        };
+      });
+}
     if (payload.sName == "assignee") {
       arrIndex = "user";
       let items = [];
@@ -134,7 +191,7 @@ export const mutations = {
 
       arr.forEach((ele) => {
         let title =
-          ele.userId !== null&&ele.userId!==undefined
+          ele.user !== null&&ele.user!==undefined
             ? ele.user.firstName + " " + ele.user.lastName
             : "Unassigned";
         if (!items.includes(title)) items.push(title);
@@ -469,15 +526,16 @@ export const actions = {
 
 },
   async fetchCompanyTasks(ctx, payload) {
-    console.log("payload121",payload)
-
           const res = await this.$axios.$get(`company/${payload.companyId}/tasks`, {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
           });
 
           if (res.data) {
             ctx.commit('setCompanyTasks', res.data);
-            ctx.commit('groupTasks', payload)
+            if(payload.sName!==''){
+              ctx.commit('groupTasks', payload)
+            }
+          
             if (payload.sort) {
               ctx.commit('sortCompanyTasks', { sName: ctx.state.sortName, order: ctx.state.sortOrder })
             }

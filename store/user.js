@@ -136,7 +136,7 @@ export const mutations = {
 
       arr.forEach((ele) => {
         let title =
-          ele.userId !== null&&ele.userId!==undefined 
+          ele.user !== null&&ele.user!==undefined 
             ? ele.user.firstName + " " + ele.user.lastName
             : "Unassigned";
         if (!items.includes(title)) items.push(title);
@@ -186,9 +186,63 @@ export const mutations = {
         };
       });
     }
-    // if(payload.key==''){
-    //   _userTasks= JSON.parse(JSON.stringify(payload.data))
-    // }
+    if (payload.key == "project") {
+      arrIndex = "project";
+      let items = [];
+      arr.sort((a,b)=>{
+        return a.id - b.id;
+      }) 
+      arr.forEach((ele) => {
+        const title = ele.project?.[0]?.project?.title ?? "Unassigned";
+        if (!items.includes(title))  items.push(title);
+      });
+      _userTasks = items.map((item, idx) => {
+        return {
+          id: idx,
+          title: item !== null ? item : "Unassigned",
+          tasks: arr.filter(
+            (_item) =>
+              (_item[arrIndex] !== null ? _item[arrIndex][0]?.project?.title : null) ===
+              (item === "Unassigned" ? null : item)
+          ),
+        };
+      });
+    }
+    if(payload.key=="dueDate"){
+      arrIndex = "dueDate";
+      let items = [];
+      arr.sort((a,b)=>{
+        if (a.dueDate === null && b.dueDate !== null) {
+          return 1;
+        }
+        if (b.dueDate === null && a.dueDate !== null) {
+          return -1;
+        }
+   
+        return new Date(a.dueDate) - new Date(b.dueDate);
+      })
+      arr.forEach((ele) => {
+        let title
+        if(ele.dueDate!==null){
+          title =this.$CalDate(ele.dueDate)
+        }
+        else {
+          title="Unassigned"
+        }
+        if (!items.includes(title)) items.push(title);
+      });
+      _userTasks = items.map((item, idx) => {
+        return {
+          id: idx,
+          title: item !== null ? item : "Unassigned",
+          tasks: arr.filter(
+            (_item) =>
+              (_item[arrIndex] !== null ? this.$CalDate(_item[arrIndex]) : null) ===
+              (item === "Unassigned" ? null : item)
+          ),
+        };
+      });
+}
     state.userTasks=_userTasks
   },
   sortUserTasks(state, payload) {

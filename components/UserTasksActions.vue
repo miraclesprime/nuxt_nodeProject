@@ -16,6 +16,9 @@
         <li class="action" id="ta-action1" v-tooltip="'View'">
           <sorting-comp :items="viewing" icon="eye-open" activeIcon="tick" v-on:change-sort="changeViewName"></sorting-comp>
         </li>
+        <li class="action" id="ta-action3" title="Group by"  v-tooltip="'Group By'">
+          <sorting-comp label="Group by" :items="groupBy" icon="accessibility-braille-solid" v-on:change-sort="groupMyTasks($event)"></sorting-comp>
+        </li>
         <li class="action" id="ta-action2" v-tooltip="'Sort By'">
           <sorting-comp :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy"></sorting-comp>
         </li>
@@ -33,7 +36,7 @@
 </template>
 
 <script>
-import { VIEW_FILTER, USER_TASK_SORT } from 'config/constants.js'
+import { VIEW_FILTER, USER_TASK_SORT,MY_TASK_GROUP} from 'config/constants.js'
 
 export default {
   props: {
@@ -48,6 +51,7 @@ export default {
       selectInfo: null,
       sortName: '',
       viewing: VIEW_FILTER,
+      groupBy:MY_TASK_GROUP,
       sorting: USER_TASK_SORT,
       searchText: ""
     };
@@ -60,7 +64,9 @@ export default {
       this.$emit("create-task", false) //event will be captured by parent only
       this.$nuxt.$emit("create-task", false) //event will be available to all
     },
-
+    groupMyTasks($event) {
+      this.$emit("myTaskGroup", $event)
+    },
     addSection(){
       this.$emit("add-section")
     },

@@ -120,7 +120,7 @@ export default {
         this.loading = false
         return false
       } else {
-        this.$store.dispatch('project/addMember', { projectId: this.project.id, team: this.team }).then(() => {
+        this.$store.dispatch('project/addMember', { projectId: this.project?.id, team: this.team }).then(() => {
           this.$nuxt.$emit('update-key', 1)
           this.showTeamCreateModal = false
           this.loading = false;

@@ -303,7 +303,7 @@ export default {
         this.activeProject.statusId = null
       }
       this.$store.dispatch("project/updateProject", {
-        id: this.project.id,
+        id: this.project?.id,
         user: this.owner,
         data: { [field]: value },
         text: `changed ${label} to ${updatedvalue}`

@@ -2,11 +2,15 @@
   <client-only>
     <div id="page" class="mytask-page-wrapper ">
       <page-title title="My Tasks"></page-title>
-      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="showNewTodo" @change-grid-type="($event)=>gridType = $event" @search-mytasks="searchTasks"></user-tasks-actions>
+
+      <user-tasks-actions :gridType="gridType" v-on:filterView="filterView"  @myTaskGroup="myTaskGroup($event)" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="toggleNewsection" @change-grid-type="($event)=>gridType = $event" @search-mytasks="searchTasks"></user-tasks-actions>
+
         <!-- <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form> -->
         <div v-show="gridType == 'list'" id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative " :style="{ 'width': contentWidth }">
           
-          <adv-table-two :tableFields="taskFields" :tableData="localdata" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @title-click="openSidebar" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createTodo" @edit-section="renameTodo" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd"></adv-table-two>
+          <!-- <adv-table-two :tableFields="taskFields" :tableData="localdata" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @title-click="openSidebar" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createTodo" @edit-section="renameTodo" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd" :drag="dragTable"></adv-table-two> -->
+
+          <adv-table-three :tableFields="taskFields" :tableData="localdata" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @title-click="openSidebar" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createTodo" @edit-section="renameTodo" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd" :drag="dragTable"></adv-table-three>
               
           <loading :loading="loading"></loading>
             
@@ -16,7 +20,6 @@
           <draggable v-model="localdata" class="d-flex grid-content" :move="moveTodo" @end="gridSectionDragend" handle=".section-drag-handle">
             <div v-if="newSection" class="task-grid-section">
               <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
-                <!-- <task-grid-section-title section="{title: '', id: ''}" ></task-grid-section-title> -->
                 <input type="text" ref="newsectioninput" class="editable-input" placeholder="Enter title" @input="debounceNewSection($event.target.value, $event)" @focus.stop="">
               </div>
             </div>
@@ -36,12 +39,6 @@
                             <span class="ml-05" :id="'tgs-list-span'+todo.id">Add task</span>
                           </div>
                         </span>
-                        <!-- <span class="list__item" :id="'tgs-list-2'+todo.id" v-on:click="showRenameModal(todo)">
-                          <div class="d-flex align-center" :id="'tgs-list-flex-2'+todo.id">
-                            <bib-icon icon="pencil"></bib-icon>
-                            <span class="ml-05" :id="'tgs-list-span'+todo.id">Rename</span>
-                          </div>
-                        </span> -->
                         <hr>
                         <span class="list__item danger" :id="'tgs-list-3'+todo.id" v-on:click="deleteTodo(todo)">
                           Delete section
@@ -78,21 +75,6 @@
 
         <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
 
-        <!-- rename section modal -->
-        <!-- <bib-modal-wrapper v-if="renameModal" title="Rename section" @close="renameModal = false">
-          <template slot="content">
-            <div>
-              <bib-input type="text" v-model.trim="todoTitle" placeholder="Enter name..."></bib-input>
-              <loading :loading="loading"></loading>
-            </div>
-          </template>
-          <template slot="footer">
-            <div class="d-flex justify-between">
-              <bib-button label="Cancel" variant="light" pill @click="renameModal = false"></bib-button>
-              <bib-button label="Rename" variant="success" pill v-on:click="renameTodo"></bib-button>
-            </div>
-          </template>
-        </bib-modal-wrapper> -->
         <bib-popup-notification-wrapper>
           <template #wrapper>
             <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" autohide="5000">
@@ -100,8 +82,6 @@
           </template>
         </bib-popup-notification-wrapper>
 
-        <!-- <confirm-dialog v-if="confirmModal" :message="confirmMsg" @close="confirmDelete"></confirm-dialog> -->
-      <!-- </div> -->
     </div>
   </client-only>
 </template>
@@ -151,12 +131,12 @@ export default {
       statusPickerOpen: false,
       priorityPickerOpen: false,
       deptPickerOpen: false,
-      // confirmModal: false,
-      // confirmMsg: "",
       alertDialog: false,
       alertMsg:"",
       contentWidth: "100%",
-      tasksKey: 'tasks'
+      tasksKey: 'tasks',
+      groupby: "",
+      dragTable: true
     }
   },
 
@@ -187,7 +167,6 @@ export default {
       const page = document.getElementById("page")
       this.$nextTick(() => {
         const panel = document.getElementById("side-panel-wrapper")
-        // console.log("page width="+page.scrollWidth+", panel width="+panel.offsetWidth)
         if (this.sidebar) {
           this.contentWidth = (page.scrollWidth - panel.offsetWidth) + 'px'
         } else {
@@ -217,19 +196,26 @@ export default {
       }
     }
 
-    // this.loading = true
     this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
       if (res.statusCode == 200) {
-        // console.log(res.data)
         this.localdata = _.cloneDeep(res.data)
         this.key += 1
       }
-      // this.loading = false;
     })
   },
 
   methods: {
-
+    //group by
+    myTaskGroup($event) {
+        this.groupby = $event;
+        this.$store.dispatch("todo/fetchTodos", { filter: 'all',sName:this.groupby }).then(() => {
+          if($event != 'default') {
+            this.dragTable = false;
+          } else {
+            this.dragTable = true;
+          }
+        })
+      },
     checkActive(sortName) {
       for(let i=0; i<this.taskFields.length; i++) {
           if(this.taskFields[i].header_icon) {
@@ -399,14 +385,6 @@ export default {
     },
 
     updateField(payload){
-      // console.log(payload)
-
-      /*let user
-      if (payload.field == "userId" && payload.value != '') {
-        user = this.teamMembers.filter(t => t.id == payload.value)
-      } else {
-        user = null
-      }*/
 
       this.$store.dispatch("task/updateTask", {
         id: payload.id,
@@ -421,26 +399,16 @@ export default {
     },
 
     taskMarkComplete(task) {
-      // this.loading = true
-      /*if (typeof task == "object" && Object.keys(task).length > 0) {
-
-      } else {
-        task = this.activeTask
-      }*/
-      // console.log(task)
       this.$store.dispatch('task/updateTaskStatus', task)
         .then((d) => {
-          // this.loading = false
           this.updateKey("Marked as complete")
           this.$store.dispatch("task/setSingleTask", d)
         }).catch(e => {
           console.log(e)
-          // this.loading = false
         })
     },
 
     updateTask(payload) {
-      // console.log(payload)
       let user
       if (payload.field == "userId" && payload.value != '') {
         user = this.teamMembers.filter(t => t.id == payload.value)
@@ -498,37 +466,12 @@ export default {
         .catch(e => console.warn(e))
     },
 
-    // confirmDelete(state){
-    //   // console.log(state, this.taskToDelete)
-    //   this.confirmModal = false
-    //   this.confirmMsg = ""
-    //   if (state) {
-    //     this.$store.dispatch("task/deleteTask", this.taskToDelete)
-    //     .then(t => {
-    //       if (t.statusCode == 200) {
-    //         this.updateKey(t.message)
-    //         this.taskToDelete = {}
-    //       } else {
-    //         this.popupMessages.push({ text: t.message, variant: "orange" })
-    //         console.warn(t.message);
-    //       }
-    //     })
-    //     .catch(e => {
-    //       console.warn(e)
-    //     })
-    //   } else {
-    //     this.popupMessages.push({ text: "Action cancelled", variant: "orange" })
-    //     this.taskToDelete = {}
-    //   }
-    // },
-
     deleteTask(task) {
       if (task) {
         this.$store.dispatch("task/deleteTask", task)
         .then(t => {
           if (t.statusCode == 200) {
             this.updateKey(t.message)
-            // this.taskToDelete = {}
           } else {
             this.popupMessages.push({ text: t.message, variant: "orange" })
             console.warn(t.message);
@@ -539,11 +482,7 @@ export default {
         })
       } else {
         this.popupMessages.push({ text: "Action cancelled", variant: "orange" })
-        // this.taskToDelete = {}
       }
-      // this.taskToDelete = task
-      // this.confirmMsg = "Are you sure "
-      // this.confirmModal = true
     },
 
     createTask(item){
@@ -568,25 +507,30 @@ export default {
       if ($event) {
         this.popupMessages.push({ text: $event, variant: "success" })
       }
-      this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
+      
+      this.$store.dispatch("todo/fetchTodos", { filter: 'all',sName:this.groupby}).then((res) => {
         if (res.statusCode == 200) {
           this.key += 1
         }
       })
     },
 
-    showNewTodo() {
+    /*showNewTodo() {
       this.newSection = true
       process.nextTick(() => {
         this.$refs.newsectioninput.focus()
       });
+    },*/
+    
+    toggleNewsection(flag) {
+      // console.log(flag)
+      this.newSection = flag ? false : true
+
     },
 
     debounceNewSection: _.debounce(function(value, event) {
       if (value) {
-        // console.log(...arguments)
         event.target.classList.remove("error")
-        // this.$emit("create-section", value)
         this.createTodo(value)
       } else {
         console.warn("Title cannot be left blank")
@@ -595,8 +539,6 @@ export default {
     }, 800),
 
     async createTodo($event) {
-      // console.log('create-todo', $event)
-      // this.sectionLoading = true
       let tempTodos = this.localdata.map((el, index) => {
         el.uOrder = index+1
         return el
@@ -610,35 +552,12 @@ export default {
       })
 
       if (todo.statusCode == 200) {
-        // this.updateKey()
         this.newSection = false
-        // this.updateKey()
-        // this.sectionLoading = false
         this.$store.dispatch("todo/fetchTodos", { filter: 'all' })
-        /*.then((res) => {
-          if (res.statusCode == 200) {
-            // this.key += 1
-            let tmp = [];
-            tmp.push(this.localdata[this.localdata.length - 1]);
-            let i;
-            for (i = 1; i < this.localdata.length; ++i)
-              tmp.push(this.localdata[i - 1]);
-            this.localdata = tmp;
-            this.todoDragEnd(this.localdata);
-          }
-        })*/
       } else {
-        // this.sectionError = todo.message
-        // this.sectionLoading = false
         console.warn(todo)
       }
     },
-
-    /*showRenameModal(todo) {
-      this.todoTitle = todo.title
-      this.todoId = todo.id
-      this.renameModal = true
-    },*/
 
     renameTodo(payload) {
       this.$store.dispatch("todo/renameTodo", {
@@ -679,7 +598,6 @@ export default {
       let sectionData = this.localdata.filter(
         (s) => s.id == e.to.dataset.section
       );
-      // console.log(e.to, sectionData[0].tasks)
       this.taskDragEnd({
         tasks: sectionData[0].tasks,
         sectionId: e.to.dataset.section,
@@ -689,7 +607,6 @@ export default {
     taskDragEnd: _.debounce(async function(payload) {
 
       this.highlight = null
-      // console.log(payload)
 
       payload.tasks.forEach((e, i) => {
         e.tOrder = i
@@ -719,7 +636,6 @@ export default {
     },
 
     gridSectionDragend(e){
-      // console.log(this.localdata)
       this.todoDragEnd(this.localdata)
     },
 
@@ -728,7 +644,6 @@ export default {
         el.uOrder = i
       })
 
-      // console.log(todos)
       let todoDnD = await this.$axios.$put("/todo/dragdrop", { data: todos }, {
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
@@ -752,21 +667,21 @@ export default {
     filterView($event) {
       this.loading = true
       if ($event == 'complete') {
-        this.$store.dispatch('todo/fetchTodos', { filter: 'complete' }).then((res) => {
+        this.$store.dispatch('todo/fetchTodos', { filter: 'complete',sName:this.groupby }).then((res) => {
           this.viewName = 'complete'
           this.key += 1;
           this.loading = false
         }).catch(e => console.log(e))
       }
       if ($event == 'incomplete') {
-        this.$store.dispatch('todo/fetchTodos', { filter: 'incomplete' }).then((res) => {
+        this.$store.dispatch('todo/fetchTodos', { filter: 'incomplete',sName:this.groupby }).then((res) => {
           this.viewName = 'incomplete'
           this.key += 1;
           this.loading = false
         }).catch(e => console.log(e))
       }
       if ($event == 'all') {
-        this.$store.dispatch('todo/fetchTodos', { filter: 'all' }).then((res) => {
+        this.$store.dispatch('todo/fetchTodos', { filter: 'all',sName:this.groupby }).then((res) => {
           this.viewName = 'all'
           this.key += 1;
           this.loading = false

@@ -400,6 +400,7 @@ export const PROJECT_GROUP = [
   { label: 'Status', key:'status' },
   { label: 'Assignee', key:'assignee' },
   { label: 'Department', key:'department' },
+  { label: 'Due Date', key: 'dueDate' },
   
   
 ]
@@ -414,10 +415,20 @@ export const TASK_SORT = [
 ]
 
 export const TASK_GROUP = [
+  { label: 'Default', key:'default' },
+  { label: 'Project', key:'project' },
   { label: 'Priority', key:'priority' },
   { label: 'Status', key:'status' },
-  { label: 'Assignee', key:'assignee' },
   { label: 'Department', key:'department' },
+  { label: 'Due Date', key:'dueDate' },
+]
+export const MY_TASK_GROUP = [
+  { label: 'Default', key:'default' },
+  { label: 'Project', key:'project' },
+  { label: 'Department', key:'department' },
+  { label: 'Priority', key:'priority' },
+  { label: 'Status', key:'status' },
+  { label: 'Due Date', key:'dueDate' },
 ]
 
 export const FAVORITE_SORT = [
@@ -908,19 +919,17 @@ export const USER_TASKS = [
       event: 'table-sort',
       isActive: false
     },
-    /*width: "20%",*/
     event: "title-click",
   },
   {
     label: 'Project',
     key: 'project',
-    /*width: '18%',*/
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
       isActive: false
     },
-    // width: "15%",
+    width: "200px",
   },
   {
     label: 'Status',
@@ -965,12 +974,12 @@ export const USER_TASKS = [
   {
     label: 'Tag',
     key: 'tag',
-
+    width: '100px',
   },
   {
     label: 'Team',
     key: 'team',
-
+    width: '100px',
   },
   {
     label: 'Department',

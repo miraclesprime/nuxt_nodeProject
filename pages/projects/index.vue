@@ -27,7 +27,7 @@
         <div v-if="groupVisible">
         <loading :loading="loading"></loading>
 
-        <adv-table-two :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" :isProject="true" @create-row="createProject" :drag="false"></adv-table-two>
+        <adv-table-two :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @context-open="contextOpen" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" :isProject="true" @create-row="createProject" :drag="false"></adv-table-two>
         </div>
        <div v-else>
         <loading :loading="loading"></loading>
@@ -79,8 +79,8 @@ import { PROJECT_CONTEXT_MENU, PROJECT_FIELDS } from '../../config/constants';
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
-import { combineTransactionSteps } from '@tiptap/core';
-import { conditionalExpression } from '@babel/types';
+// import { combineTransactionSteps } from '@tiptap/core';
+// import { conditionalExpression } from '@babel/types';
 
 export default {
   name: "Projects",
@@ -135,6 +135,7 @@ export default {
           }
         })
         this.localData = newArr;
+        console.log("this.localData",this.localData)
         this.$store.dispatch('project/setProjects', newArr);
         this.loading = false;
     })
@@ -194,7 +195,7 @@ export default {
         return;
       }
       this.groupBy = $event;
-      this.$store.dispatch('project/groupProjects', { key: $event, isGrouped: this.groupVisible }).then((res) => {
+      this.$store.dispatch('project/groupProjects', { key: $event}).then((res) => {
         this.groupVisible = true
         this.templateKey += 1;
       })
@@ -546,21 +547,55 @@ export default {
       this.loading = false
     },
 
-    async createProject(proj) {
+    async createProject(proj,section) {
       let u = {
         id: this.user.Id,
         firstName: this.user.FirstName,
         lastName: this.user.LastName,
         email: this.user.Email
       }
-      proj.departmentId = null;
-      proj.budget = 0;
-      proj.dueDate = null;
-      proj.startDate = null;
       proj.user = u;
+      proj.groupBy = this.groupBy;
+      if(this.groupBy==""){
+          proj.status=null
+          proj.statusId=null
+          proj.priority=null
+          proj.priorityId=null
+          proj.departmentId = null;
+          proj.department = null;
+      }
+      if(this.groupBy=="priority"){
+        proj.priority=section.tasks[0]?.priority
+        proj.priorityId=section.tasks[0]?.priorityId
+        proj.status=null
+        proj.statusId=null
+        proj.departmentId = null;
+        proj.department = null;
+     
+      }
+      if(this.groupBy=="status"){
+        proj.status=section.tasks[0]?.status
+        proj.statusId=section.tasks[0]?.statusId
+        proj.departmentId = null;
+        proj.department = null;
+        proj.priority=null
+        proj.priorityId=null
+      }
+      if(this.groupBy=="assignee"){
+        
+      }
+      if(this.groupBy=="department"){
+        proj.department=section.tasks[0]?.department
+        proj.departmentId=section.tasks[0]?.departmentId
+        proj.status=null
+        proj.statusId=null
+        proj.priority=null
+        proj.priorityId=null
+      }
+    
       delete proj.show;
       delete proj.sectionId;
-      proj.groupBy = this.groupBy;
+      
       this.$store.dispatch('project/createProject', proj).then(res => {
       });
     },
@@ -570,7 +605,7 @@ export default {
 
         if (navigator.clipboard) { 
           navigator.clipboard.writeText(url);
-        } else { 
+        } else {        
           unsecuredCopyToClipboard(url);
         }
     },
@@ -578,6 +613,10 @@ export default {
     updateKey() {
       // this.loading=true
         this.$store.dispatch("project/fetchProjects").then(() => {
+          if(this.groupVisible){
+              this.$store.dispatch('project/groupProjects', { key: this.groupBy}).then((res) => {
+          })
+        }
           this.templateKey += 1;
         })
       

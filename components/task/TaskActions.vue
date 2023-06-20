@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { VIEW_FILTER, TASK_SORT, TASK_GROUP } from 'config/constants.js'
+import { VIEW_FILTER, TASK_SORT, PROJECT_GROUP } from 'config/constants.js'
 export default {
   props: {
     gridType: {
@@ -50,7 +50,7 @@ export default {
       sortName: '',
       viewing: VIEW_FILTER,
       sorting: TASK_SORT,
-      groupby: TASK_GROUP,
+      groupby: PROJECT_GROUP,
       searchText: ''
     };
   },
@@ -95,7 +95,7 @@ export default {
     },
 
     groupBy($event) {
-      this.$emit("group", $event)
+      this.$emit("SingleProjectGroup", $event)
     },
 
     changeViewName($event){

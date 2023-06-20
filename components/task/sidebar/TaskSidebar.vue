@@ -1,7 +1,7 @@
 <template>
   <article id="side-panel-wrapper" class="side-panel" v-click-outside="closeSidebar">
     <div class="side-panel__header" id="tsb-header">
-      <div class="d-flex justify-between side-panel__header__actions " id="ts-side-panel">
+      <div class="d-flex justify-between py-05 px-105 " id="ts-side-panel">
         <div class="d-flex align-center gap-05" id="tsb-icon-close-Wrapper">
           <div id='tsb-icon-close' class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" v-tooltip="'Close'" title="Close" @click="$nuxt.$emit('close-sidebar')">
             <bib-icon icon="page-last" class="m-auto"></bib-icon>
@@ -80,7 +80,7 @@
       </div>
     </div>
 
-    <div class="of-scroll-y d-grid" id="tsb-of-scroll-y" style="grid-template-columns: none; align-items: start">
+    <div class="overflow-y-auto d-grid" id="tsb-of-scroll-y" style="grid-template-columns: none; align-items: start">
       <!-- updated by @wen 5.25 -->
       <sidebar-fields :task="currentTask" :loading="loading" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform" :departmentId="departmentId" :visible="visible"></sidebar-fields>
         <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" ></sidebar-subtask>
