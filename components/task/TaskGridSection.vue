@@ -79,7 +79,7 @@ export default {
       ordered: [],
       loading: false,
       drag: false,
-      highlight: "",
+      highlight: null,
       taskDnDlist: [],
       taskDnDsectionId: null,
       sectionInput: false,

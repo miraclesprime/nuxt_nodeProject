@@ -16,14 +16,11 @@
           <div v-show="gridType === 'list'" class="h-100">
             <template v-if="tasks.length">
 
-              <adv-table-two :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable"></adv-table-two>
+              <adv-table-three :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable"></adv-table-three>
 
             </template>
           <div v-else>
-            <span
-              id="projects-0"
-              class="d-inline-flex gap-1 align-center m-1 shape-rounded py-05 px-1"
-            >
+            <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 shape-rounded py-05 px-1">
               <bib-icon icon="warning"></bib-icon> No records found
             </span>
           </div>

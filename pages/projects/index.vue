@@ -24,16 +24,13 @@
           @close="confirmDelete"
         ></confirm-dialog> -->
       <template v-if="projects.length">
-        <div v-if="groupVisible">
-        <loading :loading="loading"></loading>
+        <template v-if="groupVisible">
+          <adv-table-three :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @context-open="contextOpen" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" @create-row="createProject" :drag="false"></adv-table-three>
+        </template>
 
-        <adv-table-two :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @context-open="contextOpen" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" :isProject="true" @create-row="createProject" :drag="false"></adv-table-two>
-        </div>
-       <div v-else>
-        <loading :loading="loading"></loading>
-
-        <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @context-open="contextOpen" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :newTaskButton="{label: 'New Project', icon: 'add'}" :drag="false"></advance-table>
-      </div> 
+        <template v-else>
+          <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @context-open="contextOpen" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :newTaskButton="{label: 'New Project', icon: 'add'}" :drag="false"></advance-table>
+        </template> 
 
       </template>
       <template v-else>
