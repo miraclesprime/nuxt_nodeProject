@@ -16,14 +16,11 @@
           <div v-show="gridType === 'list'" class="h-100">
             <template v-if="tasks.length">
 
-              <adv-table-two :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable"></adv-table-two>
+              <adv-table-three :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable"></adv-table-three>
 
             </template>
           <div v-else>
-            <span
-              id="projects-0"
-              class="d-inline-flex gap-1 align-center m-1 shape-rounded py-05 px-1"
-            >
+            <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 shape-rounded py-05 px-1">
               <bib-icon icon="warning"></bib-icon> No records found
             </span>
           </div>
@@ -773,12 +770,63 @@ export default {
       this.loading = false;
     }, 600),
 
-    createNewTask(payload) {
+    createNewTask(proj,section) {
+      proj.group = this.group;
+      if(this.group==""){
+          proj.status=null
+          proj.statusId=null
+          proj.priority=null
+          proj.priorityId=null
+          proj.departmentId = null;
+          proj.department = null;
+          proj.user=null
+          proj.userId=null
+      }
+      if(this.group=="priority"){
+        proj.priority=section.tasks[0]?.priority
+        proj.priorityId=section.tasks[0]?.priorityId
+        proj.status=null
+        proj.statusId=null
+        proj.departmentId = null;
+        proj.department = null;
+        proj.user=null
+        proj.userId=null
+     
+      }
+      if(this.group=="status"){
+        proj.status=section.tasks[0]?.status
+        proj.statusId=section.tasks[0]?.statusId
+        proj.departmentId = null;
+        proj.department = null;
+        proj.priority=null
+        proj.priorityId=null
+        proj.user=null
+        proj.userId=null
+      }
+      if(this.group=="assignee"){
+        proj.status=null
+        proj.statusId=null
+        proj.priority=null
+        proj.priorityId=null
+        proj.departmentId = null;
+        proj.department = null;
+        proj.user=section.tasks[0]?.user
+        proj.userId=section.tasks[0]?.userId
+      }
+      if(this.group=="department"){
+        proj.department=section.tasks[0]?.department
+        proj.departmentId=section.tasks[0]?.departmentId
+        proj.status=null
+        proj.statusId=null
+        proj.priority=null
+        proj.priorityId=null
+        proj.user=null
+        proj.userId=null
+      }
+      delete proj.show
       this.$store.dispatch("task/createTask", {
-          ...payload,
-          sectionId:payload.sectionId!==""?payload.sectionId:null,
-          departmentId: payload.sectionId!==""?payload.sectionId:null,
-          text: `created task ${payload.title}`,
+          ...proj,
+          text: `created task ${proj.title}`,
         })
         .then((t) => {
           this.resetNewRow();
@@ -795,7 +843,8 @@ export default {
         id: "",
         sectionId: null,
         title: "",
-        userId: "",
+        user:null,
+        userId: null,
         statusId: null,
         priorityId: null,
         startDate: "",

@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { VIEW_FILTER, COMPANY_TASK_SORT,TASK_GROUP } from 'config/constants.js'
+import { VIEW_FILTER, COMPANY_TASK_SORT,MY_TASK_GROUP } from 'config/constants.js'
 export default {
   props: {
     gridType: {
@@ -42,7 +42,7 @@ export default {
       searchText: '',
       selectInfo: null,
       sortName: '',
-      groupBy:TASK_GROUP,
+      groupBy:MY_TASK_GROUP,
       viewing: VIEW_FILTER,
       sorting: COMPANY_TASK_SORT
     };

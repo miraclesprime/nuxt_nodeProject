@@ -17,12 +17,12 @@
               <div v-if="groupVisible" class="h-100">
                   <loading :loading="loading"></loading>
 
-                  <adv-table-two :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" :isProject="true" @create-row="createTask" :drag="false"></adv-table-two>
+                  <adv-table-three :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" :isProject="true" @create-row="createTask" :drag="false"></adv-table-three>
               
               </div>
               <div v-else class="h-100">
                 <loading :loading="loading"></loading>                
-                <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" sectionTitle="Section" :drag="false"></advance-table>
+                <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" sectionTitle="" :drag="false"></advance-table>
               </div> 
           </div>
         

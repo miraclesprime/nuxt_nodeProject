@@ -28,7 +28,6 @@ export const PROJECT_FIELDS = [
   {
     label: 'Project name',
     key: 'title',
-    /*width: '20%',*/
     icon: {
       icon: 'check-circle-solid',
       variant: 'gray2',
@@ -93,11 +92,13 @@ export const PROJECT_FIELDS = [
   },
   {
       key: "tag",
-      label: "Tags"
+      label: "Tags",
+    width: '120px',
   },
   {
       key: "",
-      label: "Team"
+      label: "Team",
+    width: '120px',
   },
   {
     key: "department",
@@ -418,6 +419,7 @@ export const TASK_GROUP = [
   { label: 'Default', key:'default' },
   { label: 'Project', key:'project' },
   { label: 'Priority', key:'priority' },
+  { label: 'Assignee', key:'assignee' },
   { label: 'Status', key:'status' },
   { label: 'Department', key:'department' },
   { label: 'Due Date', key:'dueDate' },
@@ -828,7 +830,6 @@ export const COMPANY_TASK_FIELDS = [
   {
     label: 'Task name',
     key: 'title',
-    /*width: '20%',*/
     icon: {
       icon: 'check-circle-solid',
       variant: 'gray2',
