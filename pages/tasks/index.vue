@@ -774,17 +774,8 @@ export default {
     }, 600),
 
     createNewTask(proj,section) {
-      // console.log("232323",payload)
-      // console.log("23sdss",section)
-      // let u = {
-      //   id: this.user.Id,
-      //   firstName: this.user.FirstName,
-      //   lastName: this.user.LastName,
-      //   email: this.user.Email
-      // }
-      // proj.user = u;
-      proj.groupBy = this.groupBy;
-      if(this.groupBy==""){
+      proj.group = this.group;
+      if(this.group==""){
           proj.status=null
           proj.statusId=null
           proj.priority=null
@@ -794,7 +785,7 @@ export default {
           proj.user=null
           proj.userId=null
       }
-      if(this.groupBy=="priority"){
+      if(this.group=="priority"){
         proj.priority=section.tasks[0]?.priority
         proj.priorityId=section.tasks[0]?.priorityId
         proj.status=null
@@ -805,7 +796,7 @@ export default {
         proj.userId=null
      
       }
-      if(this.groupBy=="status"){
+      if(this.group=="status"){
         proj.status=section.tasks[0]?.status
         proj.statusId=section.tasks[0]?.statusId
         proj.departmentId = null;
@@ -815,7 +806,7 @@ export default {
         proj.user=null
         proj.userId=null
       }
-      if(this.groupBy=="assignee"){
+      if(this.group=="assignee"){
         proj.status=null
         proj.statusId=null
         proj.priority=null
@@ -825,7 +816,7 @@ export default {
         proj.user=section.tasks[0]?.user
         proj.userId=section.tasks[0]?.userId
       }
-      if(this.groupBy=="department"){
+      if(this.group=="department"){
         proj.department=section.tasks[0]?.department
         proj.departmentId=section.tasks[0]?.departmentId
         proj.status=null
