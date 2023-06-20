@@ -419,6 +419,7 @@ export const TASK_GROUP = [
   { label: 'Default', key:'default' },
   { label: 'Project', key:'project' },
   { label: 'Priority', key:'priority' },
+  { label: 'Assignee', key:'assignee' },
   { label: 'Status', key:'status' },
   { label: 'Department', key:'department' },
   { label: 'Due Date', key:'dueDate' },

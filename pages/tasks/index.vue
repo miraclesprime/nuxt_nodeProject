@@ -770,12 +770,63 @@ export default {
       this.loading = false;
     }, 600),
 
-    createNewTask(payload) {
+    createNewTask(proj,section) {
+      proj.group = this.group;
+      if(this.group==""){
+          proj.status=null
+          proj.statusId=null
+          proj.priority=null
+          proj.priorityId=null
+          proj.departmentId = null;
+          proj.department = null;
+          proj.user=null
+          proj.userId=null
+      }
+      if(this.group=="priority"){
+        proj.priority=section.tasks[0]?.priority
+        proj.priorityId=section.tasks[0]?.priorityId
+        proj.status=null
+        proj.statusId=null
+        proj.departmentId = null;
+        proj.department = null;
+        proj.user=null
+        proj.userId=null
+     
+      }
+      if(this.group=="status"){
+        proj.status=section.tasks[0]?.status
+        proj.statusId=section.tasks[0]?.statusId
+        proj.departmentId = null;
+        proj.department = null;
+        proj.priority=null
+        proj.priorityId=null
+        proj.user=null
+        proj.userId=null
+      }
+      if(this.group=="assignee"){
+        proj.status=null
+        proj.statusId=null
+        proj.priority=null
+        proj.priorityId=null
+        proj.departmentId = null;
+        proj.department = null;
+        proj.user=section.tasks[0]?.user
+        proj.userId=section.tasks[0]?.userId
+      }
+      if(this.group=="department"){
+        proj.department=section.tasks[0]?.department
+        proj.departmentId=section.tasks[0]?.departmentId
+        proj.status=null
+        proj.statusId=null
+        proj.priority=null
+        proj.priorityId=null
+        proj.user=null
+        proj.userId=null
+      }
+      delete proj.show
       this.$store.dispatch("task/createTask", {
-          ...payload,
-          sectionId:payload.sectionId!==""?payload.sectionId:null,
-          departmentId: payload.sectionId!==""?payload.sectionId:null,
-          text: `created task ${payload.title}`,
+          ...proj,
+          text: `created task ${proj.title}`,
         })
         .then((t) => {
           this.resetNewRow();
@@ -792,7 +843,8 @@ export default {
         id: "",
         sectionId: null,
         title: "",
-        userId: "",
+        user:null,
+        userId: null,
         statusId: null,
         priorityId: null,
         startDate: "",
