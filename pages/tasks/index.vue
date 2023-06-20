@@ -826,9 +826,9 @@ export default {
         proj.user=null
         proj.userId=null
       }
+      delete proj.show
       this.$store.dispatch("task/createTask", {
           ...proj,
-          sectionId:proj.sectionId!==""?proj.sectionId:null,
           text: `created task ${proj.title}`,
         })
         .then((t) => {
@@ -846,7 +846,8 @@ export default {
         id: "",
         sectionId: null,
         title: "",
-        userId: "",
+        user:null,
+        userId: null,
         statusId: null,
         priorityId: null,
         startDate: "",
