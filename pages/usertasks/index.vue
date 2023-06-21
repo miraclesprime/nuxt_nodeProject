@@ -17,12 +17,12 @@
               <div v-if="groupVisible" class="h-100">
                   <loading :loading="loading"></loading>
 
-                  <adv-table-three :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" :isProject="true" @create-row="createTask" :drag="false"></adv-table-three>
+                  <adv-table-three :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" :isProject="true" @create-row="createTask" :drag="false" :key="templateKey"></adv-table-three>
               
               </div>
               <div v-else class="h-100">
                 <loading :loading="loading"></loading>                
-                <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" sectionTitle="" :drag="false"></advance-table>
+                <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" sectionTitle="" :drag="false" :key="templateKey"></advance-table>
               </div> 
           </div>
         
@@ -84,7 +84,6 @@ import {
   COMPANY_TASK_FIELDS as TaskFields,
   TASK_CONTEXT_MENU,
 } from "../../config/constants";
-import dayjs from "dayjs";
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
 export default {
@@ -101,6 +100,7 @@ export default {
       deptPickerOpen: false,
       popupMessages: [],
       popupCoords: {},
+      templateKey: 0,
       userPickerOpen: false,
       datePickerOpen: false,
       datepickerArgs: { label: "", field: "" },
@@ -121,9 +121,8 @@ export default {
       contentWidth: "100%",
       groupVisible: false,
       groupBy:'',
-      // confirmModal: false,
-      // confirmMsg: "",
       taskToDelete: {},
+      sortName: 'priority'
     };
   },
   computed: {
@@ -218,6 +217,20 @@ export default {
   },
 
   methods: {
+
+    checkActive() {
+      for(let i=0; i<this.taskFields.length; i++) {
+          if(this.taskFields[i].header_icon) {
+            this.taskFields[i].header_icon.isActive = false
+          }
+
+          if(this.taskFields[i].header_icon && this.taskFields[i].key == this.sortName) {
+            this.taskFields[i].header_icon.isActive = true
+          } 
+      }
+      this.templateKey++;
+    },
+
     UserTaskGroup($event) {
       if ($event ==="default" ) {
         this.groupVisible = false;
@@ -536,11 +549,7 @@ export default {
           text: "Action cancelled",
           variant: "orange",
         });
-        // this.taskToDelete = {};
       }
-      // this.taskToDelete = task;
-      // this.confirmMsg = "Are you sure ";
-      // this.confirmModal = true;
     },
     async filterView($event) {
       if(this.groupVisible){
@@ -568,21 +577,6 @@ export default {
     
     },
 
-    // Sort By Action List
-    checkActive() {
-      for (let i = 0; i < this.taskFields.length; i++) {
-        if (this.taskFields[i].header_icon) {
-          this.taskFields[i].header_icon.isActive = false;
-        }
-
-        if (
-          this.taskFields[i].header_icon &&
-          this.taskFields[i].key == this.sortName
-        ) {
-          this.taskFields[i].header_icon.isActive = true;
-        }
-      }
-    },
     sortBy($event) {
       this.sortName = $event;
       if ($event == "title") {

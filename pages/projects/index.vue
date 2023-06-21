@@ -17,19 +17,13 @@
             </bib-popup-notification>
           </template>
         </bib-popup-notification-wrapper>
-        <!-- confirm delete task -->
-        <!-- <confirm-dialog
-          v-if="confirmModal"
-          :message="confirmMsg"
-          @close="confirmDelete"
-        ></confirm-dialog> -->
       <template v-if="projects.length">
         <template v-if="groupVisible">
-          <adv-table-three :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @context-open="contextOpen" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" @create-row="createProject" :drag="false"></adv-table-three>
+          <adv-table-three :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @context-open="contextOpen" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" @create-row="createProject" :drag="false" :key="templateKey"></adv-table-three>
         </template>
 
         <template v-else>
-          <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @context-open="contextOpen" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :newTaskButton="{label: 'New Project', icon: 'add'}" :drag="false"></advance-table>
+          <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @context-open="contextOpen" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :newTaskButton="{label: 'New Project', icon: 'add'}" :drag="false" :key="templateKey"></advance-table>
         </template> 
 
       </template>
@@ -74,10 +68,7 @@
 <script>
 import { PROJECT_CONTEXT_MENU, PROJECT_FIELDS } from '../../config/constants';
 import { mapGetters } from 'vuex';
-import dayjs from 'dayjs'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
-// import { combineTransactionSteps } from '@tiptap/core';
-// import { conditionalExpression } from '@babel/types';
 
 export default {
   name: "Projects",
@@ -162,6 +153,7 @@ export default {
             this.tableFields[i].header_icon.isActive = true
           } 
       }
+      this.templateKey++;
     },
 
     projectRoute(project) {
