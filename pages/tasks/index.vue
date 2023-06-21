@@ -792,7 +792,7 @@ export default {
         proj.statusId=section.tasks[0]?.statusId
       }
       if(this.group=="assignee"){
-        proj.user=section.tasks[0]?.user
+        proj.user=[section.tasks[0]?.user]
         proj.userId=section.tasks[0]?.userId
       }
       if(this.group=="department"){

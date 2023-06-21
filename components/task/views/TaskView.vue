@@ -593,7 +593,6 @@ export default {
     },
     SingleProjectGroup($event) {
       this.groupby = $event;
-      console.log($event)
       this.$store
         .dispatch("section/fetchProjectSections", {
           projectId: this.$route.params.id,
@@ -685,7 +684,7 @@ export default {
         proj.statusId=section.tasks[0]?.statusId
       }
       if(this.groupby=="assignee"){
-        proj.user=section.tasks[0]?.user
+        proj.user=[section.tasks[0]?.user]
         proj.userId=section.tasks[0]?.userId
       }
       if(this.groupby=="department"){
