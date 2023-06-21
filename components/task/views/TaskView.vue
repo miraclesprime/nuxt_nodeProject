@@ -12,7 +12,7 @@
     <div v-show="gridType === 'list'" class="calc-height " :style="{ 'width': contentWidth }">
 
       <!-- <adv-table-two :tableFields="tableFields" :tableData="localdata" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :drag="dragTable"></adv-table-two> -->
-      <adv-table-three :tableFields="tableFields" :tableData="localdata" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :drag="dragTable"></adv-table-three>
+      <adv-table-three :tableFields="tableFields" :tableData="localdata" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" :newRow="newRow" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :drag="dragTable"></adv-table-three>
 
     </div>
 
@@ -151,14 +151,14 @@ export default {
       alertMsg: "",
       sectionId: null,
       sectionTitle: "",
-      newTaskButton: {
-        show: true,
+      plusButton: {
         label: "New Task",
         icon: "add",
       },
       newRow: {
+        show: false,
         id: "",
-        sectionId: "",
+        sectionId: null,
         title: "",
         userId: "",
         statusId: null,

@@ -24,7 +24,7 @@
                       <div class="position-sticky align-center gap-05" style="left: 0.5rem;" >
                         <bib-icon icon="arrow-down" :scale="0.5" style="transform: rotate(-90deg);" ></bib-icon> 
                         <span class="font-w-700 cursor-pointer ml-025" >
-                          <input type="text" class="editable-input section-title" placeholder="Enter title..." @input="debounceNewSection($event.target.value, $event)" @blur="restoreField" />
+                          <input type="text" class="editable-input section-title" placeholder="Enter title..." ref="newsectioninput" @input="debounceNewSection($event.target.value, $event)" @blur="restoreField" />
                         </span>
                       </div>
                     </div>
@@ -122,8 +122,10 @@
                     <span class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
                   </div>
                   <div class="td" role="cell">
-                    <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate(section)" @blur="unselectAll" required placeholder="Enter title...">
-                  </div>
+
+
+                    <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate(section)" @blur="unselectAll" @keyup.esc="unselectAll" required placeholder="Enter title...">
+
                 </div>
               </template>
 
@@ -211,16 +213,24 @@ export default {
       // highlight: false,
       validTitle: false,
       localData: [],
-      localNewrow: _.cloneDeep(this.newRow),
+      localNewrow: {},
     }
   },
   
   watch: {
-    /*showNewsection(newVal){
-      
-    },*/
+    newRow(newValue){
+      console.log(newValue.sectionId)
+      this.localNewrow = _.cloneDeep(this.newRow)
+    },
     tableData(newValue){
       this.localData = _.cloneDeep(newValue)
+    },
+    showNewsection(newValue){
+      process.nextTick(() => {
+        if(newValue){
+          this.$refs.newsectioninput.focus()
+        }
+      });
     }
   },
 
@@ -251,9 +261,6 @@ export default {
       // console.log(main.clientWidth, main.offsetWidth, main.scrollWidth)
       let w = main.scrollWidth - 18
 
-      // console.log(document.querySelectorAll(".td[data-key='title']"))
-      // console.log(this.$refs['tdtitle'])
-
       return w + "px"
 
       /*const resizeObserver = new ResizeObserver((entries) => {
@@ -276,18 +283,6 @@ export default {
     this.localData = _.cloneDeep(this.tableData)
     this.resizableColumns()
 
-  },
-
-  updated () {
-    this.$nextTick( () => {
-      // Code that will run only after the
-      // entire view has been re-rendered
-      // this.resizableColumns()
-      
-      // let headrow = document.importNode(this.$refs.headrow0[0], true)
-      // document.getElementById("mainDraggable").appendChild(headrow)
-      // document.getElementById("mainDraggable").insertBefore(headrow, null)
-    })
   },
 
   methods: {
@@ -600,6 +595,7 @@ export default {
       this.unselectAll().then(() => {
         this.localNewrow.sectionId = sectionId
         this.localNewrow.title = ""
+        this.localNewrow.show = true
       })
       process.nextTick(() => {
         this.$refs['newrowInput'+sectionId][0].focus()
