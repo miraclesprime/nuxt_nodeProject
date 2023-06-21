@@ -187,17 +187,6 @@ export default {
   },
 
   methods: {
-    /*parseDate(dateString, format) {
-      return fecha.parse(dateString, this.format);
-    },*/
-
-    /*formatInputDate(dateObj, format) {
-      if (dateObj) {
-        return fecha.format(dateObj, this.format);
-      } else {
-        return ""
-      }
-    },*/
     
     // main class prototype
     columnResize(table) {
@@ -259,7 +248,6 @@ export default {
         return true;
       }
 
-      // ============================================================
       // do drag column width
       this.columnDrag = function(e) {
         var e = e || window.event;
@@ -275,7 +263,6 @@ export default {
         return false;
       }
 
-      // ============================================================
       // stops column dragging
       this.stopColumnDrag = function(e) {
         var e = e || window.event;
@@ -301,7 +288,6 @@ export default {
         self.preventEvent(e);
       }
 
-      // ============================================================
       // init data and start dragging
       this.startColumnDrag = function(e) {
         var e = e || window.event;

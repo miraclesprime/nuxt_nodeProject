@@ -24,16 +24,13 @@
           @close="confirmDelete"
         ></confirm-dialog> -->
       <template v-if="projects.length">
-        <div v-if="groupVisible">
-        <loading :loading="loading"></loading>
+        <template v-if="groupVisible">
+          <adv-table-three :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @context-open="contextOpen" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" @create-row="createProject" :drag="false"></adv-table-three>
+        </template>
 
-        <adv-table-two :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @context-open="contextOpen" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" :isProject="true" @create-row="createProject" :drag="false"></adv-table-two>
-        </div>
-       <div v-else>
-        <loading :loading="loading"></loading>
-
-        <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @context-open="contextOpen" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :newTaskButton="{label: 'New Project', icon: 'add'}" :drag="false"></advance-table>
-      </div> 
+        <template v-else>
+          <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @context-open="contextOpen" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :newTaskButton="{label: 'New Project', icon: 'add'}" :drag="false"></advance-table>
+        </template> 
 
       </template>
       <template v-else>
@@ -135,7 +132,6 @@ export default {
           }
         })
         this.localData = newArr;
-        console.log("this.localData",this.localData)
         this.$store.dispatch('project/setProjects', newArr);
         this.loading = false;
     })
@@ -563,6 +559,8 @@ export default {
           proj.priorityId=null
           proj.departmentId = null;
           proj.department = null;
+          // proj.user=null
+          // proj.userId=null
       }
       if(this.groupBy=="priority"){
         proj.priority=section.tasks[0]?.priority
@@ -571,6 +569,8 @@ export default {
         proj.statusId=null
         proj.departmentId = null;
         proj.department = null;
+        // proj.user=null
+        // proj.userId=null
      
       }
       if(this.groupBy=="status"){
@@ -580,9 +580,18 @@ export default {
         proj.department = null;
         proj.priority=null
         proj.priorityId=null
+        // proj.user=null
+        // proj.userId=null
       }
       if(this.groupBy=="assignee"){
-        
+        proj.status=null
+        proj.statusId=null
+        proj.priority=null
+        proj.priorityId=null
+        proj.departmentId = null;
+        proj.department = null;
+        proj.user=section.tasks[0]?.user
+        proj.userId=section.tasks[0]?.userId
       }
       if(this.groupBy=="department"){
         proj.department=section.tasks[0]?.department
@@ -591,6 +600,8 @@ export default {
         proj.statusId=null
         proj.priority=null
         proj.priorityId=null
+        // proj.user=null
+        // proj.userId=null
       }
     
       delete proj.show;
