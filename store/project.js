@@ -152,24 +152,23 @@ export const mutations = {
         if (a.priorityId === null && b.priorityId === null) {
           return 0;
         }
-        return b.priorityId - a.priorityId;
+        return a.priorityId - b.priorityId;
       })
-
       arr.forEach((ele) => {
-        let title = ele.priority !== null ? ele.priority.text.charAt(0).toUpperCase()+ele.priority.text.slice(1) : "Unassigned";
-        if (!items.includes(title)) items.push(title);
-      });
-      _projects = items.map((item, idx) => {
-        return {
-          id: idx,
-          title: item !== null ? item : "Unassigned",
-          tasks: arr.filter(
-            (_item) =>
-              (_item[arrIndex] !== null ? _item[arrIndex].text.charAt(0).toUpperCase()+_item[arrIndex].text.slice(1) : null) ===
-              (item === "Unassigned" ? null : item)
-          ),
-        };
-      });
+        let title = ele.priority !== null && ele.priority?.text !== null ? ele.priority.text.charAt(0).toUpperCase()+ele.priority.text.slice(1) : "Unassigned"
+         if (!items.includes(title)) items.push(title);
+       });
+       _projects = items.map((item, idx) => {
+         return {
+           id: idx,
+           title: item !== null ? item : "Unassigned",
+           tasks: arr.filter(
+             (_item) =>
+               (_item[arrIndex] !== null&&_item[arrIndex]?.text !== null ?  _item[arrIndex].text.charAt(0).toUpperCase()+_item[arrIndex].text.slice(1) : null) ===
+               (item === "Unassigned" ? null : item)
+           ),
+         };
+       });
     }
     if (payload.key == "department") {
       arrIndex = "department";

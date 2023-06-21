@@ -303,6 +303,7 @@ export default {
           companyId: compid,
           filter: "all",
           sort: this.sortName,
+          sName:this.groupBy
         })
         .then(() => {
           this.key += 1;
@@ -365,17 +366,39 @@ export default {
         }
     },
 
-    createTask(task) {
-      task.departmentId = null;
-      task.budget = 0;
-      task.dueDate = null;
-      task.startDate = null;
-      task.sectionId = null;
-      task.user = [this.selectedUser];
-      task.text = `Created a task ${task.title}`
-      delete task.show;
-      delete task.userId;
-      this.$store.dispatch('task/createTask', task).then(() => {
+    createTask(proj,section) {
+      proj.group = this.groupBy;
+          proj.status=null
+          proj.statusId=null
+          proj.priority=null
+          proj.priorityId=null
+          proj.departmentId = null;
+          proj.department = null;
+          proj.projectId=null
+          proj.budget = 0;
+          proj.dueDate = null;
+          proj.startDate = null;
+          proj.user = [this.selectedUser];
+          proj.text = `Created a task ${proj.title}`
+      if(this.groupBy=="priority"){
+        proj.priority=section.tasks[0]?.priority
+        proj.priorityId=section.tasks[0]?.priorityId
+     
+      }
+      if(this.groupBy=="status"){
+        proj.status=section.tasks[0]?.status
+        proj.statusId=section.tasks[0]?.statusId
+      }
+      if(this.groupBy=="department"){
+        proj.department=section.tasks[0]?.department
+        proj.departmentId=section.tasks[0]?.departmentId
+      }
+      if(this.groupBy=="project"){
+        proj.projectId=section.tasks[0]?.project?.[0].project?.id||null 
+      }
+      delete proj.show
+      delete proj.sectionId
+      this.$store.dispatch('task/createTask', proj).then(() => {
         this.updateKey();
       });
     },
@@ -639,8 +662,6 @@ export default {
     searchUserTasks(text) {
       let formattedText = text.toLowerCase().trim();
       let newArr
-      console.log("formattedText",formattedText)
-      console.log("dfdfformattedText",this.userTasks)
       if(this.userTasks[0]?.tasks){
               newArr = this.userTasks.map((item) => {
             const filteredTasks = item.tasks.filter((ele) => {
