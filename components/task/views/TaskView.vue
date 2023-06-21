@@ -592,19 +592,16 @@ export default {
       this.templateKey += 1;
     },
     SingleProjectGroup($event) {
-      this.groupby = $event;
-      this.$store
-        .dispatch("section/fetchProjectSections", {
-          projectId: this.$route.params.id,
-          filter: "all",
-          sName:this.groupby
-        }).then(() => {
-          if($event != 'default') {
-            this.dragTable = false;
-          } else {
-            this.dragTable = true;
-          }
-        })
+      this.groupby=$event
+      if($event != 'default') {
+        this.dragTable = false;
+      } else {
+        this.groupby=''
+        this.dragTable = true;
+        this.updateKey()
+        return;
+      }
+      this.$store.commit('section/groupSectionProject',{sName:this.groupby})
     
     },
 

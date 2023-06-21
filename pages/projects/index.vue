@@ -545,11 +545,11 @@ export default {
       proj.user = u;
       proj.groupBy = this.groupBy;
       proj.status=null
-          proj.statusId=null
-          proj.priority=null
-          proj.priorityId=null
-          proj.departmentId = null;
-          proj.department = null;
+      proj.statusId=null
+      proj.priority=null
+      proj.priorityId=null
+      proj.departmentId = null;
+      proj.department = null;
 
       if(this.groupBy=="priority"){
         proj.priority=section.tasks[0]?.priority

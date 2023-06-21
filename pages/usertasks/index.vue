@@ -241,8 +241,8 @@ export default {
       }
       this.groupBy = $event;
       this.groupVisible = true
-      this.fetchUserTasks()
-     
+      this.$store.commit('user/getUserTasks',{key:this.groupBy})
+      this.localData=this.userTasks
     },
     async fetchUserTasks($event) {
       if (process.client) {
@@ -260,7 +260,7 @@ export default {
         .then(res=> {
           if (res.data.statusCode == 200) {
             if(this.groupBy!==''){
-                this.$store.commit('user/getUserTasks',{data:res.data.data,key:this.groupBy})
+                this.$store.commit('user/getUserTasks',{key:this.groupBy})
                 this.localData=this.userTasks
             }
             else {
