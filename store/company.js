@@ -59,17 +59,21 @@ export const mutations = {
   },
   groupTasks(state, payload) {
     let arr = state.companyTasks
-    if(arr[0].tasks){
-      // let _arr = [];
-      // arr.forEach((ele) => {
-      //   _arr = _arr.concat(ele.tasks);
-      // });
-      // arr = _arr;
-      arr = arr.reduce((accumulator, currentValue) => {
-        return accumulator.concat(currentValue.tasks);
+    // if(arr[0].tasks){
+    //   // let _arr = [];
+    //   // arr.forEach((ele) => {
+    //   //   _arr = _arr.concat(ele.tasks);
+    //   // });
+    //   // arr = _arr;
+    //   arr = arr.reduce((accumulator, currentValue) => {
+    //     return accumulator.concat(currentValue.tasks);
+    //   }, []);
+    // }
+    if (arr[0].tasks) {
+      arr = arr.reduce((acc, ele) => {
+        return [...acc, ...ele.tasks];
       }, []);
     }
-    
     let arrIndex;
     let _tasks;
     if (payload.sName == "priority") {

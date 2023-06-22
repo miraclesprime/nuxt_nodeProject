@@ -165,31 +165,32 @@ export default {
 
   watch: {
     tasks(newVal) {
-          let data = _.cloneDeep(newVal);
-          let newArr = [];
+      this.localData=_.cloneDeep(newVal)
+          // let data = _.cloneDeep(newVal);
+          // let newArr = [];
 
-      for (let i = 0; i < data.length; i++) {
-          newArr.push(data[i]);
-          let tNewArr = []
-          for(let j=0; j<data[i].tasks.length; j++) {
-            if (data[i].tasks[j].priorityId) {
-              tNewArr.unshift(data[i].tasks[j])
-            } else {
-              tNewArr.push(data[i].tasks[j])
-            }
-          }
-          newArr[i]["tasks"] = tNewArr;
-        }
+      // for (let i = 0; i < data.length; i++) {
+      //     newArr.push(data[i]);
+      //     let tNewArr = []
+      //     for(let j=0; j<data[i].tasks.length; j++) {
+      //       if (data[i].tasks[j].priorityId) {
+      //         tNewArr.unshift(data[i].tasks[j])
+      //       } else {
+      //         tNewArr.push(data[i].tasks[j])
+      //       }
+      //     }
+      //     newArr[i]["tasks"] = tNewArr;
+      //   }
 
-        newArr.forEach(dept => {
-          dept["tasks"] = dept.tasks.sort((a, b) => {
-            if (a.priorityId && b.priorityId) {
-              return a.priorityId - b.priorityId
-            }
-          })
-        })
+      //   newArr.forEach(dept => {
+      //     dept["tasks"] = dept.tasks.sort((a, b) => {
+      //       if (a.priorityId && b.priorityId) {
+      //         return a.priorityId - b.priorityId
+      //       }
+      //     })
+      //   })
 
-        this.localData = newArr;
+      //   this.localData = newArr;
     },
     gridType() {
       this.key++;
@@ -242,7 +243,30 @@ export default {
         sName:this.group
       })
       .then((res) => {
-        this.taskGroup('department');
+        // this.taskGroup('department');
+        let data=res
+         let newArr = [];
+        for (let i = 0; i < data.length; i++) {
+            newArr.push(data[i]);
+            let tNewArr = []
+            for(let j=0; j<data[i].tasks.length; j++) {
+              if (data[i].tasks[j].priorityId) {
+                tNewArr.unshift(data[i].tasks[j])
+              } else {
+                tNewArr.push(data[i].tasks[j])
+              }
+            }
+            newArr[i]["tasks"] = tNewArr;
+        }
+
+        newArr.forEach(dept => {
+          dept["tasks"] = dept.tasks.sort((a, b) => {
+            if (a.priorityId && b.priorityId) {
+              return a.priorityId - b.priorityId
+            }
+          })
+        })
+        this.localData = newArr;
         this.loading = false;
       });
   },
@@ -592,17 +616,44 @@ export default {
       this.templateKey++;
     },
     //group by
-    taskGroup($event) {
+    async taskGroup($event) {
+      this.loading = true;
       this.group=$event
       if($event != 'default') {
         this.dragTable = false;
+
       } else {
         this.group=''
         this.dragTable = true;
-        this.$store.commit('company/groupTasks',{sName:"department"})
+        this.$store
+          .dispatch("company/groupTasks",{sName:"department"}, {
+            sName: $event,
+            order: this.orderBy,
+          }).then((res)=>{
+              this.loading = false;
+          })
+        // this.$store.commit('company/groupTasks',{sName:"department"})
         return;
       }
-      this.$store.commit('company/groupTasks',{sName:this.group})
+      let compid = JSON.parse(localStorage.getItem("user")).subb;
+      this.$store
+        .dispatch("company/fetchCompanyTasks", {
+          companyId: compid,
+          sName:this.group
+        })
+        .then(() => {
+          this.loading = false;
+        });
+      // this.$store
+      //     .dispatch("company/groupTasks",{sName:this.group}, {
+      //       sName: $event,
+      //       order: this.orderBy,
+      //     }).then((res)=>{
+      //       console.log("sdsaasasd",res)
+      //         this.loading = false;
+      //     })
+        //  this.$store.commit('company/groupTasks',{sName:this.group})
+        // this.loading = false;
       },
     // Sort By Action List
     sortBy($event) {
