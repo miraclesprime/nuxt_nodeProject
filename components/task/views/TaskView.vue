@@ -12,7 +12,7 @@
     <div v-show="gridType === 'list'" class="calc-height " :style="{ 'width': contentWidth }">
 
       <!-- <adv-table-two :tableFields="tableFields" :tableData="localdata" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :drag="dragTable"></adv-table-two> -->
-      <adv-table-three :tableFields="tableFields" :tableData="localdata" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" :newRow="newRow" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :drag="dragTable"></adv-table-three>
+      <adv-table-three :tableFields="tableFields" :tableData="localdata" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" :newRow="newRow" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :drag="dragTable" :key="templateKey"></adv-table-three>
 
     </div>
 
@@ -114,7 +114,6 @@ import { mapGetters } from "vuex";
 import _ from "lodash";
 import dayjs from "dayjs";
 import { unsecuredCopyToClipboard } from "~/utils/copy-util.js";
-import { liftTarget } from '@tiptap/pm/transform';
 
 export default {
   props: {
@@ -845,6 +844,7 @@ export default {
           this.tableFields[i].header_icon.isActive = true;
         }
       }
+      this.templateKey++;
     },
 
     setFavorite(task) {

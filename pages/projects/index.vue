@@ -102,9 +102,14 @@ export default {
 
     for(let field of this.tableFields) {
       if(field.header_icon) {
-        field.header_icon.isActive = false;
+        if(field.key == 'priority') {
+          field.header_icon.isActive = true;
+        } else {
+          field.header_icon.isActive = false;
+        }
       }
     }
+
     this.$store.dispatch('project/fetchProjects').then((res) => { 
       
       let newArr = [];
@@ -127,6 +132,7 @@ export default {
         this.loading = false;
     })
 
+      this.templateKey++;
   },
   computed: {
     ...mapGetters({
