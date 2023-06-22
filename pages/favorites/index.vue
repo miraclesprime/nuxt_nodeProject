@@ -16,7 +16,6 @@
         <div style="overflow: auto;">
 
           <advance-table :drag="false" :tableFields="taskTableFields" :tableData="taskSubtaskLocalData" :contextItems="taskContextMenuItems" @context-item-event="taskContextItemClick" @row-click ="openSidebar" @table-sort="sortTask" @context-open="taskContextOpen"  @title-click="openSidebar" @update-field="updateTask" sectionTitle="Favorite Tasks" :plusButton="false" :key="templateKey"></advance-table>
-
         </div>
       
         <loading :loading="loading"></loading>
@@ -138,6 +137,27 @@ export default {
   },
 
   mounted() {
+
+    for(let field of this.projectTableFields) {
+      if(field.header_icon) {
+        if(field.key == 'priority') {
+          field.header_icon.isActive = true;
+        } else {
+          field.header_icon.isActive = false;
+        }
+      }
+    }
+
+    for(let field of this.taskTableFields) {
+      if(field.header_icon) {
+        if(field.key == 'priority') {
+          field.header_icon.isActive = true;
+        } else {
+          field.header_icon.isActive = false;
+        }
+      }
+    }
+
     this.loading = true
     let user = JSON.parse(localStorage.getItem("user"))
     this.$store.dispatch("company/fetchCompanyMembers", user.subb)

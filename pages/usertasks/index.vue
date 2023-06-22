@@ -140,6 +140,7 @@ export default {
     localData(newValue, oldValue) {
       this.beforeLocal=oldValue
     },
+    
     "$route.query": {
       immediate: true,
       handler(newVal) {
@@ -164,8 +165,20 @@ export default {
           return a.priorityId - b.priorityId;
         }
       });
+
+      for(let field of this.taskFields) {
+          if(field.header_icon) {
+            if(field.key == 'priority') {
+              field.header_icon.isActive = true;
+            } else {
+              field.header_icon.isActive = false;
+            }
+          }
+        }
+
       this.localData = sortedData;
     },
+
     sidebar(newVal){
       const page = document.getElementById("page")
       this.$nextTick(() => {
@@ -200,6 +213,17 @@ export default {
 
   mounted() {
     if (process.client) {
+
+      for(let field of this.taskFields) {
+        if(field.header_icon) {
+          if(field.key == 'priority') {
+            field.header_icon.isActive = true;
+          } else {
+            field.header_icon.isActive = false;
+          }
+        }
+      }
+
       if (!this.$route.query.email) {
         this.$router.push({ path: "/dashboard" });
       }

@@ -16,7 +16,7 @@
           <div v-show="gridType === 'list'" class="h-100">
             <template v-if="tasks.length">
 
-              <adv-table-three :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable"></adv-table-three>
+              <adv-table-three :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable" :key="templateKey"></adv-table-three>
 
             </template>
           <div v-else>
@@ -112,6 +112,7 @@ export default {
       viewName: "all",
       orderBy: "desc",
       key: 99,
+      templateKey: 0,
       sortName: "",
       popupMessages: [],
       popupCoords: {},
@@ -225,6 +226,12 @@ export default {
   },
 
   mounted() {
+
+    for(let field of this.taskFields) {
+      if(field.header_icon) {
+        field.header_icon.isActive = false;
+      }
+    }
 
     this.loading = true;
     // this.updateKey()
@@ -582,6 +589,7 @@ export default {
           this.taskFields[i].header_icon.isActive = true;
         }
       }
+      this.templateKey++;
     },
     //group by
     taskGroup($event) {
