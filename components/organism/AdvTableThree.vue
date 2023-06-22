@@ -219,7 +219,7 @@ export default {
   
   watch: {
     newRow(newValue){
-      console.log(newValue.sectionId)
+      // console.log(newValue.sectionId)
       // this.localNewrow = _.cloneDeep(this.newRow)
       this.localNewrow = newValue
     },
@@ -293,7 +293,7 @@ export default {
       // let icon = this.$refs[refIcon][0].$el
       // let tar = event.target;
 
-      console.log(elem.style.height)
+      // console.log(elem.style.height)
       elem.classList.toggle("collapsed")
       
     },
