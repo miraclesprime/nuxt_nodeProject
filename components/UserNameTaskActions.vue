@@ -10,15 +10,15 @@
         <bib-input size="sm" type="text" v-model="searchText" name="name" @input="$emit('search-user-tasks', searchText)" placeholder="Search User Tasks..." :variant="searchText.length > 50 ? 'alert': ''"></bib-input>
       </template>
       <ul class="actions" id="ta-action-right-actions">
-        <li class="action" id="ta-action1" v-tooltip="'View'">
-          <sorting-comp :items="viewing" icon="eye-open" activeIcon="tick" v-on:change-sort="changeViewName"></sorting-comp>
+        <li class="action" id="ta-action1" >
+          <sorting-comp :items="viewing" icon="eye-open" activeIcon="tick" tooltip="View" v-on:change-sort="changeViewName"></sorting-comp>
         </li>
-        <li class="action" id="ta-action3" title="Group by"  v-tooltip="'Group By'">
-          <sorting-comp label="Group by" :items="groupBy" icon="accessibility-braille-solid" v-on:change-sort="groupTasks($event)"></sorting-comp>
+        <li class="action" id="ta-action3" title="Group by" >
+          <sorting-comp label="Group by" :items="groupBy" icon="accessibility-braille-solid" tooltip="Group By" v-on:change-sort="groupTasks($event)"></sorting-comp>
         </li>
     
-        <li class="action" id="ta-action2" v-tooltip="'Sort By'">
-          <sorting-comp :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy"></sorting-comp>
+        <li class="action" id="ta-action2" >
+          <sorting-comp :items="sorting" icon="swap-vertical" tooltip="Sort By" v-on:change-sort="sortBy"></sorting-comp>
         </li>
         
       </ul>
