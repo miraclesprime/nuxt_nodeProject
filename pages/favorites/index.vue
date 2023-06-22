@@ -594,14 +594,10 @@ export default {
           this.taskSubtaskLocalData = taskStArr;
 
           if (this.taskOrder == "asc") {
-            this.taskSubtaskLocalData.sort((a, b) => {
-              if (a.statusId && b.statusId) return a.status.text.localeCompare(b.status.text)
-              });
+            this.taskSubtaskLocalData.sort((a, b) => a.status.text.localeCompare(b.status.text));
             this.taskOrder = "desc"
           } else {
-            this.taskSubtaskLocalData.sort((a, b) => {
-              if (a.statusId && b.statusId) return b.status.text.localeCompare(a.status.text)
-              });
+            this.taskSubtaskLocalData.sort((a, b) => b.status.text.localeCompare(a.status.text));
             this.taskOrder = "asc"
           }
           this.key += 1
@@ -622,14 +618,10 @@ export default {
           this.taskSubtaskLocalData = taskPrArr;
 
           if (this.taskOrder == "asc") {
-            this.taskSubtaskLocalData.sort((a, b) => {
-              if (a.priorityId && b.priorityId) return a.priority.id - b.priority.id
-              });
+            this.taskSubtaskLocalData.sort((a, b) => a.priority.id - b.priority.id);
             this.taskOrder = "desc"
           } else {
-            this.taskSubtaskLocalData.sort((a, b) => {
-              if (a.priorityId && b.priorityId) return b.priority.id - a.priority.id
-              });
+            this.taskSubtaskLocalData.sort((a, b) => b.priority.id - a.priority.id);
             this.taskOrder = "asc"
           }
           this.key += 1
@@ -650,14 +642,10 @@ export default {
           this.taskSubtaskLocalData = taskDeptArr;
 
           if (this.taskOrder == "asc") {
-            this.taskSubtaskLocalData.sort((a, b) => {
-              if (a.departmentId && b.departmentId) return a.department.title.localeCompare(b.department.title)
-              });
+            this.taskSubtaskLocalData.sort((a, b) => a.department.title.localeCompare(b.department.title));
             this.taskOrder = "desc"
           } else {
-            this.taskSubtaskLocalData.sort((a, b) => {
-              if (a.departmentId && b.departmentId) return b.department.title.localeCompare(a.department.title)
-              });
+            this.taskSubtaskLocalData.sort((a, b) => b.department.title.localeCompare(a.department.title));
             this.taskOrder = "asc"
           }
           this.key += 1

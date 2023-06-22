@@ -125,6 +125,7 @@
                     <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate(section)" @blur="unselectAll" @keyup.esc="unselectAll" required placeholder="Enter title...">
                   </div>
                 </div>
+
               </template>
 
             </draggable>
