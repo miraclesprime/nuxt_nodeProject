@@ -17,19 +17,13 @@
             </bib-popup-notification>
           </template>
         </bib-popup-notification-wrapper>
-        <!-- confirm delete task -->
-        <!-- <confirm-dialog
-          v-if="confirmModal"
-          :message="confirmMsg"
-          @close="confirmDelete"
-        ></confirm-dialog> -->
       <template v-if="projects.length">
         <template v-if="groupVisible">
-          <adv-table-three :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @context-open="contextOpen" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" @create-row="createProject" :drag="false"></adv-table-three>
+          <adv-table-three :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @context-open="contextOpen" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" @create-row="createProject" :drag="false" :key="templateKey"></adv-table-three>
         </template>
 
         <template v-else>
-          <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @context-open="contextOpen" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :plusButton="{label: 'New Project', icon: 'add'}" :drag="false"></advance-table>
+          <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @context-open="contextOpen" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :plusButton="{label: 'New Project', icon: 'add'}" :drag="false" :key="templateKey"></advance-table>
         </template> 
 
       </template>
@@ -74,10 +68,7 @@
 <script>
 import { PROJECT_CONTEXT_MENU, PROJECT_FIELDS } from '../../config/constants';
 import { mapGetters } from 'vuex';
-import dayjs from 'dayjs'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
-// import { combineTransactionSteps } from '@tiptap/core';
-// import { conditionalExpression } from '@babel/types';
 
 export default {
   name: "Projects",
@@ -162,6 +153,7 @@ export default {
             this.tableFields[i].header_icon.isActive = true
           } 
       }
+      this.templateKey++;
     },
 
     projectRoute(project) {
@@ -552,56 +544,29 @@ export default {
       }
       proj.user = u;
       proj.groupBy = this.groupBy;
-      if(this.groupBy==""){
-          proj.status=null
+      proj.status=null
           proj.statusId=null
           proj.priority=null
           proj.priorityId=null
           proj.departmentId = null;
           proj.department = null;
-          // proj.user=null
-          // proj.userId=null
-      }
+
       if(this.groupBy=="priority"){
         proj.priority=section.tasks[0]?.priority
         proj.priorityId=section.tasks[0]?.priorityId
-        proj.status=null
-        proj.statusId=null
-        proj.departmentId = null;
-        proj.department = null;
-        // proj.user=null
-        // proj.userId=null
      
       }
       if(this.groupBy=="status"){
         proj.status=section.tasks[0]?.status
         proj.statusId=section.tasks[0]?.statusId
-        proj.departmentId = null;
-        proj.department = null;
-        proj.priority=null
-        proj.priorityId=null
-        // proj.user=null
-        // proj.userId=null
       }
       if(this.groupBy=="assignee"){
-        proj.status=null
-        proj.statusId=null
-        proj.priority=null
-        proj.priorityId=null
-        proj.departmentId = null;
-        proj.department = null;
         proj.user=section.tasks[0]?.user
         proj.userId=section.tasks[0]?.userId
       }
       if(this.groupBy=="department"){
         proj.department=section.tasks[0]?.department
         proj.departmentId=section.tasks[0]?.departmentId
-        proj.status=null
-        proj.statusId=null
-        proj.priority=null
-        proj.priorityId=null
-        // proj.user=null
-        // proj.userId=null
       }
     
       delete proj.show;
