@@ -17,12 +17,12 @@
               <div v-if="groupVisible" class="h-100">
                   <loading :loading="loading"></loading>
 
-                  <adv-table-three :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" :isProject="true" @create-row="createTask" :drag="false"></adv-table-three>
+                  <adv-table-three :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" :isProject="true" @create-row="createTask" :drag="false" :key="templateKey"></adv-table-three>
               
               </div>
               <div v-else class="h-100">
                 <loading :loading="loading"></loading>                
-                <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" sectionTitle="" :drag="false"></advance-table>
+                <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" sectionTitle="" :drag="false" :key="templateKey"></advance-table>
               </div> 
           </div>
         
@@ -84,7 +84,6 @@ import {
   COMPANY_TASK_FIELDS as TaskFields,
   TASK_CONTEXT_MENU,
 } from "../../config/constants";
-import dayjs from "dayjs";
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
 export default {
@@ -101,6 +100,7 @@ export default {
       deptPickerOpen: false,
       popupMessages: [],
       popupCoords: {},
+      templateKey: 0,
       userPickerOpen: false,
       datePickerOpen: false,
       datepickerArgs: { label: "", field: "" },
@@ -121,9 +121,8 @@ export default {
       contentWidth: "100%",
       groupVisible: false,
       groupBy:'',
-      // confirmModal: false,
-      // confirmMsg: "",
       taskToDelete: {},
+      sortName: 'priority'
     };
   },
   computed: {
@@ -141,6 +140,7 @@ export default {
     localData(newValue, oldValue) {
       this.beforeLocal=oldValue
     },
+    
     "$route.query": {
       immediate: true,
       handler(newVal) {
@@ -165,8 +165,20 @@ export default {
           return a.priorityId - b.priorityId;
         }
       });
+
+      for(let field of this.taskFields) {
+          if(field.header_icon) {
+            if(field.key == 'priority') {
+              field.header_icon.isActive = true;
+            } else {
+              field.header_icon.isActive = false;
+            }
+          }
+        }
+
       this.localData = sortedData;
     },
+
     sidebar(newVal){
       const page = document.getElementById("page")
       this.$nextTick(() => {
@@ -201,6 +213,17 @@ export default {
 
   mounted() {
     if (process.client) {
+
+      for(let field of this.taskFields) {
+        if(field.header_icon) {
+          if(field.key == 'priority') {
+            field.header_icon.isActive = true;
+          } else {
+            field.header_icon.isActive = false;
+          }
+        }
+      }
+
       if (!this.$route.query.email) {
         this.$router.push({ path: "/dashboard" });
       }
@@ -218,6 +241,20 @@ export default {
   },
 
   methods: {
+
+    checkActive() {
+      for(let i=0; i<this.taskFields.length; i++) {
+          if(this.taskFields[i].header_icon) {
+            this.taskFields[i].header_icon.isActive = false
+          }
+
+          if(this.taskFields[i].header_icon && this.taskFields[i].key == this.sortName) {
+            this.taskFields[i].header_icon.isActive = true
+          } 
+      }
+      this.templateKey++;
+    },
+
     UserTaskGroup($event) {
       if ($event ==="default" ) {
         this.groupVisible = false;
@@ -303,6 +340,7 @@ export default {
           companyId: compid,
           filter: "all",
           sort: this.sortName,
+          sName:this.groupBy
         })
         .then(() => {
           this.key += 1;
@@ -365,17 +403,39 @@ export default {
         }
     },
 
-    createTask(task) {
-      task.departmentId = null;
-      task.budget = 0;
-      task.dueDate = null;
-      task.startDate = null;
-      task.sectionId = null;
-      task.user = [this.selectedUser];
-      task.text = `Created a task ${task.title}`
-      delete task.show;
-      delete task.userId;
-      this.$store.dispatch('task/createTask', task).then(() => {
+    createTask(proj,section) {
+      proj.group = this.groupBy;
+          proj.status=null
+          proj.statusId=null
+          proj.priority=null
+          proj.priorityId=null
+          proj.departmentId = null;
+          proj.department = null;
+          proj.projectId=null
+          proj.budget = 0;
+          proj.dueDate = null;
+          proj.startDate = null;
+          proj.user = [this.selectedUser];
+          proj.text = `Created a task ${proj.title}`
+      if(this.groupBy=="priority"){
+        proj.priority=section.tasks[0]?.priority
+        proj.priorityId=section.tasks[0]?.priorityId
+     
+      }
+      if(this.groupBy=="status"){
+        proj.status=section.tasks[0]?.status
+        proj.statusId=section.tasks[0]?.statusId
+      }
+      if(this.groupBy=="department"){
+        proj.department=section.tasks[0]?.department
+        proj.departmentId=section.tasks[0]?.departmentId
+      }
+      if(this.groupBy=="project"){
+        proj.projectId=section.tasks[0]?.project?.[0].project?.id||null 
+      }
+      delete proj.show
+      delete proj.sectionId
+      this.$store.dispatch('task/createTask', proj).then(() => {
         this.updateKey();
       });
     },
@@ -513,11 +573,7 @@ export default {
           text: "Action cancelled",
           variant: "orange",
         });
-        // this.taskToDelete = {};
       }
-      // this.taskToDelete = task;
-      // this.confirmMsg = "Are you sure ";
-      // this.confirmModal = true;
     },
     async filterView($event) {
       if(this.groupVisible){
@@ -545,21 +601,6 @@ export default {
     
     },
 
-    // Sort By Action List
-    checkActive() {
-      for (let i = 0; i < this.taskFields.length; i++) {
-        if (this.taskFields[i].header_icon) {
-          this.taskFields[i].header_icon.isActive = false;
-        }
-
-        if (
-          this.taskFields[i].header_icon &&
-          this.taskFields[i].key == this.sortName
-        ) {
-          this.taskFields[i].header_icon.isActive = true;
-        }
-      }
-    },
     sortBy($event) {
       this.sortName = $event;
       if ($event == "title") {
@@ -639,8 +680,6 @@ export default {
     searchUserTasks(text) {
       let formattedText = text.toLowerCase().trim();
       let newArr
-      console.log("formattedText",formattedText)
-      console.log("dfdfformattedText",this.userTasks)
       if(this.userTasks[0]?.tasks){
               newArr = this.userTasks.map((item) => {
             const filteredTasks = item.tasks.filter((ele) => {

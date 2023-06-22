@@ -57,7 +57,7 @@ export const PROJECT_FIELDS = [
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
-      isActive: false
+      isActive: true
     }
   },
   {
@@ -502,7 +502,7 @@ export const PROJECT_FAVORITES = [
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
-      isActive: false
+      isActive: true
     }
   },
   {
@@ -585,7 +585,7 @@ export const TASK_FAVORITES = [
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
-      isActive: false
+      isActive: true
     }
   },
   {
@@ -869,7 +869,7 @@ export const COMPANY_TASK_FIELDS = [
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
-      isActive: false
+      isActive: true
     }
   },
   {

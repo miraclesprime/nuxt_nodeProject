@@ -12,7 +12,7 @@
     <div v-show="gridType === 'list'" class="calc-height " :style="{ 'width': contentWidth }">
 
       <!-- <adv-table-two :tableFields="tableFields" :tableData="localdata" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :drag="dragTable"></adv-table-two> -->
-      <adv-table-three :tableFields="tableFields" :tableData="localdata" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :drag="dragTable"></adv-table-three>
+      <adv-table-three :tableFields="tableFields" :tableData="localdata" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" :newRow="newRow" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :drag="dragTable" :key="templateKey"></adv-table-three>
 
     </div>
 
@@ -114,7 +114,6 @@ import { mapGetters } from "vuex";
 import _ from "lodash";
 import dayjs from "dayjs";
 import { unsecuredCopyToClipboard } from "~/utils/copy-util.js";
-import { liftTarget } from '@tiptap/pm/transform';
 
 export default {
   props: {
@@ -151,14 +150,14 @@ export default {
       alertMsg: "",
       sectionId: null,
       sectionTitle: "",
-      newTaskButton: {
-        show: true,
+      plusButton: {
         label: "New Task",
         icon: "add",
       },
       newRow: {
+        show: false,
         id: "",
-        sectionId: "",
+        sectionId: null,
         title: "",
         userId: "",
         statusId: null,
@@ -665,11 +664,43 @@ export default {
       this.$nuxt.$emit("open-sidebar", { ...task, project: project });
     },
 
-    createNewTask(payload) {
+    createNewTask(proj, section) {
+      proj.group = this.groupby;
+      proj.status = null
+      proj.statusId = null
+      proj.priority = null
+      proj.priorityId = null
+      proj.departmentId = null;
+      proj.department = null;
+      proj.user = null
+      proj.userId = null
+      proj.sectionId = this.groupby ? null : section.id
+
+      if(this.groupby == "priority"){
+        proj.priority = section.tasks[0]?.priority
+        proj.priorityId = section.tasks[0]?.priorityId
+     
+      }
+      if(this.groupby == "status"){
+        proj.status = section.tasks[0]?.status
+        proj.statusId = section.tasks[0]?.statusId
+      }
+      if(this.groupby == "assignee"){
+        proj.user = section.tasks[0]?.user
+        proj.userId = section.tasks[0]?.userId
+      }
+      if(this.groupby == "department"){
+        proj.department = section.tasks[0]?.department
+        proj.departmentId = section.tasks[0]?.departmentId
+      }
+      delete proj.show
+      // delete proj.sectionId
+      console.log(proj, section)
       this.$store.dispatch("task/createTask", {
-          ...payload,
-          projectId: this.$route.params.id,
-          text: `created task ${payload.title}`,
+          ...proj,
+          projectId: Number(this.$route.params.id),
+          sectionId: this.groupby ? "_section"+this.$route.params.id : section.id,
+          text: `created task ${proj.title}`,
         })
         .then((t) => {
           this.resetNewRow();
@@ -684,15 +715,18 @@ export default {
       this.newRow = {
         show: false,
         id: "",
-        sectionId: "",
+        sectionId: null,
         title: "",
-        userId: "",
+        userId: null,
+        user:null,
         statusId: null,
+        status: null,
+        priority: null,
         priorityId: null,
         departmentId: null,
+        department: null,
         startDate: "",
         dueDate: "",
-        department: "",
         description: "",
         budget: "",
         text: "",
@@ -810,6 +844,7 @@ export default {
           this.tableFields[i].header_icon.isActive = true;
         }
       }
+      this.templateKey++;
     },
 
     setFavorite(task) {
