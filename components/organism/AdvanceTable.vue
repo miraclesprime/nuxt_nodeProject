@@ -61,33 +61,36 @@
             <template v-if="field.key.includes('Date')" class="date-cell">
               <!-- {{$formatDate(item[field.key])}} -->
               <!-- <bib-datepicker class="align-right" :value="new Date(item[field.key])" format="dd MMM YYYY" @click.native.stop="" @input="updateDate"></bib-datepicker> -->
-              <bib-datetime-picker v-model="item[field.key]" format="DD/MM/YYYY" placeholder="No date" @input="updateDate($event, item, field.key)" @click.native.stop></bib-datetime-picker>
+              <bib-datetime-picker v-model="item[field.key]" placeholder="No date" @input="updateDate($event, item, field.key)" @click.native.stop></bib-datetime-picker>
 
             </template>
           </div>
         </div>
-
-        <div v-if="!newRow.show && newTaskButton" class="tr" role="row" style="border-bottom: var(--bib-light)" id="adv-table-newRow-wrapper">
-          <div v-show="drag" class="td " id="adv-table-newRow-td1" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
-          <div class="td" id="adv-table-newRow-td2" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
-            <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" id="adv-table-newRow-newTaskBtn" v-on:click.stop="newRowClick()">
-              <bib-icon :icon="newTaskButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{newTaskButton.label}}</span>
+        <template v-if="plusButton">
+          
+          <div v-show="!localNewrow.show" class="tr" role="row" style="border-bottom: var(--bib-light)" id="adv-table-newRow-wrapper">
+            <div v-show="drag" class="td " id="adv-table-newRow-td1" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
+            <div class="td" id="adv-table-newRow-td2" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
+              <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" id="adv-table-newRow-newTaskBtn" v-on:click.stop="newRowClick()">
+                <bib-icon :icon="plusButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{plusButton.label}}</span>
+              </div>
             </div>
+            <div v-for="n in tableFields.length-1" class="td" id="adv-table-newRow-td3" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
           </div>
-          <div v-for="n in tableFields.length-1" class="td" id="adv-table-newRow-td3" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
-        </div>
 
-        <div v-show="newRow.show" class="tr" role="row" id="adv-table-newRow-2">
-          <div v-show="drag" class="td text-center" id="adv-table-newRow2-td" role="cell">
-            <span class="d-inline-flex align-center height-105 bg-secondary-sub4 shape-rounded" id="adv-table-newRow2-drag"><bib-icon icon="drag" variant="white"></bib-icon></span>
-          </div>
-          <template v-for="(td,index) in tableFields">
-            <div v-if="td.key == 'title'" class="td" role="cell" :id="'adv-table-newRow2-td-'+index">
-              <input type="text" ref="newrowInput" class="editable-input" :id="'adv-table-editable-input-2-'+index" v-model="newRow.title" :class="{'error': validTitle}" @input="newRowCreate" required placeholder="Enter title...">
+          <div v-show="localNewrow.show" class="tr" role="row" id="adv-table-newRow-2">
+            <div v-show="drag" class="td text-center" id="adv-table-newRow2-td" role="cell">
+              <span class="d-inline-flex align-center height-105 bg-secondary-sub4 shape-rounded" id="adv-table-newRow2-drag"><bib-icon icon="drag" variant="white"></bib-icon></span>
             </div>
-            <div v-else class="td" role="cell" :id="'adv-table-else-td-'+index"></div>
-          </template>
-        </div>
+            <template v-for="(td,index) in tableFields">
+              <div v-if="td.key == 'title'" class="td" role="cell" :id="'adv-table-newRow2-td-'+index">
+                <input type="text" ref="newrowInput" class="editable-input" :id="'adv-table-editable-input-2-'+index" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate" @keyup.esc="unselectAll" required placeholder="Enter title...">
+              </div>
+              <div v-else class="td" role="cell" :id="'adv-table-else-td-'+index"></div>
+            </template>
+          </div>
+        </template>
+
       </template>
 
     </draggable>
@@ -118,7 +121,7 @@ export default {
     sectionTitle: { type: String, default: "Section" },
     contextItems: { type: Array },
     drag: { type: Boolean, default: true },
-    newTaskButton: {
+    plusButton: {
       type: [Object, Boolean],
       default () {
         return {
@@ -157,6 +160,7 @@ export default {
       resizableTables: [],
       format: "DD MMM YYYY",
       validTitle: false,
+      localNewrow: _.cloneDeep(this.newRow),
     }
   },
 
@@ -376,7 +380,10 @@ export default {
       for (let row of rows) {
         row.classList.remove('active');
       }
-      this.newRow.show = false
+      // this.newRow.show = false
+      this.localNewrow.sectionId = null
+      this.localNewrow.title = ""
+      this.localNewrow.show = false;
       this.contextVisible = false
       return 'success'
     },
@@ -394,21 +401,21 @@ export default {
 
     newRowClick() {
       this.unselectAll()
-      this.newRow.show = true
+      this.localNewrow.show = true
       process.nextTick(() => {
         this.$refs.newrowInput[0].focus()
       });
     },
 
     newRowCreate: _.debounce(function() {
-      if (!this.newRow.title) {
+      if (!this.localNewrow.title) {
         console.warn("title is required")
         this.validTitle = "alert"
         return false
       }
       this.validTitle = ""
-      console.info("valid input->", this.newRow.title)
-      this.$emit("create-row", this.newRow)
+      // console.info("valid input->", this.localNewrow.title)
+      this.$emit("create-row", this.localNewrow)
     }, 800),
 
     debounceTitle: _.debounce(function(value, item) {

@@ -23,7 +23,7 @@
         </template>
 
         <template v-else>
-          <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @context-open="contextOpen" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :newTaskButton="{label: 'New Project', icon: 'add'}" :drag="false" :key="templateKey"></advance-table>
+          <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @context-open="contextOpen" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :plusButton="{label: 'New Project', icon: 'add'}" :drag="false" :key="templateKey"></advance-table>
         </template> 
 
       </template>
@@ -102,9 +102,14 @@ export default {
 
     for(let field of this.tableFields) {
       if(field.header_icon) {
-        field.header_icon.isActive = false;
+        if(field.key == 'priority') {
+          field.header_icon.isActive = true;
+        } else {
+          field.header_icon.isActive = false;
+        }
       }
     }
+
     this.$store.dispatch('project/fetchProjects').then((res) => { 
       
       let newArr = [];
@@ -127,6 +132,7 @@ export default {
         this.loading = false;
     })
 
+      this.templateKey++;
   },
   computed: {
     ...mapGetters({
