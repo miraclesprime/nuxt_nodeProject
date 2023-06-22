@@ -590,21 +590,15 @@ export default {
 
       this.templateKey += 1;
     },
-    SingleProjectGroup($event) {
-      this.groupby = $event;
-      console.log($event)
-      this.$store
-        .dispatch("section/fetchProjectSections", {
-          projectId: this.$route.params.id,
-          filter: "all",
-          sName:this.groupby
-        }).then(() => {
-          if($event != 'default') {
-            this.dragTable = false;
-          } else {
-            this.dragTable = true;
-          }
-        })
+    async SingleProjectGroup($event) {
+      this.groupby=$event
+      if($event != 'default') {
+        this.dragTable = false;
+      } else {
+        this.groupby=''
+        this.dragTable = true;
+      }
+      await this.$store.commit('section/groupSectionProject', { sName: this.groupby })
     
     },
 
@@ -684,7 +678,7 @@ export default {
         proj.statusId=section.tasks[0]?.statusId
       }
       if(this.groupby=="assignee"){
-        proj.user=section.tasks[0]?.user
+        proj.user=[section.tasks[0]?.user]
         proj.userId=section.tasks[0]?.userId
       }
       if(this.groupby=="department"){

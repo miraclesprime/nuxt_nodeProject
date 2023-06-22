@@ -3,6 +3,7 @@ export const strict = false;
 export const state = () => ({
   sections: [],
   projectSections: [],
+  initialSections:[]
 });
 
 export const getters = {
@@ -18,7 +19,16 @@ export const getters = {
 };
 
 export const mutations = {
+  setInitialSections(state,payload){
+    let arr = JSON.parse(JSON.stringify(payload));
+    let sorted = arr.map((s) => {
+      let t = s.tasks.sort((a, b) => a.order - b.order);
+      s.tasks = t;
+      return s;
+    });
+    state.initialSections=sorted
 
+  },
   fetchSections(state, payload) {
     state.sections = payload;
   },
@@ -229,6 +239,9 @@ export const mutations = {
       });
 }
     state.projectSections = _tasks;
+    if(payload.sName==""){
+      state.projectSections=state.initialSections
+    }
   },
 
 };
@@ -257,6 +270,7 @@ export const actions = {
     });
 
     if (res.statusCode == 200) {
+      ctx.commit('setInitialSections', res.data);
       ctx.commit('fetchProjectSections', res.data);
       if(payload.sName&&payload.sName!=="default"){
         const data={

@@ -165,31 +165,31 @@ export default {
 
   watch: {
     tasks(newVal) {
-      let data = _.cloneDeep(newVal);
-      let newArr = [];
+          let data = _.cloneDeep(newVal);
+          let newArr = [];
 
       for (let i = 0; i < data.length; i++) {
-        newArr.push(data[i]);
-        let tNewArr = []
-        for(let j=0; j<data[i].tasks.length; j++) {
-          if (data[i].tasks[j].priorityId) {
-            tNewArr.unshift(data[i].tasks[j])
-          } else {
-            tNewArr.push(data[i].tasks[j])
+          newArr.push(data[i]);
+          let tNewArr = []
+          for(let j=0; j<data[i].tasks.length; j++) {
+            if (data[i].tasks[j].priorityId) {
+              tNewArr.unshift(data[i].tasks[j])
+            } else {
+              tNewArr.push(data[i].tasks[j])
+            }
           }
+          newArr[i]["tasks"] = tNewArr;
         }
-        newArr[i]["tasks"] = tNewArr;
-      }
 
-      newArr.forEach(dept => {
-        dept["tasks"] = dept.tasks.sort((a, b) => {
-          if (a.priorityId && b.priorityId) {
-            return a.priorityId - b.priorityId
-          }
+        newArr.forEach(dept => {
+          dept["tasks"] = dept.tasks.sort((a, b) => {
+            if (a.priorityId && b.priorityId) {
+              return a.priorityId - b.priorityId
+            }
+          })
         })
-      })
 
-      this.localData = newArr;
+        this.localData = newArr;
     },
     gridType() {
       this.key++;
@@ -599,17 +599,10 @@ export default {
       } else {
         this.group=''
         this.dragTable = true;
+        this.$store.commit('company/groupTasks',{sName:"department"})
+        return;
       }
-      let compid = JSON.parse(localStorage.getItem("user")).subb;
-      this.$store
-        .dispatch("company/fetchCompanyTasks", {
-          companyId: compid,
-          sName:this.group
-        })
-        .then(() => {
-          this.key += 1;
-        });
-
+      this.$store.commit('company/groupTasks',{sName:this.group})
       },
     // Sort By Action List
     sortBy($event) {
@@ -800,7 +793,7 @@ export default {
         proj.statusId=section.tasks[0]?.statusId
       }
       if(this.group=="assignee"){
-        proj.user=section.tasks[0]?.user
+        proj.user=[section.tasks[0]?.user]
         proj.userId=section.tasks[0]?.userId
       }
       if(this.group=="department"){

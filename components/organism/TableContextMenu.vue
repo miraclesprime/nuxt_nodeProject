@@ -84,7 +84,7 @@ export default {
           return this.variant='success'
         }
         if (item.label=='Remove favorite') {
-          return this.variant='warning'
+          return this.variant='orange'
         }
       if (this.activeItem) {
         if (item.label.includes('Complete')) {
