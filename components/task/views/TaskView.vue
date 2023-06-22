@@ -591,17 +591,15 @@ export default {
 
       this.templateKey += 1;
     },
-    SingleProjectGroup($event) {
+    async SingleProjectGroup($event) {
       this.groupby=$event
       if($event != 'default') {
         this.dragTable = false;
       } else {
         this.groupby=''
         this.dragTable = true;
-        this.updateKey()
-        return;
       }
-      this.$store.commit('section/groupSectionProject',{sName:this.groupby})
+      await this.$store.commit('section/groupSectionProject', { sName: this.groupby })
     
     },
 

@@ -207,14 +207,14 @@ export default {
   methods: {
     //group by
     myTaskGroup($event) {
-        this.groupby = $event;
-        this.$store.dispatch("todo/fetchTodos", { filter: 'all',sName:this.groupby }).then(() => {
-          if($event != 'default') {
-            this.dragTable = false;
-          } else {
-            this.dragTable = true;
-          }
-        })
+      this.groupby=$event
+      if($event != 'default') {
+        this.dragTable = false;
+      } else {
+        this.groupby=''
+        this.dragTable = true;
+      }
+      this.$store.commit('todo/groupMyTasks',{sName:this.groupby,team:this.teamMembers })
       },
     checkActive(sortName) {
       for(let i=0; i<this.taskFields.length; i++) {

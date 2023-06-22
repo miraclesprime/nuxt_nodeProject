@@ -3,6 +3,7 @@ export const strict = false;
 
 export const state = () => ({
   todos: [],
+  initialData:[]
 });
 
 export const getters = {
@@ -27,6 +28,13 @@ export const mutations = {
 
   setTodos(state, payload) {
     state.todos = payload;
+  },
+  setInitialTodos(state,payload){
+    let arr = JSON.parse(JSON.stringify(payload));
+    arr.forEach(function(todo) {
+      todo["tasks"] = todo.tasks?.sort((a, b) => a.tOrder - b.tOrder);
+    })
+    state.initialData=arr
   },
  
   groupMyTasks(state, payload) {
@@ -242,6 +250,9 @@ export const mutations = {
       });
     }
     state.todos = _tasks;
+    if(payload.sName==""){
+      state.todos=state.initialData
+    }
   },
 };
 
@@ -254,6 +265,7 @@ export const actions = {
 
     if (res.statusCode == 200) {
       ctx.commit('fetchTodos', res.data);
+      ctx.commit('setInitialTodos', res.data);
       if(payload.sName&&payload.sName!=="default"){
         const data={
           sName:payload.sName,

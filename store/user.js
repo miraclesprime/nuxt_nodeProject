@@ -47,6 +47,11 @@ export const mutations = {
     })
     arr = _arr;
     }
+    arr.sort((a, b) => {
+      if (a.priorityId && b.priorityId) {
+        return a.priorityId - b.priorityId;
+      }
+    });
     state.userTasks = arr;
   },
   getUserTasks(state,payload){
@@ -95,7 +100,6 @@ export const mutations = {
        });
     }
     if (payload.key == "department") {
-      console.log("111111111departme")
       arrIndex = "department";
       let items = [];
       arr.sort((a,b)=>{
