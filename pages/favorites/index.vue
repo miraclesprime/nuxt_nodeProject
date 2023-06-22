@@ -7,7 +7,8 @@
 
         <!-- project table -->
         <div style="overflow: auto;">
-          <advance-table :drag="false" :tableFields="projectTableFields" :tableData="projLocalData" :contextItems="projectContextItems" @context-item-event="projContextItemClick" @row-click ="projectRoute" @table-sort="sortProject"  @context-open="projectContextOpen" @title-click="projectRoute" @update-field="updateProject" sectionTitle="Favorite Projects" :plusButton="false" :key="templateKey"></advance-table>
+          <advance-table :drag="false" :tableFields="projectTableFields" :tableData="projLocalData" :contextItems="projectContextItems" @context-item-event="projContextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @context-open="projectContextOpen" @title-click="projectRoute" @update-field="updateProject" sectionTitle="Favorite Projects" :plusButton="false" :key="templateKey"></advance-table>
+
         </div>
 
         <!-- task table -->

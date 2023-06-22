@@ -658,38 +658,42 @@ export default {
       this.$nuxt.$emit("open-sidebar", { ...task, project: project });
     },
 
-    createNewTask(proj,section) {
+    createNewTask(proj, section) {
       proj.group = this.groupby;
-      proj.status=null
-      proj.statusId=null
-      proj.priority=null
-      proj.priorityId=null
+      proj.status = null
+      proj.statusId = null
+      proj.priority = null
+      proj.priorityId = null
       proj.departmentId = null;
       proj.department = null;
-      proj.user=null
-      proj.userId=null
-      if(this.groupby=="priority"){
-        proj.priority=section.tasks[0]?.priority
-        proj.priorityId=section.tasks[0]?.priorityId
+      proj.user = null
+      proj.userId = null
+      proj.sectionId = this.groupby ? null : section.id
+
+      if(this.groupby == "priority"){
+        proj.priority = section.tasks[0]?.priority
+        proj.priorityId = section.tasks[0]?.priorityId
      
       }
-      if(this.groupby=="status"){
-        proj.status=section.tasks[0]?.status
-        proj.statusId=section.tasks[0]?.statusId
+      if(this.groupby == "status"){
+        proj.status = section.tasks[0]?.status
+        proj.statusId = section.tasks[0]?.statusId
       }
-      if(this.groupby=="assignee"){
-        proj.user=[section.tasks[0]?.user]
-        proj.userId=section.tasks[0]?.userId
+      if(this.groupby == "assignee"){
+        proj.user = section.tasks[0]?.user
+        proj.userId = section.tasks[0]?.userId
       }
-      if(this.groupby=="department"){
-        proj.department=section.tasks[0]?.department
-        proj.departmentId=section.tasks[0]?.departmentId
+      if(this.groupby == "department"){
+        proj.department = section.tasks[0]?.department
+        proj.departmentId = section.tasks[0]?.departmentId
       }
       delete proj.show
-      delete proj.sectionId
+      // delete proj.sectionId
+      console.log(proj, section)
       this.$store.dispatch("task/createTask", {
           ...proj,
-          projectId: this.$route.params.id,
+          projectId: Number(this.$route.params.id),
+          sectionId: this.groupby ? "_section"+this.$route.params.id : section.id,
           text: `created task ${proj.title}`,
         })
         .then((t) => {
