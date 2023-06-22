@@ -23,8 +23,7 @@
         </template>
 
         <template v-else>
-
-          <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @context-open="contextOpen" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :plusButton="{label: 'New Project', icon: 'add'}" :drag="false"></advance-table>
+          <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @context-open="contextOpen" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :plusButton="{label: 'New Project', icon: 'add'}" :drag="false" :key="templateKey"></advance-table>
         </template> 
 
       </template>

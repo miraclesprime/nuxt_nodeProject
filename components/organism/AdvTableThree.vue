@@ -107,8 +107,8 @@
                 </div>
               </div>
 
-              <template v-if="plusButton">
-                <div v-show="localNewrow.sectionId != section.id" class="tr" role="row" style="border-bottom: var(--bib-light)">
+              <template v-if="plusButton" >
+                <div v-show="localNewrow.sectionId != section.id" :key="'plusbtn'+akey" class="tr" role="row" style="border-bottom: var(--bib-light)">
                   <div v-show="drag" class="td width-2" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
                   <div class="td" role="cell" style="border-bottom-color: transparent; border-right-color: transparent; width: 360px;">
                     <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
@@ -117,15 +117,12 @@
                   </div>
                 </div>
 
-                <div v-show="localNewrow.sectionId == section.id" class="tr" role="row" >
+                <div v-show="localNewrow.sectionId == section.id" :key="'plusinput'+akey" class="tr" role="row" >
                   <div v-show="drag" class="td text-center " role="cell">
                     <span class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
                   </div>
                   <div class="td" role="cell">
-
-
                     <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate(section)" @blur="unselectAll" @keyup.esc="unselectAll" required placeholder="Enter title...">
-
                   </div>
                 </div>
 
@@ -216,13 +213,15 @@ export default {
       validTitle: false,
       localData: [],
       localNewrow: {},
+      akey: 0,
     }
   },
   
   watch: {
     newRow(newValue){
       console.log(newValue.sectionId)
-      this.localNewrow = _.cloneDeep(this.newRow)
+      // this.localNewrow = _.cloneDeep(this.newRow)
+      this.localNewrow = newValue
     },
     tableData(newValue){
       this.localData = _.cloneDeep(newValue)
@@ -510,16 +509,7 @@ export default {
         this.resizableTables = this.columnResize(table);
       }
     },
-    datecell(refname){
-      // console.log(this.$refs)
-      // console.log(this.$refs[refname])
-      if (this.$refs[refname]) {
-        return {'width': (this.$refs[refname][0].clientWidth - 8) + 'px'}
-      } else {
-        return {"width": "120px"}
-      }
-      
-    },
+    
     rowDragStart(e) {
       // console.log("row drag start ", e);
       // this.highlight = true
@@ -570,6 +560,7 @@ export default {
       this.localNewrow.sectionId = null
       this.localNewrow.title = ""
       this.localNewrow.show = false;
+      this.akey+=1
       this.$emit("toggle-newsection", 'hide') //send any string to hide
       // console.log('unselect all ')
       // this.$emit("hide-newrow")
@@ -588,17 +579,13 @@ export default {
     newRowClick(sectionId) {
       // console.log(sectionId)
 
-      /*if (!sectionId) {
-        this.unselectAll()
-        this.localNewrow.show = true
-        
-        return;
-      }*/
-      this.unselectAll().then(() => {
+      this.unselectAll().then((res) => {
         this.localNewrow.sectionId = sectionId
         this.localNewrow.title = ""
-        this.localNewrow.show = true
+        this.akey+=1
+        // console.log(this.akey, this.localNewrow)
       })
+
       process.nextTick(() => {
         this.$refs['newrowInput'+sectionId][0].focus()
       });
@@ -614,7 +601,7 @@ export default {
       }
       this.validTitle = ""
       // console.info("valid input->", this.localNewrow.title)
-      this.$emit("create-row", this.localNewrow,section)
+      this.$emit("create-row", this.localNewrow, section)
     }, 800),
 
     debounceTitle: _.debounce(function(value, item) {
