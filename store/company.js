@@ -84,7 +84,6 @@ export const mutations = {
           return a.priorityId - b.priorityId;
         })
         // Sort tasks by numeric priority
-        arr.sort((a, b) => b.numericPriority - a.numericPriority);
       const groupByPriority = arr.reduce((acc, task) => {
         const priority = task.priority && task.priority.text || 'Unassigned';
         if (!acc[priority]) {
@@ -105,6 +104,18 @@ export const mutations = {
       }
 }
     if (payload.sName == "department") {
+      arr.sort((a,b)=>{
+        if (a.priorityId === null && b.priorityId !== null) {
+          return 1;
+        }
+        if (b.priorityId === null && a.priorityId !== null) {
+          return -1;
+        }
+        if (a.priorityId === null && b.priorityId === null) {
+          return 0;
+        }
+        return a.priorityId - b.priorityId;
+      })
         const groupByDepartment = arr.reduce((acc, task) => {
           const department = task.department && task.department.title || 'Unassigned';
           if (!acc[department]) {
@@ -488,13 +499,13 @@ export const actions = {
           });
 
           if (res.data) {
-            ctx.commit('setCompanyTasks', res.data);
+            await ctx.commit('setCompanyTasks', res.data);
             if(payload.sName!==''){
-              ctx.commit('groupTasks', payload)
+              await ctx.commit('groupTasks', payload)
             }
           
             if (payload.sort) {
-              ctx.commit('sortCompanyTasks', { sName: ctx.state.sortName, order: ctx.state.sortOrder })
+             await ctx.commit('sortCompanyTasks', { sName: ctx.state.sortName, order: ctx.state.sortOrder })
             }
             return res.data
           }

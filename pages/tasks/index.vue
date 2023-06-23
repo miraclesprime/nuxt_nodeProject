@@ -243,31 +243,7 @@ export default {
         sName:this.group
       })
       .then((res) => {
-        // this.taskGroup('department');
-        let data=res
-         let newArr = [];
-        for (let i = 0; i < data.length; i++) {
-            newArr.push(data[i]);
-            let tNewArr = []
-            for(let j=0; j<data[i].tasks.length; j++) {
-              if (data[i].tasks[j].priorityId) {
-                tNewArr.unshift(data[i].tasks[j])
-              } else {
-                tNewArr.push(data[i].tasks[j])
-              }
-            }
-            newArr[i]["tasks"] = tNewArr;
-        }
-
-        newArr.forEach(dept => {
-          dept["tasks"] = dept.tasks.sort((a, b) => {
-            if (a.priorityId && b.priorityId) {
-              return a.priorityId - b.priorityId
-            }
-          })
-        })
-        this.localData = newArr;
-        this.loading = false;
+    this.loading = false;
       });
   },
 
