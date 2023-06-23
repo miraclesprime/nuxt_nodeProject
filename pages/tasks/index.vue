@@ -617,7 +617,7 @@ export default {
     },
     //group by
     async taskGroup($event) {
-      this.loading = true;
+      // this.loading = true;
       this.group=$event
       if($event != 'default') {
         this.dragTable = false;
@@ -625,25 +625,25 @@ export default {
       } else {
         this.group=''
         this.dragTable = true;
-        this.$store
-          .dispatch("company/groupTasks",{sName:"department"}, {
-            sName: $event,
-            order: this.orderBy,
-          }).then((res)=>{
-              this.loading = false;
-          })
-        // this.$store.commit('company/groupTasks',{sName:"department"})
+        // this.$store
+        //   .dispatch("company/groupTasks",{sName:"department"}, {
+        //     sName: $event,
+        //     order: this.orderBy,
+        //   }).then((res)=>{
+        //       this.loading = false;
+        //   })
+        this.$store.commit('company/groupTasks',{sName:"department"})
         return;
       }
-      let compid = JSON.parse(localStorage.getItem("user")).subb;
-      this.$store
-        .dispatch("company/fetchCompanyTasks", {
-          companyId: compid,
-          sName:this.group
-        })
-        .then(() => {
-          this.loading = false;
-        });
+      // let compid = JSON.parse(localStorage.getItem("user")).subb;
+      // this.$store
+      //   .dispatch("company/fetchCompanyTasks", {
+      //     companyId: compid,
+      //     sName:this.group
+      //   })
+      //   .then(() => {
+      //     this.loading = false;
+      //   });
       // this.$store
       //     .dispatch("company/groupTasks",{sName:this.group}, {
       //       sName: $event,
@@ -652,7 +652,7 @@ export default {
       //       console.log("sdsaasasd",res)
       //         this.loading = false;
       //     })
-        //  this.$store.commit('company/groupTasks',{sName:this.group})
+         this.$store.commit('company/groupTasks',{sName:this.group})
         // this.loading = false;
       },
     // Sort By Action List
