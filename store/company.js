@@ -1,9 +1,12 @@
+// import { canSplit } from "@tiptap/pm/transform";
+
 export const state = () => ({
   companies: [],
   companyMembers: [],
   companyTasks: [],
   sortName: "title",
   sortOrder: "asc",
+  initialAllTasks:[]
 });
 
 export const getters = {
@@ -41,6 +44,7 @@ export const mutations = {
     arr = _arr;
     }
     state.companyTasks = arr;
+    
   },
   fetchCompanyMembers(state, payload) {
     state.companyMembers = payload;
@@ -48,6 +52,12 @@ export const mutations = {
 
   setCompanyTasks(state, payload) {
     state.companyTasks = payload;
+     let arr=[]
+      arr=payload
+      arr = arr.reduce((acc, ele) => {
+        return [...acc, ...ele.tasks];
+      }, []);
+    state.initialAllTasks=arr
   },
 
   setSortName(state, payload){
@@ -58,207 +68,136 @@ export const mutations = {
     state.sortOrder = payload
   },
   groupTasks(state, payload) {
-    let arr = state.companyTasks
-    // if(arr[0].tasks){
-    //   // let _arr = [];
-    //   // arr.forEach((ele) => {
-    //   //   _arr = _arr.concat(ele.tasks);
-    //   // });
-    //   // arr = _arr;
-    //   arr = arr.reduce((accumulator, currentValue) => {
-    //     return accumulator.concat(currentValue.tasks);
-    //   }, []);
-    // }
-    if (arr[0].tasks) {
-      arr = arr.reduce((acc, ele) => {
-        return [...acc, ...ele.tasks];
-      }, []);
-    }
-    let arrIndex;
-    let _tasks;
+    let arr = state.initialAllTasks
+    let _tasks=[];
     if (payload.sName == "priority") {
-      arrIndex = "priority";
-      let items = [];
-
-      arr.sort((a,b)=>{
-        if (a.priorityId === null && b.priorityId !== null) {
-          return 1;
+        arr.sort((a,b)=>{
+          if (a.priorityId === null && b.priorityId !== null) {
+            return 1;
+          }
+          if (b.priorityId === null && a.priorityId !== null) {
+            return -1;
+          }
+          if (a.priorityId === null && b.priorityId === null) {
+            return 0;
+          }
+          return a.priorityId - b.priorityId;
+        })
+        // Sort tasks by numeric priority
+        arr.sort((a, b) => b.numericPriority - a.numericPriority);
+      const groupByPriority = arr.reduce((acc, task) => {
+        const priority = task.priority && task.priority.text || 'Unassigned';
+        if (!acc[priority]) {
+          acc[priority] = [];
         }
-        if (b.priorityId === null && a.priorityId !== null) {
-          return -1;
-        }
-        if (a.priorityId === null && b.priorityId === null) {
-          return 0;
-        }
-        return a.priorityId - b.priorityId;
-      })
-
-      arr.forEach((ele) => {
-       let title = ele.priority !== null && ele.priority?.text !== null ? ele.priority.text.charAt(0).toUpperCase()+ele.priority.text.slice(1) : "Unassigned"
-        if (!items.includes(title)) items.push(title);
-      });
-      _tasks = items.map((item, idx) => {
-        return {
-          id: idx,
-          title: item !== null ? item : "Unassigned",
-          tasks: arr.filter(
-            (_item) =>
-              (_item[arrIndex] !== null&&_item[arrIndex]?.text !== null ?  _item[arrIndex].text.charAt(0).toUpperCase()+_item[arrIndex].text.slice(1) : null) ===
-              (item === "Unassigned" ? null : item)
-          ),
-        };
-      });
-    }
+        acc[priority].push(task);
+        return acc;
+      }, {});
+    
+      let groupIndex = 0;
+      for (const key in groupByPriority) {
+        _tasks.push({
+          id: groupIndex,
+          title: key.charAt(0).toUpperCase()+key.slice(1),
+          tasks: groupByPriority[key]
+        });
+        groupIndex++;
+      }
+}
     if (payload.sName == "department") {
-      arrIndex = "department";
-      let items = [];
-      arr.sort((a,b)=>{
-        if (a.departmentId === null && b.departmentId !== null) {
-          return 1;
+        const groupByDepartment = arr.reduce((acc, task) => {
+          const department = task.department && task.department.title || 'Unassigned';
+          if (!acc[department]) {
+            acc[department] = [];
+          }
+          acc[department].push(task);
+          return acc;
+        }, {});
+        let groupIndex = 0;
+        for (const key in groupByDepartment) {
+          _tasks.push({
+            id: groupIndex,
+            title: key,
+            tasks: groupByDepartment[key]
+          });
+          groupIndex++;
         }
-        if (b.departmentId === null && a.departmentId !== null) {
-          return -1;
-        }
-        if (a.departmentId === null && b.departmentId === null) {
-          return 0;
-        }
-        return a.departmentId - b.departmentId;
-      })  
-      
-
-      arr.forEach((ele) => {
-        let title =
-          ele.departmentId !== null ? ele.department.title : "Unassigned";
-        if (!items.includes(title)) items.push(title);
-      });
-      _tasks = items.map((item, idx) => {
-        return {
-          id: idx,
-          title: item !== null ? item : "Unassigned",
-          tasks: arr.filter(
-            (_item) =>
-              (_item[arrIndex] !== null ? _item[arrIndex].title : null) ===
-              (item === "Unassigned" ? null : item)
-          ),
-        };
-      });
     }
     if (payload.sName == "project") {
-      arrIndex = "project";
-      let items = [];
-      arr.sort((a,b)=>{
-        return a.id - b.id;
-      }) 
-      arr.forEach((ele) => {
-        const title = ele.project?.[0]?.project?.title ?? "Unassigned";
-        if (!items.includes(title))  items.push(title);
-      });
-      _tasks = items.map((item, idx) => {
-        return {
-          id: idx,
-          title: item !== null ? item : "Unassigned",
-          tasks: arr.filter(
-            (_item) =>
-              (_item[arrIndex].length>0 ? _item[arrIndex][0]?.project?.title : null) ===
-              (item === "Unassigned" ? null : item)
-          ),
-        };
-      });
+      const groupProject = arr.reduce((acc, task) => {
+        const project =task.project?.[0]?.project?.title ?? "Unassigned"
+        if (!acc[project]) {
+          acc[project] = [];
+        }
+        acc[project].push(task);
+        return acc;
+      }, {});
+      let groupIndex = 0;
+      for (const key in groupProject) {
+        _tasks.push({
+          id: groupIndex,
+          title: key,
+          tasks: groupProject[key]
+        });
+        groupIndex++;
+      }
     }
     if(payload.sName=="dueDate"){
-      arrIndex = "dueDate";
-      let items = [];
-      arr.sort((a,b)=>{
-        if (a.dueDate === null && b.dueDate !== null) {
-          return 1;
+      const groupDueDate = arr.reduce((acc, task) => {
+        const dueDate =this.$CalDate(task.dueDate) ?? "Unassigned"
+        if (!acc[dueDate]) {
+          acc[dueDate] = [];
         }
-        if (b.dueDate === null && a.dueDate !== null) {
-          return -1;
-        }
-   
-        return new Date(a.dueDate) - new Date(b.dueDate);
-      })
-      arr.forEach((ele) => {
-        let title
-        if(ele.dueDate!==null){
-          title =this.$CalDate(ele.dueDate)
-        }
-        else {
-          title="Unassigned"
-        }
-        if (!items.includes(title)) items.push(title);
-      });
-      _tasks = items.map((item, idx) => {
-        return {
-          id: idx,
-          title: item !== null ? item : "Unassigned",
-          tasks: arr.filter(
-            (_item) =>
-              (_item[arrIndex] !== null ? this.$CalDate(_item[arrIndex]) : null) ===
-              (item === "Unassigned" ? null : item)
-          ),
-        };
-      });
+        acc[dueDate].push(task);
+        return acc;
+      }, {});
+      let groupIndex = 0;
+      for (const key in groupDueDate) {
+        _tasks.push({
+          id: groupIndex,
+          title: key,
+          tasks: groupDueDate[key]
+        });
+        groupIndex++;
+      }
 }
     if (payload.sName == "assignee") {
-      arrIndex = "user";
-      let items = [];
-      arr.sort((a,b)=>{
-        return a.id - b.id;
-      })  
-
-      arr.forEach((ele) => {
-        let title =
-          ele.user !== null&&ele.user!==undefined
-            ? ele.user.firstName + " " + ele.user.lastName
-            : "Unassigned";
-        if (!items.includes(title)) items.push(title);
-      });
-      _tasks = items.map((item, idx) => {
-        return {
-          id: idx,
-          title: item !== null ? item : "Unassigned",
-          tasks: arr.filter(
-            (_item) =>
-              (
-                _item[arrIndex] !== null&&_item[arrIndex] !== undefined
-                ? _item[arrIndex].firstName + " " + _item[arrIndex].lastName
-                : null) === (item === "Unassigned" ? null : item)
-          ),
-        };
-      });
+      const groupAssignee = arr.reduce((acc, task) => {
+        const assignee =task.user?.firstName + " " + task.user?.lastName ?? "Unassigned";
+        if (!acc[assignee]) {
+          acc[assignee] = [];
+        }
+        acc[assignee].push(task);
+        return acc;
+      }, {});
+      let groupIndex = 0;
+      for (const key in groupAssignee) {
+        _tasks.push({
+          id: groupIndex,
+          title: key,
+          tasks: groupAssignee[key]
+        });
+        groupIndex++;
+      }
     }
     if (payload.sName == "status") {
-      arrIndex = "status";
-      let items = [];
-      
-        arr.sort((a,b)=>{
-        if (a.statusId === null && b.statusId !== null) {
-          return 1;
+      const groupStatus = arr.reduce((acc, task) => {
+        const status =task.status?.text ?? "Unassigned";
+        if (!acc[status]) {
+          acc[status] = [];
         }
-        if (b.statusId === null && a.statusId !== null) {
-          return -1;
-        }
-        if (a.statusId === null && b.statusId === null) {
-          return 0;
-        }
-        return a.statusId - b.statusId;
-      })   
-      arr.forEach((ele) => {
-        let title = ele.statusId !== null ? ele.status.text : "Unassigned";
-        if (!items.includes(title)) items.push(title);
-      });
-      _tasks = items.map((item, idx) => {
-        return {
-          id: idx,
-          title: item !== null ? item : "Unassigned",
-          tasks: arr.filter(
-            (_item) =>
-              (_item[arrIndex] !== null ? _item[arrIndex].text : null) ===
-              (item === "Unassigned" ? null : item)
-          ),
-        };
-      });
+        acc[status].push(task);
+        return acc;
+      }, {});
+      let groupIndex = 0;
+      for (const key in groupStatus) {
+        _tasks.push({
+          id: groupIndex,
+          title: key,
+          tasks: groupStatus[key]
+        });
+        groupIndex++;
+      }
     }
     state.companyTasks = _tasks;
   },
