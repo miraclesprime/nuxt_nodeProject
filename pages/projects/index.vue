@@ -5,18 +5,7 @@
    
     <div id="projects-list-wrapper" class="projects-list-wrapper position-relative" >
       <loading :loading="loading"></loading>
-      <!-- popup notification -->
-      <bib-popup-notification-wrapper>
-          <template #wrapper>
-            <bib-popup-notification
-              v-for="(msg, index) in popupMessages"
-              :key="index"
-              :message="msg.text"
-              :variant="msg.variant"
-            >
-            </bib-popup-notification>
-          </template>
-        </bib-popup-notification-wrapper>
+      
       <template v-if="projects.length">
         <template v-if="groupVisible">
           <adv-table-three :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @context-open="contextOpen" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" @create-row="createProject" :drag="false" :key="templateKey"></adv-table-three>
@@ -51,13 +40,7 @@
       </bib-modal-wrapper>
       <bib-popup-notification-wrapper>
           <template #wrapper>
-            <bib-popup-notification
-              v-for="(msg, index) in popupMessages"
-              :key="index"
-              :message="msg.text"
-              :variant="msg.variant"
-              :autohide="5000"
-            >
+            <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" :autohide="5000">
             </bib-popup-notification>
           </template>
         </bib-popup-notification-wrapper>
@@ -398,37 +381,38 @@ export default {
     
     
     updateProject(payload){
+      // console.log(payload)
       const { item, label, field, value, historyText } = payload
       
       let user = this.teamMembers.find(t => t.id == item.userId)
 
-      let data={ [payload.field]: payload.value }
-      // let before=this.beforeLocal.filter((item)=>item.id===payload.item.id)
+      let data = { [field]: value }
+      // let before=this.beforeLocal.filter((item)=>item.id===item.id)
     
-      if(payload.field==="dueDate")
-        {
-          if(new Date(payload.value).toISOString().slice(0, 10)>new Date(payload.item.startDate).toISOString().slice(0, 10))
-            {
-              
-                data={ [payload.field]: payload.value }
-            }
-            else{
-              data={ [payload.field]: null }
-              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-            }
+      if(field == "dueDate"){
+        // console.log(field, value)
+        if(new Date(value).getTime() > new Date(item.startDate).getTime()){
+          data = { [field]: value }
+        } else{
+          data = { [field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          // this.templateKey+=1;
+          this.updateKey()
+          return false
         }
-        if(payload.field==="startDate")
-        {
-          if(new Date(payload.value).toISOString().slice(0, 10)<new Date(payload.item.dueDate).toISOString().slice(0, 10))
-            {
-              data={ [payload.field]: payload.value }
-            }
-            else {
-              data={ [payload.field]: null }
-              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-            }
-          
+      }
+      if(field == "startDate"){
+        // console.log(field, value)
+        if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
+          data = { [field]: value }
+        } else {
+          data = { [field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          // this.templateKey+=1;
+          this.updateKey()
+          return false
         }
+      }
       this.$store.dispatch("project/updateProject", {
         id: item.id,
         user,
@@ -437,50 +421,14 @@ export default {
         groupBy: this.groupBy,
       })
         .then(t => {
-          if(t.statusCode==200){
-            if(this.groupBy==''||this.groupBy=='default'){
-            this.updateKey()
+          if(t.statusCode == 200){
+            if(this.groupBy == '' || this.groupBy == 'default'){
+              this.updateKey()
             }
           }
-       
         })
         .catch(e => console.warn(e))
     },
-
-    // confirmDelete(state) {
-    //   // this.confirmModal = false;
-    //   // this.confirmMsg = "";
-    //   if (state) {
-    //     this.loading = true
-    //     this.$store
-    //       .dispatch("project/deleteProject", this.taskToDelete)
-    //       .then((t) => {
-    //         if (t.statusCode == 200) {
-    //           this.popupMessages.push({ text: t.message, variant: "success" });
-    //           this.updateKey();
-    //           this.taskToDelete = {};
-              
-    //          this.loading = false;
-    //         } else {
-    //           this.popupMessages.push({ text: t.message, variant: "orange" });
-    //           console.warn(t.message);
-              
-    //     this.loading = false;
-    //         }
-    //       })
-    //       .catch((e) => {
-    //         console.warn(e);
-            
-    //     this.loading = false;
-    //       });
-    //   } else {
-    //     this.popupMessages.push({
-    //       text: "Action cancelled",
-    //       variant: "orange",
-    //     });
-    //     this.taskToDelete = {};
-    //   }
-    // },
 
     deleteTask(project) {
        if (project) {
@@ -594,13 +542,13 @@ export default {
 
     updateKey() {
       // this.loading=true
-        this.$store.dispatch("project/fetchProjects").then(() => {
-          if(this.groupVisible){
-              this.$store.dispatch('project/groupProjects', { key: this.groupBy}).then((res) => {
-          })
-        }
-          this.templateKey += 1;
+      this.$store.dispatch("project/fetchProjects").then(() => {
+        if(this.groupVisible){
+            this.$store.dispatch('project/groupProjects', { key: this.groupBy}).then((res) => {
         })
+      }
+        this.templateKey += 1;
+      })
       
       
     },

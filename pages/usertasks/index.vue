@@ -6,7 +6,7 @@
       ></page-title>
       <user-name-task-actions
         :gridType="gridType"
-        @userTaskGroup="UserTaskGroup($event)"
+        @userTaskGroup="userTaskGroup($event)"
         v-on:filterView="filterView"
         v-on:userTaskSort="sortBy"
         v-on:new-task="toggleSidebar($event)"
@@ -17,7 +17,7 @@
               <div v-if="groupVisible" class="h-100">
                   <loading :loading="loading"></loading>
 
-                  <adv-table-three :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" :isProject="true" @create-row="createTask" :drag="false" :key="templateKey"></adv-table-three>
+                  <adv-table-three :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" @create-row="createTask" :drag="false" :key="templateKey"></adv-table-three>
               
               </div>
               <div v-else class="h-100">
@@ -138,7 +138,7 @@ export default {
 
   watch: {
     localData(newValue, oldValue) {
-      this.beforeLocal=oldValue
+      this.beforeLocal = oldValue
     },
     
     "$route.query": {
@@ -198,7 +198,7 @@ export default {
     if (process.client) {
       this.$nuxt.$on("update-key", async () => {
         await this.fetchUserTasks();
-        this.beforeLocal=this.localData
+        this.beforeLocal = this.localData
       });
       this.$nuxt.$on("user-picker", (payload) => {
         // emitted from <task-grid>
@@ -255,23 +255,23 @@ export default {
       this.templateKey++;
     },
 
-    UserTaskGroup($event) {
+    userTaskGroup($event) {
       if ($event ==="default" ) {
         this.groupVisible = false;
         this.groupBy = '';
         this.$store.commit('user/flatTasks');
-        this.localData=this.userTasks
+        this.localData = this.userTasks
         return;
       }
       this.groupBy = $event;
       this.groupVisible = true
       this.$store.commit('user/getUserTasks',{key:this.groupBy})
-      this.localData=this.userTasks
+      this.localData = this.userTasks
     },
     async fetchUserTasks($event) {
       if (process.client) {
-        this.loading = true;
-        let filterData="all"
+        // this.loading = true;
+        let filterData = "all"
         if($event){
           filterData=$event
         }
@@ -279,37 +279,36 @@ export default {
         this.$store.dispatch("user/getUserTasks", {
           userId:this.userfortask ? this.userfortask.id : "",
           filter: filterData,
-          key:this.groupBy
+          key: this.groupBy
       })
         .then(res=> {
           if (res.data.statusCode == 200) {
             if(this.groupBy!==''){
-                this.$store.commit('user/getUserTasks',{key:this.groupBy})
-                this.localData=this.userTasks
-            }
-            else {
-                 let eachUserTasks = res.data.data;
-                let organizedArr = [];
-                for (let el of eachUserTasks) {
-                  if (el.priorityId) {
-                    organizedArr.unshift(el);
-                  } else {
-                    organizedArr.push(el);
-                  }
+              this.$store.commit('user/getUserTasks',{key:this.groupBy})
+              this.localData = this.userTasks
+            } else {
+              let eachUserTasks = res.data.data;
+              let organizedArr = [];
+              for (let el of eachUserTasks) {
+                if (el.priorityId) {
+                  organizedArr.unshift(el);
+                } else {
+                  organizedArr.push(el);
                 }
+              }
 
-                let taskArr = organizedArr.sort((a, b) => {
-                  if (a.priorityId && b.priorityId) {
-                    return a.priorityId - b.priorityId;
-                  }
-                });
-                this.localData = taskArr;
+              let taskArr = organizedArr.sort((a, b) => {
+                if (a.priorityId && b.priorityId) {
+                  return a.priorityId - b.priorityId;
+                }
+              });
+              this.localData = taskArr;
             }
              
-              } else {
-                console.error(e);
-              }
-              this.loading = false;
+          } else {
+            console.error(e);
+          }
+          // this.loading = false;
        
         })
    
@@ -318,14 +317,12 @@ export default {
     contextOpen(item){
       if(this.$CheckFavTask(item.id)){
        this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Remove favorite"} : item);
-      }
-      else{
+      } else {
         this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Remove favorite" ? { ...item, label: "Add to Favorites"} : item);
       }
       if(item.statusId==5){
        this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Mark Complete" ? { ...item, label: "Completed"} : item);
-      }
-      else {
+      } else {
          this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Completed" ? { ...item, label: "Mark Complete"} : item);
       }
       this.$store.dispatch("task/setSingleTask", item)
@@ -340,15 +337,13 @@ export default {
           companyId: compid,
           filter: "all",
           sort: this.sortName,
-          sName:this.groupBy
+          sName: this.groupBy
         })
         .then(() => {
           this.key += 1;
         });
       this.fetchUserTasks();
     },
-
-
 
     openSidebar(task, scroll) {
       let fwd = this.$donotCloseSidebar(event.target.classList);
@@ -487,7 +482,8 @@ export default {
         });
     },
     updateTask(payload) {
-      
+      // console.log(payload)
+
       let user, projectId;
       if (payload.field == "userId" && payload.value != "") {
         user = [this.teamMembers.find((t) => t.id == payload.value)];
@@ -500,52 +496,55 @@ export default {
       } else {
         projectId = null;
       }
-      let data={ [payload.field]: payload.value }
-      let before=this.beforeLocal.filter((item)=>item.id===payload.item.id)
+      let data = { [payload.field]: payload.value }
+      let before = this.beforeLocal.filter((item)=>item.id === payload.item.id)
     
-      if(payload.field==="dueDate")
-        {
-          if(new Date(payload.value).toISOString().slice(0, 10)>new Date(payload.item.startDate).toISOString().slice(0, 10))
-            {
-              
-                data={ [payload.field]: payload.value }
-            }
-            else{
-              data={ [payload.field]: null }
-              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-            }
+      if(payload.field == "dueDate" && payload.item.startDate){
+        // console.log(payload.value, 'startDate', payload.item.startDate)
+        // if(new Date(payload.value).toISOString().slice(0, 10)>new Date(payload.item.startDate).toISOString().slice(0, 10)){
+        if(new Date(payload.value).getTime() > new Date(payload.item.startDate).getTime()){
+          // console.log('dueDate > startDate')
+          data = { [payload.field]: payload.value }
+        } else {
+          data = { [payload.field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.updateKey();
+          return false
         }
-        if(payload.field==="startDate")
-        {
-          if(new Date(payload.value).toISOString().slice(0, 10)<new Date(payload.item.dueDate).toISOString().slice(0, 10))
-            {
-              data={ [payload.field]: payload.value }
-            }
-            else {
-              data={ [payload.field]: null }
-              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-            }
-          
+      }
+
+      if(payload.field == "startDate" && payload.item.dueDate) {
+        // console.log(payload.value, 'dueDate', payload.item.dueDate)
+        if(new Date(payload.value).getTime() < new Date(payload.item.dueDate).getTime()) {
+          // console.log('startDate < dueDate')
+          data = { [payload.field]: payload.value }
+        } else {
+          data = { [payload.field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.updateKey();
+          return false
         }
-        this.$store
-        .dispatch("task/updateTask", {
-          id: payload.item.id,
-          projectId,
-          data: data,
-          user,
-          text: `changed ${payload.label} to ${
-            payload.historyText || payload.value
-          }`,
-        })
-        .then(async (t) => {
-          console.log("tt",t)
-          if (t.statusCode == 200) {
-            this.updateKey();
-          } else {
-            console.warn(t);
-          }
-        })
-        .catch((e) => console.warn(e));
+      }
+
+      console.log(data)
+      
+      this.$store
+      .dispatch("task/updateTask", {
+        id: payload.item.id,
+        projectId,
+        data: data,
+        user,
+        text: payload.historyText,
+      })
+      .then(async (t) => {
+        // console.log("tt",t)
+        if (t.statusCode == 200) {
+          this.updateKey();
+        } else {
+          console.warn(t);
+        }
+      })
+      .catch((e) => console.warn(e));
      
     },
 
@@ -569,10 +568,7 @@ export default {
             this.loading = false;
           });
       } else {
-        this.popupMessages.push({
-          text: "Action cancelled",
-          variant: "orange",
-        });
+        this.popupMessages.push({ text: "Action cancelled", variant: "orange" });
       }
     },
     async filterView($event) {
@@ -664,7 +660,7 @@ export default {
       } else {
         this.orderBy = "asc";
       }
-      this.localData=this.userTasks
+      this.localData = this.userTasks
       this.checkActive();
       this.key += 1;
     },
@@ -681,25 +677,23 @@ export default {
       let formattedText = text.toLowerCase().trim();
       let newArr
       if(this.userTasks[0]?.tasks){
-              newArr = this.userTasks.map((item) => {
-            const filteredTasks = item.tasks.filter((ele) => {
-              if (ele.title.includes(formattedText) || ele.title.toLowerCase().includes(formattedText)) {
-                console.log("Found matching task:", ele);
-                return ele;
-              } 
-            })
-            return { ...item, tasks: filteredTasks };
+        newArr = this.userTasks.map((item) => {
+          const filteredTasks = item.tasks.filter((ele) => {
+            if (ele.title.includes(formattedText) || ele.title.toLowerCase().includes(formattedText)) {
+              console.log("Found matching task:", ele);
+              return ele;
+            } 
           })
+          return { ...item, tasks: filteredTasks };
+        })
       }
       else {
-          newArr = this.userTasks.filter((t) => {
-                if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
-                    return t;
-                }
-              });
+        newArr = this.userTasks.filter((t) => {
+          if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
+              return t;
+          }
+        });
       }
-
- 
 
       if (newArr.length >= 0) {
         this.localData = newArr;

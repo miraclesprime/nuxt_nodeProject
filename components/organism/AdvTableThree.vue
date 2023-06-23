@@ -102,7 +102,7 @@
                   <template v-if="field.key.includes('Date')" >
                     <!-- {{$formatDate(item[field.key])}} -->
                     <!-- <bib-datepicker class="align-right" size="sm" :value="new Date(item[field.key])" format="dd MMM YYYY" @click.native.stop="" @input="updateDate"></bib-datepicker> -->
-                    <bib-datetime-picker v-model="item[field.key]" format="DD/MM/YYYY" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+                    <bib-datetime-picker v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                   </template>
                 </div>
               </div>
@@ -208,7 +208,7 @@ export default {
       popupCoords: { left: 0, top: 0 },
       activeItem: {},
       resizableTables: [],
-      format: "DD MMM YYYY",
+      format: "D MMM YYYY",
       // highlight: false,
       validTitle: false,
       localData: [],
@@ -287,7 +287,12 @@ export default {
   },
 
   methods: {
-
+    parseDate(dateString, format) {
+        return new Date(dateString)
+    },
+    formatDate(dateObj, format) {
+        return dayjs(dateObj).format(format);
+    },
     collapseItem(refId, refIcon) {
       let elem = this.$refs[refId][0].$el
       // let icon = this.$refs[refIcon][0].$el
@@ -296,6 +301,10 @@ export default {
       // console.log(elem.style.height)
       elem.classList.toggle("collapsed")
       
+    },
+
+    forceUpdate(){
+      this.$forceUpdate();
     },
 
     /*iconRotate(expanded){
@@ -634,8 +643,9 @@ export default {
     },
     updateDate(d, item, field, label) {
       // console.log(...arguments)
-      // let d = new Date(date)
-      this.$emit("update-field", { id: item.id, field, value: new Date(d), label, historyText: `Changed ${label} to ${dayjs(d).format('DD MMM YYYY')}`, item: item})
+      let jd = new Date(d)
+      // console.log(jd)
+      this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format('DD MMM YYYY')}`, item: item})
     },
     debounceNewSection: _.debounce(function(value, event) {
       if (value) {
