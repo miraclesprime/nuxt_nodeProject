@@ -689,7 +689,7 @@ export default {
       }
       delete proj.show
       // delete proj.sectionId
-      console.log(proj, section)
+      // console.log(proj, section)
       this.$store.dispatch("task/createTask", {
           ...proj,
           projectId: Number(this.$route.params.id),

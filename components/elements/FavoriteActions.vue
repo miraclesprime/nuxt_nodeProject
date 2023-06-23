@@ -15,11 +15,11 @@
         <bib-input size="sm" type="text" v-model="searchText" name="name" @input="$emit('search-projects-tasks', searchText)" placeholder="Search Projects or Tasks..." :variant="searchText.length > 50 ? 'alert': ''"></bib-input>
       </template>
       <ul class="actions" id="fa-actions-list">
-        <li class="action" id="fa-action-item1" v-tooltip="'View'">
-          <sorting-comp :items="viewing" icon="eye-open" activeIcon="tick" v-on:change-sort="$emit('change-viewing', $event)"></sorting-comp>
+        <li class="action" id="fa-action-item1" >
+          <sorting-comp :items="viewing" icon="eye-open" activeIcon="tick" tooltip="View" v-on:change-sort="$emit('change-viewing', $event)"></sorting-comp>
         </li>
-        <li class="action" id="fa-action-item2" v-tooltip="'Sort By'">
-          <sorting-comp :items="sorting" icon="swap-vertical" v-on:change-sort="$emit('change-sorting', $event)"></sorting-comp>
+        <li class="action" id="fa-action-item2" >
+          <sorting-comp :items="sorting" icon="swap-vertical" tooltip="Sort By" v-on:change-sort="$emit('change-sorting', $event)"></sorting-comp>
         </li>
       </ul>
     </div>
