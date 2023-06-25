@@ -508,7 +508,7 @@ export const PROJECT_FAVORITES = [
   {
     label: 'Assignee',
     key: 'userId',
-    width: '200px',
+    width: '160px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -591,7 +591,7 @@ export const TASK_FAVORITES = [
   {
     label: 'Assignee',
     key: 'userId',
-    width: '200px',
+    width: '160px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -728,7 +728,7 @@ export const DEMO_TASK = [
   {
     label: "Project",
     key: "project",
-    width: '200px',
+    width: '160px',
     header_icon: {
       icon: "swap-vertical",
       event: "table-sort",
@@ -845,7 +845,7 @@ export const COMPANY_TASK_FIELDS = [
   {
     label: "Project",
     key: "project",
-    width: '200px',
+    width: '160px',
     header_icon: {
       icon: "swap-vertical",
       event: "table-sort",
@@ -930,7 +930,7 @@ export const USER_TASKS = [
       event: 'table-sort',
       isActive: false
     },
-    width: "200px",
+    width: "160px",
   },
   {
     label: 'Status',

@@ -890,6 +890,7 @@ export default {
     },
 
     updateTask(payload) {
+      // console.log(payload)
 
       this.$store
         .dispatch("task/updateTask", {

@@ -375,9 +375,7 @@ export default {
       }
 
       if (payload.item.project.length > 0) {
-        projectId =
-          payload.item.project[0].projectId ||
-          payload.item.project[0].project.id;
+        projectId = payload.item.project[0].projectId || payload.item.project[0].project.id;
       } else {
         projectId = null;
       }
@@ -396,9 +394,7 @@ export default {
           projectId,
           data: { [payload.field]: payload.value },
           user: user ? [user] : null,
-          text: `${
-            payload.historyText || payload.value
-          }`,
+          text: `${ payload.historyText || payload.value }`,
         })
         .then((t) => {
           this.updateKey("success")
