@@ -1,4 +1,3 @@
-// import { canSplit } from "@tiptap/pm/transform";
 
 export const state = () => ({
   companies: [],
@@ -154,6 +153,16 @@ export const mutations = {
       }
     }
     if(payload.sName=="dueDate"){
+      arr.sort((a,b)=>{
+        if (a.dueDate === null && b.dueDate !== null) {
+          return 1;
+        }
+        if (b.dueDate === null && a.dueDate !== null) {
+          return -1;
+        }
+   
+        return new Date(a.dueDate) - new Date(b.dueDate);
+      })
       const groupDueDate = arr.reduce((acc, task) => {
         const dueDate =this.$CalDate(task.dueDate) ?? "Unassigned"
         if (!acc[dueDate]) {
@@ -173,8 +182,13 @@ export const mutations = {
       }
 }
     if (payload.sName == "assignee") {
+      arr.sort((a,b)=>{
+        return a.id - b.id;
+      })  
       const groupAssignee = arr.reduce((acc, task) => {
-        const assignee =task.user?.firstName + " " + task.user?.lastName ?? "Unassigned";
+        const assignee=  task.user !== null&&task.user!==undefined 
+        ? task.user.firstName + " " + task.user.lastName
+        : "Unassigned";
         if (!acc[assignee]) {
           acc[assignee] = [];
         }
@@ -500,6 +514,7 @@ export const actions = {
 
           if (res.data) {
             await ctx.commit('setCompanyTasks', res.data);
+
             if(payload.sName!==''){
               await ctx.commit('groupTasks', payload)
             }
