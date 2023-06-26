@@ -387,9 +387,8 @@ export default {
       let user = this.teamMembers.find(t => t.id == item.userId)
 
       let data = { [field]: value }
-      // let before=this.beforeLocal.filter((item)=>item.id===item.id)
     
-      if(field == "dueDate"){
+      if(field == "dueDate" && item.startDate){
         // console.log(field, value)
         if(new Date(value).getTime() > new Date(item.startDate).getTime()){
           data = { [field]: value }
@@ -401,7 +400,7 @@ export default {
           return false
         }
       }
-      if(field == "startDate"){
+      if(field == "startDate" && item.dueDate){
         // console.log(field, value)
         if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
           data = { [field]: value }
@@ -413,6 +412,7 @@ export default {
           return false
         }
       }
+
       this.$store.dispatch("project/updateProject", {
         id: item.id,
         user,
@@ -439,7 +439,6 @@ export default {
             if (t.statusCode == 200) {
               this.popupMessages.push({ text: t.message, variant: "success" });
               this.updateKey();
-              // this.taskToDelete = {};
               
              this.loading = false;
             } else {
@@ -459,10 +458,8 @@ export default {
           text: "Action cancelled",
           variant: "orange",
         });
-        // this.taskToDelete = {};
       }
 
-      // this.taskToDelete = project;
       // this.confirmMsg = "Are you sure ";
       // this.confirmModal = true;
     },

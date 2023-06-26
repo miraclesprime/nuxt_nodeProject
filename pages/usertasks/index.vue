@@ -526,7 +526,7 @@ export default {
         }
       }
 
-      console.log(data)
+      // console.log(data)
       
       this.$store
       .dispatch("task/updateTask", {

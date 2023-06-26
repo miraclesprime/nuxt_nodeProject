@@ -16,7 +16,7 @@
             
         </div>
 
-        <div v-show="gridType == 'grid'" id="tgs-scroll" class="bg-light grid-wrapper h-100 position-relative" >
+        <div v-show="gridType == 'grid'" id="tgs-scroll" class="bg-light grid-wrapper h-100 position-relative" :style="{ 'width': contentWidth }">
           <draggable v-model="localdata" class="d-flex grid-content" :move="moveTodo" @end="gridSectionDragend" handle=".section-drag-handle">
             <div v-if="newSection" class="task-grid-section">
               <div class="w-100 d-flex justify-between" style="margin-bottom: 10px">
@@ -40,7 +40,7 @@
                           </div>
                         </span>
                         <hr>
-                        <span class="list__item danger" :id="'tgs-list-3'+todo.id" v-on:click="deleteTodo(todo)">
+                        <span class="list__item list__item__danger" :id="'tgs-list-3'+todo.id" v-on:click="deleteTodo(todo)">
                           Delete section
                         </span>
                       </div>
@@ -57,21 +57,21 @@
               </div>
             </div>
             <div class="task-grid-section " id="task-grid-section-blank-2"></div>
-            <div class="task-grid-section " id="task-grid-section-blank-3"></div>
-            <div class="task-grid-section " id="task-grid-section-blank-4" style="border-left-color: transparent;"></div>
+            <div class="task-grid-section " id="task-grid-section-blank-3" style="border-left-color: transparent;"></div>
+            <!-- <div class="task-grid-section " id="task-grid-section-blank-4"></div> -->
           </draggable>
         </div>
           
         <!-- user-picker for board view -->
-        <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"></user-picker>
-        <!-- date-picker for list and board view -->
+        <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee({label: 'Assignee', field:'userId', value: $event.id, historyText: $event.label})" @close="userPickerOpen = false"></user-picker>
+        <!-- date-picker for board view -->
         <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
-        <!-- status picker for list view -->
+        <!-- status picker for board view -->
         <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker>
-        <!-- priority picker for list view -->
+        <!-- priority picker for board view -->
         <priority-picker :show="priorityPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="priorityPickerOpen = false" ></priority-picker>
         <!-- department-picker for list view -->
-        <dept-picker :show="deptPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Department', field:'departmentId', value: $event.value, historyText: $event.label })" @close="deptPickerOpen = false"></dept-picker>
+        <!-- <dept-picker :show="deptPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Department', field:'departmentId', value: $event.value, historyText: $event.label })" @close="deptPickerOpen = false"></dept-picker> -->
 
         <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
 
@@ -250,10 +250,11 @@ export default {
 
       let el = document.getElementById("tgs-scroll")
       if (event.target.closest(".task-grid")) {
-        let scrollAmt = event.target.closest(".task-grid").offsetLeft - event.target.offsetWidth;
+        let scrllLeft = event.target.closest(".task-grid").offsetLeft - event.target.offsetWidth;
+        let scrllTop = event.target.closest(".task-grid").offsetTop - event.target.offsetHeight;
         el.scrollTo({
-          top: 0,
-          left: scrollAmt,
+          top: scrllTop,
+          left: scrllLeft,
           behavior: 'smooth'
         });
       }
@@ -387,12 +388,39 @@ export default {
     },
 
     updateField(payload){
+      // console.log(payload)
+      
+      const { item, label, field, value, historyText } = payload
+      let data = { [field]: value }
+    
+      if(field == "dueDate" && item.startDate){
+        // console.log(field, value)
+        if(new Date(value).getTime() > new Date(item.startDate).getTime()){
+          data = { [field]: value }
+        } else{
+          data = { [field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.updateKey()
+          return false
+        }
+      }
+      if(field == "startDate" && item.dueDate){
+        // console.log(field, value)
+        if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
+          data = { [field]: value }
+        } else {
+          data = { [field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.updateKey()
+          return false
+        }
+      }
 
       this.$store.dispatch("task/updateTask", {
         id: payload.id,
-        projectId: payload.item.project[0]?.projectId || null,
-        data: { [payload.field]: payload.value },
-        text: payload.historyText
+        projectId: item.project[0]?.projectId || null,
+        data: { [field]: value },
+        text: historyText
       })
         .then(t => {
           this.updateKey()
@@ -431,7 +459,9 @@ export default {
         .catch(e => console.warn(e))
     },
 
-    updateAssignee(label, field, value, historyValue){
+    updateAssignee(payload){
+      // console.log(payload)
+      const { label, field, value, historyText } = payload
       let user
       if (field == "userId" && value != '') {
         user = this.teamMembers.filter(t => t.id == value)
@@ -445,7 +475,7 @@ export default {
         id: this.activeTask.id,
         data: { [field]: value},
         user,
-        text: `changed ${label} to ${historyValue}`
+        text: `changed ${label} to ${historyText}`
       })
         .then(t => {
           this.updateKey()
@@ -454,11 +484,23 @@ export default {
     },
 
     updateDate(value){
-      let newDate = dayjs(value).format("D MMM YYYY")
+      let newDate, data = { [this.datepickerArgs.field]: value}
+
+      if(value && this.activeTask.startDate){
+        if(new Date(value).getTime() > new Date(this.activeTask.startDate).getTime()){
+          data = { [this.datepickerArgs.field]: value }
+          newDate = dayjs(value).format("D MMM YYYY")
+        } else{
+          data = { [this.datepickerArgs.field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.updateKey()
+          return false
+        }
+      }
 
       this.$store.dispatch("task/updateTask", {
         id: this.activeTask.id,
-        data: { [this.datepickerArgs.field]: value},
+        data: data,
         user: null,
         text: `changed ${this.datepickerArgs.label} to ${newDate}`
       })
@@ -1045,7 +1087,7 @@ export default {
 .grid-wrapper {
   overflow: auto;
   .grid-content {
-    height: calc(100% - 18px);
+    /*height: calc(100% - 18px);*/
   }
 }
 .highlight {
