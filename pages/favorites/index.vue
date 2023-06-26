@@ -875,10 +875,35 @@ export default {
       
       let user = this.teamMembers.find(t => t.id == item.userId)
 
+      let data = { [field]: value }
+    
+      if(field == "dueDate" && item.startDate){
+        // console.log(field, value)
+        if(new Date(value).getTime() > new Date(item.startDate).getTime()){
+          data = { [field]: value }
+        } else{
+          data = { [field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.updateKey()
+          return false
+        }
+      }
+      if(field == "startDate" && item.dueDate){
+        // console.log(field, value)
+        if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
+          data = { [field]: value }
+        } else {
+          data = { [field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.updateKey()
+          return false
+        }
+      }
+
       this.$store.dispatch("project/updateProject", {
         id: item.id,
         user,
-        data: { [field]: value},
+        data: data,
         text: historyText
       })
         .then(t => {
@@ -920,6 +945,8 @@ export default {
       const { item, label, field, value, historyText } = payload
       // payload consists of task, label, field, value, historyText
       let user
+      let data = { [field]: value }
+
       if (field == "userId" && value != '') {
         user = this.teamMembers.filter(t => t.id == value)
       } else {
@@ -938,10 +965,33 @@ export default {
         taskId = item.id
       }
 
+      if(field == "dueDate" && item.startDate){
+        // console.log(field, value)
+        if(new Date(value).getTime() > new Date(item.startDate).getTime()){
+          data = { [field]: value }
+        } else{
+          data = { [field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.updateKey()
+          return false
+        }
+      }
+      if(field == "startDate" && item.dueDate){
+        // console.log(field, value)
+        if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
+          data = { [field]: value }
+        } else {
+          data = { [field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.updateKey()
+          return false
+        }
+      }
+
       if (item.task) {
         this.$store.dispatch("subtask/updateSubtask", {
           id: taskId,
-          data: { [field]: value },
+          data: data,
           user,
           text: `updated ${label} to ${historyText || value}`
         })
@@ -951,8 +1001,7 @@ export default {
         this.$store.dispatch("task/updateTask", {
           id: taskId,
           projectId,
-          data: {
-            [field]: value },
+          data: data,
           user,
           text: `changed ${label} to ${historyText || value}`
         }).then(t => {
@@ -967,7 +1016,7 @@ export default {
       let isTaskFav = this.favTasks.some((f) => f.taskId == task.id)
       let isSubtaskFav = this.favSubtasks.some((f) => f.taskId == task.id)
 
-      console.log(task, isTaskFav, isSubtaskFav)
+      // console.log(task, isTaskFav, isSubtaskFav)
 
       if (task.task) {
         this.$store.dispatch("subtask/removeFromFavorite", { id: task.id })
