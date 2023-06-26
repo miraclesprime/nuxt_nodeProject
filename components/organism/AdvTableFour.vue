@@ -69,7 +69,38 @@
                   <div class="drag-handle width-105 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                   </div>
                 </div>
-                <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell" :class="{ 'date-cell': field.key.includes('Date')}" >
+                <div class="td" role="cell">
+                  <div class="align-center w-100">
+                    <span class="width-105 height-105 align-center justify-center cursor-pointer" @click.stop="markComplete($event, item)">
+                      <bib-icon icon="check-circle-solid" scale="1.25" variant="gray2" hover-variant="success-sub3"></bib-icon>
+                    </span>
+                    <span class="flex-grow-1" style="line-height:1.25;">
+                      <input type="text" class="editable-input" :value="item.title" @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
+                    </span>
+                    <span class="width-105 height-105 align-center justify-center flex-shrink-0 cursor-pointer bg-hover-light" @click="$emit('title-click', item)">
+                      <bib-icon icon="arrow-right" variant="gray4" hover-variant="gray5"></bib-icon>
+                    </span>
+                  </div>
+                </div>
+                <div class="td" role="cell">
+                  <div class="align-center height-2">{{item.project[0]?.project?.title}}</div>
+                </div>
+                <div class="td" role="cell">
+                  <status-select :ref="'statusSelect'+item.id" :key="'st-'+item.id" :status="item.status" @change="updateStatus($event, item)" @close-other="closePopups('statusSelect'+item.id)"></status-select>
+                </div>
+                <div class="td" role="cell">
+                  <priority-select :ref="'prioritySelect'+item.id" :priority="item.priority" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
+                </div>
+                <div class="td" role="cell">
+                  <user-select :ref="'userSelect'+item.id" :userId="item.userId" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
+                </div>
+                <div class="td date-cell" role="cell">
+                  <bib-datetime-picker v-model="item.startDate" format="MM/dd/yyyy H:mm a" placeholder="No date" @input="updateDate($event, item, 'startDate', 'Start Date')" @click.native.stop></bib-datetime-picker>
+                </div>
+                <div class="td date-cell" role="cell">
+                  <bib-datetime-picker v-model="item.dueDate" format="MM/dd/yyyy H:mm a" placeholder="No date" @input="updateDate($event, item, 'dueDate', 'Due Date')" @click.native.stop></bib-datetime-picker>
+                </div>
+                <!-- <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell" :class="{ 'date-cell': field.key.includes('Date')}" >
                   <div v-if="field.key == 'title'" class="align-center w-100">
                     <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}" @click.stop="markComplete($event, item)">
                       <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success-sub3"></bib-icon>
@@ -100,11 +131,9 @@
                     <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
                   </template>
                   <template v-if="field.key.includes('Date')" >
-                    <!-- {{$formatDate(item[field.key])}} -->
-                    <!-- <bib-datepicker class="align-right" size="sm" :value="new Date(item[field.key])" format="dd MMM YYYY" @click.native.stop="" @input="updateDate"></bib-datepicker> -->
-                    <bib-datetime-picker v-model="item[field.key]" format="DD/MM/YYYY" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+                    <bib-datetime-picker v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                   </template>
-                </div>
+                </div> -->
               </div>
 
               <template v-if="plusButton" >
@@ -208,7 +237,7 @@ export default {
       popupCoords: { left: 0, top: 0 },
       activeItem: {},
       resizableTables: [],
-      format: "DD MMM YYYY",
+      format: "D MMM YYYY",
       // highlight: false,
       validTitle: false,
       localData: [],
@@ -287,7 +316,12 @@ export default {
   },
 
   methods: {
-
+    parseDate(dateString, format) {
+        return new Date(dateString)
+    },
+    formatDate(dateObj, format) {
+        return dayjs(dateObj).format(format);
+    },
     collapseItem(refId, refIcon) {
       let elem = this.$refs[refId][0].$el
       // let icon = this.$refs[refIcon][0].$el
@@ -296,6 +330,10 @@ export default {
       // console.log(elem.style.height)
       elem.classList.toggle("collapsed")
       
+    },
+
+    forceUpdate(){
+      this.$forceUpdate();
     },
 
     /*iconRotate(expanded){
@@ -634,8 +672,9 @@ export default {
     },
     updateDate(d, item, field, label) {
       // console.log(...arguments)
-      // let d = new Date(date)
-      this.$emit("update-field", { id: item.id, field, value: new Date(d), label, historyText: `Changed ${label} to ${dayjs(d).format('DD MMM YYYY')}`, item: item})
+      let jd = new Date(d)
+      // console.log(jd)
+      this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format('DD MMM YYYY')}`, item: item})
     },
     debounceNewSection: _.debounce(function(value, event) {
       if (value) {

@@ -93,7 +93,7 @@ export default {
       }
     }
 
-    this.$store.dispatch('project/fetchProjects').then((res) => { 
+      this.$store.dispatch('project/fetchProjects').then((res) => { 
       
       let newArr = [];
 

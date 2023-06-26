@@ -1,6 +1,6 @@
 <template>
   <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll">
-
+    <Skeleton>
     <draggable class="task-draggable adv-table resizable bg-white" :id="'advTable-'+componentKey" handle=".drag-handle" :style="{'width': tableWidth}" role="table" @start="rowDragStart" @end="rowDragEnd" :move="moveTask" >
       <div slot="header" class="tr" role="row" id="adv-table-row1">
         <div v-show="drag" class="width-2 th" id="adv-table-cell1" role="cell"></div>
@@ -25,6 +25,8 @@
       </div>
 
       <template v-if="!isCollapsed">
+      
+
         <div v-for="(item, index) in localData" :key="item.id+'-'+index" class="tr" :id="'adv-table-table-data-'+index" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
           <div v-show="drag" class="td" role="cell" :id="'adv-table-td-'+index">
             <div v-show="drag" class="drag-handle width-105 h-100" id="adv-table-drag-handle"><bib-icon icon="drag" variant="gray5"></bib-icon>
@@ -66,6 +68,7 @@
             </template>
           </div>
         </div>
+ 
         <template v-if="plusButton">
           
           <div v-show="!localNewrow.show" class="tr" role="row" style="border-bottom: var(--bib-light)" id="adv-table-newRow-wrapper">
@@ -94,6 +97,7 @@
       </template>
 
     </draggable>
+  </Skeleton>
     <!-- </div> -->
     <template v-if="contextItems">
       <table-context-menu :items="contextItems" :show="contextVisible" :coordinates="popupCoords" @close-context="closePopups" @item-click="contextItemClick" ></table-context-menu>
@@ -107,12 +111,13 @@ import _ from 'lodash'
 import dayjs from 'dayjs'
 // import fecha, { format } from "fecha";
 import draggable from 'vuedraggable'
-
+import { Skeleton } from 'vue-loading-skeleton';
 export default {
 
   name: 'AdvanceTable',
   components: {
-    draggable
+    draggable,
+    Skeleton
   },
   props: {
     tableFields: { type: Array, required: true, default: () => [] },
