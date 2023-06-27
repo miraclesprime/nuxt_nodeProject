@@ -113,8 +113,8 @@ export default {
       } else {
         this.activeProject = {
           title: "",
-          startDate: new Date(),
-          dueDate: new Date(),
+          startDate: "",
+          dueDate: "",
           priorityId: null,
           statusId: null,
           departmentId: null,
@@ -199,7 +199,7 @@ export default {
     startDate: {
       get() {
         if (!this.activeProject.startDate) {
-          return new Date()
+          return ""
         } else {
           return new Date(this.activeProject.startDate)
         }
@@ -212,7 +212,7 @@ export default {
     dueDate: {
       get() {
         if (!this.activeProject.dueDate) {
-          return new Date()
+          return ""
         } else {
           return new Date(this.activeProject.dueDate)
         }

@@ -13,14 +13,14 @@
         <bib-input size="sm" type="text" v-model="searchText" name="name" @input="$emit('search-projectTasks', searchText)" placeholder="Search Project Tasks..." :variant="searchText.length > 50 ? 'alert': ''"></bib-input>
       </template>
       <ul class="actions" id="ta-action-right-actions">
-        <li class="action" id="ta-action1" title="Viewing"  v-tooltip="'View'">
-          <sorting-comp label="Viewing" :items="viewing" icon="eye-open" activeIcon="tick" v-on:change-sort="changeViewName"></sorting-comp>
+        <li class="action" id="ta-action1" title="Viewing" >
+          <sorting-comp label="Viewing" :items="viewing" icon="eye-open" activeIcon="tick" tooltip="View" v-on:change-sort="changeViewName"></sorting-comp>
         </li>
-        <li class="action" id="ta-action3" title="Group by"  v-tooltip="'Group By'">
-          <sorting-comp label="Group by" :items="groupby" icon="accessibility-braille-solid" v-on:change-sort="groupBy"></sorting-comp>
+        <li class="action" id="ta-action3" title="Group by" >
+          <sorting-comp label="Group by" :items="groupby" icon="accessibility-braille-solid" tooltip="Group By" v-on:change-sort="groupBy"></sorting-comp>
         </li>
-        <li class="action" id="ta-action2" title="Sort by"  v-tooltip="'Sort By'">
-          <sorting-comp label="Sort by" :items="sorting" icon="swap-vertical" v-on:change-sort="sortBy"></sorting-comp>
+        <li class="action" id="ta-action2" title="Sort by" >
+          <sorting-comp label="Sort by" :items="sorting" icon="swap-vertical" tooltip="Sort By" v-on:change-sort="sortBy"></sorting-comp>
         </li>
         <li class="action" id="ta-action5">
           <div class="d-flex width-2 height-2 align-center justify-center bg-light bg-hover-gray2 shape-circle p-025 cursor-pointer" id="ta-action5-link" title="Change view"  v-tooltip="'List/Grid'">

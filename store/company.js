@@ -31,7 +31,17 @@ export const mutations = {
   fetchCompanies(state, payload) {
     state.companies = payload;
   },
-
+  flatTasks(state, payload) {
+    let arr = JSON.parse(JSON.stringify(state.companyTasks));
+    if(arr[0].tasks){
+      let _arr = [];
+    arr.forEach((ele) => {
+      _arr = _arr.concat(ele.tasks);
+    })
+    arr = _arr;
+    }
+    state.companyTasks = arr;
+  },
   fetchCompanyMembers(state, payload) {
     state.companyMembers = payload;
   },
@@ -48,14 +58,18 @@ export const mutations = {
     state.sortOrder = payload
   },
   groupTasks(state, payload) {
-    let arr = JSON.parse(JSON.stringify(state.companyTasks));
+    let arr = state.companyTasks
     if(arr[0].tasks){
-      let _arr = [];
-      arr.forEach((ele) => {
-        _arr = _arr.concat(ele.tasks);
-      });
-      arr = _arr;
+      // let _arr = [];
+      // arr.forEach((ele) => {
+      //   _arr = _arr.concat(ele.tasks);
+      // });
+      // arr = _arr;
+      arr = arr.reduce((accumulator, currentValue) => {
+        return accumulator.concat(currentValue.tasks);
+      }, []);
     }
+    
     let arrIndex;
     let _tasks;
     if (payload.sName == "priority") {

@@ -594,14 +594,10 @@ export default {
           this.taskSubtaskLocalData = taskStArr;
 
           if (this.taskOrder == "asc") {
-            this.taskSubtaskLocalData.sort((a, b) => {
-              if (a.statusId && b.statusId) return a.status.text.localeCompare(b.status.text)
-              });
+            this.taskSubtaskLocalData.sort((a, b) => a.status.text.localeCompare(b.status.text));
             this.taskOrder = "desc"
           } else {
-            this.taskSubtaskLocalData.sort((a, b) => {
-              if (a.statusId && b.statusId) return b.status.text.localeCompare(a.status.text)
-              });
+            this.taskSubtaskLocalData.sort((a, b) => b.status.text.localeCompare(a.status.text));
             this.taskOrder = "asc"
           }
           this.key += 1
@@ -622,14 +618,10 @@ export default {
           this.taskSubtaskLocalData = taskPrArr;
 
           if (this.taskOrder == "asc") {
-            this.taskSubtaskLocalData.sort((a, b) => {
-              if (a.priorityId && b.priorityId) return a.priority.id - b.priority.id
-              });
+            this.taskSubtaskLocalData.sort((a, b) => a.priority.id - b.priority.id);
             this.taskOrder = "desc"
           } else {
-            this.taskSubtaskLocalData.sort((a, b) => {
-              if (a.priorityId && b.priorityId) return b.priority.id - a.priority.id
-              });
+            this.taskSubtaskLocalData.sort((a, b) => b.priority.id - a.priority.id);
             this.taskOrder = "asc"
           }
           this.key += 1
@@ -650,14 +642,10 @@ export default {
           this.taskSubtaskLocalData = taskDeptArr;
 
           if (this.taskOrder == "asc") {
-            this.taskSubtaskLocalData.sort((a, b) => {
-              if (a.departmentId && b.departmentId) return a.department.title.localeCompare(b.department.title)
-              });
+            this.taskSubtaskLocalData.sort((a, b) => a.department.title.localeCompare(b.department.title));
             this.taskOrder = "desc"
           } else {
-            this.taskSubtaskLocalData.sort((a, b) => {
-              if (a.departmentId && b.departmentId) return b.department.title.localeCompare(a.department.title)
-              });
+            this.taskSubtaskLocalData.sort((a, b) => b.department.title.localeCompare(a.department.title));
             this.taskOrder = "asc"
           }
           this.key += 1
@@ -887,10 +875,35 @@ export default {
       
       let user = this.teamMembers.find(t => t.id == item.userId)
 
+      let data = { [field]: value }
+    
+      if(field == "dueDate" && item.startDate){
+        // console.log(field, value)
+        if(new Date(value).getTime() > new Date(item.startDate).getTime()){
+          data = { [field]: value }
+        } else{
+          data = { [field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.updateKey()
+          return false
+        }
+      }
+      if(field == "startDate" && item.dueDate){
+        // console.log(field, value)
+        if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
+          data = { [field]: value }
+        } else {
+          data = { [field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.updateKey()
+          return false
+        }
+      }
+
       this.$store.dispatch("project/updateProject", {
         id: item.id,
         user,
-        data: { [field]: value},
+        data: data,
         text: historyText
       })
         .then(t => {
@@ -932,6 +945,8 @@ export default {
       const { item, label, field, value, historyText } = payload
       // payload consists of task, label, field, value, historyText
       let user
+      let data = { [field]: value }
+
       if (field == "userId" && value != '') {
         user = this.teamMembers.filter(t => t.id == value)
       } else {
@@ -950,10 +965,33 @@ export default {
         taskId = item.id
       }
 
+      if(field == "dueDate" && item.startDate){
+        // console.log(field, value)
+        if(new Date(value).getTime() > new Date(item.startDate).getTime()){
+          data = { [field]: value }
+        } else{
+          data = { [field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.updateKey()
+          return false
+        }
+      }
+      if(field == "startDate" && item.dueDate){
+        // console.log(field, value)
+        if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
+          data = { [field]: value }
+        } else {
+          data = { [field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.updateKey()
+          return false
+        }
+      }
+
       if (item.task) {
         this.$store.dispatch("subtask/updateSubtask", {
           id: taskId,
-          data: { [field]: value },
+          data: data,
           user,
           text: `updated ${label} to ${historyText || value}`
         })
@@ -963,8 +1001,7 @@ export default {
         this.$store.dispatch("task/updateTask", {
           id: taskId,
           projectId,
-          data: {
-            [field]: value },
+          data: data,
           user,
           text: `changed ${label} to ${historyText || value}`
         }).then(t => {
@@ -979,7 +1016,7 @@ export default {
       let isTaskFav = this.favTasks.some((f) => f.taskId == task.id)
       let isSubtaskFav = this.favSubtasks.some((f) => f.taskId == task.id)
 
-      console.log(task, isTaskFav, isSubtaskFav)
+      // console.log(task, isTaskFav, isSubtaskFav)
 
       if (task.task) {
         this.$store.dispatch("subtask/removeFromFavorite", { id: task.id })

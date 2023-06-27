@@ -628,7 +628,7 @@ export default {
 <style lang="scss" scoped>
 .side-panel {
   display: grid;
-  grid-template-rows: 1fr minmax(70%, auto) 1fr;
+  grid-template-rows: 1fr minmax(4fr, auto) 1fr;
   color: var(--bib-secondary);
 }
 

@@ -25,12 +25,12 @@
       </div>
 
       <template v-if="!isCollapsed">
-        <div v-for="(item, index) in tableData" :key="item.id+'-'+index" class="tr" :id="'adv-table-table-data-'+index" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
+        <div v-for="(item, index) in localData" :key="item.id+'-'+index" class="tr" :id="'adv-table-table-data-'+index" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
           <div v-show="drag" class="td" role="cell" :id="'adv-table-td-'+index">
             <div v-show="drag" class="drag-handle width-105 h-100" id="adv-table-drag-handle"><bib-icon icon="drag" variant="gray5"></bib-icon>
             </div>
           </div>
-          <div v-for="(field, index) in tableFields" :id="'adv-table-table-fields-'+index" :key="field+index" class="td" role="cell">
+          <div v-for="(field, index) in tableFields" :id="'adv-table-fields-'+index" :key="field+index" class="td" role="cell">
             <div v-if="field.key == 'title'" class="align-center " id="adv-table-title-field">
                 <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}" @click.stop="markComplete($event, item)">
                         <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success-sub3"></bib-icon>
@@ -60,8 +60,8 @@
             </template>
             <template v-if="field.key.includes('Date')" class="date-cell">
               <!-- {{$formatDate(item[field.key])}} -->
-              <!-- <bib-datepicker class="align-right" :value="new Date(item[field.key])" format="dd MMM YYYY" @click.native.stop="" @input="updateDate"></bib-datepicker> -->
-              <bib-datetime-picker v-model="item[field.key]" placeholder="No date" @input="updateDate($event, item, field.key)" @click.native.stop></bib-datetime-picker>
+              <!-- <bib-datepicker class="align-right" :value="item[field.key]" format="dd MMM YYYY" @click.native.stop="" @input="updateDate($event, item, field.key, field.label)"></bib-datepicker> -->
+              <bib-datetime-picker v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
 
             </template>
           </div>
@@ -142,6 +142,7 @@ export default {
           priorityId: null,
           startDate: "",
           dueDate: "",
+          format: "D MMM YYYY",
           departmentId: "",
           description: "",
           budget: "",
@@ -160,8 +161,15 @@ export default {
       resizableTables: [],
       format: "DD MMM YYYY",
       validTitle: false,
+      localData: [],
       localNewrow: _.cloneDeep(this.newRow),
     }
+  },
+
+  watch: {
+    tableData(newValue){
+      this.localData = _.cloneDeep(newValue)
+    },
   },
 
   computed: {
@@ -187,10 +195,17 @@ export default {
   },
 
   mounted() {
+    this.localData = _.cloneDeep(this.tableData)
     this.resizableColumns()
   },
 
   methods: {
+    parseDate(dateString, format) {
+        return new Date(dateString)
+    },
+    formatDate(dateObj, format) {
+        return dayjs(dateObj).format(format);
+    },
     
     // main class prototype
     columnResize(table) {
@@ -441,15 +456,11 @@ export default {
     updateAssignee(user, item) { 
       this.$emit("update-field", { id: item.id, field: "userId", value: user.id, label: "Assignee", historyText: `Changed Assignee To ${user.label}`, item: item })
     },
-    updateDate(d, item, field) {
-      let date = new Date(d);
-      let dateFieldText = '';
-      if(field == 'startDate') {
-        dateFieldText = 'Start Date'
-      } else {
-        dateFieldText = 'Due Date'
-      }
-      this.$emit("update-field", { id: item.id, field: `${field}`, value: date, label: "Date", historyText: `Changed ${dateFieldText} to ${dayjs(d).format('DD MMM YYYY')}`, item: item})
+    updateDate(d, item, field, label) {
+      // console.log(...arguments)
+      let jd = new Date(d);
+      
+      this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format('DD MMM YYYY')}`, item})
     },
   }
 }

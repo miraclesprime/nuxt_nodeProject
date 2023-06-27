@@ -1,15 +1,15 @@
 <template>
   <client-only>
   <div class="task-group w-100 position-relative py-05 px-2" id="sbs-task-group-main-wrapper">
-    <div id="sbs-task-group-title-wrapper" class="border-bottom-gray2 d-flex justify-between sub-title pb-05">
-      <p id="sbs-task-group-title" class="text-gray5 font-md">Subtasks </p>
+    <div id="sbs-task-group-title-wrapper" class="border-bottom-gray2 d-flex justify-between sub-title pb-025">
+      <p id="sbs-task-group-title" class="text-gray6 font-sm">Subtasks </p>
     </div>
     <div id="sbs-subtask-title-wrapper" class="section-title w-100 py-025">
       <div v-if="newSubtask" class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded bg-success-sub6 bg-hover-success-sub3 text-success  cursor-pointer" id="sbs-newSubtask" @click="newSubtask = false">
         <bib-icon icon="close" variant="success" :scale="1.2"></bib-icon>
         <span id="sbs-cancel">Cancel</span>
       </div>
-      <div v-else id="sbs-openCreateSubtask" class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded bg-success-sub6 bg-hover-success-sub3 text-success  cursor-pointer" @click="openCreateSubtask">
+      <div v-else id="sbs-openCreateSubtask" class="d-inline-flex gap-05 align-center py-025 px-1 shape-rounded bg-success-sub6 bg-hover-success-sub3 text-success  cursor-pointer" @click="openCreateSubtask">
         <bib-icon icon="add" variant="success" :scale="1.2"></bib-icon>
         <span id="sbs-addSubtask">Add Subtask</span>
       </div>

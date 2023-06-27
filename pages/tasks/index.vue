@@ -12,23 +12,18 @@
         @search-tasks="searchTasks"
       ></company-tasks-actions>
       <div id="task-table-wrapper" class="task-table-wrapper position-relative " :class="{ 'bg-light': gridType != 'list' }" :style="{ 'width': contentWidth }">
-        <template>
+
           <div v-show="gridType === 'list'" class="h-100">
             <template v-if="tasks.length">
-
               <adv-table-three :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable" :key="templateKey"></adv-table-three>
-
             </template>
-          <div v-else>
-            <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 shape-rounded py-05 px-1">
-              <bib-icon icon="warning"></bib-icon> No records found
-            </span>
+            <div v-else>
+              <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 shape-rounded py-05 px-1">
+                <bib-icon icon="warning"></bib-icon> No records found
+              </span>
+            </div>
           </div>
-          
-          </div>
-        </template>
         
-        <template>
           <div v-show="gridType == 'grid'" class="h-100">
             <task-grid-section
               :sections="localData"
@@ -45,9 +40,8 @@
             >
             </task-grid-section>
           </div>
-        </template>
 
-        <!-- user-picker for list and board view -->
+        <!-- user-picker for board view -->
         <user-picker
           :show="userPickerOpen"
           :coordinates="popupCoords"
@@ -57,7 +51,7 @@
           @close="userPickerOpen = false"
         ></user-picker>
 
-        <!-- date-picker for list and board view -->
+        <!-- date-picker for board view -->
         <inline-datepicker
           :show="datePickerOpen"
           :datetime="activeTask[datepickerArgs.field]"
@@ -165,31 +159,31 @@ export default {
 
   watch: {
     tasks(newVal) {
-      let data = _.cloneDeep(newVal);
-      let newArr = [];
+          let data = _.cloneDeep(newVal);
+          let newArr = [];
 
       for (let i = 0; i < data.length; i++) {
-        newArr.push(data[i]);
-        let tNewArr = []
-        for(let j=0; j<data[i].tasks.length; j++) {
-          if (data[i].tasks[j].priorityId) {
-            tNewArr.unshift(data[i].tasks[j])
-          } else {
-            tNewArr.push(data[i].tasks[j])
+          newArr.push(data[i]);
+          let tNewArr = []
+          for(let j=0; j<data[i].tasks.length; j++) {
+            if (data[i].tasks[j].priorityId) {
+              tNewArr.unshift(data[i].tasks[j])
+            } else {
+              tNewArr.push(data[i].tasks[j])
+            }
           }
+          newArr[i]["tasks"] = tNewArr;
         }
-        newArr[i]["tasks"] = tNewArr;
-      }
 
-      newArr.forEach(dept => {
-        dept["tasks"] = dept.tasks.sort((a, b) => {
-          if (a.priorityId && b.priorityId) {
-            return a.priorityId - b.priorityId
-          }
+        newArr.forEach(dept => {
+          dept["tasks"] = dept.tasks.sort((a, b) => {
+            if (a.priorityId && b.priorityId) {
+              return a.priorityId - b.priorityId
+            }
+          })
         })
-      })
 
-      this.localData = newArr;
+        this.localData = newArr;
     },
     gridType() {
       this.key++;
@@ -368,6 +362,8 @@ export default {
 
     updateTask(payload) {
       let user, projectId;
+      let data = { [payload.field]: payload.value }
+
       if (payload.field == "userId" && payload.value != "") {
         user = this.teamMembers.find((t) => t.id == payload.value);
       } else {
@@ -375,33 +371,58 @@ export default {
       }
 
       if (payload.item.project.length > 0) {
-        projectId =
-          payload.item.project[0].projectId ||
-          payload.item.project[0].project.id;
+        projectId = payload.item.project[0].projectId || payload.item.project[0].project.id;
       } else {
         projectId = null;
       }
 
       if (payload.field == "statusId" && payload.value == 0) {
-        payload.value = null;
+        data = { [payload.field]: null};
       }
 
       if (payload.field == "priorityId" && payload.value == 0) {
-        payload.value = null;
+        data = { [payload.field]: null};
+        // payload.value = null;
       }
 
+      // let before=this.beforeLocal.filter((item)=>item.id===item.id)
+    
+      if(payload.field == "dueDate" && payload.item.startDate){
+        // console.log(payload.field, value)
+        if(new Date(payload.value).getTime() > new Date(payload.item.startDate).getTime()){
+          data = { [payload.field]: payload.value }
+        } else{
+          data = { [payload.field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          // this.templateKey+=1;
+          this.updateKey()
+          return false
+        }
+      }
+      if(payload.field == "startDate" && payload.item.dueDate){
+        // console.log(payload.field, payload.value)
+        if(new Date(payload.value).getTime() < new Date(payload.item.dueDate).getTime()){
+          data = { [payload.field]: payload.value }
+        } else {
+          data = { [payload.field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          // this.templateKey+=1;
+          this.updateKey()
+          return false
+        }
+      }
+      
+      // console.log(data, user, projectId)
       this.$store
         .dispatch("task/updateTask", {
           id: payload.item.id,
           projectId,
-          data: { [payload.field]: payload.value },
+          data: data,
           user: user ? [user] : null,
-          text: `${
-            payload.historyText || payload.value
-          }`,
+          text: payload.historyText,
         })
         .then((t) => {
-          this.updateKey("success")
+          this.updateKey()
         })
         .catch((e) => console.warn(e));
     },
@@ -599,17 +620,10 @@ export default {
       } else {
         this.group=''
         this.dragTable = true;
+        this.$store.commit('company/groupTasks',{sName:"department"})
+        return;
       }
-      let compid = JSON.parse(localStorage.getItem("user")).subb;
-      this.$store
-        .dispatch("company/fetchCompanyTasks", {
-          companyId: compid,
-          sName:this.group
-        })
-        .then(() => {
-          this.key += 1;
-        });
-
+      this.$store.commit('company/groupTasks',{sName:this.group})
       },
     // Sort By Action List
     sortBy($event) {
@@ -800,7 +814,7 @@ export default {
         proj.statusId=section.tasks[0]?.statusId
       }
       if(this.group=="assignee"){
-        proj.user=section.tasks[0]?.user
+        proj.user=[section.tasks[0]?.user]
         proj.userId=section.tasks[0]?.userId
       }
       if(this.group=="department"){

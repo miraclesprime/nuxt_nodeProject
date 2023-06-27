@@ -590,21 +590,15 @@ export default {
 
       this.templateKey += 1;
     },
-    SingleProjectGroup($event) {
-      this.groupby = $event;
-      console.log($event)
-      this.$store
-        .dispatch("section/fetchProjectSections", {
-          projectId: this.$route.params.id,
-          filter: "all",
-          sName:this.groupby
-        }).then(() => {
-          if($event != 'default') {
-            this.dragTable = false;
-          } else {
-            this.dragTable = true;
-          }
-        })
+    async SingleProjectGroup($event) {
+      this.groupby=$event
+      if($event != 'default') {
+        this.dragTable = false;
+      } else {
+        this.groupby=''
+        this.dragTable = true;
+      }
+      await this.$store.commit('section/groupSectionProject', { sName: this.groupby })
     
     },
 
@@ -695,7 +689,7 @@ export default {
       }
       delete proj.show
       // delete proj.sectionId
-      console.log(proj, section)
+      // console.log(proj, section)
       this.$store.dispatch("task/createTask", {
           ...proj,
           projectId: Number(this.$route.params.id),
@@ -896,6 +890,7 @@ export default {
     },
 
     updateTask(payload) {
+      // console.log(payload)
 
       this.$store
         .dispatch("task/updateTask", {

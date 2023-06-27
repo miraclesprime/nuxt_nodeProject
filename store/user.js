@@ -47,6 +47,11 @@ export const mutations = {
     })
     arr = _arr;
     }
+    arr.sort((a, b) => {
+      if (a.priorityId && b.priorityId) {
+        return a.priorityId - b.priorityId;
+      }
+    });
     state.userTasks = arr;
   },
   getUserTasks(state,payload){
@@ -244,6 +249,7 @@ export const mutations = {
         };
       });
 }
+console.log("111111111departme",_userTasks)
     state.userTasks=_userTasks
   },
   sortUserTasks(state, payload) {
@@ -940,7 +946,7 @@ export const actions = {
     if(res.data.statusCode==200){
       ctx.commit('setUserTasks', res.data.data);
       // if(payload.key!==''){
-      //   await ctx.commit('getUserTasks', {data:res.data.data,key:payload.key});
+      //   ctx.commit('getUserTasks',payload)
       // }
       return res
     }
