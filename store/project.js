@@ -129,17 +129,12 @@ export const mutations = {
 
   groupProjects(state, payload) {
     let arr = JSON.parse(JSON.stringify(state.projects));
-    // if(arr[0].tasks){
-    //   let _arr = [];
-    //   arr.forEach((ele) => {
-    //     _arr = _arr.concat(ele.tasks);
-    //   });
-    //   arr = _arr;
-    // }
-    if (arr[0].tasks) {
-      arr = arr.reduce((acc, ele) => {
-        return [...acc, ...ele.tasks];
-      }, []);
+    if(arr[0].tasks){
+      let _arr = [];
+      arr.forEach((ele) => {
+        _arr = _arr.concat(ele.tasks);
+      });
+      arr = _arr;
     }
     let arrIndex;
     let _projects;

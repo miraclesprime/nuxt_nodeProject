@@ -7,23 +7,12 @@
     
       <template v-if="projects.length">
         <template v-if="groupVisible">
+         
           <adv-table-three :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @context-open="contextOpen" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" @create-row="createProject" :drag="false" :key="templateKey"></adv-table-three>
         </template>
 
         <template v-else>
-      
-            <div v-if="!loading">
-                  <!-- <loading :loading="loading"></loading> -->
-                <!-- <skeleton v-if="!showTable"></skeleton> -->
-                <!-- <div v-else> -->
-                  <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @context-open="contextOpen" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :plusButton="{label: 'New Project', icon: 'add'}" :drag="false" :key="templateKey"></advance-table>
-                <!-- </div> -->
-            </div>
-            <div v-else>
-                <skeleton ></skeleton>
-                <skeleton ></skeleton>
-            </div>
-            
+          <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @context-open="contextOpen" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :plusButton="{label: 'New Project', icon: 'add'}" :drag="false" :key="templateKey"></advance-table>
         </template> 
 
       </template>
@@ -88,7 +77,6 @@ export default {
       popupMessages: [],
       groupVisible: false,
       groupBy: '',
-      showTable:false
     }
   },
 
@@ -124,15 +112,7 @@ export default {
         })
         this.localData = newArr;
         this.$store.dispatch('project/setProjects', newArr);
-        // this.showTable = true;
         this.loading = false;
-        // const delayTime = Math.max(200, newArr.length * 10); // Adjust the multiplier as needed
-   
-        //   // Delay the rendering of the table
-        //   setTimeout(() => {
-        //     this.showTable = true;
-        //     this.loading = false;
-        //   }, delayTime);
     })
 
       this.templateKey++;
@@ -195,6 +175,7 @@ export default {
       this.$store.dispatch('project/groupProjects', { key: $event}).then((res) => {
         this.groupVisible = true
         this.templateKey += 1;
+
       })
     },
     ProjectView($event){
