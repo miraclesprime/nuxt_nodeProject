@@ -1,15 +1,16 @@
 <template>
   <div class="msg position-relative py-025" @mouseenter="isActionBarShowing = true" @mouseleave="onActionBarMouseLeave" v-click-outside="onActionBarClickOutside" id="message-wrapper">
-    <figure class="width-3 user-avatar " :class="{active: userCardVisible}" @click="toggleUserCard">
-      <bib-avatar size="2rem" :src="$userInfo(msg.userId).Photo"></bib-avatar>
-    </figure>
+    <div class="d-flex align-center pb-025">
+      <figure class="width-2 user-avatar " :class="{active: userCardVisible}" @click="toggleUserCard">
+        <bib-avatar size="1.5rem" :src="$userInfo(msg.userId).Photo"></bib-avatar>
+      </figure>
 
-    <!-- user info -->
-    <div class="msg__owner " id="msg-owner">{{$userInfo(msg.userId).Name}} <span class="ml-1 font-sm">{{displayDate}}</span>
+      <div class="msg__owner text-dark font-w-600" id="msg-owner">{{$userInfo(msg.userId).Name}} <span id="msg-timepast" class="ml-1 font-sm text-gray4">{{displayDate}}</span>
+      </div>
     </div>
 
     <!-- message content -->
-    <div class="msg__content pb-05" v-html="msg.comment" id="msg-content">
+    <div class="msg__content pb-05 text-dark" v-html="msg.comment" id="msg-content">
       <p>Lorem ipsum dolor sit amet consectetur 🙂, <a href="https://dev.proj-mgmt.biztree.com/">ipsum</a> adipisicing elit. Sit eum praesentium animi error delectus reprehenderit neque odit? Nesciunt facere quod ab veniam eligendi architecto vitae?</p>
     </div>
 
@@ -435,21 +436,18 @@ export default {
 </script>
 <style lang="scss" scoped>
 .msg {
-  padding-left: 3rem;
   font-size: $base-size;
 
   &__owner {
-    color: $text;
-    font-weight: 500;
+    /*color: $text;*/
 
     span {
-      color: $gray6;
       font-weight: normal;
     }
   }
 
   &__content {
-    color: $gray6;
+    /*color: $text;*/
   }
 
   &__files {
@@ -500,10 +498,10 @@ export default {
 }
 
 .user-avatar {
-  position: absolute;
+  /*position: absolute;
   z-index: 2;
   left: 0;
-  top: 3px;
+  top: 3px;*/
 
   &.active {
     z-index: 5;
