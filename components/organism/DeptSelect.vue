@@ -9,8 +9,8 @@
     <div v-show="show" class="picker-content" id="dept-select-content">
       <div class="" style="max-height: 15rem; overflow-y: auto; overflow-x: clip; " id="dept-select-dept-label-wrap">
         <ul class="m-0 p-0 text-left" id="dept-select-dept-label-list">
-          <li v-for="(dept, index) in departments" :id="'dept-select-dept-label'+index" :key="dept.value" class="p-025 font-md cursor-pointer" @click.stop="selected(dept)">
-            {{dept.label}}
+          <li v-for="(dpt, index) in departments" :id="'dept-select-dept-label'+index" :key="dpt.value" class="p-025 font-md cursor-pointer " @click.stop="selected(dpt)">
+            {{dpt.label}}
           </li>
         </ul>
       </div>

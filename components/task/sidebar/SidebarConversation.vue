@@ -1,11 +1,11 @@
 <template>
   <client-only>
     <div class="px-2 py-05 " id="sc-container">
-      <div class="d-flex justify-between sub-title pb-05 border-bottom-gray2 " id="sc-heading-wrap">
-        <p class="text-gray5 font-md " id="sc-heading-conv">Conversation </p>
+      <div class="d-flex justify-between sub-title pb-025 border-bottom-gray2 " id="sc-heading-wrap">
+        <p class="text-gray6 font-sm " id="sc-heading-conv">Conversation </p>
       </div>
       <div class="task-conversation w-100 " id="sc-task-team">
-        <div class="message-wrapper py-05 position-relative" id="sc-message-wrapper">
+        <div class="message-wrapper py-025 position-relative" id="sc-message-wrapper">
           <template v-if="showPlaceholder">
             <div class="placeholder my-05 d-flex align-center gap-05" id="sc-placeholder">
               <div class="left" id="sc-left">

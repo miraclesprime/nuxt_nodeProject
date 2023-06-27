@@ -1,8 +1,8 @@
 <template>
-  <div id="file-comp-wrapper" class="file-wrap border-light shape-rounded p-025">
-    <div id="file-comp-pn-ps" class="d-flex gap-05 align-center" v-tooltip="`${property.name} (${property.size})`">
-      <bib-avatar size="2rem" :src="property.preview"></bib-avatar> <span id="file-comp-pn" class="file-text font-md text-truncate">{{property.name}}</span>
-      <div id="file-comp-elipsis-icon" class="width-2 height-2 bg-light shape-circle d-flex align-center justify-center">
+  <div id="file-comp-wrapper" class="file-wrap bg-light shape-rounded p-025">
+    <div id="file-comp-pn-ps" class="d-flex gap-05 align-center" >
+      <bib-avatar size="2rem" :src="property.preview"></bib-avatar> <span id="file-comp-pn" class="file-text font-md text-truncate" v-tooltip="`${property.name} (${property.size})`">{{property.name}}</span>
+      <!-- <div id="file-comp-elipsis-icon" class="width-2 height-2 bg-light shape-circle d-flex align-center justify-center">
         <bib-popup pop="elipsis" icon-variant="gray5" icon-hover-variant="gray6">
           <template v-slot:menu>
             <div class="list" id="file-comp-list">
@@ -15,7 +15,7 @@
             </div>
           </template>
         </bib-popup>
-      </div>
+      </div> -->
     </div>
     <!-- file detail modal -->
     <bib-modal-wrapper v-if="fileDetailModal" title="File Details" @close="fileDetailModal = false">
@@ -144,7 +144,7 @@ export default {
 .file-wrap {}
 
 .file-text {
-  width: 7.5rem;
+  max-width: 7.5rem;
 }
 
 table {

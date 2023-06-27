@@ -99,9 +99,14 @@
                   <template v-if="field.key == 'department'">
                     <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
                   </template>
-                  <template v-if="field.key.includes('Date')" >
+                  <template v-if="field.key == 'startDate'" >
                     <!-- {{$formatDate(item[field.key])}} -->
-                    <!-- <bib-datepicker class="align-right" size="sm" :value="new Date(item[field.key])" format="dd MMM YYYY" @click.native.stop="" @input="updateDate"></bib-datepicker> -->
+                    <!-- <datepicker class="align-right" size="sm" :calendar-button="true" :clear-button="true" wrapper-class="vue-calendar" :value="item[field.key] ? new Date(item[field.key]) : null" format="d MMM yyyy" :disabled-dates="startdateValid(item[field.key], item['dueDate'])" placeholder="No date" @click.native.stop="" @input="updateDate($event, item, field.key, field.label)"></datepicker> -->
+                    <bib-datetime-picker v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+                  </template>
+                  <template v-if="field.key == 'dueDate'" >
+                    <!-- {{$formatDate(item[field.key])}} -->
+                    <!-- <datepicker class="align-right" size="sm" :calendar-button="true" :clear-button="true" wrapper-class="vue-calendar" :value="item[field.key] ? new Date(item[field.key]) : null" format="d MMM yyyy" :disabled-dates="duedateValid(item[field.key], item['startDate'])" placeholder="No date" @click.native.stop="" @input="updateDate($event, item, field.key, field.label)"></datepicker> -->
                     <bib-datetime-picker v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                   </template>
                 </div>
@@ -292,6 +297,28 @@ export default {
     },
     formatDate(dateObj, format) {
         return dayjs(dateObj).format(format);
+    },
+    startdateValid(date, duedate){
+      console.log(...arguments)
+      const maxDate = new Date(duedate)
+      return date < maxDate
+      /*if (date) {
+        return { from: new Date(duedate)}
+      } else {
+        return {}
+      }*/
+    },
+    duedateValid(date, startdate) {
+      console.log(...arguments)
+      // const minDate = new Date(startdate)
+      const minDate = new Date(startdate);
+      // const maxDate = new Date("2023-06-30");
+      return date < minDate.setDate(minDate.getDate() - 1);
+      /*if (date) {
+        return { to: new Date(startdate)}
+      } else {
+        return {}
+      }*/
     },
     collapseItem(refId, refIcon) {
       let elem = this.$refs[refId][0].$el

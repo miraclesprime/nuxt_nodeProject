@@ -1,41 +1,20 @@
 <template>
-  <div
-    id="sbf-task-files-wrapper"
-    class="py-05"
-    :class="{ 'px-2': mode == 'task' }"
-  >
-    <div class="d-flex justify-between sub-title pb-05 border-bottom-gray2" id="sbf-task-files-heading-wrapper">
-      <p class="text-gray5 font-md" id="sbf-task-files-para">Files</p>
+  <div id="sbf-task-files-wrapper" class="py-05" :class="{ 'px-2': mode == 'task' }" >
+    <div class="d-flex justify-between sub-title pb-025 border-bottom-gray2" id="sbf-task-files-heading-wrapper">
+      <p class="text-gray6 font-sm" id="sbf-task-files-para">Files</p>
     </div>
-    <div
-      id="sbf-task-file-actions-wrapper"
-      class="file-actions border-bottom-gray2 d-flex align-center py-025"
-    >
-      <div
-        class="d-inline-flex gap-05 cursor-pointer shape-rounded py-025 px-05 bg-success-sub6 bg-hover-success-sub3 text-success"
-        id="sbf-file-upload-button"
-        @click="uploadModal = true"
-      >
-        <bib-icon
-          icon="add"
-          variant="success"
-          :scale="1.25"
-          class=""
-        ></bib-icon>
-        <span id="sbf-file-upload-text" class="">Upload File</span>
+    <div id="sbf-task-file-actions-wrapper" class="file-actions border-bottom-gray2 d-flex align-center flex-wrap py-025" >
+      <div class="d-inline-flex gap-05 align-center cursor-pointer shape-rounded height-2 px-1 bg-success-sub6 bg-hover-success-sub3 text-success" id="sbf-file-upload-button" @click="uploadModal = true" >
+        <bib-icon icon="add" variant="success" :scale="1" class=""></bib-icon>
+        <span id="sbf-file-upload-text" class=""> Files</span>
       </div>
+
+      <file-comp v-for="file in files" :key="file.key + fileKey" :property="file" @delete-file="deleteFile" @preview-file="showPreviewModal(file)" ></file-comp>
     </div>
-    <div id="sbf-task-file-comp" class="files py-05">
+    <!-- <div id="sbf-task-file-comp" class="files py-05">
       <template>
-        <file-comp
-          v-for="file in files"
-          :key="file.key + fileKey"
-          :property="file"
-          @delete-file="deleteFile"
-          @preview-file="showPreviewModal(file)"
-        ></file-comp>
       </template>
-    </div>
+    </div> -->
     <alert-dialog
       v-show="alertDialog"
       :message="alertMsg"
