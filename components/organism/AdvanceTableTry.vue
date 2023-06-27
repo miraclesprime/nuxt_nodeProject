@@ -94,6 +94,7 @@
       </template>
 
     </draggable>
+    <skeleton :loading="loading"></skeleton>
     <!-- </div> -->
     <template v-if="contextItems">
       <table-context-menu :items="contextItems" :show="contextVisible" :coordinates="popupCoords" @close-context="closePopups" @item-click="contextItemClick" ></table-context-menu>
@@ -163,6 +164,7 @@ export default {
       validTitle: false,
       localData: [],
       localNewrow: _.cloneDeep(this.newRow),
+      loading:true
     }
   },
 

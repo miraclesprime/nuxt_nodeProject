@@ -228,7 +228,7 @@ export default {
       }
     }
 
-    this.loading = true;
+    // this.loading = true;
     // this.updateKey()
     let compid = JSON.parse(localStorage.getItem("user")).subb;
     this.$store
@@ -237,7 +237,7 @@ export default {
         sName:this.group
       })
       .then((res) => {
-    this.loading = false;
+    // this.loading = false;
       });
   },
 
