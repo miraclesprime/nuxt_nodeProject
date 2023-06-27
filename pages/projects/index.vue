@@ -112,7 +112,7 @@ export default {
         })
         this.localData = newArr;
         this.$store.dispatch('project/setProjects', newArr);
-        this.loading = false;
+        // this.loading = false;
     })
 
       this.templateKey++;
