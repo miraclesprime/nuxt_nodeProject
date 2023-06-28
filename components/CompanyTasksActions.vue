@@ -13,9 +13,9 @@
         <li class="action" id="ta-action1" >
           <sorting-comp :items="viewing" icon="eye-open" activeIcon="tick" tooltip="View" v-on:change-sort="changeViewName"></sorting-comp>
         </li>
-        <li class="action" id="ta-action3" title="Group by" >
+        <!-- <li class="action" id="ta-action3" title="Group by" >
           <sorting-comp label="Group by" :items="groupBy" icon="accessibility-braille-solid" tooltip="Group By" v-on:change-sort="groupTasks($event)"></sorting-comp>
-        </li>
+        </li> -->
         <li class="action" id="ta-action2" >
           <sorting-comp :items="sorting" icon="swap-vertical" tooltip="Sort By" v-on:change-sort="sortBy"></sorting-comp>
         </li>
