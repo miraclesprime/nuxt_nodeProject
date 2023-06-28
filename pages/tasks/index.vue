@@ -16,7 +16,6 @@
           <div v-if="gridType === 'list'" class="h-100">
             <template v-if="localData.length">
               <!-- <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localData" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" ></drag-table> -->
-
               <adv-table-three :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable" :key="templateKey"></adv-table-three>
             </template>
             <div v-else>
@@ -148,47 +147,22 @@ export default {
   },
   computed: {
     ...mapGetters({
-      user: "user/getUser",
+      // user: "user/getUser",
       tasks: "company/getCompanyTasks",
-      favTasks: "task/getFavTasks",
-      currentTask: "task/getSelectedTask",
+      // favTasks: "task/getFavTasks",
+      // currentTask: "task/getSelectedTask",
       teamMembers: "user/getTeamMembers",
-      sName: "company/getSortName",
-      sOrder: "company/getSortOrder",
+      // sName: "company/getSortName",
+      // sOrder: "company/getSortOrder",
       sidebar: "task/getSidebarVisible",
     }),
+  
   },
 
   watch: {
     tasks(newVal) {
-
       let data = _.cloneDeep(newVal);
-      /*let newArr = [];
-
-      for (let i = 0; i < data.length; i++) {
-        newArr.push(data[i]);
-        let tNewArr = []
-        for(let j=0; j<data[i].tasks.length; j++) {
-          if (data[i].tasks[j].priorityId) {
-            tNewArr.unshift(data[i].tasks[j])
-          } else {
-            tNewArr.push(data[i].tasks[j])
-          }
-        }
-        newArr[i]["tasks"] = tNewArr;
-      }
-
-      newArr.forEach(dept => {
-        dept["tasks"] = dept.tasks.sort((a, b) => {
-          if (a.priorityId && b.priorityId) {
-            return a.priorityId - b.priorityId
-          }
-        })
-      })*/
-
-      // this.localData = newArr;
       this.localData = data
-
     },
     gridType() {
       this.key++;
@@ -232,8 +206,6 @@ export default {
       }
     }
 
-    // this.loading = true;
-    // this.updateKey()
     let compid = JSON.parse(localStorage.getItem("user")).subb;
     this.$store
       .dispatch("company/fetchCompanyTasks", {
@@ -242,10 +214,8 @@ export default {
       })
       .then((res) => {
 
-        console.log(res)
         // this.taskGroup('department');
         this.localData = res
-        // this.loading = false;
 
       });
   },
@@ -501,9 +471,9 @@ export default {
 
     taskSetFavorite(task) {
       this.loading = true;
-      let isFav = this.favTasks.some((f) => f.taskId == task.id);
-
-      if (isFav) {
+      // let isFav = this.favTasks.some((f) => f.taskId == task.id);
+      if(this.$CheckFavTask(task.id)){
+      // if (isFav) {
         this.$store
           .dispatch("task/removeFromFavorite", { id: task.id })
           .then((msg) => {
