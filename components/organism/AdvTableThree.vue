@@ -88,15 +88,19 @@
                     <div class="align-center height-2">{{item[field.key][0]?.project?.title}}</div>
                   </template>
                   <template v-if="field.key == 'userId'">
+                    <!-- {{item[field.key]}} -->
                     <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
                   </template>
                   <template v-if="field.key == 'status'">
+                    <!-- {{item[field.key]}} -->
                     <status-select :ref="'statusSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('statusSelect'+item.id)"></status-select>
                   </template>
                   <template v-if="field.key == 'priority'">
+                    <!-- {{item[field.key]}} -->
                     <priority-select :ref="'prioritySelect'+item.id" :priority="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
                   </template>
                   <template v-if="field.key == 'department'">
+                    <!-- {{item[field.key]}} -->
                     <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
                   </template>
                   <template v-if="field.key == 'startDate'" >
