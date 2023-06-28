@@ -14,15 +14,71 @@
       <div id="task-table-wrapper" class="task-table-wrapper position-relative overflow-y-auto" :class="{ 'bg-light': gridType != 'list' }" :style="{ 'width': contentWidth }">
 
           <div v-if="gridType === 'list'" class="h-100">
-            <template v-if="localData.length">
+            <template v-if="!showPlaceholder">
               <!-- <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localData" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" ></drag-table> -->
               <adv-table-three :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable" :key="templateKey"></adv-table-three>
             </template>
-            <div v-else>
+            <!-- <div v-show="localData.length == 0">
               <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 shape-rounded py-05 px-1">
                 <bib-icon icon="warning"></bib-icon> No records found
               </span>
-            </div>
+            </div> -->
+            <template v-if="showPlaceholder">
+              <div class="placeholder mt-05 mx-1 pt-05 pb-025 d-flex align-center gap-1" >
+                <div class="d-flex align-center gap-05" >
+                  <div class="shape-circle width-1 height-1 animated-background" ></div>
+                  <div class="animated-background height-1"  style="width: 15rem;"></div>
+                </div>
+              </div>
+              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
+                <div class="d-flex align-center gap-025">
+                  <div class="shape-circle width-1 height-1 animated-background" ></div>
+                  <div class="animated-background height-1" style="width: 30rem;"></div>
+                </div>
+              </div>
+              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
+                <div class="d-flex align-center gap-025">
+                  <div class="shape-circle width-1 height-1 animated-background" ></div>
+                  <div class="animated-background height-1" style="width: 28rem;"></div>
+                </div>
+              </div>
+              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
+                <div class="d-flex align-center gap-025">
+                  <div class="shape-circle width-1 height-1 animated-background" ></div>
+                  <div class="animated-background height-1" style="width: 26rem;"></div>
+                </div>
+              </div>
+              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
+                <div class="d-flex align-center gap-025">
+                  <div class="shape-circle width-1 height-1 animated-background" ></div>
+                  <div class="animated-background height-1" style="width: 30rem;"></div>
+                </div>
+              </div>
+              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
+                <div class="d-flex align-center gap-025">
+                  <div class="shape-circle width-1 height-1 animated-background" ></div>
+                  <div class="animated-background height-1" style="width: 28rem;"></div>
+                </div>
+              </div>
+              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
+                <div class="d-flex align-center gap-025">
+                  <div class="shape-circle width-1 height-1 animated-background" ></div>
+                  <div class="animated-background height-1" style="width: 26rem;"></div>
+                </div>
+              </div>
+              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
+                <div class="d-flex align-center gap-025">
+                  <div class="shape-circle width-1 height-1 animated-background" ></div>
+                  <div class="animated-background height-1" style="width: 28rem;"></div>
+                </div>
+              </div>
+              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
+                <div class="d-flex align-center gap-025">
+                  <div class="shape-circle width-1 height-1 animated-background" ></div>
+                  <div class="animated-background height-1" style="width: 26rem;"></div>
+                </div>
+              </div>
+            </template>
           </div>
         
           <div v-if="gridType == 'grid'" class="h-100">
@@ -142,7 +198,8 @@ export default {
         text: "",
       },
       contentWidth: "100%",
-      dragTable: true
+      dragTable: true,
+      showPlaceholder: true,
     };
   },
   computed: {
@@ -216,6 +273,9 @@ export default {
 
         // this.taskGroup('department');
         this.localData = res
+
+        // this.loading = false;
+        this.showPlaceholder = false
 
       });
   },
