@@ -827,6 +827,10 @@ export const SUBTASK_CONTEXT_MENU = [
 ]
 
 export const COMPANY_TASK_FIELDS = [
+  /*{
+    label: "",
+    key: "#",
+  },*/
   {
     label: 'Task name',
     key: 'title',

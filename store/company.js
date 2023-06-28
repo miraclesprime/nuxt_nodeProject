@@ -537,24 +537,23 @@ export const actions = {
   },
   async groupTasks(ctx,payload){
     ctx.commit('groupTasks', payload)
-
-},
+  },
   async fetchCompanyTasks(ctx, payload) {
-          const res = await this.$axios.$get(`company/${payload.companyId}/tasks`, {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
-          });
+    const res = await this.$axios.$get(`company/${payload.companyId}/tasks`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
+    });
 
-          if (res.data) {
-            ctx.commit('setCompanyTasks', res.data);
-            if(payload.sName!==''){
-              ctx.commit('groupTasks', payload)
-            }
-          
-            if (payload.sort) {
-              ctx.commit('sortCompanyTasks', { sName: ctx.state.sortName, order: ctx.state.sortOrder })
-            }
-            return res.data
-          }
+    if (res.data) {
+      ctx.commit('setCompanyTasks', res.data);
+      /*if(payload.sName!==''){
+        ctx.commit('groupTasks', payload)
+      }
+    
+      if (payload.sort) {
+        ctx.commit('sortCompanyTasks', { sName: ctx.state.sortName, order: ctx.state.sortOrder })
+      }*/
+      return res.data
+    }
     
 
   },
