@@ -93,27 +93,7 @@ export default {
       }
     }
 
-    this.$store.dispatch('project/fetchProjects').then((res) => { 
-      
-      let newArr = [];
-
-        for(let i=0; i<res.length; i++) {
-          if(res[i].priorityId) {
-            newArr.unshift(res[i])
-          } else {
-            newArr.push(res[i])
-          }
-        }
-
-        newArr.sort((a,b) => {
-          if(a.priorityId && b.priorityId) {
-            return a.priorityId - b.priorityId
-          }
-        })
-        this.localData = newArr;
-        this.$store.dispatch('project/setProjects', newArr);
-        this.loading = false;
-    })
+    this.$store.dispatch("project/setProjects",{data:this.localData})
 
       this.templateKey++;
   },
@@ -125,11 +105,11 @@ export default {
         user: "user/getUser2"
     })
   },
-  // watch: {
-  //   projects(newVal) {
-  //       this.localData = _.cloneDeep(newVal)
-  //   },
-  // },
+  watch: {
+    projects(newVal) {
+        this.localData = _.cloneDeep(newVal)
+    },
+  },
 
   asyncData(context){
     const token = context.$cookies.get('b_ssojwt')

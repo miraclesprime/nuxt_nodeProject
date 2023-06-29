@@ -276,29 +276,15 @@ export default {
         field.header_icon.isActive = false;
       }
     }
-
-    // this.loading = true;
-    // this.updateKey()
-    // let compid = JSON.parse(localStorage.getItem("user")).subb;
-    /*this.$store
-      .dispatch("company/fetchCompanyTasks", {
-        companyId: compid,
-        // sName: this.group
-      })
-      .then((res) => {
-        console.log(res)
-        // this.taskGroup('department');
-        this.localData = res
-        // this.loading = false;
-        this.showPlaceholder = false
-      });*/
+  this.$store.dispatch("company/setCompanyTasks",{data:this.localData})
     setTimeout(() => {
-      console.log('settimeout function')
       this.showPlaceholder = false
     }, 200)
   },
 
   methods: {
+    
+
     showUserPicker(payload) {
       this.closeAllPickers();
       this.userPickerOpen = true;

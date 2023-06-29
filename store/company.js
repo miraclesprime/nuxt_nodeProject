@@ -204,6 +204,18 @@ export const mutations = {
       }
     }
     if (payload.sName == "status") {
+      arr.sort((a,b)=>{
+        if (a.statusId === null && b.statusId !== null) {
+          return 1;
+        }
+        if (b.statusId === null && a.statusId !== null) {
+          return -1;
+        }
+        if (a.statusId === null && b.statusId === null) {
+          return 0;
+        }
+        return a.statusId - b.statusId;
+      })  
       const groupStatus = arr.reduce((acc, task) => {
         const status =task.status?.text ?? "Unassigned";
         if (!acc[status]) {
@@ -221,16 +233,17 @@ export const mutations = {
         });
         groupIndex++;
       }
+      
     }
     state.companyTasks = _tasks;
   },
   sortCompanyTasks(state, payload) {
     state.sortName = payload.sName
     state.sortOrder = payload.order
-
+    let arr = state.companyTasks;
     // sort By Title
     if (payload.sName == 'title') {
-      let arr = JSON.parse(JSON.stringify(state.companyTasks));
+      
 
       if(payload.order == 'asc') {
         arr.map((dept) => {
@@ -247,7 +260,6 @@ export const mutations = {
 
     // sort By Status
     if (payload.sName == "status") {
-      let arr = JSON.parse(JSON.stringify(state.companyTasks))
       let newArr = []
 
       for (let i = 0; i < arr.length; i++) {
@@ -287,7 +299,6 @@ export const mutations = {
     // sort by priority
     if (payload.sName == 'priority') {
 
-      let arr = JSON.parse(JSON.stringify(state.companyTasks))
       let newArr = []
 
       for (let i = 0; i < arr.length; i++) {
@@ -327,7 +338,6 @@ export const mutations = {
 
     // sort by owner
     if (payload.sName == 'userId') {
-      let arr = JSON.parse(JSON.stringify(state.companyTasks))
       let newArr = []
 
       for (let i = 0; i < arr.length; i++) {
@@ -367,7 +377,6 @@ export const mutations = {
 
     // sort by due date
     if (payload.sName == 'startDate') {
-      let arr = JSON.parse(JSON.stringify(state.companyTasks))
       let newArr = []
 
       for (let i = 0; i < arr.length; i++) {
@@ -406,7 +415,6 @@ export const mutations = {
 
     // sort by due date
     if (payload.sName == 'dueDate') {
-      let arr = JSON.parse(JSON.stringify(state.companyTasks))
       let newArr = []
 
       for (let i = 0; i < arr.length; i++) {
@@ -446,7 +454,6 @@ export const mutations = {
     // sort by project
     if (payload.sName == "project") {
 
-      let arr = JSON.parse(JSON.stringify(state.companyTasks))
       let newArr = []
 
       for (let i = 0; i < arr.length; i++) {
@@ -489,7 +496,9 @@ export const actions = {
     });
     ctx.commit('fetchCompanies', res.data);
   },
-
+  async setCompanyTasks(ctx,payload){
+    ctx.commit('setCompanyTasks', payload.data);
+  },
   async fetchCompanyMembers(ctx, companyId) {
     const res = await this.$axios.$get("/company/" + companyId + "/members/", {
       headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` }
