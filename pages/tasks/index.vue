@@ -199,7 +199,7 @@ export default {
       },
       contentWidth: "100%",
       dragTable: true,
-      showPlaceholder: true,
+      showPlaceholder: false,
     };
   },
   computed: {
@@ -238,27 +238,18 @@ export default {
     }
   },
 
-  asyncData({ $cookies, params, $axios,store}){
-  // asyncData({ $cookies, params, $axios}){
-    // const token = $cookies.get('b_ssojwt')
-    // return $axios.$get(`company/O3GWpmbk5ezJn4KR/tasks`, {
-    //   headers: {
-    //     'Authorization': `Bearer ${token}`,
-    //     'Filter': 'all'
-    //   }
-    // }).then((res)=>{
-    //   console.log("333333333")
-    //   return {localData: res.data}
-    // })
-    let compid = JSON.parse(localStorage.getItem("user")).subb;
-    return store
-      .dispatch("company/fetchCompanyTasks", {
-        companyId: compid,
-      })
-      .then((res) => {
-        console.log("333333333")
-        return {localData: res}
-      });
+  asyncData({ $cookies, params, $axios}){
+    // console.log('asyncData', context.store)
+    const token = $cookies.get('b_ssojwt')
+    return $axios.$get(`company/O3GWpmbk5ezJn4KR/tasks`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Filter': 'all'
+      }
+    }).then((res)=>{
+      // console.log(res.data)
+      return {localData: res.data}
+    })
   },
 
   created() {
@@ -286,20 +277,21 @@ export default {
       }
     }
 
+    // this.loading = true;
+    // this.updateKey()
     // let compid = JSON.parse(localStorage.getItem("user")).subb;
-    // this.$store
-    //   .dispatch("company/fetchCompanyTasks", {
-    //     companyId: compid,
-    //     // sName: this.group
-    //   })
-    //   .then((res) => {
-    //     // this.taskGroup('department');
-    //     // this.localData = res
-
-    //     // this.loading = false;
-    //     // this.showPlaceholder = false
-
-    //   });
+    /*this.$store
+      .dispatch("company/fetchCompanyTasks", {
+        companyId: compid,
+        // sName: this.group
+      })
+      .then((res) => {
+        console.log(res)
+        // this.taskGroup('department');
+        this.localData = res
+        // this.loading = false;
+        this.showPlaceholder = false
+      });*/
     setTimeout(() => {
       console.log('settimeout function')
       this.showPlaceholder = false

@@ -4,71 +4,71 @@
     <div id="sbs-task-group-title-wrapper" class="border-bottom-gray2 d-flex justify-between sub-title pb-025">
       <p id="sbs-task-group-title" class="text-gray6 font-sm">Subtasks </p>
     </div>
-    <div id="sbs-subtask-title-wrapper" class="section-title w-100 py-025">
-      <div v-if="newSubtask" class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded bg-success-sub6 bg-hover-success-sub3 text-success  cursor-pointer" id="sbs-newSubtask" @click="newSubtask = false">
-        <bib-icon icon="close" variant="success" :scale="1.2"></bib-icon>
-        <span id="sbs-cancel">Cancel</span>
-      </div>
-      <div v-else id="sbs-openCreateSubtask" class="d-inline-flex gap-05 align-center py-025 px-1 shape-rounded bg-success-sub6 bg-hover-success-sub3 text-success  cursor-pointer" @click="openCreateSubtask">
-        <bib-icon icon="add" variant="success" :scale="1.2"></bib-icon>
-        <span id="sbs-addSubtask">Add Subtask</span>
-      </div>
-    </div>
+    
     <div class="position-relative" id="sbs-table-wrapper">
       
-    <table class="table " v-click-outside="removeSelection">
-      <thead v-if="localSubTasks.length > 0">
-        <tr id="sbs-table-row">
-          <th id="sbs-h1">Subtasks</th>
-          <th id="sbs-h2">Assignee</th>
-          <th id="sbs-h3" width="150">Due date</th>
-          <th id="sbs-h4"></th>
-        </tr>
-      </thead>
-      <tbody>
-       
-        <tr class="table-row" v-for="(sub, index) in localSubTasks" :id="'sbs-'+index" :key="sub.id + subkey" v-bind:class="{'selectedSubRow':rowIsSelected(sub.id)}" @click.prevent= "selectSubTaskRow($event,sub)" @click.right.prevent="subtaskRightClick($event, sub)" v-click-outside="closeContext" :ref="'sbs_' + index">
-          <td id="sbs-table-row-2">
-            <div class="d-flex gap-05 align-center" id="sbs-icons">
-              <span class="cursor-pointer" id="sbs-check-circle-solid" style="width:20px; height:20px" @click="markComplete(sub)"><bib-icon icon="check-circle-solid" :scale="1.25" :variant="sub.isDone ? 'success' : 'gray4'"></bib-icon></span>
-              <input type="text" class="editable-input sm" id="sbs-editable-input-1" v-model="sub.title" @input="debounceUpdate(sub, {field: 'title', value: sub.title, name: 'Title'})">
-              <span class="cursor-pointer shape-rounded width-105 height-105 align-center justify-center bg-hover-light" id="sbs-detail" v-tooltip="'Detail'" @click="$emit('view-subtask', sub)" >
-                <bib-icon icon="arrow-right" :scale="1" variant="gray5" ></bib-icon>
-              </span>
-            </div>
-          </td>
-          <td id="sbs-td-1">
-            <bib-select :key="subkey" :options="orgUsers" v-model="sub.userId" size="sm" class="bg-white" v-on:change="updateSubtask(sub, {field: 'userId', value: sub.userId, name: 'User'})"></bib-select>
-          </td>
-          <td id="sbs-td-2">
-            <div class="d-inline-flex align-center gap-025 position-relative" >
-              <bib-icon icon="calendar" variant="gray4"></bib-icon>
-              <datepicker v-model="sub.dueDate" format="dd MMM yyyy" @input="updateSubtask(sub, {field: 'dueDate', value: sub.dueDate, name: 'Due date'})" placeholder="Select date..." class="align-right" ></datepicker>
-            </div>            
-          </td>
-        </tr>
-        <tr v-if="newSubtask" class="new" id="sbs-tr-2">
-          <td id="sbs-td-3">
-            <div class="d-flex gap-05 align-center" id="sbs-white-check-circle-solid">
-              <bib-icon icon="check-circle-solid" variant="white" :scale="1.25"></bib-icon>
-              <input class="sub-input" ref="subtaskNameInput" type="text" v-model.trim="title" id="sbs-subtaskNameInput" :disabled="loading" pattern="[a-zA-Z0-9-_ ]+" @input="validateInput" @keyup.enter="validateInput" required placeholder="Enter text...">
-            </div>
-          </td>
-          <td id="sbs-td-4">
-            <div class="d-flex align-center gap-05" id="sbs-assign-to-wrapper">
-              <bib-avatar size="1.25rem"></bib-avatar>
-              <span id="sbs-assign-to">Assign to...</span>
-            </div>
-          </td>
-          <td id="sbs-td-5">
-            <div class="d-flex align-center gap-025" id="sbs-setdue-wrapper">
-              <bib-icon icon="calendar" variant="gray4"></bib-icon>
-              <span id="sbs-setdue">Set due...</span>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+      <table class="table " v-click-outside="removeSelection">
+        <!-- <thead v-if="localSubTasks.length > 0">
+          <tr id="sbs-table-row">
+            <th id="sbs-h1">Subtasks</th>
+            <th id="sbs-h2">Assignee</th>
+            <th id="sbs-h3" width="150">Due date</th>
+            <th id="sbs-h4"></th>
+          </tr>
+        </thead> -->
+        <tbody>
+          <tr class="table-row" v-for="(sub, index) in localSubTasks" :id="'sbs-'+index" :key="sub.id + subkey" v-bind:class="{'selectedSubRow':rowIsSelected(sub.id)}" @click.prevent= "selectSubTaskRow($event,sub)" @click.right.prevent="subtaskRightClick($event, sub)" v-click-outside="closeContext" :ref="'sbs_' + index">
+            <td id="sbs-table-row-2">
+              <div class="d-flex gap-05 align-center" id="sbs-icons">
+                <span class="cursor-pointer" id="sbs-check-circle-solid" style="width:20px; height:20px" @click="markComplete(sub)"><bib-icon icon="check-circle-solid" :scale="1.25" :variant="sub.isDone ? 'success' : 'gray4'"></bib-icon></span>
+                <input type="text" class="editable-input sm" id="sbs-editable-input-1" v-model="sub.title" @input="debounceUpdate(sub, {field: 'title', value: sub.title, name: 'Title'})">
+                <span class="cursor-pointer shape-rounded width-105 height-105 align-center justify-center bg-hover-light" id="sbs-detail" v-tooltip="'Detail'" @click="$emit('view-subtask', sub)" >
+                  <bib-icon icon="arrow-right" :scale="1" variant="gray5" ></bib-icon>
+                </span>
+              </div>
+            </td>
+            <td id="sbs-td-2">
+              <div class="d-inline-flex align-center gap-025 position-relative" >
+                <bib-icon icon="calendar" variant="gray2"></bib-icon>
+                <datepicker v-model="sub.dueDate" format="dd MMM yyyy" @input="updateSubtask(sub, {field: 'dueDate', value: sub.dueDate, name: 'Due date'})" placeholder="Select date..." class="align-right" ></datepicker>
+              </div>            
+            </td>
+            <td id="sbs-td-1">
+              <bib-select :key="subkey" :options="orgUsers" v-model="sub.userId" size="sm" class="bg-white" v-on:change="updateSubtask(sub, {field: 'userId', value: sub.userId, name: 'User'})"></bib-select>
+            </td>
+          </tr>
+          <tr v-if="newSubtask" class="new" id="sbs-tr-2">
+            <td id="sbs-td-3">
+              <div class="d-flex gap-05 align-center" id="sbs-white-check-circle-solid">
+                <bib-icon icon="check-circle-solid" variant="white" :scale="1.25"></bib-icon>
+                <input class="sub-input" ref="subtaskNameInput" type="text" v-model.trim="title" id="sbs-subtaskNameInput" :disabled="loading" pattern="[a-zA-Z0-9-_ ]+" @input="validateInput" @keyup.enter="validateInput" required placeholder="Enter text...">
+              </div>
+            </td>
+            <td id="sbs-td-5">
+              <div class="d-flex align-center gap-025" id="sbs-setdue-wrapper">
+                <bib-icon icon="calendar" variant="gray2"></bib-icon>
+                <span id="sbs-setdue">Set due...</span>
+              </div>
+            </td>
+            <td id="sbs-td-4">
+              <div class="d-flex align-center gap-05" id="sbs-assign-to-wrapper">
+                <bib-avatar size="1.25rem"></bib-avatar>
+                <span id="sbs-assign-to">Assign to...</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div id="sbs-subtask-title-wrapper" class="section-title w-100 py-025">
+        <div v-if="newSubtask" class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded bg-success-sub6 bg-hover-success-sub3 text-success  cursor-pointer" id="sbs-newSubtask" @click="newSubtask = false">
+          <bib-icon icon="close" variant="success" :scale="1.2"></bib-icon>
+          <span id="sbs-cancel">Cancel</span>
+        </div>
+        <div v-else id="sbs-openCreateSubtask" class="d-inline-flex gap-05 align-center py-025 px-1 shape-rounded bg-success-sub6 bg-hover-success-sub3 text-success  cursor-pointer" @click="openCreateSubtask">
+          <bib-icon icon="add" variant="success" :scale="1.2"></bib-icon>
+          <span id="sbs-addSubtask">Add subtask</span>
+        </div>
+      </div>
     <!-- subtask context menu -->
     <table-context-menu :items="subtaskContextMenu" :show="showContext" :coordinates="popupCoords" :activeItem="activeSubtask" @close-context="closeContext" ref="task_menu" @item-click="contextItemClick"></table-context-menu>
     <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
