@@ -200,7 +200,7 @@ export default {
       },
       contentWidth: "100%",
       dragTable: true,
-      showPlaceholder: true,
+      showPlaceholder: false,
     };
   },
   computed: {
@@ -316,10 +316,10 @@ export default {
         // this.loading = false;
         this.showPlaceholder = false
       });*/
-    setTimeout(() => {
+    /*setTimeout(() => {
       console.log('settimeout function')
       this.showPlaceholder = false
-    }, 200)
+    }, 200)*/
   },
 
   methods: {
