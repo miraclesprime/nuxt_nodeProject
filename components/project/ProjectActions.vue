@@ -13,9 +13,9 @@
         <li class="action" id="pa-action-item1" >
           <sorting-comp label="Viewing" :items="viewing" icon="eye-open" tooltip="View" v-on:change-sort="viewProjects($event)"></sorting-comp>
         </li>
-        <li class="action" id="pa-action3" title="Group by">
+        <!-- <li class="action" id="pa-action3" title="Group by">
           <sorting-comp label="Group by" :items="groupBy" icon="accessibility-braille-solid" tooltip="Group By" v-on:change-sort="groupProjects($event)"></sorting-comp>
-        </li>
+        </li> -->
         
         <li class="action" id="pa-action-item3" >
           <sorting-comp label="Sorted by" :items="sorting" icon="swap-vertical" tooltip="Sort By" v-on:change-sort="sortBy($event)"></sorting-comp>
@@ -78,19 +78,12 @@ export default {
     },
 
     viewProjects($event) {
-      // this.$emit("loading", true)
-      // this.$store.dispatch('project/fetchProjects', $event).then(() => { this.$emit("loading", false) })
-      // this.selectedView = $event;
       this.$emit('viewValue', $event)
     },
     groupProjects($event) {
-      // this.$emit("loading", true)
-      // this.$store.dispatch('project/fetchProjects', $event).then(() => { this.$emit("loading", false) })
       this.$emit("groupValue", $event)
     },
     sortBy($event) {
-      // this.$emit("loading", true)
-      // this.$store.dispatch('project/fetchProjects', $event).then(() => { this.$emit("loading", false) })
       this.$emit('sortValue', $event)
     }
   },
