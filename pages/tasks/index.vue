@@ -262,6 +262,20 @@ export default {
     }
   },
 
+  asyncData({ $cookies, params, $axios}){
+    // console.log('asyncData', context.store)
+    const token = $cookies.get('b_ssojwt')
+    return $axios.$get(`company/O3GWpmbk5ezJn4KR/tasks`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Filter': 'all'
+      }
+    }).then((res)=>{
+      // console.log(res.data)
+      return {localData: res.data}
+    })
+  },
+
   created() {
     if (process.client) {
       this.$nuxt.$on("update-key", (msg) => {
@@ -290,7 +304,7 @@ export default {
     // this.loading = true;
     // this.updateKey()
     let compid = JSON.parse(localStorage.getItem("user")).subb;
-    this.$store
+    /*this.$store
       .dispatch("company/fetchCompanyTasks", {
         companyId: compid,
         // sName: this.group
@@ -301,7 +315,11 @@ export default {
         this.localData = res
         // this.loading = false;
         this.showPlaceholder = false
-      });
+      });*/
+    setTimeout(() => {
+      console.log('settimeout function')
+      this.showPlaceholder = false
+    }, 200)
   },
 
   methods: {
