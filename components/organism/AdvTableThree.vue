@@ -718,6 +718,7 @@ export default {
 .adv-table-wrapper {
   overflow: auto;
   height: 100%;
+  min-width: 1400px!important;
 }
 
 .adv-table {
