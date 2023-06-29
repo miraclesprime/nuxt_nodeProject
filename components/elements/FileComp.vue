@@ -1,7 +1,7 @@
 <template>
-  <div id="file-comp-wrapper" class="file-wrap bg-light shape-rounded p-025">
-    <div id="file-comp-pn-ps" class="d-flex gap-05 align-center" >
-      <bib-avatar size="2rem" :src="property.preview"></bib-avatar> <span id="file-comp-pn" class="file-text font-md text-truncate" v-tooltip="`${property.name} (${property.size})`">{{property.name}}</span>
+  <div id="file-comp-wrapper" class="file-wrap bg-light shape-rounded px-05 ">
+    <div id="file-comp-pn-ps" class="d-flex gap-05 align-center height-2" >
+      <bib-icon :scale="1" :icon="icon"></bib-icon> <span id="file-comp-pn" class="file-text font-md text-truncate" v-tooltip="`${property.name} (${property.size})`">{{property.name}}</span>
       <!-- <div id="file-comp-elipsis-icon" class="width-2 height-2 bg-light shape-circle d-flex align-center justify-center">
         <bib-popup pop="elipsis" icon-variant="gray5" icon-hover-variant="gray6">
           <template v-slot:menu>
@@ -92,6 +92,29 @@ export default {
         return false
       }
     },
+    icon(){
+      if (this.property.type.includes('image')) {
+        return "file-text-solid"
+      }
+      if (this.property.type.includes('video')) {
+        return "video-solid"
+      }
+      if (this.property.type.includes('audio')) {
+        return "sales"
+      }
+      if (this.property.type.includes('pdf')) {
+        return "pdf"
+      }
+      if (this.property.type.includes('msword') || this.property.type.includes("wordprocessingml") || this.property.type.includes("rtf")) {
+        return "word"
+      }
+      if (this.property.type.includes('presentation')) {
+        return "powerpoint"
+      }
+      if (this.property.type.includes('ms-excel') || this.property.type.includes("sheet")) {
+        return "excel"
+      }
+    },
   },
   mounted() {
     this.canDeleteTaskFile()
@@ -144,7 +167,7 @@ export default {
 .file-wrap {}
 
 .file-text {
-  max-width: 7.5rem;
+  max-width: 16.875rem;
 }
 
 table {
