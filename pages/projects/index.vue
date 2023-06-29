@@ -65,7 +65,7 @@ export default {
       renameProjectData: {},
       renameModal: false,
       projectName: "",
-      loading: true,
+      loading: false,
       templateKey: 0,
       tableFields: PROJECT_FIELDS,
       gridType: "list",
@@ -81,7 +81,6 @@ export default {
   },
 
   mounted() {
-    this.loading = true;
 
     for(let field of this.tableFields) {
       if(field.header_icon) {
@@ -92,30 +91,9 @@ export default {
         }
       }
     }
-
-    this.$store.dispatch('project/fetchProjects').then((res) => { 
       
-      let newArr = [];
-
-        for(let i=0; i<res.length; i++) {
-          if(res[i].priorityId) {
-            newArr.unshift(res[i])
-          } else {
-            newArr.push(res[i])
-          }
-        }
-
-        newArr.sort((a,b) => {
-          if(a.priorityId && b.priorityId) {
-            return a.priorityId - b.priorityId
-          }
-        })
-        this.localData = newArr;
-        this.$store.dispatch('project/setProjects', newArr);
-        this.loading = false;
-    })
-
-      this.templateKey++;
+    // this.$store.dispatch('project/setProjects', this.localData);
+    // this.templateKey++;
   },
   computed: {
     ...mapGetters({
@@ -125,11 +103,44 @@ export default {
         user: "user/getUser2"
     })
   },
-  watch: {
-    projects(newVal) {
-        this.localData = _.cloneDeep(newVal)
-    },
+  // watch: {
+  //   projects(newVal) {
+  //       this.localData = _.cloneDeep(newVal)
+  //   },
+  // },
+
+  asyncData(context){
+    const token = context.$cookies.get('b_ssojwt')
+    return context.$axios.$get(`project/company/O3GWpmbk5ezJn4KR`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Filter': 'all'
+      }
+    }).then((res)=>{
+      
+      let newArr = [];
+
+      for(let i=0; i<res.data.length; i++) {
+        if(res.data[i].priorityId) {
+          newArr.unshift(res.data[i])
+        } else {
+          newArr.push(res.data[i])
+        }
+      }
+
+      newArr.sort((a,b) => {
+        if(a.priorityId && b.priorityId) {
+          return a.priorityId - b.priorityId
+        }
+      })
+
+      // context.store.dispatch('project/setProjects', newArr)
+      // $store.dispatch('project/setProjects', newArr);
+
+      return {localData: newArr}
+    })
   },
+
   methods: {
     
     checkActive() {
