@@ -69,20 +69,10 @@ export const mutations = {
   groupTasks(state, payload) {
     let arr = state.initialAllTasks
     let _tasks=[];
-    if (payload.sName == "priority") {
-        arr.sort((a,b)=>{
-          if (a.priorityId === null && b.priorityId !== null) {
-            return 1;
-          }
-          if (b.priorityId === null && a.priorityId !== null) {
-            return -1;
-          }
-          if (a.priorityId === null && b.priorityId === null) {
-            return 0;
-          }
-          return a.priorityId - b.priorityId;
-        })
-        // Sort tasks by numeric priority
+    // console.time('executionTime');
+    // console.timeEnd('executionTime');
+
+    if (payload.sName == "priority") {  
       const groupByPriority = arr.reduce((acc, task) => {
         const priority = task.priority && task.priority.text || 'Unassigned';
         if (!acc[priority]) {
@@ -91,16 +81,24 @@ export const mutations = {
         acc[priority].push(task);
         return acc;
       }, {});
-    
+      let _data=[]
       let groupIndex = 0;
       for (const key in groupByPriority) {
-        _tasks.push({
+        _data.push({
           id: groupIndex,
           title: key.charAt(0).toUpperCase()+key.slice(1),
           tasks: groupByPriority[key]
         });
         groupIndex++;
       }
+      const titleArray= {0:"High", 1:"Medium",2:"Low",3:"Unassigned"}
+      _tasks = _data.map(item => {
+        if (titleArray[item.id]) {
+          item.title = titleArray[item.id];
+        }
+        return item;
+      });
+ 
 }
     if (payload.sName == "department") {
       arr.sort((a,b)=>{
@@ -514,13 +512,13 @@ export const actions = {
 
     if (res.data) {
       ctx.commit('setCompanyTasks', res.data);
-      /*if(payload.sName!==''){
-        ctx.commit('groupTasks', payload)
-      }
+      // if(payload.sName!==''){
+      //   ctx.commit('groupTasks', payload)
+      // }
     
-      if (payload.sort) {
-        ctx.commit('sortCompanyTasks', { sName: ctx.state.sortName, order: ctx.state.sortOrder })
-      }*/
+      // if (payload.sort) {
+      //   ctx.commit('sortCompanyTasks', { sName: ctx.state.sortName, order: ctx.state.sortOrder })
+      // }
       return res.data
     }
 
