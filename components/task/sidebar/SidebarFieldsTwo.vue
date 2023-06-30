@@ -4,32 +4,15 @@
       <div class="row " >
         <div class="col-2"><label>Start Date</label></div>
         <div class="col-6" >
-          <bib-datepicker
-            v-model="startDateInput"
-            :value="startDateInput"
-            format="dd MMM yyyy"
-            label=""
-            placeholder="Start date"
-            ref="startDate"
-            @input="
-              debounceUpdateField('Start date', 'startDate', startDateInput)
-            "
-          ></bib-datepicker>
+          <!-- <bib-datepicker v-model="startDateInput" :value="startDateInput" format="dd MMM yyyy" size="sm" label="" placeholder="Start date" ref="startDate" @input="debounceUpdateField('Start date', 'startDate', startDateInput)"></bib-datepicker> -->
+          <bib-datetime-picker :value="form.startDate" placeholder="Start date" ref="startDate" @input="debounceUpdateField('Start date', 'startDate', startDateInput)" ></bib-datetime-picker>
         </div>
       </div>
       <div class="row " >
         <div class="col-2"><label>Due Date</label></div>
         <div class="col-6" >
-          <bib-datepicker
-            class="align-right"
-            v-model="dueDateInput"
-            :value="dueDateInput"
-            format="dd MMM yyyy"
-            label=""
-            placeholder="Due date"
-            ref="dueDate"
-            @input="debounceUpdateField('Due date', 'dueDate', dueDateInput)"
-          ></bib-datepicker>
+          <!-- <bib-datepicker class="align-right" v-model="dueDateInput" :value="dueDateInput" size="sm" format="dd MMM yyyy" label="" placeholder="Due date" ref="dueDate" @input="debounceUpdateField('Due date', 'dueDate', dueDateInput)"></bib-datepicker> -->
+          <bib-datetime-picker :value="form.dueDate" placeholder="Due date" ref="dueDate" @input="debounceUpdateField('Due date', 'dueDate', dueDateInput)" ></bib-datetime-picker>
         </div>
       </div>
       <div class="row " >
@@ -37,6 +20,7 @@
         <div class="col-6" >
           <bib-input
             type="select"
+            size="sm"
             label=""
             :options="companyProjects"
             v-model.number="form.projectId"
@@ -49,6 +33,7 @@
         <div class="col-6" >
           <bib-input
             type="select"
+            size="sm"
             label=""
             :options="sectionOpts"
             v-model.number="form.sectionId"
@@ -65,6 +50,7 @@
         <div class="col-6" >
           <bib-input
             type="select"
+            size="sm"
             label=""
             :options="departments"
             v-model.number="form.departmentId"
@@ -83,6 +69,7 @@
         <div class="col-6" >
           <bib-input
             type="select"
+            size="sm"
             label=""
             v-model.number="form.priorityId"
             :options="priorityValues"
@@ -98,6 +85,7 @@
         <div class="col-6" >
           <bib-input
             type="select"
+            size="sm"
             label=""
             v-model.number="form.statusId"
             :options="statusValues"
