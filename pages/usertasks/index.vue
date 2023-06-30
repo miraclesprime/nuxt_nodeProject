@@ -15,13 +15,13 @@
     
           <div v-show="gridType == 'list'" id="task-table-wrapper" class="listview h-100 position-relative" :style="{ 'width': contentWidth }">  
               <div v-if="groupVisible" class="h-100">
-                  <loading :loading="loading"></loading>
+                  <!-- <loading :loading="loading"></loading> -->
 
                   <adv-table-three :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" @create-row="createTask" :drag="false" :key="templateKey"></adv-table-three>
               
               </div>
               <div v-else class="h-100">
-                <loading :loading="loading"></loading>                
+                <!-- <loading :loading="loading"></loading>                 -->
                 <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" sectionTitle="" :drag="false" :key="templateKey"></advance-table>
               </div> 
           </div>

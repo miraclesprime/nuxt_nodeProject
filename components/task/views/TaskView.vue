@@ -679,9 +679,9 @@ export default {
         proj.status = section.tasks[0]?.status
         proj.statusId = section.tasks[0]?.statusId
       }
-      if(this.groupby == "assignee"){
-        proj.user = section.tasks[0]?.user
-        proj.userId = section.tasks[0]?.userId
+      if(this.groupby=="assignee"){
+        proj.user=[section.tasks[0]?.user]
+        proj.userId=section.tasks[0]?.userId
       }
       if(this.groupby == "department"){
         proj.department = section.tasks[0]?.department

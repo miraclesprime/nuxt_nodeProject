@@ -74,9 +74,9 @@
     <div class="overflow-y-auto d-grid" id="tsb-of-scroll-y" style="grid-template-columns: none; align-items: start">
       <div class="border-bottom-gray3 px-105 py-05">
         <div class="align-center gap-05" >
-          <span style="white-space: nowrap;">Assigned to</span> 
-          <div style="flex-basis: 8rem;">
-            <user-select :userId="currentTask.userId"></user-select> <!-- <bib-avatar></bib-avatar> -->
+          <span class="font-sm text-gray6" style="white-space: nowrap;">Assigned to</span> 
+          <div style="flex-basis: 2rem;">
+            <user-select :userId="currentTask.userId" mode="avatar"></user-select> <!-- <bib-avatar></bib-avatar> -->
           </div>
           <!-- <div class="d-inline-flex align-center">
           </div> -->

@@ -1,7 +1,7 @@
 <template>
   <client-only>
-    <div class="px-2 py-05 " id="sc-container">
-      <div class="d-flex justify-between sub-title pb-025 border-bottom-gray2 " id="sc-heading-wrap">
+    <div class="px-105 py-05 " id="sc-container">
+      <div class=" sub-title pb-025 " id="sc-heading-wrap">
         <p class="text-gray6 font-sm " id="sc-heading-conv">Conversation </p>
       </div>
       <div class="task-conversation w-100 " id="sc-task-team">

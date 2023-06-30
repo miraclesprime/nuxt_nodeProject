@@ -249,7 +249,6 @@ export const mutations = {
         };
       });
 }
-console.log("111111111departme",_userTasks)
     state.userTasks=_userTasks
   },
   sortUserTasks(state, payload) {

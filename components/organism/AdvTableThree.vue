@@ -112,6 +112,7 @@
                     <!-- {{$formatDate(item[field.key])}} -->
                     <!-- <datepicker class="align-right" size="sm" :calendar-button="true" :clear-button="true" wrapper-class="vue-calendar" :value="item[field.key] ? new Date(item[field.key]) : null" format="d MMM yyyy" :disabled-dates="duedateValid(item[field.key], item['startDate'])" placeholder="No date" @click.native.stop="" @input="updateDate($event, item, field.key, field.label)"></datepicker> -->
                     <bib-datetime-picker v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+
                   </template>
                 </div>
               </div>
@@ -217,7 +218,7 @@ export default {
       popupCoords: { left: 0, top: 0 },
       activeItem: {},
       resizableTables: [],
-      format: "D MMM YYYY",
+      format: "DD MMM YYYY",
       // highlight: false,
       validTitle: false,
       localData: [],
@@ -332,10 +333,6 @@ export default {
       // console.log(elem.style.height)
       elem.classList.toggle("collapsed")
       
-    },
-
-    forceUpdate(){
-      this.$forceUpdate();
     },
 
     /*iconRotate(expanded){
@@ -674,9 +671,8 @@ export default {
     },
     updateDate(d, item, field, label) {
       // console.log(...arguments)
-      let jd = new Date(d)
-      // console.log(jd)
-      this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format('DD MMM YYYY')}`, item: item})
+      // let d = new Date(date)
+      this.$emit("update-field", { id: item.id, field, value: new Date(d), label, historyText: `Changed ${label} to ${dayjs(d).format('DD MMM YYYY')}`, item: item})
     },
     debounceNewSection: _.debounce(function(value, event) {
       if (value) {
@@ -722,6 +718,7 @@ export default {
 .adv-table-wrapper {
   overflow: auto;
   height: 100%;
+  min-width: 1400px!important;
 }
 
 .adv-table {
