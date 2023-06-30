@@ -238,18 +238,20 @@ export default {
     }
   },
 
-  asyncData({ $cookies, params, $axios}){
+  asyncData(context){
     // console.log('asyncData', context.store)
-    const token = $cookies.get('b_ssojwt')
-    return $axios.$get(`company/O3GWpmbk5ezJn4KR/tasks`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Filter': 'all'
-      }
-    }).then((res)=>{
-      // console.log(res.data)
-      return {localData: res.data}
-    })
+    const token = context.$cookies.get('b_ssojwt')
+    if(token) {
+      return context.$axios.$get(`company/O3GWpmbk5ezJn4KR/tasks`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Filter': 'all'
+        }
+      }).then((res)=>{
+        // console.log(res.data)
+        return {localData: res.data}
+      })
+    }
   },
 
   created() {
