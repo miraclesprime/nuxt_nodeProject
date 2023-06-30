@@ -1,24 +1,25 @@
 <template>
-  <div id="user-select-wrapper" class="picker-wrapper w-100" v-click-outside="onClickOutside">
-    <div id="user-select-trigger-open" class="user-data cursor-pointer height-2 align-center justify-between" @click.stop="triggerOpen">
+  <div id="user-select-wrapper" class="picker-wrapper " :class="{'w-100': mode!='avatar', 'width-2': mode=='avatar'}" v-click-outside="onClickOutside">
+    <div id="user-select-trigger-open" class="user-data cursor-pointer height-2 align-center justify-between gap-05" @click.stop="triggerOpen">
       <div v-if="user" id="user-select-user-avatar" class="align-center gap-025  ">
-        <!-- <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> --> <span class="user-label text-truncate">{{user.label}}</span>
+        <bib-avatar v-if="mode == 'avatar' || mode == 'full'" :src="user.avatar" :size="avatarSize"></bib-avatar> <span v-if="mode == 'name' || mode == 'full'" class="user-label text-truncate">{{user.label}}</span>
       </div>
-      <div v-else id="user-select-user-avatar">
-        <span class="text-gray5">No assignee</span>
-        <!-- <span class="shape-circle d-inline-flex width-105 height-105 ">
-          <bib-avatar size="1.5rem"></bib-avatar>
-        </span> -->
+      <div v-else id="user-select-user-avatar" class="h-100">
+        <span v-if="mode != 'avatar'" class="text-gray5">No assignee</span>
+        <span v-if="mode == 'avatar' || mode == 'full'" class="shape-circle d-inline-flex width-2 height-2 ">
+          <bib-avatar :size="avatarSize"></bib-avatar>
+        </span>
       </div>
-      <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
+      <bib-icon v-if="mode != 'avatar'" icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
     </div>
 
     <div v-show="show" class="picker-content" id="user-select-content">
+      <p class="font-sm">Assign to</p>
       <input type="text" class="picker-input" id="user-select-input" ref="userFilterInput" v-model="filterKey" @keyup.esc="$emit('close')" autofocus>
       <div class="mt-05" style="max-height: 12rem; overflow-y: auto" id="user-select-user-avatar-list-wrapper">
         <ul class="m-0 p-0 text-left" id="user-select-user-avatar-list">
-          <li v-for="(user, index) in filterTeam" :key="user.id"  :id="'user-select-user-avatar-'+index" class="py-025 align-center gap-025 font-md cursor-pointer" @click.stop="selected(user)">
-            <!-- <bib-avatar :src="user.avatar" size="1.5rem"></bib-avatar> --> <span class="user-label text-truncate">{{user.label}}</span>
+          <li v-for="(user, index) in filterTeam" :key="user.id"  :id="'user-select-user-avatar-'+index" class="py-025 align-center gap-025 font-md cursor-pointer bg-hover-light" @click.stop="selected(user)">
+            <bib-avatar v-if="mode == 'avatar' || mode == 'full'" :src="user.avatar" size="1rem"></bib-avatar> <span class="user-label text-truncate">{{user.label}}</span>
           </li>
         </ul>
       </div>
@@ -34,6 +35,8 @@ export default {
 
   props: {
     userId: { type: String },
+    mode: { type: String, default: "name"}, //avatar, full
+    avatarSize: { type: String, default: "2rem" }
   },
 
   data() {
@@ -93,6 +96,7 @@ export default {
 <style lang="scss" scoped>
 .picker-wrapper {
   position: relative;
+  color: var(--bib-text);
 
   .user-data {
     border: 0 none;

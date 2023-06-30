@@ -1,7 +1,7 @@
 <template>
   <client-only>
-  <div class="task-group w-100 position-relative py-05 px-2" id="sbs-task-group-main-wrapper">
-    <div id="sbs-task-group-title-wrapper" class="border-bottom-gray2 d-flex justify-between sub-title pb-025">
+  <div class="task-group w-100 position-relative py-05 px-105 mb-05" id="sbs-task-group-main-wrapper">
+    <div id="sbs-task-group-title-wrapper" class=" sub-title pb-025">
       <p id="sbs-task-group-title" class="text-gray6 font-sm">Subtasks </p>
     </div>
     
@@ -21,20 +21,21 @@
             <td id="sbs-table-row-2">
               <div class="d-flex gap-05 align-center" id="sbs-icons">
                 <span class="cursor-pointer" id="sbs-check-circle-solid" style="width:20px; height:20px" @click="markComplete(sub)"><bib-icon icon="check-circle-solid" :scale="1.25" :variant="sub.isDone ? 'success' : 'gray4'"></bib-icon></span>
-                <input type="text" class="editable-input sm" id="sbs-editable-input-1" v-model="sub.title" @input="debounceUpdate(sub, {field: 'title', value: sub.title, name: 'Title'})">
-                <span class="cursor-pointer shape-rounded width-105 height-105 align-center justify-center bg-hover-light" id="sbs-detail" v-tooltip="'Detail'" @click="$emit('view-subtask', sub)" >
+                <input type="text" class="editable-input " id="sbs-editable-input-1" v-model="sub.title" @input="debounceUpdate(sub, {field: 'title', value: sub.title, name: 'Title'})">
+                <span class="cursor-pointer shape-rounded width-105 height-105 align-center justify-center bg-hover-light" id="sbs-detail" @click="$emit('view-subtask', sub)" >
                   <bib-icon icon="arrow-right" :scale="1" variant="gray5" ></bib-icon>
                 </span>
               </div>
             </td>
-            <td id="sbs-td-2">
+            <td id="sbs-td-2" width="120">
               <div class="d-inline-flex align-center gap-025 position-relative" >
                 <bib-icon icon="calendar" variant="gray2"></bib-icon>
                 <datepicker v-model="sub.dueDate" format="dd MMM yyyy" @input="updateSubtask(sub, {field: 'dueDate', value: sub.dueDate, name: 'Due date'})" placeholder="Select date..." class="align-right" ></datepicker>
               </div>            
             </td>
-            <td id="sbs-td-1">
-              <bib-select :key="subkey" :options="orgUsers" v-model="sub.userId" size="sm" class="bg-white" v-on:change="updateSubtask(sub, {field: 'userId', value: sub.userId, name: 'User'})"></bib-select>
+            <td id="sbs-td-1" width="40" align="right" >
+              <!-- <bib-select :key="subkey" :options="orgUsers" v-model="sub.userId" class="bg-white" v-on:change="updateSubtask(sub, {field: 'userId', value: sub.userId, name: 'User'})"></bib-select> -->
+              <user-select :userId="sub.userId" mode="avatar"></user-select>
             </td>
           </tr>
           <tr v-if="newSubtask" class="new" id="sbs-tr-2">
@@ -406,12 +407,14 @@ export default {
 </script>
 <style scoped lang="scss">
 .task-group {
-  margin-bottom: 1rem;
+  /*margin-bottom: 1rem;*/
 }
 
 .sub-title {
   font-size: 1rem;
 }
+
+.editable-input { font-size: $base-size; font-weight: normal; color: var(--bib-text); padding-inline: 0.25rem;}
 
 .sub-input {
   border: 1px solid $dark;
@@ -447,11 +450,11 @@ export default {
       text-align: left;
       font-weight: normal;
       color: $gray4;
-      padding: 0.25rem 0.25rem 0.25rem 0.25rem;
-      border-top: 1px solid var(--bib-light);
+      padding: 0.1rem 0.2rem;
+      // border-top: 1px solid var(--bib-light);
       border-bottom: 1px solid var(--bib-light);
-      border-left: 1px solid transparent;
-      border-right: 1px solid transparent;
+      // border-left: 1px solid transparent;
+      // border-right: 1px solid transparent;
       color: var(--bib-text-light);
       &:first-child { padding-left: 0 }
       &:last-child { padding-right: 0 }
@@ -479,12 +482,12 @@ export default {
 
   tbody {
     td {
-      padding: 0.25rem 0.25rem 0.25rem 0.25rem;
-      border-top: 1px solid var(--bib-light);
+      padding: 0.1rem 0.2rem;
+      // border-top: 1px solid var(--bib-light);
       border-bottom: 1px solid var(--bib-light);
-      border-left: 1px solid transparent;
-      border-right: 1px solid transparent;
-      color: var(--bib-dark-sub1);
+      // border-left: 1px solid transparent;
+      // border-right: 1px solid transparent;
+      color: var(--bib-text);
       &:first-child { padding-left: 0 }
       &:last-child { padding-right: 0 }
     }
