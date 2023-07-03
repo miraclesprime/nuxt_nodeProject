@@ -134,7 +134,8 @@ export default {
     dummy: resolve(__dirname, "./dummy"),
   },
   loading: {
-    color: "#1f42a2",
+    color: "#2ba026",
+    height: '5px'
   },
   dayjs: {
     locales: ["en", "ca"],
