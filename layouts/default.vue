@@ -18,6 +18,7 @@
             :avatarLink="user2 ? user2.Photo : ''"
             :isLightTheme="lightThemeChecked"
             :mainAction="btnText"
+            noResultText="No results, type a project or task name to begin search."
           >
             <template #avatar_menu>
               <bib-button pop="arrowhead-right" :scale="1.3">
