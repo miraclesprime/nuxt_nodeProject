@@ -105,12 +105,12 @@
                   </template>
                   <template v-if="field.key == 'startDate'" >
                     <!-- {{$formatDate(item[field.key])}} -->
-                    <!-- <datepicker class="align-right" size="sm" :calendar-button="true" :clear-button="true" wrapper-class="vue-calendar" :value="item[field.key] ? new Date(item[field.key]) : null" format="d MMM yyyy" :disabled-dates="startdateValid(item[field.key], item['dueDate'])" placeholder="No date" @click.native.stop="" @input="updateDate($event, item, field.key, field.label)"></datepicker> -->
+                    
                     <bib-datetime-picker v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                   </template>
                   <template v-if="field.key == 'dueDate'" >
                     <!-- {{$formatDate(item[field.key])}} -->
-                    <!-- <datepicker class="align-right" size="sm" :calendar-button="true" :clear-button="true" wrapper-class="vue-calendar" :value="item[field.key] ? new Date(item[field.key]) : null" format="d MMM yyyy" :disabled-dates="duedateValid(item[field.key], item['startDate'])" placeholder="No date" @click.native.stop="" @input="updateDate($event, item, field.key, field.label)"></datepicker> -->
+                    
                     <bib-datetime-picker v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
 
                   </template>

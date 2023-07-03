@@ -450,7 +450,7 @@ export const DEPARTMENT = [
 ]
 export const STATUS = [
   { label: 'Choose status', value: 0, color: "" },
-  { label: 'Not Started', value: '1', color: "secondary" },
+  { label: 'Not Started', value: '1', color: "dark" },
   { label: 'In-Progress', value: '2', color: "primary" },
   { label: 'Waiting', value: '3', color: "orange" },
   { label: 'Delayed', value: '4', color: "danger" },

@@ -13,8 +13,8 @@
       <bib-icon v-if="mode != 'avatar'" icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
     </div>
 
-    <div v-show="show" class="picker-content" id="user-select-content">
-      <p class="font-sm">Assign to</p>
+    <div v-show="show" ref="pickerContent" class="picker-content p-025" id="user-select-content">
+      <p class="font-sm text-left border-bottom-light p-025">Assign to</p>
       <input type="text" class="picker-input" id="user-select-input" ref="userFilterInput" v-model="filterKey" @keyup.esc="$emit('close')" autofocus>
       <div class="mt-05" style="max-height: 12rem; overflow-y: auto" id="user-select-user-avatar-list-wrapper">
         <ul class="m-0 p-0 text-left" id="user-select-user-avatar-list">
@@ -51,7 +51,10 @@ export default {
       if (newValue) {
         this.$nextTick(() => {
           this.$refs.userFilterInput.focus()
+          this.positionDropdown()
         });
+      } else {
+        this.positionDropdown(true)
       }
     }
   },
@@ -77,6 +80,45 @@ export default {
     },
   },
   methods: {
+    positionDropdown(original){
+      const box = this.$refs.pickerContent
+
+      if (original) {
+        box.style.removeProperty('transform')
+        return
+      }
+
+      const rect = box.getBoundingClientRect();
+      const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+      console.log(rect, viewportWidth, viewportHeight)
+
+      const isInViewport = rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= viewportHeight &&
+        rect.right <= viewportWidth;
+      
+      // console.log(isInViewport)
+
+      if (!isInViewport) {
+        const offsetY = (rect.top + rect.height) - viewportHeight
+        const offsetX = (rect.left + rect.width) - viewportWidth
+        // console.log("X-",offsetX, "Y-", offsetY)
+        if (offsetX > 0 && offsetY > 0) {
+          box.style.transform = "translate("+(-offsetX-20)+"px, "+(-offsetY-20)+"px)"
+          return
+        }
+        if (offsetX > 0) {
+          box.style.transform = "translateX("+(-offsetX-20)+"px)"
+          return
+        }
+        if (offsetY > 0) {
+          box.style.transform = "translateY("+(-offsetY-20)+"px)"
+          return
+        }
+      } 
+    },
     triggerOpen() {
       this.show = !this.show
       this.$emit('close-other')
@@ -115,7 +157,6 @@ export default {
     max-width: 15rem;
     background-color: $white;
     border: 1px solid $gray4;
-    padding: 0.5rem;
     border-radius: 0.25rem;
     box-shadow: 0 2px 10px rgba(100, 100, 100, 0.25);
   }
