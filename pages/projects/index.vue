@@ -4,10 +4,10 @@
     <project-actions  @sortValue='sortProject($event)' @groupValue="ProjectGroup($event)" @viewValue='ProjectView($event)' v-on:loading="loading = $event" v-on:sort="sortProject" @search-projects="searchProjects" />
    
     <div id="projects-list-wrapper" class="projects-list-wrapper position-relative" >
-      <loading :loading="loading"></loading>
-      
+    
       <template v-if="projects.length">
         <template v-if="groupVisible">
+         
           <adv-table-three :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @context-open="contextOpen" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" @create-row="createProject" :drag="false" :key="templateKey"></adv-table-three>
         </template>
 
@@ -28,7 +28,7 @@
         <template slot="content">
           <div>
             <bib-input type="text" v-model.trim="renameProjectData.title" placeholder="Enter name..."></bib-input>
-            <loading :loading="loading"></loading>
+            <!-- <loading :loading="loading"></loading> -->
           </div>
         </template>
         <template slot="footer">
@@ -81,6 +81,7 @@ export default {
   },
 
   mounted() {
+    this.loading = true;
 
     for(let field of this.tableFields) {
       if(field.header_icon) {
@@ -91,9 +92,10 @@ export default {
         }
       }
     }
-      
-    // this.$store.dispatch('project/setProjects', this.localData);
-    // this.templateKey++;
+
+    this.$store.dispatch("project/setProjects",{data:this.localData})
+
+      this.templateKey++;
   },
   computed: {
     ...mapGetters({
@@ -103,15 +105,16 @@ export default {
         user: "user/getUser2"
     })
   },
-  // watch: {
-  //   projects(newVal) {
-  //       this.localData = _.cloneDeep(newVal)
-  //   },
-  // },
+  watch: {
+    projects(newVal) {
+        this.localData = _.cloneDeep(newVal)
+    },
+  },
 
   asyncData(context){
     const token = context.$cookies.get('b_ssojwt')
-    return context.$axios.$get(`project/company/O3GWpmbk5ezJn4KR`, {
+    // if(token){
+      return context.$axios.$get(`project/company/O3GWpmbk5ezJn4KR`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Filter': 'all'
@@ -133,12 +136,10 @@ export default {
           return a.priorityId - b.priorityId
         }
       })
-
-      // context.store.dispatch('project/setProjects', newArr)
-      // $store.dispatch('project/setProjects', newArr);
-
       return {localData: newArr}
     })
+    // }
+   
   },
 
   methods: {
@@ -186,6 +187,7 @@ export default {
       this.$store.dispatch('project/groupProjects', { key: $event}).then((res) => {
         this.groupVisible = true
         this.templateKey += 1;
+
       })
     },
     ProjectView($event){
