@@ -95,11 +95,11 @@ export const PROJECT_FIELDS = [
       label: "Tags",
     width: '120px',
   },
-  {
-      key: "",
-      label: "Team",
-    width: '120px',
-  },
+  // {
+  //     key: "",
+  //     label: "Team",
+  //   width: '120px',
+  // },
   {
     key: "department",
     label: "Department",
@@ -440,7 +440,7 @@ export const FAVORITE_SORT = [
   { label: 'Department', key: 'department' },
   { label: 'Assignee', key: 'userId' },
   { label: 'Start Date', key: 'startDate' },
-  { label: 'Due Date', key: 'dueDate' },
+  { label: 'Due Date', key: 'dueDate' }
 ]
 
 export const DEPARTMENT = [
@@ -450,9 +450,9 @@ export const DEPARTMENT = [
 ]
 export const STATUS = [
   { label: 'Choose status', value: 0, color: "" },
-  { label: 'Not Started', value: '1', color: "secondary" },
-  { label: 'In-Progress', value: '2', color: "primary" },
-  { label: 'Waiting', value: '3', color: "orange" },
+  { label: 'In-Progress', value: '1', color: "primary" },
+  { label: 'Waiting', value: '2', color: "orange" },
+  { label: 'Not Started', value: '3', color: "secondary" },
   { label: 'Delayed', value: '4', color: "danger" },
   { label: 'Done', value: '5', color: "success" },
 ]
@@ -981,11 +981,11 @@ export const USER_TASKS = [
     key: 'tag',
     width: '100px',
   },
-  {
-    label: 'Team',
-    key: 'team',
-    width: '100px',
-  },
+  // {
+  //   label: 'Team',
+  //   key: 'team',
+  //   width: '100px',
+  // },
   {
     label: 'Department',
     key: 'department',
