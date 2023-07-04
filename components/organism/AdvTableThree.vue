@@ -719,8 +719,7 @@ export default {
   overflow: auto;
   height: 100%;
   min-width: 1400px!important;
-  overflow-x: hidden;
-
+  // overflow-x: hidden;
 }
 
 .adv-table {
