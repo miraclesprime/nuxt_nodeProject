@@ -1,80 +1,68 @@
 <template>
   <client-only>
     <div class="task-info position-relative px-105" id="sbf-task-input-wrap">
-      <div class="row ">
-        <div class="col-2"><label>Start Date</label></div>
+      <div class="row mb-05 ">
+        <div class="col-2 align-center"><label>Start Date</label></div>
         <div class="col-6">
           <!-- <bib-datepicker v-model="startDateInput" :value="startDateInput" format="dd MMM yyyy" size="sm" label="" placeholder="Start date" ref="startDate" @input="debounceUpdateField('Start date', 'startDate', startDateInput)"></bib-datepicker> -->
           <bib-datetime-picker :value="form.startDate" placeholder="Start date" ref="startDate" @input="debounceUpdateField('Start date', 'startDate', startDateInput)"></bib-datetime-picker>
         </div>
       </div>
-      <div class="row ">
-        <div class="col-2"><label>Due Date</label></div>
-        <div class="col-6">
+      <div class="row mb-05 ">
+        <div class="col-2 align-center"><label>Due Date</label></div>
+        <div class="col-5">
           <!-- <bib-datepicker class="align-right" v-model="dueDateInput" :value="dueDateInput" size="sm" format="dd MMM yyyy" label="" placeholder="Due date" ref="dueDate" @input="debounceUpdateField('Due date', 'dueDate', dueDateInput)"></bib-datepicker> -->
           <bib-datetime-picker :value="form.dueDate" placeholder="Due date" ref="dueDate" @input="debounceUpdateField('Due date', 'dueDate', dueDateInput)"></bib-datetime-picker>
         </div>
       </div>
-      <div class="row ">
-        <div class="col-2"><label>Project</label></div>
-        <div class="col-6">
-          <bib-input type="select" size="sm" label="" :options="companyProjects" v-model.number="form.projectId" v-on:change.native="changeProject"></bib-input>
+      <div class="row mb-05 ">
+        <div class="col-2 align-center"><label>Project</label></div>
+        <div class="col-5">
+          <!-- <bib-input type="select" size="sm" label="" :options="companyProjects" v-model.number="form.projectId" v-on:change.native="changeProject"></bib-input> -->
+          <select-two :options="companyProjects" :value="form.projectId" title="Project" icon="briefcase-solid" @change="changeProject"></select-two>
         </div>
       </div>
-      <div class="row ">
-        <div class="col-2"><label>Section</label></div>
-        <div class="col-6">
-          <bib-input type="select" size="sm" label="" :options="sectionOpts" v-model.number="form.sectionId" placeholder="Please select ..." v-on:change.native="
-              debounceUpdateField('Section', 'sectionId', form.sectionId)
-            " :disabled="!form.projectId"></bib-input>
+      <div class="row mb-05 ">
+        <div class="col-2 align-center"><label>Section</label></div>
+        <div class="col-5">
+          <!-- <bib-input type="select" size="sm" label="" :options="sectionOpts" v-model.number="form.sectionId" placeholder="Please select ..." v-on:change.native="debounceUpdateField('Section', 'sectionId', form.sectionId)" :disabled="!form.projectId"></bib-input> -->
+          <select-two :options="sectionOpts" :value="form.sectionId" title="Section" icon="menu-hamburger" @change="debounceUpdateField('Section', 'sectionId', $event.value)" ></select-two>
         </div>
       </div>
-      <div class="row ">
-        <div class="col-2"><label>Department</label></div>
-        <div class="col-6">
-          <bib-input type="select" size="sm" label="" :options="departments" v-model.number="form.departmentId" v-on:change.native="
-              debounceUpdateField(
-                'Department',
-                'departmentId',
-                form.departmentId
-              )
-            "></bib-input>
+      <div class="row mb-05 ">
+        <div class="col-2 align-center"><label>Department</label></div>
+        <div class="col-5">
+          <!-- <bib-input type="select" size="sm" label="" :options="departments" v-model.number="form.departmentId" v-on:change.native="debounceUpdateField('Department','departmentId',form.departmentId)"></bib-input> -->
+          <select-two :options="departments" :value="form.department" icon="projects" title="Department" @change="debounceUpdateField('Department','departmentId', $event.value)"></select-two>
         </div>
       </div>
-      <div class="row ">
-        <div class="col-2"><label>Priority</label></div>
-        <div class="col-3">
-          <bib-input type="select" size="sm" label="" v-model.number="form.priorityId" :options="priorityValues" placeholder="Please select..." v-on:change.native="
-              debounceUpdateField('Priority', 'priorityId', form.priorityId)
-            "></bib-input>
+      <div class="row mb-05 ">
+        <div class="col-2 align-center"><label>Priority</label></div>
+        <div class="col-4">
+          <priority-select-two :priority="form.priority" @change="debounceUpdateField('Priority', 'priorityId', $event.value)"></priority-select-two>
         </div>
       </div>
-      <div class="row ">
+      <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Status</label></div>
-        <div class="col-3">
-          <!-- <bib-input
-            type="select"
-            size="sm"
-            label=""
-            v-model.number="form.statusId"
-            :options="statusValues"
-            placeholder="Please select..."
-            v-on:change.native="
-              debounceUpdateField('Status', 'statusId', form.statusId)
-            "
-          ></bib-input> -->
-          <status-select-two :status="form.status" ></status-select-two>
+        <div class="col-4">
+          <status-select-two :status="form.status" @change="debounceUpdateField('Status', 'statusId', $event.value)" ></status-select-two>
+        </div>
+      </div>
+      <div class="row mb-05 ">
+        <div class="col-2 align-center"><label>Time</label></div>
+        <div class="col-4">
+          <!-- <status-select-two :status="form.status" @change="debounceUpdateField('Status', 'statusId', $event.value)" ></status-select-two> -->
+        </div>
+      </div>
+      <div class="row mb-05 ">
+        <div class="col-2 align-center"><label>Budget</label></div>
+        <div class="col-4">
+          <bib-input type="text" label="" icon-left="currency-dollar" size="sm" v-model="form.budget" ></bib-input>
         </div>
       </div>
       <div class="row ">
         <div class="col-12">
-          <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter task description..." label="Description" v-on:keyup.native="
-              debounceUpdateField(
-                'Description',
-                'description',
-                form.description
-              )
-            "></bib-input>
+          <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter task description..." label="Description" v-on:keyup.native="debounceUpdateField('Description','description',form.description)"></bib-input>
         </div>
       </div>
       <bib-popup-notification-wrapper>
@@ -107,7 +95,7 @@ export default {
   data() {
     return {
       assignee: "",
-      statusValues: STATUS,
+      // statusValues: STATUS,
       priorityValues: PRIORITY,
       form: {},
       loading2: false,
@@ -340,6 +328,7 @@ export default {
         if ((field === "startDate" || field === "dueDate") && !this.validationDate) return;
         this.$emit("update-field", { name: name, field: field, value: value });
       }
+      // console.log(...arguments)
     }, 1000),
     debounceProjectUpdateField: _.debounce(function(
         pName,

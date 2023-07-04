@@ -1,25 +1,21 @@
 <template>
-  <div class="picker-wrapper shape-rounded w-100 " id="status-select-wrapper" v-click-outside="onClickOutside">
-    <div id="status-select-button" class="user-data cursor-pointer height-2 align-center justify-between px-05" @click.stop="triggerOpen">
-      <div class="align-center flex-grow-1 gap-05" id="status-select-span-wrap">
-        <!-- <div class="align-center justify-center shape-circle circle" id="status-select-shape-circle" :style="{ 'background-color': $hex2rgba(localStatus.color, colors) }" >
-          <span class="dot shape-circle" :id="'status-select-'+localStatus.color" :class="[ 'bg-'+localStatus.color ]" ></span>
-        </div> -->
-        <bib-icon icon="check-circle" :variant="localStatus.color"></bib-icon>
+  <div class="picker-wrapper-two shape-rounded w-100 " id="ss-wrapper" v-click-outside="onClickOutside">
+    <div id="ss-button" class="user-data cursor-pointer height-2 align-center justify-between px-05" @click.stop="triggerOpen">
+      <div class="align-center gap-05" id="ss-span-wrap">
+        <bib-icon icon="check-circle-solid" :variant="localStatus.color"></bib-icon>
         {{localStatus.label}}
       </div>
-      <bib-icon icon="arrowhead-down" variant="gray2" :scale="0.5"></bib-icon>
+      <bib-icon icon="arrowhead-down" variant="gray5" :scale="0.8"></bib-icon>
     </div>
-    <div v-show="show" class="picker-content p-025" id="status-select-content">
-      <p class="font-sm text-left p-025 border-bottom-light">Status</p>
-      <div class="picker-list-wrap p-025" id="status-select-list-wrap">
-        <ul class="m-0 p-0 text-left" id="status-select-list">
-          <li v-for="st in statusList" :key="st.value+'stitem'" :id="'status-select-list-item-'+st.value" class="py-025 gap-05 align-center font-md text-dark cursor-pointer hover-bg-light" @click.stop="onStatusChange(st)">
-            <!-- <div class="align-center justify-center shape-circle circle" :id="'status-select-list-item-'+st.bgcolor" :style="{'background-color': st.bgcolor}">
-              <span class="dot shape-circle" :id="'status-select-list-item-'+st.color" :class="[ 'bg-'+st.color ]" ></span>
-            </div> -->
-            <bib-icon icon="check-circle" :variant="st.color"></bib-icon>
-            <span class=" text-truncate" :class="'text-'+st.color" :id="'status-select-list-item-'+st.label">{{st.label}}</span>
+    <div v-show="show" class="picker-content p-025" id="ss-content" @mouseleave="onClickOutside">
+      <p id="ss-heading" class="font-sm text-left p-025 border-bottom-light">Status</p>
+      <div class="picker-list-wrap " id="ss-list-wrap">
+        <ul class="m-0 p-0 text-left" id="ss-list">
+          <li v-for="st in statusList" :key="st.value+'stitem'" :id="'ss-list-item-'+st.value" class="p-025 gap-05 align-center font-md text-dark cursor-pointer bg-hover-gray2" @click.stop="onStatusChange(st)">
+            <div v-if="localStatus.value != st.value" class=" shape-circle circle" :id="'ss-circle-'+st.color" :style="{'border-color': st.color}">
+            </div>
+            <bib-icon v-else icon="check-circle-solid" :variant="st.color"></bib-icon>
+            <span class=" text-truncate" :class="'text-'+st.color" :id="'ss-list-text-'+st.label">{{st.label}}</span>
           </li>
         </ul>
       </div>
@@ -33,7 +29,9 @@ export default {
 
   name: 'StatusSelectTwo',
   props: {
-    status: { type: Object },
+    status: {
+      type: Object,
+    },
   },
   data() {
     return {
@@ -48,12 +46,12 @@ export default {
     statusList() {
       let status = []
       this.statusItems.forEach(st => {
-        if (st.value == 0) status.push({ value: null, label: "None", color: "secondary", bgcolor: this.$hex2rgba(this.colors.ColorVariants.Secondary) })
-        if (st.value == 1) status.push({ value: st.value, label: st.label, color: st.color, bgcolor: this.$hex2rgba(this.colors.ColorVariants.Dark) })
-        if (st.value == 2) status.push({ value: st.value, label: st.label, color: st.color, bgcolor: this.$hex2rgba(this.colors.ColorVariants.Primary) })
-        if (st.value == 3) status.push({ value: st.value, label: st.label, color: st.color, bgcolor: this.$hex2rgba(this.colors.ColorVariants.Orange) })
-        if (st.value == 4) status.push({ value: st.value, label: st.label, color: st.color, bgcolor: this.$hex2rgba(this.colors.ColorVariants.Danger) })
-        if (st.value == 5) status.push({ value: st.value, label: st.label, color: st.color, bgcolor: this.$hex2rgba(this.colors.ColorVariants.Success) })
+        if (st.value == 0) status.push({ value: null, label: "None", color: "secondary" })
+        if (st.value == 1) status.push({ value: st.value, label: st.label, color: st.color })
+        if (st.value == 2) status.push({ value: st.value, label: st.label, color: st.color })
+        if (st.value == 3) status.push({ value: st.value, label: st.label, color: st.color })
+        if (st.value == 4) status.push({ value: st.value, label: st.label, color: st.color })
+        if (st.value == 5) status.push({ value: st.value, label: st.label, color: st.color })
       })
 
       return status
@@ -62,31 +60,29 @@ export default {
   },
 
   watch: {
-    status: (val, oldVal) => {
+    status (val, oldVal) {
       if(val != oldVal) {
-        console.log(val)
-        process.nextTick(()=>{
-          this.localStatus = this.statusItems.find( st => st.value == this.status.id )
-        });
-        // this.setLocal()
+        // console.log(val)
+        if (this.statusItems) {
+          this.setLocal()
+        } else {
+          console.warn('statusItems not found')
+        }
       }
     }
   },
 
-  /*mounted(){
-    if(this.status?.id) {
-      this.localStatus = this.statusItems.find( st => st.value == this.status.id )
-    }else {
-      this.localStatus = { label: 'None', value: 0, color: "secondary", bgcolor: "secondary" }
-    }
-  },*/
+  mounted(){
+    this.setLocal()
+  },
 
   methods: {
     setLocal(){
+      // console.log(this.statusItems)
       if(this.status?.id) {
         this.localStatus = this.statusItems.find( st => st.value == this.status.id )
       }else {
-        this.localStatus = { label: 'None', value: 0, color: "secondary", bgcolor: "secondary" }
+        this.localStatus = { label: 'None', value: 0, color: "secondary" }
       }
     },
     triggerOpen() {
@@ -109,43 +105,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 
-.picker-wrapper {
-  position: relative;
-  background-color: var(--bib-gray9);
-  border: 1px solid transparent;
-  &:hover { border-color: var(--bib-gray2); }
-
-  .picker-content {
-    position: absolute;
-    z-index: 55;
-    left: -5px;
-    top: -5px;
-    min-height: fit-content;
-    max-height: 30rem;
-    min-width: calc(100% + 10px);
-    background-color: $white;
-    border: 1px solid $gray4;
-    border-radius: 0.25rem;
-    box-shadow: 0 2px 10px rgba(100, 100, 100, 0.25);
-  }
-
-  .user-data {
-    background-color: transparent;
-    font-size: $base-size;
-  }
-
-  .picker-list-wrap {}
-
-}
-
 .circle {
-  width: 24px;
-  height: 24px;
-
-  .dot {
-    width: 8px;
-    height: 8px;
-  }
+  width: 16px;
+  height: 16px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--bib-secondary);
 }
 
 </style>
