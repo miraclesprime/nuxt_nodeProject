@@ -135,7 +135,7 @@ export default {
   },
   loading: {
     color: "#2ba026",
-    height: '5px'
+    height: 0
   },
   dayjs: {
     locales: ["en", "ca"],
