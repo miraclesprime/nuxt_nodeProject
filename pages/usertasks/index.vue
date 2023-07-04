@@ -145,7 +145,7 @@ export default {
       immediate: true,
       handler(newVal) {
         this.userfortask = this.teamMembers.find((u) => {
-          if (u.email == newVal.email) {
+          if (u.id == newVal.id) {
             this.selectedUser = u;
             return u;
           }
@@ -224,13 +224,13 @@ export default {
         }
       }
 
-      if (!this.$route.query.email) {
+      if (!this.$route.query.id) {
         this.$router.push({ path: "/dashboard" });
       }
 
       _.delay(() => {
         this.userfortask = this.teamMembers.find((u) => {
-          if (u.email == this.$route.query.email) {
+          if (u.id == this.$route.query.id) {
             this.selectedUser = u;
             return u;
           }
@@ -668,7 +668,7 @@ export default {
 
     toggleSidebar($event) {
       if (!$event) {
-        this.$nuxt.$emit("open-sidebar", $event);
+        this.$nuxt.$emit("open-sidebar", {...$event,email:this.userfortask});
       }
       this.flag = !this.flag;
     },

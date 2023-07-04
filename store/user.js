@@ -4,6 +4,7 @@ export const state = () => ({
   teamMembers: [],
   appMembers: [],
   userTasks: [],
+  sideBarUser:[]
 });
 
 export const getters = {
@@ -34,6 +35,9 @@ export const getters = {
   getUserTasks(state) {
     return state.userTasks;
   },
+  getSideBarUser(state){
+    return state.sideBarUser
+  }
 
 };
 
@@ -749,139 +753,9 @@ export const mutations = {
     state.userTasks = payload
   },
 
-  // sortUserTasks(state, payload) {
-
-  //   // sort By Title
-  //   if (payload.sName == 'name' && payload.order == 'asc') {
-  //     state.userTasks.sort((a, b) => a.title.localeCompare(b.title))
-  //   }
-
-  //   if (payload.sName == 'name' && payload.order == 'desc') {
-  //     state.userTasks.sort((a, b) => b.title.localeCompare(a.title))
-  //   }
-
-  //   // sort By Project
-  //   if (payload.sName == 'projectId' && payload.order == 'asc') {
-
-  //     let arr = JSON.parse(JSON.stringify(state.userTasks))
-  //     let newArr = []
-
-  //     for (let i = 0; i < arr.length; i++) {
-  //       if (arr[i].project[0]) {
-  //         newArr.unshift(arr[i])
-  //       } else {
-  //         newArr.push(arr[i])
-  //       }
-  //     }
-
-  //     newArr.sort((a, b) => {
-  //       if (a.project[0] && b.project[0]) {
-  //         return a.project[0].project.title.localeCompare(b.project[0].project.title)
-  //       }
-  //     });
-  //     state.userTasks = newArr;
-
-  //   }
-
-  //   if (payload.sName == 'projectId' && payload.order == 'desc') {
-
-  //     let arr = JSON.parse(JSON.stringify(state.userTasks))
-  //     let newArr = []
-
-  //     for (let i = 0; i < arr.length; i++) {
-  //       if (arr[i].project[0]) {
-  //         newArr.unshift(arr[i])
-  //       } else {
-  //         newArr.push(arr[i])
-  //       }
-  //     }
-
-  //     newArr.sort((a, b) => {
-  //       if (a.project[0] && b.project[0]) {
-  //         return b.project[0].project.title.localeCompare(a.project[0].project.title)
-  //       }
-  //     });
-  //     state.userTasks = newArr;
-
-  //   }
-
-  //   // sort By Status
-  //   if (payload.sName == "status") {
-  //     let arr = JSON.parse(JSON.stringify(state.userTasks))
-  //     let newArr = []
-
-  //     for (let i = 0; i < arr.length; i++) {
-  //       if (arr[i].status) {
-  //         newArr.unshift(arr[i])
-  //       } else {
-  //         newArr.push(arr[i])
-  //       }
-  //     }
-
-  //     if (payload.order == "asc") {
-  //       newArr.sort((a, b) => {
-  //         if (a.status && b.status) {
-  //           return a.status.text.localeCompare(b.status.text);
-  //         }
-  //       })
-  //     } else {
-  //       newArr.sort((a, b) => {
-  //         if (a.status && b.status) {
-  //           return b.status.text.localeCompare(a.status.text);
-  //         }
-  //       })
-  //     }
-
-  //     state.userTasks = newArr;
-  //   }
-
-  //   // sort by create date
-  //   if (payload.sName == 'createdAt' && payload.order == 'asc') {
-  //     state.userTasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
-  //   }
-
-  //   if (payload.sName == 'createdAt' && payload.order == 'desc') {
-  //     state.userTasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-  //   }
-
-  //   // sort by due date
-  //   if (payload.sName == 'dueDate' && payload.order == 'asc') {
-  //     state.userTasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
-  //   }
-
-  //   if (payload.sName == 'dueDate' && payload.order == 'desc') {
-  //     state.userTasks.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate))
-  //   }
-
-  //   // sort by priority
-  //   if (payload.sName == "priority") {
-  //     let arr = JSON.parse(JSON.stringify(state.userTasks))
-  //     let newArr = []
-
-  //     for (let i = 0; i < arr.length; i++) {
-  //       if (arr[i].priority) {
-  //         newArr.unshift(arr[i])
-  //       } else {
-  //         newArr.push(arr[i])
-  //       }
-  //     }
-  //     if (payload.order == "asc") {
-  //       newArr.sort((a, b) => {
-  //         if (a.priority && b.priority) {
-  //           return a.priority.text.localeCompare(b.priority.text);
-  //         }
-  //       });
-  //     } else {
-  //       newArr.sort((a, b) => {
-  //         if (a.priority && b.priority) {
-  //           return b.priority.text.localeCompare(a.priority.text);
-  //         }
-  //       });
-  //     }
-  //     state.userTasks = newArr;
-  //   }
-
-  // },
+  setSideBarUser(state,payload){
+    state.sideBarUser=payload
+  }
 
 };
 
@@ -943,7 +817,7 @@ export const actions = {
     });
 
     if(res.data.statusCode==200){
-      ctx.commit('setUserTasks', res.data.data);
+      await ctx.commit('setUserTasks', res.data.data);
       // if(payload.key!==''){
       //   ctx.commit('getUserTasks',payload)
       // }
@@ -963,5 +837,9 @@ export const actions = {
       }
     })
     return hist
+  },
+  // sidebar user info
+  setSideBarUser(ctx,payload){
+    ctx.commit('setSideBarUser',payload)
   }
 };

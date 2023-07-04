@@ -167,6 +167,7 @@ export default {
       sections: "section/getProjectSections",
       currentTask: "task/getSelectedTask",
       favTasks: "task/getFavTasks",
+      sideBarUser:"user/getSideBarUser"
     }),
     
     teammates() {
@@ -483,7 +484,10 @@ export default {
         // if new task
         this.$refs.taskTitleInput.blur()
         this.form.projectId = this.project?.id || ""
+        this.form.userId=this.sideBarUser?.id || this.sideBarUser || "";
         this.createTask(this.form)
+        this.$store.dispatch("user/setSideBarUser",[])
+        
       }
     }, 500),
     setFavorite() {

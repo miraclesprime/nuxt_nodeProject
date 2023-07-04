@@ -283,7 +283,14 @@ export default {
       this.openSidebar = true;
       this.$store.dispatch("task/setSidebarVisible", true)
       this.scrollId = payload.scrollId;
-
+      //get userinfo about userTask page and Mytask page
+      if(payload.email){
+          this.$store.dispatch("user/setSideBarUser",payload.email)
+      }
+      if(payload.userId){
+          this.$store.dispatch("user/setSideBarUser",payload.userId)
+      }
+      
       if (!payload.id) {
         if (typeof payload == "number") {
           this.sectionPreselect = payload;
@@ -572,7 +579,7 @@ export default {
       }
 
       this.navKey++;
-      this.$router.push({ path: "/usertasks", query: { email: item.email } });
+      this.$router.push({ path: "/usertasks", query: { id: item.id } });
     },
 
     // Handle User logout

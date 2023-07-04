@@ -1031,7 +1031,8 @@ export default {
     toggleSidebar($event) {
       // in case of create task 
       if (!$event) {
-        this.$nuxt.$emit("open-sidebar", $event)
+        // this.$nuxt.$emit("open-sidebar", $event)
+        this.$nuxt.$emit("open-sidebar", {...$event,userId:JSON.parse(localStorage.getItem("user")).sub});
       }
       this.flag = !this.flag;
     },
