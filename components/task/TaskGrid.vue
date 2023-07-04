@@ -8,12 +8,13 @@
             <bib-icon icon="check-circle-solid" :scale="1.5" :variant="task.statusId == 5 ? 'success' : 'light'"></bib-icon>
           </span>
           <span class="flex-grow-1" :id="'task-title'+task.id">
-            <textarea class="editable-input" ref="titleInput" @input="debounceUpdate('Title', 'title', $event.target.value, $event)" rows="1" @blur="restoreField">{{form.title}}</textarea></span>
+           <textarea class="editable-input" ref="titleInput" @input="debounceUpdate('Title', 'title', $event.target.value, $event)" rows="1" @blur="restoreField">{{form.title}}</textarea>
+          </span>
         </div>
         <div class="shape-circle bg-light width-2 height-2 d-flex flex-shrink-0 justify-center align-center">
           <bib-popup pop="elipsis" icon="elipsis" icon-variant="gray5" icon-hover-variant="dark" @click="openContextMenu()">
             <template v-slot:menu>
-              <div class="list" :id="'task-list'+task.id">
+              <div class="list box-shadow" :id="'task-list'+task.id">
                 <span v-for="(item, index) in contextMenuItems" :key="item.label+index" class="list__item cursor-pointer" :class=" ['list__item__'+item.variant] " @click.stop="contextItemClick(item)">
                   <bib-icon v-if="item.icon" :icon="item.icon" :variant="activeVariant(item)" class="mr-05"></bib-icon> {{item.label}}
                 </span>
@@ -337,6 +338,9 @@ export default {
 
 </script>
 <style scoped lang="scss">
+.box-shadow {
+  box-shadow: 0 6px 30px -2px rgba(0,0,0,.38);
+}
 .task-grid {
   font-size: 14px;
   margin: 1rem 0;
