@@ -146,6 +146,7 @@ export default {
   server: {
     port: 4000,
   },
+  ssr: true,
   target: "static",
   // auth: {
   //   plugins: ["~/plugins/auth"],

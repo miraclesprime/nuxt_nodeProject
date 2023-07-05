@@ -18,6 +18,7 @@
             :avatarLink="user2 ? user2.Photo : ''"
             :isLightTheme="lightThemeChecked"
             :mainAction="btnText"
+            noResultText="No results, type a project or task name to begin search."
           >
             <template #avatar_menu>
               <bib-button pop="arrowhead-right" :scale="1.3">
@@ -282,7 +283,14 @@ export default {
       this.openSidebar = true;
       this.$store.dispatch("task/setSidebarVisible", true)
       this.scrollId = payload.scrollId;
-
+      //get userinfo about userTask page and Mytask page
+      if(payload.email){
+          this.$store.dispatch("user/setSideBarUser",payload.email)
+      }
+      if(payload.userId){
+          this.$store.dispatch("user/setSideBarUser",payload.userId)
+      }
+      
       if (!payload.id) {
         if (typeof payload == "number") {
           this.sectionPreselect = payload;
@@ -571,7 +579,7 @@ export default {
       }
 
       this.navKey++;
-      this.$router.push({ path: "/usertasks", query: { email: item.email } });
+      this.$router.push({ path: "/usertasks", query: { id: item.id } });
     },
 
     // Handle User logout

@@ -17,7 +17,7 @@
               <div v-if="groupVisible" class="h-100">
                   <!-- <loading :loading="loading"></loading> -->
 
-                  <adv-table-three :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" @create-row="createTask" :drag="false" :key="templateKey"></adv-table-three>
+                  <adv-table-three :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" @create-row="createTask" :drag="false" :key="templateKey" :editSection="groupBy"></adv-table-three>
               
               </div>
               <div v-else class="h-100">
@@ -145,7 +145,7 @@ export default {
       immediate: true,
       handler(newVal) {
         this.userfortask = this.teamMembers.find((u) => {
-          if (u.email == newVal.email) {
+          if (u.id == newVal.id) {
             this.selectedUser = u;
             return u;
           }
@@ -224,13 +224,13 @@ export default {
         }
       }
 
-      if (!this.$route.query.email) {
+      if (!this.$route.query.id) {
         this.$router.push({ path: "/dashboard" });
       }
 
       _.delay(() => {
         this.userfortask = this.teamMembers.find((u) => {
-          if (u.email == this.$route.query.email) {
+          if (u.id == this.$route.query.id) {
             this.selectedUser = u;
             return u;
           }
@@ -668,7 +668,7 @@ export default {
 
     toggleSidebar($event) {
       if (!$event) {
-        this.$nuxt.$emit("open-sidebar", $event);
+        this.$nuxt.$emit("open-sidebar", {...$event,email:this.userfortask});
       }
       this.flag = !this.flag;
     },

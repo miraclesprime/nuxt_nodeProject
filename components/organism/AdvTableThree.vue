@@ -51,7 +51,10 @@
                       <span class="width-1 cursor-pointer" @click.stop="collapseItem('sectionContent' + section.id)">
                         <bib-icon icon="arrow-down" :scale="0.5" ></bib-icon> 
                       </span>
-                      <span class="font-w-700 cursor-pointer ml-025" >
+                      <span class="font-w-700 cursor-pointer ml-025" v-if="editSection" >
+                       {{ section.title }}
+                      </span>
+                      <span class="font-w-700 cursor-pointer ml-025" v-else >
                         <input type="text" class="editable-input section-title" :value="section.title.includes('_section') ? 'Untitled section'
                       : section.title" @input="debounceRenameSection(section.id, $event)" @blur="restoreField" />
                       </span>
@@ -173,6 +176,7 @@ export default {
     contextItems: { type: Array },
     drag: { type: Boolean, default: true },
     // height: { type: String, default: '100%' }
+    editSection:{type:String, default:""},
     tasksKey: {
       type: String,
       default() {
@@ -232,6 +236,7 @@ export default {
       // console.log(newValue.sectionId)
       // this.localNewrow = _.cloneDeep(this.newRow)
       this.localNewrow = newValue
+
     },
     tableData(newValue){
       this.localData = _.cloneDeep(newValue)
@@ -719,6 +724,7 @@ export default {
   overflow: auto;
   height: 100%;
   min-width: 1400px!important;
+  // overflow-x: hidden;
 }
 
 .adv-table {
