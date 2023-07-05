@@ -12,7 +12,7 @@
       <div class="picker-list-wrap " style="max-height: 16rem; overflow-y: auto; overflow-x: clip; " id="select-two-list-wrap">
         <input v-show="search" type="text" v-model="filterKey" ref="selectFilterInput" class="picker-input">
         <ul class="m-0 p-0 text-left" id="select-two-list">
-          <li v-for="(opt, index) in options" :id="'dept-select-list-'+index" :key="opt.index" class="p-025 align-center gap-05 font-md cursor-pointer bg-hover-light" :class="{'bg-light': opt.value == value}" @click.stop="selected(opt)">
+          <li v-for="(opt, index) in sectionOpts" :id="'dept-select-list-'+index" :key="opt.index" class="p-025 align-center gap-05 font-md cursor-pointer bg-hover-light" :class="{'bg-light': opt.value == value}" @click.stop="selected(opt)">
             <bib-icon v-if="icon" :icon="icon" variant="gray4"></bib-icon>
             {{opt.label}}
           </li>
@@ -26,7 +26,7 @@
 import _ from 'lodash'
 export default {
 
-  name: 'SelectTwo',
+  name: 'SectionSelectTwo',
 
   props: {
     value: { type: [Number, String, Boolean] },
@@ -53,9 +53,27 @@ export default {
     },
   },
   computed: {
+    sectionOpts(){
+      return this.options.map(op => {
+        if (op.label.includes("_section")) {
+          return {label: "Untitled", value: op.value}
+        } else {
+          return op
+        }
+      })
+    },
     visibleText(){
+      let v = {}
       if (this.value && this.options) {
-        return this.options.find(op => op.value == this.value)
+        this.options.find(op => {
+          console.log(op.label, op.value == this.value, op.label.includes("_section") )
+          if(op.value == this.value && op.label.includes("_section")){
+            v = { label: "Untitled", value: op.value}
+          } else {
+            v = op
+          }
+        })
+        return v
       } else {
         return { label: "None", value: null }
       }

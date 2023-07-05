@@ -5,35 +5,35 @@
         <div class="col-2 align-center"><label>Start Date</label></div>
         <div class="col-6">
           <!-- <bib-datepicker v-model="startDateInput" :value="startDateInput" format="dd MMM yyyy" size="sm" label="" placeholder="Start date" ref="startDate" @input="debounceUpdateField('Start date', 'startDate', startDateInput)"></bib-datepicker> -->
-          <bib-datetime-picker :value="form.startDate" placeholder="Start date" ref="startDate" @input="debounceUpdateField('Start date', 'startDate', startDateInput)"></bib-datetime-picker>
+          <bib-datetime-picker :value="form.startDate" size="sm" placeholder="Start date" ref="startDate" @input="debounceUpdateField('Start date', 'startDate', startDateInput)"></bib-datetime-picker>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Due Date</label></div>
         <div class="col-5">
           <!-- <bib-datepicker class="align-right" v-model="dueDateInput" :value="dueDateInput" size="sm" format="dd MMM yyyy" label="" placeholder="Due date" ref="dueDate" @input="debounceUpdateField('Due date', 'dueDate', dueDateInput)"></bib-datepicker> -->
-          <bib-datetime-picker :value="form.dueDate" placeholder="Due date" ref="dueDate" @input="debounceUpdateField('Due date', 'dueDate', dueDateInput)"></bib-datetime-picker>
+          <bib-datetime-picker :value="form.dueDate" size="sm" placeholder="Due date" ref="dueDate" @input="debounceUpdateField('Due date', 'dueDate', dueDateInput)"></bib-datetime-picker>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Project</label></div>
         <div class="col-5">
           <!-- <bib-input type="select" size="sm" label="" :options="companyProjects" v-model.number="form.projectId" v-on:change.native="changeProject"></bib-input> -->
-          <select-two :options="companyProjects" :value="form.projectId" title="Project" icon="briefcase-solid" @change="changeProject"></select-two>
+          <select-two :options="companyProjects" :value="form.projectId" title="Project" search icon="briefcase-solid" @change="changeProject"></select-two>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Section</label></div>
         <div class="col-5">
           <!-- <bib-input type="select" size="sm" label="" :options="sectionOpts" v-model.number="form.sectionId" placeholder="Please select ..." v-on:change.native="debounceUpdateField('Section', 'sectionId', form.sectionId)" :disabled="!form.projectId"></bib-input> -->
-          <select-two :options="sectionOpts" :value="form.sectionId" title="Section" icon="menu-hamburger" @change="debounceUpdateField('Section', 'sectionId', $event.value)" ></select-two>
+          <section-select-two :options="sectionOpts" :value="form.sectionId" icon="menu-hamburger" title="Section" @change="debounceUpdateField('Section', 'sectionId', $event.value)" ></section-select-two>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Department</label></div>
         <div class="col-5">
           <!-- <bib-input type="select" size="sm" label="" :options="departments" v-model.number="form.departmentId" v-on:change.native="debounceUpdateField('Department','departmentId',form.departmentId)"></bib-input> -->
-          <select-two :options="departments" :value="form.department" icon="projects" title="Department" @change="debounceUpdateField('Department','departmentId', $event.value)"></select-two>
+          <select-two :options="departments" :value="form.departmentId" icon="projects" title="Department" @change="debounceUpdateField('Department','departmentId', $event.value)"></select-two>
         </div>
       </div>
       <div class="row mb-05 ">
@@ -48,10 +48,16 @@
           <status-select-two :status="form.status" @change="debounceUpdateField('Status', 'statusId', $event.value)" ></status-select-two>
         </div>
       </div>
+      <!-- <div class="row mb-05 ">
+        <div class="col-2 align-center"><label>Difficulty</label></div>
+        <div class="col-4">
+          <select-two :options="diffOptions" value="2" title="Difficulty" ></select-two>
+        </div>
+      </div> -->
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Time</label></div>
         <div class="col-4">
-          <bib-input type="time" icon-left="currency-dollar" size="sm" v-model="form.time" placeholder="Select your time" label="" ></bib-input>
+          <bib-input type="time" icon-left="time" size="sm" v-model="form.time" placeholder="Select your time" label="" ></bib-input>
         </div>
       </div>
       <div class="row mb-05 ">
@@ -75,7 +81,7 @@
   </client-only>
 </template>
 <script>
-import { STATUS, PRIORITY } from "~/config/constants.js";
+import { STATUS, PRIORITY, DIFFICULTY } from "~/config/constants.js";
 import { mapGetters } from "vuex";
 import _ from "lodash";
 // import fecha, { format } from "fecha";
@@ -97,6 +103,7 @@ export default {
       assignee: "",
       // statusValues: STATUS,
       priorityValues: PRIORITY,
+      diffOptions: DIFFICULTY,
       form: {},
       loading2: false,
       randomKey: 0,
@@ -132,12 +139,13 @@ export default {
     },
     sectionOpts() {
       let sec = [
-        { label: "Select section", value: "_section" + this.form.projectId },
+        // { label: "No section", value: null },
+        // { label: "Select section", value: "_section" + this.form.projectId },
       ];
       this.sections.forEach((s) => {
-        if (s.title.includes("_section")) {
+        /*if (s.title.includes("_section")) {
           return false;
-        }
+        }*/
         sec.push({ label: s.title, value: s.id });
       });
       return sec;
@@ -360,5 +368,6 @@ export default {
 .task-info {
   font-size: $font-size-sm;
 }
-
+.bib-datepicker__input,
+.vdpComponent__input { margin-block: 0;}
 </style>

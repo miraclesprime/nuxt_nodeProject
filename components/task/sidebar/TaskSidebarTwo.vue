@@ -76,7 +76,7 @@
         <div class="align-center gap-05" >
           <span class="font-sm text-gray6" style="white-space: nowrap;">Assigned to</span> 
           <div style="flex-basis: 2rem;">
-            <user-select :userId="currentTask.userId" mode="avatar"></user-select> <!-- <bib-avatar></bib-avatar> -->
+            <user-select :userId="currentTask.userId" mode="avatar" minWidth="15rem" maxWidth="18rem"></user-select> <!-- <bib-avatar></bib-avatar> -->
           </div>
           <!-- <div class="d-inline-flex align-center">
           </div> -->
