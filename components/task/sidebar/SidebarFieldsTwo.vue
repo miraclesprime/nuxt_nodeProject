@@ -51,13 +51,13 @@
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Time</label></div>
         <div class="col-4">
-          <!-- <status-select-two :status="form.status" @change="debounceUpdateField('Status', 'statusId', $event.value)" ></status-select-two> -->
+          <bib-input type="time" icon-left="currency-dollar" size="sm" v-model="form.time" placeholder="Select your time" label="" ></bib-input>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Budget</label></div>
         <div class="col-4">
-          <bib-input type="text" label="" icon-left="currency-dollar" size="sm" v-model="form.budget" ></bib-input>
+          <bib-input type="text" icon-left="currency-dollar" size="sm" label="" v-model="form.budget" ></bib-input>
         </div>
       </div>
       <div class="row ">
