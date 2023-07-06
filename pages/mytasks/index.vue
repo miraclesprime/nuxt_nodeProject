@@ -196,12 +196,19 @@ export default {
         field.header_icon.isActive = false;
       }
     }
+  },
 
-    this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
-      if (res.statusCode == 200) {
-        this.localdata = _.cloneDeep(res.data)
-        this.key += 1
+  asyncData(context) {
+    const token = context.$cookies.get('b_ssojwt')
+    return  context.$axios.$get('/todo/all', {
+      headers: { 'Authorization': `Bearer ${token}`, 'Filter': 'all' }
+    }).then((res)=>{
+     if (res.statusCode == 200) {
+        context.store.dispatch('todo/setTodos', res.data)
+        context.store.dispatch('todo/setInitialTodos', res.data)
+        return {localdata: res.data}
       }
+      
     })
   },
 

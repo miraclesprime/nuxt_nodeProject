@@ -250,7 +250,7 @@ export const mutations = {
       });
     }
     state.todos = _tasks;
-    if(payload.sName==""){
+    if(payload.sName=="" || payload.sName=="default"){
       state.todos=state.initialData
     }
   },
@@ -281,6 +281,10 @@ export const actions = {
 
   setTodos(ctx, payload) {
     ctx.commit('setTodos', payload)
+  },
+
+  setInitialTodos(ctx, payload) {
+    ctx.commit('setInitialTodos', payload)
   },
 
   async createTodo(ctx, payload) {

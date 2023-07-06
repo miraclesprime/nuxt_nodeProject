@@ -113,7 +113,6 @@ export default {
 
   asyncData(context){
     const token = context.$cookies.get('b_ssojwt')
-    // if(token){
       return context.$axios.$get(`project/company/O3GWpmbk5ezJn4KR`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -138,7 +137,6 @@ export default {
       })
       return {localData: newArr}
     })
-    // }
    
   },
 
