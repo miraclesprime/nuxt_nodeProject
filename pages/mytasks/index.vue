@@ -205,7 +205,7 @@ export default {
     }).then((res)=>{
      if (res.statusCode == 200) {
         context.store.dispatch('todo/setTodos', res.data)
-        context.store.dispatch('todo/setInitialTodos', res.data)
+        // context.store.dispatch('todo/setInitialTodos', res.data)
         return {localdata: res.data}
       }
       
