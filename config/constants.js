@@ -462,6 +462,12 @@ export const PRIORITY = [
   { label: 'Medium', value: '2', color: "orange" },
   { label: 'High', value: '1', color: "danger" },
 ]
+export const DIFFICULTY = [
+  { label: 'Choose difficulty', value: null, color: "" },
+  { label: 'Easy', value: '3', color: "success" },
+  { label: 'Medium', value: '2', color: "orange" },
+  { label: 'Hard', value: '1', color: "danger" },
+]
 
 export const PROJECT_FAVORITES = [
 

@@ -1,9 +1,7 @@
 <template>
-  <div class="picker-wrapper-two shape-rounded w-100" id="ps-wrapper" v-click-outside="onClickOutside">
-    <div id="ps-button" class="user-data cursor-pointer height-2 align-center justify-between px-05" @click.stop="triggerOpen">
+  <div class="picker-wrapper-two shape-rounded " id="ps-wrapper" v-click-outside="onClickOutside">
+    <div id="ps-button" class="user-data cursor-pointer height-2 align-center justify-between gap-05 px-05" @click.stop="triggerOpen">
       <div id="ps-inner-wrap" class="align-center gap-05">
-        <!-- <div id="ps-shape-circle" class="d-flex align-center justify-center shape-circle circle" :style="{'background-color': $hex2rgba(localValue.color, colors)}"><strong id="ps-localValue-color" :class="'text-'+localValue.color" >!</strong>
-        </div> -->
         <bib-icon icon="security-verified" :variant="localValue.color"></bib-icon>
         <span class="text-capitalize text-truncate" style="max-width: 7rem;" id="ps-localValue-label" >
           {{ localValue.label }}
@@ -11,11 +9,11 @@
       </div>
       <bib-icon icon="arrowhead-down" variant="gray5" :scale="0.8"></bib-icon>
     </div>
-    <div v-show="show" class="picker-content p-025" id="ps-content" @mouseleave="onClickOutside"> 
+    <div v-show="show" class="picker-content p-025" id="ps-content" > 
       <p id="ps-heading" class="font-sm text-left p-025 border-bottom-light">Priority</p>
       <div class="picker-list-wrap " id="ps-list-wrap">
         <ul class="m-0 p-0 text-left" id="ps-list">
-          <li v-for="pt in priorityList" :key="pt.value+'stitem'" :id="'ps-'+pt.value" class="p-025 gap-05 align-center font-md cursor-pointer bg-hover-gray2" @click.stop="onStatusChange(pt)">
+          <li v-for="pt in priorityList" :key="pt.value+'stitem'" :id="'ps-'+pt.value" class="p-025 pr-05 gap-05 align-center font-md cursor-pointer bg-hover-gray2" @click.stop="onStatusChange(pt)">
             <bib-icon icon="security-verified" :variant="pt.color"></bib-icon>
             <span :id="'ps-'+pt.label" class=" text-truncate" :class="'text-'+pt.color">{{pt.label}}</span>
           </li>
