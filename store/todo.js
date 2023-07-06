@@ -35,33 +35,37 @@ export const mutations = {
   },
 
   getFilterMyTasks(state,payload){
-    let data=[]
+    console.log(payload)
     let arr=[]
-    data=state.initialData
-    data = data.filter((item) => item.tasks.length > 0);
-    console.log("232",data) 
-
-  //   if(payload.groupBy!=""){ 
-  //     if(data[0].tasks){
-  //       let _arr = [];
-  //       data.forEach((ele) => {
-  //           _arr = _arr.concat(ele.tasks);
-  //         });
-  //         data = _arr;
-  //     }
-  //     console.log("2",data)
-  //   }
-   
+    arr=state.initialData
+    console.log("0",arr)
+    arr=arr.filter((item)=>{
+      if(item.tasks.length>0){
+        return item
+      }
+    })
+    console.log("1",arr)
+    if(payload.groupBy!=""){ 
+      if(arr[0].tasks){
+        let _arr = [];
+          arr.forEach((ele) => {
+            _arr = _arr.concat(ele.tasks);
+          });
+          arr = _arr;
+      }
+    }
+    console.log("2",arr)
 
   //  if(payload.filter=="incomplete")
   //  {
     
   //    if(payload.groupBy!=""){
-  //     arr=data.filter((item)=>item.statusId!==5)
+  //     arr=arr.filter((item)=>item.statusId!==5)
   //      arr=this.$groupBy(arr,payload.groupBy)
   //    }
   //    else {
-  //      arr = data.filter((ele) => {
+  //     console.log("incomplente",arr)
+  //      arr = arr.filter((ele) => {
   //       ele.tasks = ele.tasks.filter((item) => item.statusId != 5);
   //       return ele.tasks.length > 0; // Return true only if ele.tasks has at least one remaining task
   //     });
@@ -71,11 +75,12 @@ export const mutations = {
   //  if(payload.filter=="complete")
   //  {
   //    if(payload.groupBy!=""){
-  //     arr=data.filter((item)=>item.statusId==5)
+  //     arr=arr.filter((item)=>item.statusId==5)
   //      arr=this.$groupBy(arr,payload.groupBy)
   //    }
   //    else {
-  //        arr = data.filter((ele) => {
+  //       console.log("complente",arr)
+  //        arr = arr.filter((ele) => {
   //       ele.tasks = ele.tasks.filter((item) => item.statusId == 5);
   //       return ele.tasks.length > 0; // Return true only if ele.tasks has at least one remaining task
   //     });
@@ -84,7 +89,7 @@ export const mutations = {
   //  if(payload.filter=="all")
   //  {
   //    if(payload.groupBy!=""){
-  //      arr=this.$groupBy(data,payload.groupBy)
+  //      arr=this.$groupBy(arr,payload.groupBy)
   //    }  
   //    else{
   //     arr=state.initialData

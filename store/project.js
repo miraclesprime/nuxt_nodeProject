@@ -784,9 +784,9 @@ export const actions = {
   // for dispatch fetching projects
   async fetchProjects(ctx, payload) {
     // console.log(JSON.parse(window.localStorage.getItem('user')).subb)
-    const res = await this.$axios.$get(`/project/company/${JSON.parse(window.localStorage.getItem('user')).subb}`, {
+    const res = await this.$axios.$get(`/project/company/${JSON.parse(localStorage.getItem('user')).subb}`, {
       headers: {
-        'Authorization': `Bearer ${window.localStorage.getItem('accessToken')}`,
+        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
         'Filter': payload ? payload : 'all'
       }
     });
