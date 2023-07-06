@@ -205,7 +205,7 @@ export default {
     }).then((res)=>{
      if (res.statusCode == 200) {
         context.store.dispatch('todo/setTodos', res.data)
-        context.store.dispatch('todo/setInitialTodos', res.data)
+        // context.store.dispatch('todo/setInitialTodos', res.data)
         return {localdata: res.data}
       }
       
@@ -716,28 +716,30 @@ export default {
     }, 400),
 
     filterView($event) {
-      this.loading = true
-      if ($event == 'complete') {
-        this.$store.dispatch('todo/fetchTodos', { filter: 'complete',sName:this.groupby }).then((res) => {
-          this.viewName = 'complete'
-          this.key += 1;
-          this.loading = false
-        }).catch(e => console.log(e))
-      }
-      if ($event == 'incomplete') {
-        this.$store.dispatch('todo/fetchTodos', { filter: 'incomplete',sName:this.groupby }).then((res) => {
-          this.viewName = 'incomplete'
-          this.key += 1;
-          this.loading = false
-        }).catch(e => console.log(e))
-      }
-      if ($event == 'all') {
-        this.$store.dispatch('todo/fetchTodos', { filter: 'all',sName:this.groupby }).then((res) => {
-          this.viewName = 'all'
-          this.key += 1;
-          this.loading = false
-        }).catch(e => console.log(e))
-      }
+      this.$store.commit("todo/getFilterMyTasks",{filter:$event, groupBy:this.groupby})
+
+      // this.loading = true
+      // if ($event == 'complete') {
+      //   this.$store.dispatch('todo/fetchTodos', { filter: 'complete',sName:this.groupby }).then((res) => {
+      //     this.viewName = 'complete'
+      //     this.key += 1;
+      //     this.loading = false
+      //   }).catch(e => console.log(e))
+      // }
+      // if ($event == 'incomplete') {
+      //   this.$store.dispatch('todo/fetchTodos', { filter: 'incomplete',sName:this.groupby }).then((res) => {
+      //     this.viewName = 'incomplete'
+      //     this.key += 1;
+      //     this.loading = false
+      //   }).catch(e => console.log(e))
+      // }
+      // if ($event == 'all') {
+      //   this.$store.dispatch('todo/fetchTodos', { filter: 'all',sName:this.groupby }).then((res) => {
+      //     this.viewName = 'all'
+      //     this.key += 1;
+      //     this.loading = false
+      //   }).catch(e => console.log(e))
+      // }
     },
 
     // Sort By Action List

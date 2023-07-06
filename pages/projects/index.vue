@@ -189,13 +189,14 @@ export default {
       })
     },
     ProjectView($event){
-      this.$store.dispatch('project/fetchProjects', $event).then(() => { 
-        if(this.groupVisible){
-              this.$store.dispatch('project/groupProjects', { key: this.groupBy}).then((res) => {
-          })
-        }
+      this.$store.commit("project/getFilterProjects",{filter:$event, groupBy:this.groupBy})
+      // this.$store.dispatch('project/fetchProjects', $event).then(() => { 
+      //   if(this.groupVisible){
+      //         this.$store.dispatch('project/groupProjects', { key: this.groupBy}).then((res) => {
+      //     })
+      //   }
        
-       })
+      //  })
     },
     sortProject($event) {
       

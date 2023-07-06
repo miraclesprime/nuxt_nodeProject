@@ -121,6 +121,7 @@ export default {
       contentWidth: "100%",
       groupVisible: false,
       groupBy:'',
+      filterData:'all',
       taskToDelete: {},
       sortName: 'priority'
     };
@@ -140,7 +141,10 @@ export default {
     localData(newValue, oldValue) {
       this.beforeLocal = oldValue
     },
-    
+    userTasks(newVal) {
+      let data = _.cloneDeep(newVal);
+      this.localData = data
+    },
     "$route.query": {
       immediate: true,
       handler(newVal) {
@@ -228,15 +232,15 @@ export default {
         this.$router.push({ path: "/dashboard" });
       }
 
-      _.delay(() => {
-        this.userfortask = this.teamMembers.find((u) => {
-          if (u.id == this.$route.query.id) {
-            this.selectedUser = u;
-            return u;
-          }
-        });
-        this.fetchUserTasks();
-      }, 5000);
+      // _.delay(() => {
+      //   this.userfortask = this.teamMembers.find((u) => {
+      //     if (u.id == this.$route.query.id) {
+      //       this.selectedUser = u;
+      //       return u;
+      //     }
+      //   });
+      //   this.fetchUserTasks();
+      // }, 5000);
     }
   },
 
@@ -271,14 +275,13 @@ export default {
     async fetchUserTasks($event) {
       if (process.client) {
         // this.loading = true;
-        let filterData = "all"
         if($event){
-          filterData=$event
+          this.filterData=$event
         }
 
         this.$store.dispatch("user/getUserTasks", {
           userId:this.userfortask ? this.userfortask.id : "",
-          filter: filterData,
+          filter: this.filterData,
           key: this.groupBy
       })
         .then(res=> {
@@ -572,28 +575,7 @@ export default {
       }
     },
     async filterView($event) {
-      if(this.groupVisible){
-        this.fetchUserTasks($event)
-      }
-      else {
-             this.loading = true;
-              let compid = JSON.parse(localStorage.getItem("user")).subb;
-              const res = await this.$axios.get("user/user-tasks", {
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                  Filter: $event,
-                  userid: this.userfortask ? this.userfortask.id : "",
-                },
-              });
-              if (res.data.statusCode == 200) {
-                this.tasks = res.data.data;
-                this.key += 1;
-              } else {
-                console.error(e);
-              }
-              this.viewName = $event;
-              this.loading = false;
-      }
+      this.$store.commit("user/getFilterUserTasks",{filter:$event, groupBy:this.groupBy})
     
     },
 
