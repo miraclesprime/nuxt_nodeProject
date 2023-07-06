@@ -10,7 +10,7 @@
           
           <!-- <adv-table-two :tableFields="taskFields" :tableData="localdata" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @title-click="openSidebar" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createTodo" @edit-section="renameTodo" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd" :drag="dragTable"></adv-table-two> -->
 
-          <adv-table-three :tableFields="taskFields" :tableData="localdata" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @title-click="openSidebar" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createTodo" @edit-section="renameTodo" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd" :drag="dragTable" :key="templateKey"></adv-table-three>
+          <adv-table-three :tableFields="taskFields" :tableData="localdata" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @title-click="openSidebar" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createTodo" @edit-section="renameTodo" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd" :drag="dragTable" :key="templateKey" :editSection="groupby"></adv-table-three>
               
           <!-- <loading :loading="loading"></loading> -->
             
@@ -196,12 +196,19 @@ export default {
         field.header_icon.isActive = false;
       }
     }
+  },
 
-    this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
-      if (res.statusCode == 200) {
-        this.localdata = _.cloneDeep(res.data)
-        this.key += 1
+  asyncData(context) {
+    const token = context.$cookies.get('b_ssojwt')
+    return  context.$axios.$get('/todo/all', {
+      headers: { 'Authorization': `Bearer ${token}`, 'Filter': 'all' }
+    }).then((res)=>{
+     if (res.statusCode == 200) {
+        context.store.dispatch('todo/setTodos', res.data)
+        context.store.dispatch('todo/setInitialTodos', res.data)
+        return {localdata: res.data}
       }
+      
     })
   },
 
@@ -1031,7 +1038,8 @@ export default {
     toggleSidebar($event) {
       // in case of create task 
       if (!$event) {
-        this.$nuxt.$emit("open-sidebar", $event)
+        // this.$nuxt.$emit("open-sidebar", $event)
+        this.$nuxt.$emit("open-sidebar", {...$event,userId:JSON.parse(localStorage.getItem("user")).sub});
       }
       this.flag = !this.flag;
     },

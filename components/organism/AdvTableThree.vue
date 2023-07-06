@@ -51,7 +51,10 @@
                       <span class="width-1 cursor-pointer" @click.stop="collapseItem('sectionContent' + section.id)">
                         <bib-icon icon="arrow-down" :scale="0.5" ></bib-icon> 
                       </span>
-                      <span class="font-w-700 cursor-pointer ml-025" >
+                      <span class="font-w-700 cursor-pointer ml-025" v-if="editSection" >
+                       {{ section.title }}
+                      </span>
+                      <span class="font-w-700 cursor-pointer ml-025" v-else >
                         <input type="text" class="editable-input section-title" :value="section.title.includes('_section') ? 'Untitled section'
                       : section.title" @input="debounceRenameSection(section.id, $event)" @blur="restoreField" />
                       </span>
@@ -105,12 +108,12 @@
                   </template>
                   <template v-if="field.key == 'startDate'" >
                     <!-- {{$formatDate(item[field.key])}} -->
-                    <!-- <datepicker class="align-right" size="sm" :calendar-button="true" :clear-button="true" wrapper-class="vue-calendar" :value="item[field.key] ? new Date(item[field.key]) : null" format="d MMM yyyy" :disabled-dates="startdateValid(item[field.key], item['dueDate'])" placeholder="No date" @click.native.stop="" @input="updateDate($event, item, field.key, field.label)"></datepicker> -->
+                    
                     <bib-datetime-picker v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                   </template>
                   <template v-if="field.key == 'dueDate'" >
                     <!-- {{$formatDate(item[field.key])}} -->
-                    <!-- <datepicker class="align-right" size="sm" :calendar-button="true" :clear-button="true" wrapper-class="vue-calendar" :value="item[field.key] ? new Date(item[field.key]) : null" format="d MMM yyyy" :disabled-dates="duedateValid(item[field.key], item['startDate'])" placeholder="No date" @click.native.stop="" @input="updateDate($event, item, field.key, field.label)"></datepicker> -->
+                    
                     <bib-datetime-picker v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
 
                   </template>
@@ -173,6 +176,7 @@ export default {
     contextItems: { type: Array },
     drag: { type: Boolean, default: true },
     // height: { type: String, default: '100%' }
+    editSection:{type:String, default:""},
     tasksKey: {
       type: String,
       default() {
@@ -232,6 +236,7 @@ export default {
       // console.log(newValue.sectionId)
       // this.localNewrow = _.cloneDeep(this.newRow)
       this.localNewrow = newValue
+
     },
     tableData(newValue){
       this.localData = _.cloneDeep(newValue)
@@ -718,7 +723,7 @@ export default {
 .adv-table-wrapper {
   overflow: auto;
   height: 100%;
-  min-width: 1400px!important;
+  /*min-width: 1400px!important;*/
 }
 
 .adv-table {

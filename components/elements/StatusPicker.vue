@@ -49,9 +49,9 @@ export default {
       let status = []
       this.status.forEach(st => {
         if (st.value == 0) status.push({ value: 0, label: "----", color: "", bgcolor: "" })
-        if (st.value == 1) status.push({ value: st.value, label: st.label, color: this.colors.ColorVariants.Secondary, bgcolor: this.hex2rgba(this.colors.ColorVariants.Secondary) })
-        if (st.value == 2) status.push({ value: st.value, label: st.label, color: this.colors.ColorVariants.Primary, bgcolor: this.hex2rgba(this.colors.ColorVariants.Primary) })
-        if (st.value == 3) status.push({ value: st.value, label: st.label, color: this.colors.ColorVariants.Orange, bgcolor: this.hex2rgba(this.colors.ColorVariants.Orange) })
+        if (st.value == 1) status.push({ value: st.value, label: st.label, color: this.colors.ColorVariants.Primary, bgcolor: this.hex2rgba(this.colors.ColorVariants.Secondary) })
+        if (st.value == 2) status.push({ value: st.value, label: st.label, color: this.colors.ColorVariants.Orange, bgcolor: this.hex2rgba(this.colors.ColorVariants.Primary) })
+        if (st.value == 3) status.push({ value: st.value, label: st.label, color: this.colors.ColorVariants.Secondary, bgcolor: this.hex2rgba(this.colors.ColorVariants.Orange) })
         if (st.value == 4) status.push({ value: st.value, label: st.label, color: this.colors.ColorVariants.Danger, bgcolor: this.hex2rgba(this.colors.ColorVariants.Danger) })
         if (st.value == 5) status.push({ value: st.value, label: st.label, color: this.colors.ColorVariants.Success, bgcolor: this.hex2rgba(this.colors.ColorVariants.Success) })
       })

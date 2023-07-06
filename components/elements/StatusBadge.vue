@@ -27,11 +27,11 @@ export default {
       }
       switch (this.status.id) {
         case 1:
-          return { text: this.status.text, color: this.colors.ColorVariants.Secondary }
-        case 2:
           return { text: this.status.text, color: this.colors.ColorVariants.Primary }
-        case 3:
+        case 2:
           return { text: this.status.text, color: this.colors.ColorVariants.Orange }
+        case 3:
+          return { text: this.status.text, color: this.colors.ColorVariants.Secondary }
         case 4:
           return { text: this.status.text, color: this.colors.ColorVariants.Danger }
         case 5:

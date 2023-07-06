@@ -185,53 +185,6 @@ export default {
   },
 
   created() {
-
-    if (process.client) {
-      this.$axios.$get(`project/${this.$route.params.id}`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-      }).then((res) => {
-        if (res) {
-          this.project = res.data;
-          if (!res.data || res.data.isDeleted) {
-            this.$router.push("/notfound")
-          } else {
-            this.$store.dispatch('project/setProject', res.data)
-            this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
-            this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
-            this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id, data: res.data })
-            this.validating = false
-          }
-        } else {
-          this.$router.push("/notfound")
-        }
-      }).catch(err => {
-        console.log("There was an issue in project API", err);
-        this.validating = false
-      })
-
-    }
-
-    if(this.projects.length == 0) {
-
-      this.$store.dispatch('project/fetchProjects').then((res) => {
-        let proj = res.find((p) => {
-          if(p.id == this.$route.params.id) {
-            // console.log(p)
-            return p;
-          } 
-        })
-
-        if((proj && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
-            // console.log('user has access!')
-        } else {
-            this.alertDialog = true
-            this.alertMsg = "You do not have access to this page!"
-            this.$router.push('/projects')      
-        }
-
-      });
-    }
-
     this.$nuxt.$on("change-grid-type", (type) => {
       this.gridType = type;
     });
@@ -245,13 +198,56 @@ export default {
     })
 
   },
+
+  asyncData(context) {
+    const token = context.$cookies.get('b_ssojwt')
+    return context.$axios.$get(`project/${context.params.id}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      }).then((res) => {
+        if (res) {
+            if (!res.data || res.data.isDeleted) {
+              context.store.$router.push("/notfound")
+            } else {
+              context.store.dispatch('project/setProject', res.data)
+              return {project: res.data, validating: false}
+            }
+        } else {
+           context.store.$router.push("/notfound")
+        }
+      }).catch(err => {
+        console.log("There was an issue in project API", err);
+        return {validating: false}
+      })
+
+  },
+
   mounted() {
     if (process.client) {
+    //   if(this.projects.length == 0) {
+
+    //   this.$store.dispatch('project/fetchProjects').then((res) => {
+    //     let proj = res.find((p) => {
+    //       if(p.id == this.$route.params.id) {
+    //         // console.log(p)
+    //         return p;
+    //       } 
+    //     })
+
+    //     if((proj && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
+    //         // console.log('user has access!')
+    //     } else {
+    //         this.alertDialog = true
+    //         this.alertMsg = "You do not have access to this page!"
+    //         this.$router.push('/projects')      
+    //     }
+
+    //   });
+    // }
       this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
       this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
-      this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id }).then(() => {
-        this.canDeleteProject();
-      })
+      // this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id }).then(() => {
+      //   this.canDeleteProject();
+      // })
     }
   },
 

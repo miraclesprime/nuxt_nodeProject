@@ -132,7 +132,7 @@ ul {
   top: 65px;
   bottom: 0;
   background-color: $white;
-  box-shadow: 5px 2px 15px $gray6;
+  box-shadow: -2px 2px 8px $secondary-sub4;
 
 }
 
@@ -421,6 +421,54 @@ ul {
   }
 }
 
+.picker-wrapper-two {
+  position: relative;
+  display: inline-block;
+  background-color: var(--bib-gray9);
+  border: 1px solid transparent;
+  &:hover { border-color: var(--bib-gray2); 
+    .user-data { color: var(--bib-text);}
+  }
+
+  .picker-content {
+    position: absolute;
+    z-index: 55;
+    left: -5px;
+    top: -5px;
+    min-height: fit-content;
+    max-height: 30rem;
+    min-width: calc(100% + 10px);
+    background-color: $white;
+    border: 1px solid $gray4;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 10px rgba(100, 100, 100, 0.25);
+    li { min-width: max-content;}
+  }
+
+  .user-data {
+    background-color: transparent;
+    font-size: $base-size;
+  }
+
+  .picker-input {
+    font-size: $font-size-sm;
+    border-radius: 0.2rem;
+    border: 1px solid $gray2;
+    width: 100%;
+    margin: 0.3rem 0;
+    padding: 0.3rem 0.4rem;
+
+    &:focus {
+      outline: none;
+      border-color: $gray6;
+      box-shadow: 0 0 5px $gray5;
+    }
+  }
+
+  .picker-list-wrap {}
+
+}
+
 .bib-datepicker,
 .vdp-datepicker {
   white-space: normal;
@@ -494,7 +542,6 @@ ul {
 
 }
 .button--drop .menu details .wrapper{
-
   z-index: 4 !important;
 
 }

@@ -1,135 +1,83 @@
 <template>
   <client-only>
     <div class="task-info position-relative px-105" id="sbf-task-input-wrap">
-      <div class="row " >
-        <div class="col-2"><label>Start Date</label></div>
-        <div class="col-6" >
-          <!-- <bib-datepicker v-model="startDateInput" :value="startDateInput" format="dd MMM yyyy" size="sm" label="" placeholder="Start date" ref="startDate" @input="debounceUpdateField('Start date', 'startDate', startDateInput)"></bib-datepicker> -->
-          <bib-datetime-picker :value="form.startDate" placeholder="Start date" ref="startDate" @input="debounceUpdateField('Start date', 'startDate', startDateInput)" ></bib-datetime-picker>
+      <div class="row mb-05 ">
+        <div class="col-2 align-center"><label>Start Date</label></div>
+        <div class="col-5">
+          <bib-datetime-picker :value="form.startDate" size="sm" placeholder="Start date" ref="startDate" @input="debounceUpdateField('Start date', 'startDate', startDateInput)"></bib-datetime-picker>
         </div>
       </div>
-      <div class="row " >
-        <div class="col-2"><label>Due Date</label></div>
-        <div class="col-6" >
-          <!-- <bib-datepicker class="align-right" v-model="dueDateInput" :value="dueDateInput" size="sm" format="dd MMM yyyy" label="" placeholder="Due date" ref="dueDate" @input="debounceUpdateField('Due date', 'dueDate', dueDateInput)"></bib-datepicker> -->
-          <bib-datetime-picker :value="form.dueDate" placeholder="Due date" ref="dueDate" @input="debounceUpdateField('Due date', 'dueDate', dueDateInput)" ></bib-datetime-picker>
+      <div class="row mb-05 ">
+        <div class="col-2 align-center"><label>Due Date</label></div>
+        <div class="col-5">
+          <bib-datetime-picker :value="form.dueDate" size="sm" placeholder="Due date" ref="dueDate" @input="debounceUpdateField('Due date', 'dueDate', dueDateInput)"></bib-datetime-picker>
         </div>
       </div>
-      <div class="row " >
-        <div class="col-2"><label>Project</label></div>
-        <div class="col-6" >
-          <bib-input
-            type="select"
-            size="sm"
-            label=""
-            :options="companyProjects"
-            v-model.number="form.projectId"
-            v-on:change.native="changeProject"
-          ></bib-input>
+      <div class="row mb-05 ">
+        <div class="col-2 align-center"><label>Project</label></div>
+        <div class="col-5">
+          <select-two :options="companyProjects" :value="form.projectId" title="Project" search icon="briefcase-solid" @change="changeProject"></select-two>
         </div>
       </div>
-      <div class="row " >
-        <div class="col-2"><label>Section</label></div>
-        <div class="col-6" >
-          <bib-input
-            type="select"
-            size="sm"
-            label=""
-            :options="sectionOpts"
-            v-model.number="form.sectionId"
-            placeholder="Please select ..."
-            v-on:change.native="
-              debounceUpdateField('Section', 'sectionId', form.sectionId)
-            "
-            :disabled="!form.projectId"
-          ></bib-input>
+      <div class="row mb-05 ">
+        <div class="col-2 align-center"><label>Section</label></div>
+        <div class="col-5">
+          <!-- <bib-input type="select" size="sm" label="" :options="sectionOpts" v-model.number="form.sectionId" placeholder="Please select ..." v-on:change.native="debounceUpdateField('Section', 'sectionId', form.sectionId)" :disabled="!form.projectId"></bib-input> -->
+          <section-select-two :options="sectionOpts" :value="form.sectionId" icon="menu-hamburger" title="Section" search @change="debounceUpdateField('Section', 'sectionId', $event.value)" ></section-select-two>
         </div>
       </div>
-      <div class="row " >
-        <div class="col-2"><label>Department</label></div>
-        <div class="col-6" >
-          <bib-input
-            type="select"
-            size="sm"
-            label=""
-            :options="departments"
-            v-model.number="form.departmentId"
-            v-on:change.native="
-              debounceUpdateField(
-                'Department',
-                'departmentId',
-                form.departmentId
-              )
-            "
-          ></bib-input>
+      <div class="row mb-05 ">
+        <div class="col-2 align-center"><label>Department</label></div>
+        <div class="col-5">
+          <select-two :options="departments" :value="form.departmentId" icon="projects" title="Department" @change="debounceUpdateField('Department','departmentId', $event.value)"></select-two>
         </div>
       </div>
-      <div class="row " >
-        <div class="col-2"><label>Priority</label></div>
-        <div class="col-6" >
-          <bib-input
-            type="select"
-            size="sm"
-            label=""
-            v-model.number="form.priorityId"
-            :options="priorityValues"
-            placeholder="Please select..."
-            v-on:change.native="
-              debounceUpdateField('Priority', 'priorityId', form.priorityId)
-            "
-          ></bib-input>
+      <div class="row mb-05 ">
+        <div class="col-2 align-center"><label>Priority</label></div>
+        <div class="col-5">
+          <priority-select-two :priority="form.priority" @change="debounceUpdateField('Priority', 'priorityId', $event.value)"></priority-select-two>
         </div>
       </div>
-      <div class="row " >
-        <div class="col-2"><label>Status</label></div>
-        <div class="col-6" >
-          <bib-input
-            type="select"
-            size="sm"
-            label=""
-            v-model.number="form.statusId"
-            :options="statusValues"
-            placeholder="Please select..."
-            v-on:change.native="
-              debounceUpdateField('Status', 'statusId', form.statusId)
-            "
-          ></bib-input>
+      <div class="row mb-05 ">
+        <div class="col-2 align-center"><label>Status</label></div>
+        <div class="col-5">
+          <status-select-two :status="form.status" @change="debounceUpdateField('Status', 'statusId', $event.value)" ></status-select-two>
         </div>
       </div>
-      <div class="row " >
-        <div class="col-12" >
-          <bib-input
-            type="textarea"
-            v-model.trim="form.description"
-            placeholder="Enter task description..."
-            label="Description"
-            v-on:keyup.native="
-              debounceUpdateField(
-                'Description',
-                'description',
-                form.description
-              )
-            "
-          ></bib-input>
+      <div class="row mb-05 ">
+        <div class="col-2 align-center"><label>Difficulty</label></div>
+        <div class="col-5">
+          <select-two :options="difficultyOpt" :value="2" icon="bib-logo" title="Difficulty" ></select-two>
+        </div>
+      </div>
+      <div class="row mb-05 ">
+        <div class="col-2 align-center"><label>Time</label></div>
+        <div class="col-5">
+          <bib-input type="time" icon-left="time" size="sm" v-model="form.time" placeholder="Select your time" label="" ></bib-input>
+        </div>
+      </div>
+      <div class="row mb-05 ">
+        <div class="col-2 align-center"><label>Budget</label></div>
+        <div class="col-5">
+          <bib-input type="text" icon-left="currency-dollar" size="sm" label="" v-model="form.budget" ></bib-input>
+        </div>
+      </div>
+      <div class="row ">
+        <div class="col-12">
+          <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter task description..." label="Description" v-on:keyup.native="debounceUpdateField('Description','description',form.description)"></bib-input>
         </div>
       </div>
       <bib-popup-notification-wrapper>
-          <template #wrapper>
-            <bib-popup-notification
-              v-for="(msg, index) in popupMessages"
-              :key="index"
-              :message="msg.text"
-              :variant="msg.variant"
-            >
-            </bib-popup-notification>
-          </template>
-        </bib-popup-notification-wrapper>
+        <template #wrapper>
+          <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
+          </bib-popup-notification>
+        </template>
+      </bib-popup-notification-wrapper>
     </div>
   </client-only>
 </template>
-
 <script>
-import { STATUS, PRIORITY } from "~/config/constants.js";
+import { STATUS, PRIORITY, DIFFICULTY } from "~/config/constants.js";
 import { mapGetters } from "vuex";
 import _ from "lodash";
 // import fecha, { format } from "fecha";
@@ -139,7 +87,7 @@ export default {
     task: {
       type: Object,
     },
-    
+
     departmentId: {
       type: Number,
     },
@@ -149,13 +97,14 @@ export default {
   data() {
     return {
       assignee: "",
-      statusValues: STATUS,
+      // statusValues: STATUS,
       priorityValues: PRIORITY,
+      difficultyOpt: DIFFICULTY,
       form: {},
       loading2: false,
       randomKey: 0,
       popupMessages: [],
-      validationDate:false
+      validationDate: false
     };
   },
   computed: {
@@ -186,12 +135,13 @@ export default {
     },
     sectionOpts() {
       let sec = [
-        { label: "Select section", value: "_section" + this.form.projectId },
+        // { label: "No section", value: null },
+        // { label: "Select section", value: "_section" + this.form.projectId },
       ];
       this.sections.forEach((s) => {
-        if (s.title.includes("_section")) {
+        /*if (s.title.includes("_section")) {
           return false;
-        }
+        }*/
         sec.push({ label: s.title, value: s.id });
       });
       return sec;
@@ -209,30 +159,26 @@ export default {
         if (!newValue) this.form.startDate = "";
         else {
           const newStartDate = new Date(newValue);
-          if (
-            this.dueDateInput &&
-            newStartDate.toISOString().slice(0, 10) >
-              this.dueDateInput.toISOString().slice(0, 10)
-          ) {
-            this.popupMessages.push({ text:"Invalid date", variant: "danger" });
+          if (this.dueDateInput && newStartDate.toISOString().slice(0, 10) > this.dueDateInput.toISOString().slice(0, 10)) {
+            this.popupMessages.push({ text: "Invalid date", variant: "danger" });
             this.dueDateInput = "";
-            this.validationDate=false
+            this.validationDate = false
             // this.$nextTick(() => {
             //   this.$refs.dueDate.$emit("input");
             // });
             this.$refs.startDate.variant = "alert";
           } else {
             if (this.$refs.dueDate.variant) this.$refs.dueDate.variant = null;
-            this.validationDate=true
-            this.form.startDate = new Date(newValue); 
-          //    this.$emit("update-field", {
-          //   name: "Start date",
-          //   field: "startDate",
-          //   value: newStartDate,
-          // });
+            this.validationDate = true
+            this.form.startDate = new Date(newValue);
+            //    this.$emit("update-field", {
+            //   name: "Start date",
+            //   field: "startDate",
+            //   value: newStartDate,
+            // });
           }
-          
-        
+
+
         }
       },
     },
@@ -250,31 +196,26 @@ export default {
           this.form.dueDate = "";
         } else {
           const newDueDate = new Date(newValue);
-          if (
-            this.startDateInput &&
-            newDueDate.toISOString().slice(0, 10) <
-              this.startDateInput.toISOString().slice(0, 10)
-          ) {
-            this.popupMessages.push({ text:"Invalid date", variant: "danger" });
+          if (this.startDateInput && newDueDate.toISOString().slice(0, 10) < this.startDateInput.toISOString().slice(0, 10)) {
+            this.popupMessages.push({ text: "Invalid date", variant: "danger" });
             this.startDateInput = "";
-            this.validationDate=false
+            this.validationDate = false
             // this.$nextTick(() => {
             //   this.$refs.startDate.$emit("input");
             // });
             this.$refs.dueDate.variant = "alert";
           } else {
-            if (this.$refs.startDate.variant)
-              this.$refs.startDate.variant = null;
-               this.form.dueDate = newDueDate;
-               this.validationDate=true 
-              //  this.$emit("update-field", {
-              //   name: "Due date",
-              //   field: "dueDate",
-              //   value: newDueDate,
-              // });
+            if (this.$refs.startDate.variant) this.$refs.startDate.variant = null;
+            this.form.dueDate = newDueDate;
+            this.validationDate = true
+            //  this.$emit("update-field", {
+            //   name: "Due date",
+            //   field: "dueDate",
+            //   value: newDueDate,
+            // });
           }
-           
-         
+
+
         }
       },
     },
@@ -291,8 +232,7 @@ export default {
       if (Object.keys(this.task).length) {
         this.form = _.cloneDeep(this.task);
         if (this.task.project?.length) {
-          this.form.projectId =
-            this.task.project?.[0]?.projectId || this.task.project?.[0]?.project?.id;
+          this.form.projectId = this.task.project?. [0]?.projectId || this.task.project?. [0]?.project?.id;
           this.$store.dispatch("section/fetchProjectSections", {
             projectId: this.form.projectId,
             filter: "all",
@@ -327,12 +267,12 @@ export default {
     },
   },
   methods: {
-       /*parseDate(dateString, format) {
-              return fecha.parse(dateString, format);
-          },
-          formatDate(dateObj, format) {
-              return fecha.format(dateObj, format);
-          },*/
+    /*parseDate(dateString, format) {
+           return fecha.parse(dateString, format);
+       },
+       formatDate(dateObj, format) {
+           return fecha.format(dateObj, format);
+       },*/
 
     changeProject() {
       if (!this.form.projectId || this.form.projectId == "") {
@@ -353,10 +293,7 @@ export default {
         return false;
       }
       this.loading2 = true;
-      if (
-        this.form.projectId &&
-        (!this.form.sectionId || this.form.sectionId == "")
-      ) {
+      if (this.form.projectId && (!this.form.sectionId || this.form.sectionId == "")) {
         this.form.sectionId = "_section" + this.form.projectId;
       }
       this.$store
@@ -390,35 +327,43 @@ export default {
           );
         });
     },
-    debounceUpdateField: _.debounce(function (name, field, value) {
+    debounceUpdateField: _.debounce(function(name, field, value) {
       if (this.form?.id) {
-        if((field==="startDate"||field==="dueDate")&&!this.validationDate) return;
+        if ((field === "startDate" || field === "dueDate") && !this.validationDate) return;
         this.$emit("update-field", { name: name, field: field, value: value });
-      } 
-    }, 1000),
-    debounceProjectUpdateField: _.debounce(function (
-      pName,
-      pField,
-      pValue,
-      sName,
-      sField,
-      sValue,
-      oldProjValue
-    ) {
-      if (this.form?.id) {
-        this.$emit("update-project-field", {
-          projName: pName,
-          projField: pField,
-          projValue: pValue,
-          secName: sName,
-          secField: sField,
-          secValue: sValue,
-          oldProjValue: oldProjValue,
-        });
       }
-    },
-    500),
+      // console.log(...arguments)
+    }, 1000),
+    debounceProjectUpdateField: _.debounce(function(
+        pName,
+        pField,
+        pValue,
+        sName,
+        sField,
+        sValue,
+        oldProjValue
+      ) {
+        if (this.form?.id) {
+          this.$emit("update-project-field", {
+            projName: pName,
+            projField: pField,
+            projValue: pValue,
+            secName: sName,
+            secField: sField,
+            secValue: sValue,
+            oldProjValue: oldProjValue,
+          });
+        }
+      },
+      500),
   },
 };
+
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.task-info {
+  font-size: $font-size-sm;
+}
+.bib-datepicker__input,
+.vdpComponent__input { margin-block: 0;}
+</style>

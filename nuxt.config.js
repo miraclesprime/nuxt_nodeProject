@@ -134,7 +134,8 @@ export default {
     dummy: resolve(__dirname, "./dummy"),
   },
   loading: {
-    color: "#1f42a2",
+    color: "#2ba026",
+    height: 0
   },
   dayjs: {
     locales: ["en", "ca"],
@@ -145,6 +146,7 @@ export default {
   server: {
     port: 4000,
   },
+  ssr: true,
   target: "static",
   // auth: {
   //   plugins: ["~/plugins/auth"],

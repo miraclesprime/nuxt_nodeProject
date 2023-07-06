@@ -1,9 +1,9 @@
 <template>
   <div class="title text-gray section-drag-handle flex-grow-1" id="task-grid-section-title-wrapper">
     <template v-if="sectionEdit">
-      <input type="text" class="editable-input" id="tgst-section-edit-input" ref="sectionEditInput" :value="title" @input.stop="debounceUpdateTitle" @blur="() => {sectionEdit = false}" @keyup.esc="() => {sectionEdit = false}">
+      <input type="text" class="editable-input" id="tgst-section-edit-input" ref="sectionEditInput" :value="section.title" @input.stop="debounceUpdateTitle" @blur="() => {sectionEdit = false}" @keyup.esc="() => {sectionEdit = false}">
     </template>
-    <span v-else style="cursor: text" id="tgst-mark-section-editable" @click.stop="makeSectionEditable">{{ section.title.includes('_section') ? 'Untitled section' : title }}</span>
+    <span v-else style="cursor: text" id="tgst-mark-section-editable" @click.stop="makeSectionEditable">{{ section.title.includes('_section') ? 'Untitled section' : section.title }}</span>
   </div>
 </template>
 
@@ -16,7 +16,7 @@ export default {
 
   data() {
     return {
-      title: this.section.title,
+      // title: this.section.title,
       sectionEdit: false,
     }
   },

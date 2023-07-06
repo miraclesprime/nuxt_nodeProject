@@ -8,7 +8,7 @@
       <template v-if="projects.length">
         <template v-if="groupVisible">
          
-          <adv-table-three :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @context-open="contextOpen" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" @create-row="createProject" :drag="false" :key="templateKey"></adv-table-three>
+          <adv-table-three :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @context-open="contextOpen" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" @create-row="createProject" :drag="false" :key="templateKey" :editSection="groupBy"></adv-table-three>
         </template>
 
         <template v-else>
@@ -113,7 +113,6 @@ export default {
 
   asyncData(context){
     const token = context.$cookies.get('b_ssojwt')
-    // if(token){
       return context.$axios.$get(`project/company/O3GWpmbk5ezJn4KR`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -138,7 +137,6 @@ export default {
       })
       return {localData: newArr}
     })
-    // }
    
   },
 

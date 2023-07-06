@@ -435,7 +435,6 @@ export default {
 }
 .selectedSubRow {
   background-color:#fbf2f2
-  // color: black;
 }
 .table {
   width: 100%;
@@ -450,11 +449,10 @@ export default {
       text-align: left;
       font-weight: normal;
       color: $gray4;
-      padding: 0.1rem 0.2rem;
-      // border-top: 1px solid var(--bib-light);
+      padding: 0.15rem 0.2rem;
+      
       border-bottom: 1px solid var(--bib-light);
-      // border-left: 1px solid transparent;
-      // border-right: 1px solid transparent;
+      
       color: var(--bib-text-light);
       &:first-child { padding-left: 0 }
       &:last-child { padding-right: 0 }
@@ -482,11 +480,8 @@ export default {
 
   tbody {
     td {
-      padding: 0.1rem 0.2rem;
-      // border-top: 1px solid var(--bib-light);
+      padding: 0.15rem 0.2rem;
       border-bottom: 1px solid var(--bib-light);
-      // border-left: 1px solid transparent;
-      // border-right: 1px solid transparent;
       color: var(--bib-text);
       &:first-child { padding-left: 0 }
       &:last-child { padding-right: 0 }

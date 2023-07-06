@@ -76,7 +76,7 @@
         <div class="align-center gap-05" >
           <span class="font-sm text-gray6" style="white-space: nowrap;">Assigned to</span> 
           <div style="flex-basis: 2rem;">
-            <user-select :userId="currentTask.userId" mode="avatar"></user-select> <!-- <bib-avatar></bib-avatar> -->
+            <user-select :userId="currentTask.userId" mode="avatar" minWidth="15rem" maxWidth="18rem"></user-select> <!-- <bib-avatar></bib-avatar> -->
           </div>
           <!-- <div class="d-inline-flex align-center">
           </div> -->
@@ -167,6 +167,7 @@ export default {
       sections: "section/getProjectSections",
       currentTask: "task/getSelectedTask",
       favTasks: "task/getFavTasks",
+      sideBarUser:"user/getSideBarUser"
     }),
     
     teammates() {
@@ -483,7 +484,10 @@ export default {
         // if new task
         this.$refs.taskTitleInput.blur()
         this.form.projectId = this.project?.id || ""
+        this.form.userId=this.sideBarUser?.id || this.sideBarUser || "";
         this.createTask(this.form)
+        this.$store.dispatch("user/setSideBarUser",[])
+        
       }
     }, 500),
     setFavorite() {
