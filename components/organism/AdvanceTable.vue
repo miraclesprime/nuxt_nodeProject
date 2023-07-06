@@ -346,9 +346,9 @@ export default {
       // it runs during class creation
       for (var i = 0; i < dragColumns.length; i++) {
         dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'>" +
-          "<div class='resize-drag-handle' style='"+
+            "<div class='resize-drag-handle' style='"+
           "position:absolute;height:100%;width:4px;right:0;top:0px;cursor:w-resize;z-index:4; background-color: var(--bib-secondary-sub4)'>"+
-          "</div>"+
+            "</div>"+
           dragColumns[i].innerHTML +
           "</div>";
         // BUGBUG: calculate real border width instead of 5px!!!
