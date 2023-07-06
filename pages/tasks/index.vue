@@ -608,38 +608,39 @@ export default {
     },
 
     async filterView($event) {
-      if ($event == "complete") {
-        let viewData = await JSON.parse(JSON.stringify(this.tasks));
-        let newArr = [];
-        await viewData.map((dept) => {
-          let tArr = dept.tasks.filter((t) => t.statusId == 5);
-          dept["tasks"] = tArr;
-          newArr.push(dept);
-        });
+      this.$store.commit("company/getFilterTasks",{filter:$event, groupBy:this.group})
+      // if ($event == "complete") {
+      //   let viewData = await JSON.parse(JSON.stringify(this.tasks));
+      //   let newArr = [];
+      //   await viewData.map((dept) => {
+      //     let tArr = dept.tasks.filter((t) => t.statusId == 5);
+      //     dept["tasks"] = tArr;
+      //     newArr.push(dept);
+      //   });
 
-        this.localData = newArr;
-        this.key += 1;
-      }
+      //   this.localData = newArr;
+      //   this.key += 1;
+      // }
 
-      if ($event == "incomplete") {
-        let viewData = await JSON.parse(JSON.stringify(this.tasks));
-        let newArr = [];
-        await viewData.map((dept) => {
-          let tArr = dept.tasks.filter((t) => t.statusId != 5);
-          dept["tasks"] = tArr;
-          newArr.push(dept);
-        });
+      // if ($event == "incomplete") {
+      //   let viewData = await JSON.parse(JSON.stringify(this.tasks));
+      //   let newArr = [];
+      //   await viewData.map((dept) => {
+      //     let tArr = dept.tasks.filter((t) => t.statusId != 5);
+      //     dept["tasks"] = tArr;
+      //     newArr.push(dept);
+      //   });
 
-        this.localData = newArr;
-        this.key += 1;
-      }
+      //   this.localData = newArr;
+      //   this.key += 1;
+      // }
 
-      if ($event == "all") {
-        let viewData = await JSON.parse(JSON.stringify(this.tasks));
+      // if ($event == "all") {
+      //   let viewData = await JSON.parse(JSON.stringify(this.tasks));
 
-        this.localData = viewData;
-        this.key += 1;
-      }
+      //   this.localData = viewData;
+      //   this.key += 1;
+      // }
     },
 
     checkActive() {
@@ -663,7 +664,7 @@ export default {
       if($event != 'default') {
         this.dragTable = false;
       } else {
-        this.group=''
+        this.group='department'
         this.dragTable = true;
         this.$store.commit('company/groupTasks',{sName:"department"})
         return;
