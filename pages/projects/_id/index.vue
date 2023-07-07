@@ -51,7 +51,7 @@
               </template>
             </bib-popup>
           </div>
-          <loading :loading="favLoading"></loading>
+          <!-- <loading :loading="favLoading"></loading> -->
         </div>
       </nav>
 

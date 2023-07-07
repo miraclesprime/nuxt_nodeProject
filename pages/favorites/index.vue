@@ -17,7 +17,7 @@
           <advance-table :drag="false" :tableFields="taskTableFields" :tableData="taskSubtaskLocalData" :contextItems="taskContextMenuItems" @context-item-event="taskContextItemClick" @row-click ="openSidebar" @table-sort="sortTask" @context-open="taskContextOpen"  @title-click="openSidebar" @update-field="updateTask" sectionTitle="Favorite Tasks" :plusButton="false" :key="templateKey"></advance-table>
         </div>
       
-        <loading :loading="loading"></loading>
+        <!-- <loading :loading="loading"></loading> -->
       </div>
 
       <!-- subtask panel -->
@@ -33,7 +33,7 @@
         <template slot="content">
           <div>
             <bib-input type="text" v-model.trim="currentProject.title" placeholder="Enter name..."></bib-input>
-            <loading2 :loading="loading2"></loading2>
+            <!-- <loading2 :loading="loading2"></loading2> -->
           </div>
         </template>
         <template slot="footer">

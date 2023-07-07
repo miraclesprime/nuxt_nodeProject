@@ -19,22 +19,18 @@ export const getters = {
 };
 
 export const mutations = {
-  setInitialSections(state,payload){
-    let arr = JSON.parse(JSON.stringify(payload));
-    let sorted = arr.map((s) => {
-      let t = s.tasks.sort((a, b) => a.order - b.order);
-      s.tasks = t;
-      return s;
-    });
-    state.initialSections=sorted
-
-  },
   fetchSections(state, payload) {
     state.sections = payload;
   },
 
   fetchProjectSections(state, payload){
     state.projectSections = payload
+    let sorted = payload.map((s) => {
+      let t = s.tasks.sort((a, b) => a.order - b.order);
+      s.tasks = t;
+      return s;
+    });
+    state.initialSections=sorted
   },
 
   createSection(state, payload) {
@@ -59,10 +55,66 @@ export const mutations = {
       }
     })
   },
+  getFilterSections(state,payload){
+    console.log(payload)
+    let arr=JSON.parse(JSON.stringify(state.initialSections));
+    arr=arr.filter((item)=>{
+      if(item.tasks.length>0){
+        return item
+      }
+    })
+
+    if(payload.groupBy!=""){ 
+      if(arr[0].tasks){
+        let _arr = [];
+          arr.forEach((ele) => {
+            _arr = _arr.concat(ele.tasks);
+          });
+          arr = _arr;
+      }
+    }
+
+   if(payload.filter=="incomplete")
+   {
+    
+     if(payload.groupBy!=""){
+      arr=arr.filter((item)=>item.statusId!==5)
+       arr=this.$groupBy(arr,payload.groupBy)
+     }
+     else {
+       arr = arr.filter((ele) => {
+        ele.tasks = ele.tasks.filter((item) => item.statusId != 5);
+        return ele.tasks.length > 0; // Return true only if ele.tasks has at least one remaining task
+      });
+     }  
+   }
+
+   if(payload.filter=="complete")
+   {
+     if(payload.groupBy!=""){
+      arr=arr.filter((item)=>item.statusId==5)
+       arr=this.$groupBy(arr,payload.groupBy)
+     }
+     else {
+          arr = arr.filter((ele) => {
+        ele.tasks = ele.tasks.filter((item) => item.statusId == 5);
+        return ele.tasks.length > 0; // Return true only if ele.tasks has at least one remaining task
+      });
+     }    
+   }
+   if(payload.filter=="all")
+   {
+     if(payload.groupBy!=""){
+       arr=this.$groupBy(arr,payload.groupBy)
+     }  
+     else{
+      arr=state.initialSections
+     } 
+   }
+  state.projectSections=arr
+  },
   groupSectionProject(state, payload) {
     let arr = JSON.parse(JSON.stringify(state.projectSections));
-    let arrIndex;
-    let _tasks;
 
     arr.filter((item)=>{
       if(item.tasks.length>0){
@@ -78,170 +130,172 @@ export const mutations = {
         arr = _arr;
     }
 
-    if (payload.sName == "priority") {
-      arrIndex = "priority";
-      let items = [];
+//     if (payload.sName == "priority") {
+//       arrIndex = "priority";
+//       let items = [];
 
-      arr.sort((a,b)=>{
-        if (a.priorityId === null && b.priorityId !== null) {
-          return 1;
-        }
-        if (b.priorityId === null && a.priorityId !== null) {
-          return -1;
-        }
-        if (a.priorityId === null && b.priorityId === null) {
-          return 0;
-        }
-        return a.priorityId - b.priorityId;
-      })
-      arr.forEach((ele) => {
-        let title = ele.priority !== null && ele.priority?.text !== null ? ele.priority.text.charAt(0).toUpperCase()+ele.priority.text.slice(1) : "Unassigned"
-         if (!items.includes(title)) items.push(title);
-       });
-       _tasks = items.map((item, idx) => {
-         return {
-           id: idx,
-           title: item !== null ? item : "Unassigned",
-           tasks: arr.filter(
-             (_item) =>
-               (_item[arrIndex] !== null&&_item[arrIndex]?.text !== null ?  _item[arrIndex].text.charAt(0).toUpperCase()+_item[arrIndex].text.slice(1) : null) ===
-               (item === "Unassigned" ? null : item)
-           ),
-         };
-       });
-    }
-    if (payload.sName == "department") {
-      arrIndex = "department";
-      let items = [];
-      arr.sort((a,b)=>{
-        if (a.departmentId === null && b.departmentId !== null) {
-          return 1;
-        }
-        if (b.departmentId === null && a.departmentId !== null) {
-          return -1;
-        }
-        if (a.departmentId === null && b.departmentId === null) {
-          return 0;
-        }
-        return a.departmentId - b.departmentId;
-      })  
+//       arr.sort((a,b)=>{
+//         if (a.priorityId === null && b.priorityId !== null) {
+//           return 1;
+//         }
+//         if (b.priorityId === null && a.priorityId !== null) {
+//           return -1;
+//         }
+//         if (a.priorityId === null && b.priorityId === null) {
+//           return 0;
+//         }
+//         return a.priorityId - b.priorityId;
+//       })
+//       arr.forEach((ele) => {
+//         let title = ele.priority !== null && ele.priority?.text !== null ? ele.priority.text.charAt(0).toUpperCase()+ele.priority.text.slice(1) : "Unassigned"
+//          if (!items.includes(title)) items.push(title);
+//        });
+//        _tasks = items.map((item, idx) => {
+//          return {
+//            id: idx,
+//            title: item !== null ? item : "Unassigned",
+//            tasks: arr.filter(
+//              (_item) =>
+//                (_item[arrIndex] !== null&&_item[arrIndex]?.text !== null ?  _item[arrIndex].text.charAt(0).toUpperCase()+_item[arrIndex].text.slice(1) : null) ===
+//                (item === "Unassigned" ? null : item)
+//            ),
+//          };
+//        });
+//     }
+//     if (payload.sName == "department") {
+//       arrIndex = "department";
+//       let items = [];
+//       arr.sort((a,b)=>{
+//         if (a.departmentId === null && b.departmentId !== null) {
+//           return 1;
+//         }
+//         if (b.departmentId === null && a.departmentId !== null) {
+//           return -1;
+//         }
+//         if (a.departmentId === null && b.departmentId === null) {
+//           return 0;
+//         }
+//         return a.departmentId - b.departmentId;
+//       })  
       
 
-      arr.forEach((ele) => {
-        let title =
-          ele.departmentId !== null ? ele.department.title : "Unassigned";
-        if (!items.includes(title)) items.push(title);
-      });
-      _tasks = items.map((item, idx) => {
-        return {
-          id: idx,
-          title: item !== null ? item : "Unassigned",
-          tasks: arr.filter(
-            (_item) =>
-              (_item[arrIndex] !== null ? _item[arrIndex].title : null) ===
-              (item === "Unassigned" ? null : item)
-          ),
-        };
-      });
-    }
-    if (payload.sName == "assignee") {
-      arrIndex = "user";
-      let items = [];
-      arr.sort((a,b)=>{
-        return a.id - b.id;
-      })  
+//       arr.forEach((ele) => {
+//         let title =
+//           ele.departmentId !== null ? ele.department.title : "Unassigned";
+//         if (!items.includes(title)) items.push(title);
+//       });
+//       _tasks = items.map((item, idx) => {
+//         return {
+//           id: idx,
+//           title: item !== null ? item : "Unassigned",
+//           tasks: arr.filter(
+//             (_item) =>
+//               (_item[arrIndex] !== null ? _item[arrIndex].title : null) ===
+//               (item === "Unassigned" ? null : item)
+//           ),
+//         };
+//       });
+//     }
+//     if (payload.sName == "assignee") {
+//       arrIndex = "user";
+//       let items = [];
+//       arr.sort((a,b)=>{
+//         return a.id - b.id;
+//       })  
 
-      arr.forEach((ele) => {
-        let title =
-          ele.user !== null&&ele.user!==undefined 
-            ? ele.user.firstName + " " + ele.user.lastName
-            : "Unassigned";
-        if (!items.includes(title)) items.push(title);
-      });
-      _tasks = items.map((item, idx) => {
-        return {
-          id: idx,
-          title: item !== null ? item : "Unassigned",
-          tasks: arr.filter(
-            (_item) =>
-              (_item[arrIndex] !== null&&_item[arrIndex] !== undefined
-                ? _item[arrIndex].firstName + " " + _item[arrIndex].lastName
-                : null) === (item === "Unassigned" ? null : item)
-          ),
-        };
-      });
-    }
-    if (payload.sName == "status") {
-      arrIndex = "status";
-      let items = [];
+//       arr.forEach((ele) => {
+//         let title =
+//           ele.user !== null&&ele.user!==undefined 
+//             ? ele.user.firstName + " " + ele.user.lastName
+//             : "Unassigned";
+//         if (!items.includes(title)) items.push(title);
+//       });
+//       _tasks = items.map((item, idx) => {
+//         return {
+//           id: idx,
+//           title: item !== null ? item : "Unassigned",
+//           tasks: arr.filter(
+//             (_item) =>
+//               (_item[arrIndex] !== null&&_item[arrIndex] !== undefined
+//                 ? _item[arrIndex].firstName + " " + _item[arrIndex].lastName
+//                 : null) === (item === "Unassigned" ? null : item)
+//           ),
+//         };
+//       });
+//     }
+//     if (payload.sName == "status") {
+//       arrIndex = "status";
+//       let items = [];
       
-        arr.sort((a,b)=>{
-        if (a.statusId === null && b.statusId !== null) {
-          return 1;
-        }
-        if (b.statusId === null && a.statusId !== null) {
-          return -1;
-        }
-        if (a.statusId === null && b.statusId === null) {
-          return 0;
-        }
-        return a.statusId - b.statusId;
-      })   
-      arr.forEach((ele) => {
-        let title = ele.statusId !== null ? ele.status.text : "Unassigned";
-        if (!items.includes(title)) items.push(title);
-      });
-      _tasks = items.map((item, idx) => {
-        return {
-          id: idx,
-          title: item !== null ? item : "Unassigned",
-          tasks: arr.filter(
-            (_item) =>
-              (_item[arrIndex] !== null ? _item[arrIndex].text : null) ===
-              (item === "Unassigned" ? null : item)
-          ),
-        };
-      });
-    }
-    if(payload.sName=="dueDate"){
-      arrIndex = "dueDate";
-      let items = [];
-      arr.sort((a,b)=>{
-        if (a.dueDate === null && b.dueDate !== null) {
-          return 1;
-        }
-        if (b.dueDate === null && a.dueDate !== null) {
-          return -1;
-        }
+//         arr.sort((a,b)=>{
+//         if (a.statusId === null && b.statusId !== null) {
+//           return 1;
+//         }
+//         if (b.statusId === null && a.statusId !== null) {
+//           return -1;
+//         }
+//         if (a.statusId === null && b.statusId === null) {
+//           return 0;
+//         }
+//         return a.statusId - b.statusId;
+//       })   
+//       arr.forEach((ele) => {
+//         let title = ele.statusId !== null ? ele.status.text : "Unassigned";
+//         if (!items.includes(title)) items.push(title);
+//       });
+//       _tasks = items.map((item, idx) => {
+//         return {
+//           id: idx,
+//           title: item !== null ? item : "Unassigned",
+//           tasks: arr.filter(
+//             (_item) =>
+//               (_item[arrIndex] !== null ? _item[arrIndex].text : null) ===
+//               (item === "Unassigned" ? null : item)
+//           ),
+//         };
+//       });
+//     }
+//     if(payload.sName=="dueDate"){
+//       arrIndex = "dueDate";
+//       let items = [];
+//       arr.sort((a,b)=>{
+//         if (a.dueDate === null && b.dueDate !== null) {
+//           return 1;
+//         }
+//         if (b.dueDate === null && a.dueDate !== null) {
+//           return -1;
+//         }
    
-        return new Date(a.dueDate) - new Date(b.dueDate);
-      })
-      arr.forEach((ele) => {
-        let title
-        if(ele.dueDate!==null){
-          title =this.$CalDate(ele.dueDate)
-        }
-        else {
-          title="Unassigned"
-        }
-        if (!items.includes(title)) items.push(title);
-      });
-      _tasks = items.map((item, idx) => {
-        return {
-          id: idx,
-          title: item !== null ? item : "Unassigned",
-          tasks: arr.filter(
-            (_item) =>
-              (_item[arrIndex] !== null ? this.$CalDate(_item[arrIndex]) : null) ===
-              (item === "Unassigned" ? null : item)
-          ),
-        };
-      });
-}
-    state.projectSections = _tasks;
-    if(payload.sName==""){
-      state.projectSections=state.initialSections
-    }
+//         return new Date(a.dueDate) - new Date(b.dueDate);
+//       })
+//       arr.forEach((ele) => {
+//         let title
+//         if(ele.dueDate!==null){
+//           title =this.$CalDate(ele.dueDate)
+//         }
+//         else {
+//           title="Unassigned"
+//         }
+//         if (!items.includes(title)) items.push(title);
+//       });
+//       _tasks = items.map((item, idx) => {
+//         return {
+//           id: idx,
+//           title: item !== null ? item : "Unassigned",
+//           tasks: arr.filter(
+//             (_item) =>
+//               (_item[arrIndex] !== null ? this.$CalDate(_item[arrIndex]) : null) ===
+//               (item === "Unassigned" ? null : item)
+//           ),
+//         };
+//       });
+// }
+      if(payload.sName==""){
+        state.projectSections=state.initialSections
+      }
+      else {
+      state.projectSections=this.$groupBy(arr,payload.sName)
+      }
   },
 
 };
@@ -270,7 +324,6 @@ export const actions = {
     });
 
     if (res.statusCode == 200) {
-      ctx.commit('setInitialSections', res.data);
       ctx.commit('fetchProjectSections', res.data);
       if(payload.sName&&payload.sName!=="default"){
         const data={
