@@ -347,6 +347,7 @@ export default {
     },
 
     updateTask(taskData) {
+      console.log(taskData)
       let updata={[taskData.field]: taskData.value}
       let updatedvalue = taskData.value
       let projectId = null
@@ -386,22 +387,21 @@ export default {
         })
       }
       if (taskData.name == 'Department') {
-// updated by @wen 5.29
-          let dp = this.departments.find(d => {
-              if(taskData.value == undefined) {
-                return null;
-              } 
-              if(d.value == taskData.value) {
-                return d.label;
-              }
-            })
-            console.log(dp)
-            if(dp == undefined) {
-              updata = { [taskData.field]: null}
-              updatedvalue = "not assigned"
-            } else {
-              updatedvalue = dp.label
+        let dp = this.departments.find(d => {
+            if(taskData.value == undefined) {
+              return null;
+            } 
+            if(d.value == taskData.value) {
+              return d.label;
             }
+          })
+          console.log(dp)
+          if(dp == undefined) {
+            updata = { [taskData.field]: null}
+            updatedvalue = "not assigned"
+          } else {
+            updatedvalue = dp.label
+          }
       }
       if (taskData.name == "Due date" || taskData.name == "Start date") {
         updatedvalue = dayjs(taskData.value).format('DD MMM YYYY')
@@ -414,7 +414,7 @@ export default {
         user = null
       }
       
-          this.$store.dispatch("task/updateTask", {
+      this.$store.dispatch("task/updateTask", {
         id: this.form.id,
         data: updata,
         user,

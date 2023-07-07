@@ -34,6 +34,7 @@ export default {
     icon: { type: String, default: null },
     title: { type: String, default: "Select" },
     search: Boolean,
+    disabled: Boolean,
   },
 
   data() {
@@ -89,6 +90,9 @@ export default {
   },*/
   methods: {
     triggerOpen() {
+      if (this.disabled) {
+        return
+      }
       this.show = !this.show
       this.$nextTick(() => {
         this.$refs.selectFilterInput.focus()

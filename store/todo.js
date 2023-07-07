@@ -17,11 +17,10 @@ export const getters = {
 export const mutations = {
 
   fetchTodos(state, payload) {
-    let arr=[]
-    arr=payload
-    arr.sort((a, b) => a.uOrder - b.uOrder)
-    state.todos =arr 
-    state.initialData=arr
+    let arr = [...payload];
+    arr.sort((a, b) => a.uOrder - b.uOrder);
+    state.todos = arr;
+    state.initialData = arr;
   },
 
   createTodo(state, payload) {
@@ -32,19 +31,16 @@ export const mutations = {
 
   setTodos(state, payload) {
     state.todos = payload;
+    state.initialData = payload
   },
 
   getFilterMyTasks(state,payload){
-    console.log(payload)
-    let arr=[]
-    arr=state.initialData
-    console.log("0",arr)
+    let arr=JSON.parse(JSON.stringify(state.initialData));
     arr=arr.filter((item)=>{
       if(item.tasks.length>0){
         return item
       }
     })
-    console.log("1",arr)
     if(payload.groupBy!=""){ 
       if(arr[0].tasks){
         let _arr = [];
@@ -53,50 +49,47 @@ export const mutations = {
           });
           arr = _arr;
       }
+
     }
-    console.log("2",arr)
 
-  //  if(payload.filter=="incomplete")
-  //  {
+   if(payload.filter=="incomplete")
+   {
     
-  //    if(payload.groupBy!=""){
-  //     arr=arr.filter((item)=>item.statusId!==5)
-  //      arr=this.$groupBy(arr,payload.groupBy)
-  //    }
-  //    else {
-  //     console.log("incomplente",arr)
-  //      arr = arr.filter((ele) => {
-  //       ele.tasks = ele.tasks.filter((item) => item.statusId != 5);
-  //       return ele.tasks.length > 0; // Return true only if ele.tasks has at least one remaining task
-  //     });
-  //    }  
-  //  }
+     if(payload.groupBy!=""){
+      arr=arr.filter((item)=>item.statusId!==5)
+       arr=this.$groupBy(arr,payload.groupBy)
+     }
+     else {
+       arr = arr.filter((ele) => {
+        ele.tasks = ele.tasks.filter((item) => item.statusId != 5);
+        return ele.tasks.length > 0; // Return true only if ele.tasks has at least one remaining task
+      });
+     }  
+   }
 
-  //  if(payload.filter=="complete")
-  //  {
-  //    if(payload.groupBy!=""){
-  //     arr=arr.filter((item)=>item.statusId==5)
-  //      arr=this.$groupBy(arr,payload.groupBy)
-  //    }
-  //    else {
-  //       console.log("complente",arr)
-  //        arr = arr.filter((ele) => {
-  //       ele.tasks = ele.tasks.filter((item) => item.statusId == 5);
-  //       return ele.tasks.length > 0; // Return true only if ele.tasks has at least one remaining task
-  //     });
-  //    }    
-  //  }
-  //  if(payload.filter=="all")
-  //  {
-  //    if(payload.groupBy!=""){
-  //      arr=this.$groupBy(arr,payload.groupBy)
-  //    }  
-  //    else{
-  //     arr=state.initialData
-  //    } 
-  //  }
-
-  // state.todos=arr
+   if(payload.filter=="complete")
+   {
+     if(payload.groupBy!=""){
+      arr=arr.filter((item)=>item.statusId==5)
+       arr=this.$groupBy(arr,payload.groupBy)
+     }
+     else {
+          arr = arr.filter((ele) => {
+        ele.tasks = ele.tasks.filter((item) => item.statusId == 5);
+        return ele.tasks.length > 0; // Return true only if ele.tasks has at least one remaining task
+      });
+     }    
+   }
+   if(payload.filter=="all")
+   {
+     if(payload.groupBy!=""){
+       arr=this.$groupBy(arr,payload.groupBy)
+     }  
+     else{
+      arr=state.initialData
+     } 
+   }
+  state.todos=arr
   },
 
   groupMyTasks(state, payload) {

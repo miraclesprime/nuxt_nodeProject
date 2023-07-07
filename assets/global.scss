@@ -151,6 +151,50 @@ ul {
 .drawer-leave-active {
   animation: slidein-right 0.2s reverse;
 }
+.editable-input-grid {
+  width: 99%;
+  padding: 0.2rem 0.4rem;
+  font-size: $font-size-lg;
+  font-weight: 600;
+  border-width: 1px;
+  border-style: solid;
+  border-color: transparent;
+  border-radius: 0.25rem;
+
+  &:hover {
+    border-color: $gray4;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $dark;
+    box-shadow: 0 0 3px $dark-sub4;
+  }
+
+  &.error {
+    border-color: $danger-sub1;
+    color: $danger;
+
+    &:focus {
+      border-color: $danger-sub1;
+      box-shadow: 0 0 3px $danger-sub2;
+    }
+  }
+
+  &.sm {
+    padding: 0.125rem 0.2rem;
+    font-weight: normal;
+    font-size: $font-size-sm;
+    border-radius: 0.1rem;
+  }
+
+  &.loading {
+    background-image: url('./static/spinner.svg');
+    background-position: right center;
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+}
 
 .editable-input {
   width: 99%;
