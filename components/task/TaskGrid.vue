@@ -7,8 +7,8 @@
           <span class="cursor-pointer" @click.stop="markComplete(task)">
             <bib-icon icon="check-circle-solid" :scale="1.5" :variant="task.statusId == 5 ? 'success' : 'light'"></bib-icon>
           </span>
-          <span class="flex-grow-1" :id="'task-title'+task.id">
-           <textarea class="editable-input" ref="titleInput" @input="debounceUpdate('Title', 'title', $event.target.value, $event)" rows="1" @blur="restoreField">{{form.title}}</textarea>
+          <span class="flex-grow-1" :id="'task-title'+task.id" >
+           <textarea class="editable-input-grid" ref="titleInput" @focus="$nuxt.$emit('open-sidebar', task)" @input="debounceUpdate('Title', 'title', $event.target.value, $event)" rows="1" @blur="restoreField">{{form.title}}</textarea>
           </span>
         </div>
         <div class="shape-circle bg-light width-2 height-2 d-flex flex-shrink-0 justify-center align-center">
@@ -370,7 +370,7 @@ export default {
     background-size: cover;
   }
 
-  .editable-input {
+  .editable-input-grid {
     font-size: $base-size;
     font-weight: normal;
     resize: initial;

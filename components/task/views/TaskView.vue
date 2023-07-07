@@ -1,6 +1,7 @@
 <template>
   <div id="task-view-wrapper" class="task-view-wrapper position-relative ">
     <task-actions
+      :group="groupby"
       :gridType="gridType"
       v-on:create-task="toggleSidebar($event)"
       v-on:filterView="filterView"
@@ -785,44 +786,45 @@ export default {
     },
 
     filterView($event) {
-      this.loading = true;
-      if ($event == "complete") {
-        this.$store
-          .dispatch("section/fetchProjectSections", {
-            projectId: this.$route.params.id,
-            filter: "complete",
-            sName:this.groupby
-          })
-          .then(() => {
-            this.taskByOrder();
-          })
-          .catch((e) => console.log(e));
-      }
-      if ($event == "incomplete") {
-        this.$store
-          .dispatch("section/fetchProjectSections", {
-            projectId: this.$route.params.id,
-            filter: "incomplete",
-            sName:this.groupby
-          })
-          .then(() => {
-            this.taskByOrder();
-          })
-          .catch((e) => console.log(e));
-      }
-      if ($event == "all") {
-        this.$store
-          .dispatch("section/fetchProjectSections", {
-            projectId: this.$route.params.id,
-            filter: "all",
-            sName:this.groupby
-          })
-          .then(() => {
-            this.taskByOrder();
-          })
-          .catch((e) => console.log(e));
-      }
-      this.loading = false;
+      this.$store.commit("section/getFilterSections",{filter:$event, groupBy:this.groupby})
+      // this.loading = true;
+      // if ($event == "complete") {
+      //   this.$store
+      //     .dispatch("section/fetchProjectSections", {
+      //       projectId: this.$route.params.id,
+      //       filter: "complete",
+      //       sName:this.groupby
+      //     })
+      //     .then(() => {
+      //       this.taskByOrder();
+      //     })
+      //     .catch((e) => console.log(e));
+      // }
+      // if ($event == "incomplete") {
+      //   this.$store
+      //     .dispatch("section/fetchProjectSections", {
+      //       projectId: this.$route.params.id,
+      //       filter: "incomplete",
+      //       sName:this.groupby
+      //     })
+      //     .then(() => {
+      //       this.taskByOrder();
+      //     })
+      //     .catch((e) => console.log(e));
+      // }
+      // if ($event == "all") {
+      //   this.$store
+      //     .dispatch("section/fetchProjectSections", {
+      //       projectId: this.$route.params.id,
+      //       filter: "all",
+      //       sName:this.groupby
+      //     })
+      //     .then(() => {
+      //       this.taskByOrder();
+      //     })
+      //     .catch((e) => console.log(e));
+      // }
+      // this.loading = false;
     },
 
     checkActive() {

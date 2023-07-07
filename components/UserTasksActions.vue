@@ -4,8 +4,8 @@
       <div class="d-flex gap-05 py-025 px-05 shape-rounded cursor-pointer text-success bg-success-sub6 bg-hover-success-sub3" id="ta-add-task-button" v-on:click.stop="showCreateTaskModal">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-task-text" class="">New Task</span>
       </div>
-      <div class="d-flex gap-05 py-025 px-05 shape-rounded cursor-pointer text-success bg-success-sub6 bg-hover-success-sub3" id="ta-add-section-button" v-on:click.stop="addSection">
-        <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-section-text" class="">New Section</span>
+      <div class="d-flex gap-05 py-025 px-05 shape-rounded cursor-pointer text-success bg-success-sub6 bg-hover-success-sub3" id="ta-add-section-button" v-show="!group"  v-on:click.stop="addSection">
+        <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-section-text" class="" >New Section</span>
       </div>
     </div>
     <div class="action-right d-flex gap-05" id="ta-action-right">
@@ -44,6 +44,10 @@ export default {
       type: String,
       default: "list",
       sortDir: {default: "asc"}
+    },
+    group:{
+      type: String,
+      default: "",
     }
   },
   data() {

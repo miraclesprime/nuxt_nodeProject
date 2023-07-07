@@ -5,6 +5,7 @@
         <bib-icon :icon="icon" variant="gray4"></bib-icon>
         {{visibleText.label}}
       </div>
+      <bib-icon v-if="disabled" icon="urgent" variant="danger-sub2" ></bib-icon>
       <bib-icon icon="arrowhead-down" variant="gray5" :scale="0.8"></bib-icon>
     </div>
     <div v-show="show" class="picker-content p-025" id="select-two-content" >
@@ -34,6 +35,7 @@ export default {
     icon: { type: String, default: null },
     title: { type: String, default: "Select" },
     search: Boolean,
+    disabled: Boolean,
   },
 
   data() {
@@ -69,20 +71,21 @@ export default {
       })
     },
     visibleText(){
-      let v = {}
-      if (this.value && this.options) {
-        this.options.find(op => {
+      if (this.localData && this.sectionOpts) {
+        let out = this.sectionOpts.find(op => {
           // console.log(op.label, op.value == this.value, op.label.includes("_section") )
-          if(op.value == this.value && op.label.includes("_section")){
-            v = { label: "Untitled", value: op.value}
-            return
-          }
+          /*if(op.value == this.localData && op.label.includes("_section")){
+            return { label: "Untitled", value: op.value}
+          }*/
           if (op.value == this.value) {
-            v = op
-            return
+            return op
           } 
         })
-        return v
+        if (out) {
+          return out
+        } else {
+          return { label: "None", value: null }
+        }
       } else {
         return { label: "None", value: null }
       }
@@ -105,6 +108,7 @@ export default {
   },
   methods: {
     triggerOpen() {
+      if (this.disabled) return
       this.show = !this.show
       this.$nextTick(() => {
         this.$refs.selectFilterInput.focus()
@@ -112,7 +116,7 @@ export default {
       });
     },
     selected(opt){
-      this.localData = opt
+      this.localData = opt.value
       this.$emit("change", opt)
       this.show = false
     },

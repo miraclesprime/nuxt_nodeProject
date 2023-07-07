@@ -347,7 +347,7 @@ export default {
       for (var i = 0; i < dragColumns.length; i++) {
         dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'>" +
             "<div class='resize-drag-handle' style='"+
-          "position:absolute;height:100%;width:4px;right:0;top:0px;cursor:w-resize;z-index:4; background-color: var(--bib-secondary-sub4)'>"+
+          "position:absolute;height:100%;width:4px;right:0;top:0px;cursor:col-resize;z-index:4;'><div style='" + "width:4px;background-color:#f9f9fa;z-index:40;" + "'></div>" +
             "</div>"+
           dragColumns[i].innerHTML +
           "</div>";
@@ -614,6 +614,10 @@ export default {
       border-color: transparent;
     }
   }
+}
+
+#adv-table-th1.th {
+  border-right: 1px solid #e3e3ea !important;
 }
 
 </style>

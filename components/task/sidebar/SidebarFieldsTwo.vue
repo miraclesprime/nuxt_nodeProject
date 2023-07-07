@@ -23,7 +23,7 @@
         <div class="col-2 align-center"><label>Section</label></div>
         <div class="col-5">
           <!-- <bib-input type="select" size="sm" label="" :options="sectionOpts" v-model.number="form.sectionId" placeholder="Please select ..." v-on:change.native="debounceUpdateField('Section', 'sectionId', form.sectionId)" :disabled="!form.projectId"></bib-input> -->
-          <section-select-two :options="sectionOpts" :value="form.sectionId" icon="menu-hamburger" title="Section" search @change="debounceUpdateField('Section', 'sectionId', $event.value)" ></section-select-two>
+          <section-select-two :options="sectionOpts" :value="form.sectionId" icon="menu-hamburger" title="Section" search :disabled="!form.projectId" @change="debounceUpdateField('Section', 'sectionId', $event.value)" ></section-select-two>
         </div>
       </div>
       <div class="row mb-05 ">
@@ -51,9 +51,9 @@
         </div>
       </div>
       <div class="row mb-05 ">
-        <div class="col-2 align-center"><label>Time</label></div>
+        <div class="col-2 align-center"><label>Est. Days</label></div>
         <div class="col-5">
-          <bib-input type="time" icon-left="time" size="sm" v-model="form.time" placeholder="Select your time" label="" ></bib-input>
+          <bib-input type="text" icon-left="time" size="sm" v-model="form.time" placeholder="Select estimated days" label="" ></bib-input>
         </div>
       </div>
       <div class="row mb-05 ">
@@ -101,7 +101,7 @@ export default {
       priorityValues: PRIORITY,
       difficultyOpt: DIFFICULTY,
       form: {},
-      loading2: false,
+      // loading2: false,
       randomKey: 0,
       popupMessages: [],
       validationDate: false
@@ -177,8 +177,6 @@ export default {
             //   value: newStartDate,
             // });
           }
-
-
         }
       },
     },
@@ -274,36 +272,28 @@ export default {
            return fecha.format(dateObj, format);
        },*/
 
-    changeProject() {
+    changeProject(proj) {
+      // console.log(proj)
+      this.form.projectId = proj.value
+      this.form.sectionId = null
       if (!this.form.projectId || this.form.projectId == "") {
         this.form.projectId = null;
         this.form.sectionId = null;
-        if (this.form.id) {
-          this.debounceProjectUpdateField(
-            "Project",
-            "projectId",
-            this.form.projectId,
-            "Section",
-            "sectionId",
-            this.form.sectionId,
-            this.task.project[0].projectId
-          );
+        if (this.form.id) { //task edit mode
+          this.debounceProjectUpdateField("Project", "projectId", this.form.projectId, "Section", "sectionId", this.form.sectionId, this.form.projectId);
           return false;
         }
         return false;
       }
-      this.loading2 = true;
       if (this.form.projectId && (!this.form.sectionId || this.form.sectionId == "")) {
         this.form.sectionId = "_section" + this.form.projectId;
       }
-      this.$store
-        .dispatch("section/fetchProjectSections", {
+      this.$store.dispatch("section/fetchProjectSections", {
           projectId: this.form.projectId,
           filter: "all",
         })
         .then((sections) => {
           if (!this.form.id || this.form.id == "") {
-            this.loading2 = false;
             return false;
           }
           let sec = sections.find((s) => s.title.includes("_section"));
@@ -315,47 +305,32 @@ export default {
           } else {
             this.form.sectionId = sec.id;
           }
-          this.loading2 = false;
-          this.debounceProjectUpdateField(
-            "Project",
-            "projectId",
-            this.form.projectId,
-            "Section",
-            "sectionId",
-            this.form.sectionId,
-            this.form.projectId
-          );
+          this.debounceProjectUpdateField("Project", "projectId", this.form.projectId, "Section", "sectionId", this.form.sectionId, this.form.projectId);
         });
     },
     debounceUpdateField: _.debounce(function(name, field, value) {
       if (this.form?.id) {
         if ((field === "startDate" || field === "dueDate") && !this.validationDate) return;
-        this.$emit("update-field", { name: name, field: field, value: value });
+        this.$emit("update-field", { name: name, field: field, value: value, historyText: `changed ${name} to ${value}` });
       }
       // console.log(...arguments)
-    }, 1000),
-    debounceProjectUpdateField: _.debounce(function(
-        pName,
-        pField,
-        pValue,
-        sName,
-        sField,
-        sValue,
-        oldProjValue
-      ) {
-        if (this.form?.id) {
-          this.$emit("update-project-field", {
-            projName: pName,
-            projField: pField,
-            projValue: pValue,
-            secName: sName,
-            secField: sField,
-            secValue: sValue,
-            oldProjValue: oldProjValue,
-          });
-        }
-      },
-      500),
+    }, 800),
+
+    debounceProjectUpdateField: _.debounce(function(pName, pField, pValue, sName, sField, sValue, oldProjValue) {
+      // console.log(...arguments)
+      if (this.form?.id) {
+        this.$emit("update-project-field", {
+          projName: pName,
+          projField: pField,
+          projValue: pValue,
+          secName: sName,
+          secField: sField,
+          secValue: sValue,
+          oldProjValue: oldProjValue,
+        });
+      }
+    },
+    600),
   },
 };
 
