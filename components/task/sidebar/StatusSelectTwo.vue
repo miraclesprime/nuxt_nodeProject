@@ -1,18 +1,18 @@
 <template>
-  <div class="picker-wrapper-two shape-rounded w-100 " id="ss-wrapper" v-click-outside="onClickOutside">
-    <div id="ss-button" class="user-data cursor-pointer height-2 align-center justify-between px-05" @click.stop="triggerOpen">
+  <div class="picker-wrapper-two shape-rounded " id="ss-wrapper" v-click-outside="onClickOutside">
+    <div id="ss-button" class="user-data cursor-pointer height-2 align-center justify-between gap-05 px-05" @click.stop="triggerOpen">
       <div class="align-center gap-05" id="ss-span-wrap">
         <bib-icon icon="check-circle-solid" :variant="localStatus.color"></bib-icon>
         {{localStatus.label}}
       </div>
       <bib-icon icon="arrowhead-down" variant="gray5" :scale="0.8"></bib-icon>
     </div>
-    <div v-show="show" class="picker-content p-025" id="ss-content" @mouseleave="onClickOutside">
+    <div v-show="show" class="picker-content p-025" id="ss-content" >
       <p id="ss-heading" class="font-sm text-left p-025 border-bottom-light">Status</p>
       <div class="picker-list-wrap " id="ss-list-wrap">
         <ul class="m-0 p-0 text-left" id="ss-list">
-          <li v-for="st in statusList" :key="st.value+'stitem'" :id="'ss-list-item-'+st.value" class="p-025 gap-05 align-center font-md text-dark cursor-pointer bg-hover-gray2" @click.stop="onStatusChange(st)">
-            <div v-if="localStatus.value != st.value" class=" shape-circle circle" :id="'ss-circle-'+st.color" :style="{'border-color': st.color}">
+          <li v-for="st in statusList" :key="st.value+'stitem'" :id="'ss-list-item-'+st.value" class="p-025 pr-05 gap-05 align-center font-md text-dark cursor-pointer bg-hover-gray2" @click.stop="onStatusChange(st)">
+            <div v-if="localStatus.value != st.value" class=" shape-circle circle" :id="'ss-circle-'+st.color" :class="'border-'+st.color">
             </div>
             <bib-icon v-else icon="check-circle-solid" :variant="st.color"></bib-icon>
             <span class=" text-truncate" :class="'text-'+st.color" :id="'ss-list-text-'+st.label">{{st.label}}</span>
@@ -108,9 +108,9 @@ export default {
 .circle {
   width: 16px;
   height: 16px;
-  border-width: 1px;
+  /*border-width: 1px;
   border-style: solid;
-  border-color: var(--bib-secondary);
+  border-color: var(--bib-secondary);*/
 }
 
 </style>

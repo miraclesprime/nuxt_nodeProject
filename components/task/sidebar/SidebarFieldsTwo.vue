@@ -3,22 +3,19 @@
     <div class="task-info position-relative px-105" id="sbf-task-input-wrap">
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Start Date</label></div>
-        <div class="col-6">
-          <!-- <bib-datepicker v-model="startDateInput" :value="startDateInput" format="dd MMM yyyy" size="sm" label="" placeholder="Start date" ref="startDate" @input="debounceUpdateField('Start date', 'startDate', startDateInput)"></bib-datepicker> -->
+        <div class="col-5">
           <bib-datetime-picker :value="form.startDate" size="sm" placeholder="Start date" ref="startDate" @input="debounceUpdateField('Start date', 'startDate', startDateInput)"></bib-datetime-picker>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Due Date</label></div>
         <div class="col-5">
-          <!-- <bib-datepicker class="align-right" v-model="dueDateInput" :value="dueDateInput" size="sm" format="dd MMM yyyy" label="" placeholder="Due date" ref="dueDate" @input="debounceUpdateField('Due date', 'dueDate', dueDateInput)"></bib-datepicker> -->
           <bib-datetime-picker :value="form.dueDate" size="sm" placeholder="Due date" ref="dueDate" @input="debounceUpdateField('Due date', 'dueDate', dueDateInput)"></bib-datetime-picker>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Project</label></div>
         <div class="col-5">
-          <!-- <bib-input type="select" size="sm" label="" :options="companyProjects" v-model.number="form.projectId" v-on:change.native="changeProject"></bib-input> -->
           <select-two :options="companyProjects" :value="form.projectId" title="Project" search icon="briefcase-solid" @change="changeProject"></select-two>
         </div>
       </div>
@@ -26,43 +23,42 @@
         <div class="col-2 align-center"><label>Section</label></div>
         <div class="col-5">
           <!-- <bib-input type="select" size="sm" label="" :options="sectionOpts" v-model.number="form.sectionId" placeholder="Please select ..." v-on:change.native="debounceUpdateField('Section', 'sectionId', form.sectionId)" :disabled="!form.projectId"></bib-input> -->
-          <section-select-two :options="sectionOpts" :value="form.sectionId" icon="menu-hamburger" title="Section" @change="debounceUpdateField('Section', 'sectionId', $event.value)" ></section-select-two>
+          <section-select-two :options="sectionOpts" :value="form.sectionId" icon="menu-hamburger" title="Section" search @change="debounceUpdateField('Section', 'sectionId', $event.value)" ></section-select-two>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Department</label></div>
         <div class="col-5">
-          <!-- <bib-input type="select" size="sm" label="" :options="departments" v-model.number="form.departmentId" v-on:change.native="debounceUpdateField('Department','departmentId',form.departmentId)"></bib-input> -->
           <select-two :options="departments" :value="form.departmentId" icon="projects" title="Department" @change="debounceUpdateField('Department','departmentId', $event.value)"></select-two>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Priority</label></div>
-        <div class="col-4">
+        <div class="col-5">
           <priority-select-two :priority="form.priority" @change="debounceUpdateField('Priority', 'priorityId', $event.value)"></priority-select-two>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Status</label></div>
-        <div class="col-4">
+        <div class="col-5">
           <status-select-two :status="form.status" @change="debounceUpdateField('Status', 'statusId', $event.value)" ></status-select-two>
         </div>
       </div>
-      <!-- <div class="row mb-05 ">
+      <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Difficulty</label></div>
-        <div class="col-4">
-          <select-two :options="diffOptions" value="2" title="Difficulty" ></select-two>
+        <div class="col-5">
+          <select-two :options="difficultyOpt" :value="2" icon="bib-logo" title="Difficulty" ></select-two>
         </div>
-      </div> -->
+      </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Time</label></div>
-        <div class="col-4">
+        <div class="col-5">
           <bib-input type="time" icon-left="time" size="sm" v-model="form.time" placeholder="Select your time" label="" ></bib-input>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Budget</label></div>
-        <div class="col-4">
+        <div class="col-5">
           <bib-input type="text" icon-left="currency-dollar" size="sm" label="" v-model="form.budget" ></bib-input>
         </div>
       </div>
@@ -103,7 +99,7 @@ export default {
       assignee: "",
       // statusValues: STATUS,
       priorityValues: PRIORITY,
-      diffOptions: DIFFICULTY,
+      difficultyOpt: DIFFICULTY,
       form: {},
       loading2: false,
       randomKey: 0,
