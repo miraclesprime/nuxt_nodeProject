@@ -117,7 +117,7 @@
           @close="datePickerOpen = false"
         ></inline-datepicker>
 
-        <loading :loading="loading"></loading>
+        <!-- <loading :loading="loading"></loading> -->
         <!-- popup notification -->
         <bib-popup-notification-wrapper>
           <template #wrapper>
