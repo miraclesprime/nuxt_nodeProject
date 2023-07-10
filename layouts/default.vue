@@ -102,31 +102,6 @@
             :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']"
             style="height: 1px"
           ></div>
-          <template>
-                    <bib-button label="Create" variant="success" size="lg" pill class="w-100"></bib-button>
-                    <bib-button dropdown="" label="" style="transform: translateY(-30px)">
-                        <template v-slot:menu>
-                            <ul>
-                                <li class="d-flex align-center">
-                                  <bib-icon variant="success" icon="check-circle" :scale="1.1"></bib-icon>
-                                <span class="ml-05" @click="changeSortPeople('Most_Tasks_Todo')">Most Tasks Todo</span>
-                                </li>
-                                <li class="d-flex align-center">
-                                <bib-icon icon="briefcase" :scale="1.1"></bib-icon>
-                                <span class="ml-05" @click="changeSortPeople('Least_Tasks_Todo')">Least Tasks Todo</span>
-                                </li>
-                                <li class="d-flex align-center">
-                                <bib-icon icon="file" :scale="1.1"></bib-icon>
-                                <span class="ml-05" @click="changeSortPeople('Most_Task_Completed')">Most Task Completed</span>
-                                </li>
-                                <li class="d-flex align-center">
-                                <bib-icon icon="file" :scale="1.1"></bib-icon>
-                                <span class="ml-05" @click="changeSortPeople('Least_Task_Completed')">Least Task Completed</span>
-                                </li>
-                            </ul>
-                        </template>
-                    </bib-button>
-            </template>
           <bib-detail-collapse
             v-show="!collapseNavigation"
             label=""
@@ -135,6 +110,30 @@
             open
             v-if="isAdmin"
           >
+             <template>
+                  <bib-button dropdown="" label="People" style="transform: translateY(-30px)">
+                      <template v-slot:menu>
+                          <ul>
+                              <li class="d-flex align-center">
+                                <bib-icon variant="success" icon="check-circle" :scale="1.1"></bib-icon>
+                              <span class="ml-05" @click="changeSortPeople('Most_Tasks_Todo')">Most Tasks Todo</span>
+                              </li>
+                              <li class="d-flex align-center">
+                              <bib-icon icon="briefcase" :scale="1.1"></bib-icon>
+                              <span class="ml-05" @click="changeSortPeople('Least_Tasks_Todo')">Least Tasks Todo</span>
+                              </li>
+                              <li class="d-flex align-center">
+                              <bib-icon icon="file" :scale="1.1"></bib-icon>
+                              <span class="ml-05" @click="changeSortPeople('Most_Task_Completed')">Most Task Completed</span>
+                              </li>
+                              <li class="d-flex align-center">
+                              <bib-icon icon="file" :scale="1.1"></bib-icon>
+                              <span class="ml-05" @click="changeSortPeople('Least_Task_Completed')">Least Task Completed</span>
+                              </li>
+                          </ul>
+                      </template>
+                  </bib-button>
+            </template>
             <template v-slot:content>
               <bib-app-navigation
                 :items="appMembers"
