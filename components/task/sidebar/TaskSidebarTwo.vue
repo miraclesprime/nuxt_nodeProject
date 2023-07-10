@@ -2,10 +2,11 @@
   <article id="side-panel-wrapper" class="side-panel" v-click-outside="closeSidebar">
     <div class="side-panel__header" id="tsb-header">
       <div class="d-flex justify-between pt-105 px-105 pb-05" id="ts-side-panel">
-        <div class="d-flex align-center gap-05" id="tsb-mark-button-wrapper">
-          <div class="bg-light shape-rounded px-1 height-2 d-inline-flex gap-05 align-center justify-center cursor-pointer" @click="markComplete">
+        <div class="" id="tsb-mark-button-wrapper">
+          <!-- <div class="bg-light shape-rounded px-1 height-2 d-inline-flex gap-05 align-center justify-center cursor-pointer" @click="markComplete">
             <bib-icon icon="check-circle-solid" :variant="isComplete.variant" :scale="1"></bib-icon> <span class="font-md text-secondary">{{isComplete.text}}</span>
-          </div>
+          </div> -->
+           <bib-button :label="isComplete.text" :variant="isComplete.variant" icon="check-circle-solid" @click="markComplete"></bib-button>
         </div>
         <div class="d-flex gap-05 align-center" id="tsb-icons-wrapper">
           <div class="d-flex cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2" id='tsb-icon-external' >
@@ -40,16 +41,16 @@
                     {{isFavorite.text}}
                   </span>
                   <!-- <span class="list__item" id="tsb-list-item-4" @click="showAddTeamModal">
-                    <bib-icon icon="user-group-solid" variant="gray5" class="mr-075" ></bib-icon> Team
+                    <bib-icon icon="user-group-solid" variant="gray4" class="mr-075" ></bib-icon> Team
                   </span> -->
                   <span class="list__item" id="tsb-list-item-5" v-scroll-to="'#task_subtasks'">
-                    <bib-icon icon="check-square-solid" variant="gray5" class="mr-075" v-scroll-to=""></bib-icon> Subtasks
+                    <bib-icon icon="check-square-solid" variant="gray4" class="mr-075" v-scroll-to=""></bib-icon> Subtasks
                   </span>
                   <span class="list__item" id="tsb-list-item-7" v-scroll-to="'#task_conversation'">
-                    <bib-icon icon="comment-forum-solid" variant="gray5" class="mr-075"></bib-icon> Conversation
+                    <bib-icon icon="comment-forum-solid" variant="gray4" class="mr-075"></bib-icon> Conversation
                   </span>
                   <span class="list__item" id="tsb-list-item-3" v-scroll-to="'#task_files'">
-                    <bib-icon icon="folder-solid" variant="gray5" class="mr-075"></bib-icon> Files
+                    <bib-icon icon="folder-solid" variant="gray4" class="mr-075"></bib-icon> Files
                   </span>
                   <span class="list__item" id="tsb-project-id-list-item3" @click="copyTaskLink">
                       <bib-icon icon="duplicate" class="mr-075"></bib-icon> Copy Link
@@ -76,7 +77,7 @@
         <div class="align-center gap-05" >
           <span class="font-sm text-gray6" style="white-space: nowrap;">Assigned to</span> 
           <div style="flex-basis: 2rem;">
-            <user-select :userId="currentTask.userId" mode="avatar" minWidth="15rem" maxWidth="18rem"></user-select> <!-- <bib-avatar></bib-avatar> -->
+            <user-select :userId="currentTask.userId" mode="avatar" minWidth="15rem" maxWidth="18rem" @change="updateAssignee" ></user-select> <!-- <bib-avatar></bib-avatar> -->
           </div>
           <!-- <div class="d-inline-flex align-center">
           </div> -->
@@ -195,14 +196,14 @@ export default {
       if (fav) {
         return { variant: "orange", text: "Remove favorite", status: true }
       } else {
-        return { variant: "gray5", text: "Add to favorites", status: false }
+        return { variant: "gray4", text: "Add to favorites", status: false }
       }
     },
     isComplete() {
       if (this.currentTask.statusId == 5) {
         return { variant: "success", text: "Completed" }
       } else {
-        return { variant: "gray5", text: "Mark Completed" }
+        return { variant: "light", text: "Mark Completed" }
       }
     },
     userPhoto(){
@@ -347,14 +348,14 @@ export default {
     },
 
     updateTask(taskData) {
-      console.log(taskData)
+      // console.log(taskData)
       let updata={[taskData.field]: taskData.value}
       let updatedvalue = taskData.value
       let projectId = null
-      if (taskData.name == 'Assignee') {
+      /*if (taskData.name == 'Assignee') {
         let user = this.teamMembers.find(t => t.id == taskData.value)
         updatedvalue = user.label
-      }
+      }*/
       if( taskData.name == 'Section') {
         this.sections.find(sec => {
           if(sec.id == taskData.value) {
@@ -428,9 +429,27 @@ export default {
         .catch(e => {
           console.log(e)
         })
-      
-    
 
+    },
+
+    updateAssignee(userData){
+      console.log(userData)
+      let user = this.teamMembers.filter(u => u.id == userData.id)
+
+      this.$store.dispatch("task/updateTask", {
+        id: this.form.id,
+        data: { userId: userData.id},
+        user,
+        // projectId: projectId ? projectId : null,
+        text: `changed Assignee to ${userData.label}`,
+      })
+        .then((u) => {
+          this.$nuxt.$emit("update-key")
+          this.reloadHistory += 1
+        })
+        .catch(e => {
+          console.log(e)
+        })
     },
 
     async updateProject(taskData) {
