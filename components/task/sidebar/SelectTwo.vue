@@ -82,12 +82,7 @@ export default {
     } else {
       this.localData = 0
     }
-    // document.addEventListener('click', this.close)
   },
-  /*beforeDestroy () {
-    console.info("beforeDestroy hook")
-    document.removeEventListener('click',this.close)
-  },*/
   methods: {
     triggerOpen() {
       if (this.disabled) {

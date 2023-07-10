@@ -465,7 +465,8 @@ ul {
   }
 }
 
-.picker-wrapper-two {
+.picker-wrapper-two,
+.input-wrapper-two {
   position: relative;
   display: inline-block;
   background-color: var(--bib-gray9);
@@ -511,6 +512,21 @@ ul {
 
   .picker-list-wrap {}
 
+}
+.input-wrapper-two {
+  input { 
+    outline: none;
+    border: 0 none;
+    padding: 0.1rem  0.25rem;
+    background-color: transparent;
+    color: var(--bib-secondary);
+    /*width: fit-content;
+    flex: 0 0 auto;*/
+    &:hover, &:focus {
+      outline: none;
+      color: var(--bib-text);
+    }
+  }
 }
 
 .bib-datepicker,
