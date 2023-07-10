@@ -104,12 +104,36 @@
           ></div>
           <bib-detail-collapse
             v-show="!collapseNavigation"
-            label="People"
+            label=""
             label-weight="400"
             variant="light"
             open
             v-if="isAdmin"
           >
+             <template>
+                  <bib-button dropdown="" label="People" style="transform: translateY(-30px)">
+                      <template v-slot:menu>
+                          <ul>
+                              <li class="d-flex align-center">
+                                <bib-icon variant="success" icon="check-circle" :scale="1.1"></bib-icon>
+                              <span class="ml-05" @click="changeSortPeople('Most_Tasks_Todo')">Most Tasks Todo</span>
+                              </li>
+                              <li class="d-flex align-center">
+                              <bib-icon icon="briefcase" :scale="1.1"></bib-icon>
+                              <span class="ml-05" @click="changeSortPeople('Least_Tasks_Todo')">Least Tasks Todo</span>
+                              </li>
+                              <li class="d-flex align-center">
+                              <bib-icon icon="file" :scale="1.1"></bib-icon>
+                              <span class="ml-05" @click="changeSortPeople('Most_Task_Completed')">Most Task Completed</span>
+                              </li>
+                              <li class="d-flex align-center">
+                              <bib-icon icon="file" :scale="1.1"></bib-icon>
+                              <span class="ml-05" @click="changeSortPeople('Least_Task_Completed')">Least Task Completed</span>
+                              </li>
+                          </ul>
+                      </template>
+                  </bib-button>
+            </template>
             <template v-slot:content>
               <bib-app-navigation
                 :items="appMembers"
@@ -118,6 +142,7 @@
               ></bib-app-navigation>
             </template>
           </bib-detail-collapse>
+  
         </template>
         <template #content>
           <div
@@ -147,6 +172,7 @@ import { mapGetters } from "vuex";
 export default {
   data() {
     return {
+      sortUser:[],
       openSidebar: false,
       flag: false,
       navKey: 0,
@@ -276,6 +302,8 @@ export default {
       isAdmin: false,
       btnText: "Upgrade",
       departmentId: null,
+      sortCompleteTasks:[],
+      sortAllTasks:[],
     };
   },
   created() {
@@ -462,6 +490,7 @@ export default {
                 this.$store.dispatch("project/fetchFavProjects");
                 this.$store.dispatch("user/setTeamMembers");
                 this.$store.dispatch("task/getFavTasks");
+                this.$store.dispatch("company/fetchCompanyTasks",{companyId:"O3GWpmbk5ezJn4KR"});
               })
               .catch((err) => {
                 console.log("there was some issue!!!");
@@ -490,18 +519,47 @@ export default {
   computed: {
     ...mapGetters({
       favProjects: "project/getFavProjects",
-      teammate: "user/getTeamMembers",
+      // teammate: "user/getTeamMembers",
       appMembers: "user/getAppMembers",
       user2: "user/getUser2",
       sidebar: "task/getSidebarVisible",
+      allTasks:"company/getInitialAllTasks"
     }),
   },
-
+  watch: {
+      allTasks(newVal)
+      {
+            let data = _.cloneDeep(newVal)
+            this.sortUser= Object.values(
+                  data.reduce((acc, curr) => {
+                    if (acc[curr.userId]) {
+                      acc[curr.userId].taskCount++;
+                      if (curr.statusId === 5) {
+                        acc[curr.userId].complete++;
+                      }
+                    } else {
+                      acc[curr.userId] = {
+                        userId: curr.userId,
+                        taskCount: 1,
+                        complete: curr.statusId === 5 ? 1 : 0
+                      };
+                    }
+                    return acc;
+                  }, {})
+                );
+       console.log("121",this.sortUser)         
+        },
+  },
   methods: {
     /*handleStateChange() {
       this.$store.commit("project/setArrowVisible", this.historyLength - 2);
       this.historyLength = this.historyLength - 2;
     },*/
+    changeSortPeople(item){
+      this.$store.commit("user/sortPeople",{sort:item,data:this.sortUser});
+      console.log(item)
+    },
+
     isRouteActive(id) {
       if (this.$route.path.includes(id)) {
         return true;
@@ -560,7 +618,9 @@ export default {
     },
 
     goToUsertask($event, item) {
-      this.teammate.find((u) => u.email == item.email);
+      console.log("this.allTasks",this.allTasks)
+      
+      // this.teammate.find((u) => u.email == item.email);
 
       this.appMembers.map((u) => {
         if (u.email == item.email) {
