@@ -24,9 +24,9 @@
             ></bib-icon>
           </div>
           <div style="float: right;" >
-            <bib-button dropdown="" v-if="!fixed" label="People" >
+            <bib-button  dropdown="" label="People Sort" >
                   <template v-slot:menu >
-                      <ul class="bib-dropButton">
+                      <ul>
                           <li class="d-flex align-center">
                           <span class="ml-05" @click="changeSortPeople('Most_Tasks_Todo')">Most Tasks Todo</span>
                           </li>
@@ -97,7 +97,6 @@
    * @vue-prop {String} label-weight="600" - header label weight: 300, 400, 500, 600, 700
    */
 import { mapGetters } from "vuex";
-
   export default {
     name: "BibDetailCollapse",
     props: {
@@ -188,6 +187,7 @@ import { mapGetters } from "vuex";
         },
   },
     methods: {
+
       changeSortPeople(item){
       this.$store.commit("user/sortPeople",{sort:item,data:this.sortUser});
     },
@@ -205,6 +205,11 @@ import { mapGetters } from "vuex";
   </script>
   
   <style lang="scss">
+  .button details summary {
+      grid-gap: 0 !important;
+      padding: 1 !important;
+      font-size: 0.9rem !important;
+  }
   .detail-collapse {
     &__header {
       padding: 1.6rem 1rem;
@@ -253,8 +258,9 @@ import { mapGetters } from "vuex";
   .detail-collapse__content_space {
     margin-bottom: 1rem !important;
   }
-  .bib-dropButton{
-    left:110% !important;
+  .button--drop .menu details .wrapper{
+    left: 100% !important;
     z-index: 50 !important;
-  }
+
+}
   </style>

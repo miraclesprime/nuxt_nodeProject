@@ -113,10 +113,10 @@ export const mutations = {
     if (payload.sort === "Least_Tasks_Todo") {
       arr.sort((a, b) => a.taskCount - b.taskCount);
     }
-    if (payload.sort === "Most_Tasks_Completed") {
+    if (payload.sort === "Most_Task_Completed") {
       arr.sort((a, b) => b.completeTask - a.completeTask);
     }
-    if (payload.sort === "Least_Tasks_Completed") {
+    if (payload.sort === "Least_Task_Completed") {
       arr.sort((a, b) => a.completeTask - b.completeTask);
     }
   
