@@ -1,3 +1,4 @@
+
 export const state = () => ({
   user: null,
   user2: null,
@@ -27,7 +28,11 @@ export const getters = {
   },
 
   getAppMembers(state) {
-    return state.userInfo
+    let members=[]
+    state.appMembers.map(t => {
+      members.push({ label: t.FirstName + ' ' + t.LastName, firstName: t.FirstName, lastName: t.LastName, email: t.Email, icon: "user", id: t.Id, status: t.Status, role: t.Role, avatar: t.Photo, selected: false,completeTask:t.completeTask,taskCount:t.taskCount })
+    })
+    return members
   },
 
   getUserTasks(state) {
@@ -85,36 +90,37 @@ export const mutations = {
 
       state.userTasks=arr
   },
-  
   sortPeople(state, payload) {
-    let arr = [...state.userInfo]; // Create a new array using the spread operator to avoid mutating the original array
-    arr.forEach((ele) => {
-      let found = payload.data.find(item => ele.id === item.userId); // Find the matching item in payload.data based on ele.id
+    const arr = state.appMembers.map((member) => {
+      const found = payload.data.find((item) => item.userId === member.Id);
       if (found) {
-        ele.completeTask = found.complete; // Assign the value of found.complete to ele.completeTask
-        ele.taskCount = found.taskCount; // Assign the value of found.taskCount to ele.taskCount
+        return {
+          ...member,
+          completeTask: found.complete,
+          taskCount: found.taskCount,
+        };
       } else {
-        ele.completeTask = 0; // Assign 0 if no matching item is found
-        ele.taskCount = 0; // Assign 0 if no matching item is found
+        return {
+          ...member,
+          completeTask: 0,
+          taskCount: 0,
+        };
       }
     });
-    if(payload.sort=="Most_Tasks_Todo"){
-        arr.sort((a,b)=>b.taskCount-a.taskCount)
+    if (payload.sort === "Most_Tasks_Todo") {
+      arr.sort((a, b) => b.taskCount - a.taskCount);
     }
-    if(payload.sort=="Least_Tasks_Todo"){
-        arr.sort((a,b)=>a.taskCount-b.taskCount)
+    if (payload.sort === "Least_Tasks_Todo") {
+      arr.sort((a, b) => a.taskCount - b.taskCount);
     }
-    if(payload.sort=="Most_Tasks_Completed"){
-
-        arr.sort((a,b)=>b.completeTask-a.completeTask)
-     
+    if (payload.sort === "Most_Tasks_Completed") {
+      arr.sort((a, b) => b.completeTask - a.completeTask);
     }
-    if(payload.sort=="Least_Tasks_Completed"){
-
-        arr.sort((a,b)=>a.completeTask-b.completeTask)
-
+    if (payload.sort === "Least_Tasks_Completed") {
+      arr.sort((a, b) => a.completeTask - b.completeTask);
     }
-    state.userInfo=arr
+  
+    state.appMembers = arr;
   },
   getUserTasks(state,payload){
     let arr = state.userTasks
@@ -615,15 +621,14 @@ export const mutations = {
 
   setTeamMembers(state, payload) {
     state.teamMembers = payload;
-    let members = []
-    state.teamMembers.map(t => {
-      members.push({ label: t.FirstName + ' ' + t.LastName, firstName: t.FirstName, lastName: t.LastName, email: t.Email, icon: "user", id: t.Id, status: t.Status, role: t.Role, avatar: t.Photo, selected: false })
-    })
-    state.userInfo=members
+    
   },
 
+
   setAppMembers(state, payload) {
-    state.appMembers = payload;
+    state.appMembers = payload.map((ele) => {
+      return { ...ele, taskCount: 0, completeTask: 0 };
+    });
   },
 
   setUserTasks(state, payload) {

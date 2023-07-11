@@ -105,12 +105,25 @@ export const mutations = {
   },
 
   fetchTeamMember(state, payload) {
-    state.taskMembers = payload;
+      if(state.selectedTask.userId){
+        state.taskMembers=payload.filter((item)=>item.id!==state.selectedTask.userId)
+      
+        }
+        else {
+          state.taskMembers=payload
+    console.log("state.taskMembers",state.taskMembers)
+
+        }
   },
 
-  addMember(state, payload) {
-    state.taskMembers = payload
-  },
+  // addMember(state, payload) {
+  //   if(state.selectedTask.userId){
+  //     state.taskMembers=payload.filter((item)=>item.id!==state.selectedTask.userId)
+  //     }
+  //     else {
+  //       state.taskMembers=payload
+  //     }
+  // },
 
   setKey(state) {
     state.teamKey += 1;
@@ -304,7 +317,7 @@ export const actions = {
       let data = team.map((el) => {
         return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName };
       });
-      ctx.commit('addMember', data);
+      ctx.commit('fetchTeamMember', data);
     }).catch((err) => {
       console.log('add member->', err)
     })

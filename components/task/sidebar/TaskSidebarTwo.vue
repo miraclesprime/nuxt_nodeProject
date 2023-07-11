@@ -169,7 +169,6 @@ export default {
       favTasks: "task/getFavTasks",
       sideBarUser:"user/getSideBarUser"
     }),
-    
     teammates() {
       let tm = { main: [], extra: [], all: [] }
       if (Object.keys(this.currentTask).length == 0) {
@@ -275,6 +274,7 @@ export default {
   },
 
   mounted() {
+    console.log("sideBarUser",this.sideBarUser)
     this.$store.dispatch("project/fetchProjects")
     this.showSubtaskDetail = false
   },
