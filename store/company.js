@@ -24,6 +24,9 @@ export const getters = {
   },
   getSortOrder(state){
     return state.sortOrder
+  },
+  getInitialAllTasks(state){
+    return state.initialAllTasks
   }
 
 };
@@ -390,13 +393,6 @@ export const actions = {
 
     if (res.data) {
       ctx.commit('setCompanyTasks', res.data);
-      // if(payload.sName!==''){
-      //   ctx.commit('groupTasks', payload)
-      // }
-    
-      // if (payload.sort) {
-      //   ctx.commit('sortCompanyTasks', { sName: ctx.state.sortName, order: ctx.state.sortOrder })
-      // }
       return res.data
     }
 

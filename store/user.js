@@ -5,7 +5,8 @@ export const state = () => ({
   appMembers: [],
   userTasks: [],
   sideBarUser:[],
-  initialData:[]
+  initialData:[],
+  userInfo:[]
 });
 
 export const getters = {
@@ -26,11 +27,7 @@ export const getters = {
   },
 
   getAppMembers(state) {
-    let appmembers = []
-    state.appMembers.map(t => {
-      appmembers.push({ label: t.FirstName + ' ' + t.LastName, firstName: t.FirstName, lastName: t.LastName, email: t.Email, icon: "user", id: t.Id, status: t.Status, role: t.Role, avatar: t.Photo, selected: false })
-    })
-    return appmembers
+    return state.userInfo
   },
 
   getUserTasks(state) {
@@ -87,6 +84,37 @@ export const mutations = {
         }
 
       state.userTasks=arr
+  },
+  
+  sortPeople(state, payload) {
+    let arr = [...state.userInfo]; // Create a new array using the spread operator to avoid mutating the original array
+    arr.forEach((ele) => {
+      let found = payload.data.find(item => ele.id === item.userId); // Find the matching item in payload.data based on ele.id
+      if (found) {
+        ele.completeTask = found.complete; // Assign the value of found.complete to ele.completeTask
+        ele.taskCount = found.taskCount; // Assign the value of found.taskCount to ele.taskCount
+      } else {
+        ele.completeTask = 0; // Assign 0 if no matching item is found
+        ele.taskCount = 0; // Assign 0 if no matching item is found
+      }
+    });
+    if(payload.sort=="Most_Tasks_Todo"){
+        arr.sort((a,b)=>b.taskCount-a.taskCount)
+    }
+    if(payload.sort=="Least_Tasks_Todo"){
+        arr.sort((a,b)=>a.taskCount-b.taskCount)
+    }
+    if(payload.sort=="Most_Tasks_Completed"){
+
+        arr.sort((a,b)=>b.completeTask-a.completeTask)
+     
+    }
+    if(payload.sort=="Least_Tasks_Completed"){
+
+        arr.sort((a,b)=>a.completeTask-b.completeTask)
+
+    }
+    state.userInfo=arr
   },
   getUserTasks(state,payload){
     let arr = state.userTasks
@@ -587,6 +615,11 @@ export const mutations = {
 
   setTeamMembers(state, payload) {
     state.teamMembers = payload;
+    let members = []
+    state.teamMembers.map(t => {
+      members.push({ label: t.FirstName + ' ' + t.LastName, firstName: t.FirstName, lastName: t.LastName, email: t.Email, icon: "user", id: t.Id, status: t.Status, role: t.Role, avatar: t.Photo, selected: false })
+    })
+    state.userInfo=members
   },
 
   setAppMembers(state, payload) {
