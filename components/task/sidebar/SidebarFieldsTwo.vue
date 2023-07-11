@@ -53,18 +53,20 @@
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Est. Days</label></div>
         <div class="col-5">
-          <bib-input type="text" icon-left="time" size="sm" v-model="form.time" placeholder="Select estimated days" label="" ></bib-input>
+          <!-- <bib-input type="text" icon-left="calendar-solid" size="sm" label="" v-model.number="form.time" placeholder="Select estimated days" ></bib-input> -->
+          <input-two :value="form.time" icon="calendar-solid" @input="updateField" ></input-two>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Budget</label></div>
         <div class="col-5">
-          <bib-input type="text" icon-left="currency-dollar" size="sm" label="" v-model="form.budget" ></bib-input>
+          <!-- <bib-input type="text" icon-left="currency-dollar" size="sm" label="" v-model.number="form.budget" @input="debounceUpdateField('Budget', 'budget', form.budget)" ></bib-input> -->
+          <input-two :value="form.budget" icon="currency-dollar" ></input-two>
         </div>
       </div>
       <div class="row ">
         <div class="col-12">
-          <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter task description..." label="Description" v-on:keyup.native="debounceUpdateField('Description','description',form.description)"></bib-input>
+          <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter task description..." label="Description" class="w-100" v-on:keyup.native="debounceUpdateField('Description','description',form.description)"></bib-input>
         </div>
       </div>
       <bib-popup-notification-wrapper>
@@ -308,6 +310,9 @@ export default {
           this.debounceProjectUpdateField("Project", "projectId", this.form.projectId, "Section", "sectionId", this.form.sectionId, this.form.projectId);
         });
     },
+    updateField(val){
+      console.log(val)
+    },
     debounceUpdateField: _.debounce(function(name, field, value) {
       if (this.form?.id) {
         if ((field === "startDate" || field === "dueDate") && !this.validationDate) return;
@@ -339,6 +344,36 @@ export default {
 .task-info {
   font-size: $font-size-sm;
 }
-.bib-datepicker__input,
-.vdpComponent__input { margin-block: 0;}
+
+::v-deep {
+  .input {
+
+    &--sm {
+      .wrapper {
+        .icon { top: 0.5rem; }
+      }
+    }
+    input {
+      display: inline;
+      margin-block: 0;
+      width: auto;
+      min-width: 5rem;
+      max-width: max-content;
+      background-color: var(--bib-gray9);
+      border: 1px solid transparent;
+      color: var(--bib-secondary);
+      &:hover, &:focus {
+        border-color: var(--bib-gray2);
+        color: var(--bib-text);
+      }
+    }
+    textarea {
+      background-color: var(--bib-gray9);
+      border: 1px solid transparent;
+      color: var(--bib-secondary);
+    }
+  }
+  .bib-datepicker__input,
+  .vdpComponent__input { margin-block: 0;}
+}
 </style>
