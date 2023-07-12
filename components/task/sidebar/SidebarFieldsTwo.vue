@@ -1,7 +1,7 @@
 <template>
   <client-only>
-    <div class="task-info position-relative px-105" id="sbf-task-input-wrap">
-      <div class="row mb-05 ">
+    <div class="task-info position-relative py-05 px-105 " id="sbf-task-input-wrap">
+      <div class="row mt-05 mb-05 ">
         <div class="col-2 align-center"><label>Start Date</label></div>
         <div class="col-5">
           <bib-datetime-picker :value="form.startDate" size="sm" placeholder="Start date" ref="startDate" @input="updateField('Start date', 'startDate', startDateInput)"></bib-datetime-picker>

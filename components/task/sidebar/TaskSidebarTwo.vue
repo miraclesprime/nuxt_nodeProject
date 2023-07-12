@@ -83,9 +83,10 @@
           </div> -->
         
           <div class="align-center height-2 cursor-pointer" @click="showAddTeamModal"> 
-            <div class="width-2 height-2 bg-success-sub6 align-center justify-center shape-circle">
+            <!-- <div class="width-2 height-2 bg-success-sub6 align-center justify-center shape-circle">
               <bib-icon icon="add" variant="success"></bib-icon>
-            </div>
+            </div> -->
+            <user-select userId="" mode="avatar" title="Add to team" min-width="15rem" max-width="18rem" @change="addTeamMember"></user-select>
             <team-avatar-list :team="team"></team-avatar-list>
             <!-- <bib-icon icon="user-group-solid"></bib-icon> -->
           </div>
@@ -388,6 +389,10 @@ export default {
         .catch(e => {
           console.log(e)
         })
+    },
+
+    addTeamMember(userData){
+      console.log(userData)
     },
 
     async updateProject(taskData) {
