@@ -1023,26 +1023,6 @@ export const USER_TASKS = [
     }
   },
   {
-    label: 'Start Date',
-    key: 'startDate',
-    width: '160px',
-    header_icon: {
-      icon: 'swap-vertical',
-      event: 'table-sort',
-      isActive: false
-    }
-  },
-  {
-    label: 'Due Date',
-    key: 'dueDate',
-    width: '160px',
-    header_icon: {
-      icon: 'swap-vertical',
-      event: 'table-sort',
-      isActive: false
-    }
-  },
-  {
     label: 'Priority',
     key: 'priority',
     width: '160px',
@@ -1077,14 +1057,19 @@ export const USER_TASKS = [
     key: 'tag',
     width: '100px',
   },
-  // {
-  //   label: 'Team',
-  //   key: 'team',
-  //   width: '100px',
-  // },
   {
-    label: 'Department',
-    key: 'department',
+    label: 'Start Date',
+    key: 'startDate',
+    width: '160px',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  },
+  {
+    label: 'Due Date',
+    key: 'dueDate',
     width: '160px',
     header_icon: {
       icon: 'swap-vertical',
