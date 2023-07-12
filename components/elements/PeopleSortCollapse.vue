@@ -1,0 +1,254 @@
+<template>
+    <div  >
+      <div
+      
+        :class="{
+          'detail-collapse__header': true,
+          'detail-collapse__header--non-expandable': nonExpandable,
+          'header-fixed': fixHeader,
+        }"
+      >
+      <div >
+          <div style="float: left;">
+                <bib-icon
+              v-if="!fixed"
+              ref="icon"
+              icon="arrow-down"
+              :scale="0.5"
+              :variant="variant"
+              @click="
+          () => {
+            if (!fixed) openDetails();
+          }
+        "
+            ></bib-icon>
+          </div>
+          <div style="float: right;" >
+            <people-sort-button  dropdown="" label="People Sort"  :themeColor="themeColor">
+                <template v-slot:menu >
+                    <ul>
+                        <li class="d-flex align-center">
+                        <span class="ml-05" @click="changeSortPeople('Most_Tasks_Todo')">Most Tasks Todo</span>
+                        </li>
+                        <li class="d-flex align-center">
+                        <span class="ml-05" @click="changeSortPeople('Least_Tasks_Todo')">Least Tasks Todo</span>
+                        </li>
+                        <li class="d-flex align-center">
+                        <span class="ml-05" @click="changeSortPeople('Most_Task_Completed')">Most Task Completed</span>
+                        </li>
+                        <li class="d-flex align-center">
+                        <span class="ml-05" @click="changeSortPeople('Least_Task_Completed')">Least Task Completed</span>
+                        </li>
+                    </ul>
+                </template>
+            </people-sort-button>
+          </div>
+      </div>
+      <div style="clear: both;"></div>
+        <div class="d-flex align-center gap-0" v-if="buttons">
+          <template v-for="(icon, key) of buttons">
+            <div
+              @click.stop="$emit(icon.event, $event)"
+              class="d-flex align-center height-2 pl-0625 mr-05"
+              :class="'bg-' + icon.bg + ' shape-' + icon.shape + ' ' + icon.class"
+              :key="key"
+            >
+              <bib-icon
+                :icon="icon.src"
+                :scale="icon.scale"
+                :variant="icon.variant"
+              ></bib-icon>
+              <template v-if="icon.label">
+                <span
+                  :class="['text-' + icon.label.variant, icon.label.class]"
+                  class="font-sm font-w-500"
+                >
+                  <span class="ml-0625">{{ icon.label.text }} </span>
+                </span>
+              </template>
+            </div>
+          </template>
+        </div>
+        <div v-if="this.$slots.switcher" class="detail-collapse__switcher">
+          <slot name="switcher"></slot>
+        </div>
+      </div>
+      <div
+        ref="content"
+        class="detail-collapse__content"
+        :class="{
+          'bib-collapse': !open,
+          'header-content-fixed': fixHeader,
+          'detail-collapse__content_space': extraSpace,
+        }"
+      >
+        <slot name="content"> </slot>
+      </div>
+    </div>
+  </template>
+  
+  <script>
+
+import { mapGetters } from "vuex";
+  export default {
+    name: "BibDetailCollapse",
+    props: {
+      themeColor: {
+        type: Boolean,
+        default() {
+          return true;
+        },
+      },
+      label: {
+        type: String,
+        default() {
+          return null;
+        },
+      },
+      variant: {
+        type: String,
+        default() {
+          return "dark";
+        },
+      },
+      open: {
+        type: Boolean,
+        default() {
+          return false;
+        },
+      },
+      fixed: {
+        type: Boolean,
+        default() {
+          return false;
+        },
+      },
+      labelWeight: {
+        type: String,
+        default() {
+          return '600'
+        },
+      },
+      nonExpandable: {
+        type: Boolean,
+        default: false,
+      },
+      buttons: {
+        type: Array,
+        default: null,
+      },
+      fixHeader: {
+        type: Boolean,
+        default: false,
+      },
+      extraSpace: {
+        type: Boolean,
+        default() {
+          return false;
+        },
+      },
+    },
+    data() {
+      return {
+        id: null,
+        sortUser:[],
+      };
+    },
+    computed: {
+      getLabelWeight() {
+        return `font-w-${this.labelWeight}`;
+      },
+      ...mapGetters({
+      allTasks:"company/getInitialAllTasks"
+    }),
+    },
+    watch: {
+      allTasks(newVal)
+      {
+            let data = _.cloneDeep(newVal)
+            this.sortUser= Object.values(
+                  data.reduce((acc, curr) => {
+                    if (acc[curr.userId]) {
+                      acc[curr.userId].taskCount++;
+                      if (curr.statusId === 5) {
+                        acc[curr.userId].complete++;
+                      }
+                    } else {
+                      acc[curr.userId] = {
+                        userId: curr.userId,
+                        taskCount: 1,
+                        complete: curr.statusId === 5 ? 1 : 0
+                      };
+                    }
+                    return acc;
+                  }, {})
+                );
+        },
+  },
+    methods: {
+
+      changeSortPeople(item){
+      this.$store.commit("user/sortPeople",{sort:item,data:this.sortUser});
+    },
+      openDetails() {
+        if (this.nonExpandable) return;
+        let collapse = this.$refs.content;
+        if (collapse) collapse.classList.toggle("bib-collapse");
+        let icon = this.$refs.icon.$vnode.elm;
+        if (icon) icon.classList.toggle("flip");
+        this.$emit("click");
+      },
+    },
+  };
+  </script>
+  
+  <style lang="scss">
+  .detail-collapse {
+    &__header {
+      padding: 1.6rem 1rem;
+      display: flex;
+      align-items: center;
+      height: 2.5rem;
+      font-size: $base-size;
+      font-weight: 600;
+      cursor: pointer;
+      &--non-expandable {
+        cursor: auto;
+      }
+      &__title {
+        padding-left: 0.5rem;
+        color: $gray6;
+      }
+    }
+    &__content {
+      height: 100%;
+    }
+    &__switcher {
+      margin-left: auto;
+    }
+  }
+  
+  .header-fixed {
+    position: sticky; // detail-collapse__header
+    z-index: 3;
+    // top: 4rem;
+    top: 0;
+    width: 100%;
+    background: #fff;
+  }
+  .header-content-fixed {
+    position: relative; // detail-collapse__content
+    height: 100%;
+    //  z-index: 2;
+  }
+  
+  .text-white-hover:hover {
+    span {
+      color: #fff;
+    }
+  }
+  
+  .detail-collapse__content_space {
+    margin-bottom: 1rem !important;
+  }
+  </style>
