@@ -150,7 +150,7 @@ export const TASK_FIELDS = [
   },
   {
     label: 'Difficulty',
-    key: 'difficulty',
+    key: 'difficultyId',
     width: '160px',
     header_icon: {
       icon: 'swap-vertical',
@@ -473,7 +473,7 @@ export const PRIORITY = [
   { label: 'High', value: '1', color: "danger" },
 ]
 export const DIFFICULTY = [
-  { label: 'Choose difficulty', value: null, color: "" },
+  { label: 'Choose difficulty', value: 0, color: "" },
   { label: 'Easy', value: '1', color: "success" },
   { label: 'Medium', value: '2', color: "orange" },
   { label: 'Hard', value: '3', color: "danger" },
@@ -492,16 +492,6 @@ export const PROJECT_FAVORITES = [
     event: "title-click"
   },
   {
-    label: 'Department',
-    key: 'department',
-    width: '160px',
-    header_icon: {
-      icon: 'swap-vertical',
-      event: 'table-sort',
-      isActive: false
-    }
-  },
-  {
     label: 'Status',
     key: 'status',
     width: '160px',
@@ -514,16 +504,6 @@ export const PROJECT_FAVORITES = [
   {
     label: 'Priority',
     key: 'priority',
-    width: '160px',
-    header_icon: {
-      icon: 'swap-vertical',
-      event: 'table-sort',
-      isActive: true
-    }
-  },
-  {
-    label: 'Difficulty',
-    key: 'difficulty',
     width: '160px',
     header_icon: {
       icon: 'swap-vertical',
@@ -585,25 +565,15 @@ export const TASK_FAVORITES = [
     },
     event: "title-click",
   },
-  {
-    label: "Project",
-    key: "project",
-    header_icon: {
-      icon: "swap-vertical",
-      event: "table-sort",
-      isActive: false,
-    },
-  },
-  {
-    label: "Department",
-    key: "department",
-    width: '160px',
-    header_icon: {
-      icon: "swap-vertical",
-      event: "table-sort",
-      isActive: false,
-    },
-  },
+  // {
+  //   label: "Project",
+  //   key: "project",
+  //   header_icon: {
+  //     icon: "swap-vertical",
+  //     event: "table-sort",
+  //     isActive: false,
+  //   },
+  // },
   {
     label: 'Status',
     key: 'status',
@@ -626,7 +596,7 @@ export const TASK_FAVORITES = [
   },
   {
     label: 'Difficulty',
-    key: 'difficulty',
+    key: 'difficultyId',
     width: '160px',
     header_icon: {
       icon: 'swap-vertical',
@@ -934,7 +904,7 @@ export const COMPANY_TASK_FIELDS = [
   },
   {
     label: 'Difficulty',
-    key: 'difficulty',
+    key: 'difficultyId',
     width: '160px',
     header_icon: {
       icon: 'swap-vertical',
@@ -1034,7 +1004,7 @@ export const USER_TASKS = [
   },
   {
     label: 'Difficulty',
-    key: 'difficulty',
+    key: 'difficultyId',
     width: '160px',
     header_icon: {
       icon: 'swap-vertical',
