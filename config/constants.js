@@ -129,16 +129,6 @@ export const TASK_FIELDS = [
     event: "title-click",
   },
   {
-    key: "department",
-    label: "Department",
-    width: "160px",
-    header_icon: {
-      icon: 'swap-vertical',
-      event: 'table-sort',
-      isActive: false
-    }
-  },
-  {
     key: "status",
     label: "Status",
     width: "160px",
@@ -151,6 +141,26 @@ export const TASK_FIELDS = [
   {
     key: "priority",
     label: "Priority",
+    width: "160px",
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  },
+  {
+    label: 'Difficulty',
+    key: 'difficulty',
+    width: '160px',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: true
+    }
+  },
+  {
+    key: "department",
+    label: "Department",
     width: "160px",
     header_icon: {
       icon: 'swap-vertical',
@@ -464,9 +474,9 @@ export const PRIORITY = [
 ]
 export const DIFFICULTY = [
   { label: 'Choose difficulty', value: null, color: "" },
-  { label: 'Easy', value: '3', color: "success" },
+  { label: 'Easy', value: '1', color: "success" },
   { label: 'Medium', value: '2', color: "orange" },
-  { label: 'Hard', value: '1', color: "danger" },
+  { label: 'Hard', value: '3', color: "danger" },
 ]
 
 export const PROJECT_FAVORITES = [
@@ -504,6 +514,26 @@ export const PROJECT_FAVORITES = [
   {
     label: 'Priority',
     key: 'priority',
+    width: '160px',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: true
+    }
+  },
+  {
+    label: 'Difficulty',
+    key: 'difficulty',
+    width: '160px',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: true
+    }
+  },
+  {
+    label: 'Department',
+    key: 'department',
     width: '160px',
     header_icon: {
       icon: 'swap-vertical',
@@ -587,6 +617,26 @@ export const TASK_FAVORITES = [
   {
     label: 'Priority',
     key: 'priority',
+    width: '160px',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: true
+    }
+  },
+  {
+    label: 'Difficulty',
+    key: 'difficulty',
+    width: '160px',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: true
+    }
+  },
+  {
+    label: 'Department',
+    key: 'department',
     width: '160px',
     header_icon: {
       icon: 'swap-vertical',
@@ -883,6 +933,26 @@ export const COMPANY_TASK_FIELDS = [
     }
   },
   {
+    label: 'Difficulty',
+    key: 'difficulty',
+    width: '160px',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: true
+    }
+  },
+  {
+    label: 'Department',
+    key: 'department',
+    width: '160px',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: true
+    }
+  },
+  {
     label: 'Assignee',
     key: 'userId',
     width: '160px',
@@ -980,6 +1050,26 @@ export const USER_TASKS = [
       icon: 'swap-vertical',
       event: 'table-sort',
       isActive: false
+    }
+  },
+  {
+    label: 'Difficulty',
+    key: 'difficulty',
+    width: '160px',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: true
+    }
+  },
+  {
+    label: 'Department',
+    key: 'department',
+    width: '160px',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: true
     }
   },
   {

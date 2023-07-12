@@ -58,14 +58,14 @@
           </div>
         </div>
         <div id="proj-overview-row5" class="row">
-          <div id="proj-overview-row5-col1" class="col-4">
+          <!-- <div id="proj-overview-row5-col1" class="col-4">
             <label class="text-gray6" id="proj-overview-span1">Time</label>
             <div class="shape-rounded border-gray4 my-05 p-05" id="proj-overview-div1">Hours {{time}}</div>
-          </div>
-          <div id="proj-overview-row5-col2" class="col-4">
+          </div> -->
+          <div id="proj-overview-row5-col2" class="col-6">
             <bib-input type="number" icon-left="currency-dollar" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="debounceUpdate('Budget', 'budget', activeProject.budget)"></bib-input>
           </div>
-          <div id="proj-overview-row5-col3" class="col-4">
+          <div id="proj-overview-row5-col3" class="col-6">
             <label class="text-gray6" id="proj-overview-label1">Progress</label>
             <div class="shape-rounded border-gray4 my-05 p-05" id="proj-overview-div2">{{progress}}%</div>
           </div>

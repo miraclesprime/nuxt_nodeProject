@@ -102,46 +102,24 @@
             :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']"
             style="height: 1px"
           ></div>
-          <bib-detail-collapse
+          <people-sort-collapse
             v-show="!collapseNavigation"
+            :themeColor="lightThemeChecked"
             label=""
             label-weight="400"
             variant="light"
             open
             v-if="isAdmin"
           >
-             <template>
-                  <bib-button dropdown="" label="People" style="transform: translateY(-30px)">
-                      <template v-slot:menu>
-                          <ul>
-                              <li class="d-flex align-center">
-                                <bib-icon variant="success" icon="check-circle" :scale="1.1"></bib-icon>
-                              <span class="ml-05" @click="changeSortPeople('Most_Tasks_Todo')">Most Tasks Todo</span>
-                              </li>
-                              <li class="d-flex align-center">
-                              <bib-icon icon="briefcase" :scale="1.1"></bib-icon>
-                              <span class="ml-05" @click="changeSortPeople('Least_Tasks_Todo')">Least Tasks Todo</span>
-                              </li>
-                              <li class="d-flex align-center">
-                              <bib-icon icon="file" :scale="1.1"></bib-icon>
-                              <span class="ml-05" @click="changeSortPeople('Most_Task_Completed')">Most Task Completed</span>
-                              </li>
-                              <li class="d-flex align-center">
-                              <bib-icon icon="file" :scale="1.1"></bib-icon>
-                              <span class="ml-05" @click="changeSortPeople('Least_Task_Completed')">Least Task Completed</span>
-                              </li>
-                          </ul>
-                      </template>
-                  </bib-button>
-            </template>
+           
             <template v-slot:content>
               <bib-app-navigation
-                :items="appMembers"
+                :items="teamMembers"
                 @click="goToUsertask"
                 :key="navKey"
               ></bib-app-navigation>
             </template>
-          </bib-detail-collapse>
+          </people-sort-collapse>
   
         </template>
         <template #content>
@@ -172,7 +150,7 @@ import { mapGetters } from "vuex";
 export default {
   data() {
     return {
-      sortUser:[],
+      // sortUser:[],
       openSidebar: false,
       flag: false,
       navKey: 0,
@@ -304,6 +282,7 @@ export default {
       departmentId: null,
       sortCompleteTasks:[],
       sortAllTasks:[],
+      teamMembers:[]
     };
   },
   created() {
@@ -523,42 +502,19 @@ export default {
       appMembers: "user/getAppMembers",
       user2: "user/getUser2",
       sidebar: "task/getSidebarVisible",
-      allTasks:"company/getInitialAllTasks"
     }),
   },
   watch: {
-      allTasks(newVal)
-      {
-            let data = _.cloneDeep(newVal)
-            this.sortUser= Object.values(
-                  data.reduce((acc, curr) => {
-                    if (acc[curr.userId]) {
-                      acc[curr.userId].taskCount++;
-                      if (curr.statusId === 5) {
-                        acc[curr.userId].complete++;
-                      }
-                    } else {
-                      acc[curr.userId] = {
-                        userId: curr.userId,
-                        taskCount: 1,
-                        complete: curr.statusId === 5 ? 1 : 0
-                      };
-                    }
-                    return acc;
-                  }, {})
-                );
-       console.log("121",this.sortUser)         
-        },
-  },
+    appMembers(newVal){
+      this.teamMembers=newVal
+    }
+ },
   methods: {
     /*handleStateChange() {
       this.$store.commit("project/setArrowVisible", this.historyLength - 2);
       this.historyLength = this.historyLength - 2;
     },*/
-    changeSortPeople(item){
-      this.$store.commit("user/sortPeople",{sort:item,data:this.sortUser});
-      console.log(item)
-    },
+ 
 
     isRouteActive(id) {
       if (this.$route.path.includes(id)) {
@@ -618,8 +574,6 @@ export default {
     },
 
     goToUsertask($event, item) {
-      console.log("this.allTasks",this.allTasks)
-      
       // this.teammate.find((u) => u.email == item.email);
 
       this.appMembers.map((u) => {

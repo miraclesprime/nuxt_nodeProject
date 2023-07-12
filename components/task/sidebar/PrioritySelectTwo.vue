@@ -54,13 +54,14 @@ export default {
   },
   watch: {
     priority (val, oldVal) {
-      if (val != oldVal) {
+      this.setLocal()
+      /*if (val != oldVal) {
         if (this.priorityItems) {
           this.setLocal()
         } else {
           console.warn("priorityItems no found");
         }
-      }
+      }*/
     }
   },
   mounted() {
@@ -71,7 +72,7 @@ export default {
       if (this.priority?.id) {
         this.localValue = this.priorityItems.find( pt => pt.value == this.priority.id )
       } else {
-        this.localValue = { label: 'Choose priority', value: 0, color: "dark" }
+        this.localValue = { label: 'Choose priority', value: 0, color: "secondary" }
       }
     },
     triggerOpen() {

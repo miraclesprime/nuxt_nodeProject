@@ -13,7 +13,7 @@
         
         <span v-if="mode == 'name' || mode == 'full'" class="user-label text-truncate" :style="{ maxWidth: 'calc(${maxWidth} - 3rem)'}">{{user.label}}</span>
       </div>
-      <div v-else id="user-select-user-avatar" class="h-100">
+      <div v-else id="user-select-user-avatar" >
         <span v-if="mode != 'avatar'" class="text-gray5">No assignee</span>
         <span v-if="mode == 'avatar' || mode == 'full'" class="shape-circle d-inline-flex width-2 height-2 ">
           <bib-avatar :size="avatarSize"></bib-avatar>
@@ -23,7 +23,7 @@
     </div>
 
     <div v-show="show" ref="pickerContent" class="picker-content p-025" :style="styleObj" id="user-select-content">
-      <p class="font-sm text-left border-bottom-light p-025">Assign to</p>
+      <p class="font-sm text-left border-bottom-light p-025">{{title}}</p>
       <input type="text" class="picker-input m-025" id="user-select-input" ref="userFilterInput" v-model="filterKey" @keyup.esc="$emit('close')" autofocus>
       <div class="mt-05" style="max-height: 12rem; overflow-y: auto" id="user-select-user-avatar-list-wrapper">
         <ul class="m-0 p-0 text-left" id="user-select-user-avatar-list">
@@ -46,6 +46,7 @@ export default {
   props: {
     userId: { type: String },
     mode: { type: String, default: "name"}, //avatar, full
+    title: { type: String, default: "Assign to" },
     avatarSize: { type: String, default: "2rem" },
     minWidth: { type: String, default: "calc(100% + 10px)" },
     maxWidth: { type: String, default: "15rem" },
@@ -124,7 +125,7 @@ export default {
       const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
       const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
 
-      console.log(rect, viewportWidth, viewportHeight)
+      // console.log(rect, viewportWidth, viewportHeight)
 
       const isInViewport = rect.top >= 0 &&
         rect.left >= 0 &&
