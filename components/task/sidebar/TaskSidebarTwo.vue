@@ -112,6 +112,13 @@
         </div>
       </template>
     </bib-modal-wrapper> -->
+
+    <bib-popup-notification-wrapper>
+      <template #wrapper>
+        <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" :autohide="4000">
+        </bib-popup-notification>
+      </template>
+    </bib-popup-notification-wrapper>
     
     <subtask-detail v-if="showSubtaskDetail" @close-sidebar-detail="showSubtaskDetail = false"></subtask-detail>
 
@@ -150,6 +157,7 @@ export default {
       reloadFiles: 1,
       // taskTeamModal: false,
       showSubtaskDetail: false,
+      popupMessages: [],
     };
   },
 
@@ -393,6 +401,7 @@ export default {
 
     addTeamMember(userData){
       console.log(userData)
+      this.popupMessages.push({text: `You selected ${userData.label} - ${userData.email}. Work in progress.`, variant: "palette"})
     },
 
     async updateProject(taskData) {
