@@ -102,46 +102,24 @@
             :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']"
             style="height: 1px"
           ></div>
-          <bib-detail-collapse
+          <people-sort-collapse
             v-show="!collapseNavigation"
+            :themeColor="lightThemeChecked"
             label=""
             label-weight="400"
             variant="light"
             open
             v-if="isAdmin"
           >
-             <template>
-                  <bib-button dropdown="" label="People" style="transform: translateY(-30px)">
-                      <template v-slot:menu>
-                          <ul>
-                              <li class="d-flex align-center">
-                                <bib-icon variant="success" icon="check-circle" :scale="1.1"></bib-icon>
-                              <span class="ml-05" @click="changeSortPeople('Most_Tasks_Todo')">Most Tasks Todo</span>
-                              </li>
-                              <li class="d-flex align-center">
-                              <bib-icon icon="briefcase" :scale="1.1"></bib-icon>
-                              <span class="ml-05" @click="changeSortPeople('Least_Tasks_Todo')">Least Tasks Todo</span>
-                              </li>
-                              <li class="d-flex align-center">
-                              <bib-icon icon="file" :scale="1.1"></bib-icon>
-                              <span class="ml-05" @click="changeSortPeople('Most_Task_Completed')">Most Task Completed</span>
-                              </li>
-                              <li class="d-flex align-center">
-                              <bib-icon icon="file" :scale="1.1"></bib-icon>
-                              <span class="ml-05" @click="changeSortPeople('Least_Task_Completed')">Least Task Completed</span>
-                              </li>
-                          </ul>
-                      </template>
-                  </bib-button>
-            </template>
+           
             <template v-slot:content>
               <bib-app-navigation
-                :items="appMembers"
+                :items="teamMembers"
                 @click="goToUsertask"
                 :key="navKey"
               ></bib-app-navigation>
             </template>
-          </bib-detail-collapse>
+          </people-sort-collapse>
   
         </template>
         <template #content>
@@ -172,7 +150,7 @@ import { mapGetters } from "vuex";
 export default {
   data() {
     return {
-      sortUser:[],
+      // sortUser:[],
       openSidebar: false,
       flag: false,
       navKey: 0,
@@ -304,6 +282,7 @@ export default {
       departmentId: null,
       sortCompleteTasks:[],
       sortAllTasks:[],
+      teamMembers:[]
     };
   },
   created() {
@@ -409,7 +388,7 @@ export default {
 
       // Dhruv (admin)
 
-      let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4MjMxNDk5MjM1NywiZXhwIjoxNjkwMDkwOTkyMzU3LCJqdGkiOiIxODkxMjg1Ni00ZDIyLTQzMDQtODI4My1kNzAzMDMzOTQ2NTYifQ.7NKaoTwlgkwho6DzjV96ohKvQznbASt846ZA1KRCtN0";
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4MjMxNDk5MjM1NywiZXhwIjoxNjkwMDkwOTkyMzU3LCJqdGkiOiIxODkxMjg1Ni00ZDIyLTQzMDQtODI4My1kNzAzMDMzOTQ2NTYifQ.7NKaoTwlgkwho6DzjV96ohKvQznbASt846ZA1KRCtN0";
 
       // Vishwajeet
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2ODg0NDk2Nzg2NzUsImV4cCI6MTY5NjIyNTY3ODY3NSwianRpIjoiNjA0OTU1ZTEtZjc2OC00YmUzLTkxYzgtYmI0ZGM2NWM5NzBhIn0.kiUQRmE4VSwFx3augkQtUAEdpuzGkmV7GVBKt7VDifg"
@@ -423,8 +402,8 @@ export default {
       // Charan
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQeTdMRGR3cE9xMWUxWUtYIiwic3ViZSI6ImNoYXJhbi5wYWxAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJVU0VSIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY3NzQ5NjY2MDM4NywiZXhwIjoxNjg1MjcyNjYwMzg3LCJqdGkiOiJkNjAwOWQ0Zi1lNDFjLTQ2YWMtYjU0MC1iOTk3NzJmNDIzY2MifQ.6G04xtF0oRIaHr5gV4Jxx71TJRPb3sb3S1e85BMn3vc"
 
-      this.$cookies.set('b_ssojwt', cookie);
-      this.$store.dispatch('token/setToken', cookie);
+      // this.$cookies.set('b_ssojwt', cookie);
+      // this.$store.dispatch('token/setToken', cookie);
 
       if (this.$cookies.get("b_ssojwt")) {
         let jwt = this.$cookies.get("b_ssojwt");
@@ -523,42 +502,19 @@ export default {
       appMembers: "user/getAppMembers",
       user2: "user/getUser2",
       sidebar: "task/getSidebarVisible",
-      allTasks:"company/getInitialAllTasks"
     }),
   },
   watch: {
-      allTasks(newVal)
-      {
-            let data = _.cloneDeep(newVal)
-            this.sortUser= Object.values(
-                  data.reduce((acc, curr) => {
-                    if (acc[curr.userId]) {
-                      acc[curr.userId].taskCount++;
-                      if (curr.statusId === 5) {
-                        acc[curr.userId].complete++;
-                      }
-                    } else {
-                      acc[curr.userId] = {
-                        userId: curr.userId,
-                        taskCount: 1,
-                        complete: curr.statusId === 5 ? 1 : 0
-                      };
-                    }
-                    return acc;
-                  }, {})
-                );
-       console.log("121",this.sortUser)         
-        },
-  },
+    appMembers(newVal){
+      this.teamMembers=newVal
+    }
+ },
   methods: {
     /*handleStateChange() {
       this.$store.commit("project/setArrowVisible", this.historyLength - 2);
       this.historyLength = this.historyLength - 2;
     },*/
-    changeSortPeople(item){
-      this.$store.commit("user/sortPeople",{sort:item,data:this.sortUser});
-      console.log(item)
-    },
+ 
 
     isRouteActive(id) {
       if (this.$route.path.includes(id)) {
@@ -618,8 +574,6 @@ export default {
     },
 
     goToUsertask($event, item) {
-      console.log("this.allTasks",this.allTasks)
-      
       // this.teammate.find((u) => u.email == item.email);
 
       this.appMembers.map((u) => {

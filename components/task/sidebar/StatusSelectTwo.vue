@@ -61,14 +61,14 @@ export default {
 
   watch: {
     status (val, oldVal) {
-      if(val != oldVal) {
-        // console.log(val)
+      this.setLocal()
+      /*if(val != oldVal) {
         if (this.statusItems) {
           this.setLocal()
         } else {
           console.warn('statusItems not found')
         }
-      }
+      }*/
     }
   },
 
@@ -78,7 +78,6 @@ export default {
 
   methods: {
     setLocal(){
-      // console.log(this.statusItems)
       if(this.status?.id) {
         this.localStatus = this.statusItems.find( st => st.value == this.status.id )
       }else {
