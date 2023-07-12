@@ -508,7 +508,7 @@ export default {
     appMembers(newVal){
       this.teamMembers=newVal
     }
-  },
+ },
   methods: {
     /*handleStateChange() {
       this.$store.commit("project/setArrowVisible", this.historyLength - 2);

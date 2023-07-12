@@ -1,16 +1,16 @@
 <template>
   <client-only>
-    <div class="task-info position-relative px-105" id="sbf-task-input-wrap">
-      <div class="row mb-05 ">
+    <div class="task-info position-relative py-05 px-105 " id="sbf-task-input-wrap">
+      <div class="row mt-05 mb-05 ">
         <div class="col-2 align-center"><label>Start Date</label></div>
         <div class="col-5">
-          <bib-datetime-picker :value="form.startDate" size="sm" placeholder="Start date" ref="startDate" @input="debounceUpdateField('Start date', 'startDate', startDateInput)"></bib-datetime-picker>
+          <bib-datetime-picker :value="form.startDate" size="sm" placeholder="Start date" ref="startDate" @input="updateField('Start date', 'startDate', startDateInput)"></bib-datetime-picker>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Due Date</label></div>
         <div class="col-5">
-          <bib-datetime-picker :value="form.dueDate" size="sm" placeholder="Due date" ref="dueDate" @input="debounceUpdateField('Due date', 'dueDate', dueDateInput)"></bib-datetime-picker>
+          <bib-datetime-picker :value="form.dueDate" size="sm" placeholder="Due date" ref="dueDate" @input="updateField('Due date', 'dueDate', dueDateInput)"></bib-datetime-picker>
         </div>
       </div>
       <div class="row mb-05 ">
@@ -22,46 +22,45 @@
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Section</label></div>
         <div class="col-5">
-          <!-- <bib-input type="select" size="sm" label="" :options="sectionOpts" v-model.number="form.sectionId" placeholder="Please select ..." v-on:change.native="debounceUpdateField('Section', 'sectionId', form.sectionId)" :disabled="!form.projectId"></bib-input> -->
-          <section-select-two :options="sectionOpts" :value="form.sectionId" icon="menu-hamburger" title="Section" search :disabled="!form.projectId" @change="debounceUpdateField('Section', 'sectionId', $event.value)" ></section-select-two>
+          <section-select-two :options="sectionOpts" :value="form.sectionId" icon="menu-hamburger" title="Section" search :disabled="!form.projectId" @change="updateField('Section', 'sectionId', $event.value, $event.label)" ></section-select-two>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Department</label></div>
         <div class="col-5">
-          <select-two :options="departments" :value="form.departmentId" icon="projects" title="Department" @change="debounceUpdateField('Department','departmentId', $event.value)"></select-two>
+          <select-two :options="departments" :value="form.departmentId" icon="projects" title="Department" @change="updateField('Department','departmentId', $event.value, $event.label)"></select-two>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Priority</label></div>
         <div class="col-5">
-          <priority-select-two :priority="form.priority" @change="debounceUpdateField('Priority', 'priorityId', $event.value)"></priority-select-two>
+          <priority-select-two :priority="form.priority" @change="updateField('Priority', 'priorityId', $event.value, $event.label)"></priority-select-two>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Status</label></div>
         <div class="col-5">
-          <status-select-two :status="form.status" @change="debounceUpdateField('Status', 'statusId', $event.value)" ></status-select-two>
+          <status-select-two :status="form.status" @change="updateField('Status', 'statusId', $event.value, $event.label)" ></status-select-two>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Difficulty</label></div>
         <div class="col-5">
-          <select-two :options="difficultyOpt" :value="2" icon="bib-logo" title="Difficulty" ></select-two>
+          <select-two :options="difficultyOpt" :value="2" icon="bib-logo" title="Difficulty" @change="updateField('Difficulty', 'difficultyId', $event.value, $event.label)" ></select-two>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Est. Days</label></div>
         <div class="col-5">
           <!-- <bib-input type="text" icon-left="calendar-solid" size="sm" label="" v-model.number="form.time" placeholder="Select estimated days" ></bib-input> -->
-          <input-two :value="form.time" icon="calendar-solid" @input="updateField" ></input-two>
+          <input-two :value="form.estDays" icon="calendar-solid" @input="debounceUpdateField('Est. Days', 'estDays', $event)" ></input-two>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Budget</label></div>
         <div class="col-5">
           <!-- <bib-input type="text" icon-left="currency-dollar" size="sm" label="" v-model.number="form.budget" @input="debounceUpdateField('Budget', 'budget', form.budget)" ></bib-input> -->
-          <input-two :value="form.budget" icon="currency-dollar" ></input-two>
+          <input-two :value="form.budget" icon="currency-dollar" @input="debounceUpdateField('Budget','budget', $event)" ></input-two>
         </div>
       </div>
       <div class="row ">
@@ -310,8 +309,9 @@ export default {
           this.debounceProjectUpdateField("Project", "projectId", this.form.projectId, "Section", "sectionId", this.form.sectionId, this.form.projectId);
         });
     },
-    updateField(val){
-      console.log(val)
+    updateField(name, field, value, historyText){
+      // console.log(...arguments)
+      this.$emit("update-field", {name: name, field: field, value: value, historyText: `changed ${name} to ${historyText || value}`})
     },
     debounceUpdateField: _.debounce(function(name, field, value) {
       if (this.form?.id) {
