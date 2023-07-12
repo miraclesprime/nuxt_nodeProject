@@ -124,7 +124,7 @@ export default {
       const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
       const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
 
-      console.log(rect, viewportWidth, viewportHeight)
+      // console.log(rect, viewportWidth, viewportHeight)
 
       const isInViewport = rect.top >= 0 &&
         rect.left >= 0 &&

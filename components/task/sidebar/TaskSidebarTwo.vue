@@ -76,7 +76,7 @@
       <div class="border-bottom-gray3 px-105 py-05">
         <div class="align-center gap-05" >
           <span class="font-sm text-gray6" style="white-space: nowrap;">Assigned to</span> 
-          <div style="flex-basis: 2rem;">
+          <div class="mr-1" style="flex-basis: 2rem;">
             <user-select :userId="currentTask.userId" mode="avatar" minWidth="15rem" maxWidth="18rem" @change="updateAssignee" ></user-select> <!-- <bib-avatar></bib-avatar> -->
           </div>
           <!-- <div class="d-inline-flex align-center">
@@ -104,7 +104,6 @@
       <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
     </div>
 
-    <!-- <confirm-dialog v-if="confirmModal" :message="confirmMsg" @close="confirmDelete"></confirm-dialog> -->
     <!-- <bib-modal-wrapper v-if="taskTeamModal" title="Team" size="lg" @close="taskTeamModal = false">
       <template slot="content">
         <div style="min-height: 12rem;">
@@ -150,9 +149,6 @@ export default {
       reloadFiles: 1,
       // taskTeamModal: false,
       showSubtaskDetail: false,
-      taskToDelete: {},
-      // confirmModal: false,
-      // confirmMsg: "",
     };
   },
 
@@ -348,79 +344,21 @@ export default {
     },
 
     updateTask(taskData) {
-      // console.log(taskData)
-      let updata={[taskData.field]: taskData.value}
+      console.log(taskData)
+      let updata = { [taskData.field]: taskData.value }
       let updatedvalue = taskData.value
       let projectId = null
-      /*if (taskData.name == 'Assignee') {
-        let user = this.teamMembers.find(t => t.id == taskData.value)
-        updatedvalue = user.label
-      }*/
-      if( taskData.name == 'Section') {
-        this.sections.find(sec => {
-          if(sec.id == taskData.value) {
-            updatedvalue = sec.title
-          }
-        })
-      }
-      if (taskData.name == 'Status') {
 
-        if(taskData.value == 0) {
-          taskData.value = null
-        }
-
-        this.statusValues.find(s => {
-          if (s.value == taskData.value) {
-            updatedvalue = s.label
-          }
-        })
-      }
-
-      if (taskData.name == 'Priority') {
-        if(taskData.value == 0) {
-          taskData.value = null
-        }
-        
-        this.priorityValues.find(p => {
-          if (p.value == taskData.value) {
-            updatedvalue = p.label
-          }
-        })
-      }
-      if (taskData.name == 'Department') {
-        let dp = this.departments.find(d => {
-            if(taskData.value == undefined) {
-              return null;
-            } 
-            if(d.value == taskData.value) {
-              return d.label;
-            }
-          })
-          console.log(dp)
-          if(dp == undefined) {
-            updata = { [taskData.field]: null}
-            updatedvalue = "not assigned"
-          } else {
-            updatedvalue = dp.label
-          }
-      }
       if (taskData.name == "Due date" || taskData.name == "Start date") {
         updatedvalue = dayjs(taskData.value).format('DD MMM YYYY')
-      }
-
-      let user;
-      if (taskData.field == 'userId' && taskData.value != "") {
-        user = this.teamMembers.filter(u => u.id == taskData.value)
-      } else {
-        user = null
       }
       
       this.$store.dispatch("task/updateTask", {
         id: this.form.id,
         data: updata,
-        user,
+        // user,
         projectId: projectId ? projectId : null,
-        text: `changed ${taskData.name} to ${updatedvalue}`,
+        text: taskData.historyText,
       })
         .then((u) => {
           this.$nuxt.$emit("update-key")
@@ -433,7 +371,7 @@ export default {
     },
 
     updateAssignee(userData){
-      console.log(userData)
+      // console.log(userData)
       let user = this.teamMembers.filter(u => u.id == userData.id)
 
       this.$store.dispatch("task/updateTask", {
@@ -536,27 +474,6 @@ export default {
           this.loading = false
         })
     },
-    // confirmDelete(state){
-    //   this.confirmModal = false
-    //   this.confirmMsg = ""
-    //   if (state) {
-    //     this.$store.dispatch("task/deleteTask", this.taskToDelete)
-    //     .then(t => {
-    //       if (t.statusCode == 200) {
-    //         this.$nuxt.$emit("close-sidebar");
-    //         this.$nuxt.$emit("update-key", t.message)
-    //         this.taskToDelete = {}
-    //       } else {
-    //         console.warn(t.message);
-    //       }
-    //     })
-    //     .catch(e => {
-    //       console.warn(e)
-    //     })
-    //   } else {
-    //     this.taskToDelete = {}
-    //   }
-    // },
     deleteTask(task) {
       if (task) {
         this.$store.dispatch("task/deleteTask", task)
@@ -564,7 +481,6 @@ export default {
           if (t.statusCode == 200) {
             this.$nuxt.$emit("close-sidebar");
             this.$nuxt.$emit("update-key", t.message)
-            // this.taskToDelete = {}
           } else {
             console.warn(t.message);
           }
@@ -572,12 +488,7 @@ export default {
         .catch(e => {
           console.warn(e)
         })
-      } else {
-        // this.taskToDelete = {}
-      }
-      // this.taskToDelete = task
-      // this.confirmMsg = "Are you sure "
-      // this.confirmModal = true
+      } 
     },
     onFileInput(payload) {
       this.value.files = payload.files
