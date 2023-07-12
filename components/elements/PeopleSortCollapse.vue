@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div  >
       <div
       
         :class="{
@@ -24,24 +24,24 @@
             ></bib-icon>
           </div>
           <div style="float: right;" >
-            <bib-button  dropdown="" label="People Sort" >
-                  <template v-slot:menu >
-                      <ul>
-                          <li class="d-flex align-center">
-                          <span class="ml-05" @click="changeSortPeople('Most_Tasks_Todo')">Most Tasks Todo</span>
-                          </li>
-                          <li class="d-flex align-center">
-                          <span class="ml-05" @click="changeSortPeople('Least_Tasks_Todo')">Least Tasks Todo</span>
-                          </li>
-                          <li class="d-flex align-center">
-                          <span class="ml-05" @click="changeSortPeople('Most_Task_Completed')">Most Task Completed</span>
-                          </li>
-                          <li class="d-flex align-center">
-                          <span class="ml-05" @click="changeSortPeople('Least_Task_Completed')">Least Task Completed</span>
-                          </li>
-                      </ul>
-                  </template>
-            </bib-button>
+            <people-sort-button  dropdown="" label="People Sort"  :themeColor="themeColor">
+                <template v-slot:menu >
+                    <ul>
+                        <li class="d-flex align-center">
+                        <span class="ml-05" @click="changeSortPeople('Most_Tasks_Todo')">Most Tasks Todo</span>
+                        </li>
+                        <li class="d-flex align-center">
+                        <span class="ml-05" @click="changeSortPeople('Least_Tasks_Todo')">Least Tasks Todo</span>
+                        </li>
+                        <li class="d-flex align-center">
+                        <span class="ml-05" @click="changeSortPeople('Most_Task_Completed')">Most Task Completed</span>
+                        </li>
+                        <li class="d-flex align-center">
+                        <span class="ml-05" @click="changeSortPeople('Least_Task_Completed')">Least Task Completed</span>
+                        </li>
+                    </ul>
+                </template>
+            </people-sort-button>
           </div>
       </div>
       <div style="clear: both;"></div>
@@ -88,18 +88,17 @@
   </template>
   
   <script>
-  /**
-   * @module Molecules/BibDetailCollapse
-   * @author Ihab Benbouziyane
-   * @desc Detail Collapse component.
-   * @vue-prop {Array<Object>} label=null - Collapse header label.
-   * @vue-prop {String} variant=dark - variant colors system
-   * @vue-prop {String} label-weight="600" - header label weight: 300, 400, 500, 600, 700
-   */
+
 import { mapGetters } from "vuex";
   export default {
     name: "BibDetailCollapse",
     props: {
+      themeColor: {
+        type: Boolean,
+        default() {
+          return true;
+        },
+      },
       label: {
         type: String,
         default() {
@@ -195,7 +194,6 @@ import { mapGetters } from "vuex";
         if (this.nonExpandable) return;
         let collapse = this.$refs.content;
         if (collapse) collapse.classList.toggle("bib-collapse");
-  
         let icon = this.$refs.icon.$vnode.elm;
         if (icon) icon.classList.toggle("flip");
         this.$emit("click");
@@ -205,11 +203,6 @@ import { mapGetters } from "vuex";
   </script>
   
   <style lang="scss">
-  .button details summary {
-      grid-gap: 0 !important;
-      padding: 1 !important;
-      font-size: 0.9rem !important;
-  }
   .detail-collapse {
     &__header {
       padding: 1.6rem 1rem;
@@ -258,9 +251,4 @@ import { mapGetters } from "vuex";
   .detail-collapse__content_space {
     margin-bottom: 1rem !important;
   }
-  .button--drop .menu details .wrapper{
-    left: 100% !important;
-    z-index: 50 !important;
-
-}
   </style>

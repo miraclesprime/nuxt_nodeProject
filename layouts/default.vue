@@ -104,6 +104,7 @@
           ></div>
           <people-sort-collapse
             v-show="!collapseNavigation"
+            :themeColor="lightThemeChecked"
             label=""
             label-weight="400"
             variant="light"

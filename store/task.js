@@ -105,15 +105,15 @@ export const mutations = {
   },
 
   fetchTeamMember(state, payload) {
-      // if(state.selectedTask.userId){
-      //   state.taskMembers=payload.filter((item)=>item.id!==state.selectedTask.userId)
+      if(state.selectedTask.userId){
+        state.taskMembers=payload.filter((item)=>item.id!==state.selectedTask.userId)
       
-      //   }
-      //   else {
+        }
+        else {
           state.taskMembers=payload
     // console.log("state.taskMembers",state.taskMembers)
 
-        // }
+        }
   },
 
   // addMember(state, payload) {
