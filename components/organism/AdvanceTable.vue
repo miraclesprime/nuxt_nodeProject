@@ -55,6 +55,9 @@
             <template v-if="field.key == 'priority'">
               <priority-select :ref="'prioritySelect'+item.id" :priority="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
             </template>
+            <template v-if="field.key == 'difficultyId'">
+              <difficulty-select :ref="'difficultySelect'+item.id" :difficulty="item[field.key]" @change="updateDifficulty($event, item)" @close-other="closePopups('difficultySelect'+item.id)"></difficulty-select>
+            </template>
             <template v-if="field.key == 'department'">
               <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
             </template>
@@ -449,6 +452,9 @@ export default {
     },
     updatePriority(priority, item) {
       this.$emit("update-field", { id: item.id, field: "priorityId", value: priority.value, label: "Priority", historyText: `changed priority to ${priority.label}`, item: item })
+    },
+    updateDifficulty(difficulty, item) {
+      this.$emit("update-field", { id: item.id, field: "difficultyId", value: difficulty.value, label: "Difficulty", historyText: `changed difficulty to ${difficulty.label}`, item: item })
     },
     updateDept(dept, item){
       this.$emit("update-field", { id: item.id, field: "departmentId", value: dept.value, label: "Department", historyText: `changed department to ${dept.label}`, item: item })
