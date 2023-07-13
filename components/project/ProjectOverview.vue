@@ -38,10 +38,13 @@
             <bib-select label="Owner" test_id="po-owner-dd1" :options="filterUser" v-model="activeProject.userId" v-on:change="debounceUpdate('Owner', 'userId', activeProject.userId)"></bib-select>
           </div>
           <div id="proj-overview-row2-col2" class="col-3">
-            <bib-datepicker test_id="date01" v-model="startDate" :value="startDate" :maxDate="dueDate" format="dd MMM yyyy" @input="debounceUpdate('Start date', 'startDate', startDate)" label="Start date" name="startDate" placeholder="Start date" ></bib-datepicker>
+            <!-- <bib-datepicker test_id="date01" v-model="startDate" :value="startDate" :maxDate="dueDate" format="dd MMM yyyy" @input="debounceUpdate('Start date', 'startDate', startDate)" label="Start date" name="startDate" placeholder="Start date" ></bib-datepicker> -->
+            <bib-datetime-picker :value="activeProject.startDate" label="Start date" placeholder="Start date" @input="startdateProcess" ></bib-datetime-picker>
           </div>
           <div id="proj-overview-row2-col3" class="col-3">
-            <bib-datepicker test_id="date02" v-model="dueDate" :value="dueDate" :minDate="startDate" format="dd MMM yyyy" @input="debounceUpdate('Due date', 'dueDate', dueDate)" label="Due date" name="dueDate" class="align-right" placeholder="Due date"></bib-datepicker>
+            <!-- <bib-datepicker test_id="date02" v-model="dueDate" :value="dueDate" :minDate="startDate" format="dd MMM yyyy" @input="debounceUpdate('Due date', 'dueDate', dueDate)" label="Due date" name="dueDate" class="align-right" placeholder="Due date"></bib-datepicker> -->
+            <bib-datetime-picker :value="activeProject.dueDate" label="Due date" placeholder="Due date" @input="duedateProcess"></bib-datetime-picker>
+
           </div>
         </div>
         <div id="proj-overview-row3" class="row">
@@ -254,6 +257,89 @@ export default {
 
   methods: {
 
+    startdateProcess(newValue){
+      const oldValue = this.activeProject.startDate
+      const newStartDate = new Date(newValue);
+      this.activeProject.startDate = newValue;
+
+      console.log(newValue, newStartDate, oldValue, this.activeProject.dueDate)
+
+      if (newValue == "") {
+        this.$store.dispatch("project/updateProject", {
+          id: this.project?.id,
+          user: this.owner,
+          data: { "startdate": newValue },
+          text: "removed Start date"
+        })
+        return
+      }
+
+      if (this.activeProject.dueDate && this.activeProject.dueDate != null) {
+        if (newStartDate.getTime() > new Date(this.activeProject.dueDate).getTime()) {
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.activeProject.startDate = oldValue
+          // return
+        } else {
+          this.$store.dispatch("project/updateProject", {
+            id: this.project?.id,
+            user: this.owner,
+            data: { "startdate": newValue },
+            text: `changed Start date to ${this.$formatDate(newValue)}`
+          })
+        }
+      } else {
+        this.$store.dispatch("project/updateProject", {
+          id: this.project?.id,
+          user: this.owner,
+          data: { "startdate": newValue },
+          text: `changed Start date to ${this.$formatDate(newValue)}`
+        })
+      }
+
+    },
+
+    duedateProcess(newValue){
+      const oldValue = this.activeProject.dueDate
+      const newDueDate = new Date(newValue);
+      this.activeProject.dueDate = newValue;
+
+      console.log(newValue, newDueDate, oldValue, "startdate != null", this.activeProject.startDate != null)
+
+      if (newValue == "") {
+        this.$store.dispatch("project/updateProject", {
+          id: this.project?.id,
+          user: this.owner,
+          data: { "dueDate": newValue },
+          text: "removed Due date"
+        })
+        return
+      } 
+
+      if (this.activeProject.startDate && this.activeProject.startDate != null) {
+          // console.log(this.activeProject.startDate )
+        if (newDueDate.getTime() < new Date(this.activeProject.startDate).getTime()) {
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.activeProject.dueDate = oldValue
+          // return
+        } else {
+          this.$store.dispatch("project/updateProject", {
+          id: this.project?.id,
+          user: this.owner,
+          data: { "dueDate": newValue },
+          text: `changed Due date to ${this.$formatDate(newValue)}`
+        })
+        }
+      } else {
+        this.$store.dispatch("project/updateProject", {
+          id: this.project?.id,
+          user: this.owner,
+          data: { "dueDate": newValue },
+          text: `changed Due date to ${this.$formatDate(newValue)}`
+        })
+      }
+      
+    },
+
     debounceUpdate: _.debounce(function(label, field, value) {
 
       let updatedvalue = value
@@ -286,13 +372,13 @@ export default {
         })
       }
 
-      if (label == "Due date") {
+      /*if (label == "Due date") {
         updatedvalue = dayjs(value).format('DD MMM YYYY')
       }
 
       if( label == "Start date") {
         updatedvalue = dayjs(value).format('DD MMM YYYY')
-      }
+      }*/
 
       if (this.activeProject.priorityId == "") {
         this.activeProject.priority = null
@@ -308,7 +394,7 @@ export default {
         data: { [field]: value },
         text: `changed ${label} to ${updatedvalue}`
       })
-    }, 1200)
+    }, 800)
 
   },
 

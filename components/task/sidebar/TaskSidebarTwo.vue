@@ -353,7 +353,7 @@ export default {
     },
 
     updateTask(taskData) {
-      console.log(taskData)
+      // console.log(taskData)
       let updata = { [taskData.field]: taskData.value }
       let updatedvalue = taskData.value
       let projectId = null
