@@ -113,7 +113,7 @@ export default {
 
   asyncData(context){
     const token = context.$cookies.get('b_ssojwt')
-      return context.$axios.$get(`project/company/O3GWpmbk5ezJn4KR`, {
+      return context.$axios.$get(`project/company/all`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Filter': 'all'
@@ -388,7 +388,6 @@ export default {
     
     
     updateProject(payload){
-      // console.log(payload)
       const { item, label, field, value, historyText } = payload
       
       let user = this.teamMembers.find(t => t.id == item.userId)
@@ -408,7 +407,6 @@ export default {
         }
       }
       if(field == "startDate" && item.dueDate){
-        // console.log(field, value)
         if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
           data = { [field]: value }
         } else {
