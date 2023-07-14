@@ -892,14 +892,37 @@ export default {
     },
 
     updateTask(payload) {
-      // console.log(payload)
+      const { item, label, field, value, historyText } = payload
+      
 
+      let data = { [field]: value }
+    
+      if(field == "dueDate" && item.startDate){
+        if(new Date(value).getTime() > new Date(item.startDate).getTime()){
+          data = { [field]: value }
+        } else{
+          data = { [field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.updateKey()
+          return false
+        }
+      }
+      if(field == "startDate" && item.dueDate){
+        if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
+          data = { [field]: value }
+        } else {
+          data = { [field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.updateKey()
+          return false
+        }
+      }
       this.$store
         .dispatch("task/updateTask", {
           id: payload.id,
-          data: { [payload.field]: payload.value },
+          data: data,
           text: `${
-            payload.historyText || payload.value
+            historyText || value
           }`,
         })
         .then((t) => {

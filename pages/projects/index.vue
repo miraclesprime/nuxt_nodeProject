@@ -393,7 +393,6 @@ export default {
     
     
     updateProject(payload){
-      // console.log(payload)
       const { item, label, field, value, historyText } = payload
       
       let user = this.teamMembers.find(t => t.id == item.userId)
@@ -413,7 +412,6 @@ export default {
         }
       }
       if(field == "startDate" && item.dueDate){
-        // console.log(field, value)
         if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
           data = { [field]: value }
         } else {

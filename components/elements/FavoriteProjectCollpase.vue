@@ -8,38 +8,28 @@
           'light': themeColor,
           'dark': !themeColor
         }"
+           @click="
+              () => {
+                if (!fixed) openDetails();
+              }
+                "
       >
   
-          <bib-icon
+         <bib-icon
           v-if="!fixed"
           ref="icon"
           icon="arrow-down"
           :scale="0.6"
           :variant="dark"
-          @click="
-              () => {
-                if (!fixed) openDetails();
-              }
-                "
         ></bib-icon>
-        <people-sort-button  dropdown="" label="People Sort"  :themeColor="themeColor" >
-                  <template v-slot:menu >
-                      <ul>
-                          <li class="d-flex align-center">
-                          <span class="ml-05" @click="changeSortPeople('Most_Tasks_Todo')">Most Tasks Todo</span>
-                          </li>
-                          <li class="d-flex align-center">
-                          <span class="ml-05" @click="changeSortPeople('Least_Tasks_Todo')">Least Tasks Todo</span>
-                          </li>
-                          <li class="d-flex align-center">
-                          <span class="ml-05" @click="changeSortPeople('Most_Task_Completed')">Most Task Completed</span>
-                          </li>
-                          <li class="d-flex align-center">
-                          <span class="ml-05" @click="changeSortPeople('Least_Task_Completed')">Least Task Completed</span>
-                          </li>
-                      </ul>
-                  </template>
-              </people-sort-button>
+        <div
+            v-if="label"
+            class="detail-collapse__header__title"
+            :class="['text-' , getLabelWeight]"
+          >
+        {{ label }}
+      </div>
+           
         <div class="d-flex align-center gap-0" v-if="buttons">
           <template v-for="(icon, key) of buttons">
             <div
@@ -202,7 +192,7 @@ import { mapGetters } from "vuex";
   .light {
     &:hover {
       background-color:#f2f2f5;
-        color: dark;
+        color: black !important;
         border-radius: 4px;
     }  
   }
