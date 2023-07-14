@@ -280,7 +280,6 @@ export default {
   },
 
   mounted() {
-    console.log("sideBarUser",this.sideBarUser)
     this.$store.dispatch("project/fetchProjects")
     this.showSubtaskDetail = false
   },

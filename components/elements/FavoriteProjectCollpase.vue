@@ -24,7 +24,7 @@
         <div
             v-if="label"
             class="detail-collapse__header__title"
-            :class="['text-' , getLabelWeight]"
+            :class="{'label-dark':themeColor,'label-light:':!themeColor}"
           >
         {{ label }}
       </div>
@@ -187,11 +187,22 @@ import { mapGetters } from "vuex";
   </script>
   
   <style lang="scss">
-
+.label-dark {
+color: grey;
+font-weight: 400;
+&:hover {
+        color: black;
+    }
+}
+.label-light {
+  font-weight: 400;
+  &:hover {
+        color: white
+    }
+}
   .light {
     &:hover {
       background-color:#f2f2f5;
-        color: black !important;
         border-radius: 4px;
     }  
   }
