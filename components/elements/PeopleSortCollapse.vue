@@ -9,13 +9,12 @@
           'dark': !themeColor
         }"
       >
-  
+      <!-- :variant="dark" -->
           <bib-icon
           v-if="!fixed"
           ref="icon"
           icon="arrow-down"
           :scale="0.6"
-          :variant="dark"
           @click="
               () => {
                 if (!fixed) openDetails();
@@ -202,14 +201,14 @@ import { mapGetters } from "vuex";
   .light {
     &:hover {
       background-color:#f2f2f5;
-        color: dark;
+        color: black;
         border-radius: 4px;
     }  
   }
   .dark {
     &:hover {
       background-color: white;
-        color: dark;
+      color: black;
         border-radius: 4px;
     }  
   }

@@ -20,7 +20,6 @@
           ref="icon"
           icon="arrow-down"
           :scale="0.6"
-          :variant="dark"
         ></bib-icon>
         <div
             v-if="label"
@@ -199,7 +198,7 @@ import { mapGetters } from "vuex";
   .dark {
     &:hover {
       background-color: white;
-        color: dark;
+        color: black;
         border-radius: 4px;
     }  
   }

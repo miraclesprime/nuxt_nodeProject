@@ -859,7 +859,7 @@ export const actions = {
       ctx.commit("setSingleProject", {
         currentProject: res.data,
       });
-      if (payload.groupBy !== '' && payload.groupBy !== "default") {
+      if (payload.groupBy != undefined && payload.groupBy != "") {
         ctx.commit("groupProjects", { key: payload.groupBy});
       }
     }
