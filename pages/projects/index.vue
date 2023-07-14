@@ -85,7 +85,7 @@ export default {
 
     for(let field of this.tableFields) {
       if(field.header_icon) {
-        if(field.key == 'priority') {
+        if(field.key == 'dueDate') {
           field.header_icon.isActive = true;
         } else {
           field.header_icon.isActive = false;
@@ -123,18 +123,13 @@ export default {
       let newArr = [];
 
       for(let i=0; i<res.data.length; i++) {
-        if(res.data[i].priorityId) {
+        if(res.data[i].dueDate) {
           newArr.unshift(res.data[i])
         } else {
           newArr.push(res.data[i])
         }
       }
 
-      newArr.sort((a,b) => {
-        if(a.priorityId && b.priorityId) {
-          return a.priorityId - b.priorityId
-        }
-      })
       return {localData: newArr}
     })
    

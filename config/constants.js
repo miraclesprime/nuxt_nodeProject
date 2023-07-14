@@ -57,7 +57,7 @@ export const PROJECT_FIELDS = [
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
-      isActive: true
+      isActive: false
     }
   },
   {
@@ -87,7 +87,7 @@ export const PROJECT_FIELDS = [
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
-      isActive: false
+      isActive: true
     }
   },
   {
