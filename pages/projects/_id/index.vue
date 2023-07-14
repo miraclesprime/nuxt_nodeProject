@@ -223,31 +223,34 @@ export default {
 
   mounted() {
     if (process.client) {
-    //   if(this.projects.length == 0) {
 
-    //   this.$store.dispatch('project/fetchProjects').then((res) => {
-    //     let proj = res.find((p) => {
-    //       if(p.id == this.$route.params.id) {
-    //         // console.log(p)
-    //         return p;
-    //       } 
-    //     })
+      let p = JSON.parse(JSON.stringify(this.project))
+      if(Object.keys(p).length != 0) {
 
-    //     if((proj && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
-    //         // console.log('user has access!')
-    //     } else {
-    //         this.alertDialog = true
-    //         this.alertMsg = "You do not have access to this page!"
-    //         this.$router.push('/projects')      
-    //     }
+        this.$store.dispatch('project/fetchProjects').then((res) => {
+          let proj = res.find((p) => {
+            if(p.id == this.$route.params.id) {
+              return p;
+            } 
+          })
 
-    //   });
-    // }
+          if((proj && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
+              console.log('user has access!')
+          } else {
+              this.alertDialog = true
+              this.alertMsg = "You do not have access to this page!"
+              setTimeout(function() {
+                this.$router.push('/projects')      
+              }.bind(this),200)
+          }
+
+        });
+      } else {
+        this.$router.push('/notfound')
+      }
+
       this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
       this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
-      // this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id }).then(() => {
-      //   this.canDeleteProject();
-      // })
     }
   },
 

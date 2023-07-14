@@ -57,7 +57,7 @@ export const PROJECT_FIELDS = [
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
-      isActive: true
+      isActive: false
     }
   },
   {
@@ -87,13 +87,13 @@ export const PROJECT_FIELDS = [
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
-      isActive: false
+      isActive: true
     }
   },
   {
-      key: "tag",
-      label: "Tags",
-    width: '120px',
+    key: "tag",
+    label: "Tags",
+    width: '150px',
   },
   // {
   //     key: "",
@@ -853,13 +853,10 @@ export const SUBTASK_CONTEXT_MENU = [
 ]
 
 export const COMPANY_TASK_FIELDS = [
-  /*{
-    label: "",
-    key: "#",
-  },*/
   {
     label: 'Task name',
     key: 'title',
+    minWidth: "200px",
     icon: {
       icon: 'check-circle-solid',
       variant: 'gray2',
@@ -960,6 +957,7 @@ export const USER_TASKS = [
   {
     label: 'Task name',
     key: 'title',
+    minWidth: "200px",
     icon: {
       icon: 'check-circle-solid',
       variant: 'gray2',
@@ -975,12 +973,12 @@ export const USER_TASKS = [
   {
     label: 'Project',
     key: 'project',
+    width: "150px",
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
       isActive: false
     },
-    width: "150px",
   },
   {
     label: 'Status',
@@ -1025,7 +1023,7 @@ export const USER_TASKS = [
   {
     label: 'Tag',
     key: 'tag',
-    width: '100px',
+    width: '150px',
   },
   {
     label: 'Start Date',

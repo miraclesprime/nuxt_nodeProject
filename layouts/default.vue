@@ -82,7 +82,7 @@
             :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']"
             style="height: 1px"
           ></div>
-          <bib-detail-collapse
+          <favorite-project-collpase
             v-show="!collapseNavigation"
             label="Favorite Projects"
             label-weight="400"
@@ -95,7 +95,7 @@
                 @click="goToProject"
               ></bib-app-navigation>
             </template>
-          </bib-detail-collapse>
+          </favorite-project-collpase>
           <!-- separator -->
           <div
             class="mt-05 mb-05"
@@ -146,7 +146,6 @@
 
 <script>
 import { mapGetters } from "vuex";
-
 export default {
   data() {
     return {

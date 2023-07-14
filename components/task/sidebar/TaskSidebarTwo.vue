@@ -87,7 +87,7 @@
               <bib-icon icon="add" variant="success"></bib-icon>
             </div> -->
             <user-select-two userId="" mode="icon" title="Add to team" min-width="15rem" max-width="18rem" @change="addTeamMember"></user-select-two>
-            <team-list-two :team="team"></team-list-two>
+            <team-list-two :team="team" @delete-member="deleteMember"></team-list-two>
             <!-- <bib-icon icon="user-group-solid"></bib-icon> -->
           </div>
         </div>
@@ -353,7 +353,7 @@ export default {
     },
 
     updateTask(taskData) {
-      console.log(taskData)
+      // console.log(taskData)
       let updata = { [taskData.field]: taskData.value }
       let updatedvalue = taskData.value
       let projectId = null
@@ -414,6 +414,26 @@ export default {
         .catch((err) => {
           console.warn(err)
         })
+    },
+
+    async deleteMember(member) {
+      // this.newTeam = this.newTeam.filter((item)=>item.id!==member.id);
+      // if (this.mode == "task") {
+        await this.$store.dispatch("task/deleteMember", { taskId: this.form.id, memberId: member.id, text: `removed ${member.label}` })
+          .then((res) => {
+            this.$store.dispatch('task/fetchTeamMember', { id: this.form.id })
+          })
+          .catch(e => console.warn(e))
+      // }
+      /*if (this.mode == "subtask") {
+        await this.$store.dispatch("subtask/deleteMember", { id: this.task.id, memberId: member.id, text: `${member.name} removed from subtask` })
+          .then((res) => {
+            this.$store.dispatch('subtask/fetchSubtaskMembers', { id: this.task.id })
+            this.key += 1
+          })
+          .catch(e => console.log(e))
+        this.loading = false
+      }*/
     },
 
     async updateProject(taskData) {

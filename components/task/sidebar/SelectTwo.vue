@@ -46,7 +46,8 @@ export default {
   },
   watch: {
     value(newValue, oldValue){
-      if (newValue) {
+      // console.log(newValue == null)
+      if (newValue || newValue != null) {
         this.localData = newValue
       } else {
         this.localData = 0

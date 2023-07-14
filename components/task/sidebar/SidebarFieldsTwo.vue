@@ -4,13 +4,13 @@
       <div class="row mt-05 mb-05 ">
         <div class="col-2 align-center"><label>Start Date</label></div>
         <div class="col-5">
-          <bib-datetime-picker :value="form.startDate" size="sm" placeholder="Start date" ref="startDate" @input="updateField('Start date', 'startDate', startDateInput)"></bib-datetime-picker>
+          <bib-datetime-picker :value="form.startDate" size="sm" placeholder="Start date" @input="startdateProcess" ></bib-datetime-picker>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Due Date</label></div>
         <div class="col-5">
-          <bib-datetime-picker :value="form.dueDate" size="sm" placeholder="Due date" ref="dueDate" @input="updateField('Due date', 'dueDate', dueDateInput)"></bib-datetime-picker>
+          <bib-datetime-picker :value="form.dueDate" size="sm" placeholder="Due date" @input="duedateProcess"></bib-datetime-picker>
         </div>
       </div>
       <div class="row mb-05 ">
@@ -46,7 +46,7 @@
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Difficulty</label></div>
         <div class="col-5">
-          <select-two :options="difficultyOpt" :value="2" icon="bib-logo" title="Difficulty" @change="updateField('Difficulty', 'difficultyId', $event.value, $event.label)" ></select-two>
+          <select-two :options="difficultyOpt" :value="form.difficultyId" icon="bib-logo" title="Difficulty" @change="updateField('Difficulty', 'difficultyId', $event.value, $event.label)" ></select-two>
         </div>
       </div>
       <div class="row mb-05 ">
@@ -70,7 +70,7 @@
       </div>
       <bib-popup-notification-wrapper>
         <template #wrapper>
-          <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
+          <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" :autohide="4000">
           </bib-popup-notification>
         </template>
       </bib-popup-notification-wrapper>
@@ -92,7 +92,6 @@ export default {
     departmentId: {
       type: Number,
     },
-    visible: Boolean,
   },
 
   data() {
@@ -102,8 +101,6 @@ export default {
       priorityValues: PRIORITY,
       difficultyOpt: DIFFICULTY,
       form: {},
-      // loading2: false,
-      randomKey: 0,
       popupMessages: [],
       validationDate: false
     };
@@ -125,7 +122,6 @@ export default {
         };
       });
       let completeData = [{ label: "Please select...", value: null }, ...data];
-      this.randomKey++;
       return completeData;
     },
     companyProjects() {
@@ -135,10 +131,7 @@ export default {
       return [{ label: "Please select...", value: null }, ...data];
     },
     sectionOpts() {
-      let sec = [
-        // { label: "No section", value: null },
-        // { label: "Select section", value: "_section" + this.form.projectId },
-      ];
+      let sec = []
       this.sections.forEach((s) => {
         /*if (s.title.includes("_section")) {
           return false;
@@ -147,85 +140,8 @@ export default {
       });
       return sec;
     },
-    startDateInput: {
-      get() {
-        if (!this.form.startDate) {
-          return null
-        } else {
-          return new Date(this.form.startDate)
-        }
-      },
-      set(newValue) {
-        this.$refs.startDate.variant = null;
-        if (!newValue) this.form.startDate = "";
-        else {
-          const newStartDate = new Date(newValue);
-          if (this.dueDateInput && newStartDate.toISOString().slice(0, 10) > this.dueDateInput.toISOString().slice(0, 10)) {
-            this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-            this.dueDateInput = "";
-            this.validationDate = false
-            // this.$nextTick(() => {
-            //   this.$refs.dueDate.$emit("input");
-            // });
-            this.$refs.startDate.variant = "alert";
-          } else {
-            if (this.$refs.dueDate.variant) this.$refs.dueDate.variant = null;
-            this.validationDate = true
-            this.form.startDate = new Date(newValue);
-            //    this.$emit("update-field", {
-            //   name: "Start date",
-            //   field: "startDate",
-            //   value: newStartDate,
-            // });
-          }
-        }
-      },
-    },
-    dueDateInput: {
-      get() {
-        if (!this.form.dueDate) {
-          return null
-        } else {
-          return new Date(this.form.dueDate)
-        }
-      },
-      set(newValue) {
-        this.$refs.dueDate.variant = null;
-        if (!newValue) {
-          this.form.dueDate = "";
-        } else {
-          const newDueDate = new Date(newValue);
-          if (this.startDateInput && newDueDate.toISOString().slice(0, 10) < this.startDateInput.toISOString().slice(0, 10)) {
-            this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-            this.startDateInput = "";
-            this.validationDate = false
-            // this.$nextTick(() => {
-            //   this.$refs.startDate.$emit("input");
-            // });
-            this.$refs.dueDate.variant = "alert";
-          } else {
-            if (this.$refs.startDate.variant) this.$refs.startDate.variant = null;
-            this.form.dueDate = newDueDate;
-            this.validationDate = true
-            //  this.$emit("update-field", {
-            //   name: "Due date",
-            //   field: "dueDate",
-            //   value: newDueDate,
-            // });
-          }
-
-
-        }
-      },
-    },
   },
   watch: {
-    visible(newValue, oldValue) {
-      if (!newValue) {
-        if (!!this.$refs.startDate.variant) this.$refs.startDate.variant = null;
-        if (!!this.$refs.dueDate.variant) this.$refs.dueDate.variant = null;
-      }
-    },
 
     task() {
       if (Object.keys(this.task).length) {
@@ -272,6 +188,88 @@ export default {
        formatDate(dateObj, format) {
            return fecha.format(dateObj, format);
        },*/
+    startdateProcess(newValue){
+      const oldValue = this.form.startDate
+      const newStartDate = new Date(newValue);
+      this.form.startDate = newValue;
+
+      // console.log(newValue, newStartDate, oldValue, this.form.dueDate)
+
+      if (newValue == "") {
+        this.$emit("update-field", {
+          name: 'Start date',
+          field: 'startDate',
+          value: newValue,
+          historyText: "removed Start date"
+        })
+        return
+      }
+
+      if (this.form.dueDate && this.form.dueDate != null) {
+        if (newStartDate.getTime() > new Date(this.form.dueDate).getTime()) {
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.form.startDate = oldValue
+          // return
+        } else {
+          this.$emit("update-field", {
+            name: 'Start date',
+            field: 'startDate',
+            value: newStartDate,
+            historyText: `changed Start date to ${this.$formatDate(newValue)}`
+          })  
+        }
+      } else {
+        this.$emit("update-field", {
+          name: 'Start date',
+          field: 'startDate',
+          value: newStartDate,
+          historyText: `changed Start date to ${this.$formatDate(newValue)}`
+        })
+      }
+
+    },
+
+    duedateProcess(newValue){
+      const oldValue = this.form.dueDate
+      const newDueDate = new Date(newValue);
+      this.form.dueDate = newValue;
+
+      // console.log(newValue, newDueDate, oldValue, "startdate != null", this.form.startDate != null)
+
+      if (newValue == "") {
+        this.$emit("update-field", {
+          name: "Due date",
+          field: "dueDate",
+          value: newValue,
+          historyText: "removed Due date"
+        })
+        return
+      } 
+
+      if (this.form.startDate && this.form.startDate != null) {
+          // console.log(this.form.startDate )
+        if (newDueDate.getTime() < new Date(this.form.startDate).getTime()) {
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.form.dueDate = oldValue
+          // return
+        } else {
+          this.$emit("update-field", {
+            name: "Due date",
+            field: "dueDate",
+            value: newDueDate,
+            historyText: `changed Due date to ${this.$formatDate(newValue)}`
+          })
+        }
+      } else {
+        this.$emit("update-field", {
+          name: "Due date",
+          field: "dueDate",
+          value: newDueDate,
+          historyText: `changed Due date to ${this.$formatDate(newValue)}`
+        })
+      }
+      
+    },
 
     changeProject(proj) {
       // console.log(proj)
@@ -315,7 +313,7 @@ export default {
     },
     debounceUpdateField: _.debounce(function(name, field, value) {
       if (this.form?.id) {
-        if ((field === "startDate" || field === "dueDate") && !this.validationDate) return;
+        // if ((field === "startDate" || field === "dueDate") && !this.validationDate) return;
         this.$emit("update-field", { name: name, field: field, value: value, historyText: `changed ${name} to ${value}` });
       }
       // console.log(...arguments)

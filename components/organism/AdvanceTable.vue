@@ -5,7 +5,7 @@
       <div slot="header" class="tr" role="row" id="adv-table-row1">
         <div v-show="drag" class="width-2 th" id="adv-table-cell1" role="cell"></div>
         <div v-for="(field, index) in tableFields" :key="field+'-'+index" class="th" id="adv-table-th1" role="cell" :style="{ width: field.width}" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
-          <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer"  id="adv-table-header-icon">
+          <div class="align-center gap-05" :style="{'min-width': field.minWidth}">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer"  id="adv-table-header-icon">
               <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
             </span></div>
         </div>

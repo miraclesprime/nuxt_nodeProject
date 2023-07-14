@@ -387,7 +387,7 @@ export const actions = {
   },
   async fetchCompanyTasks(ctx, payload) {
 
-    const res = await this.$axios.$get(`company/${payload.companyId}/tasks`, {
+    const res = await this.$axios.$get(`company/tasks/all`, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
     });
 

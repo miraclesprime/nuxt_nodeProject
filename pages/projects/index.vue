@@ -85,7 +85,7 @@ export default {
 
     for(let field of this.tableFields) {
       if(field.header_icon) {
-        if(field.key == 'priority') {
+        if(field.key == 'dueDate') {
           field.header_icon.isActive = true;
         } else {
           field.header_icon.isActive = false;
@@ -113,7 +113,7 @@ export default {
 
   asyncData(context){
     const token = context.$cookies.get('b_ssojwt')
-      return context.$axios.$get(`project/company/O3GWpmbk5ezJn4KR`, {
+      return context.$axios.$get(`project/company/all`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Filter': 'all'
@@ -123,18 +123,13 @@ export default {
       let newArr = [];
 
       for(let i=0; i<res.data.length; i++) {
-        if(res.data[i].priorityId) {
+        if(res.data[i].dueDate) {
           newArr.unshift(res.data[i])
         } else {
           newArr.push(res.data[i])
         }
       }
 
-      newArr.sort((a,b) => {
-        if(a.priorityId && b.priorityId) {
-          return a.priorityId - b.priorityId
-        }
-      })
       return {localData: newArr}
     })
    
@@ -393,7 +388,6 @@ export default {
     
     
     updateProject(payload){
-      // console.log(payload)
       const { item, label, field, value, historyText } = payload
       
       let user = this.teamMembers.find(t => t.id == item.userId)
@@ -413,7 +407,6 @@ export default {
         }
       }
       if(field == "startDate" && item.dueDate){
-        // console.log(field, value)
         if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
           data = { [field]: value }
         } else {
