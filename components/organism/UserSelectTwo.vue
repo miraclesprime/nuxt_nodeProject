@@ -1,25 +1,28 @@
 <template>
-  <div id="user-select-wrapper" class="picker-wrapper " :class="{'w-100': mode!='avatar', 'width-2': mode=='avatar'}" v-click-outside="onClickOutside">
+  <div id="user-select-wrapper" class="picker-wrapper width-2" v-click-outside="onClickOutside">
     <div id="user-select-trigger-open" class="user-data cursor-pointer height-2 align-center justify-between gap-05" @click.stop="triggerOpen">
       <div v-if="user" id="user-select-user-avatar" class="align-center gap-025 ">
-        <tippy arrow v-if="mode == 'full'" >
+        <tippy arrow v-if="mode == 'avatar'" >
           <template v-slot:trigger>
             <bib-avatar :src="user.avatar" size="2rem"></bib-avatar>
           </template>
           {{user.label}}
         </tippy>
         
-        <bib-avatar v-if="mode == 'full'" :src="user.avatar" size="2rem"></bib-avatar>
+        <div v-if="mode == 'icon'" class="width-2 height-2 align-center justify-center shape-circle" :class="['bg-'+iconBg]">
+          <bib-icon :icon="icon" :variant="iconVariant"></bib-icon>
+        </div>
         
-        <span class="user-label text-truncate" :style="{ maxWidth: 'calc(${maxWidth} - 3rem)'}">{{user.label}}</span>
       </div>
       <div v-else id="user-select-user-avatar" class="align-center gap-025" >
-        <span v-if="mode == 'full'" class="shape-circle d-inline-flex width-2 height-2 ">
+        <span v-if="mode == 'avatar'" class="shape-circle d-inline-flex width-2 height-2 ">
           <bib-avatar size="2rem"></bib-avatar>
         </span>
-        <span class="text-gray5">No assignee</span>
+        <div v-if="mode == 'icon'" class="width-2 height-2 align-center justify-center shape-circle" :class="['bg-'+iconBg]">
+          <bib-icon :icon="icon" :variant="iconVariant"></bib-icon>
+        </div>
       </div>
-      <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
+      <!-- <bib-icon v-if="mode != 'avatar' && mode != 'icon'" icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon> -->
     </div>
 
     <div v-show="show" ref="pickerContent" class="picker-content p-025" :style="styleObj" id="user-select-content">
@@ -28,7 +31,7 @@
       <div class="mt-05" style="max-height: 12rem; overflow-y: auto" id="user-select-user-avatar-list-wrapper">
         <ul class="m-0 p-0 text-left" id="user-select-user-avatar-list">
           <li v-for="(user, index) in filterTeam" :key="user.id"  :id="'user-select-user-avatar-'+index" class="p-025 pr-05 align-center gap-025 font-md cursor-pointer bg-hover-light" @click.stop="selected(user)">
-            <bib-avatar v-if="mode == 'full'" :src="user.avatar" size="1rem"></bib-avatar> <span class="user-label text-truncate" :style="{ maxWidth: 'calc(${maxWidth} - 3rem)'}">{{user.label}}</span>
+            <bib-avatar :src="user.avatar" size="1rem"></bib-avatar> <span class="user-label text-truncate" :style="{ maxWidth: 'calc(${maxWidth} - 3rem)'}">{{user.label}}</span>
           </li>
         </ul>
       </div>
@@ -41,11 +44,14 @@ import { mapGetters } from 'vuex'
 import { TippyComponent } from "vue-tippy";
 export default {
 
-  name: 'UserSelect',
+  name: 'UserSelectTwo',
 
   props: {
     userId: { type: String },
-    mode: { type: String, default: "name"}, //name, full, 
+    mode: { type: String, default: "avatar"}, //avatar, icon
+    icon: { type: String, default: "add"},
+    iconBg: { type: String, default: "success-sub6"},
+    iconVariant: { type: String, default: "success"},
     title: { type: String, default: "Assign to" },
     // avatarSize: { type: String, default: "2rem" },
     minWidth: { type: String, default: "calc(100% + 10px)" },
@@ -100,12 +106,6 @@ export default {
       })
     },
     styleObj(){
-      /*if (this.minWidth && this.maxWidth) {
-        return { 'min-width': this.minWidth; 'max-width': this.maxWidth }
-      }
-      if (this.minWidth) {
-        return { 'min-width': 'calc(100% + 10px)'; 'max-width': '15rem'}
-      }*/
       return { minWidth: this.minWidth, maxWidth: this.maxWidth }
     }
   },

@@ -77,17 +77,17 @@
         <div class="align-center gap-05" >
           <span class="font-sm text-gray6" style="white-space: nowrap;">Assigned to</span> 
           <div class="mr-1" style="flex-basis: 2rem;">
-            <user-select :userId="currentTask.userId" mode="avatar" minWidth="15rem" maxWidth="18rem" @change="updateAssignee" ></user-select> <!-- <bib-avatar></bib-avatar> -->
+            <user-select-two :userId="currentTask.userId" mode="avatar" minWidth="15rem" maxWidth="18rem" @change="updateAssignee" ></user-select-two> <!-- <bib-avatar></bib-avatar> -->
           </div>
           <!-- <div class="d-inline-flex align-center">
           </div> -->
         
-          <div class="align-center height-2 cursor-pointer" @click="showAddTeamModal"> 
+          <div class="align-center height-2 cursor-pointer" > 
             <!-- <div class="width-2 height-2 bg-success-sub6 align-center justify-center shape-circle">
               <bib-icon icon="add" variant="success"></bib-icon>
             </div> -->
-            <user-select userId="" mode="avatar" title="Add to team" min-width="15rem" max-width="18rem" @change="addTeamMember"></user-select>
-            <team-avatar-list :team="team"></team-avatar-list>
+            <user-select-two userId="" mode="icon" title="Add to team" min-width="15rem" max-width="18rem" @change="addTeamMember"></user-select-two>
+            <team-list-two :team="team"></team-list-two>
             <!-- <bib-icon icon="user-group-solid"></bib-icon> -->
           </div>
         </div>
@@ -353,7 +353,7 @@ export default {
     },
 
     updateTask(taskData) {
-      console.log(taskData)
+      // console.log(taskData)
       let updata = { [taskData.field]: taskData.value }
       let updatedvalue = taskData.value
       let projectId = null
@@ -367,7 +367,7 @@ export default {
         data: updata,
         // user,
         projectId: projectId ? projectId : null,
-        text: taskData.historyText,
+        text: taskData.historyText || taskData.value,
       })
         .then((u) => {
           this.$nuxt.$emit("update-key")
@@ -400,8 +400,20 @@ export default {
     },
 
     addTeamMember(userData){
-      console.log(userData)
-      this.popupMessages.push({text: `You selected ${userData.label} - ${userData.email}. Work in progress.`, variant: "palette"})
+      // console.log(userData, this.form.id)
+
+      this.$store.dispatch('task/addMember', { taskId: this.form.id, team: [userData], text: `added ${userData.label} to task` })
+        .then((res) => {
+          if (res.statusCode == 200) {
+            this.popupMessages.push({text: res.message, variant: "success"})
+            this.$store.dispatch('task/fetchTeamMember', { id: this.form.id })
+          } else {
+            console.warn(res)
+          }
+        })
+        .catch((err) => {
+          console.warn(err)
+        })
     },
 
     async updateProject(taskData) {
@@ -448,7 +460,7 @@ export default {
           this.form.status = null
           this.form.statusId = null
         }
-        this.updateTask({ name: payload.name, field: payload.field, value: payload.value })
+        this.updateTask({ name: payload.name, field: payload.field, value: payload.value, historyText: `changed ${payload.name} to ${payload.value}` })
         this.reloadComments += 1
 
       } else {
@@ -460,7 +472,8 @@ export default {
         this.$store.dispatch("user/setSideBarUser",[])
         
       }
-    }, 500),
+    }, 600),
+
     setFavorite() {
       this.favProcess = true
       if (this.isFavorite.status) {
