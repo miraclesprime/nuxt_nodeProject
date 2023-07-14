@@ -7,8 +7,8 @@
           <div class="table resizable w-100 position-sticky" ref="headrow" style="top: 0; z-index:2;">
             <div class="tr " role="row" >
               <div v-show="drag" class="width-2 th" role="cell" ></div>
-              <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{ width: field.width}" :ref="'th'+field.key" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
-                <div class="align-center gap-05">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer" >
+              <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{width: field.width, 'min-width': field.minWidth}" :ref="'th'+field.key" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
+                <div class="align-center gap-05" >{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer" >
                     <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
                   </span>
                 </div>
@@ -37,8 +37,8 @@
               
               <div class="tr hidden" role="row" >
                 <div v-show="drag" class="width-2 th" role="cell" ></div>
-                <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :data-key="field.key" :style="{ width: field.width}" >
-                  <!-- <div class="align-center gap-05">{{field.label}} </div> -->
+                <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :data-key="field.key" :style="{ width: field.width, 'min-width': field.minWidth}" >
+                  <!-- <div class="align-center gap-05" > </div> -->
                 </div>
               </div>
 
@@ -72,7 +72,7 @@
                   <div class="drag-handle width-105 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                   </div>
                 </div>
-                <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell" :class="{ 'date-cell': field.key.includes('Date')}" >
+                <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell" >
                   <div v-if="field.key == 'title'" class="align-center w-100">
                     <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}" @click.stop="markComplete($event, item)">
                       <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success-sub3"></bib-icon>
