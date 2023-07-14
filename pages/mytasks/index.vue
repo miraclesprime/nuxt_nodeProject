@@ -1105,4 +1105,10 @@ export default {
   background-color: azure;
 }
 
+/*@media screen and (max-width: 1600px) {
+  .mytask-table-wrapper {
+    min-width: 1440px;
+  }
+}*/
+
 </style>
