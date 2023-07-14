@@ -111,8 +111,6 @@ export const mutations = {
         }
         else {
           state.taskMembers=payload
-    // console.log("state.taskMembers",state.taskMembers)
-
         }
   },
 
