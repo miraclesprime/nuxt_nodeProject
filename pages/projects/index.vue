@@ -113,7 +113,7 @@ export default {
 
   asyncData(context){
     const token = context.$cookies.get('b_ssojwt')
-      return context.$axios.$get(`project/company/O3GWpmbk5ezJn4KR`, {
+      return context.$axios.$get(`project/company/all`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Filter': 'all'
