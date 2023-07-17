@@ -608,6 +608,72 @@ export const mutations = {
       
     }
 
+
+    // Sort By Difficulty
+    if (payload.key == 'difficultyId' ) {
+
+      if(arr[0].tasks)
+      {
+        arr.map((ele)=>{
+          let newArr=[]
+          ele.tasks.forEach((item) => {
+            if (item.difficultyId) {
+              newArr.unshift(item)
+            } else {
+              newArr.push(item)
+            }
+          });
+          if(payload.order == 'asc'){
+              newArr.sort((a,b)=>{
+              if (a.difficultyId && b.difficultyId) {
+                return a.difficultyId - b.difficultyId;
+              }
+            });
+          }
+          if(payload.order == 'desc'){
+            newArr.sort((a,b)=>{
+            if (a.difficultyId && b.difficultyId) {
+              return b.difficultyId - a.difficultyId;
+            }
+          });
+        }
+          ele.tasks=newArr
+          return ele
+        })
+     
+        state.userTasks=arr
+      }
+      else 
+      {
+            let newArr = []
+
+            for (let i = 0; i < arr.length; i++) {
+              if (arr[i].difficultyId) {
+                newArr.unshift(arr[i])
+              } else {
+                newArr.push(arr[i])
+              }
+            }
+            if(payload.order == 'asc'){
+                newArr.sort((a, b) => {
+                if (a.difficultyId && b.difficultyId) {
+                  return a.difficultyId - b.difficultyId;
+                }
+              });
+            }
+            if(payload.order == 'desc'){
+              newArr.sort((a, b) => {
+              if (a.difficultyId && b.difficultyId) {
+                return b.difficultyId - a.difficultyId;
+              }
+            });
+          }
+           
+            state.userTasks = newArr;
+
+       }
+     
+    }
    
 
   },

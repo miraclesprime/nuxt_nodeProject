@@ -613,6 +613,14 @@ export default {
           })
       }
 
+      if ($event == "difficultyId") {
+        this.$store
+          .dispatch("user/sortUserTasks", {
+            key: $event,
+            order: this.orderBy,
+          })
+      }
+
       if ($event == "priority") {
         this.$store
           .dispatch("user/sortUserTasks", {

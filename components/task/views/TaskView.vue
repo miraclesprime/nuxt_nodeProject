@@ -505,6 +505,48 @@ export default {
         this.checkActive();
       }
 
+      // Sort By Difficulty
+      if ($event == "difficultyId") {
+
+        let deptArr = [];
+
+        for (let i = 0; i < newData.length; i++) {
+          let t = []
+          for(let j=0; j<newData[i].tasks.length; j++) {
+            if (newData[i].tasks[j].difficultyId) {
+              t.unshift(newData[i].tasks[j])
+            } else {
+              t.push(newData[i].tasks[j])
+            }
+          }
+          newData[i].tasks = t;
+          deptArr.push(newData[i]);
+        }
+
+        if (this.orderBy == "asc") {
+          this.orderBy = "desc";
+          deptArr.forEach(function (sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => {
+              if (a.difficultyId && b.difficultyId) {
+                return a.difficultyId - b.difficultyId;
+              }
+            });
+          });
+        } else {
+          this.orderBy = "asc";
+          deptArr.forEach(function (sec) {
+            sec["tasks"] = sec.tasks.sort((a, b) => {
+              if (a.difficultyId && b.difficultyId) {
+                return b.difficultyId - a.difficultyId;
+              }
+            });
+          });
+        }
+        this.sortName = "difficulty";
+        this.localdata = deptArr;
+        this.checkActive();
+      }
+
       // sort By Start Date
       if ($event == "startDate") {
 
