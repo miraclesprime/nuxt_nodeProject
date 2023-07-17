@@ -7,7 +7,7 @@
           <div class="table resizable w-100 position-sticky" ref="headrow" style="top: 0; z-index:2;">
             <div class="tr " role="row" >
               <div v-show="drag" class="width-2 th" role="cell" ></div>
-              <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{width: field.width, 'min-width': field.minWidth}" :ref="'th'+field.key" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
+              <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{width: field.width}" :ref="'th'+field.key" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
                 <div class="align-center gap-05" >{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer" >
                     <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
                   </span>
@@ -37,7 +37,7 @@
               
               <div class="tr hidden" role="row" >
                 <div v-show="drag" class="width-2 th" role="cell" ></div>
-                <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :data-key="field.key" :style="{ width: field.width, 'min-width': field.minWidth}" >
+                <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :data-key="field.key" :style="{ width: field.width}" >
                   <!-- <div class="align-center gap-05" > </div> -->
                 </div>
               </div>
@@ -446,10 +446,11 @@ export default {
       // ============================================================
       // stops column dragging
       this.stopColumnDrag = function(e) {
-        console.log(e.target, e.bubbles)
 
-        var e = e || window.event;
-        e.stopPropagation()
+        var ev = e || window.event;
+        ev.stopPropagation()
+        ev.stopImmediatePropagation()
+        console.log(ev)
 
         if (!dragColumns) return;
 
@@ -467,17 +468,20 @@ export default {
         }
         // console.log(colWidth)
 
-        self.preventEvent(e);
+        self.preventEvent(ev);
       }
 
       // ============================================================
       // init data and start dragging
       this.startColumnDrag = function(e) {
-        // console.log(e)
         var e = e || window.event;
-
+        // e.cancelBubble = true
+        // e.preventDefault()
+        // e.stopPropagation()
+        e.stopImmediatePropagation()
+        console.log(e)
         // if not first button was clicked
-        //if (e.button != 0) return;
+        if (e.button != 0) return;
 
         // remember dragging object
         var dragEl = (e.target || e.srcElement).offsetParent.parentElement
@@ -736,11 +740,10 @@ export default {
 .adv-table-wrapper {
   overflow: auto;
   height: 100%;
-  /*min-width: 1400px!important;*/
+  /*min-width: 1400px;*/
 }
 
 .adv-table {
-  /*display: table;*/
   min-width: 100%;
   font-size: $base-size;
 
