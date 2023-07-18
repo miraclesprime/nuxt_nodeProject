@@ -1024,7 +1024,49 @@ export default {
         this.localdata = newArr6;
       }
 
-      // this.key += 1
+      // sort by difficulty
+      if ($event == "difficultyId") {
+        let newArr6 = [];
+
+          for (let i = 0; i < this.localdata.length; i++) {
+            newArr6.push(this.localdata[i]);
+            let tNewArr = []
+            for(let j=0; j<this.localdata[i].tasks.length; j++) {
+              if (this.localdata[i].tasks[j].difficultyId) {
+                tNewArr.unshift(this.localdata[i].tasks[j])
+              } else {
+                tNewArr.push(this.localdata[i].tasks[j])
+              }
+            }
+            newArr6[i]["tasks"] = tNewArr;
+          }
+
+          if (this.orderBy == "asc") {
+
+              newArr6.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.difficultyId && b.difficultyId) {
+                    return a.difficultyId - b.difficultyId
+                  }
+                })
+              })
+
+          } else {
+
+            newArr6.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.difficultyId && b.difficultyId) {
+                    return b.difficultyId - a.difficultyId
+                  }
+                })
+              })
+          }
+
+          this.localdata = newArr6;
+      }
+
+
+      this.key += 1
       this.checkActive($event)
       if (this.orderBy == 'asc') {
         this.orderBy = 'desc'

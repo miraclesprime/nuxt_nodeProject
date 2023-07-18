@@ -422,6 +422,7 @@ export const TASK_SORT = [
   { label: 'Priority', key: 'priority' },
   { label: 'Status', key: 'status' },
   { label: 'Department', key: 'department' },
+  { label: 'Difficulty', key: 'difficultyId' },
   { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },
 ]
@@ -1056,6 +1057,7 @@ export const USER_TASK_SORT = [
   { label: 'Priority', key: 'priority' },
   { label: 'Status', key: 'status' },
   { label: 'Department', key: 'department' },
+  { label: 'Difficulty', key: 'difficultyId'},
   { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },
 ]
@@ -1082,6 +1084,7 @@ export const COMPANY_TASK_SORT = [
   { label: 'Status', key: 'status' },
   { label: 'Priority', key: 'priority' },
   { label: 'Assignee', key: 'userId' },
+  { label: 'Difficulty', key: 'difficultyId' },
   { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },
 ]
