@@ -985,46 +985,43 @@ export default {
           this.localdata = newArr5;
       }
 
-
       // sort by department
       if ($event == "department") {
         let newArr6 = [];
 
-          for (let i = 0; i < this.localdata.length; i++) {
-            newArr6.push(this.localdata[i]);
-            let tNewArr = []
-            for(let j=0; j<this.localdata[i].tasks.length; j++) {
-              if (this.localdata[i].tasks[j].departmentId) {
-                tNewArr.unshift(this.localdata[i].tasks[j])
-              } else {
-                tNewArr.push(this.localdata[i].tasks[j])
-              }
+        for (let i = 0; i < this.localdata.length; i++) {
+          newArr6.push(this.localdata[i]);
+          let tNewArr = []
+          for(let j=0; j<this.localdata[i].tasks.length; j++) {
+            if (this.localdata[i].tasks[j].departmentId) {
+              tNewArr.unshift(this.localdata[i].tasks[j])
+            } else {
+              tNewArr.push(this.localdata[i].tasks[j])
             }
-            newArr6[i]["tasks"] = tNewArr;
           }
+          newArr6[i]["tasks"] = tNewArr;
+        }
 
-          if (this.orderBy == "asc") {
-
-              newArr6.forEach(todo => {
-                todo["tasks"] = todo.tasks.sort((a, b) => {
-                  if (a.departmentId && b.departmentId) {
-                    return a.department.title.localeCompare(b.department.title)
-                  }
-                })
-              })
-
-          } else {
-
+        if (this.orderBy == "asc") {
             newArr6.forEach(todo => {
-                todo["tasks"] = todo.tasks.sort((a, b) => {
-                  if (a.departmentId && b.departmentId) {
-                    return b.department.title.localeCompare(a.department.title)
-                  }
-                })
+              todo["tasks"] = todo.tasks.sort((a, b) => {
+                if (a.departmentId && b.departmentId) {
+                  return a.department.title.localeCompare(b.department.title)
+                }
               })
-          }
+            })
 
-          this.localdata = newArr6;
+        } else {
+          newArr6.forEach(todo => {
+              todo["tasks"] = todo.tasks.sort((a, b) => {
+                if (a.departmentId && b.departmentId) {
+                  return b.department.title.localeCompare(a.department.title)
+                }
+              })
+            })
+        }
+
+        this.localdata = newArr6;
       }
 
       // sort by difficulty
@@ -1082,7 +1079,7 @@ export default {
       // in case of create task 
       if (!$event) {
         // this.$nuxt.$emit("open-sidebar", $event)
-        this.$nuxt.$emit("open-sidebar", {...$event,userId:JSON.parse(localStorage.getItem("user")).sub});
+        this.$nuxt.$emit("open-sidebar", {...$event, userId: JSON.parse(localStorage.getItem("user")).sub});
       }
       this.flag = !this.flag;
     },

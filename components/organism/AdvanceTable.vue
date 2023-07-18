@@ -488,6 +488,7 @@ export default {
   overflow: auto;
   height: 100%;
   border-bottom: 1px solid $gray2;
+  /*min-width: 1400px;*/
 }
 
 .adv-table {
