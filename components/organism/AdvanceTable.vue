@@ -5,7 +5,7 @@
       <div slot="header" class="tr" role="row" id="adv-table-row1">
         <div v-show="drag" class="width-2 th" id="adv-table-cell1" role="cell"></div>
         <div v-for="(field, index) in tableFields" :key="field+'-'+index" class="th" id="adv-table-th1" role="cell" :style="{ width: field.width}" >
-          <div class="align-center gap-05" :style="{'min-width': field.minWidth}">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
+          <div class="align-center gap-05" :style="{'min-width': field.minWidth}">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
               <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
             </span></div>
         </div>
@@ -351,6 +351,16 @@ export default {
         dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'><div class='resize-drag-handle position-absolute h-100' ></div>"+dragColumns[i].innerHTML+"</div>";
         // BUGBUG: calculate real border width instead of 5px!!!
         dragColumns[i].firstChild.firstChild.onmousedown = this.startColumnDrag;
+      }
+      
+      const sorttrig = document.getElementsByClassName('sortingtrigger')
+
+      for (var i = 0; i < sorttrig.length; i++) {
+        // console.log(sorttrig[i])
+        sorttrig[i].addEventListener("click", (e) => {
+          // console.log(e.currentTarget, e.currentTarget.dataset)
+          this.$emit(e.currentTarget.dataset.event, e.currentTarget.dataset.key)
+        })
       }
     },
     resizableColumns() {

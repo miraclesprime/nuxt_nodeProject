@@ -8,7 +8,7 @@
             <div class="tr " role="row" >
               <div v-show="drag" class="width-2 th" role="cell" ></div>
               <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{width: field.width}" :ref="'th'+field.key" :data-key="field.key" >
-                <div class="align-center gap-05" >{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null" >
+                <div class="align-center gap-05" >{{field.label}} <span v-if="field.header_icon" :id="'adv-table-header-icon'+index" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null" >
                     <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
                   </span>
                 </div>
@@ -450,7 +450,7 @@ export default {
         var ev = e || window.event;
         ev.stopPropagation()
         ev.stopImmediatePropagation()
-        console.log(ev)
+        // console.log(ev)
 
         if (!dragColumns) return;
 
@@ -477,9 +477,9 @@ export default {
         var e = e || window.event;
         // e.cancelBubble = true
         // e.preventDefault()
-        // e.stopPropagation()
+        e.stopPropagation()
         e.stopImmediatePropagation()
-        console.log(e)
+        // console.log(e)
         // if not first button was clicked
         if (e.button != 0) return;
 
@@ -520,34 +520,23 @@ export default {
         let clientw = dragColumns[i].clientWidth
         dragColumns[i].style.width = clientw + 'px'
         // console.log(dragColumns[i], clientw)
-        // dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'>" +
-        //   "<div class='resize-drag-handle' style='"+
-        //   "position:absolute;height:100%;width:4px;right:0;top:0px;cursor:w-resize;z-index:4; background-color: var(--bib-secondary-sub4)'>"+
-        //   "</div>"+
-        //   dragColumns[i].innerHTML +
-        //   "</div>";
+
         dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'><div class='resize-drag-handle position-absolute h-100' ></div>"+dragColumns[i].innerHTML+"</div>";
         // BUGBUG: calculate real border width instead of 5px!!!
+        
         dragColumns[i].firstChild.firstChild.onmousedown = this.startColumnDrag;
       }
 
-      const headElems = document.querySelectorAll(".th")
-      const cells = document.querySelectorAll('.td')
-      /*const col1 = document.querySelectorAll(".td:nth-child(2)")
-      const col2 = document.querySelectorAll(".td:nth-child(3)")*/
+      // const headElems = document.getElementsByClassName("th")
+      const sorttrig = document.getElementsByClassName('sortingtrigger')
 
-      const resizeObserver = new ResizeObserver((entries) => {
-        for (const entry of entries) {
-          // console.log(entry)
-          console.log(entry.target.dataset.key, entry.contentRect.width)
-          /*for (var i = 0; i < cells.length; i++) {
-            // console.log(cells[i])
-            // console.log(cells[i].dataset.key, cells[i].style.width)
-            // cells[i].style.flexBasis = entry.contentRect.width+"px"
-          }*/
-          // entry.target.style.width = entry.contentBoxSize[0].inlineSize + "px";
-        }
-      });
+      for (var i = 0; i < sorttrig.length; i++) {
+        // console.log(sorttrig[i])
+        sorttrig[i].addEventListener("click", (e) => {
+          // console.log(e.currentTarget, e.currentTarget.dataset)
+          this.$emit(e.currentTarget.dataset.event, e.currentTarget.dataset.key)
+        })
+      }
 
     },
     resizableColumns() {
