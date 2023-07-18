@@ -7,8 +7,8 @@
           <div class="table resizable w-100 position-sticky" ref="headrow" style="top: 0; z-index:2;">
             <div class="tr " role="row" >
               <div v-show="drag" class="width-2 th" role="cell" ></div>
-              <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{width: field.width}" :ref="'th'+field.key" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
-                <div class="align-center gap-05" >{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer" >
+              <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{width: field.width}" :ref="'th'+field.key" :data-key="field.key" >
+                <div class="align-center gap-05" >{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null" >
                     <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
                   </span>
                 </div>
@@ -526,12 +526,7 @@ export default {
         //   "</div>"+
         //   dragColumns[i].innerHTML +
         //   "</div>";
-        dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'>" +
-            "<div class='resize-drag-handle' style='"+
-          "position:absolute;height:100%;width:4px;right:0;top:0px;cursor:col-resize;z-index:4;'><div style='" + "width:4px;background-color:#f9f9fa;z-index:40;" + "'></div>" +
-            "</div>"+
-          dragColumns[i].innerHTML +
-          "</div>";
+        dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'><div class='resize-drag-handle position-absolute h-100' ></div>"+dragColumns[i].innerHTML+"</div>";
         // BUGBUG: calculate real border width instead of 5px!!!
         dragColumns[i].firstChild.firstChild.onmousedown = this.startColumnDrag;
       }
@@ -773,7 +768,10 @@ export default {
 
   .tr {
     display: table-row;
-    /*display: flex;*/
+
+    .resize-drag-handle {
+      background-color: $secondary;
+    }
 
     .th:nth-child(2),
     .td:nth-child(2) {
@@ -821,9 +819,7 @@ export default {
     }
   }
 
-  .resize-drag-handle {
-    background-color: $secondary;
-  }
+  
   .drag-handle,
   .section-drag-handle {
     cursor: grab;

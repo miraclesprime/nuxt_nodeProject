@@ -465,6 +465,18 @@ ul {
   }
 }
 
+.resize-drag-handle {
+  background-color: transparent;
+  top:0px;
+  right:0;
+  z-index:4;
+  width:4px;
+  cursor:col-resize;
+  transition: background 200ms;
+  &:hover { background-color: $gray4; }
+      
+}
+
 .picker-wrapper-two,
 .input-wrapper-two {
   position: relative;

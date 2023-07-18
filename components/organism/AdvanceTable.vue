@@ -4,8 +4,8 @@
     <draggable class="task-draggable adv-table resizable bg-white" :id="'advTable-'+componentKey" handle=".drag-handle" :style="{'width': tableWidth}" role="table" @start="rowDragStart" @end="rowDragEnd" :move="moveTask" >
       <div slot="header" class="tr" role="row" id="adv-table-row1">
         <div v-show="drag" class="width-2 th" id="adv-table-cell1" role="cell"></div>
-        <div v-for="(field, index) in tableFields" :key="field+'-'+index" class="th" id="adv-table-th1" role="cell" :style="{ width: field.width}" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
-          <div class="align-center gap-05" :style="{'min-width': field.minWidth}">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer"  id="adv-table-header-icon">
+        <div v-for="(field, index) in tableFields" :key="field+'-'+index" class="th" id="adv-table-th1" role="cell" :style="{ width: field.width}" >
+          <div class="align-center gap-05" :style="{'min-width': field.minWidth}">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
               <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
             </span></div>
         </div>
@@ -348,12 +348,7 @@ export default {
       // prepare table header to be draggable
       // it runs during class creation
       for (var i = 0; i < dragColumns.length; i++) {
-        dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'>" +
-            "<div class='resize-drag-handle' style='"+
-          "position:absolute;height:100%;width:4px;right:0;top:0px;cursor:col-resize;z-index:4;'><div style='" + "width:4px;background-color:#f9f9fa;z-index:40;" + "'></div>" +
-            "</div>"+
-          dragColumns[i].innerHTML +
-          "</div>";
+        dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'><div class='resize-drag-handle position-absolute h-100' ></div>"+dragColumns[i].innerHTML+"</div>";
         // BUGBUG: calculate real border width instead of 5px!!!
         dragColumns[i].firstChild.firstChild.onmousedown = this.startColumnDrag;
       }
@@ -519,6 +514,7 @@ export default {
   .tr {
     display: table-row;
 
+
     .th:nth-child(2),
     .td:nth-child(2) {
       position: sticky;
@@ -542,9 +538,7 @@ export default {
         z-index: 3;
         background: $gray9;
       }
-      &:hover {
-        .resize-drag-handle { background-color: $primary; }
-      }
+      
     }
     &:hover {
       .drag-handle {
@@ -557,9 +551,7 @@ export default {
     }
   }
 
-  .resize-drag-handle {
-    background-color: $secondary;
-  }
+  
   .drag-handle {
     cursor: grab;
     opacity: 0.35;
