@@ -64,6 +64,18 @@ export default ({ store, app, context }, inject) => {
   inject('groupBy',(data,group)=>{
         let arr=data
         let _tasks=[];
+        arr.sort((a,b)=>{
+          if (a.priorityId === null && b.priorityId !== null) {
+            return 1;
+          }
+          if (b.priorityId === null && a.priorityId !== null) {
+            return -1;
+          }
+          if (a.priorityId === null && b.priorityId === null) {
+            return 0;
+          }
+          return a.priorityId - b.priorityId;
+        })  
         if (group == "priority") {  
           const groupByPriority = arr.reduce((acc, task) => {
             const priority = task.priority && task.priority.text || 'Unassigned';
@@ -83,14 +95,7 @@ export default ({ store, app, context }, inject) => {
             });
             groupIndex++;
           }
-          const titleArray= {0:"High", 1:"Medium",2:"Low",3:"Unassigned"}
-          _tasks = _data.map(item => {
-            if (titleArray[item.id]) {
-              item.title = titleArray[item.id];
-            }
-            return item;
-          });
-          return _tasks
+          return _data
      
        }
         if (group == "department") {
