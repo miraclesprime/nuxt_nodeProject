@@ -224,30 +224,30 @@ export default {
   mounted() {
     if (process.client) {
 
-      let p = JSON.parse(JSON.stringify(this.project))
-      if(Object.keys(p).length != 0) {
+      // let p = JSON.parse(JSON.stringify(this.project))
+      // if(Object.keys(p).length != 0) {
 
-        this.$store.dispatch('project/fetchProjects').then((res) => {
-          let proj = res.find((p) => {
-            if(p.id == this.$route.params.id) {
-              return p;
-            } 
-          })
+        // this.$store.dispatch('project/fetchProjects').then((res) => {
+        //   let proj = res.find((p) => {
+        //     if(p.id == this.$route.params.id) {
+        //       return p;
+        //     } 
+        //   })
 
-          if((proj && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
-              console.log('user has access!')
-          } else {
-              this.alertDialog = true
-              this.alertMsg = "You do not have access to this page!"
-              setTimeout(function() {
-                this.$router.push('/projects')      
-              }.bind(this),200)
-          }
+        //   if((proj && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
+        //       console.log('user has access!')
+        //   } else {
+        //       this.alertDialog = true
+        //       this.alertMsg = "You do not have access to this page!"
+        //       setTimeout(function() {
+        //         this.$router.push('/projects')      
+        //       }.bind(this),200)
+        //   }
 
-        });
-      } else {
-        this.$router.push('/notfound')
-      }
+        // });
+      // } else {
+      //   this.$router.push('/notfound')
+      // }
 
       this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
       this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })

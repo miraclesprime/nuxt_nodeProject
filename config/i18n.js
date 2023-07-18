@@ -1,5 +1,5 @@
-import en from "@bizinbox/bib-ui-lib/dist/lang/en.json";
-import fr from "@bizinbox/bib-ui-lib/dist/lang/fr.json";
+import en from "@bizinbox/bib-ui-lib/dist/lang/global_en.json";
+import fr from "@bizinbox/bib-ui-lib/dist/lang/global_fr.json";
 
 export default {
   locale: 'en',

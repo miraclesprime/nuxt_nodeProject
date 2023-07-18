@@ -80,12 +80,12 @@ export default {
           {
             code: "en",
             name: "English",
-            file: "en.json",
+            file: "global_en.json",
           },
           {
             code: "fr",
             name: "Français",
-            file: "fr.json",
+            file: "global_fr.json",
           },
         ],
         globalInjection: true,
