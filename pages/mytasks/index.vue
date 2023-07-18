@@ -985,16 +985,54 @@ export default {
           this.localdata = newArr5;
       }
 
-
       // sort by department
       if ($event == "department") {
+        let newArr6 = [];
+
+        for (let i = 0; i < this.localdata.length; i++) {
+          newArr6.push(this.localdata[i]);
+          let tNewArr = []
+          for(let j=0; j<this.localdata[i].tasks.length; j++) {
+            if (this.localdata[i].tasks[j].departmentId) {
+              tNewArr.unshift(this.localdata[i].tasks[j])
+            } else {
+              tNewArr.push(this.localdata[i].tasks[j])
+            }
+          }
+          newArr6[i]["tasks"] = tNewArr;
+        }
+
+        if (this.orderBy == "asc") {
+            newArr6.forEach(todo => {
+              todo["tasks"] = todo.tasks.sort((a, b) => {
+                if (a.departmentId && b.departmentId) {
+                  return a.department.title.localeCompare(b.department.title)
+                }
+              })
+            })
+
+        } else {
+          newArr6.forEach(todo => {
+              todo["tasks"] = todo.tasks.sort((a, b) => {
+                if (a.departmentId && b.departmentId) {
+                  return b.department.title.localeCompare(a.department.title)
+                }
+              })
+            })
+        }
+
+        this.localdata = newArr6;
+      }
+
+      // sort by difficulty
+      if ($event == "difficultyId") {
         let newArr6 = [];
 
           for (let i = 0; i < this.localdata.length; i++) {
             newArr6.push(this.localdata[i]);
             let tNewArr = []
             for(let j=0; j<this.localdata[i].tasks.length; j++) {
-              if (this.localdata[i].tasks[j].departmentId) {
+              if (this.localdata[i].tasks[j].difficultyId) {
                 tNewArr.unshift(this.localdata[i].tasks[j])
               } else {
                 tNewArr.push(this.localdata[i].tasks[j])
@@ -1007,8 +1045,8 @@ export default {
 
               newArr6.forEach(todo => {
                 todo["tasks"] = todo.tasks.sort((a, b) => {
-                  if (a.departmentId && b.departmentId) {
-                    return a.department.title.localeCompare(b.department.title)
+                  if (a.difficultyId && b.difficultyId) {
+                    return a.difficultyId - b.difficultyId
                   }
                 })
               })
@@ -1017,8 +1055,8 @@ export default {
 
             newArr6.forEach(todo => {
                 todo["tasks"] = todo.tasks.sort((a, b) => {
-                  if (a.departmentId && b.departmentId) {
-                    return b.department.title.localeCompare(a.department.title)
+                  if (a.difficultyId && b.difficultyId) {
+                    return b.difficultyId - a.difficultyId
                   }
                 })
               })
@@ -1041,7 +1079,7 @@ export default {
       // in case of create task 
       if (!$event) {
         // this.$nuxt.$emit("open-sidebar", $event)
-        this.$nuxt.$emit("open-sidebar", {...$event,userId:JSON.parse(localStorage.getItem("user")).sub});
+        this.$nuxt.$emit("open-sidebar", {...$event, userId: JSON.parse(localStorage.getItem("user")).sub});
       }
       this.flag = !this.flag;
     },

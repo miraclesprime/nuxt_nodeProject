@@ -71,6 +71,26 @@ export const PROJECT_FIELDS = [
     }
   },
   {
+    key: "department",
+    label: "Department",
+    width: '150px',
+    header_icon: {
+      icon: 'swap-vertical',
+      event: 'table-sort',
+      isActive: false
+    }
+  },
+  {
+    key: "tag",
+    label: "Tags",
+    width: '150px',
+  },
+  // {
+  //     key: "",
+  //     label: "Team",
+  //   width: '120px',
+  // },
+  {
     label: 'Start Date',
     key: 'startDate',
     width: '150px',
@@ -90,32 +110,13 @@ export const PROJECT_FIELDS = [
       isActive: true
     }
   },
-  {
-    key: "tag",
-    label: "Tags",
-    width: '150px',
-  },
-  // {
-  //     key: "",
-  //     label: "Team",
-  //   width: '120px',
-  // },
-  {
-    key: "department",
-    label: "Department",
-    width: '150px',
-    header_icon: {
-      icon: 'swap-vertical',
-      event: 'table-sort',
-      isActive: false
-    }
-  },
 ]
 
 export const TASK_FIELDS = [
   {
     label: 'Task name',
     key: 'title',
+    width: "200px",
     icon: {
       icon: 'check-circle-solid',
       variant: 'gray2',
@@ -421,6 +422,7 @@ export const TASK_SORT = [
   { label: 'Priority', key: 'priority' },
   { label: 'Status', key: 'status' },
   { label: 'Department', key: 'department' },
+  { label: 'Difficulty', key: 'difficultyId' },
   { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },
 ]
@@ -856,7 +858,8 @@ export const COMPANY_TASK_FIELDS = [
   {
     label: 'Task name',
     key: 'title',
-    minWidth: "200px",
+    // minWidth: "200px",
+    width: "200px",
     icon: {
       icon: 'check-circle-solid',
       variant: 'gray2',
@@ -957,7 +960,8 @@ export const USER_TASKS = [
   {
     label: 'Task name',
     key: 'title',
-    minWidth: "200px",
+    /*minWidth: "200px",*/
+    width: "200px",
     icon: {
       icon: 'check-circle-solid',
       variant: 'gray2',
@@ -1053,6 +1057,7 @@ export const USER_TASK_SORT = [
   { label: 'Priority', key: 'priority' },
   { label: 'Status', key: 'status' },
   { label: 'Department', key: 'department' },
+  { label: 'Difficulty', key: 'difficultyId'},
   { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },
 ]
@@ -1079,6 +1084,7 @@ export const COMPANY_TASK_SORT = [
   { label: 'Status', key: 'status' },
   { label: 'Priority', key: 'priority' },
   { label: 'Assignee', key: 'userId' },
+  { label: 'Difficulty', key: 'difficultyId' },
   { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },
 ]

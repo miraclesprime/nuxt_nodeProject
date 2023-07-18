@@ -208,6 +208,46 @@ export const mutations = {
 
     }
 
+    // sort by priority
+    if (payload.sName == 'difficultyId') {
+
+      let newArr = []
+
+      for (let i = 0; i < arr.length; i++) {
+        let t = []
+        for(let j=0; j<arr[i].tasks.length; j++) {
+          if (arr[i].tasks[j].difficultyId) {
+            t.unshift(arr[i].tasks[j])
+          } else {
+            t.push(arr[i].tasks[j])
+          }
+        }
+        arr[i].tasks = t;
+        newArr.push(arr[i]);
+      }
+
+      if (payload.order == "asc") {
+        newArr.map((dept) => {
+          return dept.tasks.sort((a, b) => {
+            if (a.difficultyId && b.difficultyId) {
+              return a.difficultyId - b.difficultyId;
+            }
+          })
+        })
+      } else {
+        newArr.map((dept) => {
+          return dept.tasks.sort((a, b) => {
+            if (a.difficultyId && b.difficultyId) {
+              return b.difficultyId - a.difficultyId;
+            }
+          })
+        })
+      }
+
+      state.companyTasks = newArr;
+
+    }
+
     // sort by owner
     if (payload.sName == 'userId') {
       let newArr = []

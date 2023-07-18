@@ -698,6 +698,14 @@ export default {
           })
       }
 
+      if ($event == "difficultyId") {
+        this.$store
+          .dispatch("company/sortCompanyTasks", {
+            sName: $event,
+            order: this.orderBy,
+          })
+      }
+
       if ($event == "status") {
         this.$store
           .dispatch("company/sortCompanyTasks", {

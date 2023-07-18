@@ -420,10 +420,10 @@ export default {
 
 <style lang="scss" scoped>
 .light-button {
-  color:dark !important;
+  color:grey
 }
 .dark-button {
-  color:grey !important;
+  color:grey
 }
 .button {
   display: inline-block;
