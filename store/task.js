@@ -8,6 +8,7 @@ export const state = () => ({
   singleTaskComment: {},
   taskHistory: [],
   sidebarVisible: false,
+  expandVisible:true
 });
 
 export const getters = {
@@ -17,7 +18,9 @@ export const getters = {
   tasksForListView(state) {
     return state.tasks;
   },
-
+  getExpandVisible (state) {
+    return state.expandVisible
+  },
   tableFields(state) {
     return state.TABLE_FIELDS;
   },
@@ -50,6 +53,9 @@ export const getters = {
 };
 
 export const mutations = {
+  setExpandVisible(state,payload) {
+    state.expandVisible=payload
+  },
   setSidebarVisible(state, payload){
     state.sidebarVisible = payload
   },

@@ -596,7 +596,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .projects-wrapper { display: flex; flex-direction: column; height: 100%; }
-.projects-list-wrapper { overflow: auto; }
+.projects-list-wrapper { overflow: auto;height: 100%; }
 details {
   summary::-webkit-details-marker {
     display: none;

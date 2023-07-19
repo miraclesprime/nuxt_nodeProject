@@ -61,7 +61,7 @@
               </template>
             </bib-button>
           </div>
-          <div id='tsb-icon-close' class="shape-circle bg-hover-light width-2 height-2 d-flex cursor-pointer" title="Close" @click="$nuxt.$emit('close-sidebar')">
+          <div id='tsb-icon-close' class="shape-circle bg-hover-light width-2 height-2 d-flex cursor-pointer" title="Close" @click="closeExpand">
             <bib-icon icon="close" class="m-auto"></bib-icon>
           </div>
         </div>
@@ -492,9 +492,15 @@ export default {
         
       }
     }, 600),
-    setExpand()
-    {
+    
+    setExpand(){
+  
       this.$store.commit("task/setExpandVisible",false)
+      this.$router.push('/tasks/' + this.currentTask.id)
+    },
+    closeExpand(){
+      this.$router.push(this.$route.path);
+      this.$store.commit("task/setExpandVisible",true)
     },
     setFavorite() {
       this.favProcess = true
