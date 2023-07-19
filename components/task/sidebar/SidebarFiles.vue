@@ -333,33 +333,5 @@ export default {
 };
 </script>
 <style scoped lang="scss">
-.file-actions {
-}
 
-.actions {
-  display: flex;
-  color: $gray1;
-
-  span {
-    margin-left: 5px;
-    font-size: 13px;
-  }
-
-  svg,
-  svg g {
-    fill: $gray1;
-  }
-}
-
-.action {
-  display: flex;
-  padding: 0 20px;
-  align-items: center;
-}
-
-.files {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.5rem;
-}
 </style>
