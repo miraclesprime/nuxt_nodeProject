@@ -181,6 +181,9 @@ export default {
       }
     },
   },
+  mounted () {
+    this.form=this.task
+  },
   methods: {
     /*parseDate(dateString, format) {
            return fecha.parse(dateString, format);

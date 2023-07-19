@@ -1,5 +1,5 @@
 <template>
-  <article id="side-panel-wrapper" class="side-panel" v-click-outside="closeSidebar">
+  <article id="side-panel-wrapper" class="side-panel expandSidebar" v-click-outside="closeSidebar" >
     <div class="side-panel__header" id="tsb-header">
       <div class="d-flex justify-between pt-105 px-105 pb-05" id="ts-side-panel">
         <div class="" id="tsb-mark-button-wrapper">
@@ -9,9 +9,9 @@
            <bib-button :label="isComplete.text" :variant="isComplete.variant" icon="check-circle-solid" @click="markComplete"></bib-button>
         </div>
         <div class="d-flex gap-05 align-center" id="tsb-icons-wrapper">
-          <div class="d-flex cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2" id='tsb-icon-external' @click="setExpand">
+          <!-- <div class="d-flex cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2" id='tsb-icon-external' @click="setExpand">
             <bib-icon icon="expand-fullscreen" variant="gray6" class="m-auto"></bib-icon>
-          </div>
+          </div> -->
           <!-- <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="tsb-icon-2" title="Team" @click="showAddTeamModal">
             <bib-icon icon="user-group-solid" variant="gray5" ></bib-icon>
           </div> -->
@@ -225,10 +225,31 @@ export default {
   },
 
   watch: {
-    currentTask(newVal) {
-      this.showSubtaskDetail = false
+ 
+    /*scrollId(newValue, oldValue){
+      this.$nextTick(() => {
+        this.$refs.topScroll.click()
+      });
+    },*/
+    showSubtaskDetail(newValue){
+      if(!newValue){
+        this.$store.dispatch("subtask/fetchSubtasks", this.currentTask )
+      } 
+    },
+
+  },
+
+  created(){
+    this.$nuxt.$on("edit-message", (msg) => {
+      this.editMessage = msg
+    })
+  },
+
+  mounted() {
+    this.$store.dispatch("project/fetchProjects")
+    this.showSubtaskDetail = false
       if (Object.keys(this.currentTask).length) {
-        this.form = _.cloneDeep(this.currentTask);
+        this.form =this.currentTask;
         if (this.currentTask.project?.length) {
           this.form.projectId = this.currentTask.project[0]?.projectId || this.currentTask.project[0].project?.id
         } else {
@@ -259,29 +280,7 @@ export default {
           this.form.sectionId = this.sectionIdActive
         }
       }
-    },
-    /*scrollId(newValue, oldValue){
-      this.$nextTick(() => {
-        this.$refs.topScroll.click()
-      });
-    },*/
-    showSubtaskDetail(newValue){
-      if(!newValue){
-        this.$store.dispatch("subtask/fetchSubtasks", this.currentTask )
-      } 
-    },
 
-  },
-
-  created(){
-    this.$nuxt.$on("edit-message", (msg) => {
-      this.editMessage = msg
-    })
-  },
-
-  mounted() {
-    this.$store.dispatch("project/fetchProjects")
-    this.showSubtaskDetail = false
   },
 
   methods: {
@@ -493,13 +492,14 @@ export default {
       }
     }, 600),
     
-    setExpand(){
+    // setExpand(){
   
-      this.$store.commit("task/setExpandVisible",false)
-      this.$router.push('/tasks/' + this.currentTask.id)
-    },
+    //   this.$store.commit("task/setExpandVisible",false)
+    // },
     closeExpand(){
-      this.$router.push(this.$route.path);
+      this.$router.push("projects")
+      this.$router.push("mytasks")
+      
       this.$store.commit("task/setExpandVisible",true)
     },
     setFavorite() {
@@ -620,7 +620,14 @@ export default {
   grid-template-rows: 1fr minmax(4fr, auto) 1fr;
   color: var(--bib-secondary);
 }
-
+.expandSidebar {
+position: absolute; 
+left: 50%;
+right:50%;
+bottom:-5%;
+transform: translate(-50%, -5%);
+border-radius: 4px;
+}
 .editable-input { border-color: var(--bib-light)}
 
 .row {

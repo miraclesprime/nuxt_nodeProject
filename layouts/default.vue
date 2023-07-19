@@ -142,7 +142,7 @@
       <add-teammember-modal ref="teammemberModal"></add-teammember-modal>
       <add-member-to-task ref="taskTeamModal"></add-member-to-task>
     </div>
-    <div v-else>
+    <div v-else class="expand">
       <task-sidebar-expand></task-sidebar-expand>
     </div>
   </client-only>
@@ -394,7 +394,7 @@ export default {
       let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4MjMxNDk5MjM1NywiZXhwIjoxNjkwMDkwOTkyMzU3LCJqdGkiOiIxODkxMjg1Ni00ZDIyLTQzMDQtODI4My1kNzAzMDMzOTQ2NTYifQ.7NKaoTwlgkwho6DzjV96ohKvQznbASt846ZA1KRCtN0";
 
       // Vishwajeet
-      let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2ODg0NDk2Nzg2NzUsImV4cCI6MTY5NjIyNTY3ODY3NSwianRpIjoiNjA0OTU1ZTEtZjc2OC00YmUzLTkxYzgtYmI0ZGM2NWM5NzBhIn0.kiUQRmE4VSwFx3augkQtUAEdpuzGkmV7GVBKt7VDifg"
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2ODg0NDk2Nzg2NzUsImV4cCI6MTY5NjIyNTY3ODY3NSwianRpIjoiNjA0OTU1ZTEtZjc2OC00YmUzLTkxYzgtYmI0ZGM2NWM5NzBhIn0.kiUQRmE4VSwFx3augkQtUAEdpuzGkmV7GVBKt7VDifg"
 
       // Rajeev
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnRUxZcWFRV1FHOWRuamsyIiwic3ViZSI6InJhamVldi5zaGFybWFAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJVU0VSIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY3MjYzOTg2MDMzMSwiZXhwIjoxNjgwNDE1ODYwMzMxLCJqdGkiOiJhYWZlYmUxYi1kZGI2LTRmODMtYjIzYy1hZWRkMDcxMzU1ZTEifQ.AxRf7tHVZC4r0Io6J9ghNZJscPkRKWM3LBOgevkQdKE"
@@ -643,7 +643,14 @@ html {
     line-height: 1.8rem;
   }
 }
-
+.expand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: black;
+  width:100%;
+  height:100vh;
+}
 .app-wrapper {
   &__navigation {
     position: relative;
