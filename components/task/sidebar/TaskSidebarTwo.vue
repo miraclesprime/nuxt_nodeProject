@@ -94,6 +94,7 @@
       </div>
 
       <sidebar-fields-two :task="currentTask" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform" ></sidebar-fields-two>
+      <sidebar-tag @add-tag="addTag" @change="addTag" @delete-tag="deleteTag" ></sidebar-tag>
       <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" ></sidebar-subtask>
       <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
       <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
@@ -603,6 +604,16 @@ export default {
       } else { 
         unsecuredCopyToClipboard(url);
       }
+    },
+    addTag(tag){
+      if (tag.id) {
+        console.log('existing tag->', tag.id, tag.text)
+      } else {
+        console.log('new tag->', tag)
+      }
+    },
+    deleteTag(tag){
+      console.log(tag)
     },
   },
 };
