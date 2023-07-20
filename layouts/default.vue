@@ -478,7 +478,7 @@ export default {
             console.log(err);
           });
 
-        this.$store.dispatch("token/setToken", jwt);
+        // this.$store.dispatch("token/setToken", jwt);
         localStorage.setItem("accessToken", jwt);
 
         this.$store.dispatch("company/fetchCompanyMembers", user.subb);
