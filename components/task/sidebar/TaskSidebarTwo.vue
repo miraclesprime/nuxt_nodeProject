@@ -1,5 +1,5 @@
 <template>
-  <article id="side-panel-wrapper" class="side-panel" v-click-outside="closeSidebar">
+  <article id="side-panel-wrapper" :class="expandVisible?'side-panel':'side-panel expandVisible'" v-click-outside="closeSidebar">
     <div class="side-panel__header" id="tsb-header">
       <div class="d-flex justify-between pt-105 px-105 pb-05" id="ts-side-panel">
         <div class="" id="tsb-mark-button-wrapper">
@@ -61,7 +61,10 @@
               </template>
             </bib-button>
           </div>
-          <div id='tsb-icon-close' class="shape-circle bg-hover-light width-2 height-2 d-flex cursor-pointer" title="Close" @click="$nuxt.$emit('close-sidebar')">
+          <div v-if="expandVisible" id='tsb-icon-close' class="shape-circle bg-hover-light width-2 height-2 d-flex cursor-pointer" title="Close" @click="$nuxt.$emit('close-sidebar')">
+            <bib-icon icon="close" class="m-auto"></bib-icon>
+          </div>
+          <div v-else id='tsb-icon-close' class="shape-circle bg-hover-light width-2 height-2 d-flex cursor-pointer" title="Close" @click="closeExpand">
             <bib-icon icon="close" class="m-auto"></bib-icon>
           </div>
         </div>
@@ -139,6 +142,7 @@ export default {
     sectionIdActive: Number,
     // scrollId: {type: String, default: "sidebar-inner-wrap"},
     departmentId: {type: Number},
+    expandVisible:{type:Boolean,default:true}
     // visible: Boolean,
   },
   data: function() {
@@ -284,7 +288,7 @@ export default {
     this.showSubtaskDetail = false
     this.$store.dispatch("project/fetchProjects")
     if (Object.keys(this.currentTask).length) {
-      this.form = _.cloneDeep(this.currentTask);
+        this.form = _.cloneDeep(this.currentTask);
         if (this.currentTask.project?.length) {
           this.form.projectId = this.currentTask.project[0]?.projectId || this.currentTask.project[0].project?.id
         } else {
@@ -315,13 +319,17 @@ export default {
           this.form.sectionId = this.sectionIdActive
         }
       }
-    
   },
 
   methods: {
     showAddTeamModal() {
       // this.taskTeamModal = true
       console.info("clicked to open team modal")
+    },
+    closeExpand(){
+      this.$router.push(this.$route.path)
+      
+      this.$store.commit("task/setExpandVisible",true)
     },
     closeSidebar(event) {
       let main = document.getElementById("main-content").className
@@ -426,6 +434,7 @@ export default {
       })
         .then((u) => {
           this.$nuxt.$emit("update-key")
+          this.$store.dispatch("task/setSingleTask", u)
           this.reloadHistory += 1
         })
         .catch(e => {
@@ -491,6 +500,7 @@ export default {
       })
         .then((u) => {
           this.$nuxt.$emit("update-key")
+          
           this.reloadHistory += 1
         })
         .catch(e => {
@@ -654,6 +664,14 @@ export default {
 
 </script>
 <style lang="scss" scoped>
+.expandVisible {
+  position: absolute; 
+  left: 50%;
+  right:50%;
+  bottom:-5%;
+  transform: translate(-50%, -5%);
+  border-radius: 4px;
+}
 .side-panel {
   display: grid;
   grid-template-rows: 1fr minmax(4fr, auto) 1fr;
