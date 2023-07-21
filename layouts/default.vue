@@ -401,11 +401,10 @@ export default {
       // Charan
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQeTdMRGR3cE9xMWUxWUtYIiwic3ViZSI6ImNoYXJhbi5wYWxAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJVU0VSIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY3NzQ5NjY2MDM4NywiZXhwIjoxNjg1MjcyNjYwMzg3LCJqdGkiOiJkNjAwOWQ0Zi1lNDFjLTQ2YWMtYjU0MC1iOTk3NzJmNDIzY2MifQ.6G04xtF0oRIaHr5gV4Jxx71TJRPb3sb3S1e85BMn3vc"
 
-      // this.$cookies.set('b_ssojwt', cookie);
-      // this.$store.dispatch('token/setToken', cookie);
+      // this.$cookies.set(process.env.SSO_COOKIE_NAME, cookie);
 
-      if (this.$cookies.get("b_ssojwt")) {
-        let jwt = this.$cookies.get("b_ssojwt");
+      if (this.$cookies.get(process.env.SSO_COOKIE_NAME)) {
+        let jwt = this.$cookies.get(process.env.SSO_COOKIE_NAME);
 
         // extract user
         var base64Url = jwt.split(".")[1];
@@ -478,7 +477,7 @@ export default {
             console.log(err);
           });
 
-        this.$store.dispatch("token/setToken", jwt);
+        // this.$store.dispatch("token/setToken", jwt);
         localStorage.setItem("accessToken", jwt);
 
         this.$store.dispatch("company/fetchCompanyMembers", user.subb);

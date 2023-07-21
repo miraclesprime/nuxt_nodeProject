@@ -19,7 +19,10 @@
               <inbox-item :item="o" :key="o.id"  @task-click="fetchTask" @project-click="fetchProject" :active="active"></inbox-item>
             </template>
           </div>
-          <div ref="infinitescrolltrigger" v-show="currentPage <= pageCount" class="align-center justify-center text-gray5"> <bib-spinner variant="gray5"></bib-spinner> </div>
+          <div ref="infinitescrolltrigger" v-show="currentPage <= pageCount" class="align-center justify-center text-gray5">
+            <!-- <bib-spinner variant="gray5"></bib-spinner> -->
+            <div class="animated-background" style="height: 5px;"></div>
+          </div>
         </div>
       </main>
       <aside class="position-relative bg-white border-left-gray4">

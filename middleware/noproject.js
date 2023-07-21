@@ -1,10 +1,9 @@
 import axios from 'axios'
 export default function({ app, $axios, redirect, error, route }) {
-  const token = app.$cookies.get('b_ssojwt')
+  const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
   if (route.path.indexOf('/projects/') == 0 && route.params?.id) {
     getProject(route.params.id, token).then(r => {
-      console.log(r)
-
+      // console.log(r)
       if (r) {
         redirect("/projects/"+route.params.id)
       } else {
@@ -19,7 +18,7 @@ export default function({ app, $axios, redirect, error, route }) {
       headers: { 'Authorization': `Bearer ${token}` }
     })
 
-    console.log("project->", p.data.data)
+    // console.log("project->", p.data.data)
     if (p.data.data.isDeleted) {
       return "false"
     } else {
