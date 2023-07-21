@@ -281,8 +281,41 @@ export default {
   },
 
   mounted() {
-    this.$store.dispatch("project/fetchProjects")
     this.showSubtaskDetail = false
+    this.$store.dispatch("project/fetchProjects")
+    if (Object.keys(this.currentTask).length) {
+      this.form = _.cloneDeep(this.currentTask);
+        if (this.currentTask.project?.length) {
+          this.form.projectId = this.currentTask.project[0]?.projectId || this.currentTask.project[0].project?.id
+        } else {
+          this.form.projectId = this.project?.id
+        }
+        this.reloadFiles += 1
+      } else {
+        this.form = {
+          id: '',
+          title: "",
+          createdAt: "",
+          startDate: "",
+          dueDate: "",
+          userId: "",
+          sectionId: "",
+          departmentId: this.departmentId || null,
+          projectId: "",
+          statusId: null,
+          priorityId: null,
+          description: '',
+          budget: 0,
+        }
+        this.$nextTick(() => {
+          this.$refs.taskTitleInput.focus()
+        });
+
+        if (this.sectionIdActive) {
+          this.form.sectionId = this.sectionIdActive
+        }
+      }
+    
   },
 
   methods: {
@@ -371,6 +404,7 @@ export default {
       })
         .then((u) => {
           this.$nuxt.$emit("update-key")
+          this.$store.dispatch("task/setSingleTask", u)
           this.reloadHistory += 1
         })
         .catch(e => {

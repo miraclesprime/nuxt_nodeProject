@@ -111,7 +111,7 @@ export const mutations = {
   },
 
   fetchTeamMember(state, payload) {
-      if(state.selectedTask.userId){
+      if(state.selectedTask.userId){  
         state.taskMembers=payload.filter((item)=>item.id!==state.selectedTask.userId)
       
         }
@@ -200,7 +200,9 @@ export const actions = {
     const res = await this.$axios.$put("/task", payload, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
-    return res
+   
+    return res.data
+    
   },
 
   async deleteTask(ctx, payload) {

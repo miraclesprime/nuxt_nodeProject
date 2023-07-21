@@ -143,7 +143,7 @@
       <add-member-to-task ref="taskTeamModal"></add-member-to-task>
     </div>
     <div v-else class="expand">
-      <task-sidebar-expand></task-sidebar-expand>
+      <task-sidebar-expand ></task-sidebar-expand>
     </div>
   </client-only>
 </template>

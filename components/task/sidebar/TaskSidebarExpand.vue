@@ -93,7 +93,7 @@
         </div>
       </div>
 
-      <sidebar-fields-two :task="currentTask" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform" ></sidebar-fields-two>
+      <sidebar-fields-two :task="form" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform" ></sidebar-fields-two>
       <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" ></sidebar-subtask>
       <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
       <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
@@ -225,6 +225,42 @@ export default {
   },
 
   watch: {
+    currentTask(newVal) {
+      this.showSubtaskDetail = false
+      if (Object.keys(this.currentTask).length) {
+        this.form = _.cloneDeep(this.currentTask);
+        console.log("TasksidebarEpxnad",this.form.title)
+        if (this.currentTask.project?.length) {
+          this.form.projectId = this.currentTask.project[0]?.projectId || this.currentTask.project[0].project?.id
+        } else {
+          this.form.projectId = this.project?.id
+        }
+        this.reloadFiles += 1
+      } else {
+        this.form = {
+          id: '',
+          title: "",
+          createdAt: "",
+          startDate: "",
+          dueDate: "",
+          userId: "",
+          sectionId: "",
+          departmentId: this.departmentId || null,
+          projectId: "",
+          statusId: null,
+          priorityId: null,
+          description: '',
+          budget: 0,
+        }
+        this.$nextTick(() => {
+          this.$refs.taskTitleInput.focus()
+        });
+
+        if (this.sectionIdActive) {
+          this.form.sectionId = this.sectionIdActive
+        }
+      }
+    },
  
     /*scrollId(newValue, oldValue){
       this.$nextTick(() => {
@@ -248,8 +284,8 @@ export default {
   mounted() {
     this.$store.dispatch("project/fetchProjects")
     this.showSubtaskDetail = false
-      if (Object.keys(this.currentTask).length) {
-        this.form =this.currentTask;
+    if (Object.keys(this.currentTask).length) {
+        this.form = _.cloneDeep(this.currentTask);
         if (this.currentTask.project?.length) {
           this.form.projectId = this.currentTask.project[0]?.projectId || this.currentTask.project[0].project?.id
         } else {
@@ -369,6 +405,7 @@ export default {
       })
         .then((u) => {
           this.$nuxt.$emit("update-key")
+          this.$store.dispatch("task/setSingleTask", u)
           this.reloadHistory += 1
         })
         .catch(e => {
@@ -492,14 +529,8 @@ export default {
       }
     }, 600),
     
-    // setExpand(){
-  
-    //   this.$store.commit("task/setExpandVisible",false)
-    // },
     closeExpand(){
-      this.$router.push("projects")
-      this.$router.push("mytasks")
-      
+      this.$router.push(this.$route.path) 
       this.$store.commit("task/setExpandVisible",true)
     },
     setFavorite() {
