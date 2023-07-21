@@ -668,8 +668,8 @@ export default {
   position: absolute; 
   left: 50%;
   right:50%;
-  bottom:-5%;
-  transform: translate(-50%, -5%);
+  top: 16px !important;
+  transform: translate(-50%);
   border-radius: 4px;
 }
 .side-panel {
