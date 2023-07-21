@@ -33,11 +33,11 @@
     <div class="content font-md py-05" id="ii-history-comment-wrap">
       <div v-if="item.content || item.comment" id="ii-content" class="inbox-item-content mb-05">
         <template v-for="(cn, i) in item.content">
-          <div class="history" :id="'ii-history-'+cn.title">{{truncateText(cn.title)}}</div>
+          <div class="history" :id="'ii-history-'+i">{{truncateText(cn.title)}}</div>
           <div :id="'ii-time-'+i">@ {{cn.time}}</div>
         </template>
         <template v-for="(cm, i) in item.comment">
-          <div class="comment" :id="'ii-comment-'+cn.title">{{truncateText(cm.comment)}}</div>
+          <div class="comment" :id="'ii-comment-'+i">{{truncateText(cm.comment)}}</div>
           <div :id="'ii-updatedAt-'+i">@ {{$toTime(cm.updatedAt)}}</div>
         </template>
       </div>
