@@ -408,7 +408,7 @@ export default {
         if((field==="startDate"||field==="dueDate")&&!this.validationDate) return;
         this.$emit("update-field", { name: name, field: field, value: value });
       } 
-    }, 1000),
+    }, 800),
     debounceProjectUpdateField: _.debounce(function (
       pName,
       pField,

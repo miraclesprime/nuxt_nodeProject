@@ -180,12 +180,15 @@ export default {
   created() {
     if (process.client) {
       this.$nuxt.$on("update-key", (msg) => {
-        this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then(() => { this.key += 1 })
+        this.$store.dispatch("todo/fetchTodos", { filter: 'all' })
+          .then(() => {
+            this.key += 1
+            this.templateKey += 1
+          })
         if (msg) {
           this.popupMessages.push({text: msg, variant: 'success'})
         }
       })
-
     }
   },
 
@@ -446,6 +449,7 @@ export default {
         text: historyText
       })
         .then(t => {
+          console.log(t.data)
           this.updateKey()
         })
         .catch(e => console.warn(e))
@@ -564,7 +568,7 @@ export default {
       console.log(taskdata)
       this.$store.dispatch("task/createTask", taskdata)
       .then(t => {
-        console.log(t)
+        // console.log(t)
         this.updateKey()
       })
       .catch(e => console.warn(e))
@@ -575,19 +579,15 @@ export default {
         this.popupMessages.push({ text: $event, variant: "success" })
       }
       
-      this.$store.dispatch("todo/fetchTodos", { filter: 'all',sName:this.groupby}).then((res) => {
-        if (res.statusCode == 200) {
-          this.key += 1
-        }
-      })
+      this.$store.dispatch("todo/fetchTodos", { filter: 'all', sName:this.groupby })
+        .then((res) => {
+          // console.log(res)
+          if (res.statusCode == 200) {
+            this.key += 1
+            this.templateKey += 1
+          }
+        })
     },
-
-    /*showNewTodo() {
-      this.newSection = true
-      process.nextTick(() => {
-        this.$refs.newsectioninput.focus()
-      });
-    },*/
     
     toggleNewsection(flag) {
       // console.log(flag)
@@ -734,28 +734,6 @@ export default {
     filterView($event) {
       this.$store.commit("todo/getFilterMyTasks",{filter:$event, groupBy:this.groupby})
 
-      // this.loading = true
-      // if ($event == 'complete') {
-      //   this.$store.dispatch('todo/fetchTodos', { filter: 'complete',sName:this.groupby }).then((res) => {
-      //     this.viewName = 'complete'
-      //     this.key += 1;
-      //     this.loading = false
-      //   }).catch(e => console.log(e))
-      // }
-      // if ($event == 'incomplete') {
-      //   this.$store.dispatch('todo/fetchTodos', { filter: 'incomplete',sName:this.groupby }).then((res) => {
-      //     this.viewName = 'incomplete'
-      //     this.key += 1;
-      //     this.loading = false
-      //   }).catch(e => console.log(e))
-      // }
-      // if ($event == 'all') {
-      //   this.$store.dispatch('todo/fetchTodos', { filter: 'all',sName:this.groupby }).then((res) => {
-      //     this.viewName = 'all'
-      //     this.key += 1;
-      //     this.loading = false
-      //   }).catch(e => console.log(e))
-      // }
     },
 
     // Sort By Action List

@@ -5,7 +5,8 @@ export const state = () => ({
   companyTasks: [],
   sortName: "title",
   sortOrder: "asc",
-  initialAllTasks:[]
+  initialAllTasks:[],
+  tags: [],
 });
 
 export const getters = {
@@ -27,6 +28,9 @@ export const getters = {
   },
   getInitialAllTasks(state){
     return state.initialAllTasks
+  },
+  getCompanyTags(state){
+    return state.tags
   }
 
 };
@@ -94,7 +98,7 @@ export const mutations = {
     
    }
 
- state.companyTasks=arr
+    state.companyTasks=arr
   },
   
   groupTasks(state, payload) {
@@ -397,6 +401,12 @@ export const mutations = {
 
       state.companyTasks = newArr;
     }
+  },
+  SET_COMPANY_TAGS(state, payload){
+    state.tags = payload
+  },
+  ADDTO_TAGS(state, payload){
+    state.tags.push(payload)
   }
 };
 
@@ -436,11 +446,34 @@ export const actions = {
       return res.data
     }
 
-    
-
   },
 
   sortCompanyTasks(ctx, payload) {
     ctx.commit('sortCompanyTasks', payload)
-  }
+  },
+  async addCompanyTag(ctx, payload){
+    const res = await this.$axios.post("/tag", { content: payload.content }, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+      }
+    })
+    if (res.data.statusCode == 200) {
+      // ctx.state.tags.push(res.data.data)
+      ctx.commit("ADDTO_TAGS", res.data.data)
+      return res
+    }
+  },
+  async fetchCompanyTags(ctx, payload){
+    const res = await this.$axios.get("/tag/company/all", {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+    });
+    // console.log("company tags", res.data)
+    if (res.data.statusCode == 200) {
+      ctx.commit("SET_COMPANY_TAGS", res.data.data)
+      return res.data
+    } else {
+      return []
+    }
+  },
+
 };
