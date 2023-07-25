@@ -25,7 +25,7 @@
         </template>
         {{te.label}}
       </tippy>
-      <span class="extra" id="team-avatar-list-extra" @click="showAll">show less </span>
+      <span v-show="showall" class="extra" id="team-avatar-list-extra" @click="showAll">show less </span>
     </template>
   </div>
 </template>

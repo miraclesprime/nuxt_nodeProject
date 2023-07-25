@@ -94,7 +94,7 @@
       </div>
 
       <sidebar-fields-two :task="currentTask" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform" ></sidebar-fields-two>
-      <sidebar-tag @add-tag="addTag" @change="addTag" @delete-tag="deleteTag" ></sidebar-tag>
+      <sidebar-tag :tags="tags" @add-tag="addTag" @change="addTag" @delete-tag="removeTag" ></sidebar-tag>
       <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" ></sidebar-subtask>
       <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
       <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
@@ -156,7 +156,9 @@ export default {
       reloadComments: 1,
       reloadHistory: 1,
       reloadFiles: 1,
+      // reloadTags: 1,
       // taskTeamModal: false,
+      tags: [],
       showSubtaskDetail: false,
       popupMessages: [],
     };
@@ -168,13 +170,15 @@ export default {
       teamMembers: "user/getTeamMembers",
       tasks: "task/tasksForListView",
       team: 'task/getTaskMembers',
+      sidebarOpen: 'task/getSidebarVisible',
       departments: "department/getAllDepartments",
       project: "project/getSingleProject",
       projects: "project/getAllProjects",
       sections: "section/getProjectSections",
       currentTask: "task/getSelectedTask",
       favTasks: "task/getFavTasks",
-      sideBarUser:"user/getSideBarUser"
+      sideBarUser:"user/getSideBarUser",
+      // alltags: "company/getCompanyTags",
     }),
     teammates() {
       let tm = { main: [], extra: [], all: [] }
@@ -236,6 +240,8 @@ export default {
           this.form.projectId = this.project?.id
         }
         this.reloadFiles += 1
+        // this.realodTags += 1
+        this.getTags()
       } else {
         this.form = {
           id: '',
@@ -254,6 +260,7 @@ export default {
         }
         this.$nextTick(() => {
           this.$refs.taskTitleInput.focus()
+          this.tags = []
         });
 
         if (this.sectionIdActive) {
@@ -272,6 +279,13 @@ export default {
       } 
     },
 
+    sidebarOpen(newValue){
+      if (newValue) {
+        this.getTags()
+        // this.$store.dispatch("company/fetchCompanyTags")
+      }
+    },
+
   },
 
   created(){
@@ -283,9 +297,14 @@ export default {
   mounted() {
     this.$store.dispatch("project/fetchProjects")
     this.showSubtaskDetail = false
+
   },
 
   methods: {
+
+    /*...mapActions({
+      addCompTag: "company/addCompanyTag",
+    }),*/
     showAddTeamModal() {
       // this.taskTeamModal = true
       console.info("clicked to open team modal")
@@ -404,6 +423,7 @@ export default {
 
       this.$store.dispatch('task/addMember', { taskId: this.form.id, team: [userData], text: `added ${userData.label} to task` })
         .then((res) => {
+
           if (res.statusCode == 200) {
             this.popupMessages.push({text: res.message, variant: "success"})
             this.$store.dispatch('task/fetchTeamMember', { id: this.form.id })
@@ -602,15 +622,65 @@ export default {
         unsecuredCopyToClipboard(url);
       }
     },
-    addTag(tag){
-      if (tag.id) {
-        console.log('existing tag->', tag.id, tag.text)
-      } else {
-        console.log('new tag->', tag)
+    async getTags(){
+      const tags = await this.$axios.get("/tag/task/"+this.form.id, {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+        }
+      })
+      // console.log(tags.data)
+      if (tags.data.statusCode == 200) {
+        this.tags = tags.data.data.map(t => t.tag)
       }
     },
-    deleteTag(tag){
-      console.log(tag)
+    addTag(tag){
+      if (tag.id) {
+        console.log('existing tag->', tag.id, tag.content)
+        this.$axios.post("/tag/assign-to-task",  { tagId: tag.id, taskId: this.form.id }, {
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+          }
+        })
+        .then(res => {
+          console.log(res)
+          this.getTags()
+        })
+        .catch(e => console.error(e))
+      } else {
+        console.log('new tag->', tag)
+        this.$store.dispatch("company/addCompanyTag", {content: tag})
+        .then((res)=>{
+          console.log(res.data)
+          // this.reloadTags += 1
+          if (res.data.statusCode == 200) {
+            this.$axios.get("company/fetchCompanyTags")
+            this.$axios.post("/tag/assign-to-task",  { tagId: res.data.data.id, taskId: this.form.id }, {
+              headers: {
+                "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+              }
+            }).then((res) => {
+              console.log(res)
+              this.getTags()
+            }).catch(e=>console.error(e))
+          } else {
+            console.warn("error creating tag")
+          }
+        })
+        .catch(e=>console.error(e))
+      }
+    },
+    removeTag(tag){
+      // console.log(tag)
+      this.$axios.delete("/tag/remove-from-task", {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+          "tagid": tag.id,
+          "taskid": this.form.id,
+        }
+      }).then(res => {
+        console.log(res.data.message)
+        this.getTags()
+      }).catch(e => console.warn(e))
     },
   },
 };
