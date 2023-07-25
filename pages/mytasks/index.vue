@@ -187,7 +187,6 @@ export default {
   created() {
     if (process.client) {
       this.$nuxt.$on("update-key", (msg) => {
-<<<<<<< HEAD
           this.updateKey()
         
       });
@@ -198,17 +197,6 @@ export default {
       //     this.popupMessages.push({text: msg, variant: 'success'})
       //   }
       // })
-=======
-        this.$store.dispatch("todo/fetchTodos", { filter: 'all' })
-          .then(() => {
-            this.key += 1
-            this.templateKey += 1
-          })
-        if (msg) {
-          this.popupMessages.push({text: msg, variant: 'success'})
-        }
-      })
->>>>>>> 2b659ded99cc125140eb74c82948f693f76b52a7
     }
   },
 
@@ -439,7 +427,7 @@ export default {
     },
 
     updateField(payload){
-      console.log(payload)
+      // console.log(payload)
       
       const { item, label, field, value, historyText } = payload
       let data = { [field]: value }
@@ -485,7 +473,6 @@ export default {
         text: historyText
       })
         .then(t => {
-          console.log(t.data)
           this.updateKey()
         })
         .catch(e => console.warn(e))
@@ -604,7 +591,7 @@ export default {
       // console.log(taskdata)
       this.$store.dispatch("task/createTask", taskdata)
       .then(t => {
-        // console.log(t)
+        console.log(t)
         this.updateKey()
       })
       .catch(e => console.warn(e))
@@ -614,25 +601,20 @@ export default {
       if ($event) {
         this.popupMessages.push({ text: $event, variant: "success" })
       }
-<<<<<<< HEAD
       this.$store.dispatch("todo/fetchTodos", { filter: this.filterViews,sName:this.groupby}).then((res) => {
         if (res.statusCode == 200) {
           this.key += 1
           this.templateKey += 1
         }
       })
-=======
-      
-      this.$store.dispatch("todo/fetchTodos", { filter: 'all', sName:this.groupby })
-        .then((res) => {
-          // console.log(res)
-          if (res.statusCode == 200) {
-            this.key += 1
-            this.templateKey += 1
-          }
-        })
->>>>>>> 2b659ded99cc125140eb74c82948f693f76b52a7
     },
+
+    /*showNewTodo() {
+      this.newSection = true
+      process.nextTick(() => {
+        this.$refs.newsectioninput.focus()
+      });
+    },*/
     
     toggleNewsection(flag) {
       // console.log(flag)
@@ -780,6 +762,28 @@ export default {
       this.$store.commit('task/setFilterView', {filter:$event})
       this.$store.commit("todo/getFilterMyTasks",{filter:$event, groupBy:this.groupby})
 
+      // this.loading = true
+      // if ($event == 'complete') {
+      //   this.$store.dispatch('todo/fetchTodos', { filter: 'complete',sName:this.groupby }).then((res) => {
+      //     this.viewName = 'complete'
+      //     this.key += 1;
+      //     this.loading = false
+      //   }).catch(e => console.log(e))
+      // }
+      // if ($event == 'incomplete') {
+      //   this.$store.dispatch('todo/fetchTodos', { filter: 'incomplete',sName:this.groupby }).then((res) => {
+      //     this.viewName = 'incomplete'
+      //     this.key += 1;
+      //     this.loading = false
+      //   }).catch(e => console.log(e))
+      // }
+      // if ($event == 'all') {
+      //   this.$store.dispatch('todo/fetchTodos', { filter: 'all',sName:this.groupby }).then((res) => {
+      //     this.viewName = 'all'
+      //     this.key += 1;
+      //     this.loading = false
+      //   }).catch(e => console.log(e))
+      // }
     },
 
     // Sort By Action List
