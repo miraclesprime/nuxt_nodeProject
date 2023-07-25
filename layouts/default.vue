@@ -391,7 +391,7 @@ export default {
 
       // Dhruv (admin)
 
-
+      let cookie="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJEWE1WeWI4MmtabWV2QVpFIiwic3ViZSI6Imxlb25hbmMwMDIyQGdtYWlsLmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4OTk0MzM5MjQxMCwiZXhwIjoxNjk3NzE5MzkyNDEwLCJqdGkiOiI0OTgzN2ExNy02YmU2LTRjMWMtOGI4My02ZDZlZjRjMDMxNWUifQ.sEF-3noKrHHrhCHgl9DPY2esBMi4L4J0S4Zmq1okwFg"
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4MjMxNDk5MjM1NywiZXhwIjoxNjkwMDkwOTkyMzU3LCJqdGkiOiIxODkxMjg1Ni00ZDIyLTQzMDQtODI4My1kNzAzMDMzOTQ2NTYifQ.7NKaoTwlgkwho6DzjV96ohKvQznbASt846ZA1KRCtN0";
 
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4OTg1MDM0ODYxMCwiZXhwIjoxNjk3NjI2MzQ4NjEwLCJqdGkiOiIxYWI4MDVlMC0zYTkyLTQxNDMtYmMyOC0zNGM2ZmRhZGFkZDgifQ.5-G-YJ16WfrZBp5VhK_p2-qULAP9jpF5ZOqsQ7Phs_0";
@@ -409,7 +409,7 @@ export default {
       // Charan
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQeTdMRGR3cE9xMWUxWUtYIiwic3ViZSI6ImNoYXJhbi5wYWxAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJVU0VSIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY3NzQ5NjY2MDM4NywiZXhwIjoxNjg1MjcyNjYwMzg3LCJqdGkiOiJkNjAwOWQ0Zi1lNDFjLTQ2YWMtYjU0MC1iOTk3NzJmNDIzY2MifQ.6G04xtF0oRIaHr5gV4Jxx71TJRPb3sb3S1e85BMn3vc"
 
-      // this.$cookies.set(process.env.SSO_COOKIE_NAME, cookie);
+      this.$cookies.set(process.env.SSO_COOKIE_NAME, cookie);
 
       if (this.$cookies.get(process.env.SSO_COOKIE_NAME)) {
         let jwt = this.$cookies.get(process.env.SSO_COOKIE_NAME);

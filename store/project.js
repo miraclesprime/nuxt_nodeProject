@@ -52,8 +52,7 @@ export const getters = {
 export const mutations = {
 
   // To fetch all projects
-  fetchProjects(state, payload) {
-    state.projects = payload;
+  fetchInitialProjects(state, payload) {
     if(payload) {
       payload.sort((a, b) => {
         if (a.dueDate && b.dueDate) {
@@ -63,7 +62,10 @@ export const mutations = {
     }
     state.initialData=payload
   },
+  fetchProjects(state,payload){
+    state.projects = payload;
 
+  },
   // To set a single project
   setSingleProject(state, { currentProject }) {
     state.selectedProject = currentProject;
@@ -792,7 +794,7 @@ export const actions = {
         'Filter': payload ? payload : 'all'
       }
     });
-    ctx.commit('fetchProjects', res.data);
+    ctx.commit('fetchInitialProjects', res.data);
     return res.data;
   },
 
@@ -1155,11 +1157,12 @@ export const actions = {
   },
 
   setProject(ctx, payload) {
+    console.log("121",payload)
     ctx.commit("setProject", payload);
   },
 
   setProjects(ctx, payload) {
-    ctx.commit('fetchProjects', payload.data)
+    ctx.commit('fetchProjects', payload)
   }
 
 }

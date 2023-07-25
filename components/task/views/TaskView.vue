@@ -185,6 +185,7 @@ export default {
       project: "project/getSingleProject",
       sections: "section/getProjectSections",
       sidebar: "task/getSidebarVisible",
+      filterViews :'task/getFilterView'
     }),
   },
 
@@ -206,7 +207,7 @@ export default {
     },
     sidebar(newVal){
       const page = document.getElementById("page")
-      this.$nextTick(() => {
+      this.$nextTick(() => { 
         const panel = document.getElementById("side-panel-wrapper")
         // console.log("page width="+page.scrollWidth+", panel width="+panel.offsetWidth)
         if (this.sidebar) {
@@ -666,7 +667,7 @@ export default {
       this.$store
         .dispatch("section/fetchProjectSections", {
           projectId: this.$route.params.id,
-          filter: "all",
+          filter: this.filterViews,
           sName:this.groupby
         })
         .then(() => {
@@ -828,6 +829,8 @@ export default {
     },
 
     filterView($event) {
+      this.filterData=$event
+      this.$store.commit('task/setFilterView', {filter:$event})
       this.$store.commit("section/getFilterSections",{filter:$event, groupBy:this.groupby})
       // this.loading = true;
       // if ($event == "complete") {
@@ -940,7 +943,10 @@ export default {
       let data = { [field]: value }
     
       if(field == "dueDate" && item.startDate){
-        if(new Date(value).getTime() > new Date(item.startDate).getTime()){
+        if(value=="Invalid Date"){
+          data = { [field]: null }
+        }else {
+          if(new Date(value).getTime() > new Date(item.startDate).getTime()){
           data = { [field]: value }
         } else{
           data = { [field]: null }
@@ -948,9 +954,14 @@ export default {
           this.updateKey()
           return false
         }
+        }
+        
       }
       if(field == "startDate" && item.dueDate){
-        if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
+        if(value=="Invalid Date"){
+          data = { [field]: null }
+        }else {
+          if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
           data = { [field]: value }
         } else {
           data = { [field]: null }
@@ -958,6 +969,8 @@ export default {
           this.updateKey()
           return false
         }
+        }
+     
       }
       this.$store
         .dispatch("task/updateTask", {

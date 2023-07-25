@@ -162,6 +162,7 @@ export default {
         taskFields: "task/tableFields",
         favProjects: "project/getFavProjects",
         user2: "user/getUser2",
+        filterViews :'task/getFilterView'
     }),
 
     projectName: {
@@ -185,6 +186,7 @@ export default {
   },
 
   created() {
+
     this.$nuxt.$on("change-grid-type", (type) => {
       this.gridType = type;
     });
@@ -201,14 +203,13 @@ export default {
 
   async asyncData({$axios, app, params, store}) {
 
-    // console.log(app)
     // console.log(store)
     // const token = context.$cookies.get('b_ssojwt')
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
-    // const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4OTg1MDM0ODYxMCwiZXhwIjoxNjk3NjI2MzQ4NjEwLCJqdGkiOiIxYWI4MDVlMC0zYTkyLTQxNDMtYmMyOC0zNGM2ZmRhZGFkZDgifQ.5-G-YJ16WfrZBp5VhK_p2-qULAP9jpF5ZOqsQ7Phs_0"
+    const filter=store.getters['task/getFilterView']
     try {
       const res = await $axios.get(`project/${params.id}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: { 'Authorization': `Bearer ${token}`,'filter':filter }
         })
       // console.log(res.data)
       if (res.data) {

@@ -1,3 +1,4 @@
+
 export const state = () => ({
   tasks: [],
   selectedTask: {},
@@ -8,7 +9,8 @@ export const state = () => ({
   singleTaskComment: {},
   taskHistory: [],
   sidebarVisible: false,
-  expandVisible:true
+  expandVisible:true,
+  filterView:"all"
 });
 
 export const getters = {
@@ -48,6 +50,9 @@ export const getters = {
 
   getTaskHistory(state) {
     return state.taskHistory;
+  },
+  getFilterView (state) {
+    return state.filterView
   }
 
 };
@@ -59,7 +64,9 @@ export const mutations = {
   setSidebarVisible(state, payload){
     state.sidebarVisible = payload
   },
-
+  setFilterView (state,payload) {
+    state.filterView=payload.filter
+  },
   initialize(state, list) {
     state.list = [...(list || [])];
   },
@@ -200,7 +207,6 @@ export const actions = {
     const res = await this.$axios.$put("/task", payload, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
-   
     return res.data
     
   },

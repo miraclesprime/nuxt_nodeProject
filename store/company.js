@@ -54,6 +54,9 @@ export const mutations = {
 
   setCompanyTasks(state, payload) {
     state.companyTasks = payload;
+
+  },
+  setInitialTasks(state,payload) {
      let arr=[]
       arr=payload
       arr = arr.reduce((acc, ele) => {
@@ -61,7 +64,6 @@ export const mutations = {
       }, []);
     state.initialAllTasks=arr
   },
-
   setSortName(state, payload){
     state.sortName = payload
   },
@@ -409,7 +411,7 @@ export const actions = {
     ctx.commit('fetchCompanies', res.data);
   },
   async setCompanyTasks(ctx,payload){
-    ctx.commit('setCompanyTasks', payload.data);
+    ctx.commit('setCompanyTasks', payload);
   },
   async fetchCompanyMembers(ctx, companyId) {
     const res = await this.$axios.$get("/company/" + companyId + "/members/", {
@@ -431,15 +433,19 @@ export const actions = {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
     });
 
+    return res.data
+  },
+  async fetchInitialCompanyTasks(ctx, payload) {
+
+    const res = await this.$axios.$get(`company/tasks/all`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter':'all' }
+    });
+
     if (res.data) {
-      ctx.commit('setCompanyTasks', res.data);
+      ctx.commit('setInitialTasks', res.data);
       return res.data
     }
-
-    
-
   },
-
   sortCompanyTasks(ctx, payload) {
     ctx.commit('sortCompanyTasks', payload)
   }

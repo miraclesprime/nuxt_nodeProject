@@ -92,9 +92,7 @@ export default {
         }
       }
     }
-
-    this.$store.dispatch("project/setProjects",{data:this.localData})
-
+    this.$store.dispatch('project/fetchProjects')
     this.templateKey++;
   },
   computed: {
@@ -102,7 +100,8 @@ export default {
         projects: 'project/getAllProjects',
         favProjects: 'project/getFavProjects',
         teamMembers: "user/getTeamMembers",
-        user: "user/getUser2"
+        user: "user/getUser2",
+        filterViews :'task/getFilterView'
     })
   },
   watch: {
@@ -111,18 +110,16 @@ export default {
     },
   },
 
-  async asyncData({$axios, app}){
-      // console.log(context.store.state.token)
-      // const token = context.$cookies.get('b_ssojwt')
+  async asyncData({$axios, app,store}){
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
-      // const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4OTg1MDM0ODYxMCwiZXhwIjoxNjk3NjI2MzQ4NjEwLCJqdGkiOiIxYWI4MDVlMC0zYTkyLTQxNDMtYmMyOC0zNGM2ZmRhZGFkZDgifQ.5-G-YJ16WfrZBp5VhK_p2-qULAP9jpF5ZOqsQ7Phs_0"
+    const filter=store.getters['task/getFilterView']
       const res = await $axios.get(`project/company/all`, {
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Filter': 'all'
+        'Filter': filter
       }
     })
-
+    store.dispatch('project/setProjects', res.data.data)
       
     let newArr = [];
 
@@ -154,7 +151,6 @@ export default {
     },
 
     projectRoute(project) {
-
       let fwd = this.$donotCloseSidebar(event.target.classList)
       if (!fwd) {
         return false
@@ -187,6 +183,7 @@ export default {
       })
     },
     ProjectView($event){
+      this.$store.commit('task/setFilterView', {filter:$event})
       this.$store.commit("project/getFilterProjects",{filter:$event, groupBy:this.groupBy})
       // this.$store.dispatch('project/fetchProjects', $event).then(() => { 
       //   if(this.groupVisible){
@@ -398,27 +395,41 @@ export default {
       let data = { [field]: value }
     
       if(field == "dueDate" && item.startDate){
-        // console.log(field, value)
-        if(new Date(value).getTime() > new Date(item.startDate).getTime()){
-          data = { [field]: value }
-        } else{
+        if(value=="Invalid Date"){
           data = { [field]: null }
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          // this.templateKey+=1;
-          this.updateKey()
-          return false
         }
+        else
+         {
+           if(new Date(value).getTime() > new Date(item.startDate).getTime())
+           {
+              data = { [field]: value }
+            } 
+          else{
+              data = { [field]: null }
+              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+              this.updateKey()
+              return false
+            }
+        }
+     
       }
       if(field == "startDate" && item.dueDate){
-        if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
-          data = { [field]: value }
-        } else {
+        if(value=="Invalid Date"){
           data = { [field]: null }
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          // this.templateKey+=1;
-          this.updateKey()
-          return false
         }
+        else
+         {
+            if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
+            data = { [field]: value }
+          } else {
+            data = { [field]: null }
+            this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+            // this.templateKey+=1;
+            this.updateKey()
+            return false
+          }
+         }
+    
       }
 
       this.$store.dispatch("project/updateProject", {

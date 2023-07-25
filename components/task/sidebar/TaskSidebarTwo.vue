@@ -9,7 +9,7 @@
            <bib-button :label="isComplete.text" :variant="isComplete.variant" icon="check-circle-solid" @click="markComplete"></bib-button>
         </div>
         <div class="d-flex gap-05 align-center" id="tsb-icons-wrapper">
-          <div class="d-flex cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2" id='tsb-icon-external' @click="setExpand">
+          <div v-show ="expandVisible" class="d-flex cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2" id='tsb-icon-external' @click="setExpand">
             <bib-icon icon="expand-fullscreen" variant="gray6" class="m-auto"></bib-icon>
           </div>
           <!-- <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="tsb-icon-2" title="Team" @click="showAddTeamModal">
@@ -314,7 +314,6 @@ export default {
         this.$nextTick(() => {
           this.$refs.taskTitleInput.focus()
         });
-
         if (this.sectionIdActive) {
           this.form.sectionId = this.sectionIdActive
         }
@@ -394,7 +393,6 @@ export default {
     },
 
     updateTask(taskData) {
-      // console.log(taskData)
       let updata = { [taskData.field]: taskData.value }
       let updatedvalue = taskData.value
       let projectId = null
@@ -411,7 +409,10 @@ export default {
         text: taskData.historyText || taskData.value,
       })
         .then((u) => {
-          this.$nuxt.$emit("update-key")
+          if(this.expandVisible){
+            this.$nuxt.$emit("update-key")
+          }
+          
           this.$store.dispatch("task/setSingleTask", u)
           this.reloadHistory += 1
         })
@@ -480,7 +481,7 @@ export default {
     },
 
     async updateProject(taskData) {
-
+      console.log("12",taskData)
       let proj = this.projects.find(t => t.id == taskData.projValue)
 
       let user;
@@ -499,6 +500,7 @@ export default {
         text: proj ? `changed project to ${proj.title}` : 'Task removed from Project',
       })
         .then((u) => {
+          console.log("###############",u)
           this.$nuxt.$emit("update-key")
           
           this.reloadHistory += 1
