@@ -322,17 +322,19 @@ export const actions = {
         }
       })
     }
-    await this.$axios.post(`/task/${payload.taskId}/members`, { users: data, text: payload.text }, {
+    const res = await this.$axios.post(`/task/${payload.taskId}/members`, { users: data, text: payload.text }, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-    }).then((res) => {
+    })
+    // console.log(res.data)
+    if(res.data.statusCode == 200) {
       let team = res.data.data.members;
       let data = team.map((el) => {
         return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName };
       });
       ctx.commit('fetchTeamMember', data);
-    }).catch((err) => {
-      console.log('add member->', err)
-    })
+    } else {
+      console.warn('add member->', err)
+    }
 
   },
 

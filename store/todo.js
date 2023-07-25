@@ -132,8 +132,9 @@ export const actions = {
         const data={
           sName:payload.sName,
           team:ctx.rootState.user.teamMembers
+
         }
-        ctx.commit('groupMyTasks',data)
+        ctx.commit('groupMyTasks', data)
       }
     }
 
