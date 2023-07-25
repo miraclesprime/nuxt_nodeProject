@@ -91,34 +91,29 @@
                     <div class="align-center height-2">{{item[field.key][0]?.project?.title}}</div>
                   </template>
                   <template v-if="field.key == 'userId'">
-                    <!-- {{item[field.key]}} -->
-                    <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
+                    <!-- <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select> -->
                   </template>
                   <template v-if="field.key == 'status'">
-                    <!-- {{item[field.key]}} -->
-                    <status-select :ref="'statusSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('statusSelect'+item.id)"></status-select>
+                    <!-- <status-select :ref="'statusSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('statusSelect'+item.id)"></status-select> -->
                   </template>
                   <template v-if="field.key == 'priority'">
-                    <!-- {{item[field.key]}} -->
-                    <priority-select :ref="'prioritySelect'+item.id" :priority="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
+                    <!-- <priority-select :ref="'prioritySelect'+item.id" :priority="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select> -->
                   </template>
                   <template v-if="field.key == 'difficultyId'">
-                    <!-- {{item[field.key]}} -->
-                    <difficulty-select :ref="'difficultySelect'+item.id" :difficulty="item[field.key]" @change="updateDifficulty($event, item)" @close-other="closePopups('difficultySelect'+item.id)"></difficulty-select>
+                    <!-- <difficulty-select :ref="'difficultySelect'+item.id" :difficulty="item[field.key]" @change="updateDifficulty($event, item)" @close-other="closePopups('difficultySelect'+item.id)"></difficulty-select> -->
                   </template>
                   <template v-if="field.key == 'department'">
-                    <!-- {{item[field.key]}} -->
-                    <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
+                    <!-- <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select> -->
                   </template>
                   <template v-if="field.key == 'startDate'" >
-                    <!-- {{$formatDate(item[field.key])}} -->
+                    {{$formatDate(item[field.key])}}
                     
-                    <bib-datetime-picker v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+                    <!-- <bib-datetime-picker v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker> -->
                   </template>
                   <template v-if="field.key == 'dueDate'" >
-                    <!-- {{$formatDate(item[field.key])}} -->
+                    {{$formatDate(item[field.key])}}
                     
-                    <bib-datetime-picker v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+                    <!-- <bib-datetime-picker v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker> -->
 
                   </template>
                 </div>
