@@ -92,8 +92,7 @@ export default {
         }
       }
     }
-
-    this.$store.dispatch("project/setProjects",{data:this.localData})
+    this.$store.dispatch("project/setProjects",this.localData)
 
     this.templateKey++;
   },
@@ -102,7 +101,8 @@ export default {
         projects: 'project/getAllProjects',
         favProjects: 'project/getFavProjects',
         teamMembers: "user/getTeamMembers",
-        user: "user/getUser2"
+        user: "user/getUser2",
+        filterViews :'task/getFilterView'
     })
   },
   watch: {
@@ -559,6 +559,7 @@ export default {
       // this.loading=true
       this.$store.dispatch("project/fetchProjects").then(() => {
         if(this.groupVisible){
+          console.log("1212",this.groupVisible)
             this.$store.dispatch('project/groupProjects', { key: this.groupBy}).then((res) => {
         })
       }
