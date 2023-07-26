@@ -77,7 +77,7 @@ export default {
       let regex = new RegExp(this.filterKey, 'g\i')
       if (this.alltags) {
         return this.alltags.filter((u) => {
-          if (regex.test(u.text)) {
+          if (regex.test(u.content)) {
             return u
           }
         })
