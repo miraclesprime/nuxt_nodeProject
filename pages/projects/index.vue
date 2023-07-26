@@ -110,9 +110,14 @@ export default {
     },
   },
 
+
   async asyncData({$axios, app,store}){
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
     const filter=store.getters['task/getFilterView']
+
+  // async asyncData({$axios, app}){
+  //   const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
+
       const res = await $axios.get(`project/company/all`, {
       headers: {
         'Authorization': `Bearer ${token}`,

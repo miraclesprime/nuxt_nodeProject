@@ -1,7 +1,7 @@
 <template>
   <client-only>
     <div id="page" class="task-page-wrapper">
-      <page-title title="Tasks"></page-title>
+      <page-title title="Tasks" :count="tasksCount"></page-title>
       <company-tasks-actions
         :gridType="gridType"
         v-on:filterView="filterView"
@@ -200,6 +200,7 @@ export default {
       contentWidth: "100%",
       dragTable: true,
       showPlaceholder: false,
+      tasksCount: 0,
     };
   },
   computed: {
@@ -224,6 +225,11 @@ export default {
     tasks(newVal) {
       let data = _.cloneDeep(newVal);
       this.localData = data
+      newVal.map(s => {
+        s.tasks.forEach(t => {
+          this.tasksCount += 1
+        })
+      })
     },
     gridType() {
       this.key++;
@@ -246,6 +252,8 @@ export default {
     // console.log('asyncData', context.store)
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
     const filter=store.getters['task/getFilterView']
+  // async asyncData({$axios, app}){
+  //   const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
     const res = await $axios.get(`company/tasks/all`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -275,6 +283,10 @@ export default {
   },
 
   mounted() {
+
+    if (JSON.parse(localStorage.getItem("user")).subr != "ADMIN") {
+      this.$router.push('/error/403')    
+    } 
 
     for(let field of this.taskFields) {
       if(field.header_icon) {

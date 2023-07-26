@@ -470,6 +470,7 @@ export default {
                 if (JSON.parse(localStorage.getItem("user")).subr == "ADMIN") {
                   this.isAdmin = true;
                 } else {
+                  this.navItems2.splice(0,1);
                   this.isAdmin = false;
                 }
                 this.$store.dispatch("department/fetchDepartments");
