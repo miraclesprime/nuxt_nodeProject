@@ -143,7 +143,6 @@ export default {
     },
     userTasks(newVal) {
       this.localData = _.cloneDeep(newVal);
-       console.log("this.localData",this.localData)
     },
     "$route.query": {
       immediate: true,
