@@ -116,7 +116,7 @@ export default {
       const res = await $axios.get(`project/company/all`, {
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Filter': filter
+        'Filter': 'all'
       }
     })
     store.dispatch('project/setProjects', res.data.data)
