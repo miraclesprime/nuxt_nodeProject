@@ -92,7 +92,9 @@ export default {
         }
       }
     }
-    this.$store.dispatch('project/fetchProjects')
+
+    this.$store.dispatch("project/setProjects",{data:this.localData})
+
     this.templateKey++;
   },
   computed: {
@@ -100,8 +102,7 @@ export default {
         projects: 'project/getAllProjects',
         favProjects: 'project/getFavProjects',
         teamMembers: "user/getTeamMembers",
-        user: "user/getUser2",
-        filterViews :'task/getFilterView'
+        user: "user/getUser2"
     })
   },
   watch: {
@@ -110,21 +111,15 @@ export default {
     },
   },
 
-
-  async asyncData({$axios, app,store}){
+  async asyncData({$axios, app}){
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
-    const filter=store.getters['task/getFilterView']
-
-  // async asyncData({$axios, app}){
-  //   const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
-
       const res = await $axios.get(`project/company/all`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Filter': 'all'
       }
     })
-    store.dispatch('project/setProjects', res.data.data)
+
       
     let newArr = [];
 
@@ -188,7 +183,6 @@ export default {
       })
     },
     ProjectView($event){
-      this.$store.commit('task/setFilterView', {filter:$event})
       this.$store.commit("project/getFilterProjects",{filter:$event, groupBy:this.groupBy})
       // this.$store.dispatch('project/fetchProjects', $event).then(() => { 
       //   if(this.groupVisible){

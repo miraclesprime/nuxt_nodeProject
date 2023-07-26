@@ -1157,7 +1157,6 @@ export const actions = {
   },
 
   setProject(ctx, payload) {
-    console.log("121",payload)
     ctx.commit("setProject", payload);
   },
 
