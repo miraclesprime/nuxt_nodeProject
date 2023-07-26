@@ -91,19 +91,19 @@
                     <div class="align-center height-2">{{item[field.key][0]?.project?.title}}</div>
                   </template>
                   <template v-if="field.key == 'userId'">
-                    <user-select :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></user-select>
+                    <lazy-user-select :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></lazy-user-select>
                   </template>
                   <template v-if="field.key == 'status'">
-                    <status-select :ref="'statusSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('statusSelect'+item.id)"></status-select>
+                    <lazy-status-select :ref="'statusSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('statusSelect'+item.id)"></lazy-status-select>
                   </template>
                   <template v-if="field.key == 'priority'">
-                    <priority-select :ref="'prioritySelect'+item.id" :priority="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></priority-select>
+                    <lazy-priority-select :ref="'prioritySelect'+item.id" :priority="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></lazy-priority-select>
                   </template>
                   <template v-if="field.key == 'difficultyId'">
-                    <difficulty-select :ref="'difficultySelect'+item.id" :difficulty="item[field.key]" @change="updateDifficulty($event, item)" @close-other="closePopups('difficultySelect'+item.id)"></difficulty-select>
+                    <lazy-difficulty-select :ref="'difficultySelect'+item.id" :difficulty="item[field.key]" @change="updateDifficulty($event, item)" @close-other="closePopups('difficultySelect'+item.id)"></lazy-difficulty-select>
                   </template>
                   <template v-if="field.key == 'department'">
-                    <dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></dept-select>
+                    <lazy-dept-select :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></lazy-dept-select>
                   </template>
                   <template v-if="field.key == 'startDate'" >
                     <!-- {{$formatDate(item[field.key])}} -->
@@ -155,17 +155,33 @@
   </div>
 </template>
 <script>
+// import lazyLoadComponent from '~/utils/lazyload-component.client.js';
+// import SkeletonBox from '~/components/SkeletonBox.vue';
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
 import dayjs from 'dayjs'
 // import fecha, { format } from "fecha";
 import draggable from 'vuedraggable'
 
+/*const defaultOptions = {
+  loading: SkeletonBox,
+  loadingData: {
+    props: {
+      width: `100%`,
+      height: `2rem`,
+    },
+  },
+};*/
+
 export default {
 
   name: 'AdvTableThree',
   components: {
-    draggable
+    draggable,
+    /*UserSelect: lazyLoadComponent({
+      ...defaultOptions,
+      componentFactory: () => import('~/components/organism/UserSelect.vue'),
+    }),*/
   },
   props: {
     tableFields: { type: Array, required: true, default: () => [] },

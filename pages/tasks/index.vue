@@ -1,7 +1,7 @@
 <template>
   <client-only>
     <div id="page" class="task-page-wrapper">
-      <page-title title="Tasks"></page-title>
+      <page-title title="Tasks" :count="tasksCount"></page-title>
       <company-tasks-actions
         :gridType="gridType"
         v-on:filterView="filterView"
@@ -200,6 +200,7 @@ export default {
       contentWidth: "100%",
       dragTable: true,
       showPlaceholder: false,
+      tasksCount: 0,
     };
   },
   computed: {
@@ -220,6 +221,11 @@ export default {
     tasks(newVal) {
       let data = _.cloneDeep(newVal);
       this.localData = data
+      newVal.map(s => {
+        s.tasks.forEach(t => {
+          this.tasksCount += 1
+        })
+      })
     },
     gridType() {
       this.key++;
