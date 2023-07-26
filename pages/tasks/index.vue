@@ -203,6 +203,9 @@ export default {
       dragTable: true,
       showPlaceholder: false,
       tasksCount: 0,
+      // itemsPerPage: 10, // Number of items to display initially
+      // displayedData:[]
+
     };
   },
   computed: {
@@ -217,7 +220,26 @@ export default {
       // sOrder: "company/getSortOrder",
       sidebar: "task/getSidebarVisible",
     }),
-  
+  //   displayedData() {
+  //   const displayedData = [];
+
+  //   let remainingCount = this.itemsPerPage;
+
+  //   for (let i = 0; i < this.tasks.length; i++) {
+  //     const item = this.tasks[i];
+
+  //     if (item.dataCount <= remainingCount) {
+  //       displayedData.push(item);
+  //       remainingCount -= item.dataCount;
+  //     } else {
+  //       const slicedData = item.tasks.slice(0, remainingCount);
+  //       displayedData.push({ ...item, tasks: slicedData });
+  //       break;
+  //     }
+  //   }
+  //   console.log("1212",displayedData)
+  //   return displayedData;
+  // },
   },
 
   watch: {
@@ -251,11 +273,8 @@ export default {
   },
 
   async asyncData({$axios, app,store}){
-    // console.log('asyncData', context.store)
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
     const filter=store.getters['task/getFilterView']
-  // async asyncData({$axios, app}){
-  //   const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
     const res = await $axios.get(`company/tasks/all`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -263,10 +282,32 @@ export default {
       }
     })
     store.dispatch('company/setCompanyTasks', res.data.data)
-
-    // return { localData: res.data.data.slice(0, 4), localData2: res.data.data.slice(4) }
-
     return { localData: res.data.data }
+    // const displayedTasks = [];
+    // let allTasks = res.data.data.map((item) => {
+    //               item.dataCount = item.tasks.length;
+    //               return item;
+    //             });
+    //   let remainingCount = 20
+    // for (let i = 0; i < allTasks.length; i++) {
+    //     const item = allTasks[i];
+
+    //     if (item.dataCount <= remainingCount) {
+    //       displayedTasks.push(item);
+    //       remainingCount -= item.dataCount;
+    //     } else {
+    //       const start = 0;
+    //       const end = remainingCount;
+    //       const slicedData = item.tasks.slice(start, end);
+
+    //       displayedTasks.push({ ...item, tasks: slicedData });
+    //       break;
+    //     }
+    //   }
+    // store.dispatch('company/setCompanyTasks', allTasks)
+   
+
+    // return { localData: displayedTasks}
   },
 
   created() {
@@ -291,14 +332,12 @@ export default {
     if (JSON.parse(localStorage.getItem("user")).subr != "ADMIN") {
       this.$router.push('/error/403')    
     } 
-
+    // window.addEventListener('scroll', this.handleScroll);
     for(let field of this.taskFields) {
       if(field.header_icon) {
         field.header_icon.isActive = false;
       }
     }
-  this.$store.dispatch("company/fetchInitialCompanyTasks",{filter:'all'})
-  this.updateKey()
 
 
     /*this.$store.dispatch("company/setCompanyTasks",{data:this.localData})
@@ -309,14 +348,43 @@ export default {
 
     setTimeout(() => {
       // this.localData = this.localData.concat(this.localData2)
-      this.$store.dispatch("company/setCompanyTasks",{data:this.localData})
+      // this.$store.dispatch("company/setCompanyTasks",{data:this.localData})
+      this.$store.dispatch("company/fetchInitialCompanyTasks",{filter:'all'})
+      this.updateKey()
       // this.templateKey += 1
       this.lazyComponent = true
     }, 200)
   },
-
+  beforeDestroy() {
+  window.removeEventListener('scroll', this.handleScroll);
+},
   methods: {
-    
+    //     handleScroll() {
+    //       const bottomOfWindow =
+    //         document.documentElement.scrollTop +
+    //         window.innerHeight ===
+    //         document.documentElement.offsetHeight;
+
+    //       if (bottomOfWindow) {
+    //         let remainingCount = this.itemsPerPage - this.displayedData.length;
+
+    //         for (let i = 0; i < this.tasks.length; i++) {
+    //           const item = this.tasks[i];
+
+    //           if (item.dataCount <= remainingCount) {
+    //             this.displayedData.push(item);
+    //             remainingCount -= item.dataCount;
+    //           } else {
+    //             const start = item.tasks.length - remainingCount;
+    //             const end = start + remainingCount;
+    //             const slicedData = item.tasks.slice(start, end);
+
+    //             this.displayedData.push({ ...item, tasks: slicedData });
+    //             break;
+    //           }
+    //         }
+    //       }
+    // },
 
     showUserPicker(payload) {
       this.closeAllPickers();
