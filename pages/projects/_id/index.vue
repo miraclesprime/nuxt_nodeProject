@@ -209,18 +209,12 @@ export default {
       const res = await $axios.get(`project/${params.id}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         })
-      // console.log(res.data)
-      if (res.data) {
-        if (!res.data.data || res.data.data.isDeleted) {
-          app.$router.push("/notfound")
-        } else {
-          store.dispatch('project/setProject', res.data.data)
-          return { project: res.data.data}
-        }
-      } else {
-         app.$router.push("/notfound")
-      }
+      
+      store.dispatch('project/setProject', res.data.data)
+      return { project: res.data.data}
+      
     } catch(err) {
+
       console.log("There was an issue in project API", err);
       return { project: {} }
     }
@@ -230,30 +224,28 @@ export default {
   mounted() {
     if (process.client) {
 
-      // let p = JSON.parse(JSON.stringify(this.project))
-      // if(Object.keys(p).length != 0) {
+      let p = JSON.parse(JSON.stringify(this.project))
+      if(Object.keys(p).length != 0 && p.isDeleted != true) {
 
-        // this.$store.dispatch('project/fetchProjects').then((res) => {
-        //   let proj = res.find((p) => {
-        //     if(p.id == this.$route.params.id) {
-        //       return p;
-        //     } 
-        //   })
+        this.$store.dispatch('project/fetchProjects').then((res) => {
+          let proj = res.find((p) => {
+            if(p.id == this.$route.params.id) {
+              return p;
+            } else {
 
-        //   if((proj && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
-        //       console.log('user has access!')
-        //   } else {
-        //       this.alertDialog = true
-        //       this.alertMsg = "You do not have access to this page!"
-        //       setTimeout(function() {
-        //         this.$router.push('/projects')      
-        //       }.bind(this),200)
-        //   }
+            }
+          })
 
-        // });
-      // } else {
-      //   this.$router.push('/notfound')
-      // }
+          if((proj && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
+              console.log('user has access!')
+          } else {
+              this.$router.push('/error/403');
+          }
+
+        });
+      } else {
+        this.$router.push('/notfound')
+      }
 
       this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
       this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })

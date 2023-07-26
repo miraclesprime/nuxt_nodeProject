@@ -218,6 +218,10 @@ export default {
   mounted() {
     if (process.client) {
 
+      if (JSON.parse(localStorage.getItem("user")).subr != "ADMIN") {
+        this.$router.push('/error/403')    
+      } 
+
       for(let field of this.taskFields) {
         if(field.header_icon) {
           if(field.key == 'priority') {
@@ -232,15 +236,6 @@ export default {
         this.$router.push({ path: "/dashboard" });
       }
 
-      // _.delay(() => {
-      //   this.userfortask = this.teamMembers.find((u) => {
-      //     if (u.id == this.$route.query.id) {
-      //       this.selectedUser = u;
-      //       return u;
-      //     }
-      //   });
-      //   this.fetchUserTasks();
-      // }, 5000);
     }
   },
 
