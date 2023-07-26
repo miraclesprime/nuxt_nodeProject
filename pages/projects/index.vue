@@ -92,6 +92,7 @@ export default {
         }
       }
     }
+
     this.$store.dispatch("project/setProjects",this.localData)
 
     this.templateKey++;
@@ -183,6 +184,7 @@ export default {
       })
     },
     ProjectView($event){
+      this.$store.commit('task/setFilterView', {filter:$event})
       this.$store.commit("project/getFilterProjects",{filter:$event, groupBy:this.groupBy})
       // this.$store.dispatch('project/fetchProjects', $event).then(() => { 
       //   if(this.groupVisible){
@@ -559,7 +561,6 @@ export default {
       // this.loading=true
       this.$store.dispatch("project/fetchProjects").then(() => {
         if(this.groupVisible){
-          console.log("1212",this.groupVisible)
             this.$store.dispatch('project/groupProjects', { key: this.groupBy}).then((res) => {
         })
       }

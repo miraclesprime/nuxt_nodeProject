@@ -16,7 +16,7 @@
           <div v-if="gridType === 'list'" class="h-100">
             <template v-if="!showPlaceholder">
               <!-- <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localData" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" ></drag-table> -->
-              <adv-table-three :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable" :key="templateKey" :editSection="group"></adv-table-three>
+              <adv-table-three :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable" :key="templateKey" :editSection="group" :lazyComponent="lazyComponent"></adv-table-three>
             </template>
             <!-- <div v-show="localData.length == 0">
               <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 shape-rounded py-05 px-1">
@@ -176,6 +176,8 @@ export default {
       alertDialog: false,
       alertMsg: "",
       localData: [],
+      localData2: [],
+      lazyComponent: false,
       plusButton: {
         show: true,
         label: "New Task",
@@ -261,8 +263,10 @@ export default {
       }
     })
     store.dispatch('company/setCompanyTasks', res.data.data)
+
+    // return { localData: res.data.data.slice(0, 4), localData2: res.data.data.slice(4) }
+
     return { localData: res.data.data }
-      
   },
 
   created() {
@@ -295,8 +299,19 @@ export default {
     }
   this.$store.dispatch("company/fetchInitialCompanyTasks",{filter:'all'})
   this.updateKey()
+
+
+    /*this.$store.dispatch("company/setCompanyTasks",{data:this.localData})
+      setTimeout(() => {
+        this.showPlaceholder = false
+      }, 200)*/
+
+
     setTimeout(() => {
-      this.showPlaceholder = false
+      // this.localData = this.localData.concat(this.localData2)
+      this.$store.dispatch("company/setCompanyTasks",{data:this.localData})
+      // this.templateKey += 1
+      this.lazyComponent = true
     }, 200)
   },
 
@@ -688,7 +703,8 @@ export default {
     },
     //group by
     taskGroup($event) {
-      this.group=$event
+      this.group = $event
+      // this.lazyComponent = false
       if($event != 'default') {
         this.dragTable = false;
       } else {
@@ -697,6 +713,7 @@ export default {
         this.$store.commit('company/groupTasks',{sName:"department"})
         return;
       }
+      // this.lazyComponent = true
       this.$store.commit('company/groupTasks',{sName:this.group})
       },
     // Sort By Action List
