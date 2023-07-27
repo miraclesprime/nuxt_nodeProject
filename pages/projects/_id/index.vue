@@ -120,7 +120,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { TABLE_FIELDS } from "config/constants";
+// import { TABLE_FIELDS } from "config/constants";
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
 export default {

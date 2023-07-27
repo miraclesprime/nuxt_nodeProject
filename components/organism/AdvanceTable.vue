@@ -66,6 +66,11 @@
               <lazy-dept-select v-if="lazyComponent" :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></lazy-dept-select>
                     <skeleton-box v-else></skeleton-box>
             </template>
+            <template v-if="field.key == 'tag'">
+              <template v-if="item['TaskTags'].length > 0">
+                <tag-comp :tags="item['TaskTags']"></tag-comp>
+              </template>
+            </template>
             <template v-if="field.key.includes('Date')" class="date-cell">
               <!-- {{$formatDate(item[field.key])}} -->
               <bib-datetime-picker v-if="lazyComponent" :value="formatDate(item[field.key])" :format="`D MMM YYYY`" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>

@@ -279,6 +279,7 @@ export default {
   mounted() {
 
     if (JSON.parse(localStorage.getItem("user")).subr != "ADMIN") {
+      console.log('admin')
       this.$router.push('/error/403')    
     } 
 
