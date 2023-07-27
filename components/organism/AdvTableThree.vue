@@ -32,20 +32,7 @@
               </div>
             </template>
           </div>
-          <!-- <RecycleScroller
-            class="scroller"
-            :items="localData"
-            :item-size="32"
-            key-field="id"
-            v-slot="{ item }"
-          >
-            <div class="user">
-              {{ item.title }}
-              <div v-for="task in item">
-                {{task.title}}
-              </div>
-            </div>
-          </RecycleScroller> -->
+        
           <section v-for="(section, index) in localData" class="resizable w-100">
             <div class="thead">
               
@@ -176,8 +163,6 @@ import _ from 'lodash'
 import dayjs from 'dayjs'
 // import fecha, { format } from "fecha";
 import draggable from 'vuedraggable'
-import { RecycleScroller } from 'vue-virtual-scroller'
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
 /*const defaultOptions = {
   loading: SkeletonBox,
@@ -193,8 +178,7 @@ export default {
 
   name: 'AdvTableThree',
   components: {
-    draggable,
-    RecycleScroller,
+    draggable
     /*UserSelect: lazyLoadComponent({
       ...defaultOptions,
       componentFactory: () => import('~/components/organism/UserSelect.vue'),

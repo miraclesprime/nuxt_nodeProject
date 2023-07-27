@@ -293,12 +293,12 @@ export default {
         this.showPlaceholder = false
       }, 200)*/
 
-    setTimeout(() => {
-      // this.localData = this.localData.concat(this.localData2)
+    // setTimeout(() => {
+    //   // this.localData = this.localData.concat(this.localData2)
       this.$store.dispatch("company/setCompanyTasks",{data:this.localData})
       // this.templateKey += 1
       this.lazyComponent = true
-    }, 200)
+    // }, 200)
   },
 
   methods: {
