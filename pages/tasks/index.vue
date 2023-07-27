@@ -298,7 +298,7 @@ export default {
       this.$store.dispatch("company/setCompanyTasks",{data:this.localData})
       // this.templateKey += 1
       this.lazyComponent = true
-    }, 200)
+    }, 10)
   },
 
   methods: {

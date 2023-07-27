@@ -40,7 +40,7 @@ export default {
   position: relative;
   vertical-align: middle;
   overflow: hidden;
-  background-color: #DDDBDD;
+  background-color: var(--bib-light);
 
   &::after {
     position: absolute;
@@ -52,7 +52,7 @@ export default {
     background-image: linear-gradient(
       90deg,
       rgba(#fff, 0) 0,
-      rgba(#fff, 0.2) 20%,
+      rgba(#fff, 0.1) 20%,
       rgba(#fff, 0.5) 60%,
       rgba(#fff, 0)
     );

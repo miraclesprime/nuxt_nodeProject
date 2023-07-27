@@ -8,11 +8,11 @@
       <template v-if="projects.length">
         <template v-if="groupVisible">
          
-          <adv-table-three :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @context-open="contextOpen" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" @create-row="createProject" :drag="false" :key="templateKey" :editSection="groupBy"></adv-table-three>
+          <adv-table-three :tableFields="tableFields" :tableData="localData" :lazyComponent="lazyComponent" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @context-open="contextOpen" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" @create-row="createProject" :drag="false" :key="templateKey" :editSection="groupBy"></adv-table-three>
         </template>
 
         <template v-else>
-          <advance-table :tableFields="tableFields" :tableData="localData" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @context-open="contextOpen" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :plusButton="{label: 'New Project', icon: 'add'}" :drag="false" :key="templateKey"></advance-table>
+          <advance-table :tableFields="tableFields" :tableData="localData" :lazyComponent="lazyComponent" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click ="projectRoute" @context-open="contextOpen" @table-sort="sortProject" @title-click="projectRoute" @update-field="updateProject" @create-row="createProject" sectionTitle="" :plusButton="{label: 'New Project', icon: 'add'}" :drag="false" :key="templateKey"></advance-table>
         </template> 
 
       </template>
@@ -77,6 +77,7 @@ export default {
       popupMessages: [],
       groupVisible: false,
       groupBy: '',
+      lazyComponent: false,
     }
   },
 
@@ -93,7 +94,11 @@ export default {
       }
     }
 
-    this.$store.dispatch("project/setProjects",{data:this.localData})
+    setTimeout(() => {
+      // this.templateKey += 1
+      this.$store.dispatch("project/setProjects",{data:this.localData})
+      this.lazyComponent = true
+    }, 50)
 
     this.templateKey++;
   },
