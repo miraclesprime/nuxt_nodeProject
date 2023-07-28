@@ -326,6 +326,7 @@ export default {
   },
 
   mounted() {
+    window.addEventListener('scroll', this.handleScroll);
     this.showInitialData();
     this.resizableColumns()
 
@@ -335,41 +336,28 @@ export default {
   // },
   methods: {
     handleScroll(event) {
-      if (this.allDataDisplayed) {
-        return; // Stop adding data if all data has been displayed
-      }
+      // if (this.allDataDisplayed) {
+      //   return; // Stop adding data if all data has been displayed
+      // }
 
-      const tableContainer = event.target;
-      const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight >= tableContainer.scrollHeight;
+      // const tableContainer = event.target;
+      // const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight >= tableContainer.scrollHeight;
 
-      if (isAtBottom) {
-          this.showRemainingData();
-          }
+      // if (isAtBottom) {
+      //     this.showRemainingData();
+      //     }
+      const tableHeight = document.getElementById("mainDraggable").scrollHeight;
+    const scrollPosition = window.innerHeight + window.pageYOffset;
+
+    if (scrollPosition >= tableHeight) {
+      this.showRemainingData();
+    }
     },
     showInitialData() {
       
     // this.localData = _.cloneDeep(this.tableData);
       let allTasks = _.cloneDeep(this.tableData);
       let remainingCount = this.itemsPerPage;
-      // for (let i = 0; i < allTasks.length; i++) {
-      //   const item = allTasks[i];
-
-      //   if (item.dataCount <= remainingCount) {
-      //     this.localData.push(item);
-      //     remainingCount -= item.dataCount;
- 
-      //   } else {
-      //     const start = 0;
-      //     const end = remainingCount;
-      //     const slicedData = item.tasks.slice(start, end);
-      //     this.localData.push({ ...item, tasks: slicedData });
-      //     break;
-      //   }
-      //   this.lastDisplayedIndex = i;
-      //   if (this.lastDisplayedIndex === allTasks.length-1) {
-      //       this.allDataDisplayed = true;
-      //   }
-      // }
       let start = this.lastDisplayedIndex.curIdxInGroup;
       let i;
       for (i = start === -1 ? this.lastDisplayedIndex.groupIdx + 1 : this.lastDisplayedIndex.groupIdx; i < allTasks.length; ++ i) {
