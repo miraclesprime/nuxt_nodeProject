@@ -32,21 +32,8 @@
               </div>
             </template>
           </div>
-          <!-- <RecycleScroller
-            class="scroller"
-            :items="localData"
-            :item-size="32"
-            key-field="id"
-            v-slot="{ item }"
-          >
-            <div class="user">
-              {{ item.title }}
-              <div v-for="task in item">
-                {{task.title}}
-              </div>
-            </div>
-          </RecycleScroller> -->
           <section v-for="(section, index) in localData" class="resizable w-100"   @wheel="handleScroll"  ref="tableContainer" >
+
             <div class="thead">
               
               <div class="tr hidden" role="row" >
@@ -106,29 +93,38 @@
                   </template>
                   <template v-if="field.key == 'userId'">
                     <lazy-user-select v-if="lazyComponent" :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></lazy-user-select>
+                    <skeleton-box v-else></skeleton-box>
                   </template>
                   <template v-if="field.key == 'status'">
                     <lazy-status-select v-if="lazyComponent" :ref="'statusSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('statusSelect'+item.id)"></lazy-status-select>
+                    <skeleton-box v-else></skeleton-box>
                   </template>
                   <template v-if="field.key == 'priority'">
                     <lazy-priority-select v-if="lazyComponent" :ref="'prioritySelect'+item.id" :priority="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></lazy-priority-select>
+                    <skeleton-box v-else></skeleton-box>
                   </template>
                   <template v-if="field.key == 'difficultyId'">
                     <lazy-difficulty-select v-if="lazyComponent" :ref="'difficultySelect'+item.id" :difficulty="item[field.key]" @change="updateDifficulty($event, item)" @close-other="closePopups('difficultySelect'+item.id)"></lazy-difficulty-select>
+                    <skeleton-box v-else></skeleton-box>
                   </template>
                   <template v-if="field.key == 'department'">
                     <lazy-dept-select v-if="lazyComponent" :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></lazy-dept-select>
+                    <skeleton-box v-else></skeleton-box>
+                  </template>
+                  <template v-if="field.key == 'tag'">
+                    <template v-if="item['TaskTags']?.length > 0">
+                      <tag-comp :tags="item['TaskTags']"></tag-comp>
+                    </template>
                   </template>
                   <template v-if="field.key == 'startDate'" >
-                    <!-- {{$formatDate(item[field.key])}} -->
                     
                     <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+                    <skeleton-box v-else></skeleton-box>
                   </template>
                   <template v-if="field.key == 'dueDate'" >
-                    <!-- {{$formatDate(item[field.key])}} -->
                     
                     <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
-
+                    <skeleton-box v-else></skeleton-box>
                   </template>
                 </div>
               </div>
@@ -176,9 +172,6 @@ import _ from 'lodash'
 import dayjs from 'dayjs'
 // import fecha, { format } from "fecha";
 import draggable from 'vuedraggable'
-import { RecycleScroller } from 'vue-virtual-scroller'
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import loginVue from '../../pages/auth/login.vue'
 
 /*const defaultOptions = {
   loading: SkeletonBox,
@@ -195,7 +188,7 @@ export default {
   name: 'AdvTableThree',
   components: {
     draggable,
-    RecycleScroller,
+    // RecycleScroller,
     /*UserSelect: lazyLoadComponent({
       ...defaultOptions,
       componentFactory: () => import('~/components/organism/UserSelect.vue'),
@@ -355,8 +348,8 @@ export default {
     },
     showInitialData() {
       
+    // this.localData = _.cloneDeep(this.tableData);
       let allTasks = _.cloneDeep(this.tableData);
-      console.log(allTasks)
       let remainingCount = this.itemsPerPage;
       // for (let i = 0; i < allTasks.length; i++) {
       //   const item = allTasks[i];

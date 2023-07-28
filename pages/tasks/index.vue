@@ -330,9 +330,10 @@ export default {
   mounted() {
 
     if (JSON.parse(localStorage.getItem("user")).subr != "ADMIN") {
+      console.log('admin')
       this.$router.push('/error/403')    
     } 
-    // window.addEventListener('scroll', this.handleScroll);
+
     for(let field of this.taskFields) {
       if(field.header_icon) {
         field.header_icon.isActive = false;
@@ -353,11 +354,8 @@ export default {
       this.updateKey()
       // this.templateKey += 1
       this.lazyComponent = true
-    }, 200)
+    }, 10)
   },
-  beforeDestroy() {
-  window.removeEventListener('scroll', this.handleScroll);
-},
   methods: {
 
     showUserPicker(payload) {
