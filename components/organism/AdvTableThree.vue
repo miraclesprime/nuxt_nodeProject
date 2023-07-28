@@ -88,7 +88,7 @@
                     </span>
                   </div>
                   <template v-if="field.key == 'project'">
-                    <div class="align-center height-2">{{item[field.key][0]?.project?.title}}</div>
+                    <div class="align-center height-2">{{item[field.key]?.[0]?.project?.title}}</div>
                   </template>
                   <template v-if="field.key == 'userId'">
                     <lazy-user-select v-if="lazyComponent" :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></lazy-user-select>

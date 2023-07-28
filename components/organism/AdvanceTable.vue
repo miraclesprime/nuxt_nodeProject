@@ -45,7 +45,7 @@
                 <bib-icon icon="arrow-right" variant="gray4" hover-variant="gray5"></bib-icon>
               </span>
             </div>
-            <template v-if="field.key == 'project'">{{item[field.key][0]?.project?.title}}</template>
+            <template v-if="field.key == 'project'">{{item[field.key]?.[0]?.project?.title}}</template>
             <template v-if="field.key == 'userId'">
               <lazy-user-select v-if="lazyComponent" :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></lazy-user-select>
                     <skeleton-box v-else></skeleton-box>
