@@ -111,7 +111,7 @@
                     <skeleton-box v-else></skeleton-box>
                   </template>
                   <template v-if="field.key == 'tag'">
-                    <template v-if="item['TaskTags'].length > 0">
+                    <template v-if="item['TaskTags']?.length > 0">
                       <tag-comp :tags="item['TaskTags']"></tag-comp>
                     </template>
                   </template>

@@ -13,67 +13,57 @@
         @search-user-tasks="searchUserTasks"
       ></user-name-task-actions>
     
-          <div v-show="gridType == 'list'" id="task-table-wrapper" class="listview h-100 position-relative" :style="{ 'width': contentWidth }">  
-              <div v-if="groupVisible" class="h-100">
-                  <!-- <loading :loading="loading"></loading> -->
-
-                  <adv-table-three :tableFields="taskFields" :tableData="localData" :lazyComponent="true" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" @create-row="createTask" :drag="false" :key="templateKey" :editSection="groupBy"></adv-table-three>
-              
+      <div v-show="gridType == 'list'" id="task-table-wrapper" class="listview h-100 position-relative" :style="{ 'width': contentWidth }">  
+        <div v-if="groupVisible" class="h-100">
+          <adv-table-three :tableFields="taskFields" :tableData="localData" :lazyComponent="true" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" @create-row="createTask" :drag="false" :key="templateKey" :editSection="groupBy"></adv-table-three>              
+        </div>
+        <div v-else class="h-100">
+          <advance-table :tableFields="taskFields" :tableData="localData" :lazyComponent="true" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" sectionTitle="" :drag="false" :key="templateKey"></advance-table>
+        </div> 
+      </div>
+    
+      <div v-show="gridType == 'grid'" id="task-grid-wrapper" class="d-flex gridview h-100" >
+        <div class="task-grid-section">
+          <div
+            class="w-100 d-flex justify-between"
+            style="margin-bottom: 10px"
+          >
+            <div class="title text-gray">Department</div>
+            <div class="d-flex section-options">
+              <div class="mr-1">
+                <bib-icon icon="add" variant="success" :scale="1.2" />
               </div>
-              <div v-else class="h-100">
-                <!-- <loading :loading="loading"></loading>                 -->
-                <advance-table :tableFields="taskFields" :tableData="localData" :lazyComponent="true" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" sectionTitle="" :drag="false" :key="templateKey"></advance-table>
-              </div> 
-          </div>
-        
-          <div v-show="gridType == 'grid'" id="task-grid-wrapper" class="d-flex gridview h-100" >
-            <div class="task-grid-section">
-              <div
-                class="w-100 d-flex justify-between"
-                style="margin-bottom: 10px"
-              >
-                <div class="title text-gray">Department</div>
-                <div class="d-flex section-options">
-                  <div class="mr-1">
-                    <bib-icon icon="add" variant="success" :scale="1.2" />
-                  </div>
-                  <div>
-                    <bib-icon icon="elipsis" :scale="1.2" />
-                  </div>
-                </div>
-              </div>
-              <div class="task-section__body">
-                <div v-for="(item, index) in tasks" :key="index + '-' + key">
-                  <task-grid :task="item" v-on:update-key="updateKey" />
-                </div>
+              <div>
+                <bib-icon icon="elipsis" :scale="1.2" />
               </div>
             </div>
           </div>
-        
-        <alert-dialog
-          v-show="alertDialog"
-          :message="alertMsg"
-          @close="alertDialog = false"
-        ></alert-dialog>
-        <bib-popup-notification-wrapper>
-          <template #wrapper>
-            <bib-popup-notification
-              v-for="(msg, index) in popupMessages"
-              :key="index"
-              :message="msg.text"
-              :variant="msg.variant"
-              :autohide="5000"
-            >
-            </bib-popup-notification>
-          </template>
-        </bib-popup-notification-wrapper>
-        <!-- confirm delete task -->
-        <!-- <confirm-dialog
-          v-if="confirmModal"
-          :message="confirmMsg"
-          @close="confirmDelete"
-        ></confirm-dialog> -->
+          <div class="task-section__body">
+            <div v-for="(item, index) in tasks" :key="index + '-' + key">
+              <task-grid :task="item" v-on:update-key="updateKey" />
+            </div>
+          </div>
+        </div>
       </div>
+        
+      <alert-dialog
+        v-show="alertDialog"
+        :message="alertMsg"
+        @close="alertDialog = false"
+      ></alert-dialog>
+      <bib-popup-notification-wrapper>
+        <template #wrapper>
+          <bib-popup-notification
+            v-for="(msg, index) in popupMessages"
+            :key="index"
+            :message="msg.text"
+            :variant="msg.variant"
+            :autohide="5000"
+          >
+          </bib-popup-notification>
+        </template>
+      </bib-popup-notification-wrapper>
+    </div>
   </client-only>
 </template>
 
