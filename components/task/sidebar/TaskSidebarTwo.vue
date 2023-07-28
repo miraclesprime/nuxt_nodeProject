@@ -660,9 +660,8 @@ export default {
           this.$store.dispatch("company/addCompanyTag", {content: tag})
           .then((res)=>{
             // console.log(res.data)
-            // this.reloadTags += 1
             if (res.data.statusCode == 200) {
-              this.$axios.get("company/fetchCompanyTags")
+              this.$store.dispatch("company/fetchCompanyTags")
               this.$axios.post("/tag/assign-to-task",  { tagId: res.data.data.id, taskId: this.form.id }, {
                 headers: {
                   "Authorization": "Bearer " + localStorage.getItem("accessToken"),

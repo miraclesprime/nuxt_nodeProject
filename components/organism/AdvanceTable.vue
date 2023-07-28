@@ -72,9 +72,9 @@
               </template>
             </template>
             <template v-if="field.key.includes('Date')" class="date-cell">
-              <!-- {{$formatDate(item[field.key])}} -->
-              <bib-datetime-picker v-if="lazyComponent" :value="formatDate(item[field.key])" :format="`D MMM YYYY`" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
-                    <skeleton-box v-else></skeleton-box>
+              {{$formatDate(item[field.key])}}
+              <!-- <bib-datetime-picker v-if="lazyComponent" :value="formatDate(item[field.key])" :format="`D MMM YYYY`" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker> -->
+              <!-- <skeleton-box v-else></skeleton-box> -->
             </template>
           </div>
         </div>
