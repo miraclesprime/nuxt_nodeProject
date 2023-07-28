@@ -120,7 +120,6 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { TABLE_FIELDS } from "config/constants";
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
 export default {
@@ -148,7 +147,8 @@ export default {
       alertDialog: false,
       alertMsg:"",
       cdp: false,
-      project: {}
+      project: {},
+      userProj: {}
     }
   },
 
@@ -201,22 +201,36 @@ export default {
 
   async asyncData({$axios, app, params, store}) {
 
-    // console.log(app)
-    // console.log(store)
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
 
     try {
       const res = await $axios.get(`project/${params.id}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         })
-      
+
       store.dispatch('project/setProject', res.data.data)
-      return { project: res.data.data}
+      
+      let resp = await $axios.$get(`/project/company/all`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Filter': 'all'
+        }
+      });
+
+      store.dispatch('project/setProjects', resp);
+      
+      let proj = resp.data.find((p) => {
+        if(p.id == params.id) {
+          return p;
+        } 
+      })
+
+      return { project: res.data.data, userProj: proj }
       
     } catch(err) {
 
       console.log("There was an issue in project API", err);
-      return { project: {} }
+      return { project: {}, userProj: {} }
     }
 
   },
@@ -225,24 +239,22 @@ export default {
     if (process.client) {
 
       let p = JSON.parse(JSON.stringify(this.project))
-      if(Object.keys(p).length != 0 && p.isDeleted != true) {
 
-        this.$store.dispatch('project/fetchProjects').then((res) => {
-          let proj = res.find((p) => {
-            if(p.id == this.$route.params.id) {
-              return p;
-            } else {
+      if(!p) {
+        this.$router.push('/notfound')
+        return;
+      }
 
-            }
-          })
+      if(p?.isDeleted != true) {
 
-          if((proj && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
-              console.log('user has access!')
-          } else {
-              this.$router.push('/error/403');
-          }
+        if((this.userProj && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN'){
+            console.log('user has access!')
+        } else {
+            this.$router.push('/error/403');
+        }
 
-        });
+        this.canDeleteProject()
+        
       } else {
         this.$router.push('/notfound')
       }

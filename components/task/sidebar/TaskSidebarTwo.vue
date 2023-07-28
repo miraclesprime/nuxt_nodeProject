@@ -642,15 +642,16 @@ export default {
           }
         })
         .then(res => {
-          console.log(res)
+          // console.log(res)
           this.getTags()
+          this.$nuxt.$emit("update-key")
         })
         .catch(e => console.error(e))
       } else {
         console.log('new tag->', tag)
         this.$store.dispatch("company/addCompanyTag", {content: tag})
         .then((res)=>{
-          console.log(res.data)
+          // console.log(res.data)
           // this.reloadTags += 1
           if (res.data.statusCode == 200) {
             this.$axios.get("company/fetchCompanyTags")
@@ -659,8 +660,9 @@ export default {
                 "Authorization": "Bearer " + localStorage.getItem("accessToken"),
               }
             }).then((res) => {
-              console.log(res)
+              // console.log(res)
               this.getTags()
+              this.$nuxt.$emit("update-key")
             }).catch(e=>console.error(e))
           } else {
             console.warn("error creating tag")
@@ -680,6 +682,7 @@ export default {
       }).then(res => {
         console.log(res.data.message)
         this.getTags()
+        this.$nuxt.$emit("update-key")
       }).catch(e => console.warn(e))
     },
   },

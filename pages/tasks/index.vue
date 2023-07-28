@@ -255,7 +255,6 @@ export default {
       }
     })
 
-    // return { localData: res.data.data.slice(0, 4), localData2: res.data.data.slice(4) }
     return { localData: res.data.data }
   },
 
@@ -281,7 +280,8 @@ export default {
   if(process.client) {
 
     if (JSON.parse(localStorage.getItem("user")).subr != "ADMIN") {
-      window.location.href = "/error/403" 
+      console.log('admin')
+      this.$router.push('/error/403')    
     } 
 
     for(let field of this.taskFields) {
@@ -290,15 +290,8 @@ export default {
       }
     }
 
-    /*this.$store.dispatch("company/setCompanyTasks",{data:this.localData})
-      setTimeout(() => {
-        this.showPlaceholder = false
-      }, 200)*/
-
     setTimeout(() => {
-      //   // this.localData = this.localData.concat(this.localData2)
       this.$store.dispatch("company/setCompanyTasks",{data:this.localData})
-      // this.templateKey += 1
       this.lazyComponent = true
     }, 10)
   }
@@ -435,8 +428,8 @@ export default {
       } else {
         user = null;
       }
-
-      if (payload.item.project.length > 0) {
+ 
+      if (payload.item.project || payload.item.project?.length > 0) {
         projectId = payload.item.project[0].projectId || payload.item.project[0].project.id;
       } else {
         projectId = null;

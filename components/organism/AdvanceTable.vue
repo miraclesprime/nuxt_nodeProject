@@ -45,7 +45,7 @@
                 <bib-icon icon="arrow-right" variant="gray4" hover-variant="gray5"></bib-icon>
               </span>
             </div>
-            <template v-if="field.key == 'project'">{{item[field.key][0]?.project?.title}}</template>
+            <template v-if="field.key == 'project'">{{item[field.key]?.[0]?.project?.title}}</template>
             <template v-if="field.key == 'userId'">
               <lazy-user-select v-if="lazyComponent" :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></lazy-user-select>
                     <skeleton-box v-else></skeleton-box>
@@ -65,6 +65,11 @@
             <template v-if="field.key == 'department'">
               <lazy-dept-select v-if="lazyComponent" :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></lazy-dept-select>
                     <skeleton-box v-else></skeleton-box>
+            </template>
+            <template v-if="field.key == 'tag'">
+              <template v-if="item['TaskTags']?.length > 0">
+                <tag-comp :tags="item['TaskTags']"></tag-comp>
+              </template>
             </template>
             <template v-if="field.key.includes('Date')" class="date-cell">
               <!-- {{$formatDate(item[field.key])}} -->

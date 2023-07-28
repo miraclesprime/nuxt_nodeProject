@@ -82,6 +82,7 @@ export default {
   },
 
   mounted() {
+
     this.loading = true;
 
     for(let field of this.tableFields) {
@@ -95,8 +96,7 @@ export default {
     }
 
     setTimeout(() => {
-      // this.templateKey += 1
-      this.$store.dispatch("project/setProjects",{data:this.localData})
+      this.$store.dispatch("project/setProjects", {data: this.localData})
       this.lazyComponent = true
     }, 50)
 
@@ -165,6 +165,16 @@ export default {
     },
 
     contextOpen(item){
+
+      let projMenu = JSON.parse(JSON.stringify(PROJECT_CONTEXT_MENU));
+
+        if(item.userId == JSON.parse(localStorage.getItem('user')).sub || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
+          this.projectContextItems = projMenu;
+        } else {
+          projMenu.pop()
+          this.projectContextItems = projMenu
+        }
+        
       if(this.$CheckFavProject(item.id)){
        this.projectContextItems=this.projectContextItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Remove favorite"} : item);
       }
@@ -174,6 +184,7 @@ export default {
    
       this.$store.dispatch("task/setSingleTask", item)
     },
+
     ProjectGroup($event) {
       if ($event ==="default" ) {
         this.groupVisible = false;

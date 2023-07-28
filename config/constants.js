@@ -43,7 +43,7 @@ export const PROJECT_FIELDS = [
   {
     label: 'Status',
     key: 'status',
-    width: '150px',
+    width: '160px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -53,7 +53,7 @@ export const PROJECT_FIELDS = [
   {
     label: 'Priority',
     key: 'priority',
-    width: '150px',
+    width: '160px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -63,7 +63,7 @@ export const PROJECT_FIELDS = [
   {
     label: 'Assignee',
     key: 'userId',
-    width: '150px',
+    width: '160px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -73,27 +73,27 @@ export const PROJECT_FIELDS = [
   {
     key: "department",
     label: "Department",
-    width: '150px',
+    width: '160px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
       isActive: false
     }
   },
-  {
+  /*{
     key: "tag",
     label: "Tags",
-    width: '150px',
-  },
+    width: '160px',
+  },*/
   // {
   //     key: "",
   //     label: "Team",
-  //   width: '120px',
+  //   width: '160px',
   // },
   {
     label: 'Start Date',
     key: 'startDate',
-    width: '150px',
+    width: '160px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -103,7 +103,7 @@ export const PROJECT_FIELDS = [
   {
     label: 'Due Date',
     key: 'dueDate',
-    width: '150px',
+    width: '160px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -178,6 +178,11 @@ export const TASK_FIELDS = [
       event: 'table-sort',
       isActive: false
     }
+  },
+  {
+    key: "tag",
+    label: "Tags",
+    width: '150px',
   },
   {
     key: "startDate",
@@ -931,6 +936,11 @@ export const COMPANY_TASK_FIELDS = [
       event: 'table-sort',
       isActive: false
     }
+  },
+  {
+    label: 'Tag',
+    key: 'tag',
+    width: '150px',
   },
   {
     label: 'Start Date',

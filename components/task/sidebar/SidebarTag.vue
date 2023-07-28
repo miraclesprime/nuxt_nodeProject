@@ -100,25 +100,6 @@ export default {
       fetchalltags: "company/fetchCompanyTags"
     }),
 
-    /*async getTags(){
-      let id = this.taskId
-      if (this.subtaskId) {
-        id = this.subtaskId
-      }
-
-      const res = await this.$axios.get(`/tag/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      })
-      console.log(res.data)
-      if (res.data.statusCode == 200) {
-        return res.data
-      } else {
-        console.error("e")
-        return "Error"
-      }
-    },*/
     triggerOpen() {
       this.show = !this.show
       this.$nextTick(() => {
