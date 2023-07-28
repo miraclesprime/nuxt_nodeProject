@@ -278,8 +278,10 @@ export default {
 
   mounted() {
 
+  if(process.client) {
+
     if (JSON.parse(localStorage.getItem("user")).subr != "ADMIN") {
-      this.$router.push('/error/403')    
+      window.location.href = "/error/403" 
     } 
 
     for(let field of this.taskFields) {
@@ -293,12 +295,14 @@ export default {
         this.showPlaceholder = false
       }, 200)*/
 
-    // setTimeout(() => {
-    //   // this.localData = this.localData.concat(this.localData2)
+    setTimeout(() => {
+      //   // this.localData = this.localData.concat(this.localData2)
       this.$store.dispatch("company/setCompanyTasks",{data:this.localData})
       // this.templateKey += 1
       this.lazyComponent = true
-    // }, 200)
+    }, 10)
+  }
+  
   },
 
   methods: {

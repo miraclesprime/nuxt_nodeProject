@@ -17,12 +17,12 @@
               <div v-if="groupVisible" class="h-100">
                   <!-- <loading :loading="loading"></loading> -->
 
-                  <adv-table-three :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" @create-row="createTask" :drag="false" :key="templateKey" :editSection="groupBy"></adv-table-three>
+                  <adv-table-three :tableFields="taskFields" :tableData="localData" :lazyComponent="true" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" @create-row="createTask" :drag="false" :key="templateKey" :editSection="groupBy"></adv-table-three>
               
               </div>
               <div v-else class="h-100">
                 <!-- <loading :loading="loading"></loading>                 -->
-                <advance-table :tableFields="taskFields" :tableData="localData" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" sectionTitle="" :drag="false" :key="templateKey"></advance-table>
+                <advance-table :tableFields="taskFields" :tableData="localData" :lazyComponent="true" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" sectionTitle="" :drag="false" :key="templateKey"></advance-table>
               </div> 
           </div>
         
