@@ -1,10 +1,10 @@
 <template>
-  <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll">
+  <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll"  >
 
-      <div :id="'advTableTwo-'+componentKey" class=" adv-table  bg-white" :style="{'width': tableWidth}"  >
+      <div :id="'advTableTwo-'+componentKey" class=" adv-table  bg-white" :style="{'width': tableWidth}" >
 
-        <draggable v-model="localData" id="mainDraggable" class="section-draggable-wrapper sortable-list position-relative" @end="$emit('section-dragend', localData)">
-          <div class="table resizable w-100 position-sticky" ref="headrow" style="top: 0; z-index:2;">
+        <draggable v-model="localData" id="mainDraggable" class="section-draggable-wrapper sortable-list position-relative" @end="$emit('section-dragend', localData)" >
+          <div class="table resizable w-100 position-sticky" ref="headrow" style="top: 0; z-index:2;" >
             <div class="tr " role="row" >
               <div v-show="drag" class="width-2 th" role="cell" ></div>
               <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{width: field.width}" :ref="'th'+field.key" :data-key="field.key" >
@@ -46,7 +46,7 @@
               </div>
             </div>
           </RecycleScroller> -->
-          <section v-for="(section, index) in localData" class="resizable w-100">
+          <section v-for="(section, index) in localData" class="resizable w-100"   @wheel="handleScroll"  ref="tableContainer" >
             <div class="thead">
               
               <div class="tr hidden" role="row" >
@@ -178,6 +178,7 @@ import dayjs from 'dayjs'
 import draggable from 'vuedraggable'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+import loginVue from '../../pages/auth/login.vue'
 
 /*const defaultOptions = {
   loading: SkeletonBox,
@@ -261,6 +262,10 @@ export default {
       localData: [],
       localNewrow: {},
       akey: 0,
+      itemsPerPage: 20,
+      allDataDisplayed: false,
+      lastDisplayedIndex:{ groupIdx: -1, curIdxInGroup: -1},
+      dataDisplayed: false, 
     }
   },
   
@@ -328,13 +333,214 @@ export default {
   },
 
   mounted() {
-    // const sub = document.getElementById("sub-panel")
-    this.localData = _.cloneDeep(this.tableData)
+    this.showInitialData();
     this.resizableColumns()
 
   },
-
+  // beforeDestroy() {
+  //   window.removeEventListener('scroll', this.handleScroll);
+  // },
   methods: {
+    handleScroll(event) {
+      if (this.allDataDisplayed) {
+        return; // Stop adding data if all data has been displayed
+      }
+
+      const tableContainer = event.target;
+      const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight >= tableContainer.scrollHeight;
+
+      if (isAtBottom) {
+          this.showRemainingData();
+          }
+    },
+    showInitialData() {
+      
+      let allTasks = _.cloneDeep(this.tableData);
+      console.log(allTasks)
+      let remainingCount = this.itemsPerPage;
+      // for (let i = 0; i < allTasks.length; i++) {
+      //   const item = allTasks[i];
+
+      //   if (item.dataCount <= remainingCount) {
+      //     this.localData.push(item);
+      //     remainingCount -= item.dataCount;
+ 
+      //   } else {
+      //     const start = 0;
+      //     const end = remainingCount;
+      //     const slicedData = item.tasks.slice(start, end);
+      //     this.localData.push({ ...item, tasks: slicedData });
+      //     break;
+      //   }
+      //   this.lastDisplayedIndex = i;
+      //   if (this.lastDisplayedIndex === allTasks.length-1) {
+      //       this.allDataDisplayed = true;
+      //   }
+      // }
+      let start = this.lastDisplayedIndex.curIdxInGroup;
+      let i;
+      for (i = start === -1 ? this.lastDisplayedIndex.groupIdx + 1 : this.lastDisplayedIndex.groupIdx; i < allTasks.length; ++ i) {
+        if (start === -1) {
+          if (remainingCount < allTasks[i].dataCount - start - 1) {
+            
+            this.localData.push({});
+            for (const [key, value] of Object.entries(allTasks[i])) {
+              if (key !== 'tasks') { 
+                this.localData[i][key] = value; 
+              }
+            }
+            this.localData[i].tasks = allTasks[i].tasks.slice(start + 1, start + remainingCount + 1);
+            start += remainingCount;
+            remainingCount = 0;
+          } else {
+            this.localData.push(allTasks[i])
+            remainingCount -= allTasks[i].dataCount;
+            start = -1;
+          }
+        }
+        else {
+          if (start + remainingCount + 1 < allTasks[i].dataCount) {
+            this.localData.tasks.push(...allTasks[i].slice(start + 1, start + remainingCount + 1))
+            start += remainingCount;
+            remainingCount = 0;
+          } else {
+            this.localData.tasks = allTasks[i].tasks;
+            remainingCount -= (allTasks[i].dataCount - start - 1);
+            start = -1;
+          }
+        }
+        if (remainingCount == 0) break;
+
+      }
+      console.log(i)
+      if (i >= allTasks.length - 1 && start === -1) this.allDataDisplayed = true;
+      this.lastDisplayedIndex.groupIdx = i;
+      this.lastDisplayedIndex.curIdxInGroup = start;
+    },
+    showRemainingData() {
+  const allTasks = [...this.tableData];
+  let remainingCount = this.itemsPerPage;
+
+  // for (let i = this.lastDisplayedIndex + 1; i < allTasks.length; i++) {
+  //   const item = allTasks[i];
+
+  //   if (item.dataCount > remainingCount) {
+  //     const start = item.tasks.length - (item.dataCount - remainingCount);
+  //     const slicedData = item.tasks.slice(start);
+      
+  //     if (this.localData.length > 0 && i === this.lastDisplayedIndex + 1) {
+  //       const prevItem = this.localData[i - 1];
+  //       const prevSlicedData = prevItem.tasks.slice(0, remainingCount);
+  //       prevItem.tasks = [...prevSlicedData, ...slicedData];
+  //     } else {
+  //       this.localData.push({ ...item, tasks: slicedData });
+  //     }
+      
+  //     break;
+  //   } else {
+  //     const slicedData = item.tasks.slice();
+  //     this.localData.push({ ...item, tasks: slicedData });
+  //     remainingCount -= item.dataCount;
+  //   }
+
+  let start = this.lastDisplayedIndex.curIdxInGroup;
+      let i;
+      for (i = start === -1 ? this.lastDisplayedIndex.groupIdx + 1 : this.lastDisplayedIndex.groupIdx; i < allTasks.length; ++ i) {
+        if (start === -1) {
+          if (remainingCount < allTasks[i].dataCount - start - 1) {
+            
+            this.localData.push({});
+            for (const [key, value] of Object.entries(allTasks[i])) {
+              if (key !== 'tasks') { 
+                this.localData[i][key] = value; 
+              }
+            }
+            this.localData[i].tasks = allTasks[i].tasks.slice(start + 1, start + remainingCount + 1);
+            start += remainingCount;
+            remainingCount = 0;
+          } else {
+            this.localData.push(allTasks[i])
+            remainingCount -= allTasks[i].dataCount;
+            start = -1;
+          }
+        }
+        else {
+          if (start + remainingCount + 1 < allTasks[i].dataCount) {
+            this.localData[i].tasks.push(...allTasks[i].tasks.slice(start + 1, start + remainingCount + 1))
+            start += remainingCount;
+            remainingCount = 0;
+          } else {
+            if (i === allTasks.length - 1) debugger
+            this.localData[i].tasks.push(...allTasks[i].tasks.slice(start + 1, allTasks[i].dataCount))
+            remainingCount -= (allTasks[i].dataCount - start - 1);
+            start = -1;
+          }
+        }
+        if (remainingCount == 0) break;
+
+      }
+      if (i >= allTasks.length - 1 && start === -1) this.allDataDisplayed = true;
+
+
+      this.lastDisplayedIndex.groupIdx = i;
+      this.lastDisplayedIndex.curIdxInGroup = start;
+
+},
+//     showRemainingData() {
+//   let allTasks = [...this.tableData]
+//   let remainingCount = this.itemsPerPage;
+  
+//   for (let i = this.lastDisplayedIndex+1; i < allTasks.length; i++) {
+//     const item = allTasks[i];
+    
+//     if (item.dataCount > remainingCount) {
+//       const start = item.dataCount - remainingCount;
+//       const slicedData = item.tasks.slice(start);
+//        if (this.localData.length > 0 && i === this.lastDisplayedIndex+1) {
+//         const prevItem = this.localData[i-1];
+//         const prevSlicedData = prevItem.tasks.slice(0, remainingCount);
+//         prevItem.tasks = [...prevSlicedData, ...slicedData];
+//       } else {
+//         this.localData.push({ ...item, tasks: slicedData });
+//       }
+//       break;
+//     } else {
+//       const slicedData = item.tasks.slice();
+//       this.localData.push({ ...item, tasks: slicedData });
+//       remainingCount -= item.dataCount;
+//     }
+
+//     this.lastDisplayedIndex = i;
+//   }
+
+//   if (this.lastDisplayedIndex === allTasks.length - 1) {
+//     this.allDataDisplayed = true;
+//   }
+// },
+    // showRemainingData() {
+    //   let allTasks = _.cloneDeep(this.tableData);
+    //   let remainingCount =this.itemsPerPage;
+    //   for (let i = this.lastDisplayedIndex + 1; i < allTasks.length; i++) {
+    //     const item = allTasks[i];
+
+    //     if (item.dataCount-remainingCount > remainingCount) {
+    //       const start = item.dataCount - remainingCount;
+    //       const slicedData = item.tasks.slice(start);
+
+    //       this.localData.push({ ...item, tasks: slicedData });
+    //       break;
+    //     } else {
+    //       this.localData.push(item);
+    //       remainingCount -= item.dataCount;
+    //     }
+
+    //     this.lastDisplayedIndex = i;
+    //   }
+
+    //   if (this.lastDisplayedIndex === allTasks.length-1) {
+    //     this.allDataDisplayed = true;
+    //   }
+    // },
     parseDate(dateString, format) {
         return new Date(dateString)
     },

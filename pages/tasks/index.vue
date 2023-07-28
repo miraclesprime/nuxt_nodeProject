@@ -278,16 +278,16 @@ export default {
     const res = await $axios.get(`company/tasks/all`, {
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Filter': filter
+        'Filter': 'all'
       }
     })
-    store.dispatch('company/setCompanyTasks', res.data.data)
-    return { localData: res.data.data }
+    // store.dispatch('company/setCompanyTasks', res.data.data)
+    // return { localData: res.data.data }
     // const displayedTasks = [];
-    // let allTasks = res.data.data.map((item) => {
-    //               item.dataCount = item.tasks.length;
-    //               return item;
-    //             });
+    let allTasks = res.data.data.map((item) => {
+                  item.dataCount = item.tasks.length;
+                  return item;
+                });
     //   let remainingCount = 20
     // for (let i = 0; i < allTasks.length; i++) {
     //     const item = allTasks[i];
@@ -304,10 +304,10 @@ export default {
     //       break;
     //     }
     //   }
-    // store.dispatch('company/setCompanyTasks', allTasks)
+    store.dispatch('company/setCompanyTasks', allTasks)
    
 
-    // return { localData: displayedTasks}
+    return { localData: allTasks}
   },
 
   created() {
@@ -359,32 +359,6 @@ export default {
   window.removeEventListener('scroll', this.handleScroll);
 },
   methods: {
-    //     handleScroll() {
-    //       const bottomOfWindow =
-    //         document.documentElement.scrollTop +
-    //         window.innerHeight ===
-    //         document.documentElement.offsetHeight;
-
-    //       if (bottomOfWindow) {
-    //         let remainingCount = this.itemsPerPage - this.displayedData.length;
-
-    //         for (let i = 0; i < this.tasks.length; i++) {
-    //           const item = this.tasks[i];
-
-    //           if (item.dataCount <= remainingCount) {
-    //             this.displayedData.push(item);
-    //             remainingCount -= item.dataCount;
-    //           } else {
-    //             const start = item.tasks.length - remainingCount;
-    //             const end = start + remainingCount;
-    //             const slicedData = item.tasks.slice(start, end);
-
-    //             this.displayedData.push({ ...item, tasks: slicedData });
-    //             break;
-    //           }
-    //         }
-    //       }
-    // },
 
     showUserPicker(payload) {
       this.closeAllPickers();

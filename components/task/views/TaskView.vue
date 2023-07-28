@@ -667,7 +667,7 @@ export default {
       this.$store
         .dispatch("section/fetchProjectSections", {
           projectId: this.$route.params.id,
-          filter: this.filterViews,
+          filter: 'all',
           sName:this.groupby
         })
         .then(() => {
