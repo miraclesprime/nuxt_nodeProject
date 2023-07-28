@@ -38,6 +38,12 @@
           </div>
         </template>
       </div>
+      <bib-popup-notification-wrapper>
+        <template #wrapper>
+          <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" :autohide="4000" >
+          </bib-popup-notification>
+        </template>
+      </bib-popup-notification-wrapper>
     </div>
   </client-only>
 </template>
@@ -63,6 +69,7 @@ export default {
         { id: 8, text: "imp", orgId: "sf2346werlds" },
       ],*/
       filterKey: "",
+      popupMessages: [],
     }
   },
   watch: {
@@ -108,9 +115,14 @@ export default {
       });
     },
     selected(tag) {
-      // this.localData = tag.value
-      this.$emit("change", tag)
-      this.show = false
+      let tagExist = this.tags.find(t => t.id == tag.id)
+      // console.log(tagExist?"true":"false")
+      if (tagExist) {
+        this.popupMessages.push({text: "tag already exists", variant: "orange"})
+      } else {
+        this.$emit("change", tag)
+        this.show = false
+      }
     },
     deleteTag(tag) {
       // console.log('delete tag')

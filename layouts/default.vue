@@ -367,6 +367,7 @@ export default {
         this.navItems1[3].selected = true;
       }
 
+    if(!this.isAdmin) {
       if (this.$router.history.current.fullPath == "/tasks") {
         this.navItems2[0].selected = true;
       }
@@ -376,6 +377,11 @@ export default {
           this.navItems2[1].selected = true;
         }, 500);
       }
+    } else {
+      if (this.$router.history.current.fullPath == "/projects") {
+        this.navItems2[0].selected = true;
+      }
+    }
 
       // if (this.$router.history.current.fullPath == '/goals') {
       //   this.navItems2[2].selected = true;
@@ -569,7 +575,12 @@ export default {
         this.navItems2[i].selected = false;
       }
 
-      this.navItems2[1].selected = true;
+      if(!this.isAdmin) {
+        this.navItems2[0].selected = true;
+      } else {
+        this.navItems2[1].selected = true;
+      }
+
     },
 
     goToUsertask($event, item) {

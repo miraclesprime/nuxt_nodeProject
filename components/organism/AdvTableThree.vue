@@ -88,7 +88,7 @@
                     </span>
                   </div>
                   <template v-if="field.key == 'project'">
-                    <div class="align-center height-2">{{item[field.key][0]?.project?.title}}</div>
+                    <div class="align-center height-2">{{item[field.key]?.[0]?.project?.title}}</div>
                   </template>
                   <template v-if="field.key == 'userId'">
                     <lazy-user-select v-if="lazyComponent" :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></lazy-user-select>
@@ -111,21 +111,21 @@
                     <skeleton-box v-else></skeleton-box>
                   </template>
                   <template v-if="field.key == 'tag'">
-                    <template v-if="item['TaskTags'].length > 0">
+                    <template v-if="item['TaskTags']?.length > 0">
                       <tag-comp :tags="item['TaskTags']"></tag-comp>
                     </template>
                   </template>
                   <template v-if="field.key == 'startDate'" >
-                    <!-- {{$formatDate(item[field.key])}} -->
+                    {{$formatDate(item[field.key])}}
                     
-                    <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
-                    <skeleton-box v-else></skeleton-box>
+                    <!-- <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker> -->
+                    <!-- <skeleton-box v-else></skeleton-box> -->
                   </template>
                   <template v-if="field.key == 'dueDate'" >
                     <!-- {{$formatDate(item[field.key])}} -->
                     
-                    <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
-                    <skeleton-box v-else></skeleton-box>
+                    <!-- <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker> -->
+                    <!-- <skeleton-box v-else></skeleton-box> -->
                   </template>
                 </div>
               </div>

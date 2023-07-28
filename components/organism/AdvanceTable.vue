@@ -45,7 +45,7 @@
                 <bib-icon icon="arrow-right" variant="gray4" hover-variant="gray5"></bib-icon>
               </span>
             </div>
-            <template v-if="field.key == 'project'">{{item[field.key][0]?.project?.title}}</template>
+            <template v-if="field.key == 'project'">{{item[field.key]?.[0]?.project?.title}}</template>
             <template v-if="field.key == 'userId'">
               <lazy-user-select v-if="lazyComponent" :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></lazy-user-select>
                     <skeleton-box v-else></skeleton-box>
@@ -67,14 +67,14 @@
                     <skeleton-box v-else></skeleton-box>
             </template>
             <template v-if="field.key == 'tag'">
-              <template v-if="item['TaskTags'].length > 0">
+              <template v-if="item['TaskTags']?.length > 0">
                 <tag-comp :tags="item['TaskTags']"></tag-comp>
               </template>
             </template>
             <template v-if="field.key.includes('Date')" class="date-cell">
-              <!-- {{$formatDate(item[field.key])}} -->
-              <bib-datetime-picker v-if="lazyComponent" :value="formatDate(item[field.key])" :format="`D MMM YYYY`" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
-                    <skeleton-box v-else></skeleton-box>
+              {{$formatDate(item[field.key])}}
+              <!-- <bib-datetime-picker v-if="lazyComponent" :value="formatDate(item[field.key])" :format="`D MMM YYYY`" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker> -->
+              <!-- <skeleton-box v-else></skeleton-box> -->
             </template>
           </div>
         </div>
@@ -526,6 +526,7 @@ export default {
   display: table;
   min-width: 100%;
   font-size: $base-size;
+  table-layout: fixed;
 
   .thead,
   .tbody,
