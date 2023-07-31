@@ -98,6 +98,7 @@ server/
 .yarnrc
 
 .scannerwork
+.vscode/
 sonar-project.properties
 
 # dotenv environment variables file
