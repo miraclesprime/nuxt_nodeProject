@@ -501,7 +501,6 @@ export default {
     },
 
     async updateProject(taskData) {
-      console.log("12",taskData)
       let proj = this.projects.find(t => t.id == taskData.projValue)
 
       let user;
@@ -520,7 +519,6 @@ export default {
         text: proj ? `changed project to ${proj.title}` : 'Task removed from Project',
       })
         .then((u) => {
-          console.log("###############",u)
           this.$nuxt.$emit("update-key")
           
           this.reloadHistory += 1

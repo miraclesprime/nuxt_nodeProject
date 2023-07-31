@@ -381,7 +381,7 @@ export default {
     showData() {
       let allTasks = this.newValue.length > 0 ? [...this.newValue] : [...this.tableData];
       allTasks =allTasks.map((item) => {
-                  item.dataCount = item.tasks.length;
+                  item.dataCount = item.tasks?.length||0;
                   return item;
                 });
 
