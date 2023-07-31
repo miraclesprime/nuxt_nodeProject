@@ -1,7 +1,8 @@
 <template>
   <client-only>
     <div id="page" class="task-page-wrapper">
-      <page-title title="Tasks" :count="tasksCount"></page-title>
+      <page-title title="Tasks"></page-title>
+      <!-- <page-title title="Tasks" :count="tasksCount"></page-title> -->
       <company-tasks-actions
         :gridType="gridType"
         v-on:filterView="filterView"
@@ -202,7 +203,7 @@ export default {
       contentWidth: "100%",
       dragTable: true,
       showPlaceholder: false,
-      tasksCount: 0,
+      // tasksCount: 0,
       // itemsPerPage: 10, // Number of items to display initially
       // displayedData:[]
 
@@ -229,11 +230,11 @@ export default {
     tasks(newVal) {
       let data = _.cloneDeep(newVal);
       this.localData = data
-      newVal.map(s => {
-        s.tasks.forEach(t => {
-          this.tasksCount += 1
-        })
-      })
+      // newVal.map(s => {
+      //   s.tasks.forEach(t => {
+      //     this.tasksCount += 1
+      //   })
+      // })
     },
     gridType() {
       this.key++;
@@ -357,6 +358,7 @@ export default {
       this.$store.dispatch("task/setSingleTask", item)
     },
     updateKey(value) {
+      console.log("111")
       if (value) {
         this.popupMessages.push({ text: value, variant: "success" });
       }

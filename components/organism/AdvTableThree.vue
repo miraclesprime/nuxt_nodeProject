@@ -349,7 +349,7 @@ export default {
   //   this.showData();
 
   // });
-  // this.resizableColumns()
+  this.resizableColumns()
   },
 
   methods: {
@@ -379,7 +379,7 @@ export default {
   // },
 
     showData() {
-  let allTasks = this.newValue.length > 0 ? [...this.newValue] : [...this.tableData];
+      let allTasks = this.newValue.length > 0 ? [...this.newValue] : [...this.tableData];
       allTasks =allTasks.map((item) => {
                   item.dataCount = item.tasks.length;
                   return item;

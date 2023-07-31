@@ -442,6 +442,7 @@ export const actions = {
     const res = await this.$axios.$get(`company/tasks/all`, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
     });
+    ctx.commit('setCompanyTasks', res.data);
 
     return res.data
   },
