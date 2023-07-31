@@ -1,6 +1,7 @@
 <template>
   <client-only>
-    <div id="layout-wrapper">
+
+    <div v-if="expandVisible" id="layout-wrapper">
       <bib-app-wrapper
         class="test"
         :navigationCollapsed="collapseNavigation"
@@ -140,6 +141,9 @@
       <create-project-modal ref="projectModals"></create-project-modal>
       <add-teammember-modal ref="teammemberModal"></add-teammember-modal>
       <add-member-to-task ref="taskTeamModal"></add-member-to-task>
+    </div>
+    <div v-else class="expand">
+      <task-sidebar-two :expandVisible="expandVisible" ></task-sidebar-two>
     </div>
   </client-only>
 </template>
@@ -393,6 +397,13 @@ export default {
 
       // Dhruv (admin)
 
+
+      let cookie="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJEWE1WeWI4MmtabWV2QVpFIiwic3ViZSI6Imxlb25hbmMwMDIyQGdtYWlsLmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4OTk0MzM5MjQxMCwiZXhwIjoxNjk3NzE5MzkyNDEwLCJqdGkiOiI0OTgzN2ExNy02YmU2LTRjMWMtOGI4My02ZDZlZjRjMDMxNWUifQ.sEF-3noKrHHrhCHgl9DPY2esBMi4L4J0S4Zmq1okwFg"
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4MjMxNDk5MjM1NywiZXhwIjoxNjkwMDkwOTkyMzU3LCJqdGkiOiIxODkxMjg1Ni00ZDIyLTQzMDQtODI4My1kNzAzMDMzOTQ2NTYifQ.7NKaoTwlgkwho6DzjV96ohKvQznbASt846ZA1KRCtN0";
+
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4OTg1MDM0ODYxMCwiZXhwIjoxNjk3NjI2MzQ4NjEwLCJqdGkiOiIxYWI4MDVlMC0zYTkyLTQxNDMtYmMyOC0zNGM2ZmRhZGFkZDgifQ.5-G-YJ16WfrZBp5VhK_p2-qULAP9jpF5ZOqsQ7Phs_0";
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4OTg1MDM0ODYxMCwiZXhwIjoxNjk3NjI2MzQ4NjEwLCJqdGkiOiIxYWI4MDVlMC0zYTkyLTQxNDMtYmMyOC0zNGM2ZmRhZGFkZDgifQ.5-G-YJ16WfrZBp5VhK_p2-qULAP9jpF5ZOqsQ7Phs_0";
+
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4OTg1MDM0ODYxMCwiZXhwIjoxNjk3NjI2MzQ4NjEwLCJqdGkiOiIxYWI4MDVlMC0zYTkyLTQxNDMtYmMyOC0zNGM2ZmRhZGFkZDgifQ.5-G-YJ16WfrZBp5VhK_p2-qULAP9jpF5ZOqsQ7Phs_0";
 
       // Vishwajeet
@@ -467,7 +478,6 @@ export default {
                 if (JSON.parse(localStorage.getItem("user")).subr == "ADMIN") {
                   this.isAdmin = true;
                 } else {
-                  this.navItems2.splice(0,1);
                   this.isAdmin = false;
                 }
                 this.$store.dispatch("department/fetchDepartments");
@@ -504,6 +514,7 @@ export default {
     ...mapGetters({
       favProjects: "project/getFavProjects",
       // teammate: "user/getTeamMembers",
+      expandVisible:"task/getExpandVisible",
       appMembers: "user/getAppMembers",
       user2: "user/getUser2",
       sidebar: "task/getSidebarVisible",
@@ -649,7 +660,18 @@ html {
     line-height: 1.8rem;
   }
 }
+.expand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: black;
+  width:100%;
+  height:100vh;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 16px;
 
+}
 .app-wrapper {
   &__navigation {
     position: relative;

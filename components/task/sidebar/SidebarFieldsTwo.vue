@@ -147,7 +147,7 @@ export default {
       if (Object.keys(this.task).length) {
         this.form = _.cloneDeep(this.task);
         if (this.task.project?.length) {
-          this.form.projectId = this.task.project?. [0]?.projectId || this.task.project?. [0]?.project?.id;
+          this.form.projectId = this.task.project?.[0]?.projectId || this.task.project?.[0]?.project?.id;
           this.$store.dispatch("section/fetchProjectSections", {
             projectId: this.form.projectId,
             filter: "all",
@@ -181,6 +181,43 @@ export default {
       }
     },
   },
+ mounted () {
+  if (Object.keys(this.task).length) {
+        this.form = _.cloneDeep(this.task);
+        if (this.task.project?.length) {
+          this.form.projectId = this.task.project?.[0]?.projectId || this.task.project?.[0]?.project?.id;
+          this.$store.dispatch("section/fetchProjectSections", {
+            projectId: this.form.projectId,
+            filter: "all",
+          });
+        } else {
+          this.form.projectId = this.project?.id;
+        }
+      } else {
+        this.form = {
+          id: "",
+          title: "",
+          startDate: "",
+          dueDate: "",
+          userId: "",
+          sectionId: "_section" + this.project?.id,
+          projectId: this.project?.id || "",
+          departmentId: this.departmentId || null,
+          statusId: null,
+          priorityId: null,
+          description: "",
+          budget: 0,
+        };
+        if (this.sectionIdActive) {
+          this.form.sectionId = this.sectionIdActive;
+        }
+        if (this.project?.id) {
+          this.form.sectionId = "_section" + this.project.id;
+        } else {
+          this.form.sectionId = "";
+        }
+      }
+ },
   methods: {
     /*parseDate(dateString, format) {
            return fecha.parse(dateString, format);

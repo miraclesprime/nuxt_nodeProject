@@ -137,7 +137,7 @@ export default {
       contentWidth: "100%",
       tasksKey: 'tasks',
       groupby: "",
-      dragTable: true
+      dragTable: true,
     }
   },
 
@@ -149,19 +149,26 @@ export default {
       teamMembers: "user/getTeamMembers",
       sidebar: "task/getSidebarVisible",
       loggedUser: "user/getUser2",
+      filterViews :'task/getFilterView',
+      expandVisible:"task/getExpandVisible",
+      grid:"todo/getGridType"
     })
   },
 
   watch: {
+      filterViews(newVal) {
+    return _.cloneDeep(newVal)
+      },
     todos(newVal) {
       let localTodos = _.cloneDeep(newVal)
-      localTodos.forEach(function(todo) {
-        todo["tasks"] = todo.tasks?.sort((a, b) => a.tOrder - b.tOrder);
-      })
+      // localTodos.forEach(function(todo) {
+      //   todo["tasks"] = todo.tasks?.sort((a, b) => a.tOrder - b.tOrder);
+      // })
       this.localdata = localTodos
     },
 
     gridType() {
+      this.$store.commit('todo/gridType',{gridType:this.gridType})
       this.key++;
     },
     sidebar(newVal){
@@ -180,15 +187,16 @@ export default {
   created() {
     if (process.client) {
       this.$nuxt.$on("update-key", (msg) => {
-        this.$store.dispatch("todo/fetchTodos", { filter: 'all' })
-          .then(() => {
-            this.key += 1
-            this.templateKey += 1
-          })
-        if (msg) {
-          this.popupMessages.push({text: msg, variant: 'success'})
-        }
-      })
+          this.updateKey()
+        
+      });
+      // this.$nuxt.$on("update-key", (msg) => {
+      //   this.$store.dispatch("todo/fetchTodos", { filter: this.filterViews,sName:this.groupby }).then((res) => { 
+      //     this.key += 1 })
+      //   if (msg) {
+      //     this.popupMessages.push({text: msg, variant: 'success'})
+      //   }
+      // })
     }
   },
 
@@ -199,10 +207,16 @@ export default {
         field.header_icon.isActive = false;
       }
     }
+    this.$store.dispatch("todo/setMyfetchTodos")
+       
+      setTimeout(() => {
+        this.updateKey()
+        this.gridType=this.grid
+      }, 200);
+    
   },
 
-  async asyncData({$axios, app}) {
-    // console.log(req.headers.cookie)
+  async asyncData({$axios, app,store,context}) {
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
     // const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4OTg1MDM0ODYxMCwiZXhwIjoxNjk3NjI2MzQ4NjEwLCJqdGkiOiIxYWI4MDVlMC0zYTkyLTQxNDMtYmMyOC0zNGM2ZmRhZGFkZDgifQ.5-G-YJ16WfrZBp5VhK_p2-qULAP9jpF5ZOqsQ7Phs_0"
 
@@ -218,15 +232,14 @@ export default {
     })*/
 
     // console.log(token)
+    const filter=store.getters['task/getFilterView']
     const response = await $axios.get('/todo/all', {
       headers: {
         Authorization: `Bearer ${token}`,
-        Filter: 'all'
+        Filter:filter
       },
     });
-
-    // console.log(response.data)
-
+    store.dispatch('todo/setTodos', response.data.data)
     return { localdata: response.data.data }
     
   },
@@ -421,7 +434,11 @@ export default {
     
       if(field == "dueDate" && item.startDate){
         // console.log(field, value)
-        if(new Date(value).getTime() > new Date(item.startDate).getTime()){
+        if(value=="Invalid Date"){
+          data = { [field]: null }
+        }
+        else {
+          if(new Date(value).getTime() > new Date(item.startDate).getTime()){
           data = { [field]: value }
         } else{
           data = { [field]: null }
@@ -429,17 +446,24 @@ export default {
           this.updateKey()
           return false
         }
-      }
-      if(field == "startDate" && item.dueDate){
-        // console.log(field, value)
-        if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
-          data = { [field]: value }
-        } else {
-          data = { [field]: null }
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          this.updateKey()
-          return false
         }
+      }
+      
+      if(field == "startDate" && item.dueDate){
+        if(value=="Invalid Date"){
+          data = { [field]: null }
+        }
+        else 
+        {
+            if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
+            data = { [field]: value }
+        } else {
+            data = { [field]: null }
+            this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+            this.updateKey()
+            return false
+        }
+        }   
       }
 
       this.$store.dispatch("task/updateTask", {
@@ -449,7 +473,6 @@ export default {
         text: historyText
       })
         .then(t => {
-          console.log(t.data)
           this.updateKey()
         })
         .catch(e => console.warn(e))
@@ -565,10 +588,10 @@ export default {
         firstName: this.loggedUser.FirstName,
         lastName: this.loggedUser.LastName
       }]
-      console.log(taskdata)
+      // console.log(taskdata)
       this.$store.dispatch("task/createTask", taskdata)
       .then(t => {
-        // console.log(t)
+        console.log(t)
         this.updateKey()
       })
       .catch(e => console.warn(e))
@@ -578,16 +601,20 @@ export default {
       if ($event) {
         this.popupMessages.push({ text: $event, variant: "success" })
       }
-      
-      this.$store.dispatch("todo/fetchTodos", { filter: 'all', sName:this.groupby })
-        .then((res) => {
-          // console.log(res)
-          if (res.statusCode == 200) {
-            this.key += 1
-            this.templateKey += 1
-          }
-        })
+      this.$store.dispatch("todo/fetchTodos", { filter: this.filterViews,sName:this.groupby}).then((res) => {
+        if (res.statusCode == 200) {
+          this.key += 1
+          this.templateKey += 1
+        }
+      })
     },
+
+    /*showNewTodo() {
+      this.newSection = true
+      process.nextTick(() => {
+        this.$refs.newsectioninput.focus()
+      });
+    },*/
     
     toggleNewsection(flag) {
       // console.log(flag)
@@ -732,8 +759,31 @@ export default {
     }, 400),
 
     filterView($event) {
+      this.$store.commit('task/setFilterView', {filter:$event})
       this.$store.commit("todo/getFilterMyTasks",{filter:$event, groupBy:this.groupby})
 
+      // this.loading = true
+      // if ($event == 'complete') {
+      //   this.$store.dispatch('todo/fetchTodos', { filter: 'complete',sName:this.groupby }).then((res) => {
+      //     this.viewName = 'complete'
+      //     this.key += 1;
+      //     this.loading = false
+      //   }).catch(e => console.log(e))
+      // }
+      // if ($event == 'incomplete') {
+      //   this.$store.dispatch('todo/fetchTodos', { filter: 'incomplete',sName:this.groupby }).then((res) => {
+      //     this.viewName = 'incomplete'
+      //     this.key += 1;
+      //     this.loading = false
+      //   }).catch(e => console.log(e))
+      // }
+      // if ($event == 'all') {
+      //   this.$store.dispatch('todo/fetchTodos', { filter: 'all',sName:this.groupby }).then((res) => {
+      //     this.viewName = 'all'
+      //     this.key += 1;
+      //     this.loading = false
+      //   }).catch(e => console.log(e))
+      // }
     },
 
     // Sort By Action List
@@ -979,43 +1029,46 @@ export default {
           this.localdata = newArr5;
       }
 
+
       // sort by department
       if ($event == "department") {
         let newArr6 = [];
 
-        for (let i = 0; i < this.localdata.length; i++) {
-          newArr6.push(this.localdata[i]);
-          let tNewArr = []
-          for(let j=0; j<this.localdata[i].tasks.length; j++) {
-            if (this.localdata[i].tasks[j].departmentId) {
-              tNewArr.unshift(this.localdata[i].tasks[j])
-            } else {
-              tNewArr.push(this.localdata[i].tasks[j])
+          for (let i = 0; i < this.localdata.length; i++) {
+            newArr6.push(this.localdata[i]);
+            let tNewArr = []
+            for(let j=0; j<this.localdata[i].tasks.length; j++) {
+              if (this.localdata[i].tasks[j].departmentId) {
+                tNewArr.unshift(this.localdata[i].tasks[j])
+              } else {
+                tNewArr.push(this.localdata[i].tasks[j])
+              }
             }
+            newArr6[i]["tasks"] = tNewArr;
           }
-          newArr6[i]["tasks"] = tNewArr;
-        }
 
-        if (this.orderBy == "asc") {
+          if (this.orderBy == "asc") {
+
+              newArr6.forEach(todo => {
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.departmentId && b.departmentId) {
+                    return a.department.title.localeCompare(b.department.title)
+                  }
+                })
+              })
+
+          } else {
+
             newArr6.forEach(todo => {
-              todo["tasks"] = todo.tasks.sort((a, b) => {
-                if (a.departmentId && b.departmentId) {
-                  return a.department.title.localeCompare(b.department.title)
-                }
+                todo["tasks"] = todo.tasks.sort((a, b) => {
+                  if (a.departmentId && b.departmentId) {
+                    return b.department.title.localeCompare(a.department.title)
+                  }
+                })
               })
-            })
+          }
 
-        } else {
-          newArr6.forEach(todo => {
-              todo["tasks"] = todo.tasks.sort((a, b) => {
-                if (a.departmentId && b.departmentId) {
-                  return b.department.title.localeCompare(a.department.title)
-                }
-              })
-            })
-        }
-
-        this.localdata = newArr6;
+          this.localdata = newArr6;
       }
 
       // sort by difficulty
@@ -1073,7 +1126,7 @@ export default {
       // in case of create task 
       if (!$event) {
         // this.$nuxt.$emit("open-sidebar", $event)
-        this.$nuxt.$emit("open-sidebar", {...$event, userId: JSON.parse(localStorage.getItem("user")).sub});
+        this.$nuxt.$emit("open-sidebar", {...$event,userId:JSON.parse(localStorage.getItem("user")).sub});
       }
       this.flag = !this.flag;
     },

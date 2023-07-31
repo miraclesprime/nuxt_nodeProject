@@ -1159,7 +1159,7 @@ export const actions = {
   },
 
   setProjects(ctx, payload) {
-    ctx.commit('fetchProjects', payload.data)
+    ctx.commit('fetchProjects', payload)
   }
 
 }
