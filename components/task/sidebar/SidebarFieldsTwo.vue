@@ -4,13 +4,13 @@
       <div class="row mt-05 mb-05 ">
         <div class="col-2 align-center"><label>Start Date</label></div>
         <div class="col-5">
-          <bib-datetime-picker :value="form.startDate" size="sm" placeholder="Start date" @input="startdateProcess" ></bib-datetime-picker>
+          <bib-datetime-picker v-model="sdate" :format="format" :parseDate="parseDate" :formatDate="formatDate" size="sm" placeholder="Start date" @input="startdateProcess" ></bib-datetime-picker>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Due Date</label></div>
         <div class="col-5">
-          <bib-datetime-picker :value="form.dueDate" size="sm" placeholder="Due date" @input="duedateProcess"></bib-datetime-picker>
+          <bib-datetime-picker v-model="ddate" :format="format" :parseDate="parseDate" :formatDate="formatDate" size="sm" placeholder="Due date" @input="duedateProcess"></bib-datetime-picker>
         </div>
       </div>
       <div class="row mb-05 ">
@@ -81,7 +81,7 @@
 import { STATUS, PRIORITY, DIFFICULTY } from "~/config/constants.js";
 import { mapGetters } from "vuex";
 import _ from "lodash";
-// import fecha, { format } from "fecha";
+// import dayjs from "dayjs";
 export default {
   name: "SidebarFieldsTwo",
   props: {
@@ -102,7 +102,10 @@ export default {
       difficultyOpt: DIFFICULTY,
       form: {},
       popupMessages: [],
-      validationDate: false
+      validationDate: false,
+      format: "DD MMM YYYY",
+      sdate: "",
+      ddate: "",
     };
   },
   computed: {
@@ -170,6 +173,7 @@ export default {
           description: "",
           budget: 0,
         };
+
         if (this.sectionIdActive) {
           this.form.sectionId = this.sectionIdActive;
         }
@@ -179,6 +183,8 @@ export default {
           this.form.sectionId = "";
         }
       }
+      this.sdate = this.$formatDate(this.form?.startDate)
+      this.ddate = this.$formatDate(this.form?.dueDate)
     },
   },
  mounted () {
@@ -219,13 +225,13 @@ export default {
       }
  },
   methods: {
-    /*parseDate(dateString, format) {
-           return fecha.parse(dateString, format);
-       },
-       formatDate(dateObj, format) {
-           return fecha.format(dateObj, format);
-       },*/
-    startdateProcess(newValue){
+    parseDate(dateString, format) {
+      return new Date(dateString);
+    },
+    formatDate(dateObj, format) {
+      return this.$formatDate(dateObj)
+    },
+    startdateProcess(newValue, repeat){
       const oldValue = this.form.startDate
       const newStartDate = new Date(newValue);
       this.form.startDate = newValue;

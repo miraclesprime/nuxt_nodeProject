@@ -83,7 +83,7 @@ export default {
 
   mounted() {
 
-    this.loading = true;
+    // this.loading = true;
 
     for(let field of this.tableFields) {
       if(field.header_icon) {
@@ -96,10 +96,12 @@ export default {
     }
 
     setTimeout(() => {
-      // this.$store.dispatch("project/setProjects", {data: this.localData})
       this.$store.dispatch("project/setProjects", this.localData)
+      this.$store.dispatch("project/fetchInitialProjects")
       this.lazyComponent = true
     }, 50)
+
+
     this.templateKey++;
   },
   computed: {
@@ -117,12 +119,13 @@ export default {
     },
   },
 
-  async asyncData({$axios, app}){
-    const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
+  async asyncData({$axios, app,store}){
+      const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
+      const filter=store.getters['task/getFilterView']
       const res = await $axios.get(`project/company/all`, {
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Filter': 'all'
+        'Filter': filter
       }
     })
 
@@ -136,7 +139,6 @@ export default {
         newArr.push(res.data.data[i])
       }
     }
-
     return { localData: newArr }
    
   },

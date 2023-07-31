@@ -218,8 +218,7 @@ export default {
           'Filter': 'all'
         }
       });
-
-      store.dispatch('project/setProjects', resp);
+      store.dispatch('project/setProjects', resp.data);
       
       let proj = resp.data.find((p) => {
         if(p.id == params.id) {
