@@ -443,7 +443,6 @@ export const actions = {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
     });
     ctx.commit('setCompanyTasks', res.data);
-
     return res.data
   },
   async fetchInitialCompanyTasks(ctx, payload) {
