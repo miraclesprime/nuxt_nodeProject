@@ -100,7 +100,10 @@ server/
 
 
 .scannerwork
+.vscode/
 sonar-project.properties
 
 # dotenv environment variables file
 package-lock.json
+
+.vscode

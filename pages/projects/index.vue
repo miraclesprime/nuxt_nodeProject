@@ -81,26 +81,26 @@ export default {
     }
   },
 
-    mounted() {
+  mounted() {
 
-  this.loading = true;
+    // this.loading = true;
 
-  for(let field of this.tableFields) {
-    if(field.header_icon) {
-      if(field.key == 'dueDate') {
-        field.header_icon.isActive = true;
-      } else {
-        field.header_icon.isActive = false;
+    for(let field of this.tableFields) {
+      if(field.header_icon) {
+        if(field.key == 'dueDate') {
+          field.header_icon.isActive = true;
+        } else {
+          field.header_icon.isActive = false;
+        }
       }
     }
-  }
 
     setTimeout(() => {
-
       this.$store.dispatch("project/setProjects", this.localData)
       this.$store.dispatch("project/fetchInitialProjects")
       this.lazyComponent = true
     }, 50)
+
 
     this.templateKey++;
   },

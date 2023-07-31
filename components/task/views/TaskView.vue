@@ -939,6 +939,12 @@ export default {
     updateTask(payload) {
       const { item, label, field, value, historyText } = payload
       
+      let user;
+      if (field == "userId" && value != "") {
+        user = this.teamMembers.filter((t) => t.id == value);
+      } else {
+        user = null;
+      }
 
       let data = { [field]: value }
     
@@ -976,6 +982,7 @@ export default {
         .dispatch("task/updateTask", {
           id: payload.id,
           data: data,
+          user: user,
           text: `${
             historyText || value
           }`,

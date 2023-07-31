@@ -255,7 +255,9 @@ export default {
 
   async asyncData({$axios, app,store}){
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
+
     const filter=store.getters['task/getFilterView']
+
     const res = await $axios.get(`company/tasks/all`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -263,9 +265,7 @@ export default {
       }
     })
 
-
     store.dispatch('company/setCompanyTasks', res.data.data)
-   
 
     return { localData: res.data.data}
 

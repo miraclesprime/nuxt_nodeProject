@@ -71,10 +71,13 @@
                 <tag-comp :tags="item['TaskTags']"></tag-comp>
               </template>
             </template>
-            <template v-if="field.key.includes('Date')" class="date-cell">
-              {{$formatDate(item[field.key])}}
-              <!-- <bib-datetime-picker v-if="lazyComponent" :value="formatDate(item[field.key])" :format="`D MMM YYYY`" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker> -->
-              <!-- <skeleton-box v-else></skeleton-box> -->
+            <template v-if="field.key == 'dueDate'" class="date-cell">
+              <!-- {{$formatDate(item[field.key])}} -->
+              <bib-datetime-picker v-model="duedatesFormat[index]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate(value, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+            </template>
+            <template v-if="field.key == 'startDate'" class="date-cell">
+              <!-- {{$formatDate(item[field.key])}} -->
+              <bib-datetime-picker v-model="startdatesFormat[index]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate(value, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
             </template>
           </div>
         </div>
@@ -118,7 +121,7 @@
 // import SkeletonBox from '~/components/SkeletonBox.vue';
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
-import dayjs from 'dayjs'
+// import dayjs from 'dayjs'
 // import fecha, { format } from "fecha";
 import draggable from 'vuedraggable'
 
@@ -189,6 +192,8 @@ export default {
       activeItem: {},
       resizableTables: [],
       format: "DD MMM YYYY",
+      startdatesFormat: [],
+      duedatesFormat: [],
       validTitle: false,
       localData: [],
       localNewrow: _.cloneDeep(this.newRow),
@@ -198,6 +203,8 @@ export default {
   watch: {
     tableData(newValue){
       this.localData = _.cloneDeep(newValue)
+      this.duedatesFormat = this.localData.map(task => this.$formatDate(task.dueDate))
+      this.startdatesFormat = this.localData.map(task => this.$formatDate(task.startDate))
     },
   },
 
@@ -228,12 +235,17 @@ export default {
     this.resizableColumns()
   },
 
+  beforeDestroy(){
+    this.startdatesFormat = []
+    this.duedatesFormat = []
+  },
+
   methods: {
     parseDate(dateString, format) {
-        return new Date(dateString)
+      return new Date(dateString);
     },
     formatDate(dateObj, format) {
-        return dayjs(dateObj).format(format);
+      return this.$formatDate(dateObj)
     },
     
     // main class prototype
@@ -493,11 +505,11 @@ export default {
     updateAssignee(user, item) { 
       this.$emit("update-field", { id: item.id, field: "userId", value: user.id, label: "Assignee", historyText: `Changed Assignee To ${user.label}`, item: item })
     },
-    updateDate(d, item, field, label) {
-      // console.log(...arguments)
-      let jd = new Date(d);
+    updateDate($event, item, field, label) {
+      console.log(...arguments)
+      // let jd = new Date(value);
       
-      this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format('DD MMM YYYY')}`, item})
+      // this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format('DD MMM YYYY')}`, item})
     },
   }
 }
