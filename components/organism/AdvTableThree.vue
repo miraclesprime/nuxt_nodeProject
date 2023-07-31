@@ -32,7 +32,7 @@
               </div>
             </template>
           </div>
-          <section v-for="(section, index) in localData" class="resizable w-100"   @wheel="handleScroll"  ref="tableContainer" >
+          <section v-for="(section, index) in localData" class="resizable w-100"  @wheel="handleScroll"  >
 
             <div class="thead">
               
@@ -89,7 +89,7 @@
                     </span>
                   </div>
                   <template v-if="field.key == 'project'">
-                    <div class="align-center height-2">{{item[field.key][0]?.project?.title}}</div>
+                    <div class="align-center height-2">{{item[field.key]?.[0]?.project?.title}}</div>
                   </template>
                   <template v-if="field.key == 'userId'">
                     <lazy-user-select v-if="lazyComponent" :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></lazy-user-select>
@@ -117,14 +117,16 @@
                     </template>
                   </template>
                   <template v-if="field.key == 'startDate'" >
+
+                    {{$formatDate(item[field.key])}}
                     
-                    <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
-                    <skeleton-box v-else></skeleton-box>
+                    <!-- <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker> -->
+                    <!-- <skeleton-box v-else></skeleton-box> -->
                   </template>
                   <template v-if="field.key == 'dueDate'" >
                     
-                    <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
-                    <skeleton-box v-else></skeleton-box>
+                    <!-- <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker> -->
+                    <!-- <skeleton-box v-else></skeleton-box> -->
                   </template>
                 </div>
               </div>
@@ -253,6 +255,7 @@ export default {
       // highlight: false,
       validTitle: false,
       localData: [],
+      newValue: [],
       localNewrow: {},
       akey: 0,
       itemsPerPage: 20,
@@ -269,9 +272,24 @@ export default {
       this.localNewrow = newValue
 
     },
-    tableData(newValue){
-      this.localData = _.cloneDeep(newValue)
+    tableData: {
+    immediate: true, // Execute the watcher immediately on component mount
+    deep: true, // Watch for changes in nested properties of tableData
+    handler(newValue) {
+      this.newValue=_.cloneDeep(newValue)
+      this.$nextTick(() => {
+        this.localData=[]
+        this.lastDisplayedIndex={ groupIdx: -1, curIdxInGroup: -1}
+        this.eventFunc()
+     
+        this.showData();
+      });
     },
+  },
+    // tableData(newValue){
+    //   this.newValue = _.cloneDeep(newValue)
+      
+    // },
     showNewsection(newValue){
       process.nextTick(() => {
         if(newValue){
@@ -326,105 +344,50 @@ export default {
   },
 
   mounted() {
-    window.addEventListener('scroll', this.handleScroll);
-    this.showInitialData();
-    this.resizableColumns()
+  //   this.$nextTick(() => {
+  //   window.addEventListener('scroll', this.handleScroll);
+  //   this.showData();
 
+  // });
+  // this.resizableColumns()
   },
-  // beforeDestroy() {
-  //   window.removeEventListener('scroll', this.handleScroll);
-  // },
+
   methods: {
+    eventFunc() {
+      window.addEventListener('scroll', this.handleScroll);
+    },
+
     handleScroll(event) {
-      // if (this.allDataDisplayed) {
-      //   return; // Stop adding data if all data has been displayed
-      // }
-
-      // const tableContainer = event.target;
-      // const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight >= tableContainer.scrollHeight;
-
-      // if (isAtBottom) {
-      //     this.showRemainingData();
-      //     }
-      const tableHeight = document.getElementById("mainDraggable").scrollHeight;
-    const scrollPosition = window.innerHeight + window.pageYOffset;
-
-    if (scrollPosition >= tableHeight) {
-      this.showRemainingData();
-    }
-    },
-    showInitialData() {
-      
-    // this.localData = _.cloneDeep(this.tableData);
-      let allTasks = _.cloneDeep(this.tableData);
-      let remainingCount = this.itemsPerPage;
-      let start = this.lastDisplayedIndex.curIdxInGroup;
-      let i;
-      for (i = start === -1 ? this.lastDisplayedIndex.groupIdx + 1 : this.lastDisplayedIndex.groupIdx; i < allTasks.length; ++ i) {
-        if (start === -1) {
-          if (remainingCount < allTasks[i].dataCount - start - 1) {
-            
-            this.localData.push({});
-            for (const [key, value] of Object.entries(allTasks[i])) {
-              if (key !== 'tasks') { 
-                this.localData[i][key] = value; 
-              }
-            }
-            this.localData[i].tasks = allTasks[i].tasks.slice(start + 1, start + remainingCount + 1);
-            start += remainingCount;
-            remainingCount = 0;
-          } else {
-            this.localData.push(allTasks[i])
-            remainingCount -= allTasks[i].dataCount;
-            start = -1;
-          }
-        }
-        else {
-          if (start + remainingCount + 1 < allTasks[i].dataCount) {
-            this.localData.tasks.push(...allTasks[i].slice(start + 1, start + remainingCount + 1))
-            start += remainingCount;
-            remainingCount = 0;
-          } else {
-            this.localData.tasks = allTasks[i].tasks;
-            remainingCount -= (allTasks[i].dataCount - start - 1);
-            start = -1;
-          }
-        }
-        if (remainingCount == 0) break;
-
+      if (this.allDataDisplayed) {
+        return; // Stop adding data if all data has been displayed
       }
-      console.log(i)
-      if (i >= allTasks.length - 1 && start === -1) this.allDataDisplayed = true;
-      this.lastDisplayedIndex.groupIdx = i;
-      this.lastDisplayedIndex.curIdxInGroup = start;
+      const tableContainer = event.target;
+      const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight >= tableContainer.scrollHeight;
+
+      if (isAtBottom) {
+        console.log("1111111111111111111111111111")
+          this.showData();
+          }
+
     },
-    showRemainingData() {
-  const allTasks = [...this.tableData];
-  let remainingCount = this.itemsPerPage;
-
-  // for (let i = this.lastDisplayedIndex + 1; i < allTasks.length; i++) {
-  //   const item = allTasks[i];
-
-  //   if (item.dataCount > remainingCount) {
-  //     const start = item.tasks.length - (item.dataCount - remainingCount);
-  //     const slicedData = item.tasks.slice(start);
-      
-  //     if (this.localData.length > 0 && i === this.lastDisplayedIndex + 1) {
-  //       const prevItem = this.localData[i - 1];
-  //       const prevSlicedData = prevItem.tasks.slice(0, remainingCount);
-  //       prevItem.tasks = [...prevSlicedData, ...slicedData];
-  //     } else {
-  //       this.localData.push({ ...item, tasks: slicedData });
-  //     }
-      
-  //     break;
-  //   } else {
-  //     const slicedData = item.tasks.slice();
-  //     this.localData.push({ ...item, tasks: slicedData });
-  //     remainingCount -= item.dataCount;
+  //   scrollToLastSection() {
+  //   // Scroll to the last added section if it exists
+  //   const sections = document.querySelectorAll('.mouseScroll');
+  //   const lastSection = sections[sections.length - 1];
+  //   if (lastSection) {
+  //     lastSection.scrollIntoView({ behavior: 'smooth', block: 'end' });
   //   }
+  // },
 
-  let start = this.lastDisplayedIndex.curIdxInGroup;
+    showData() {
+  let allTasks = this.newValue.length > 0 ? [...this.newValue] : [...this.tableData];
+      allTasks =allTasks.map((item) => {
+                  item.dataCount = item.tasks.length;
+                  return item;
+                });
+
+  let remainingCount = this.itemsPerPage;
+    let start = this.lastDisplayedIndex.curIdxInGroup;
       let i;
       for (i = start === -1 ? this.lastDisplayedIndex.groupIdx + 1 : this.lastDisplayedIndex.groupIdx; i < allTasks.length; ++ i) {
         if (start === -1) {
@@ -446,13 +409,20 @@ export default {
           }
         }
         else {
+          let tmp = {};
           if (start + remainingCount + 1 < allTasks[i].dataCount) {
-            this.localData[i].tasks.push(...allTasks[i].tasks.slice(start + 1, start + remainingCount + 1))
+            Object.assign(tmp, this.localData[i])
+          
+            tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, start + remainingCount + 1))
+            this.localData.length -= 1;
+            this.localData.push(tmp)
             start += remainingCount;
             remainingCount = 0;
           } else {
-            if (i === allTasks.length - 1) debugger
-            this.localData[i].tasks.push(...allTasks[i].tasks.slice(start + 1, allTasks[i].dataCount))
+            Object.assign(tmp, this.localData[i])
+            tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, allTasks[i].dataCount))
+            this.localData.length -= 1;
+            this.localData.push(tmp)
             remainingCount -= (allTasks[i].dataCount - start - 1);
             start = -1;
           }
@@ -460,68 +430,20 @@ export default {
         if (remainingCount == 0) break;
 
       }
-      if (i >= allTasks.length - 1 && start === -1) this.allDataDisplayed = true;
-
+      // this.scrollToLastSection();
+      if (i >= allTasks.length - 1 && start === -1) 
+      {
+        this.allDataDisplayed = true;
+        this.lastDisplayedIndex.groupIdx = -1;
+        this.lastDisplayedIndex.curIdxInGroup = -1;
+        return 
+      }
 
       this.lastDisplayedIndex.groupIdx = i;
       this.lastDisplayedIndex.curIdxInGroup = start;
-
-},
-//     showRemainingData() {
-//   let allTasks = [...this.tableData]
-//   let remainingCount = this.itemsPerPage;
-  
-//   for (let i = this.lastDisplayedIndex+1; i < allTasks.length; i++) {
-//     const item = allTasks[i];
+    },
     
-//     if (item.dataCount > remainingCount) {
-//       const start = item.dataCount - remainingCount;
-//       const slicedData = item.tasks.slice(start);
-//        if (this.localData.length > 0 && i === this.lastDisplayedIndex+1) {
-//         const prevItem = this.localData[i-1];
-//         const prevSlicedData = prevItem.tasks.slice(0, remainingCount);
-//         prevItem.tasks = [...prevSlicedData, ...slicedData];
-//       } else {
-//         this.localData.push({ ...item, tasks: slicedData });
-//       }
-//       break;
-//     } else {
-//       const slicedData = item.tasks.slice();
-//       this.localData.push({ ...item, tasks: slicedData });
-//       remainingCount -= item.dataCount;
-//     }
 
-//     this.lastDisplayedIndex = i;
-//   }
-
-//   if (this.lastDisplayedIndex === allTasks.length - 1) {
-//     this.allDataDisplayed = true;
-//   }
-// },
-    // showRemainingData() {
-    //   let allTasks = _.cloneDeep(this.tableData);
-    //   let remainingCount =this.itemsPerPage;
-    //   for (let i = this.lastDisplayedIndex + 1; i < allTasks.length; i++) {
-    //     const item = allTasks[i];
-
-    //     if (item.dataCount-remainingCount > remainingCount) {
-    //       const start = item.dataCount - remainingCount;
-    //       const slicedData = item.tasks.slice(start);
-
-    //       this.localData.push({ ...item, tasks: slicedData });
-    //       break;
-    //     } else {
-    //       this.localData.push(item);
-    //       remainingCount -= item.dataCount;
-    //     }
-
-    //     this.lastDisplayedIndex = i;
-    //   }
-
-    //   if (this.lastDisplayedIndex === allTasks.length-1) {
-    //     this.allDataDisplayed = true;
-    //   }
-    // },
     parseDate(dateString, format) {
         return new Date(dateString)
     },
@@ -529,7 +451,7 @@ export default {
         return dayjs(dateObj).format(format);
     },
     startdateValid(date, duedate){
-      console.log(...arguments)
+      // console.log(...arguments)
       const maxDate = new Date(duedate)
       return date < maxDate
       /*if (date) {

@@ -220,26 +220,6 @@ export default {
       // sOrder: "company/getSortOrder",
       sidebar: "task/getSidebarVisible",
     }),
-  //   displayedData() {
-  //   const displayedData = [];
-
-  //   let remainingCount = this.itemsPerPage;
-
-  //   for (let i = 0; i < this.tasks.length; i++) {
-  //     const item = this.tasks[i];
-
-  //     if (item.dataCount <= remainingCount) {
-  //       displayedData.push(item);
-  //       remainingCount -= item.dataCount;
-  //     } else {
-  //       const slicedData = item.tasks.slice(0, remainingCount);
-  //       displayedData.push({ ...item, tasks: slicedData });
-  //       break;
-  //     }
-  //   }
-  //   console.log("1212",displayedData)
-  //   return displayedData;
-  // },
   },
 
   watch: {
@@ -278,36 +258,16 @@ export default {
     const res = await $axios.get(`company/tasks/all`, {
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Filter': 'all'
+        'Filter': filter
       }
     })
-    // store.dispatch('company/setCompanyTasks', res.data.data)
-    // return { localData: res.data.data }
-    // const displayedTasks = [];
-    let allTasks = res.data.data.map((item) => {
-                  item.dataCount = item.tasks.length;
-                  return item;
-                });
-    //   let remainingCount = 20
-    // for (let i = 0; i < allTasks.length; i++) {
-    //     const item = allTasks[i];
 
-    //     if (item.dataCount <= remainingCount) {
-    //       displayedTasks.push(item);
-    //       remainingCount -= item.dataCount;
-    //     } else {
-    //       const start = 0;
-    //       const end = remainingCount;
-    //       const slicedData = item.tasks.slice(start, end);
 
-    //       displayedTasks.push({ ...item, tasks: slicedData });
-    //       break;
-    //     }
-    //   }
-    store.dispatch('company/setCompanyTasks', allTasks)
+    store.dispatch('company/setCompanyTasks', res.data.data)
    
 
-    return { localData: allTasks}
+    return { localData: res.data.data}
+
   },
 
   created() {
@@ -329,6 +289,8 @@ export default {
 
   mounted() {
 
+  if(process.client) {
+
     if (JSON.parse(localStorage.getItem("user")).subr != "ADMIN") {
       console.log('admin')
       this.$router.push('/error/403')    
@@ -340,21 +302,14 @@ export default {
       }
     }
 
-
-    /*this.$store.dispatch("company/setCompanyTasks",{data:this.localData})
-      setTimeout(() => {
-        this.showPlaceholder = false
-      }, 200)*/
-
-
     setTimeout(() => {
-      // this.localData = this.localData.concat(this.localData2)
-      // this.$store.dispatch("company/setCompanyTasks",{data:this.localData})
+
       this.$store.dispatch("company/fetchInitialCompanyTasks",{filter:'all'})
       this.updateKey()
-      // this.templateKey += 1
       this.lazyComponent = true
     }, 10)
+  }
+  
   },
   methods: {
 
@@ -486,8 +441,8 @@ export default {
       } else {
         user = null;
       }
-
-      if (payload.item.project.length > 0) {
+ 
+      if (payload.item.project || payload.item.project?.length > 0) {
         projectId = payload.item.project[0].projectId || payload.item.project[0].project.id;
       } else {
         projectId = null;

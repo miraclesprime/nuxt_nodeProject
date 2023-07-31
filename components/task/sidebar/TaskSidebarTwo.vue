@@ -182,7 +182,7 @@ export default {
       currentTask: "task/getSelectedTask",
       favTasks: "task/getFavTasks",
       sideBarUser:"user/getSideBarUser",
-      // alltags: "company/getCompanyTags",
+      alltags: "company/getCompanyTags",
     }),
     teammates() {
       let tm = { main: [], extra: [], all: [] }
@@ -672,19 +672,21 @@ export default {
       }
     },
     async getTags(){
-      const tags = await this.$axios.get("/tag/task/"+this.form.id, {
-        headers: {
-          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+      if (this.form.id) {
+        const tags = await this.$axios.get("/tag/task/"+this.form.id, {
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+          }
+        })
+        // console.log(tags.data)
+        if (tags.data.statusCode == 200) {
+          this.tags = tags.data.data.map(t => t.tag)
         }
-      })
-      // console.log(tags.data)
-      if (tags.data.statusCode == 200) {
-        this.tags = tags.data.data.map(t => t.tag)
       }
     },
     addTag(tag){
       if (tag.id) {
-        console.log('existing tag->', tag.id, tag.content)
+        // console.log('existing tag->', tag.id, tag.content)
         this.$axios.post("/tag/assign-to-task",  { tagId: tag.id, taskId: this.form.id }, {
           headers: {
             "Authorization": "Bearer " + localStorage.getItem("accessToken"),
@@ -697,27 +699,33 @@ export default {
         })
         .catch(e => console.error(e))
       } else {
-        console.log('new tag->', tag)
-        this.$store.dispatch("company/addCompanyTag", {content: tag})
-        .then((res)=>{
-          // console.log(res.data)
-          // this.reloadTags += 1
-          if (res.data.statusCode == 200) {
-            this.$axios.get("company/fetchCompanyTags")
-            this.$axios.post("/tag/assign-to-task",  { tagId: res.data.data.id, taskId: this.form.id }, {
-              headers: {
-                "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-              }
-            }).then((res) => {
-              // console.log(res)
-              this.getTags()
-              this.$nuxt.$emit("update-key")
-            }).catch(e=>console.error(e))
-          } else {
-            console.warn("error creating tag")
-          }
-        })
-        .catch(e=>console.error(e))
+        // console.log('new tag->', tag)
+        let tagExist = this.alltags.find(t => t.content == tag)
+        if (tagExist) {
+          // console.log('tag already exists', tag)
+          this.popupMessages.push({text: "tag already exists", variant: "orange"})
+          return
+        } else {
+          this.$store.dispatch("company/addCompanyTag", {content: tag})
+          .then((res)=>{
+            // console.log(res.data)
+            if (res.data.statusCode == 200) {
+              this.$store.dispatch("company/fetchCompanyTags")
+              this.$axios.post("/tag/assign-to-task",  { tagId: res.data.data.id, taskId: this.form.id }, {
+                headers: {
+                  "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+                }
+              }).then((res) => {
+                // console.log(res)
+                this.getTags()
+                this.$nuxt.$emit("update-key")
+              }).catch(e=>console.error(e))
+            } else {
+              console.warn("error creating tag")
+            }
+          })
+          .catch(e=>console.error(e))
+        }
       }
     },
     removeTag(tag){

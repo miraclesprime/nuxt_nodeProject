@@ -371,6 +371,7 @@ export default {
         this.navItems1[3].selected = true;
       }
 
+    if(!this.isAdmin) {
       if (this.$router.history.current.fullPath == "/tasks") {
         this.navItems2[0].selected = true;
       }
@@ -380,6 +381,11 @@ export default {
           this.navItems2[1].selected = true;
         }, 500);
       }
+    } else {
+      if (this.$router.history.current.fullPath == "/projects") {
+        this.navItems2[0].selected = true;
+      }
+    }
 
       // if (this.$router.history.current.fullPath == '/goals') {
       //   this.navItems2[2].selected = true;
@@ -412,7 +418,7 @@ export default {
       // Charan
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQeTdMRGR3cE9xMWUxWUtYIiwic3ViZSI6ImNoYXJhbi5wYWxAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJVU0VSIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY3NzQ5NjY2MDM4NywiZXhwIjoxNjg1MjcyNjYwMzg3LCJqdGkiOiJkNjAwOWQ0Zi1lNDFjLTQ2YWMtYjU0MC1iOTk3NzJmNDIzY2MifQ.6G04xtF0oRIaHr5gV4Jxx71TJRPb3sb3S1e85BMn3vc"
 
-      // this.$cookies.set(process.env.SSO_COOKIE_NAME, cookie);
+      this.$cookies.set(process.env.SSO_COOKIE_NAME, cookie);
 
       if (this.$cookies.get(process.env.SSO_COOKIE_NAME)) {
         let jwt = this.$cookies.get(process.env.SSO_COOKIE_NAME);
@@ -580,7 +586,12 @@ export default {
         this.navItems2[i].selected = false;
       }
 
-      this.navItems2[1].selected = true;
+      if(!this.isAdmin) {
+        this.navItems2[0].selected = true;
+      } else {
+        this.navItems2[1].selected = true;
+      }
+
     },
 
     goToUsertask($event, item) {

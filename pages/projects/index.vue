@@ -80,27 +80,6 @@ export default {
       lazyComponent: false,
     }
   },
-
-  mounted() {
-    this.loading = true;
-
-    for(let field of this.tableFields) {
-      if(field.header_icon) {
-        if(field.key == 'dueDate') {
-          field.header_icon.isActive = true;
-        } else {
-          field.header_icon.isActive = false;
-        }
-      }
-    }
-
-    setTimeout(() => {
-      // this.templateKey += 1
-      this.$store.dispatch("project/setProjects",this.localData)
-      this.lazyComponent = true
-    }, 50)
-    this.templateKey++;
-  },
   computed: {
     ...mapGetters({
         projects: 'project/getAllProjects',
@@ -116,12 +95,14 @@ export default {
     },
   },
 
-  async asyncData({$axios, app}){
+  
+  async asyncData({$axios, app,store}){
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
+    const filter=store.getters['task/getFilterView']
       const res = await $axios.get(`project/company/all`, {
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Filter': 'all'
+        'Filter':filter
       }
     })
 
@@ -135,9 +116,32 @@ export default {
         newArr.push(res.data.data[i])
       }
     }
-
+    store.dispatch('project/setProjects', newArr)
     return { localData: newArr }
    
+  },
+
+    mounted() {
+
+  this.loading = true;
+
+  for(let field of this.tableFields) {
+    if(field.header_icon) {
+      if(field.key == 'dueDate') {
+        field.header_icon.isActive = true;
+      } else {
+        field.header_icon.isActive = false;
+      }
+    }
+  }
+  this.$store.dispatch('project/fetchInitialProjects').then((res) => {
+              this.templateKey += 1;
+            })
+          
+      setTimeout(() => {
+        // this.templateKey += 1
+        this.lazyComponent = true
+      }, 50)
   },
 
   methods: {
@@ -164,6 +168,16 @@ export default {
     },
 
     contextOpen(item){
+
+      let projMenu = JSON.parse(JSON.stringify(PROJECT_CONTEXT_MENU));
+
+        if(item.userId == JSON.parse(localStorage.getItem('user')).sub || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
+          this.projectContextItems = projMenu;
+        } else {
+          projMenu.pop()
+          this.projectContextItems = projMenu
+        }
+        
       if(this.$CheckFavProject(item.id)){
        this.projectContextItems=this.projectContextItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Remove favorite"} : item);
       }
@@ -173,6 +187,7 @@ export default {
    
       this.$store.dispatch("task/setSingleTask", item)
     },
+
     ProjectGroup($event) {
       if ($event ==="default" ) {
         this.groupVisible = false;

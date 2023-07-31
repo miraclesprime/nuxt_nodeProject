@@ -125,7 +125,7 @@ export default {
       return completeData;
     },
     companyProjects() {
-      let data = this.projects.map((p) => {
+      let data = this.projects?.map((p) => {
         return { label: p.title, value: p.id };
       });
       return [{ label: "Please select...", value: null }, ...data];
