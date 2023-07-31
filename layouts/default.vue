@@ -19,6 +19,8 @@
             :isLightTheme="lightThemeChecked"
             :mainAction="btnText"
             noResultText="No results, type a project or task name to begin search."
+            @my-account-link="myAccount"
+            @logout="logout"
           >
             <template #avatar_menu>
               <bib-button pop="arrowhead-right" :scale="1.3">
@@ -306,12 +308,12 @@ export default {
       } else {
         if (payload.project.length > 0) {
           this.$store.dispatch("section/fetchProjectSections", {
-            projectId: payload.project[0].projectId,
+            projectId: payload.project[0].project.id,
             filter: "all",
           });
           // fetch single project data
           this.$axios
-            .$get(`project/${payload.project[0].projectId}`, {
+            .$get(`project/${payload.project[0].project.id}`, {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
               },
@@ -392,6 +394,8 @@ export default {
       // }
 
       // Dhruv (admin)
+
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4OTg1MDM0ODYxMCwiZXhwIjoxNjk3NjI2MzQ4NjEwLCJqdGkiOiIxYWI4MDVlMC0zYTkyLTQxNDMtYmMyOC0zNGM2ZmRhZGFkZDgifQ.5-G-YJ16WfrZBp5VhK_p2-qULAP9jpF5ZOqsQ7Phs_0";
 
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4OTg1MDM0ODYxMCwiZXhwIjoxNjk3NjI2MzQ4NjEwLCJqdGkiOiIxYWI4MDVlMC0zYTkyLTQxNDMtYmMyOC0zNGM2ZmRhZGFkZDgifQ.5-G-YJ16WfrZBp5VhK_p2-qULAP9jpF5ZOqsQ7Phs_0";
 
@@ -607,12 +611,11 @@ export default {
     },
 
     // Handle User logout
-    async logout() {
-      try {
-        let response = await this.$auth.logout();
-      } catch (err) {
-        console.log(err);
-      }
+    logout() {
+      window.location.href = this.logoutUrl
+    },
+    myAccount(){
+      window.location.href = this.userProfileUrl
     },
     handleToggleWrapperTheme(value) {
       this.lightThemeChecked = value;

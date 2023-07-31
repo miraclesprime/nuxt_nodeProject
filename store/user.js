@@ -47,6 +47,32 @@ export const getters = {
 };
 
 export const mutations = {
+  setFetchUserTasks(state,payload) {
+      let arr=[]
+      arr=payload.data
+    if(payload.filter=="incomplete")
+    {
+      arr=arr.filter((item)=>item.statusId!==5)
+      if(payload.key!=""){
+        arr=this.$groupBy(arr,payload.key)
+      }  
+    }
+
+    if(payload.filter=="complete")
+    {
+      arr=arr.filter((item)=>item.statusId==5)
+      if(payload.key!=""){
+        arr=this.$groupBy(arr,payload.key)
+      }  
+    }
+    if(payload.filter=="all")
+    {
+      if(payload.key!=""){
+        arr=this.$groupBy(arr,payload.key)
+      }  
+    }
+    state.userTasks=arr
+  },
   flatTasks(state, payload) {
     let arr = JSON.parse(JSON.stringify(state.userTasks));
     if(arr[0].tasks){
@@ -699,16 +725,61 @@ export const mutations = {
 
   setUserTasks(state, payload) {
     state.userTasks = payload
-    payload.sort((a, b) => {
-      if (a.priorityId && b.priorityId) {
-        return a.priorityId - b.priorityId;
-      }
-    });
-    state.initialData=payload
   },
 
   setSideBarUser(state,payload){
     state.sideBarUser=payload
+  },
+  setInitialUserTasks(state,payload) {
+    payload.initial.sort((a, b) => {
+      if (a.priorityId && b.priorityId) {
+        return a.priorityId - b.priorityId;
+      }
+    });
+    state.initialData = payload.initial
+    // let arr = payload.filterValue
+    // if(arr[0]?.tasks)
+    // {
+    //   arr.map((ele)=>{
+    //     let newArr=[]
+    //     ele.tasks.forEach((item) => {
+    //       if (item.priorityId) {
+    //         newArr.unshift(item)
+    //       } else {
+    //         newArr.push(item)
+    //       }
+    //     });
+    //         newArr.sort((a,b)=>{
+    //         if (a.priorityId && b.priorityId) {
+    //           return a.priority.id - b.priority.id;
+    //         }
+    //       });
+        
+    //     ele.tasks=newArr
+    //     return ele
+    //   })
+   
+    //   state.userTasks=arr
+    // }
+    // else 
+    // {
+    //       let newArr = []
+
+    //       for (let i = 0; i < arr.length; i++) {
+    //         if (arr[i].priorityId) {
+    //           newArr.unshift(arr[i])
+    //         } else {
+    //           newArr.push(arr[i])
+    //         }
+    //       }
+  
+    //           newArr.sort((a, b) => {
+    //           if (a.priorityId && b.priorityId) {
+    //             return a.priority.id - b.priority.id;
+    //           }
+    //         });
+    //       state.userTasks=newArr;
+    //  }
   }
 
 };
@@ -751,34 +822,22 @@ export const actions = {
 
   },
 
-  async setUserTasks(ctx, payload) {
-    const res = await this.$axios.$get('user/tasks', {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
-    });
-
-    if (res.data) {
-      ctx.commit('setUserTasks', res.data);
-      return res.data
-    }
-  },
   async getUserTasks(ctx,payload){
     const res = await this.$axios.get("user/user-tasks", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        Filter: payload.filter,
+        Filter: 'all',
         userid: payload.userId,
       },
     });
+   
+        if(res.data.statusCode==200){
 
-    if(res.data.statusCode==200){
-      await ctx.commit('setUserTasks', res.data.data);
-      // if(payload.key!==''){
-      //   ctx.commit('getUserTasks',payload)
-      // }
-      return res
+          ctx.commit('setInitialUserTasks', {initial:res.data.data});
+          return res.data.data
     }
-  
   },
+  
   sortUserTasks(ctx, payload) {
     ctx.commit('sortUserTasks', payload)
   },
