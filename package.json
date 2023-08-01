@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "nuxt --max_old_space_size=8192 --optimize_for_size",
-    "build": "nuxt build --max_old_space_size=8192 --optimize_for_size",
-    "start": "nuxt start --max_old_space_size=8192 --optimize_for_size",
-    "generate": "nuxt generate --max_old_space_size=8192 --optimize_for_size",
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "node --max_old_space_size=9192 node_modules/@nuxt/typescript-runtime/bin/nuxt-ts.js  generate",
     "test": "jest"
   },
   "dependencies": {
