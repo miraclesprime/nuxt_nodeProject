@@ -1,4 +1,3 @@
-
 export const state = () => ({
   tasks: [],
   selectedTask: {},
@@ -9,8 +8,6 @@ export const state = () => ({
   singleTaskComment: {},
   taskHistory: [],
   sidebarVisible: false,
-  expandVisible:true,
-  filterView:"all"
 });
 
 export const getters = {
@@ -20,9 +17,7 @@ export const getters = {
   tasksForListView(state) {
     return state.tasks;
   },
-  getExpandVisible (state) {
-    return state.expandVisible
-  },
+
   tableFields(state) {
     return state.TABLE_FIELDS;
   },
@@ -50,23 +45,15 @@ export const getters = {
 
   getTaskHistory(state) {
     return state.taskHistory;
-  },
-  getFilterView (state) {
-    return state.filterView
   }
 
 };
 
 export const mutations = {
-  setExpandVisible(state,payload) {
-    state.expandVisible=payload
-  },
   setSidebarVisible(state, payload){
     state.sidebarVisible = payload
   },
-  setFilterView (state,payload) {
-    state.filterView=payload.filter
-  },
+
   initialize(state, list) {
     state.list = [...(list || [])];
   },
@@ -118,7 +105,7 @@ export const mutations = {
   },
 
   fetchTeamMember(state, payload) {
-      if(state.selectedTask.userId){  
+      if(state.selectedTask.userId){
         state.taskMembers=payload.filter((item)=>item.id!==state.selectedTask.userId)
       
         }
@@ -207,8 +194,7 @@ export const actions = {
     const res = await this.$axios.$put("/task", payload, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
-    return res.data
-    
+    return res
   },
 
   async deleteTask(ctx, payload) {

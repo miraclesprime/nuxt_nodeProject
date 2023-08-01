@@ -39,11 +39,11 @@
           </div>
           <div id="proj-overview-row2-col2" class="col-3">
             <!-- <bib-datepicker test_id="date01" v-model="startDate" :value="startDate" :maxDate="dueDate" format="dd MMM yyyy" @input="debounceUpdate('Start date', 'startDate', startDate)" label="Start date" name="startDate" placeholder="Start date" ></bib-datepicker> -->
-            <bib-datetime-picker v-model="sdate" :format="format" :parseDate="parseDate" label="Start date" placeholder="Start date" @input="startdateProcess" ></bib-datetime-picker>
+            <bib-datetime-picker :value="activeProject.startDate" label="Start date" placeholder="Start date" @input="startdateProcess" ></bib-datetime-picker>
           </div>
           <div id="proj-overview-row2-col3" class="col-3">
             <!-- <bib-datepicker test_id="date02" v-model="dueDate" :value="dueDate" :minDate="startDate" format="dd MMM yyyy" @input="debounceUpdate('Due date', 'dueDate', dueDate)" label="Due date" name="dueDate" class="align-right" placeholder="Due date"></bib-datepicker> -->
-            <bib-datetime-picker v-model="ddate" :format="format" :parseDate="parseDate" label="Due date" placeholder="Due date" @input="duedateProcess"></bib-datetime-picker>
+            <bib-datetime-picker :value="activeProject.dueDate" label="Due date" placeholder="Due date" @input="duedateProcess"></bib-datetime-picker>
 
           </div>
         </div>
@@ -78,7 +78,7 @@
             <bib-input type="textarea" label="Brief" v-model="activeProject.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate('Project brief', 'description', activeProject.description)"></bib-input>
           </div>
         </div>
-        <!-- <loading :loading="loading"></loading> -->
+        <loading :loading="loading"></loading>
       </div>
     </div>
   </client-only>
@@ -105,9 +105,6 @@ export default {
       activeProject: {},
       loading: false,
       project: {},
-      format: "DD MMM YYYY",
-      sdate: "",
-      ddate: "",
     };
   },
 
@@ -131,8 +128,6 @@ export default {
         }
 
       }
-      this.sdate = this.$formatDate(this.activeProject?.startDate)
-      this.ddate = this.$formatDate(this.activeProject?.dueDate)
     },
   },
 
@@ -204,7 +199,7 @@ export default {
       })
     },
 
-    /*startDate: {
+    startDate: {
       get() {
         if (!this.activeProject.startDate) {
           return ""
@@ -215,9 +210,9 @@ export default {
       set(newValue) {
         this.activeProject.startDate = new Date(newValue)
       }
-    },*/
+    },
 
-    /*dueDate: {
+    dueDate: {
       get() {
         if (!this.activeProject.dueDate) {
           return ""
@@ -229,7 +224,7 @@ export default {
       set(newValue) {
         this.activeProject.dueDate = new Date(newValue)
       }
-    },*/
+    },
     time() {
       if (this.activeProject.dueDate) {
         let diff = new Date(this.activeProject.dueDate) - new Date();
@@ -246,11 +241,13 @@ export default {
 
   mounted() {
     if (process.client) {
-      this.$store.dispatch("project/fetchSingleProject", this.$route.params.id)
-      .then((res) => {
-        // console.log(res)
-        if (res.statusCode == 200) {
+      this.loading = true
+      this.$axios.$get(`project/${this.$route.params.id}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      }).then((res) => {
+        if (res) {
           this.project = res.data;
+          this.loading = false
         }
       }).catch(err => {
         console.warn(err);
@@ -259,18 +256,13 @@ export default {
   },
 
   methods: {
-    parseDate(dateString, format) {
-      return new Date(dateString);
-    },
-    formatDate(dateObj, format) {
-      return this.$formatDate(dateObj)
-    },
-    startdateProcess(newValue, repeat){
-      console.log(newValue, repeat, this.ddate)
-      const oldValue = this.sdate
-      const newStartDate = new Date(newValue);
-      this.sdate = newValue;
 
+    startdateProcess(newValue){
+      const oldValue = this.activeProject.startDate
+      const newStartDate = new Date(newValue);
+      this.activeProject.startDate = newValue;
+
+      console.log(newValue, newStartDate, oldValue, this.activeProject.dueDate)
 
       if (newValue == "") {
         this.$store.dispatch("project/updateProject", {
@@ -285,7 +277,7 @@ export default {
       if (this.activeProject.dueDate && this.activeProject.dueDate != null) {
         if (newStartDate.getTime() > new Date(this.activeProject.dueDate).getTime()) {
           this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          this.sdate = oldValue
+          this.activeProject.startDate = oldValue
           // return
         } else {
           this.$store.dispatch("project/updateProject", {
@@ -306,12 +298,12 @@ export default {
 
     },
 
-    duedateProcess(newValue, repeat){
-      console.log(newValue, repeat, "startdate != null", this.sdate != null)
+    duedateProcess(newValue){
       const oldValue = this.activeProject.dueDate
       const newDueDate = new Date(newValue);
       this.activeProject.dueDate = newValue;
 
+      console.log(newValue, newDueDate, oldValue, "startdate != null", this.activeProject.startDate != null)
 
       if (newValue == "") {
         this.$store.dispatch("project/updateProject", {

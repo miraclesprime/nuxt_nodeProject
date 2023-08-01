@@ -162,7 +162,6 @@ export default {
         taskFields: "task/tableFields",
         favProjects: "project/getFavProjects",
         user2: "user/getUser2",
-        filterViews :'task/getFilterView'
     }),
 
     projectName: {
@@ -186,7 +185,6 @@ export default {
   },
 
   created() {
-
     this.$nuxt.$on("change-grid-type", (type) => {
       this.gridType = type;
     });
@@ -204,10 +202,10 @@ export default {
   async asyncData({$axios, app, params, store}) {
 
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
-    const filter = store.getters['task/getFilterView']
+
     try {
       const res = await $axios.get(`project/${params.id}`, {
-          headers: { 'Authorization': `Bearer ${token}`,'filter':filter }
+          headers: { 'Authorization': `Bearer ${token}` }
         })
 
       store.dispatch('project/setProject', res.data.data)
@@ -218,7 +216,8 @@ export default {
           'Filter': 'all'
         }
       });
-      store.dispatch('project/setProjects', resp.data);
+
+      store.dispatch('project/setProjects', resp);
       
       let proj = resp.data.find((p) => {
         if(p.id == params.id) {

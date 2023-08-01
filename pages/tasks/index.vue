@@ -203,9 +203,6 @@ export default {
       dragTable: true,
       showPlaceholder: false,
       tasksCount: 0,
-      // itemsPerPage: 10, // Number of items to display initially
-      // displayedData:[]
-
     };
   },
   computed: {
@@ -216,16 +213,13 @@ export default {
       // currentTask: "task/getSelectedTask",
       teamMembers: "user/getTeamMembers",
       // sName: "company/getSortName",
-      filterViews :'task/getFilterView',
       // sOrder: "company/getSortOrder",
       sidebar: "task/getSidebarVisible",
     }),
+  
   },
 
   watch: {
-    filterViews(newValue){
-         return _.cloneDeep(newValue)
-    },
     tasks(newVal) {
       let data = _.cloneDeep(newVal);
       this.localData = data
@@ -252,22 +246,16 @@ export default {
     }
   },
 
-  async asyncData({$axios, app,store}){
+  async asyncData({$axios, app}){
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
-
-    const filter=store.getters['task/getFilterView']
-
     const res = await $axios.get(`company/tasks/all`, {
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Filter': filter
+        'Filter': 'all'
       }
     })
 
-    store.dispatch('company/setCompanyTasks', res.data.data)
-
-    return { localData: res.data.data}
-
+    return { localData: res.data.data }
   },
 
   created() {
@@ -303,15 +291,15 @@ export default {
     }
 
     setTimeout(() => {
-
-      this.$store.dispatch("company/fetchInitialCompanyTasks",{filter:'all'})
-      this.updateKey()
+      this.$store.dispatch("company/setCompanyTasks",{data:this.localData})
       this.lazyComponent = true
     }, 10)
   }
   
   },
+
   methods: {
+    
 
     showUserPicker(payload) {
       this.closeAllPickers();
@@ -364,8 +352,7 @@ export default {
       this.$store
         .dispatch("company/fetchCompanyTasks", {
           companyId: compid,
-          filter:this.filterViews,
-          sName:this.group
+          // sName:this.group
         })
         .then(() => {
           this.key += 1;
@@ -461,10 +448,7 @@ export default {
     
       if(payload.field == "dueDate" && payload.item.startDate){
         // console.log(payload.field, value)
-        if(payload.value=="Invalid Date"){
-          data = { [payload.field]: null }
-        }else {
-          if(new Date(payload.value).getTime() > new Date(payload.item.startDate).getTime()){
+        if(new Date(payload.value).getTime() > new Date(payload.item.startDate).getTime()){
           data = { [payload.field]: payload.value }
         } else{
           data = { [payload.field]: null }
@@ -473,25 +457,18 @@ export default {
           this.updateKey()
           return false
         }
-        }
-  
       }
       if(payload.field == "startDate" && payload.item.dueDate){
         // console.log(payload.field, payload.value)
-        if(payload.value=="Invalid Date"){
+        if(new Date(payload.value).getTime() < new Date(payload.item.dueDate).getTime()){
+          data = { [payload.field]: payload.value }
+        } else {
           data = { [payload.field]: null }
-        }else {
-            if(new Date(payload.value).getTime() < new Date(payload.item.dueDate).getTime()){
-            data = { [payload.field]: payload.value }
-          } else {
-            data = { [payload.field]: null }
-            this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-            // this.templateKey+=1;
-            this.updateKey()
-            return false
-          }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          // this.templateKey+=1;
+          this.updateKey()
+          return false
         }
-    
       }
       
       // console.log(data, user, projectId)
@@ -645,7 +622,6 @@ export default {
     },
 
     async filterView($event) {
-      this.$store.commit('task/setFilterView', {filter:$event})
       this.$store.commit("company/getFilterTasks",{filter:$event, groupBy:this.group})
       // if ($event == "complete") {
       //   let viewData = await JSON.parse(JSON.stringify(this.tasks));

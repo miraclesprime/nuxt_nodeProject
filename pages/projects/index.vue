@@ -83,7 +83,7 @@ export default {
 
   mounted() {
 
-    // this.loading = true;
+    this.loading = true;
 
     for(let field of this.tableFields) {
       if(field.header_icon) {
@@ -96,11 +96,9 @@ export default {
     }
 
     setTimeout(() => {
-      this.$store.dispatch("project/setProjects", this.localData)
-      this.$store.dispatch("project/fetchInitialProjects")
+      this.$store.dispatch("project/setProjects", {data: this.localData})
       this.lazyComponent = true
     }, 50)
-
 
     this.templateKey++;
   },
@@ -109,8 +107,7 @@ export default {
         projects: 'project/getAllProjects',
         favProjects: 'project/getFavProjects',
         teamMembers: "user/getTeamMembers",
-        user: "user/getUser2",
-        filterViews :'task/getFilterView'
+        user: "user/getUser2"
     })
   },
   watch: {
@@ -119,13 +116,12 @@ export default {
     },
   },
 
-  async asyncData({$axios, app,store}){
-      const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
-      const filter=store.getters['task/getFilterView']
+  async asyncData({$axios, app}){
+    const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
       const res = await $axios.get(`project/company/all`, {
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Filter': filter
+        'Filter': 'all'
       }
     })
 
@@ -139,6 +135,7 @@ export default {
         newArr.push(res.data.data[i])
       }
     }
+
     return { localData: newArr }
    
   },
@@ -159,6 +156,7 @@ export default {
     },
 
     projectRoute(project) {
+
       let fwd = this.$donotCloseSidebar(event.target.classList)
       if (!fwd) {
         return false
@@ -202,7 +200,6 @@ export default {
       })
     },
     ProjectView($event){
-      this.$store.commit('task/setFilterView', {filter:$event})
       this.$store.commit("project/getFilterProjects",{filter:$event, groupBy:this.groupBy})
       // this.$store.dispatch('project/fetchProjects', $event).then(() => { 
       //   if(this.groupVisible){
@@ -414,41 +411,27 @@ export default {
       let data = { [field]: value }
     
       if(field == "dueDate" && item.startDate){
-        if(value=="Invalid Date"){
+        // console.log(field, value)
+        if(new Date(value).getTime() > new Date(item.startDate).getTime()){
+          data = { [field]: value }
+        } else{
           data = { [field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          // this.templateKey+=1;
+          this.updateKey()
+          return false
         }
-        else
-         {
-           if(new Date(value).getTime() > new Date(item.startDate).getTime())
-           {
-              data = { [field]: value }
-            } 
-          else{
-              data = { [field]: null }
-              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-              this.updateKey()
-              return false
-            }
-        }
-     
       }
       if(field == "startDate" && item.dueDate){
-        if(value=="Invalid Date"){
+        if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
+          data = { [field]: value }
+        } else {
           data = { [field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          // this.templateKey+=1;
+          this.updateKey()
+          return false
         }
-        else
-         {
-            if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
-            data = { [field]: value }
-          } else {
-            data = { [field]: null }
-            this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-            // this.templateKey+=1;
-            this.updateKey()
-            return false
-          }
-         }
-    
       }
 
       this.$store.dispatch("project/updateProject", {
@@ -629,7 +612,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .projects-wrapper { display: flex; flex-direction: column; height: 100%; }
-.projects-list-wrapper { overflow: auto;height: 100%; }
+.projects-list-wrapper { overflow: auto; }
 details {
   summary::-webkit-details-marker {
     display: none;

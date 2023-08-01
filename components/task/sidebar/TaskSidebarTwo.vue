@@ -1,5 +1,5 @@
 <template>
-  <article id="side-panel-wrapper" :class="expandVisible?'side-panel':'side-panel expandVisible'" v-click-outside="closeSidebar">
+  <article id="side-panel-wrapper" class="side-panel" v-click-outside="closeSidebar">
     <div class="side-panel__header" id="tsb-header">
       <div class="d-flex justify-between pt-105 px-105 pb-05" id="ts-side-panel">
         <div class="" id="tsb-mark-button-wrapper">
@@ -9,7 +9,7 @@
            <bib-button :label="isComplete.text" :variant="isComplete.variant" icon="check-circle-solid" @click="markComplete"></bib-button>
         </div>
         <div class="d-flex gap-05 align-center" id="tsb-icons-wrapper">
-          <div v-show ="expandVisible" class="d-flex cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2" id='tsb-icon-external' @click="setExpand">
+          <div class="d-flex cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2" id='tsb-icon-external' >
             <bib-icon icon="expand-fullscreen" variant="gray6" class="m-auto"></bib-icon>
           </div>
           <!-- <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="tsb-icon-2" title="Team" @click="showAddTeamModal">
@@ -61,10 +61,7 @@
               </template>
             </bib-button>
           </div>
-          <div v-if="expandVisible" id='tsb-icon-close' class="shape-circle bg-hover-light width-2 height-2 d-flex cursor-pointer" title="Close" @click="$nuxt.$emit('close-sidebar')">
-            <bib-icon icon="close" class="m-auto"></bib-icon>
-          </div>
-          <div v-else id='tsb-icon-close' class="shape-circle bg-hover-light width-2 height-2 d-flex cursor-pointer" title="Close" @click="closeExpand">
+          <div id='tsb-icon-close' class="shape-circle bg-hover-light width-2 height-2 d-flex cursor-pointer" title="Close" @click="$nuxt.$emit('close-sidebar')">
             <bib-icon icon="close" class="m-auto"></bib-icon>
           </div>
         </div>
@@ -142,7 +139,6 @@ export default {
     sectionIdActive: Number,
     // scrollId: {type: String, default: "sidebar-inner-wrap"},
     departmentId: {type: Number},
-    expandVisible:{type:Boolean,default:true}
     // visible: Boolean,
   },
   data: function() {
@@ -299,39 +295,8 @@ export default {
   },
 
   mounted() {
-    this.showSubtaskDetail = false
     this.$store.dispatch("project/fetchProjects")
-    if (Object.keys(this.currentTask).length) {
-        this.form = _.cloneDeep(this.currentTask);
-        if (this.currentTask.project?.length) {
-          this.form.projectId = this.currentTask.project[0]?.projectId || this.currentTask.project[0].project?.id
-        } else {
-          this.form.projectId = this.project?.id
-        }
-        this.reloadFiles += 1
-      } else {
-        this.form = {
-          id: '',
-          title: "",
-          createdAt: "",
-          startDate: "",
-          dueDate: "",
-          userId: "",
-          sectionId: "",
-          departmentId: this.departmentId || null,
-          projectId: "",
-          statusId: null,
-          priorityId: null,
-          description: '',
-          budget: 0,
-        }
-        this.$nextTick(() => {
-          this.$refs.taskTitleInput.focus()
-        });
-        if (this.sectionIdActive) {
-          this.form.sectionId = this.sectionIdActive
-        }
-      }
+    this.showSubtaskDetail = false
 
   },
 
@@ -343,11 +308,6 @@ export default {
     showAddTeamModal() {
       // this.taskTeamModal = true
       console.info("clicked to open team modal")
-    },
-    closeExpand(){
-      this.$router.push(this.$route.path)
-      
-      this.$store.commit("task/setExpandVisible",true)
     },
     closeSidebar(event) {
       let main = document.getElementById("main-content").className
@@ -412,6 +372,7 @@ export default {
     },
 
     updateTask(taskData) {
+      // console.log(taskData)
       let updata = { [taskData.field]: taskData.value }
       let updatedvalue = taskData.value
       let projectId = null
@@ -428,11 +389,7 @@ export default {
         text: taskData.historyText || taskData.value,
       })
         .then((u) => {
-          if(this.expandVisible){
-            this.$nuxt.$emit("update-key")
-          }
-          
-          this.$store.dispatch("task/setSingleTask", u)
+          this.$nuxt.$emit("update-key")
           this.reloadHistory += 1
         })
         .catch(e => {
@@ -454,7 +411,6 @@ export default {
       })
         .then((u) => {
           this.$nuxt.$emit("update-key")
-          this.$store.dispatch("task/setSingleTask", u)
           this.reloadHistory += 1
         })
         .catch(e => {
@@ -501,7 +457,7 @@ export default {
     },
 
     async updateProject(taskData) {
-      console.log("12",taskData)
+
       let proj = this.projects.find(t => t.id == taskData.projValue)
 
       let user;
@@ -520,9 +476,7 @@ export default {
         text: proj ? `changed project to ${proj.title}` : 'Task removed from Project',
       })
         .then((u) => {
-          console.log("###############",u)
           this.$nuxt.$emit("update-key")
-          
           this.reloadHistory += 1
         })
         .catch(e => {
@@ -559,10 +513,7 @@ export default {
         
       }
     }, 600),
-    setExpand()
-    {
-      this.$store.commit("task/setExpandVisible",false)
-    },
+
     setFavorite() {
       this.favProcess = true
       if (this.isFavorite.status) {
@@ -747,14 +698,6 @@ export default {
 
 </script>
 <style lang="scss" scoped>
-.expandVisible {
-  position: absolute; 
-  left: 50%;
-  right:50%;
-  top: 16px !important;
-  transform: translate(-50%);
-  border-radius: 4px;
-}
 .side-panel {
   display: grid;
   grid-template-rows: 1fr minmax(4fr, auto) 1fr;
