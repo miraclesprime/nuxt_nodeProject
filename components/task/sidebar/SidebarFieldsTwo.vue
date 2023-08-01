@@ -4,13 +4,13 @@
       <div class="row mt-05 mb-05 ">
         <div class="col-2 align-center"><label>Start Date</label></div>
         <div class="col-5">
-          <bib-datetime-picker v-model="sdate" :format="format" :parseDate="parseDate" :formatDate="formatDate" size="sm" placeholder="Start date" @input="startdateProcess" ></bib-datetime-picker>
+          <bib-datetime-picker :value="form.startDate" size="sm" placeholder="Start date" @input="startdateProcess" ></bib-datetime-picker>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Due Date</label></div>
         <div class="col-5">
-          <bib-datetime-picker v-model="ddate" :format="format" :parseDate="parseDate" :formatDate="formatDate" size="sm" placeholder="Due date" @input="duedateProcess"></bib-datetime-picker>
+          <bib-datetime-picker :value="form.dueDate" size="sm" placeholder="Due date" @input="duedateProcess"></bib-datetime-picker>
         </div>
       </div>
       <div class="row mb-05 ">
@@ -81,7 +81,7 @@
 import { STATUS, PRIORITY, DIFFICULTY } from "~/config/constants.js";
 import { mapGetters } from "vuex";
 import _ from "lodash";
-// import dayjs from "dayjs";
+// import fecha, { format } from "fecha";
 export default {
   name: "SidebarFieldsTwo",
   props: {
@@ -102,10 +102,7 @@ export default {
       difficultyOpt: DIFFICULTY,
       form: {},
       popupMessages: [],
-      validationDate: false,
-      format: "DD MMM YYYY",
-      sdate: "",
-      ddate: "",
+      validationDate: false
     };
   },
   computed: {
@@ -150,7 +147,7 @@ export default {
       if (Object.keys(this.task).length) {
         this.form = _.cloneDeep(this.task);
         if (this.task.project?.length) {
-          this.form.projectId = this.task.project?.[0]?.projectId || this.task.project?.[0]?.project?.id;
+          this.form.projectId = this.task.project?. [0]?.projectId || this.task.project?. [0]?.project?.id;
           this.$store.dispatch("section/fetchProjectSections", {
             projectId: this.form.projectId,
             filter: "all",
@@ -173,7 +170,6 @@ export default {
           description: "",
           budget: 0,
         };
-
         if (this.sectionIdActive) {
           this.form.sectionId = this.sectionIdActive;
         }
@@ -183,55 +179,16 @@ export default {
           this.form.sectionId = "";
         }
       }
-      this.sdate = this.$formatDate(this.form?.startDate)
-      this.ddate = this.$formatDate(this.form?.dueDate)
     },
   },
- mounted () {
-  if (Object.keys(this.task).length) {
-        this.form = _.cloneDeep(this.task);
-        if (this.task.project?.length) {
-          this.form.projectId = this.task.project?.[0]?.projectId || this.task.project?.[0]?.project?.id;
-          this.$store.dispatch("section/fetchProjectSections", {
-            projectId: this.form.projectId,
-            filter: "all",
-          });
-        } else {
-          this.form.projectId = this.project?.id;
-        }
-      } else {
-        this.form = {
-          id: "",
-          title: "",
-          startDate: "",
-          dueDate: "",
-          userId: "",
-          sectionId: "_section" + this.project?.id,
-          projectId: this.project?.id || "",
-          departmentId: this.departmentId || null,
-          statusId: null,
-          priorityId: null,
-          description: "",
-          budget: 0,
-        };
-        if (this.sectionIdActive) {
-          this.form.sectionId = this.sectionIdActive;
-        }
-        if (this.project?.id) {
-          this.form.sectionId = "_section" + this.project.id;
-        } else {
-          this.form.sectionId = "";
-        }
-      }
- },
   methods: {
-    parseDate(dateString, format) {
-      return new Date(dateString);
-    },
-    formatDate(dateObj, format) {
-      return this.$formatDate(dateObj)
-    },
-    startdateProcess(newValue, repeat){
+    /*parseDate(dateString, format) {
+           return fecha.parse(dateString, format);
+       },
+       formatDate(dateObj, format) {
+           return fecha.format(dateObj, format);
+       },*/
+    startdateProcess(newValue){
       const oldValue = this.form.startDate
       const newStartDate = new Date(newValue);
       this.form.startDate = newValue;
