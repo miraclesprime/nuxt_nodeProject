@@ -229,12 +229,12 @@ export default {
   },
 
   methods: {
-    parseDate(dateString, format) {
+    /*parseDate(dateString, format) {
         return new Date(dateString)
     },
     formatDate(dateObj, format) {
         return dayjs(dateObj).format(format);
-    },
+    },*/
     
     // main class prototype
     columnResize(table) {
