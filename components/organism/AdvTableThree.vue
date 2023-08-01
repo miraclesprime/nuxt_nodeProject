@@ -122,7 +122,7 @@
                     <!-- <skeleton-box v-else></skeleton-box> -->
                   </template>
                   <template v-if="field.key == 'dueDate'" >
-                    <!-- {{$formatDate(item[field.key])}} -->
+                    {{$formatDate(item[field.key])}}
                     
                     <!-- <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker> -->
                     <!-- <skeleton-box v-else></skeleton-box> -->
