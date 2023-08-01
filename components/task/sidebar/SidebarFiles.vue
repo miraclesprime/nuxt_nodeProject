@@ -110,7 +110,7 @@ export default {
       fileLoader: false,
       dbFiles: [],
       fileKey: 1,
-      showPlaceholder: false,
+      // showPlaceholder: false,
       previewModal: false,
       imgPreview: "",
       pdfPreview: "",
@@ -192,14 +192,14 @@ export default {
       );
       formdata.append("isHidden", true);
 
-      if (
-        this.mode == "task" &&
-        this.task.hasOwnProperty("project") &&
-        this.task.project.length > 0
-      ) {
-        formdata.append("projectId", this.task.project[0].projectId);
+      if ( this.mode == "task" && this.task.project?.length > 0 ) {
+        formdata.append("projectId", this.task.project[0].project?.id ? this.task.project[0].project.id : null );
       }
 
+      /*for (var pair of formdata.entries()) {
+        console.log(pair[0]+ ', ' + pair[1]) 
+      }*/
+      // console.log(formdata.entries)
       const fi = await this.$axios.post("/file/upload", formdata, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -216,7 +216,7 @@ export default {
     },
 
     getFiles() {
-      this.showPlaceholder = true;
+      // this.showPlaceholder = true;
 
       if (this.mode == "task" && Object.keys(this.task).length == 0) {
         this.dbFiles = [];
@@ -245,7 +245,7 @@ export default {
           console.error(e);
           this.dbFiles = [];
         });
-      this.showPlaceholder = false;
+      // this.showPlaceholder = false;
     },
 
     downloadFile(file) {
@@ -300,16 +300,15 @@ export default {
 
       console.log(file.type, file.url)
       if ((file.type.indexOf("image/") == 0 || file.type.indexOf("/pdf") > 1) && file.url) {
-        // this.previewModal = true;
+        this.previewModal = true;
         console.log('preview available')
       } else {
         console.log('file will be downloaded')
-        // this.downloadFile(file);
+        this.downloadFile(file);
+        return
       }
 
-      return
-
-      if (file.type.indexOf("image/") && "url" in file) {
+      if (file.type.indexOf("image/") == 0 && "url" in file) {
         let imgtype = file.type.split("/")[1];
         const prev = await this.$axios.get("file/single/" + file.key, {
           headers: {
@@ -319,7 +318,8 @@ export default {
         });
         this.imgPreview = `data:image/${imgtype};base64,${prev.data.data}`;
         this.pdfPreview = "";
-      } else if (file.type.indexOf("/pdf") && "url" in file) {
+      } 
+      if (file.type.indexOf("/pdf") > 1 && "url" in file) {
         const prev = await this.$axios.get("file/single/" + file.key, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -328,10 +328,7 @@ export default {
         });
         this.pdfPreview = `data:application/pdf;base64,${prev.data.data}`;
         this.imgPreview = "";
-      } else {
-        this.downloadFile(file);
-        this.previewModal = false;
-      }
+      } 
     },
 
     closePreviewModal() {
