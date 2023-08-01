@@ -15,11 +15,12 @@
       <template>
       </template>
     </div> -->
-    <alert-dialog
+    <!-- <alert-dialog
       v-show="alertDialog"
       :message="alertMsg"
       @close="alertDialog = false"
-    ></alert-dialog>
+    ></alert-dialog> -->
+
     <!-- File Upload modal -->
     <bib-modal-wrapper
       v-if="uploadModal"
@@ -92,6 +93,12 @@
         </div>
       </template>
     </bib-modal-wrapper>
+    <bib-popup-notification-wrapper>
+      <template #wrapper>
+        <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" :autohide="4000">
+        </bib-popup-notification>
+      </template>
+    </bib-popup-notification-wrapper>
   </div>
 </template>
 
@@ -116,8 +123,9 @@ export default {
       pdfPreview: "",
       oldfilesCount: 0,
       ffcount: 0,
-      alertDialog: false,
-      alertMsg: "",
+      // alertDialog: false,
+      // alertMsg: "",
+      popupMessages: [],
     };
   },
   props: {
@@ -269,8 +277,9 @@ export default {
     },
 
     deleteFile(file) {
-      let del = window.confirm("Are you sure want to delete?");
-      if (del) {
+      // let del = window.confirm("Are you sure want to delete?");
+      // if (del) {
+      console.log(file)
         this.$axios
           .delete("file/" + file.key, {
             headers: {
@@ -278,13 +287,14 @@ export default {
               taskid: this.task.id,
               text: "File deleted from task",
               isHidden: true,
-              userid: file.userId,
+              userid: file.owner,
             },
           })
           .then((f) => {
             if (f.data.statusCode == 200) {
-              this.alertDialog = true;
-              this.alertMsg = f.data.message;
+              // this.alertDialog = true;
+              // this.alertMsg = f.data.message;
+              this.popupMessages.push({ text: f.data.message, variant: "success"})
               _.delay(() => {
                 this.getFiles().then((res) => {
                   this.fileKey += 1;
@@ -293,7 +303,7 @@ export default {
             }
           })
           .catch((e) => console.error(e));
-      }
+      // }
     },
 
     async showPreviewModal(file) {
