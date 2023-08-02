@@ -47,6 +47,71 @@ export const getters = {
 };
 
 export const mutations = {
+  updateFetchUserTasks(state,payload) {
+    let userTasks=state.userTasks
+    let selectedTask=payload.data
+    console.log("payload.createORupdate",payload)
+    if(payload.createORupdate=="create"){
+      console.log("create")
+      state.initialData.push(payload.data)
+      let arr=[]
+      arr=state.initialData
+      if(payload.filter=="incomplete")
+      {
+        arr=arr.filter((item)=>item.statusId!==5)
+        if(payload.key!=""){
+          arr=this.$groupBy(arr,payload.key)
+        }  
+      }
+  
+      if(payload.filter=="complete")
+      {
+        arr=arr.filter((item)=>item.statusId==5)
+        if(payload.key!=""){
+          arr=this.$groupBy(arr,payload.key)
+        }  
+      }
+      if(payload.filter=="all")
+      {
+        if(payload.key!=""){
+          arr=this.$groupBy(arr,payload.key)
+        }  
+      }
+      state.userTasks=arr
+      console.log(state.userTasks)
+     
+    }
+    else{
+      state.initialData = state.initialData.map((item) => {
+        if (item.id === selectedTask.id) {
+          return selectedTask;
+        }
+        return item;
+      });
+      if(userTasks[0]?.tasks){
+        let sectionID, taskID;
+        state.userTasks.forEach((section, section_idx) => {
+            section.tasks.forEach((task, task_idx) => {
+            if (task.id === selectedTask.id) {
+              console.log("task",task)
+              sectionID = section_idx;
+              taskID = task_idx;
+            }
+          });   
+        });
+        state.userTasks[sectionID].tasks[taskID] = selectedTask;
+      }
+      else {
+        state.userTasks = state.userTasks.map((item) => {
+          if (item.id === selectedTask.id) {
+            return selectedTask;
+          }
+          return item;
+        });
+      }
+    } 
+  
+  },
   setFetchUserTasks(state,payload) {
       let arr=[]
       arr=payload.data
@@ -148,7 +213,7 @@ export const mutations = {
   
     state.appMembers = arr;
   },
-  getUserTasks(state,payload){
+  groupUserTasks(state,payload){
     let arr = state.userTasks
     if(arr?.[0]?.tasks){
       let _arr = [];
@@ -786,7 +851,10 @@ export const mutations = {
 
 
 export const actions = {
-
+async setFetchUserTasks (ctx,payload) {
+  console.log("11",payload)
+  ctx.commit('setFetchUserTasks', payload);
+},
   async setUser(ctx, payload) {
     await ctx.commit('setUser', payload);
   },

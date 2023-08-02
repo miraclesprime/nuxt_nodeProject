@@ -123,7 +123,8 @@ export default {
       sidebar: "task/getSidebarVisible",
       user: "user/getUser2",
       favTasks: 'task/getFavTasks',
-      filterViews :'task/getFilterView'
+      filterViews :'task/getFilterView',
+      selectedTask :'task/getSelectedTask'
     }),
   },
 
@@ -189,8 +190,9 @@ export default {
 
   created() {
     if (process.client) {
-      this.$nuxt.$on("update-key", async () => {
-        await this.fetchUserTasks();
+      this.$nuxt.$on("update-key", async (payload) => {
+        this.$store.commit('user/updateFetchUserTasks',{createORupdate:payload,data:this.selectedTask,filter:this.filterViews,key:this.groupBy})
+        // await this.fetchUserTasks();
         // this.beforeLocal = this.localData
       });
       this.$nuxt.$on("user-picker", (payload) => {
@@ -254,7 +256,7 @@ export default {
       }
       this.groupBy = $event;
       this.groupVisible = true
-      this.$store.commit('user/getUserTasks',{key:this.groupBy})
+      this.$store.commit('user/groupUserTasks',{key:this.groupBy})
       this.localData = this.userTasks
     },
 

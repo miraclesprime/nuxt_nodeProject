@@ -402,7 +402,7 @@ export default {
         }).then((task) => {
           this.$store.dispatch("task/setSingleTask", task.data)
           this.$emit("update-key")
-          this.$nuxt.$emit("update-key")
+          this.$nuxt.$emit("update-key","create")
           this.loading = false
         }).catch(e => {
           console.warn(e)
@@ -428,11 +428,12 @@ export default {
         text: taskData.historyText || taskData.value,
       })
         .then((u) => {
+           this.$store.dispatch("task/setSingleTask", u)
           if(this.expandVisible){
-            this.$nuxt.$emit("update-key")
+            this.$nuxt.$emit("update-key","update")
           }
           
-          this.$store.dispatch("task/setSingleTask", u)
+         
           this.reloadHistory += 1
         })
         .catch(e => {
