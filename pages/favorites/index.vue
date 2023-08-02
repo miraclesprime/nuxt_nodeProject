@@ -13,8 +13,8 @@
         </div>
 
         <!-- task table -->
-        <div style="overflow: auto;">
-          <advance-table :drag="false" :tableFields="taskTableFields" :tableData="taskSubtaskLocalData" :lazyComponent="true" :contextItems="taskContextMenuItems" @context-item-event="taskContextItemClick" @row-click ="openSidebar" @table-sort="sortTask" @context-open="taskContextOpen"  @title-click="openSidebar" @update-field="updateTask" sectionTitle="Favorite Tasks" :plusButton="false" :key="templateKey"></advance-table>
+        <div style="overflow: auto;height:100%">
+          <advance-table :drag="false" :tableFields="taskTableFields" :tableData="taskSubtaskLocalData" :contextItems="taskContextMenuItems" @context-item-event="taskContextItemClick" @row-click ="openSidebar" @table-sort="sortTask" @context-open="taskContextOpen"  @title-click="openSidebar" @update-field="updateTask" sectionTitle="Favorite Tasks" :plusButton="false" :key="templateKey"></advance-table>
         </div>
       
         <!-- <loading :loading="loading"></loading> -->
@@ -880,7 +880,11 @@ export default {
     
       if(field == "dueDate" && item.startDate){
         // console.log(field, value)
-        if(new Date(value).getTime() > new Date(item.startDate).getTime()){
+        if(value=="Invalid Date"){
+          data = { [field]: null }
+        }
+        else {
+          if(new Date(value).getTime() > new Date(item.startDate).getTime()){
           data = { [field]: value }
         } else{
           data = { [field]: null }
@@ -888,10 +892,15 @@ export default {
           this.updateKey()
           return false
         }
+        }
+      
       }
       if(field == "startDate" && item.dueDate){
         // console.log(field, value)
-        if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
+        if(value=="Invalid Date"){
+          data = { [field]: null }
+        }else {
+          if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
           data = { [field]: value }
         } else {
           data = { [field]: null }
@@ -899,6 +908,8 @@ export default {
           this.updateKey()
           return false
         }
+        }
+      
       }
 
       this.$store.dispatch("project/updateProject", {
@@ -968,7 +979,11 @@ export default {
 
       if(field == "dueDate" && item.startDate){
         // console.log(field, value)
-        if(new Date(value).getTime() > new Date(item.startDate).getTime()){
+        if(value=="Invalid Date"){
+          data = { [field]: null }
+        }
+        else {
+          if(new Date(value).getTime() > new Date(item.startDate).getTime()){
           data = { [field]: value }
         } else{
           data = { [field]: null }
@@ -976,10 +991,16 @@ export default {
           this.updateKey()
           return false
         }
+        }
+  
       }
       if(field == "startDate" && item.dueDate){
         // console.log(field, value)
-        if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
+        if(value=="Invalid Date"){
+          data = { [field]: null }
+        }
+        else {
+          if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
           data = { [field]: value }
         } else {
           data = { [field]: null }
@@ -987,6 +1008,8 @@ export default {
           this.updateKey()
           return false
         }
+        }
+       
       }
 
       if (item.task) {

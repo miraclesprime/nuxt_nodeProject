@@ -149,10 +149,16 @@ export default {
       teamMembers: "user/getTeamMembers",
       sidebar: "task/getSidebarVisible",
       loggedUser: "user/getUser2",
+      filterViews :'task/getFilterView',
+      expandVisible:"task/getExpandVisible",
+      grid:"todo/getGridType"
     })
   },
 
   watch: {
+      filterViews(newVal) {
+          return _.cloneDeep(newVal)
+      },
     todos(newVal) {
       let localTodos = _.cloneDeep(newVal)
       localTodos.forEach(function(todo) {
@@ -162,6 +168,7 @@ export default {
     },
 
     gridType() {
+      this.$store.commit('todo/gridType',{gridType:this.gridType})
       this.key++;
     },
     sidebar(newVal){
@@ -180,15 +187,16 @@ export default {
   created() {
     if (process.client) {
       this.$nuxt.$on("update-key", (msg) => {
-        this.$store.dispatch("todo/fetchTodos", { filter: 'all' })
-          .then(() => {
-            this.key += 1
-            this.templateKey += 1
-          })
-        if (msg) {
-          this.popupMessages.push({text: msg, variant: 'success'})
-        }
-      })
+          this.updateKey()
+        
+      });
+      // this.$nuxt.$on("update-key", (msg) => {
+      //   this.$store.dispatch("todo/fetchTodos", { filter: this.filterViews,sName:this.groupby }).then((res) => { 
+      //     this.key += 1 })
+      //   if (msg) {
+      //     this.popupMessages.push({text: msg, variant: 'success'})
+      //   }
+      // })
     }
   },
 
@@ -199,18 +207,27 @@ export default {
         field.header_icon.isActive = false;
       }
     }
+    this.$store.dispatch("todo/setMyfetchTodos")
+       
+      setTimeout(() => {
+        this.updateKey()
+        this.gridType=this.grid
+      }, 200);
+    
   },
 
-  async asyncData({$axios, app}) {
+  async asyncData({$axios, app,store,context}) {
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
 
+    // console.log(token)
+    const filter=store.getters['task/getFilterView']
     const response = await $axios.get('/todo/all', {
       headers: {
         Authorization: `Bearer ${token}`,
-        Filter: 'all'
+        Filter:filter
       },
     });
-
+    store.dispatch('todo/setTodos', response.data.data)
     return { localdata: response.data.data }
     
   },
@@ -405,7 +422,11 @@ export default {
     
       if(field == "dueDate" && item.startDate){
         // console.log(field, value)
-        if(new Date(value).getTime() > new Date(item.startDate).getTime()){
+        if(value=="Invalid Date"){
+          data = { [field]: null }
+        }
+        else {
+          if(new Date(value).getTime() > new Date(item.startDate).getTime()){
           data = { [field]: value }
         } else{
           data = { [field]: null }
@@ -413,17 +434,24 @@ export default {
           this.updateKey()
           return false
         }
+        }
       }
+      
       if(field == "startDate" && item.dueDate){
-        // console.log(field, value)
-        if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
-          data = { [field]: value }
+        if(value=="Invalid Date"){
+          data = { [field]: null }
+        }
+        else 
+        {
+            if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
+            data = { [field]: value }
         } else {
           data = { [field]: null }
           this.popupMessages.push({ text: "Invalid date", variant: "danger" });
           this.updateKey()
           return false
         }
+        }   
       }
 
       this.$store.dispatch("task/updateTask", {
@@ -433,7 +461,6 @@ export default {
         text: historyText
       })
         .then(t => {
-          console.log(t.data)
           this.updateKey()
         })
         .catch(e => console.warn(e))
@@ -549,7 +576,7 @@ export default {
         firstName: this.loggedUser.FirstName,
         lastName: this.loggedUser.LastName
       }]
-      console.log(taskdata)
+      // console.log(taskdata)
       this.$store.dispatch("task/createTask", taskdata)
       .then(t => {
         // console.log(t)
@@ -562,15 +589,12 @@ export default {
       if ($event) {
         this.popupMessages.push({ text: $event, variant: "success" })
       }
-      
-      this.$store.dispatch("todo/fetchTodos", { filter: 'all', sName:this.groupby })
-        .then((res) => {
-          // console.log(res)
-          if (res.statusCode == 200) {
-            this.key += 1
-            this.templateKey += 1
-          }
-        })
+      this.$store.dispatch("todo/fetchTodos", { filter: this.filterViews,sName:this.groupby}).then((res) => {
+        if (res.statusCode == 200) {
+          this.key += 1
+          this.templateKey += 1
+        }
+      })
     },
     
     toggleNewsection(flag) {
@@ -716,6 +740,7 @@ export default {
     }, 400),
 
     filterView($event) {
+      this.$store.commit('task/setFilterView', {filter:$event})
       this.$store.commit("todo/getFilterMyTasks",{filter:$event, groupBy:this.groupby})
 
     },

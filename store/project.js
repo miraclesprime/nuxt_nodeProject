@@ -54,6 +54,10 @@ export const mutations = {
   // To fetch all projects
   fetchProjects(state, payload) {
     state.projects = payload;
+    
+  },
+  //to get initial projects
+  fetchInitialProjects (state,payload) {
     if(payload) {
       payload.sort((a, b) => {
         if (a.dueDate && b.dueDate) {
@@ -795,7 +799,17 @@ export const actions = {
     ctx.commit('fetchProjects', res.data);
     return res.data;
   },
-
+  async fetchInitialProjects(ctx, payload) {
+    // console.log(JSON.parse(window.localStorage.getItem('user')).subb)
+    const res = await this.$axios.$get(`/project/company/all`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+        'Filter': payload ? payload : 'all'
+      }
+    });
+    ctx.commit('fetchInitialProjects', res.data);
+    return res.data;
+  },
   async fetchSingleProject(ctx, payload) {
     const proj = await this.$axios.$get(`/project/${payload}`, {
       headers: {
@@ -1159,7 +1173,7 @@ export const actions = {
   },
 
   setProjects(ctx, payload) {
-    ctx.commit('fetchProjects', payload.data)
+    ctx.commit('fetchProjects', payload)
   }
 
 }

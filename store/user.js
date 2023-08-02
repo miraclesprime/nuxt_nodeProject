@@ -47,6 +47,97 @@ export const getters = {
 };
 
 export const mutations = {
+  updateFetchUserTasks(state,payload) {
+    let userTasks=state.userTasks
+    let selectedTask=payload.data
+    console.log("payload.createORupdate",payload)
+    if(payload.createORupdate=="create"){
+      console.log("create")
+      state.initialData.push(payload.data)
+      let arr=[]
+      arr=state.initialData
+      if(payload.filter=="incomplete")
+      {
+        arr=arr.filter((item)=>item.statusId!==5)
+        if(payload.key!=""){
+          arr=this.$groupBy(arr,payload.key)
+        }  
+      }
+  
+      if(payload.filter=="complete")
+      {
+        arr=arr.filter((item)=>item.statusId==5)
+        if(payload.key!=""){
+          arr=this.$groupBy(arr,payload.key)
+        }  
+      }
+      if(payload.filter=="all")
+      {
+        if(payload.key!=""){
+          arr=this.$groupBy(arr,payload.key)
+        }  
+      }
+      state.userTasks=arr
+      console.log(state.userTasks)
+     
+    }
+    else{
+      state.initialData = state.initialData.map((item) => {
+        if (item.id === selectedTask.id) {
+          return selectedTask;
+        }
+        return item;
+      });
+      if(userTasks[0]?.tasks){
+        let sectionID, taskID;
+        state.userTasks.forEach((section, section_idx) => {
+            section.tasks.forEach((task, task_idx) => {
+            if (task.id === selectedTask.id) {
+              console.log("task",task)
+              sectionID = section_idx;
+              taskID = task_idx;
+            }
+          });   
+        });
+        state.userTasks[sectionID].tasks[taskID] = selectedTask;
+      }
+      else {
+        state.userTasks = state.userTasks.map((item) => {
+          if (item.id === selectedTask.id) {
+            return selectedTask;
+          }
+          return item;
+        });
+      }
+    } 
+  
+  },
+  setFetchUserTasks(state,payload) {
+      let arr=[]
+      arr=payload.data
+    if(payload.filter=="incomplete")
+    {
+      arr=arr.filter((item)=>item.statusId!==5)
+      if(payload.key!=""){
+        arr=this.$groupBy(arr,payload.key)
+      }  
+    }
+
+    if(payload.filter=="complete")
+    {
+      arr=arr.filter((item)=>item.statusId==5)
+      if(payload.key!=""){
+        arr=this.$groupBy(arr,payload.key)
+      }  
+    }
+    if(payload.filter=="all")
+    {
+      if(payload.key!=""){
+        arr=this.$groupBy(arr,payload.key)
+      }  
+    }
+    state.userTasks=arr
+  },
   flatTasks(state, payload) {
     let arr = JSON.parse(JSON.stringify(state.userTasks));
     if(arr[0].tasks){
@@ -122,7 +213,7 @@ export const mutations = {
   
     state.appMembers = arr;
   },
-  getUserTasks(state,payload){
+  groupUserTasks(state,payload){
     let arr = state.userTasks
     if(arr[0].tasks){
       let _arr = [];
@@ -699,23 +790,71 @@ export const mutations = {
 
   setUserTasks(state, payload) {
     state.userTasks = payload
-    payload.sort((a, b) => {
-      if (a.priorityId && b.priorityId) {
-        return a.priorityId - b.priorityId;
-      }
-    });
-    state.initialData=payload
   },
 
   setSideBarUser(state,payload){
     state.sideBarUser=payload
+  },
+  setInitialUserTasks(state,payload) {
+    payload.initial.sort((a, b) => {
+      if (a.priorityId && b.priorityId) {
+        return a.priorityId - b.priorityId;
+      }
+    });
+    state.initialData = payload.initial
+    // let arr = payload.filterValue
+    // if(arr[0]?.tasks)
+    // {
+    //   arr.map((ele)=>{
+    //     let newArr=[]
+    //     ele.tasks.forEach((item) => {
+    //       if (item.priorityId) {
+    //         newArr.unshift(item)
+    //       } else {
+    //         newArr.push(item)
+    //       }
+    //     });
+    //         newArr.sort((a,b)=>{
+    //         if (a.priorityId && b.priorityId) {
+    //           return a.priority.id - b.priority.id;
+    //         }
+    //       });
+        
+    //     ele.tasks=newArr
+    //     return ele
+    //   })
+   
+    //   state.userTasks=arr
+    // }
+    // else 
+    // {
+    //       let newArr = []
+
+    //       for (let i = 0; i < arr.length; i++) {
+    //         if (arr[i].priorityId) {
+    //           newArr.unshift(arr[i])
+    //         } else {
+    //           newArr.push(arr[i])
+    //         }
+    //       }
+  
+    //           newArr.sort((a, b) => {
+    //           if (a.priorityId && b.priorityId) {
+    //             return a.priority.id - b.priority.id;
+    //           }
+    //         });
+    //       state.userTasks=newArr;
+    //  }
   }
 
 };
 
 
 export const actions = {
-
+async setFetchUserTasks (ctx,payload) {
+  console.log("11",payload)
+  ctx.commit('setFetchUserTasks', payload);
+},
   async setUser(ctx, payload) {
     await ctx.commit('setUser', payload);
   },
@@ -765,17 +904,15 @@ export const actions = {
     const res = await this.$axios.get("user/user-tasks", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        Filter: payload.filter,
+        Filter: 'all',
         userid: payload.userId,
       },
     });
+   
+        if(res.data.statusCode==200){
 
-    if(res.data.statusCode==200){
-      await ctx.commit('setUserTasks', res.data.data);
-      // if(payload.key!==''){
-      //   ctx.commit('getUserTasks',payload)
-      // }
-      return res
+          ctx.commit('setInitialUserTasks', {initial:res.data.data});
+          return res.data.data
     }
   
   },
