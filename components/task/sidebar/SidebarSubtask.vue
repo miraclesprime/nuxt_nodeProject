@@ -34,8 +34,7 @@
               </div>            
             </td>
             <td id="sbs-td-1" width="40" align="right" >
-              <!-- <bib-select :key="subkey" :options="orgUsers" v-model="sub.userId" class="bg-white" v-on:change="updateSubtask(sub, {field: 'userId', value: sub.userId, name: 'User'})"></bib-select> -->
-              <user-select :userId="sub.userId" mode="avatar"></user-select>
+              <user-select-two :userId="sub.userId" ></user-select-two>
             </td>
           </tr>
           <tr v-if="newSubtask" class="new" id="sbs-tr-2">
