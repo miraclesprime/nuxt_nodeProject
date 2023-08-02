@@ -280,8 +280,8 @@ export default {
       this.$nextTick(() => {
         this.localData=[]
         this.lastDisplayedIndex={ groupIdx: -1, curIdxInGroup: -1}
-        this.eventFunc()
-     
+        this.allDataDisplayed=false
+        window.addEventListener('scroll', this.handleScroll);
         this.showData();
       });
     },
@@ -353,9 +353,7 @@ export default {
   },
 
   methods: {
-    eventFunc() {
-      window.addEventListener('scroll', this.handleScroll);
-    },
+
 
     handleScroll(event) {
       if (this.allDataDisplayed) {
