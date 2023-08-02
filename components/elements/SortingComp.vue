@@ -12,45 +12,15 @@
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex';
 export default {
 
   name: 'SortingComp',
-  computed: {
-    ...mapGetters({
-      filterViews :'task/getFilterView'
-    }),
-    selectedView() {
-      if(this.filterViews=="incomplete"){
-        return 'Incompleted'
-      }
-      if(this.filterViews=="complete"){
-        return 'Completed'
-      }
-      if(this.filterViews=="all"){
-        return 'All'
-      }
-  },
-  },
-  watch: {
-    selectedView(newValue){
-      if(newValue=="incomplete"){
-        return 'Incompleted'
-      }
-      if(newValue=="complete"){
-        return 'Completed'
-      }
-      if(newValue=="all"){
-        return 'All'
-      }
-    }
-  },
+
   data() {
     return {
-      // selectedView:  ''
+      selectedView: ""
     }
   },
-
   props: {
     label: { type: String, },
     items: { type: Array, required: true },
@@ -65,7 +35,7 @@ export default {
   methods: {
     changeViewName(item) {
       // console.log(item)
-      // this.selectedView = item.label
+      this.selectedView = item.label;
       this.$emit("change-sort", item.key)
     }
   }

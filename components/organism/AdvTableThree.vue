@@ -1,10 +1,10 @@
 <template>
-  <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll"  >
+  <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll">
 
-      <div :id="'advTableTwo-'+componentKey" class=" adv-table  bg-white" :style="{'width': tableWidth}" >
+      <div :id="'advTableTwo-'+componentKey" class=" adv-table  bg-white" :style="{'width': tableWidth}"  >
 
-        <draggable v-model="localData" id="mainDraggable" class="section-draggable-wrapper sortable-list position-relative" @end="$emit('section-dragend', localData)" >
-          <div class="table resizable w-100 position-sticky" ref="headrow" style="top: 0; z-index:2;" >
+        <draggable v-model="localData" id="mainDraggable" class="section-draggable-wrapper sortable-list position-relative" @end="$emit('section-dragend', localData)">
+          <div class="table resizable w-100 position-sticky" ref="headrow" style="top: 0; z-index:2;">
             <div class="tr " role="row" >
               <div v-show="drag" class="width-2 th" role="cell" ></div>
               <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{width: field.width}" :ref="'th'+field.key" :data-key="field.key" >
@@ -32,8 +32,7 @@
               </div>
             </template>
           </div>
-          <section v-for="(section, index) in localData" class="resizable w-100"  @wheel="handleScroll"  >
-
+          <section v-for="(section, index) in localData" class="resizable w-100">
             <div class="thead">
               
               <div class="tr hidden" role="row" >
@@ -255,13 +254,8 @@ export default {
       // highlight: false,
       validTitle: false,
       localData: [],
-      newValue: [],
       localNewrow: {},
       akey: 0,
-      itemsPerPage: 20,
-      allDataDisplayed: false,
-      lastDisplayedIndex:{ groupIdx: -1, curIdxInGroup: -1},
-      dataDisplayed: false, 
     }
   },
   
@@ -272,24 +266,9 @@ export default {
       this.localNewrow = newValue
 
     },
-    tableData: {
-    immediate: true, // Execute the watcher immediately on component mount
-    deep: true, // Watch for changes in nested properties of tableData
-    handler(newValue) {
-      this.newValue=_.cloneDeep(newValue)
-      this.$nextTick(() => {
-        this.localData=[]
-        this.lastDisplayedIndex={ groupIdx: -1, curIdxInGroup: -1}
-        this.allDataDisplayed=false
-        window.addEventListener('scroll', this.handleScroll);
-        this.showData();
-      });
+    tableData(newValue){
+      this.localData = _.cloneDeep(newValue)
     },
-  },
-    // tableData(newValue){
-    //   this.newValue = _.cloneDeep(newValue)
-      
-    // },
     showNewsection(newValue){
       process.nextTick(() => {
         if(newValue){
@@ -344,103 +323,13 @@ export default {
   },
 
   mounted() {
-  //   this.$nextTick(() => {
-  //   window.addEventListener('scroll', this.handleScroll);
-  //   this.showData();
+    // const sub = document.getElementById("sub-panel")
+    this.localData = _.cloneDeep(this.tableData)
+    this.resizableColumns()
 
-  // });
-  this.resizableColumns()
   },
 
   methods: {
-
-
-    handleScroll(event) {
-      if (this.allDataDisplayed) {
-        return; // Stop adding data if all data has been displayed
-      }
-      const tableContainer = event.target;
-      const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight >= tableContainer.scrollHeight;
-
-      if (isAtBottom) {
-          this.showData();
-          }
-
-    },
-  //   scrollToLastSection() {
-  //   // Scroll to the last added section if it exists
-  //   const sections = document.querySelectorAll('.mouseScroll');
-  //   const lastSection = sections[sections.length - 1];
-  //   if (lastSection) {
-  //     lastSection.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  //   }
-  // },
-
-    showData() {
-      let allTasks = this.newValue.length > 0 ? [...this.newValue] : [...this.tableData];
-      allTasks =allTasks.map((item) => {
-                  item.dataCount = item.tasks?.length||0;
-                  return item;
-                });
-
-  let remainingCount = this.itemsPerPage;
-    let start = this.lastDisplayedIndex.curIdxInGroup;
-      let i;
-      for (i = start === -1 ? this.lastDisplayedIndex.groupIdx + 1 : this.lastDisplayedIndex.groupIdx; i < allTasks.length; ++ i) {
-        if (start === -1) {
-          if (remainingCount < allTasks[i].dataCount - start - 1) {
-            
-            this.localData.push({});
-            for (const [key, value] of Object.entries(allTasks[i])) {
-              if (key !== 'tasks') { 
-                this.localData[i][key] = value; 
-              }
-            }
-            this.localData[i].tasks = allTasks[i].tasks.slice(start + 1, start + remainingCount + 1);
-            start += remainingCount;
-            remainingCount = 0;
-          } else {
-            this.localData.push(allTasks[i])
-            remainingCount -= allTasks[i].dataCount;
-            start = -1;
-          }
-        }
-        else {
-          let tmp = {};
-          if (start + remainingCount + 1 < allTasks[i].dataCount) {
-            Object.assign(tmp, this.localData[i])
-          
-            tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, start + remainingCount + 1))
-            this.localData.length -= 1;
-            this.localData.push(tmp)
-            start += remainingCount;
-            remainingCount = 0;
-          } else {
-            Object.assign(tmp, this.localData[i])
-            tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, allTasks[i].dataCount))
-            this.localData.length -= 1;
-            this.localData.push(tmp)
-            remainingCount -= (allTasks[i].dataCount - start - 1);
-            start = -1;
-          }
-        }
-        if (remainingCount == 0) break;
-
-      }
-      // this.scrollToLastSection();
-      if (i >= allTasks.length - 1 && start === -1) 
-      {
-        this.allDataDisplayed = true;
-        this.lastDisplayedIndex.groupIdx = -1;
-        this.lastDisplayedIndex.curIdxInGroup = -1;
-        return 
-      }
-
-      this.lastDisplayedIndex.groupIdx = i;
-      this.lastDisplayedIndex.curIdxInGroup = start;
-    },
-    
-
     parseDate(dateString, format) {
         return new Date(dateString)
     },
@@ -448,7 +337,7 @@ export default {
         return dayjs(dateObj).format(format);
     },
     startdateValid(date, duedate){
-      // console.log(...arguments)
+      console.log(...arguments)
       const maxDate = new Date(duedate)
       return date < maxDate
       /*if (date) {

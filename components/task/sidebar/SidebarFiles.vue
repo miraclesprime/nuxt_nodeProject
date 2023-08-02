@@ -300,16 +300,15 @@ export default {
 
       console.log(file.type, file.url)
       if ((file.type.indexOf("image/") == 0 || file.type.indexOf("/pdf") > 1) && file.url) {
-        // this.previewModal = true;
+        this.previewModal = true;
         console.log('preview available')
       } else {
         console.log('file will be downloaded')
-        // this.downloadFile(file);
+        this.downloadFile(file);
+        return
       }
 
-      return
-
-      if (file.type.indexOf("image/") && "url" in file) {
+      if (file.type.indexOf("image/") == 0 && "url" in file) {
         let imgtype = file.type.split("/")[1];
         const prev = await this.$axios.get("file/single/" + file.key, {
           headers: {
@@ -319,7 +318,8 @@ export default {
         });
         this.imgPreview = `data:image/${imgtype};base64,${prev.data.data}`;
         this.pdfPreview = "";
-      } else if (file.type.indexOf("/pdf") && "url" in file) {
+      } 
+      if (file.type.indexOf("/pdf") > 1 && "url" in file) {
         const prev = await this.$axios.get("file/single/" + file.key, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -328,10 +328,7 @@ export default {
         });
         this.pdfPreview = `data:application/pdf;base64,${prev.data.data}`;
         this.imgPreview = "";
-      } else {
-        this.downloadFile(file);
-        this.previewModal = false;
-      }
+      } 
     },
 
     closePreviewModal() {

@@ -1,8 +1,7 @@
 <template>
   <client-only>
     <div id="page" class="task-page-wrapper">
-      <page-title title="Tasks"></page-title>
-      <!-- <page-title title="Tasks" :count="tasksCount"></page-title> -->
+      <page-title title="Tasks" :count="tasksCount"></page-title>
       <company-tasks-actions
         :gridType="gridType"
         v-on:filterView="filterView"
@@ -15,16 +14,16 @@
       <div id="task-table-wrapper" class="task-table-wrapper position-relative overflow-y-auto" :class="{ 'bg-light': gridType != 'list' }" :style="{ 'width': contentWidth }">
 
           <div v-if="gridType === 'list'" class="h-100">
-            <template v-if="!showPlaceholder">
-              <!-- <drag-table :key="key" :componentKey="key" :fields="taskFields" :sections="localData" :titleIcon="{icon:'check-circle-solid', event:'task-icon-click'}" v-on:new-task="toggleSidebar($event)" @table-sort="sortBy" @row-click="openSidebar" @edit-field="updateTask" @user-picker="showUserPicker" @date-picker="showDatePicker" :newRow="newRow" @create-newrow="createNewTask" @hide-newrow="resetNewRow" @section-dragend="sectionDragEnd" @task-dragend="taskDragEnd" ></drag-table> -->
+            <!-- <template v-if="!showPlaceholder"> -->
+              
               <adv-table-three :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable" :key="templateKey" :editSection="group" :lazyComponent="lazyComponent"></adv-table-three>
-            </template>
+            <!-- </template> -->
             <!-- <div v-show="localData.length == 0">
               <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 shape-rounded py-05 px-1">
                 <bib-icon icon="warning"></bib-icon> No records found
               </span>
             </div> -->
-            <template v-if="showPlaceholder">
+            <!-- <template v-if="showPlaceholder">
               <div class="placeholder mt-05 mx-1 pt-05 pb-025 d-flex align-center gap-1" >
                 <div class="d-flex align-center gap-05" >
                   <div class="shape-circle width-1 height-1 animated-background" ></div>
@@ -79,7 +78,7 @@
                   <div class="animated-background height-1" style="width: 26rem;"></div>
                 </div>
               </div>
-            </template>
+            </template> -->
           </div>
         
           <div v-if="gridType == 'grid'" class="h-100">
@@ -203,10 +202,7 @@ export default {
       contentWidth: "100%",
       dragTable: true,
       showPlaceholder: false,
-      // tasksCount: 0,
-      // itemsPerPage: 10, // Number of items to display initially
-      // displayedData:[]
-
+      tasksCount: 0,
     };
   },
   computed: {
@@ -217,24 +213,21 @@ export default {
       // currentTask: "task/getSelectedTask",
       teamMembers: "user/getTeamMembers",
       // sName: "company/getSortName",
-      filterViews :'task/getFilterView',
       // sOrder: "company/getSortOrder",
       sidebar: "task/getSidebarVisible",
     }),
+  
   },
 
   watch: {
-    filterViews(newValue){
-         return _.cloneDeep(newValue)
-    },
     tasks(newVal) {
       let data = _.cloneDeep(newVal);
       this.localData = data
-      // newVal.map(s => {
-      //   s.tasks.forEach(t => {
-      //     this.tasksCount += 1
-      //   })
-      // })
+      newVal.map(s => {
+        s.tasks.forEach(t => {
+          this.tasksCount += 1
+        })
+      })
     },
     gridType() {
       this.key++;
@@ -253,22 +246,16 @@ export default {
     }
   },
 
-  async asyncData({$axios, app,store}){
+  async asyncData({$axios, app}){
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
-
-    const filter=store.getters['task/getFilterView']
-
     const res = await $axios.get(`company/tasks/all`, {
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Filter': filter
+        'Filter': 'all'
       }
     })
 
-    store.dispatch('company/setCompanyTasks', res.data.data)
-
-    return { localData: res.data.data}
-
+    return { localData: res.data.data }
   },
 
   created() {
@@ -304,15 +291,15 @@ export default {
     }
 
     setTimeout(() => {
-
-      this.$store.dispatch("company/fetchInitialCompanyTasks",{filter:'all'})
-      this.updateKey()
+      this.$store.dispatch("company/setCompanyTasks",{data:this.localData})
       this.lazyComponent = true
     }, 10)
   }
   
   },
+
   methods: {
+    
 
     showUserPicker(payload) {
       this.closeAllPickers();
@@ -365,8 +352,7 @@ export default {
       this.$store
         .dispatch("company/fetchCompanyTasks", {
           companyId: compid,
-          filter:this.filterViews,
-          sName:this.group
+          // sName:this.group
         })
         .then(() => {
           this.key += 1;
@@ -443,8 +429,8 @@ export default {
         user = null;
       }
  
-      if (payload.item.project || payload.item.project?.length > 0) {
-        projectId = payload.item.project[0].projectId || payload.item.project[0].project.id;
+      if (payload.item.project && payload.item.project?.length > 0) {
+        projectId = payload.item.project[0].project.id || payload.item.project[0].project.id;
       } else {
         projectId = null;
       }
@@ -462,10 +448,7 @@ export default {
     
       if(payload.field == "dueDate" && payload.item.startDate){
         // console.log(payload.field, value)
-        if(payload.value=="Invalid Date"){
-          data = { [payload.field]: null }
-        }else {
-          if(new Date(payload.value).getTime() > new Date(payload.item.startDate).getTime()){
+        if(new Date(payload.value).getTime() > new Date(payload.item.startDate).getTime()){
           data = { [payload.field]: payload.value }
         } else{
           data = { [payload.field]: null }
@@ -474,25 +457,18 @@ export default {
           this.updateKey()
           return false
         }
-        }
-  
       }
       if(payload.field == "startDate" && payload.item.dueDate){
         // console.log(payload.field, payload.value)
-        if(payload.value=="Invalid Date"){
+        if(new Date(payload.value).getTime() < new Date(payload.item.dueDate).getTime()){
+          data = { [payload.field]: payload.value }
+        } else {
           data = { [payload.field]: null }
-        }else {
-            if(new Date(payload.value).getTime() < new Date(payload.item.dueDate).getTime()){
-            data = { [payload.field]: payload.value }
-          } else {
-            data = { [payload.field]: null }
-            this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-            // this.templateKey+=1;
-            this.updateKey()
-            return false
-          }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          // this.templateKey+=1;
+          this.updateKey()
+          return false
         }
-    
       }
       
       // console.log(data, user, projectId)
@@ -646,7 +622,6 @@ export default {
     },
 
     async filterView($event) {
-      this.$store.commit('task/setFilterView', {filter:$event})
       this.$store.commit("company/getFilterTasks",{filter:$event, groupBy:this.group})
       // if ($event == "complete") {
       //   let viewData = await JSON.parse(JSON.stringify(this.tasks));

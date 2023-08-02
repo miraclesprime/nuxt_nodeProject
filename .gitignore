@@ -100,7 +100,6 @@ server/
 
 
 .scannerwork
-.vscode/
 sonar-project.properties
 
 # dotenv environment variables file
