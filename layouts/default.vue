@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <div id="layout-wrapper">
+    <div id="layout-wrapper" v-if="expandVisible">
       <bib-app-wrapper
         class="test"
         :navigationCollapsed="collapseNavigation"
@@ -142,6 +142,9 @@
       <create-project-modal ref="projectModals"></create-project-modal>
       <add-teammember-modal ref="teammemberModal"></add-teammember-modal>
       <add-member-to-task ref="taskTeamModal"></add-member-to-task>
+    </div>
+    <div v-else class="expand">
+      <task-sidebar-two :expandVisible="expandVisible" ></task-sidebar-two>
     </div>
   </client-only>
 </template>
@@ -508,6 +511,7 @@ export default {
       // teammate: "user/getTeamMembers",
       appMembers: "user/getAppMembers",
       user2: "user/getUser2",
+      expandVisible:"task/getExpandVisible",
       sidebar: "task/getSidebarVisible",
     }),
   },
@@ -650,7 +654,18 @@ html {
     line-height: 1.8rem;
   }
 }
+.expand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: black;
+  width:100%;
+  height:100vh;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 16px;
 
+}
 .app-wrapper {
   &__navigation {
     position: relative;
