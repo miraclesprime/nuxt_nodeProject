@@ -1,55 +1,63 @@
 <template>
-  <section id="subtask-detail-wrapper" class="position-absolute subtask-detail-wrapper bg-white">
-    <div class="d-flex align-center gap-05 px-105 py-075" id="subtask-detail-icons-wrapper">
-      <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="subtask-detail-page-last-icon" title="Close" @click="closeSidebarDetail">
-        <bib-icon icon="page-last" class="m-auto"></bib-icon>
+  <section id="sd-wrapper" class="position-absolute subtask-detail-wrapper bg-white">
+    <!-- top row -->
+    <div class="d-flex align-center justify-between pt-105 px-105 pb-05" id="sd-toolbar-wrapper">
+      <div class="" id="sd-mark-button-wrapper">
+         <bib-button :label="isComplete.text" :variant="isComplete.variant" icon="check-circle-solid" @click="markComplete"></bib-button>
       </div>
-      <span v-show="showTaskTitle" id="subtask-detail-goToParent" class="text-underline cursor-pointer" @click="gotoParent">{{form?.task?.title}}</span>
-      <div class="ml-auto d-flex align-center gap-05"  id="subtask-detail-icons-inner-wrap">
-          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="std-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
-            <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" ></bib-icon>
-          </div>
-          <div class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="std-icons">
-            <bib-button dropdown="horizontal-dots">
-              <template v-slot:menu>
-                <div class="list" id="std-list">
-                  <span class="list__item" id="std-list-item-1" @click="markComplete">
-                    <bib-icon icon="check-circle-solid" :variant="isComplete.variant" class="mr-075"></bib-icon> {{isComplete.text}}
-                  </span>
-                  <span class="list__item" id="std-list-item-2" @click="setFavorite">
-                    <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
-                  </span>
-                  
-                  <hr>
-                  <span class="list__item list__item__danger" id="std-list-item-8" @click="$nuxt.$emit('delete-subtask', subtask)">Delete</span>
-                </div>
-              </template>
-            </bib-button>
-          </div>
-      </div>
-    </div>
-    <div class="border-top-gray3 border-bottom-gray3 position-relative px-105 py-025 mb-1" id="std-fields-wrap">
-      <div class="d-flex align-center gap-05" id="std-fields-inner-wrap">
-        <div class="width-2 height-2 d-inline-flex align-center justify-center cursor-pointer" id="std-markcomplete" @click="markComplete">
-          <bib-icon icon="check-circle-solid" :variant="isComplete.variant" :scale="1.5"></bib-icon>
+      <!-- <span v-show="showTaskTitle" id="sd-goToParent" class="text-underline cursor-pointer" @click="gotoParent">{{form?.task?.title}}</span> -->
+      <div class="d-flex gap-05 align-center" id="sd-icons-wrapper">
+        <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="std-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
+          <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" ></bib-icon>
         </div>
-        <div class="flex-grow-1" id="std-title-editable">
-          <input type="text"  id="std-title-editable-input" class="editable-input" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" v-model="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdateField({field: 'title', value: form.title, name: 'Title'})">
+        <div class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="std-icons">
+          <bib-button pop="elipsis" >
+            <template v-slot:menu>
+              <div class="list" id="std-list">
+                <span class="list__item" id="std-list-item-1" @click="markComplete">
+                  <bib-icon icon="check-circle-solid" :variant="isComplete.variant" class="mr-075"></bib-icon> {{isComplete.text}}
+                </span>
+                <span class="list__item" id="std-list-item-2" @click="setFavorite">
+                  <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
+                </span>
+                
+                <hr>
+                <span class="list__item list__item__danger" id="std-list-item-8" @click="$nuxt.$emit('delete-subtask', subtask)">Delete</span>
+              </div>
+            </template>
+          </bib-button>
         </div>
-        <div id="std-team-avatar-list">
-          <team-avatar-list :team="team"></team-avatar-list>
-        </div>
-        <div id="std-show-add-team-modal" class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light cursor-pointer" v-tooltip="'Team'" @click="showAddTeamModal">
-          <bib-icon icon="user-group-solid"></bib-icon>
-        </div>
+        <div class="shape-circle bg-hover-light width-2 height-2 d-flex cursor-pointer" id="sd-page-last-icon" title="Close" @click="closeSidebarDetail"><bib-icon icon="page-last" class="m-auto"></bib-icon></div>
       </div>
     </div>
+    
+    <!-- title input -->
+    <div class="border-bottom-gray3 position-relative px-105 pt-05 pb-105 mb-1" id="std-fields-wrap">
+      <input type="text" id="std-title-editable-input" class="editable-input" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" v-model="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdateField({field: 'title', value: form.title, name: 'Title'})">
+    </div>
+
     <!-- other fields -->
-    <div class="overflow-y-auto px-105" id="std-other-fields">
-      <div class="row" id="std-other-fields-row">
-        <div class="col-4" id="std-other-fields-col-1">
-          <bib-select label="Assignee" test_id="subtask_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="updateSubtask({field: 'userId', value: form.userId, name: 'User' })"></bib-select>
+    <div class="overflow-y-auto d-grid" id="std-other-fields" style="grid-template-columns: none; align-items: start">
+      <div class="border-bottom-gray3 px-105 py-05">
+        <div class="align-center gap-05" >
+          <span class="font-sm text-gray6" style="white-space: nowrap;">Assigned to</span> 
+          <div class="mr-1" style="flex-basis: 2rem;">
+            <user-select-two :userId="form.userId" mode="avatar" minWidth="15rem" maxWidth="18rem" @change="updateAssignee" ></user-select-two> 
+          </div>
+        
+          <div class="align-center height-2 cursor-pointer" >             
+            <user-select-two userId="" mode="icon" title="Add to team" min-width="15rem" max-width="18rem" @change="addTeamMember"></user-select-two>
+            <team-list-two :team="team" @delete-member="deleteMember"></team-list-two>
+          </div>
         </div>
+      </div>
+      <!-- <div id="std-team-avatar-list">
+        <team-avatar-list :team="team"></team-avatar-list>
+      </div> -->
+      <div class="row" id="std-other-fields-row">
+        <!-- <div class="col-4" id="std-other-fields-col-1">
+          <bib-select label="Assignee" test_id="subtask_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="updateSubtask({field: 'userId', value: form.userId, name: 'User' })"></bib-select>
+        </div> -->
         <div class="col-4" id="std-other-fields-col-2">
           <bib-datepicker v-model="startDateInput" :value="startDateInput" format="dd MMM yyyy"  ref="startDate" label="Start date" placeholder="Start date" @input="updateSubtask({name: 'Start date', field: 'startDate', value: form.startDate})"></bib-datepicker>
         </div>
@@ -112,16 +120,11 @@
       </template>
     </bib-modal-wrapper>
     <bib-popup-notification-wrapper>
-          <template #wrapper>
-            <bib-popup-notification
-              v-for="(msg, index) in popupMessages"
-              :key="index"
-              :message="msg.text"
-              :variant="msg.variant"
-            >
-            </bib-popup-notification>
-          </template>
-        </bib-popup-notification-wrapper>
+      <template #wrapper>
+        <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" :autohide="4000">
+        </bib-popup-notification>
+      </template>
+    </bib-popup-notification-wrapper>
   </section>
 </template>
 
@@ -185,17 +188,17 @@ export default {
       if (this.form.isDone) {
         return { variant: "success", text: "Completed" }
       } else {
-        return { variant: "gray5", text: "Mark Completed" }
+        return { variant: "light", text: "Mark Completed" }
       }
     },
 
-    assignee() {
+    /*assignee() {
       if (this.teamMembers.length > 0 && this.form.userId) {
         return this.teamMembers.find((m) => m.id == this.form.userId)
       } else {
         return { Name: "no user found" }
       }
-    },
+    },*/
     startDateInput: {
       get() {
         if (!this.form.startDate) {
@@ -328,9 +331,9 @@ export default {
       fetchSubtaskHistory: "subtask/fetchSubtaskHistory",
     }),
 
-    showAddTeamModal() {
+    /*showAddTeamModal() {
       this.taskTeamModal = true
-    },
+    },*/
     fetchComments() {
       this.loadingComments = true
       this.$store.dispatch("subtask/fetchSubtaskComments", this.subtask)
@@ -379,6 +382,43 @@ export default {
       }
     },
 
+    async updateAssignee(userData){
+      // console.log(userData)
+
+      const sub = await this.$store.dispatch("subtask/updateSubtask", {
+        id: this.form.id,
+        data: { userId: userData.id },
+        user: [userData],
+        text: `changed Assignee to ${userData.label}`
+      })
+      // console.log(sub)
+      if (sub.statusCode == 200) {
+        this.$store.dispatch("subtask/setSelectedSubtask", sub.data)
+        this.$store.dispatch('subtask/fetchSubTask', sub.data).then((res) => {
+          this.form = res;
+        })
+        this.$store.dispatch("subtask/fetchSubtaskHistory", this.subtask)
+      } else {
+        console.warn(sub.statusCode, sub.message)
+        this.popupMessages.push({text: sub.message, variant: "danger"})
+      }
+    },
+
+    addTeamMember(member){
+      console.log(member)
+      this.$store.dispatch("subtask/addMembers", {
+        id: this.form.id,
+        team: [member],
+        text: `added ${member.label} to subtask`
+      })
+        .then(() => {
+          this.$store.dispatch("subtask/fetchSubtaskMembers", { id: this.form.id, userId: this.form.userId })
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
     async updateSubtask(data) {
         let updata = {[data.field]: data.value}
         let userobj = {}
@@ -423,20 +463,29 @@ export default {
           histvalue = dayjs(data.value).format('DD MMM YYYY')
         }
         if (data.name == 'User') {
-            userobj = this.$userInfo(data.value)
-            let user = { id: userobj.Id, email: userobj.Email, firstName: userobj.FirstName, lastName: userobj.LastName }
-            sub = await this.$store.dispatch("subtask/updateSubtask", { id: this.form.id, data: updata, user, text: `updated ${data.name} to ${userobj.Name}` })
+          userobj = this.$userInfo(data.value)
+          let user = { id: userobj.Id, email: userobj.Email, firstName: userobj.FirstName, lastName: userobj.LastName }
+          sub = await this.$store.dispatch("subtask/updateSubtask", {
+            id: this.form.id,
+            data: updata,
+            user,
+            text: `updated ${data.name} to ${userobj.Name}`
+          })
         } else {
-            sub = await this.$store.dispatch("subtask/updateSubtask", { id: this.form.id, data: updata, text: `updated ${data.name} to ${histvalue}` })
+          sub = await this.$store.dispatch("subtask/updateSubtask", {
+            id: this.form.id,
+            data: updata,
+            text: `updated ${data.name} to ${histvalue}`
+          })
         }
         if (sub.statusCode == 200) {
-            this.$store.dispatch("subtask/setSelectedSubtask", sub.data)
-            this.$store.dispatch('subtask/fetchSubTask', sub.data).then((res) => {
-              this.form = res;
-            })
-            this.$store.dispatch("subtask/fetchSubtaskHistory", this.subtask)
+          this.$store.dispatch("subtask/setSelectedSubtask", sub.data)
+          this.$store.dispatch('subtask/fetchSubTask', sub.data).then((res) => {
+            this.form = res;
+          })
+          this.$store.dispatch("subtask/fetchSubtaskHistory", this.subtask)
         } else {
-            console.warn("error")
+          console.warn("error")
         }
     },
     closeSidebarDetail() {
@@ -506,5 +555,7 @@ export default {
   display: grid;
   grid-template-rows: 1fr 1fr minmax(60vh, 100%) 1fr;
 }
+.editable-input { border-color: var(--bib-light)}
+
 
 </style>
