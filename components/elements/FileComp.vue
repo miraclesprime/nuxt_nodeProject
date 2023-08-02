@@ -3,7 +3,7 @@
     <div id="file-comp-pn-ps" class="d-flex gap-05 align-center height-2" >
       <bib-icon :scale="1" :icon="icon" variant="gray4"></bib-icon>
       <span id="file-comp-pn" class="file-text font-md text-truncate cursor-pointer" v-tooltip="`${property.name} (${$formatBytes(property.size)})`" @click.stop="previewFile(property)">{{property.name}} </span>
-      <span class="d-inline-flex align-center justify-center height-1 width-1 shape-circle cursor-pointer bg-white" @click.stop="deleteFile"><bib-icon icon="close-circle-solid" :scale="1" variant="gray4" ></bib-icon></span>
+      <span v-if="cdtf" class="d-inline-flex align-center justify-center height-1 width-1 shape-circle cursor-pointer bg-white" @click.stop="deleteFile"><bib-icon icon="close-circle-solid" :scale="1" variant="gray4" ></bib-icon></span>
       <!-- <div id="file-comp-elipsis-icon" class="width-2 height-2 bg-light shape-circle d-flex align-center justify-center">
         <bib-popup pop="elipsis" icon-variant="gray5" icon-hover-variant="gray6">
           <template v-slot:menu>
@@ -170,7 +170,7 @@ export default {
 .file-wrap {}
 
 .file-text {
-  max-width: 16.875rem;
+  max-width: 16rem;
 }
 
 table {

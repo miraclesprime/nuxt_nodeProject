@@ -236,13 +236,13 @@ export default {
       const newStartDate = new Date(newValue);
       this.form.startDate = newValue;
 
-      // console.log(newValue, newStartDate, oldValue, this.form.dueDate)
+      // console.table({"newvalue":newValue, "newstartdate":newStartDate, "oldvalue":oldValue, "sdate":this.sdate})
 
       if (newValue == "") {
         this.$emit("update-field", {
           name: 'Start date',
           field: 'startDate',
-          value: newValue,
+          value: null,
           historyText: "removed Start date"
         })
         return
@@ -252,6 +252,7 @@ export default {
         if (newStartDate.getTime() > new Date(this.form.dueDate).getTime()) {
           this.popupMessages.push({ text: "Invalid date", variant: "danger" });
           this.form.startDate = oldValue
+          this.sdate = oldValue
           // return
         } else {
           this.$emit("update-field", {
@@ -272,18 +273,18 @@ export default {
 
     },
 
-    duedateProcess(newValue){
+    duedateProcess(newValue, repeat){
       const oldValue = this.form.dueDate
       const newDueDate = new Date(newValue);
       this.form.dueDate = newValue;
 
-      // console.log(newValue, newDueDate, oldValue, "startdate != null", this.form.startDate != null)
+      // console.table({"newvalue": newValue, "newduedate":newDueDate, "oldvalue":oldValue, "ddate":this.ddate})
 
       if (newValue == "") {
         this.$emit("update-field", {
           name: "Due date",
           field: "dueDate",
-          value: newValue,
+          value: null,
           historyText: "removed Due date"
         })
         return
@@ -294,6 +295,7 @@ export default {
         if (newDueDate.getTime() < new Date(this.form.startDate).getTime()) {
           this.popupMessages.push({ text: "Invalid date", variant: "danger" });
           this.form.dueDate = oldValue
+          this.ddate = oldValue
           // return
         } else {
           this.$emit("update-field", {
