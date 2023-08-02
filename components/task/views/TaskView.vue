@@ -950,30 +950,30 @@ export default {
       if(field == "dueDate" && item.startDate){
         if(value=="Invalid Date"){
           data = { [field]: null }
-        }else {
+        } else {
           if(new Date(value).getTime() > new Date(item.startDate).getTime()){
-          data = { [field]: value }
-        } else{
-          data = { [field]: null }
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          this.updateKey()
-          return false
-        }
+            data = { [field]: value }
+          } else {
+            data = { [field]: null }
+            this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+            this.updateKey()
+            return false
+          }
         }
         
       }
       if(field == "startDate" && item.dueDate){
         if(value=="Invalid Date"){
           data = { [field]: null }
-        }else {
-          if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
-          data = { [field]: value }
         } else {
-          data = { [field]: null }
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          this.updateKey()
-          return false
-        }
+          if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
+            data = { [field]: value }
+          } else {
+            data = { [field]: null }
+            this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+            this.updateKey()
+            return false
+          }
         }
      
       }
@@ -982,9 +982,7 @@ export default {
           id: payload.id,
           data: data,
           user: user,
-          text: `${
-            historyText || value
-          }`,
+          text: `${historyText || value}`,
         })
         .then((t) => {
           this.updateKey();

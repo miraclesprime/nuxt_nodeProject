@@ -203,6 +203,7 @@ export default {
 
   async asyncData({$axios, app}) {
     // console.log(req.headers.cookie)
+
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
     // const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4OTg1MDM0ODYxMCwiZXhwIjoxNjk3NjI2MzQ4NjEwLCJqdGkiOiIxYWI4MDVlMC0zYTkyLTQxNDMtYmMyOC0zNGM2ZmRhZGFkZDgifQ.5-G-YJ16WfrZBp5VhK_p2-qULAP9jpF5ZOqsQ7Phs_0"
 
@@ -217,15 +218,12 @@ export default {
       
     })*/
 
-    // console.log(token)
     const response = await $axios.get('/todo/all', {
       headers: {
         Authorization: `Bearer ${token}`,
         Filter: 'all'
       },
     });
-
-    // console.log(response.data)
 
     return { localdata: response.data.data }
     
