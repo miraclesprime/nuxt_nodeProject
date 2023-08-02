@@ -55,29 +55,17 @@ export default {
 
   props: {
     tags: { type: Array, default: function() { return [] }},
-    // reloadTags: { type: Number },
-    // taskId: { type: [Number, String] },
-    // subtaskId: { type: [Number, String] },
   },
 
   data() {
     return {
       show: false,
-      /*tags: [
-        { id: 1, text: "high_priority", orgId: "sf2346werlds" },
-        { id: 5, text: "high_p", orgId: "sf2346werlds" },
-        { id: 8, text: "imp", orgId: "sf2346werlds" },
-      ],*/
       filterKey: "",
       popupMessages: [],
     }
   },
-  watch: {
-    // reloadTags(newValue, oldValue) {}
-  },
   computed: {
     ...mapGetters({
-      // sidebarOpen: 'task/getSidebarVisible',
       alltags: "company/getCompanyTags",
     }),
     filtered() {
@@ -92,11 +80,6 @@ export default {
         return []
       }
     },
-    /*tags(){
-      if (this.sidebarOpen) {
-        return this.getTags()
-      }
-    },*/
   },
   mounted(){
     this.fetchalltags()
@@ -116,7 +99,6 @@ export default {
     },
     selected(tag) {
       let tagExist = this.tags.find(t => t.id == tag.id)
-      // console.log(tagExist?"true":"false")
       if (tagExist) {
         this.popupMessages.push({text: "tag already exists", variant: "orange"})
       } else {
@@ -125,7 +107,6 @@ export default {
       }
     },
     deleteTag(tag) {
-      // console.log('delete tag')
       this.$emit("delete-tag", tag)
     },
     onClickOutside() {

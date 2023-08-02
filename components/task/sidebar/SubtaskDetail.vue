@@ -74,6 +74,9 @@
           <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter subtask description..." label="Description" v-on:keyup.native="debounceUpdateField({field: 'description', value: form.description, name: 'Description'})"></bib-input>
         </div>
       </div>
+
+      <sidebar-tag :tags="tags" @add-tag="addTag" @change="addTag" @delete-tag="removeTag" ></sidebar-tag>
+
       <div class="py-05 " id="std-conv-wrap">
         <div class="d-flex justify-between sub-title pb-05 mb-05 border-bottom-gray2 " id="std-conv-heading">
           <p class="text-gray5 font-md " id="std-conv-para-text">Conversation </p>
@@ -151,6 +154,7 @@ export default {
       reloadFiles: 0,
       taskTeamModal: false,
       popupMessages: [],
+      tags: []
     }
   },
   computed: {
@@ -163,6 +167,7 @@ export default {
       subtaskHistory: "subtask/getSubtaskHistory",
       teamMembers: "user/getTeamMembers",
       departments: "department/getAllDepartments",
+      alltags: "company/getCompanyTags",
     }),
 
     orgUsers() {
@@ -295,6 +300,7 @@ export default {
         this.fetchSubtaskMembers(this.subtask)
         this.fetchSubtaskComments(this.subtask)
         this.fetchSubtaskHistory(this.subtask)
+        this.getTags()
       }
     }
   },
@@ -495,6 +501,80 @@ export default {
         console.warn(del.message)
       }
     },
+
+    async getTags(){
+      if (this.form.id) {
+        const tags = await this.$axios.get("/tag/subtask/"+this.form.id, {
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+          }
+        })
+        // console.log(tags.data)
+        if (tags.data.statusCode == 200) {
+          this.tags = tags.data.data.map(t => t.tag)
+        }
+      }
+    },
+
+    addTag(tag){
+      if (tag.id) {
+        // console.log('existing tag->', tag.id, tag.content)
+        this.$axios.post("/tag/assign-to-subtask",  { tagId: tag.id, subTaskId: this.form.id }, {
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+          }
+        })
+        .then(res => {
+          // console.log(res)
+          this.getTags()
+          this.$nuxt.$emit("update-key")
+        })
+        .catch(e => console.error(e))
+      } else {
+        // console.log('new tag->', tag)
+        let tagExist = this.alltags.find(t => t.content == tag)
+        if (tagExist) {
+          // console.log('tag already exists', tag)
+          this.popupMessages.push({text: "tag already exists", variant: "orange"})
+          return
+        } else {
+          this.$store.dispatch("company/addCompanyTag", {content: tag})
+          .then((res)=>{
+            // console.log(res.data)
+            if (res.data.statusCode == 200) {
+              this.$store.dispatch("company/fetchCompanyTags")
+              this.$axios.post("/tag/assign-to-subtask",  { tagId: res.data.data.id, subTaskId: this.form.id }, {
+                headers: {
+                  "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+                }
+              }).then((res) => {
+                // console.log(res)
+                this.getTags()
+                this.$nuxt.$emit("update-key")
+              }).catch(e=>console.error(e))
+            } else {
+              console.warn("error creating tag")
+            }
+          })
+          .catch(e=>console.error(e))
+        }
+      }
+    },
+    
+    removeTag(tag){
+      // console.log(tag)
+      this.$axios.delete("/tag/remove-from-subtask", {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+          "tagid": tag.id,
+          "subtaskid": this.form.id,
+        }
+      }).then(res => {
+        console.log(res.data.message)
+        this.getTags()
+        this.$nuxt.$emit("update-key")
+      }).catch(e => console.warn(e))
+    }
   }
 }
 

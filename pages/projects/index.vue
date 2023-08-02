@@ -124,7 +124,6 @@ export default {
         'Filter': 'all'
       }
     })
-
       
     let newArr = [];
 
