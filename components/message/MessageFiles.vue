@@ -14,6 +14,7 @@
                 <span id="msg-file-list-item-2" class="list__item">Open</span>
                 <span id="msg-file-list-item-3" class="list__item" @click.stop="fileDetailModal = true">Detail</span>
                 <span id="msg-file-list-item-4" class="list__item" @click.stop="downloadFile">Download File</span>
+                <span id="msg-file-list-item-5" class="list__item list__item__danger" @click.stop="deleteFile(property)">Delete File</span>
               </div>
             </template>
           </bib-button>
@@ -54,6 +55,7 @@ export default {
   name: 'MessageFiles',
   props: {
     property: { type: Object },
+    project: { type: Object }
   },
 
   components: {
@@ -127,6 +129,35 @@ export default {
           }
         })
         .catch(e => console.error(e))
+    },
+
+    deleteFile(file) {
+      
+      if((file.owner == JSON.parse(localStorage.getItem('user')).sub ) || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
+        let del = window.confirm("Are you sure want to delete " + file.name + "?")
+        if (del) {
+          this.$axios.delete("file/" + file.key, {
+              headers: {
+                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+                'projectid': this.project.id,
+                'text': `file ${file.name} deleted`,
+                'isHidden': true,
+                'userid': file.owner
+              }
+            }).then(f => {
+              console.log(f.data)
+              if (f.data.statusCode == 200) {
+                alert(f.data.message);
+                // _.delay(() => {
+                //   this.getFiles()
+                // }, 2000);
+              }
+            })
+            .catch(e => console.error(e))
+        }
+      } else {
+        console.log("you don't have enough permission to delete this file")
+      }
     },
   }
 }

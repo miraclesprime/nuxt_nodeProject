@@ -55,7 +55,7 @@
                     <span class="list__item"  id="pf-file-list-item-3" @click.stop="openFileDetail(data.value)">Detail</span>
                     <span class="list__item"  id="pf-file-list-item-4" @click.stop="downloadFile(data.value)">Download File</span>
                     <hr>
-                    <span class="list__item list__item__danger"  id="pf-file-list-item-5" @click.stop="deleteFile(data.value)">Delete</span>
+                    <span v-if="data.value" class="list__item list__item__danger"  id="pf-file-list-item-5" @click.stop="deleteFile(data.value)">Delete</span>
                   </div>
                 </template>
               </bib-button>
@@ -65,7 +65,7 @@
       </template>
       <template v-if="displayType == 'grid'">
         <div class="files d-grid gap-1 py-1"  id="pf-file-message-files">
-          <message-files v-for="file in files" :property="file" :key="file.key" @file-click="showPreviewModal(file)" ></message-files>
+          <message-files v-for="file in files" :property="file" :project="project" :key="file.key" @file-click="showPreviewModal(file)" ></message-files>
         </div>
       </template>
       <loading :loading="loading"></loading>
@@ -289,26 +289,31 @@ export default {
         .catch(e => console.error(e))
     },
     deleteFile(file) {
-      let del = window.confirm("Are you sure want to delete " + file.name + "?")
-      if (del) {
-        this.$axios.delete("file/" + file.key, {
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-              'projectid': this.project.id || this.proj.id,
-              'text': `file ${file.name} deleted`,
-              'isHidden': true,
-              'userid': file.userId
-            }
-          }).then(f => {
-            console.log(f.data)
-            if (f.data.statusCode == 200) {
-              alert(f.data.message);
-              _.delay(() => {
-                this.getFiles()
-              }, 2000);
-            }
-          })
-          .catch(e => console.error(e))
+      
+      if((file.userId == JSON.parse(localStorage.getItem('user')).sub ) || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
+        let del = window.confirm("Are you sure want to delete " + file.name + "?")
+        if (del) {
+          this.$axios.delete("file/" + file.key, {
+              headers: {
+                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+                'projectid': this.project.id || this.proj.id,
+                'text': `file ${file.name} deleted`,
+                'isHidden': true,
+                'userid': file.userId
+              }
+            }).then(f => {
+              console.log(f.data)
+              if (f.data.statusCode == 200) {
+                alert(f.data.message);
+                _.delay(() => {
+                  this.getFiles()
+                }, 2000);
+              }
+            })
+            .catch(e => console.error(e))
+        }
+      } else {
+        console.log("you don't have enough permission to delete this file")
       }
     },
     openFileDetail(file) {

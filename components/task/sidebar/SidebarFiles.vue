@@ -270,6 +270,8 @@ export default {
 
     deleteFile(file) {
       let del = window.confirm("Are you sure want to delete?");
+
+      if((file.userId == JSON.parse(localStorage.getItem('user')).sub ) || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
       if (del) {
         this.$axios
           .delete("file/" + file.key, {
@@ -293,6 +295,9 @@ export default {
             }
           })
           .catch((e) => console.error(e));
+      }
+      } else {
+        console.log("you don't have enough permission to delete this file")
       }
     },
 

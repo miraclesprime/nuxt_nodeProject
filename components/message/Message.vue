@@ -209,6 +209,7 @@ export default {
       return rg
     },
     canDeleteMessage() {
+      console.log(this.msg.userId, this.user.Id)
       if (this.msg.userId == this.user.Id || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
         return true;
       }
@@ -247,7 +248,7 @@ export default {
       let react = reaction.data.find(d => d.user.id == this.user.Id)
       this.$axios.delete(`/${this.fieldkey}/${this.msg.id}/reaction`, {
           headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") },
-          data: { reactionId: react.id, userId: react.userId },
+          data: { reactionId: react.id, userId: react.user.id },
         })
         .then(d => {
           this.fetchReactions()
