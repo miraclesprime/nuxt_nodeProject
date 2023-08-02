@@ -89,7 +89,7 @@ export default {
       return this.item['project'] ? this.item.project.title : ''
     },
     inboxStatus() {
-      let st = this.userInbox.find(it => it.historyId == this.item.id)
+      let st = this.userInbox?.find(it => it.historyId == this.item.id)
       if (st) {
         this.status = st
         return st
