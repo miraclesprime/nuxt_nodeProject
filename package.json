@@ -7,7 +7,7 @@
     "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
-    "generate": "nuxt generate",
+    "generate": "node --max_old_space_size=9192 node_modules/nuxt/bin/nuxt.js generate",
     "test": "jest"
   },
   "dependencies": {
