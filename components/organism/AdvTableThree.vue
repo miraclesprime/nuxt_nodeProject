@@ -32,7 +32,8 @@
               </div>
             </template>
           </div>
-          <section v-for="(section, index) in localData" class="resizable w-100">
+          <section v-for="(section, index) in localData" class="resizable w-100"  @wheel="handleScroll"  >
+
             <div class="thead">
               
               <div class="tr hidden" role="row" >
@@ -254,8 +255,13 @@ export default {
       // highlight: false,
       validTitle: false,
       localData: [],
+      newValue: [],
       localNewrow: {},
       akey: 0,
+      itemsPerPage: 20,
+      allDataDisplayed: false,
+      lastDisplayedIndex:{ groupIdx: -1, curIdxInGroup: -1},
+      dataDisplayed: false, 
     }
   },
   
@@ -266,9 +272,24 @@ export default {
       this.localNewrow = newValue
 
     },
-    tableData(newValue){
-      this.localData = _.cloneDeep(newValue)
+    tableData: {
+    immediate: true, // Execute the watcher immediately on component mount
+    deep: true, // Watch for changes in nested properties of tableData
+    handler(newValue) {
+      this.newValue=_.cloneDeep(newValue)
+      this.$nextTick(() => {
+        this.localData=[]
+        this.lastDisplayedIndex={ groupIdx: -1, curIdxInGroup: -1}
+        this.allDataDisplayed=false
+        window.addEventListener('scroll', this.handleScroll);
+        this.showData();
+      });
     },
+  },
+    // tableData(newValue){
+    //   this.newValue = _.cloneDeep(newValue)
+      
+    // },
     showNewsection(newValue){
       process.nextTick(() => {
         if(newValue){
@@ -323,13 +344,89 @@ export default {
   },
 
   mounted() {
-    // const sub = document.getElementById("sub-panel")
-    this.localData = _.cloneDeep(this.tableData)
-    this.resizableColumns()
-
+  this.resizableColumns()
   },
 
   methods: {
+
+
+    handleScroll(event) {
+      if (this.allDataDisplayed) {
+        return; // Stop adding data if all data has been displayed
+      }
+      const tableContainer = event.target;
+      const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight >= tableContainer.scrollHeight;
+
+      if (isAtBottom) {
+          this.showData();
+          }
+
+    },
+    showData() {
+      let allTasks = this.newValue.length > 0 ? [...this.newValue] : [...this.tableData];
+      allTasks =allTasks.map((item) => {
+                  item.dataCount = item.tasks?.length||0;
+                  return item;
+                });
+
+  let remainingCount = this.itemsPerPage;
+    let start = this.lastDisplayedIndex.curIdxInGroup;
+      let i;
+      for (i = start === -1 ? this.lastDisplayedIndex.groupIdx + 1 : this.lastDisplayedIndex.groupIdx; i < allTasks.length; ++ i) {
+        if (start === -1) {
+          if (remainingCount < allTasks[i].dataCount - start - 1) {
+            
+            this.localData.push({});
+            for (const [key, value] of Object.entries(allTasks[i])) {
+              if (key !== 'tasks') { 
+                this.localData[i][key] = value; 
+              }
+            }
+            this.localData[i].tasks = allTasks[i].tasks.slice(start + 1, start + remainingCount + 1);
+            start += remainingCount;
+            remainingCount = 0;
+          } else {
+            this.localData.push(allTasks[i])
+            remainingCount -= allTasks[i].dataCount;
+            start = -1;
+          }
+        }
+        else {
+          let tmp = {};
+          if (start + remainingCount + 1 < allTasks[i].dataCount) {
+            Object.assign(tmp, this.localData[i])
+          
+            tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, start + remainingCount + 1))
+            this.localData.length -= 1;
+            this.localData.push(tmp)
+            start += remainingCount;
+            remainingCount = 0;
+          } else {
+            Object.assign(tmp, this.localData[i])
+            tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, allTasks[i].dataCount))
+            this.localData.length -= 1;
+            this.localData.push(tmp)
+            remainingCount -= (allTasks[i].dataCount - start - 1);
+            start = -1;
+          }
+        }
+        if (remainingCount == 0) break;
+
+      }
+      // this.scrollToLastSection();
+      if (i >= allTasks.length - 1 && start === -1) 
+      {
+        this.allDataDisplayed = true;
+        this.lastDisplayedIndex.groupIdx = -1;
+        this.lastDisplayedIndex.curIdxInGroup = -1;
+        return 
+      }
+
+      this.lastDisplayedIndex.groupIdx = i;
+      this.lastDisplayedIndex.curIdxInGroup = start;
+    },
+    
+
     parseDate(dateString, format) {
         return new Date(dateString)
     },
@@ -337,7 +434,7 @@ export default {
         return dayjs(dateObj).format(format);
     },
     startdateValid(date, duedate){
-      console.log(...arguments)
+      // console.log(...arguments)
       const maxDate = new Date(duedate)
       return date < maxDate
       /*if (date) {

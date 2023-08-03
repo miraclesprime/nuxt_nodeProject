@@ -1,39 +1,42 @@
 <template>
   <section id="sd-wrapper" class="position-absolute subtask-detail-wrapper bg-white">
-    <!-- top row -->
-    <div class="d-flex align-center justify-between pt-105 px-105 pb-05" id="sd-toolbar-wrapper">
-      <div class="" id="sd-mark-button-wrapper">
-         <bib-button :label="isComplete.text" :variant="isComplete.variant" icon="check-circle-solid" @click="markComplete"></bib-button>
-      </div>
-      <!-- <span v-show="showTaskTitle" id="sd-goToParent" class="text-underline cursor-pointer" @click="gotoParent">{{form?.task?.title}}</span> -->
-      <div class="d-flex gap-05 align-center" id="sd-icons-wrapper">
-        <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="std-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
-          <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" ></bib-icon>
+    <div id="sd-header">
+      
+      <!-- top row -->
+      <div class="d-flex align-center justify-between pt-105 px-105 pb-05" id="sd-toolbar-wrapper">
+        <div class="" id="sd-mark-button-wrapper">
+           <bib-button :label="isComplete.text" :variant="isComplete.variant" icon="check-circle-solid" @click="markComplete"></bib-button>
         </div>
-        <div class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="std-icons">
-          <bib-button pop="elipsis" >
-            <template v-slot:menu>
-              <div class="list" id="std-list">
-                <span class="list__item" id="std-list-item-1" @click="markComplete">
-                  <bib-icon icon="check-circle-solid" :variant="isComplete.variant" class="mr-075"></bib-icon> {{isComplete.text}}
-                </span>
-                <span class="list__item" id="std-list-item-2" @click="setFavorite">
-                  <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
-                </span>
-                
-                <hr>
-                <span class="list__item list__item__danger" id="std-list-item-8" @click="$nuxt.$emit('delete-subtask', subtask)">Delete</span>
-              </div>
-            </template>
-          </bib-button>
+        <!-- <span v-show="showTaskTitle" id="sd-goToParent" class="text-underline cursor-pointer" @click="gotoParent">{{form?.task?.title}}</span> -->
+        <div class="d-flex gap-05 align-center" id="sd-icons-wrapper">
+          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="std-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
+            <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" ></bib-icon>
+          </div>
+          <div class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="std-icons">
+            <bib-button pop="elipsis" >
+              <template v-slot:menu>
+                <div class="list" id="std-list">
+                  <span class="list__item" id="std-list-item-1" @click="markComplete">
+                    <bib-icon icon="check-circle-solid" :variant="isComplete.variant" class="mr-075"></bib-icon> {{isComplete.text}}
+                  </span>
+                  <span class="list__item" id="std-list-item-2" @click="setFavorite">
+                    <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
+                  </span>
+                  
+                  <hr>
+                  <span class="list__item list__item__danger" id="std-list-item-8" @click="$nuxt.$emit('delete-subtask', subtask)">Delete</span>
+                </div>
+              </template>
+            </bib-button>
+          </div>
+          <div class="shape-circle bg-hover-light width-2 height-2 d-flex cursor-pointer" id="sd-page-last-icon" title="Close" @click="closeSidebarDetail"><bib-icon icon="page-last" class="m-auto"></bib-icon></div>
         </div>
-        <div class="shape-circle bg-hover-light width-2 height-2 d-flex cursor-pointer" id="sd-page-last-icon" title="Close" @click="closeSidebarDetail"><bib-icon icon="page-last" class="m-auto"></bib-icon></div>
       </div>
-    </div>
     
-    <!-- title input -->
-    <div class="border-bottom-gray3 position-relative px-105 pt-05 pb-105 mb-1" id="std-fields-wrap">
-      <input type="text" id="std-title-editable-input" class="editable-input" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" v-model="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdateField({field: 'title', value: form.title, name: 'Title'})">
+      <!-- title input -->
+      <div class="border-bottom-gray3 position-relative px-105 pt-05 pb-105 mb-1" id="std-fields-wrap">
+        <input type="text" id="std-title-editable-input" class="editable-input" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" v-model="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdateField({field: 'title', value: form.title, name: 'Title'})">
+      </div>
     </div>
 
     <!-- other fields -->
@@ -51,9 +54,7 @@
           </div>
         </div>
       </div>
-      <!-- <div id="std-team-avatar-list">
-        <team-avatar-list :team="team"></team-avatar-list>
-      </div> -->
+      
       <div class="subtask-info position-relative py-05 px-105" id="sd-input-wrap">
         <div class="row mt-05 mb-05" id="sd-other-fields-row1">
           <!-- <div class="col-4" id="sd-other-fields-col-1">
@@ -118,9 +119,12 @@
           </div>
         </div>
       </div>
-      <div class="py-05 " id="sd-conv-wrap">
-        <div class="d-flex justify-between sub-title pb-05 mb-05 border-bottom-gray2 " id="sd-conv-heading">
-          <p class="text-gray5 font-md " id="sd-conv-para-text">Conversation </p>
+
+      <sidebar-tag :tags="tags" @add-tag="addTag" @change="addTag" @delete-tag="removeTag" ></sidebar-tag>
+
+      <div class="py-05 px-105" id="std-conv-wrap">
+        <div class="d-flex justify-between sub-title pb-05 mb-05 border-bottom-gray2 " id="std-conv-heading">
+          <p class="text-gray5 font-md " id="std-conv-para-text">Conversation </p>
         </div>
         <div v-if="loadingComments" class="my-05" id="sd-loading-comments">
           <div class="d-inline-flex gap-05 align-center " id="sd-loading-comments-inner">
@@ -194,6 +198,7 @@ export default {
       format: "DD MMM YYYY",
       sdate: "",
       ddate: "",
+      tags: []
     }
   },
   computed: {
@@ -206,6 +211,7 @@ export default {
       subtaskHistory: "subtask/getSubtaskHistory",
       teamMembers: "user/getTeamMembers",
       departments: "department/getAllDepartments",
+      alltags: "company/getCompanyTags",
     }),
 
     orgUsers() {
@@ -338,6 +344,7 @@ export default {
         this.fetchSubtaskMembers(this.subtask)
         this.fetchSubtaskComments(this.subtask)
         this.fetchSubtaskHistory(this.subtask)
+        this.getTags()
         this.sdate = this.$formatDate(this.subtask?.startDate)
         this.ddate = this.$formatDate(this.subtask?.dueDate)
       }
@@ -652,6 +659,80 @@ export default {
         console.warn(del.message)
       }
     },
+
+    async getTags(){
+      if (this.form.id) {
+        const tags = await this.$axios.get("/tag/subtask/"+this.form.id, {
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+          }
+        })
+        // console.log(tags.data)
+        if (tags.data.statusCode == 200) {
+          this.tags = tags.data.data.map(t => t.tag)
+        }
+      }
+    },
+
+    addTag(tag){
+      if (tag.id) {
+        console.log('existing tag->', tag.id, tag.content)
+        this.$axios.post("/tag/assign-to-subtask",  { tagId: tag.id, subTaskId: this.form.id }, {
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+          }
+        })
+        .then(res => {
+          // console.log(res)
+          this.getTags()
+          this.$nuxt.$emit("update-key")
+        })
+        .catch(e => console.error(e))
+      } else {
+        console.log('new tag->', tag)
+        let tagExist = this.alltags.find(t => t.content == tag)
+        if (tagExist) {
+          // console.log('tag already exists', tag)
+          this.popupMessages.push({text: "tag already exists", variant: "orange"})
+          return
+        } else {
+          this.$store.dispatch("company/addCompanyTag", {content: tag})
+          .then((res)=>{
+            // console.log(res.data)
+            if (res.data.statusCode == 200) {
+              this.$store.dispatch("company/fetchCompanyTags")
+              this.$axios.post("/tag/assign-to-subtask",  { tagId: res.data.data.id, subTaskId: this.form.id }, {
+                headers: {
+                  "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+                }
+              }).then((res) => {
+                // console.log(res)
+                this.getTags()
+                // this.$nuxt.$emit("update-key")
+              }).catch(e=>console.error(e))
+            } else {
+              console.warn("error creating tag")
+            }
+          })
+          .catch(e=>console.error(e))
+        }
+      }
+    },
+    
+    removeTag(tag){
+      console.log(tag)
+      this.$axios.delete("/tag/remove-from-subtask", {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+          "tagid": tag.id,
+          "subtaskid": this.form.id,
+        }
+      }).then(res => {
+        console.log(res.data.message)
+        this.getTags()
+        // this.$nuxt.$emit("update-key")
+      }).catch(e => console.warn(e))
+    }
   }
 }
 
@@ -661,7 +742,7 @@ export default {
   inset: 0;
   z-index: 8;
   display: grid;
-  grid-template-rows: 1fr 1fr minmax(60vh, 100%) 1fr;
+  grid-template-rows: 1fr minmax(4fr, auto) 1fr;
 }
 .subtask-info {
   font-size: $font-size-sm;

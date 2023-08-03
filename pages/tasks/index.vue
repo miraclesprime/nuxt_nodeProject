@@ -1,7 +1,8 @@
 <template>
   <client-only>
     <div id="page" class="task-page-wrapper">
-      <page-title title="Tasks" :count="tasksCount"></page-title>
+      <page-title title="Tasks"></page-title>
+      <!-- <page-title title="Tasks" :count="tasksCount"></page-title> -->
       <company-tasks-actions
         :gridType="gridType"
         v-on:filterView="filterView"
@@ -202,7 +203,10 @@ export default {
       contentWidth: "100%",
       dragTable: true,
       showPlaceholder: false,
-      tasksCount: 0,
+      // tasksCount: 0,
+      // itemsPerPage: 10, // Number of items to display initially
+      // displayedData:[]
+
     };
   },
   computed: {
@@ -213,6 +217,7 @@ export default {
       // currentTask: "task/getSelectedTask",
       teamMembers: "user/getTeamMembers",
       // sName: "company/getSortName",
+      filterViews :'task/getFilterView',
       // sOrder: "company/getSortOrder",
       sidebar: "task/getSidebarVisible",
     }),
@@ -220,14 +225,17 @@ export default {
   },
 
   watch: {
+    filterViews(newValue){
+         return _.cloneDeep(newValue)
+    },
     tasks(newVal) {
       let data = _.cloneDeep(newVal);
       this.localData = data
-      newVal.map(s => {
-        s.tasks.forEach(t => {
-          this.tasksCount += 1
-        })
-      })
+      // newVal.map(s => {
+      //   s.tasks.forEach(t => {
+      //     this.tasksCount += 1
+      //   })
+      // })
     },
     gridType() {
       this.key++;
@@ -246,16 +254,22 @@ export default {
     }
   },
 
-  async asyncData({$axios, app}){
+  async asyncData({$axios, app,store}){
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
+
+    const filter=store.getters['task/getFilterView']
+
     const res = await $axios.get(`company/tasks/all`, {
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Filter': 'all'
+        'Filter': filter
       }
     })
 
-    return { localData: res.data.data }
+    store.dispatch('company/setCompanyTasks', res.data.data)
+
+    return { localData: res.data.data}
+
   },
 
   created() {
@@ -291,7 +305,9 @@ export default {
     }
 
     setTimeout(() => {
-      this.$store.dispatch("company/setCompanyTasks",{data:this.localData})
+
+      this.$store.dispatch("company/fetchInitialCompanyTasks",{filter:'all'})
+      this.updateKey()
       this.lazyComponent = true
     }, 10)
   }
@@ -352,7 +368,8 @@ export default {
       this.$store
         .dispatch("company/fetchCompanyTasks", {
           companyId: compid,
-          // sName:this.group
+          filter:this.filterViews,
+          sName:this.group
         })
         .then(() => {
           this.key += 1;
@@ -448,7 +465,10 @@ export default {
     
       if(payload.field == "dueDate" && payload.item.startDate){
         // console.log(payload.field, value)
-        if(new Date(payload.value).getTime() > new Date(payload.item.startDate).getTime()){
+        if(payload.value=="Invalid Date"){
+          data = { [payload.field]: null }
+        }else {
+          if(new Date(payload.value).getTime() > new Date(payload.item.startDate).getTime()){
           data = { [payload.field]: payload.value }
         } else{
           data = { [payload.field]: null }
@@ -457,17 +477,23 @@ export default {
           this.updateKey()
           return false
         }
+        }
+  
       }
       if(payload.field == "startDate" && payload.item.dueDate){
         // console.log(payload.field, payload.value)
-        if(new Date(payload.value).getTime() < new Date(payload.item.dueDate).getTime()){
-          data = { [payload.field]: payload.value }
-        } else {
+        if(payload.value=="Invalid Date"){
           data = { [payload.field]: null }
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          // this.templateKey+=1;
-          this.updateKey()
-          return false
+        }else {
+            if(new Date(payload.value).getTime() < new Date(payload.item.dueDate).getTime()){
+            data = { [payload.field]: payload.value }
+          } else {
+            data = { [payload.field]: null }
+            this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+            // this.templateKey+=1;
+            this.updateKey()
+            return false
+          }
         }
       }
       
@@ -622,39 +648,8 @@ export default {
     },
 
     async filterView($event) {
+      this.$store.commit('task/setFilterView', {filter:$event})
       this.$store.commit("company/getFilterTasks",{filter:$event, groupBy:this.group})
-      // if ($event == "complete") {
-      //   let viewData = await JSON.parse(JSON.stringify(this.tasks));
-      //   let newArr = [];
-      //   await viewData.map((dept) => {
-      //     let tArr = dept.tasks.filter((t) => t.statusId == 5);
-      //     dept["tasks"] = tArr;
-      //     newArr.push(dept);
-      //   });
-
-      //   this.localData = newArr;
-      //   this.key += 1;
-      // }
-
-      // if ($event == "incomplete") {
-      //   let viewData = await JSON.parse(JSON.stringify(this.tasks));
-      //   let newArr = [];
-      //   await viewData.map((dept) => {
-      //     let tArr = dept.tasks.filter((t) => t.statusId != 5);
-      //     dept["tasks"] = tArr;
-      //     newArr.push(dept);
-      //   });
-
-      //   this.localData = newArr;
-      //   this.key += 1;
-      // }
-
-      // if ($event == "all") {
-      //   let viewData = await JSON.parse(JSON.stringify(this.tasks));
-
-      //   this.localData = viewData;
-      //   this.key += 1;
-      // }
     },
 
     checkActive() {
