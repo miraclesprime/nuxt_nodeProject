@@ -52,14 +52,12 @@
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Est. Days</label></div>
         <div class="col-5">
-          <!-- <bib-input type="text" icon-left="calendar-solid" size="sm" label="" v-model.number="form.time" placeholder="Select estimated days" ></bib-input> -->
           <input-two :value="form.estDays" icon="calendar-solid" @input="debounceUpdateField('Est. Days', 'estDays', $event)" ></input-two>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Budget</label></div>
         <div class="col-5">
-          <!-- <bib-input type="text" icon-left="currency-dollar" size="sm" label="" v-model.number="form.budget" @input="debounceUpdateField('Budget', 'budget', form.budget)" ></bib-input> -->
           <input-two :value="form.budget" icon="currency-dollar" @input="debounceUpdateField('Budget','budget', $event)" ></input-two>
         </div>
       </div>
