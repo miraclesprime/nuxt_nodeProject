@@ -397,7 +397,6 @@ export default {
       // }
 
       // Dhruv (admin)
-
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4OTg1MDM0ODYxMCwiZXhwIjoxNjk3NjI2MzQ4NjEwLCJqdGkiOiIxYWI4MDVlMC0zYTkyLTQxNDMtYmMyOC0zNGM2ZmRhZGFkZDgifQ.5-G-YJ16WfrZBp5VhK_p2-qULAP9jpF5ZOqsQ7Phs_0";
 
       // Vishwajeet

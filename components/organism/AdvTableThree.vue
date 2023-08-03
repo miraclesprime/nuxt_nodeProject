@@ -270,22 +270,21 @@ export default {
       // console.log(newValue.sectionId)
       // this.localNewrow = _.cloneDeep(this.newRow)
       this.localNewrow = newValue
-
     },
     tableData: {
-    immediate: true, // Execute the watcher immediately on component mount
-    deep: true, // Watch for changes in nested properties of tableData
-    handler(newValue) {
-      this.newValue=_.cloneDeep(newValue)
-      this.$nextTick(() => {
-        this.localData=[]
-        this.lastDisplayedIndex={ groupIdx: -1, curIdxInGroup: -1}
-        this.allDataDisplayed=false
-        window.addEventListener('scroll', this.handleScroll);
-        this.showData();
-      });
+      immediate: true, // Execute the watcher immediately on component mount
+      deep: true, // Watch for changes in nested properties of tableData
+      handler(newValue) {
+        this.newValue=_.cloneDeep(newValue)
+        this.$nextTick(() => {
+          this.localData=[]
+          this.lastDisplayedIndex={ groupIdx: -1, curIdxInGroup: -1}
+          this.allDataDisplayed=false
+          window.addEventListener('scroll', this.handleScroll);
+          this.showData();
+        });
+      },
     },
-  },
     // tableData(newValue){
     //   this.newValue = _.cloneDeep(newValue)
       

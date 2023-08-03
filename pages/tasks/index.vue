@@ -18,68 +18,7 @@
             <!-- <template v-if="!showPlaceholder"> -->
               
               <adv-table-three :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable" :key="templateKey" :editSection="group" :lazyComponent="lazyComponent"></adv-table-three>
-            <!-- </template> -->
-            <!-- <div v-show="localData.length == 0">
-              <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 shape-rounded py-05 px-1">
-                <bib-icon icon="warning"></bib-icon> No records found
-              </span>
-            </div> -->
-            <!-- <template v-if="showPlaceholder">
-              <div class="placeholder mt-05 mx-1 pt-05 pb-025 d-flex align-center gap-1" >
-                <div class="d-flex align-center gap-05" >
-                  <div class="shape-circle width-1 height-1 animated-background" ></div>
-                  <div class="animated-background height-1"  style="width: 15rem;"></div>
-                </div>
-              </div>
-              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
-                <div class="d-flex align-center gap-025">
-                  <div class="shape-circle width-1 height-1 animated-background" ></div>
-                  <div class="animated-background height-1" style="width: 30rem;"></div>
-                </div>
-              </div>
-              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
-                <div class="d-flex align-center gap-025">
-                  <div class="shape-circle width-1 height-1 animated-background" ></div>
-                  <div class="animated-background height-1" style="width: 28rem;"></div>
-                </div>
-              </div>
-              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
-                <div class="d-flex align-center gap-025">
-                  <div class="shape-circle width-1 height-1 animated-background" ></div>
-                  <div class="animated-background height-1" style="width: 26rem;"></div>
-                </div>
-              </div>
-              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
-                <div class="d-flex align-center gap-025">
-                  <div class="shape-circle width-1 height-1 animated-background" ></div>
-                  <div class="animated-background height-1" style="width: 30rem;"></div>
-                </div>
-              </div>
-              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
-                <div class="d-flex align-center gap-025">
-                  <div class="shape-circle width-1 height-1 animated-background" ></div>
-                  <div class="animated-background height-1" style="width: 28rem;"></div>
-                </div>
-              </div>
-              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
-                <div class="d-flex align-center gap-025">
-                  <div class="shape-circle width-1 height-1 animated-background" ></div>
-                  <div class="animated-background height-1" style="width: 26rem;"></div>
-                </div>
-              </div>
-              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
-                <div class="d-flex align-center gap-025">
-                  <div class="shape-circle width-1 height-1 animated-background" ></div>
-                  <div class="animated-background height-1" style="width: 28rem;"></div>
-                </div>
-              </div>
-              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
-                <div class="d-flex align-center gap-025">
-                  <div class="shape-circle width-1 height-1 animated-background" ></div>
-                  <div class="animated-background height-1" style="width: 26rem;"></div>
-                </div>
-              </div>
-            </template> -->
+            
           </div>
         
           <div v-if="gridType == 'grid'" class="h-100">
@@ -813,6 +752,8 @@ export default {
         el.order = i;
       });
 
+      console.log(clone)
+
       let sectionDnD = await this.$axios.$put(
         "/department/dragdrop",
         { data: clone },
@@ -838,6 +779,9 @@ export default {
       tasks.forEach((el, i) => {
         el.dOrder = i;
       });
+
+      console.log(tasks)
+      console.log(payload.sectionId)
 
       let taskDnD = await this.$axios.$put(
         "/department/crossDepartmentDragDrop",
@@ -889,11 +833,19 @@ export default {
       if(this.group=="project"){
         proj.projectId=section.tasks[0]?.project?.[0].project?.id||null 
       }
+
+      let taskCount = 0;
+      this.localData.find((dept) => {
+        taskCount = dept.tasks.length + 1;
+      })
+
+      console.log(taskCount)
       delete proj.show
       delete proj.sectionId
       this.$store.dispatch("task/createTask", {
           ...proj,
           text: `created task ${proj.title}`,
+          dOrder: 
         })
         .then((t) => {
           this.resetNewRow();
