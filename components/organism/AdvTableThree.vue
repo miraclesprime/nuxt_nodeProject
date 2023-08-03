@@ -33,7 +33,6 @@
             </template>
           </div>
           <section v-for="(section, index) in localData" class="resizable w-100"  @wheel="handleScroll"  >
-
             <div class="thead">
               
               <div class="tr hidden" role="row" >
@@ -358,7 +357,7 @@ export default {
       const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight >= tableContainer.scrollHeight;
 
       if (isAtBottom) {
-          this.showData();
+      this.showData();
           }
 
     },

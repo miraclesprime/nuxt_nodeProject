@@ -208,9 +208,8 @@ export default {
       }
     }
     this.$store.dispatch("todo/setMyfetchTodos")
-       
+    this.updateKey()
       setTimeout(() => {
-        this.updateKey()
         this.gridType=this.grid
       }, 200);
     

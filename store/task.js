@@ -9,7 +9,8 @@ export const state = () => ({
   taskHistory: [],
   sidebarVisible: false,
   expandVisible:true,
-  filterView:"all"
+  filterView:"all",
+  gridType:"list"
 });
 
 export const getters = {
@@ -52,11 +53,18 @@ export const getters = {
   },
   getFilterView (state) {
     return state.filterView
+  },
+  getGridType(state){
+
+    return state.gridType
   }
 
 };
 
 export const mutations = {
+  gridType(state,payload){
+    state.gridType=payload.gridType
+  },
   setExpandVisible(state,payload) {
     state.expandVisible=payload
   },
