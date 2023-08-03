@@ -754,22 +754,22 @@ export default {
 
       console.log(clone)
 
-      // let sectionDnD = await this.$axios.$put(
-      //   "/department/dragdrop",
-      //   { data: clone },
-      //   {
-      //     headers: {
-      //       Authorization: "Bearer " + localStorage.getItem("accessToken"),
-      //       "Content-Type": "application/json",
-      //     },
-      //   }
-      // );
+      let sectionDnD = await this.$axios.$put(
+        "/department/dragdrop",
+        { data: clone },
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      // if (sectionDnD.statusCode == 200) {
-      //   this.updateKey()
-      // }
+      if (sectionDnD.statusCode == 200) {
+        this.updateKey()
+      }
 
-      // this.loading = false;
+      this.loading = false;
     }, 600),
 
     taskDragEnd: _.debounce(async function (payload) {
@@ -783,22 +783,22 @@ export default {
       console.log(tasks)
       console.log(payload.sectionId)
 
-      // let taskDnD = await this.$axios.$put(
-      //   "/department/crossDepartmentDragDrop",
-      //   { data: tasks, departmentId: payload.sectionId },
-      //   {
-      //     headers: {
-      //       Authorization: "Bearer " + localStorage.getItem("accessToken"),
-      //       "Content-Type": "application/json",
-      //     },
-      //   }
-      // );
-      // if (taskDnD.statusCode == 200) {
-      //   this.updateKey();
-      // } else {
-      //   console.warn(taskDnD.message);
-      // }
-      // this.loading = false;
+      let taskDnD = await this.$axios.$put(
+        "/department/crossDepartmentDragDrop",
+        { data: tasks, departmentId: payload.sectionId },
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (taskDnD.statusCode == 200) {
+        this.updateKey();
+      } else {
+        console.warn(taskDnD.message);
+      }
+      this.loading = false;
     }, 600),
 
     createNewTask(proj,section) {
@@ -840,20 +840,20 @@ export default {
       })
 
       console.log(taskCount)
-      // delete proj.show
-      // delete proj.sectionId
-      // this.$store.dispatch("task/createTask", {
-      //     ...proj,
-      //     text: `created task ${proj.title}`,
-      //     dOrder: 
-      //   })
-      //   .then((t) => {
-      //     this.resetNewRow();
-      //     this.updateKey();
-      //   })
-      //   .catch((e) => {
-      //     console.warn(e);
-      //   });
+      delete proj.show
+      delete proj.sectionId
+      this.$store.dispatch("task/createTask", {
+          ...proj,
+          text: `created task ${proj.title}`,
+          dOrder: 
+        })
+        .then((t) => {
+          this.resetNewRow();
+          this.updateKey();
+        })
+        .catch((e) => {
+          console.warn(e);
+        });
     },
 
     resetNewRow() {
