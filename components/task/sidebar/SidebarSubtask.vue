@@ -30,7 +30,7 @@
             <td id="sbs-td-2" width="120">
               <div class="d-inline-flex align-center gap-025 position-relative" >
                 <bib-icon icon="calendar" variant="gray2"></bib-icon>
-                <datepicker v-model="sub.dueDate" format="dd MMM yyyy" @input="updateSubtask(sub, {field: 'dueDate', value: sub.dueDate, name: 'Due date'})" placeholder="Select date..." class="align-right" ></datepicker>
+                <datepicker v-model="sub.dueDate" format="dd MMM yyyy" @input="updateSubtask(sub, {field: 'dueDate', value: sub.dueDate, name: 'Due date'})" placeholder="Select due d..." class="align-right" ></datepicker>
               </div>            
             </td>
             <td id="sbs-td-1" width="40" align="right" >
@@ -47,13 +47,12 @@
             <td id="sbs-td-5">
               <div class="d-flex align-center gap-025" id="sbs-setdue-wrapper">
                 <bib-icon icon="calendar" variant="gray2"></bib-icon>
-                <span id="sbs-setdue">Set due...</span>
+                <span id="sbs-setdue" class="font-sm">Select due d...</span>
               </div>
             </td>
             <td id="sbs-td-4">
-              <div class="d-flex align-center gap-05" id="sbs-assign-to-wrapper">
-                <bib-avatar size="1.25rem"></bib-avatar>
-                <span id="sbs-assign-to">Assign to...</span>
+              <div class="d-flex align-center " id="sbs-assign-to-wrapper">
+                <bib-avatar size="2rem"></bib-avatar>
               </div>
             </td>
           </tr>

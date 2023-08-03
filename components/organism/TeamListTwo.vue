@@ -79,7 +79,6 @@ export default {
       this.showall = !this.showall
     },
     deleteMember(member){
-      console.log(member)
       this.$emit("delete-member", member)
     },
   }

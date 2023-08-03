@@ -72,9 +72,9 @@
               </template>
             </template>
             <template v-if="field.key.includes('Date')" class="date-cell">
-              {{$formatDate(item[field.key])}}
-              <!-- <bib-datetime-picker v-if="lazyComponent" :value="formatDate(item[field.key])" :format="`D MMM YYYY`" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker> -->
-              <!-- <skeleton-box v-else></skeleton-box> -->
+              <!-- {{$formatDate(item[field.key])}} -->
+              <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+              <skeleton-box v-else></skeleton-box>
             </template>
           </div>
         </div>
@@ -198,7 +198,14 @@ export default {
   watch: {
     tableData(newValue){
       this.localData = _.cloneDeep(newValue)
+      this.localData.map((task) => {
+          task.dueDate = task.dueDate ? dayjs(task.dueDate).format(this.format) : null
+          task.startDate = task.startDate ? dayjs(task.startDate).format(this.format) : null
+          return task;
+        }
+      )
     },
+
   },
 
   computed: {
@@ -229,12 +236,12 @@ export default {
   },
 
   methods: {
-    /*parseDate(dateString, format) {
-        return new Date(dateString)
+    parseDate(dateString, format) {
+        return new Date(dateString);
     },
     formatDate(dateObj, format) {
         return dayjs(dateObj).format(format);
-    },*/
+    },
     
     // main class prototype
     columnResize(table) {
@@ -496,8 +503,7 @@ export default {
     updateDate(d, item, field, label) {
       // console.log(...arguments)
       let jd = new Date(d);
-      
-      this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format('DD MMM YYYY')}`, item})
+      this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
     },
   }
 }
