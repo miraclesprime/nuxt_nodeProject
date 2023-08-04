@@ -1,5 +1,5 @@
 <template>
-  <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll">
+  <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll" @scroll="handleScroll" ref="myTable">
 
       <div :id="'advTableTwo-'+componentKey" class=" adv-table  bg-white" :style="{'width': tableWidth}"  >
 
@@ -32,7 +32,7 @@
               </div>
             </template>
           </div>
-          <section v-for="(section, index) in localData" class="resizable w-100"  @wheel="handleScroll"  >
+          <section v-for="(section, index) in localData" class="resizable w-100"   >
             <div class="thead">
               
               <div class="tr hidden" role="row" >
@@ -277,9 +277,9 @@ export default {
         this.newValue=_.cloneDeep(newValue)
         this.$nextTick(() => {
           this.localData=[]
+          this.$refs.myTable.scrollTop=0
           this.lastDisplayedIndex={ groupIdx: -1, curIdxInGroup: -1}
           this.allDataDisplayed=false
-          window.addEventListener('scroll', this.handleScroll);
           this.showData();
         });
       },
@@ -349,11 +349,11 @@ export default {
 
 
     handleScroll(event) {
+      const tableContainer = event.target;
       if (this.allDataDisplayed) {
         return; // Stop adding data if all data has been displayed
       }
-      const tableContainer = event.target;
-      const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight >= tableContainer.scrollHeight;
+      const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight+1 >= tableContainer.scrollHeight;
 
       if (isAtBottom) {
       this.showData();
