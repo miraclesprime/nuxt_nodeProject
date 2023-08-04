@@ -43,10 +43,16 @@ export const getters = {
   },
   getInitialUserTasks(state){
     return state.initialData
+  },
+  getUserInfo(state) {
+    return state.userInfo
   }
 };
 
 export const mutations = {
+  setUserForTask(state,payload) {
+    state.userInfo=payload
+  },
   updateFetchUserTasks(state,payload) {
     let userTasks=state.userTasks
     let selectedTask=payload.data
@@ -852,7 +858,6 @@ export const mutations = {
 
 export const actions = {
 async setFetchUserTasks (ctx,payload) {
-  console.log("11",payload)
   ctx.commit('setFetchUserTasks', payload);
 },
   async setUser(ctx, payload) {
@@ -900,6 +905,7 @@ async setFetchUserTasks (ctx,payload) {
       return res.data
     }
   },
+  
   async getUserTasks(ctx,payload){
     const res = await this.$axios.get("user/user-tasks", {
       headers: {

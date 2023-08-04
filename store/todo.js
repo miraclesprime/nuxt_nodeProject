@@ -32,9 +32,9 @@ export const mutations = {
     ns.tasks = []
     state.todos.unshift(ns);
   },
-gridType(state,payload){
-  state.gridType=payload.gridType
-},
+  gridType(state,payload){
+    state.gridType=payload.gridType
+  },
   setTodos(state, payload) {
     state.todos = payload;
   },

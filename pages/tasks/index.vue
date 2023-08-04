@@ -220,6 +220,7 @@ export default {
       filterViews :'task/getFilterView',
       // sOrder: "company/getSortOrder",
       sidebar: "task/getSidebarVisible",
+      grid:"task/getGridType"
     }),
   
   },
@@ -238,6 +239,7 @@ export default {
       // })
     },
     gridType() {
+      this.$store.commit('task/gridType',{gridType:this.gridType})
       this.key++;
     },
     sidebar(newVal){
@@ -294,7 +296,7 @@ export default {
   if(process.client) {
 
     if (JSON.parse(localStorage.getItem("user")).subr != "ADMIN") {
-      console.log('admin')
+      // console.log('admin')
       this.$router.push('/error/403')    
     } 
 
@@ -303,13 +305,12 @@ export default {
         field.header_icon.isActive = false;
       }
     }
-
-    setTimeout(() => {
-
-      this.$store.dispatch("company/fetchInitialCompanyTasks",{filter:'all'})
+    this.$store.dispatch("company/fetchInitialCompanyTasks",{filter:'all'})
       this.updateKey()
-      this.lazyComponent = true
-    }, 10)
+      setTimeout(() => {
+        this.gridType=this.grid
+        this.lazyComponent = true
+      }, 200);
   }
   
   },

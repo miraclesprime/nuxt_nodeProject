@@ -125,7 +125,8 @@ export default {
       user: "user/getUser2",
       favTasks: 'task/getFavTasks',
       filterViews :'task/getFilterView',
-      selectedTask :'task/getSelectedTask'
+      selectedTask :'task/getSelectedTask',
+      userInfo :"user/getUserInfo"
     }),
   },
 
@@ -139,12 +140,18 @@ export default {
     "$route.query": {
       immediate: true,
       handler(newVal) {
+        if(Object.keys(newVal).length === 0){
+          newVal=this.userInfo
+          this.$route.query.id=this.userInfo.id
+        }
         this.userfortask = this.teamMembers.find((u) => {
           if (u.id == newVal.id) {
             this.selectedUser = u;
             return u;
           }
         });
+        //save userinfo to the store for expand taskside
+        this.$store.commit('user/setUserForTask',this.userfortask)
         this.fetchUserTasks();
       },
     },
@@ -223,8 +230,10 @@ export default {
           }
         }
       }
+      
        setTimeout(() => {
-      this.fetchUserTasks()
+        this.userfortask=this.userInfo
+        this.fetchUserTasks()
       }, 200);
 
       if (!this.$route.query.id) {
