@@ -197,13 +197,9 @@ export default {
 
   watch: {
     tableData(newValue){
+      // console.log(newValue.length)
       this.localData = _.cloneDeep(newValue)
-      this.localData.map((task) => {
-          task.dueDate = task.dueDate ? dayjs(task.dueDate).format(this.format) : null
-          task.startDate = task.startDate ? dayjs(task.startDate).format(this.format) : null
-          return task;
-        }
-      )
+      this.modifyDateFormat()
     },
 
   },
@@ -232,8 +228,14 @@ export default {
 
   mounted() {
     this.localData = _.cloneDeep(this.tableData)
+    this.modifyDateFormat()
     this.resizableColumns()
   },
+
+  /*beforeDestroy(){
+    this.localData = null
+    this.activeItem = {}
+  },*/
 
   methods: {
     parseDate(dateString, format) {
@@ -241,6 +243,17 @@ export default {
     },
     formatDate(dateObj, format) {
         return dayjs(dateObj).format(format);
+    },
+
+    modifyDateFormat(){
+      // console.log(this.localData)
+      this.localData.map((task) => {
+          task.dueDate = task.dueDate ? dayjs(task.dueDate).format(this.format) : null
+          task.startDate = task.startDate ? dayjs(task.startDate).format(this.format) : null
+          // console.log(task.title, " start",task.startDate, " due",task.dueDate)
+          return task;
+        }
+      )
     },
     
     // main class prototype
