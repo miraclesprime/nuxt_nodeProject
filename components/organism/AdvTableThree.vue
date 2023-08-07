@@ -347,7 +347,17 @@ export default {
   },
 
   methods: {
-
+    modifyDateFormat(value){
+     value.map((item) => {
+          item.tasks?.forEach((items)=>{
+            items.dueDate = items.dueDate ? dayjs(items.dueDate).format(this.format) : null
+              items.startDate = items.startDate ? dayjs(items.startDate).format(this.format) : null
+              return items
+          })
+        }
+      )
+      return value
+    },
 
     handleScroll(event) {
       const tableContainer = event.target;
@@ -367,7 +377,7 @@ export default {
       //             item.dataCount = item.tasks?.length||0;
       //             return item;
       //           });
-
+  allTasks=this.modifyDateFormat(allTasks)
   let remainingCount = this.itemsPerPage;
     let start = this.lastDisplayedIndex.curIdxInGroup;
       let i;
