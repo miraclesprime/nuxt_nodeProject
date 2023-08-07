@@ -121,7 +121,7 @@ export default {
   //   middleware: ["auth"]
     trailingSlash: false
   },
-  serverMiddleware: ["~/middleware/redirects"],
+  serverMiddleware: ["~/middleware/redirects", "~/middleware/redirectTrailingSlash"],
   // proxy: {
   //   '/auth': {
   //     target: process.env.VUE_APP_API_ENDPOINT+'/auth',
