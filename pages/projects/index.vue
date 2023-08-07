@@ -1,6 +1,6 @@
 <template>
   <div id="projects-wrapper" class="projects-wrapper" >   
-    <page-title title="Projects"></page-title>  
+    <page-title title="Projects" :count="localData.length"></page-title>  
     <project-actions  @sortValue='sortProject($event)' @groupValue="ProjectGroup($event)" @viewValue='ProjectView($event)' v-on:loading="loading = $event" v-on:sort="sortProject" @search-projects="searchProjects" />
    
     <div id="projects-list-wrapper" class="projects-list-wrapper position-relative" >
