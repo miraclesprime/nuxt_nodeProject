@@ -18,68 +18,7 @@
             <!-- <template v-if="!showPlaceholder"> -->
               
               <adv-table-three :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable" :key="templateKey" :editSection="group" :lazyComponent="lazyComponent"></adv-table-three>
-            <!-- </template> -->
-            <!-- <div v-show="localData.length == 0">
-              <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 shape-rounded py-05 px-1">
-                <bib-icon icon="warning"></bib-icon> No records found
-              </span>
-            </div> -->
-            <!-- <template v-if="showPlaceholder">
-              <div class="placeholder mt-05 mx-1 pt-05 pb-025 d-flex align-center gap-1" >
-                <div class="d-flex align-center gap-05" >
-                  <div class="shape-circle width-1 height-1 animated-background" ></div>
-                  <div class="animated-background height-1"  style="width: 15rem;"></div>
-                </div>
-              </div>
-              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
-                <div class="d-flex align-center gap-025">
-                  <div class="shape-circle width-1 height-1 animated-background" ></div>
-                  <div class="animated-background height-1" style="width: 30rem;"></div>
-                </div>
-              </div>
-              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
-                <div class="d-flex align-center gap-025">
-                  <div class="shape-circle width-1 height-1 animated-background" ></div>
-                  <div class="animated-background height-1" style="width: 28rem;"></div>
-                </div>
-              </div>
-              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
-                <div class="d-flex align-center gap-025">
-                  <div class="shape-circle width-1 height-1 animated-background" ></div>
-                  <div class="animated-background height-1" style="width: 26rem;"></div>
-                </div>
-              </div>
-              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
-                <div class="d-flex align-center gap-025">
-                  <div class="shape-circle width-1 height-1 animated-background" ></div>
-                  <div class="animated-background height-1" style="width: 30rem;"></div>
-                </div>
-              </div>
-              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
-                <div class="d-flex align-center gap-025">
-                  <div class="shape-circle width-1 height-1 animated-background" ></div>
-                  <div class="animated-background height-1" style="width: 28rem;"></div>
-                </div>
-              </div>
-              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
-                <div class="d-flex align-center gap-025">
-                  <div class="shape-circle width-1 height-1 animated-background" ></div>
-                  <div class="animated-background height-1" style="width: 26rem;"></div>
-                </div>
-              </div>
-              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
-                <div class="d-flex align-center gap-025">
-                  <div class="shape-circle width-1 height-1 animated-background" ></div>
-                  <div class="animated-background height-1" style="width: 28rem;"></div>
-                </div>
-              </div>
-              <div class="placeholder mt-05 mx-1 pt-075 pb-025 d-flex align-center gap-1 border-top-light" >
-                <div class="d-flex align-center gap-025">
-                  <div class="shape-circle width-1 height-1 animated-background" ></div>
-                  <div class="animated-background height-1" style="width: 26rem;"></div>
-                </div>
-              </div>
-            </template> -->
+          
           </div>
         
           <div v-if="gridType == 'grid'" class="h-100">
@@ -203,22 +142,14 @@ export default {
       contentWidth: "100%",
       dragTable: true,
       showPlaceholder: false,
-      // tasksCount: 0,
-      // itemsPerPage: 10, // Number of items to display initially
-      // displayedData:[]
 
     };
   },
   computed: {
     ...mapGetters({
-      // user: "user/getUser",
       tasks: "company/getCompanyTasks",
-      // favTasks: "task/getFavTasks",
-      // currentTask: "task/getSelectedTask",
       teamMembers: "user/getTeamMembers",
-      // sName: "company/getSortName",
       filterViews :'task/getFilterView',
-      // sOrder: "company/getSortOrder",
       sidebar: "task/getSidebarVisible",
       grid:"task/getGridType"
     }),
@@ -232,11 +163,6 @@ export default {
     tasks(newVal) {
       let data = _.cloneDeep(newVal);
       this.localData = data
-      // newVal.map(s => {
-      //   s.tasks.forEach(t => {
-      //     this.tasksCount += 1
-      //   })
-      // })
     },
     gridType() {
       this.$store.commit('task/gridType',{gridType:this.gridType})
@@ -246,7 +172,6 @@ export default {
       const page = document.getElementById("page")
       this.$nextTick(() => {
         const panel = document.getElementById("side-panel-wrapper")
-        // console.log("page width="+page.scrollWidth+", panel width="+panel.offsetWidth)
         if (this.sidebar) {
           this.contentWidth = (page.scrollWidth - panel.offsetWidth) + 'px'
         } else {
@@ -257,10 +182,9 @@ export default {
   },
 
   async asyncData({$axios, app,store}){
+
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
-
     const filter=store.getters['task/getFilterView']
-
     const res = await $axios.get(`company/tasks/all`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -269,7 +193,6 @@ export default {
     })
 
     store.dispatch('company/setCompanyTasks', res.data.data)
-
     return { localData: res.data.data}
 
   },
@@ -296,7 +219,6 @@ export default {
   if(process.client) {
 
     if (JSON.parse(localStorage.getItem("user")).subr != "ADMIN") {
-      // console.log('admin')
       this.$router.push('/error/403')    
     } 
 
@@ -425,18 +347,6 @@ export default {
       }
     },
 
-    /*updateSingleRow(taskData) {
-      let depts = JSON.parse(JSON.stringify(this.tasks));
-
-      depts.map((dept) => {
-        let replaceIndex = dept.tasks.findIndex((lt) => lt.id == taskData.id);
-        dept.tasks.splice(replaceIndex, 1, taskData);
-      });
-
-      this.localData = depts;
-      this.key += 1;
-    },*/
-
     updateTask(payload) {
       let user, projectId;
       let data = { [payload.field]: payload.value }
@@ -459,13 +369,9 @@ export default {
 
       if (payload.field == "priorityId" && payload.value == 0) {
         data = { [payload.field]: null};
-        // payload.value = null;
       }
-
-      // let before=this.beforeLocal.filter((item)=>item.id===item.id)
     
       if(payload.field == "dueDate" && payload.item.startDate){
-        // console.log(payload.field, value)
         if(payload.value=="Invalid Date"){
           data = { [payload.field]: null }
         }else {
@@ -474,7 +380,6 @@ export default {
         } else{
           data = { [payload.field]: null }
           this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          // this.templateKey+=1;
           this.updateKey()
           return false
         }
@@ -482,7 +387,6 @@ export default {
   
       }
       if(payload.field == "startDate" && payload.item.dueDate){
-        // console.log(payload.field, payload.value)
         if(payload.value=="Invalid Date"){
           data = { [payload.field]: null }
         }else {
@@ -491,14 +395,12 @@ export default {
           } else {
             data = { [payload.field]: null }
             this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-            // this.templateKey+=1;
             this.updateKey()
             return false
           }
         }
       }
       
-      // console.log(data, user, projectId)
       this.$store
         .dispatch("task/updateTask", {
           id: payload.item.id,
@@ -578,9 +480,7 @@ export default {
 
     taskSetFavorite(task) {
       this.loading = true;
-      // let isFav = this.favTasks.some((f) => f.taskId == task.id);
       if(this.$CheckFavTask(task.id)){
-      // if (isFav) {
         this.$store
           .dispatch("task/removeFromFavorite", { id: task.id })
           .then((msg) => {
@@ -631,7 +531,6 @@ export default {
             if (t.statusCode == 200) {
               
               this.updateKey(t.message);
-              // this.taskToDelete = {};
             } else {
               this.popupMessages.push({ text: t.message, variant: "orange" });
               console.warn(t.message);
@@ -858,43 +757,51 @@ export default {
       this.loading = false;
     }, 600),
 
-    createNewTask(proj,section) {
-      proj.group = this.group;
-          proj.status=null
-          proj.statusId=null
-          proj.priority=null
-          proj.priorityId=null
-          proj.departmentId = null;
-          proj.department = null;
-          proj.user=null
-          proj.userId=null
-          proj.projectId=null
+    createNewTask(task,section) {
+      task.group = this.group;
+          task.status=null
+          task.statusId=null
+          task.priority=null
+          task.priorityId=null
+          task.departmentId = null;
+          task.department = null;
+          task.user=null
+          task.userId=null
+          task.projectId=null
       
       if(this.group=="priority"){
-        proj.priority=section.tasks[0]?.priority
-        proj.priorityId=section.tasks[0]?.priorityId
+        task.priority=section.tasks[0]?.priority
+        task.priorityId=section.tasks[0]?.priorityId
      
       }
       if(this.group=="status"){
-        proj.status=section.tasks[0]?.status
-        proj.statusId=section.tasks[0]?.statusId
+        task.status=section.tasks[0]?.status
+        task.statusId=section.tasks[0]?.statusId
       }
       if(this.group=="assignee"){
-        proj.user=[section.tasks[0]?.user]
-        proj.userId=section.tasks[0]?.userId
+        task.user=[section.tasks[0]?.user]
+        task.userId=section.tasks[0]?.userId
       }
       if(this.group=="department"){
-        proj.department=section.tasks[0]?.department
-        proj.departmentId=section.tasks[0]?.departmentId
+        task.department=section.tasks[0]?.department
+        task.departmentId=section.tasks[0]?.departmentId
       }
       if(this.group=="project"){
-        proj.projectId=section.tasks[0]?.project?.[0].project?.id||null 
+        task.projectId=section.tasks[0]?.project?.[0].project?.id || null 
       }
-      delete proj.show
-      delete proj.sectionId
+
+      section.tasks.forEach((el, i) => {
+        el.dOrder = i;
+      });
+
+      console.log(task, section)
+      delete task.show
+      delete task.sectionId
       this.$store.dispatch("task/createTask", {
-          ...proj,
-          text: `created task ${proj.title}`,
+          ...task,
+          data: section,
+          mode: "department",
+          text: `created task ${task.title}`,
         })
         .then((t) => {
           this.resetNewRow();

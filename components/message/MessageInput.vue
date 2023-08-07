@@ -451,10 +451,11 @@ export default {
 }
 
 .editor {
+  font-size: $base-size;
 
-  .ProseMirror {
-    font-size: 1rem;
-  }
+  /*.ProseMirror {
+    font-size: $base-size;
+  }*/
 
   ::v-deep {
     p {

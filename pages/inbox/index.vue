@@ -16,7 +16,7 @@
           <div v-for="(value, key) in combinedInbox">
             <h4 class="font-md text-gray6 text-capitalize py-05 px-2 border-bottom-light">{{key}}</h4>
             <template v-for="(o, index) in value">
-              <inbox-item :item="o" :key="o.id"  @task-click="fetchTask" @project-click="fetchProject" :active="active"></inbox-item>
+              <inbox-item :item="o" :key="o.id" @task-click="fetchTask" @project-click="fetchProject" :active="active"></inbox-item>
             </template>
           </div>
           <div ref="infinitescrolltrigger" v-show="currentPage <= pageCount" class="align-center justify-center text-gray5">
@@ -44,7 +44,7 @@ export default {
 
   data() {
     return {
-      loading: false,
+      // loading: false,
       inbox: [],
       task: {},
       project: {},
@@ -192,10 +192,10 @@ export default {
   mounted() {
 
     this.$store.dispatch("inbox/fetchInboxEntries").then(res => {
-      this.loading = false
+      console.log(res)
+      this.switchTaskProject()
     }).catch(err => {
       console.warn(err)
-      this.loading = false
     })
 
     this.scrollTrigger();
@@ -215,7 +215,7 @@ export default {
                   this.inbox.push(...h.data.data)
                 }
               })
-            }, 1500)
+            }, 800)
 
             newdata()
           }
