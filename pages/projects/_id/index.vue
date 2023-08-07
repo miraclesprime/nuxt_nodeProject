@@ -224,7 +224,10 @@ export default {
           return p;
         } 
       })
-
+    //   const sections = await $axios.$get(`/section/project/' + ${params.id}`, {
+    //   headers: {'Authorization': `Bearer ${token}`, 'Filter': filter }
+    // });
+    //   console.log(sections)
       return { project: res.data.data, userProj: proj }
       
     } catch(err) {
