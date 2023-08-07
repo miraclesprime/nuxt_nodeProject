@@ -118,7 +118,7 @@ export default {
   },
   router: {
   //   // base: '/dashboard',
-  //   middleware: ["auth"]
+    // middleware: ["defineNuxtRouteMiddleware"],
     trailingSlash: false
   },
   serverMiddleware: ["~/middleware/redirects"],
