@@ -100,11 +100,15 @@ export default {
       project: "project/getSingleProject",
       currentTask: 'task/getSelectedTask',
       favTasks: "task/getFavTasks",
+      filterViews :'task/getFilterView'
     }),
 
   },
 
   watch: {
+    filterViews(newValue){
+         return _.cloneDeep(newValue)
+    },
     sections(newVal) {
       this.localdata = JSON.parse(JSON.stringify(newVal))
     },
@@ -122,10 +126,9 @@ export default {
   },
 
   mounted() {
-
     if(this.sectionType == "singleProject") {
       this.loading = true
-      this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id })
+      this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id,filter :this.filterViews })
         .then((sections) => {
           this.localdata = JSON.parse(JSON.stringify(sections))
           this.loading = false

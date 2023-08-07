@@ -161,13 +161,11 @@ export const actions = {
   },
 
   async fetchProjectSections(ctx, payload) {
-    console.log("$$$$$$$$$$$$$$$",payload)
     const res = await this.$axios.$get('/section/project/' + payload.projectId, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
     });
 
     if (res.statusCode == 200) {
-      console.log("##############",res.data)
       ctx.commit('fetchProjectSections', res.data);
       if(payload.sName&&payload.sName!=="default"){
         const data={

@@ -162,7 +162,9 @@ export default {
         taskFields: "task/tableFields",
         favProjects: "project/getFavProjects",
         user2: "user/getUser2",
-        filterViews :'task/getFilterView'
+        filterViews :'task/getFilterView', 
+        grid:"project/getGridType"
+
     }),
 
     projectName: {
@@ -188,6 +190,7 @@ export default {
   created() {
     this.$nuxt.$on("change-grid-type", (type) => {
       this.gridType = type;
+      this.$store.commit('project/gridType',{gridType:this.gridType})
     });
 
     this.$nuxt.$on("set-active-task", (task) => {
@@ -261,6 +264,9 @@ export default {
 
       this.$store.dispatch("section/fetchProjectInitialSections", { projectId: this.$route.params.id, filter: 'all' })
       this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
+      setTimeout(() => {
+        this.gridType=this.grid
+      }, 200);
     }
   },
 

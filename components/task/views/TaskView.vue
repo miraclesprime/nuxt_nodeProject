@@ -664,7 +664,6 @@ export default {
        this.$store.dispatch("task/setSingleTask", item)
     },
     updateKey() {
-      console.log("here")
       this.userPickerOpen = false;
       this.taskContextMenu = false;
       this.$store

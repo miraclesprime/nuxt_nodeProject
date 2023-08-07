@@ -113,6 +113,7 @@ export default {
       departments: "department/getAllDepartments",
       project: "project/getSingleProject",
       projects: "project/getAllProjects",
+      filterViews :'task/getFilterView'
     }),
     orgUsers() {
       let data = this.teamMembers.map((u) => {
@@ -143,7 +144,9 @@ export default {
     },
   },
   watch: {
-
+    filterViews(newValue){
+         return _.cloneDeep(newValue)
+    },
     task() {
       if (Object.keys(this.task).length) {
         this.form = _.cloneDeep(this.task);
@@ -151,7 +154,7 @@ export default {
           this.form.projectId = this.task.project?.[0]?.projectId || this.task.project?.[0]?.project?.id;
           this.$store.dispatch("section/fetchProjectSections", {
             projectId: this.form.projectId,
-            filter: "all",
+            filter: this.filterViews,
           });
         } else {
           this.form.projectId = this.project?.id;
@@ -192,7 +195,7 @@ export default {
           this.form.projectId = this.task.project?.[0]?.projectId || this.task.project?.[0]?.project?.id;
           this.$store.dispatch("section/fetchProjectSections", {
             projectId: this.form.projectId,
-            filter: "all",
+            filter: this.filterViews,
           });
         } else {
           this.form.projectId = this.project?.id;
@@ -332,7 +335,7 @@ export default {
       }
       this.$store.dispatch("section/fetchProjectSections", {
           projectId: this.form.projectId,
-          filter: "all",
+          filter: this.filterViews,
         })
         .then((sections) => {
           if (!this.form.id || this.form.id == "") {

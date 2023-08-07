@@ -6,7 +6,8 @@ export const state = () => ({
   projectComments: [],
   singleProjComment: {},
   projectHistory: [],
-  initialData:[]
+  initialData:[],
+  gridType:"list"
 });
 
 export const getters = {
@@ -45,12 +46,18 @@ export const getters = {
 
   getProjectHistory(state) {
     return state.projectHistory;
+  },
+  getGridType(state){
+
+    return state.gridType
   }
 
 };
 
 export const mutations = {
-
+  gridType(state,payload){
+    state.gridType=payload.gridType
+  },
   // To fetch all projects
   fetchProjects(state, payload) {
     state.projects = payload;
