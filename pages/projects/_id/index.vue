@@ -201,7 +201,6 @@ export default {
   },
 
   async asyncData({$axios, app, params, store}) {
-
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
     const filter = store.getters['task/getFilterView']
     try {
@@ -224,10 +223,8 @@ export default {
           return p;
         } 
       })
-    //   const sections = await $axios.$get(`/section/project/' + ${params.id}`, {
-    //   headers: {'Authorization': `Bearer ${token}`, 'Filter': filter }
-    // });
-    //   console.log(sections)
+
+      // store.dispatch("section/fetchProjectSections", { projectId: params.id, filter: filter })
       return { project: res.data.data, userProj: proj }
       
     } catch(err) {
@@ -262,7 +259,7 @@ export default {
         this.$router.push('/notfound')
       }
 
-      this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
+      this.$store.dispatch("section/fetchProjectInitialSections", { projectId: this.$route.params.id, filter: 'all' })
       this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
     }
   },

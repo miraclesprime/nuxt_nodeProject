@@ -275,7 +275,6 @@ export default {
       deep: true, // Watch for changes in nested properties of tableData
       handler(newValue) {
         this.newValue=_.cloneDeep(newValue)
-        console.log("newValue",newValue)
         this.$nextTick(() => {
           this.localData=[]
           this.$refs.myTable.scrollTop=0

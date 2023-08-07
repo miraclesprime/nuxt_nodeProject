@@ -25,6 +25,9 @@ export const mutations = {
 
   fetchProjectSections(state, payload){
     state.projectSections = payload
+
+  },
+  fetchProjectInitialSections(state,payload) {
     let sorted = payload.map((s) => {
       let t = s.tasks.sort((a, b) => a.order - b.order);
       s.tasks = t;
@@ -56,7 +59,6 @@ export const mutations = {
     })
   },
   getFilterSections(state,payload){
-    console.log(payload)
     let arr=JSON.parse(JSON.stringify(state.initialSections));
     arr=arr.filter((item)=>{
       if(item.tasks.length>0){
@@ -159,11 +161,13 @@ export const actions = {
   },
 
   async fetchProjectSections(ctx, payload) {
+    console.log("$$$$$$$$$$$$$$$",payload)
     const res = await this.$axios.$get('/section/project/' + payload.projectId, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
     });
 
     if (res.statusCode == 200) {
+      console.log("##############",res.data)
       ctx.commit('fetchProjectSections', res.data);
       if(payload.sName&&payload.sName!=="default"){
         const data={
@@ -171,6 +175,16 @@ export const actions = {
         }
         ctx.commit('groupSectionProject',data)
       }
+      return res.data
+    }
+  },
+  async fetchProjectInitialSections(ctx, payload) {
+    const res = await this.$axios.$get('/section/project/' + payload.projectId, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
+    });
+
+    if (res.statusCode == 200) {
+      ctx.commit('fetchProjectInitialSections', res.data);
       return res.data
     }
   },
