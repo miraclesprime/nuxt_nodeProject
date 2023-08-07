@@ -118,10 +118,10 @@ export default {
   },
   router: {
   //   // base: '/dashboard',
-  //   middleware: ["auth"]
+    middleware: ["defineNuxtRouteMiddleware"],
     trailingSlash: false
   },
-  serverMiddleware: ["~/middleware/redirects", "~/middleware/redirectTrailingSlash"],
+  serverMiddleware: ["~/middleware/redirects"],
   // proxy: {
   //   '/auth': {
   //     target: process.env.VUE_APP_API_ENDPOINT+'/auth',
