@@ -232,10 +232,10 @@ export default {
     this.resizableColumns()
   },
 
-  /*beforeDestroy(){
+  beforeDestroy(){
     this.localData = null
     this.activeItem = {}
-  },*/
+  },
 
   methods: {
     parseDate(dateString, format) {
