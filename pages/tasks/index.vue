@@ -787,8 +787,12 @@ export default {
         task.departmentId=section.tasks[0]?.departmentId
       }
       if(this.group=="project"){
-        task.projectId=section.tasks[0]?.project?.[0].project?.id||null 
+        task.projectId=section.tasks[0]?.project?.[0].project?.id || null 
       }
+
+      section.tasks.forEach((el, i) => {
+        el.dOrder = i;
+      });
 
       console.log(task, section)
       delete task.show
