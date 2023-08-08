@@ -25,6 +25,9 @@ export const mutations = {
 
   fetchProjectSections(state, payload){
     state.projectSections = payload
+
+  },
+  fetchProjectInitialSections(state,payload) {
     let sorted = payload.map((s) => {
       let t = s.tasks.sort((a, b) => a.order - b.order);
       s.tasks = t;
@@ -56,7 +59,6 @@ export const mutations = {
     })
   },
   getFilterSections(state,payload){
-    console.log(payload)
     let arr=JSON.parse(JSON.stringify(state.initialSections));
     arr=arr.filter((item)=>{
       if(item.tasks.length>0){
@@ -130,166 +132,6 @@ export const mutations = {
         arr = _arr;
     }
 
-//     if (payload.sName == "priority") {
-//       arrIndex = "priority";
-//       let items = [];
-
-//       arr.sort((a,b)=>{
-//         if (a.priorityId === null && b.priorityId !== null) {
-//           return 1;
-//         }
-//         if (b.priorityId === null && a.priorityId !== null) {
-//           return -1;
-//         }
-//         if (a.priorityId === null && b.priorityId === null) {
-//           return 0;
-//         }
-//         return a.priorityId - b.priorityId;
-//       })
-//       arr.forEach((ele) => {
-//         let title = ele.priority !== null && ele.priority?.text !== null ? ele.priority.text.charAt(0).toUpperCase()+ele.priority.text.slice(1) : "Unassigned"
-//          if (!items.includes(title)) items.push(title);
-//        });
-//        _tasks = items.map((item, idx) => {
-//          return {
-//            id: idx,
-//            title: item !== null ? item : "Unassigned",
-//            tasks: arr.filter(
-//              (_item) =>
-//                (_item[arrIndex] !== null&&_item[arrIndex]?.text !== null ?  _item[arrIndex].text.charAt(0).toUpperCase()+_item[arrIndex].text.slice(1) : null) ===
-//                (item === "Unassigned" ? null : item)
-//            ),
-//          };
-//        });
-//     }
-//     if (payload.sName == "department") {
-//       arrIndex = "department";
-//       let items = [];
-//       arr.sort((a,b)=>{
-//         if (a.departmentId === null && b.departmentId !== null) {
-//           return 1;
-//         }
-//         if (b.departmentId === null && a.departmentId !== null) {
-//           return -1;
-//         }
-//         if (a.departmentId === null && b.departmentId === null) {
-//           return 0;
-//         }
-//         return a.departmentId - b.departmentId;
-//       })  
-      
-
-//       arr.forEach((ele) => {
-//         let title =
-//           ele.departmentId !== null ? ele.department.title : "Unassigned";
-//         if (!items.includes(title)) items.push(title);
-//       });
-//       _tasks = items.map((item, idx) => {
-//         return {
-//           id: idx,
-//           title: item !== null ? item : "Unassigned",
-//           tasks: arr.filter(
-//             (_item) =>
-//               (_item[arrIndex] !== null ? _item[arrIndex].title : null) ===
-//               (item === "Unassigned" ? null : item)
-//           ),
-//         };
-//       });
-//     }
-//     if (payload.sName == "assignee") {
-//       arrIndex = "user";
-//       let items = [];
-//       arr.sort((a,b)=>{
-//         return a.id - b.id;
-//       })  
-
-//       arr.forEach((ele) => {
-//         let title =
-//           ele.user !== null&&ele.user!==undefined 
-//             ? ele.user.firstName + " " + ele.user.lastName
-//             : "Unassigned";
-//         if (!items.includes(title)) items.push(title);
-//       });
-//       _tasks = items.map((item, idx) => {
-//         return {
-//           id: idx,
-//           title: item !== null ? item : "Unassigned",
-//           tasks: arr.filter(
-//             (_item) =>
-//               (_item[arrIndex] !== null&&_item[arrIndex] !== undefined
-//                 ? _item[arrIndex].firstName + " " + _item[arrIndex].lastName
-//                 : null) === (item === "Unassigned" ? null : item)
-//           ),
-//         };
-//       });
-//     }
-//     if (payload.sName == "status") {
-//       arrIndex = "status";
-//       let items = [];
-      
-//         arr.sort((a,b)=>{
-//         if (a.statusId === null && b.statusId !== null) {
-//           return 1;
-//         }
-//         if (b.statusId === null && a.statusId !== null) {
-//           return -1;
-//         }
-//         if (a.statusId === null && b.statusId === null) {
-//           return 0;
-//         }
-//         return a.statusId - b.statusId;
-//       })   
-//       arr.forEach((ele) => {
-//         let title = ele.statusId !== null ? ele.status.text : "Unassigned";
-//         if (!items.includes(title)) items.push(title);
-//       });
-//       _tasks = items.map((item, idx) => {
-//         return {
-//           id: idx,
-//           title: item !== null ? item : "Unassigned",
-//           tasks: arr.filter(
-//             (_item) =>
-//               (_item[arrIndex] !== null ? _item[arrIndex].text : null) ===
-//               (item === "Unassigned" ? null : item)
-//           ),
-//         };
-//       });
-//     }
-//     if(payload.sName=="dueDate"){
-//       arrIndex = "dueDate";
-//       let items = [];
-//       arr.sort((a,b)=>{
-//         if (a.dueDate === null && b.dueDate !== null) {
-//           return 1;
-//         }
-//         if (b.dueDate === null && a.dueDate !== null) {
-//           return -1;
-//         }
-   
-//         return new Date(a.dueDate) - new Date(b.dueDate);
-//       })
-//       arr.forEach((ele) => {
-//         let title
-//         if(ele.dueDate!==null){
-//           title =this.$CalDate(ele.dueDate)
-//         }
-//         else {
-//           title="Unassigned"
-//         }
-//         if (!items.includes(title)) items.push(title);
-//       });
-//       _tasks = items.map((item, idx) => {
-//         return {
-//           id: idx,
-//           title: item !== null ? item : "Unassigned",
-//           tasks: arr.filter(
-//             (_item) =>
-//               (_item[arrIndex] !== null ? this.$CalDate(_item[arrIndex]) : null) ===
-//               (item === "Unassigned" ? null : item)
-//           ),
-//         };
-//       });
-// }
       if(payload.sName==""){
         state.projectSections=state.initialSections
       }
@@ -331,6 +173,16 @@ export const actions = {
         }
         ctx.commit('groupSectionProject',data)
       }
+      return res.data
+    }
+  },
+  async fetchProjectInitialSections(ctx, payload) {
+    const res = await this.$axios.$get('/section/project/' + payload.projectId, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
+    });
+
+    if (res.statusCode == 200) {
+      ctx.commit('fetchProjectInitialSections', res.data);
       return res.data
     }
   },

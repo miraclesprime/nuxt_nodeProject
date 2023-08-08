@@ -189,6 +189,9 @@ export default {
   },
 
   watch: {
+    filterViews(newValue){
+         return _.cloneDeep(newValue)
+    },
     sections(newVal) {
       this.localdata = _.cloneDeep(newVal);
 
@@ -666,7 +669,7 @@ export default {
       this.$store
         .dispatch("section/fetchProjectSections", {
           projectId: this.$route.params.id,
-          filter: 'all',
+          filter: this.filterViews,
           sName:this.groupby
         })
         .then(() => {

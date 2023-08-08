@@ -162,7 +162,9 @@ export default {
         taskFields: "task/tableFields",
         favProjects: "project/getFavProjects",
         user2: "user/getUser2",
-        filterViews :'task/getFilterView'
+        filterViews :'task/getFilterView', 
+        grid:"project/getGridType"
+
     }),
 
     projectName: {
@@ -188,6 +190,7 @@ export default {
   created() {
     this.$nuxt.$on("change-grid-type", (type) => {
       this.gridType = type;
+      this.$store.commit('project/gridType',{gridType:this.gridType})
     });
 
     this.$nuxt.$on("set-active-task", (task) => {
@@ -201,7 +204,6 @@ export default {
   },
 
   async asyncData({$axios, app, params, store}) {
-
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
     const filter = store.getters['task/getFilterView']
     try {
@@ -225,6 +227,7 @@ export default {
         } 
       })
 
+      // store.dispatch("section/fetchProjectSections", { projectId: params.id, filter: filter })
       return { project: res.data.data, userProj: proj }
       
     } catch(err) {
@@ -259,8 +262,11 @@ export default {
         this.$router.push('/notfound')
       }
 
-      this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id, filter: 'all' })
+      this.$store.dispatch("section/fetchProjectInitialSections", { projectId: this.$route.params.id, filter: 'all' })
       this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
+      setTimeout(() => {
+        this.gridType=this.grid
+      }, 200);
     }
   },
 
