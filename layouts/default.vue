@@ -478,7 +478,7 @@ export default {
                 this.$store.dispatch("project/fetchFavProjects");
                 this.$store.dispatch("user/setTeamMembers");
                 this.$store.dispatch("task/getFavTasks");
-                // this.$store.dispatch("company/fetchCompanyTasks");
+                this.$store.dispatch("company/fetchInitialCompanyTasks");
               })
               .catch((err) => {
                 console.log("there was some issue!!!");

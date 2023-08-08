@@ -162,7 +162,6 @@ export default ({ store, app, context }, inject) => {
             return new Date(a.dueDate) - new Date(b.dueDate);
           })
           const groupDueDate = arr.reduce((acc, task) => {
-
             // calc dueDate
             let _dueDate=""
             const oneDay = 24 * 60 * 60 * 1000; // one week in milliseconds

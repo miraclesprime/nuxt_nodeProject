@@ -3,7 +3,7 @@
 
       <div :id="'advTableTwo-'+componentKey" class=" adv-table  bg-white" :style="{'width': tableWidth}"  >
 
-        <draggable v-model="localData" id="mainDraggable" class="section-draggable-wrapper sortable-list position-relative" @end="$emit('section-dragend', localData)">
+        <draggable v-model="newValue" id="mainDraggable" class="section-draggable-wrapper sortable-list position-relative" @end="$emit('section-dragend', newValue)">
           <div class="table resizable w-100 position-sticky" ref="headrow" style="top: 0; z-index:2;">
             <div class="tr " role="row" >
               <div v-show="drag" class="width-2 th" role="cell" ></div>
@@ -116,16 +116,16 @@
                     </template>
                   </template>
                   <template v-if="field.key == 'startDate'" >
-                    {{$formatDate(item[field.key])}}
+                    <!-- {{$formatDate(item[field.key])}} -->
                     
-                    <!-- <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker> -->
-                    <!-- <skeleton-box v-else></skeleton-box> -->
+                    <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+                    <skeleton-box v-else></skeleton-box>
                   </template>
                   <template v-if="field.key == 'dueDate'" >
-                    {{$formatDate(item[field.key])}}
+                    <!-- {{$formatDate(item[field.key])}} -->
                     
-                    <!-- <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker> -->
-                    <!-- <skeleton-box v-else></skeleton-box> -->
+                    <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+                    <skeleton-box v-else></skeleton-box>
                   </template>
                 </div>
               </div>
@@ -285,7 +285,7 @@ export default {
       },
     },
     // tableData(newValue){
-    //   this.newValue = _.cloneDeep(newValue)
+    //   this.localData = _.cloneDeep(newValue)
       
     // },
     showNewsection(newValue){
@@ -342,18 +342,29 @@ export default {
   },
 
   mounted() {
-  this.resizableColumns()
+    // this.localData=_.cloneDeep(this.tableData)
+    this.resizableColumns()
   },
 
   methods: {
-
+    modifyDateFormat(value){
+     value.map((item) => {
+          item.tasks?.forEach((items)=>{
+            items.dueDate = items.dueDate ? dayjs(items.dueDate).format(this.format) : null
+              items.startDate = items.startDate ? dayjs(items.startDate).format(this.format) : null
+              return items
+          })
+        }
+      )
+      return value
+    },
 
     handleScroll(event) {
       const tableContainer = event.target;
       if (this.allDataDisplayed) {
         return; // Stop adding data if all data has been displayed
       }
-      const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight+1 >= tableContainer.scrollHeight;
+      const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight+5 >= tableContainer.scrollHeight;
 
       if (isAtBottom) {
       this.showData();
@@ -362,17 +373,17 @@ export default {
     },
     showData() {
       let allTasks = this.newValue.length > 0 ? [...this.newValue] : [...this.tableData];
-      allTasks =allTasks.map((item) => {
-                  item.dataCount = item.tasks?.length||0;
-                  return item;
-                });
-
+      // allTasks =allTasks.map((item) => {
+      //             item.dataCount = item.tasks?.length||0;
+      //             return item;
+      //           });
+  allTasks=this.modifyDateFormat(allTasks)
   let remainingCount = this.itemsPerPage;
     let start = this.lastDisplayedIndex.curIdxInGroup;
       let i;
       for (i = start === -1 ? this.lastDisplayedIndex.groupIdx + 1 : this.lastDisplayedIndex.groupIdx; i < allTasks.length; ++ i) {
         if (start === -1) {
-          if (remainingCount < allTasks[i].dataCount - start - 1) {
+          if (remainingCount < allTasks[i].tasks?.length - start - 1) {
             
             this.localData.push({});
             for (const [key, value] of Object.entries(allTasks[i])) {
@@ -385,13 +396,13 @@ export default {
             remainingCount = 0;
           } else {
             this.localData.push(allTasks[i])
-            remainingCount -= allTasks[i].dataCount;
+            remainingCount -= allTasks[i].tasks?.length;
             start = -1;
           }
         }
         else {
           let tmp = {};
-          if (start + remainingCount + 1 < allTasks[i].dataCount) {
+          if (start + remainingCount + 1 < allTasks[i].tasks?.length) {
             Object.assign(tmp, this.localData[i])
           
             tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, start + remainingCount + 1))
@@ -401,17 +412,16 @@ export default {
             remainingCount = 0;
           } else {
             Object.assign(tmp, this.localData[i])
-            tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, allTasks[i].dataCount))
+            tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, allTasks[i].tasks?.length))
             this.localData.length -= 1;
             this.localData.push(tmp)
-            remainingCount -= (allTasks[i].dataCount - start - 1);
+            remainingCount -= (allTasks[i].tasks?.length - start - 1);
             start = -1;
           }
         }
         if (remainingCount == 0) break;
 
       }
-      // this.scrollToLastSection();
       if (i >= allTasks.length - 1 && start === -1) 
       {
         this.allDataDisplayed = true;
@@ -422,6 +432,7 @@ export default {
 
       this.lastDisplayedIndex.groupIdx = i;
       this.lastDisplayedIndex.curIdxInGroup = start;
+      
     },
     
 

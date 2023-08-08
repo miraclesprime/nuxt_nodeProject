@@ -2,8 +2,8 @@
   <client-only>
     <div id="inbox-wrapper" class="inbox-wrapper d-flex h-100">
       <main class="position-relative">
-        <page-title title="Inbox" :avatar="'I'"></page-title>
-        <nav id="inbox-nav" class="d-flex align-center gap-05 py-05 px-025 border-bottom-light">
+        <page-title title="Inbox" ></page-title>
+        <!-- <nav id="inbox-nav" class="d-flex align-center gap-05 py-05 px-025 border-bottom-light">
           <div id="inbox-action-wrapper" class="action-left">
             <div class="d-flex gap-05 shape-rounded py-025 px-05 cursor-pointer text-success bg-success-sub6 bg-hover-success-sub3" id="inbox-add-project-button" v-on:click="$nuxt.$emit('create-project-modal')">
               <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="inbox-add-project-text">New Project</span>
@@ -11,17 +11,18 @@
           </div>
           <div class="action-right" id="pa-action-right">
           </div>
-        </nav>
+        </nav> -->
         <div class="position-relative h-100 of-scroll-y" >
           <div v-for="(value, key) in combinedInbox">
             <h4 class="font-md text-gray6 text-capitalize py-05 px-2 border-bottom-light">{{key}}</h4>
             <template v-for="(o, index) in value">
-              <inbox-item :item="o" :key="o.id"  @task-click="fetchTask" @project-click="fetchProject" :active="active"></inbox-item>
+              <inbox-item :item="o" :key="o.id" @task-click="fetchTask" @project-click="fetchProject" :active="active"></inbox-item>
             </template>
           </div>
-          <div ref="infinitescrolltrigger" v-show="currentPage <= pageCount" class="align-center justify-center text-gray5">
+          <div ref="infinitescrolltrigger" v-show="currentPage <= pageCount" class="align-center justify-center py-05">
             <!-- <bib-spinner variant="gray5"></bib-spinner> -->
-            <div class="animated-background" style="height: 5px;"></div>
+            <div class="animated-background width-10" style="height: 2px;"></div>
+            <!-- <skeleton-box></skeleton-box> -->
           </div>
         </div>
       </main>
@@ -44,7 +45,7 @@ export default {
 
   data() {
     return {
-      loading: false,
+      // loading: false,
       inbox: [],
       task: {},
       project: {},
@@ -186,20 +187,31 @@ export default {
         }
       })
 
-      return { today: t2, yesterday: y2, older: o2 }
-    }
+      // make first item active
+      if (t2.length > 0) {
+        this.switchTaskProject(t2[0])
+        return { today: t2, yesterday: y2, older: o2 }
+      }
+      if (y2.length > 0) {
+        this.switchTaskProject(y2[0])
+        return { today: t2, yesterday: y2, older: o2 }
+      }
+      if (o2.length > 0) {
+        this.switchTaskProject(o2[0])
+        return { today: t2, yesterday: y2, older: o2 }
+      }
+
+    },
   },
   mounted() {
 
     this.$store.dispatch("inbox/fetchInboxEntries").then(res => {
-      this.loading = false
+      // console.log(res.data)
     }).catch(err => {
       console.warn(err)
-      this.loading = false
     })
 
     this.scrollTrigger();
-
   },
   methods: {
     scrollTrigger() {
@@ -215,7 +227,7 @@ export default {
                   this.inbox.push(...h.data.data)
                 }
               })
-            }, 1500)
+            }, 800)
 
             newdata()
           }
@@ -231,18 +243,20 @@ export default {
     testUserProject(arr, item) {
       return arr.findIndex(a => a.userId == item.userId && a.projectId == item.projectId)
     },
-    switchTaskProject() {
-      this.active = this.inbox[0].id
-      if (this.inbox[0].taskId) {
+    switchTaskProject(item) {
+      if (item.taskId) {
         this.taskProject = "task"
-        this.fetchTask({ id: this.inbox[0].id, taskId: this.inbox[0].taskId })
+        this.fetchTask({ id: item.id, taskId: item.taskId })
+        // console.log('inbox task')
       }
-      if (this.inbox[0].projectId) {
+      if (item.projectId) {
         this.taskProject = "project"
-        this.fetchProject({ id: this.inbox[0].id, projectId: this.inbox[0].projectId })
+        this.fetchProject({ id: item.id, projectId: item.projectId })
+        // console.log('inbox project')
       }
     },
     fetchTask(payload) {
+      // console.log(payload)
       if (payload.id) {
         this.active = payload.id
       }
@@ -257,6 +271,7 @@ export default {
         })
     },
     fetchProject(payload) {
+      // console.log(payload)
       this.active = payload.id
       this.task = {}
       this.taskProject = "project"

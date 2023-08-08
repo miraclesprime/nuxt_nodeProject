@@ -176,9 +176,9 @@ export default {
 .new {
   background-color: $success;
   left: 0;
-  top: 1rem;
-  padding-left: 0.25rem;
-  padding-right: 0.6rem;
+  top: 1.25rem;
+  padding-left: 0.35rem;
+  padding-right: 0.75rem;
   height: 24px;
   line-height: 24px;
 

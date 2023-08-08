@@ -56,9 +56,7 @@ export const mutations = {
   updateFetchUserTasks(state,payload) {
     let userTasks=state.userTasks
     let selectedTask=payload.data
-    console.log("payload.createORupdate",payload)
     if(payload.createORupdate=="create"){
-      console.log("create")
       state.initialData.push(payload.data)
       let arr=[]
       arr=state.initialData
@@ -84,7 +82,6 @@ export const mutations = {
         }  
       }
       state.userTasks=arr
-      console.log(state.userTasks)
      
     }
     else{
@@ -99,7 +96,6 @@ export const mutations = {
         state.userTasks.forEach((section, section_idx) => {
             section.tasks.forEach((task, task_idx) => {
             if (task.id === selectedTask.id) {
-              console.log("task",task)
               sectionID = section_idx;
               taskID = task_idx;
             }
