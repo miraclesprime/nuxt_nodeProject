@@ -234,18 +234,18 @@ export default {
         this.getTags()
       } else {
         this.form = {
-          id: '',
+          id: "",
           title: "",
           createdAt: "",
-          startDate: "",
-          dueDate: "",
-          userId: "",
+          startDate: null,
+          dueDate: null,
+          userId: null,
           sectionId: "",
           departmentId: this.departmentId || null,
-          projectId: "",
+          projectId: null,
           statusId: null,
           priorityId: null,
-          description: '',
+          description: "",
           budget: 0,
         }
         this.$nextTick(() => {
@@ -297,18 +297,18 @@ export default {
         this.reloadFiles += 1
       } else {
         this.form = {
-          id: '',
+          id: "",
           title: "",
           createdAt: "",
-          startDate: "",
-          dueDate: "",
-          userId: "",
+          startDate: null,
+          dueDate: null,
+          userId: null,
           sectionId: "",
           departmentId: this.departmentId || null,
-          projectId: "",
+          projectId: null,
           statusId: null,
           priorityId: null,
-          description: '',
+          description: "",
           budget: 0,
         }
         this.$nextTick(() => {
