@@ -158,10 +158,12 @@ export default {
     },
     selected(user) {
       this.user = user
-      this.show = false
+      // this.show = false
+      this.onClickOutside()
       this.$emit("change", user)
     },
     onClickOutside() {
+      this.filterKey = ""
       this.show = false
     },
   }
