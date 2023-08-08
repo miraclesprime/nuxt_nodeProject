@@ -118,9 +118,28 @@ export default {
       favTasks: 'task/getFavTasks',
       favSubtasks: "subtask/getFavSubtasks",
       teamMembers: "user/getTeamMembers",
+      filterViews :'task/getFilterView',
     }),
 
   },
+  watch: {
+      filterViews(newVal) {
+          return _.cloneDeep(newVal)
+      },
+    },
+
+  //   async asyncData({$axios, app,store}){
+
+  // const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
+  // const filter=store.getters['task/getFilterView']
+  // const fav = await $axios.get("project/user/favorites", {
+  //       headers: {
+  //         "Authorization": `Bearer ${token}`,'Filter': filter 
+  //       }
+  //     })
+  // return { localData: res.data.data}
+
+  // },
 
   created() {
     if (process.client) {

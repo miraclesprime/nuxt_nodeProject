@@ -3,7 +3,7 @@
 
       <div :id="'advTableTwo-'+componentKey" class=" adv-table  bg-white" :style="{'width': tableWidth}"  >
 
-        <draggable v-model="localData" id="mainDraggable" class="section-draggable-wrapper sortable-list position-relative" @end="$emit('section-dragend', newValue)">
+        <draggable v-model="newValue" id="mainDraggable" class="section-draggable-wrapper sortable-list position-relative" @end="$emit('section-dragend', newValue)">
           <div class="table resizable w-100 position-sticky" ref="headrow" style="top: 0; z-index:2;">
             <div class="tr " role="row" >
               <div v-show="drag" class="width-2 th" role="cell" ></div>
@@ -422,7 +422,6 @@ export default {
         if (remainingCount == 0) break;
 
       }
-      // this.scrollToLastSection();
       if (i >= allTasks.length - 1 && start === -1) 
       {
         this.allDataDisplayed = true;
@@ -433,6 +432,7 @@ export default {
 
       this.lastDisplayedIndex.groupIdx = i;
       this.lastDisplayedIndex.curIdxInGroup = start;
+      
     },
     
 
