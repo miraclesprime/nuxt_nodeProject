@@ -236,7 +236,6 @@ export default {
         this.form = {
           id: "",
           title: "",
-          createdAt: "",
           startDate: null,
           dueDate: null,
           userId: null,
@@ -299,7 +298,6 @@ export default {
         this.form = {
           id: "",
           title: "",
-          createdAt: "",
           startDate: null,
           dueDate: null,
           userId: null,
@@ -358,8 +356,8 @@ export default {
           user = null
         }
 
-        if (taskform.projectId && (!taskform.sectionId || taskform.sectionId == "")) {
-          taskform.sectionId = "_section" + taskform.projectId
+        if ((taskform.projectId || this.$route.params.id) && (!taskform.sectionId || taskform.sectionId == "")) {
+          taskform.sectionId = "_section" + (this.$route.params.id || taskform.projectId)
         } else {
           taskform.sectionId = ""
         }
@@ -370,8 +368,8 @@ export default {
         }
 
         this.$store.dispatch("task/createTask", {
-          "sectionId": taskform.sectionId,
-          "projectId": taskform.projectId,
+          "sectionId": this.$route.params.id ? "_section" + this.$route.params.id : taskform.sectionId,
+          "projectId": Number(this.$route.params.id || taskform.projectId),
           "title": this.form.title,
           "description": taskform.description,
           "startDate": taskform.startDate,
@@ -382,6 +380,7 @@ export default {
           "statusId": taskform.statusId,
           user,
           "text": `task "${this.form.title}" created`,
+          "mode": this.$route.params.id ? "project" : null
         }).then((task) => {
           this.$store.dispatch("task/setSingleTask", task.data)
           this.$emit("update-key")
