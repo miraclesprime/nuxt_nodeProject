@@ -759,42 +759,42 @@ export default {
 
     createNewTask(task,section) {
       task.group = this.group;
-          task.status=null
-          task.statusId=null
-          task.priority=null
-          task.priorityId=null
+          task.status = null
+          task.statusId = null
+          task.priority = null
+          task.priorityId = null
           task.departmentId = null;
           task.department = null;
-          task.user=null
-          task.userId=null
-          task.projectId=null
+          task.user = null
+          task.userId = null
+          task.projectId = null
       
-      if(this.group=="priority"){
-        task.priority=section.tasks[0]?.priority
-        task.priorityId=section.tasks[0]?.priorityId
+      if(this.group == "priority"){
+        task.priority = section.tasks[0]?.priority
+        task.priorityId = section.tasks[0]?.priorityId
      
       }
-      if(this.group=="status"){
-        task.status=section.tasks[0]?.status
-        task.statusId=section.tasks[0]?.statusId
+      if(this.group == "status"){
+        task.status = section.tasks[0]?.status
+        task.statusId = section.tasks[0]?.statusId
       }
-      if(this.group=="assignee"){
-        task.user=[section.tasks[0]?.user]
-        task.userId=section.tasks[0]?.userId
+      if(this.group == "assignee"){
+        task.user = [section.tasks[0]?.user]
+        task.userId = section.tasks[0]?.userId
       }
-      if(this.group=="department"){
-        task.department=section.tasks[0]?.department
-        task.departmentId=section.tasks[0]?.departmentId
+      if(this.group == "department"){
+        task.department = section.tasks[0]?.department
+        task.departmentId = section.tasks[0]?.departmentId
       }
-      if(this.group=="project"){
-        task.projectId=section.tasks[0]?.project?.[0].project?.id || null 
+      if(this.group == "project"){
+        task.projectId = section.tasks[0]?.project?.[0].project?.id || null 
       }
 
       section.tasks.forEach((el, i) => {
         el.dOrder = i;
       });
 
-      console.log(task, section)
+      // console.log(task, section)
       delete task.show
       delete task.sectionId
       this.$store.dispatch("task/createTask", {
@@ -822,7 +822,7 @@ export default {
         userId: null,
         statusId: null,
         priorityId: null,
-        projectId:null,
+        projectId: null,
         startDate: "",
         dueDate: "",
         departmentId: null,
