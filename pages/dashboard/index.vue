@@ -41,7 +41,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .dashboard-title {
-  background: linear-gradient(10deg, $purple, $orange);
+  background: linear-gradient(45deg, $primary, $success);
   background-clip: text;
   color: transparent;
 }

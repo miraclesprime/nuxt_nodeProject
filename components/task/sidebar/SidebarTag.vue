@@ -102,14 +102,16 @@ export default {
       if (tagExist) {
         this.popupMessages.push({text: "tag already exists", variant: "orange"})
       } else {
+        this.onClickOutside()
         this.$emit("change", tag)
-        this.show = false
+        // this.show = false
       }
     },
     deleteTag(tag) {
       this.$emit("delete-tag", tag)
     },
     onClickOutside() {
+      this.filterKey = ""
       this.show = false
     },
     addTag() {
