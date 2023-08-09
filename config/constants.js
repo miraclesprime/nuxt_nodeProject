@@ -116,7 +116,7 @@ export const TASK_FIELDS = [
   {
     label: 'Task name',
     key: 'title',
-    // width: "200px",
+    width: "200px",
     icon: {
       icon: 'check-circle-solid',
       variant: 'gray2',
@@ -187,7 +187,7 @@ export const TASK_FIELDS = [
   {
     key: "startDate",
     label: "Start Date",
-    width: "150px",
+    width: "160px",
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -197,7 +197,7 @@ export const TASK_FIELDS = [
   {
     key: "dueDate",
     label: "Due Date",
-    width: "150px",
+    width: "160px",
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -467,9 +467,9 @@ export const DEPARTMENT = [
 ]
 export const STATUS = [
   { label: 'Choose status', value: 0, color: "" },
-  { label: 'In-Progress', value: '1', color: "primary" },
-  { label: 'Waiting', value: '2', color: "orange" },
-  { label: 'Not Started', value: '3', color: "secondary" },
+  { label: 'Not Started', value: '1', color: "secondary" },
+  { label: 'In-Progress', value: '2', color: "primary" },
+  { label: 'Waiting', value: '3', color: "orange" },
   { label: 'Delayed', value: '4', color: "danger" },
   { label: 'Done', value: '5', color: "success" },
 ]
@@ -541,7 +541,7 @@ export const PROJECT_FAVORITES = [
   {
     label: 'Start Date',
     key: 'startDate',
-    width: '150px',
+    width: '160px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -551,7 +551,7 @@ export const PROJECT_FAVORITES = [
   {
     label: 'Due Date',
     key: 'dueDate',
-    width: '150px',
+    width: '160px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -634,7 +634,7 @@ export const TASK_FAVORITES = [
   {
     label: 'Start Date',
     key: 'startDate',
-    width: '150px',
+    width: '160px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -644,7 +644,7 @@ export const TASK_FAVORITES = [
   {
     label: 'Due Date',
     key: 'dueDate',
-    width: '150px',
+    width: '160px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -811,7 +811,7 @@ export const DEMO_TASK = [
   {
     label: 'Start Date',
     key: 'startDate',
-    width: '150px',
+    width: '160px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -821,7 +821,7 @@ export const DEMO_TASK = [
   {
     label: 'Due Date',
     key: 'dueDate',
-    width: '150px',
+    width: '160px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -864,7 +864,7 @@ export const COMPANY_TASK_FIELDS = [
     label: 'Task name',
     key: 'title',
     // minWidth: "200px",
-    // width: "200px",
+    width: "200px",
     icon: {
       icon: 'check-circle-solid',
       variant: 'gray2',
@@ -945,7 +945,7 @@ export const COMPANY_TASK_FIELDS = [
   {
     label: 'Start Date',
     key: 'startDate',
-    width: '150px',
+    width: '160px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -955,7 +955,7 @@ export const COMPANY_TASK_FIELDS = [
   {
     label: 'Due Date',
     key: 'dueDate',
-    width: '150px',
+    width: '160px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -1042,7 +1042,7 @@ export const USER_TASKS = [
   {
     label: 'Start Date',
     key: 'startDate',
-    width: '150px',
+    width: '160px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -1052,7 +1052,7 @@ export const USER_TASKS = [
   {
     label: 'Due Date',
     key: 'dueDate',
-    width: '150px',
+    width: '160px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',

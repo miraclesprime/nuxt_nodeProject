@@ -57,7 +57,9 @@ export const mutations = {
     let userTasks=state.userTasks
     let selectedTask=payload.data
     if(payload.createORupdate=="create"){
-      state.initialData.push(payload.data)
+      if (!state.initialData.some(item => item.id === selectedTask.id)) {
+        state.initialData.push(selectedTask);
+      }
       let arr=[]
       arr=state.initialData
       if(payload.filter=="incomplete")

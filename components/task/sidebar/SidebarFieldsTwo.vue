@@ -150,12 +150,15 @@ export default {
     task() {
       if (Object.keys(this.task).length) {
         this.form = _.cloneDeep(this.task);
-        if (this.task.project?.length) {
+        if (this.task.project[0]?.project?.id) {
           this.form.projectId = this.task.project?.[0]?.projectId || this.task.project?.[0]?.project?.id;
-          this.$store.dispatch("section/fetchProjectSections", {
-            projectId: this.form.projectId,
-            filter: this.filterViews,
-          });
+          // console.log(this.form.projectId)
+          /*if (this.form.projectId) {
+            this.$store.dispatch("section/fetchProjectSections", {
+              projectId: this.form.projectId,
+              filter: this.filterViews,
+            });
+          }*/
         } else {
           this.form.projectId = this.project?.id;
         }
@@ -193,10 +196,13 @@ export default {
         this.form = _.cloneDeep(this.task);
         if (this.task.project?.length) {
           this.form.projectId = this.task.project?.[0]?.projectId || this.task.project?.[0]?.project?.id;
-          this.$store.dispatch("section/fetchProjectSections", {
-            projectId: this.form.projectId,
-            filter: this.filterViews,
-          });
+          if (this.task.project?.[0]?.project?.id) {
+            // console.log(this.form.projectId)
+            this.$store.dispatch("section/fetchProjectSections", {
+              projectId: this.form.projectId,
+              filter: this.filterViews,
+            });
+          }
         } else {
           this.form.projectId = this.project?.id;
         }
