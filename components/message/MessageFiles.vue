@@ -11,7 +11,7 @@
             <template v-slot:menu>
               <div id="msg-file-list" class="list ">
                 <span id="msg-file-list-item-1" class="list__item" v-if="canPreview" @click="$emit('file-click')">Preview</span>
-                <span id="msg-file-list-item-2" class="list__item">Open</span>
+                <!-- <span id="msg-file-list-item-2" class="list__item">Open</span> -->
                 <span id="msg-file-list-item-3" class="list__item" @click.stop="fileDetailModal = true">Detail</span>
                 <span id="msg-file-list-item-4" class="list__item" @click.stop="downloadFile">Download File</span>
                 <span id="msg-file-list-item-5" class="list__item list__item__danger" @click.stop="deleteFile(property)">Delete File</span>

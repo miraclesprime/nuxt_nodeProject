@@ -51,7 +51,7 @@
                 <template v-slot:menu>
                   <div class="list " id="pf-file-list">
                     <span class="list__item"  id="pf-file-list-item-1" v-if="canPreview(data.value)" @click="showPreviewModal(data.value)">Preview</span>
-                    <span class="list__item"  id="pf-file-list-item-2">Open</span>
+                    <!-- <span class="list__item"  id="pf-file-list-item-2">Open</span> -->
                     <span class="list__item"  id="pf-file-list-item-3" @click.stop="openFileDetail(data.value)">Detail</span>
                     <span class="list__item"  id="pf-file-list-item-4" @click.stop="downloadFile(data.value)">Download File</span>
                     <hr>
