@@ -617,3 +617,44 @@ ul {
   z-index: 4 !important;
 
 }
+.app-wrapper__navigation {
+  overflow: hidden !important;
+}
+
+.detail-collapse__content {
+  width: 100% !important;
+  overflow-y: auto !important;
+}
+
+.visible-scrollbar,
+.invisible-scrollbar,
+.mostly-customized-scrollbar {
+  display: block;
+  width: 10px;
+  overflow: auto;
+  height: 8px;
+}
+
+.invisible-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Demonstrate a "mostly customized" scrollbar
+ * (won't be visible otherwise if width/height is specified) */
+.mostly-customized-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background-color: transparent; /* or add it to the track */
+}
+
+/* Add a thumb */
+.mostly-customized-scrollbar::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 20px;
+
+  background: #e1d6d8;
+}
+
+.bib-collapse {
+  display: none;
+}
