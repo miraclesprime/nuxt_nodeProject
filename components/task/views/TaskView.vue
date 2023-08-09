@@ -195,12 +195,12 @@ export default {
     sections(newVal) {
       this.localdata = _.cloneDeep(newVal);
 
-       let sorted = this.localdata.map((s) => {
+       /*let sorted = this.localdata.map((s) => {
         let t = s.tasks.sort((a, b) => a.order - b.order);
         s.tasks = t;
         return s;
       });
-      this.localdata = sorted;
+      this.localdata = sorted;*/
       this.templateKey += 1;
     },
 
@@ -693,15 +693,15 @@ export default {
         return false;
       }
 
-      let project = [
+      /*let project = [
         {
           projectId: this.project?.id,
           project: {
             id: this.project?.id,
           },
         },
-      ];
-      this.$nuxt.$emit("open-sidebar", { ...task, project: project });
+      ];*/
+      this.$nuxt.$emit("open-sidebar", { ...task });
     },
 
     createNewTask(proj, section) {
