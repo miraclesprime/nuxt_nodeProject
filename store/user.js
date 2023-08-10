@@ -7,7 +7,9 @@ export const state = () => ({
   userTasks: [],
   sideBarUser:[],
   initialData:[],
-  userInfo:[]
+  userInfo:[],
+  isAdmin:false,
+
 });
 
 export const getters = {
@@ -46,10 +48,18 @@ export const getters = {
   },
   getUserInfo(state) {
     return state.userInfo
+  },
+  getIsAdmin(state) {
+    return state.isAdmin
   }
 };
 
 export const mutations = {
+  setIsAdmin(state,payload) {
+    console.log("store",payload)
+    state.isAdmin=payload
+
+  },
   setUserForTask(state,payload) {
     state.userInfo=payload
   },

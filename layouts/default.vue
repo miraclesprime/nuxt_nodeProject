@@ -470,9 +470,12 @@ export default {
               .then((value) => {
                 if (JSON.parse(localStorage.getItem("user")).subr == "ADMIN") {
                   this.isAdmin = true;
+                  this.$store.commit("user/setIsAdmin",this.isAdmin)
+                  console.log(this.isAdmin)
                 } else {
                   this.navItems2.splice(0,1);
                   this.isAdmin = false;
+                  this.$store.commit("user/setIsAdmin",this.isAdmin)
                 }
                 this.$store.dispatch("department/fetchDepartments");
                 this.$store.dispatch("project/fetchFavProjects");

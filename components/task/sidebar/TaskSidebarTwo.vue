@@ -29,13 +29,13 @@
                     <bib-icon v-else icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon>
                     {{isFavorite.text}}
                   </span>
-                  <span class="list__item" id="tsb-list-item-5" v-scroll-to="'#task_subtasks'">
+                  <span class="list__item" id="tsb-list-item-5"  @click="scrollToSubtasks">
                     <bib-icon icon="check-square-solid" variant="gray4" class="mr-075" v-scroll-to=""></bib-icon> Subtasks
                   </span>
-                  <span class="list__item" id="tsb-list-item-3" v-scroll-to="'#task_files'">
+                  <span class="list__item" id="tsb-list-item-3"   @click="scrollToFiles">
                     <bib-icon icon="folder-solid" variant="gray4" class="mr-075"></bib-icon> Files
                   </span>
-                  <span class="list__item" id="tsb-list-item-7" v-scroll-to="'#task_conversation'">
+                  <span class="list__item" id="tsb-list-item-7" @click="scrollToConversation">
                     <bib-icon icon="comment-forum-solid" variant="gray4" class="mr-075"></bib-icon> Conversation
                   </span>
                   <span class="list__item" id="tsb-project-id-list-item3" @click="copyTaskLink">
@@ -320,6 +320,30 @@ export default {
   },
 
   methods: {
+  scrollToSubtasks() {
+    this.$nextTick(() => {
+      const element = document.getElementById('task_subtasks');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' ,block: "center" });
+      }
+    });
+  },
+  scrollToFiles() {
+    this.$nextTick(() => {
+      const element = document.getElementById('task_files');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth',block: "center" });
+      }
+    });
+  },
+  scrollToConversation() {
+    this.$nextTick(() => {
+      const element = document.getElementById('task_conversation');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' ,block: "end"});
+      }
+    });
+  },
 
     /*showAddTeamModal() {
       // this.taskTeamModal = true
