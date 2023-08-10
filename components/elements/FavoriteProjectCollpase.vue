@@ -1,5 +1,5 @@
 <template>
-    <div  style="max-height: 240px ; overflow: hidden !important; ">
+    <div>
       <div
         :class="{
           'detail-collapse__header': true,
