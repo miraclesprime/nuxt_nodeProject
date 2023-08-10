@@ -102,7 +102,55 @@ export default {
         });
       }
 
-      console.log(inboxData);
+      const categorizeEntries = (group) => {
+        const todayEntries = [];
+        const yesterdayEntries = [];
+        const olderEntries = [];
+
+        group.history.forEach(entry => {
+          const updatedAt = new Date(entry.updatedAt);
+          const timeDifferenceInDays = Math.floor((now - updatedAt) / (1000 * 60 * 60 * 24));
+
+          if (timeDifferenceInDays === 0) {
+            todayEntries.push(entry);
+          } else if (timeDifferenceInDays === 1) {
+            yesterdayEntries.push(entry);
+          } else {
+            olderEntries.push(entry);
+          }
+        });
+
+        return {
+          today: todayEntries,
+          yesterday: yesterdayEntries,
+          older: olderEntries
+        };
+      };
+
+      inboxData.forEach(group => {
+        const categorizedEntries = categorizeEntries(group);
+        group.history = categorizedEntries;
+      });
+
+      let newData = {
+        today: [],
+        yesterday: [],
+        older: []
+      }
+
+      inboxData.forEach((torp) => {
+        if(torp.history.today.length > 0) {
+          newData.today.push({data: torp.history.today, id: torp.id, title: torp.title});
+        }
+        if(torp.history.yesterday.length > 0) {
+          newData.yesterday.push({data: torp.history.yesterday, id: torp.id, title: torp.title});
+        }
+        if(torp.history.older.length > 0) {
+          newData.older.push({data: torp.history.older, id: torp.id, title: torp.title});
+        }
+      })
+
+      console.log(newData);
 
     },
   },
