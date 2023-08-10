@@ -65,7 +65,6 @@
           'header-content-fixed': fixHeader,
           'detail-collapse__content_space': extraSpace,
         }"
-        style="max-height: 200px;"
       >
         <slot name="content"> </slot>
       </div>
@@ -137,6 +136,7 @@ import { mapGetters } from "vuex";
       return {
         id: null,
         sortUser:[],
+        checkRole:false
       };
     },
     computed: {
@@ -144,7 +144,8 @@ import { mapGetters } from "vuex";
         return `font-w-${this.labelWeight}`;
       },
       ...mapGetters({
-      allTasks:"company/getInitialAllTasks"
+      allTasks:"company/getInitialAllTasks",
+      isAdmin:"user/getIsAdmin"
     }),
     },
     watch: {
@@ -169,9 +170,30 @@ import { mapGetters } from "vuex";
                   }, {})
                 );
         },
+        isAdmin: {
+        immediate: true, // Execute the watcher immediately on component mount
+        handler(newValue) {
+          this.updateMaxHeight(newValue);
+        }
+      }
+
   },
+  mounted(){
+    this.updateMaxHeight(this.isAdmin)
+  },
+
     methods: {
 
+      updateMaxHeight(checkRole) {
+        const divElement = this.$refs.content;
+        if (divElement) {
+        if (checkRole) {
+          divElement.style.maxHeight = '200px';
+        } else {
+          divElement.style.maxHeight = `${window.innerHeight - 370}px`;
+        }
+      }
+  },
       changeSortPeople(item){
       this.$store.commit("user/sortPeople",{sort:item,data:this.sortUser});
     },
