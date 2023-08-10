@@ -69,12 +69,13 @@
       </div>
       <div
         ref="content"
-        class="detail-collapse__content"
+        class="detail-collapse__content mostly-customized-scrollbar"
         :class="{
           'bib-collapse': !open,
           'header-content-fixed': fixHeader,
           'detail-collapse__content_space': extraSpace,
         }"
+        style="height: 400px !important;"
       >
         <slot name="content"> </slot>
       </div>
@@ -265,5 +266,4 @@ import { mapGetters } from "vuex";
   .detail-collapse__content_space {
     margin-bottom: 1rem !important;
   }
-
   </style>

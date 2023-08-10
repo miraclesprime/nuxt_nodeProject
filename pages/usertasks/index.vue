@@ -200,6 +200,7 @@ export default {
     if (process.client) {
       this.$nuxt.$on("update-key", async (payload) => {
         this.$store.commit('user/updateFetchUserTasks',{createORupdate:payload,data:this.selectedTask,filter:this.filterViews,key:this.groupBy})
+        this.templateKey += 1
         // await this.fetchUserTasks();
         // this.beforeLocal = this.localData
       });
@@ -279,7 +280,8 @@ export default {
           filter: 'all',
       })
         .then(res=> {
-          this.$store.commit('user/setFetchUserTasks',{data:res,filter:this.filterViews,key:this.groupBy})         
+          this.$store.commit('user/setFetchUserTasks',{data:res,filter:this.filterViews,key:this.groupBy})     
+          this.templateKey += 1
         })
    
       }

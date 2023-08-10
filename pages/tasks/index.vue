@@ -296,6 +296,7 @@ export default {
         })
         .then(() => {
           this.key += 1;
+          this.templateKey++;
         });
        
     },
