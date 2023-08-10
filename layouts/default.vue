@@ -403,7 +403,7 @@ export default {
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2ODg0NDk2Nzg2NzUsImV4cCI6MTY5NjIyNTY3ODY3NSwianRpIjoiNjA0OTU1ZTEtZjc2OC00YmUzLTkxYzgtYmI0ZGM2NWM5NzBhIn0.kiUQRmE4VSwFx3augkQtUAEdpuzGkmV7GVBKt7VDifg"
 
       // Rajeev
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnRUxZcWFRV1FHOWRuamsyIiwic3ViZSI6InJhamVldi5zaGFybWFAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJVU0VSIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY3MjYzOTg2MDMzMSwiZXhwIjoxNjgwNDE1ODYwMzMxLCJqdGkiOiJhYWZlYmUxYi1kZGI2LTRmODMtYjIzYy1hZWRkMDcxMzU1ZTEifQ.AxRf7tHVZC4r0Io6J9ghNZJscPkRKWM3LBOgevkQdKE"
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnRUxZcWFRV1FHOWRuamsyIiwic3ViZSI6InJhamVldi5zaGFybWFAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJVU0VSIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4NjEyNTI5NDg4MSwiZXhwIjoxNjkzOTAxMjk0ODgxLCJqdGkiOiJlNDRhMDYyOS1iZjU5LTQ0Y2EtYjVmMS0wZDM3MjAwNjU2OGQifQ.s1xskLXNbGv-58LD0oQrK-ZBQMHuF5t3Qa9sxaIvgvk"
 
       //free
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJWWW14a2F6cFJqWWRKMFBvIiwic3ViZSI6ImFyaXR6YTNAc2hhcGVkY3YuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJEWE1WeWI4MmtEM2V2QVpFIiwic3ViYnMiOiJGUkVFVFJJQUwiLCJzdWJyIjoiQURNSU4iLCJzdWJjIjoiVW5pdGVkIFN0YXRlcyIsImVudiI6ImRldiIsImlhdCI6MTY3OTYzNzM2MzkxMiwiZXhwIjoxNjg3NDEzMzYzOTEyLCJqdGkiOiJkZGJiMzE1MC04ODkxLTQ5MjAtYTVjYy0yNDBhYTcxZTdhMDQifQ.7Xy5W1dEFUN-R6rHXYL3awJ5QjDa_73uxhGl_nqcvEc"
@@ -470,9 +470,12 @@ export default {
               .then((value) => {
                 if (JSON.parse(localStorage.getItem("user")).subr == "ADMIN") {
                   this.isAdmin = true;
+                  this.$store.commit("user/setIsAdmin",this.isAdmin)
+                  console.log(this.isAdmin)
                 } else {
                   this.navItems2.splice(0,1);
                   this.isAdmin = false;
+                  this.$store.commit("user/setIsAdmin",this.isAdmin)
                 }
                 this.$store.dispatch("department/fetchDepartments");
                 this.$store.dispatch("project/fetchFavProjects");

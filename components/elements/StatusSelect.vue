@@ -2,9 +2,10 @@
   <div class="picker-wrapper w-100" id="status-select-wrapper" v-click-outside="onClickOutside">
     <div id="status-select-button" class="user-data cursor-pointer height-2 align-center justify-between" @click.stop="triggerOpen">
       <div class="align-center flex-grow-1 gap-025" id="status-select-span-wrap">
-        <div class="align-center justify-center shape-circle circle" id="status-select-shape-circle" :style="{ 'background-color': $hex2rgba(localStatus.color, colors) }" >
+        <!-- <div class="align-center justify-center shape-circle circle" id="status-select-shape-circle" :style="{ 'background-color': $hex2rgba(localStatus.color, colors) }" >
           <span class="dot shape-circle" :id="'status-select-'+localStatus.color" :class="[ 'bg-'+localStatus.color ]" ></span>
-        </div>
+        </div> -->
+        <bib-icon icon="check-circle-solid" :variant="localStatus.color"></bib-icon>
         {{localStatus.label}}
       </div>
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
@@ -13,9 +14,10 @@
       <div class="picker-list-wrap" id="status-select-list-wrap">
         <ul class="m-0 p-0 text-left" id="status-select-list">
           <li v-for="st in statusList" :key="st.value+'stitem'" :id="'status-select-list-item-'+st.value" class="py-025 gap-05 align-center font-md cursor-pointer" @click.stop="onStatusChange(st)">
-            <div class="align-center justify-center shape-circle circle" :id="'status-select-list-item-'+st.bgcolor" :style="{'background-color': st.bgcolor}">
+            <!-- <div class="align-center justify-center shape-circle circle" :id="'status-select-list-item-'+st.bgcolor" :style="{'background-color': st.bgcolor}">
               <span class="dot shape-circle" :id="'status-select-list-item-'+st.color" :class="[ 'bg-'+st.color ]" ></span>
-            </div>
+            </div> -->
+            <bib-icon icon="check-circle-solid" :variant="st.color"></bib-icon>
             <span class="text-dark text-truncate" :id="'status-select-list-item-'+st.label">{{st.label}}</span>
           </li>
         </ul>
@@ -45,7 +47,7 @@ export default {
     statusList() {
       let status = []
       this.statusItems.forEach(st => {
-        if (st.value == 0) status.push({ value: null, label: "Choose status", color: "secondary", bgcolor: this.$hex2rgba(this.colors.ColorVariants.Secondary) })
+        if (st.value == 0) status.push({ value: null, label: "Choose status", color: "gray4", bgcolor: this.$hex2rgba(this.colors.ColorVariants.Gray4) })
         if (st.value == 1) status.push({ value: st.value, label: st.label, color: st.color, bgcolor: this.$hex2rgba(this.colors.ColorVariants.Primary) })
         if (st.value == 2) status.push({ value: st.value, label: st.label, color: st.color, bgcolor: this.$hex2rgba(this.colors.ColorVariants.Orange) })
         if (st.value == 3) status.push({ value: st.value, label: st.label, color: st.color, bgcolor: this.$hex2rgba(this.colors.ColorVariants.Secondary) })
@@ -62,7 +64,7 @@ export default {
     if(this.status && this.status.id) {
       this.localStatus = this.statusItems.find( st => st.value == this.status.id )
     }else {
-      this.localStatus = { label: 'Choose Status', value: 0, color: "secondary", bgcolor: "secondary" }
+      this.localStatus = { label: 'Choose Status', value: 0, color: "gray4", bgcolor: "gray4" }
     }
   },
 

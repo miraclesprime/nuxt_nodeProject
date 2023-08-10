@@ -1,15 +1,19 @@
 <template>
   <div class="picker-wrapper w-100" id="dept-select-wrapper" v-click-outside="onClickOutside" >
     <div id="dept-select-trigger-open" class="user-data cursor-pointer height-2 align-center justify-between" @click.stop="triggerOpen">
-      <span v-if="localDept" id="dept-select-local-dept-label" class="text-truncate" style="max-width: 7rem;">
-         {{localDept.label}}
-      </span>
+      <div id="dept-select-inner-wrap" class="align-center flex-grow-1 gap-025">
+        <bib-icon icon="node-solid" variant="gray4"></bib-icon>
+        <span v-if="localDept" id="dept-select-local-dept-label" class="text-truncate" style="max-width: 7rem;">
+           {{localDept.label}}
+        </span>
+      </div>
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
     </div>
     <div v-show="show" class="picker-content" id="dept-select-content">
       <div class="" style="max-height: 15rem; overflow-y: auto; overflow-x: clip; " id="dept-select-dept-label-wrap">
         <ul class="m-0 p-0 text-left" id="dept-select-dept-label-list">
-          <li v-for="(dpt, index) in departments" :id="'dept-select-dept-label'+index" :key="dpt.value" class="p-025 font-md cursor-pointer " @click.stop="selected(dpt)">
+          <li v-for="(dpt, index) in departments" :id="'dept-select-dept-label'+index" :key="dpt.value" class="p-025 font-md cursor-pointer align-center gap-025" @click.stop="selected(dpt)">
+            <bib-icon icon="node-solid" variant="gray4"></bib-icon>
             {{dpt.label}}
           </li>
         </ul>

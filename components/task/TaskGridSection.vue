@@ -1,6 +1,6 @@
 <template>
-  <div id="tgs-scroll" class="overflow-x-auto h-100 position-relative bg-light" style="min-height: 30rem;">
-    <draggable :list="localdata" class="d-flex " :move="moveSection" v-on:end="$emit('section-dragend', localdata)" handle=".section-drag-handle">
+  <div id="tgs-scroll" class="overflow-x-auto h-100 position-relative bg-light" style="min-height: 30rem;"  @scroll="handleScroll" ref="myTable">
+    <draggable :list="newValue" class="d-flex " :move="moveSection" v-on:end="$emit('section-dragend', newValue)" handle=".section-drag-handle">
       <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${templateKey}${section.title}${section.id}`">
         <div class="w-100 d-flex align-center section-title-wrapper border-bottom-gray2 mb-075" :id="'tgs-inner-wrap-'+section.id" :class="{'active': sectionEdit}" >
           <task-grid-section-title :section="section" @update-title="renameSection"></task-grid-section-title>
@@ -87,6 +87,12 @@ export default {
       newSectionName: '',
       newSectionLoader: false,
       newTask: false,
+
+      newValue: [],
+      itemsPerPage: 20,
+      allDataDisplayed: false,
+      lastDisplayedIndex:{ groupIdx: -1, curIdxInGroup: -1},
+      dataDisplayed: false, 
     };
   },
   props: {
@@ -109,10 +115,23 @@ export default {
     filterViews(newValue){
          return _.cloneDeep(newValue)
     },
-    sections(newVal) {
-      this.localdata = JSON.parse(JSON.stringify(newVal))
+    // sections(newVal) {
+    //   this.localdata = JSON.parse(JSON.stringify(newVal))
+    // },
+    sections: {
+      immediate: true, // Execute the watcher immediately on component mount
+      deep: true, // Watch for changes in nested properties of tableData
+      handler(newValue) {
+        this.newValue=_.cloneDeep(newValue)
+        this.$nextTick(() => {
+          this.localdata=[]
+          this.$refs.myTable.scrollTop=0
+          this.lastDisplayedIndex={ groupIdx: -1, curIdxInGroup: -1}
+          this.allDataDisplayed=false
+          this.showData();
+        });
+      },
     },
-    
     sectionInput(newVal){
       if (newVal) {
         this.$nextTick(()=>{
@@ -140,13 +159,83 @@ export default {
         })
     } 
     
-    if(this.sectionType == "department") {
-      this.localdata = JSON.parse(JSON.stringify(this.sections));
-    }
+    // if(this.sectionType == "department") {
+    //   this.localdata = JSON.parse(JSON.stringify(this.sections));
+    // }
     
   },
 
   methods: {
+    handleScroll(event) {
+      const tableContainer = event.target;
+      if (this.allDataDisplayed) {
+        return; // Stop adding data if all data has been displayed
+      }
+      const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight+5 >= tableContainer.scrollHeight;
+
+      if (isAtBottom) {
+      this.showData();
+          }
+
+    },
+    showData() {
+      let allTasks = this.newValue.length > 0 ? [...this.newValue] : [...this.sections];
+  let remainingCount = this.itemsPerPage;
+    let start = this.lastDisplayedIndex.curIdxInGroup;
+      let i;
+      for (i = start === -1 ? this.lastDisplayedIndex.groupIdx + 1 : this.lastDisplayedIndex.groupIdx; i < allTasks.length; ++ i) {
+        if (start === -1) {
+          if (remainingCount < allTasks[i].tasks?.length - start - 1) {
+            
+            this.localdata.push({});
+            for (const [key, value] of Object.entries(allTasks[i])) {
+              if (key !== 'tasks') { 
+                this.localdata[i][key] = value; 
+              }
+            }
+            this.localdata[i].tasks = allTasks[i].tasks.slice(start + 1, start + remainingCount + 1);
+            start += remainingCount;
+            remainingCount = 0;
+          } else {
+            this.localdata.push(allTasks[i])
+            remainingCount -= allTasks[i].tasks?.length;
+            start = -1;
+          }
+        }
+        else {
+          let tmp = {};
+          if (start + remainingCount + 1 < allTasks[i].tasks?.length) {
+            Object.assign(tmp, this.localdata[i])
+          
+            tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, start + remainingCount + 1))
+            this.localdata.length -= 1;
+            this.localdata.push(tmp)
+            start += remainingCount;
+            remainingCount = 0;
+          } else {
+            Object.assign(tmp, this.localdata[i])
+            tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, allTasks[i].tasks?.length))
+            this.localdata.length -= 1;
+            this.localdata.push(tmp)
+            remainingCount -= (allTasks[i].tasks?.length - start - 1);
+            start = -1;
+          }
+        }
+        if (remainingCount == 0) break;
+
+      }
+      if (i >= allTasks.length - 1 && start === -1) 
+      {
+        this.allDataDisplayed = true;
+        this.lastDisplayedIndex.groupIdx = -1;
+        this.lastDisplayedIndex.curIdxInGroup = -1;
+        return 
+      }
+
+      this.lastDisplayedIndex.groupIdx = i;
+      this.lastDisplayedIndex.curIdxInGroup = start;
+      
+    },
     closeOtherBlankGrid($event){
         for (var ref in this.$refs) {
           if(this.$refs[ref][0].title != $event){

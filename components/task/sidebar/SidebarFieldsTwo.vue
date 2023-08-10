@@ -150,7 +150,7 @@ export default {
     task() {
       if (Object.keys(this.task).length) {
         this.form = _.cloneDeep(this.task);
-        if (this.task.project[0]?.project?.id) {
+        if (this.task.project?.[0]?.project?.id) {
           this.form.projectId = this.task.project?.[0]?.projectId || this.task.project?.[0]?.project?.id;
           // console.log(this.form.projectId)
           /*if (this.form.projectId) {
