@@ -5,9 +5,9 @@
     </div>
     <div id="inbox-item-tile-wrapper" class="w-100 d-inline-flex align-center gap-05 pb-05 text-secondary font-md">
       <span>
-        <user-info :userId="item.userId"></user-info>
+        <user-info :userId="item.data[0].userId"></user-info>
       </span>
-      <span v-if="projTitle" id="inbox-item-briefcase-icon">
+      <span v-if="projTitle" class="align-center gap-025" id="inbox-item-briefcase-icon">
         <bib-icon icon="briefcase" variant="gray5"></bib-icon> {{projTitle}}
       </span>
       <div class="inbox-flags d-inline-flex align-center ml-auto">
@@ -24,14 +24,14 @@
       </div>
     </div>
     <div class="d-flex align-center justify-between" id="inbox-item-project-task-title">
-      <h4 id="task-project-title">{{taskTitle || projTitle}}</h4>
+      <h4 id="task-project-title">{{item.title || taskTitle || projTitle}}</h4>
       <span id="calendar-date-wrapper" class="duedate d-inline-flex align-center gap-05 text-secondary font-md">
         <bib-icon icon="calendar" variant="gray5"></bib-icon>
-        <format-date :datetime="item.updatedAt"></format-date>
+        <format-date :datetime="item.data[0].updatedAt"></format-date>
       </span>
     </div>
     <div class="content font-md py-05" id="ii-history-comment-wrap">
-      <div v-if="item.content || item.comment" id="ii-content" class="inbox-item-content mb-05">
+      <!-- <div v-if="item.content || item.comment" id="ii-content" class="inbox-item-content mb-05">
         <template v-for="(cn, i) in item.content">
           <div class="history" :id="'ii-history-'+i">{{truncateText(cn.title)}}</div>
           <div :id="'ii-time-'+i">@ {{cn.time}}</div>
@@ -40,11 +40,17 @@
           <div class="comment" :id="'ii-comment-'+i">{{truncateText(cm.comment)}}</div>
           <div :id="'ii-updatedAt-'+i">@ {{$toTime(cm.updatedAt)}}</div>
         </template>
+      </div> -->
+      <div v-if="item.data.length > 0" id="ii-content" class="inbox-item-content mb-05">
+        <template v-for="(it, i) in item.data">
+            <div class="history" :id="'ii-history-'+i">{{truncateText(it.text)}}</div>
+            <div :id="'ii-updatedAt-'+i">@ {{$toTime(it.updatedAt)}}</div>
+        </template>
       </div>
-      <span v-else v-html="item.text"><br></span>
+        <!-- <span v-html="it.text"><br></span> -->
     </div>
-    <div class="sent font-sm text-gray5">Sent
-      @ {{$toTime(item.updatedAt)}} </div>
+    <!-- <div class="sent font-sm text-gray5">Sent
+      @ {{$toTime(item.data.updatedAt)}} </div> -->
   </div>
 </template>
 
@@ -56,7 +62,7 @@ export default {
   name: 'InboxItem',
   props: {
     item: Object,
-    active: Number,
+    active: [Number, String],
     
   },
   data() {
@@ -86,7 +92,12 @@ export default {
       return this.item['task'] ? this.item.task.title : ''
     },
     projTitle() {
-      return this.item['project'] ? this.item.project.title : ''
+      if (this.item.id.split("-")[0] == "project") {
+        return this.item.title
+      } else {
+        return null
+      }
+      // return this.item['project'] ? this.item.project.title : ''
     },
     inboxStatus() {
       let st = this.userInbox?.find(it => it.historyId == this.item.id)
@@ -104,14 +115,18 @@ export default {
   },
   methods: {
     itemClick() {
-      if (this.item.taskId) {
-        this.$emit('task-click', { id: this.item.id, taskId: this.item.taskId })
+      let type = this.item.id.split("-")[0]
+      let id = this.item.id.split("-")[1]
+
+      console.log(type, id)
+      if (type == "task") {
+        this.$emit('task-click', { id: this.item.id, taskId: id })
       }
-      if (this.item.projectId) {
-        this.$store.dispatch('project/setProject', this.item.project)
-        this.$emit('project-click', { id: this.item.id, projectId: this.item.projectId })
+      if (type == "project") {
+        // this.$store.dispatch('project/setProject', this.item.project)
+        this.$emit('project-click', { id: this.item.id, projectId: id })
       }
-      this.$store.dispatch("inbox/createInboxEntry", { historyId: this.item.id, obj: { markRead: true, markFlag: false, markArchive: false } })
+      // this.$store.dispatch("inbox/createInboxEntry", { historyId: this.item.id, obj: { markRead: true, markFlag: false, markArchive: false } })
     },
     markRead() {
 

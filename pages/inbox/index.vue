@@ -12,7 +12,7 @@
           <div class="action-right" id="pa-action-right">
           </div>
         </nav> -->
-        <div class="position-relative h-100 of-scroll-y" >
+        <div class="position-relative h-100 overflow-y-auto" >
           <div v-for="(value, key) in combinedInbox">
             <h4 class="font-md text-gray6 text-capitalize py-05 px-2 border-bottom-light">{{key}}</h4>
             <template v-for="(o, index) in value">
@@ -102,8 +102,6 @@ export default {
         });
       }
 
-      // console.log(inboxData);
-
       const categorizeEntries = (group) => {
         const todayEntries = [];
         const yesterdayEntries = [];
@@ -129,16 +127,36 @@ export default {
         };
       };
 
-      // Process each group in inboxData
+
       inboxData.forEach(group => {
-        // Categorize entries within the group
         const categorizedEntries = categorizeEntries(group);
-        group.history = categorizedEntries; // Replace the history with categorized entries
+        group.history = categorizedEntries;
       });
 
-      // Now inboxData contains categorized entries within each group
-      console.log(inboxData);
+      let newData = {
+        today: [],
+        yesterday: [],
+        older: []
+      }
 
+      inboxData.forEach((torp) => {
+        if(torp.history.today.length > 0) {
+          newData.today.push({data: torp.history.today, id: torp.id, title: torp.title, updatedAt: torp.updatedAt});
+        }
+        if(torp.history.yesterday.length > 0) {
+          newData.yesterday.push({data: torp.history.yesterday, id: torp.id, title: torp.title, updatedAt: torp.updatedAt});
+        }
+        if(torp.history.older.length > 0) {
+          newData.older.push({data: torp.history.older, id: torp.id, title: torp.title, updatedAt: torp.updatedAt});
+        }
+      })
+
+      // console.log(newData.today = newData.today.sort((a,b) => b.updatedAt - a.updatedAt), newData.yesterday = newData.yesterday.sort((a,b) => b.updatedAt - a.updatedAt), newData.older = newData.older.sort((a,b) => b.updatedAt - a.updatedAt));
+      let newtod = newData.today.sort((a,b) => b.updatedAt - a.updatedAt),
+      newyes = newData.yesterday.sort((a,b) => b.updatedAt - a.updatedAt),
+      newold = newData.older.sort((a,b) => b.updatedAt - a.updatedAt)
+      newData.today = newtod, newData.yesterday = newyes, newData.older = newold
+      return newData
     },
   },
   mounted() {
