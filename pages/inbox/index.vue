@@ -57,149 +57,100 @@ export default {
   },
   computed: {
     combinedInbox() {
-      let today = [],
-        yesterday = [],
-        older = [];
 
-      let inbox2 = { today: today, yesterday: yesterday, older: older }
+      const organizedData = {
+        today: [],
+        yesterday: [],
+        older: []
+      };
 
-      this.inbox.forEach((item, index) => {
-        let timeDiff = new Date().getTime() - new Date(item.updatedAt).getTime()
-        let daysDiff = Math.round(timeDiff / (1000 * 60 * 60 * 24))
+      const now = new Date(); 
 
-        if (daysDiff >= 0 && daysDiff < 1) {
-          today.push(item)
-          return
-        }
-        if (daysDiff >= 1 && daysDiff < 2) {
-          yesterday.push(item)
-          return
-        }
-        older.push(item)
-      })
+      this.inbox.forEach(entry => {
+        const updatedAt = new Date(entry.updatedAt);
 
-      let o2 = [],
-        t2 = [],
-        y2 = []
+        const timeDifference = now - updatedAt;
 
-      today.forEach(o => {
-        if (t2.length == 0) {
-          t2.push(o)
-        }
+        const timeDifferenceInDays = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
 
-        let prIndex = t2.findIndex(a => a.userId == o.userId && a?.projectId == o?.projectId)
-        let taIndex = t2.findIndex(a => a.userId == o.userId && a?.taskId == o?.taskId)
-
-        if (prIndex >= 0) {
-          if (!t2[prIndex]?.content) {
-            t2[prIndex]['content'] = []
-          }
-          if (!t2[prIndex]?.comment) {
-            t2[prIndex]['comment'] = []
-          }
-          t2[prIndex].content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
-          if (o.projectComment.id) {
-            t2[prIndex].comment.push(o.projectComment)
-          }
-          return
-        }
-
-        if (taIndex >= 0) {
-          if (!t2[taIndex]?.content) {
-            t2[taIndex]['content'] = []
-          }
-          if (!t2[taIndex]?.comment) {
-            t2[taIndex]['comment'] = []
-          }
-          t2[taIndex].content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
-          if (o.taskComment.id) {
-            t2[taIndex].comment.push(o.taskComment)
-          }
-          return
-        }
-
-        t2.push(o)
-
-      })
-
-      yesterday.forEach(o => {
-        if (y2.length == 0) {
-          y2.push(o)
-        }
-
-        let prIndex = y2.findIndex(a => a.userId == o.userId && a?.projectId == o?.projectId)
-        let taIndex = y2.findIndex(a => a.userId == o.userId && a?.taskId == o?.taskId)
-
-        if (prIndex >= 0) {
-          if (!y2[prIndex]?.content) {
-            y2[prIndex]['content'] = []
-          }
-          if (!y2[prIndex]?.comment) {
-            y2[prIndex]['comment'] = []
-          }
-          y2[prIndex].content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
-          if (o.projectComment.id) {
-            y2[prIndex].comment.push(o.projectComment)
-          }
-          return
-        }
-
-        if (taIndex >= 0) {
-          if (!y2[taIndex]?.content) {
-            y2[taIndex]['content'] = []
-          }
-          if (!y2[taIndex]?.comment) {
-            y2[taIndex]['comment'] = []
-          }
-          y2[taIndex].content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
-          if (o.taskComment.id) {
-            y2[taIndex].comment.push(o.taskComment)
-          }
-          return
-        }
-
-        y2.push(o)
-      })
-
-      older.forEach(o => {
-        let o2last = o2.slice(-1)[0]
-        if (o2.length == 0) {
-          o2.push(o)
-          return
-        }
-        if ((o2last?.taskId == o.taskId || o2last?.projectId == o.projectId) && o2last.userId == o.userId) {
-          if (!o2last?.content) {
-            o2last['content'] = []
-          }
-          if (!o2last?.comment) {
-            o2last['comment'] = []
-          }
-          o2last.content.push({ title: o.text, time: this.$toTime(o.updatedAt) })
-          if (o.taskComment.id) {
-            o2last.comment.push(o.taskComment)
-          }
-          if (o.projectComment.id) {
-            o2last.comment.push(o.projectComment)
-          }
-          o2[o2.length - 1] = o2last
+        if (timeDifferenceInDays === 0) {
+          organizedData.today.push(entry);
+        } else if (timeDifferenceInDays === 1) {
+          organizedData.yesterday.push(entry);
         } else {
-          o2.push(o)
+          organizedData.older.push(entry);
+        }
+      });
+
+      const inboxData = [];
+
+      for (const day in organizedData) {
+        organizedData[day].forEach(entry => {
+          const groupId = (entry.taskId ? 'task-' : 'project-') + (entry.taskId || entry.projectId);
+
+          let groupIndex = inboxData.findIndex(group => group.id === groupId);
+          if (groupIndex === -1) {
+            inboxData.push({
+              id: groupId,
+              title: entry.task?.title || entry.project?.title,
+              history: [] 
+            });
+            groupIndex = inboxData.length - 1; 
+          }
+
+          inboxData[groupIndex].history.push(entry);
+        });
+      }
+
+      const categorizeEntries = (group) => {
+        const todayEntries = [];
+        const yesterdayEntries = [];
+        const olderEntries = [];
+
+        group.history.forEach(entry => {
+          const updatedAt = new Date(entry.updatedAt);
+          const timeDifferenceInDays = Math.floor((now - updatedAt) / (1000 * 60 * 60 * 24));
+
+          if (timeDifferenceInDays === 0) {
+            todayEntries.push(entry);
+          } else if (timeDifferenceInDays === 1) {
+            yesterdayEntries.push(entry);
+          } else {
+            olderEntries.push(entry);
+          }
+        });
+
+        return {
+          today: todayEntries,
+          yesterday: yesterdayEntries,
+          older: olderEntries
+        };
+      };
+
+      inboxData.forEach(group => {
+        const categorizedEntries = categorizeEntries(group);
+        group.history = categorizedEntries;
+      });
+
+      let newData = {
+        today: [],
+        yesterday: [],
+        older: []
+      }
+
+      inboxData.forEach((torp) => {
+        if(torp.history.today.length > 0) {
+          newData.today.push({data: torp.history.today, id: torp.id, title: torp.title});
+        }
+        if(torp.history.yesterday.length > 0) {
+          newData.yesterday.push({data: torp.history.yesterday, id: torp.id, title: torp.title});
+        }
+        if(torp.history.older.length > 0) {
+          newData.older.push({data: torp.history.older, id: torp.id, title: torp.title});
         }
       })
 
-      // make first item active
-      if (t2.length > 0) {
-        this.switchTaskProject(t2[0])
-        return { today: t2, yesterday: y2, older: o2 }
-      }
-      if (y2.length > 0) {
-        this.switchTaskProject(y2[0])
-        return { today: t2, yesterday: y2, older: o2 }
-      }
-      if (o2.length > 0) {
-        this.switchTaskProject(o2[0])
-        return { today: t2, yesterday: y2, older: o2 }
-      }
+      console.log(newData);
 
     },
   },
