@@ -122,6 +122,29 @@ export default {
 
       })
 
+      /*today.forEach(o => {
+        const existingIndex = t2.findIndex(a => (
+          (a.userId === o.userId && a.projectId === o.projectId) ||
+          (a.userId === o.userId && a.taskId === o.taskId)
+        ));
+
+        if (existingIndex !== -1) {
+          if (!t2[existingIndex].content) t2[existingIndex].content = [];
+          if (!t2[existingIndex].comment) t2[existingIndex].comment = [];
+
+          t2[existingIndex].content.push({ title: o.text, time: this.$toTime(o.updatedAt) });
+
+          if (o.projectComment.id || o.taskComment.id) {
+            t2[existingIndex].comment.push(o.projectComment || o.taskComment);
+          }
+        } else {
+          t2.push(o);
+        }
+        t2.push(o)
+      });*/
+
+      // console.log(today)
+
       yesterday.forEach(o => {
         if (y2.length == 0) {
           y2.push(o)
@@ -189,15 +212,15 @@ export default {
 
       // make first item active
       if (t2.length > 0) {
-        this.switchTaskProject(t2[0])
+        // this.switchTaskProject(t2[0])
         return { today: t2, yesterday: y2, older: o2 }
       }
       if (y2.length > 0) {
-        this.switchTaskProject(y2[0])
+        // this.switchTaskProject(y2[0])
         return { today: t2, yesterday: y2, older: o2 }
       }
       if (o2.length > 0) {
-        this.switchTaskProject(o2[0])
+        // this.switchTaskProject(o2[0])
         return { today: t2, yesterday: y2, older: o2 }
       }
 
