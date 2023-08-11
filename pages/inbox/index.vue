@@ -83,6 +83,7 @@ export default {
           if (groupIndex === -1) {
             inboxData.push({
               id: groupId,
+              mode: groupId.split("-")[0],
               title: entry.task?.title || entry.project?.title,
               history: [] 
             });
@@ -132,13 +133,13 @@ export default {
 
       inboxData.forEach((torp) => {
         if(torp.history.today.length > 0) {
-          newData.today.push({data: torp.history.today, id: torp.id, title: torp.title, updatedAt: torp.updatedAt});
+          newData.today.push({data: torp.history.today, id: torp.id, mode: torp.mode, title: torp.title, updatedAt: torp.updatedAt});
         }
         if(torp.history.yesterday.length > 0) {
-          newData.yesterday.push({data: torp.history.yesterday, id: torp.id, title: torp.title, updatedAt: torp.updatedAt});
+          newData.yesterday.push({data: torp.history.yesterday, id: torp.id, mode: torp.mode, title: torp.title, updatedAt: torp.updatedAt});
         }
         if(torp.history.older.length > 0) {
-          newData.older.push({data: torp.history.older, id: torp.id, title: torp.title, updatedAt: torp.updatedAt});
+          newData.older.push({data: torp.history.older, id: torp.id, mode: torp.mode, title: torp.title, updatedAt: torp.updatedAt});
         }
       })
 
@@ -147,6 +148,7 @@ export default {
       newold = newData.older.sort((a,b) => b.updatedAt - a.updatedAt)
       newData.today = newtod, newData.yesterday = newyes, newData.older = newold
 
+      console.log(newData.today)
       // make first item active
       if (newData.today.length > 0) {
         this.switchTaskProject(newData.today[0])
@@ -204,22 +206,22 @@ export default {
       return arr.findIndex(a => a.userId == item.userId && a.projectId == item.projectId)
     },
     switchTaskProject(item) {
+      // console.log(item.data[0].id)
+      // this.active = item.data[0].id
       if (item.id.split('-')[0] == 'task') {
         this.taskProject = "task"
-        this.fetchTask({ id: item.id, taskId: Number(item.id.split('-')[1]) })
+        this.fetchTask({ id: item.id, historyId: item.data[0].id, taskId: Number(item.id.split('-')[1]) })
         // console.log('inbox task')
       }
       if (item.id.split('-')[0] == 'project') {
         this.taskProject = "project"
-        this.fetchProject({ id: item.id, projectId: Number(item.id.split('-')[1]) })
+        this.fetchProject({ id: item.id, historyId: item.data[0].id, projectId: Number(item.id.split('-')[1]) })
         // console.log('inbox project')
       }
     },
     fetchTask(payload) {
       // console.log(payload)
-      if (payload.id) {
-        this.active = payload.id
-      }
+      this.active = payload.historyId
       this.project = {}
       this.taskProject = "task"
       this.$store.dispatch("task/fetchSingleTask", payload.taskId)
@@ -232,7 +234,7 @@ export default {
     },
     fetchProject(payload) {
       // console.log(payload)
-      this.active = payload.id
+      this.active = payload.historyId
       this.task = {}
       this.taskProject = "project"
       this.$store.dispatch("project/fetchSingleProject", payload.projectId)
