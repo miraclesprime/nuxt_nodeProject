@@ -15,8 +15,10 @@
         <div class="position-absolute" id="adv-table-section-header-wrapper" style="inset: 0; border-bottom: 1px solid var(--bib-light);">
           <div class="section-header d-flex align-center gap-05 height-2 px-075" id="adv-table-section-header">
             <div class="position-sticky align-center" style="left: 0.5rem;" >
-              <bib-icon icon="arrow-down" :scale="0.5" :style="{transform: iconRotate}"></bib-icon> 
-              <span class="font-w-700 cursor-pointer ml-1" id="adv-table-section-title" @click.stop="isCollapsed = !isCollapsed">
+              <span class="width-1 cursor-pointer" @click.stop="isCollapsed = !isCollapsed">
+                <bib-icon icon="arrow-down" :scale="0.5" :style="{transform: iconRotate}"></bib-icon> 
+              </span>
+              <span class="font-w-700 cursor-pointer ml-1" id="adv-table-section-title" >
                 {{sectionTitle}}
               </span>
             </div>

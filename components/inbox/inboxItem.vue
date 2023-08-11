@@ -1,5 +1,5 @@
 <template>
-  <div class="inbox-item border-bottom-gray2 py-1 px-3 position-relative cursor-pointer" :class="{'active': active == item.id}" @click="itemClick" id="inbox-item-wrapper">
+  <div class="inbox-item border-bottom-gray2 py-1 px-3 position-relative cursor-pointer" :class="{'active': active == item.data[0].id}" @click="itemClick" id="inbox-item-wrapper">
     <div v-if="!status.markRead" class="new text-white font-xs position-absolute" id="inbox-item-new">New
       <span class="triangle" id="inbox-item-triangle"></span>
     </div>
@@ -14,13 +14,13 @@
         <span id="inbox-item-flag-racing-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Flag message'">
           <bib-icon icon="flag-racing" variant="gray5"></bib-icon>
         </span>
-        <span  id="inbox-item-mail-solid-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="readText" @click.stop="markRead">
+        <span id="inbox-item-mail-solid-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="readText" @click.stop="markRead">
           <bib-icon icon="mail-solid" :variant="status.markRead ? 'gray6' : 'gray5'"></bib-icon>
         </span>
-        <span  id="inbox-item-file-multiple-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Archive'">
+        <span id="inbox-item-file-multiple-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Archive'">
           <bib-icon icon="file-multiple" variant="gray5"></bib-icon>
         </span>
-        <span id="inbox-item-icon" class="shape-rounded px-025 border-gray5 text-gray5 font-xs">{{item.id}}</span>
+        <!-- <span id="inbox-item-icon" class="shape-rounded px-025 border-gray5 text-gray5 font-xs">{{item.id}}</span> -->
       </div>
     </div>
     <div class="d-flex align-center justify-between" id="inbox-item-project-task-title">
@@ -92,7 +92,7 @@ export default {
       return this.item['task'] ? this.item.task.title : ''
     },
     projTitle() {
-      if (this.item.id.split("-")[0] == "project") {
+      if (this.item.mode == "project") {
         return this.item.title
       } else {
         return null
@@ -100,7 +100,7 @@ export default {
       // return this.item['project'] ? this.item.project.title : ''
     },
     inboxStatus() {
-      let st = this.userInbox?.find(it => it.historyId == this.item.id)
+      let st = this.userInbox?.find(it => it.historyId == this.item.data[0].id)
       if (st) {
         this.status = st
         return st
@@ -115,18 +115,18 @@ export default {
   },
   methods: {
     itemClick() {
-      let type = this.item.id.split("-")[0]
+      let type = this.item.mode
       let id = this.item.id.split("-")[1]
 
       console.log(type, id)
       if (type == "task") {
-        this.$emit('task-click', { id: this.item.id, taskId: id })
+        this.$emit('task-click', { id: this.item.id, historyId: this.item.data[0].id, taskId: id })
       }
       if (type == "project") {
         // this.$store.dispatch('project/setProject', this.item.project)
-        this.$emit('project-click', { id: this.item.id, projectId: id })
+        this.$emit('project-click', { id: this.item.id, historyId: this.item.data[0].id, projectId: id })
       }
-      // this.$store.dispatch("inbox/createInboxEntry", { historyId: this.item.id, obj: { markRead: true, markFlag: false, markArchive: false } })
+      this.$store.dispatch("inbox/createInboxEntry", { historyId: this.item.data[0].id, obj: { markRead: true, markFlag: false, markArchive: false } })
     },
     markRead() {
 
@@ -138,7 +138,7 @@ export default {
         obj1.markRead = true
       }
 
-      this.$store.dispatch("inbox/createInboxEntry", { historyId: this.item.id, obj: obj1 }).then(res => {
+      this.$store.dispatch("inbox/createInboxEntry", { historyId: this.item.data[0].id, obj: obj1 }).then(res => {
         if (res.statusCode == 200) {
           this.$store.dispatch("inbox/fetchInboxEntry", { id: this.status.id })
             .then(res => {

@@ -3,15 +3,6 @@
     <div id="inbox-wrapper" class="inbox-wrapper d-flex h-100">
       <main class="position-relative">
         <page-title title="Inbox" ></page-title>
-        <!-- <nav id="inbox-nav" class="d-flex align-center gap-05 py-05 px-025 border-bottom-light">
-          <div id="inbox-action-wrapper" class="action-left">
-            <div class="d-flex gap-05 shape-rounded py-025 px-05 cursor-pointer text-success bg-success-sub6 bg-hover-success-sub3" id="inbox-add-project-button" v-on:click="$nuxt.$emit('create-project-modal')">
-              <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="inbox-add-project-text">New Project</span>
-            </div>
-          </div>
-          <div class="action-right" id="pa-action-right">
-          </div>
-        </nav> -->
         <div class="position-relative h-100 overflow-y-auto" >
           <div v-for="(value, key) in combinedInbox">
             <h4 class="font-md text-gray6 text-capitalize py-05 px-2 border-bottom-light">{{key}}</h4>
@@ -92,6 +83,7 @@ export default {
           if (groupIndex === -1) {
             inboxData.push({
               id: groupId,
+              mode: groupId.split("-")[0],
               title: entry.task?.title || entry.project?.title,
               history: [] 
             });
@@ -141,22 +133,36 @@ export default {
 
       inboxData.forEach((torp) => {
         if(torp.history.today.length > 0) {
-          newData.today.push({data: torp.history.today, id: torp.id, title: torp.title, updatedAt: torp.updatedAt});
+          newData.today.push({data: torp.history.today, id: torp.id, mode: torp.mode, title: torp.title, updatedAt: torp.updatedAt});
         }
         if(torp.history.yesterday.length > 0) {
-          newData.yesterday.push({data: torp.history.yesterday, id: torp.id, title: torp.title, updatedAt: torp.updatedAt});
+          newData.yesterday.push({data: torp.history.yesterday, id: torp.id, mode: torp.mode, title: torp.title, updatedAt: torp.updatedAt});
         }
         if(torp.history.older.length > 0) {
-          newData.older.push({data: torp.history.older, id: torp.id, title: torp.title, updatedAt: torp.updatedAt});
+          newData.older.push({data: torp.history.older, id: torp.id, mode: torp.mode, title: torp.title, updatedAt: torp.updatedAt});
         }
       })
 
-      // console.log(newData.today = newData.today.sort((a,b) => b.updatedAt - a.updatedAt), newData.yesterday = newData.yesterday.sort((a,b) => b.updatedAt - a.updatedAt), newData.older = newData.older.sort((a,b) => b.updatedAt - a.updatedAt));
       let newtod = newData.today.sort((a,b) => b.updatedAt - a.updatedAt),
       newyes = newData.yesterday.sort((a,b) => b.updatedAt - a.updatedAt),
       newold = newData.older.sort((a,b) => b.updatedAt - a.updatedAt)
       newData.today = newtod, newData.yesterday = newyes, newData.older = newold
-      return newData
+
+      console.log(newData.today)
+      // make first item active
+      if (newData.today.length > 0) {
+        this.switchTaskProject(newData.today[0])
+        return newData
+      }
+      if (newData.yesterday.length > 0) {
+        this.switchTaskProject(newData.yesterday[0])
+        return newData
+      }
+      if (newData.older.length > 0) {
+        this.switchTaskProject(newData.older[0])
+        return newData
+      }
+
     },
   },
   mounted() {
@@ -200,22 +206,22 @@ export default {
       return arr.findIndex(a => a.userId == item.userId && a.projectId == item.projectId)
     },
     switchTaskProject(item) {
-      if (item.taskId) {
+      // console.log(item.data[0].id)
+      // this.active = item.data[0].id
+      if (item.id.split('-')[0] == 'task') {
         this.taskProject = "task"
-        this.fetchTask({ id: item.id, taskId: item.taskId })
+        this.fetchTask({ id: item.id, historyId: item.data[0].id, taskId: Number(item.id.split('-')[1]) })
         // console.log('inbox task')
       }
-      if (item.projectId) {
+      if (item.id.split('-')[0] == 'project') {
         this.taskProject = "project"
-        this.fetchProject({ id: item.id, projectId: item.projectId })
+        this.fetchProject({ id: item.id, historyId: item.data[0].id, projectId: Number(item.id.split('-')[1]) })
         // console.log('inbox project')
       }
     },
     fetchTask(payload) {
       // console.log(payload)
-      if (payload.id) {
-        this.active = payload.id
-      }
+      this.active = payload.historyId
       this.project = {}
       this.taskProject = "task"
       this.$store.dispatch("task/fetchSingleTask", payload.taskId)
@@ -228,7 +234,7 @@ export default {
     },
     fetchProject(payload) {
       // console.log(payload)
-      this.active = payload.id
+      this.active = payload.historyId
       this.task = {}
       this.taskProject = "project"
       this.$store.dispatch("project/fetchSingleProject", payload.projectId)
