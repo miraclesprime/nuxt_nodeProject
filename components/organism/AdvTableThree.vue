@@ -48,7 +48,7 @@
                     <div v-show="drag" class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                     </div>
                     <div class="position-sticky align-center" style="left: 0.5rem;" >
-                      <span class="width-1 cursor-pointer" @click.stop="collapseItem('sectionContent' + section.id)">
+                      <span class="width-1 cursor-pointer" @click.stop="collapseItem(section.id)">
                         <bib-icon icon="arrow-down" :scale="0.5" ></bib-icon> 
                       </span>
                       <span class="font-w-700 cursor-pointer ml-025" v-if="editSection" >
@@ -453,7 +453,7 @@ export default {
       }*/
     },
     duedateValid(date, startdate) {
-      console.log(...arguments)
+      // console.log(...arguments)
       // const minDate = new Date(startdate)
       const minDate = new Date(startdate);
       // const maxDate = new Date("2023-06-30");
@@ -464,23 +464,18 @@ export default {
         return {}
       }*/
     },
-    collapseItem(refId, refIcon) {
-      let elem = this.$refs[refId][0].$el
-      // let icon = this.$refs[refIcon][0].$el
-      // let tar = event.target;
-
-      // console.log(elem.style.height)
-      elem.classList.toggle("collapsed")
+    collapseItem(sectionId) {
+      // console.log(sectionId)
+      let elem = this.$refs['sectionContent'+sectionId][0].$el
+      let icon = event.currentTarget.children[0]
       
-    },
-
-    /*iconRotate(expanded){
-      if (expanded) {
-        return {'transform': 'rotate(-90deg)'}
+      elem.classList.toggle("collapsed")
+      if (elem.classList.contains("collapsed")) {
+        icon.style.transform = 'rotate(-90deg)'
       } else {
-        return {"transform": 'rotate(0deg)'}
+        icon.style.transform = 'rotate(0deg)'
       }
-    },*/
+    },
     
     // main class prototype
     columnResize(table) {
@@ -960,7 +955,7 @@ export default {
   }*/
 
   .section-content {
-    &.collapsed { /*height: 0; overflow: hidden;*/ /*visibility: hidden;*/ }
+    &.collapsed { /*height: 0; overflow: hidden;*/ /*visibility: hidden;*/ display: none; }
   }
 
   .new-button {
