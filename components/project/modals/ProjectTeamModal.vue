@@ -12,29 +12,24 @@
         </ul>
       </template>
     </bib-button>
-    <div id="ptm-project-team-members" class="py-025">
+    <div id="ptm-project-team-members" class="">
       <template v-for="t in team">
         <email-chip :key="t.id" :email="t.email" :name="t.label" :avatar="t.avatar" class="mt-05" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
       </template>
-      <small v-show="team.length == 0" class="text-danger" id="ptm-team-length">Select at least 1 team member.</small>
+      <small v-show="team.length == 0" class="text-danger font-xs" id="ptm-team-length">Select at least 1 team member.</small>
       <p v-if="message" v-text="message" class="font-sm mt-025 text-orange" id="ptm-message"></p>
     </div>
   </div> 
-  <div class="bg-light p-1 mt-05 shape-rounded">
+  <div class="bg-light p-1 my-05 shape-rounded">
   
     <label class="text-gray6 font-md" id="ptm-team-label">Team</label>
     <template v-if="projectMembers.length">
       <bib-table :key="'tt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="this.teamMembers.filter(item=>this.projectMembers.some(value=>value.id===item.id)).filter(item1=>!this.newTeam.some(val=>val.id===item1.id))"  :hide-no-column="true" headless>
         <template #cell(name)="data">
-          <div class="d-flex gap-05" id="ptm-owner-text">
+          <div class="d-flex align-center gap-05" id="ptm-owner-text">
             <bib-avatar :src="data.value.avatar" class="mt-auto mb-auto" size="1.5rem"></bib-avatar>
-            <!-- <bib-avatar class="mt-auto mb-auto" size="1.5rem">
-            </bib-avatar> -->
-            <!-- <span class="text-dark" id="ptm-dark-owner">
-              {{ data.value.name }} <span v-if="data.value.isOwner" id="ptm-owner-show">(Owner)</span>
-            </span> -->
             <strong class="text-dark px-030 font-sm" >{{ data.value.label }}</strong>
-              <span class=" text-black px-030 font-sm">{{ data.value.email }}</span>
+            <span class="text-black px-030 font-sm">{{ data.value.email }}</span>
           </div>
         </template>
         <template #cell_action="data">
@@ -45,15 +40,10 @@
       </bib-table>
       <bib-table :key="'ttt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="this.teamMembers.filter(item=>this.newTeam.some(value=>value.id===item.id))" :hide-no-column="true" headless>
         <template #cell(name)="data">
-          <div class="d-flex gap-05" id="ptm-owner-text">
+          <div class="d-flex align-center gap-05" id="ptm-owner-text">
             <bib-avatar :src="data.value.avatar" class="mt-auto mb-auto" size="1.5rem"></bib-avatar>
-            <!-- <bib-avatar class="mt-auto mb-auto" size="1.5rem">
-            </bib-avatar> -->
-            <!-- <span class="text-dark" id="ptm-dark-owner">
-              {{ data.value.name }} <span v-if="data.value.isOwner" id="ptm-owner-show">(Owner)</span>
-            </span> -->
             <strong class="text-dark px-030 font-sm" >{{ data.value.label }}</strong>
-              <span class=" text-black px-030 font-sm">{{ data.value.email }}</span>
+            <span class="text-black px-030 font-sm">{{ data.value.email }}</span>
           </div>
         </template>
         <template #cell_action="data">
@@ -70,7 +60,7 @@
     </template>
     </div>
     <div v-show="team.length > 0" class="pt-05 pb-1 justify-end" id="ptm-addIteamMember">
-      <bib-button label="Add" variant="success" class="w-20"  @click="addTeamMember"></bib-button>
+      <bib-button label="Add" variant="success" pill @click="addTeamMember"></bib-button>
     </div>
     <loading :loading="loading"></loading>
   </div>
@@ -81,6 +71,9 @@ import { PROJECT_TEAM_FIELDS } from "~/config/constants";
 import { mapGetters } from 'vuex';
 
 export default {
+  props: {
+    project: { type: Object },
+  },
   data: function() {
     return {
       member: "",
@@ -110,7 +103,7 @@ export default {
 
   computed: {
     ...mapGetters({
-      project: "project/getSingleProject",
+      // project: "project/getSingleProject",
       projectMembers: 'project/getProjectMembers',
       teamMembers: "user/getTeamMembers",
     }),
@@ -126,7 +119,7 @@ export default {
 
   mounted() {
     this.loading = true
-    console.log(this.project)
+    // console.log(this.project)
     this.$store.dispatch('project/fetchTeamMember', { projectId: this.$route.params?.id || this.project?.id})
     // console.log("sdsd",this.projectMembers)
   },
@@ -151,6 +144,7 @@ export default {
           return false
         }
         this.team.push(m[0])
+        this.filterKey = ""
       } else {
         this.message = "User already exists"
       }
@@ -168,14 +162,15 @@ export default {
         return false
       } else {
         this.team.map((index)=>{
-          let newObj={id:index.id,name:index.label}
+          let newObj = {id:index.id, name:index.label}
           this.newTeam.push(newObj)
         })
-        // console.log("1111",this.newTeam)
+        // console.log(this.project.id, this.newTeam)
         this.$store.dispatch('project/addMember', { projectId: this.project?.id, team: this.team }).then(() => {
           this.loading = false;
           this.message = ""
           this.team = []
+          this.filterKey = ""
         }).catch((err) => {
           this.loading = false;
           this.message = ""
@@ -202,5 +197,5 @@ export default {
 
 </script>
 <style scoped lang="scss">
-
+  .table { margin-top: 0.5rem; }
 </style>

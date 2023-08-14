@@ -118,8 +118,8 @@
     <!-- project team -->
       <bib-modal-wrapper v-if="projectTeamModal" title="Team" size="lg" @close="projectTeamModal = false">
         <template slot="content">
-          <div id="ip-bib-modal-project-team" style="height: 12rem;">
-            <project-team-modal></project-team-modal>
+          <div id="ip-bib-modal-project-team">
+            <project-team-modal :project="project"></project-team-modal>
           </div>
         </template>
       </bib-modal-wrapper>

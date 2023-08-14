@@ -148,7 +148,7 @@ export default {
       newold = newData.older.sort((a,b) => b.updatedAt - a.updatedAt)
       newData.today = newtod, newData.yesterday = newyes, newData.older = newold
 
-      console.log(newData.today)
+      // console.log(newData.today)
       // make first item active
       if (newData.today.length > 0) {
         this.switchTaskProject(newData.today[0])

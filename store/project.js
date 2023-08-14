@@ -78,8 +78,8 @@ export const mutations = {
   // To set a single project
   setSingleProject(state, { currentProject }) {
     state.selectedProject = currentProject;
-    let projectData=state.projects
-      if(projectData[0]?.tasks&&currentProject){
+    let projectData = state.projects
+      if(projectData[0]?.tasks && currentProject){
         let sectionID, taskID;
         state.projects.forEach((section, section_idx) => {
             section.tasks.forEach((task, task_idx) => {
@@ -99,9 +99,9 @@ export const mutations = {
   },
 
   // to set project on project single page.
-    setProject(state, payload) {
-      state.selectedProject = payload;
-    },
+  setProject(state, payload) {
+    state.selectedProject = payload;
+  },
 
   createProjectForGroup(state, payload) {
     let obj = [...state.projects];
