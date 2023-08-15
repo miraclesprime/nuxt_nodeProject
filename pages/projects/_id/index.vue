@@ -86,7 +86,7 @@
       <bib-modal-wrapper v-if="projectTeamModal" title="Team" size="lg" @close="projectTeamModal = false">
         <template slot="content">
           <div style="min-height: 12rem;">
-            <project-team-modal></project-team-modal>
+            <project-team-modal :project="project"></project-team-modal>
           </div>
         </template>
       </bib-modal-wrapper>
@@ -210,7 +210,7 @@ export default {
       const res = await $axios.get(`project/${params.id}`, {
           headers: { 'Authorization': `Bearer ${token}`,'filter':filter }
         })
-
+      // console.log(res.data.data)
       store.dispatch('project/setProject', res.data.data)
       
       let resp = await $axios.$get(`/project/company/all`, {
@@ -219,6 +219,7 @@ export default {
           'Filter': filter
         }
       });
+      // console.log(resp.data)
       store.dispatch('project/setProjects', resp.data);
       
       let proj = resp.data.find((p) => {
@@ -251,7 +252,8 @@ export default {
       if(p?.isDeleted != true) {
 
         if((this.userProj && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN'){
-            console.log('user has access!')
+            console.info('user has access!')
+            this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id, userId: this.project.userId ? this.project.userId : null }).then(t => console.log("users found", t.length)).catch(e => console.warn(e))
         } else {
             this.$router.push('/error/403');
         }
@@ -265,7 +267,7 @@ export default {
       this.$store.dispatch("section/fetchProjectInitialSections", { projectId: this.$route.params.id, filter: 'all' })
       this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
       setTimeout(() => {
-        this.gridType=this.grid
+        this.gridType = this.grid
       }, 200);
     }
   },

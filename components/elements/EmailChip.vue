@@ -1,5 +1,5 @@
 <template>
-  <div id="email-chip-wrapper" class="d-inline-flex align-center py-025 px-05 bg-white" style="border-radius: 1.25rem;">
+  <div id="email-chip-wrapper" class="d-inline-flex align-center py-025 px-025 bg-white" style="border-radius: 1.25rem;">
     <template v-if="avatar">
       <bib-avatar :src="avatar" size="1.25rem" class="mr-025"></bib-avatar>
     </template>
@@ -9,7 +9,7 @@
     <strong v-if="name" class="px-025 font-sm" id="email-chip-strong">{{name}}</strong>
     <span id="email" class="px-025 font-sm">{{email}}</span>
     <template v-if="close">
-      <bib-icon icon="trash-solid" variant="gray5" :scale="0.8" class="cursor-pointer ml-05" v-on:click="onClose" ></bib-icon>
+      <bib-icon icon="trash-solid" variant="gray5" :scale="0.8" class="cursor-pointer ml-05 mr-025" v-on:click="onClose" ></bib-icon>
     </template>
   </div>
 </template>
