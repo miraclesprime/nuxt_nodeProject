@@ -261,6 +261,9 @@ export default {
       allDataDisplayed: false,
       lastDisplayedIndex:{ groupIdx: -1, curIdxInGroup: -1},
       dataDisplayed: false, 
+      // collapseStatus: {},
+      available_tasks: [],
+      showedCount: 0,
     }
   },
   
@@ -279,6 +282,8 @@ export default {
           this.localData=[]
           this.$refs.myTable.scrollTop=0
           this.lastDisplayedIndex={ groupIdx: -1, curIdxInGroup: -1}
+          this.showedCount=0
+          this.available_tasks=[]
           this.allDataDisplayed=false
           this.showData();
         });
@@ -372,52 +377,61 @@ export default {
 
     },
     showData() {
+      
       let allTasks = this.newValue.length > 0 ? [...this.newValue] : [...this.tableData];
       // allTasks =allTasks.map((item) => {
       //             item.dataCount = item.tasks?.length||0;
       //             return item;
       //           });
-  allTasks=this.modifyDateFormat(allTasks)
-  let remainingCount = this.itemsPerPage;
-    let start = this.lastDisplayedIndex.curIdxInGroup;
+      allTasks=this.modifyDateFormat(allTasks)
+      let remainingCount = this.itemsPerPage;
+      let start = this.lastDisplayedIndex.curIdxInGroup;
+      debugger
+      this.showedCount += remainingCount;
       let i;
       for (i = start === -1 ? this.lastDisplayedIndex.groupIdx + 1 : this.lastDisplayedIndex.groupIdx; i < allTasks.length; ++ i) {
         if (start === -1) {
+          // this.collapseStatus[allTasks[i].title] = true;
           if (remainingCount < allTasks[i].tasks?.length - start - 1) {
             
             this.localData.push({});
             for (const [key, value] of Object.entries(allTasks[i])) {
               if (key !== 'tasks') { 
-                this.localData[i][key] = value; 
+                this.localData[i][key] = value;
               }
             }
             this.localData[i].tasks = allTasks[i].tasks.slice(start + 1, start + remainingCount + 1);
+            this.available_tasks[allTasks[i].title] = allTasks[i].tasks.slice(start + 1, start + remainingCount + 1);
             start += remainingCount;
             remainingCount = 0;
           } else {
             this.localData.push(allTasks[i])
+            this.available_tasks[allTasks[i].title] = allTasks[i].tasks;
             remainingCount -= allTasks[i].tasks?.length;
             start = -1;
           }
         }
         else {
-          let tmp = {};
-          if (start + remainingCount + 1 < allTasks[i].tasks?.length) {
-            Object.assign(tmp, this.localData[i])
-          
-            tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, start + remainingCount + 1))
-            this.localData.length -= 1;
-            this.localData.push(tmp)
-            start += remainingCount;
-            remainingCount = 0;
-          } else {
-            Object.assign(tmp, this.localData[i])
-            tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, allTasks[i].tasks?.length))
-            this.localData.length -= 1;
-            this.localData.push(tmp)
-            remainingCount -= (allTasks[i].tasks?.length - start - 1);
-            start = -1;
-          }
+            let tmp = {};
+            if (start + remainingCount + 1 < allTasks[i].tasks?.length) {
+              Object.assign(tmp, this.localData[i])
+            
+              tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, start + remainingCount + 1))
+              this.available_tasks[allTasks[i].title] = tmp.tasks;
+              this.localData.length -= 1;
+              this.localData.push(tmp)
+              start += remainingCount;
+              remainingCount = 0;
+            } else {
+              Object.assign(tmp, this.localData[i])
+              tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, allTasks[i].tasks?.length))
+              this.available_tasks[allTasks[i].title] = tmp.tasks;
+              this.localData.length -= 1;
+              this.localData.push(tmp)
+              remainingCount -= (allTasks[i].tasks?.length - start - 1);
+              start = -1;
+            }
+       
         }
         if (remainingCount == 0) break;
 
@@ -429,7 +443,6 @@ export default {
         this.lastDisplayedIndex.curIdxInGroup = -1;
         return 
       }
-
       this.lastDisplayedIndex.groupIdx = i;
       this.lastDisplayedIndex.curIdxInGroup = start;
       
@@ -465,15 +478,21 @@ export default {
       }*/
     },
     collapseItem(sectionId) {
-      // console.log(sectionId)
       let elem = this.$refs['sectionContent'+sectionId][0].$el
       let icon = event.currentTarget.children[0]
-      
       elem.classList.toggle("collapsed")
       if (elem.classList.contains("collapsed")) {
         icon.style.transform = 'rotate(-90deg)'
+        const collapsedSection = this.newValue.find(ele => ele.id === sectionId);
+        // debugger
+        this.showedCount -= this.available_tasks[collapsedSection.title].length
+        if (this.showedCount < this.itemsPerPage) {
+          this.showData()
+        }
       } else {
         icon.style.transform = 'rotate(0deg)'
+        const collapsedSection = this.newValue.find(ele => ele.id === sectionId);
+        this.showedCount += this.available_tasks[collapsedSection.title].length
       }
     },
     
