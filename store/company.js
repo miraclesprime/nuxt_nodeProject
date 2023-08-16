@@ -144,7 +144,7 @@ export const mutations = {
       for (let i = 0; i < arr.length; i++) {
         let t = []
         for(let j=0; j<arr[i].tasks.length; j++) {
-          if (arr[i].tasks[j].status) {
+          if (arr[i].tasks[j].statusId) {
             t.unshift(arr[i].tasks[j])
           } else {
             t.push(arr[i].tasks[j])
@@ -183,7 +183,7 @@ export const mutations = {
       for (let i = 0; i < arr.length; i++) {
         let t = []
         for(let j=0; j<arr[i].tasks.length; j++) {
-          if (arr[i].tasks[j].priority) {
+          if (arr[i].tasks[j].priorityId) {
             t.unshift(arr[i].tasks[j])
           } else {
             t.push(arr[i].tasks[j])
@@ -262,7 +262,7 @@ export const mutations = {
       for (let i = 0; i < arr.length; i++) {
         let t = []
         for(let j=0; j<arr[i].tasks.length; j++) {
-          if (arr[i].tasks[j].user) {
+          if (arr[i].tasks[j].userId) {
             t.unshift(arr[i].tasks[j])
           } else {
             t.push(arr[i].tasks[j])
