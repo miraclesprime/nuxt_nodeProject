@@ -1,5 +1,5 @@
 <template>
-  <div id="tgs-scroll" class="overflow-x-auto h-100 position-relative bg-light" style="min-height: 30rem;"  @scroll="handleScroll" ref="myTable">
+  <div id="tgs-scroll" class="overflow-x-auto h-100 position-relative bg-light" style="min-height: 30rem;"  >
     <draggable :list="newValue" class="d-flex " :move="moveSection" v-on:end="$emit('section-dragend', newValue)" handle=".section-drag-handle">
       <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${templateKey}${section.title}${section.id}`">
         <div class="w-100 d-flex align-center section-title-wrapper border-bottom-gray2 mb-075" :id="'tgs-inner-wrap-'+section.id" :class="{'active': sectionEdit}" >
@@ -31,7 +31,7 @@
             </bib-popup>
           </div>
         </div>
-        <div class="task-section__body" :id="'tgs-task-section-body-'+section.id">
+        <div class="task-section__body" :id="'tgs-task-section-body-'+section.id" style="height: calc(100vh - 275px) !important;overflow: auto" @scroll="handleScroll($event,section.id)" >
           <draggable :list="section.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable" :class="{highlight: highlight == section.id}" :data-section="section.id">
             <template v-for="task in section.tasks">
               <task-grid :task="task" :project="section.projectId" :key="task.title + templateKey + '-' + task.id" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="$emit('update-key')" @open-sidebar="openSidebar(task, section.projectId)" ></task-grid>
@@ -87,11 +87,11 @@ export default {
       newSectionName: '',
       newSectionLoader: false,
       newTask: false,
-
+      itemCount:6,
       newValue: [],
       itemsPerPage: 20,
       allDataDisplayed: false,
-      lastDisplayedIndex:{ groupIdx: -1, curIdxInGroup: -1},
+      lastDisplayedIndex:{},
       dataDisplayed: false, 
     };
   },
@@ -116,7 +116,7 @@ export default {
          return _.cloneDeep(newValue)
     },
     // sections(newVal) {
-    //   this.localdata = JSON.parse(JSON.stringify(newVal))
+    //   this.newValue = JSON.parse(JSON.stringify(newVal))
     // },
     sections: {
       immediate: true, // Execute the watcher immediately on component mount
@@ -125,8 +125,8 @@ export default {
         this.newValue=_.cloneDeep(newValue)
         this.$nextTick(() => {
           this.localdata=[]
-          this.$refs.myTable.scrollTop=0
-          this.lastDisplayedIndex={ groupIdx: -1, curIdxInGroup: -1}
+          // this.$refs.myTable.scrollTop=0
+          // this.lastDisplayedIndex={ groupIdx: -1, curIdxInGroup: -1}
           this.allDataDisplayed=false
           this.showData();
         });
@@ -159,82 +159,75 @@ export default {
         })
     } 
     
-    // if(this.sectionType == "department") {
-    //   this.localdata = JSON.parse(JSON.stringify(this.sections));
-    // }
+    if(this.sectionType == "department") {
+      // let data=JSON.parse(JSON.stringify(this.sections));
+      // console.log("sections",data)
+    // console.log(this.sections);
+      // this.localdata = data.map(obj => {
+      //     if(obj.tasks?.length>2){
+      //       obj.tasks = obj.tasks.slice(0, 2);
+      //       return obj;
+      //     }
+      //     else {
+      //       return obj;
+      //     }
+      //   })
+    }
     
+ 
   },
 
   methods: {
-    handleScroll(event) {
+    handleScroll(event,sectionId) {
       const tableContainer = event.target;
       if (this.allDataDisplayed) {
         return; // Stop adding data if all data has been displayed
       }
       const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight+5 >= tableContainer.scrollHeight;
-
       if (isAtBottom) {
-      this.showData();
+        // console.log("$$")
+      this.showData(sectionId);
           }
 
     },
-    showData() {
-      let allTasks = this.newValue.length > 0 ? [...this.newValue] : [...this.sections];
-  let remainingCount = this.itemsPerPage;
-    let start = this.lastDisplayedIndex.curIdxInGroup;
-      let i;
-      for (i = start === -1 ? this.lastDisplayedIndex.groupIdx + 1 : this.lastDisplayedIndex.groupIdx; i < allTasks.length; ++ i) {
-        if (start === -1) {
-          if (remainingCount < allTasks[i].tasks?.length - start - 1) {
-            
-            this.localdata.push({});
-            for (const [key, value] of Object.entries(allTasks[i])) {
-              if (key !== 'tasks') { 
-                this.localdata[i][key] = value; 
-              }
-            }
-            this.localdata[i].tasks = allTasks[i].tasks.slice(start + 1, start + remainingCount + 1);
-            start += remainingCount;
-            remainingCount = 0;
-          } else {
-            this.localdata.push(allTasks[i])
-            remainingCount -= allTasks[i].tasks?.length;
-            start = -1;
+    showData(sectionId) {
+      console.log(sectionId)
+      // this.localdata
+      let allTasks = this.newValue?.length > 0 ? JSON.parse(JSON.stringify(this.newValue)) : JSON.parse(JSON.stringify(this.sections));
+      console.log(allTasks)
+      if (sectionId === undefined) {
+    //   // debugger
+        this.localdata = allTasks.map(obj => {
+          const newObj = {...obj}; // Create a new object with the same properties as obj
+          if (newObj.tasks?.length > this.itemCount) {
+            newObj.tasks = newObj.tasks.slice(0, this.itemCount);
           }
-        }
-        else {
-          let tmp = {};
-          if (start + remainingCount + 1 < allTasks[i].tasks?.length) {
-            Object.assign(tmp, this.localdata[i])
-          
-            tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, start + remainingCount + 1))
-            this.localdata.length -= 1;
-            this.localdata.push(tmp)
-            start += remainingCount;
-            remainingCount = 0;
-          } else {
-            Object.assign(tmp, this.localdata[i])
-            tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, allTasks[i].tasks?.length))
-            this.localdata.length -= 1;
-            this.localdata.push(tmp)
-            remainingCount -= (allTasks[i].tasks?.length - start - 1);
-            start = -1;
-          }
-        }
-        if (remainingCount == 0) break;
+          return newObj;
+        });
 
+        allTasks.forEach(ele => {
+          const newObj = JSON.parse(JSON.stringify(ele));
+          this.lastDisplayedIndex[newObj.title] = this.itemCount;
+        })
       }
-      if (i >= allTasks.length - 1 && start === -1) 
-      {
-        this.allDataDisplayed = true;
-        this.lastDisplayedIndex.groupIdx = -1;
-        this.lastDisplayedIndex.curIdxInGroup = -1;
-        return 
+      else {
+        const selectedSection = allTasks.findIndex(ele => {
+        const newObj = JSON.parse(JSON.stringify(ele));
+          if (newObj.id === sectionId) {
+            console.log(newObj.id)
+            return newObj;
+          }
+        });
+        console.log(selectedSection)
+      // debugger
+      const breakPoint = this.lastDisplayedIndex[allTasks[selectedSection].title];
+
+      let remainingCount = allTasks[selectedSection].tasks.length- breakPoint;
+
+      this.lastDisplayedIndex[allTasks[selectedSection].title] += (remainingCount > this.itemCount ? this.itemCount : remainingCount);
+      this.localdata[selectedSection].tasks = allTasks[selectedSection].tasks.slice(0, breakPoint + (remainingCount > this.itemCount ? this.itemCount : remainingCount));
       }
 
-      this.lastDisplayedIndex.groupIdx = i;
-      this.lastDisplayedIndex.curIdxInGroup = start;
-      
     },
     closeOtherBlankGrid($event){
         for (var ref in this.$refs) {

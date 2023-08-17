@@ -528,7 +528,11 @@ export default {
         text: proj ? `changed project to ${proj.title}` : 'Task removed from Project',
       })
         .then((u) => {
-          this.$nuxt.$emit("update-key")
+          // console.log(u)
+          this.$store.dispatch("task/setSingleTask", u)
+          if(this.expandVisible){
+            this.$nuxt.$emit("update-key","update")
+          }
           this.reloadHistory += 1
         })
         .catch(e => {
@@ -700,7 +704,7 @@ export default {
         .then(res => {
           // console.log(res)
           this.getTags()
-          this.$nuxt.$emit("update-key")
+          this.$nuxt.$emit("update-key","tagStatus")
         })
         .catch(e => console.error(e))
       } else {
@@ -744,7 +748,7 @@ export default {
       }).then(res => {
         console.log(res.data.message)
         this.getTags()
-        this.$nuxt.$emit("update-key")
+        this.$nuxt.$emit("update-key","tagStatus")
       }).catch(e => console.warn(e))
     },
   },

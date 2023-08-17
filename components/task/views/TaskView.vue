@@ -1138,6 +1138,7 @@ export default {
     }, 600),
 
     taskDragEnd: _.debounce(async function (payload) {
+      console.log("11",payload)
       this.loading = true;
       let tasks = _.cloneDeep(payload.tasks);
 

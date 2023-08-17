@@ -199,7 +199,13 @@ export default {
   created() {
     if (process.client) {
       this.$nuxt.$on("update-key", async (payload) => {
-        this.$store.commit('user/updateFetchUserTasks',{createORupdate:payload,data:this.selectedTask,filter:this.filterViews,key:this.groupBy})
+        if(payload=="tagStatus"){
+          this.fetchUserTasks();
+        }
+        else {
+          this.$store.commit('user/updateFetchUserTasks',{createORupdate:payload,data:this.selectedTask,filter:this.filterViews,key:this.groupBy})
+        }
+      
         this.templateKey += 1
         // await this.fetchUserTasks();
         // this.beforeLocal = this.localData
@@ -602,7 +608,13 @@ export default {
             order: this.orderBy,
           })
       }
-
+      if ($event == "department") {
+        this.$store
+          .dispatch("user/sortUserTasks", {
+            key: $event,
+            order: this.orderBy,
+          })
+      }
       if ($event == "difficultyId") {
         this.$store
           .dispatch("user/sortUserTasks", {

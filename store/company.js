@@ -119,19 +119,24 @@ export const mutations = {
   sortCompanyTasks(state, payload) {
     state.sortName = payload.sName
     state.sortOrder = payload.order
-    let arr = state.companyTasks;
+    let arr =JSON.parse(JSON.stringify(state.companyTasks));
     // sort By Title
     if (payload.sName == 'title') {
-      
-
       if(payload.order == 'asc') {
-        arr.map((dept) => {
-          dept.tasks.sort((a,b) => a.title.localeCompare(b.title))
-        })
+        if(arr[0].tasks){
+                arr.forEach((ele)=>{
+              ele.tasks.sort((a,b)=>a.title.localeCompare(b.title))
+              return ele
+            })
+        }
+      
       } else {
-        arr.map((dept) => {
-          dept.tasks.sort((a,b) => b.title.localeCompare(a.title))
-        })
+        if(arr[0].tasks){
+            arr.forEach((ele)=>{
+              ele.tasks.sort((a,b)=>b.title.localeCompare(a.title))
+              return ele
+            })
+          }
       }
 
       state.companyTasks = arr;
@@ -254,7 +259,44 @@ export const mutations = {
       state.companyTasks = newArr;
 
     }
+    if (payload.sName == 'department') {
 
+      let newArr = []
+
+      for (let i = 0; i < arr.length; i++) {
+        let t = []
+        for(let j=0; j<arr[i].tasks.length; j++) {
+          if (arr[i].tasks[j].departmentId) {
+            t.unshift(arr[i].tasks[j])
+          } else {
+            t.push(arr[i].tasks[j])
+          }
+        }
+        arr[i].tasks = t;
+        newArr.push(arr[i]);
+      }
+
+      if (payload.order == "asc") {
+        newArr.map((dept) => {
+          return dept.tasks.sort((a, b) => {
+            if (a.departmentId && b.departmentId) {
+              return a.department.title.localeCompare(b.department.title)
+            }
+          })
+        })
+      } else {
+        newArr.map((dept) => {
+          return dept.tasks.sort((a, b) => {
+            if (a.departmentId && b.difficultyId) {
+              return b.department.title.localeCompare(a.department.title)
+            }
+          })
+        })
+      }
+
+      state.companyTasks = newArr;
+
+    }
     // sort by owner
     if (payload.sName == 'userId') {
       let newArr = []
@@ -378,7 +420,7 @@ export const mutations = {
       for (let i = 0; i < arr.length; i++) {
         let t = []
         for(let j=0; j<arr[i].tasks.length; j++) {
-          if (arr[i].tasks[j].project[0]) {
+          if (arr[i].tasks[j].project[0]?.projectId) {
             t.unshift(arr[i].tasks[j])
           } else {
             t.push(arr[i].tasks[j])
@@ -390,14 +432,19 @@ export const mutations = {
 
       if (payload.order == "asc") {
         newArr.map((dept) => {
+       
           return dept.tasks.sort((a, b) => {
-            return a.project[0]?.project?.title?.localeCompare(b.project[0]?.project?.title);
+            if (b.project[0]?.project?.title && a.project[0]?.project?.title) {
+              return a.project[0]?.project?.title?.localeCompare(b.project[0]?.project?.title);
+               }
           })
         })
       } else {
         newArr.map((dept) => {
           return dept.tasks.sort((a, b) => {
+            if (b.project[0]?.project?.title && a.project[0]?.project?.title) {
             return b.project[0]?.project?.title?.localeCompare(a.project[0]?.project?.title);
+             }
           })
         })
       }
@@ -443,6 +490,15 @@ export const actions = {
     const res = await this.$axios.$get(`company/tasks/all`, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
     });
+    await res.data.map(item=>{
+      if(item.id){
+        return item
+      }
+      else {
+        item['id']=res.data.length
+        return item
+      }
+    })
     ctx.commit('setCompanyTasks', res.data);
     return res.data
   },
@@ -453,6 +509,15 @@ export const actions = {
     });
 
     if (res.data) {
+      await res.data.map(item=>{
+        if(item.id){
+          return item
+        }
+        else {
+          item['id']=res.data.length
+          return item
+        }
+      })
       ctx.commit('setInitialTasks', res.data);
       return res.data
     }
