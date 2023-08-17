@@ -194,7 +194,6 @@ export default {
       console.log(sectionId)
       // this.localdata
       let allTasks = this.newValue?.length > 0 ? JSON.parse(JSON.stringify(this.newValue)) : JSON.parse(JSON.stringify(this.sections));
-      console.log(allTasks)
       if (sectionId === undefined) {
     //   // debugger
         this.localdata = allTasks.map(obj => {

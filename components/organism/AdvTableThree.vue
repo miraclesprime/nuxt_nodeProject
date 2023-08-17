@@ -65,7 +65,6 @@
             </div>
 
             <draggable class="section-content" tag="article" :list="section[tasksKey]" :group="{ name: 'tasks' }" :data-section="section.id" :ref="'sectionContent' + section.id" @start="rowDragStart" :move="moveRow" @end="rowDragEnd">
-
               <div v-for="item in section[tasksKey]" :key="item.id" ref="trdata" role="row" class="tr sortable drag-item" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
                 <div v-show="drag" class="td" role="cell" >
                   <div class="drag-handle width-105 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
@@ -486,7 +485,13 @@ export default {
         // debugger
         this.showedCount -= this.available_tasks[collapsedSection.title].length
         if (this.showedCount < this.itemsPerPage) {
-          this.showData()
+          if (this.allDataDisplayed) {
+            return; // Stop adding data if all data has been displayed
+          }
+          setTimeout(() => {
+            this.showData()
+          }, 300);
+          
         }
       } else {
         icon.style.transform = 'rotate(0deg)'
