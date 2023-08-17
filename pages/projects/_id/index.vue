@@ -253,7 +253,7 @@ export default {
 
         if((this.userProj && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN'){
             console.info('user has access!')
-            this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id, userId: this.project.userId ? this.project.userId : null }).then(t => console.log("users found", t.length)).catch(e => console.warn(e))
+            this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id, userId: this.project.userId ? this.project.userId : null })
         } else {
             this.$router.push('/error/403');
         }

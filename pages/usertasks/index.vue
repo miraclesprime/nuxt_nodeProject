@@ -309,16 +309,16 @@ export default {
       if ($event) {
         this.popupMessages.push({ text: $event, variant: "success" });
       }
-      if (process.client) {
+      // if (process.client) {
         this.$store.dispatch("user/getUserTasks", {
           userId:this.userfortask ? this.userfortask.id : "",
           filter: 'all',
       })
         .then(res=> {
-          this.$store.commit('user/setFetchUserTasks',{data:res,filter:this.filterViews,key:this.groupBy})         
+          this.$store.commit('user/setFetchUserTasks', {data:res,filter:this.filterViews,key:this.groupBy})
         })
    
-      }
+      // }
       // let compid = JSON.parse(localStorage.getItem("user")).subb;
       // this.$store
       //   .dispatch("company/fetchCompanyTasks", {

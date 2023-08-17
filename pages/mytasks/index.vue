@@ -714,6 +714,7 @@ export default {
     },
 
     todoDragEnd: _.debounce(async function(todos) {
+      console.log(todos)
       todos.forEach((el, i) => {
         el.uOrder = i
       })

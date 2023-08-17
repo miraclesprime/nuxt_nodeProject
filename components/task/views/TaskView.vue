@@ -1108,15 +1108,17 @@ export default {
     sectionDragEnd: _.debounce(async function (payload) {
       this.loading = true;
 
+      console.log(payload)
+
       let clone = _.cloneDeep(payload);
       clone.forEach((el, i) => {
         el.order = i;
       });
 
-      let sectionDnD = await this.$axios.$put(
-        "/section/dragdrop",
-        { projectId: this.project?.id, data: clone },
-        {
+      let sectionDnD = await this.$axios.$put("/section/dragdrop", {
+        projectId: this.project?.id,
+        data: clone
+      }, {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("accessToken"),
             "Content-Type": "application/json",
@@ -1125,10 +1127,7 @@ export default {
       );
 
       if (sectionDnD.statusCode == 200) {
-        this.$store
-          .dispatch("section/fetchProjectSections", {
-            projectId: this.$route.params.id,
-          })
+        this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id })
           .then(() => {
             this.$nuxt.$emit("update-key");
           });
