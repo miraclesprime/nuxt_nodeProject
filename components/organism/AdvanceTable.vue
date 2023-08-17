@@ -116,33 +116,17 @@
   </div>
 </template>
 <script>
-// import lazyLoadComponent from '~/utils/lazyload-component.client.js';
-// import SkeletonBox from '~/components/SkeletonBox.vue';
+
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
 import dayjs from 'dayjs'
-// import fecha, { format } from "fecha";
 import draggable from 'vuedraggable'
-
-/*const defaultOptions = {
-  loading: SkeletonBox,
-  loadingData: {
-    props: {
-      width: `100%`,
-      height: `2rem`,
-    },
-  },
-};*/
 
 export default {
 
   name: 'AdvanceTable',
   components: {
     draggable,
-    /*UserSelect: lazyLoadComponent({
-      ...defaultOptions,
-      componentFactory: () => import('~/components/organism/UserSelect.vue'),
-    }),*/
   },
   props: {
     tableFields: { type: Array, required: true, default: () => [] },
