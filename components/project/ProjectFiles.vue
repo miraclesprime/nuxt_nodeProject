@@ -65,7 +65,7 @@
       </template>
       <template v-if="displayType == 'grid'">
         <div class="files d-grid gap-1 py-1"  id="pf-file-message-files">
-          <message-files v-for="file in files" :property="file" :project="project" :key="file.key" @file-click="showPreviewModal(file)" ></message-files>
+          <message-files v-for="file in files" :property="file" :project="project" :key="file.key" @file-click="showPreviewModal(file)" @reload-files="getFiles" ></message-files>
         </div>
       </template>
       <loading :loading="loading"></loading>
@@ -163,6 +163,7 @@ export default {
       pdfPreview: '',
       fileDetailModal: false,
       fileDetail: {},
+      popupMessages: [],
     }
   },
   computed: {
@@ -189,6 +190,7 @@ export default {
     },
 
   },
+
   mounted() {
     this.getFiles()
   },
@@ -334,8 +336,6 @@ export default {
     deleteFile(file) {
       
       if((file.userId == JSON.parse(localStorage.getItem('user')).sub ) || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
-        // let del = window.confirm("Are you sure want to delete " + file.name + "?")
-        // if (del) {
           this.$axios.delete("file/" + file.key, {
               headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
@@ -355,7 +355,6 @@ export default {
               }
             })
             .catch(e => console.error(e))
-        // }
       } else {
         this.popupMessages.push({text: "you do not have permission to delete this file", variant: "orange"})
         // console.log("you don't have enough permission to delete this file")

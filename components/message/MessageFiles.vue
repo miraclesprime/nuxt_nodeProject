@@ -43,6 +43,18 @@
           </div>
         </template>
       </bib-modal-wrapper>
+      <bib-popup-notification-wrapper>
+        <template #wrapper>
+          <bib-popup-notification
+            v-for="(msg, index) in popupMessages"
+            :key="index"
+            :message="msg.text"
+            :variant="msg.variant"
+            :autohide="5000"
+          >
+          </bib-popup-notification>
+        </template>
+      </bib-popup-notification-wrapper>
     </div>
   </client-only>
 </template>
@@ -69,6 +81,7 @@ export default {
       // faMagnifyingGlassPlus,
       fileDetailModal: false,
       filePreview: "",
+      popupMessages: [],
     }
   },
   computed: {
@@ -145,8 +158,6 @@ export default {
     deleteFile(file) {
       
       if((file.owner == JSON.parse(localStorage.getItem('user')).sub ) || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
-        let del = window.confirm("Are you sure want to delete " + file.name + "?")
-        if (del) {
           this.$axios.delete("file/" + file.key, {
               headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
@@ -156,18 +167,19 @@ export default {
                 'userid': file.owner
               }
             }).then(f => {
-              console.log(f.data)
+              // console.log(f.data)
               if (f.data.statusCode == 200) {
-                alert(f.data.message);
-                // _.delay(() => {
-                //   this.getFiles()
-                // }, 2000);
+                this.popupMessages.push({test: f.data.message, variant: "success"})
+                _.delay(() => {
+                  // this.getFiles()
+                  this.$emit("reload-files")
+                }, 3000);
               }
             })
             .catch(e => console.error(e))
-        }
       } else {
-        console.log("you don't have enough permission to delete this file")
+        // console.log("you don't have enough permission to delete this file")
+        this.popupMessages.push({test: "you do not have permission to delete this file", variant: "orange"})
       }
     },
   }
