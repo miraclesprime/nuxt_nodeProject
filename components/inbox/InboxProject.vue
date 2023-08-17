@@ -3,10 +3,10 @@
   <div class="h-100 inbox-project" id="inbox-project-wrapper">
     <div class="d-flex gap-05 align-center justify-end position-relative border-bottom-light px-105 py-05" id="inbox-project-button-wraps">
 
-      <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="inbox-project-menu-item2" v-tooltip="'Conversation'">
+      <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="inbox-project-menu-item2" v-tooltip="'Conversation'" @click="scrollToConversation">
         <bib-icon icon="comment-forum-solid" class="m-auto"></bib-icon>
       </div>
-      <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="inbox-project-menu-item3" v-tooltip="'Files'">
+      <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="inbox-project-menu-item3" v-tooltip="'Files'" @click="scrollToFiles">
         <bib-icon icon="folder-solid" class="m-auto"></bib-icon>
       </div>
       <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex align-center justify-center cursor-pointer" id="inbox-project-bookmark" @click="setFavorite" v-tooltip="isFavorite.text">
@@ -22,15 +22,15 @@
               <span class="list__item" id="inbox-project-list-item3" @click="showAddTeamModal">
                 <bib-icon icon="user-group-solid" class="mr-075"></bib-icon> Team
               </span>
-              <span class="list__item" id="inbox-project-list-item3">
+              <span class="list__item" id="inbox_project_list-item4" @click="scrollToConversation">
                 <bib-icon icon="comment-forum-solid" class="mr-075"></bib-icon> Conversation
               </span>
-              <span class="list__item" id="inbox-project-list-item3">
+              <span class="list__item" id="inbox_project_list-item5" @click="scrollToFiles">
                 <bib-icon icon="folder-solid" class="mr-075"></bib-icon> Files
               </span>
-              <span class="list__item" id="inbox-project-list-item5" @click="reportModal = !reportModal">
+              <!-- <span class="list__item" id="inbox-project-list-item5" @click="reportModal = !reportModal">
                 <bib-icon icon="warning" class="mr-075"></bib-icon> Report
-              </span>
+              </span> -->
               <hr id="inbox-project-hr2">
               <span v-if="cdp" class="list__item list__item__danger" id="inbox-project-list-item6" @click="deleteProject(project)">Delete </span>
             </div>
@@ -82,14 +82,14 @@
         <div id="ip-proj-row5" class="row">
           <div id="ip-proj-row5-col1" class="col-4">
             <label id="ip-label-1" class="text-gray6">Time</label>
-            <div id="ip-hours" class="shape-rounded border-gray4 my-05 p-05">Hours {{time}}</div>
+            <div id="ip-hours" class="inbox-proj-time shape-rounded border-gray4 my-05 p-05" >Hours {{time}}</div>
           </div>
           <div id="ip-proj-row5-col2" class="col-4">
             <bib-input type="number" icon-left="currency-dollar" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="debounceUpdate('Budget', activeProject.budget)"></bib-input>
           </div>
           <div id="ip-proj-row5-col3" class="col-4">
             <label id="ip-label-2" class="text-gray6">Progress</label>
-            <div id="ip-progress" class="shape-rounded border-gray4 my-05 p-05">{{progress}}%</div>
+            <div id="ip-progress" class="inbox-proj-progress shape-rounded border-gray4 my-05 p-05">{{progress}}%</div>
           </div>
         </div>
         <div id="ip-proj-row6" class="row">
@@ -103,12 +103,12 @@
       <div id="ip-conv-wrap" class="border-bottom-gray2 d-flex justify-between sub-title pb-05">
         <p id="ip-coversation-para" class="text-gray5 font-md">Conversation </p>
       </div>
-      <project-conversation :project="activeProject" :key="'conv-'+activeProject.id"></project-conversation>
+      <project-conversation id="inbox_project_conversation" :project="activeProject" :key="'conv-'+activeProject.id"></project-conversation>
       
       <div id="ip-files-wrap" class="border-bottom-gray2 d-flex justify-between sub-title pb-05">
         <p id="ip-files-para" class="text-gray5 font-md">Files </p>
       </div>
-      <project-files :proj="activeProject" :key="'files'+activeProject.id"></project-files>
+      <project-files id="inbox_project_files" :proj="activeProject" :key="'files'+activeProject.id"></project-files>
     </div>
     <div id="inbox-project-message-input" class=" d-flex gap-1 border-top-light py-1 px-105">
       <bib-avatar :src="user2.Photo" size="2rem" class="flex-shrink-0"></bib-avatar>
@@ -431,6 +431,13 @@ export default {
     async uploadFile(commentFiles, data){
       let formdata = new FormData()
       let filelist = []
+      let delayTime = 100;
+
+      if(commentFiles.length > 1) {
+        delayTime = 6000;
+      } else {
+        delayTime = 800;
+      }
 
       commentFiles.forEach(file => {
         formdata.append('files', file)
@@ -448,9 +455,30 @@ export default {
       })
       if (fi.data.statusCode == 200) {
         this.value.files = []
-        this.$nuxt.$emit("get-msg-files")
+        _.delay(() => {
+          console.log("after 5 seconds")
+          this.$nuxt.$emit("get-msg-files")
+        }, delayTime)
       }
-    }
+    },
+
+    scrollToFiles() {
+      this.$nextTick(() => {
+        const element = document.getElementById('inbox_project_files');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth',block: "center" });
+        }
+      });
+    },
+
+    scrollToConversation() {
+      this.$nextTick(() => {
+        const element = document.getElementById('inbox_project_conversation');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' ,block: "end"});
+        }
+      });
+    },
   }
 }
 
@@ -461,7 +489,13 @@ export default {
   grid-template-columns: none;
   grid-template-rows: 1fr 1fr minmax(400px, auto) 1fr;
 }
+
 .sub-title {
   font-size: 1rem;
 }
+
+.inbox-proj-time, .inbox-proj-progress {
+  background: var(--bib-light);
+}
+
 </style>

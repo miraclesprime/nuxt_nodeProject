@@ -14,13 +14,13 @@
           <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="tsb-icon-2" v-tooltip="'Team'" title="Team" @click="showAddTeamModal">
             <bib-icon icon="user-group-solid" variant="gray5" ></bib-icon>
           </div>
-          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='tsb-icon-3' v-tooltip="'Subtasks'"  v-scroll-to="'#task_subtasks'">
+          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='tsb-icon-3' v-tooltip="'Subtasks'" >
             <bib-icon icon="check-square-solid" variant="gray5"></bib-icon>
           </div>
-          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='tsb-icon-4' v-tooltip="'Conversation'" v-scroll-to="'#task_conversation'">
+          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='tsb-icon-4' v-tooltip="'Conversation'">
             <bib-icon icon="comment-forum-solid" variant="gray5" ></bib-icon>
           </div>
-          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='tsb-icon-5' v-tooltip="'Files'" v-scroll-to="'#task_files'">
+          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='tsb-icon-5' v-tooltip="'Files'">
             <bib-icon icon="folder-solid" variant="gray5" ></bib-icon>
           </div>
           <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="tsb-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
@@ -42,13 +42,13 @@
                   <span class="list__item" id="tsb-list-item-4" @click="showAddTeamModal">
                     <bib-icon icon="user-group-solid" variant="gray5" class="mr-075" ></bib-icon> Team
                   </span>
-                  <span class="list__item" id="tsb-list-item-5" v-scroll-to="'#task_subtasks'">
-                    <bib-icon icon="check-square-solid" variant="gray5" class="mr-075" v-scroll-to=""></bib-icon> Subtasks
+                  <span class="list__item" id="tsb-list-item-5" >
+                    <bib-icon icon="check-square-solid" variant="gray5" class="mr-075" ></bib-icon> Subtasks
                   </span>
-                  <span class="list__item" id="tsb-list-item-7" v-scroll-to="'#task_conversation'">
+                  <span class="list__item" id="tsb-list-item-7" >
                     <bib-icon icon="comment-forum-solid" variant="gray5" class="mr-075"></bib-icon> Conversation
                   </span>
-                  <span class="list__item" id="tsb-list-item-3" v-scroll-to="'#task_files'">
+                  <span class="list__item" id="tsb-list-item-3" >
                     <bib-icon icon="folder-solid" variant="gray5" class="mr-075"></bib-icon> Files
                   </span>
                   <span class="list__item" id="tsb-project-id-list-item3" @click="copyTaskLink">
@@ -86,7 +86,6 @@
         <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" ></sidebar-subtask>
         <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
         <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
-      <button ref="topScroll" id="topScroll" style="visibility: hidden; opacity: 0" v-scroll-to="scrollId"></button>
     </div>
 
     <div class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-2">
