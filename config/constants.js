@@ -82,7 +82,7 @@ export const PROJECT_FIELDS = [
   },
   /*{
     key: "tag",
-    label: "Tags",
+    label: "Tag",
     width: '160px',
   },*/
   // {
@@ -181,7 +181,7 @@ export const TASK_FIELDS = [
   },
   {
     key: "tag",
-    label: "Tags",
+    label: "Tag",
     width: '150px',
   },
   {

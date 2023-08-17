@@ -918,35 +918,37 @@ export const actions = {
 
   async fetchTeamMember(ctx, payload) {
 
-    await this.$axios.get(`/project/${payload.projectId}/members`, {
+    let tm = await this.$axios.get(`/project/${payload.projectId}/members`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
       },
     })
-      .then((res) => {
-        let team = res.data.data.members;
-        let data = team.map((el) => {
-          if(ctx.state.selectedProject) {
-            if (ctx.state.selectedProject.userId == el.user.id) {
-              el.isOwner = true
-            } else {
-              el.isOwner = false
-            }
-          }else {
-            if (payload.userId == el.user.id) {
-              el.isOwner = true
-            } else {
-              el.isOwner = false
-            }
+    // console.log(tm.data)
+    if(tm.data.statusCode == 200) {
+      let team = tm.data.data.members;
+      let data = team.map((el) => {
+        if(ctx.state.selectedProject) {
+          if (ctx.state.selectedProject.userId == el.user.id) {
+            el.isOwner = true
+          } else {
+            el.isOwner = false
           }
+        } else {
+          if (payload.userId == el.user.id) {
+            el.isOwner = true
+          } else {
+            el.isOwner = false
+          }
+        }
 
-          return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName, isOwner: el.isOwner };
-        });
-        ctx.commit('fetchTeamMember', data)
-      })
-      .catch((err) => {
-        console.log(err);
+        return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName, isOwner: el.isOwner };
       });
+      ctx.commit('fetchTeamMember', data)
+      return data
+    }
+    else {
+      console.warn(tm);
+    }
   },
 
   async addMember(ctx, payload) {
