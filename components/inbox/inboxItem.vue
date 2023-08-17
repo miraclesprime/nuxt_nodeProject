@@ -11,15 +11,15 @@
         <bib-icon icon="briefcase" variant="gray5"></bib-icon> {{projTitle}}
       </span>
       <div class="inbox-flags d-inline-flex align-center ml-auto">
-        <span id="inbox-item-flag-racing-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Flag message'">
+        <!-- <span id="inbox-item-flag-racing-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Flag message'">
           <bib-icon icon="flag-racing" variant="gray5"></bib-icon>
-        </span>
+        </span> -->
         <span id="inbox-item-mail-solid-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="readText" @click.stop="markRead">
           <bib-icon icon="mail-solid" :variant="status.markRead ? 'gray6' : 'gray5'"></bib-icon>
         </span>
-        <span id="inbox-item-file-multiple-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Archive'">
+        <!-- <span id="inbox-item-file-multiple-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Archive'">
           <bib-icon icon="file-multiple" variant="gray5"></bib-icon>
-        </span>
+        </span> -->
         <!-- <span id="inbox-item-icon" class="shape-rounded px-025 border-gray5 text-gray5 font-xs">{{item.id}}</span> -->
       </div>
     </div>
@@ -44,7 +44,7 @@
       <div v-if="item.data.length > 0" id="ii-content" class="inbox-item-content mb-05">
         <template v-for="(it, i) in item.data">
             <div class="history" :id="'ii-history-'+i">{{truncateText(it.text)}}</div>
-            <div :id="'ii-updatedAt-'+i">@ {{$toTime(it.updatedAt)}}</div>
+            <div class="text-secondary" :id="'ii-updatedAt-'+i">@ {{$toTime(it.updatedAt)}}</div>
         </template>
       </div>
         <!-- <span v-html="it.text"><br></span> -->

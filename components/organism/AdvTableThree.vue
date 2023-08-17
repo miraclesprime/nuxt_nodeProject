@@ -164,34 +164,16 @@
   </div>
 </template>
 <script>
-// import lazyLoadComponent from '~/utils/lazyload-component.client.js';
-// import SkeletonBox from '~/components/SkeletonBox.vue';
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
 import dayjs from 'dayjs'
-// import fecha, { format } from "fecha";
 import draggable from 'vuedraggable'
-
-/*const defaultOptions = {
-  loading: SkeletonBox,
-  loadingData: {
-    props: {
-      width: `100%`,
-      height: `2rem`,
-    },
-  },
-};*/
 
 export default {
 
   name: 'AdvTableThree',
   components: {
     draggable,
-    // RecycleScroller,
-    /*UserSelect: lazyLoadComponent({
-      ...defaultOptions,
-      componentFactory: () => import('~/components/organism/UserSelect.vue'),
-    }),*/
   },
   props: {
     tableFields: { type: Array, required: true, default: () => [] },
@@ -248,7 +230,7 @@ export default {
       popupCoords: { left: 0, top: 0 },
       activeItem: {},
       resizableTables: [],
-      format: "DD MMM YYYY",
+      format: "D MMM YYYY",
       // highlight: false,
       validTitle: false,
       localData: [],
@@ -688,9 +670,6 @@ export default {
 
     },
     resizableColumns() {
-      // var tables = document.getElementsByTagName('table');
-      // var table = document.getElementsByClassName("adv-table");
-      // var table = document.getElementById(`advTableTwo-${this.componentKey}`);
       var table = this.$refs.headrow
       // console.log(table)
       if (table.className.match(/resizable/)) {
@@ -826,7 +805,7 @@ export default {
     updateDate(d, item, field, label) {
       // console.log(...arguments)
       // let d = new Date(date)
-      this.$emit("update-field", { id: item.id, field, value: new Date(d), label, historyText: `Changed ${label} to ${dayjs(d).format('DD MMM YYYY')}`, item: item})
+      this.$emit("update-field", { id: item.id, field, value: new Date(d), label, historyText: `Changed ${label} to ${dayjs(d).format('D MMM YYYY')}`, item: item})
     },
     debounceNewSection: _.debounce(function(value, event) {
       if (value) {

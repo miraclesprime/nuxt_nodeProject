@@ -211,12 +211,12 @@ export default {
         },
       ],
       navItems1: [
-        {
+        /*{
           label: "Home",
           icon: "home-solid",
           key: "dashboard-route",
           selected: false,
-        },
+        },*/
         {
           label: "Inbox",
           icon: "mail-new-solid",
