@@ -17,14 +17,14 @@
         <bib-table :fields="tableFields" :sections="dbFiles" :key="tempKey" :hide-no-column="true">
           <template #cell(name)="data">
             <div class="d-flex align-center text-left gap-05 cursor-pointer" id="pf-file-extensions" @click="showPreviewModal(data.value)">
-              <bib-avatar v-if="imageType(data.value)" shape="rounded" :src="data.value.url" size="1.5rem">
-              </bib-avatar>
-              <bib-icon v-else-if="data.value.extension == '.docx'" icon="word" :scale="1.25"></bib-icon>
+              <!-- <bib-avatar v-if="imageType(data.value)" shape="rounded" :src="data.value.url" size="1.5rem"></bib-avatar> -->
+              <bib-icon :icon="fileIcon(data.value)" ></bib-icon>
+              <!-- <bib-icon v-else-if="data.value.extension == '.docx'" icon="word" :scale="1.25"></bib-icon>
               <bib-icon v-else-if="data.value.extension == '.xlsx'" icon="excel" :scale="1.25"></bib-icon>
               <bib-icon v-else-if="data.value.extension == '.pptx'" icon="powerpoint" :scale="1.25"></bib-icon>
               <bib-icon v-else-if="data.value.extension == '.pdf'" icon="pdf" :scale="1.25"></bib-icon>
-              <bib-icon v-else icon="file-text-solid" variant="gray4" :scale="1.25"></bib-icon>
-              <span class="text-gray1" id="pf-file-data-name">
+              <bib-icon v-else icon="file-text-solid" variant="gray4" :scale="1.25"></bib-icon> -->
+              <span class="text-gray1 text-truncate" id="pf-file-data-name" v-tooltip="data.value.name" style="max-width: 6rem;">
                 {{ data.value.name }}
               </span>
             </div>
@@ -55,7 +55,7 @@
                     <span class="list__item"  id="pf-file-list-item-3" @click.stop="openFileDetail(data.value)">Detail</span>
                     <span class="list__item"  id="pf-file-list-item-4" @click.stop="downloadFile(data.value)">Download File</span>
                     <hr>
-                    <span v-if="data.value" class="list__item list__item__danger"  id="pf-file-list-item-5" @click.stop="deleteFile(data.value)">Delete</span>
+                    <span v-if="canDelete(data.value)" class="list__item list__item__danger"  id="pf-file-list-item-5" @click.stop="deleteFile(data.value)">Delete</span>
                   </div>
                 </template>
               </bib-button>
@@ -101,26 +101,39 @@
     </bib-modal-wrapper>
     <!-- file detail modal -->
     <bib-modal-wrapper v-if="fileDetailModal" title="File Details" @close="fileDetailModal = false">
-        <template slot="content">
-          <table class="table">
-            <tr v-for="(file, index) in fileDetail" :id="'pf-file-table-row-'+index" :key="index">
-              <template v-if="file.key == 'size'">
-                <th id="pf-th1" class="text-right font-w-400">{{file.key}}:</th>
-                <td class="text-left text-gray6 pl-1" id="pf-td1">{{$formatBytes(file.value)}}</td>
-              </template>
-              <template v-else>
-                <th id="pf-th2" class="text-right font-w-400">{{file.key}}:</th>
-                <td class="text-left text-gray6 pl-1" id="pf-td2">{{file.value}}</td>
-              </template>
-            </tr>
-          </table>
-        </template>
-        <template slot="footer">
-          <div class="d-flex justify-end" id="pf-file-footer">
-            <bib-button label="Close" variant="light" pill @click="fileDetailModal = false"></bib-button>
-          </div>
-        </template>
-      </bib-modal-wrapper>
+      <template slot="content">
+        <table class="table">
+          <tr v-for="(file, index) in fileDetail" :id="'pf-file-table-row-'+index" :key="index">
+            <template v-if="file.key == 'size'">
+              <th id="pf-th1" class="text-right font-w-400">{{file.key}}:</th>
+              <td class="text-left text-gray6 pl-1" id="pf-td1">{{$formatBytes(file.value)}}</td>
+            </template>
+            <template v-else>
+              <th id="pf-th2" class="text-right font-w-400">{{file.key}}:</th>
+              <td class="text-left text-gray6 pl-1" id="pf-td2">{{file.value}}</td>
+            </template>
+          </tr>
+        </table>
+      </template>
+      <template slot="footer">
+        <div class="d-flex justify-end" id="pf-file-footer">
+          <bib-button label="Close" variant="light" pill @click="fileDetailModal = false"></bib-button>
+        </div>
+      </template>
+    </bib-modal-wrapper>
+    <!-- popup message -->
+    <bib-popup-notification-wrapper>
+      <template #wrapper>
+        <bib-popup-notification
+          v-for="(msg, index) in popupMessages"
+          :key="index"
+          :message="msg.text"
+          :variant="msg.variant"
+          :autohide="5000"
+        >
+        </bib-popup-notification>
+      </template>
+    </bib-popup-notification-wrapper>
   </div>
 </template>
 
@@ -180,11 +193,35 @@ export default {
     this.getFiles()
   },
   methods: {
-    imageType(data) {
+    fileIcon(file){
+      if (file.type.includes('image')) {
+        return "file-text-solid"
+      }
+      if (file.type.includes('video')) {
+        return "video-solid"
+      }
+      if (file.type.includes('audio')) {
+        return "sales"
+      }
+      if (file.type.includes('pdf')) {
+        return "pdf"
+      }
+      if (file.type.includes('msword') || file.type.includes("wordprocessingml") || file.type.includes("rtf")) {
+        return "word"
+      }
+      if (file.type.includes('presentation')) {
+        return "powerpoint"
+      }
+      if (file.type.includes('ms-excel') || file.type.includes("sheet")) {
+        return "excel"
+      }
+      return "file-text-solid"
+    },
+    /*imageType(data) {
       if (data.type.indexOf("image/") == 0) {
         return true
       } else { return false }
-    },
+    },*/
     handleChangeFile(files, event) {
     },
     async uploadFiles() {
@@ -235,32 +272,37 @@ export default {
       })
     },
     async showPreviewModal(file){
-      this.previewModal = true
+      console.log(file)
 
-      if (file.type.indexOf('image/') == 0 && "url" in file) {
-        let imgtype = file.type.split("/")[1]
-        const prev = await this.$axios.get("file/single/"+file.key, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-            'preview': 'preview'
-          }
-        })
-        this.imgPreview = `data:image/${imgtype};base64,${prev.data.data}`
-        this.pdfPreview = ''
-      } else if(file.type.indexOf('pdf') && "url" in file) { 
-
-        const prev = await this.$axios.get("file/single/"+file.key, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-            'preview': 'preview'
-          }
-        })
-        this.pdfPreview = `data:application/pdf;base64,${prev.data.data}`
-        this.imgPreview = ''
-        
+      if (file.type.indexOf('image/') == 0 || file.type.indexOf('pdf') > 0) {
+        this.previewModal = true
+        if (file.type.indexOf('image/') == 0 && "url" in file) {
+          let imgtype = file.type.split("/")[1]
+          const prev = await this.$axios.get("file/single/"+file.key, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+              'preview': 'preview'
+            }
+          })
+          this.imgPreview = `data:image/${imgtype};base64,${prev.data.data}`
+          this.pdfPreview = ''
+          return
+        } 
+        if(file.type.indexOf('pdf') && "url" in file) { 
+          const prev = await this.$axios.get("file/single/"+file.key, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+              'preview': 'preview'
+            }
+          })
+          this.pdfPreview = `data:application/pdf;base64,${prev.data.data}`
+          this.imgPreview = ''
+          return
+        }
       } else { 
         this.downloadFile(file)
-        this.previewModal = false
+        this.closePreviewModal()
+        // this.previewModal = false
       }
     
     },
@@ -275,7 +317,7 @@ export default {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           }
         }).then(f => {
-          console.log(f.data)
+          // console.log(f.data)
           if (f.data.statusCode == 200) {
             const a = document.createElement('a');
             a.style.display = 'none';
@@ -283,7 +325,8 @@ export default {
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(f.data.data);
-            alert('your file downloaded!');
+            // alert('your file downloaded!');
+            this.popupMessages.push({text: "your file downloaded", variant: "success"})
           }
         })
         .catch(e => console.error(e))
@@ -291,8 +334,8 @@ export default {
     deleteFile(file) {
       
       if((file.userId == JSON.parse(localStorage.getItem('user')).sub ) || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
-        let del = window.confirm("Are you sure want to delete " + file.name + "?")
-        if (del) {
+        // let del = window.confirm("Are you sure want to delete " + file.name + "?")
+        // if (del) {
           this.$axios.delete("file/" + file.key, {
               headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
@@ -304,16 +347,18 @@ export default {
             }).then(f => {
               console.log(f.data)
               if (f.data.statusCode == 200) {
-                alert(f.data.message);
+                // alert(f.data.message);
+                this.popupMessages.push({text: f.data.message, variant: "orange"})
                 _.delay(() => {
                   this.getFiles()
-                }, 2000);
+                }, 3000);
               }
             })
             .catch(e => console.error(e))
-        }
+        // }
       } else {
-        console.log("you don't have enough permission to delete this file")
+        this.popupMessages.push({text: "you do not have permission to delete this file", variant: "orange"})
+        // console.log("you don't have enough permission to delete this file")
       }
     },
     openFileDetail(file) {
@@ -338,6 +383,14 @@ export default {
         return false
       }
     },
+    canDelete(file){
+      // console.log(file)
+      if((file.userId == JSON.parse(localStorage.getItem('user')).sub ) || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
+        return true
+      } else {
+        return false
+      }
+    }
   }
 }
 
@@ -396,4 +449,9 @@ table {
   }
 }
 
+::v-deep{
+  .table {
+    th, td { padding: 0.15rem 0.3rem;}
+  }
+}
 </style>

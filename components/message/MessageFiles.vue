@@ -1,10 +1,12 @@
 <template>
   <client-only>
     <div class="file-wrap d-flex " id="msg-file-wrapper">
-      <figure class="position-relative w-100" v-tooltip="`${property.name}`">
-        <img id="msg-file-filePreview" :src="filePreview" class="shape-rounded d-block" alt="filePreview">
+      <figure class="position-relative w-100 align-center justify-center" v-tooltip="`${property.name}`">
+        <img id="msg-file-filePreview" v-if="filePreview" :src="filePreview" class="shape-rounded d-block" :alt="property.name">
+        <div v-else class="text-gray5 font-heading-lg">{{property.extension}}</div>
         <div id="msg-file-file-click" class="file-overlay d-flex align-center justify-center cursor-pointer" @click="$emit('file-click')">
-          <fa :icon="faMagnifyingGlassPlus" class="width-2 height-2"></fa>
+          <!-- <fa :icon="faMagnifyingGlassPlus" class="width-2 height-2"></fa> -->
+          <bib-icon icon="eye-open" :scale="2" variant="secondary"></bib-icon>
         </div>
         <div id="msg-file-list-wrapper" class="shape-circle bg-gray4 width-2 height-2 d-flex justify-center align-center file-menu">
           <bib-button pop="elipsis" :scale="1">
@@ -14,7 +16,7 @@
                 <!-- <span id="msg-file-list-item-2" class="list__item">Open</span> -->
                 <span id="msg-file-list-item-3" class="list__item" @click.stop="fileDetailModal = true">Detail</span>
                 <span id="msg-file-list-item-4" class="list__item" @click.stop="downloadFile">Download File</span>
-                <span id="msg-file-list-item-5" class="list__item list__item__danger" @click.stop="deleteFile(property)">Delete File</span>
+                <span id="msg-file-list-item-5" v-show="canDelete" class="list__item list__item__danger" @click.stop="deleteFile(property)">Delete File</span>
               </div>
             </template>
           </bib-button>
@@ -46,8 +48,8 @@
 </template>
 
 <script>
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
+// import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+// import { faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
 import dayjs from 'dayjs'
 
 export default {
@@ -58,13 +60,13 @@ export default {
     project: { type: Object }
   },
 
-  components: {
+  /*components: {
     fa: FontAwesomeIcon,
-  },
+  },*/
 
   data() {
     return {
-      faMagnifyingGlassPlus,
+      // faMagnifyingGlassPlus,
       fileDetailModal: false,
       filePreview: "",
     }
@@ -92,6 +94,13 @@ export default {
         return false
       }
     },
+    canDelete() {
+      if((this.property.owner == JSON.parse(localStorage.getItem('user')).sub ) || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
+        return true
+      } else {
+        return false
+      }
+    },
   },
   mounted() {
     this.previewFile()
@@ -108,7 +117,9 @@ export default {
         })
         this.filePreview = `data:image/${imgtype};base64,${prev.data.data}`
       } else {
-        this.filePreview = "https://via.placeholder.com/200x160/f0f0f0/6f6f79?text=" + this.property.extension
+        // this.filePreview = "https://via.placeholder.com/200x160/f0f0f0/6f6f79?text=" + this.property.extension
+        // this.filePreview = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAB9AAAAXcAQMAAABAq4doAAAABGdBTUEAALGPC/xhBQAAAANQTFRFAAAAp3o92gAAAAF0Uk5TAEDm2GYAAAGESURBVHic7cExAQAAAMKg9U9tCU+gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICnAb7/AAE0lx4oAAAAAElFTkSuQmCC"
+        this.filePreview = null
       }
     },
 
