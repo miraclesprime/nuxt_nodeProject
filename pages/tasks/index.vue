@@ -191,9 +191,19 @@ export default {
         'Filter': filter
       }
     })
-
-    store.dispatch('company/setCompanyTasks', res.data.data)
-    return { localData: res.data.data}
+    let data=res.data.data
+   await data.map(item=>{
+      if(item.id){
+        return item
+      }
+      else {
+        item['id']=res.data.length
+        return item
+      }
+    })
+    
+    store.dispatch('company/setCompanyTasks', data)
+    return { localData: data}
 
   },
 
@@ -609,7 +619,13 @@ export default {
             order: this.orderBy,
           })
       }
-
+      if ($event == "department") {
+        this.$store
+          .dispatch("company/sortCompanyTasks", {
+            sName: $event,
+            order: this.orderBy,
+          })
+      }
       if ($event == "difficultyId") {
         this.$store
           .dispatch("company/sortCompanyTasks", {

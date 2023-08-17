@@ -43,9 +43,9 @@
                   <span class="list__item" id="project-id-list-item3" @click="copyProjectLink">
                     <bib-icon icon="duplicate" class="mr-075"></bib-icon> Copy Link
                   </span>
-                  <span class="list__item" id="project-id-list-item5" @click="reportModal = !reportModal">
+                  <!-- <span class="list__item" id="project-id-list-item5" @click="reportModal = !reportModal">
                     <bib-icon icon="warning" class="mr-075"></bib-icon> Report
-                  </span>
+                  </span> -->
                   <hr id="project-id-hr2">
                   <span v-if="cdp" class="list__item list__item__danger" id="project-id-list-item6" @click="deleteProject(project)">Delete </span>
                 </div>

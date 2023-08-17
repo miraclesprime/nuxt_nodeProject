@@ -323,7 +323,7 @@ export default {
 
     setLink() {
       const previousUrl = this.editor.getAttributes('link').href
-      const url = window.prompt('URL', previousUrl)
+      let url = window.prompt('URL', previousUrl)
 
       // cancelled
       if (url === null) {
@@ -340,6 +340,26 @@ export default {
           .run()
 
         return
+      }
+
+      const urlPattern = /^(http(s)?:\/\/|www\.)[\w-]+\.[\w]{2,}(\/.*)*$/;
+      console.log()
+
+      if(urlPattern.test(url)) {
+        this.editor
+        .chain()
+        .focus()
+        .extendMarkRange('link')
+        .setLink({ href: url })
+        .run()
+      } else {
+        url = 'http://' + url
+        this.editor
+        .chain()
+        .focus()
+        .extendMarkRange('link')
+        .setLink({ href: url })
+        .run()
       }
 
       // update link

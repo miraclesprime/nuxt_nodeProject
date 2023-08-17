@@ -4,13 +4,13 @@
         <div class="single-task h-100 position-relative" >
             <div class="d-flex justify-between side-panel__header__actions " id='ts-side-panel'>
             <div class="d-flex gap-05 ml-auto align-center" id="ts-icon-attachment-wrapper">
-                <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-3' v-tooltip="'Subtasks'" v-scroll-to="'#task_subtasks'">
+                <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-3' v-tooltip="'Subtasks'" @click="scrollToSubtasks">
                 <bib-icon icon="check-square-solid" variant="gray5"></bib-icon>
                 </div>
-                <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-4' v-tooltip="'Conversation'" v-scroll-to="'#task_conversation'">
+                <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-4' v-tooltip="'Conversation'" @click="scrollToConversation">
                 <bib-icon icon="comment-forum-solid" variant="gray5"></bib-icon>
                 </div>
-                <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-5' v-tooltip="'Files'" v-scroll-to="'#task_files'">
+                <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='ts-icon-5' v-tooltip="'Files'" @click="scrollToFiles">
                 <bib-icon icon="folder-solid" variant="gray5"></bib-icon>
                 </div>
                 <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="ts-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
@@ -26,18 +26,6 @@
                         <span class="list__item" id="ts-list-item-2" @click="setFavorite">
                             <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
                         </span>
-                        <!-- <span class="list__item" id="ts-list-item-4" @click="showAddTeamModal">
-                            <bib-icon icon="user-group-solid" variant="gray5" class="mr-075"></bib-icon> Team
-                        </span>
-                        <span class="list__item" id="ts-list-item-5" v-scroll-to="'#task_subtasks'">
-                            <bib-icon icon="check-square-solid" variant="gray5" class="mr-075" v-scroll-to=""></bib-icon> Subtasks
-                        </span>
-                        <span class="list__item" id="ts-list-item-7" v-scroll-to="'#task_conversation'">
-                            <bib-icon icon="comment-forum-solid" variant="gray5" class="mr-075"></bib-icon> Conversation
-                        </span>
-                        <span class="list__item" id="ts-list-item-3" v-scroll-to="'#task_files'">
-                            <bib-icon icon="folder-solid" variant="gray5" class="mr-075"></bib-icon> Files
-                        </span> -->
                         <span class="list__item" id="project-id-list-item3" @click="copyTaskLink">
                             <bib-icon icon="duplicate" class="mr-075"></bib-icon> Copy Link
                         </span>
@@ -68,11 +56,11 @@
                 <!-- editable fields -->
                 <sidebar-fields :task="form" @update-project-field="updateProject" @update-field="updateTask"></sidebar-fields>
                 <!-- subtasks -->
-                <sidebar-subtask :reloadSubtask="reloadSubtask" @reload-subtask="reloadSubtask++" @view-subtask="viewSubtask($event)"></sidebar-subtask>
+                <sidebar-subtask id="single_task_subtasks" :reloadSubtask="reloadSubtask" @reload-subtask="reloadSubtask++" @view-subtask="viewSubtask($event)"></sidebar-subtask>
                 <!-- conversation -->
-                <sidebar-conversation :taskId="task" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
+                <sidebar-conversation id="single_task_conversation" :taskId="task" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
                 <!-- files -->
-                <sidebar-files :reloadFiles="reloadFiles"></sidebar-files>
+                <sidebar-files id="single_task_files" :reloadFiles="reloadFiles"></sidebar-files>
             </div>
             <!-- message input -->
             <div id="task-message-input" class=" d-flex gap-1 border-top-light py-1 px-105">
@@ -397,7 +385,32 @@ export default {
             } else { 
                 unsecuredCopyToClipboard(url);
             }
-        }
+        },
+
+        scrollToSubtasks() {
+            this.$nextTick(() => {
+            const element = document.getElementById('single_task_subtasks');
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' ,block: "center" });
+            }
+            });
+        },
+        scrollToFiles() {
+            this.$nextTick(() => {
+            const element = document.getElementById('single_task_files');
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth',block: "center" });
+            }
+            });
+        },
+        scrollToConversation() {
+            this.$nextTick(() => {
+            const element = document.getElementById('single_task_conversation');
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' ,block: "end"});
+            }
+            });
+        },
     }
 }
 </script>

@@ -3,13 +3,13 @@
   <div id="inbox-task-wrapper" class="inbox-task h-100 position-relative" >
     <div class="d-flex justify-between side-panel__header__actions " id='it-inner-wrapper'>
       <div class="d-flex gap-05 ml-auto align-center" id="it-icon-attachment-wrapper">
-        <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='it-icon-3' v-tooltip="'Subtasks'" v-scroll-to="'#task_subtasks'">
+        <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='it-icon-3' v-tooltip="'Subtasks'" @click="scrollToSubtasks">
           <bib-icon icon="check-square-solid" variant="gray5"></bib-icon>
         </div>
-        <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='it-icon-4' v-tooltip="'Conversation'" v-scroll-to="'#task_conversation'">
+        <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='it-icon-4' v-tooltip="'Conversation'" @click="scrollToConversation">
           <bib-icon icon="comment-forum-solid" variant="gray5"></bib-icon>
         </div>
-        <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='it-icon-5' v-tooltip="'Files'" v-scroll-to="'#task_files'">
+        <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='it-icon-5' v-tooltip="'Files'" @click="scrollToFiles">
           <bib-icon icon="folder-solid" variant="gray5"></bib-icon>
         </div>
         <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="it-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
@@ -28,13 +28,13 @@
                 <span class="list__item" id="it-list-item-4" @click="showAddTeamModal">
                   <bib-icon icon="user-group-solid" variant="gray5" class="mr-075"></bib-icon> Team
                 </span>
-                <span class="list__item" id="it-list-item-5" v-scroll-to="'#task_subtasks'">
-                  <bib-icon icon="check-square-solid" variant="gray5" class="mr-075" v-scroll-to=""></bib-icon> Subtasks
+                <span class="list__item" id="'it-list-item-5'"  @click="scrollToSubtasks">
+                  <bib-icon icon="check-square-solid" variant="gray5" class="mr-075"></bib-icon> Subtasks
                 </span>
-                <span class="list__item" id="it-list-item-7" v-scroll-to="'#task_conversation'">
+                <span class="list__item" id="'it-list-item-6'" @click="scrollToConversation">
                   <bib-icon icon="comment-forum-solid" variant="gray5" class="mr-075"></bib-icon> Conversation
                 </span>
-                <span class="list__item" id="it-list-item-3" v-scroll-to="'#task_files'">
+                <span class="list__item" id="'it-list-item-7'" @click="scrollToFiles">
                   <bib-icon icon="folder-solid" variant="gray5" class="mr-075"></bib-icon> Files
                 </span>
                 <hr>
@@ -72,9 +72,9 @@
 
       <sidebar-fields-two :task="form" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform" ></sidebar-fields-two>
       <sidebar-tag :tags="tags" @add-tag="addTag" @change="addTag" @delete-tag="removeTag" ></sidebar-tag>
-      <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" ></sidebar-subtask>
-      <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
-      <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
+      <sidebar-subtask id="inbox_task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" ></sidebar-subtask>
+      <sidebar-files id="inbox_task_files" :reloadFiles="reloadFiles"></sidebar-files>
+      <sidebar-conversation id="inbox_task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
     </div>
     <!-- message input -->
     <div id="it-message-input" class=" d-flex gap-1 border-top-light py-1 px-105">
@@ -444,7 +444,35 @@ export default {
         this.getTags()
         this.$nuxt.$emit("update-key")
       }).catch(e => console.warn(e))
-    }
+    },
+
+    scrollToSubtasks() {
+    this.$nextTick(() => {
+      const element = document.getElementById('inbox_task_subtasks');
+      console.log(element)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' ,block: "center" });
+      }
+    });
+  },
+  scrollToFiles() {
+    this.$nextTick(() => {
+      const element = document.getElementById('inbox_task_files');
+      console.log(element)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth',block: "center" });
+      }
+    });
+  },
+  scrollToConversation() {
+    this.$nextTick(() => {
+      const element = document.getElementById('inbox_task_conversation');
+      console.log(element)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' ,block: "end"});
+      }
+    });
+  },
   }
 }
 

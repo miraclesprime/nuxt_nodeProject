@@ -6,7 +6,7 @@ export default ({ app }, inject) => {
   inject('toDate', time => dayjs(time).format('YYYY-MM-DD'));
   inject('formatDate', dateTime => {
     if (dateTime) {
-      return dayjs(dateTime).format('DD MMM YYYY')
+      return dayjs(dateTime).format('D MMM YYYY')
     } else {
       return ''
     }

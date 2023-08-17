@@ -30,7 +30,7 @@
                     {{isFavorite.text}}
                   </span>
                   <span class="list__item" id="tsb-list-item-5"  @click="scrollToSubtasks">
-                    <bib-icon icon="check-square-solid" variant="gray4" class="mr-075" v-scroll-to=""></bib-icon> Subtasks
+                    <bib-icon icon="check-square-solid" variant="gray4" class="mr-075"></bib-icon> Subtasks
                   </span>
                   <span class="list__item" id="tsb-list-item-3"   @click="scrollToFiles">
                     <bib-icon icon="folder-solid" variant="gray4" class="mr-075"></bib-icon> Files
@@ -87,7 +87,6 @@
       <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" ></sidebar-subtask>
       <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
       <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
-      <!-- <button ref="topScroll" id="topScroll" style="visibility: hidden; opacity: 0" v-scroll-to="scrollId"></button> -->
     </div>
 
     <div class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-2">
@@ -528,7 +527,11 @@ export default {
         text: proj ? `changed project to ${proj.title}` : 'Task removed from Project',
       })
         .then((u) => {
-          this.$nuxt.$emit("update-key")
+          // console.log(u)
+          this.$store.dispatch("task/setSingleTask", u)
+          if(this.expandVisible){
+            this.$nuxt.$emit("update-key","update")
+          }
           this.reloadHistory += 1
         })
         .catch(e => {
@@ -700,7 +703,7 @@ export default {
         .then(res => {
           // console.log(res)
           this.getTags()
-          this.$nuxt.$emit("update-key")
+          this.$nuxt.$emit("update-key","tagStatus")
         })
         .catch(e => console.error(e))
       } else {
@@ -744,7 +747,7 @@ export default {
       }).then(res => {
         console.log(res.data.message)
         this.getTags()
-        this.$nuxt.$emit("update-key")
+        this.$nuxt.$emit("update-key","tagStatus")
       }).catch(e => console.warn(e))
     },
   },

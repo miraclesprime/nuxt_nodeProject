@@ -2,7 +2,6 @@
   <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll" @scroll="handleScroll" ref="myTable">
 
       <div :id="'advTableTwo-'+componentKey" class=" adv-table  bg-white" :style="{'width': tableWidth}"  >
-
         <draggable v-model="newValue" id="mainDraggable" class="section-draggable-wrapper sortable-list position-relative" @end="$emit('section-dragend', newValue)">
           <div class="table resizable w-100 position-sticky" ref="headrow" style="top: 0; z-index:2;">
             <div class="tr " role="row" >
@@ -66,7 +65,6 @@
             </div>
 
             <draggable class="section-content" tag="article" :list="section[tasksKey]" :group="{ name: 'tasks' }" :data-section="section.id" :ref="'sectionContent' + section.id" @start="rowDragStart" :move="moveRow" @end="rowDragEnd">
-
               <div v-for="item in section[tasksKey]" :key="item.id" ref="trdata" role="row" class="tr sortable drag-item" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
                 <div v-show="drag" class="td" role="cell" >
                   <div class="drag-handle width-105 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
@@ -166,34 +164,16 @@
   </div>
 </template>
 <script>
-// import lazyLoadComponent from '~/utils/lazyload-component.client.js';
-// import SkeletonBox from '~/components/SkeletonBox.vue';
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
 import dayjs from 'dayjs'
-// import fecha, { format } from "fecha";
 import draggable from 'vuedraggable'
-
-/*const defaultOptions = {
-  loading: SkeletonBox,
-  loadingData: {
-    props: {
-      width: `100%`,
-      height: `2rem`,
-    },
-  },
-};*/
 
 export default {
 
   name: 'AdvTableThree',
   components: {
     draggable,
-    // RecycleScroller,
-    /*UserSelect: lazyLoadComponent({
-      ...defaultOptions,
-      componentFactory: () => import('~/components/organism/UserSelect.vue'),
-    }),*/
   },
   props: {
     tableFields: { type: Array, required: true, default: () => [] },
@@ -250,7 +230,7 @@ export default {
       popupCoords: { left: 0, top: 0 },
       activeItem: {},
       resizableTables: [],
-      format: "DD MMM YYYY",
+      format: "D MMM YYYY",
       // highlight: false,
       validTitle: false,
       localData: [],
@@ -487,7 +467,13 @@ export default {
         // debugger
         this.showedCount -= this.available_tasks[collapsedSection.title].length
         if (this.showedCount < this.itemsPerPage) {
-          this.showData()
+          if (this.allDataDisplayed) {
+            return; // Stop adding data if all data has been displayed
+          }
+          setTimeout(() => {
+            this.showData()
+          }, 300);
+          
         }
       } else {
         icon.style.transform = 'rotate(0deg)'
@@ -684,9 +670,6 @@ export default {
 
     },
     resizableColumns() {
-      // var tables = document.getElementsByTagName('table');
-      // var table = document.getElementsByClassName("adv-table");
-      // var table = document.getElementById(`advTableTwo-${this.componentKey}`);
       var table = this.$refs.headrow
       // console.log(table)
       if (table.className.match(/resizable/)) {
@@ -822,7 +805,7 @@ export default {
     updateDate(d, item, field, label) {
       // console.log(...arguments)
       // let d = new Date(date)
-      this.$emit("update-field", { id: item.id, field, value: new Date(d), label, historyText: `Changed ${label} to ${dayjs(d).format('DD MMM YYYY')}`, item: item})
+      this.$emit("update-field", { id: item.id, field, value: new Date(d), label, historyText: `Changed ${label} to ${dayjs(d).format('D MMM YYYY')}`, item: item})
     },
     debounceNewSection: _.debounce(function(value, event) {
       if (value) {
