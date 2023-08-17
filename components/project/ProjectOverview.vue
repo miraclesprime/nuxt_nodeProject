@@ -70,7 +70,7 @@
           </div>
           <div id="proj-overview-row5-col3" class="col-6">
             <label class="text-gray6" id="proj-overview-label1">Progress</label>
-            <div class="shape-rounded border-gray4 my-05 p-05" id="proj-overview-div2">{{progress}}%</div>
+            <div class="proj-overview-progress shape-rounded border-gray4 my-05 p-05" id="proj-overview-div2">{{progress}}%</div>
           </div>
         </div>
         <div id="proj-overview-row6" class="row">
@@ -412,6 +412,10 @@ export default {
 <style lang="scss" scoped>
 .overview-wrapper {
   width: $overview-width;
+}
+
+.proj-overview-progress {
+  background: var(--bib-light);
 }
 
 @media screen and (max-width:1600px) {
