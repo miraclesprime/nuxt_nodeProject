@@ -48,7 +48,7 @@
                   </bib-popup>
                 </div>
               </div>
-              <div class="task-section__body h-100">
+              <div class="task-section__body h-100" style="height: calc(100vh - 275px) !important;overflow: auto">
                 <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="gridTaskDragend" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
                   <template v-for="(task, index) in todo.tasks">
                     <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker"></task-grid>
