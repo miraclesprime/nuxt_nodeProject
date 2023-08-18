@@ -1107,14 +1107,13 @@ export default {
 
     sectionDragEnd: _.debounce(async function (payload) {
       this.loading = true;
-
-      console.log(payload)
-
       let clone = _.cloneDeep(payload);
-      clone.forEach((el, i) => {
-        el.order = i;
-      });
 
+      clone =clone.filter((el, i) => el != undefined);
+      
+      clone.map((el, i) => {     
+          el.order = i;
+      });
       let sectionDnD = await this.$axios.$put("/section/dragdrop", {
         projectId: this.project?.id,
         data: clone
