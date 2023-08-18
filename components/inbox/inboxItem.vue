@@ -118,7 +118,7 @@ export default {
       let type = this.item.mode
       let id = this.item.id.split("-")[1]
 
-      console.log(type, id)
+      // console.log(type, id)
       if (type == "task") {
         this.$emit('task-click', { id: this.item.id, historyId: this.item.data[0].id, taskId: id })
       }

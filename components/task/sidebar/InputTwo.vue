@@ -2,7 +2,7 @@
   <div class="input-wrapper-two shape-rounded " id="input-two-wrapper" >
     <div class="align-center gap-01 px-05" id="input-two-span-wrap">
       <bib-icon v-if="icon && iconPosition == 'left'" :icon="icon" :variant="iconVariant"></bib-icon>
-      <input type="text" v-model="localData" ref="input2field" class=" height-2 " :style="{width: inputwidth}" @input="onInput" >
+      <input :type="type" v-model="localData" class=" height-2 " :class="{'text-danger': !validNumber}" :style="{width: inputwidth}" @input="onInput" >
       <bib-icon v-if="icon && iconPosition == 'right'" :icon="icon" :variant="iconVariant"></bib-icon>
       <!-- {{visibleText.label}} -->
     </div>
@@ -16,6 +16,7 @@ export default {
   name: 'InputTwo',
 
   props: {
+    type: {type: String, default: "text"},
     value: { type: [Number, String] },
     icon: { type: String, default: null },
     iconPosition: { type: String, default: 'left' },
@@ -32,18 +33,24 @@ export default {
     value(newValue, oldValue){
       if (newValue) {
         this.localData = newValue
-        // this.$refs.input2field.style.width = ((this.localData.length + 2) * 8) + 'px';
       } else {
         this.localData = ""
-        // this.$refs.input2field.style.width = '6rem'
       }
     },
   },
   computed: {
     inputwidth(){
-      return (this.localData.length + 2) * 8 + "px"
+      // console.log(this.localData.length)
+      return this.localData.length >= 6 ? (this.localData.length + 1) * 8 + "px" : "60px"
     },
-    
+    validNumber(){
+      if (this.type == 'number') {
+        return (typeof(this.localData) === 'number' || typeof(this.localData) === "string" && this.localData.trim() !== '') && !isNaN(this.localData);
+      } else {
+        return true
+      }
+      // return /^-?\d+$/.test(this.localData);
+    },
   },
   mounted() {
     if (this.value) {
@@ -53,10 +60,11 @@ export default {
     }
   },
   methods: {
-    
     onInput: _.debounce(function() {
       // console.log(this.localData)
-      this.$emit("input", this.localData)
+      if (this.validNumber) {
+        this.$emit("input", this.localData)
+      }
     }, 600)
   }
 }
@@ -64,5 +72,15 @@ export default {
 </script>
 <style lang="scss" scoped>
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
 
 </style>
