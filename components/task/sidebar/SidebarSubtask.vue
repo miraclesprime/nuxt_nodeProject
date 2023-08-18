@@ -58,7 +58,7 @@
           </tr>
         </tbody>
       </table>
-      <div id="sbs-subtask-title-wrapper" class="section-title w-100 py-025">
+      <div id="sbs-subtask-title-wrapper" class="section-title w-100 py-025" v-show="activeProp">
         <div v-if="newSubtask" class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded bg-success-sub6 bg-hover-success-sub3 text-success  cursor-pointer" id="sbs-newSubtask" @click="newSubtask = false">
           <bib-icon icon="close" variant="success" :scale="1.2"></bib-icon>
           <span id="sbs-cancel">Cancel</span>
@@ -92,6 +92,11 @@ import dayjs from 'dayjs'
 import _ from 'lodash'
 export default {
   name: "SidebarSubtask",
+  props: {
+    activeProp: {
+      type: [Number, null]
+    }
+  },
 
   data: function() {
     return {
@@ -162,6 +167,9 @@ export default {
           })
       } else {
         this.user = undefined
+        this.$store.dispatch("subtask/setSubtasks", []).then(() => {
+          this.subkey++;
+        })
       }
     },
   },

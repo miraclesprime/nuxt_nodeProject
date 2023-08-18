@@ -6,7 +6,7 @@
       </div>
       <div id="task-tags-actions-wrapper" class="tags-actions d-flex align-center flex-wrap gap-05 py-025">
         <div class="picker-wrapper-two " id="tags-select-wrapper" v-click-outside="onClickOutside">
-          <div class="d-inline-flex gap-05 align-center cursor-pointer shape-rounded height-2 px-1 bg-success-sub6 bg-hover-success-sub3 text-success" id="task-tags-add-button" @click.stop="triggerOpen">
+          <div class="d-inline-flex gap-05 align-center cursor-pointer shape-rounded height-2 px-1 bg-success-sub6 bg-hover-success-sub3 text-success" id="task-tags-add-button" @click.stop="triggerOpen" v-show="activeProp">
             <bib-icon icon="add" variant="success" :scale="1" class=""></bib-icon>
             <span id="task-tags-add-text" class=""> Tags</span>
           </div>
@@ -55,6 +55,9 @@ export default {
 
   props: {
     tags: { type: Array, default: function() { return [] }},
+    activeProp: {
+      type: [Number, null]
+    }
   },
 
   data() {
