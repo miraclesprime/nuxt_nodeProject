@@ -52,13 +52,13 @@
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Est. Days</label></div>
         <div class="col-5">
-          <input-two :value="form.estDays" icon="calendar-solid" @input="debounceUpdateField('Est. Days', 'estDays', $event)" ></input-two>
+          <input-two type="number" :value="form.estDays" icon="calendar-solid" @input="validate('Est. Days', 'estDays', $event)" ></input-two>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Budget</label></div>
         <div class="col-5">
-          <input-two :value="form.budget" icon="currency-dollar" @input="debounceUpdateField('Budget','budget', $event)" ></input-two>
+          <input-two type="number" :value="form.budget" icon="currency-dollar" @input="validate('Budget','budget', $event)" ></input-two>
         </div>
       </div>
       <div class="row ">
@@ -363,9 +363,12 @@ export default {
       // console.log(...arguments)
       this.$emit("update-field", {name: name, field: field, value: value, historyText: `changed ${name} to ${historyText || value}`})
     },
+    validate(name, field, value) {
+      let dec = Number.parseFloat(value).toFixed(2)
+      this.debounceUpdateField(name, field, dec)
+    },
     debounceUpdateField: _.debounce(function(name, field, value) {
       if (this.form?.id) {
-        // if ((field === "startDate" || field === "dueDate") && !this.validationDate) return;
         this.$emit("update-field", { name: name, field: field, value: value, historyText: `changed ${name} to ${value}` });
       }
       // console.log(...arguments)
