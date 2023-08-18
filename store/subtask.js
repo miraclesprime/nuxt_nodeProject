@@ -338,4 +338,13 @@ export const actions = {
     }
   },
 
+  async setSubtasks(ctx, payload) {
+    try{
+      ctx.commit("fetchSubTasks", payload)
+      return ctx.state.subtasks;
+    }catch(e) {
+      console.log(e)
+    }
+  }
+
 };

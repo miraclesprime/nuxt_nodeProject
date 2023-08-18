@@ -2,21 +2,23 @@
   <article id="side-panel-wrapper" :class="expandVisible?'side-panel':'side-panel expandVisible'" v-click-outside="closeSidebar">
     <div class="side-panel__header" id="tsb-header">
       <div class="d-flex justify-between pt-105 px-105 pb-05" id="ts-side-panel">
-        <div class="" id="tsb-mark-button-wrapper">
+        <div class="" id="tsb-mark-button-wrapper" >
           <!-- <div class="bg-light shape-rounded px-1 height-2 d-inline-flex gap-05 align-center justify-center cursor-pointer" @click="markComplete">
             <bib-icon icon="check-circle-solid" :variant="isComplete.variant" :scale="1"></bib-icon> <span class="font-md text-secondary">{{isComplete.text}}</span>
           </div> -->
-           <bib-button :label="isComplete.text" :variant="isComplete.variant" icon="check-circle-solid" @click="markComplete"></bib-button>
+          <span v-show="form.id">
+           <bib-button :label="isComplete.text" :variant="isComplete.variant" icon="check-circle-solid" @click="markComplete"></bib-button >
+          </span>
         </div>
         <div class="d-flex gap-05 align-center" id="tsb-icons-wrapper">
           <div v-show ="expandVisible" class="d-flex cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2" id='tsb-icon-external' @click="setExpand">
             <bib-icon icon="expand-fullscreen" variant="gray6" class="m-auto"></bib-icon>
           </div>
-          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="tsb-icon-6" @click="setFavorite">
+          <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="tsb-icon-6" @click="setFavorite" v-show="form.id">
             <bib-spinner v-if="favProcess" :scale="2" ></bib-spinner>
             <bib-icon v-else icon="bookmark-solid" :variant="isFavorite.variant" ></bib-icon>
           </div>
-          <div id="tsb-list-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center">
+          <div id="tsb-list-wrap" class="cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" v-show="form.id">
             <bib-button pop="elipsis">
               <template v-slot:menu>
                 <div class="list" id="tsb-list">
@@ -62,7 +64,7 @@
     </div>
 
     <div class="overflow-y-auto d-grid" id="tsb-of-scroll-y" style="grid-template-columns: none; align-items: start">
-      <div class="border-bottom-gray3 px-105 py-05">
+      <div class="border-bottom-gray3 px-105 py-05" v-show="form.id">
         <div class="align-center gap-05" >
           <span class="font-sm text-gray6" style="white-space: nowrap;">Assigned to</span> 
           <div class="mr-1" style="flex-basis: 2rem;">
@@ -82,14 +84,14 @@
         </div>
       </div>
 
-      <sidebar-fields-two :task="currentTask" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform" ></sidebar-fields-two>
-      <sidebar-tag :tags="tags" @add-tag="addTag" @change="addTag" @delete-tag="removeTag" ></sidebar-tag>
-      <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" ></sidebar-subtask>
-      <sidebar-files id="task_files" :reloadFiles="reloadFiles"></sidebar-files>
-      <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
+      <sidebar-fields-two :task="currentTask" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform" :activeProp="form.id"></sidebar-fields-two>
+      <sidebar-tag :tags="tags" @add-tag="addTag" @change="addTag" @delete-tag="removeTag" :activeProp="form.id"></sidebar-tag>
+      <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" :activeProp="form.id"></sidebar-subtask>
+      <sidebar-files id="task_files" :reloadFiles="reloadFiles" :activeProp="form.id"></sidebar-files>
+      <sidebar-conversation id="task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory" :activeProp="form.id"></sidebar-conversation>
     </div>
 
-    <div class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-2">
+    <div class="task-message-input d-flex gap-1 border-top-gray3 py-1 px-2" v-show="form.id">
       <bib-avatar :src="userPhoto" size="2rem" class="flex-shrink-0" ></bib-avatar>
       <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
     </div>
@@ -233,7 +235,7 @@ export default {
         this.getTags()
       } else {
         this.form = {
-          id: "",
+          id: null,
           title: "",
           startDate: null,
           dueDate: null,
@@ -249,6 +251,7 @@ export default {
         this.$nextTick(() => {
           this.$refs.taskTitleInput.focus()
           this.tags = []
+          this.reload
         });
 
         if (this.sectionIdActive) {
@@ -295,7 +298,7 @@ export default {
         this.reloadFiles += 1
       } else {
         this.form = {
-          id: "",
+          id: null,
           title: "",
           startDate: null,
           dueDate: null,

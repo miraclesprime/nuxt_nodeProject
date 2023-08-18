@@ -72,7 +72,11 @@
           </bib-popup-notification>
         </template>
       </bib-popup-notification-wrapper>
+      
+      <div class="overlay position-absolute" style="inset: 0; z-index: 5;" v-show="!activeProp">
+      </div>
     </div>
+
   </client-only>
 </template>
 <script>
@@ -90,6 +94,9 @@ export default {
     departmentId: {
       type: Number,
     },
+    activeProp: {
+      type: [Number, null]
+    }
   },
 
   data() {
