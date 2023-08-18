@@ -1094,6 +1094,7 @@ export const COMPANY_TASK_SORT = [
   { label: 'Status', key: 'status' },
   { label: 'Priority', key: 'priority' },
   { label: 'Assignee', key: 'userId' },
+  { label: 'Department', key: 'department' },
   { label: 'Difficulty', key: 'difficultyId' },
   { label: 'Start Date', key: 'startDate' },
   { label: 'Due Date', key: 'dueDate' },
