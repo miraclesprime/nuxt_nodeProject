@@ -56,7 +56,7 @@ export const getters = {
 
 export const mutations = {
   setIsAdmin(state,payload) {
-    console.log("store",payload)
+    // console.log("store",payload)
     state.isAdmin=payload
 
   },

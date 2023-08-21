@@ -93,9 +93,7 @@ import _ from 'lodash'
 export default {
   name: "SidebarSubtask",
   props: {
-    activeProp: {
-      type: [Number, null]
-    }
+    activeProp: { default: null }
   },
 
   data: function() {
