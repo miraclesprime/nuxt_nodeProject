@@ -82,14 +82,14 @@
         <div id="ip-proj-row5" class="row">
           <div id="ip-proj-row5-col1" class="col-4">
             <label id="ip-label-1" class="text-gray6">Time</label>
-            <div id="ip-hours" class="inbox-proj-time shape-rounded border-gray4 my-05 p-05" >Hours {{time}}</div>
+            <div id="ip-hours" class="inbox-proj-time font-md shape-rounded border-gray4 my-05 p-05" >Hours {{time}}</div>
           </div>
           <div id="ip-proj-row5-col2" class="col-4">
-            <bib-input type="number" icon-left="currency-dollar" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="debounceUpdate('Budget', activeProject.budget)"></bib-input>
+            <bib-input type="number" icon-left="currency-dollar" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="validate('Budget', activeProject.budget)"></bib-input>
           </div>
           <div id="ip-proj-row5-col3" class="col-4">
             <label id="ip-label-2" class="text-gray6">Progress</label>
-            <div id="ip-progress" class="inbox-proj-progress shape-rounded border-gray4 my-05 p-05">{{progress}}%</div>
+            <div id="ip-progress" class="inbox-proj-progress font-md shape-rounded border-gray4 my-05 p-05">{{progress}}%</div>
           </div>
         </div>
         <div id="ip-proj-row6" class="row">
@@ -287,6 +287,12 @@ export default {
   // },
 
   methods: {
+    validate(name, value) {
+      let dec = Number.parseFloat(value).toFixed(2)
+      // console.log(dec)
+      this.debounceUpdate(name, dec)
+    },
+
     debounceUpdate: _.debounce(function(name, value) {
 
       let updatedvalue = value

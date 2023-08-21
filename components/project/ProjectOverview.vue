@@ -66,7 +66,7 @@
             <div class="shape-rounded border-gray4 my-05 p-05" id="proj-overview-div1">Hours {{time}}</div>
           </div> -->
           <div id="proj-overview-row5-col2" class="col-6">
-            <bib-input type="number" icon-left="currency-dollar" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="debounceUpdate('Budget', 'budget', activeProject.budget)"></bib-input>
+            <bib-input type="number" icon-left="currency-dollar" v-model="activeProject.budget" placeholder="Set your Budget" label="Budget" v-on:keyup.native="validate('Budget', 'budget', activeProject.budget)"></bib-input>
           </div>
           <div id="proj-overview-row5-col3" class="col-6">
             <label class="text-gray6" id="proj-overview-label1">Progress</label>
@@ -204,32 +204,6 @@ export default {
       })
     },
 
-    /*startDate: {
-      get() {
-        if (!this.activeProject.startDate) {
-          return ""
-        } else {
-          return new Date(this.activeProject.startDate)
-        }
-      },
-      set(newValue) {
-        this.activeProject.startDate = new Date(newValue)
-      }
-    },*/
-
-    /*dueDate: {
-      get() {
-        if (!this.activeProject.dueDate) {
-          return ""
-        } else {
-          return new Date(this.activeProject.dueDate)
-        }
-        
-      },
-      set(newValue) {
-        this.activeProject.dueDate = new Date(newValue)
-      }
-    },*/
     time() {
       if (this.activeProject.dueDate) {
         let diff = new Date(this.activeProject.dueDate) - new Date();
@@ -348,6 +322,12 @@ export default {
       
     },
 
+    validate(name, field, value) {
+      let dec = Number.parseFloat(value).toFixed(2)
+      // console.log(dec)
+      this.debounceUpdate(name, field, dec)
+    },
+
     debounceUpdate: _.debounce(function(label, field, value) {
 
       let updatedvalue = value
@@ -379,14 +359,6 @@ export default {
           }
         })
       }
-
-      /*if (label == "Due date") {
-        updatedvalue = dayjs(value).format('DD MMM YYYY')
-      }
-
-      if( label == "Start date") {
-        updatedvalue = dayjs(value).format('DD MMM YYYY')
-      }*/
 
       if (this.activeProject.priorityId == "") {
         this.activeProject.priority = null
