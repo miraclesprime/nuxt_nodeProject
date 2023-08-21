@@ -6,7 +6,7 @@
           <bib-icon icon="arrowhead-left" :scale="1.5" variant="gray5"></bib-icon>
         </button>
         <bib-avatar></bib-avatar>
-        <span id="project-id-project-title" class=" font-w-700  mr-1 " style="font-size: 1.25rem;">{{projectTitle ? projectTitle : ''}}</span>
+        <span id="project-id-project-title" class=" font-w-700  mr-1 " style="font-size: 1.25rem;">{{projectTitle}}</span>
         <div class="ml-auto d-flex gap-05 align-center position-relative" id="project-id-button-wraps">
           <team-avatar-list :team="team"></team-avatar-list>
 
@@ -239,10 +239,16 @@ export default {
 
   },
 
-  mounted() {
+  async mounted() {
     if (process.client) {
 
       let p = JSON.parse(JSON.stringify(this.project))
+
+      this.$axios.get(`project/${this.$route.params.id}`, {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`}
+        }).then((res) => {
+          this.projectTitle = res.data?.data?.title;
+        })
 
       if(!p) {
         this.$router.push('/notfound')
