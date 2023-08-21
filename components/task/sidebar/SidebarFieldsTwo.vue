@@ -94,9 +94,7 @@ export default {
     departmentId: {
       type: Number,
     },
-    activeProp: {
-      type: [Number, null]
-    }
+    activeProp: { default: null }
   },
 
   data() {
