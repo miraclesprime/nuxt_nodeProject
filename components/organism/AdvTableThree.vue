@@ -1,8 +1,9 @@
 <template>
-  <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll" @scroll="handleScroll" ref="myTable">
+  <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll" ref="myTable">
 
       <div :id="'advTableTwo-'+componentKey" class=" adv-table  bg-white" :style="{'width': tableWidth}"  >
-        <draggable v-model="newValue" id="mainDraggable" class="section-draggable-wrapper sortable-list position-relative" @end="$emit('section-dragend', newValue)">
+        <draggable id="mainDraggable" v-model="localData" class="section-draggable-wrapper sortable-list position-relative" @start="sectionDragstart" @end="sectionDragend(localData)" >
+
           <div class="table resizable w-100 position-sticky" ref="headrow" style="top: 0; z-index:2;">
             <div class="tr " role="row" >
               <div v-show="drag" class="width-2 th" role="cell" ></div>
@@ -31,6 +32,7 @@
               </div>
             </template>
           </div>
+
           <section v-for="(section, index) in localData" class="resizable w-100"   >
             <div class="thead">
               
@@ -54,8 +56,7 @@
                        {{ section.title }}
                       </span>
                       <span class="font-w-700 cursor-pointer ml-025" v-else >
-                        <input type="text" class="editable-input section-title" :value="section.title.includes('_section') ? 'Untitled section'
-                      : section.title" @input="debounceRenameSection(section.id, $event)" @blur="restoreField" />
+                        <input type="text" class="editable-input section-title" :value="section.title.includes('_section') ? 'Untitled section' : section.title" @input="debounceRenameSection(section.id, $event)" @blur="restoreField" />
                       </span>
                     </div>
                   </div>
@@ -233,7 +234,9 @@ export default {
       format: "D MMM YYYY",
       // highlight: false,
       validTitle: false,
-      localData: [],
+      localData: [{id: 1, title: "section one", tasks: [], order: 0},
+        {id: 2, title: "section two", tasks: [], order: 1},
+        {id: 3, title: "section three", tasks: [], order: 4},],
       newValue: [],
       localNewrow: {},
       akey: 0,
@@ -253,7 +256,7 @@ export default {
       // this.localNewrow = _.cloneDeep(this.newRow)
       this.localNewrow = newValue
     },
-    tableData: {
+    /*tableData: {
       immediate: true, // Execute the watcher immediately on component mount
       deep: true, // Watch for changes in nested properties of tableData
       handler(newValue) {
@@ -268,18 +271,18 @@ export default {
           this.showData();
         });
       },
+    },*/
+    tableData(newValue){
+      this.localData = _.cloneDeep(newValue)
     },
-    // tableData(newValue){
-    //   this.localData = _.cloneDeep(newValue)
-      
-    // },
     showNewsection(newValue){
       process.nextTick(() => {
         if(newValue){
           this.$refs.newsectioninput.focus()
         }
       });
-    }
+    },
+    
   },
 
   computed: {
@@ -327,7 +330,7 @@ export default {
   },
 
   mounted() {
-    // this.localData=_.cloneDeep(this.tableData)
+    this.localData = _.cloneDeep(this.tableData)
     this.resizableColumns()
   },
 
@@ -344,7 +347,7 @@ export default {
       return value
     },
 
-    handleScroll(event) {
+    /*handleScroll(event) {
       const tableContainer = event.target;
       if (this.allDataDisplayed) {
         return; // Stop adding data if all data has been displayed
@@ -352,11 +355,11 @@ export default {
       const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight+5 >= tableContainer.scrollHeight;
 
       if (isAtBottom) {
-      this.showData();
-          }
+        this.showData();
+      }
 
-    },
-    showData() {
+    },*/
+    /*showData() {
       
       let allTasks = this.newValue.length > 0 ? [...this.newValue] : [...this.tableData];
       // allTasks =allTasks.map((item) => {
@@ -426,8 +429,7 @@ export default {
       this.lastDisplayedIndex.groupIdx = i;
       this.lastDisplayedIndex.curIdxInGroup = start;
       
-    },
-    
+    },*/
 
     parseDate(dateString, format) {
         return new Date(dateString)
@@ -465,7 +467,7 @@ export default {
         icon.style.transform = 'rotate(-90deg)'
         const collapsedSection = this.newValue.find(ele => ele.id === sectionId);
         // debugger
-        this.showedCount -= this.available_tasks[collapsedSection.title].length
+        /*this.showedCount -= this.available_tasks[collapsedSection.title].length
         if (this.showedCount < this.itemsPerPage) {
           if (this.allDataDisplayed) {
             return; // Stop adding data if all data has been displayed
@@ -474,11 +476,11 @@ export default {
             this.showData()
           }, 300);
           
-        }
+        }*/
       } else {
         icon.style.transform = 'rotate(0deg)'
         const collapsedSection = this.newValue.find(ele => ele.id === sectionId);
-        this.showedCount += this.available_tasks[collapsedSection.title].length
+        // this.showedCount += this.available_tasks[collapsedSection.title].length
       }
     },
     
@@ -704,6 +706,13 @@ export default {
           $event.currentTarget.classList.add("active")
         // })
       this.$emit("row-click", item)
+    },
+    sectionDragstart(){
+      console.log('section drag start')
+    },
+    sectionDragend(data){
+      console.log(data)
+      // this.$emit('section-dragend', data)
     },
    
     contextOpen($event, item) {
