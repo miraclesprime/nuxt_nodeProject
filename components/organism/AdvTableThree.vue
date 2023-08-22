@@ -48,7 +48,7 @@
                     </div>
                     <div class="position-sticky align-center" style="left: 0.5rem;" >
                       <span class="width-1 cursor-pointer" @click.stop="collapseItem(section.id)">
-                        <bib-icon icon="arrow-down" :scale="0.5" ></bib-icon> 
+                        <bib-icon icon="arrow-down" :scale="0.5" :ref="'collapseIcon'+section.id" ></bib-icon> 
                       </span>
                       <span class="font-w-700 cursor-pointer ml-025" v-if="editSection" >
                        {{ section.title }}
@@ -154,7 +154,45 @@
           </section>
           
       </draggable>
-
+          <template v-if="loading">
+                    <div class="placeholder my-05 d-flex align-center gap-05" id="sc-placeholder">
+                      <div class="left" id="sc-left">
+                        <div class="shape-circle width-2 height-2 animated-background" id="sc-shape-circle"></div>
+                      </div>
+                      <div class="right" id="sc-right">
+                        <div class="animated-background width-4 " id="sc-animated-bg-w4" style="height: 0.8rem;"></div>
+                        <div class="animated-background width-10 mt-025" id="sc-animated-bg-w10" style="height: 0.6rem;"></div>
+                      </div>
+                    </div>
+                    <div class="placeholder my-05 d-flex align-center gap-05" id="sc-placeholder">
+                      <div class="left" id="sc-left">
+                        <div class="shape-circle width-2 height-2 animated-background" id="sc-shape-circle"></div>
+                      </div>
+                      <div class="right" id="sc-right">
+                        <div class="animated-background width-4 " id="sc-animated-bg-w4" style="height: 0.8rem;"></div>
+                        <div class="animated-background width-10 mt-025" id="sc-animated-bg-w10" style="height: 0.6rem;"></div>
+                      </div>
+                    </div>
+                    <div class="placeholder my-05 d-flex align-center gap-05" id="sc-placeholder">
+                      <div class="left" id="sc-left">
+                        <div class="shape-circle width-2 height-2 animated-background" id="sc-shape-circle"></div>
+                      </div>
+                      <div class="right" id="sc-right">
+                        <div class="animated-background width-4 " id="sc-animated-bg-w4" style="height: 0.8rem;"></div>
+                        <div class="animated-background width-10 mt-025" id="sc-animated-bg-w10" style="height: 0.6rem;"></div>
+                      </div>
+                    </div>
+                    <div class="placeholder my-05 d-flex align-center gap-05" id="sc-placeholder">
+                      <div class="left" id="sc-left">
+                        <div class="shape-circle width-2 height-2 animated-background" id="sc-shape-circle"></div>
+                      </div>
+                      <div class="right" id="sc-right">
+                        <div class="animated-background width-4 " id="sc-animated-bg-w4" style="height: 0.8rem;"></div>
+                        <div class="animated-background width-10 mt-025" id="sc-animated-bg-w10" style="height: 0.6rem;"></div>
+                      </div>
+                    </div>
+                  </template>
+      <!-- <loading :loading="loading"></loading> -->
       </div>
     <!-- </div> -->
     <template v-if="contextItems">
@@ -241,9 +279,9 @@ export default {
       allDataDisplayed: false,
       lastDisplayedIndex:{ groupIdx: -1, curIdxInGroup: -1},
       dataDisplayed: false, 
-      // collapseStatus: {},
       available_tasks: [],
       showedCount: 0,
+      loading:false
     }
   },
   
@@ -258,6 +296,17 @@ export default {
       deep: true, // Watch for changes in nested properties of tableData
       handler(newValue) {
         this.newValue=_.cloneDeep(newValue)
+        newValue.forEach(ele => {
+          if (this.$refs['sectionContent' + ele.id] === undefined || this.$refs['sectionContent' + ele.id]?.length === 0) { 
+            return;
+          }
+          const el = this.$refs['sectionContent' + ele.id][0].$el;
+          const icon = this.$refs['collapseIcon' + ele.id][0].$el;
+          if (el.classList.contains('collapsed')) {
+            el.classList.remove('collapsed');
+            icon.style.transform = 'rotate(0deg)';
+          }
+        });
         this.$nextTick(() => {
           this.localData=[]
           this.$refs.myTable.scrollTop=0
@@ -371,7 +420,7 @@ export default {
       let i;
       for (i = start === -1 ? this.lastDisplayedIndex.groupIdx + 1 : this.lastDisplayedIndex.groupIdx; i < allTasks.length; ++ i) {
         if (start === -1) {
-          // this.collapseStatus[allTasks[i].title] = true;
+        
           if (remainingCount < allTasks[i].tasks?.length - start - 1) {
             
             this.localData.push({});
@@ -470,10 +519,16 @@ export default {
           if (this.allDataDisplayed) {
             return; // Stop adding data if all data has been displayed
           }
-          setTimeout(() => {
-            this.showData()
-          }, 300);
-          
+          this.loading = true;
+          new Promise((resolve) => {
+              setTimeout(() => {
+                  this.showData();
+                  resolve();
+              }, 300);
+          }).then(() => {
+              this.loading = false;
+          });
+
         }
       } else {
         icon.style.transform = 'rotate(0deg)'
