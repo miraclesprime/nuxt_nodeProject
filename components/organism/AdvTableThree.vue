@@ -415,7 +415,6 @@ export default {
       allTasks=this.modifyDateFormat(allTasks)
       let remainingCount = this.itemsPerPage;
       let start = this.lastDisplayedIndex.curIdxInGroup;
-      // debugger
       this.showedCount += remainingCount;
       let i;
       for (i = start === -1 ? this.lastDisplayedIndex.groupIdx + 1 : this.lastDisplayedIndex.groupIdx; i < allTasks.length; ++ i) {
@@ -513,12 +512,24 @@ export default {
       if (elem.classList.contains("collapsed")) {
         icon.style.transform = 'rotate(-90deg)'
         const collapsedSection = this.newValue.find(ele => ele.id === sectionId);
-        // debugger
+        
+
         this.showedCount -= this.available_tasks[collapsedSection.title].length
+        if (this.available_tasks[collapsedSection.title].length !== collapsedSection.tasks.length) {
+          const groupIdx = this.lastDisplayedIndex.groupIdx;
+          let tmp = {};
+          Object.assign(tmp, this.localData[groupIdx])
+          tmp.tasks.push(...this.newValue[groupIdx].tasks.slice(this.lastDisplayedIndex.curIdxInGroup + 1, this.newValue[groupIdx].tasks?.length))
+          this.available_tasks[this.newValue[groupIdx].title] = tmp.tasks;
+          this.localData.length -= 1;
+          this.localData.push(tmp)
+          this.lastDisplayedIndex.curIdxInGroup = -1;
+        }
         if (this.showedCount < this.itemsPerPage) {
-          if (this.allDataDisplayed) {
+          if (this.allDataDisplayed || this.localData.length==this.newValue.length) {
             return; // Stop adding data if all data has been displayed
           }
+
           this.loading = true;
           new Promise((resolve) => {
               setTimeout(() => {
