@@ -55,9 +55,7 @@ export default {
 
   props: {
     tags: { type: Array, default: function() { return [] }},
-    activeProp: {
-      type: [Number, null]
-    }
+    activeProp: { default: null }
   },
 
   data() {

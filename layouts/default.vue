@@ -471,7 +471,7 @@ export default {
                 if (JSON.parse(localStorage.getItem("user")).subr == "ADMIN") {
                   this.isAdmin = true;
                   this.$store.commit("user/setIsAdmin",this.isAdmin)
-                  console.log(this.isAdmin)
+                  // console.log(this.isAdmin)
                 } else {
                   this.navItems2.splice(0,1);
                   this.isAdmin = false;

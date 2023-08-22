@@ -131,9 +131,7 @@ export default {
   props: {
     mode: { type: String, default: "task" },
     reloadFiles: { type: Number, default: 0 },
-    activeProp: {
-      type: [Number, null]
-    }
+    activeProp: { default: null }
   },
   computed: {
     ...mapGetters({
