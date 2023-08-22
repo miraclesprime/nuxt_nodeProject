@@ -70,11 +70,11 @@
         <!-- files -->
         <!-- <sidebar-files :reloadFiles="reloadFiles"></sidebar-files> -->
 
-      <sidebar-fields-two :task="form" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform" ></sidebar-fields-two>
-      <sidebar-tag :tags="tags" @add-tag="addTag" @change="addTag" @delete-tag="removeTag" ></sidebar-tag>
-      <sidebar-subtask id="inbox_task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" ></sidebar-subtask>
-      <sidebar-files id="inbox_task_files" :reloadFiles="reloadFiles"></sidebar-files>
-      <sidebar-conversation id="inbox_task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
+      <sidebar-fields-two :task="form" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform"  :activeProp="form.id"></sidebar-fields-two>
+      <sidebar-tag :tags="tags" @add-tag="addTag" @change="addTag" @delete-tag="removeTag"  :activeProp="form.id"></sidebar-tag>
+      <sidebar-subtask id="inbox_task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false"  :activeProp="form.id"></sidebar-subtask>
+      <sidebar-files id="inbox_task_files" :reloadFiles="reloadFiles" :activeProp="form.id"></sidebar-files>
+      <sidebar-conversation id="inbox_task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory" :activeProp="form.id"></sidebar-conversation>
     </div>
     <!-- message input -->
     <div id="it-message-input" class=" d-flex gap-1 border-top-light py-1 px-105">
