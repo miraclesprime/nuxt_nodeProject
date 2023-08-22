@@ -53,14 +53,16 @@
             </div>
             </div>
             <div class="of-scroll-y position-relative py-05" id="ts-of-scroll-y" >
-                <!-- editable fields -->
-                <sidebar-fields :task="form" @update-project-field="updateProject" @update-field="updateTask"></sidebar-fields>
-                <!-- subtasks -->
+                <!-- <sidebar-fields :task="form" @update-project-field="updateProject" @update-field="updateTask"></sidebar-fields>
                 <sidebar-subtask id="single_task_subtasks" :reloadSubtask="reloadSubtask" @reload-subtask="reloadSubtask++" @view-subtask="viewSubtask($event)"></sidebar-subtask>
-                <!-- conversation -->
                 <sidebar-conversation id="single_task_conversation" :taskId="task" :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation>
-                <!-- files -->
-                <sidebar-files id="single_task_files" :reloadFiles="reloadFiles"></sidebar-files>
+                <sidebar-files id="single_task_files" :reloadFiles="reloadFiles"></sidebar-files> -->
+
+                <sidebar-fields-two :task="form" @update-project-field="updateProject" @update-field="updateTask" :activeProp="form.id"></sidebar-fields-two>
+                <sidebar-tag :tags="tags" @add-tag="addTag" @change="addTag" @delete-tag="removeTag" :activeProp="form.id"></sidebar-tag>
+                <sidebar-subtask id="single_task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" :activeProp="form.id"></sidebar-subtask>
+                <sidebar-files id="single_task_files" :reloadFiles="reloadFiles" :activeProp="form.id"></sidebar-files>
+                <sidebar-conversation id="single_task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory" :activeProp="form.id"></sidebar-conversation>
             </div>
             <!-- message input -->
             <div id="task-message-input" class=" d-flex gap-1 border-top-light py-1 px-105">
@@ -93,6 +95,7 @@ export default {
             value: {
                 files: []
             },
+            tags: [],
             editMessage: {},
             reloadComments: 1,
             reloadHistory: 1,
@@ -106,6 +109,7 @@ export default {
         task(newValue){
             this.form = _.cloneDeep(newValue)
             this.$store.dispatch("task/fetchTeamMember", this.task)
+            this.getTags()
         },
         
         showSubtaskDetail(newValue){
@@ -124,6 +128,7 @@ export default {
             teamMembers: "user/getTeamMembers",
             projects: "project/getAllProjects",
             sections: "section/getProjectSections",
+            alltags: "company/getCompanyTags",
         }),
 
         isFavorite() {
@@ -179,6 +184,31 @@ export default {
     },
 
     methods: {
+        scrollToSubtasks() {
+            this.$nextTick(() => {
+            const element = document.getElementById('single_task_subtasks');
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' ,block: "center" });
+                }
+            });
+        },
+        scrollToFiles() {
+            this.$nextTick(() => {
+            const element = document.getElementById('single_task_files');
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth',block: "center" });
+                }
+            });
+        },
+        scrollToConversation() {
+            this.$nextTick(() => {
+            const element = document.getElementById('single_task_conversation');
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' ,block: "end"});
+                }
+            });
+        },
+
         markComplete() {
             this.loading = true
             this.$store.dispatch('task/updateTaskStatus', this.task)
@@ -411,6 +441,80 @@ export default {
             }
             });
         },
+
+        async getTags(){
+
+            if (this.form.id) {
+                const tags = await this.$axios.get("/tag/task/"+this.form.id, {
+                    headers: {
+                        "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+                    }
+                })
+                // console.log(tags.data)
+                if (tags.data.statusCode == 200) {
+                    this.tags = tags.data.data.map(t => t.tag)
+                }
+            }
+        },
+
+        addTag(tag){
+        if (tag.id) {
+            // console.log('existing tag->', tag.id, tag.content)
+            this.$axios.post("/tag/assign-to-task",  { tagId: tag.id, taskId: this.form.id }, {
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+                }
+            })
+            .then(res => {
+            // console.log(res)
+            this.getTags()
+            this.$nuxt.$emit("update-key","tagStatus")
+            })
+            .catch(e => console.error(e))
+        } else {
+            // console.log('new tag->', tag)
+            let tagExist = this.alltags.find(t => t.content == tag)
+            if (tagExist) {
+                // console.log('tag already exists', tag)
+                this.popupMessages.push({text: "tag already exists", variant: "orange"})
+                return
+            } else {
+            this.$store.dispatch("company/addCompanyTag", {content: tag})
+            .then((res)=>{
+                // console.log(res.data)
+                if (res.data.statusCode == 200) {
+                    this.$store.dispatch("company/fetchCompanyTags")
+                    this.$axios.post("/tag/assign-to-task",  { tagId: res.data.data.id, taskId: this.form.id }, {
+                        headers: {
+                        "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+                        }
+                    }).then((res) => {
+                        // console.log(res)
+                        this.getTags()
+                        this.$nuxt.$emit("update-key")
+                    }).catch(e=>console.error(e))
+                    } else {
+                        console.warn("error creating tag")
+                    }
+            })
+            .catch(e=>console.error(e))
+            }
+        }
+        },
+        removeTag(tag){
+        // console.log(tag)
+        this.$axios.delete("/tag/remove-from-task", {
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+                "tagid": tag.id,
+                "taskid": this.form.id,
+            }
+        }).then(res => {
+            console.log(res.data.message)
+            this.getTags()
+            this.$nuxt.$emit("update-key","tagStatus")
+        }).catch(e => console.warn(e))
+        }
     }
 }
 </script>
