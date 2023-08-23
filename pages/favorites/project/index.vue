@@ -29,30 +29,50 @@
       <task-actions :gridType="gridType" @change-grid-type="changeGridType" @create-task="openSidebar" @add-section="toggleNewsection"></task-actions>
 
       <!-- Task View -->
-      <div id="project-id-content" class="project-id-content bg-light position-relative " :style="{ 'width': contentWidth }">
+      <div id="project-id-content" class="project-id-content bg-light position-relative overflow-y-auto" :style="{ 'width': contentWidth }">
         <template v-if="gridType == 'list'">
-          
-          <adv-table-three
-          :tableFields="tableFields"
-          :tableData="localdata"
-          :contextItems="contextMenuItems"
-          @row-click="openSidebar"
-          @title-click="openSidebar"
-          @context-item-event="contextItemClick"
-          :plusButton="plusButton"
-          :newRow="newRow"
-          @create-row="createRow"
-          :showNewsection="newSection"
-          @toggle-newsection="toggleNewsection"
-          @create-section="() => alert($event)"
-          @edit-section="editSection"
-          @section-dragend="sectionDragend"
-          :lazy-component="true"
-        ></adv-table-three>
+          <h3>List view</h3>
+          <Container orientation="vertical" @drop="onColumnDrop($event)"  >
+            <Draggable v-for="section in localdata.sections" :key="section.id">
+              <div class="p-05">
+                <div class="card-column-header bg-warning-sub3 p-025 border-warning">
+                  <span class="section-drag-handle">&#x2630;</span>
+                  {{ section.title }}
+                </div>
+                <Container group-name="section" @drop="(e) => onCardDrop(section.id, e)" drag-class="card-ghost" drop-class="card-ghost-drop" :get-child-payload="getCardPayload(section.id)">
+                  <Draggable v-for="task in section.tasks" :key="task?.id">
+                    <div class="p-025 border-secondary align-center gap-05">{{task?.order}}
+                      <p>{{ task?.title }} </p>
+                      <user-info :userId="task?.userId"></user-info>
+                    </div>
+                  </Draggable>
+                </Container>
+              </div>
+            </Draggable>
+          </Container>
+          <!-- <adv-table-three :tableFields="tableFields" :tableData="localdata" :contextItems="contextMenuItems" @row-click="openSidebar" @title-click="openSidebar" @context-item-event="contextItemClick" :plusButton="plusButton" :newRow="newRow" @create-row="createRow" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="() => alert($event)" @edit-section="editSection" @section-dragend="sectionDragend" :lazy-component="true"></adv-table-three> -->
         <!-- {{localdata}} -->
         </template>
         <div v-else>
           <h3>Grid view</h3>
+          <Container orientation="horizontal" @drop="onColumnDrop($event)"  >
+            <Draggable v-for="section in localdata.sections" :key="section.id">
+              <div class="p-05">
+                <div class="card-column-header bg-warning-sub3 p-025 border-warning">
+                  <span class="section-drag-handle">&#x2630;</span>
+                  {{ section.title }}
+                </div>
+                <Container group-name="section" @drop="(e) => onCardDrop(section.id, e)" drag-class="card-ghost" drop-class="card-ghost-drop" :get-child-payload="getCardPayload(section.id)" >
+                  <Draggable v-for="task in section.tasks" :key="task.id">
+                    <div class="p-025 border-secondary align-center gap-05">{{task.order}}
+                      <p>{{ task.title }} </p>
+                      <user-info :userId="task.userId"></user-info>
+                    </div>
+                  </Draggable>
+                </Container>
+              </div>
+            </Draggable>
+          </Container>
         </div>
       </div>
       
@@ -71,20 +91,24 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import _ from 'lodash'
 import { DEMO_TASK, TASK_CONTEXT_MENU } from "config/constants";
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
+import { Container, Draggable } from 'vue-smooth-dnd'
+import { applyDrag, generateItems } from '~/utils/helpers'
 
 export default {
   // name: 'ProjectTask',
+  components: {Container, Draggable},
   data() {
     return {
       tableFields: DEMO_TASK,
       // projectModal: false,
-      localdata: [
-        {id: 1, title: "section one", tasks: [], order: 0},
-        {id: 2, title: "section two", tasks: [], order: 1},
-        {id: 3, title: "section three", tasks: [], order: 4},
-        ],
+      localdata: { sections: [
+              {id: 11, title: "chosen one", tasks: [], order: 0},
+              {id: 28, title: "twin tower", tasks: [], order: 1},
+              {id: 3, title: "three stooges", tasks: [], order: 4},
+              ]},
       contextMenuItems: TASK_CONTEXT_MENU,
       conversationModal: false,
       value: {
@@ -198,15 +222,21 @@ export default {
       })
       .then((res) => {
         // console.log(res)
-        this.localdata = JSON.parse(JSON.stringify(this.sections));
+        this.localdata = { 
+          type: 'container',
+          props: {
+            // orientation: 'horizontal'
+          },
+          sections: _.cloneDeep(this.sections)
+        };
 
-        let sorted = this.localdata.map((s) => {
+        let sorted = this.localdata.sections.map((s) => {
           let t = s.tasks.sort((a, b) => a.order - b.order);
           s.tasks = t;
           return s;
         });
         // console.log("sorted =>", sorted)
-        this.localdata = sorted;
+        this.localdata.sections = sorted;
         this.templateKey += 1;
         this.loading = false;
       })
@@ -222,10 +252,56 @@ export default {
 
   beforeDestroy(){
     console.info("before destroy hook");
+    this.localdata = null
     // this.$store.dispatch('project/setSingleProject', {})
   },
 
   methods: {
+
+    onColumnDrop (dropResult) {
+      this.localdata.sections = applyDrag(this.localdata.sections, dropResult);
+      // console.log(dropResult)
+    },
+
+    /*onCardDrop (columnId, dropResult) {
+      // console.log(dropResult)
+      const { removedIndex, addedIndex, payload, element } = dropResult;
+      if (removedIndex !== null || addedIndex !== null) {
+        // const scene = Object.assign({}, this.scene)
+        const column = this.localdata.filter(p => p.id === columnId)[0]
+        const columnIndex = this.localdata.indexOf(column)
+
+        const newColumn = Object.assign({}, column)
+        newColumn.tasks = applyDrag(newColumn.tasks, dropResult)
+        // console.log(newColumn.tasks, columnIndex)
+        this.localdata.splice(columnIndex, 1, newColumn)
+
+        // this.localdata = scene
+      }
+    },*/
+
+    onCardDrop (columnId, dropResult) {
+      // console.log(dropResult)
+      if (dropResult.removedIndex !== null || dropResult.addedIndex !== null) {
+        const scene = Object.assign({}, this.localdata)
+        const column = scene.sections.filter(p => p.id === columnId)[0]
+        const columnIndex = scene.sections.indexOf(column)
+
+        const newColumn = Object.assign({}, column)
+        newColumn.tasks = applyDrag(newColumn.tasks, dropResult)
+        // console.log(newColumn)
+        scene.sections.splice(columnIndex, 1, newColumn)
+        this.localdata = scene
+      }
+    },
+
+    getCardPayload (columnId) {
+      // console.log(columnId)
+      return index => {
+        return this.localdata.sections.filter(p => p.id === columnId)[0].tasks[index]
+      }
+    },
+
     sectionDragend(){
       console.log(...arguments)
     },
