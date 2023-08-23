@@ -71,6 +71,8 @@
 
         <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
 
+          <!-- <loading :loading="loading"></loading> -->
+
         <bib-popup-notification-wrapper>
           <template #wrapper>
             <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" autohide="5000">
@@ -710,12 +712,12 @@ export default {
     },
 
     todoDragEnd: _.debounce(async function(todos) {
-      console.log(todos)
-      /*todos.forEach((el, i) => {
+      this.loading = true;
+      todos.forEach((el, i) => {
         el.uOrder = i
-      })*/
+      })
 
-      /*let todoDnD = await this.$axios.$put("/todo/dragdrop", { data: todos }, {
+      let todoDnD = await this.$axios.$put("/todo/dragdrop", { data: todos }, {
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
           "Content-Type": "application/json"
@@ -730,8 +732,9 @@ export default {
       this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
         if (res.statusCode == 200) {
           this.key += 1
+          this.loading = false;
         }
-      })*/
+      })
 
     }, 600),
 

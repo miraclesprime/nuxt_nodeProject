@@ -887,11 +887,7 @@ export default {
     },
 
     sectionDragend(newValue){
-      console.log(newValue)
-      newValue.forEach( function(s, index) {
-        console.log(index, s.title)
-      });
-      // this.$emit('section-dragend', newValue)
+      this.$emit('section-dragend', newValue)
     },
     
     rowDragEnd(e) {

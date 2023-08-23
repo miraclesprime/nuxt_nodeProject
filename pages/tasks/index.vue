@@ -57,7 +57,7 @@
           @close="datePickerOpen = false"
         ></inline-datepicker>
 
-        <!-- <loading :loading="loading"></loading> -->
+        <loading :loading="loading"></loading>
         <!-- popup notification -->
         <bib-popup-notification-wrapper>
           <template #wrapper>
@@ -723,29 +723,31 @@ export default {
     },
 
     sectionDragEnd: _.debounce(async function (payload) {
-      this.loading = true;
+      // this.loading = true;
 
       let clone = _.cloneDeep(payload);
       clone.forEach((el, i) => {
         el.order = i;
       });
 
-      let sectionDnD = await this.$axios.$put(
-        "/department/dragdrop",
-        { data: clone },
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("accessToken"),
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      console.log(clone)
 
-      if (sectionDnD.statusCode == 200) {
-        this.updateKey()
-      }
+      // let sectionDnD = await this.$axios.$put(
+      //   "/department/dragdrop",
+      //   { data: clone },
+      //   {
+      //     headers: {
+      //       Authorization: "Bearer " + localStorage.getItem("accessToken"),
+      //       "Content-Type": "application/json",
+      //     },
+      //   }
+      // );
 
-      this.loading = false;
+      // if (sectionDnD.statusCode == 200) {
+      //   this.updateKey()
+      // }
+
+      // this.loading = false;
     }, 600),
 
     taskDragEnd: _.debounce(async function (payload) {

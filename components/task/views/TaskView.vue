@@ -1106,15 +1106,13 @@ export default {
     },
 
     sectionDragEnd: _.debounce(async function (payload) {
-      console.log(payload)
       // this.loading = true;
-      /*let clone = _.cloneDeep(payload);
-
-      clone = clone.filter((el, i) => el != undefined);
+      let clone = _.cloneDeep(payload);
       
       clone.map((el, i) => {     
           el.order = i;
       });
+
       let sectionDnD = await this.$axios.$put("/section/dragdrop", {
         projectId: this.project?.id,
         data: clone
@@ -1131,7 +1129,7 @@ export default {
           .then(() => {
             this.$nuxt.$emit("update-key");
           });
-      }*/
+      }
 
       // this.loading = false;
     }, 600),
