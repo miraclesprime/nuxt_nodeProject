@@ -7,7 +7,7 @@
     <!-- <span v-show="visible !== 2" class=" mr-1 title-text" :id="id+'-title-text'">{{title}}</span>
     <span v-show="visible === 2" class=" ml-2 title-text" :id="id+'-title-text'">{{title}}</span> -->
     <!-- removed the back arrow -->
-    <span class="ml-05 title-text" :id="id+'-title-text'">{{title}}</span> <span :id="id+'-count'" class="text-secondary font-sm">{{count}}</span>
+    <span class="ml-05 title-text" :id="id+'-title-text'">{{title}}</span> <span v-if="count > 0" :id="id+'-count'" class="text-secondary font-md">({{count}})</span>
   </nav>
 </template>
 <script>

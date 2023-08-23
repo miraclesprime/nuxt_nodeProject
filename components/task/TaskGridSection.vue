@@ -191,7 +191,7 @@ export default {
 
     },
     showData(sectionId) {
-      console.log(sectionId)
+      // console.log(sectionId)
       // this.localdata
       let allTasks = this.newValue?.length > 0 ? JSON.parse(JSON.stringify(this.newValue)) : JSON.parse(JSON.stringify(this.sections));
       if (sectionId === undefined) {

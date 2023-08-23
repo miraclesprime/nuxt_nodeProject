@@ -1106,10 +1106,11 @@ export default {
     },
 
     sectionDragEnd: _.debounce(async function (payload) {
-      this.loading = true;
-      let clone = _.cloneDeep(payload);
+      console.log(payload)
+      // this.loading = true;
+      /*let clone = _.cloneDeep(payload);
 
-      clone =clone.filter((el, i) => el != undefined);
+      clone = clone.filter((el, i) => el != undefined);
       
       clone.map((el, i) => {     
           el.order = i;
@@ -1130,9 +1131,9 @@ export default {
           .then(() => {
             this.$nuxt.$emit("update-key");
           });
-      }
+      }*/
 
-      this.loading = false;
+      // this.loading = false;
     }, 600),
 
     taskDragEnd: _.debounce(async function (payload) {
