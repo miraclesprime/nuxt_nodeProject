@@ -731,18 +731,18 @@ export default {
       });
 
       console.log(clone)
+      // this.$store.dispatch("company/setCompanyTasks",{data:clone})
 
-      // let sectionDnD = await this.$axios.$put(
-      //   "/department/dragdrop",
-      //   { data: clone },
-      //   {
-      //     headers: {
-      //       Authorization: "Bearer " + localStorage.getItem("accessToken"),
-      //       "Content-Type": "application/json",
-      //     },
-      //   }
-      // );
-
+      let sectionDnD = await this.$axios.$put(
+        "/department/dragdrop",
+        { data: clone },
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("accessToken"),
+            "Content-Type": "application/json",
+          },
+        }
+      );
       // if (sectionDnD.statusCode == 200) {
       //   this.updateKey()
       // }

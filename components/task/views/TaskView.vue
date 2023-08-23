@@ -1127,7 +1127,7 @@ export default {
       if (sectionDnD.statusCode == 200) {
         this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id })
           .then(() => {
-            this.$nuxt.$emit("update-key");
+            // this.$nuxt.$emit("update-key");
           });
       }
 

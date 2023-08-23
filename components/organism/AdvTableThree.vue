@@ -31,7 +31,7 @@
           </template>
         </div>
         <draggable v-model="localData" class=" sortable-list" @end="sectionDragend(localData)" >
-          <section v-for="section in localData" :key="section.id" class="sortable" >
+          <section v-for="(section, groupIdx) in localData" :key="section.id" class="sortable" >
             <div class="thead">
               
               <div class="tr hidden" role="row" >
@@ -64,7 +64,7 @@
             </div>
 
             <draggable class="section-content" tag="article" :list="section.tasks" :group="{ name: 'tasks' }" :data-section="section.id" :ref="'sectionContent' + section.id" @end="rowDragEnd">
-              <div v-for="item in section.tasks" :key="item.id" ref="trdata" role="row" class="tr sortable drag-item" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
+              <div v-for="(item, itemIdx) in section.tasks" :key="item.id" ref="trdata" role="row" class="tr sortable drag-item" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
                 <div v-show="drag&&filterViews=='all'" class="td" role="cell" >
                   <div class="drag-handle width-105 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                   </div>
@@ -88,23 +88,23 @@
                     <div class="align-center height-2">{{item[field.key]?.[0]?.project?.title}}</div>
                   </template>
                   <template v-if="field.key == 'userId'">
-                    <lazy-user-select v-if="lazyComponent" :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></lazy-user-select>
+                    <lazy-user-select v-if="isLazy(groupIdx, itemIdx) || isRendered" :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></lazy-user-select>
                     <skeleton-box v-else></skeleton-box>
                   </template>
                   <template v-if="field.key == 'status'">
-                    <lazy-status-select v-if="lazyComponent" :ref="'statusSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('statusSelect'+item.id)"></lazy-status-select>
+                    <lazy-status-select v-if="isLazy(groupIdx, itemIdx) || isRendered" :ref="'statusSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('statusSelect'+item.id)"></lazy-status-select>
                     <skeleton-box v-else></skeleton-box>
                   </template>
                   <template v-if="field.key == 'priority'">
-                    <lazy-priority-select v-if="lazyComponent" :ref="'prioritySelect'+item.id" :priority="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></lazy-priority-select>
+                    <lazy-priority-select v-if="isLazy(groupIdx, itemIdx) || isRendered" :ref="'prioritySelect'+item.id" :priority="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></lazy-priority-select>
                     <skeleton-box v-else></skeleton-box>
                   </template>
                   <template v-if="field.key == 'difficultyId'">
-                    <lazy-difficulty-select v-if="lazyComponent" :ref="'difficultySelect'+item.id" :difficulty="item[field.key]" @change="updateDifficulty($event, item)" @close-other="closePopups('difficultySelect'+item.id)"></lazy-difficulty-select>
+                    <lazy-difficulty-select v-if="isLazy(groupIdx, itemIdx) || isRendered" :ref="'difficultySelect'+item.id" :difficulty="item[field.key]" @change="updateDifficulty($event, item)" @close-other="closePopups('difficultySelect'+item.id)"></lazy-difficulty-select>
                     <skeleton-box v-else></skeleton-box>
                   </template>
                   <template v-if="field.key == 'department'">
-                    <lazy-dept-select v-if="lazyComponent" :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></lazy-dept-select>
+                    <lazy-dept-select v-if="isLazy(groupIdx, itemIdx) || isRendered" :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></lazy-dept-select>
                     <skeleton-box v-else></skeleton-box>
                   </template>
                   <template v-if="field.key == 'tag'">
@@ -113,13 +113,15 @@
                     </template>
                   </template>
                   <template v-if="field.key == 'startDate'" >
+                    <!-- {{$formatDate(item[field.key])}} -->
                     
-                    <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+                    <bib-datetime-picker v-if="isLazy(groupIdx, itemIdx) || isRendered" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                     <skeleton-box v-else></skeleton-box>
                   </template>
                   <template v-if="field.key == 'dueDate'" >
+                    <!-- {{$formatDate(item[field.key])}} -->
                     
-                    <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+                    <bib-datetime-picker v-if="isLazy(groupIdx, itemIdx) || isRendered" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                     <skeleton-box v-else></skeleton-box>
                   </template>
                 </div>
@@ -148,20 +150,6 @@
             </draggable>
           </section>
         </draggable>
-      
-      <template v-if="loading">
-                <skeleton-box ></skeleton-box>
-                <skeleton-box ></skeleton-box>
-                <skeleton-box ></skeleton-box>     
-                <skeleton-box ></skeleton-box>
-                <skeleton-box ></skeleton-box>
-                <skeleton-box ></skeleton-box>
-                <skeleton-box ></skeleton-box>     
-                <skeleton-box ></skeleton-box>
-                <skeleton-box ></skeleton-box>
-                <skeleton-box ></skeleton-box>
-                <skeleton-box ></skeleton-box> 
-           </template>
       </div>
     <template v-if="contextItems">
       <table-context-menu :items="contextItems" :show="contextVisible" :coordinates="popupCoords" @close-context="closePopups" @item-click="contextItemClick" ></table-context-menu>
@@ -246,12 +234,15 @@ export default {
       akey: 0,
       itemsPerPage: 20,
       allDataDisplayed: false,
+      previousIndex: { groupIdx: -1, curIdxInGroup: -1 },
       lastDisplayedIndex:{ groupIdx: -1, curIdxInGroup: -1},
       dataDisplayed: false, 
       available_tasks: [],
       showedCount: 0,
       loading:false,
-      filterViews:""
+      filterViews:"",
+      isRendered: false,
+
     }
   },
   watch: {
@@ -284,8 +275,10 @@ export default {
         });
         this.$nextTick(() => {
           this.localData=[]
-          // this.$refs.myTable.scrollTop=0
+          this.$refs.myTable.scrollTop=0
           this.lastDisplayedIndex={ groupIdx: -1, curIdxInGroup: -1}
+          this.previousIndex={ groupIdx: -1, curIdxInGroup: -1 },
+
           this.showedCount=0
           this.available_tasks=[]
           this.allDataDisplayed=false
@@ -369,7 +362,12 @@ export default {
       )
       return value
     },
-
+    isLazy(groupIdx, itemIdx) {
+      if (groupIdx > this.previousIndex.groupIdx || (itemIdx > this.previousIndex.curIdxInGroup && groupIdx === this.previousIndex.groupIdx) ) {
+        return false;
+      }
+      return true;
+    },
     handleScroll(event) {
       const tableContainer = event.target;
       if (this.allDataDisplayed) {
@@ -451,6 +449,15 @@ export default {
         if (remainingCount == 0) break;
 
       }
+      this.isRendered = false;
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve('Changed successfully!');
+        }, 1000)
+      }).then(() => {
+        this.isRendered = true;
+      });
+
       if (i >= allTasks.length - 1 && start === -1) 
       {
         this.allDataDisplayed = true;
@@ -458,6 +465,9 @@ export default {
         this.lastDisplayedIndex.curIdxInGroup = -1;
         return 
       }
+  
+
+      Object.assign(this.previousIndex, this.lastDisplayedIndex);
       this.lastDisplayedIndex.groupIdx = i;
       this.lastDisplayedIndex.curIdxInGroup = start;
       
@@ -513,19 +523,14 @@ export default {
           this.lastDisplayedIndex.curIdxInGroup = -1;
         }
         if (this.showedCount < this.itemsPerPage) {
+          if (this.lastDisplayedIndex.groupIdx === this.newValue.length - 1) {
+            this.allDataDisplayed = true;
+            return;
+          }
           if (this.allDataDisplayed ) {
             return; // Stop adding data if all data has been displayed
           }
-
-          this.loading = true;
-          new Promise((resolve) => {
-              setTimeout(() => {
-                  this.showData();
-                  resolve();
-              }, 300);
-          }).then(() => {
-              this.loading = false;
-          });
+          this.showData();
 
         }
       } else {
