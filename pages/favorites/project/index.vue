@@ -32,7 +32,17 @@
       <div id="project-id-content" class="project-id-content bg-light position-relative overflow-y-auto" :style="{ 'width': contentWidth }">
         <template v-if="gridType == 'list'">
           <h3>List view</h3>
-          <Container orientation="vertical" @drop="onColumnDrop($event)"  >
+          <draggable v-model="localdata.sections" class=" sortable-list" @end="sectionDragend(localdata.sections)" >
+            <section v-for="section in localdata.sections" :key="section.id" class="sortable" >
+              <p class="text-primary align-center gap-05 font-w-700"><bib-icon icon="menu-hamburger" variant="primary"></bib-icon> {{section.title}}</p>
+              <draggable :list="section.tasks" :group="{ name: 'section' }" class=" ">
+                <div v-for="task in section.tasks" :key="task.title" class="p-025" >
+                  <article class="border-gray2" >{{ task.title }}</article>
+                </div>
+              </draggable>
+            </section>
+          </draggable>
+          <!-- <Container orientation="vertical" @drop="onColumnDrop($event)"  >
             <Draggable v-for="section in localdata.sections" :key="section.id">
               <div class="p-05">
                 <div class="card-column-header bg-warning-sub3 p-025 border-warning">
@@ -49,13 +59,13 @@
                 </Container>
               </div>
             </Draggable>
-          </Container>
+          </Container> -->
           <!-- <adv-table-three :tableFields="tableFields" :tableData="localdata" :contextItems="contextMenuItems" @row-click="openSidebar" @title-click="openSidebar" @context-item-event="contextItemClick" :plusButton="plusButton" :newRow="newRow" @create-row="createRow" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="() => alert($event)" @edit-section="editSection" @section-dragend="sectionDragend" :lazy-component="true"></adv-table-three> -->
         <!-- {{localdata}} -->
         </template>
         <div v-else>
           <h3>Grid view</h3>
-          <Container orientation="horizontal" @drop="onColumnDrop($event)"  >
+          <!-- <Container orientation="horizontal" @drop="onColumnDrop($event)"  >
             <Draggable v-for="section in localdata.sections" :key="section.id">
               <div class="p-05">
                 <div class="card-column-header bg-warning-sub3 p-025 border-warning">
@@ -72,7 +82,7 @@
                 </Container>
               </div>
             </Draggable>
-          </Container>
+          </Container> -->
         </div>
       </div>
       
@@ -96,10 +106,11 @@ import { DEMO_TASK, TASK_CONTEXT_MENU } from "config/constants";
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 import { Container, Draggable } from 'vue-smooth-dnd'
 import { applyDrag, generateItems } from '~/utils/helpers'
+import draggable from 'vuedraggable'
 
 export default {
   // name: 'ProjectTask',
-  components: {Container, Draggable},
+  components: {Container, Draggable, draggable},
   data() {
     return {
       tableFields: DEMO_TASK,
@@ -302,7 +313,7 @@ export default {
       }
     },
 
-    sectionDragend(){
+    sectionDragend(e){
       console.log(...arguments)
     },
     changeGridType(type){
