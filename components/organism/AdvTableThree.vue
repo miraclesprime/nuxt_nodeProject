@@ -5,7 +5,7 @@
         <draggable v-model="newValue" id="mainDraggable" class="section-draggable-wrapper sortable-list position-relative" @end="$emit('section-dragend', newValue)">
           <div class="table resizable w-100 position-sticky" ref="headrow" style="top: 0; z-index:2;">
             <div class="tr " role="row" >
-              <div v-show="drag" class="width-2 th" role="cell" ></div>
+              <div v-show="drag&&filterViews=='all'" class="width-2 th" role="cell" ></div>
               <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{width: field.width}" :ref="'th'+field.key" :data-key="field.key" >
                 <div class="align-center gap-05" >{{field.label}} <span v-if="field.header_icon" :id="'adv-table-header-icon'+index" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null" >
                     <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
@@ -18,7 +18,7 @@
               <div slot="header" class="tr position-relative height-205">
                 <div class="position-absolute border-bottom-light" style="inset: 0; ">
                     <div class="section-header d-flex align-center gap-05 height-205 bg-white" >
-                      <div v-show="drag" class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
+                      <div v-show="drag&&filterViews=='all'" class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                       </div>
                       <div class="position-sticky align-center gap-05" style="left: 0.5rem;" >
                         <bib-icon icon="arrow-down" :scale="0.5" style="transform: rotate(-90deg);" ></bib-icon> 
@@ -35,7 +35,7 @@
             <div class="thead">
               
               <div class="tr hidden" role="row" >
-                <div v-show="drag" class="width-2 th" role="cell" ></div>
+                <div v-show="drag&&filterViews=='all'" class="width-2 th" role="cell" ></div>
                 <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :data-key="field.key" :style="{ width: field.width}" >
                   <!-- <div class="align-center gap-05" > </div> -->
                 </div>
@@ -44,7 +44,7 @@
               <div class="tr position-relative height-205" role="row">
                 <div class="position-absolute border-bottom-light" style="inset: 0; ">
                   <div class="section-header d-flex align-center gap-05 height-205 " >
-                    <div v-show="drag" class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
+                    <div v-show="drag&&filterViews=='all'" class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                     </div>
                     <div class="position-sticky align-center" style="left: 0.5rem;" >
                       <span class="width-1 cursor-pointer" @click.stop="collapseItem(section.id)">
@@ -66,7 +66,7 @@
 
             <draggable class="section-content" tag="article" :list="section[tasksKey]" :group="{ name: 'tasks' }" :data-section="section.id" :ref="'sectionContent' + section.id" @start="rowDragStart" :move="moveRow" @end="rowDragEnd">
               <div v-for="item in section[tasksKey]" :key="item.id" ref="trdata" role="row" class="tr sortable drag-item" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
-                <div v-show="drag" class="td" role="cell" >
+                <div v-show="drag&&filterViews=='all'" class="td" role="cell" >
                   <div class="drag-handle width-105 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                   </div>
                 </div>
@@ -130,7 +130,7 @@
 
               <template v-if="plusButton" >
                 <div v-show="localNewrow.sectionId != section.id" :key="'plusbtn'+akey" class="tr" role="row" style="border-bottom: var(--bib-light)">
-                  <div v-show="drag" class="td width-2" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
+                  <div v-show="drag&&filterViews=='all'" class="td width-2" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
                   <div class="td" role="cell" style="border-bottom-color: transparent; border-right-color: transparent; width: 360px;">
                     <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
                       <bib-icon :icon="plusButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{plusButton.label}}</span>
@@ -139,7 +139,7 @@
                 </div>
 
                 <div v-show="localNewrow.sectionId == section.id" :key="'plusinput'+akey" class="tr" role="row" >
-                  <div v-show="drag" class="td text-center " role="cell">
+                  <div v-show="drag&&filterViews=='all'" class="td text-center " role="cell">
                     <span class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
                   </div>
                   <div class="td" role="cell">
@@ -155,43 +155,18 @@
           
       </draggable>
           <template v-if="loading">
-                    <div class="placeholder my-05 d-flex align-center gap-05" id="sc-placeholder">
-                      <div class="left" id="sc-left">
-                        <div class="shape-circle width-2 height-2 animated-background" id="sc-shape-circle"></div>
-                      </div>
-                      <div class="right" id="sc-right">
-                        <div class="animated-background width-4 " id="sc-animated-bg-w4" style="height: 0.8rem;"></div>
-                        <div class="animated-background width-10 mt-025" id="sc-animated-bg-w10" style="height: 0.6rem;"></div>
-                      </div>
-                    </div>
-                    <div class="placeholder my-05 d-flex align-center gap-05" id="sc-placeholder">
-                      <div class="left" id="sc-left">
-                        <div class="shape-circle width-2 height-2 animated-background" id="sc-shape-circle"></div>
-                      </div>
-                      <div class="right" id="sc-right">
-                        <div class="animated-background width-4 " id="sc-animated-bg-w4" style="height: 0.8rem;"></div>
-                        <div class="animated-background width-10 mt-025" id="sc-animated-bg-w10" style="height: 0.6rem;"></div>
-                      </div>
-                    </div>
-                    <div class="placeholder my-05 d-flex align-center gap-05" id="sc-placeholder">
-                      <div class="left" id="sc-left">
-                        <div class="shape-circle width-2 height-2 animated-background" id="sc-shape-circle"></div>
-                      </div>
-                      <div class="right" id="sc-right">
-                        <div class="animated-background width-4 " id="sc-animated-bg-w4" style="height: 0.8rem;"></div>
-                        <div class="animated-background width-10 mt-025" id="sc-animated-bg-w10" style="height: 0.6rem;"></div>
-                      </div>
-                    </div>
-                    <div class="placeholder my-05 d-flex align-center gap-05" id="sc-placeholder">
-                      <div class="left" id="sc-left">
-                        <div class="shape-circle width-2 height-2 animated-background" id="sc-shape-circle"></div>
-                      </div>
-                      <div class="right" id="sc-right">
-                        <div class="animated-background width-4 " id="sc-animated-bg-w4" style="height: 0.8rem;"></div>
-                        <div class="animated-background width-10 mt-025" id="sc-animated-bg-w10" style="height: 0.6rem;"></div>
-                      </div>
-                    </div>
-                  </template>
+                <skeleton-box ></skeleton-box>
+                <skeleton-box ></skeleton-box>
+                <skeleton-box ></skeleton-box>     
+                <skeleton-box ></skeleton-box>
+                <skeleton-box ></skeleton-box>
+                <skeleton-box ></skeleton-box>
+                <skeleton-box ></skeleton-box>     
+                <skeleton-box ></skeleton-box>
+                <skeleton-box ></skeleton-box>
+                <skeleton-box ></skeleton-box>
+                <skeleton-box ></skeleton-box> 
+           </template>
       <!-- <loading :loading="loading"></loading> -->
       </div>
     <!-- </div> -->
@@ -216,6 +191,7 @@ export default {
   props: {
     tableFields: { type: Array, required: true, default: () => [] },
     tableData: { type: Array, required: true, default: () => [] },
+    filter:{ type: String, default: 'all' },
     dataType: { type: String, default: 'nested' },
     // sectionTitle: { type: String, default: "Section" },
     contextItems: { type: Array },
@@ -281,16 +257,22 @@ export default {
       dataDisplayed: false, 
       available_tasks: [],
       showedCount: 0,
-      loading:false
+      loading:false,
+      filterViews:""
     }
   },
-  
   watch: {
     newRow(newValue){
       // console.log(newValue.sectionId)
       // this.localNewrow = _.cloneDeep(this.newRow)
       this.localNewrow = newValue
     },
+    filter:{
+          immediate:true,
+          handler(newValue){
+            this.filterViews=_.cloneDeep(newValue)
+          }
+      },
     tableData: {
       immediate: true, // Execute the watcher immediately on component mount
       deep: true, // Watch for changes in nested properties of tableData
@@ -378,6 +360,8 @@ export default {
   mounted() {
     // this.localData=_.cloneDeep(this.tableData)
     this.resizableColumns()
+    const divHeight = this.$refs.myTable.clientHeight;
+    this.itemsPerPage= parseInt((divHeight - 40) / 40);
   },
 
   methods: {
@@ -401,7 +385,16 @@ export default {
       const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight+5 >= tableContainer.scrollHeight;
 
       if (isAtBottom) {
-      this.showData();
+        // this.lazyComponent = true;
+        //   new Promise((resolve) => {
+        //       setTimeout(() => {
+                this.showData();
+        //           resolve();
+        //       }, 100);
+        //   }).then(() => {
+        //       this.lazyComponent = false;
+        //   });
+    
           }
 
     },
@@ -440,6 +433,7 @@ export default {
           }
         }
         else {
+          
             let tmp = {};
             if (start + remainingCount + 1 < allTasks[i].tasks?.length) {
               Object.assign(tmp, this.localData[i])
@@ -526,7 +520,7 @@ export default {
           this.lastDisplayedIndex.curIdxInGroup = -1;
         }
         if (this.showedCount < this.itemsPerPage) {
-          if (this.allDataDisplayed || this.localData.length==this.newValue.length) {
+          if (this.allDataDisplayed ) {
             return; // Stop adding data if all data has been displayed
           }
 

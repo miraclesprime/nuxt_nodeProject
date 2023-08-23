@@ -89,7 +89,6 @@ export default {
       newTask: false,
       itemCount:6,
       newValue: [],
-      itemsPerPage: 20,
       allDataDisplayed: false,
       lastDisplayedIndex:{},
       dataDisplayed: false, 
@@ -125,8 +124,6 @@ export default {
         this.newValue=_.cloneDeep(newValue)
         this.$nextTick(() => {
           this.localdata=[]
-          // this.$refs.myTable.scrollTop=0
-          // this.lastDisplayedIndex={ groupIdx: -1, curIdxInGroup: -1}
           this.allDataDisplayed=false
           this.showData();
         });

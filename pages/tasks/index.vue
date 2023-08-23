@@ -17,7 +17,7 @@
           <div v-if="gridType === 'list'" class="h-100">
             <!-- <template v-if="!showPlaceholder"> -->
               
-              <adv-table-three :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable" :key="templateKey" :editSection="group" :lazyComponent="lazyComponent"></adv-table-three>
+              <adv-table-three :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable" :key="templateKey" :editSection="group" :lazyComponent="lazyComponent" :filter="filterViews"></adv-table-three>
           
           </div>
         
@@ -581,7 +581,7 @@ export default {
     //group by
     taskGroup($event) {
       this.group = $event
-      // this.lazyComponent = false
+      this.lazyComponent = false
       if($event != 'default') {
         this.dragTable = false;
       } else {
@@ -590,7 +590,7 @@ export default {
         this.$store.commit('company/groupTasks',{sName:"department"})
         return;
       }
-      // this.lazyComponent = true
+      this.lazyComponent = true
       this.$store.commit('company/groupTasks',{sName:this.group})
       },
     // Sort By Action List
