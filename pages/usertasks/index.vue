@@ -535,11 +535,8 @@ export default {
       })
       .then(async (t) => {
         // console.log("tt",t)
-        if (t.statusCode == 200) {
           this.updateKey();
-        } else {
-          console.warn(t);
-        }
+    
       })
       .catch((e) => console.warn(e));
      
