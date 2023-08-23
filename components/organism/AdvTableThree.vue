@@ -2,42 +2,41 @@
   <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll" @scroll="handleScroll" ref="myTable">
 
       <div :id="'advTableTwo-'+componentKey" class=" adv-table  bg-white" :style="{'width': tableWidth}"  >
-        <draggable v-model="newValue" id="mainDraggable" class="section-draggable-wrapper sortable-list position-relative" @end="$emit('section-dragend', newValue)">
-          <div class="table resizable w-100 position-sticky" ref="headrow" style="top: 0; z-index:2;">
-            <div class="tr " role="row" >
-              <div v-show="drag&&filterViews=='all'" class="width-2 th" role="cell" ></div>
-              <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{width: field.width}" :ref="'th'+field.key" :data-key="field.key" >
-                <div class="align-center gap-05" >{{field.label}} <span v-if="field.header_icon" :id="'adv-table-header-icon'+index" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null" >
-                    <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
-                  </span>
-                </div>
+        <div class="table resizable w-100 position-sticky" ref="headrow" style="top: 0; z-index:2;">
+          <div class="tr " role="row" >
+            <div v-show="drag&&filterViews=='all'" class="width-2 th" role="cell" ></div>
+            <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{width: field.width}" :ref="'th'+field.key" :data-key="field.key" >
+              <div class="align-center gap-05" >{{field.label}} <span v-if="field.header_icon" :id="'adv-table-header-icon'+index" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null" >
+                  <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
+                </span>
               </div>
             </div>
-            
-            <template v-if="showNewsection">
-              <div slot="header" class="tr position-relative height-205">
-                <div class="position-absolute border-bottom-light" style="inset: 0; ">
-                    <div class="section-header d-flex align-center gap-05 height-205 bg-white" >
-                      <div v-show="drag&&filterViews=='all'" class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
-                      </div>
-                      <div class="position-sticky align-center gap-05" style="left: 0.5rem;" >
-                        <bib-icon icon="arrow-down" :scale="0.5" style="transform: rotate(-90deg);" ></bib-icon> 
-                        <span class="font-w-700 cursor-pointer ml-025" >
-                          <input type="text" class="editable-input section-title" placeholder="Enter title..." ref="newsectioninput" @input="debounceNewSection($event.target.value, $event)" @blur="restoreField" />
-                        </span>
-                      </div>
+          </div>
+          
+          <template v-if="showNewsection">
+            <div slot="header" class="tr position-relative height-205">
+              <div class="position-absolute border-bottom-light" style="inset: 0; ">
+                  <div class="section-header d-flex align-center gap-05 height-205 bg-white" >
+                    <div v-show="drag&&filterViews=='all'" class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
+                    </div>
+                    <div class="position-sticky align-center gap-05" style="left: 0.5rem;" >
+                      <bib-icon icon="arrow-down" :scale="0.5" style="transform: rotate(-90deg);" ></bib-icon> 
+                      <span class="font-w-700 cursor-pointer ml-025" >
+                        <input type="text" class="editable-input section-title" placeholder="Enter title..." ref="newsectioninput" @input="debounceNewSection($event.target.value, $event)" @blur="restoreField" />
+                      </span>
                     </div>
                   </div>
-              </div>
-            </template>
-          </div>
-          <section v-for="(section, index) in localData" class="resizable w-100"   >
+                </div>
+            </div>
+          </template>
+        </div>
+        <draggable v-model="localData" class=" sortable-list" @end="sectionDragend(localData)" >
+          <section v-for="section in localData" :key="section.id" class="sortable" >
             <div class="thead">
               
               <div class="tr hidden" role="row" >
                 <div v-show="drag&&filterViews=='all'" class="width-2 th" role="cell" ></div>
                 <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :data-key="field.key" :style="{ width: field.width}" >
-                  <!-- <div class="align-center gap-05" > </div> -->
                 </div>
               </div>
 
@@ -61,11 +60,11 @@
                   </div>
                 </div>
               </div>
-
+              
             </div>
 
-            <draggable class="section-content" tag="article" :list="section[tasksKey]" :group="{ name: 'tasks' }" :data-section="section.id" :ref="'sectionContent' + section.id" @start="rowDragStart" :move="moveRow" @end="rowDragEnd">
-              <div v-for="item in section[tasksKey]" :key="item.id" ref="trdata" role="row" class="tr sortable drag-item" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
+            <draggable class="section-content" tag="article" :list="section.tasks" :group="{ name: 'tasks' }" :data-section="section.id" :ref="'sectionContent' + section.id" @end="rowDragEnd">
+              <div v-for="item in section.tasks" :key="item.id" ref="trdata" role="row" class="tr sortable drag-item" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
                 <div v-show="drag&&filterViews=='all'" class="td" role="cell" >
                   <div class="drag-handle width-105 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                   </div>
@@ -114,13 +113,11 @@
                     </template>
                   </template>
                   <template v-if="field.key == 'startDate'" >
-                    <!-- {{$formatDate(item[field.key])}} -->
                     
                     <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                     <skeleton-box v-else></skeleton-box>
                   </template>
                   <template v-if="field.key == 'dueDate'" >
-                    <!-- {{$formatDate(item[field.key])}} -->
                     
                     <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                     <skeleton-box v-else></skeleton-box>
@@ -146,15 +143,13 @@
                     <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate(section)" @blur="unselectAll" @keyup.esc="unselectAll" required placeholder="Enter title...">
                   </div>
                 </div>
-
               </template>
 
             </draggable>
-
           </section>
-          
-      </draggable>
-          <template v-if="loading">
+        </draggable>
+      
+      <template v-if="loading">
                 <skeleton-box ></skeleton-box>
                 <skeleton-box ></skeleton-box>
                 <skeleton-box ></skeleton-box>     
@@ -167,9 +162,7 @@
                 <skeleton-box ></skeleton-box>
                 <skeleton-box ></skeleton-box> 
            </template>
-      <!-- <loading :loading="loading"></loading> -->
       </div>
-    <!-- </div> -->
     <template v-if="contextItems">
       <table-context-menu :items="contextItems" :show="contextVisible" :coordinates="popupCoords" @close-context="closePopups" @item-click="contextItemClick" ></table-context-menu>
     </template>
@@ -291,7 +284,7 @@ export default {
         });
         this.$nextTick(() => {
           this.localData=[]
-          this.$refs.myTable.scrollTop=0
+          // this.$refs.myTable.scrollTop=0
           this.lastDisplayedIndex={ groupIdx: -1, curIdxInGroup: -1}
           this.showedCount=0
           this.available_tasks=[]
@@ -736,27 +729,24 @@ export default {
         this.resizableTables = this.columnResize(table);
       }
     },
-    
-    rowDragStart(e) {
-      // console.log("row drag start ", e);
-      // this.highlight = true
+
+    sectionDragend(newValue){
+      this.$emit('section-dragend', newValue)
     },
+    
     rowDragEnd(e) {
       // this.highlight = false;
       let sectionData = this.localData.filter(
         (s) => s.id == e.to.dataset.section
       );
 
-      // console.log("row drag end ", e, sectionData[0][this.tasksKey])
+      // console.log("row dragend ", e, sectionData)
       this.$emit("row-dragend", {
         [this.tasksKey]: sectionData[0][this.tasksKey],
         sectionId: e.to.dataset.section,
       });
     },
-    moveRow(e) {
-      // console.log("move row ", e)
-      // this.taskMoveSection = +e.to.dataset.section
-    },
+    
     rowClick($event, item) {
       // console.log($event.target)
       this.unselectAll()

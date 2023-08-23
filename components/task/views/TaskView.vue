@@ -1106,14 +1106,13 @@ export default {
     },
 
     sectionDragEnd: _.debounce(async function (payload) {
-      this.loading = true;
+      // this.loading = true;
       let clone = _.cloneDeep(payload);
-
-      clone =clone.filter((el, i) => el != undefined);
       
       clone.map((el, i) => {     
           el.order = i;
       });
+
       let sectionDnD = await this.$axios.$put("/section/dragdrop", {
         projectId: this.project?.id,
         data: clone
@@ -1132,7 +1131,7 @@ export default {
           });
       }
 
-      this.loading = false;
+      // this.loading = false;
     }, 600),
 
     taskDragEnd: _.debounce(async function (payload) {

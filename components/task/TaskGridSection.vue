@@ -1,6 +1,6 @@
 <template>
   <div id="tgs-scroll" class="overflow-x-auto h-100 position-relative bg-light" style="min-height: 30rem;"  >
-    <draggable :list="newValue" class="d-flex " :move="moveSection" v-on:end="$emit('section-dragend', newValue)" handle=".section-drag-handle">
+    <draggable :list="localdata" class="d-flex " :move="moveSection" v-on:end="$emit('section-dragend', localdata)" handle=".section-drag-handle">
       <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${templateKey}${section.title}${section.id}`">
         <div class="w-100 d-flex align-center section-title-wrapper border-bottom-gray2 mb-075" :id="'tgs-inner-wrap-'+section.id" :class="{'active': sectionEdit}" >
           <task-grid-section-title :section="section" @update-title="renameSection"></task-grid-section-title>
@@ -188,7 +188,7 @@ export default {
 
     },
     showData(sectionId) {
-      console.log(sectionId)
+      // console.log(sectionId)
       // this.localdata
       let allTasks = this.newValue?.length > 0 ? JSON.parse(JSON.stringify(this.newValue)) : JSON.parse(JSON.stringify(this.sections));
       if (sectionId === undefined) {
