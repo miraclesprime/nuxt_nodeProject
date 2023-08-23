@@ -31,7 +31,7 @@
           </template>
         </div>
         <draggable v-model="localData" class=" sortable-list" @end="sectionDragend(localData)" >
-          <section v-for="(section, groupIdx) in localData" :key="section.id" class="sortable" >
+          <section v-for="(section, groupIdx) in localData" :key="section.id" class="sortable w-100" >
             <div class="thead">
               
               <div class="tr hidden" role="row" >
@@ -128,22 +128,24 @@
               </div>
 
               <template v-if="plusButton" >
-                <div v-show="localNewrow.sectionId != section.id" :key="'plusbtn'+akey" class="tr" role="row" style="border-bottom: var(--bib-light)">
-                  <div v-show="drag&&filterViews=='all'" class="td width-2" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
-                  <div class="td" role="cell" style="border-bottom-color: transparent; border-right-color: transparent; width: 360px;">
+                <div v-show="localNewrow.sectionId != section.id" :key="'plusbtn'+akey" class="tr position-relative" role="row" >
+                  <div v-show="drag&&filterViews=='all'" class="td width-2" role="cell" style="border-right-color: transparent;"></div>
+                  <div class="td" role="cell" style="border-right-color: transparent; width: 360px;">
                     <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
                       <bib-icon :icon="plusButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{plusButton.label}}</span>
                     </div>
                   </div>
+		              <div class="position-absolute" style="left:0; bottom:0; right:0; z-index:1; height: 1px; border-bottom: 1px solid var(--bib-light)"></div>
                 </div>
 
-                <div v-show="localNewrow.sectionId == section.id" :key="'plusinput'+akey" class="tr" role="row" >
+                <div v-show="localNewrow.sectionId == section.id" :key="'plusinput'+akey" class="tr position-relative" role="row" >
                   <div v-show="drag&&filterViews=='all'" class="td text-center " role="cell">
                     <span class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
                   </div>
-                  <div class="td" role="cell">
+                  <div class="td" role="cell" style="border-right-color: transparent;">
                     <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate(section)" @blur="unselectAll" @keyup.esc="unselectAll" required placeholder="Enter title...">
                   </div>
+		                	<div class="position-absolute" style="left:0; bottom:0; right:0; z-index:1; height: 1px; border-bottom: 1px solid var(--bib-light)"></div>
                 </div>
               </template>
 
@@ -909,11 +911,12 @@ export default {
   /*min-width: 1400px;*/
 }
 
+.table { display: table; table-layout: fixed; }
 .adv-table {
   min-width: 100%;
   font-size: $base-size;
-
-  .table, section { display: table; table-layout: fixed; }
+  
+  section { display: table; table-layout: fixed; }
   article { display: table-row-group; }
   
   .thead,
@@ -931,6 +934,8 @@ export default {
     vertical-align: middle;
     min-width: fit-content;
     white-space: nowrap;
+    transition: width;
+    will-change: width;
 
     &:not(:last-child) {
       border-right: 1px solid $light;
