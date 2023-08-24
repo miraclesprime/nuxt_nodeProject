@@ -148,7 +148,10 @@ export default {
         .then((sections) => {
           this.localdata = JSON.parse(JSON.stringify(sections))
           this.loading = false
+
+          this.$nuxt.$on("close-sidebar", (msg) => {
           this.$emit("update-key")
+          });
         })
         .catch(e => {
           console.log(e)

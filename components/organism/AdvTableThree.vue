@@ -377,16 +377,7 @@ export default {
       const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight+5 >= tableContainer.scrollHeight;
 
       if (isAtBottom) {
-        // this.lazyComponent = true;
-        //   new Promise((resolve) => {
-        //       setTimeout(() => {
                 this.showData();
-        //           resolve();
-        //       }, 100);
-        //   }).then(() => {
-        //       this.lazyComponent = false;
-        //   });
-    
           }
 
     },
@@ -454,7 +445,7 @@ export default {
       new Promise((resolve, reject) => {
         setTimeout(() => {
           resolve('Changed successfully!');
-        }, 1000)
+        }, 100)
       }).then(() => {
         this.isRendered = true;
       });
