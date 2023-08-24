@@ -355,7 +355,7 @@ export default {
       this.$router.push(this.$route.path)
       
       this.$store.commit("task/setExpandVisible",true)
-      this.$nuxt.$emit("close-sidebar")
+      this.$nuxt.$emit("close-expand")
     },
     closeSidebar(event) {
       let main = document.getElementById("main-content").className

@@ -191,19 +191,8 @@ export default {
         'Filter': filter
       }
     })
-    let data=res.data.data
-   await data.map(item=>{
-      if(item.id){
-        return item
-      }
-      else {
-        item['id']=res.data.length
-        return item
-      }
-    })
-    
-    store.dispatch('company/setCompanyTasks', data)
-    return { localData: data}
+    store.dispatch('company/setCompanyTasks', {data:res.data.data})
+    return { localData: res.data.data}
 
   },
 
@@ -212,7 +201,9 @@ export default {
       this.$nuxt.$on("update-key", (msg) => {
         this.updateKey()
       });
-
+      this.$nuxt.$on("close-expand", (msg) => {
+        this.updateKey()
+      });
       this.$nuxt.$on("user-picker", (payload) => {
         // emitted from <task-grid>
         this.showUserPicker(payload);
@@ -223,7 +214,11 @@ export default {
       });
     }
   },
-
+//   beforeDestroy() {
+//   if (process.client) {
+//     this.$nuxt.$off("close-expand", this.updateKey);
+//   }
+// },
   mounted() {
 
   if(process.client) {
@@ -238,9 +233,7 @@ export default {
       }
     }
     this.$store.dispatch("company/fetchInitialCompanyTasks",{filter:'all'})
-      this.$nuxt.$on("close-sidebar", (msg) => {
-        this.updateKey()
-      });
+
       setTimeout(() => {
         this.gridType=this.grid
       }, 300);

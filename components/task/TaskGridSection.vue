@@ -87,7 +87,7 @@ export default {
       newSectionName: '',
       newSectionLoader: false,
       newTask: false,
-      itemCount:6,
+      itemCount:8,
       newValue: [],
       allDataDisplayed: false,
       lastDisplayedIndex:{},
@@ -122,6 +122,15 @@ export default {
       deep: true, // Watch for changes in nested properties of tableData
       handler(newValue) {
         this.newValue=_.cloneDeep(newValue)
+    this.newValue.map(item=>{
+      if(item.id){
+        return item
+      }
+      else {
+        item['id']=this.newValue.length
+        return item
+      }
+    })
         this.$nextTick(() => {
           this.localdata=[]
           this.allDataDisplayed=false
@@ -185,7 +194,6 @@ export default {
       }
       const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight+5 >= tableContainer.scrollHeight;
       if (isAtBottom) {
-        // console.log("$$")
       this.showData(sectionId);
           }
 
@@ -213,11 +221,10 @@ export default {
         const selectedSection = allTasks.findIndex(ele => {
         const newObj = JSON.parse(JSON.stringify(ele));
           if (newObj.id === sectionId) {
-            console.log(newObj.id)
+            // console.log(newObj.id)
             return newObj;
           }
         });
-        console.log(selectedSection)
       // debugger
       const breakPoint = this.lastDisplayedIndex[allTasks[selectedSection].title];
 

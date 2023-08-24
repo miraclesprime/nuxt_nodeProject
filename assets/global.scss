@@ -651,7 +651,7 @@ ul {
 .mostly-customized-scrollbar::-webkit-scrollbar-thumb {
   border: 2px solid transparent;
   border-radius: 20px;
-
+  min-height: 100px;
   background: #e1d6d8;
 }
 
