@@ -24,8 +24,8 @@
         </div>
       </div>
       <div class="task-mid d-flex gap-05">
-        <status-badge v-if="task.status" :status="task.status"></status-badge>
-        <priority-badge v-if="task.priority" :priority="task.priority"></priority-badge>
+        <status-badge v-if="task.statusId" :status="task.status"></status-badge>
+        <priority-badge v-if="task.priorityId" :priority="task.priority"></priority-badge>
       </div>
       <div class="task-bottom " :id="'tg-bottom'+ task.id">
         <span v-if="task.userId" class="user-info" @click.stop="showUserPicker(task)">
