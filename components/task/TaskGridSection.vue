@@ -1,6 +1,6 @@
 <template>
   <div id="tgs-scroll" class="overflow-x-auto h-100 position-relative bg-light" style="min-height: 30rem;"  >
-    <draggable :list="newValue" class="d-flex " :move="moveSection" v-on:end="$emit('section-dragend', newValue)" handle=".section-drag-handle">
+    <draggable :list="localdata" class="d-flex " :move="moveSection" v-on:end="$emit('section-dragend', localdata)" handle=".section-drag-handle">
       <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${templateKey}${section.title}${section.id}`">
         <div class="w-100 d-flex align-center section-title-wrapper border-bottom-gray2 mb-075" :id="'tgs-inner-wrap-'+section.id" :class="{'active': sectionEdit}" >
           <task-grid-section-title :section="section" @update-title="renameSection"></task-grid-section-title>
@@ -89,7 +89,6 @@ export default {
       newTask: false,
       itemCount:6,
       newValue: [],
-      itemsPerPage: 20,
       allDataDisplayed: false,
       lastDisplayedIndex:{},
       dataDisplayed: false, 
@@ -125,8 +124,6 @@ export default {
         this.newValue=_.cloneDeep(newValue)
         this.$nextTick(() => {
           this.localdata=[]
-          // this.$refs.myTable.scrollTop=0
-          // this.lastDisplayedIndex={ groupIdx: -1, curIdxInGroup: -1}
           this.allDataDisplayed=false
           this.showData();
         });

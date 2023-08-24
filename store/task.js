@@ -214,6 +214,8 @@ export const actions = {
     const res = await this.$axios.$put("/task", payload, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
+    ctx.commit('setSingleTask', res.data)
+
     return res.data
     
   },
