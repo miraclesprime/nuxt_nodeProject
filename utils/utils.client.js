@@ -223,8 +223,14 @@ export default ({ store, app, context }, inject) => {
             const nextNextSunday = new Date(nextSunday.getTime() + 7 * oneDay); // get date of Sunday after next
             const changeDueDate=new Date (task.dueDate)
             const selectedDate = new Date(changeDueDate.toISOString().substring(0, 10));
+            
             selectedDate.setHours(0, 0, 0, 0);
+            if(selectedDate=="Wed Dec 31 1969 00:00:00 GMT-0500 (Eastern Standard Time)")
+            {
+              _dueDate="Unassigned";
+            }else
             if (selectedDate < lastSunday ) {
+              
               _dueDate=  "Past Due";
             } else if(todayTime.getTime() === selectedDate.getTime()){
               _dueDate="Today";
