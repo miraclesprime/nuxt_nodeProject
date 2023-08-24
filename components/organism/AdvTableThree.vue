@@ -458,7 +458,6 @@ export default {
         return 
       }
   
-
       Object.assign(this.previousIndex, this.lastDisplayedIndex);
       this.lastDisplayedIndex.groupIdx = i;
       this.lastDisplayedIndex.curIdxInGroup = start;
@@ -476,11 +475,7 @@ export default {
       // console.log(...arguments)
       const maxDate = new Date(duedate)
       return date < maxDate
-      /*if (date) {
-        return { from: new Date(duedate)}
-      } else {
-        return {}
-      }*/
+      
     },
     duedateValid(date, startdate) {
       // console.log(...arguments)
@@ -488,11 +483,7 @@ export default {
       const minDate = new Date(startdate);
       // const maxDate = new Date("2023-06-30");
       return date < minDate.setDate(minDate.getDate() - 1);
-      /*if (date) {
-        return { to: new Date(startdate)}
-      } else {
-        return {}
-      }*/
+      
     },
     collapseItem(sectionId) {
       let elem = this.$refs['sectionContent'+sectionId][0].$el
@@ -542,7 +533,6 @@ export default {
       // private data
       var self = this;
 
-      // console.log(table.children[0].children)
       // var dragColumns  = table.rows[0].cells; // first row columns, used for changing of width
       var dragColumns = table.children[0].children
       // console.log(dragColumns)
@@ -777,7 +767,6 @@ export default {
       this.localNewrow.show = false;
       this.akey+=1
       this.$emit("toggle-newsection", 'hide') //send any string to hide
-      // console.log('unselect all ')
       // this.$emit("hide-newrow")
       // this.$emit("close-context-menu")
       return 'success'
@@ -810,7 +799,7 @@ export default {
     newRowCreate: _.debounce(function(section) {
       // console.table([this.newRow.sectionId, this.newRow.title]);
       if (!this.localNewrow.title) {
-        console.warn("title is required")
+        // console.warn("title is required")
         this.validTitle = "alert"
         return false
       }

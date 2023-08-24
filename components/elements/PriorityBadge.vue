@@ -1,13 +1,15 @@
 <template>
-  <div :id="'priority-badge-'+compId" class="priority-badge d-flex gap-05 align-center px-05 shape-rounded" :style="{ 'background-color': hex2rgba(priorityOutput.color)}">
-    <strong :id="'priority-icon-'+compId" class="icon text-center " :style="{'color': priorityOutput.color}">!</strong>
-    <span v-if="priorityOutput.text && !iconOnly" :id="'priority-text'+compId" class="text-capitalize font-xs" :style="{'color': priorityOutput.color}">
+  <div :id="'priority-badge-'+compId" class="priority-badge gap-025 align-center px-05 shape-rounded" :style="{ 'background-color': $hex2rgba(priorityOutput.color, colors)}">
+    <!-- <strong :id="'priority-icon-'+compId" class="icon text-center " :style="{'color': priorityOutput.color}">!</strong> -->
+    <bib-icon icon="security-verified" :scale="0.8" :variant="priorityOutput.color"></bib-icon>
+    <span v-if="priorityOutput.text != '' && !iconOnly" :id="'priority-text'+compId" class="text-capitalize font-xs" :class="['text-'+priorityOutput.color]" >
       {{ priorityOutput.text }}
     </span>
   </div>
 </template>
 
 <script>
+import { PRIORITY } from '~/config/constants'
 export default {
 
   name: 'PriorityBadge',
@@ -24,17 +26,17 @@ export default {
   computed: {
     priorityOutput() {
       if (this.priority == null) {
-        return { text: "", color: this.colors.ColorVariants.Secondary }
+        return { text: "None", color: "secondary" }
       }
       switch (this.priority.id) {
         case 1:
-          return { text: this.priority.text, color: this.colors.ColorVariants.Danger }
+          return { text: this.priority.text, color: "danger" }
         case 2:
-          return { text: this.priority.text, color: this.colors.ColorVariants.Orange }
+          return { text: this.priority.text, color: "orange" }
         case 3:
-          return { text: this.priority.text, color: this.colors.ColorVariants.Success }
+          return { text: this.priority.text, color: "success" }
         default:
-          return { text: "", color: this.colors.ColorVariants.Secondary }
+          return { text: "None", color: "secondary" }
       }
     },
   	compId(){

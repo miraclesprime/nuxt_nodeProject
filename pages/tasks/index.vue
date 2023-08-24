@@ -39,13 +39,7 @@
           </div>
 
         <!-- user-picker for board view -->
-        <user-picker
-          :show="userPickerOpen"
-          :coordinates="popupCoords"
-          @selected="
-            updateAssignee('Assignee', 'userId', $event.id, $event.label)
-          "
-          @close="userPickerOpen = false"
+        <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"
         ></user-picker>
 
         <!-- date-picker for board view -->
@@ -421,6 +415,7 @@ export default {
     },
 
     updateAssignee(label, field, value, historyText) {
+      console.log(...arguments)
       let user;
       if (field == "userId" && value != "") {
         user = this.teamMembers.filter((t) => t.id == value);
@@ -428,12 +423,13 @@ export default {
         user = null;
       }
       this.userPickerOpen = false;
+      console.log(user)
 
       this.$store
         .dispatch("task/updateTask", {
           id: this.activeTask.id,
           data: { [field]: value },
-          user: user ? [user] : null,
+          user,
           text: `changed ${label} to ${historyText}`,
         })
         .then((t) => {
