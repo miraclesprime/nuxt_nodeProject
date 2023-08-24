@@ -60,8 +60,7 @@
                   </div>
                 </div>
               </div>
-              
-            </div>
+          </div>
 
             <draggable class="section-content" tag="article" :list="section.tasks" :group="{ name: 'tasks' }" :data-section="section.id" :ref="'sectionContent' + section.id" @end="rowDragEnd">
               <div v-for="(item, itemIdx) in section.tasks" :key="item.id" ref="trdata" role="row" class="tr sortable drag-item" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
@@ -738,6 +737,7 @@ export default {
     },
 
     sectionDragend(newValue){
+      // console.log(newValue)
       this.$emit('section-dragend', newValue)
     },
     
