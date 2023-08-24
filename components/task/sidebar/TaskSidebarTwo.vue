@@ -682,6 +682,7 @@ export default {
         unsecuredCopyToClipboard(url);
       }
     },
+    
     async getTags(){
       if (this.form.id) {
         const tags = await this.$axios.get("/tag/task/"+this.form.id, {
@@ -695,6 +696,7 @@ export default {
         }
       }
     },
+
     addTag(tag){
       if (tag.id) {
         // console.log('existing tag->', tag.id, tag.content)
@@ -739,6 +741,7 @@ export default {
         }
       }
     },
+
     removeTag(tag){
       // console.log(tag)
       this.$axios.delete("/tag/remove-from-task", {
