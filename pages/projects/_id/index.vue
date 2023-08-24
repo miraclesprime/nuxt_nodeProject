@@ -131,6 +131,7 @@ export default {
       value: {
         files: []
       },
+      projectId: null,
       editMessage: {},
       projectModalTitle: '',
       projectModalContent: '',
