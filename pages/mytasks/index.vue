@@ -209,8 +209,10 @@ export default {
       }
     }
     this.$store.dispatch("todo/setMyfetchTodos")
-      setTimeout(() => {
+    this.$nuxt.$on("close-sidebar", (msg) => {
         this.updateKey()
+      });
+      setTimeout(() => {
         this.gridType=this.grid
       }, 10);
     
