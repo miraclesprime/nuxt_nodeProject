@@ -414,6 +414,7 @@ export const PROJECT_TEAM_FIELDS = [
 export const PROJECT_GROUP = [
   { label: 'Default', key:'default' },
   { label: 'Priority', key:'priority' },
+  { label: 'Difficulty', key:'difficulty' },
   { label: 'Status', key:'status' },
   { label: 'Assignee', key:'assignee' },
   { label: 'Department', key:'department' },
@@ -436,6 +437,7 @@ export const TASK_GROUP = [
   { label: 'Default', key:'default' },
   { label: 'Project', key:'project' },
   { label: 'Priority', key:'priority' },
+  { label: 'Difficulty', key:'difficulty' },
   { label: 'Assignee', key:'assignee' },
   { label: 'Status', key:'status' },
   { label: 'Department', key:'department' },
@@ -445,6 +447,7 @@ export const MY_TASK_GROUP = [
   { label: 'Default', key:'default' },
   { label: 'Project', key:'project' },
   { label: 'Department', key:'department' },
+  { label: 'Difficulty', key:'difficulty' },
   { label: 'Priority', key:'priority' },
   { label: 'Status', key:'status' },
   { label: 'Due Date', key:'dueDate' },
