@@ -78,26 +78,36 @@ export default {
     if (this.project?.id) {
       this.fetchComments()
     } else {
-      this.showPlaceholder = true
-      this.$store.dispatch("project/fetchProjectComments", { id: this.selectedProject?.id }).then(c => {
-        this.comments = c.data
-        this.fetchHistory()
-        this.showPlaceholder = false
-      }).catch(e => {
-        console.warn(e)
-        this.showPlaceholder = false
-      })
+      // this.showPlaceholder = true
+      if (this.selectedProject?.id) {
+        this.$store.dispatch("project/fetchProjectComments", { id: this.selectedProject?.id }).then(c => {
+          this.comments = c.data
+          this.fetchHistory()
+          this.showPlaceholder = false
+        }).catch(e => {
+          console.warn(e)
+          this.showPlaceholder = false
+        })
+      } else {
+        this.comments = []
+      }
+      // this.comments = []
     }
   },
   methods: {
     fetchComments() {
-      this.$store.dispatch("project/fetchProjectComments", { id: this.project?.id })
-      .then(c => {
-        this.comments = c.data
-        this.fetchHistory()
-      }).catch(e => {
-        console.warn(e)
-      })
+      if (this.project?.id) {
+        this.$store.dispatch("project/fetchProjectComments", { id: this.project?.id })
+        .then(c => {
+          this.comments = c.data
+          this.fetchHistory()
+        }).catch(e => {
+          console.warn(e)
+        })
+      } else {
+        this.comments = []
+      }
+      // this.comments = []
     },
     fetchHistory() {
       this.$store.dispatch("project/fetchHistory", this.project)

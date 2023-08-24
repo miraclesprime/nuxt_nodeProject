@@ -1,19 +1,18 @@
 <template>
   <client-only>
     <div id="page" class="mytask-page-wrapper ">
-      <page-title title="My Tasks"></page-title>
+      <page-title title="My Tasks" :count="localdata.length"></page-title>
 
       <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" :group="groupby" @myTaskGroup="myTaskGroup($event)" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="toggleNewsection" @change-grid-type="($event)=>gridType = $event" @search-mytasks="searchTasks"></user-tasks-actions>
 
         <!-- <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form> -->
         <div v-show="gridType == 'list'" id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative " :style="{ 'width': contentWidth }">
-          
-          <!-- <adv-table-two :tableFields="taskFields" :tableData="localdata" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @title-click="openSidebar" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="newSection = $event" @create-section="createTodo" @edit-section="renameTodo" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd" :drag="dragTable"></adv-table-two> -->
 
-          <adv-table-three :tableFields="taskFields" :tableData="localdata" :lazyComponent="true" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @title-click="openSidebar" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createTodo" @edit-section="renameTodo" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd" :drag="dragTable" :key="templateKey" :editSection="groupby"></adv-table-three>
+          <adv-table-three :tableFields="taskFields" :tableData="localdata" :lazyComponent="true" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @title-click="openSidebar" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createTodo" @edit-section="renameTodo" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd" :drag="true" :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
               
           <!-- <loading :loading="loading"></loading> -->
             
+
         </div>
 
         <div v-show="gridType == 'grid'" id="tgs-scroll" class="bg-light grid-wrapper h-100 position-relative" :style="{ 'width': contentWidth }">
@@ -74,6 +73,8 @@
         <!-- <dept-picker :show="deptPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Department', field:'departmentId', value: $event.value, historyText: $event.label })" @close="deptPickerOpen = false"></dept-picker> -->
 
         <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
+
+          <!-- <loading :loading="loading"></loading> -->
 
         <bib-popup-notification-wrapper>
           <template #wrapper>
@@ -208,8 +209,10 @@ export default {
       }
     }
     this.$store.dispatch("todo/setMyfetchTodos")
-      setTimeout(() => {
+    this.$nuxt.$on("close-sidebar", (msg) => {
         this.updateKey()
+      });
+      setTimeout(() => {
         this.gridType=this.grid
       }, 10);
     
@@ -714,7 +717,7 @@ export default {
     },
 
     todoDragEnd: _.debounce(async function(todos) {
-      console.log(todos)
+      this.loading = true;
       todos.forEach((el, i) => {
         el.uOrder = i
       })
@@ -734,10 +737,11 @@ export default {
       this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
         if (res.statusCode == 200) {
           this.key += 1
+          this.loading = false;
         }
       })
 
-    }, 400),
+    }, 600),
 
     filterView($event) {
       this.$store.commit('task/setFilterView', {filter:$event})

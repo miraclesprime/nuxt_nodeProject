@@ -131,6 +131,7 @@ export default {
       value: {
         files: []
       },
+      projectId: null,
       editMessage: {},
       projectModalTitle: '',
       projectModalContent: '',
@@ -241,6 +242,14 @@ export default {
 
   async mounted() {
     if (process.client) {
+
+      // const text = "projects" + this.$route.params.id;
+      // this.projectId = this.$route.params.id;
+      // const hexEncoded = Buffer.from(text).toString('hex');
+
+      // const locationHref = window.location.href;
+      // const newUrl = locationHref.split(`/${this.$route.params.id}`)[0] + `/${hexEncoded}`
+      // history.pushState(null, null, newURL);
 
       let p = JSON.parse(JSON.stringify(this.project))
 

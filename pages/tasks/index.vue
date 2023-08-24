@@ -17,7 +17,7 @@
           <div v-if="gridType === 'list'" class="h-100">
             <!-- <template v-if="!showPlaceholder"> -->
               
-              <adv-table-three :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable" :key="templateKey" :editSection="group" :lazyComponent="lazyComponent"></adv-table-three>
+              <adv-table-three :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable" :key="templateKey" :editSection="group" :lazyComponent="lazyComponent" :filter="filterViews"></adv-table-three>
           
           </div>
         
@@ -39,13 +39,7 @@
           </div>
 
         <!-- user-picker for board view -->
-        <user-picker
-          :show="userPickerOpen"
-          :coordinates="popupCoords"
-          @selected="
-            updateAssignee('Assignee', 'userId', $event.id, $event.label)
-          "
-          @close="userPickerOpen = false"
+        <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"
         ></user-picker>
 
         <!-- date-picker for board view -->
@@ -57,7 +51,7 @@
           @close="datePickerOpen = false"
         ></inline-datepicker>
 
-        <!-- <loading :loading="loading"></loading> -->
+        <loading :loading="loading"></loading>
         <!-- popup notification -->
         <bib-popup-notification-wrapper>
           <template #wrapper>
@@ -238,11 +232,12 @@ export default {
       }
     }
     this.$store.dispatch("company/fetchInitialCompanyTasks",{filter:'all'})
-      this.updateKey()
+      this.$nuxt.$on("close-sidebar", (msg) => {
+        this.updateKey()
+      });
       setTimeout(() => {
         this.gridType=this.grid
-        this.lazyComponent = true
-      }, 200);
+      }, 300);
   }
   
   },
@@ -427,6 +422,7 @@ export default {
     },
 
     updateAssignee(label, field, value, historyText) {
+      console.log(...arguments)
       let user;
       if (field == "userId" && value != "") {
         user = this.teamMembers.filter((t) => t.id == value);
@@ -434,12 +430,13 @@ export default {
         user = null;
       }
       this.userPickerOpen = false;
+      console.log(user)
 
       this.$store
         .dispatch("task/updateTask", {
           id: this.activeTask.id,
           data: { [field]: value },
-          user: user ? [user] : null,
+          user,
           text: `changed ${label} to ${historyText}`,
         })
         .then((t) => {
@@ -581,7 +578,7 @@ export default {
     //group by
     taskGroup($event) {
       this.group = $event
-      // this.lazyComponent = false
+      this.lazyComponent = false
       if($event != 'default') {
         this.dragTable = false;
       } else {
@@ -590,7 +587,7 @@ export default {
         this.$store.commit('company/groupTasks',{sName:"department"})
         return;
       }
-      // this.lazyComponent = true
+      this.lazyComponent = true
       this.$store.commit('company/groupTasks',{sName:this.group})
       },
     // Sort By Action List
@@ -723,12 +720,15 @@ export default {
     },
 
     sectionDragEnd: _.debounce(async function (payload) {
-      this.loading = true;
+      // this.loading = true;
 
       let clone = _.cloneDeep(payload);
       clone.forEach((el, i) => {
         el.order = i;
       });
+
+      console.log(clone)
+      // this.$store.dispatch("company/setCompanyTasks",{data:clone})
 
       let sectionDnD = await this.$axios.$put(
         "/department/dragdrop",
@@ -740,12 +740,11 @@ export default {
           },
         }
       );
+      // if (sectionDnD.statusCode == 200) {
+      //   this.updateKey()
+      // }
 
-      if (sectionDnD.statusCode == 200) {
-        this.updateKey()
-      }
-
-      this.loading = false;
+      // this.loading = false;
     }, 600),
 
     taskDragEnd: _.debounce(async function (payload) {

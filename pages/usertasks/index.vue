@@ -15,7 +15,7 @@
     
       <div v-show="gridType == 'list'" id="task-table-wrapper" class="listview h-100 position-relative" :style="{ 'width': contentWidth }">  
         <div v-if="groupVisible" class="h-100">
-          <adv-table-three :tableFields="taskFields" :tableData="localData" :lazyComponent="true" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" @create-row="createTask" :drag="false" :key="templateKey" :editSection="groupBy"></adv-table-three>              
+          <adv-table-three :tableFields="taskFields" :tableData="localData" :lazyComponent="true" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" @create-row="createTask" :drag="false" :key="templateKey" :editSection="groupBy"  ></adv-table-three>              
         </div>
         <div v-else class="h-100">
           <advance-table :tableFields="taskFields" :tableData="localData" :lazyComponent="true" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" sectionTitle="" :drag="false" :key="templateKey"></advance-table>
@@ -535,11 +535,8 @@ export default {
       })
       .then(async (t) => {
         // console.log("tt",t)
-        if (t.statusCode == 200) {
           this.updateKey();
-        } else {
-          console.warn(t);
-        }
+    
       })
       .catch((e) => console.warn(e));
      

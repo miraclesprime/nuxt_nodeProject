@@ -355,6 +355,7 @@ export default {
       this.$router.push(this.$route.path)
       
       this.$store.commit("task/setExpandVisible",true)
+      this.$nuxt.$emit("close-sidebar")
     },
     closeSidebar(event) {
       let main = document.getElementById("main-content").className
@@ -682,6 +683,7 @@ export default {
         unsecuredCopyToClipboard(url);
       }
     },
+    
     async getTags(){
       if (this.form.id) {
         const tags = await this.$axios.get("/tag/task/"+this.form.id, {
@@ -695,6 +697,7 @@ export default {
         }
       }
     },
+
     addTag(tag){
       if (tag.id) {
         // console.log('existing tag->', tag.id, tag.content)
@@ -739,6 +742,7 @@ export default {
         }
       }
     },
+
     removeTag(tag){
       // console.log(tag)
       this.$axios.delete("/tag/remove-from-task", {

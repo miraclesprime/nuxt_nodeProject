@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <div id="proj-overview-wrapper" class="row ">
+    <div id="proj-overview-wrapper" class="row " >
       <div id="proj-overview-inner" class="overview-wrapper mx-auto position-relative">
         <div class="d-flex align-center gap-05" id="proj-overview-bib-avatar-wrap">
           <div class="width-2 height-2 d-inline-flex align-center justify-center cursor-pointer" id="proj-overview-bib-avatar-inner-wrap">

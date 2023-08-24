@@ -98,6 +98,54 @@ export default ({ store, app, context }, inject) => {
           return _data
      
        }
+       if (group == "difficulty") {
+        arr.sort((a,b)=>{
+          if (a.difficultyId === null && b.difficultyId !== null) {
+            return 1;
+          }
+          if (b.difficultyId === null && a.difficultyId !== null) {
+            return -1;
+          }
+          if (a.difficultyId === null && b.difficultyId === null) {
+            return 0;
+          }
+          return b.difficultyId - a.difficultyId;
+        })  
+          const groupByDifficulty = arr.reduce((acc, task) => {
+            let difficulty = '';
+
+            switch (task.difficultyId) {
+              case 3:
+                difficulty = 'Hard';
+                break;
+              case 2:
+                difficulty = 'Medium';
+                break;
+              case 1:
+                difficulty = 'Easy';
+                break;
+              default:
+                difficulty = 'Unassigned';
+                break;
+            }
+            
+            if (!acc[difficulty]) {
+              acc[difficulty] = [];
+            }
+            acc[difficulty].push(task);
+            return acc;
+          }, {});
+          let groupIndex = 0;
+          for (const key in groupByDifficulty) {
+            _tasks.push({
+              id: groupIndex,
+              title: key,
+              tasks: groupByDifficulty[key]
+            });
+            groupIndex++;
+          }
+          return _tasks
+      }
         if (group == "department") {
           arr.sort((a,b)=>{
             if (a.departmentId === null && b.departmentId !== null) {
@@ -175,8 +223,14 @@ export default ({ store, app, context }, inject) => {
             const nextNextSunday = new Date(nextSunday.getTime() + 7 * oneDay); // get date of Sunday after next
             const changeDueDate=new Date (task.dueDate)
             const selectedDate = new Date(changeDueDate.toISOString().substring(0, 10));
+            
             selectedDate.setHours(0, 0, 0, 0);
+            if(selectedDate=="Wed Dec 31 1969 00:00:00 GMT-0500 (Eastern Standard Time)")
+            {
+              _dueDate="Unassigned";
+            }else
             if (selectedDate < lastSunday ) {
+              
               _dueDate=  "Past Due";
             } else if(todayTime.getTime() === selectedDate.getTime()){
               _dueDate="Today";
