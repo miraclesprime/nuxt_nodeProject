@@ -440,7 +440,7 @@ export default {
         .dispatch("task/updateTask", {
           id: this.activeTask.id,
           data: { [field]: value },
-          user: user ? [user] : null,
+          user: user ? user : null,
           text: `changed ${label} to ${historyText}`,
         })
         .then((t) => {
