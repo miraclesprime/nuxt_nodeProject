@@ -414,13 +414,19 @@ export const PROJECT_TEAM_FIELDS = [
 export const PROJECT_GROUP = [
   { label: 'Default', key:'default' },
   { label: 'Priority', key:'priority' },
+  { label: 'Status', key:'status' },
+  { label: 'Assignee', key:'assignee' },
+  { label: 'Department', key:'department' },
+  { label: 'Due Date', key: 'dueDate' },
+]
+export const SINGLE_PROJECT_GROUP = [
+  { label: 'Default', key:'default' },
+  { label: 'Priority', key:'priority' },
   { label: 'Difficulty', key:'difficulty' },
   { label: 'Status', key:'status' },
   { label: 'Assignee', key:'assignee' },
   { label: 'Department', key:'department' },
   { label: 'Due Date', key: 'dueDate' },
-  
-  
 ]
 export const TASK_SORT = [
   { label: 'Name', key: 'title' },
