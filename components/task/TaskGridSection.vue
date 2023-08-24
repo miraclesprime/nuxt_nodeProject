@@ -87,7 +87,7 @@ export default {
       newSectionName: '',
       newSectionLoader: false,
       newTask: false,
-      itemCount:8,
+      itemCount:9,
       newValue: [],
       allDataDisplayed: false,
       lastDisplayedIndex:{},
@@ -340,7 +340,7 @@ export default {
 }
 
 .section-draggable {
-  min-height: calc(100vh - 260px);
+  // min-height: calc(100vh - 260px);
   border-radius: 3px;
 }
 
