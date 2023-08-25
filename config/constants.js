@@ -179,11 +179,11 @@ export const TASK_FIELDS = [
       isActive: false
     }
   },
-  {
-    key: "tag",
-    label: "Tag",
-    width: '150px',
-  },
+  // {
+  //   key: "tag",
+  //   label: "Tag",
+  //   width: '150px',
+  // },
   {
     key: "startDate",
     label: "Start Date",
@@ -946,11 +946,11 @@ export const COMPANY_TASK_FIELDS = [
       isActive: false
     }
   },
-  {
-    label: 'Tag',
-    key: 'tag',
-    width: '150px',
-  },
+  // {
+  //   label: 'Tag',
+  //   key: 'tag',
+  //   width: '150px',
+  // },
   {
     label: 'Start Date',
     key: 'startDate',
@@ -1043,11 +1043,11 @@ export const USER_TASKS = [
       isActive: true
     }
   },
-  {
-    label: 'Tag',
-    key: 'tag',
-    width: '150px',
-  },
+  // {
+  //   label: 'Tag',
+  //   key: 'tag',
+  //   width: '150px',
+  // },
   {
     label: 'Start Date',
     key: 'startDate',

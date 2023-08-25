@@ -1,7 +1,7 @@
 <template>
   <client-only>
     <div id="page" class="mytask-page-wrapper ">
-      <page-title title="My Tasks" :count="localdata.length"></page-title>
+      <page-title title="My Tasks" :count="taskcount"></page-title>
 
       <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" :group="groupby" @myTaskGroup="myTaskGroup($event)" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="toggleNewsection" @change-grid-type="($event)=>gridType = $event" @search-mytasks="searchTasks"></user-tasks-actions>
 
@@ -22,7 +22,7 @@
                 <input type="text" ref="newsectioninput" class="editable-input" placeholder="Enter title" @input="debounceNewSection($event.target.value, $event)" @focus.stop="">
               </div>
             </div>
-            <div class="task-grid-section" v-for="(todo, index) in localdata" :key="index + viewName + '-' + key">
+            <div class="task-grid-section" v-for="(todo, index) in localdata" :key="index + viewName + '-' + key" style="padding-bottom: 0px !important;">
               <div class="w-100 d-flex justify-between bg-light" style="margin-bottom: 10px; position: sticky; top: 0; z-index: 2;">
                 <task-grid-section-title :section="todo" @update-title="renameTodo"></task-grid-section-title>
                 <div class="d-flex align-center section-options" :id="'tg-section-options-'+todo.id">
@@ -47,8 +47,8 @@
                   </bib-popup>
                 </div>
               </div>
-              <div class="task-section__body h-100" >
-                <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="gridTaskDragend" style="height: calc(100vh - 275px) !important;overflow: auto" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
+              <div class="task-section__body h-100"  style="height: calc(100vh - 230px) !important;overflow: hidden">
+                <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="gridTaskDragend"  style="height: calc(100vh - 230px) !important;overflow: auto" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
                   <template v-for="(task, index) in todo.tasks">
                     <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker"></task-grid>
                   </template>
@@ -108,7 +108,15 @@ export default {
       gridType: 'list',
       viewName: null,
       sortName: null,
-      orderBy: 'desc',
+      dueDateSort: 'asc',
+      startDateSort: 'asc',
+      departmentSort: 'asc',
+      prioritySort: 'asc',
+      statusSort: 'asc',
+      titleSort: 'asc',
+      userSort: 'asc',
+      projectSort: 'asc',
+      difficultySort: 'asc',
       flag: false,
       key: 11,
       templateKey: 0,
@@ -153,7 +161,10 @@ export default {
       filterViews :'task/getFilterView',
       expandVisible:"task/getExpandVisible",
       grid:"todo/getGridType"
-    })
+    }),
+    taskcount(){
+      return this.todos.reduce((acc, td) => acc + td.tasks.length, 0)
+    },
   },
 
   watch: {
@@ -209,12 +220,13 @@ export default {
       }
     }
     this.$store.dispatch("todo/setMyfetchTodos")
-    this.$nuxt.$on("close-sidebar", (msg) => {
-        this.updateKey()
-      });
+    // this.$nuxt.$on("close-sidebar", (msg) => {
+    //     this.updateKey()
+    //   });
+    this.updateKey()
       setTimeout(() => {
         this.gridType=this.grid
-      }, 10);
+      }, 300);
     
   },
 
@@ -749,14 +761,130 @@ export default {
 
     },
 
+    resetOtherSorts(sName) {
+
+      switch (sName) {
+        case 'title':
+          this.statusSort = 'asc';
+          this.userSort = 'asc';
+          this.prioritySort = 'asc';
+          this.departmentSort = 'asc';
+          this.startDateSort = 'asc';
+          this.dueDateSort = 'asc';
+          this.difficultySort = 'asc';
+          this.projectSort = 'asc';
+          break;
+      
+        case 'userId':
+          this.statusSort = 'asc';
+          this.titleSort = 'asc';
+          this.prioritySort = 'asc';
+          this.departmentSort = 'asc';
+          this.startDateSort = 'asc';
+          this.dueDateSort = 'asc';
+          this.difficultySort = 'asc';
+          this.projectSort = 'asc';
+          break;
+        
+        case 'status':
+          this.titleSort = 'asc';
+          this.userSort = 'asc';
+          this.prioritySort = 'asc';
+          this.departmentSort = 'asc';
+          this.startDateSort = 'asc';
+          this.dueDateSort = 'asc';
+          this.difficultySort = 'asc';
+          this.projectSort = 'asc';
+          break;
+
+        case 'priority':
+          this.statusSort = 'asc';
+          this.userSort = 'asc';
+          this.titleSort = 'asc';
+          this.departmentSort = 'asc';
+          this.startDateSort = 'asc';
+          this.dueDateSort = 'asc';
+          this.difficultySort = 'asc';
+          this.projectSort = 'asc';
+          break;
+
+        case 'department':
+          this.statusSort = 'asc';
+          this.userSort = 'asc';
+          this.prioritySort = 'asc';
+          this.titleSort = 'asc';
+          this.startDateSort = 'asc';
+          this.dueDateSort = 'asc';
+          this.difficultySort = 'asc';
+          this.projectSort = 'asc';
+          break;
+
+        case 'startDate':
+          this.statusSort = 'asc';
+          this.userSort = 'asc';
+          this.prioritySort = 'asc';
+          this.departmentSort = 'asc';
+          this.titleSort = 'asc';
+          this.dueDateSort = 'asc';
+          this.difficultySort = 'asc';
+          this.projectSort = 'asc';
+          break;
+
+        case 'dueDate':
+          this.statusSort = 'asc';
+          this.userSort = 'asc';
+          this.prioritySort = 'asc';
+          this.departmentSort = 'asc';
+          this.startDateSort = 'asc';
+          this.titleSort = 'asc';
+          this.difficultySort = 'asc';
+          this.projectSort = 'asc';
+          break;
+
+        case 'project': 
+          this.statusSort = 'asc';
+          this.userSort = 'asc';
+          this.prioritySort = 'asc';
+          this.departmentSort = 'asc';
+          this.startDateSort = 'asc';
+          this.dueDateSort = 'asc';
+          this.difficultySort = 'asc';
+          this.titleSort = 'asc';
+          break;
+
+        case 'difficultyId':
+          this.statusSort = 'asc';
+          this.userSort = 'asc';
+          this.prioritySort = 'asc';
+          this.departmentSort = 'asc';
+          this.startDateSort = 'asc';
+          this.dueDateSort = 'asc';
+          this.titleSort = 'asc';
+          this.projectSort = 'asc';
+          break;
+
+        default:
+          this.statusSort = 'asc';
+          this.userSort = 'asc';
+          this.prioritySort = 'asc';
+          this.departmentSort = 'asc';
+          this.startDateSort = 'asc';
+          this.dueDateSort = 'asc';
+          this.difficultySort = 'asc';
+          this.projectSort = 'asc';
+          this.titleSort = 'asc';
+          break;
+      }
+    },
+
     // Sort By Action List
     sortBy($event) {
       // sort by title
+        let newArr = JSON.parse(JSON.stringify(this.localdata))
+      
       if ($event == 'title') {
-
-          let newArr = JSON.parse(JSON.stringify(this.localdata))
        
-          if (this.orderBy == "asc") {
+          if (this.titleSort == "asc") {
 
               newArr.forEach(todo => {
                 todo["tasks"] = todo.tasks.sort((a, b) => {
@@ -765,6 +893,8 @@ export default {
                   }
                 })
               })
+
+              this.titleSort = 'desc'
 
           } else {
 
@@ -775,8 +905,10 @@ export default {
                   }
                 })
               })
+            this.titleSort = 'asc'
           }
 
+          this.resetOtherSorts($event);
           this.localdata = newArr; 
       }
 
@@ -785,20 +917,20 @@ export default {
       
           let newArr1 = [];
 
-          for (let i = 0; i < this.localdata.length; i++) {
-            newArr1.push(this.localdata[i]);
+          for (let i = 0; i < newArr.length; i++) {
+            newArr1.push(newArr[i]);
             let tNewArr = []
-            for(let j=0; j<this.localdata[i].tasks.length; j++) {
-              if (this.localdata[i].tasks[j].project.length > 0) {
-                tNewArr.unshift(this.localdata[i].tasks[j])
+            for(let j=0; j<newArr[i].tasks.length; j++) {
+              if (newArr[i].tasks[j].project.length > 0) {
+                tNewArr.unshift(newArr[i].tasks[j])
               } else {
-                tNewArr.push(this.localdata[i].tasks[j])
+                tNewArr.push(newArr[i].tasks[j])
               }
             }
             newArr1[i]["tasks"] = tNewArr;
           }
 
-          if (this.orderBy == "asc") {
+          if (this.projectSort == "asc") {
 
               newArr1.forEach(todo => {
                 todo["tasks"] = todo.tasks.sort((a, b) => {
@@ -807,6 +939,8 @@ export default {
                   }
                 })
               })
+
+              this.projectSort = 'desc'
 
           } else {
 
@@ -817,8 +951,11 @@ export default {
                   }
                 })
               })
+
+              this.projectSort = 'asc'
           }
 
+          this.resetOtherSorts($event)
           this.localdata = newArr1;  
       }
 
@@ -828,20 +965,20 @@ export default {
 
           let newArr2 = [];
 
-          for (let i = 0; i < this.localdata.length; i++) {
-            newArr2.push(this.localdata[i]);
+          for (let i = 0; i < newArr.length; i++) {
+            newArr2.push(newArr[i]);
             let tNewArr = []
-            for(let j=0; j<this.localdata[i].tasks.length; j++) {
-              if (this.localdata[i].tasks[j].statusId) {
-                tNewArr.unshift(this.localdata[i].tasks[j])
+            for(let j=0; j<newArr[i].tasks.length; j++) {
+              if (newArr[i].tasks[j].statusId) {
+                tNewArr.unshift(newArr[i].tasks[j])
               } else {
-                tNewArr.push(this.localdata[i].tasks[j])
+                tNewArr.push(newArr[i].tasks[j])
               }
             }
             newArr2[i]["tasks"] = tNewArr;
           }
 
-          if (this.orderBy == "asc") {
+          if (this.statusSort == "asc") {
 
               newArr2.forEach(todo => {
                 todo["tasks"] = todo.tasks.sort((a, b) => {
@@ -850,6 +987,8 @@ export default {
                   }
                 })
               })
+
+              this.statusSort = 'desc'
 
           } else {
 
@@ -860,8 +999,11 @@ export default {
                   }
                 })
               })
+
+              this.statusSort = 'asc'
           }
 
+          this.resetOtherSorts($event);
           this.localdata = newArr2;
 
       }
@@ -871,20 +1013,20 @@ export default {
 
         let newArr3 = [];
 
-        for (let i = 0; i < this.localdata.length; i++) {
-          newArr3.push(this.localdata[i]);
+        for (let i = 0; i < newArr.length; i++) {
+          newArr3.push(newArr[i]);
           let tNewArr = []
-          for(let j=0; j<this.localdata[i].tasks.length; j++) {
-            if (this.localdata[i].tasks[j].startDate) {
-              tNewArr.unshift(this.localdata[i].tasks[j])
+          for(let j=0; j<newArr[i].tasks.length; j++) {
+            if (newArr[i].tasks[j].startDate) {
+              tNewArr.unshift(newArr[i].tasks[j])
             } else {
-              tNewArr.push(this.localdata[i].tasks[j])
+              tNewArr.push(newArr[i].tasks[j])
             }
           }
           newArr3[i]["tasks"] = tNewArr;
         }
 
-        if (this.orderBy == "asc") {
+        if (this.startDateSort == "asc") {
 
             newArr3.forEach(todo => {
               todo["tasks"] = todo.tasks.sort((a, b) => {
@@ -893,6 +1035,8 @@ export default {
                 }
               })
             })
+            
+            this.startDateSort = 'desc'
 
         } else {
 
@@ -903,8 +1047,11 @@ export default {
                 }
               })
             })
+
+            this.startDateSort = 'asc'
         }
 
+        this.resetOtherSorts($event);
         this.localdata = newArr3;
       }
 
@@ -913,20 +1060,20 @@ export default {
       if ($event == 'dueDate') {
         let newArr4 = [];
 
-        for (let i = 0; i < this.localdata.length; i++) {
-          newArr4.push(this.localdata[i]);
+        for (let i = 0; i < newArr.length; i++) {
+          newArr4.push(newArr[i]);
           let tNewArr = []
-          for(let j=0; j<this.localdata[i].tasks.length; j++) {
-            if (this.localdata[i].tasks[j].dueDate) {
-              tNewArr.unshift(this.localdata[i].tasks[j])
+          for(let j=0; j<newArr[i].tasks.length; j++) {
+            if (newArr[i].tasks[j].dueDate) {
+              tNewArr.unshift(newArr[i].tasks[j])
             } else {
-              tNewArr.push(this.localdata[i].tasks[j])
+              tNewArr.push(newArr[i].tasks[j])
             }
           }
           newArr4[i]["tasks"] = tNewArr;
         }
 
-        if (this.orderBy == "asc") {
+        if (this.dueDateSort == "asc") {
 
             newArr4.forEach(todo => {
               todo["tasks"] = todo.tasks.sort((a, b) => {
@@ -935,6 +1082,8 @@ export default {
                 }
               })
             })
+
+            this.dueDateSort = 'desc'
 
         } else {
 
@@ -945,8 +1094,11 @@ export default {
                 }
               })
             })
+
+            this.dueDateSort = 'asc'
         }
 
+        this.resetOtherSorts($event);
         this.localdata = newArr4;
       }
 
@@ -955,20 +1107,20 @@ export default {
       if ($event == "priority") {
         let newArr5 = [];
 
-          for (let i = 0; i < this.localdata.length; i++) {
-            newArr5.push(this.localdata[i]);
+          for (let i = 0; i < newArr.length; i++) {
+            newArr5.push(newArr[i]);
             let tNewArr = []
-            for(let j=0; j<this.localdata[i].tasks.length; j++) {
-              if (this.localdata[i].tasks[j].priorityId) {
-                tNewArr.unshift(this.localdata[i].tasks[j])
+            for(let j=0; j<newArr[i].tasks.length; j++) {
+              if (newArr[i].tasks[j].priorityId) {
+                tNewArr.unshift(newArr[i].tasks[j])
               } else {
-                tNewArr.push(this.localdata[i].tasks[j])
+                tNewArr.push(newArr[i].tasks[j])
               }
             }
             newArr5[i]["tasks"] = tNewArr;
           }
 
-          if (this.orderBy == "asc") {
+          if (this.prioritySort == "asc") {
 
               newArr5.forEach(todo => {
                 todo["tasks"] = todo.tasks.sort((a, b) => {
@@ -977,6 +1129,8 @@ export default {
                   }
                 })
               })
+
+              this.prioritySort = 'desc'
 
           } else {
 
@@ -987,8 +1141,11 @@ export default {
                   }
                 })
               })
+
+              this.prioritySort = 'asc'
           }
 
+          this.resetOtherSorts($event);
           this.localdata = newArr5;
       }
 
@@ -996,20 +1153,20 @@ export default {
       if ($event == "department") {
         let newArr6 = [];
 
-        for (let i = 0; i < this.localdata.length; i++) {
-          newArr6.push(this.localdata[i]);
+        for (let i = 0; i < newArr.length; i++) {
+          newArr6.push(newArr[i]);
           let tNewArr = []
-          for(let j=0; j<this.localdata[i].tasks.length; j++) {
-            if (this.localdata[i].tasks[j].departmentId) {
-              tNewArr.unshift(this.localdata[i].tasks[j])
+          for(let j=0; j<newArr[i].tasks.length; j++) {
+            if (newArr[i].tasks[j].departmentId) {
+              tNewArr.unshift(newArr[i].tasks[j])
             } else {
-              tNewArr.push(this.localdata[i].tasks[j])
+              tNewArr.push(newArr[i].tasks[j])
             }
           }
           newArr6[i]["tasks"] = tNewArr;
         }
 
-        if (this.orderBy == "asc") {
+        if (this.departmentSort == "asc") {
             newArr6.forEach(todo => {
               todo["tasks"] = todo.tasks.sort((a, b) => {
                 if (a.departmentId && b.departmentId) {
@@ -1017,6 +1174,8 @@ export default {
                 }
               })
             })
+
+            this.departmentSort = 'desc'
 
         } else {
           newArr6.forEach(todo => {
@@ -1026,8 +1185,11 @@ export default {
                 }
               })
             })
+
+            this.departmentSort = 'asc'
         }
 
+        this.resetOtherSorts($event);
         this.localdata = newArr6;
       }
 
@@ -1035,20 +1197,20 @@ export default {
       if ($event == "difficultyId") {
         let newArr6 = [];
 
-          for (let i = 0; i < this.localdata.length; i++) {
-            newArr6.push(this.localdata[i]);
+          for (let i = 0; i < newArr.length; i++) {
+            newArr6.push(newArr[i]);
             let tNewArr = []
-            for(let j=0; j<this.localdata[i].tasks.length; j++) {
-              if (this.localdata[i].tasks[j].difficultyId) {
-                tNewArr.unshift(this.localdata[i].tasks[j])
+            for(let j=0; j<newArr[i].tasks.length; j++) {
+              if (newArr[i].tasks[j].difficultyId) {
+                tNewArr.unshift(newArr[i].tasks[j])
               } else {
-                tNewArr.push(this.localdata[i].tasks[j])
+                tNewArr.push(newArr[i].tasks[j])
               }
             }
             newArr6[i]["tasks"] = tNewArr;
           }
 
-          if (this.orderBy == "asc") {
+          if (this.difficultySort == "asc") {
 
               newArr6.forEach(todo => {
                 todo["tasks"] = todo.tasks.sort((a, b) => {
@@ -1057,6 +1219,8 @@ export default {
                   }
                 })
               })
+
+              this.difficultySort = 'desc'
 
           } else {
 
@@ -1067,19 +1231,17 @@ export default {
                   }
                 })
               })
+
+              this.difficultySort = 'asc'
           }
 
+          this.resetOtherSorts($event);
           this.localdata = newArr6;
       }
 
 
       this.key += 1
       this.checkActive($event)
-      if (this.orderBy == 'asc') {
-        this.orderBy = 'desc'
-      } else {
-        this.orderBy = 'asc'
-      }
     },
 
     toggleSidebar($event) {

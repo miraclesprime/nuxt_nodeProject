@@ -1,5 +1,5 @@
 <template>
-  <div id="project-files-wrapper" class="project-files-wrapper mb-105" >
+  <div id="project-files-wrapper" class="project-files-wrapper mb-105 overflow-y-auto" >
     <div id="project-file-actions-wrapper" class="file-actions d-flex align-center py-025 ">
       <div class="action-left d-flex " id="pf-file-action-left">
         <div class="d-flex gap-05 cursor-pointer shape-rounded bg-success-sub6 bg-hover-success-sub3 py-025 px-05 text-success " id="pf-file-upload-button" @click="uploadModal = true">
@@ -395,7 +395,7 @@ export default {
 
 </script>
 <style scoped lang="scss">
-.project-files-wrapper { margin-bottom: 1.5rem; }
+.project-files-wrapper { margin-bottom: 1.5rem; max-height: 60vh; }
 .file-actions {
   border-bottom: 1px solid $gray4;
 }

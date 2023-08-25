@@ -355,7 +355,7 @@ export default {
       this.$router.push(this.$route.path)
       
       this.$store.commit("task/setExpandVisible",true)
-      this.$nuxt.$emit("close-expand")
+      // this.$nuxt.$emit("close-expand")
     },
     closeSidebar(event) {
       let main = document.getElementById("main-content").className
@@ -421,7 +421,6 @@ export default {
     },
 
     updateTask(taskData) {
-      // console.log(taskData)
       let updata = { [taskData.field]: taskData.value }
       let updatedvalue = taskData.value
       let projectId = null
@@ -433,7 +432,6 @@ export default {
       this.$store.dispatch("task/updateTask", {
         id: this.form.id,
         data: updata,
-        // user,
         projectId: projectId ? projectId : null,
         text: taskData.historyText || taskData.value,
       })
@@ -564,7 +562,7 @@ export default {
 
       } else {
         // if new task
-        this.$refs.taskTitleInput.blur()
+        // this.$refs.taskTitleInput.blur()
         this.form.projectId = this.project?.id || ""
         this.form.userId=this.sideBarUser?.id || this.sideBarUser || "";
         this.createTask(this.form)
