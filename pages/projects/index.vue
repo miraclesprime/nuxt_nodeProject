@@ -69,7 +69,13 @@ export default {
       templateKey: 0,
       tableFields: PROJECT_FIELDS,
       gridType: "list",
-      orderBy: 'asc',
+      dueDateSort: 'asc',
+      startDateSort: 'asc',
+      departmentSort: 'asc',
+      prioritySort: 'asc',
+      statusSort: 'asc',
+      titleSort: 'asc',
+      userSort: 'asc',
       newkey: "",
       alertDialog: false,
       alertMsg:"",
@@ -206,146 +212,225 @@ export default {
     ProjectView($event){
       this.$store.commit('task/setFilterView', {filter:$event})
       this.$store.commit("project/getFilterProjects",{filter:$event, groupBy:this.groupBy})
-      // this.$store.dispatch('project/fetchProjects', $event).then(() => { 
-      //   if(this.groupVisible){
-      //         this.$store.dispatch('project/groupProjects', { key: this.groupBy}).then((res) => {
-      //     })
-      //   }
-       
-      //  })
     },
+
+    resetOtherSorts(sName) {
+
+      switch (sName) {
+        case 'title':
+          this.statusSort = 'asc';
+          this.userSort = 'asc';
+          this.prioritySort = 'asc';
+          this.departmentSort = 'asc';
+          this.startDateSort = 'asc';
+          this.dueDateSort = 'asc';
+          break;
+      
+        case 'userId':
+          this.statusSort = 'asc';
+          this.titleSort = 'asc';
+          this.prioritySort = 'asc';
+          this.departmentSort = 'asc';
+          this.startDateSort = 'asc';
+          this.dueDateSort = 'asc';
+          break;
+        
+        case 'status':
+          this.titleSort = 'asc';
+          this.userSort = 'asc';
+          this.prioritySort = 'asc';
+          this.departmentSort = 'asc';
+          this.startDateSort = 'asc';
+          this.dueDateSort = 'asc';
+          break;
+
+        case 'priority':
+          this.statusSort = 'asc';
+          this.userSort = 'asc';
+          this.titleSort = 'asc';
+          this.departmentSort = 'asc';
+          this.startDateSort = 'asc';
+          this.dueDateSort = 'asc';
+          break;
+
+        case 'department':
+          this.statusSort = 'asc';
+          this.userSort = 'asc';
+          this.prioritySort = 'asc';
+          this.titleSort = 'asc';
+          this.startDateSort = 'asc';
+          this.dueDateSort = 'asc';
+          break;
+
+        case 'startDate':
+          this.statusSort = 'asc';
+          this.userSort = 'asc';
+          this.prioritySort = 'asc';
+          this.departmentSort = 'asc';
+          this.titleSort = 'asc';
+          this.dueDateSort = 'asc';
+          break;
+
+        case 'dueDate':
+          this.statusSort = 'asc';
+          this.userSort = 'asc';
+          this.prioritySort = 'asc';
+          this.departmentSort = 'asc';
+          this.startDateSort = 'asc';
+          this.titleSort = 'asc';
+          break;
+
+        default:
+          this.statusSort = 'asc';
+          this.userSort = 'asc';
+          this.prioritySort = 'asc';
+          this.departmentSort = 'asc';
+          this.startDateSort = 'asc';
+          this.dueDateSort = 'asc';
+          this.titleSort = 'asc';
+          break;
+      }
+    },
+
     sortProject($event) {
       
       if($event == 'title') {
-          if(this.orderBy == 'asc') {
+          if(this.titleSort == 'asc') {
             this.$store.dispatch('project/sortProjects', {key: 'name', order: 'asc'} ).then((res) => {
-              this.orderBy = 'desc'
+              this.titleSort = 'desc'
               this.templateKey += 1;
             })
           }
 
-          if(this.orderBy == 'desc') {
+          if(this.titleSort == 'desc') {
             this.$store.dispatch('project/sortProjects', {key: 'name', order: 'desc'} ).then((res) => {
-              this.orderBy = 'asc'
+              this.titleSort = 'asc'
               this.templateKey += 1;
             })
           }
           this.sortName = 'title';
+          this.resetOtherSorts($event)
           this.checkActive()
       }
 
       if($event == 'userId') {
 
-          if(this.orderBy == 'asc') {
+          if(this.userSort == 'asc') {
             this.$store.dispatch('project/sortProjects', {key: 'owner', order: 'asc'} ).then((res) => {
-              this.orderBy = 'desc'
+              this.userSort = 'desc'
               this.templateKey += 1;
             })
           }
 
-          if(this.orderBy == 'desc') {
+          if(this.userSort == 'desc') {
             this.$store.dispatch('project/sortProjects', {key: 'owner', order: 'desc'} ).then((res) => {
-              this.orderBy = 'asc'
+              this.userSort = 'asc'
               this.templateKey += 1;
             })
           }
           this.sortName = 'userId';
+          this.resetOtherSorts($event)
           this.checkActive()
       }
 
       if($event == 'status') {
 
-          if(this.orderBy == 'asc') {
+          if(this.statusSort == 'asc') {
             this.$store.dispatch('project/sortProjects', {key: 'status', order: 'asc'} ).then((res) => {
-              this.orderBy = 'desc'
+              this.statusSort = 'desc'
               this.templateKey += 1;
             })
           }
 
-          if(this.orderBy == 'desc') {
+          if(this.statusSort == 'desc') {
             this.$store.dispatch('project/sortProjects', {key: 'status', order: 'desc'} ).then((res) => {
-              this.orderBy = 'asc'
+              this.statusSort = 'asc'
               this.templateKey += 1;
             })
             
           }
           this.sortName = 'status';
+          this.resetOtherSorts($event)
           this.checkActive()
       }
 
       if($event == 'priority') {
 
-          if(this.orderBy == 'asc') {
+          if(this.prioritySort == 'asc') {
             this.$store.dispatch('project/sortProjects', {key: 'priority', order: 'asc'} ).then((res) => {
-              this.orderBy = 'desc'
+              this.prioritySort = 'desc'
               this.templateKey += 1;
             })
           }
 
-          if(this.orderBy == 'desc') {
+          if(this.prioritySort == 'desc') {
             this.$store.dispatch('project/sortProjects', {key: 'priority', order: 'desc'} ).then((res) => {
-              this.orderBy = 'asc'
+              this.prioritySort = 'asc'
               this.templateKey += 1;
             })
           }
           this.sortName = 'priority';
+          this.resetOtherSorts($event)
           this.checkActive()
       }
 
       if($event == 'department') {
 
-          if(this.orderBy == 'asc') {
+          if(this.departmentSort == 'asc') {
             this.$store.dispatch('project/sortProjects', {key: 'department', order: 'asc'} ).then((res) => {
-              this.orderBy = 'desc'
+              this.departmentSort = 'desc'
               this.templateKey += 1;
             })
           }
 
-          if(this.orderBy == 'desc') {
+          if(this.departmentSort == 'desc') {
             this.$store.dispatch('project/sortProjects', {key: 'department', order: 'desc'} ).then((res) => {
-              this.orderBy = 'asc'
+              this.departmentSort = 'asc'
               this.templateKey += 1;
             })
           }
           this.sortName = 'department';
+          this.resetOtherSorts($event)
           this.checkActive()
       }
 
       if($event == 'startDate') {
 
-          if(this.orderBy == 'asc') {
+          if(this.startDateSort == 'asc') {
             this.$store.dispatch('project/sortProjects', {key: 'startDate', order: 'asc'} ).then((res) => {
-              this.orderBy = 'desc'
+              this.startDateSort = 'desc'
               this.templateKey += 1;
             })
           }
 
-          if(this.orderBy == 'desc') {
+          if(this.startDateSort == 'desc') {
             this.$store.dispatch('project/sortProjects', {key: 'startDate', order: 'desc'} ).then((res) => {
-              this.orderBy = 'asc'
+              this.startDateSort = 'asc'
               this.templateKey += 1;
             })
           }
           this.sortName = 'startDate';
+          this.resetOtherSorts($event)
           this.checkActive()
       }
       
       if($event == 'dueDate') {
 
-          if(this.orderBy == 'asc') {
+          if(this.dueDateSort == 'asc') {
             this.$store.dispatch('project/sortProjects', {key: 'dueDate', order: 'asc'} ).then((res) => {
-              this.orderBy = 'desc'
+              this.dueDateSort = 'desc'
               this.templateKey += 1;
             })
           }
 
-          if(this.orderBy == 'desc') {
+          if(this.dueDateSort == 'desc') {
             this.$store.dispatch('project/sortProjects', {key: 'dueDate', order: 'desc'} ).then((res) => {
-              this.orderBy = 'asc'
+              this.dueDateSort = 'asc'
               this.templateKey += 1;
             })
           }
           this.sortName = 'dueDate';
+          this.resetOtherSorts($event)
           this.checkActive()
       }
 
