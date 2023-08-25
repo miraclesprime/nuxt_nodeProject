@@ -1,5 +1,5 @@
 <template>
-    <div  >
+    <div >
       <div
         :class="{
           'detail-collapse__header': true,
@@ -75,7 +75,7 @@
           'header-content-fixed': fixHeader,
           'detail-collapse__content_space': extraSpace,
         }"
-        style="height: 400px !important;"
+        style="height: calc(100vh - 610px) !important;"
       >
         <slot name="content"> </slot>
       </div>

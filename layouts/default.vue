@@ -59,6 +59,7 @@
             :menuItems="appItems"
             :isLightTheme="lightThemeChecked"
             @toggle-theme="handleToggleWrapperTheme"
+            style="z-index: 99;"
           ></bib-app-switcher>
         </template>
         <template #navigation>
@@ -181,7 +182,7 @@ export default {
         {
           img: "projects",
           color: "primary",
-          text: "Project",
+          text: "Projects",
           active: true,
           href: process.env.VUE_APP_URL,
         },
@@ -203,12 +204,12 @@ export default {
           text: "Video",
           href: "https://dev-video-conf.business-in-a-box.com",
         },
-        {
-          img: "data-storage-single",
-          color: "primary",
-          text: "Drive",
-          href: "",
-        },
+        // {
+        //   img: "data-storage-single",
+        //   color: "primary",
+        //   text: "Drive",
+        //   href: "",
+        // },
       ],
       navItems1: [
         /*{
