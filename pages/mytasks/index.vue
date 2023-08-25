@@ -22,7 +22,7 @@
                 <input type="text" ref="newsectioninput" class="editable-input" placeholder="Enter title" @input="debounceNewSection($event.target.value, $event)" @focus.stop="">
               </div>
             </div>
-            <div class="task-grid-section" v-for="(todo, index) in localdata" :key="index + viewName + '-' + key">
+            <div class="task-grid-section" v-for="(todo, index) in localdata" :key="index + viewName + '-' + key" style="padding-bottom: 0px !important;">
               <div class="w-100 d-flex justify-between bg-light" style="margin-bottom: 10px; position: sticky; top: 0; z-index: 2;">
                 <task-grid-section-title :section="todo" @update-title="renameTodo"></task-grid-section-title>
                 <div class="d-flex align-center section-options" :id="'tg-section-options-'+todo.id">
@@ -47,8 +47,8 @@
                   </bib-popup>
                 </div>
               </div>
-              <div class="task-section__body h-100" >
-                <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="gridTaskDragend" style="height: calc(100vh - 275px) !important;overflow: auto" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
+              <div class="task-section__body h-100"  style="height: calc(100vh - 230px) !important;overflow: hidden">
+                <draggable :list="todo.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="gridTaskDragend"  style="height: calc(100vh - 230px) !important;overflow: auto" class="section-draggable h-100" :class="{highlight: highlight == todo.id}" :data-section="todo.id">
                   <template v-for="(task, index) in todo.tasks">
                     <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker"></task-grid>
                   </template>
@@ -220,12 +220,13 @@ export default {
       }
     }
     this.$store.dispatch("todo/setMyfetchTodos")
-    this.$nuxt.$on("close-sidebar", (msg) => {
-        this.updateKey()
-      });
+    // this.$nuxt.$on("close-sidebar", (msg) => {
+    //     this.updateKey()
+    //   });
+    this.updateKey()
       setTimeout(() => {
         this.gridType=this.grid
-      }, 10);
+      }, 300);
     
   },
 

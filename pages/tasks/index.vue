@@ -195,9 +195,9 @@ export default {
       this.$nuxt.$on("update-key", (msg) => {
         this.updateKey()
       });
-      this.$nuxt.$on("close-expand", (msg) => {
-        this.updateKey()
-      });
+      // this.$nuxt.$on("close-expand", (msg) => {
+      //   this.updateKey()
+      // });
       this.$nuxt.$on("user-picker", (payload) => {
         // emitted from <task-grid>
         this.showUserPicker(payload);
@@ -227,9 +227,10 @@ export default {
       }
     }
     this.$store.dispatch("company/fetchInitialCompanyTasks",{filter:'all'})
-
+    this.updateKey()
       setTimeout(() => {
         this.gridType=this.grid
+        this.lazyComponent=true
       }, 300);
   }
   

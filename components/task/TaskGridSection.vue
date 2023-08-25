@@ -1,5 +1,5 @@
 <template>
-  <div id="tgs-scroll" class="overflow-x-auto h-100 position-relative bg-light" style="min-height: 30rem;"  >
+  <div id="tgs-scroll" class="overflow-x-auto h-100 position-relative bg-light" style="min-height: 30rem;"  ref="gridTable">
     <draggable :list="localdata" class="d-flex " :move="moveSection" v-on:end="$emit('section-dragend', localdata)" handle=".section-drag-handle">
       <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${templateKey}${section.title}${section.id}`">
         <div class="w-100 d-flex align-center section-title-wrapper border-bottom-gray2 mb-075" :id="'tgs-inner-wrap-'+section.id" :class="{'active': sectionEdit}" >
@@ -151,6 +151,9 @@ export default {
   },
 
   mounted() {
+    const divHeight = this.$refs.gridTable.clientHeight;
+    this.itemCount= parseInt((divHeight - 40) / 125)+2;
+
     if(this.sectionType == "singleProject") {
       this.loading = true
       this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id,filter :this.filterViews })
@@ -158,9 +161,9 @@ export default {
           this.localdata = JSON.parse(JSON.stringify(sections))
           this.loading = false
 
-          this.$nuxt.$on("close-sidebar", (msg) => {
+          // this.$nuxt.$on("close-sidebar", (msg) => {
           this.$emit("update-key")
-          });
+          // });
         })
         .catch(e => {
           console.log(e)
