@@ -31,6 +31,7 @@
         @section-dragend="sectionDragEnd"
         @task-dragend="taskDragEnd"
         sectionType="singleProject"
+        @user-picker="showUserPicker"
       >
       </task-grid-section>
     </div>
@@ -289,14 +290,11 @@ export default {
           break;
       }
     },
-    showUserPicker(payload) {
-      this.closeAllPickers();
-      this.userPickerOpen = true;
-      this.popupCoords = {
-        left: event.clientX + "px",
-        top: event.clientY + "px",
-      };
-      this.activeTask = payload.task;
+    showUserPicker(payload){
+      this.closeAllPickers()
+      this.userPickerOpen = true
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
     },
     showDatePicker(payload) {
       // payload consists of event, task, label, field

@@ -7,12 +7,12 @@
 
 <script>
 
-export default {
-  mounted() {
+// export default {
+//   mounted() {
 
-    this.$router.push("/projects")
-  }
-}
+//     this.$router.push("/projects")
+//   }
+// }
 
 </script>
 
