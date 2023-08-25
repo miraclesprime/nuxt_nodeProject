@@ -29,13 +29,13 @@
       <template v-if="!isCollapsed">
         <div v-for="(item, index) in localData" :key="item.id+'-'+index" class="tr" :id="'adv-table-table-data-'+index" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
           <div v-show="drag" class="td" role="cell" :id="'adv-table-td-'+index">
-            <div v-show="drag" class="drag-handle width-105 h-100" id="adv-table-drag-handle"><bib-icon icon="drag" variant="gray5"></bib-icon>
+            <div v-show="drag" class="drag-handle width-105 height-2" :id="'advtable-drag-handle'+item.id"><bib-icon icon="drag" variant="gray5"></bib-icon>
             </div>
           </div>
           <div v-for="(field, index) in tableFields" :id="'adv-table-fields-'+index" :key="field+index" class="td" role="cell">
             <div v-if="field.key == 'title'" class="align-center " id="adv-table-title-field">
-                <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}" @click.stop="markComplete($event, item)">
-                        <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success-sub3"></bib-icon>
+              <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}" @click.stop="markComplete($event, item)">
+                <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success-sub3"></bib-icon>
               </span>
               <span v-if="field.event" class=" flex-grow-1" style="line-height:1.25;" id="adv-table-field-event">
                 <input type="text" class="editable-input" id="adv-table-editable-input" :value="item[field.key]" @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">

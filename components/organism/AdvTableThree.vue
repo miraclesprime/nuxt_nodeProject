@@ -65,11 +65,11 @@
             <draggable class="section-content" tag="article" :list="section.tasks" :group="{ name: 'tasks' }" :data-section="section.id" :ref="'sectionContent' + section.id" @end="rowDragEnd">
               <div v-for="(item, itemIdx) in section.tasks" :key="item.id" ref="trdata" role="row" class="tr sortable drag-item" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
                 <div v-show="drag&&filterViews=='all'" class="td" role="cell" >
-                  <div class="drag-handle width-105 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
+                  <div class="drag-handle width-105 height-2" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                   </div>
                 </div>
                 <div v-for="(field, index) in tableFields" :key="field+index" class="td" role="cell" >
-                  <div v-if="field.key == 'title'" class="align-center w-100">
+                  <div v-if="field.key == 'title'" class="align-center w-100 pl-025">
                     <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}" @click.stop="markComplete($event, item)">
                       <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success-sub3"></bib-icon>
                     </span>

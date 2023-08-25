@@ -1,5 +1,5 @@
 <template>
-  <div class="message-wrapper mb-105" id="proj-conv-wrapper">
+  <div class="message-wrapper mb-105 overflow-y-auto" id="proj-conv-wrapper">
     <template v-if="showPlaceholder">
       <div class="placeholder m-1 d-flex align-center gap-05" id="proj-conv-inner-wrap">
         <div class="left" id="proj-conv-left">
@@ -124,8 +124,6 @@ export default {
 
 </script>
 <style lang="scss" scoped>
-.container {
-  padding: 0 0.5rem;
-}
-.message-wrapper { margin-bottom: 1.5rem;}
+.container { padding: 0 0.5rem; }
+.message-wrapper { max-height: 60vh; }
 </style>

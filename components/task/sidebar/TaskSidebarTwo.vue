@@ -564,7 +564,7 @@ export default {
 
       } else {
         // if new task
-        this.$refs.taskTitleInput.blur()
+        // this.$refs.taskTitleInput.blur()
         this.form.projectId = this.project?.id || ""
         this.form.userId=this.sideBarUser?.id || this.sideBarUser || "";
         this.createTask(this.form)

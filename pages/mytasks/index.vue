@@ -1,7 +1,7 @@
 <template>
   <client-only>
     <div id="page" class="mytask-page-wrapper ">
-      <page-title title="My Tasks" :count="localdata.length"></page-title>
+      <page-title title="My Tasks" :count="taskcount"></page-title>
 
       <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" :group="groupby" @myTaskGroup="myTaskGroup($event)" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="toggleNewsection" @change-grid-type="($event)=>gridType = $event" @search-mytasks="searchTasks"></user-tasks-actions>
 
@@ -153,7 +153,10 @@ export default {
       filterViews :'task/getFilterView',
       expandVisible:"task/getExpandVisible",
       grid:"todo/getGridType"
-    })
+    }),
+    taskcount(){
+      return this.todos.reduce((acc, td) => acc + td.tasks.length, 0)
+    },
   },
 
   watch: {
