@@ -30,7 +30,7 @@
             <td id="sbs-td-2" width="180">
               <div class="d-inline-flex align-center gap-025 position-relative" >
                 <bib-icon icon="calendar" variant="gray2"></bib-icon>
-                <bib-datetime-picker v-model="sub.dueDate" format="dd MMM yyyy" :parseDate="parseDate" :formatDate="formatDate"   class="align-right" size="sm" placeholder="Select due d..." @input="updateSubtask(sub, {field: 'dueDate', value: sub.dueDate, name: 'Due date'})" ></bib-datetime-picker>
+                <bib-datetime-picker v-model="sub.dueDate" :format="format" :parseDate="parseDate" :formatDate="formatDate"   class="align-right" size="sm" placeholder="Select due d..." @input="updateSubtask(sub, {field: 'dueDate', value: sub.dueDate, name: 'Due date'})" ></bib-datetime-picker>
               </div>            
             </td>
             <td id="sbs-td-1" width="40" align="right" >
@@ -113,6 +113,7 @@ export default {
       user: {},
       flag: false,
       loading: false,
+      format: "D MMM YYYY",
       subkey: 0,
       alertDialog: false,
       alertMsg:"",
@@ -139,8 +140,16 @@ export default {
 
     localSubTasks() {
       let subTs = _.cloneDeep(this.subTasks);
+      const options = {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      timeZone: 'UTC',
+    };
       subTs.map((s) => {
-        s.dueDate = this.$formatDate(s?.dueDate)
+        const date = new Date(s.dueDate);
+      s.dueDate = date.toLocaleDateString('en-US', options);
+      console.log(s.dueDate)
         if (s.userId == JSON.parse(localStorage.getItem('user')).sub || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
           s.canDelete = true;
         } else {
@@ -188,6 +197,7 @@ export default {
       return new Date(dateString);
     },
     formatDate(dateObj, format) {
+      console.log("dateObj",dateObj)
       return this.$formatDate(dateObj)
     },
     removeSelection() {
@@ -329,7 +339,7 @@ export default {
     },
 
     async updateSubtask(subtask, data){
-      console.log(subtask)
+      // console.log(subtask)
       let updata = {[data.field]: data.value}
       let userobj = {}
       let sub
@@ -362,7 +372,6 @@ export default {
       if (data.name == 'User') {
           userobj = this.$userInfo(data.value)
           let user = { id: userobj.Id, email: userobj.Email, firstName: userobj.FirstName, lastName: userobj.LastName }
-        console.log(updata)
           sub = await this.$store.dispatch("subtask/updateSubtask", {
             id: subtask.id,
             data: updata,
@@ -370,7 +379,7 @@ export default {
             text: `updated ${data.name} to ${userobj.Name}`
           })
       } else {
-        console.log(updata)
+        // console.log(updata)
           sub = await this.$store.dispatch("subtask/updateSubtask", {
             id: subtask.id,
             data: updata,
@@ -378,7 +387,7 @@ export default {
           })
       }
       if (sub.statusCode == 200) {
-        console.log(sub.data)
+        // console.log(sub.data)
           this.$store.dispatch("subtask/setSelectedSubtask", sub.data)
           this.$store.dispatch('subtask/fetchSubtasks', this.currentTask).then(() => {
             this.$emit('reload-subtask')
