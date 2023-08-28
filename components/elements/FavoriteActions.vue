@@ -11,9 +11,9 @@
     </div>
 
     <div class="action-right d-flex gap-05" id="fa-action-right">
-      <template>
+      <!-- <template>
         <bib-input size="sm" type="text" v-model="searchText" name="name" @input="$emit('search-projects-tasks', searchText)" placeholder="Search Projects or Tasks..." :variant="searchText.length > 50 ? 'alert': ''"></bib-input>
-      </template>
+      </template> -->
       <ul class="actions" id="fa-actions-list">
         <li class="action" id="fa-action-item1" >
           <sorting-comp :items="viewing" icon="eye-open" activeIcon="tick" tooltip="View" v-on:change-sort="$emit('change-viewing', $event)"></sorting-comp>

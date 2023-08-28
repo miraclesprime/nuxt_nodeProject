@@ -134,7 +134,7 @@
             <Nuxt />
             <transition name="drawer">
               <!-- <task-sidebar v-show="openSidebar" :visible="openSidebar" :sectionIdActive="sectionPreselect" :scrollId="scrollId" :departmentId="departmentId" ></task-sidebar> -->
-              <task-sidebar-two v-show="openSidebar" ></task-sidebar-two>
+              <task-sidebar-two v-show="openSidebar" :expandVisible="expandVisible" ></task-sidebar-two>
             </transition>
           </div>
         </template>
@@ -144,9 +144,24 @@
       <add-teammember-modal ref="teammemberModal"></add-teammember-modal>
       <add-member-to-task ref="taskTeamModal"></add-member-to-task>
     </div>
-    <div v-else class="expand">
-      <task-sidebar-two :expandVisible="expandVisible" ></task-sidebar-two>
-    </div>
+    <div class="blackbox" v-else>
+        <bib-app-wrapper>
+        <template #content>
+          <div
+            class="main blackbox"
+            id="main-content"
+            :class="openSidebar ? 'open-sidebar' : ''"
+          >
+            <Nuxt />
+            <div class="blackbox"></div>
+            <transition name="drawer">
+              <!-- <task-sidebar v-show="openSidebar" :visible="openSidebar" :sectionIdActive="sectionPreselect" :scrollId="scrollId" :departmentId="departmentId" ></task-sidebar> -->
+              <task-sidebar-two v-show="openSidebar" :expandVisible="expandVisible"></task-sidebar-two>
+            </transition>
+          </div>
+        </template>
+      </bib-app-wrapper>  
+      </div>
   </client-only>
 </template>
 
@@ -357,20 +372,20 @@ export default {
   mounted() {
     // window.addEventListener("popstate", this.handleStateChange);
     if (process.client) {
-      if (this.$router.history.current.fullPath == "/dashboard") {
+      // if (this.$router.history.current.fullPath == "/dashboard") {
+      //   this.navItems1[0].selected = true;
+      // }
+
+      if (this.$router.history.current.fullPath == "/inbox") {
         this.navItems1[0].selected = true;
       }
 
-      if (this.$router.history.current.fullPath == "/inbox") {
+      if (this.$router.history.current.fullPath == "/mytasks") {
         this.navItems1[1].selected = true;
       }
 
-      if (this.$router.history.current.fullPath == "/mytasks") {
-        this.navItems1[2].selected = true;
-      }
-
       if (this.$router.history.current.fullPath == "/favorites") {
-        this.navItems1[3].selected = true;
+        this.navItems1[2].selected = true;
       }
 
     if(!this.isAdmin) {
@@ -657,18 +672,6 @@ html {
     line-height: 1.8rem;
   }
 }
-.expand {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: black;
-  width:100%;
-  height:100vh;
-  margin-left: auto;
-  margin-right: auto;
-  padding-top: 16px;
-
-}
 .app-wrapper {
   &__navigation {
     position: relative;
@@ -708,5 +711,15 @@ html {
     max-width: $sidebar-width;
     border-left: 1px solid $gray4;
   }
+}
+
+.blackbox {
+  width: 100vw;
+  height: 100vh;
+  background-color: black;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;  
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div id="tgs-scroll" class="overflow-x-auto h-100 position-relative bg-light" style="min-height: 30rem;"  ref="gridTable">
     <draggable :list="localdata" class="d-flex " :move="moveSection" v-on:end="$emit('section-dragend', localdata)" handle=".section-drag-handle">
-      <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${templateKey}${section.title}${section.id}`">
+      <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${templateKey}${section.title}${section.id}`" style="padding-bottom: 0px !important;">
         <div class="w-100 d-flex align-center section-title-wrapper border-bottom-gray2 mb-075" :id="'tgs-inner-wrap-'+section.id" :class="{'active': sectionEdit}" >
           <task-grid-section-title :section="section" @update-title="renameSection"></task-grid-section-title>
           <div class="d-flex align-center section-options" :id="'tgs-section-options-'+section.id">
@@ -31,7 +31,7 @@
             </bib-popup>
           </div>
         </div>
-        <div class="task-section__body" :id="'tgs-task-section-body-'+section.id" style="height: calc(100vh - 275px) !important;overflow: auto" @scroll="handleScroll($event,section.id)" >
+        <div class="task-section__body" :id="'tgs-task-section-body-'+section.id" style="height: calc(100vh - 265px) !important;overflow: auto" @scroll="handleScroll($event,section.id)" >
           <draggable :list="section.tasks" :group="{name: 'task'}" :move="moveTask" @start="taskDragStart" @end="taskDragEnd" class="section-draggable" :class="{highlight: highlight == section.id}" :data-section="section.id">
             <template v-for="task in section.tasks">
               <task-grid :task="task" :project="section.projectId" :key="task.title + templateKey + '-' + task.id" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="$emit('update-key')" @open-sidebar="openSidebar(task, section.projectId)" ></task-grid>
@@ -105,7 +105,9 @@ export default {
       project: "project/getSingleProject",
       currentTask: 'task/getSelectedTask',
       favTasks: "task/getFavTasks",
-      filterViews :'task/getFilterView'
+      filterViews :'task/getFilterView',
+      // grid:"project/getGridType"
+
     }),
 
   },
@@ -151,9 +153,14 @@ export default {
   },
 
   mounted() {
-    const divHeight = this.$refs.gridTable.clientHeight;
-    this.itemCount= parseInt((divHeight - 40) / 125)+2;
 
+    
+    // if(this.grid=="grid"){
+    //   const divHeight = this.$refs.gridTable.clientHeight;
+    //   this.itemCount= parseInt((divHeight - 40) / 125)+2;
+    // }
+    
+    
     if(this.sectionType == "singleProject") {
       this.loading = true
       this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id,filter :this.filterViews })

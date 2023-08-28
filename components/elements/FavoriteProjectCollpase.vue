@@ -136,7 +136,8 @@ import { mapGetters } from "vuex";
       return {
         id: null,
         sortUser:[],
-        checkRole:false
+        checkRole:false,
+        collapseCount:0
       };
     },
     computed: {
@@ -198,6 +199,9 @@ import { mapGetters } from "vuex";
       this.$store.commit("user/sortPeople",{sort:item,data:this.sortUser});
     },
       openDetails() {
+        this.collapseCount+=1
+        let status=this.collapseCount%2==1?"false":"true"
+          this.$store.commit("project/setCollapseStatus",status)
         if (this.nonExpandable) return;
         let collapse = this.$refs.content;
         if (collapse) collapse.classList.toggle("bib-collapse");
