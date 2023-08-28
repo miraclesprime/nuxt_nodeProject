@@ -75,7 +75,7 @@
           'header-content-fixed': fixHeader,
           'detail-collapse__content_space': extraSpace,
         }"
-        style="height: calc(100vh - 610px) !important;"
+        :style="{'height':collapseStatus=='true'?`calc(100vh - 610px) !important`:`calc(100vh - 410px) !important`}"
       >
         <slot name="content"> </slot>
       </div>
@@ -147,6 +147,7 @@ import { mapGetters } from "vuex";
       return {
         id: null,
         sortUser:[],
+        collapseStatus:"true"
       };
     },
     computed: {
@@ -154,7 +155,8 @@ import { mapGetters } from "vuex";
         return `font-w-${this.labelWeight}`;
       },
       ...mapGetters({
-      allTasks:"company/getInitialAllTasks"
+      allTasks:"company/getInitialAllTasks",
+      favoriteCollapse:"project/getCollapseStatus"
     }),
     },
     watch: {
@@ -179,6 +181,14 @@ import { mapGetters } from "vuex";
                   }, {})
                 );
         },
+        favoriteCollapse:{
+          immediate:true,
+          handler(newValue){
+            this.collapseStatus=_.cloneDeep(newValue)
+          }
+      },
+  },
+  mounted(){
   },
     methods: {
 

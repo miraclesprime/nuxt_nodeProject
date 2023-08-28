@@ -316,6 +316,8 @@ export default {
       })
         .then(res=> {
           this.$store.commit('user/setFetchUserTasks', {data:res,filter:this.filterViews,key:this.groupBy})
+          this.key += 1;
+          this.templateKey+=1
         })
    
       // }

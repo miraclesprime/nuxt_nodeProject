@@ -7,7 +7,8 @@ export const state = () => ({
   singleProjComment: {},
   projectHistory: [],
   initialData:[],
-  gridType:"list"
+  gridType:"list",
+  collapseStatus:"true"
 });
 
 export const getters = {
@@ -50,11 +51,17 @@ export const getters = {
   getGridType(state){
 
     return state.gridType
+  },
+  //get collapse status in the  menu
+  getCollapseStatus(state) {
+    return state.collapseStatus
   }
-
 };
 
 export const mutations = {
+  setCollapseStatus (state,payload) {
+    state.collapseStatus=payload
+  },
   gridType(state,payload){
     state.gridType=payload.gridType
   },

@@ -134,7 +134,7 @@
             <Nuxt />
             <transition name="drawer">
               <!-- <task-sidebar v-show="openSidebar" :visible="openSidebar" :sectionIdActive="sectionPreselect" :scrollId="scrollId" :departmentId="departmentId" ></task-sidebar> -->
-              <task-sidebar-two v-show="openSidebar" ></task-sidebar-two>
+              <task-sidebar-two v-show="openSidebar" :expandVisible="expandVisible" ></task-sidebar-two>
             </transition>
           </div>
         </template>
@@ -144,9 +144,24 @@
       <add-teammember-modal ref="teammemberModal"></add-teammember-modal>
       <add-member-to-task ref="taskTeamModal"></add-member-to-task>
     </div>
-    <div v-else class="expand">
-      <task-sidebar-two :expandVisible="expandVisible" ></task-sidebar-two>
-    </div>
+    <div class="blackbox" v-else>
+        <bib-app-wrapper>
+        <template #content>
+          <div
+            class="main blackbox"
+            id="main-content"
+            :class="openSidebar ? 'open-sidebar' : ''"
+          >
+            <Nuxt />
+            <div class="blackbox"></div>
+            <transition name="drawer">
+              <!-- <task-sidebar v-show="openSidebar" :visible="openSidebar" :sectionIdActive="sectionPreselect" :scrollId="scrollId" :departmentId="departmentId" ></task-sidebar> -->
+              <task-sidebar-two v-show="openSidebar" :expandVisible="expandVisible"></task-sidebar-two>
+            </transition>
+          </div>
+        </template>
+      </bib-app-wrapper>  
+      </div>
   </client-only>
 </template>
 
@@ -398,7 +413,7 @@ export default {
       // }
 
       // Dhruv (admin)
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4OTg1MDM0ODYxMCwiZXhwIjoxNjk3NjI2MzQ4NjEwLCJqdGkiOiIxYWI4MDVlMC0zYTkyLTQxNDMtYmMyOC0zNGM2ZmRhZGFkZDgifQ.5-G-YJ16WfrZBp5VhK_p2-qULAP9jpF5ZOqsQ7Phs_0";
+      let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4OTg1MDM0ODYxMCwiZXhwIjoxNjk3NjI2MzQ4NjEwLCJqdGkiOiIxYWI4MDVlMC0zYTkyLTQxNDMtYmMyOC0zNGM2ZmRhZGFkZDgifQ.5-G-YJ16WfrZBp5VhK_p2-qULAP9jpF5ZOqsQ7Phs_0";
     
       // Vishwajeet
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2ODg0NDk2Nzg2NzUsImV4cCI6MTY5NjIyNTY3ODY3NSwianRpIjoiNjA0OTU1ZTEtZjc2OC00YmUzLTkxYzgtYmI0ZGM2NWM5NzBhIn0.kiUQRmE4VSwFx3augkQtUAEdpuzGkmV7GVBKt7VDifg"
@@ -657,18 +672,6 @@ html {
     line-height: 1.8rem;
   }
 }
-.expand {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: black;
-  width:100%;
-  height:100vh;
-  margin-left: auto;
-  margin-right: auto;
-  padding-top: 16px;
-
-}
 .app-wrapper {
   &__navigation {
     position: relative;
@@ -708,5 +711,15 @@ html {
     max-width: $sidebar-width;
     border-left: 1px solid $gray4;
   }
+}
+
+.blackbox {
+  width: 100vw;
+  height: 100vh;
+  background-color: black;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;  
 }
 </style>
