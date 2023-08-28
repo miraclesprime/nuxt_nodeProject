@@ -134,7 +134,8 @@ export default {
       favTasks: 'task/getFavTasks',
       filterViews :'task/getFilterView',
       selectedTask :'task/getSelectedTask',
-      userInfo :"user/getUserInfo"
+      userInfo :"user/getUserInfo",
+      allTasks: "company/getInitialAllTasks",
     }),
   },
 
@@ -158,9 +159,17 @@ export default {
             return u;
           }
         });
+        const allTasks= _.cloneDeep(this.allTasks)
+        const data=allTasks.filter(item=>{
+          if(item.userId==newVal.id){
+            return item
+          }
+        })
         //save userinfo to the store for expand taskside
         this.$store.commit('user/setUserForTask',this.userfortask)
-        this.fetchUserTasks();
+        this.$store.commit('user/setFetchUserTasks',{data:data,filter:this.filterViews,key:this.groupBy})     
+        this.templateKey += 1
+        // this.fetchUserTasks();
       },
     },
 
