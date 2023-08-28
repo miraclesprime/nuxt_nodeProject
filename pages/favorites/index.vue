@@ -2,21 +2,22 @@
   <client-only>
     <div id="favorite_wrapper" class="favorite-wrapper h-100">
       <page-title title="Favorites"></page-title>
-      <favorite-actions v-on:change-viewing="changeView" v-on:change-sorting="changeSort" @search-projects-tasks="searchProjectOrTasks"></favorite-actions>
+      <favorite-actions v-on:change-viewing="changeView" v-on:change-sorting="changeSort" ></favorite-actions>
+      <!-- @search-projects-tasks="searchProjectOrTasks" -->
       <div id="favorite-scroll-wrap" class="favorite-tables position-relative " >
 
- 
+          <!-- project table -->
+          <div style="overflow: auto;height:100%;">
+          
+          <advance-table :drag="false" :tableFields="projectTableFields" :tableData="projLocalData" :lazyComponent="true" :contextItems="projectContextItems" @context-item-event="projContextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @context-open="projectContextOpen" @title-click="projectRoute" @update-field="updateProject" sectionTitle="Favorite Projects" :plusButton="false" :key="templateKey"></advance-table>
+
+        </div>
 
         <!-- task table -->
         <div style="overflow: auto;margin-bottom:10px">
           <advance-table :drag="false" :tableFields="taskTableFields" :tableData="taskSubtaskLocalData" :lazyComponent="true" :contextItems="taskContextMenuItems" @context-item-event="taskContextItemClick" @row-click ="openSidebar" @table-sort="sortTask" @context-open="taskContextOpen"  @title-click="openSidebar" @update-field="updateTask" sectionTitle="Favorite Tasks" :plusButton="false" :key="templateKey"></advance-table>
         </div>
-             <!-- project table -->
-             <div style="overflow: auto;height:100%;">
-          
-          <advance-table :drag="false" :tableFields="projectTableFields" :tableData="projLocalData" :lazyComponent="true" :contextItems="projectContextItems" @context-item-event="projContextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @context-open="projectContextOpen" @title-click="projectRoute" @update-field="updateProject" sectionTitle="Favorite Projects" :plusButton="false" :key="templateKey"></advance-table>
-
-        </div>
+            
         <!-- <loading :loading="loading"></loading> -->
       </div>
 
@@ -85,8 +86,22 @@ export default {
       view: 'all',
       projSortName: '',
       taskSortName: '',
-      projOrder: 'asc',
-      taskOrder: 'asc',
+      pTitleSort: 'asc',
+      pStatusSort: 'asc',
+      pPrioritySort: 'asc',
+      pDepartmentSort: 'asc',
+      pUserSort: 'asc',
+      pStartDateSort: 'asc',
+      pDueDateSort: 'asc',
+      tTitleSort: 'asc',
+      tStatusSort: 'asc',
+      tPrioritySort: 'asc',
+      tProjSort: 'asc',
+      tDepartmentSort: 'asc',
+      tDifficultySort: 'asc',
+      tUserSort: 'asc',
+      tStartDateSort: 'asc',
+      tDueDateSort: 'asc',
       projectContextMenu: false,
       projectContextItems: PROJECT_CONTEXT_MENU,
       projUserpickerOpen: false,
@@ -118,7 +133,7 @@ export default {
       favTasks: 'task/getFavTasks',
       favSubtasks: "subtask/getFavSubtasks",
       teamMembers: "user/getTeamMembers",
-      filterViews :'task/getFilterView',
+      filterViews:'task/getFilterView',
     }),
 
   },
@@ -254,11 +269,6 @@ export default {
         
       this.projLocalData = newArr
       this.sortedProject = newArr
-      if (this.projOrder == 'asc') {
-        this.projOrder = 'desc'
-      } else {
-        this.projOrder = 'asc'
-      }
       if (this.projSortName) {
         this.sortProject(this.projSortName) //forever loop
       }
@@ -283,7 +293,6 @@ export default {
       })
       this.taskSubtaskLocalData = stsArr
       this.sortedTask = stsArr
-      if (this.taskOrder == 'asc') { this.taskOrder = 'desc'} else { this.taskOrder = 'asc'}
       if (this.taskSortName) {
         this.sortTask(this.taskSortName) //forever loop issue
       }
@@ -354,16 +363,13 @@ export default {
 
     },
     changeSort($event) {
-      if (this.projOrder == this.taskOrder) {
-        this.sortProject($event)
+      console.log($event)
+      if($event == 'difficultyId' || $event == 'project') {
         this.sortTask($event)
       } else {
-        this.projOrder = 'asc'
-        this.taskOrder = 'asc'
         this.sortProject($event)
         this.sortTask($event)
       }
-
     },
 
     checkActive() {
@@ -388,22 +394,219 @@ export default {
       this.templateKey++;
     },
 
+    resetProjSorts(sName) {
+
+      switch (sName) {
+        case 'title':
+          this.pStatusSort = 'asc';
+          this.pUserSort = 'asc';
+          this.pPrioritySort = 'asc';
+          this.pDepartmentSort = 'asc';
+          this.pStartDateSort = 'asc';
+          this.pDueDateSort = 'asc';
+          break;
+      
+        case 'userId':
+          this.pStatusSort = 'asc';
+          this.pTitleSort = 'asc';
+          this.pPrioritySort = 'asc';
+          this.pDepartmentSort = 'asc';
+          this.pStartDateSort = 'asc';
+          this.pDueDateSort = 'asc';
+          break;
+        
+        case 'status':
+          this.pTitleSort = 'asc';
+          this.pUserSort = 'asc';
+          this.pPrioritySort = 'asc';
+          this.pDepartmentSort = 'asc';
+          this.pStartDateSort = 'asc';
+          this.pDueDateSort = 'asc';
+          break;
+
+        case 'priority':
+          this.pStatusSort = 'asc';
+          this.pUserSort = 'asc';
+          this.pTitleSort = 'asc';
+          this.pDepartmentSort = 'asc';
+          this.pStartDateSort = 'asc';
+          this.pDueDateSort = 'asc';
+          break;
+
+        case 'department':
+          this.pStatusSort = 'asc';
+          this.pUserSort = 'asc';
+          this.pPrioritySort = 'asc';
+          this.pTitleSort = 'asc';
+          this.pStartDateSort = 'asc';
+          this.pDueDateSort = 'asc';
+          break;
+
+        case 'startDate':
+          this.pStatusSort = 'asc';
+          this.pUserSort = 'asc';
+          this.pPrioritySort = 'asc';
+          this.pDepartmentSort = 'asc';
+          this.pTitleSort = 'asc';
+          this.pDueDateSort = 'asc';
+          break;
+
+        case 'dueDate':
+          this.pStatusSort = 'asc';
+          this.pUserSort = 'asc';
+          this.pPrioritySort = 'asc';
+          this.pDepartmentSort = 'asc';
+          this.pStartDateSort = 'asc';
+          this.pTitleSort = 'asc';
+          break;
+
+        default:
+          this.pTitleSort = 'asc';
+          this.pStatusSort = 'asc';
+          this.pUserSort = 'asc';
+          this.pPrioritySort = 'asc';
+          this.pDepartmentSort = 'asc';
+          this.pStartDateSort = 'asc';
+          this.pDueDateSort = 'asc';
+          break;
+      }
+    },
+
+
+    resetTaskSorts(sName) {
+
+      switch (sName) {
+
+        case 'title':
+          this.tStatusSort = 'asc';
+          this.tUserSort = 'asc';
+          this.tPrioritySort = 'asc';
+          this.tDepartmentSort = 'asc';
+          this.tStartDateSort = 'asc';
+          this.tDueDateSort = 'asc';
+          this.tDifficultySort = 'asc';
+          this.tProjSort = 'asc';
+          break;
+      
+        case 'userId':
+          this.tStatusSort = 'asc';
+          this.tTitleSort = 'asc';
+          this.tPrioritySort = 'asc';
+          this.tDepartmentSort = 'asc';
+          this.tStartDateSort = 'asc';
+          this.tDueDateSort = 'asc';
+          this.tDifficultySort = 'asc';
+          this.tProjSort = 'asc';
+          break;
+        
+        case 'status':
+          this.tTitleSort = 'asc';
+          this.tUserSort = 'asc';
+          this.tPrioritySort = 'asc';
+          this.tDepartmentSort = 'asc';
+          this.tStartDateSort = 'asc';
+          this.tDueDateSort = 'asc';
+          this.tDifficultySort = 'asc';
+          this.tProjSort = 'asc';
+          break;
+
+        case 'priority':
+          this.tStatusSort = 'asc';
+          this.tUserSort = 'asc';
+          this.tTitleSort = 'asc';
+          this.tDepartmentSort = 'asc';
+          this.tStartDateSort = 'asc';
+          this.tDueDateSort = 'asc';
+          this.tDifficultySort = 'asc';
+          this.tProjSort = 'asc';
+          break;
+
+        case 'department':
+          this.tStatusSort = 'asc';
+          this.tUserSort = 'asc';
+          this.tPrioritySort = 'asc';
+          this.tTitleSort = 'asc';
+          this.tStartDateSort = 'asc';
+          this.tDueDateSort = 'asc';
+          this.tDifficultySort = 'asc';
+          this.tProjSort = 'asc';
+          break;
+
+        case 'startDate':
+          this.tStatusSort = 'asc';
+          this.tUserSort = 'asc';
+          this.tPrioritySort = 'asc';
+          this.tDepartmentSort = 'asc';
+          this.tTitleSort = 'asc';
+          this.tDueDateSort = 'asc';
+          this.tDifficultySort = 'asc';
+          this.tProjSort = 'asc';
+          break;
+
+        case 'dueDate':
+          this.tStatusSort = 'asc';
+          this.tUserSort = 'asc';
+          this.tPrioritySort = 'asc';
+          this.tDepartmentSort = 'asc';
+          this.tStartDateSort = 'asc';
+          this.tTitleSort = 'asc';
+          this.tDifficultySort = 'asc';
+          this.tProjSort = 'asc';
+          break;
+        
+        case 'project':
+          this.tStatusSort = 'asc';
+          this.tUserSort = 'asc';
+          this.tPrioritySort = 'asc';
+          this.tDepartmentSort = 'asc';
+          this.tStartDateSort = 'asc';
+          this.tDueDateSort = 'asc';
+          this.tDifficultySort = 'asc';
+          this.tTitleSort = 'asc';
+          break;
+
+        case 'difficultyId':
+          this.tStatusSort = 'asc';
+          this.tUserSort = 'asc';
+          this.tPrioritySort = 'asc';
+          this.tDepartmentSort = 'asc';
+          this.tStartDateSort = 'asc';
+          this.tDueDateSort = 'asc';
+          this.tTitleSort = 'asc';
+          this.tProjSort = 'asc';
+          break;
+
+        default:
+          this.tStatusSort = 'asc';
+          this.tUserSort = 'asc';
+          this.tPrioritySort = 'asc';
+          this.tDepartmentSort = 'asc';
+          this.tStartDateSort = 'asc';
+          this.tDueDateSort = 'asc';
+          this.tDifficultySort = 'asc';
+          this.tTitleSort = 'asc';
+          this.tProjSort = 'asc';
+          break;
+      }
+    },
+
     sortProject(field) {
       
       this.projSortName = field
-      console.log("field->",field, "sort name->",this.projSortName, this.projOrder)
       switch (field) {
 
         case 'title':
-          if (this.projOrder == "asc") {
+          if (this.pTitleSort == "asc") {
             this.projLocalData.sort((a, b) => a.title.localeCompare(b.title))
-            this.projOrder = "desc"
+            this.pTitleSort = "desc"
           } else {
             this.projLocalData.sort((a, b) => b.title.localeCompare(a.title))
-            this.projOrder = "asc"
+            this.pTitleSort = "asc"
           }
+
           this.key += 1
           this.projSortName = 'title'
+          this.resetProjSorts(field);
           this.checkActive()
           break;
 
@@ -419,20 +622,21 @@ export default {
 
           this.projLocalData = sArr;
 
-          if (this.projOrder == "asc") {
+          if (this.pStatusSort == "asc") {
             this.projLocalData.sort((a, b) => {
-              if (a.status && b.status) { return a.status.text.localeCompare(b.status.text) }
+              if (a.status && b.status) { return a.statusId - b.statusId }
             });
-            this.projOrder = "desc"
+            this.pStatusSort = "desc"
           } else {
             this.projLocalData.sort((a, b) => {
-              if (a.status && b.status) { return b.status.text.localeCompare(a.status.text) }
+              if (a.status && b.status) { return b.statusId - a.statusId }
             });
-            this.projOrder = "asc"
+            this.pStatusSort = "asc"
           }
 
           this.key += 1
           this.projSortName = 'status'
+          this.resetProjSorts(field)
           this.checkActive()
           break;
 
@@ -448,19 +652,20 @@ export default {
 
           this.projLocalData = pArr;
 
-          if (this.projOrder == "asc") {
+          if (this.pPrioritySort == "asc") {
             this.projLocalData.sort((a, b) => {
               if (a.priority && b.priority) { return a.priority.id - b.priority.id }
             });
-            this.projOrder = "desc"
+            this.pPrioritySort = "desc"
           } else {
             this.projLocalData.sort((a, b) => {
               if (a.priority && b.priority) { return b.priority.id - a.priority.id }
             });
-            this.projOrder = "asc"
+            this.pPrioritySort = "asc"
           }
           this.key += 1
           this.projSortName = 'priority'
+          this.resetProjSorts(field);
           this.checkActive()
           break;
 
@@ -476,19 +681,21 @@ export default {
 
           this.projLocalData = deptArr;
 
-          if (this.projOrder == "asc") {
+          if (this.pDepartmentSort == "asc") {
             this.projLocalData.sort((a, b) => {
               if (a.departmentId && b.departmentId) { return a.department.title.localeCompare(b.department.title) }
             });
-            this.projOrder = "desc"
+            this.pDepartmentSort = "desc"
           } else {
             this.projLocalData.sort((a, b) => {
               if (a.departmentId && b.departmentId) { return b.department.title.localeCompare(a.department.title) }
             });
-            this.projOrder = "asc"
+            this.pDepartmentSort = "asc"
           }
+
           this.key += 1
           this.projSortName = 'department'
+          this.resetProjSorts(field);
           this.checkActive()
           break;
 
@@ -504,19 +711,20 @@ export default {
 
           this.projLocalData = uArr;
 
-          if (this.projOrder == "asc") {
+          if (this.pUserSort == "asc") {
             this.projLocalData.sort((a, b) => {
               if (a.user && b.user) { return a.user.firstName.localeCompare(b.user.firstName) }
             });
-            this.projOrder = "desc"
+            this.pUserSort = "desc"
           } else {
             this.projLocalData.sort((a, b) => {
               if (a.user && b.user) { b.user.firstName.localeCompare(a.user.firstName) }
             });
-            this.projOrder = "asc"
+            this.pUserSort = "asc"
           }
           this.key += 1
           this.projSortName = 'userId'
+          this.resetProjSorts(field);
           this.checkActive()
           break;
 
@@ -531,19 +739,20 @@ export default {
           }
 
           this.projLocalData = dArr;
-          if (this.projOrder == "asc") {
+          if (this.pDueDateSort == "asc") {
             this.projLocalData.sort((a, b) => {
               if (a.dueDate && b.dueDate) { return new Date(a.dueDate) - new Date(b.dueDate) }
             });
-            this.projOrder = "desc"
+            this.pDueDateSort = "desc"
           } else {
             this.projLocalData.sort((a, b) => {
               if (a.dueDate && b.dueDate) { return new Date(b.dueDate) - new Date(a.dueDate) }
             });
-            this.projOrder = "asc"
+            this.pDueDateSort = "asc"
           }
           this.key += 1
           this.projSortName = 'dueDate'
+          this.resetProjSorts(field);
           this.checkActive()
           break;
 
@@ -559,19 +768,20 @@ export default {
           }
 
           this.projLocalData = dArr2;
-          if (this.projOrder == "asc") {
+          if (this.pStartDateSort == "asc") {
             this.projLocalData.sort((a, b) => {
               if (a.startDate && b.startDate) { return new Date(a.startDate) - new Date(b.startDate) }
             });
-            this.projOrder = "desc"
+            this.pStartDateSort = "desc"
           } else {
             this.projLocalData.sort((a, b) => {
               if (a.startDate && b.startDate) { return new Date(b.startDate) - new Date(a.startDate) }
             });
-            this.projOrder = "asc"
+            this.pStartDateSort = "asc"
           }
           this.key += 1
           this.projSortName = 'startDate'
+          this.resetProjSorts(field);
           this.checkActive()
           break;
 
@@ -584,20 +794,20 @@ export default {
     async sortTask(field) {
       
       this.taskSortName = field
-      console.log(field, this.taskSortName, this.taskOrder)
 
       switch (field) {
 
         case 'title':
-          if (this.taskOrder == "asc") {
+          if (this.tTitleSort == "asc") {
             this.taskSubtaskLocalData.sort((a, b) => a.title.localeCompare(b.title))
-            this.taskOrder = "desc"
+            this.tTitleSort = "desc"
           } else {
             this.taskSubtaskLocalData.sort((a, b) => b.title.localeCompare(a.title))
-            this.taskOrder = "asc"
+            this.tTitleSort = "asc"
           }
           this.key += 1
           this.taskSortName = 'title'
+          this.resetTaskSorts(field);
           this.checkActive()
           break;
 
@@ -613,15 +823,57 @@ export default {
 
           this.taskSubtaskLocalData = taskStArr;
 
-          if (this.taskOrder == "asc") {
-            this.taskSubtaskLocalData.sort((a, b) => a.status.text.localeCompare(b.status.text));
-            this.taskOrder = "desc"
+          if (this.tStatusSort == "asc") {
+            this.taskSubtaskLocalData.sort((a, b) => { 
+              if (a.statusId && b.statusId) {
+                return a.statusId - b.statusId;
+              }
+            });
+            this.tStatusSort = "desc"
           } else {
-            this.taskSubtaskLocalData.sort((a, b) => b.status.text.localeCompare(a.status.text));
-            this.taskOrder = "asc"
+            this.taskSubtaskLocalData.sort((a, b) => { 
+              if (a.statusId && b.statusId) {
+                return b.statusId - a.statusId;
+              }
+            });
+            this.tStatusSort = "asc"
           }
           this.key += 1
           this.taskSortName = 'status'
+          this.resetTaskSorts(field);
+          this.checkActive()
+          break;
+
+        case 'difficultyId':
+          let taskDiffArr = []
+          for (let i = 0; i < this.taskSubtaskLocalData.length; i++) {
+            if (this.taskSubtaskLocalData[i].difficultyId) {
+              taskDiffArr.unshift(this.taskSubtaskLocalData[i])
+            } else {
+              taskDiffArr.push(this.taskSubtaskLocalData[i])
+            }
+          }
+
+          this.taskSubtaskLocalData = taskDiffArr;
+
+          if (this.tDifficultySort == "asc") {
+            this.taskSubtaskLocalData.sort((a, b) => { 
+              if (a.difficultyId && b.difficultyId) {
+                return a.difficultyId - b.difficultyId;
+              }
+            });
+            this.tDifficultySort = "desc"
+          } else {
+            this.taskSubtaskLocalData.sort((a, b) => { 
+              if (a.difficultyId && b.difficultyId) {
+                return b.difficultyId - a.difficultyId;
+              }
+            });
+            this.tDifficultySort = "asc"
+          }
+          this.key += 1
+          this.taskSortName = 'difficultyId'
+          this.resetTaskSorts(field);
           this.checkActive()
           break;
 
@@ -637,15 +889,24 @@ export default {
 
           this.taskSubtaskLocalData = taskPrArr;
 
-          if (this.taskOrder == "asc") {
-            this.taskSubtaskLocalData.sort((a, b) => a.priority.id - b.priority.id);
-            this.taskOrder = "desc"
+          if (this.tPrioritySort == "asc") {
+            this.taskSubtaskLocalData.sort((a, b) => { 
+              if (a.priorityId && b.priorityId) {
+                return a.priorityId - b.priorityId;
+              }
+            });
+            this.tPrioritySort = "desc"
           } else {
-            this.taskSubtaskLocalData.sort((a, b) => b.priority.id - a.priority.id);
-            this.taskOrder = "asc"
+            this.taskSubtaskLocalData.sort((a, b) => { 
+              if (a.priorityId && b.priorityId) {
+                return b.priorityId - a.priorityId;
+              }
+            });
+            this.tPrioritySort = "asc"
           }
           this.key += 1
           this.taskSortName = 'priority'
+          this.resetTaskSorts(field);
           this.checkActive()
           break;
 
@@ -661,12 +922,12 @@ export default {
 
           this.taskSubtaskLocalData = taskDeptArr;
 
-          if (this.taskOrder == "asc") {
+          if (this.tDepartmentSort == "asc") {
             this.taskSubtaskLocalData.sort((a, b) => a.department.title.localeCompare(b.department.title));
-            this.taskOrder = "desc"
+            this.tDepartmentSort = "desc"
           } else {
             this.taskSubtaskLocalData.sort((a, b) => b.department.title.localeCompare(a.department.title));
-            this.taskOrder = "asc"
+            this.tDepartmentSort = "asc"
           }
           this.key += 1
           break;
@@ -683,19 +944,20 @@ export default {
 
           this.taskSubtaskLocalData = taskUserArr;
 
-          if (this.taskOrder == "asc") {
+          if (this.tUserSort == "asc") {
             this.taskSubtaskLocalData.sort((a, b) => {
               if (a.user && b.user) { return a.user.firstName.localeCompare(b.user.firstName) }
             });
-            this.taskOrder = "desc"
+            this.tUserSort = "desc"
           } else {
             this.taskSubtaskLocalData.sort((a, b) => {
               if (a.user && b.user) { return b.user.firstName.localeCompare(a.user.firstName) }
             });
-            this.taskOrder = "asc"
+            this.tUserSort = "asc"
           }
           this.key += 1
           this.taskSortName = 'userId'
+          this.resetTaskSorts(field);
           this.checkActive()
           break;
 
@@ -710,19 +972,20 @@ export default {
           }
 
           this.taskSubtaskLocalData = taskDArr;
-          if (this.taskOrder == "asc") {
+          if (this.tDueDateSort == "asc") {
             this.taskSubtaskLocalData.sort((a, b) => {
               if (a.dueDate && b.dueDate) { return new Date(a.dueDate) - new Date(b.dueDate) }
             });
-            this.taskOrder = "desc"
+            this.tDueDateSort = "desc"
           } else {
             this.taskSubtaskLocalData.sort((a, b) => {
               if (a.dueDate && b.dueDate) { return new Date(b.dueDate) - new Date(a.dueDate) }
             });
-            this.taskOrder = "asc"
+            this.tDueDateSort = "asc"
           }
           this.key += 1
           this.taskSortName = 'dueDate'
+          this.resetTaskSorts(field);
           this.checkActive()
           break;
 
@@ -737,19 +1000,20 @@ export default {
           }
 
           this.taskSubtaskLocalData = taskSArr;
-          if (this.taskOrder == "asc") {
+          if (this.tStartDateSort == "asc") {
             this.taskSubtaskLocalData.sort((a, b) => {
               if (a.startDate && b.startDate) { return new Date(a.startDate) - new Date(b.startDate) }
             });
-            this.taskOrder = "desc"
+            this.tStartDateSort = "desc"
           } else {
             this.taskSubtaskLocalData.sort((a, b) => {
               if (a.startDate && b.startDate) { return new Date(b.startDate) - new Date(a.startDate) }
             });
-            this.taskOrder = "asc"
+            this.tStartDateSort = "asc"
           }
           this.key += 1
           this.taskSortName = 'startDate'
+          this.resetTaskSorts(field);
           this.checkActive()
           break;
 
@@ -763,14 +1027,26 @@ export default {
             }
           }
 
-          newArr.sort((a, b) => {
-            if (a.project[0] && b.project[0]) {
-              return a.project[0].project.title.localeCompare(b.project[0].project.title);
-            }
-          });
+          if (this.tProjSort == "asc") {
+            newArr.sort((a, b) => {
+              if (a.project[0] && b.project[0]) {
+                return a.project[0].project.title.localeCompare(b.project[0].project.title);
+              }
+            });
+            this.tProjSort = 'desc'
+          } else {
+            newArr.sort((a, b) => {
+              if (a.project[0] && b.project[0]) {
+                return b.project[0].project.title.localeCompare(a.project[0].project.title);
+              }
+            });
+            this.tProjSort = 'asc'
+          }
+
           this.taskSubtaskLocalData = newArr;
           this.key += 1
           this.taskSortName = 'project'
+          this.resetTaskSorts(field);
           this.checkActive()
           break;
 
@@ -1204,37 +1480,37 @@ export default {
       }
     },
 
-    searchProjectOrTasks(text) {
+    // searchProjectOrTasks(text) {
 
-      let formattedText = text.toLowerCase().trim();
-      let tArr = this.sortedTask.filter((t) => {
-        if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
-          return t
-        }
-      })
+    //   let formattedText = text.toLowerCase().trim();
+    //   let tArr = this.sortedTask.filter((t) => {
+    //     if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
+    //       return t
+    //     }
+    //   })
 
-      let pArr = this.sortedProject.filter((p) => {
-        if (p.title.includes(formattedText) || p.title.toLowerCase().includes(formattedText)) {
-          return p
-        }
-      })
+    //   let pArr = this.sortedProject.filter((p) => {
+    //     if (p.title.includes(formattedText) || p.title.toLowerCase().includes(formattedText)) {
+    //       return p
+    //     }
+    //   })
 
-      if (pArr.length >= 0) {
-        this.projLocalData = pArr
-        this.key++;
-      } else {
-        this.projLocalData = JSON.parse(JSON.stringify(this.sortedProject));
-        this.key++;
-      }
+    //   if (pArr.length >= 0) {
+    //     this.projLocalData = pArr
+    //     this.key++;
+    //   } else {
+    //     this.projLocalData = JSON.parse(JSON.stringify(this.sortedProject));
+    //     this.key++;
+    //   }
 
-      if (tArr.length >= 0) {
-        this.taskSubtaskLocalData = tArr
-        this.key++;
-      } else {
-        this.taskSubtaskLocalData = JSON.parse(JSON.stringify(this.sortedTask));
-        this.key++;
-      }
-    }
+    //   if (tArr.length >= 0) {
+    //     this.taskSubtaskLocalData = tArr
+    //     this.key++;
+    //   } else {
+    //     this.taskSubtaskLocalData = JSON.parse(JSON.stringify(this.sortedTask));
+    //     this.key++;
+    //   }
+    // }
 
   }
 }

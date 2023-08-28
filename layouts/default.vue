@@ -372,20 +372,20 @@ export default {
   mounted() {
     // window.addEventListener("popstate", this.handleStateChange);
     if (process.client) {
-      if (this.$router.history.current.fullPath == "/dashboard") {
+      // if (this.$router.history.current.fullPath == "/dashboard") {
+      //   this.navItems1[0].selected = true;
+      // }
+
+      if (this.$router.history.current.fullPath == "/inbox") {
         this.navItems1[0].selected = true;
       }
 
-      if (this.$router.history.current.fullPath == "/inbox") {
+      if (this.$router.history.current.fullPath == "/mytasks") {
         this.navItems1[1].selected = true;
       }
 
-      if (this.$router.history.current.fullPath == "/mytasks") {
-        this.navItems1[2].selected = true;
-      }
-
       if (this.$router.history.current.fullPath == "/favorites") {
-        this.navItems1[3].selected = true;
+        this.navItems1[2].selected = true;
       }
 
     if(!this.isAdmin) {

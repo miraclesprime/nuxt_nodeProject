@@ -404,14 +404,14 @@ export const mutations = {
           if(payload.order == 'asc'){
                 newArr.sort((a,b)=>{
                 if (a.statusId && b.statusId) {
-                  return a.status.text.localeCompare(b.status.text)
+                  return a.statusId - b.statusId
                 }
               });
           } 
           if(payload.order == 'desc'){
             newArr.sort((a,b)=>{
             if (a.statusId && b.statusId) {
-              return b.status.text.localeCompare(a.status.text)
+              return b.statusId - a.statusId
             }
           });
       } 
@@ -437,14 +437,14 @@ export const mutations = {
       if(payload.order == 'asc'){
         newArr.sort((a, b) => {
           if (a.statusId && b.statusId) {
-            return a.status.text.localeCompare(b.status.text)
+            return a.statusId - b.statusId
           }
         });
       }
       if(payload.order == 'desc'){
         newArr.sort((a, b) => {
           if (a.statusId && b.statusId) {
-            return b.status.text.localeCompare(a.status.text)
+            return b.statusId - a.statusId
           }
         });
       }
