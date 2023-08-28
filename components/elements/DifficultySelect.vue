@@ -2,10 +2,8 @@
   <div class="picker-wrapper w-100" id="difficulty-select-wrapper" v-click-outside="onClickOutside">
     <div id="difficulty-select-button" class="user-data cursor-pointer height-2 align-center justify-between" @click.stop="triggerOpen">
       <div id="difficulty-select-inner-wrap" class="align-center flex-grow-1 gap-025">
-        <!-- <div id="difficulty-select-shape-circle" class="d-flex align-center justify-center shape-circle circle" :style="{'background-color': $hex2rgba(localValue.color, colors)}"><strong id="difficulty-select-localValue-color" :class="'text-'+localValue.color" >!</strong>
-        </div> -->
         <bib-icon icon="node" :variant="localValue.color"></bib-icon>
-        <span class="text-capitalize text-truncate" style="max-width: 7rem;" id="difficulty-select-localValue-label" >
+        <span class="text-capitalize text-truncate" style="max-width: 80%;" id="difficulty-select-localValue-label" >
           {{ localValue.label }}
         </span>
       </div>
@@ -15,9 +13,6 @@
       <div class="picker-list-wrap" id="difficulty-select-list-wrap">
         <ul class="m-0 p-0 text-left" id="difficulty-select-list">
           <li v-for="diff in difficultyList" :key="diff.value+'stitem'" :id="'ps-'+diff.value" class="p-025 gap-05 align-center font-md cursor-pointer" @click.stop="onStatusChange(diff)">
-            <!-- <div class="align-center justify-center shape-circle circle" :id="'ps-'+diff.bgcolor" :style="{'background-color': diff.bgcolor}">
-              <strong :id="'ps-'+diff.color" :class="'text-' + diff.color">!</strong>
-            </div> -->
             <bib-icon icon="node" :variant="diff.color"></bib-icon>
             <span :id="'ps-'+diff.label" class="text-dark text-truncate">{{diff.label}}</span>
           </li>

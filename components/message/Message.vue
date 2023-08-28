@@ -10,13 +10,13 @@
     </div>
 
     <!-- message content -->
-    <div class="msg__content pb-05 text-dark" v-html="msg.comment" id="msg-content">
-      <p>Lorem ipsum dolor sit amet consectetur 🙂, <a href="https://dev.proj-mgmt.biztree.com/">ipsum</a> adipisicing elit. Sit eum praesentium animi error delectus reprehenderit neque odit? Nesciunt facere quod ab veniam eligendi architecto vitae?</p>
+    <div class="msg__content text-dark" v-html="msg.comment" :id="'msg-content'+msg.id">
+      <p>Lorem ipsum dolor sit amet consectetur 🙂, <a href="http://dev.proj-mgmt.business-in-a-box.com">ipsum project management</a> adipisicing elit. Sit eum praesentium animi error delectus reprehenderit neque odit? Nesciunt facere quod ab veniam eligendi architecto vitae?</p>
     </div>
 
     <!-- message reactions -->
-    <div v-if="reactionsExist" class="reactions-section" id="msg-reaction-section">
-      <div class="reactions" id="msg-reactions">
+    <div v-if="reactionsExist" class="reactions-section my-025" :id="'msg-reaction-section'+msg.id">
+      <div class="reactions" :id="'msg-reactions'+msg.id">
         <div v-for="(react, index) in reactionGroup" :key="reactionKey + react.reaction + msg.id" class="reaction " :class=" ownReaction(react) " name="reaction1" @click.stop="deleteOwnReaction(react)" :id="'msg-'+index">
           {{ react.reaction }} <span class="count" :id="'msg-count-'+index">{{react.count}}</span>
         </div>
@@ -59,14 +59,14 @@
         </template>
         <div id="msg-isMenuOpen" class="menu" :class="{ open: isMenuOpen }">
           <div id="msg-menu-item1" v-if="msg.userId == user.Id" class="menu-item">
-            <a id="msg-editMessage" @click="editMessage">Edit</a>
+            <a id="msg-editMessage" @click.stop="editMessage">Edit</a>
           </div>
           <div id="msg-menu-item2" v-if="msg.userId == user.Id" class="menu-item">
-            <a id="msg-attachFile" @click="attachFile">Attach file</a>
+            <a id="msg-attachFile" @click.stop="attachFile">Attach file</a>
           </div>
           <div id="msg-menu-item-separator" class="menu-item-separator"></div>
           <div id="msg-canDeleteMessage" v-if="canDeleteMessage" class="menu-item danger">
-            <a id="msg-deleteMessage" @click="deleteMessage">Delete</a>
+            <a id="msg-deleteMessage" @click.stop="deleteMessage">Delete</a>
           </div>
         </div>
       </tippy>
@@ -441,7 +441,6 @@ export default {
 
   &__owner {
     /*color: $text;*/
-
     span {
       font-weight: normal;
     }
@@ -449,6 +448,7 @@ export default {
 
   &__content {
     /*color: $text;*/
+    /*refer global.scss*/
   }
 
   &__files {
@@ -499,11 +499,6 @@ export default {
 }
 
 .user-avatar {
-  /*position: absolute;
-  z-index: 2;
-  left: 0;
-  top: 3px;*/
-
   &.active {
     z-index: 5;
   }
@@ -700,7 +695,6 @@ export default {
 }
 
 .reactions-section {
-  margin-bottom: 8px;
 
   .reactions {
     display: flex;

@@ -116,7 +116,7 @@ export const TASK_FIELDS = [
   {
     label: 'Task name',
     key: 'title',
-    width: "200px",
+    width: "300px",
     icon: {
       icon: 'check-circle-solid',
       variant: 'gray2',
@@ -132,7 +132,7 @@ export const TASK_FIELDS = [
   {
     key: "status",
     label: "Status",
-    width: "150px",
+    width: "140px",
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -142,7 +142,7 @@ export const TASK_FIELDS = [
   {
     key: "priority",
     label: "Priority",
-    width: "150px",
+    width: "140px",
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -152,7 +152,7 @@ export const TASK_FIELDS = [
   {
     label: 'Difficulty',
     key: 'difficultyId',
-    width: '150px',
+    width: '140px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -162,7 +162,7 @@ export const TASK_FIELDS = [
   {
     key: "department",
     label: "Department",
-    width: "150px",
+    width: "140px",
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -172,7 +172,7 @@ export const TASK_FIELDS = [
   {
     key: "userId",
     label: "Assignee",
-    width: "150px",
+    width: "140px",
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -873,7 +873,7 @@ export const COMPANY_TASK_FIELDS = [
     label: 'Task name',
     key: 'title',
     // minWidth: "200px",
-    width: "200px",
+    width: "260px",
     icon: {
       icon: 'check-circle-solid',
       variant: 'gray2',
@@ -889,7 +889,7 @@ export const COMPANY_TASK_FIELDS = [
   {
     label: "Project",
     key: "project",
-    width: '150px',
+    width: '160px',
     header_icon: {
       icon: "swap-vertical",
       event: "table-sort",
@@ -899,7 +899,7 @@ export const COMPANY_TASK_FIELDS = [
   {
     label: 'Status',
     key: 'status',
-    width: '150px',
+    width: '140px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -909,7 +909,7 @@ export const COMPANY_TASK_FIELDS = [
   {
     label: 'Priority',
     key: 'priority',
-    width: '150px',
+    width: '140px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -919,7 +919,7 @@ export const COMPANY_TASK_FIELDS = [
   {
     label: 'Difficulty',
     key: 'difficultyId',
-    width: '150px',
+    width: '140px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -929,7 +929,7 @@ export const COMPANY_TASK_FIELDS = [
   {
     label: 'Department',
     key: 'department',
-    width: '150px',
+    width: '140px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -939,7 +939,7 @@ export const COMPANY_TASK_FIELDS = [
   {
     label: 'Assignee',
     key: 'userId',
-    width: '150px',
+    width: '140px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -980,7 +980,7 @@ export const USER_TASKS = [
     label: 'Task name',
     key: 'title',
     /*minWidth: "200px",*/
-    width: "200px",
+    width: "300px",
     icon: {
       icon: 'check-circle-solid',
       variant: 'gray2',
@@ -996,7 +996,7 @@ export const USER_TASKS = [
   {
     label: 'Project',
     key: 'project',
-    width: "150px",
+    width: "200px",
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -1006,7 +1006,7 @@ export const USER_TASKS = [
   {
     label: 'Status',
     key: 'status',
-    width: '150px',
+    width: '140px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -1016,7 +1016,7 @@ export const USER_TASKS = [
   {
     label: 'Priority',
     key: 'priority',
-    width: '150px',
+    width: '140px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -1026,7 +1026,7 @@ export const USER_TASKS = [
   {
     label: 'Difficulty',
     key: 'difficultyId',
-    width: '150px',
+    width: '140px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -1036,7 +1036,7 @@ export const USER_TASKS = [
   {
     label: 'Department',
     key: 'department',
-    width: '150px',
+    width: '140px',
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',

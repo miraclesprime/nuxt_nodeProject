@@ -2,10 +2,8 @@
   <div class="picker-wrapper w-100" id="priority-select-wrapper" v-click-outside="onClickOutside">
     <div id="priority-select-button" class="user-data cursor-pointer height-2 align-center justify-between" @click.stop="triggerOpen">
       <div id="priority-select-inner-wrap" class="align-center flex-grow-1 gap-025">
-        <!-- <div id="priority-select-shape-circle" class="d-flex align-center justify-center shape-circle circle" :style="{'background-color': $hex2rgba(localValue.color, colors)}"><strong id="priority-select-localValue-color" :class="'text-'+localValue.color" >!</strong>
-        </div> -->
         <bib-icon icon="security-verified" :variant="localValue.color"></bib-icon>
-        <span class="text-capitalize text-truncate" style="max-width: 7rem;" id="priority-select-localValue-label" >
+        <span class="text-capitalize text-truncate" style="max-width: 80%;" id="priority-select-localValue-label" >
           {{ localValue.label }}
         </span>
       </div>
@@ -15,9 +13,6 @@
       <div class="picker-list-wrap" id="priority-select-list-wrap">
         <ul class="m-0 p-0 text-left" id="priority-select-list">
           <li v-for="pt in priorityList" :key="pt.value+'stitem'" :id="'ps-'+pt.value" class="p-025 gap-05 align-center font-md cursor-pointer" @click.stop="onStatusChange(pt)">
-            <!-- <div class="align-center justify-center shape-circle circle" :id="'ps-'+pt.bgcolor" :style="{'background-color': pt.bgcolor}">
-              <strong :id="'ps-'+pt.color" :class="'text-' + pt.color">!</strong>
-            </div> -->
             <bib-icon icon="security-verified" :variant="pt.color"></bib-icon>
             <span :id="'ps-'+pt.label" class="text-dark text-truncate">{{pt.label}}</span>
           </li>
