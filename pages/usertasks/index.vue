@@ -99,7 +99,15 @@ export default {
       loading: false,
       flag: false,
       viewName: "all",
-      orderBy: "desc",
+      dueDateSort: 'asc',
+      startDateSort: 'asc',
+      departmentSort: 'asc',
+      prioritySort: 'asc',
+      statusSort: 'asc',
+      titleSort: 'asc',
+      userSort: 'asc',
+      projectSort: 'asc',
+      difficultySort: 'asc',
       key: 100,
       userfortask: "",
       tasks: [],
@@ -572,84 +580,250 @@ export default {
     
     },
 
+    resetOtherSorts(sName) {
+
+      switch (sName) {
+        case 'title':
+          this.statusSort = 'asc';
+          this.userSort = 'asc';
+          this.prioritySort = 'asc';
+          this.departmentSort = 'asc';
+          this.startDateSort = 'asc';
+          this.dueDateSort = 'asc';
+          this.difficultySort = 'asc';
+          this.projectSort = 'asc';
+          break;
+      
+        case 'userId':
+          this.statusSort = 'asc';
+          this.titleSort = 'asc';
+          this.prioritySort = 'asc';
+          this.departmentSort = 'asc';
+          this.startDateSort = 'asc';
+          this.dueDateSort = 'asc';
+          this.difficultySort = 'asc';
+          this.projectSort = 'asc';
+          break;
+        
+        case 'status':
+          this.titleSort = 'asc';
+          this.userSort = 'asc';
+          this.prioritySort = 'asc';
+          this.departmentSort = 'asc';
+          this.startDateSort = 'asc';
+          this.dueDateSort = 'asc';
+          this.difficultySort = 'asc';
+          this.projectSort = 'asc';
+          break;
+
+        case 'priority':
+          this.statusSort = 'asc';
+          this.userSort = 'asc';
+          this.titleSort = 'asc';
+          this.departmentSort = 'asc';
+          this.startDateSort = 'asc';
+          this.dueDateSort = 'asc';
+          this.difficultySort = 'asc';
+          this.projectSort = 'asc';
+          break;
+
+        case 'department':
+          this.statusSort = 'asc';
+          this.userSort = 'asc';
+          this.prioritySort = 'asc';
+          this.titleSort = 'asc';
+          this.startDateSort = 'asc';
+          this.dueDateSort = 'asc';
+          this.difficultySort = 'asc';
+          this.projectSort = 'asc';
+          break;
+
+        case 'startDate':
+          this.statusSort = 'asc';
+          this.userSort = 'asc';
+          this.prioritySort = 'asc';
+          this.departmentSort = 'asc';
+          this.titleSort = 'asc';
+          this.dueDateSort = 'asc';
+          this.difficultySort = 'asc';
+          this.projectSort = 'asc';
+          break;
+
+        case 'dueDate':
+          this.statusSort = 'asc';
+          this.userSort = 'asc';
+          this.prioritySort = 'asc';
+          this.departmentSort = 'asc';
+          this.startDateSort = 'asc';
+          this.titleSort = 'asc';
+          this.difficultySort = 'asc';
+          this.projectSort = 'asc';
+          break;
+
+        case 'project': 
+          this.statusSort = 'asc';
+          this.userSort = 'asc';
+          this.prioritySort = 'asc';
+          this.departmentSort = 'asc';
+          this.startDateSort = 'asc';
+          this.dueDateSort = 'asc';
+          this.difficultySort = 'asc';
+          this.titleSort = 'asc';
+          break;
+
+        case 'difficultyId':
+          this.statusSort = 'asc';
+          this.userSort = 'asc';
+          this.prioritySort = 'asc';
+          this.departmentSort = 'asc';
+          this.startDateSort = 'asc';
+          this.dueDateSort = 'asc';
+          this.titleSort = 'asc';
+          this.projectSort = 'asc';
+          break;
+
+        default:
+          this.statusSort = 'asc';
+          this.userSort = 'asc';
+          this.prioritySort = 'asc';
+          this.departmentSort = 'asc';
+          this.startDateSort = 'asc';
+          this.dueDateSort = 'asc';
+          this.difficultySort = 'asc';
+          this.projectSort = 'asc';
+          this.titleSort = 'asc';
+          break;
+      }
+    },
+
     sortBy($event) {
       this.sortName = $event;
       if ($event == "title") {
         this.$store
           .dispatch("user/sortUserTasks", {
             key: $event,
-            order: this.orderBy,
+            order: this.titleSort,
           })
+
+        if (this.titleSort == "asc") {
+            this.titleSort = "desc";
+          } else {
+            this.titleSort = "asc";
+          }
       }
 
       if ($event == "userId") {
         this.$store
           .dispatch("user/sortUserTasks", {
             key: $event,
-            order: this.orderBy,
+            order: this.userSort,
           })
+
+        if (this.userSort == "asc") {
+            this.userSort = "desc";
+          } else {
+            this.userSort = "asc";
+          }
       }
 
       if ($event == "project") {
         this.$store
           .dispatch("user/sortUserTasks", {
             key: $event,
-            order: this.orderBy,
+            order: this.projectSort,
           })
+        
+        if (this.projectSort == "asc") {
+            this.projectSort = "desc";
+          } else {
+            this.projectSort = "asc";
+          }
       }
 
       if ($event == "status") {
         this.$store
           .dispatch("user/sortUserTasks", {
             key: $event,
-            order: this.orderBy,
+            order: this.statusSort,
           })
+
+        if (this.statusSort == "asc") {
+            this.statusSort = "desc";
+          } else {
+            this.statusSort = "asc";
+          }
       }
       if ($event == "department") {
         this.$store
           .dispatch("user/sortUserTasks", {
             key: $event,
-            order: this.orderBy,
+            order: this.departmentSort,
           })
+
+        if (this.departmentSort == "asc") {
+            this.departmentSort = "desc";
+          } else {
+            this.departmentSort = "asc";
+          }
       }
       if ($event == "difficultyId") {
         this.$store
           .dispatch("user/sortUserTasks", {
             key: $event,
-            order: this.orderBy,
+            order: this.difficultySort,
           })
+
+        if (this.difficultySort == "asc") {
+            this.difficultySort = "desc";
+          } else {
+            this.difficultySort = "asc";
+          }
       }
 
       if ($event == "priority") {
         this.$store
           .dispatch("user/sortUserTasks", {
             key: $event,
-            order: this.orderBy,
+            order: this.prioritySort,
           })
+
+        if (this.prioritySort == "asc") {
+            this.prioritySort = "desc";
+          } else {
+            this.prioritySort = "asc";
+          }
       }
 
       if ($event == "startDate") {
         this.$store
           .dispatch("user/sortUserTasks", {
             key: $event,
-            order: this.orderBy,
+            order: this.startDateSort,
           })
+        
+        if (this.startDateSort == "asc") {
+            this.startDateSort = "desc";
+          } else {
+            this.startDateSort = "asc";
+          }
       }
 
       if ($event == "dueDate") {
         this.$store
           .dispatch("user/sortUserTasks", {
             key: $event,
-            order: this.orderBy,
+            order: this.dueDateSort,
           })
+
+        if (this.dueDateSort == "asc") {
+            this.dueDateSort = "desc";
+          } else {
+            this.dueDateSort = "asc";
+          }
       }
 
-      if (this.orderBy == "asc") {
-        this.orderBy = "desc";
-      } else {
-        this.orderBy = "asc";
-      }
       this.localData = this.userTasks
+      this.resetOtherSorts($event)
       this.checkActive();
       this.key += 1;
     },

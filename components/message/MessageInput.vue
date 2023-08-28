@@ -343,7 +343,6 @@ export default {
       }
 
       const urlPattern = /^(http(s)?:\/\/|www\.)[\w-]+\.[\w]{2,}(\/.*)*$/;
-      console.log()
 
       if(urlPattern.test(url)) {
         this.editor
@@ -353,7 +352,7 @@ export default {
         .setLink({ href: url })
         .run()
       } else {
-        url = 'http://' + url
+        url = 'https://' + url
         this.editor
         .chain()
         .focus()
@@ -361,14 +360,6 @@ export default {
         .setLink({ href: url })
         .run()
       }
-
-      // update link
-      // this.editor
-      //   .chain()
-      //   .focus()
-      //   .extendMarkRange('link')
-      //   .setLink({ href: url })
-      //   .run()
     },
 
     addVoice(voice) {
