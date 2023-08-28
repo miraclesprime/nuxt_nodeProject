@@ -140,16 +140,8 @@ export default {
 
     localSubTasks() {
       let subTs = _.cloneDeep(this.subTasks);
-      const options = {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      timeZone: 'UTC',
-    };
       subTs.map((s) => {
-        const date = new Date(s.dueDate);
-      s.dueDate = date.toLocaleDateString('en-US', options);
-      console.log(s.dueDate)
+        s.dueDate= this.$formatDate(s.dueDate)
         if (s.userId == JSON.parse(localStorage.getItem('user')).sub || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
           s.canDelete = true;
         } else {
@@ -197,7 +189,7 @@ export default {
       return new Date(dateString);
     },
     formatDate(dateObj, format) {
-      console.log("dateObj",dateObj)
+      // console.log("dateObj",dateObj)
       return this.$formatDate(dateObj)
     },
     removeSelection() {
@@ -379,15 +371,15 @@ export default {
             text: `updated ${data.name} to ${userobj.Name}`
           })
       } else {
-        // console.log(updata)
+        updata.dueDate=new Date(updata.dueDate)
           sub = await this.$store.dispatch("subtask/updateSubtask", {
             id: subtask.id,
-            data: updata,
+            data:updata ,
             text: `updated ${data.name} to ${histvalue}`
           })
       }
       if (sub.statusCode == 200) {
-        // console.log(sub.data)
+        console.log("sub.statusCode ",sub.data)
           this.$store.dispatch("subtask/setSelectedSubtask", sub.data)
           this.$store.dispatch('subtask/fetchSubtasks', this.currentTask).then(() => {
             this.$emit('reload-subtask')
