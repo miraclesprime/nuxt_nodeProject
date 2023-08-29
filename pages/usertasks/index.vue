@@ -176,15 +176,6 @@ export default {
             this.$store.commit('user/setUserForTask',this.userfortask)
             this.fetchUserTasks();
         })
-<<<<<<< HEAD
-        //save userinfo to the store for expand taskside
-        this.$store.commit('user/setUserForTask',this.userfortask)
-        this.$store.commit('user/setInitialUserTasks',{initial:data})
-        this.$store.commit('user/setFetchUserTasks',{data:data,filter:this.filterViews,key:this.groupBy})     
-        this.templateKey += 1
-        // this.fetchUserTasks();
-=======
->>>>>>> 7538b8391acf7bb8712139c4b5d1e2132bd5ca60
       },
     },
 
