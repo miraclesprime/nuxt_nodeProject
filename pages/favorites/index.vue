@@ -5,19 +5,17 @@
       <favorite-actions v-on:change-viewing="changeView" v-on:change-sorting="changeSort" ></favorite-actions>
       <!-- @search-projects-tasks="searchProjectOrTasks" -->
       <div id="favorite-scroll-wrap" class="favorite-tables position-relative " >
-
-      
-
-        <!-- task table -->
-        <div style="overflow: auto;margin-bottom:15px">
-          <advance-table :drag="false" :tableFields="taskTableFields" :tableData="taskSubtaskLocalData" :lazyComponent="true" :contextItems="taskContextMenuItems" @context-item-event="taskContextItemClick" @row-click ="openSidebar" @table-sort="sortTask" @context-open="taskContextOpen"  @title-click="openSidebar" @update-field="updateTask" sectionTitle="Favorite Tasks" :plusButton="false" :key="templateKey"></advance-table>
-        </div>
-                <!-- project table -->
-          <div style="overflow: auto;height:100%;">
-          
+        <!-- project table -->
+        <div style="height:50%;">
           <advance-table :drag="false" :tableFields="projectTableFields" :tableData="projLocalData" :lazyComponent="true" :contextItems="projectContextItems" @context-item-event="projContextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @context-open="projectContextOpen" @title-click="projectRoute" @update-field="updateProject" sectionTitle="Favorite Projects" :plusButton="false" :key="templateKey"></advance-table>
 
         </div>
+
+        <!-- task table -->
+        <div style="height:50%;">
+          <advance-table :drag="false" :tableFields="taskTableFields" :tableData="taskSubtaskLocalData" :lazyComponent="true" :contextItems="taskContextMenuItems" @context-item-event="taskContextItemClick" @row-click ="openSidebar" @table-sort="sortTask" @context-open="taskContextOpen"  @title-click="openSidebar" @update-field="updateTask" sectionTitle="Favorite Tasks" :plusButton="false" :key="templateKey"></advance-table>
+        </div>
+
         <!-- <loading :loading="loading"></loading> -->
       </div>
 
@@ -1524,7 +1522,7 @@ export default {
 }
 .favorite-tables {
   display: flex;
-  height: calc(100% - 110px);
+  height: calc(100% - 100px);
   flex-direction: column;
 }
 </style>

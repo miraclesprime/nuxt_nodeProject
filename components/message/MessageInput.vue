@@ -58,11 +58,13 @@
             <fa :icon="faPaperclip"></fa>
             <input ref="file" multiple type="file" id="message-input-attachment-input" class="attachment-input" @change="onFilesSelect" />
           </div>
-          <tippy arrow trigger="click" theme="light-border p-0" interactive :animate-fill="false" :distance="10" placement="top-start" >
-            <div slot="trigger" class="toolbar-icon"  id="message-input-toolbar-icon-2">
+          <tippy ref="emojiPickerTippy" arrow trigger="click" theme="light-border p-0" interactive :animate-fill="false" :distance="10" placement="top-start" >
+            <div slot="trigger" class="toolbar-icon" id="message-input-toolbar-icon-2">
               <fa :icon="faGrin"></fa>
             </div>
-            <v-emoji-picker @select="selectEmoji" ></v-emoji-picker>
+            <div @click.stop>
+              <v-emoji-picker @select="selectEmoji" ></v-emoji-picker>
+            </div>
           </tippy>
         </div>
         <button class="send-btn"  id="message-input-send-btn" type="button" @click="sendMessage"> Send
@@ -181,6 +183,7 @@ export default {
         StarterKit,
         Link.configure({
           openOnClick: false,
+          validate: href => /^https?:\/\//.test(href)
         }),
         Underline,
         Placeholder.configure({ placeholder: this.placeholder }),
@@ -265,7 +268,7 @@ export default {
     }
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     this.editor.destroy();
   },
 
@@ -299,6 +302,7 @@ export default {
     selectEmoji(emoji) {
       const transaction = this.editor.state.tr.insertText(emoji.data);
       this.editor.view.dispatch(transaction);
+      this.$refs.emojiPickerTippy.tip.hide()
     },
     reset() {
       this.editor.commands.setContent('');
@@ -322,7 +326,7 @@ export default {
     },
 
     setLink() {
-      const previousUrl = this.editor.getAttributes('link').href
+      let previousUrl = this.editor.getAttributes('link').href
       let url = window.prompt('URL', previousUrl)
 
       // cancelled
@@ -332,33 +336,38 @@ export default {
 
       // empty
       if (url === '') {
-        this.editor
-          .chain()
-          .focus()
-          .extendMarkRange('link')
-          .unsetLink()
+        this.editor.chain().focus().extendMarkRange('link').unsetLink()
           .run()
-
         return
       }
 
-      const urlPattern = /^(http(s)?:\/\/|www\.)[\w-]+\.[\w]{2,}(\/.*)*$/;
+      // update link
+
+      const urlPattern = /^(http:\/\/|https:\/\/)/;
+
+      let checkHttp = url.split('http://') ? url.split('http://')[1] : null;
+      let checkHttps = url.split('https://') ? url.split('https://')[1] : null;
+
+      console.log(urlPattern.test(url))
 
       if(urlPattern.test(url)) {
-        this.editor
-        .chain()
-        .focus()
-        .extendMarkRange('link')
-        .setLink({ href: url })
-        .run()
+        console.log(checkHttp, checkHttps)
+        if(checkHttp) {
+          checkHttp = 'http://' + checkHttp
+          this.editor
+          .commands
+          .setLink({ href: checkHttp, target: '_blank' })
+        } else {
+          checkHttps = 'https://' + checkHttps
+          this.editor
+          .commands
+          .setLink({ href: checkHttps, target: '_blank' })
+        }
       } else {
         url = 'https://' + url
         this.editor
-        .chain()
-        .focus()
-        .extendMarkRange('link')
-        .setLink({ href: url })
-        .run()
+        .commands
+        .setLink({ href: url, target: '_blank' })
       }
     },
 
