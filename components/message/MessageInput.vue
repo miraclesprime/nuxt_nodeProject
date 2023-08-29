@@ -183,6 +183,7 @@ export default {
         StarterKit,
         Link.configure({
           openOnClick: false,
+          validate: href => /^https?:\/\//.test(href)
         }),
         Underline,
         Placeholder.configure({ placeholder: this.placeholder }),
@@ -267,7 +268,7 @@ export default {
     }
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     this.editor.destroy();
   },
 
@@ -325,7 +326,7 @@ export default {
     },
 
     setLink() {
-      const previousUrl = this.editor.getAttributes('link').href
+      let previousUrl = this.editor.getAttributes('link').href
       let url = window.prompt('URL', previousUrl)
 
       // cancelled
@@ -335,33 +336,38 @@ export default {
 
       // empty
       if (url === '') {
-        this.editor
-          .chain()
-          .focus()
-          .extendMarkRange('link')
-          .unsetLink()
+        this.editor.chain().focus().extendMarkRange('link').unsetLink()
           .run()
-
         return
       }
 
-      const urlPattern = /^(http(s)?:\/\/|www\.)[\w-]+\.[\w]{2,}(\/.*)*$/;
+      // update link
+
+      const urlPattern = /^(http:\/\/|https:\/\/)/;
+
+      let checkHttp = url.split('http://') ? url.split('http://')[1] : null;
+      let checkHttps = url.split('https://') ? url.split('https://')[1] : null;
+
+      console.log(urlPattern.test(url))
 
       if(urlPattern.test(url)) {
-        this.editor
-        .chain()
-        .focus()
-        .extendMarkRange('link')
-        .setLink({ href: url })
-        .run()
+        console.log(checkHttp, checkHttps)
+        if(checkHttp) {
+          checkHttp = 'http://' + checkHttp
+          this.editor
+          .commands
+          .setLink({ href: checkHttp, target: '_blank' })
+        } else {
+          checkHttps = 'https://' + checkHttps
+          this.editor
+          .commands
+          .setLink({ href: checkHttps, target: '_blank' })
+        }
       } else {
         url = 'https://' + url
         this.editor
-        .chain()
-        .focus()
-        .extendMarkRange('link')
-        .setLink({ href: url })
-        .run()
+        .commands
+        .setLink({ href: url, target: '_blank' })
       }
     },
 

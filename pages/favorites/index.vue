@@ -1522,7 +1522,7 @@ export default {
 }
 .favorite-tables {
   display: flex;
-  height: calc(100% - 110px);
+  height: calc(100% - 100px);
   flex-direction: column;
 }
 </style>
