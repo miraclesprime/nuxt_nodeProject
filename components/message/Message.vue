@@ -209,7 +209,7 @@ export default {
       return rg
     },
     canDeleteMessage() {
-      console.log(this.msg.userId, this.user.Id)
+      // console.log(this.msg.userId, this.user.Id)
       if (this.msg.userId == this.user.Id || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
         return true;
       }

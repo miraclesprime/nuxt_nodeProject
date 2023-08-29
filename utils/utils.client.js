@@ -320,6 +320,7 @@ export default ({ store, app, context }, inject) => {
         }
   })
   inject('donotCloseSidebar', (classes) => {
+    console.log(classes)
     const cl = ['editable-input', 'user-info', 'date-info']
     let out = true
     cl.forEach((c) => {

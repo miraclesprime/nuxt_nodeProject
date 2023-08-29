@@ -58,11 +58,13 @@
             <fa :icon="faPaperclip"></fa>
             <input ref="file" multiple type="file" id="message-input-attachment-input" class="attachment-input" @change="onFilesSelect" />
           </div>
-          <tippy arrow trigger="click" theme="light-border p-0" interactive :animate-fill="false" :distance="10" placement="top-start" >
-            <div slot="trigger" class="toolbar-icon"  id="message-input-toolbar-icon-2">
+          <tippy ref="emojiPickerTippy" arrow trigger="click" theme="light-border p-0" interactive :animate-fill="false" :distance="10" placement="top-start" >
+            <div slot="trigger" class="toolbar-icon" id="message-input-toolbar-icon-2">
               <fa :icon="faGrin"></fa>
             </div>
-            <v-emoji-picker @select="selectEmoji" ></v-emoji-picker>
+            <div @click.stop>
+              <v-emoji-picker @select="selectEmoji" ></v-emoji-picker>
+            </div>
           </tippy>
         </div>
         <button class="send-btn"  id="message-input-send-btn" type="button" @click="sendMessage"> Send
@@ -299,6 +301,7 @@ export default {
     selectEmoji(emoji) {
       const transaction = this.editor.state.tr.insertText(emoji.data);
       this.editor.view.dispatch(transaction);
+      this.$refs.emojiPickerTippy.tip.hide()
     },
     reset() {
       this.editor.commands.setContent('');
