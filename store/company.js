@@ -501,15 +501,15 @@ export const actions = {
     });
 
     if (res.data) {
-      await res.data.map(item=>{
-        if(item.id){
-          return item
-        }
-        else {
-          item['id']=res.data.length
-          return item
-        }
-      })
+      // await res.data.map(item=>{
+      //   if(item.id){
+      //     return item
+      //   }
+      //   else {
+      //     item['id']=res.data.length
+      //     return item
+      //   }
+      // })
       ctx.commit('setInitialTasks', res.data);
       return res.data
     }
