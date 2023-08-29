@@ -2,7 +2,7 @@
   <client-only>
     <div id="page" class="task-page-wrapper">
       <page-title
-        :title="`${selectedUser.firstName} ${selectedUser.lastName}'s Tasks`"
+        :title="`${selectedUser.firstName ? selectedUser.firstName: ''} ${selectedUser.lastName ? selectedUser.lastName : ''}'s Tasks`"
       ></page-title>
       <user-name-task-actions
         :gridType="gridType"
@@ -152,15 +152,29 @@ export default {
           newVal=this.userInfo
           this.$route.query.id=this.userInfo.id
         }
-        this.userfortask = this.teamMembers.find((u) => {
-          if (u.id == newVal.id) {
-            this.selectedUser = u;
-            return u;
+
+        let teamMembers= [];
+
+        this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${JSON.parse(localStorage.getItem('user')).subb}/users`, {
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
           }
-        });
-        //save userinfo to the store for expand taskside
-        this.$store.commit('user/setUserForTask',this.userfortask)
-        this.fetchUserTasks();
+        }).then((res) => {
+            res.map(t => {
+              teamMembers.push({ label: t.FirstName + ' ' + t.LastName, firstName: t.FirstName, lastName: t.LastName, email: t.Email, icon: "user", id: t.Id, status: t.Status, role: t.Role, avatar: t.Photo, selected: false })
+            })
+
+            this.userfortask = teamMembers.find((u) => {
+              if (u.id == newVal.id) {
+                this.selectedUser = u;
+                return u;
+              }
+            });
+
+            // save userinfo to the store for expand taskside
+            this.$store.commit('user/setUserForTask',this.userfortask)
+            this.fetchUserTasks();
+        })
       },
     },
 
@@ -290,7 +304,7 @@ export default {
     async fetchUserTasks() {
       if (process.client) {
         this.$store.dispatch("user/getUserTasks", {
-          userId:this.userfortask ? this.userfortask.id : "",
+          userId: this.userfortask ? this.userfortask.id : "",
           filter: 'all',
       })
         .then(res=> {
@@ -319,7 +333,7 @@ export default {
       }
       // if (process.client) {
         this.$store.dispatch("user/getUserTasks", {
-          userId:this.userfortask ? this.userfortask.id : "",
+          userId: this.userfortask ? this.userfortask.id : "",
           filter: 'all',
       })
         .then(res=> {
