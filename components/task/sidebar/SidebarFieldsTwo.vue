@@ -63,7 +63,8 @@
       </div>
       <div class="row ">
         <div class="col-12">
-          <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter task description..." label="Description" class="w-100" v-on:keyup.native="debounceUpdateField('Description','description',form.description)"></bib-input>
+          <!-- <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter task description..." label="Description" class="w-100" v-on:keyup.native="debounceUpdateField('Description','description',form.description)"></bib-input> -->
+          <rich-editor :value="value" ></rich-editor>
         </div>
       </div>
       <bib-popup-notification-wrapper>
@@ -109,6 +110,9 @@ export default {
       format: "DD MMM YYYY",
       sdate: "",
       ddate: "",
+      value: {
+        files: []
+      },
     };
   },
   computed: {
