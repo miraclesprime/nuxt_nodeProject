@@ -2,7 +2,7 @@
   <div class="input-wrapper-two shape-rounded " id="input-two-wrapper" >
     <div class="align-center gap-01 px-05" id="input-two-span-wrap">
       <bib-icon v-if="icon && iconPosition == 'left'" :icon="icon" :variant="iconVariant"></bib-icon>
-      <input :type="type" v-model="localData" class=" height-2 " :class="{'text-danger': !validNumber}" :style="{width: inputwidth}" @input="onInput" >
+      <input :type="type" v-model="localData" class=" height-2 " :class="{'text-danger': !validNumber}" :style="{width: inputwidth}" @keyup="handleInput" @input="onInput" >
       <bib-icon v-if="icon && iconPosition == 'right'" :icon="icon" :variant="iconVariant"></bib-icon>
       <!-- {{visibleText.label}} -->
     </div>
@@ -60,10 +60,30 @@ export default {
     }
   },
   methods: {
+    handleInput() {
+      // Remove any non-numeric and non-decimal characters
+      let cleanedValue = this.localData.replace(/[^0-9.]/g, '');
+
+      // Split the value into integer and decimal parts
+      let parts = cleanedValue.split('.');
+      let integerPart = parts[0];
+      let decimalPart = parts[1] || '';
+
+      // Limit decimal part to 2 digits
+      if (decimalPart.length > 2) {
+        decimalPart = decimalPart.slice(0, 2);
+      }
+
+      // Combine integer and decimal parts back
+      cleanedValue = decimalPart === '' ? integerPart : `${integerPart}.${decimalPart}`;
+
+      // Update the input value
+      this.localData = cleanedValue;
+    },
     onInput: _.debounce(function() {
-      // console.log(this.localData)
       if (this.validNumber) {
-        this.$emit("input", this.localData)
+        // this.$emit("input", this.localData)
+        console.log(this.localData)
       }
     }, 600)
   }
