@@ -221,6 +221,14 @@ export default {
 
   created() {
     if (process.client) {
+      if(this.$route.query.id) {
+        const newUrl = `${window.location.origin}/usertasks?id=${this.$route.query.id}`;
+        window.history.replaceState(null, null, newUrl);
+      } else {
+        const newUrl = `${window.location.origin}/usertasks?id=${JSON.parse(localStorage.getItem('user-page-query')).id}`;
+        window.history.replaceState(null, null, newUrl);
+      }
+      
       this.$nuxt.$on("update-key", async (payload) => {
         if(payload=="tagStatus"){
           this.fetchUserTasks();
@@ -228,7 +236,6 @@ export default {
         else {
           this.$store.commit('user/updateFetchUserTasks',{createORupdate:payload,data:this.selectedTask,filter:this.filterViews,key:this.groupBy})
         }
-      
         this.templateKey += 1
         // await this.fetchUserTasks();
         // this.beforeLocal = this.localData
@@ -271,6 +278,10 @@ export default {
       }
 
     }
+  },
+
+  beforeDestroy() {
+    localStorage.removeItem('user-page-query');
   },
 
   methods: {
