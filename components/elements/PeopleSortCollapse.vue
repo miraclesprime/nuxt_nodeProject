@@ -75,7 +75,7 @@
           'header-content-fixed': fixHeader,
           'detail-collapse__content_space': extraSpace,
         }"
-        :style="{'height':collapseStatus=='true'?`calc(100vh - ${favoHeight}px) !important`:`calc(100vh - ${favoHeight}px) !important`}"
+        :style="{'height':collapseStatus=='true'?`calc(100vh - ${favoHeight}px) !important`:`calc(100vh - 400px) !important`}"
       >
         <slot name="content"> </slot>
       </div>
@@ -192,14 +192,14 @@ import { mapGetters } from "vuex";
               this.favoriteProjects=_.cloneDeep(newVal)
               if(this.favoriteProjects){
                 if(this.favoriteProjects.length>5){
-                  this.favoHeight=310
+                  this.favoHeight=600
                 }
                 else {
-                  this.favoHeight=310+this.favoriteProjects.length * 40
+                  this.favoHeight=400+this.favoriteProjects.length * 40
                 }
               }
               else {
-                this.favoHeight=310
+                this.favoHeight=400
               }
           }
         },
