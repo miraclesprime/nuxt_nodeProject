@@ -694,14 +694,14 @@ export default {
     },
 
     taskDragEnd: _.debounce(async function(payload) {
-
+      let dragData=_.cloneDeep(payload)
       this.highlight = null
 
-      payload.tasks.forEach((e, i) => {
+      dragData.tasks.forEach((e, i) => {
         e.tOrder = i
       })
 
-      let taskDnD = await this.$axios.$put("/todo/crossTodoDragDrop", { data: payload.tasks, todoId: payload.sectionId }, {
+      let taskDnD = await this.$axios.$put("/todo/crossTodoDragDrop", { data: dragData.tasks, todoId: dragData.sectionId }, {
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("accessToken"),
           "Content-Type": "application/json"

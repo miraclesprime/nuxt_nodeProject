@@ -75,7 +75,7 @@
           'header-content-fixed': fixHeader,
           'detail-collapse__content_space': extraSpace,
         }"
-        :style="{'height':collapseStatus=='true'?`calc(100vh - 610px) !important`:`calc(100vh - 410px) !important`}"
+        :style="{'height':collapseStatus=='true'?`calc(100vh - ${favoHeight}px) !important`:`calc(100vh - ${favoHeight}px) !important`}"
       >
         <slot name="content"> </slot>
       </div>
@@ -142,12 +142,15 @@ import { mapGetters } from "vuex";
           return false;
         },
       },
+  
     },
     data() {
       return {
         id: null,
         sortUser:[],
-        collapseStatus:"true"
+        collapseStatus:"true",
+        favoriteProjects:[],
+        favoHeight:0
       };
     },
     computed: {
@@ -156,7 +159,9 @@ import { mapGetters } from "vuex";
       },
       ...mapGetters({
       allTasks:"company/getInitialAllTasks",
-      favoriteCollapse:"project/getCollapseStatus"
+      favoriteCollapse:"project/getCollapseStatus",
+      favProjects: "project/getFavProjects",
+
     }),
     },
     watch: {
@@ -181,6 +186,23 @@ import { mapGetters } from "vuex";
                   }, {})
                 );
         },
+        favProjects : {
+          immediate:true,
+          handler(newVal){
+              this.favoriteProjects=_.cloneDeep(newVal)
+              if(this.favoriteProjects){
+                if(this.favoriteProjects.length>5){
+                  this.favoHeight=310
+                }
+                else {
+                  this.favoHeight=310+this.favoriteProjects.length * 40
+                }
+              }
+              else {
+                this.favoHeight=310
+              }
+          }
+        },
         favoriteCollapse:{
           immediate:true,
           handler(newValue){
@@ -188,8 +210,7 @@ import { mapGetters } from "vuex";
           }
       },
   },
-  mounted(){
-  },
+ 
     methods: {
 
       changeSortPeople(item){

@@ -342,16 +342,12 @@ export default {
       }
 
       // update link
-
       const urlPattern = /^(http:\/\/|https:\/\/)/;
 
       let checkHttp = url.split('http://') ? url.split('http://')[1] : null;
       let checkHttps = url.split('https://') ? url.split('https://')[1] : null;
 
-      console.log(urlPattern.test(url))
-
       if(urlPattern.test(url)) {
-        console.log(checkHttp, checkHttps)
         if(checkHttp) {
           checkHttp = 'http://' + checkHttp
           this.editor
