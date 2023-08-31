@@ -151,12 +151,6 @@ export default {
       immediate: true, 
       handler(newValue) {
         this.localData = _.cloneDeep(newValue);
-        this.loadingTime=200
-        if (this.localData.length > 20) {
-          this.loadingTime=this.localData.length*100
-        } else {
-          this.loadingTime=200
-        }
       }
     },
  
@@ -193,7 +187,11 @@ export default {
                 return item
               }
             })
-            console.log(this.loadingTime)
+              if (data.length > 20) {
+                this.loadingTime=data.length*100
+              } else {
+              this.loadingTime=data.length*25
+              }
             this.loading = true;
             setTimeout(() => {
               this.$store.commit('user/setFetchUserTasks',{data:data,filter:this.filterViews,key:this.groupBy})   
