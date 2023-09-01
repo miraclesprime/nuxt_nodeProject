@@ -116,11 +116,11 @@ export default {
       "~/node_modules/@bizinbox/bib-ui-lib/dist/utilities.scss",
     ],
   },
-  /*router: {
+  router: {
   //   // base: '/dashboard',
     // middleware: ["defineNuxtRouteMiddleware"],
     trailingSlash: false
-  },*/
+  },
   serverMiddleware: ["~/middleware/redirects"],
   // proxy: {
   //   '/auth': {

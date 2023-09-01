@@ -221,13 +221,13 @@ export default {
 
   created() {
     if (process.client) {
-      if(this.$route.query.id) {
-        const newUrl = `${window.location.origin}/usertasks?id=${this.$route.query.id}`;
-        window.history.replaceState(null, null, newUrl);
-      } else {
-        const newUrl = `${window.location.origin}/usertasks?id=${JSON.parse(localStorage.getItem('user-page-query')).id}`;
-        window.history.replaceState(null, null, newUrl);
-      }
+      // if(this.$route.query.id) {
+      //   const newUrl = `${window.location.origin}/usertasks?id=${this.$route.query.id}`;
+      //   window.history.replaceState(null, null, newUrl);
+      // } else {
+      //   const newUrl = `${window.location.origin}/usertasks?id=${JSON.parse(localStorage.getItem('user-page-query')).id}`;
+      //   window.history.replaceState(null, null, newUrl);
+      // }
       
       this.$nuxt.$on("update-key", async (payload) => {
         if(payload=="tagStatus"){
