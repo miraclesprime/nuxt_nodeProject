@@ -356,7 +356,8 @@ export default {
 
 .highlight {
   outline: 2px skyblue dashed;
-  background-color: azure;
+  background-color: white;
+  // background-color: azure;
 }
 
 .flip-list-move {

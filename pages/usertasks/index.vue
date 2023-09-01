@@ -18,6 +18,7 @@
           <adv-table-three :tableFields="taskFields" :tableData="localData" :lazyComponent="true" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" @create-row="createTask" :drag="false" :key="templateKey" :editSection="groupBy"  ></adv-table-three>              
         </div>
         <div v-else class="h-100">
+          <loading :loading="loading"></loading>
           <advance-table :tableFields="taskFields" :tableData="localData" :lazyComponent="true" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" sectionTitle="" :drag="false" :key="templateKey"></advance-table>
         </div> 
       </div>
@@ -121,7 +122,8 @@ export default {
       groupBy:'',
       filterData:'all',
       taskToDelete: {},
-      sortName: 'priority'
+      sortName: 'priority',
+      loadingTime:200
     };
   },
   computed: {
@@ -136,16 +138,22 @@ export default {
       selectedTask :'task/getSelectedTask',
       userInfo :"user/getUserInfo",
       allTasks: "company/getInitialAllTasks",
+   
     }),
+   
   },
 
   watch: {
     filterViews(newValue){
       return _.cloneDeep(newValue)
     },
-    userTasks(newVal) {
-      this.localData = _.cloneDeep(newVal);
+    userTasks : {
+      immediate: true, 
+      handler(newValue) {
+        this.localData = _.cloneDeep(newValue);
+      }
     },
+ 
     "$route.query": {
       immediate: true,
       handler(newVal) {
@@ -171,10 +179,28 @@ export default {
                 return u;
               }
             });
+          
+            const allTasks= _.cloneDeep(this.allTasks)
+            const data=allTasks.filter(item=>{
+            if(item.userId==newVal.id)
+              {
+                return item
+              }
+            })
+              if (data.length > 20) {
+                this.loadingTime=data.length*100
+              } else {
+              this.loadingTime=data.length*30
+              }
+            this.loading = true;
+            setTimeout(() => {
+              this.$store.commit('user/setFetchUserTasks',{data:data,filter:this.filterViews,key:this.groupBy})   
+              this.$store.commit('user/setUserForTask',this.userfortask)
+              this.$store.commit('user/setInitialUserTasks',{initial:data})
+            this.loading = false;
+       
+        }, this.loadingTime);
 
-            // save userinfo to the store for expand taskside
-            this.$store.commit('user/setUserForTask',this.userfortask)
-            this.fetchUserTasks();
         })
       },
     },
@@ -221,13 +247,13 @@ export default {
 
   created() {
     if (process.client) {
-      if(this.$route.query.id) {
-        const newUrl = `${window.location.origin}/usertasks?id=${this.$route.query.id}`;
-        window.history.replaceState(null, null, newUrl);
-      } else {
-        const newUrl = `${window.location.origin}/usertasks?id=${JSON.parse(localStorage.getItem('user-page-query')).id}`;
-        window.history.replaceState(null, null, newUrl);
-      }
+      // if(this.$route.query.id) {
+      //   const newUrl = `${window.location.origin}/usertasks?id=${this.$route.query.id}`;
+      //   window.history.replaceState(null, null, newUrl);
+      // } else {
+      //   const newUrl = `${window.location.origin}/usertasks?id=${JSON.parse(localStorage.getItem('user-page-query')).id}`;
+      //   window.history.replaceState(null, null, newUrl);
+      // }
       
       this.$nuxt.$on("update-key", async (payload) => {
         if(payload=="tagStatus"){
