@@ -18,12 +18,11 @@
           <adv-table-three :tableFields="taskFields" :tableData="localData" :lazyComponent="true" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" @create-row="createTask" :drag="false" :key="templateKey" :editSection="groupBy"  ></adv-table-three>              
         </div>
         <div v-else class="h-100">
-          <loading :loading="loading"></loading>
           <advance-table :tableFields="taskFields" :tableData="localData" :lazyComponent="true" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" sectionTitle="" :drag="false" :key="templateKey"></advance-table>
         </div> 
       </div>
     
-      <div v-show="gridType == 'grid'" id="task-grid-wrapper" class="d-flex gridview h-100" >
+      <!-- <div v-show="gridType == 'grid'" id="task-grid-wrapper" class="d-flex gridview h-100" >
         <div class="task-grid-section">
           <div
             class="w-100 d-flex justify-between"
@@ -45,7 +44,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
         
       <alert-dialog
         v-show="alertDialog"
@@ -74,7 +73,7 @@ import _ from "lodash";
 import {
   COMPANY_TASK_FIELDS as TaskFields,
   TASK_CONTEXT_MENU,
-} from "../../config/constants";
+} from "../../../config/constants";
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
 export default {
@@ -122,8 +121,7 @@ export default {
       groupBy:'',
       filterData:'all',
       taskToDelete: {},
-      sortName: 'priority',
-      loadingTime:200
+      sortName: 'priority'
     };
   },
   computed: {
@@ -138,96 +136,19 @@ export default {
       selectedTask :'task/getSelectedTask',
       userInfo :"user/getUserInfo",
       allTasks: "company/getInitialAllTasks",
-   
     }),
-   
   },
 
   watch: {
     filterViews(newValue){
       return _.cloneDeep(newValue)
     },
-    userTasks : {
-      immediate: true, 
-      handler(newValue) {
-        this.localData = _.cloneDeep(newValue);
-      }
-    },
- 
-    "$route.query": {
-      immediate: true,
-      handler(newVal) {
-        if(Object.keys(newVal).length === 0){
-          newVal=this.userInfo
-          this.$route.query.id=this.userInfo.id
-        }
-
-        let teamMembers= [];
-
-        this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${JSON.parse(localStorage.getItem('user')).subb}/users`, {
-          headers: {
-            "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
-          }
-        }).then((res) => {
-            res.map(t => {
-              teamMembers.push({ label: t.FirstName + ' ' + t.LastName, firstName: t.FirstName, lastName: t.LastName, email: t.Email, icon: "user", id: t.Id, status: t.Status, role: t.Role, avatar: t.Photo, selected: false })
-            })
-
-            this.userfortask = teamMembers.find((u) => {
-              if (u.id == newVal.id) {
-                this.selectedUser = u;
-                return u;
-              }
-            });
-          
-            const allTasks= _.cloneDeep(this.allTasks)
-            const data=allTasks.filter(item=>{
-            if(item.userId==newVal.id)
-              {
-                return item
-              }
-            })
-              if (data.length > 20) {
-                this.loadingTime=data.length*100
-              } else {
-              this.loadingTime=data.length*30
-              }
-            this.loading = true;
-            setTimeout(() => {
-              this.$store.commit('user/setFetchUserTasks',{data:data,filter:this.filterViews,key:this.groupBy})   
-              this.$store.commit('user/setUserForTask',this.userfortask)
-              this.$store.commit('user/setInitialUserTasks',{initial:data})
-            this.loading = false;
-       
-        }, this.loadingTime);
-
-        })
-      },
+    userTasks(newVal) {
+      this.localData = _.cloneDeep(newVal);
     },
 
     gridType() {
       this.key++;
-    },
-
-    tasks(newVal) {
-      let data = _.cloneDeep(newVal);
-      let sortedData = data.sort((a, b) => {
-        if (a.priorityId && b.priorityId) {
-          return a.priorityId - b.priorityId;
-        }
-      });
-
-      for(let field of this.taskFields) {
-          if(field.header_icon) {
-            if(field.key == 'priority') {
-              field.header_icon.isActive = true;
-            } else {
-              field.header_icon.isActive = false;
-            }
-          }
-        }
-
-      this.localData = sortedData;
     },
 
     sidebar(newVal){
@@ -247,13 +168,6 @@ export default {
 
   created() {
     if (process.client) {
-      // if(this.$route.query.id) {
-      //   const newUrl = `${window.location.origin}/usertasks?id=${this.$route.query.id}`;
-      //   window.history.replaceState(null, null, newUrl);
-      // } else {
-      //   const newUrl = `${window.location.origin}/usertasks?id=${JSON.parse(localStorage.getItem('user-page-query')).id}`;
-      //   window.history.replaceState(null, null, newUrl);
-      // }
       
       this.$nuxt.$on("update-key", async (payload) => {
         if(payload=="tagStatus"){
@@ -293,21 +207,59 @@ export default {
           }
         }
       }
+
+      let teamMembers= [];
+
+      this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${JSON.parse(localStorage.getItem('user')).subb}/users`, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      }).then((res) => {
+          res.map(t => {
+            teamMembers.push({ label: t.FirstName + ' ' + t.LastName, firstName: t.FirstName, lastName: t.LastName, email: t.Email, icon: "user", id: t.Id, status: t.Status, role: t.Role, avatar: t.Photo, selected: false })
+          })
+
+          this.userfortask = teamMembers.find((u) => {
+            if (u.id == this.$route.params.id) {
+              this.selectedUser = u;
+            }
+          });
+
+        // save userinfo to the store for expand taskside
+        this.$store.commit('user/setUserForTask',this.userfortask)
+      })
       
        setTimeout(() => {
         this.userfortask=this.userInfo
-        this.fetchUserTasks()
+        // this.fetchUserTasks()
       }, 200);
 
-      if (!this.$route.query.id) {
+      if (!this.$route.params.id) {
         this.$router.push({ path: "/dashboard" });
       }
 
     }
   },
 
-  beforeDestroy() {
-    localStorage.removeItem('user-page-query');
+  async asyncData({$axios, app,store, params}) {
+
+    const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
+    
+      let response = await $axios.get("user/user-tasks", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Userid: params.id,
+          filter: 'all',
+        }
+      })
+
+    if(response.data.statusCode == 200) {
+      store.commit('user/setInitialUserTasks', {initial:response.data.data});
+      store.commit('user/setFetchUserTasks', {data:response.data.data, filter: store.getters['task/getFilterView'], key:''})
+
+      return { localData: response.data.data };
+    } 
+   
   },
 
   methods: {
@@ -352,6 +304,7 @@ export default {
    
       }
     },
+
     contextOpen(item){
       if(this.$CheckFavTask(item.id)){
        this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Remove favorite"} : item);
@@ -380,18 +333,6 @@ export default {
           this.templateKey+=1
         })
    
-      // }
-      // let compid = JSON.parse(localStorage.getItem("user")).subb;
-      // this.$store
-      //   .dispatch("company/fetchCompanyTasks", {
-      //     companyId: compid,
-      //     filter: "all",
-      //     sort: this.sortName,
-      //     sName: this.groupBy
-      //   })
-      //   .then(() => {
-      //     this.key += 1;
-      //   });
     },
 
     openSidebar(task, scroll) {

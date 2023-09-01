@@ -156,10 +156,10 @@ export const mutations = {
     let arr = JSON.parse(JSON.stringify(state.userTasks));
     if(arr[0].tasks){
       let _arr = [];
-    arr.forEach((ele) => {
-      _arr = _arr.concat(ele.tasks);
-    })
-    arr = _arr;
+      arr.forEach((ele) => {
+        _arr = _arr.concat(ele.tasks);
+      })
+      arr = _arr;
     }
     arr.sort((a, b) => {
       if (a.priorityId && b.priorityId) {
