@@ -73,7 +73,7 @@ import _ from "lodash";
 import {
   COMPANY_TASK_FIELDS as TaskFields,
   TASK_CONTEXT_MENU,
-} from "../../config/constants";
+} from "../../../config/constants";
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
 export default {
@@ -146,63 +146,64 @@ export default {
     userTasks(newVal) {
       this.localData = _.cloneDeep(newVal);
     },
-    "$route.query": {
-      immediate: true,
-      handler(newVal) {
-        if(Object.keys(newVal).length === 0){
-          newVal=this.userInfo
-          this.$route.query.id=this.userInfo.id
-        }
+    // "$route.params": {
+    //   immediate: true,
+    //   handler(newVal) {
+        
+    //     if(Object.keys(newVal).length === 0){
+    //       newVal=this.userInfo
+    //       this.$route.params.id=this.userInfo.id
+    //     }
 
-        let teamMembers= [];
+    //     let teamMembers= [];
 
-        this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${JSON.parse(localStorage.getItem('user')).subb}/users`, {
-          headers: {
-            "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
-          }
-        }).then((res) => {
-            res.map(t => {
-              teamMembers.push({ label: t.FirstName + ' ' + t.LastName, firstName: t.FirstName, lastName: t.LastName, email: t.Email, icon: "user", id: t.Id, status: t.Status, role: t.Role, avatar: t.Photo, selected: false })
-            })
+    //     this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${JSON.parse(localStorage.getItem('user')).subb}/users`, {
+    //       headers: {
+    //         "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
+    //       }
+    //     }).then((res) => {
+    //         res.map(t => {
+    //           teamMembers.push({ label: t.FirstName + ' ' + t.LastName, firstName: t.FirstName, lastName: t.LastName, email: t.Email, icon: "user", id: t.Id, status: t.Status, role: t.Role, avatar: t.Photo, selected: false })
+    //         })
 
-            this.userfortask = teamMembers.find((u) => {
-              if (u.id == newVal.id) {
-                this.selectedUser = u;
-                return u;
-              }
-            });
+    //         this.userfortask = teamMembers.find((u) => {
+    //           if (u.id == newVal.id) {
+    //             this.selectedUser = u;
+    //             return u;
+    //           }
+    //         });
 
-            // save userinfo to the store for expand taskside
-            this.$store.commit('user/setUserForTask',this.userfortask)
-            this.fetchUserTasks();
-        })
-      },
-    },
+    //         // save userinfo to the store for expand taskside
+    //         this.$store.commit('user/setUserForTask',this.userfortask)
+    //         this.fetchUserTasks();
+    //     })
+    //   },
+    // },
 
     gridType() {
       this.key++;
     },
 
-    tasks(newVal) {
-      let data = _.cloneDeep(newVal);
-      let sortedData = data.sort((a, b) => {
-        if (a.priorityId && b.priorityId) {
-          return a.priorityId - b.priorityId;
-        }
-      });
+    // tasks(newVal) {
+    //   let data = _.cloneDeep(newVal);
+    //   let sortedData = data.sort((a, b) => {
+    //     if (a.priorityId && b.priorityId) {
+    //       return a.priorityId - b.priorityId;
+    //     }
+    //   });
 
-      for(let field of this.taskFields) {
-          if(field.header_icon) {
-            if(field.key == 'priority') {
-              field.header_icon.isActive = true;
-            } else {
-              field.header_icon.isActive = false;
-            }
-          }
-        }
+    //   for(let field of this.taskFields) {
+    //       if(field.header_icon) {
+    //         if(field.key == 'priority') {
+    //           field.header_icon.isActive = true;
+    //         } else {
+    //           field.header_icon.isActive = false;
+    //         }
+    //       }
+    //     }
 
-      this.localData = sortedData;
-    },
+    //   this.localData = sortedData;
+    // },
 
     sidebar(newVal){
       const page = document.getElementById("page")
@@ -267,21 +268,57 @@ export default {
           }
         }
       }
+
+      let teamMembers= [];
+
+      this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${JSON.parse(localStorage.getItem('user')).subb}/users`, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      }).then((res) => {
+          res.map(t => {
+            teamMembers.push({ label: t.FirstName + ' ' + t.LastName, firstName: t.FirstName, lastName: t.LastName, email: t.Email, icon: "user", id: t.Id, status: t.Status, role: t.Role, avatar: t.Photo, selected: false })
+          })
+
+          this.userfortask = teamMembers.find((u) => {
+            if (u.id == this.$route.params.id) {
+              this.selectedUser = u;
+            }
+          });
+
+        // save userinfo to the store for expand taskside
+        this.$store.commit('user/setUserForTask',this.userfortask)
+      })
       
        setTimeout(() => {
         this.userfortask=this.userInfo
         this.fetchUserTasks()
       }, 200);
 
-      if (!this.$route.query.id) {
+      if (!this.$route.params.id) {
         this.$router.push({ path: "/dashboard" });
       }
 
     }
   },
 
-  beforeDestroy() {
-    localStorage.removeItem('user-page-query');
+  async asyncData({$axios, app,store, params}) {
+
+    const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
+    
+      let response = await $axios.get("user/user-tasks", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Userid: params.id,
+          filter: 'all',
+        }
+      })
+
+    if(response.data.statusCode == 200) {
+      store.commit('user/setInitialUserTasks', {initial:response.data.data});
+      return { localData: response.data.data };
+    } 
+   
   },
 
   methods: {
@@ -313,19 +350,19 @@ export default {
       this.localData = this.userTasks
     },
 
-    async fetchUserTasks() {
-      if (process.client) {
-        this.$store.dispatch("user/getUserTasks", {
-          userId: this.userfortask ? this.userfortask.id : "",
-          filter: 'all',
-      })
-        .then(res=> {
-          this.$store.commit('user/setFetchUserTasks',{data:res,filter:this.filterViews,key:this.groupBy})     
-          this.templateKey += 1
-        })
+    // async fetchUserTasks() {
+    //   if (process.client) {
+    //     this.$store.dispatch("user/getUserTasks", {
+    //       userId: this.userfortask ? this.userfortask.id : "",
+    //       filter: 'all',
+    //   })
+    //     .then(res=> {
+    //       this.$store.commit('user/setFetchUserTasks',{data:res,filter:this.filterViews,key:this.groupBy})     
+    //       this.templateKey += 1
+    //     })
    
-      }
-    },
+    //   }
+    // },
     contextOpen(item){
       if(this.$CheckFavTask(item.id)){
        this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Remove favorite"} : item);

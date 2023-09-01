@@ -627,8 +627,9 @@ export default {
       }
 
       this.navKey++;
-      localStorage.setItem('user-page-query', JSON.stringify({id: item.id}) )
-      this.$router.push({ path: "/usertasks", query: { id: item.id } });
+      // localStorage.setItem('user-page-query', JSON.stringify({id: item.id}) )
+      let id = item.id;
+      this.$router.push({ path: `/usertasks/${id}` });
     },
 
     // Handle User logout
