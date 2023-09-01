@@ -190,7 +190,7 @@ export default {
               if (data.length > 20) {
                 this.loadingTime=data.length*100
               } else {
-              this.loadingTime=data.length*25
+              this.loadingTime=data.length*30
               }
             this.loading = true;
             setTimeout(() => {
