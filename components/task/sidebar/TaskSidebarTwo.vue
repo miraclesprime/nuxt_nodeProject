@@ -424,16 +424,23 @@ export default {
       let updata = { [taskData.field]: taskData.value }
       let updatedvalue = taskData.value
       let projectId = null
+      let htext = null
 
       if (taskData.name == "Due date" || taskData.name == "Start date") {
         updatedvalue = dayjs(taskData.value).format('DD MMM YYYY')
       }
+
+      if (taskData.name == "Description") {
+        htext = _.truncate(taskData.historyText, {'length': 15})
+      }
+
+      console.log(htext)
       
       this.$store.dispatch("task/updateTask", {
         id: this.form.id,
         data: updata,
         projectId: projectId ? projectId : null,
-        text: taskData.historyText || taskData.value,
+        text: htext || taskData.historyText || taskData.value,
       })
         .then((u) => {
            this.$store.dispatch("task/setSingleTask", u)

@@ -1,9 +1,9 @@
 <template>
   <client-only>
   <div id="message-input-wrapper" v-if="editor" class="wrapper" @click.stop>
-    <div class="container"  id="message-input-container">
-      <!-- <div class="toolbar-top"  id="message-input-toolbar-top">
-        <div class="toolbar-icon"  id="message-input-toolbar-icon-1" :class="{ 'is-active': editor.isActive('bold') }" @click="editor.chain().focus().toggleBold().run()">
+    <div class="container" id="message-input-container">
+      <div class="toolbar-top" id="message-input-toolbar-top">
+        <div class="toolbar-icon border-gray2" id="message-input-toolbar-icon-1" :class="{ 'is-active': editor.isActive('bold') }" @click="editor.chain().focus().toggleBold().run()">
           <fa :icon="faBold"></fa>
         </div>
         <div class="toolbar-icon"  id="message-input-toolbar-icon-2" :class="{ 'is-active': editor.isActive('italic') }" @click="editor.chain().focus().toggleItalic().run()">
@@ -27,11 +27,23 @@
           <fa :icon="faListOl"></fa>
         </div>
         <div class="toolbar-separator"  id="message-input-toolbar-separator-3"></div>
-        <mention-popup @select="mentionUser"></mention-popup>
-        <div class="toolbar-button d-inline-flex align-center ml-auto"  id="message-input-toolbar-btn-wrap">
-          <button type="button" id="message-input-toolbar-btn" class="cursor-pointer text-secondary text-underline border-none bg-white text-hover-dark" @click.stop="cancelMessage">Cancel</button> 
+        <div class="toolbar-icon" @click="onAttachmentClick"  id="message-input-toolbar-icon-8">
+          <fa :icon="faPaperclip"></fa>
+          <input ref="file" multiple type="file" id="message-input-attachment-input" class="attachment-input" @change="onFilesSelect" />
         </div>
-      </div> -->
+        <mention-popup @select="mentionUser"></mention-popup>
+        <tippy ref="emojiPickerTippy" arrow trigger="click" theme="light-border p-0" interactive :animate-fill="false" :distance="10" placement="top-start" >
+          <div slot="trigger" class="toolbar-icon" id="message-input-toolbar-icon-9">
+            <fa :icon="faGrin"></fa>
+          </div>
+          <div @click.stop>
+            <v-emoji-picker @select="selectEmoji" ></v-emoji-picker>
+          </div>
+        </tippy>
+        <!-- <div class="toolbar-button d-inline-flex align-center ml-auto"  id="message-input-toolbar-btn-wrap">
+          <button type="button" id="message-input-toolbar-btn" class="cursor-pointer text-secondary text-underline border-none bg-white text-hover-dark" @click.stop="cancelMessage">Cancel</button> 
+        </div> -->
+      </div>
       <div class="editor-container" id="message-input-editor-container">
         <div class="editor-wrapper" id="message-input-editor-container-wrapper">
           <div v-if="value.files.length > 0" class="files" id="message-input-files-wrapper">
@@ -51,50 +63,6 @@
           </div>
           <editor-content :editor="editor" class="editor" />
         </div>
-      </div>
-      <div class="toolbar-bottom d-flex justify-between" id="message-input-mi-wrap" @click.stop>
-        <div class="d-flex gap-025"  id="message-input-mi-inner-wrap">
-          <div class="toolbar-icon"  id="message-input-toolbar-icon-1" :class="{ 'is-active': editor.isActive('bold') }" @click="editor.chain().focus().toggleBold().run()">
-            <fa :icon="faBold"></fa>
-          </div>
-          <div class="toolbar-icon"  id="message-input-toolbar-icon-2" :class="{ 'is-active': editor.isActive('italic') }" @click="editor.chain().focus().toggleItalic().run()">
-            <fa :icon="faItalic"></fa>
-          </div>
-          <div class="toolbar-icon"  id="message-input-toolbar-icon-3" :class="{ 'is-active': editor.isActive('underline') }" @click="editor.chain().focus().toggleUnderline().run()">
-            <fa :icon="faUnderline"></fa>
-          </div>
-          <div class="toolbar-icon"  id="message-input-toolbar-icon-4" :class="{ 'is-active': editor.isActive('strike') }" @click="editor.chain().focus().toggleStrike().run()">
-            <fa :icon="faStrikethrough"></fa>
-          </div>
-          <div class="toolbar-separator"  id="message-input-toolbar-separator"></div>
-          <div class="toolbar-icon"  id="message-input-toolbar-icon-5" :class="{ 'is-active': editor.isActive('link') }" @click="toggleLink">
-            <fa :icon="faLink"></fa>
-          </div>
-          <div class="toolbar-separator"  id="message-input-toolbar-separator-2"></div>
-          <div class="toolbar-icon"  id="message-input-toolbar-icon-6" :class="{ 'is-active': editor.isActive('bulletList') }" @click="editor.chain().focus().toggleBulletList().run()">
-            <fa :icon="faListUl"></fa>
-          </div>
-          <div class="toolbar-icon"  id="message-input-toolbar-icon-7" :class="{ 'is-active': editor.isActive('orderedList') }" @click="editor.chain().focus().toggleOrderedList().run()">
-            <fa :icon="faListOl"></fa>
-          </div>
-          <div class="toolbar-separator"  id="message-input-toolbar-separator-3"></div>
-          <div class="toolbar-icon" @click="onAttachmentClick"  id="message-input-toolbar-icon1">
-            <fa :icon="faPaperclip"></fa>
-            <input ref="file" multiple type="file" id="message-input-attachment-input" class="attachment-input" @change="onFilesSelect" />
-          </div>
-          <mention-popup @select="mentionUser"></mention-popup>
-          <tippy ref="emojiPickerTippy" arrow trigger="click" theme="light-border p-0" interactive :animate-fill="false" :distance="10" placement="top-start" >
-            <div slot="trigger" class="toolbar-icon" id="message-input-toolbar-icon-2">
-              <fa :icon="faGrin"></fa>
-            </div>
-            <div @click.stop>
-              <v-emoji-picker @select="selectEmoji" ></v-emoji-picker>
-            </div>
-          </tippy>
-        </div>
-        <!-- <button class="send-btn"  id="message-input-send-btn" type="button" @click="sendMessage"> Send
-          <fa :icon="faPaperPlane"></fa>
-        </button> -->
       </div>
     </div>
     <bib-modal-wrapper v-if="isLinkModalShown" title="Link URL" @close="isLinkModalShown = false">
@@ -158,7 +126,7 @@ export default {
 
   props: {
     value: Object,
-    editingMessage: Object,
+    editingMessage: String,
     placeholder: {
       type: String,
       default: 'Type a message...',
@@ -203,7 +171,7 @@ export default {
     if (process.client) {
 
     this.editor = new Editor({
-      content: '',
+      content: this.editingMessage || '',
       extensions: [
         StarterKit,
         Link.configure({
@@ -289,6 +257,11 @@ export default {
           },
         }),
       ],
+      onBlur: ({ editor, event }) => {
+        // The editor isn’t focused anymore.
+        console.log(editor.getHTML())
+        this.$emit('submit', { text: editor.getHTML(), ...this.value });
+      },
     });
     }
   },
@@ -423,7 +396,7 @@ export default {
   watch: {
     editingMessage(value) {
       if (value) {
-        this.editor.commands.setContent(value.comment);
+        this.editor.commands.setContent(value);
       } else {
         this.editor.commands.setContent('');
       }
@@ -596,7 +569,8 @@ export default {
   cursor: pointer;
   border-radius: 4px;
   color: var(--bib-secondary);
-  background-color: var(--bib-light);
+  /*background-color: var(--bib-light);*/
+
 
   &.is-active {
     color: rgb(34, 34, 34);
