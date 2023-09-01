@@ -105,12 +105,9 @@ import {
   faListOl,
   faLink,
   faCode,
-  faCodeBranch,
   faFile,
   faTimes,
   faAddressCard,
-  faMicrophone,
-  faVideo,
 } from '@fortawesome/free-solid-svg-icons';
 import { v4 as uuidV4 } from 'uuid';
 import { mapGetters } from 'vuex';
@@ -165,12 +162,9 @@ export default {
       faListOl,
       faLink,
       faCode,
-      faCodeBranch,
       faFile,
       faTimes,
       faAddressCard,
-      faMicrophone,
-      faVideo,
     };
   },
 
@@ -367,33 +361,6 @@ export default {
       }
     },
 
-    addVoice(voice) {
-      this.$emit('input', { ...this.value, voices: [...this.value.voices, voice] });
-    },
-    removeVoice(idx) {
-      this.$emit('input', {
-        ...this.value,
-        voices: this.value.voices.filter((_, i) => i !== idx),
-      });
-    },
-    addVideo(video) {
-      this.$emit('input', { ...this.value, videos: [...this.value.videos, video] });
-    },
-    removeVideo(idx) {
-      this.$emit('input', {
-        ...this.value,
-        videos: this.value.videos.filter((_, i) => i !== idx),
-      });
-    },
-    addImage(img) {
-      this.$emit('input', { ...this.value, images: [...this.value.images, img] });
-    },
-    removeImage(idx) {
-      this.$emit('input', {
-        ...this.value,
-        images: this.value.images.filter((_, i) => i !== idx),
-      });
-    },
     mentionUser(user) {
       // console.log(user)
       const anchorPos = this.editor.state.selection.anchor;
