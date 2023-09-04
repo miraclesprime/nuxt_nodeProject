@@ -229,10 +229,8 @@ export default {
         this.$store.commit('user/setUserForTask',this.userfortask)
       })
       
-       setTimeout(() => {
-        this.userfortask=this.userInfo
-        // this.fetchUserTasks()
-      }, 200);
+      this.userfortask=this.userInfo
+      this.fetchUserTasks()
 
       if (!this.$route.params.id) {
         this.$router.push({ path: "/dashboard" });
@@ -241,26 +239,26 @@ export default {
     }
   },
 
-  async asyncData({$axios, app,store, params}) {
+  // async asyncData({$axios, app,store, params}) {
 
-    const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
+  //   const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
     
-      let response = await $axios.get("user/user-tasks", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Userid: params.id,
-          filter: 'all',
-        }
-      })
+  //     let response = await $axios.get("user/user-tasks", {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         Userid: params.id,
+  //         filter: 'all',
+  //       }
+  //     })
 
-    if(response.data.statusCode == 200) {
-      store.commit('user/setInitialUserTasks', {initial:response.data.data});
-      store.commit('user/setFetchUserTasks', {data:response.data.data, filter: store.getters['task/getFilterView'], key:''})
+  //   if(response.data.statusCode == 200) {
+  //     store.commit('user/setInitialUserTasks', {initial:response.data.data});
+  //     store.commit('user/setFetchUserTasks', {data:response.data.data, filter: store.getters['task/getFilterView'], key:''})
 
-      return { localData: response.data.data };
-    } 
+  //     return { localData: response.data.data };
+  //   } 
    
-  },
+  // },
 
   methods: {
 
@@ -294,11 +292,14 @@ export default {
     async fetchUserTasks() {
       if (process.client) {
         this.$store.dispatch("user/getUserTasks", {
-          userId: this.userfortask ? this.userfortask.id : "",
+          userId: this.$route.params.id,
           filter: 'all',
       })
         .then(res=> {
+          console.log(res);
+          this.localData = res;
           this.$store.commit('user/setFetchUserTasks',{data:res,filter:this.filterViews,key:this.groupBy})     
+          this.$store.commit('user/setInitialUserTasks', {initial:res});
           this.templateKey += 1
         })
    
