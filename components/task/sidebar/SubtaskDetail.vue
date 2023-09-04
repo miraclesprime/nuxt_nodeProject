@@ -115,7 +115,8 @@
         </div>
         <div class="row " id="sd-other-fields-row7">
           <div class="col-12" id="sd-other-fields-r7-c1">
-            <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter subtask description..." label="Description" v-on:keyup.native="debounceUpdateField({name: 'Description', field: 'description', value: form.description })"></bib-input>
+            <!-- <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter subtask description..." label="Description" v-on:keyup.native="debounceUpdateField({name: 'Description', field: 'description', value: form.description })"></bib-input> -->
+            <rich-editor :value="value" :editingMessage="form.description" @submit="debounceUpdateField({name: 'Description', field: 'description', value: $event.text})" ></rich-editor>
           </div>
         </div>
       </div>

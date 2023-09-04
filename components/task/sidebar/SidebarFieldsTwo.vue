@@ -63,7 +63,8 @@
       </div>
       <div class="row ">
         <div class="col-12">
-          <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter task description..." label="Description" class="w-100" v-on:keyup.native="debounceUpdateField('Description','description',form.description)"></bib-input>
+          <!-- <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter task description..." label="Description" class="w-100" v-on:keyup.native="debounceUpdateField('Description','description',form.description)"></bib-input> -->
+          <rich-editor :value="value" :editingMessage="form.description" @submit="debounceUpdateField('Description', 'description', $event)" ></rich-editor>
         </div>
       </div>
       <bib-popup-notification-wrapper>
@@ -109,6 +110,9 @@ export default {
       format: "DD MMM YYYY",
       sdate: "",
       ddate: "",
+      value: {
+        files: []
+      },
     };
   },
   computed: {
@@ -374,7 +378,7 @@ export default {
     },
     debounceUpdateField: _.debounce(function(name, field, value) {
       if (this.form?.id) {
-        this.$emit("update-field", { name: name, field: field, value: value, historyText: `changed ${name} to ${value}` });
+        this.$emit("update-field", { name: name, field: field, value: value.text, historyText: `changed ${name} to ${value.text}` });
       }
       // console.log(...arguments)
     }, 800),
