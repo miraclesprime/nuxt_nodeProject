@@ -250,7 +250,7 @@ export default {
       // const locationHref = window.location.href;
       // const newUrl = locationHref.split(`/${this.$route.params.id}`)[0] + `/${hexEncoded}`
       // history.pushState(null, null, newURL);
-
+      this.$store.commit("task/setExpandVisible",true);
       let p = JSON.parse(JSON.stringify(this.project))
 
       this.$axios.get(`project/${this.$route.params.id}`, {

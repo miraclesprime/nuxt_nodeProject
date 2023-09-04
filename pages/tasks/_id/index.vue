@@ -364,10 +364,8 @@ export default {
       if (this.currentTask.project.length !== 0) {
           this.$router.push('/projects/' + this.currentTask.project[0].projectId);
       } else {
-          this.$router.push('/usertasks?id=' + this.currentTask.userId);   
+          this.$router.push('/usertasks/' + this.currentTask.userId);
       }
-      
-      this.$store.commit("task/setExpandVisible",true)
       // this.$nuxt.$emit("close-expand")
     },
     closeSidebar(event) {
