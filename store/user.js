@@ -930,10 +930,9 @@ async setFetchUserTasks (ctx,payload) {
       },
     });
    
-        if(res.data.statusCode==200){
-
-          ctx.commit('setInitialUserTasks', {initial:res.data.data});
-          return res.data.data
+    if(res.data.statusCode==200){
+      ctx.commit('setInitialUserTasks', {initial:res.data.data});
+      return res.data.data
     }
   
   },
