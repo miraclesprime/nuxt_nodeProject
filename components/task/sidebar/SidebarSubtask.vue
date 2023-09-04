@@ -29,7 +29,7 @@
             </td>
             <td id="sbs-td-2" width="180">
               <div class="d-inline-flex align-center gap-025 position-relative" >
-                <bib-icon icon="calendar" variant="gray2"></bib-icon>
+                <!-- <bib-icon icon="calendar" variant="gray2"></bib-icon> -->
                 <bib-datetime-picker v-model="sub.dueDate" :format="format" :parseDate="parseDate" :formatDate="formatDate"   class="align-right" size="sm" placeholder="Select due d..." @input="updateSubtask(sub, {field: 'dueDate', value: sub.dueDate, name: 'Due date'})" ></bib-datetime-picker>
               </div>            
             </td>

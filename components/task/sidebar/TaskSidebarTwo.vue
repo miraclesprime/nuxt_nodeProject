@@ -57,7 +57,7 @@
           </div>
         </div>
       </div>
-      <div class=" border-bottom-gray3 position-relative px-105 pt-05 pb-105 mb-1" id="tsb-row">
+      <div class=" border-bottom-gray3 position-relative px-105 pt-05 pb-05 " id="tsb-row">
         <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="taskTitleInput" v-model.trim="form.title" placeholder="Enter Task Name ..." v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" >
       </div>
       
