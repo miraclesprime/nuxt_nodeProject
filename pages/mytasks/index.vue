@@ -1309,7 +1309,8 @@ export default {
 }
 .highlight {
   outline: 2px skyblue dashed;
-  background-color: azure;
+  // background-color: azure;
+  background-color: white;
 }
 
 /*@media screen and (max-width: 1600px) {
