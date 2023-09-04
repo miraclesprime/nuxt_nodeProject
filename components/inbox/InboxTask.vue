@@ -1,8 +1,13 @@
 <template>
 <client-only>
   <div id="inbox-task-wrapper" class="inbox-task h-100 position-relative" >
-    <div class="d-flex justify-between side-panel__header__actions " id='it-inner-wrapper'>
-      <div class="d-flex gap-05 ml-auto align-center" id="it-icon-attachment-wrapper">
+    <div class="d-flex justify-between pt-105 px-105 pb-05 side-panel__header__actions " id='it-inner-wrapper'>
+      <div class="" id="it-mark-button-wrapper" >
+        <span v-show="form.id">
+         <bib-button :label="isComplete.text" :variant="isComplete.variant" icon="check-circle-solid" @click="markComplete"></bib-button >
+        </span>
+      </div>
+      <div class="d-flex gap-05 align-center" id="it-icon-attachment-wrapper">
         <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='it-icon-3' v-tooltip="'Subtasks'" @click="scrollToSubtasks">
           <bib-icon icon="check-square-solid" variant="gray5"></bib-icon>
         </div>
@@ -25,9 +30,9 @@
                 <span class="list__item" id="it-list-item-2" @click="setFavorite">
                   <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
                 </span>
-                <span class="list__item" id="it-list-item-4" @click="showAddTeamModal">
+                <!-- <span class="list__item" id="it-list-item-4" @click="showAddTeamModal">
                   <bib-icon icon="user-group-solid" variant="gray5" class="mr-075"></bib-icon> Team
-                </span>
+                </span> -->
                 <span class="list__item" id="'it-list-item-5'"  @click="scrollToSubtasks">
                   <bib-icon icon="check-square-solid" variant="gray5" class="mr-075"></bib-icon> Subtasks
                 </span>
@@ -46,21 +51,24 @@
       </div>
     </div>
     <!-- task title -->
-    <div class="d-flex align-center gap-05 border-top-light border-bottom-light py-025 px-1" id="it-title">
-      <div class="width-2 height-2 d-inline-flex align-center justify-center cursor-pointer" @click="markComplete" id="it-ccs-icon">
-        <bib-icon icon="check-circle-solid" :variant="isComplete.variant" :scale="1.5"></bib-icon>
-      </div>
-      <div class="flex-grow-1" id="it-editable-input">
-        <input type="text" class="editable-input" ref="taskTitleInput" v-model="form.title" placeholder="Enter task name..." v-on:keyup="debounceUpdate('Title', 'title', form.title)" id="it-taskTitleInput">
-      </div>
-      <div>
-        <team-avatar-list :team="team"></team-avatar-list>
-      </div>
-      <div class="d-flex align-center justify-center width-2 height-2 shape-circle bg-light cursor-pointer" v-tooltip="'Team'" @click="showAddTeamModal" id="it-show-add-team-modal">
-        <bib-icon icon="user-group-solid"></bib-icon>
-      </div>
+    <div class=" border-bottom-gray3 position-relative px-105 pt-05 pb-05 " id="it-editable-input">
+      <input type="text" class="editable-input" ref="taskTitleInput" v-model="form.title" placeholder="Enter task name..." v-on:keyup="debounceUpdate('Title', 'title', form.title)" id="it-taskTitleInput">
     </div>
     <div class="of-scroll-y position-relative py-05" id="it-of-scroll-y">
+      <div class="border-bottom-gray3 px-105 py-05" v-show="form.id">
+        <div class="align-center gap-05" >
+          <span class="font-sm text-gray6" style="white-space: nowrap;">Assigned to</span> 
+          <div class="mr-1" style="flex-basis: 2rem;">
+            <user-select-two :userId="form.userId" mode="avatar" minWidth="15rem" maxWidth="18rem" @change="updateAssignee" ></user-select-two> <!-- <bib-avatar></bib-avatar> -->
+          </div>
+          <div class="align-center height-2 cursor-pointer" > 
+            <user-select-two userId="" mode="icon" title="Add to team" min-width="15rem" max-width="18rem" @change="addTeamMember"></user-select-two>
+            <team-list-two :team="team" @delete-member="deleteMember"></team-list-two>
+            <!-- <bib-icon icon="user-group-solid"></bib-icon> -->
+          </div>
+        </div>
+      </div>
+
         <!-- editable fields -->
         <!-- <sidebar-fields :task="form" @update-project-field="updateProject" @update-field="updateTask"></sidebar-fields> -->
         <!-- subtasks -->
@@ -193,8 +201,57 @@ export default {
           .catch(e => console.log(e))
       }
     },
-    showAddTeamModal() {
+    /*showAddTeamModal() {
       this.$nuxt.$emit("add-member-to-task")
+    },*/
+
+    updateAssignee(userData){
+      let user = this.teamMembers.filter(u => u.id == userData.id)
+      // console.log(userData, user)
+
+      this.$store.dispatch("task/updateTask", {
+        id: this.form.id,
+        data: { userId: userData.id},
+        user,
+        // projectId: projectId ? projectId : null,
+        text: `changed Assignee to ${userData.label}`,
+      })
+        .then((u) => {
+          this.$nuxt.$emit("update-key")
+          // this.$store.dispatch("task/setSingleTask", u)
+          this.reloadHistory += 1
+        })
+        .catch(e => {
+          console.log(e)
+        })
+    },
+
+    addTeamMember(userData){
+      console.log(userData)
+
+      this.$store.dispatch('task/addMember', { taskId: this.form.id, team: [userData], text: `added ${userData.label} to task` })
+        .then((res) => {
+          if (res.statusCode == 200) {
+            this.popupMessages.push({text: res.message, variant: "success"})
+            this.$store.dispatch('task/fetchTeamMember', { id: this.form.id })
+          } else {
+            this.popupMessages.push({text: res.message, variant: "warning"})
+            console.warn(res)
+          }
+        })
+        .catch((err) => {
+          console.warn(err)
+        })
+    },
+
+    async deleteMember(member) {
+      console.log(member)
+      await this.$store.dispatch("task/deleteMember", { taskId: this.form.id, memberId: member.id, text: `removed ${member.label}` })
+        .then((res) => {
+          this.$store.dispatch('task/fetchTeamMember', { id: this.form.id })
+          this.popupMessages.push({text: "Deleted successfully", variant: "success"})
+        })
+        .catch(e => console.warn(e))
     },
     
     debounceUpdate: _.debounce(function(payload) {
