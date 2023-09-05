@@ -444,9 +444,11 @@ export default {
       })
         .then((u) => {
            this.$store.dispatch("task/setSingleTask", u)
-          if(this.expandVisible){
-            this.$nuxt.$emit("update-key","update")
-          }
+           this.$nuxt.$emit("update-key")
+          // if(this.expandVisible){
+          //   console.log("111")
+          //   this.$nuxt.$emit("update-key","update")
+          // }
           
          
           this.reloadHistory += 1
@@ -538,9 +540,10 @@ export default {
         .then((u) => {
           // console.log(u)
           this.$store.dispatch("task/setSingleTask", u)
-          if(this.expandVisible){
-            this.$nuxt.$emit("update-key","update")
-          }
+          this.$nuxt.$emit("update-key")
+          // if(this.expandVisible){
+          //   this.$nuxt.$emit("update-key","update")
+          // }
           this.reloadHistory += 1
         })
         .catch(e => {

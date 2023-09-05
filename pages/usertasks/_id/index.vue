@@ -209,7 +209,7 @@ export default {
           }
         }
       }
-  if(this.teamMembers.length>0){
+      if(this.teamMembers.length>0){
           this.teamMembers.find((u) => {
             if (u.id == this.$route.params.id) {
               this.selectedUser = u;
