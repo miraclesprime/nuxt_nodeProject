@@ -194,6 +194,7 @@ export default {
   mounted() {
     if (process.client) {
 
+      this.$store.commit("task/setExpandVisible",true);
       if (JSON.parse(localStorage.getItem("user")).subr != "ADMIN") {
         this.$router.push('/error/403')    
       } 
@@ -325,7 +326,7 @@ export default {
       }
       // if (process.client) {
         this.$store.dispatch("user/getUserTasks", {
-          userId: this.userfortask ? this.userfortask.id : "",
+          userId: this.$route.params.id,
           filter: 'all',
       })
         .then(res=> {

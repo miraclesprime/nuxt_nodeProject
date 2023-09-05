@@ -242,18 +242,36 @@ export default {
     ownReaction(reaction) {
       return { sent: reaction.data.some(d => d.user.id == this.user.Id) }
     },
-    deleteOwnReaction(reaction) {
+    async deleteOwnReaction(reaction) {
       this.reactionSpinner = true
-      let react = reaction.data.find(d => d.user.id == this.user.Id)
-      this.$axios.delete(`/${this.fieldkey}/${this.msg.id}/reaction`, {
-          headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") },
-          data: { reactionId: react.id, userId: react.user.id },
-        })
-        .then(d => {
+      let react = reaction.data.find(rd => rd.user.id == this.user.Id)
+      console.log(reaction, react)
+      if (react) {
+        const res = await this.$axios.delete(`/${this.fieldkey}/${this.msg.id}/reaction`, {
+            headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") },
+            data: { reactionId: react.id, userId: react.user.id },
+          })
+        if (res.data.statusCode == 200) {
           this.fetchReactions()
           this.reactionSpinner = false
-        })
-        .catch(e => console.log(e))
+        } else {
+          console.warn(res.data.message)
+          this.reactionSpinner = false
+        }
+      } else {
+        // this.onReactionClick(reaction)
+        const res = await this.$axios.post(`/${this.fieldkey}/${this.msg.id}/reaction`, { reaction: reaction.reaction, [`${this.fieldkey}Id`]: this.msg[`${this.fieldkey}Id`], text: `reacted ${reaction.reaction} to comment` }, {
+            headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
+          })
+        if (res.data.statusCode == 200) {
+          this.fetchReactions()
+          this.reactionSpinner = false
+        } else {
+          console.warn(res.data.message)
+          this.reactionSpinner = false
+        }
+      }
+        
     },
     
     onActionBarMouseLeave() {
@@ -278,7 +296,7 @@ export default {
       this.isMenuOpen = false;
     },
     onReactionClick({ data }) {
-
+      console.log(data)
       this.isReactionPickerOpen = false;
       this.reactionSpinner = true
       let duplicateReaction = this.reactions.some(r => r.userId == this.user.Id && r.reaction == data)
