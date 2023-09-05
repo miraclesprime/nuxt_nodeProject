@@ -194,6 +194,7 @@ export default {
   mounted() {
     if (process.client) {
 
+      this.$store.commit("task/setExpandVisible",true);
       if (JSON.parse(localStorage.getItem("user")).subr != "ADMIN") {
         this.$router.push('/error/403')    
       } 

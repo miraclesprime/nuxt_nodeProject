@@ -207,7 +207,7 @@ export default {
   async asyncData({$axios, app, params, store}) {
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
     const filter = store.getters['task/getFilterView']
-    try {
+try {
       const res = await $axios.get(`project/${params.id}`, {
           headers: { 'Authorization': `Bearer ${token}`,'filter':filter }
         })
@@ -250,7 +250,7 @@ export default {
       // const locationHref = window.location.href;
       // const newUrl = locationHref.split(`/${this.$route.params.id}`)[0] + `/${hexEncoded}`
       // history.pushState(null, null, newURL);
-
+      this.$store.commit("task/setExpandVisible",true);
       let p = JSON.parse(JSON.stringify(this.project))
 
       this.$axios.get(`project/${this.$route.params.id}`, {

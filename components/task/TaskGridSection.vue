@@ -356,7 +356,7 @@ export default {
 
 .highlight {
   outline: 2px skyblue dashed;
-  background-color: white;
+  background-color: #e6e6e6;
   // background-color: azure;
 }
 
