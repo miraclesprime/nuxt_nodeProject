@@ -2,8 +2,9 @@
   <client-only>
     <div id="page" class="task-page-wrapper">
       <page-title
-        :title="`${selectedUser.firstName ? selectedUser.firstName: ''} ${selectedUser.lastName ? selectedUser.lastName : ''}'s Tasks`"
+        :title="selectedUser?.firstName?`${selectedUser.firstName ? selectedUser.firstName: ''} ${selectedUser.lastName ? selectedUser.lastName : ''}'s Tasks`:''"
       ></page-title>
+      
       <user-name-task-actions
         :gridType="gridType"
         @userTaskGroup="userTaskGroup($event)"
@@ -138,7 +139,7 @@ export default {
       allTasks: "company/getInitialAllTasks",
     }),
   },
-
+ 
   watch: {
     filterViews(newValue){
       return _.cloneDeep(newValue)
@@ -171,7 +172,7 @@ export default {
       
       this.$nuxt.$on("update-key", async (payload) => {
         if(payload=="tagStatus"){
-          this.fetchUserTasks();
+          this.updateKey();
         }
         else {
           this.$store.commit('user/updateFetchUserTasks',{createORupdate:payload,data:this.selectedTask,filter:this.filterViews,key:this.groupBy})
@@ -208,7 +209,23 @@ export default {
           }
         }
       }
-
+      if(this.teamMembers.length>0){
+          this.teamMembers.find((u) => {
+            if (u.id == this.$route.params.id) {
+              this.selectedUser = u;
+            }
+          });
+        let data=_.cloneDeep(this.allTasks)
+          data=data.filter((item)=>{
+            if(item.userId==this.$route.params.id){
+              return item
+            }
+          })
+            this.$store.commit('user/setFetchUserTasks',{data:data,filter:this.filterViews,key:this.groupBy})     
+            this.$store.commit('user/setInitialUserTasks', {initial:data});
+          
+  }
+  else {
       let teamMembers= [];
 
       this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${JSON.parse(localStorage.getItem('user')).subb}/users`, {
@@ -219,20 +236,25 @@ export default {
           res.map(t => {
             teamMembers.push({ label: t.FirstName + ' ' + t.LastName, firstName: t.FirstName, lastName: t.LastName, email: t.Email, icon: "user", id: t.Id, status: t.Status, role: t.Role, avatar: t.Photo, selected: false })
           })
-
-          this.userfortask = teamMembers.find((u) => {
+          teamMembers.find((u) => {
             if (u.id == this.$route.params.id) {
               this.selectedUser = u;
             }
           });
+          
+
+          this.updateKey()
+          // this.userfortask = teamMembers.find((u) => {
+          //   if (u.id == this.$route.params.id) {
+          //     this.selectedUser = u;
+          //   }
+          // });
 
         // save userinfo to the store for expand taskside
-        this.$store.commit('user/setUserForTask',this.userfortask)
+        // this.$store.commit('user/setUserForTask',this.userfortask)
       })
+  }
       
-      this.userfortask=this.userInfo
-      this.fetchUserTasks()
-
       if (!this.$route.params.id) {
         this.$router.push({ path: "/dashboard" });
       }
@@ -243,7 +265,6 @@ export default {
   // async asyncData({$axios, app,store, params}) {
 
   //   const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
-    
   //     let response = await $axios.get("user/user-tasks", {
   //       headers: {
   //         Authorization: `Bearer ${token}`,
@@ -253,7 +274,7 @@ export default {
   //     })
 
   //   if(response.data.statusCode == 200) {
-  //     store.commit('user/setInitialUserTasks', {initial:response.data.data});
+  //     // store.commit('user/setInitialUserTasks', {initial:response.data.data});
   //     store.commit('user/setFetchUserTasks', {data:response.data.data, filter: store.getters['task/getFilterView'], key:''})
 
   //     return { localData: response.data.data };
@@ -290,22 +311,7 @@ export default {
       this.localData = this.userTasks
     },
 
-    async fetchUserTasks() {
-      if (process.client) {
-        this.$store.dispatch("user/getUserTasks", {
-          userId: this.$route.params.id,
-          filter: 'all',
-      })
-        .then(res=> {
-          console.log(res);
-          this.localData = res;
-          this.$store.commit('user/setFetchUserTasks',{data:res,filter:this.filterViews,key:this.groupBy})     
-          this.$store.commit('user/setInitialUserTasks', {initial:res});
-          this.templateKey += 1
-        })
-   
-      }
-    },
+
 
     contextOpen(item){
       if(this.$CheckFavTask(item.id)){
@@ -326,6 +332,7 @@ export default {
       }
       // if (process.client) {
         this.$store.dispatch("user/getUserTasks", {
+
           userId: this.$route.params.id,
           filter: 'all',
       })
@@ -828,7 +835,7 @@ export default {
 
     toggleSidebar($event) {
       if (!$event) {
-        this.$nuxt.$emit("open-sidebar", {...$event,email:this.userfortask});
+        this.$nuxt.$emit("open-sidebar", {...$event,email:this.selectedUser});
       }
       this.flag = !this.flag;
     },
