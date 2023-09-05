@@ -332,7 +332,8 @@ export default {
       }
       // if (process.client) {
         this.$store.dispatch("user/getUserTasks", {
-          userId: this.selectedUser ? this.selectedUser.id : "",
+
+          userId: this.$route.params.id,
           filter: 'all',
       })
         .then(res=> {
