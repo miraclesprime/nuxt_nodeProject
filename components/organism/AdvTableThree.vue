@@ -53,7 +53,7 @@
                        {{ section.title }}
                       </span>
                       <span class="font-w-700 cursor-pointer ml-025" v-else >
-                        <input type="text" class="editable-input section-title" :value="section.title.includes('_section') ? 'Untitled section'
+                        <input type="text" class="editable-input section-title"  :value="section.title.includes('_section') ? 'Untitled section'
                       : section.title" @input="debounceRenameSection(section.id, $event)" @blur="restoreField" />
                       </span>
                     </div>
@@ -62,7 +62,7 @@
               </div>
           </div>
 
-            <draggable class="section-content" tag="article" :list="section.tasks" :group="{ name: 'tasks' }" :data-section="section.id" :ref="'sectionContent' + section.id" @end="rowDragEnd">
+            <draggable :class="sectionClass" tag="article" :list="section.tasks" :group="{ name: 'tasks' }" :data-section="section.id" :ref="'sectionContent' + section.id" @end="rowDragEnd">
               <div v-for="(item, itemIdx) in section.tasks" :key="item.id" ref="trdata" role="row" class="tr sortable drag-item" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
                 <div v-show="drag&&filterViews=='all'" class="td" role="cell" >
                   <div class="drag-handle width-105 height-2" ><bib-icon icon="drag" variant="gray5"></bib-icon>
@@ -74,7 +74,7 @@
                       <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success-sub3"></bib-icon>
                     </span>
                     <span v-if="field.event" class=" flex-grow-1" style="line-height:1.25;">
-                      <input type="text" class="editable-input" :value="item[field.key]" @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
+                      <input type="text" class="editable-input" :value="item[field.key]" @focus="$nuxt.$emit('open-sidebar', item)"  @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
                     </span>
                     <span v-else class="flex-grow-1">
                       {{item[field.key]}}
@@ -87,6 +87,41 @@
                     <div class="align-center height-2">{{item[field.key]?.[0]?.project?.title}}</div>
                   </template>
                   <template v-if="field.key == 'userId'">
+                    <lazy-user-select v-if="isLazy(groupIdx, itemIdx) || isRendered" :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></lazy-user-select>
+                    <skeleton-box v-else></skeleton-box>
+                  </template>
+                  <template v-if="field.key == 'status'">
+                    <lazy-status-select v-if="isLazy(groupIdx, itemIdx) || isRendered" :ref="'statusSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('statusSelect'+item.id)"></lazy-status-select>
+                    <skeleton-box v-else></skeleton-box>
+                  </template>
+                  <template v-if="field.key == 'priority'">
+                    <lazy-priority-select v-if="isLazy(groupIdx, itemIdx) || isRendered" :ref="'prioritySelect'+item.id" :priority="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></lazy-priority-select>
+                    <skeleton-box v-else></skeleton-box>
+                  </template>
+                  <template v-if="field.key == 'difficultyId'">
+                    <lazy-difficulty-select v-if="isLazy(groupIdx, itemIdx) || isRendered" :ref="'difficultySelect'+item.id" :difficulty="item[field.key]" @change="updateDifficulty($event, item)" @close-other="closePopups('difficultySelect'+item.id)"></lazy-difficulty-select>
+                    <skeleton-box v-else></skeleton-box>
+                  </template>
+                  <template v-if="field.key == 'department'">
+                    <lazy-dept-select v-if="isLazy(groupIdx, itemIdx) || isRendered" :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></lazy-dept-select>
+                    <skeleton-box v-else></skeleton-box>
+                  </template>
+                  <template v-if="field.key == 'tag'">
+                    <template v-if="item['TaskTags']?.length > 0">
+                      <tag-comp :tags="item['TaskTags']"></tag-comp>
+                    </template>
+                  </template>
+                  <template v-if="field.key == 'startDate'" >
+                    
+                    <bib-datetime-picker v-if="isLazy(groupIdx, itemIdx) || isRendered" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+                    <skeleton-box v-else></skeleton-box>
+                  </template>
+                  <template v-if="field.key == 'dueDate'" >
+                    
+                    <bib-datetime-picker v-if="isLazy(groupIdx, itemIdx) || isRendered" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+                    <skeleton-box v-else></skeleton-box>
+                  </template>
+                   <!-- <template v-if="field.key == 'userId'">
                     <lazy-user-select v-if="lazyComponent" :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></lazy-user-select>
                     <skeleton-box v-else></skeleton-box>
                   </template>
@@ -112,17 +147,15 @@
                     </template>
                   </template>
                   <template v-if="field.key == 'startDate'" >
-                    <!-- {{$formatDate(item[field.key])}} -->
                     
                     <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                     <skeleton-box v-else></skeleton-box>
                   </template>
                   <template v-if="field.key == 'dueDate'" >
-                    <!-- {{$formatDate(item[field.key])}} -->
                     
                     <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                     <skeleton-box v-else></skeleton-box>
-                  </template>
+                  </template> -->
                 </div>
               </div>
 
@@ -243,6 +276,7 @@ export default {
       loading:false,
       filterViews:"",
       isRendered: false,
+      sectionClass:'section-content'
 
     }
   },
@@ -262,6 +296,7 @@ export default {
       immediate: true, // Execute the watcher immediately on component mount
       deep: true, // Watch for changes in nested properties of tableData
       handler(newValue) {
+        console.log(newValue)
         this.newValue=_.cloneDeep(newValue)
         newValue.forEach(ele => {
           if (this.$refs['sectionContent' + ele.id] === undefined || this.$refs['sectionContent' + ele.id]?.length === 0) { 
@@ -297,6 +332,11 @@ export default {
           this.$refs.newsectioninput.focus()
         }
       });
+    },
+    sectionClass(newValue) {
+      if (newValue === "section-content collapsed") {
+        this.$emit('sectionExpandedEvent', { sectionId: 1 })
+      }
     }
   },
 
@@ -349,6 +389,9 @@ export default {
     this.resizableColumns()
     const divHeight = this.$refs.myTable.clientHeight;
     this.itemsPerPage= parseInt((divHeight - 40) / 40);
+    this.$on('sectionExpandedEvent', (event) => {
+      this.sectionShow(event.sectionId)
+    })
   },
 
   methods: {
@@ -485,13 +528,10 @@ export default {
       return date < minDate.setDate(minDate.getDate() - 1);
       
     },
-    collapseItem(sectionId) {
-      let elem = this.$refs['sectionContent'+sectionId][0].$el
-      let icon = event.currentTarget.children[0]
-      elem.classList.toggle("collapsed")
-      if (elem.classList.contains("collapsed")) {
-        icon.style.transform = 'rotate(-90deg)'
-        const collapsedSection = this.newValue.find(ele => ele.id === sectionId);
+    sectionShow(sectionId){
+      // let elem = this.$refs['sectionContent'+sectionId][0].$el
+      // let icon = event.currentTarget.children[0]
+          const collapsedSection = this.newValue.find(ele => ele.id === sectionId);
         
 
         this.showedCount -= this.available_tasks[collapsedSection.title].length
@@ -516,11 +556,90 @@ export default {
           this.showData();
 
         }
+        // this.$forceUpdate()
+    },
+
+    collapseItem(sectionId) {
+      let elem = this.$refs['sectionContent'+sectionId][0].$el
+      let icon = event.currentTarget.children[0]
+      elem.classList.toggle("collapsed")
+      if (elem.classList.contains("collapsed")) {
+        icon.style.transform = 'rotate(-90deg)'
+        setTimeout(() => {
+          this.$emit('sectionExpandedEvent', { sectionId: sectionId })
+        }, 0)
       } else {
         icon.style.transform = 'rotate(0deg)'
         const collapsedSection = this.newValue.find(ele => ele.id === sectionId);
         this.showedCount += this.available_tasks[collapsedSection.title].length
       }
+      // if (elem.classList.contains("collapsed")) {
+      //   this.$set(this, 'sectionClass', 'section-content')
+      //   icon.style.transform = 'rotate(0deg)'
+      // } else {
+      //   this.$set(this, 'sectionClass', 'section-content collapsed')
+      //   icon.style.transform = 'rotate(-90deg)'
+        // const collapsedSection = this.newValue.find(ele => ele.id === sectionId);
+        // this.showedCount -= this.available_tasks[collapsedSection.title].length
+        // if (this.available_tasks[collapsedSection.title].length !== collapsedSection.tasks.length) {
+        //   const groupIdx = this.lastDisplayedIndex.groupIdx;
+        //   let tmp = {};
+        //   Object.assign(tmp, this.localData[groupIdx])
+        //   tmp.tasks.push(...this.newValue[groupIdx].tasks.slice(this.lastDisplayedIndex.curIdxInGroup + 1, this.newValue[groupIdx].tasks?.length))
+        //   this.available_tasks[this.newValue[groupIdx].title] = tmp.tasks;
+        //   this.localData.length -= 1;
+        //   this.localData.push(tmp)
+        //   this.lastDisplayedIndex.curIdxInGroup = -1;
+        // }
+        // if (this.showedCount < this.itemsPerPage) {
+        //   if (this.lastDisplayedIndex.groupIdx === this.newValue.length - 1) {
+        //     this.allDataDisplayed = true;
+        //     return;
+        //   }
+        //   if (this.allDataDisplayed ) {
+        //     return; // Stop adding data if all data has been displayed
+        //   }
+        //   this.showData();
+        // }
+      // }
+
+      // vm.$set(elem, 'class', 'collapsed', () => {
+
+      // elem.classList.toggle("collapsed")
+      // if (elem.classList.contains("collapsed")) {
+      //   icon.style.transform = 'rotate(-90deg)'
+      //   const collapsedSection = this.newValue.find(ele => ele.id === sectionId);
+        
+
+      //   this.showedCount -= this.available_tasks[collapsedSection.title].length
+      //   if (this.available_tasks[collapsedSection.title].length !== collapsedSection.tasks.length) {
+      //     const groupIdx = this.lastDisplayedIndex.groupIdx;
+      //     let tmp = {};
+      //     Object.assign(tmp, this.localData[groupIdx])
+      //     tmp.tasks.push(...this.newValue[groupIdx].tasks.slice(this.lastDisplayedIndex.curIdxInGroup + 1, this.newValue[groupIdx].tasks?.length))
+      //     this.available_tasks[this.newValue[groupIdx].title] = tmp.tasks;
+      //     this.localData.length -= 1;
+      //     this.localData.push(tmp)
+      //     this.lastDisplayedIndex.curIdxInGroup = -1;
+      //   }
+      //   if (this.showedCount < this.itemsPerPage) {
+      //     if (this.lastDisplayedIndex.groupIdx === this.newValue.length - 1) {
+      //       this.allDataDisplayed = true;
+      //       return;
+      //     }
+      //     if (this.allDataDisplayed ) {
+      //       return; // Stop adding data if all data has been displayed
+      //     }
+      //     this.showData();
+
+      //   }
+      // } else {
+      //   icon.style.transform = 'rotate(0deg)'
+      //   const collapsedSection = this.newValue.find(ele => ele.id === sectionId);
+      //   this.showedCount += this.available_tasks[collapsedSection.title].length
+      // }
+      // })
+
     },
     
     // main class prototype

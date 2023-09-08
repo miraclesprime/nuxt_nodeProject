@@ -38,7 +38,7 @@
                 <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success-sub3"></bib-icon>
               </span>
               <span v-if="field.event" class=" flex-grow-1" style="line-height:1.25;" id="adv-table-field-event">
-                <input type="text" class="editable-input" id="adv-table-editable-input" :value="item[field.key]" @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
+                <input type="text" class="editable-input" id="adv-table-editable-input" :value="item[field.key]"  @focus="$nuxt.$emit('open-sidebar', item)"  @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
               </span>
               <span v-else class="flex-grow-1" id="adv-table-item-field-key">
                 {{item[field.key]}}

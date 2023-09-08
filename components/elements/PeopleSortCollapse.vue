@@ -21,7 +21,7 @@
               }
                 "
         ></bib-icon>
-        <people-sort-button  dropdown="" label="People Sort"  :themeColor="themeColor" >
+        <people-sort-button  dropdown="" label="People"  :themeColor="themeColor" >
                   <template v-slot:menu >
                       <ul>
                           <li class="d-flex align-center">

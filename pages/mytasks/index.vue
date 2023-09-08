@@ -223,7 +223,7 @@ export default {
     // this.$nuxt.$on("close-sidebar", (msg) => {
     //     this.updateKey()
     //   });
-    this.updateKey()
+    // this.updateKey()
       setTimeout(() => {
         this.gridType=this.grid
       }, 300);

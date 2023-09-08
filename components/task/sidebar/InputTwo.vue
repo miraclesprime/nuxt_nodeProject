@@ -56,7 +56,8 @@ export default {
         } else {
           // Use a regular expression to check for valid number format
           // This regex matches numbers with up to 2 decimal places
-          const regex = /^[+-]?\d+(\.\d{1,2})?$/;
+          // const regex = /^[+-]?\d+(\.\d{1,2})?$/;
+          const regex = /^[+-]?\d*\.?\d{1,2}$/;
           return regex.test(inputString);
         }
         // return (typeof(this.localData) === 'number' || typeof(this.localData) === "string" && this.localData.trim() !== '') && !isNaN(this.localData);

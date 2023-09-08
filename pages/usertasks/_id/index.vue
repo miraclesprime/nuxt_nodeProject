@@ -122,7 +122,8 @@ export default {
       groupBy:'',
       filterData:'all',
       taskToDelete: {},
-      sortName: 'priority'
+      sortName: 'priority',
+
     };
   },
   computed: {
@@ -224,7 +225,7 @@ export default {
             this.$store.commit('user/setFetchUserTasks',{data:data,filter:this.filterViews,key:this.groupBy})     
             this.$store.commit('user/setInitialUserTasks', {initial:data});
           
-  }
+  } 
   else {
       let teamMembers= [];
 
@@ -244,14 +245,6 @@ export default {
           
 
           this.updateKey()
-          // this.userfortask = teamMembers.find((u) => {
-          //   if (u.id == this.$route.params.id) {
-          //     this.selectedUser = u;
-          //   }
-          // });
-
-        // save userinfo to the store for expand taskside
-        // this.$store.commit('user/setUserForTask',this.userfortask)
       })
   }
       
