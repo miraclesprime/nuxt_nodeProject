@@ -119,7 +119,7 @@ export default {
       localData: [],
       contentWidth: "100%",
       groupVisible: false,
-      groupBy:'',
+      // groupBy:'',
       filterData:'all',
       taskToDelete: {},
       sortName: 'priority',
@@ -138,6 +138,7 @@ export default {
       selectedTask :'task/getSelectedTask',
       userInfo :"user/getUserInfo",
       allTasks: "company/getInitialAllTasks",
+      groupBy:"user/getGroupBy"
     }),
   },
  
@@ -145,10 +146,20 @@ export default {
     filterViews(newValue){
       return _.cloneDeep(newValue)
     },
+    
     userTasks(newVal) {
       this.localData = _.cloneDeep(newVal);
     },
-
+    groupBy(newValue){
+      return _.cloneDeep(newValue)
+    },
+    // groupBy:{
+    //   immediate:true,
+    //       handler(newValue){
+    //         console.log("newValue",newValue)
+    //         return _.cloneDeep(newValue)
+    //       }
+    // },
     gridType() {
       this.key++;
     },
@@ -176,6 +187,7 @@ export default {
           this.updateKey();
         }
         else {
+          
           this.$store.commit('user/updateFetchUserTasks',{createORupdate:payload,data:this.selectedTask,filter:this.filterViews,key:this.groupBy})
         }
         this.templateKey += 1
@@ -222,6 +234,12 @@ export default {
               return item
             }
           })
+          if(this.groupBy!==''||this.groupBy=="default"){
+            this.groupVisible=true
+          }
+          else {
+            this.groupVisible=false
+          }
             this.$store.commit('user/setFetchUserTasks',{data:data,filter:this.filterViews,key:this.groupBy})     
             this.$store.commit('user/setInitialUserTasks', {initial:data});
           
@@ -293,14 +311,16 @@ export default {
     userTaskGroup($event) {
       if ($event ==="default" ) {
         this.groupVisible = false;
-        this.groupBy = '';
+        // this.groupBy = '';
         this.$store.commit('user/flatTasks');
+        this.$store.commit('user/setGroupBy','')
         this.localData = this.userTasks
         return;
       }
-      this.groupBy = $event;
+      // this.groupBy = $event;
       this.groupVisible = true
-      this.$store.commit('user/groupUserTasks',{key:this.groupBy})
+      this.$store.commit('user/groupUserTasks',{key:$event})
+      this.$store.commit('user/setGroupBy',$event)
       this.localData = this.userTasks
     },
 

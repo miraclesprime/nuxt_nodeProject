@@ -9,6 +9,8 @@ export const state = () => ({
   initialData:[],
   userInfo:[],
   isAdmin:false,
+  groupByValue:"",
+
 
 });
 
@@ -17,6 +19,9 @@ export const getters = {
     return state.user;
   },
 
+  getGroupBy (state) {
+    return state.groupByValue 
+  },
   getUser2(state) {
     return state.user2;
   },
@@ -55,6 +60,9 @@ export const getters = {
 };
 
 export const mutations = {
+  setGroupBy(state,payload) {
+    state.groupByValue=payload
+  },
   setIsAdmin(state,payload) {
     // console.log("store",payload)
     state.isAdmin=payload
