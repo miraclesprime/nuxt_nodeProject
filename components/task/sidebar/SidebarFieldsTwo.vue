@@ -378,7 +378,11 @@ export default {
     },
     debounceUpdateField: _.debounce(function(name, field, value) {
       if (this.form?.id) {
-        this.$emit("update-field", { name: name, field: field, value: value.text, historyText: `changed ${name} to ${value.text}` });
+         if(value.text){
+         }
+         else {
+          this.$emit("update-field", { name: name, field: field, value: value, historyText: `changed ${name} to ${value}` });          
+         }
       }
       // console.log(...arguments)
     }, 800),

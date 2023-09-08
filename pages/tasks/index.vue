@@ -235,7 +235,7 @@ export default {
       }
     }
     this.$store.dispatch("company/fetchInitialCompanyTasks",{filter:'all'})
-    this.updateKey()
+    // this.updateKey()
       setTimeout(() => {
         this.gridType=this.grid
         this.lazyComponent=true
