@@ -30,7 +30,7 @@
             <td id="sbs-td-2" width="180">
               <div class="d-inline-flex align-center gap-025 position-relative" >
                 <!-- <bib-icon icon="calendar" variant="gray2"></bib-icon> -->
-                <bib-datetime-picker v-model="sub.dueDate" :format="format" :parseDate="parseDate" :formatDate="formatDate"   class="align-right" size="sm" placeholder="Select due d..." @input="updateSubtask(sub, {field: 'dueDate', value: sub.dueDate, name: 'Due date'})" ></bib-datetime-picker>
+                <bib-datetime-picker v-model="sub.dueDate" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate"   class="align-right" size="sm" placeholder="Select due d..." @input="updateSubtask(sub, {field: 'dueDate', value: sub.dueDate, name: 'Due date'})" ></bib-datetime-picker>
               </div>            
             </td>
             <td id="sbs-td-1" width="40" align="right" >
@@ -531,6 +531,16 @@ export default {
     }
     &__clear-button { color: $gray5; font-size: $font-size-sm;
       i { font-style: normal;}
+    }
+  }
+  .vdpComponent__input {
+    margin: 0;
+    min-height: 2rem;
+    border-color: transparent;
+    background-color: transparent;
+
+    &:hover {
+      border-color: transparent;
     }
   }
   .bib-select {

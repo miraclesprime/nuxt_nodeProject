@@ -169,7 +169,7 @@ export default {
           this.loading = false
 
           // this.$nuxt.$on("close-sidebar", (msg) => {
-          this.$emit("update-key")
+          // this.$emit("update-key")
           // });
         })
         .catch(e => {

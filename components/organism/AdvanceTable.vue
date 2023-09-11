@@ -32,7 +32,7 @@
             <div v-show="drag" class="drag-handle width-105 height-2" :id="'advtable-drag-handle'+item.id"><bib-icon icon="drag" variant="gray5"></bib-icon>
             </div>
           </div>
-          <div v-for="(field, index) in tableFields" :id="'adv-table-fields-'+index" :key="field+index" class="td" role="cell">
+          <div v-for="(field, findex) in tableFields" :id="'adv-table-fields-'+findex" :key="field+findex" class="td" role="cell">
             <div v-if="field.key == 'title'" class="align-center " id="adv-table-title-field">
               <span v-if="field.icon" class="width-105 height-105 align-center justify-center" :class="{'cursor-pointer': field.icon.event}" @click.stop="markComplete($event, item)">
                 <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success-sub3"></bib-icon>
@@ -43,7 +43,7 @@
               <span v-else class="flex-grow-1" id="adv-table-item-field-key">
                 {{item[field.key]}}
               </span>
-              <span v-if="field.event" class="width-105 height-105 align-center justify-center flex-shrink-0 cursor-pointer bg-hover-light" id="adv-table-field-event-arrow-right" @click.stop="$emit(`${field.event}`, item)">
+              <span v-if="field.event" class="width-105 height-105 align-center justify-center flex-shrink-0 cursor-pointer bg-hover-light" :id="'advtable-field-event-trigger-'+index" @click.stop="titleClick(`${field.event}`, item)">
                 <bib-icon icon="arrow-right" variant="gray4" hover-variant="gray5"></bib-icon>
               </span>
             </div>
@@ -75,7 +75,7 @@
             </template>
             <template v-if="field.key.includes('Date')" class="date-cell">
               <!-- {{$formatDate(item[field.key])}} -->
-              <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+              <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
               <skeleton-box v-else></skeleton-box>
             </template>
           </div>
@@ -221,6 +221,8 @@ export default {
   beforeDestroy(){
     this.localData = null
     this.activeItem = {}
+    this.resizableTables = []
+    console.info("before destroy hook")
   },
 
   methods: {
@@ -419,6 +421,14 @@ export default {
         })
       this.$emit("row-click", item)
     },
+    titleClick(fieldEvent, item){
+      this.unselectAll().then(r => {
+        let elem = event.currentTarget.closest(".tr")
+        elem.classList.add('active')
+        // console.log(elem)
+      })
+      this.$emit(`${fieldEvent}`, item)
+    },
     contextOpen($event, item) {
       this.popupCoords = { left: event.pageX + 'px', top: event.pageY + 'px' }
       this.contextVisible = true
@@ -588,8 +598,8 @@ export default {
       }
     }
     &.active {
-      background-color: $secondary-sub3;
-      .td { background-color: $secondary-sub3; }
+      /*background-color: $secondary-sub4;*/
+      .td { background-color: $gray9; }
     }
   }
 
@@ -650,6 +660,7 @@ export default {
     margin: 0;
     min-height: 2rem;
     border-color: transparent;
+    background-color: transparent;
 
     &:hover {
       border-color: transparent;

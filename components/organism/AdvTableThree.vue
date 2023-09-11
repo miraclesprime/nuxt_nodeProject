@@ -79,7 +79,7 @@
                     <span v-else class="flex-grow-1">
                       {{item[field.key]}}
                     </span>
-                    <span v-if="field.event" class="width-105 height-105 align-center justify-center flex-shrink-0 cursor-pointer bg-hover-light" @click.stop="$emit(`${field.event}`, item)">
+                    <span v-if="field.event" class="width-105 height-105 align-center justify-center flex-shrink-0 cursor-pointer bg-hover-light" @click.stop="titleClick(`${field.event}`, item)">
                       <bib-icon icon="arrow-right" variant="gray4" hover-variant="gray5"></bib-icon>
                     </span>
                   </div>
@@ -113,12 +113,12 @@
                   </template>
                   <template v-if="field.key == 'startDate'" >
                     
-                    <bib-datetime-picker v-if="isLazy(groupIdx, itemIdx) || isRendered" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+                    <bib-datetime-picker v-if="isLazy(groupIdx, itemIdx) || isRendered" v-model="item[field.key]" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                     <skeleton-box v-else></skeleton-box>
                   </template>
                   <template v-if="field.key == 'dueDate'" >
                     
-                    <bib-datetime-picker v-if="isLazy(groupIdx, itemIdx) || isRendered" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+                    <bib-datetime-picker v-if="isLazy(groupIdx, itemIdx) || isRendered" v-model="item[field.key]" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                     <skeleton-box v-else></skeleton-box>
                   </template>
                    <!-- <template v-if="field.key == 'userId'">
@@ -296,7 +296,7 @@ export default {
       immediate: true, // Execute the watcher immediately on component mount
       deep: true, // Watch for changes in nested properties of tableData
       handler(newValue) {
-        console.log(newValue)
+        // console.log(newValue)
         this.newValue=_.cloneDeep(newValue)
         newValue.forEach(ele => {
           if (this.$refs['sectionContent' + ele.id] === undefined || this.$refs['sectionContent' + ele.id]?.length === 0) { 
@@ -392,6 +392,14 @@ export default {
     this.$on('sectionExpandedEvent', (event) => {
       this.sectionShow(event.sectionId)
     })
+  },
+
+  beforeDestroy(){
+    this.localData = null
+    this.available_tasks = []
+    this.activeItem = {}
+    this.resizableTables = []
+    console.info("before destroy hook")
   },
 
   methods: {
@@ -862,6 +870,15 @@ export default {
         // })
       this.$emit("row-click", item)
     },
+
+    titleClick(fieldEvent, item){
+      this.unselectAll().then(r => {
+        let elem = event.currentTarget.closest(".tr")
+        elem.classList.add('active')
+        // console.log(elem)
+      })
+      this.$emit(`${fieldEvent}`, item)
+    },
    
     contextOpen($event, item) {
       this.unselectAll()
@@ -1088,9 +1105,9 @@ export default {
       }
     }
     &.active {
-      background-color: $secondary-sub3;
+      /*background-color: $secondary-sub3;*/
       /*outline: 1px solid $gray4;*/
-      .td { background-color: $secondary-sub3; }
+      .td { background-color: $gray9; }
     }
   }
 
@@ -1160,6 +1177,7 @@ export default {
     margin: 0;
     min-height: 2rem;
     border-color: transparent;
+    background-color: transparent;
 
     &:hover {
       border-color: transparent;

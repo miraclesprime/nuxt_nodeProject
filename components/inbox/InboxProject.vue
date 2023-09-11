@@ -100,12 +100,12 @@
         <loading :loading="loading"></loading>
       </div>
       
-      <div id="ip-conv-wrap" class="border-bottom-gray2 d-flex justify-between sub-title pb-05">
+      <div id="ip-conv-wrap" class=" sub-title pb-05">
         <p id="ip-coversation-para" class="text-gray5 font-md">Conversation </p>
       </div>
       <project-conversation id="inbox_project_conversation" :project="activeProject" :key="'conv-'+activeProject.id"></project-conversation>
       
-      <div id="ip-files-wrap" class="border-bottom-gray2 d-flex justify-between sub-title pb-05">
+      <div id="ip-files-wrap" class=" sub-title mt-05 pb-05">
         <p id="ip-files-para" class="text-gray5 font-md">Files </p>
       </div>
       <project-files id="inbox_project_files" :proj="activeProject" :key="'files'+activeProject.id"></project-files>
