@@ -19,11 +19,7 @@
             <div class="d-flex align-center text-left gap-05 cursor-pointer" id="pf-file-extensions" @click="showPreviewModal(data.value)">
               <!-- <bib-avatar v-if="imageType(data.value)" shape="rounded" :src="data.value.url" size="1.5rem"></bib-avatar> -->
               <bib-icon :icon="fileIcon(data.value)" ></bib-icon>
-              <!-- <bib-icon v-else-if="data.value.extension == '.docx'" icon="word" :scale="1.25"></bib-icon>
-              <bib-icon v-else-if="data.value.extension == '.xlsx'" icon="excel" :scale="1.25"></bib-icon>
-              <bib-icon v-else-if="data.value.extension == '.pptx'" icon="powerpoint" :scale="1.25"></bib-icon>
-              <bib-icon v-else-if="data.value.extension == '.pdf'" icon="pdf" :scale="1.25"></bib-icon>
-              <bib-icon v-else icon="file-text-solid" variant="gray4" :scale="1.25"></bib-icon> -->
+              
               <span class="text-gray1 text-truncate" id="pf-file-data-name" v-tooltip="data.value.name" style="max-width: 6rem;">
                 {{ data.value.name }}
               </span>
@@ -397,7 +393,7 @@ export default {
 <style scoped lang="scss">
 .project-files-wrapper { margin-bottom: 1.5rem; max-height: 60vh; }
 .file-actions {
-  border-bottom: 1px solid $gray4;
+  /*border-bottom: 1px solid $gray4;*/
 }
 
 .action-right {
