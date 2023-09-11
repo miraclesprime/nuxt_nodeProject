@@ -162,7 +162,7 @@ export const mutations = {
   },
   flatTasks(state, payload) {
     let arr = JSON.parse(JSON.stringify(state.userTasks));
-    if(arr[0].tasks){
+    if(arr[0]?.tasks){
       let _arr = [];
       arr.forEach((ele) => {
         _arr = _arr.concat(ele.tasks);
@@ -237,7 +237,7 @@ export const mutations = {
   },
   groupUserTasks(state,payload){
     let arr = state.userTasks
-    if(arr[0].tasks){
+    if(arr[0]?.tasks){
       let _arr = [];
     arr.forEach((ele) => {
       _arr = _arr.concat(ele.tasks);

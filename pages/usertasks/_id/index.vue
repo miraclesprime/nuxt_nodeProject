@@ -16,10 +16,10 @@
     
       <div v-show="gridType == 'list'" id="task-table-wrapper" class="listview h-100 position-relative" :style="{ 'width': contentWidth }">  
         <div v-if="groupVisible" class="h-100">
-          <adv-table-three :tableFields="taskFields" :tableData="localData" :lazyComponent="true" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" @create-row="createTask" :drag="false" :key="templateKey" :editSection="groupBy"  ></adv-table-three>              
+          <adv-table-three :tableFields="taskFields" :tableData="localData" :lazyComponent="lazyComponent" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" @create-row="createTask" :drag="false" :key="templateKey" :editSection="groupBy"  ></adv-table-three>              
         </div>
         <div v-else class="h-100">
-          <advance-table :tableFields="taskFields" :tableData="localData" :lazyComponent="true" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" sectionTitle="" :drag="false" :key="templateKey"></advance-table>
+          <advance-table :tableFields="taskFields" :tableData="localData" :lazyComponent="lazyComponent" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" sectionTitle="" :drag="false" :key="templateKey"></advance-table>
         </div> 
       </div>
     
@@ -123,6 +123,7 @@ export default {
       filterData:'all',
       taskToDelete: {},
       sortName: 'priority',
+      lazyComponent:false
 
     };
   },
@@ -239,6 +240,9 @@ export default {
           }
           else {
             this.groupVisible=false
+            setTimeout(() => {
+            this.lazyComponent=true
+            }, 30);
           }
             this.$store.commit('user/setFetchUserTasks',{data:data,filter:this.filterViews,key:this.groupBy})     
             this.$store.commit('user/setInitialUserTasks', {initial:data});
@@ -263,6 +267,9 @@ export default {
           
 
           this.updateKey()
+          setTimeout(() => {
+          this.lazyComponent=true
+          }, 30);
       })
   }
       
@@ -309,12 +316,16 @@ export default {
     },
 
     userTaskGroup($event) {
+      this.lazyComponent=false
       if ($event ==="default" ) {
         this.groupVisible = false;
         // this.groupBy = '';
         this.$store.commit('user/flatTasks');
         this.$store.commit('user/setGroupBy','')
         this.localData = this.userTasks
+        setTimeout(() => {
+            this.lazyComponent=true
+            }, 30);
         return;
       }
       // this.groupBy = $event;

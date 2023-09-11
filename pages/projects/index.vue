@@ -196,10 +196,14 @@ export default {
     },
 
     ProjectGroup($event) {
+      this.lazyComponent=false
       if ($event ==="default" ) {
         this.groupVisible = false;
         this.groupBy = '';
         this.$store.commit('project/flatProjects');
+        setTimeout(() => {
+            this.lazyComponent=true
+            }, 30);
         return;
       }
       this.groupBy = $event;
