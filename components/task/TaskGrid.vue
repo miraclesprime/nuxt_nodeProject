@@ -359,9 +359,9 @@ export default {
   }
 
   &.active {
-    background-color: $gray9;
-    border-color: $gray8;
-    /*box-shadow: 0 0 0 4px $primary-sub3;*/
+    /*background-color: $gray9;*/
+    /*border-color: $gray4;*/
+    box-shadow: 0 0 0 2px $gray5 inset;
   }
 
   .task-image {
