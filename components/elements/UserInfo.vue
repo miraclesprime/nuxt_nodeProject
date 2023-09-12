@@ -24,6 +24,7 @@ export default {
     avatarSize: { type: String, default: '1.5rem' },
     color: { type: String, default: 'text-dark' },
     weight: { type: String, default: '400' },
+    members: {type: Array, default: []} 
   },
   data() {
     return {
@@ -36,22 +37,33 @@ export default {
 
   computed: {
     ...mapGetters({
-      members: 'user/getTeamMembers'
+      teamMembers: 'user/getTeamMembers'
     }),
   },
 
   mounted() {
+
     this.random = Math.floor(Math.random() * (898) + 100);
 
     if (this.user?.id) {
       this.userName = `${this.user.firstName} ${this.user.lastName}`
-      let m = this.members.find(el => el.id == this.user.id )
-      this.pic = m?.avatar
-      return
+      if(this.teamMembers.length > 0) {
+        let m = this.teamMembers.find(el => el.id == this.user.id )
+        this.pic = m?.avatar
+        return
+      } else {
+        let m = this.members.find(el => el.id == this.user.id )
+        this.pic = m?.avatar
+        return
+      }
     } 
 
     if (this.userId) {
-      this.userInfo = this.members.find(el => el.id == this.userId)
+      if(this.teamMembers.length > 0) {
+        this.userInfo = this.teamMembers.find(el => el.id == this.userId)
+      } else {
+        this.userInfo = this.members.find(el => el.id == this.userId)
+      }
     }
   }
 }
