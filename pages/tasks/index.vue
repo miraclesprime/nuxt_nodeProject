@@ -1,7 +1,7 @@
 <template>
   <client-only>
     <div id="page" class="task-page-wrapper">
-      <page-title title="Tasks"></page-title>
+      <page-title title="Tasks" :count="taskcount"></page-title>
       <!-- <page-title title="Tasks" :count="tasksCount"></page-title> -->
       <company-tasks-actions
         :gridType="gridType"
@@ -155,6 +155,9 @@ export default {
       sidebar: "task/getSidebarVisible",
       grid:"task/getGridType"
     }),
+    taskcount(){
+      return this.tasks.reduce((acc, td) => acc + td.tasks.length, 0)
+    },
   
   },
 

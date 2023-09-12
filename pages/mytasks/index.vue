@@ -66,9 +66,9 @@
         <!-- date-picker for board view -->
         <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
         <!-- status picker for board view -->
-        <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker>
+        <!-- <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker> -->
         <!-- priority picker for board view -->
-        <priority-picker :show="priorityPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="priorityPickerOpen = false" ></priority-picker>
+        <!-- <priority-picker :show="priorityPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="priorityPickerOpen = false" ></priority-picker> -->
         <!-- department-picker for list view -->
         <!-- <dept-picker :show="deptPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Department', field:'departmentId', value: $event.value, historyText: $event.label })" @close="deptPickerOpen = false"></dept-picker> -->
 
@@ -138,9 +138,9 @@ export default {
       userPickerOpen: false,
       datePickerOpen: false,
       datepickerArgs: { label: "", field: ""},
-      statusPickerOpen: false,
-      priorityPickerOpen: false,
-      deptPickerOpen: false,
+      // statusPickerOpen: false,
+      // priorityPickerOpen: false,
+      // deptPickerOpen: false,
       alertDialog: false,
       alertMsg:"",
       contentWidth: "100%",
@@ -371,7 +371,7 @@ export default {
       this.datepickerArgs.field = payload.field || 'dueDate'
       this.datepickerArgs.label = payload.label || 'Due date'
     },
-    showStatusPicker(payload){
+    /*showStatusPicker(payload){
       this.closeAllPickers()
       this.statusPickerOpen = true
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
@@ -388,14 +388,14 @@ export default {
       this.deptPickerOpen = true
       this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
       this.activeTask = payload.task
-    },
+    },*/
     closeAllPickers(){
       this.taskContextMenu = false
       this.userPickerOpen = false
       this.datePickerOpen = false
-      this.statusPickerOpen = false
-      this.priorityPickerOpen = false
-      this.deptPickerOpen = false
+      // this.statusPickerOpen = false
+      // this.priorityPickerOpen = false
+      // this.deptPickerOpen = false
       this.activeTask = {}
     },
 

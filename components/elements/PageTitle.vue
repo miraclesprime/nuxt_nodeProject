@@ -1,13 +1,7 @@
 <template>
   <nav :id="id+'-title-wrapper'" class="bg-white d-flex align-center gap-05 py-075 px-025">
-    <!-- <button type="button" v-show="visible !== 2" @click="$router.back()" class="d-flex cursor-pointer bg-white border-white" id="pt-button">
-      <bib-icon  icon="arrowhead-left" :scale="1.5" variant="gray5"></bib-icon>
-    </button> -->
     <bib-avatar v-if="avatar" :src="avatar" class="mr-105"></bib-avatar>
-    <!-- <span v-show="visible !== 2" class=" mr-1 title-text" :id="id+'-title-text'">{{title}}</span>
-    <span v-show="visible === 2" class=" ml-2 title-text" :id="id+'-title-text'">{{title}}</span> -->
-    <!-- removed the back arrow -->
-    <span class="ml-05 title-text" :id="id+'-title-text'">{{title}}</span> <span v-if="count > 0" :id="id+'-count'" class="text-secondary font-md">({{count}})</span>
+    <span class="ml-05 title-text font-w-700" :id="id+'-title-text'">{{title}}</span> <span v-if="count > 0" :id="id+'-count'" class="text-secondary font-md font-w-700">({{count}})</span>
   </nav>
 </template>
 <script>
@@ -48,7 +42,7 @@ nav {
 
 .title-text {
   font-size: 1.25rem;
-  font-weight: bold;
+  
 }
 
 </style>
