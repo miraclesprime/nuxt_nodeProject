@@ -1,14 +1,14 @@
 <template>
   <client-only>
     <div v-show="show" ref="inlineDatepicker" class="picker-wrapper" id="inline-date-picker-wrapper" v-click-outside="onClickOutside" :style="position">
-      <!-- date picker -->
-      <datepicker :value="datetime" v-model="localDate" :inline="true" @input="datePicked" @click.native.stop placeholder="Due date"></datepicker>
+      <!-- <datepicker :value="datetime" v-model="localDate" :inline="true" @input="datePicked" @click.native.stop placeholder="Due date"></datepicker> -->
+      <bib-datetime-picker v-model="localDate" :hasInputElement="false" @input="datePicked" @click.native.stop></bib-datetime-picker>
     </div>
   </client-only>
 </template>
 
 <script>
-import _ from 'lodash'
+// import _ from 'lodash'
 export default {
 
   name: 'InlineDatepicker',
