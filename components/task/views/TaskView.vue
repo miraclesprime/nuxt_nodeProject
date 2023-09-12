@@ -203,7 +203,6 @@ export default {
          return _.cloneDeep(newValue)
     },
     sections(newVal) {
-      console.log("$$$$")
       this.localdata = _.cloneDeep(newVal);
 
        /*let sorted = this.localdata.map((s) => {

@@ -5,7 +5,7 @@
     </div>
     <div id="inbox-item-tile-wrapper" class="w-100 d-inline-flex align-center gap-05 pb-05 text-secondary font-md">
       <span>
-        <user-info :userId="item.data[0].userId"></user-info>
+        <user-info :userId="item.data[0].userId" :members="members"></user-info>
       </span>
       <span v-if="projTitle" class="align-center gap-025" id="inbox-item-briefcase-icon">
         <bib-icon icon="briefcase" variant="gray5"></bib-icon> {{projTitle}}
@@ -63,7 +63,7 @@ export default {
   props: {
     item: Object,
     active: [Number, String],
-    
+    members: [Array]
   },
   data() {
     return {

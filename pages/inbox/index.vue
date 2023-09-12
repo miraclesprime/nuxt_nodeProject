@@ -7,7 +7,7 @@
           <div v-for="(value, key) in combinedInbox">
             <h4 class="font-md text-gray6 text-capitalize py-05 px-2 border-bottom-light">{{key}}</h4>
             <template v-for="(o, index) in value">
-              <inbox-item :item="o" :key="o.id" @task-click="fetchTask" @project-click="fetchProject" :active="active"></inbox-item>
+              <inbox-item :item="o" :key="o.id" @task-click="fetchTask" @project-click="fetchProject" :active="active" :members="members"></inbox-item>
             </template>
           </div>
           <div ref="infinitescrolltrigger" v-show="currentPage <= pageCount" class="align-center justify-center py-05">
@@ -38,6 +38,7 @@ export default {
     return {
       // loading: false,
       inbox: [],
+      members: [],
       task: {},
       project: {},
       active: 0,
@@ -165,6 +166,25 @@ export default {
 
     },
   },
+
+  created() {
+    if(process.client) {
+      let members= [];
+
+      this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${JSON.parse(localStorage.getItem('user')).subb}/users`, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      }).then((res) => {
+          res.map(t => {
+            members.push({ label: t.FirstName + ' ' + t.LastName, firstName: t.FirstName, lastName: t.LastName, email: t.Email, icon: "user", id: t.Id, status: t.Status, role: t.Role, avatar: t.Photo, selected: false })
+          })
+      })
+
+      this.members = members
+    }
+  },
+
   mounted() {
 
     this.$store.dispatch("inbox/fetchInboxEntries").then(res => {
