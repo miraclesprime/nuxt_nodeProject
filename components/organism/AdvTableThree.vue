@@ -1103,6 +1103,7 @@ export default {
       .drag-handle {
         opacity: 1;
       }
+      .td { background-color: rgba(lightgray, 0.15); }
     }
     &.active {
       /*background-color: $secondary-sub3;*/

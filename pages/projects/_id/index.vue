@@ -6,7 +6,8 @@
           <bib-icon icon="arrowhead-left" :scale="1.5" variant="gray5"></bib-icon>
         </button>
         <bib-avatar></bib-avatar>
-        <span id="project-id-project-title" class=" font-w-700  mr-1 " style="font-size: 1.25rem;">{{projectTitle}}</span>
+        <span id="project-id-project-title" class="font-w-700 " style="font-size: 1.25rem;">{{projectTitle}}</span>
+        <span :id="projectName+'-count'" class="text-secondary font-md font-w-700">({{taskcount}})</span>
         <div class="ml-auto d-flex gap-05 align-center position-relative" id="project-id-button-wraps">
           <team-avatar-list :team="team"></team-avatar-list>
 
@@ -59,7 +60,7 @@
       <!-- <div id="project-id-content" class="project-id-content bg-light position-relative h-100 ">
       </div> -->
       
-      <task-view :fields="taskFields" :tasks="projectTasks" :sections="projectSections" :gridType="gridType"></task-view>
+      <task-view :sections="projectSections" :gridType="gridType"></task-view>
 
       <!-- project modals -->
       <bib-modal-wrapper v-if="projectModal" :title="projectModalTitle" size="xl" @close="projectModal = false">
@@ -159,8 +160,8 @@ export default {
         projects: 'project/getAllProjects',
         team: "project/getProjectMembers",
         projectSections: 'section/getProjectSections',
-        projectTasks: "task/tasksForListView",
-        taskFields: "task/tableFields",
+        // projectTasks: "task/tasksForListView",
+        // taskFields: "task/tableFields",
         favProjects: "project/getFavProjects",
         user2: "user/getUser2",
         filterViews :'task/getFilterView', 
@@ -184,6 +185,9 @@ export default {
       } else {
         return { variant: "gray5", text: "Add to favorites", status: false }
       }
+    },
+    taskcount(){
+      return this.projectSections.reduce((acc, td) => acc + td.tasks.length, 0)
     },
 
   },

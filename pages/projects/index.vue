@@ -1,6 +1,6 @@
 <template>
   <div id="projects-wrapper" class="projects-wrapper" >   
-    <page-title title="Projects" :count="localData.length"></page-title>  
+    <page-title title="Projects" :count="projectcount"></page-title>  
     <project-actions  @sortValue='sortProject($event)' @groupValue="ProjectGroup($event)" @viewValue='ProjectView($event)' v-on:loading="loading = $event" v-on:sort="sortProject" @search-projects="searchProjects" />
    
     <div id="projects-list-wrapper" class="projects-list-wrapper position-relative" >
@@ -117,7 +117,14 @@ export default {
         teamMembers: "user/getTeamMembers",
         user: "user/getUser2",
         filterViews :'task/getFilterView'
-    })
+    }),
+    projectcount(){
+      if (this.groupBy == "") {
+        return this.projects.length
+      } else {
+        return this.projects.reduce((acc, td) => acc + td.tasks.length, 0)
+      }
+    },
   },
   watch: {
     projects(newVal) {

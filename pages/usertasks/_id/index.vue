@@ -3,6 +3,7 @@
     <div id="page" class="task-page-wrapper">
       <page-title
         :title="selectedUser?.firstName?`${selectedUser.firstName ? selectedUser.firstName: ''} ${selectedUser.lastName ? selectedUser.lastName : ''}'s Tasks`:''"
+        :count="taskcount"
       ></page-title>
       
       <user-name-task-actions
@@ -141,6 +142,13 @@ export default {
       allTasks: "company/getInitialAllTasks",
       groupBy:"user/getGroupBy"
     }),
+    taskcount(){
+      if (this.groupBy == "") {
+        return this.userTasks.length
+      } else {
+        return this.userTasks.reduce((acc, td) => acc + td.tasks.length, 0)
+      }
+    },
   },
  
   watch: {
