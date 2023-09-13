@@ -262,6 +262,12 @@ export default {
       var saveOnmouseup; // save document onmouseup event handler
       var saveOnmousemove; // save document onmousemove event handler
       var saveBodyCursor; // save body cursor property
+      
+      var colContent = new Array();
+      for (var i = 0; i < dragColumns.length; i++) {
+        console.log(dragColumns[i].innerText)
+        colContent[i] = (dragColumns[i].innerText.length*8)+30
+      }
 
       // ============================================================
       // methods
@@ -301,6 +307,7 @@ export default {
         if (dragColumns[no + 1])
           dragColumns[no + 1].style.width = parseInt(dragColumns[no + 1].style.width) - w + 'px';
 
+        if (parseInt(dragColumns[no].style.width) < colContent[no] || parseInt(dragColumns[no+1].style.width) < colContent[no]) return false;
         return true;
       }
 
@@ -359,8 +366,12 @@ export default {
         // set up current columns widths in their particular attributes
         // do it in two steps to avoid jumps on page!
         var colWidth = new Array();
-        for (var i = 0; i < dragColumns.length; i++)
+        // var colContent = new Array();
+        for (var i = 0; i < dragColumns.length; i++){
           colWidth[i] = parseInt(self.getWidth(dragColumns[i]));
+          // colContent[i] = dragColumns[i].children[0].textContent.trim().length
+          // console.log(dragColumns[i].children[0].textContent.trim())
+        }
         for (var i = 0; i < dragColumns.length; i++) {
           dragColumns[i].width = ""; // for sure
           dragColumns[i].style.width = colWidth[i] + "px";
