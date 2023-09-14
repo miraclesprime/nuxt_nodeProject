@@ -46,7 +46,7 @@ export default {
       if (this.dept) {
         this.localDept = newValue.find( d => d.value == this.dept.id)
       } else {
-        this.localDept = { label: 'No department', value: 0 }
+        this.localDept = { label: '--', value: 0 }
       }
     }
   },
@@ -59,7 +59,7 @@ export default {
     if (this.dept) {
       this.localDept = this.departments.find( d => d.value == this.dept.id)
     } else {
-      this.localDept = { label: 'No department', value: null }
+      this.localDept = { label: '--', value: null }
     }
   },
   methods: {

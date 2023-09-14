@@ -43,7 +43,7 @@ export default {
     priorityList() {
       let prio = []
       this.priorityItems.forEach(pt => {
-        if (pt.value == 0) prio.push({ value: null, label: "Choose priority", color: "secondary" })
+        if (pt.value == 0) prio.push({ value: null, label: "--", color: "gray5" })
         if (pt.value == 1) prio.push({ value: pt.value, label: pt.label, color: pt.color })
         if (pt.value == 2) prio.push({ value: pt.value, label: pt.label, color: pt.color })
         if (pt.value == 3) prio.push({ value: pt.value, label: pt.label, color: pt.color })
@@ -72,7 +72,7 @@ export default {
       if (this.priority?.id) {
         this.localValue = this.priorityItems.find( pt => pt.value == this.priority.id )
       } else {
-        this.localValue = { label: 'Choose priority', value: 0, color: "secondary" }
+        this.localValue = { label: '--', value: 0, color: "gray5" }
       }
     },
     triggerOpen() {

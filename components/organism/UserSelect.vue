@@ -17,7 +17,7 @@
         <span v-if="mode == 'full'" class="shape-circle d-inline-flex width-2 height-2 ">
           <bib-avatar size="2rem"></bib-avatar>
         </span>
-        <span class="text-gray5">No assignee</span>
+        <span class="text-gray5">--</span>
       </div>
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
     </div>

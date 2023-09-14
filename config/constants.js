@@ -475,7 +475,7 @@ export const DEPARTMENT = [
   { label: 'Marketing', value: "marketing" },
 ]
 export const STATUS = [
-  { label: 'Choose status', value: 0, color: "" },
+  { label: '--', value: 0, color: "" },
   { label: 'Not Started', value: '1', color: "secondary" },
   { label: 'In-Progress', value: '2', color: "primary" },
   { label: 'Waiting', value: '3', color: "orange" },
@@ -483,13 +483,13 @@ export const STATUS = [
   { label: 'Done', value: '5', color: "success" },
 ]
 export const PRIORITY = [
-  { label: 'Choose priority', value: 0, color: "" },
+  { label: '--', value: 0, color: "" },
   { label: 'Low', value: '3', color: "success" },
   { label: 'Medium', value: '2', color: "orange" },
   { label: 'High', value: '1', color: "danger" },
 ]
 export const DIFFICULTY = [
-  { label: 'Choose difficulty', value: 0, color: "" },
+  { label: '--', value: 0, color: "" },
   { label: 'Easy', value: '1', color: "success" },
   { label: 'Medium', value: '2', color: "orange" },
   { label: 'Hard', value: '3', color: "danger" },
