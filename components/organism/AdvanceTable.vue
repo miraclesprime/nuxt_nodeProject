@@ -222,7 +222,7 @@ export default {
     this.localData = null
     this.activeItem = {}
     this.resizableTables = []
-    console.info("before destroy hook")
+    // console.info("before destroy hook")
   },
 
   methods: {
@@ -265,7 +265,7 @@ export default {
       
       var colContent = new Array();
       for (var i = 0; i < dragColumns.length; i++) {
-        console.log(dragColumns[i].innerText)
+        // console.log(dragColumns[i].innerText)
         colContent[i] = (dragColumns[i].innerText.length*8)+30
       }
 
@@ -568,6 +568,8 @@ export default {
     vertical-align: middle;
     min-width: fit-content;
     white-space: nowrap;
+    transition: width 50ms linear;
+    will-change: width;
 
     &:not(:last-child) {
       border-right: 1px solid $light;
@@ -628,10 +630,10 @@ export default {
     }
   }
 
-  .sortable-chosen {
+  /*.sortable-chosen {
     .td { background-color: $success-sub6; }
     .td:nth-child(2) { background-color: $success-sub6; }
-  }
+  }*/
 
   .new-button {
     background-color: $success-sub6;

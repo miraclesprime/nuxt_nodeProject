@@ -399,7 +399,7 @@ export default {
     this.available_tasks = []
     this.activeItem = {}
     this.resizableTables = []
-    console.info("before destroy hook")
+    // console.info("before destroy hook")
   },
 
   methods: {
@@ -581,72 +581,6 @@ export default {
         const collapsedSection = this.newValue.find(ele => ele.id === sectionId);
         this.showedCount += this.available_tasks[collapsedSection.title].length
       }
-      // if (elem.classList.contains("collapsed")) {
-      //   this.$set(this, 'sectionClass', 'section-content')
-      //   icon.style.transform = 'rotate(0deg)'
-      // } else {
-      //   this.$set(this, 'sectionClass', 'section-content collapsed')
-      //   icon.style.transform = 'rotate(-90deg)'
-        // const collapsedSection = this.newValue.find(ele => ele.id === sectionId);
-        // this.showedCount -= this.available_tasks[collapsedSection.title].length
-        // if (this.available_tasks[collapsedSection.title].length !== collapsedSection.tasks.length) {
-        //   const groupIdx = this.lastDisplayedIndex.groupIdx;
-        //   let tmp = {};
-        //   Object.assign(tmp, this.localData[groupIdx])
-        //   tmp.tasks.push(...this.newValue[groupIdx].tasks.slice(this.lastDisplayedIndex.curIdxInGroup + 1, this.newValue[groupIdx].tasks?.length))
-        //   this.available_tasks[this.newValue[groupIdx].title] = tmp.tasks;
-        //   this.localData.length -= 1;
-        //   this.localData.push(tmp)
-        //   this.lastDisplayedIndex.curIdxInGroup = -1;
-        // }
-        // if (this.showedCount < this.itemsPerPage) {
-        //   if (this.lastDisplayedIndex.groupIdx === this.newValue.length - 1) {
-        //     this.allDataDisplayed = true;
-        //     return;
-        //   }
-        //   if (this.allDataDisplayed ) {
-        //     return; // Stop adding data if all data has been displayed
-        //   }
-        //   this.showData();
-        // }
-      // }
-
-      // vm.$set(elem, 'class', 'collapsed', () => {
-
-      // elem.classList.toggle("collapsed")
-      // if (elem.classList.contains("collapsed")) {
-      //   icon.style.transform = 'rotate(-90deg)'
-      //   const collapsedSection = this.newValue.find(ele => ele.id === sectionId);
-        
-
-      //   this.showedCount -= this.available_tasks[collapsedSection.title].length
-      //   if (this.available_tasks[collapsedSection.title].length !== collapsedSection.tasks.length) {
-      //     const groupIdx = this.lastDisplayedIndex.groupIdx;
-      //     let tmp = {};
-      //     Object.assign(tmp, this.localData[groupIdx])
-      //     tmp.tasks.push(...this.newValue[groupIdx].tasks.slice(this.lastDisplayedIndex.curIdxInGroup + 1, this.newValue[groupIdx].tasks?.length))
-      //     this.available_tasks[this.newValue[groupIdx].title] = tmp.tasks;
-      //     this.localData.length -= 1;
-      //     this.localData.push(tmp)
-      //     this.lastDisplayedIndex.curIdxInGroup = -1;
-      //   }
-      //   if (this.showedCount < this.itemsPerPage) {
-      //     if (this.lastDisplayedIndex.groupIdx === this.newValue.length - 1) {
-      //       this.allDataDisplayed = true;
-      //       return;
-      //     }
-      //     if (this.allDataDisplayed ) {
-      //       return; // Stop adding data if all data has been displayed
-      //     }
-      //     this.showData();
-
-      //   }
-      // } else {
-      //   icon.style.transform = 'rotate(0deg)'
-      //   const collapsedSection = this.newValue.find(ele => ele.id === sectionId);
-      //   this.showedCount += this.available_tasks[collapsedSection.title].length
-      // }
-      // })
 
     },
     
@@ -671,6 +605,12 @@ export default {
       var saveOnmouseup; // save document onmouseup event handler
       var saveOnmousemove; // save document onmousemove event handler
       var saveBodyCursor; // save body cursor property
+
+      var colContent = new Array();
+      for (var i = 0; i < dragColumns.length; i++) {
+        // console.log(dragColumns[i].innerText)
+        colContent[i] = (dragColumns[i].innerText.length*8)+30
+      }
 
       // ============================================================
       // methods
@@ -714,14 +654,26 @@ export default {
         let col2key = dragColumns[no + 1].dataset.key
         let col1 = document.querySelectorAll(`.th[data-key="${col1key}"]`)
         let col2 = document.querySelectorAll(`.th[data-key="${col2key}"]`)
+
         // console.log(col1, col2)
+        /*for (var i = 0; i < col1.length; i++) {
+          col1[i].style.width = dragColumns[no].clientWidth + "px"
+          col2[i].style.width = dragColumns[no + 1].clientWidth + "px"
+        }*/
+
+        self.resizeNestedCols(col1, col2, no);
+
+        if (parseInt(dragColumns[no].style.width) < colContent[no] || parseInt(dragColumns[no+1].style.width) < colContent[no]) return false;
+        return true;
+      }
+
+      this.resizeNestedCols = _.debounce(function (col1, col2, no) {
+        // console.log(col1, col2, no)
         for (var i = 0; i < col1.length; i++) {
-          // console.log(col1[i])
           col1[i].style.width = dragColumns[no].clientWidth + "px"
           col2[i].style.width = dragColumns[no + 1].clientWidth + "px"
         }
-        return true;
-      }
+      }, 300)
 
       // ============================================================
       // do drag column width
@@ -1050,7 +1002,7 @@ export default {
     vertical-align: middle;
     min-width: fit-content;
     white-space: nowrap;
-    transition: width;
+    transition: width 50ms linear;
     will-change: width;
 
     &:not(:last-child) {
