@@ -17,6 +17,7 @@
           <bib-header
             :avatarLink="user2 ? user2.Photo : ''"
             :isLightTheme="lightThemeChecked"
+            @side-menu-expand="collapseNavigation=!collapseNavigation"
             :mainAction="btnText"
             noResultText="No results, type a project or task name to begin search."
             @my-account-link="myAccount"
@@ -58,6 +59,7 @@
           <bib-app-switcher
             :menuItems="appItems"
             :isLightTheme="lightThemeChecked"
+              v-if="!collapseNavigation"
             @toggle-theme="handleToggleWrapperTheme"
             style="z-index: 99;"
           ></bib-app-switcher>
@@ -67,6 +69,7 @@
             :items="navItems1"
             @click="goToRoute"
             :isLightTheme="lightThemeChecked"
+            style="margin-left:-0.5rem"
           ></bib-app-navigation>
           <!-- separator -->
           <div
@@ -78,12 +81,14 @@
             :items="navItems2"
             @click="goToRoute"
             :isLightTheme="lightThemeChecked"
+            style="margin-left:-0.5rem"
           ></bib-app-navigation>
           <!-- separator -->
           <div
             class="mt-05 mb-05"
             :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']"
             style="height: 1px"
+            v-show="!collapseNavigation"
           ></div>
           <favorite-project-collpase
             v-show="!collapseNavigation"
@@ -104,6 +109,7 @@
             class="mt-05 mb-05"
             :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']"
             style="height: 1px"
+            v-show="!collapseNavigation"
           ></div>
           <people-sort-collapse
             v-show="!collapseNavigation"

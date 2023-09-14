@@ -19,12 +19,12 @@ export default {
   name: 'UserInfo',
 
   props: {
-    userId: {type: String, default: ""},
-    user: {type: Object, default: function() { return { id: "", firstName: "", lastName: ""}}},
+    userId: { type: String, default: ""},
+    user: { type: Object, default: function() { return { id: "", firstName: "", lastName: ""}} },
     avatarSize: { type: String, default: '1.5rem' },
     color: { type: String, default: 'text-dark' },
     weight: { type: String, default: '400' },
-    members: {type: Array, default: []} 
+    members: { type: Array, default: function() { return [] } } 
   },
   data() {
     return {
