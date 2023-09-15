@@ -84,7 +84,7 @@
                     </span>
                   </div>
                   <template v-if="field.key == 'project'">
-                    <div class="align-center height-2">{{item[field.key]?.[0]?.project?.title}}</div>
+                    <div class="align-center height-2 w-100 text-wrap text-of-elipsis of-hidden">{{item[field.key]?.[0]?.project?.title}}</div>
                   </template>
                   <template v-if="field.key == 'userId'">
                     <lazy-user-select v-if="isLazy(groupIdx, itemIdx) || isRendered" :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></lazy-user-select>
