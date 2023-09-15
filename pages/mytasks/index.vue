@@ -541,7 +541,8 @@ export default {
       if(value && this.activeTask.startDate){
         if(new Date(value).getTime() > new Date(this.activeTask.startDate).getTime()){
           data = { [this.datepickerArgs.field]: value }
-          newDate = dayjs(value).format("D MMM YYYY")
+          // newDate = dayjs(value).format("D MMM YYYY")
+          newDate = this.$formatDate(value)
         } else{
           data = { [this.datepickerArgs.field]: null }
           this.popupMessages.push({ text: "Invalid date", variant: "danger" });
@@ -549,10 +550,10 @@ export default {
           return false
         }
       }
-
+      console.log(newDate, data, this.activeTask)
       this.$store.dispatch("task/updateTask", {
         id: this.activeTask.id,
-        data: data,
+        data,
         user: null,
         text: `changed ${this.datepickerArgs.label} to ${newDate}`
       })
