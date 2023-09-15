@@ -1,22 +1,22 @@
 <template>
-  <div class="picker-wrapper w-100" id="status-select-wrapper" v-click-outside="onClickOutside">
+  <div id="status-select-wrapper" class="picker-wrapper w-100" v-click-outside="onClickOutside">
     <div id="status-select-button" class="user-data cursor-pointer height-2 align-center justify-between" @click.stop="triggerOpen">
-      <div class="align-center flex-grow-1 gap-025" id="status-select-span-wrap">
+      <div id="status-select-span-wrap" class=" align-center gap-025" style="max-width: 80%;">
         <bib-icon icon="check-circle-solid" :variant="localStatus.color"></bib-icon>
-        <span class="text-capitalize text-truncate" style="max-width: 80%;" id="status-select-localValue-label" >
+        <span id="status-select-localValue-label" class="text-capitalize text-truncate"  >
           {{localStatus.label}}
         </span>
       </div>
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
     </div>
-    <div v-show="show" class="picker-content" id="status-select-content">
-      <div class="picker-list-wrap" id="status-select-list-wrap">
-        <ul class="m-0 p-0 text-left" id="status-select-list">
+    <div v-show="show" id="status-select-content" class="picker-content" >
+      <div id="status-select-list-wrap" class="picker-list-wrap" >
+        <ul id="status-select-list" class="m-0 p-0 text-left" >
           <li v-for="st in statusList" :key="st.value+'stitem'" :id="'status-select-list-item-'+st.value" class="py-025 gap-05 align-center font-md cursor-pointer" @click.stop="onStatusChange(st)">
-            <div v-if="localStatus.value != st.value" class="shape-circle circle" :id="'ss-circle-'+st.color" :class="'border-'+st.color">
+            <div v-if="localStatus.value != st.value" :id="'ss-circle-'+st.color" class="shape-circle circle" :class="'border-'+st.color">
             </div>
             <bib-icon v-else icon="check-circle-solid" :variant="st.color"></bib-icon>
-            <span class="text-dark text-truncate" :id="'status-select-list-item-'+st.label">{{st.label}}</span>
+            <span :id="'status-select-list-item-'+st.label" class="text-dark text-truncate" >{{st.label}}</span>
           </li>
         </ul>
       </div>

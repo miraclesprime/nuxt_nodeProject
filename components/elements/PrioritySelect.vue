@@ -1,20 +1,20 @@
 <template>
-  <div class="picker-wrapper w-100" id="priority-select-wrapper" v-click-outside="onClickOutside">
+  <div id="priority-select-wrapper" class="picker-wrapper w-100" v-click-outside="onClickOutside">
     <div id="priority-select-button" class="user-data cursor-pointer height-2 align-center justify-between" @click.stop="triggerOpen">
-      <div id="priority-select-inner-wrap" class="align-center flex-grow-1 gap-025">
+      <div id="priority-select-inner-wrap" class="align-center gap-025" style="max-width: 80%;">
         <bib-icon icon="security-verified" :variant="localValue.color"></bib-icon>
-        <span class="text-capitalize text-truncate" style="max-width: 80%;" id="priority-select-localValue-label" >
+        <span id="priority-select-localValue-label" class="text-capitalize text-truncate" >
           {{ localValue.label }}
         </span>
       </div>
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
     </div>
-    <div v-show="show" class="picker-content" id="priority-select-content"> 
-      <div class="picker-list-wrap" id="priority-select-list-wrap">
-        <ul class="m-0 p-0 text-left" id="priority-select-list">
+    <div v-show="show" id="priority-select-content" class="picker-content" > 
+      <div id="priority-select-list-wrap" class="picker-list-wrap" >
+        <ul id="priority-select-list" class="m-0 p-0 text-left" >
           <li v-for="pt in priorityList" :key="pt.value+'stitem'" :id="'ps-'+pt.value" class="p-025 gap-05 align-center font-md cursor-pointer" @click.stop="onStatusChange(pt)">
             <bib-icon icon="security-verified" :variant="pt.color"></bib-icon>
-            <span :id="'ps-'+pt.label" class="text-dark text-truncate">{{pt.label}}</span>
+            <span :id="'ps-list-item-'+pt.label" class="text-dark text-truncate">{{pt.label}}</span>
           </li>
         </ul>
       </div>

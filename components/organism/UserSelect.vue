@@ -1,7 +1,7 @@
 <template>
   <div id="user-select-wrapper" class="picker-wrapper " :class="{'w-100': mode!='avatar', 'width-2': mode=='avatar'}" v-click-outside="onClickOutside">
     <div id="user-select-trigger-open" class="user-data cursor-pointer height-2 align-center justify-between gap-05" @click.stop="triggerOpen">
-      <div v-if="user" id="user-select-user-avatar" class="align-center gap-025 ">
+      <div v-if="user" id="user-select-user-avatar" class="align-center gap-025 " style="max-width: calc(100% - 12px);">
         <tippy arrow v-if="mode == 'full'" >
           <template v-slot:trigger>
             <bib-avatar :src="user.avatar" size="2rem"></bib-avatar>
@@ -13,7 +13,7 @@
         
         <span class="user-label text-truncate" :style="{ maxWidth: 'calc(${maxWidth} - 3rem)'}">{{user.label}}</span>
       </div>
-      <div v-else id="user-select-user-avatar" class="align-center gap-025" >
+      <div v-else id="user-select-user-avatar" class="align-center gap-025" style="max-width: calc(100% - 12px);">
         <span v-if="mode == 'full'" class="shape-circle d-inline-flex width-2 height-2 ">
           <bib-avatar size="2rem"></bib-avatar>
         </span>
