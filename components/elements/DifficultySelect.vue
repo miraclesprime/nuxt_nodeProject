@@ -41,7 +41,7 @@ export default {
     difficultyList() {
       let diff = []
       this.difficultyItems.forEach(d => {
-        if (d.value == 0) diff.push({ value: null, label: "Choose difficulty", color: "gray4", bgcolor: this.$hex2rgba(this.colors.ColorVariants.Gray4) })
+        if (d.value == 0) diff.push({ value: null, label: "--", color: "gray4", bgcolor: this.$hex2rgba(this.colors.ColorVariants.Gray4) })
         if (d.value == 1) diff.push({ value: d.value, label: d.label, color: d.color, bgcolor: this.$hex2rgba(this.colors.ColorVariants.Success) })
         if (d.value == 2) diff.push({ value: d.value, label: d.label, color: d.color, bgcolor: this.$hex2rgba(this.colors.ColorVariants.Orange) })
         if (d.value == 3) diff.push({ value: d.value, label: d.label, color: d.color, bgcolor: this.$hex2rgba(this.colors.ColorVariants.Danger) })
@@ -54,7 +54,7 @@ export default {
     if (this.difficulty) {
       this.localValue = this.difficultyItems.find( d => d.value == this.difficulty )
     } else {
-      this.localValue = { label: 'Choose difficulty', value: 0, color: "gray4", bgcolor: "gray4" }
+      this.localValue = { label: '--', value: 0, color: "gray4", bgcolor: "gray4" }
     }
   },
   methods: {

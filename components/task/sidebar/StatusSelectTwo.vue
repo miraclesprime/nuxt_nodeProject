@@ -46,7 +46,7 @@ export default {
     statusList() {
       let status = []
       this.statusItems.forEach(st => {
-        if (st.value == 0) status.push({ value: null, label: "None", color: "secondary" })
+        if (st.value == 0) status.push({ value: null, label: "--", color: "gray5" })
         if (st.value == 1) status.push({ value: st.value, label: st.label, color: st.color })
         if (st.value == 2) status.push({ value: st.value, label: st.label, color: st.color })
         if (st.value == 3) status.push({ value: st.value, label: st.label, color: st.color })
@@ -62,13 +62,7 @@ export default {
   watch: {
     status (val, oldVal) {
       this.setLocal()
-      /*if(val != oldVal) {
-        if (this.statusItems) {
-          this.setLocal()
-        } else {
-          console.warn('statusItems not found')
-        }
-      }*/
+      
     }
   },
 
@@ -81,7 +75,7 @@ export default {
       if(this.status?.id) {
         this.localStatus = this.statusItems.find( st => st.value == this.status.id )
       }else {
-        this.localStatus = { label: 'None', value: 0, color: "secondary" }
+        this.localStatus = { label: '--', value: 0, color: "gray5" }
       }
     },
     triggerOpen() {
