@@ -12,6 +12,20 @@
                   </div>
                 </div>
             </div>
+            <div class="row">
+            <div v-if="appMembers.length > 0" class="col-6">
+              <h3>Users in Central Biztree</h3>
+              <ol>
+                <li v-for="(user, index) in appMembers">{{user.email}}</li>
+              </ol>
+            </div>
+            <div v-if="userList.length > 0" class="col-6">
+              <h3>Users in Asana Project</h3>
+              <ol>
+                <li v-for="(user, index) in userList">{{user}}</li>
+              </ol>
+            </div>
+            </div>
             <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
             <!-- notification -->
             <bib-popup-notification-wrapper>
@@ -52,6 +66,8 @@ export default {
                 icon: "add",
             },
 
+            userList: []
+
         }
     },
 
@@ -72,17 +88,9 @@ export default {
 
     computed: {
 
-        /*...mapGetters({
-            project: 'project/getSingleProject',
-            projects: 'project/getAllProjects',
-            team: "project/getProjectMembers",
-            sections: "section/getProjectSections",
-            projectTasks: "task/tasksForListView",
-            taskFields: "task/tableFields",
-            favProjects: "project/getFavProjects",
-            user2: "user/getUser2",
-            sidebar: "task/getSidebarVisible",
-        }),*/
+        ...mapGetters({
+            appMembers: "user/getAppMembers",
+        }),
 
     },
 
@@ -109,12 +117,14 @@ export default {
           let formdata = new FormData();
           formdata.append('file', file[0])
 
-          await this.$axios.post("/file/import", formdata, {
+          let users = await this.$axios.post("/file/import", formdata, {
               headers: {
                 'Content-Type': 'multipart/form-data',
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
               }
             })
+
+          this.userList = await users?.data?.data;
         },
 
         /*async uploadFile(commentFiles, data){
