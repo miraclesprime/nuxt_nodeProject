@@ -64,7 +64,7 @@
         <!-- user-picker for board view -->
         <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee({label: 'Assignee', field:'userId', value: $event.id, historyText: $event.label})" @close="userPickerOpen = false"></user-picker>
         <!-- date-picker for board view -->
-        <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
+        <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDuedate" @close="datePickerOpen = false"></inline-datepicker>
         <!-- status picker for board view -->
         <!-- <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker> -->
         <!-- priority picker for board view -->
@@ -535,11 +535,12 @@ export default {
         .catch(e => console.warn(e))
     },
 
-    updateDate(value){
-      let newDate, data = { [this.datepickerArgs.field]: value}
+    updateDuedate(value){
+      let newDate = new Date(value) || null
+      let data = { [this.datepickerArgs.field]: value }
 
-      if(value && this.activeTask.startDate){
-        if(new Date(value).getTime() > new Date(this.activeTask.startDate).getTime()){
+      if(newDate && !this.activeTask.startDate){
+        if(newDate.getTime() > new Date(this.activeTask.startDate).getTime()){
           data = { [this.datepickerArgs.field]: value }
           // newDate = dayjs(value).format("D MMM YYYY")
           newDate = this.$formatDate(value)
@@ -550,8 +551,8 @@ export default {
           return false
         }
       }
-      console.log(newDate, data, this.activeTask)
-      this.$store.dispatch("task/updateTask", {
+      console.log(newDate, this.activeTask.startDate)
+      /*this.$store.dispatch("task/updateTask", {
         id: this.activeTask.id,
         data,
         user: null,
@@ -560,7 +561,7 @@ export default {
         .then(t => {
           this.updateKey()
         })
-        .catch(e => console.warn(e))
+        .catch(e => console.warn(e))*/
     },
 
     deleteTask(task) {
