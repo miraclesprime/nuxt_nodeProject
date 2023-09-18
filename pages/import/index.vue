@@ -7,7 +7,8 @@
             <div id="project-id-content" class="project-id-content position-relative overflow-y-auto" :style="{ 'width': contentWidth }">
                 <div class="d-flex justify-center p-1">
                   <div class="border-gray2 shape-rounded py-1" style="max-width:300px;">
-                    <bib-input type="file" ref="filesUploaded"  @files-dropped="onFileInput" variant="accepted" iconLeft="upload" placeholder="Drop file here or click to upload"></bib-input>
+                    <bib-input type="file" ref="csvImport"  @files-dropped="onFileInput" variant="accepted" iconLeft="upload" placeholder="Drop file here or click to upload"></bib-input>
+                    <bib-button variant="secondary" label="Import CSV" @click="onsubmit"></bib-button>
                   </div>
                 </div>
             </div>
@@ -22,6 +23,7 @@
         </div>
     </client-only>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
@@ -97,35 +99,24 @@ export default {
     },
 
     methods: {
-        onFileInput(files) {
-            console.log(files);
+        async onFileInput(file) {
+            // console.log(file) 
         },
 
-        /*onsubmit(data) {
-          if (this.editMessage?.id) {
-            this.$store.dispatch("project/updateProjectComment", { projectId: this.project?.id, commentId: this.editMessage.id, comment: data.text })
-            .then(res => {
-              if (this.value.files.length > 0) {
-                this.uploadFile(this.value.files, this.editMessage)
-                this.value.files = []
-              }
-              this.$nuxt.$emit('refresh-list')
-              this.editMessage = {}
+        async onsubmit() {
+          let file = this.$refs.csvImport.filesUploaded;
 
+          let formdata = new FormData();
+          formdata.append('file', file[0])
+
+          await this.$axios.post("/file/import", formdata, {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+              }
             })
-            .catch(e => console.log(e))
-          } else {
-            this.$store.dispatch("project/createProjectComment", { id: this.project?.id, comment: data.text })
-              .then(res => {
-                if (this.value.files.length > 0) {
-                  this.uploadFile(this.value.files, res.data)
-                  this.value.files = []
-                }
-                this.$nuxt.$emit('refresh-list')
-              })
-              .catch(e => console.log(e))
-          }
-        },*/
+        },
+
         /*async uploadFile(commentFiles, data){
           let formdata = new FormData()
           let filelist = []
