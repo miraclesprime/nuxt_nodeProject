@@ -425,8 +425,8 @@ export default {
       if (this.allDataDisplayed) {
         return; // Stop adding data if all data has been displayed
       }
-      // const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight *0.6+5 >= tableContainer.scrollHeight*0.6;
-      const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight+200 >= tableContainer.scrollHeight;
+      const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight *0.6+5 >= tableContainer.scrollHeight*0.6;
+      // const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight+200 >= tableContainer.scrollHeight;
       if (isAtBottom) {
                 this.showData();
           }
