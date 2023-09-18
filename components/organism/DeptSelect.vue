@@ -9,7 +9,7 @@
       </div>
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
     </div>
-    <div v-show="show" class="picker-content" id="dept-select-content">
+    <div v-if="show" class="picker-content" id="dept-select-content">
       <div class="" style="max-height: 15rem; overflow-y: auto; overflow-x: clip; " id="dept-select-dept-label-wrap">
         <ul class="m-0 p-0 text-left" id="dept-select-dept-label-list">
           <li v-for="(dpt, index) in departments" :id="'dept-select-dept-label'+index" :key="dpt.value" class="p-025 font-md cursor-pointer align-center gap-025" @click.stop="selected(dpt)">
