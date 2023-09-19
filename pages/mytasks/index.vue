@@ -537,31 +537,33 @@ export default {
 
     updateDuedate(value){
       let newDate = new Date(value) || null
-      let data = { [this.datepickerArgs.field]: value }
+      let data = { [this.datepickerArgs.field]: newDate }
 
-      if(newDate && !this.activeTask.startDate){
+      if(this.activeTask.startDate){
         if(newDate.getTime() > new Date(this.activeTask.startDate).getTime()){
-          data = { [this.datepickerArgs.field]: value }
-          // newDate = dayjs(value).format("D MMM YYYY")
-          newDate = this.$formatDate(value)
-        } else{
+          data = { [this.datepickerArgs.field]: newDate }
+          // newDate = this.$formatDate(value)
+          console.log('valid date', newDate, this.activeTask.startDate)
+        } else {
+          // console.log('Invalid date', newDate, this.activeTask.startDate)
           data = { [this.datepickerArgs.field]: null }
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          this.updateKey()
+          this.popupMessages.push({ text: `Due date must be after ${this.$formatDate(this.activeTask.startDate)}`, variant: "danger" });
+          // this.updateKey()
           return false
         }
+      } else {
+        console.log('no startdate-> ',newDate )
       }
-      console.log(newDate, this.activeTask.startDate)
-      /*this.$store.dispatch("task/updateTask", {
+      this.$store.dispatch("task/updateTask", {
         id: this.activeTask.id,
         data,
         user: null,
-        text: `changed ${this.datepickerArgs.label} to ${newDate}`
+        text: `changed ${this.datepickerArgs.label} to ${this.$formatDate(value)}`
       })
         .then(t => {
           this.updateKey()
         })
-        .catch(e => console.warn(e))*/
+        .catch(e => console.warn(e))
     },
 
     deleteTask(task) {
