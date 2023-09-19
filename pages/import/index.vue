@@ -98,6 +98,7 @@ export default {
 
             userList: [],
             importmodal: false,
+            importfinish: false,
             missingMembers: [],
         }
     },
@@ -139,7 +140,7 @@ export default {
 
     methods: {
         async onFileInput(file) {
-          console.log(file) 
+          // console.log(file) 
         },
 
         async onsubmit() {
@@ -149,19 +150,18 @@ export default {
             let formdata = new FormData();
             formdata.append('file', file[0])
 
-            let users = await this.$axios.post("/file/import", formdata, {
+            let users = await this.$axios.post("/file/import/check-user", formdata, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
             })
-            console.log(users.data.data, this.appMembers)
+
             if (users.data.statusCode == 200) {
               let appMemberEmails = this.appMembers.map(member => member.email); 
               this.missingMembers = users.data.data.filter(email => !appMemberEmails.includes(email)); 
 
               this.importmodal = true
-              console.log(this.missingMembers)
               this.loading = false
             } else {
               this.popupMessages.push({text: "Some error occured", variant: "danger"})
@@ -199,8 +199,23 @@ export default {
           this.missingMembers = []
           this.importfinish = false
         },
-        importData(){
+
+        async importData(){
           // _.delay(function() {
+            let file = this.$refs.csvImport.filesUploaded;
+
+            let formdata = new FormData();
+            formdata.append('file', file[0])
+
+            let res = await this.$axios.post("/file/import", formdata, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                }
+            })
+
+            console.log(res.data);
+
             this.missingMembers = []
             this.importfinish = true
           // }, 1200)
