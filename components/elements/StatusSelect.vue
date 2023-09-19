@@ -9,7 +9,7 @@
       </div>
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
     </div>
-    <div v-show="show" id="status-select-content" class="picker-content" >
+    <div v-if="show" id="status-select-content" class="picker-content" >
       <div id="status-select-list-wrap" class="picker-list-wrap" >
         <ul id="status-select-list" class="m-0 p-0 text-left" >
           <li v-for="st in statusList" :key="st.value+'stitem'" :id="'status-select-list-item-'+st.value" class="py-025 gap-05 align-center font-md cursor-pointer" @click.stop="onStatusChange(st)">
@@ -67,6 +67,7 @@ export default {
   },
 
   methods: {
+
     triggerOpen() {
       this.show = !this.show
       this.$emit('close-other')
@@ -76,6 +77,7 @@ export default {
     },
 
     onStatusChange(status) {
+
       this.$emit("change", status)
       this.show = false
       this.localStatus = status
