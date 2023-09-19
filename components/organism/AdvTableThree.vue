@@ -425,11 +425,14 @@ export default {
       if (this.allDataDisplayed) {
         return; // Stop adding data if all data has been displayed
       }
-      const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight *0.6+5 >= tableContainer.scrollHeight*0.6;
-      // const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight+200 >= tableContainer.scrollHeight;
-      if (isAtBottom) {
-                this.showData();
-          }
+      const scrollPercentage = (tableContainer.scrollTop + tableContainer.clientHeight) / tableContainer.scrollHeight;
+  if (scrollPercentage >= 0.8 ) {
+      tableContainer.scrollBy({
+        top: -200,
+        behavior: 'smooth'
+      });
+      this.showData();   
+  }
 
     },
     showData() {
