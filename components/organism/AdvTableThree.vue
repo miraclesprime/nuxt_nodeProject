@@ -773,7 +773,7 @@ export default {
         dragColumns[i].style.width = clientw + 'px'
         // console.log(dragColumns[i], clientw)
 
-        dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'><div class='resize-drag-handle position-absolute h-100' ></div>"+dragColumns[i].innerHTML+"</div>";
+        dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'><div class='resize-drag-handle position-absolute h-100' ></div><span class='count position-absolute border-success-sub2 text-success font-xs' style='right:0;top:0;'>"+colContent[i]+"</span>"+dragColumns[i].innerHTML+"</div>";
         // BUGBUG: calculate real border width instead of 5px!!!
         
         dragColumns[i].firstChild.firstChild.onmousedown = this.startColumnDrag;
@@ -1016,10 +1016,6 @@ export default {
   .tr {
     display: table-row;
 
-    .resize-drag-handle {
-      background-color: $secondary;
-    }
-
     .th:nth-child(2),
     .td:nth-child(2) {
       position: sticky;
@@ -1050,9 +1046,7 @@ export default {
       &:not(:last-child) {
         border-right: 1px solid $gray8;
       }
-      &:hover {
-        .resize-drag-handle { background-color: $primary; }
-      }
+      
     }
     &:hover {
       .drag-handle {
