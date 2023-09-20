@@ -9,7 +9,7 @@
       </div>
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
     </div>
-    <div v-show="show" class="picker-content" id="difficulty-select-content"> 
+    <div v-if="show" class="picker-content" id="difficulty-select-content"> 
       <div class="picker-list-wrap" id="difficulty-select-list-wrap">
         <ul class="m-0 p-0 text-left" id="difficulty-select-list">
           <li v-for="diff in difficultyList" :key="diff.value+'stitem'" :id="'ps-'+diff.value" class="p-025 gap-05 align-center font-md cursor-pointer" @click.stop="onStatusChange(diff)">

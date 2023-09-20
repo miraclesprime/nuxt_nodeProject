@@ -1150,28 +1150,20 @@ export default {
 
 
      updateDate(value) {
-      if(this.datepickerArgs.field==="dueDate")
-        {
-          if(new Date(value).toISOString().slice(0, 10)>new Date(this.activeTask.startDate).toISOString().slice(0, 10))
-            {
+      if(this.datepickerArgs.field==="dueDate") {
+          if(new Date(value).toISOString().slice(0, 10)>new Date(this.activeTask.startDate).toISOString().slice(0, 10)) {
                 this.changeDate(value)
-            }
-            else{
+            } else{
               this.popupMessages.push({ text: "Invalid date", variant: "danger" });
             }
-        }
-        else
-        {
-          if(new Date(value).toISOString().slice(0, 10)<new Date(this.activeTask.dueDate).toISOString().slice(0, 10))
-            {
+        } else {
+          if(new Date(value).toISOString().slice(0, 10)<new Date(this.activeTask.dueDate).toISOString().slice(0, 10)) {
                 this.changeDate(value)
-            }
-            else {
+            } else {
               this.popupMessages.push({ text: "Invalid date", variant: "danger" });
             }
           
         }
-        
       
     },
     changeDate(value){

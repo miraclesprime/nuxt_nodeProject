@@ -64,7 +64,7 @@
         <!-- user-picker for board view -->
         <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee({label: 'Assignee', field:'userId', value: $event.id, historyText: $event.label})" @close="userPickerOpen = false"></user-picker>
         <!-- date-picker for board view -->
-        <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDate" @close="datePickerOpen = false"></inline-datepicker>
+        <inline-datepicker :show="datePickerOpen" :datetime="activeTask[datepickerArgs.field]" :coordinates="popupCoords" @date-updated="updateDuedate" @close="datePickerOpen = false"></inline-datepicker>
         <!-- status picker for board view -->
         <!-- <status-picker :show="statusPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Status', field:'statusId', value: $event.value, historyText: $event.label})" @close="statusPickerOpen = false" ></status-picker> -->
         <!-- priority picker for board view -->
@@ -535,26 +535,30 @@ export default {
         .catch(e => console.warn(e))
     },
 
-    updateDate(value){
-      let newDate, data = { [this.datepickerArgs.field]: value}
+    updateDuedate(value){
+      let newDate = new Date(value) || null
+      let data = { [this.datepickerArgs.field]: newDate }
 
-      if(value && this.activeTask.startDate){
-        if(new Date(value).getTime() > new Date(this.activeTask.startDate).getTime()){
-          data = { [this.datepickerArgs.field]: value }
-          newDate = dayjs(value).format("D MMM YYYY")
-        } else{
+      if(this.activeTask.startDate){
+        if(newDate.getTime() > new Date(this.activeTask.startDate).getTime()){
+          data = { [this.datepickerArgs.field]: newDate }
+          // newDate = this.$formatDate(value)
+          console.log('valid date', newDate, this.activeTask.startDate)
+        } else {
+          // console.log('Invalid date', newDate, this.activeTask.startDate)
           data = { [this.datepickerArgs.field]: null }
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          this.updateKey()
+          this.popupMessages.push({ text: `Due date must be after ${this.$formatDate(this.activeTask.startDate)}`, variant: "danger" });
+          // this.updateKey()
           return false
         }
+      } else {
+        console.log('no startdate-> ',newDate )
       }
-
       this.$store.dispatch("task/updateTask", {
         id: this.activeTask.id,
-        data: data,
+        data,
         user: null,
-        text: `changed ${this.datepickerArgs.label} to ${newDate}`
+        text: `changed ${this.datepickerArgs.label} to ${this.$formatDate(value)}`
       })
         .then(t => {
           this.updateKey()
