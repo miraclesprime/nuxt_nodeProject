@@ -666,7 +666,7 @@ export default {
 
         self.resizeNestedCols(col1, col2, no);
 
-        if (parseInt(dragColumns[no].style.width) < colContent[no] || parseInt(dragColumns[no+1].style.width) < colContent[no]) return false;
+        // if (parseInt(dragColumns[no].style.width) < colContent[no] || parseInt(dragColumns[no+1].style.width) < colContent[no]) return false;
         return true;
       }
 
@@ -683,6 +683,25 @@ export default {
       this.columnDrag = function(e) {
         var e = e || window.event;
         var X = e.clientX || e.pageX;
+        
+        if (parseInt(dragColumns[dragColumnNo].style.width) <= colContent[dragColumnNo]) {
+          self.stopColumnDrag(e)
+          if (e.movementX <= 0) {
+            dragColumns[dragColumnNo].style.width = colContent[dragColumnNo]+4+"px"
+            dragColumns[dragColumnNo+1].style.width -= 4+"px"
+          } 
+          console.log('col-1', parseInt(dragColumns[dragColumnNo].style.width), colContent[dragColumnNo])
+        } 
+
+        if (parseInt(dragColumns[dragColumnNo+1].style.width) <= colContent[dragColumnNo+1]) {
+          self.stopColumnDrag(e)
+          if(e.movementX > 0) {
+            dragColumns[dragColumnNo+1].style.width = colContent[dragColumnNo+1]+4+"px"
+            dragColumns[dragColumnNo].style.width -= 4+"px"
+          }
+          console.log('col-2', parseInt(dragColumns[dragColumnNo+1].style.width), colContent[dragColumnNo+1])
+        }
+
         if (!self.changeColumnWidth(dragColumnNo, X - dragX)) {
           // stop drag!
           self.stopColumnDrag(e);
@@ -773,7 +792,7 @@ export default {
         dragColumns[i].style.width = clientw + 'px'
         // console.log(dragColumns[i], clientw)
 
-        dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'><div class='resize-drag-handle position-absolute h-100' ></div><span class='count position-absolute border-success-sub2 text-success font-xs' style='right:0;top:0;'>"+colContent[i]+"</span>"+dragColumns[i].innerHTML+"</div>";
+        dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'><div class='resize-drag-handle position-absolute h-100' ></div>"+dragColumns[i].innerHTML+"</div>";
         // BUGBUG: calculate real border width instead of 5px!!!
         
         dragColumns[i].firstChild.firstChild.onmousedown = this.startColumnDrag;

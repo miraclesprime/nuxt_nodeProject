@@ -417,7 +417,7 @@ export default {
       // prepare table header to be draggable
       // it runs during class creation
       for (var i = 0; i < dragColumns.length; i++) {
-        dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'><div class='resize-drag-handle position-absolute h-100' ></div><span class='count position-absolute border-primary-sub2 text-primary font-xs' style='right:0;top:0;'>"+colContent[i]+"</span>"+dragColumns[i].innerHTML+"</div>";
+        dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'><div class='resize-drag-handle position-absolute h-100' ></div>"+dragColumns[i].innerHTML+"</div>";
         // BUGBUG: calculate real border width instead of 5px!!!
         dragColumns[i].firstChild.firstChild.onmousedown = this.startColumnDrag;
       }
