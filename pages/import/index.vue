@@ -214,6 +214,10 @@ export default {
                 }
             })
 
+            if(res.data.statusCode == 200) {
+              this.importSections(res.data.data)
+            }
+
             console.log(res.data);
 
             this.missingMembers = []
