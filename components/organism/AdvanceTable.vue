@@ -4,7 +4,7 @@
     <draggable class="task-draggable adv-table resizable bg-white" :id="'advTable-'+componentKey" handle=".drag-handle" :style="{'width': tableWidth}" role="table" @start="rowDragStart" @end="rowDragEnd" :move="moveTask" >
       <div slot="header" class="tr" role="row" id="adv-table-row1">
         <div v-show="drag" class="width-2 th" id="adv-table-cell1" role="cell"></div>
-        <div v-for="(field, index) in tableFields" :key="field+'-'+index" class="th" id="adv-table-th1" role="cell" :style="{ width: field.width}" >
+        <div v-for="(field, index) in tableFields" :key="field+'-'+index" class="th" :id="'advtable-th'+index" role="cell" :style="{ width: field.width}" >
           <div class="align-center gap-05" :style="{'min-width': field.minWidth}">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
               <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
             </span></div>
@@ -118,7 +118,7 @@
   </div>
 </template>
 <script>
-
+import Split from 'split.js'
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
 import dayjs from 'dayjs'
@@ -217,7 +217,11 @@ export default {
   mounted() {
     this.localData = _.cloneDeep(this.tableData)
     this.modifyDateFormat()
-    this.resizableColumns()
+    // this.resizableColumns()
+    Split(['#advtable-th0', '#advtable-th1', '#advtable-th2'], {
+        minSize: [100, 100, 300],
+        gutterSize: 5,
+    })
   },
 
   beforeDestroy(){
