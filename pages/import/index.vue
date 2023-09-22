@@ -158,14 +158,37 @@ export default {
               this.importSections(res.data.data)
             }
 
-            console.log(res.data);
-
             this.missingMembers = []
             this.importfinish = true
         },
 
         async importSections(data) {
-            console.log('Start Importing Sections')
+            console.log('Started Importing Sections...')
+            
+            let res = await this.$axios.post("/import/sections", {data: data}, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                }
+            })
+
+            if(res.data.statusCode == 200) {
+              this.importTasks(res.data.data)
+            }
+        },
+
+        async importTasks(data) {
+            console.log('Started Importing Tasks...')
+            console.log(data)
+        },
+
+        async importSubTasks(data) {
+            console.log('Started Importing SubTasks...')
+            console.log(data)
+        },
+
+        async importTags(data) {
+            console.log('Started Importing Tags...')
             console.log(data)
         }
 
