@@ -162,20 +162,20 @@ export default {
     
     
     if(this.sectionType == "singleProject") {
-      this.loading = true
-      this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id,filter :this.filterViews })
-        .then((sections) => {
-          this.localdata = JSON.parse(JSON.stringify(sections))
-          this.loading = false
+      // this.loading = true
+      // this.$store.dispatch("section/fetchProjectSections", { projectId: this.$route.params.id,filter :this.filterViews })
+      //   .then((sections) => {
+      //     this.localdata = JSON.parse(JSON.stringify(sections))
+      //     this.loading = false
 
-          // this.$nuxt.$on("close-sidebar", (msg) => {
-          // this.$emit("update-key")
-          // });
-        })
-        .catch(e => {
-          console.log(e)
-          this.loading = false
-        })
+      //     // this.$nuxt.$on("close-sidebar", (msg) => {
+      //     // this.$emit("update-key")
+      //     // });
+      //   })
+      //   .catch(e => {
+      //     console.log(e)
+      //     this.loading = false
+      //   })
     } 
     
     if(this.sectionType == "department") {

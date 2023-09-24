@@ -215,25 +215,27 @@ try {
       const res = await $axios.get(`project/${params.id}`, {
           headers: { 'Authorization': `Bearer ${token}`,'filter':filter }
         })
-      // console.log(res.data.data)
       store.dispatch('project/setProject', res.data.data)
-      
-      let resp = await $axios.$get(`/project/company/all`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Filter': filter
-        }
-      });
+      // let resp = await $axios.$get(`/project/company/all`, {
+      //   headers: {
+      //     'Authorization': `Bearer ${token}`,
+      //     'Filter': filter
+      //   }
+      // });
       // console.log(resp.data)
-      store.dispatch('project/setProjects', resp.data);
+      let all_projects= store.getters['project/getAllProjects']
+      // store.dispatch('project/setProjects', resp.data);
       
-      let proj = resp.data.find((p) => {
+      let proj =all_projects?.find((p) => {
         if(p.id == params.id) {
           return p;
         } 
       })
+      const sections = await $axios.$get(`/section/project/${params.id}`, {
+        headers: { 'Authorization': `Bearer ${token}`,'Filter':filter }
 
-      // store.dispatch("section/fetchProjectSections", { projectId: params.id, filter: filter })
+    });
+      store.dispatch("section/setProjectSections",{data:sections.data})
       return { project: res.data.data, projectTitle: res.data?.data?.title, userProj: proj }
       
     } catch(err) {
@@ -257,11 +259,11 @@ try {
       this.$store.commit("task/setExpandVisible",true);
       let p = JSON.parse(JSON.stringify(this.project))
 
-      this.$axios.get(`project/${this.$route.params.id}`, {
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`}
-        }).then((res) => {
-          this.projectTitle = res.data?.data?.title;
-        })
+      // this.$axios.get(`project/${this.$route.params.id}`, {
+      //     headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`}
+      //   }).then((res) => {
+      //     this.projectTitle = res.data?.data?.title;
+      //   })
 
       if(!p) {
         this.$router.push('/notfound')

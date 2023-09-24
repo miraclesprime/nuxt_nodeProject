@@ -202,17 +202,25 @@ export default {
     filterViews(newValue){
          return _.cloneDeep(newValue)
     },
-    sections(newVal) {
-      this.localdata = _.cloneDeep(newVal);
-
-       /*let sorted = this.localdata.map((s) => {
-        let t = s.tasks.sort((a, b) => a.order - b.order);
-        s.tasks = t;
-        return s;
-      });
-      this.localdata = sorted;*/
-      this.templateKey += 1;
+    sections: {
+      immediate: true, // Execute the watcher immediately on component mount
+      deep: true, // Watch for changes in nested properties of tableData
+      handler(newValue) {
+        this.localdata = _.cloneDeep(newValue);
+        this.templateKey += 1;
+      },
     },
+    // sections(newVal) {
+    //   this.localdata = _.cloneDeep(newVal);
+    //   console.log("$$$$",this.localdata)
+    //    /*let sorted = this.localdata.map((s) => {
+    //     let t = s.tasks.sort((a, b) => a.order - b.order);
+    //     s.tasks = t;
+    //     return s;
+    //   });
+    //   this.localdata = sorted;*/
+    //   this.templateKey += 1;
+    // },
 
     gridType() {
       this.templateKey++;
