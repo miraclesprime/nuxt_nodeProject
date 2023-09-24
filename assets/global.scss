@@ -470,14 +470,17 @@ ul {
 
 .resize-drag-handle {
   background-color: transparent;
-  top:0px;
-  right:0;
-  z-index:4;
-  width:4px;
-  cursor:col-resize;
+  top: 0;
+  right: 0;
+  z-index: 44;
+  width: 5px;
+  font-size: 0.5rem;
+  cursor: col-resize;
   transition: background 200ms;
+  will-change: background-color;
+  /*isolation: isolate;*/
   &:hover { background-color: $gray4; }
-      
+  
 }
 
 .picker-wrapper-two,
