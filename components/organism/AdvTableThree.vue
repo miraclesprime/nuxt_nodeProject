@@ -427,12 +427,12 @@ export default {
       }
       const scrollPercentage = (tableContainer.scrollTop + tableContainer.clientHeight) / tableContainer.scrollHeight;
   if (scrollPercentage >= 0.8 ) {
-      tableContainer.scrollBy({
-        top: -200,
-        behavior: 'smooth'
-      });
+      // tableContainer.scrollBy({
+      //   top: -200,
+      //   behavior: 'smooth'
+      // });
       this.showData();   
-  }
+      }
 
     },
     showData() {
@@ -470,11 +470,11 @@ export default {
           }
         }
         else {
-          
+
             let tmp = {};
             if (start + remainingCount + 1 < allTasks[i].tasks?.length) {
               Object.assign(tmp, this.localData[i])
-            
+
               tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, start + remainingCount + 1))
               this.available_tasks[allTasks[i].title] = tmp.tasks;
               this.localData.length -= 1;
@@ -490,7 +490,7 @@ export default {
               remainingCount -= (allTasks[i].tasks?.length - start - 1);
               start = -1;
             }
-       
+
         }
         if (remainingCount == 0) break;
 

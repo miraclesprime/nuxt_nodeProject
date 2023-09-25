@@ -42,9 +42,9 @@ export const mutations = {
     state.projectSections.unshift(ns)
   },
 
-  setSections(state, payload) {
-    state.sections = payload;
-  },
+  // setProjectSections(state, payload) {
+  //   state.sections = payload;
+  // },
 
   setSortType(state, payload) {
     state.sortType = payload
@@ -187,8 +187,8 @@ export const actions = {
     }
   },
 
-  setSections(ctx, payload) {
-    ctx.commit('setSections', payload)
+  setProjectSections(ctx, payload) {
+    ctx.commit('fetchProjectSections', payload.data)
   },
 
   setSortType(ctx, payload) {
