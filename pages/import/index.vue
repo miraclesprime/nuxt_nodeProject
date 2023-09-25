@@ -157,9 +157,6 @@ export default {
             if(res.data.statusCode == 200) {
               this.importSections(res.data.data)
             }
-
-            this.missingMembers = []
-            this.importfinish = true
         },
 
         async importSections(data) {
@@ -173,23 +170,40 @@ export default {
             })
 
             if(res.data.statusCode == 200) {
-              this.importTasks(res.data.data)
+              this.importSubTasks(res.data.data)
             }
-        },
-
-        async importTasks(data) {
-            console.log('Started Importing Tasks...')
-            console.log(data)
         },
 
         async importSubTasks(data) {
             console.log('Started Importing SubTasks...')
-            console.log(data)
+            
+            let res = await this.$axios.post("/import/subtasks", {data: data}, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                }
+            })
+
+            if(res.data.statusCode == 200) {
+              this.importTags(res.data.data)
+            }
         },
 
         async importTags(data) {
             console.log('Started Importing Tags...')
-            console.log(data)
+            
+            let res = await this.$axios.post("/import/tags", {data: data}, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                }
+            })
+
+            if(res.data.statusCode == 200) {
+              console.log('Import Successful!!!')
+              this.missingMembers = []
+              this.importfinish = true
+            }
         }
 
     }
