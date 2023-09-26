@@ -10,16 +10,6 @@
             </span></div> -->
         </div>
       </div>
-      <!-- <div class="position-absolute " style="inset: 0; z-index: 3; pointer-events: none;">
-        <div class="split position-sticky" style="top: 0; z-index:5; isolation: isolate; pointer-events: all" >
-          <div v-if="drag" class="width-2 " id="advtable-th-1" ></div>
-          <div v-for="(field, index) in tableFields" class="splitcell bg-gray9 border-bottom-gray2" :id="'split'+index" :minwidth="field.minwidth" >
-            <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
-              <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
-            </span></div>
-          </div>
-        </div>
-      </div> -->
 
       <div class="tr position-relative height-2" id="adv-table-tr1" v-if="sectionTitle">
         <div class="position-absolute" id="adv-table-section-header-wrapper" style="inset: 0; border-bottom: 1px solid var(--bib-light);">
