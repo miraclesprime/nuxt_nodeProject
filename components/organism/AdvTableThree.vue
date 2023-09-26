@@ -4,12 +4,12 @@
       <div :id="'advTableTwo-'+componentKey" class=" adv-table  bg-white" :style="{'width': tableWidth}"  >
         <div class="table resizable w-100 position-sticky" ref="headrow" style="top: 0; z-index:2;">
           <div class="tr " role="row" >
-            <div v-show="drag&&filterViews=='all'" class="width-2 th" role="cell" ></div>
-            <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{width: field.width}" :ref="'th'+field.key" :data-key="field.key" >
-              <div class="align-center gap-05" >{{field.label}} <span v-if="field.header_icon" :id="'adv-table-header-icon'+index" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null" >
+            <div v-if="drag && filterViews == 'all'" class="width-2 th" role="cell" ></div>
+            <div v-for="(field, index) in tableFields" :key="field+index" class="th height-2" role="cell" :style="{width: colSizes[index]+'%'}" :ref="'th'+field.key" :data-key="field.key" >
+              <!-- <div class="align-center gap-05" >{{field.label}} <span v-if="field.header_icon" :id="'adv-table-header-icon'+index" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null" >
                   <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
                 </span>
-              </div>
+              </div> -->
             </div>
           </div>
           
@@ -35,7 +35,7 @@
             <div class="thead">
               
               <div class="tr hidden" role="row" >
-                <div v-show="drag&&filterViews=='all'" class="width-2 th" role="cell" ></div>
+                <div v-if="drag&&filterViews=='all'" class="width-2 th" role="cell" ></div>
                 <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :data-key="field.key" :style="{ width: field.width}" >
                 </div>
               </div>
@@ -64,7 +64,7 @@
 
             <draggable :class="sectionClass" tag="article" :list="section.tasks" :group="{ name: 'tasks' }" :data-section="section.id" :ref="'sectionContent' + section.id" @end="rowDragEnd">
               <div v-for="(item, itemIdx) in section.tasks" :key="item.id" ref="trdata" role="row" class="tr sortable drag-item" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
-                <div v-show="drag&&filterViews=='all'" class="td" role="cell" >
+                <div v-if="drag&&filterViews=='all'" class="td" role="cell" >
                   <div class="drag-handle width-105 height-2" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                   </div>
                 </div>
@@ -183,6 +183,16 @@
 
             </draggable>
           </section>
+          <div class="position-absolute " style="inset: 0; z-index: 5; pointer-events: none;">
+            <div class="split position-sticky " style="top: 0; z-index: 1; pointer-events: all" >
+              <div v-if="drag && filterViews == 'all'" class="width-2 " id="advtable-th-1" ></div>
+              <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :id="'split'+index" :minwidth="field.minwidth" >
+                <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
+                  <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
+                </span></div>
+              </div>
+            </div>
+          </div>
         </draggable>
       </div>
     <template v-if="contextItems">
@@ -194,6 +204,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
+import Split from 'split.js'
 import dayjs from 'dayjs'
 import draggable from 'vuedraggable'
 
@@ -250,6 +261,7 @@ export default {
     showNewsection: { type: Boolean, default: false},
     lazyComponent: false,
     // isProject: { type: Boolean, default: false},
+    
   },
 
   data() {
@@ -276,8 +288,10 @@ export default {
       loading:false,
       filterViews:"",
       isRendered: false,
-      sectionClass:'section-content'
-
+      sectionClass:'section-content',
+      colIds: [],
+      colSizes: [],
+      colmw: [],
     }
   },
   watch: {
@@ -311,7 +325,7 @@ export default {
         });
         this.$nextTick(() => {
           this.localData=[]
-          this.$refs.myTable.scrollTop=0
+          // this.$refs.myTable.scrollTop=0
           this.lastDisplayedIndex={ groupIdx: -1, curIdxInGroup: -1}
           this.previousIndex={ groupIdx: -1, curIdxInGroup: -1 },
 
@@ -326,6 +340,22 @@ export default {
     //   this.localData = _.cloneDeep(newValue)
       
     // },
+    tableFields(newValue){
+      let nowidth = 0;
+      let arr = newValue.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100 )
+      console.log(arr)
+      for (var i = 0; i < arr.length; i++) {
+        if(isNaN(arr[i])){
+          arr[i] = 30
+        } else {
+          nowidth += arr[i]
+          arr[i] = Number(arr[i].toFixed(4))
+        }
+        this.colSizes = arr[i]
+      }
+      
+    },
+
     showNewsection(newValue){
       process.nextTick(() => {
         if(newValue){
@@ -337,7 +367,7 @@ export default {
       if (newValue === "section-content collapsed") {
         this.$emit('sectionExpandedEvent', { sectionId: 1 })
       }
-    }
+    },
   },
 
   computed: {
@@ -386,12 +416,61 @@ export default {
 
   mounted() {
     // this.localData=_.cloneDeep(this.tableData)
-    this.resizableColumns()
-    const divHeight = this.$refs.myTable.clientHeight;
-    this.itemsPerPage= parseInt((divHeight - 40) / 40);
+    // this.resizableColumns()
+
+    let nowidth = 0;
+    let nowidthIndex = [];
+    let colwidthArr = this.tableFields.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100 )
+    // console.log(colwidthArr)
+    for (var i = 0; i < colwidthArr.length; i++) {
+      if(!isNaN(colwidthArr[i])){
+        nowidth += colwidthArr[i]
+        colwidthArr[i] = Number(colwidthArr[i].toFixed(4))
+      } else {
+        nowidthIndex.push(i)
+        colwidthArr[i] = 100-nowidth
+      }
+      // this.colSizes.push(colwidthArr[i])
+    }
+
+    // nowidthIndex.length
+      if (nowidthIndex.length == 1) {
+        colwidthArr[nowidthIndex[0]] = 100 - nowidth
+      } else {
+        /*for (var i = 0; i < colwidthArr.length; i++) {
+
+        }*/
+      }
+
+    this.colSizes = colwidthArr
+    // console.log(colwidthArr, nowidth, nowidthIndex)
+    
+    let elemIds = document.getElementsByClassName("splitcell")
+    for(let c of elemIds){
+      // console.log(c.getAttribute("id"))
+      this.colIds.push("#"+c.getAttribute("id"))
+      this.colmw.push(Number(c.getAttribute("minwidth")))
+    }
+
+    Split(this.colIds, {
+      sizes: this.colSizes,
+      minSize: this.colmw,
+      gutterSize: 5,
+      snapOffset: 4,
+      onDragEnd: (sizes) => {
+        // console.log(sizes)
+        this.colSizes = sizes
+        localStorage.setItem("colsizes", JSON.stringify(sizes))
+        // this.colWidth = sizes
+        // console.info(this.split.getSizs())
+      }
+    })
+
+    /*const divHeight = this.$refs.myTable.clientHeight;
+    this.itemsPerPage = parseInt((divHeight - 40) / 40);
     this.$on('sectionExpandedEvent', (event) => {
       this.sectionShow(event.sectionId)
-    })
+    })*/
   },
 
   beforeDestroy(){
@@ -998,7 +1077,27 @@ export default {
 .adv-table-wrapper {
   overflow: auto;
   height: 100%;
-  /*min-width: 1400px;*/
+  
+  .split {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    background-color: $gray9;
+    .splitcell {
+      transition: width 50ms linear;
+      will-change: width;
+
+      &:nth-child(2) {
+        background-color: $gray9;
+        position: sticky;
+        left:0;
+        z-index: 2;
+      }
+    }
+  }
 }
 
 .table { display: table; table-layout: fixed; }

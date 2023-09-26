@@ -994,7 +994,7 @@ export const USER_TASKS = [
   {
     label: 'Task name',
     key: 'title',
-    width: "300px",
+    /*width: "300px",*/
     minwidth: 260,
     icon: {
       icon: 'check-circle-solid',
@@ -1071,7 +1071,7 @@ export const USER_TASKS = [
   {
     label: 'Start Date',
     key: 'startDate',
-    width: '160px',
+    width: '150px',
     minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
@@ -1082,7 +1082,7 @@ export const USER_TASKS = [
   {
     label: 'Due Date',
     key: 'dueDate',
-    width: '160px',
+    width: '150px',
     minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
