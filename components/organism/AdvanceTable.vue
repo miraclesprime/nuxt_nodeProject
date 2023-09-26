@@ -1,13 +1,13 @@
 <template>
   <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll">
 
-    <draggable class="task-draggable adv-table resizable bg-white" :id="'advTable-'+componentKey" handle=".drag-handle" :style="{'width': tableWidth}" role="table" @start="rowDragStart" @end="rowDragEnd" :move="moveTask" >
-      <div slot="header" class="tr" role="row" id="adv-table-row1">
-        <div v-show="drag" class="width-2 th" id="adv-table-cell1" role="cell"></div>
-        <div v-for="(field, index) in tableFields" :key="field+'-'+index" class="th" id="adv-table-th1" role="cell" :style="{ width: field.width}" >
-          <div class="align-center gap-05" :style="{'min-width': field.minWidth}">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
+    <draggable class="task-draggable adv-table resizable bg-white position-relative" :id="'advTable-'+componentKey" handle=".drag-handle" :style="{'width': tableWidth}" role="table" @start="rowDragStart" @end="rowDragEnd" :move="moveTask" >
+      <div slot="header" class="tr position-relative" role="row" id="advtable-row1">
+        <div v-if="drag" class="width-2 th" id="advtable-th" role="cell"></div>
+        <div v-for="(field, index) in tableFields" :key="field+'-'+index" class="th height-2" :id="'advtable-th'+index" role="cell" :style="{ width: colSizes[index]+'%'}" >
+          <!-- <div class="align-center gap-05" :style="{'min-width': field.minWidth}">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
               <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
-            </span></div>
+            </span></div> -->
         </div>
       </div>
 
@@ -108,7 +108,16 @@
         </template>
 
       </template>
-
+      <div class="position-absolute " style="inset: 0; z-index: 5; pointer-events: none;">
+        <div class="split position-sticky " style="top: 0; z-index: 1; pointer-events: all" >
+          <div v-if="drag" class="width-2 " id="advtable-th-1" ></div>
+          <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :id="'split'+index" :minwidth="field.minwidth" >
+            <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
+              <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
+            </span></div>
+          </div>
+        </div>
+      </div>
     </draggable>
     <!-- </div> -->
     <template v-if="contextItems">
@@ -118,7 +127,7 @@
   </div>
 </template>
 <script>
-
+import Split from 'split.js'
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
 import dayjs from 'dayjs'
@@ -180,6 +189,10 @@ export default {
       validTitle: false,
       localData: [],
       localNewrow: _.cloneDeep(this.newRow),
+      colIds: [],
+      colSizes: [],
+      colmw: [],
+      // columns: []
     }
   },
 
@@ -189,7 +202,22 @@ export default {
       this.localData = _.cloneDeep(newValue)
       this.modifyDateFormat()
     },
-
+    tableFields(newValue){
+      let nowidth = 0;
+      let arr = newValue.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100 )
+      console.log(arr)
+      for (var i = 0; i < arr.length; i++) {
+        if(isNaN(arr[i])){
+          arr[i] = 30
+        } else {
+          nowidth += arr[i]
+          arr[i] = Number(arr[i].toFixed(4))
+        }
+        this.colSizes = arr[i]
+      }
+      
+      // return {arr, w}
+    },
   },
 
   computed: {
@@ -212,12 +240,93 @@ export default {
     componentKey(){
       return Math.floor((Math.random() * 999))
     },
+    /*columns: {
+      get: function() {
+        let w = 0;
+        let arr = this.tableFields.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100 )
+        console.log(arr)
+        for (var i = 0; i < arr.length; i++) {
+          if(isNaN(arr[i])){
+            arr[i] = 30
+          } else {
+            w += arr[i]
+            arr[i] = Number(arr[i].toFixed(4))
+          }
+          this.colSizes = arr[i]
+        }
+        
+        return {arr, w}
+      },
+      set: function(newValue) {
+        for (var i = 0; i < this.colIds.length; i++) {
+          this.colSizes = newValue[i]
+        }
+      }
+    },*/
   },
 
   mounted() {
     this.localData = _.cloneDeep(this.tableData)
     this.modifyDateFormat()
-    this.resizableColumns()
+    // this.resizableColumns()
+
+    let nowidth = 0;
+    let nowidthIndex = [];
+    let colwidthArr = this.tableFields.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100 )
+    // console.log(colwidthArr)
+    for (var i = 0; i < colwidthArr.length; i++) {
+      if(!isNaN(colwidthArr[i])){
+        nowidth += colwidthArr[i]
+        colwidthArr[i] = Number(colwidthArr[i].toFixed(4))
+      } else {
+        nowidthIndex.push(i)
+        colwidthArr[i] = 100-nowidth
+      }
+      // this.colSizes.push(colwidthArr[i])
+    }
+
+    // nowidthIndex.length
+      if (nowidthIndex.length == 1) {
+        colwidthArr[nowidthIndex[0]] = 100 - nowidth
+      } else {
+        /*for (var i = 0; i < colwidthArr.length; i++) {
+
+        }*/
+      }
+
+    this.colSizes = colwidthArr
+    // console.log(colwidthArr, nowidth, nowidthIndex)
+    
+    let elemIds = document.getElementsByClassName("splitcell")
+    for(let c of elemIds){
+      // console.log(c.getAttribute("id"))
+      this.colIds.push("#"+c.getAttribute("id"))
+      this.colmw.push(Number(c.getAttribute("minwidth")))
+    }
+
+    /*let sizes = localStorage.getItem("colsizes")
+
+    if (sizes) {
+        sizes = JSON.parse(sizes)
+    } else {
+        sizes = this.colSizes
+    }*/
+
+    // let colminwidht = this.tableFields.map(m => m.minwidth)
+
+    Split(this.colIds, {
+      sizes: this.colSizes,
+      minSize: this.colmw,
+      gutterSize: 5,
+      snapOffset: 4,
+      onDragEnd: (sizes) => {
+        // console.log(sizes)
+        this.colSizes = sizes
+        localStorage.setItem("colsizes", JSON.stringify(sizes))
+        // this.colWidth = sizes
+        // console.info(this.split.getSizs())
+      }
+    })
   },
 
   beforeDestroy(){
@@ -569,7 +678,28 @@ export default {
   overflow: auto;
   height: 100%;
   border-bottom: 1px solid $gray2;
-  /*min-width: 1400px;*/
+  
+  .split {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    background-color: $gray9;
+    .splitcell {
+      transition: width 50ms linear;
+      will-change: width;
+
+      &:nth-child(1) {
+        background-color: $gray9;
+        position: sticky;
+        left:0;
+        z-index: 2;
+      }
+    }
+  }
+
 }
 
 .adv-table {
@@ -602,18 +732,16 @@ export default {
 
   .tr {
     display: table-row;
-
-
     .th:nth-child(2),
     .td:nth-child(2) {
       position: sticky;
       min-width: 2rem;
       left: 0;
-      z-index: 2;
+      z-index: 1;
       background: #fff;
     }
 
-    .th {
+    /*.th {
       position: sticky;
       top: 0;
       z-index: 2;
@@ -627,8 +755,7 @@ export default {
         z-index: 3;
         background: $gray9;
       }
-      
-    }
+    }*/
     &:hover {
       .drag-handle {
         opacity: 1;

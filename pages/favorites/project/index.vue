@@ -29,10 +29,10 @@
       <task-actions :gridType="gridType" @change-grid-type="changeGridType" @create-task="openSidebar" @add-section="toggleNewsection"></task-actions>
 
       <!-- Task View -->
-      <div id="project-id-content" class="project-id-content bg-light position-relative overflow-y-auto" :style="{ 'width': contentWidth }">
+      <div id="project-id-content" class="project-id-content bg-light position-relative " :style="{ 'width': contentWidth }">
         <template v-if="gridType == 'list'">
-          <h3>List view</h3>
-          <draggable v-model="localdata.sections" class=" sortable-list" @end="sectionDragend(localdata.sections)" >
+          <!-- <h3>List view</h3> -->
+          <!-- <draggable v-model="localdata.sections" class=" sortable-list" @end="sectionDragend(localdata.sections)" >
             <section v-for="section in localdata.sections" :key="section.id" class="sortable" >
               <p class="text-primary align-center gap-05 font-w-700"><bib-icon icon="menu-hamburger" variant="primary"></bib-icon> {{section.title}}</p>
               <draggable :list="section.tasks" :group="{ name: 'section' }" class=" ">
@@ -41,7 +41,7 @@
                 </div>
               </draggable>
             </section>
-          </draggable>
+          </draggable> -->
           <!-- <Container orientation="vertical" @drop="onColumnDrop($event)"  >
             <Draggable v-for="section in localdata.sections" :key="section.id">
               <div class="p-05">
@@ -61,11 +61,12 @@
             </Draggable>
           </Container> -->
           <!-- <adv-table-three :tableFields="tableFields" :tableData="localdata" :contextItems="contextMenuItems" @row-click="openSidebar" @title-click="openSidebar" @context-item-event="contextItemClick" :plusButton="plusButton" :newRow="newRow" @create-row="createRow" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="() => alert($event)" @edit-section="editSection" @section-dragend="sectionDragend" :lazy-component="true"></adv-table-three> -->
+          <advance-table :tableFields="projectFields" :tableData="localProjects" :lazyComponent="lazyComponent" :contextItems="projectContextItems"  sectionTitle="" :plusButton="{label: 'New Project', icon: 'add'}" :drag="false" :key="templateKey"></advance-table>
         <!-- {{localdata}} -->
         </template>
         <div v-else>
           <h3>Grid view</h3>
-          <!-- <Container orientation="horizontal" @drop="onColumnDrop($event)"  >
+          <Container orientation="horizontal" @drop="onColumnDrop($event)"  >
             <Draggable v-for="section in localdata.sections" :key="section.id">
               <div class="p-05">
                 <div class="card-column-header bg-warning-sub3 p-025 border-warning">
@@ -82,7 +83,7 @@
                 </Container>
               </div>
             </Draggable>
-          </Container> -->
+          </Container>
         </div>
       </div>
       
@@ -102,24 +103,29 @@
 <script>
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
-import { DEMO_TASK, TASK_CONTEXT_MENU } from "config/constants";
+import { DEMO_TASK, TASK_CONTEXT_MENU, PROJECT_CONTEXT_MENU, PROJECT_FIELDS } from "config/constants";
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 import { Container, Draggable } from 'vue-smooth-dnd'
 import { applyDrag, generateItems } from '~/utils/helpers'
 import draggable from 'vuedraggable'
+// import Split from 'split-grid'
+import Split from 'split.js'
 
 export default {
   // name: 'ProjectTask',
   components: {Container, Draggable, draggable},
   data() {
     return {
-      tableFields: DEMO_TASK,
+      // tableFields: DEMO_TASK,
+      projectFields: PROJECT_FIELDS,
+      projectContextItems: PROJECT_CONTEXT_MENU,
       // projectModal: false,
       localdata: { sections: [
               {id: 11, title: "chosen one", tasks: [], order: 0},
               {id: 28, title: "twin tower", tasks: [], order: 1},
               {id: 3, title: "three stooges", tasks: [], order: 4},
               ]},
+      localProjects: [],
       contextMenuItems: TASK_CONTEXT_MENU,
       conversationModal: false,
       value: {
@@ -162,6 +168,8 @@ export default {
       contentWidth: "100%",
       newSection: false,
       gridType: "list",
+      lazyComponent: false,
+      templateKey: 0,
     }
   },
 
@@ -177,7 +185,35 @@ export default {
           this.contentWidth = '100%'
         }
       });
+    },
+    projects(newVal) {
+        this.localProjects = _.cloneDeep(newVal)
+    },
+  },
+
+  async asyncData({$axios, app,store}){
+      const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
+      const filter=store.getters['task/getFilterView']
+      const res = await $axios.get(`project/company/all`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Filter': filter
+      }
+    })
+
+      
+    let newArr = [];
+
+    for(let i=0; i<res.data.data.length; i++) {
+      if(res.data.data[i].dueDate) {
+        newArr.unshift(res.data.data[i])
+      } else {
+        newArr.push(res.data.data[i])
+      }
     }
+
+    return { localProjects: newArr }
+   
   },
 
   computed: {
@@ -214,8 +250,8 @@ export default {
 
   },
 
-  created() {
 
+  created() {
     this.$nuxt.$on("set-active-task", (task) => {
       this.activeTask = task;
     });
@@ -223,7 +259,6 @@ export default {
     this.$nuxt.$on("edit-message", (msg) => {
       this.editMessage = msg
     })
-
   },
   mounted() {
     if (process.client) {
@@ -258,7 +293,25 @@ export default {
         this.canDeleteProject();
       })
 
+      /*Split({
+        columnGutters: [{
+            track: 1,
+            element: document.querySelector('.gutter-col-1'),
+        }, {
+            track: 3,
+            element: document.querySelector('.gutter-col-3'),
+        }, {
+            track: 5,
+            element: document.querySelector('.gutter-col-5'),
+        }],
+      })*/
     }
+
+    setTimeout(() => {
+      this.$store.dispatch("project/setProjects", this.localProjects)
+      this.$store.dispatch("project/fetchInitialProjects")
+      this.lazyComponent = true
+    }, 250)
   },
 
   beforeDestroy(){
@@ -471,6 +524,26 @@ export default {
 
 </script>
 <style lang="scss" scoped>
+.split {
+    height: 300px;
+}
+
+.split > div {
+    float: left;
+    height: 100%;
+}
+
+.gutter {
+    background-color: #eee;
+    background-repeat: no-repeat;
+    background-position: 50%;
+}
+
+.gutter.gutter-horizontal {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+    cursor: col-resize;
+}
+
 .project-id-wrapper {
   display: flex;
   flex-direction: column;
