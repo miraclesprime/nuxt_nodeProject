@@ -112,50 +112,14 @@
                     </template>
                   </template>
                   <template v-if="field.key == 'startDate'" >
-                    
                     <bib-datetime-picker v-if="isLazy(groupIdx, itemIdx) || isRendered" v-model="item[field.key]" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                     <skeleton-box v-else></skeleton-box>
                   </template>
                   <template v-if="field.key == 'dueDate'" >
-                    
                     <bib-datetime-picker v-if="isLazy(groupIdx, itemIdx) || isRendered" v-model="item[field.key]" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                     <skeleton-box v-else></skeleton-box>
                   </template>
-                   <!-- <template v-if="field.key == 'userId'">
-                    <lazy-user-select v-if="lazyComponent" :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></lazy-user-select>
-                    <skeleton-box v-else></skeleton-box>
-                  </template>
-                  <template v-if="field.key == 'status'">
-                    <lazy-status-select v-if="lazyComponent" :ref="'statusSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('statusSelect'+item.id)"></lazy-status-select>
-                    <skeleton-box v-else></skeleton-box>
-                  </template>
-                  <template v-if="field.key == 'priority'">
-                    <lazy-priority-select v-if="lazyComponent" :ref="'prioritySelect'+item.id" :priority="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></lazy-priority-select>
-                    <skeleton-box v-else></skeleton-box>
-                  </template>
-                  <template v-if="field.key == 'difficultyId'">
-                    <lazy-difficulty-select v-if="lazyComponent" :ref="'difficultySelect'+item.id" :difficulty="item[field.key]" @change="updateDifficulty($event, item)" @close-other="closePopups('difficultySelect'+item.id)"></lazy-difficulty-select>
-                    <skeleton-box v-else></skeleton-box>
-                  </template>
-                  <template v-if="field.key == 'department'">
-                    <lazy-dept-select v-if="lazyComponent" :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></lazy-dept-select>
-                    <skeleton-box v-else></skeleton-box>
-                  </template>
-                  <template v-if="field.key == 'tag'">
-                    <template v-if="item['TaskTags']?.length > 0">
-                      <tag-comp :tags="item['TaskTags']"></tag-comp>
-                    </template>
-                  </template>
-                  <template v-if="field.key == 'startDate'" >
-                    
-                    <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
-                    <skeleton-box v-else></skeleton-box>
-                  </template>
-                  <template v-if="field.key == 'dueDate'" >
-                    
-                    <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
-                    <skeleton-box v-else></skeleton-box>
-                  </template> -->
+                   
                 </div>
               </div>
 
@@ -425,11 +389,14 @@ export default {
       if (this.allDataDisplayed) {
         return; // Stop adding data if all data has been displayed
       }
-      const isAtBottom = tableContainer.scrollTop + tableContainer.clientHeight+5 >= tableContainer.scrollHeight;
-
-      if (isAtBottom) {
-                this.showData();
-          }
+      const scrollPercentage = (tableContainer.scrollTop + tableContainer.clientHeight) / tableContainer.scrollHeight;
+  if (scrollPercentage >= 0.8 ) {
+      tableContainer.scrollBy({
+        top: -200,
+        behavior: 'smooth'
+      });
+      this.showData();   
+  }
 
     },
     showData() {
@@ -663,7 +630,7 @@ export default {
 
         self.resizeNestedCols(col1, col2, no);
 
-        if (parseInt(dragColumns[no].style.width) < colContent[no] || parseInt(dragColumns[no+1].style.width) < colContent[no]) return false;
+        // if (parseInt(dragColumns[no].style.width) < colContent[no] || parseInt(dragColumns[no+1].style.width) < colContent[no]) return false;
         return true;
       }
 
@@ -680,6 +647,25 @@ export default {
       this.columnDrag = function(e) {
         var e = e || window.event;
         var X = e.clientX || e.pageX;
+        
+        if (parseInt(dragColumns[dragColumnNo].style.width) <= colContent[dragColumnNo]) {
+          self.stopColumnDrag(e)
+          if (e.movementX <= 0) {
+            dragColumns[dragColumnNo].style.width = colContent[dragColumnNo]+4+"px"
+            dragColumns[dragColumnNo+1].style.width -= 4+"px"
+          } 
+          console.log('col-1', parseInt(dragColumns[dragColumnNo].style.width), colContent[dragColumnNo])
+        } 
+
+        if (parseInt(dragColumns[dragColumnNo+1].style.width) <= colContent[dragColumnNo+1]) {
+          self.stopColumnDrag(e)
+          if(e.movementX > 0) {
+            dragColumns[dragColumnNo+1].style.width = colContent[dragColumnNo+1]+4+"px"
+            dragColumns[dragColumnNo].style.width -= 4+"px"
+          }
+          console.log('col-2', parseInt(dragColumns[dragColumnNo+1].style.width), colContent[dragColumnNo+1])
+        }
+
         if (!self.changeColumnWidth(dragColumnNo, X - dragX)) {
           // stop drag!
           self.stopColumnDrag(e);
@@ -1013,10 +999,6 @@ export default {
   .tr {
     display: table-row;
 
-    .resize-drag-handle {
-      background-color: $secondary;
-    }
-
     .th:nth-child(2),
     .td:nth-child(2) {
       position: sticky;
@@ -1047,9 +1029,7 @@ export default {
       &:not(:last-child) {
         border-right: 1px solid $gray8;
       }
-      &:hover {
-        .resize-drag-handle { background-color: $primary; }
-      }
+      
     }
     &:hover {
       .drag-handle {

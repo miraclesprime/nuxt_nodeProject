@@ -22,7 +22,7 @@
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
     </div>
 
-    <div v-show="show" ref="pickerContent" class="picker-content p-025" :style="styleObj" id="user-select-content">
+    <div v-if="show" ref="pickerContent" class="picker-content p-025" :style="styleObj" id="user-select-content">
       <p class="font-sm text-left border-bottom-light p-025">{{title}}</p>
       <input type="text" class="picker-input m-025" id="user-select-input" ref="userFilterInput" v-model="filterKey" @keyup.esc="$emit('close')" autofocus>
       <div class="mt-05" style="max-height: 12rem; overflow-y: auto" id="user-select-user-avatar-list-wrapper">

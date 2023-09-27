@@ -9,7 +9,7 @@
       </div>
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
     </div>
-    <div v-show="show" id="priority-select-content" class="picker-content" > 
+    <div v-if="show" id="priority-select-content" class="picker-content" > 
       <div id="priority-select-list-wrap" class="picker-list-wrap" >
         <ul id="priority-select-list" class="m-0 p-0 text-left" >
           <li v-for="pt in priorityList" :key="pt.value+'stitem'" :id="'ps-'+pt.value" class="p-025 gap-05 align-center font-md cursor-pointer" @click.stop="onStatusChange(pt)">

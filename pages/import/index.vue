@@ -2,14 +2,13 @@
     <client-only>
         <div id="page" class="project-id-wrapper h-100 overflow-y-auto">
             <page-title title="Import"></page-title>
-            <!-- <task-actions :gridType="gridType" @change-grid-type="changeGridType" @create-task="openSidebar" @add-section="toggleNewsection"></task-actions> -->
             <!-- Task View -->
             <div id="project-id-content" class="project-id-content position-relative " :style="{ 'width': contentWidth }">
                 <div class="d-flex justify-center p-1">
                     <div class="border-gray2 shape-rounded py-1" style="min-width: 300px; max-width:400px;">
                         <bib-input type="file" ref="csvImport" @files-dropped="onFileInput" multiple="false" variant="accepted" iconLeft="upload" placeholder="Click to upload"></bib-input>
                         <div class="mx-1 mt-1 align-center">
-                          <bib-button :disabled="loading" variant="secondary" label="Import CSV" @click="onsubmit"></bib-button> <bib-spinner v-if="loading" :scale="2" ></bib-spinner>
+                          <bib-button :disabled="loading" variant="secondary" label="Import CSV" @click="checkUser"></bib-button> <bib-spinner v-if="loading" :scale="2" ></bib-spinner>
                         </div>
                     </div>
                 </div>
@@ -40,22 +39,22 @@
                 
               </template> -->
                 <template slot="content">
-                    <h4>Import will be done in steps</h4>
-                    <div v-for="item in steps" class="align-center gap-05">
-                        <div class="width-105 height-105 align-center justify-center">
-                            <bib-spinner v-if="item.progress == 'progress'" :scale="2" variant="orange" ></bib-spinner>
-                            <bib-icon v-else-if="item.progress == 'done'" icon="check-circle-solid" :variant="item.variant"></bib-icon>
-                            <bib-icon v-else-if="item.progress == 'error'" icon="close-circle-solid" :variant="item.variant"></bib-icon>
-                            <bib-icon v-else icon="check-circle" :variant="item.variant"></bib-icon>
+                    <template v-if="!importfinish">
+                        <h4>Import will be done in steps</h4>
+                        <div v-for="item in steps" class="align-center gap-05">
+                            <div class="width-105 height-105 align-center justify-center">
+                                <bib-spinner v-if="item.progress == 'progress'" :scale="2" variant="orange" ></bib-spinner>
+                                <bib-icon v-else-if="item.progress == 'done'" icon="check-circle-solid" :variant="item.variant"></bib-icon>
+                                <bib-icon v-else-if="item.progress == 'error'" icon="close-circle-solid" :variant="item.variant"></bib-icon>
+                                <bib-icon v-else icon="check-circle" :variant="item.variant"></bib-icon>
+                            </div>
+                            <div :class="'text-'+item.variant" >{{item.status}} {{item.label}} </div>
                         </div>
-                        <div :class="'text-'+item.variant" >{{item.status}} {{item.label}} </div>
-                    </div>
-                    <div v-show="missingMembers.length > 0" class="of-scroll-y mt-1" style="max-height: 400px">
-                        <!-- <p v-for="(mm, index) in missingMembers">{{index}}. {{mm.label}} - {{(mm.email)}}</p> -->
-                        
-                        <h4>Missing member(s) from import</h4>
-                        <p v-for="(mm, index) in missingMembers"> {{index+1}}. {{mm}}</p>
-                    </div>
+                        <div v-show="missingMembers.length > 0" class="of-scroll-y mt-1" style="max-height: 400px">
+                            <h4>Missing member(s) from import</h4>
+                            <p v-for="(mm, index) in missingMembers"> {{index+1}}. {{mm}}</p>
+                        </div>
+                    </template>
                     
                     <div v-show="importfinish" class="shape-rounded align-center gap-05 border-success text-success p-05">
                       <bib-icon icon="tick" variant="success"></bib-icon>
@@ -65,7 +64,10 @@
                 <template slot="footer">
                     <div v-show="missingMembers.length > 0 && steps[0].progress == 'done'" class="justify-between">
                         <bib-button label="Add users" variant="secondary" class="mr-1" pill @click="closeModal"></bib-button>
-                        <bib-button label="Continue" variant="primary" pill @click="importData"></bib-button>
+                        <bib-button label="Continue" variant="primary" pill @click="importProject"></bib-button>
+                    </div>
+                    <div v-show="importfinish">
+                        <bib-button label="Finish" variant="success" pill @click="()=>{$router.push('/projects')}"></bib-button>
                     </div>
                 </template>
             </bib-modal-wrapper>
@@ -83,18 +85,11 @@
 <script>
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
-// import { DEMO_TASK, TASK_CONTEXT_MENU } from "config/constants";
-// import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
-// import { Container, Draggable } from 'vue-smooth-dnd'
-// import { applyDrag, generateItems } from '~/utils/helpers'
-// import draggable from 'vuedraggable'
 
 export default {
     name: 'Import',
-    // components: {Container, Draggable, draggable},
     data() {
         return {
-            // tableFields: DEMO_TASK,
             contentWidth: "100%",
             loading: false,
 
@@ -122,21 +117,6 @@ export default {
         }
     },
 
-    watch: {
-        /*sidebar(newVal){
-          const page = document.getElementById("page")
-          this.$nextTick(() => {
-            const panel = document.getElementById("side-panel-wrapper")
-            // console.log("page width="+page.scrollWidth+", panel width="+panel.offsetWidth)
-            if (this.sidebar) {
-              this.contentWidth = (page.scrollWidth - panel.offsetWidth) + 'px'
-            } else {
-              this.contentWidth = '100%'
-            }
-          });
-        }*/
-    },
-
     computed: {
 
         ...mapGetters({
@@ -145,24 +125,19 @@ export default {
 
     },
 
-    mounted() {
-        if (process.client) {
-
-
-        }
-    },
-
-    beforeDestroy() {
-        // console.info("before destroy hook");
-        // this.localdata = null
-    },
-
     methods: {
         async onFileInput(file) {
           // console.log(file) 
         },
 
-        async onsubmit() {
+
+        closeModal(){
+          this.importmodal = false
+          this.missingMembers = []
+          this.importfinish = false
+        },
+
+        async checkUser() {
           // this.loading = true
             this.importmodal = true
             let file = this.$refs.csvImport.filesUploaded;
@@ -170,7 +145,7 @@ export default {
             let formdata = new FormData();
             formdata.append('file', file[0])
 
-            let users = await this.$axios.post("/file/import/check-user", formdata, {
+            let users = await this.$axios.post("/import/check-user", formdata, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
@@ -181,8 +156,6 @@ export default {
               let appMemberEmails = this.appMembers.map(member => member.email); 
               this.missingMembers = users.data.data.filter(email => !appMemberEmails.includes(email)); 
 
-              // this.importmodal = true
-              // this.loading = false
               this.steps[0].progress = "done"
               this.steps[0].variant = "success"
             } else {
@@ -195,56 +168,109 @@ export default {
             this.userList = await users?.data?.data;
         },
 
-        /*async uploadFile(commentFiles, data){
-          let formdata = new FormData()
-          let filelist = []
-
-          commentFiles.forEach(file => {
-            formdata.append('files', file)
-            filelist.push(file.name)
-          })
-          formdata.append('projectId', this.project?.id)
-          formdata.append('projCommentId', data.id)
-          formdata.append('text', `uploaded file(s) "${filelist.join(", ")}" to comment`)
-
-          const fi = await this.$axios.post("/file/upload", formdata, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-            }
-          })
-          if (fi.data.statusCode == 200) {
-            this.value.files = []
-            this.$nuxt.$emit("get-msg-files")
-          }
-        }*/
-        closeModal(){
-          this.importmodal = false
-          this.missingMembers = []
-          this.importfinish = false
-        },
-
-        async importData(){
-          // _.delay(function() {
+        async importProject(){
             this.missingMembers = []
+            this.steps[1].progress = "progress"
+            this.steps[1].variant = "orange"
+
             let file = this.$refs.csvImport.filesUploaded;
 
             let formdata = new FormData();
             formdata.append('file', file[0])
 
-            let res = await this.$axios.post("/file/import", formdata, {
+            let res = await this.$axios.post("/import/project", formdata, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
             })
 
-            console.log(res.data);
-
-            // this.missingMembers = []
-            // this.importfinish = true
-          // }, 1200)
+            if(res.data.statusCode == 200) {
+              this.importSections(res.data.data)
+              this.steps[1].progress = "done"
+              this.steps[1].variant = "success"
+            } else {
+              this.popupMessages.push({text: "Some error occured", variant: "danger"})
+              // this.loading = false
+              this.steps[1].progress = "error"
+              this.steps[1].variant = "danger"
+            }
         },
+
+        async importSections(data) {
+            // console.log('Started Importing Sections...')
+            this.steps[2].progress = "progress"
+            this.steps[2].variant = "orange"
+            
+            let res = await this.$axios.post("/import/sections", {data: data}, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                }
+            })
+
+            if(res.data.statusCode == 200) {
+              this.importSubTasks(res.data.data)
+              this.steps[2].progress = "done"
+              this.steps[2].variant = "success"
+            } else {
+              this.popupMessages.push({text: "Some error occured", variant: "danger"})
+              // this.loading = false
+              this.steps[2].progress = "error"
+              this.steps[2].variant = "danger"
+            }
+        },
+
+        async importSubTasks(data) {
+            // console.log('Started Importing SubTasks...')
+            this.steps[3].progress = "progress"
+            this.steps[3].variant = "orange"
+
+            let res = await this.$axios.post("/import/subtasks", {data: data}, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                }
+            })
+
+            if(res.data.statusCode == 200) {
+                this.importTags(res.data.data)
+                this.steps[3].progress = "done"
+                this.steps[3].variant = "success"
+            } else {
+              this.popupMessages.push({text: "Some error occured", variant: "danger"})
+              // this.loading = false
+              this.steps[3].progress = "error"
+              this.steps[3].variant = "danger"
+            }
+
+        },
+
+        async importTags(data) {
+            // console.log('Started Importing Tags...')
+            this.steps[4].progress = "progress"
+            this.steps[4].variant = "orange"
+
+            let res = await this.$axios.post("/import/tags", {data: data}, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                }
+            })
+
+            if(res.data.statusCode == 200) {
+              // console.log('Import Successful!!!')
+              // this.missingMembers = []
+                this.steps[4].progress = "done"
+                this.steps[4].variant = "success"
+                this.importfinish = true
+            } else {
+              this.popupMessages.push({text: "Some error occured", variant: "danger"})
+              // this.loading = false
+              this.steps[4].progress = "error"
+              this.steps[4].variant = "danger"
+            }
+        }
 
     }
 }

@@ -1,6 +1,6 @@
 <template>
-    <div id="error-500-wrapper" class="shape-rounded bg-light">
-      <h1 id="error-500-heading" >There was some error, something went wrong. we are redirecting you.</h1>
+    <div id="error-500-wrapper" class="shape-rounded bg-light border-danger-sub3">
+      <h1 id="error-500-heading font-w-500" >There was some error, something went wrong. </h1>
       <NuxtLink class="error-link" to="/">Redirect to Home</NuxtLink>
     </div>
 </template>

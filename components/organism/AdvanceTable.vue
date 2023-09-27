@@ -309,7 +309,7 @@ export default {
         if (dragColumns[no + 1])
           dragColumns[no + 1].style.width = parseInt(dragColumns[no + 1].style.width) - w + 'px';
 
-        if (parseInt(dragColumns[no].style.width) < colContent[no] || parseInt(dragColumns[no+1].style.width) < colContent[no]) return false;
+        // if (parseInt(dragColumns[no].style.width) < colContent[no] || parseInt(dragColumns[no+1].style.width) < colContent[no]) return false;
         return true;
       }
 
@@ -317,6 +317,27 @@ export default {
       this.columnDrag = function(e) {
         var e = e || window.event;
         var X = e.clientX || e.pageX;
+        // console.log(e.movementX, 'col-1', parseInt(dragColumns[dragColumnNo].style.width), colContent[dragColumnNo])
+        // console.log(e.movementX, 'col-2', parseInt(dragColumns[dragColumnNo+1].style.width), colContent[dragColumnNo+1])
+
+        if (parseInt(dragColumns[dragColumnNo].style.width) <= colContent[dragColumnNo]) {
+          self.stopColumnDrag(e)
+          if (e.movementX <= 0) {
+            dragColumns[dragColumnNo].style.width = colContent[dragColumnNo]+4+"px"
+            dragColumns[dragColumnNo+1].style.width -= 4+"px"
+          } 
+          console.log('col-1', parseInt(dragColumns[dragColumnNo].style.width), colContent[dragColumnNo])
+        } 
+
+        if (parseInt(dragColumns[dragColumnNo+1].style.width) <= colContent[dragColumnNo+1]) {
+          self.stopColumnDrag(e)
+          if(e.movementX > 0) {
+            dragColumns[dragColumnNo+1].style.width = colContent[dragColumnNo+1]+4+"px"
+            dragColumns[dragColumnNo].style.width -= 4+"px"
+          }
+          console.log('col-2', parseInt(dragColumns[dragColumnNo+1].style.width), colContent[dragColumnNo+1])
+        }
+
         if (!self.changeColumnWidth(dragColumnNo, X - dragX)) {
           // stop drag!
           self.stopColumnDrag(e);
@@ -339,17 +360,18 @@ export default {
         document.body.style.cursor = saveBodyCursor;
 
         // remember columns widths in cookies for server side
-        var colWidth = '';
-        var separator = '';
+        var colWidth = [];
+        // var separator = '';
         for (var i = 1; i < dragColumns.length; i++) {
-          colWidth += separator + parseInt(self.getWidth(dragColumns[i]));
-          separator = '+';
+          // colWidth += separator + parseInt(self.getWidth(dragColumns[i]));
+          colWidth.push(parseInt(self.getWidth(dragColumns[i])))
+          // separator = '+';
         }
         /*var expire = new Date();
         expire.setDate(expire.getDate() + 365); // year
         document.cookie = self.id + '-width=' + colWidth +
           '; expires=' + expire.toGMTString();*/
-
+        // console.log(colWidth, colContent)
         self.preventEvent(e);
       }
 

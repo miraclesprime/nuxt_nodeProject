@@ -1,7 +1,7 @@
 <template>
   <nav :id="id+'-title-wrapper'" class="bg-white d-flex align-center gap-05 py-075 px-025">
     <bib-avatar v-if="avatar" :src="avatar" class="mr-105"></bib-avatar>
-    <span class="ml-05 title-text font-w-700" :id="id+'-title-text'">{{title}}</span> <span v-if="count > 0" :id="id+'-count'" class="text-secondary font-md font-w-700">({{count}})</span>
+    <span class="ml-05 title-text font-w-700" :id="id+'-title-text'">{{title}}</span> <span v-if="count > 0" :id="id+'-count'" class="text-secondary font-w-700">({{count}})</span>
   </nav>
 </template>
 <script>
