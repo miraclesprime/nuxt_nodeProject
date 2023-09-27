@@ -144,12 +144,59 @@ export default {
 
   // const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
   // const filter=store.getters['task/getFilterView']
-  // const fav = await $axios.get("project/user/favorites", {
+  // const favProject = await $axios.get("project/user/favorites", {
   //       headers: {
   //         "Authorization": `Bearer ${token}`,'Filter': filter 
   //       }
   //     })
-  // return { localData: res.data.data}
+  //     console.log("favproject",favProject.data)
+  //     let prArr = []
+  //     let newAr = []
+  //     let favpro = _.cloneDeep(favProject.data.data)
+  //     favpro.forEach(p => { prArr.push(p.projects) })
+
+  //     for(let i=0; i < prArr.length; i++) {
+  //         if(prArr[i].priorityId) {
+  //             newAr.unshift(prArr[i])
+  //         } else {
+  //             newAr.push(prArr[i])
+  //         }
+  //     }
+
+  //     newAr.sort((a,b) => {
+  //         if(a.priorityId && b.priorityId) {
+  //             return a.priorityId - b.priorityId
+  //         }
+  //     })
+
+
+  //   const favTask = await $axios.get("/task/user/favorites", {
+  //     headers: {
+  //       "Authorization": `Bearer ${token}`,'Filter': filter 
+  //     }
+  //   })
+  //     let favData=[]
+  //     let newArr = []
+  //     favTask.data.data.forEach(d => { 
+  //       favData.push(d.task)
+  //     })
+  //   for(let i=0; i <favData.length; i++) {
+  //     if(favData?.[i]?.priorityId) {
+  //       newArr.unshift(favData[i])
+  //     } else {
+  //       newArr.push(favData[i])
+  //     }
+  //   }
+
+  //   newArr.sort((a,b) => {
+  //     if(a.priorityId && b.priorityId) {
+  //       return a.priorityId - b.priorityId
+  //     }
+  //   })
+
+  //   console.log("favTask",newArr)
+
+  // return { taskSubtaskLocalData: newArr,projLocalData: newAr}
 
   // },
 
@@ -326,6 +373,7 @@ export default {
     },
 
     changeView($event) {
+      this.$store.commit('task/setFilterView', {filter:$event})
       if ($event == 'complete') {
         this.projLocalData = JSON.parse(JSON.stringify(this.sortedProject));
         this.taskSubtaskLocalData = JSON.parse(JSON.stringify(this.sortedTask));

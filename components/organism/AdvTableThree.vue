@@ -276,8 +276,8 @@ export default {
       loading:false,
       filterViews:"",
       isRendered: false,
-      sectionClass:'section-content'
-
+      sectionClass:'section-content',
+      testIsLoadingData: false
     }
   },
   watch: {
@@ -392,6 +392,7 @@ export default {
     this.$on('sectionExpandedEvent', (event) => {
       this.sectionShow(event.sectionId)
     })
+    // this.handleScroll();
   },
 
   beforeDestroy(){
@@ -426,22 +427,25 @@ export default {
         return; // Stop adding data if all data has been displayed
       }
       const scrollPercentage = (tableContainer.scrollTop + tableContainer.clientHeight) / tableContainer.scrollHeight;
-  if (scrollPercentage >= 0.8 ) {
-      // tableContainer.scrollBy({
-      //   top: -200,
-      //   behavior: 'smooth'
-      // });
-      this.showData();   
+  if (scrollPercentage >= 0.7 ) {
+
+      if (this.testIsLoadingData) return;
+        this.testIsLoadingData = true;
+        new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve('Changed successfully!');
+          }, 1500);
+        }).then(() => {
+          this.showData();
+        this.testIsLoadingData = false;
+        });
+
       }
 
     },
     showData() {
       
       let allTasks = this.newValue.length > 0 ? [...this.newValue] : [...this.tableData];
-      // allTasks =allTasks.map((item) => {
-      //             item.dataCount = item.tasks?.length||0;
-      //             return item;
-      //           });
       allTasks=this.modifyDateFormat(allTasks)
       let remainingCount = this.itemsPerPage;
       let start = this.lastDisplayedIndex.curIdxInGroup;
@@ -472,7 +476,7 @@ export default {
         else {
 
             let tmp = {};
-            if (start + remainingCount + 1 < allTasks[i].tasks?.length) {
+            if (start + remainingCount + 1 <=allTasks[i].tasks?.length) {
               Object.assign(tmp, this.localData[i])
 
               tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, start + remainingCount + 1))
@@ -495,6 +499,13 @@ export default {
         if (remainingCount == 0) break;
 
       }
+      if (i >= allTasks.length - 1 && start === -1) 
+      {
+        this.allDataDisplayed = true;
+        this.lastDisplayedIndex.groupIdx = -1;
+        this.lastDisplayedIndex.curIdxInGroup = -1;
+        return 
+      }
       this.isRendered = false;
       new Promise((resolve, reject) => {
         setTimeout(() => {
@@ -504,13 +515,7 @@ export default {
         this.isRendered = true;
       });
 
-      if (i >= allTasks.length - 1 && start === -1) 
-      {
-        this.allDataDisplayed = true;
-        this.lastDisplayedIndex.groupIdx = -1;
-        this.lastDisplayedIndex.curIdxInGroup = -1;
-        return 
-      }
+    
   
       Object.assign(this.previousIndex, this.lastDisplayedIndex);
       this.lastDisplayedIndex.groupIdx = i;
