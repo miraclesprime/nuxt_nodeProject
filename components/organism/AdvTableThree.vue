@@ -1,8 +1,8 @@
 <template>
   <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll" @scroll="handleScroll" ref="myTable">
 
-      <div :id="'advTableTwo-'+componentKey" class=" adv-table  bg-white" :style="{'width': tableWidth}"  >
-        <div class="table resizable w-100 position-sticky" ref="headrow" style="top: 0; z-index:2;">
+      <div :id="'advTableTwo-'+componentKey" class="adv-table position-relative bg-white" :style="{'width': tableWidth}"  >
+        <div class="table resizable w-100 position-absolute" ref="headrow" style="inset: 0;">
           <div class="tr " role="row" >
             <div v-if="drag && filterViews == 'all'" class="width-2 th" role="cell" ></div>
             <div v-for="(field, index) in tableFields" :key="field+index" class="th height-2" role="cell" :style="{width: colSizes[index]+'%'}" :ref="'th'+field.key" :data-key="field.key" >
@@ -30,13 +30,13 @@
             </div>
           </template>
         </div>
-        <draggable v-model="localData" class=" sortable-list" @end="sectionDragend(localData)" >
+        <draggable v-model="localData" class="sortable-list " @end="sectionDragend(localData)" >
           <section v-for="(section, groupIdx) in localData" :key="section.id" class="sortable w-100" >
             <div class="thead">
               
               <div class="tr hidden" role="row" >
                 <div v-if="drag&&filterViews=='all'" class="width-2 th" role="cell" ></div>
-                <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :data-key="field.key" :style="{ width: field.width}" >
+                <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :data-key="field.key" :style="{ width: colSizes[index]+'%'}" >
                 </div>
               </div>
 
@@ -64,7 +64,7 @@
 
             <draggable :class="sectionClass" tag="article" :list="section.tasks" :group="{ name: 'tasks' }" :data-section="section.id" :ref="'sectionContent' + section.id" @end="rowDragEnd">
               <div v-for="(item, itemIdx) in section.tasks" :key="item.id" ref="trdata" role="row" class="tr sortable drag-item" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
-                <div v-if="drag&&filterViews=='all'" class="td" role="cell" >
+                <div v-if="drag && filterViews == 'all'" class="td" role="cell" >
                   <div class="drag-handle width-105 height-2" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                   </div>
                 </div>
@@ -121,47 +121,13 @@
                     <bib-datetime-picker v-if="isLazy(groupIdx, itemIdx) || isRendered" v-model="item[field.key]" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                     <skeleton-box v-else></skeleton-box>
                   </template>
-                   <!-- <template v-if="field.key == 'userId'">
-                    <lazy-user-select v-if="lazyComponent" :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></lazy-user-select>
-                    <skeleton-box v-else></skeleton-box>
-                  </template>
-                  <template v-if="field.key == 'status'">
-                    <lazy-status-select v-if="lazyComponent" :ref="'statusSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('statusSelect'+item.id)"></lazy-status-select>
-                    <skeleton-box v-else></skeleton-box>
-                  </template>
-                  <template v-if="field.key == 'priority'">
-                    <lazy-priority-select v-if="lazyComponent" :ref="'prioritySelect'+item.id" :priority="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></lazy-priority-select>
-                    <skeleton-box v-else></skeleton-box>
-                  </template>
-                  <template v-if="field.key == 'difficultyId'">
-                    <lazy-difficulty-select v-if="lazyComponent" :ref="'difficultySelect'+item.id" :difficulty="item[field.key]" @change="updateDifficulty($event, item)" @close-other="closePopups('difficultySelect'+item.id)"></lazy-difficulty-select>
-                    <skeleton-box v-else></skeleton-box>
-                  </template>
-                  <template v-if="field.key == 'department'">
-                    <lazy-dept-select v-if="lazyComponent" :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></lazy-dept-select>
-                    <skeleton-box v-else></skeleton-box>
-                  </template>
-                  <template v-if="field.key == 'tag'">
-                    <template v-if="item['TaskTags']?.length > 0">
-                      <tag-comp :tags="item['TaskTags']"></tag-comp>
-                    </template>
-                  </template>
-                  <template v-if="field.key == 'startDate'" >
-                    
-                    <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
-                    <skeleton-box v-else></skeleton-box>
-                  </template>
-                  <template v-if="field.key == 'dueDate'" >
-                    
-                    <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
-                    <skeleton-box v-else></skeleton-box>
-                  </template> -->
+                   
                 </div>
               </div>
 
               <template v-if="plusButton" >
                 <div v-show="localNewrow.sectionId != section.id" :key="'plusbtn'+akey" class="tr position-relative" role="row" >
-                  <div v-show="drag&&filterViews=='all'" class="td width-2" role="cell" style="border-right-color: transparent;"></div>
+                  <div v-if="drag && filterViews == 'all'" class="td width-2" role="cell" style="border-right-color: transparent;"></div>
                   <div class="td" role="cell" style="border-right-color: transparent; width: 360px;">
                     <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
                       <bib-icon :icon="plusButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{plusButton.label}}</span>
@@ -171,29 +137,29 @@
                 </div>
 
                 <div v-show="localNewrow.sectionId == section.id" :key="'plusinput'+akey" class="tr position-relative" role="row" >
-                  <div v-show="drag&&filterViews=='all'" class="td text-center " role="cell">
+                  <div v-if="drag && filterViews == 'all'" class="td text-center " role="cell">
                     <span class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
                   </div>
                   <div class="td" role="cell" style="border-right-color: transparent;">
                     <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate(section)" @blur="unselectAll" @keyup.esc="unselectAll" required placeholder="Enter title...">
                   </div>
-		                	<div class="position-absolute" style="left:0; bottom:0; right:0; z-index:1; height: 1px; border-bottom: 1px solid var(--bib-light)"></div>
+		              <div class="position-absolute" style="left:0; bottom:0; right:0; z-index:1; height: 1px; border-bottom: 1px solid var(--bib-light)"></div>
                 </div>
               </template>
 
             </draggable>
           </section>
-          <div class="position-absolute " style="inset: 0; z-index: 5; pointer-events: none;">
-            <div class="split position-sticky " style="top: 0; z-index: 1; pointer-events: all" >
-              <div v-if="drag && filterViews == 'all'" class="width-2 " id="advtable-th-1" ></div>
-              <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :id="'split'+index" :minwidth="field.minwidth" >
-                <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
-                  <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
-                </span></div>
-              </div>
+        </draggable>
+        <div class="position-absolute " style="inset: 0; z-index: 5; pointer-events: none;">
+          <div class="split position-sticky " style="top: 0; z-index: 1; pointer-events: all" >
+            <div v-if="drag && filterViews == 'all'" class="width-2 border-bottom-gray2" id="advtable-th-1" ></div>
+            <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :id="'split'+index" :minwidth="field.minwidth" >
+              <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
+                <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
+              </span></div>
             </div>
           </div>
-        </draggable>
+        </div>
       </div>
     <template v-if="contextItems">
       <table-context-menu :items="contextItems" :show="contextVisible" :coordinates="popupCoords" @close-context="closePopups" @item-click="contextItemClick" ></table-context-menu>
@@ -1064,6 +1030,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 
+/*
 *::-webkit-scrollbar {
   width: thin;
   height: thin;
@@ -1073,6 +1040,7 @@ export default {
   width: thin;
   height: thin;
 }
+*/
 
 .adv-table-wrapper {
   overflow: auto;

@@ -123,7 +123,8 @@ export const TASK_FIELDS = [
   {
     label: 'Task name',
     key: 'title',
-    width: "300px",
+    // width: 300,
+    minwidth: 260,
     icon: {
       icon: 'check-circle-solid',
       variant: 'gray2',
@@ -139,7 +140,8 @@ export const TASK_FIELDS = [
   {
     key: "status",
     label: "Status",
-    width: "140px",
+    width: 140,
+    minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -149,7 +151,8 @@ export const TASK_FIELDS = [
   {
     key: "priority",
     label: "Priority",
-    width: "140px",
+    width: 140,
+    minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -160,6 +163,7 @@ export const TASK_FIELDS = [
     label: 'Difficulty',
     key: 'difficultyId',
     width: '140px',
+    minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -169,7 +173,8 @@ export const TASK_FIELDS = [
   {
     key: "department",
     label: "Department",
-    width: "140px",
+    width: 150,
+    minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -179,7 +184,8 @@ export const TASK_FIELDS = [
   {
     key: "userId",
     label: "Assignee",
-    width: "140px",
+    width: 150,
+    minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -194,7 +200,8 @@ export const TASK_FIELDS = [
   {
     key: "startDate",
     label: "Start Date",
-    width: "160px",
+    width: 160,
+    minwidth: 150,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -204,7 +211,8 @@ export const TASK_FIELDS = [
   {
     key: "dueDate",
     label: "Due Date",
-    width: "160px",
+    width: 160,
+    minwidth: 150,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -1011,7 +1019,7 @@ export const USER_TASKS = [
   {
     label: 'Project',
     key: 'project',
-    width: "200px",
+    width: 200,
     minwidth: 150,
     header_icon: {
       icon: 'swap-vertical',
@@ -1022,7 +1030,7 @@ export const USER_TASKS = [
   {
     label: 'Status',
     key: 'status',
-    width: '140px',
+    width: 140,
     minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
@@ -1033,7 +1041,7 @@ export const USER_TASKS = [
   {
     label: 'Priority',
     key: 'priority',
-    width: '140px',
+    width: 140,
     minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
@@ -1044,7 +1052,7 @@ export const USER_TASKS = [
   {
     label: 'Difficulty',
     key: 'difficultyId',
-    width: '140px',
+    width: 140,
     minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
@@ -1055,7 +1063,7 @@ export const USER_TASKS = [
   {
     label: 'Department',
     key: 'department',
-    width: '140px',
+    width: 140,
     minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
@@ -1071,8 +1079,8 @@ export const USER_TASKS = [
   {
     label: 'Start Date',
     key: 'startDate',
-    width: '150px',
-    minwidth: 120,
+    width: 160,
+    minwidth: 140,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -1082,8 +1090,8 @@ export const USER_TASKS = [
   {
     label: 'Due Date',
     key: 'dueDate',
-    width: '150px',
-    minwidth: 120,
+    width: 160,
+    minwidth: 140,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
