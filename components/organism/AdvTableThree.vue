@@ -427,20 +427,20 @@ export default {
         return; // Stop adding data if all data has been displayed
       }
       const scrollPercentage = (tableContainer.scrollTop + tableContainer.clientHeight) / tableContainer.scrollHeight;
-  if (scrollPercentage >= 0.7 ) {
+      if (scrollPercentage >= 0.7 ) {
 
-      if (this.testIsLoadingData) return;
-        this.testIsLoadingData = true;
-        new Promise((resolve, reject) => {
-          setTimeout(() => {
-            resolve('Changed successfully!');
-          }, 1500);
-        }).then(() => {
-          this.showData();
-        this.testIsLoadingData = false;
-        });
+          if (this.testIsLoadingData) return;
+            this.testIsLoadingData = true;
+            new Promise((resolve, reject) => {
+              setTimeout(() => {
+                resolve('Changed successfully!');
+              }, 1000);
+            }).then(() => {
+              this.showData();
+            this.testIsLoadingData = false;
+            });
 
-      }
+          }
 
     },
     showData() {
@@ -499,6 +499,17 @@ export default {
         if (remainingCount == 0) break;
 
       }
+      if(!this.allDataDisplayed){
+        this.isRendered = false;
+        new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve('Changed successfully!');
+          }, 100)
+        }).then(() => {
+          this.isRendered = true;
+        });
+      }
+    
       if (i >= allTasks.length - 1 && start === -1) 
       {
         this.allDataDisplayed = true;
@@ -506,17 +517,7 @@ export default {
         this.lastDisplayedIndex.curIdxInGroup = -1;
         return 
       }
-      this.isRendered = false;
-      new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve('Changed successfully!');
-        }, 100)
-      }).then(() => {
-        this.isRendered = true;
-      });
 
-    
-  
       Object.assign(this.previousIndex, this.lastDisplayedIndex);
       this.lastDisplayedIndex.groupIdx = i;
       this.lastDisplayedIndex.curIdxInGroup = start;

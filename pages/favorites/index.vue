@@ -140,65 +140,66 @@ export default {
       },
     },
 
-  //   async asyncData({$axios, app,store}){
+    async asyncData({$axios, app,store}){
 
-  // const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
-  // const filter=store.getters['task/getFilterView']
-  // const favProject = await $axios.get("project/user/favorites", {
-  //       headers: {
-  //         "Authorization": `Bearer ${token}`,'Filter': filter 
-  //       }
-  //     })
-  //     console.log("favproject",favProject.data)
-  //     let prArr = []
-  //     let newAr = []
-  //     let favpro = _.cloneDeep(favProject.data.data)
-  //     favpro.forEach(p => { prArr.push(p.projects) })
+  const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
+  const filter=store.getters['task/getFilterView']
+  const favProject = await $axios.get("project/user/favorites", {
+        headers: {
+          "Authorization": `Bearer ${token}`,'Filter': filter 
+        }
+      })
+      console.log("favproject",favProject.data)
+      let prArr = []
+      let newAr = []
+      let favpro = _.cloneDeep(favProject.data.data)
+      favpro.forEach(p => { prArr.push(p.projects) })
 
-  //     for(let i=0; i < prArr.length; i++) {
-  //         if(prArr[i].priorityId) {
-  //             newAr.unshift(prArr[i])
-  //         } else {
-  //             newAr.push(prArr[i])
-  //         }
-  //     }
+      for(let i=0; i < prArr.length; i++) {
+          if(prArr[i].priorityId) {
+              newAr.unshift(prArr[i])
+          } else {
+              newAr.push(prArr[i])
+          }
+      }
 
-  //     newAr.sort((a,b) => {
-  //         if(a.priorityId && b.priorityId) {
-  //             return a.priorityId - b.priorityId
-  //         }
-  //     })
+      newAr.sort((a,b) => {
+          if(a.priorityId && b.priorityId) {
+              return a.priorityId - b.priorityId
+          }
+      })
 
 
-  //   const favTask = await $axios.get("/task/user/favorites", {
-  //     headers: {
-  //       "Authorization": `Bearer ${token}`,'Filter': filter 
-  //     }
-  //   })
-  //     let favData=[]
-  //     let newArr = []
-  //     favTask.data.data.forEach(d => { 
-  //       favData.push(d.task)
-  //     })
-  //   for(let i=0; i <favData.length; i++) {
-  //     if(favData?.[i]?.priorityId) {
-  //       newArr.unshift(favData[i])
-  //     } else {
-  //       newArr.push(favData[i])
-  //     }
-  //   }
+    const favTask = await $axios.get("/task/user/favorites", {
+      headers: {
+        "Authorization": `Bearer ${token}`,'Filter': filter 
+      }
+    })
+      let favData=[]
+      let newArr = []
+      favTask.data.data.forEach(d => { 
+        favData.push(d.task)
+      })
+    for(let i=0; i <favData.length; i++) {
+      if(favData?.[i]?.priorityId) {
+        newArr.unshift(favData[i])
+      } else {
+        newArr.push(favData[i])
+      }
+    }
 
-  //   newArr.sort((a,b) => {
-  //     if(a.priorityId && b.priorityId) {
-  //       return a.priorityId - b.priorityId
-  //     }
-  //   })
+    newArr.sort((a,b) => {
+      if(a.priorityId && b.priorityId) {
+        return a.priorityId - b.priorityId
+      }
+    })
 
-  //   console.log("favTask",newArr)
+    console.log("favTask",newArr)
 
-  // return { taskSubtaskLocalData: newArr,projLocalData: newAr}
+  return { taskSubtaskLocalData: newArr,projLocalData: newAr,sortedProject:newAr, sortedTask:newArr}
 
-  // },
+
+  },
 
   created() {
     if (process.client) {
@@ -235,46 +236,46 @@ export default {
       }
     }
 
-    this.loading = true
-    let user = JSON.parse(localStorage.getItem("user"))
-    this.$store.dispatch("company/fetchCompanyMembers", user.subb)
-    this.$store.dispatch('project/fetchFavProjects')
-    .then(() => {
-      this.fetchProjects()
-    })
+    // this.loading = true
+    // let user = JSON.parse(localStorage.getItem("user"))
+    // this.$store.dispatch("company/fetchCompanyMembers", user.subb)
+    // this.$store.dispatch('project/fetchFavProjects')
+    // .then(() => {
+    //   this.+()
+    // })
 
-    const fetchTask = this.$store.dispatch('task/getFavTasks')
-    const fetchSubtask = this.$store.dispatch("subtask/fetchFavorites")
-    Promise.all([fetchTask, fetchSubtask]).then((values) => {
-      values[0].data.forEach(d => { 
-        this.taskSubtaskLocalData.push(d.task)
-        this.sortedTask.push(d.task)
-        })
-      values[1].data.forEach(d => {
-        if(d.subtasks){
-          this.taskSubtaskLocalData.push({...d.subtasks, project: d.subtasks.task?.project || {}})
-          this.sortedTask.push({...d.subtasks, project: d.subtasks.task?.project || {}})
-        }
-      })
+    // const fetchTask = this.$store.dispatch('task/getFavTasks')
+    // const fetchSubtask = this.$store.dispatch("subtask/fetchFavorites")
+    // Promise.all([fetchTask, fetchSubtask]).then((values) => {
+    //   values[0].data.forEach(d => { 
+    //     this.taskSubtaskLocalData.push(d.task)
+    //     this.sortedTask.push(d.task)
+    //     })
+    //   values[1].data.forEach(d => {
+    //     if(d.subtasks){
+    //       this.taskSubtaskLocalData.push({...d.subtasks, project: d.subtasks.task?.project || {}})
+    //       this.sortedTask.push({...d.subtasks, project: d.subtasks.task?.project || {}})
+    //     }
+    //   })
 
-      let newArr = []
+    //   let newArr = []
 
-      for(let i=0; i < this.taskSubtaskLocalData.length; i++) {
-        if(this.taskSubtaskLocalData[i].priorityId) {
-          newArr.unshift(this.taskSubtaskLocalData[i])
-        } else {
-          newArr.push(this.taskSubtaskLocalData[i])
-        }
-      }
+    //   for(let i=0; i < this.taskSubtaskLocalData.length; i++) {
+    //     if(this.taskSubtaskLocalData[i].priorityId) {
+    //       newArr.unshift(this.taskSubtaskLocalData[i])
+    //     } else {
+    //       newArr.push(this.taskSubtaskLocalData[i])
+    //     }
+    //   }
 
-      newArr.sort((a,b) => {
-        if(a.priorityId && b.priorityId) {
-          return a.priorityId - b.priorityId
-        }
-      })
+    //   newArr.sort((a,b) => {
+    //     if(a.priorityId && b.priorityId) {
+    //       return a.priorityId - b.priorityId
+    //     }
+    //   })
 
-      this.taskSubtaskLocalData = newArr;
-    })
+    //   this.taskSubtaskLocalData = newArr;
+    // })
   },
 
   methods: {
@@ -375,6 +376,7 @@ export default {
     changeView($event) {
       this.$store.commit('task/setFilterView', {filter:$event})
       if ($event == 'complete') {
+        console.log($event)
         this.projLocalData = JSON.parse(JSON.stringify(this.sortedProject));
         this.taskSubtaskLocalData = JSON.parse(JSON.stringify(this.sortedTask));
         this.fetchProjects().then(() => {
