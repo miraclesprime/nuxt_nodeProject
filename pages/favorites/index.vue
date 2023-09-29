@@ -149,7 +149,6 @@ export default {
           "Authorization": `Bearer ${token}`,'Filter': filter 
         }
       })
-      console.log("favproject",favProject.data)
       let prArr = []
       let newAr = []
       let favpro = _.cloneDeep(favProject.data.data)
@@ -194,7 +193,6 @@ export default {
       }
     })
 
-    console.log("favTask",newArr)
 
   return { taskSubtaskLocalData: newArr,projLocalData: newAr,sortedProject:newAr, sortedTask:newArr}
 

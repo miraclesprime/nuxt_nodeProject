@@ -1,15 +1,15 @@
 <template>
   <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll" @scroll="handleScroll" ref="myTable">
 
-      <div :id="'advTableTwo-'+componentKey" class=" adv-table  bg-white" :style="{'width': tableWidth}"  >
-        <div class="table resizable w-100 position-sticky" ref="headrow" style="top: 0; z-index:2;">
+      <div :id="'advTableTwo-'+componentKey" class="adv-table position-relative bg-white" :style="{'width': tableWidth}"  >
+        <div class="table resizable w-100 position-absolute" ref="headrow" style="inset: 0;">
           <div class="tr " role="row" >
-            <div v-show="drag&&filterViews=='all'" class="width-2 th" role="cell" ></div>
-            <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{width: field.width}" :ref="'th'+field.key" :data-key="field.key" >
-              <div class="align-center gap-05" >{{field.label}} <span v-if="field.header_icon" :id="'adv-table-header-icon'+index" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null" >
+            <div v-if="drag && filterViews == 'all'" class="width-2 th" role="cell" ></div>
+            <div v-for="(field, index) in tableFields" :key="field+index" class="th height-2" role="cell" :style="{width: colSizes[index]+'%'}" :ref="'th'+field.key" :data-key="field.key" >
+              <!-- <div class="align-center gap-05" >{{field.label}} <span v-if="field.header_icon" :id="'adv-table-header-icon'+index" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null" >
                   <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
                 </span>
-              </div>
+              </div> -->
             </div>
           </div>
           
@@ -30,13 +30,13 @@
             </div>
           </template>
         </div>
-        <draggable v-model="localData" class=" sortable-list" @end="sectionDragend(localData)" >
+        <draggable v-model="localData" class="sortable-list " @end="sectionDragend(localData)" >
           <section v-for="(section, groupIdx) in localData" :key="section.id" class="sortable w-100" >
             <div class="thead">
               
               <div class="tr hidden" role="row" >
-                <div v-show="drag&&filterViews=='all'" class="width-2 th" role="cell" ></div>
-                <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :data-key="field.key" :style="{ width: field.width}" >
+                <div v-if="drag&&filterViews=='all'" class="width-2 th" role="cell" ></div>
+                <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :data-key="field.key" :style="{ width: colSizes[index]+'%'}" >
                 </div>
               </div>
 
@@ -64,7 +64,7 @@
 
             <draggable :class="sectionClass" tag="article" :list="section.tasks" :group="{ name: 'tasks' }" :data-section="section.id" :ref="'sectionContent' + section.id" @end="rowDragEnd">
               <div v-for="(item, itemIdx) in section.tasks" :key="item.id" ref="trdata" role="row" class="tr sortable drag-item" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
-                <div v-show="drag&&filterViews=='all'" class="td" role="cell" >
+                <div v-if="drag && filterViews == 'all'" class="td" role="cell" >
                   <div class="drag-handle width-105 height-2" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                   </div>
                 </div>
@@ -121,47 +121,13 @@
                     <bib-datetime-picker v-if="isLazy(groupIdx, itemIdx) || isRendered" v-model="item[field.key]" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                     <skeleton-box v-else></skeleton-box>
                   </template>
-                   <!-- <template v-if="field.key == 'userId'">
-                    <lazy-user-select v-if="lazyComponent" :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></lazy-user-select>
-                    <skeleton-box v-else></skeleton-box>
-                  </template>
-                  <template v-if="field.key == 'status'">
-                    <lazy-status-select v-if="lazyComponent" :ref="'statusSelect'+item.id" :key="'st-'+item.id" :status="item[field.key]" @change="updateStatus($event, item)" @close-other="closePopups('statusSelect'+item.id)"></lazy-status-select>
-                    <skeleton-box v-else></skeleton-box>
-                  </template>
-                  <template v-if="field.key == 'priority'">
-                    <lazy-priority-select v-if="lazyComponent" :ref="'prioritySelect'+item.id" :priority="item[field.key]" @change="updatePriority($event, item)" @close-other="closePopups('prioritySelect'+item.id)"></lazy-priority-select>
-                    <skeleton-box v-else></skeleton-box>
-                  </template>
-                  <template v-if="field.key == 'difficultyId'">
-                    <lazy-difficulty-select v-if="lazyComponent" :ref="'difficultySelect'+item.id" :difficulty="item[field.key]" @change="updateDifficulty($event, item)" @close-other="closePopups('difficultySelect'+item.id)"></lazy-difficulty-select>
-                    <skeleton-box v-else></skeleton-box>
-                  </template>
-                  <template v-if="field.key == 'department'">
-                    <lazy-dept-select v-if="lazyComponent" :ref="'deptSelect'+item.id" :dept="item[field.key]" @change="updateDept($event, item)" @close-other="closePopups('deptSelect'+item.id)"></lazy-dept-select>
-                    <skeleton-box v-else></skeleton-box>
-                  </template>
-                  <template v-if="field.key == 'tag'">
-                    <template v-if="item['TaskTags']?.length > 0">
-                      <tag-comp :tags="item['TaskTags']"></tag-comp>
-                    </template>
-                  </template>
-                  <template v-if="field.key == 'startDate'" >
-                    
-                    <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
-                    <skeleton-box v-else></skeleton-box>
-                  </template>
-                  <template v-if="field.key == 'dueDate'" >
-                    
-                    <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
-                    <skeleton-box v-else></skeleton-box>
-                  </template> -->
+                   
                 </div>
               </div>
 
               <template v-if="plusButton" >
                 <div v-show="localNewrow.sectionId != section.id" :key="'plusbtn'+akey" class="tr position-relative" role="row" >
-                  <div v-show="drag&&filterViews=='all'" class="td width-2" role="cell" style="border-right-color: transparent;"></div>
+                  <div v-if="drag && filterViews == 'all'" class="td width-2" role="cell" style="border-right-color: transparent;"></div>
                   <div class="td" role="cell" style="border-right-color: transparent; width: 360px;">
                     <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
                       <bib-icon :icon="plusButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{plusButton.label}}</span>
@@ -171,19 +137,29 @@
                 </div>
 
                 <div v-show="localNewrow.sectionId == section.id" :key="'plusinput'+akey" class="tr position-relative" role="row" >
-                  <div v-show="drag&&filterViews=='all'" class="td text-center " role="cell">
+                  <div v-if="drag && filterViews == 'all'" class="td text-center " role="cell">
                     <span class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
                   </div>
                   <div class="td" role="cell" style="border-right-color: transparent;">
                     <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate(section)" @blur="unselectAll" @keyup.esc="unselectAll" required placeholder="Enter title...">
                   </div>
-		                	<div class="position-absolute" style="left:0; bottom:0; right:0; z-index:1; height: 1px; border-bottom: 1px solid var(--bib-light)"></div>
+		              <div class="position-absolute" style="left:0; bottom:0; right:0; z-index:1; height: 1px; border-bottom: 1px solid var(--bib-light)"></div>
                 </div>
               </template>
 
             </draggable>
           </section>
         </draggable>
+        <div class="position-absolute " style="inset: 0; z-index: 5; pointer-events: none;">
+          <div class="split position-sticky " style="top: 0; z-index: 1; pointer-events: all" >
+            <div v-if="drag && filterViews == 'all'" class="width-2 border-bottom-gray2" id="advtable-th-1" ></div>
+            <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :id="'split'+index" :minwidth="field.minwidth" >
+              <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
+                <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
+              </span></div>
+            </div>
+          </div>
+        </div>
       </div>
     <template v-if="contextItems">
       <table-context-menu :items="contextItems" :show="contextVisible" :coordinates="popupCoords" @close-context="closePopups" @item-click="contextItemClick" ></table-context-menu>
@@ -194,6 +170,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
+import Split from 'split.js'
 import dayjs from 'dayjs'
 import draggable from 'vuedraggable'
 
@@ -250,6 +227,7 @@ export default {
     showNewsection: { type: Boolean, default: false},
     lazyComponent: false,
     // isProject: { type: Boolean, default: false},
+    
   },
 
   data() {
@@ -277,7 +255,10 @@ export default {
       filterViews:"",
       isRendered: false,
       sectionClass:'section-content',
-      testIsLoadingData: false
+      testIsLoadingData: false,
+      colIds: [],
+      colSizes: [],
+      colmw: [],
     }
   },
   watch: {
@@ -311,7 +292,7 @@ export default {
         });
         this.$nextTick(() => {
           this.localData=[]
-          this.$refs.myTable.scrollTop=0
+          // this.$refs.myTable.scrollTop=0
           this.lastDisplayedIndex={ groupIdx: -1, curIdxInGroup: -1}
           this.previousIndex={ groupIdx: -1, curIdxInGroup: -1 },
 
@@ -326,6 +307,22 @@ export default {
     //   this.localData = _.cloneDeep(newValue)
       
     // },
+    tableFields(newValue){
+      let nowidth = 0;
+      let arr = newValue.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100 )
+      console.log(arr)
+      for (var i = 0; i < arr.length; i++) {
+        if(isNaN(arr[i])){
+          arr[i] = 30
+        } else {
+          nowidth += arr[i]
+          arr[i] = Number(arr[i].toFixed(4))
+        }
+        this.colSizes = arr[i]
+      }
+      
+    },
+
     showNewsection(newValue){
       process.nextTick(() => {
         if(newValue){
@@ -337,7 +334,7 @@ export default {
       if (newValue === "section-content collapsed") {
         this.$emit('sectionExpandedEvent', { sectionId: 1 })
       }
-    }
+    },
   },
 
   computed: {
@@ -386,13 +383,62 @@ export default {
 
   mounted() {
     // this.localData=_.cloneDeep(this.tableData)
-    this.resizableColumns()
-    const divHeight = this.$refs.myTable.clientHeight;
-    this.itemsPerPage= parseInt((divHeight - 40) / 40);
+    // this.resizableColumns()
+
+    let nowidth = 0;
+    let nowidthIndex = [];
+    let colwidthArr = this.tableFields.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100 )
+    // console.log(colwidthArr)
+    for (var i = 0; i < colwidthArr.length; i++) {
+      if(!isNaN(colwidthArr[i])){
+        nowidth += colwidthArr[i]
+        colwidthArr[i] = Number(colwidthArr[i].toFixed(4))
+      } else {
+        nowidthIndex.push(i)
+        colwidthArr[i] = 100-nowidth
+      }
+      // this.colSizes.push(colwidthArr[i])
+    }
+
+    // nowidthIndex.length
+      if (nowidthIndex.length == 1) {
+        colwidthArr[nowidthIndex[0]] = 100 - nowidth
+      } else {
+        /*for (var i = 0; i < colwidthArr.length; i++) {
+
+        }*/
+      }
+
+    this.colSizes = colwidthArr
+    // console.log(colwidthArr, nowidth, nowidthIndex)
+    
+    let elemIds = document.getElementsByClassName("splitcell")
+    for(let c of elemIds){
+      // console.log(c.getAttribute("id"))
+      this.colIds.push("#"+c.getAttribute("id"))
+      this.colmw.push(Number(c.getAttribute("minwidth")))
+    }
+
+    Split(this.colIds, {
+      sizes: this.colSizes,
+      minSize: this.colmw,
+      gutterSize: 5,
+      snapOffset: 4,
+      onDragEnd: (sizes) => {
+        // console.log(sizes)
+        this.colSizes = sizes
+        localStorage.setItem("colsizes", JSON.stringify(sizes))
+        // this.colWidth = sizes
+        // console.info(this.split.getSizs())
+      }
+    })
+
+    /*const divHeight = this.$refs.myTable.clientHeight;
+    this.itemsPerPage = parseInt((divHeight - 40) / 40);
     this.$on('sectionExpandedEvent', (event) => {
       this.sectionShow(event.sectionId)
     })
-    // this.handleScroll();
+    })*/
   },
 
   beforeDestroy(){
@@ -991,6 +1037,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 
+/*
 *::-webkit-scrollbar {
   width: thin;
   height: thin;
@@ -1000,11 +1047,32 @@ export default {
   width: thin;
   height: thin;
 }
+*/
 
 .adv-table-wrapper {
   overflow: auto;
   height: 100%;
-  /*min-width: 1400px;*/
+  
+  .split {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    background-color: $gray9;
+    .splitcell {
+      transition: width 50ms linear;
+      will-change: width;
+
+      &:nth-child(2) {
+        background-color: $gray9;
+        position: sticky;
+        left:0;
+        z-index: 2;
+      }
+    }
+  }
 }
 
 .table { display: table; table-layout: fixed; }

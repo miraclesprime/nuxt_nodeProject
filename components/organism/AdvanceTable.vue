@@ -127,9 +127,9 @@
   </div>
 </template>
 <script>
-import Split from 'split.js'
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
+import Split from 'split.js'
 import dayjs from 'dayjs'
 import draggable from 'vuedraggable'
 
@@ -216,7 +216,6 @@ export default {
         this.colSizes = arr[i]
       }
       
-      // return {arr, w}
     },
   },
 
@@ -240,29 +239,6 @@ export default {
     componentKey(){
       return Math.floor((Math.random() * 999))
     },
-    /*columns: {
-      get: function() {
-        let w = 0;
-        let arr = this.tableFields.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100 )
-        console.log(arr)
-        for (var i = 0; i < arr.length; i++) {
-          if(isNaN(arr[i])){
-            arr[i] = 30
-          } else {
-            w += arr[i]
-            arr[i] = Number(arr[i].toFixed(4))
-          }
-          this.colSizes = arr[i]
-        }
-        
-        return {arr, w}
-      },
-      set: function(newValue) {
-        for (var i = 0; i < this.colIds.length; i++) {
-          this.colSizes = newValue[i]
-        }
-      }
-    },*/
   },
 
   mounted() {
@@ -303,16 +279,6 @@ export default {
       this.colIds.push("#"+c.getAttribute("id"))
       this.colmw.push(Number(c.getAttribute("minwidth")))
     }
-
-    /*let sizes = localStorage.getItem("colsizes")
-
-    if (sizes) {
-        sizes = JSON.parse(sizes)
-    } else {
-        sizes = this.colSizes
-    }*/
-
-    // let colminwidht = this.tableFields.map(m => m.minwidth)
 
     Split(this.colIds, {
       sizes: this.colSizes,
