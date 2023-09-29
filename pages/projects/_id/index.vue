@@ -7,7 +7,7 @@
         </button>
         <bib-avatar></bib-avatar>
         <span id="project-id-project-title" class="font-w-700 " style="font-size: 1.25rem;">{{projectTitle}}</span>
-        <span :id="projectName+'-count'" class="text-secondary font-md font-w-700">({{taskcount}})</span>
+        <span :id="projectName+'-count'" class="text-secondary-sub1 " style="font-size: 1.2rem;">({{taskcount}})</span>
         <div class="ml-auto d-flex gap-05 align-center position-relative" id="project-id-button-wraps">
           <team-avatar-list :team="team"></team-avatar-list>
 
