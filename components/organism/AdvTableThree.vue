@@ -2,7 +2,7 @@
   <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll" @scroll="handleScroll" ref="myTable">
 
       <div :id="'advTableTwo-'+componentKey" class="adv-table position-relative bg-white" :style="{'width': tableWidth}"  >
-        <div class="table resizable w-100 position-absolute" ref="headrow" style="inset: 0;">
+        <div class="table resizable w-100 " ref="headrow" style="">
           <div class="tr " role="row" >
             <div v-if="drag && filterViews == 'all'" class="width-2 th" role="cell" ></div>
             <div v-for="(field, index) in tableFields" :key="field+index" class="th height-2" role="cell" :style="{width: colSizes[index]+'%'}" :ref="'th'+field.key" :data-key="field.key" >
@@ -159,6 +159,7 @@
               </span></div>
             </div>
           </div>
+          <div ref="splitHint" class="split-indicator h-100 position-absolute"></div>
         </div>
       </div>
     <template v-if="contextItems">
@@ -418,15 +419,24 @@ export default {
       this.colmw.push(Number(c.getAttribute("minwidth")))
     }
 
+    var pg = this.$route.path.replace(/\//g,'-')
+    var sizes = sessionStorage.getItem('cols'+pg)
+
+    if (sizes) {
+      this.colSizes = JSON.parse(sizes)
+    }
+
     Split(this.colIds, {
       sizes: this.colSizes,
       minSize: this.colmw,
       gutterSize: 5,
       snapOffset: 4,
+      /*onDragStart: (sizes) => {
+        console.info(this.$refs.splitHint)
+      },*/
       onDragEnd: (sizes) => {
-        // console.log(sizes)
         this.colSizes = sizes
-        localStorage.setItem("colsizes", JSON.stringify(sizes))
+        sessionStorage.setItem("cols"+pg, JSON.stringify(sizes))
         // this.colWidth = sizes
         // console.info(this.split.getSizs())
       }
@@ -1066,6 +1076,7 @@ export default {
       }
     }
   }
+  .split-indicator { width: 2px; background-color: $gray9; top: 0; bottom: 0; display: none; }
 }
 
 .table { display: table; table-layout: fixed; }

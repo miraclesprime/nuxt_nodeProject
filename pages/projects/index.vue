@@ -5,7 +5,7 @@
    
     <div id="projects-list-wrapper" class="projects-list-wrapper position-relative" >
     
-      <template v-if="projects.length">
+      <template v-if="localData.length > 0">
         <template v-if="groupVisible">
          
           <adv-table-three :tableFields="tableFields" :tableData="localData" :lazyComponent="lazyComponent" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @context-open="contextOpen" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" @create-row="createProject" :drag="false" :key="templateKey" :editSection="groupBy" :filter="filterViews"></adv-table-three>
@@ -16,11 +16,8 @@
         </template> 
 
       </template>
-      <template v-else>
-        <span id="projects-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
-          <bib-icon icon="warning"></bib-icon> No records found
-        </span>
-      </template>
+
+      <no-data v-else></no-data>
 
       <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
       <!-- project rename modal -->
