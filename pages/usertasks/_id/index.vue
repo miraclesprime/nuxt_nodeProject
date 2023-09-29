@@ -14,15 +14,19 @@
         v-on:new-task="toggleSidebar($event)"
         @search-user-tasks="searchUserTasks"
       ></user-name-task-actions>
-    
-      <div v-show="gridType == 'list'" id="task-table-wrapper" class="listview h-100 position-relative" :style="{ 'width': contentWidth }">  
-        <div v-if="groupVisible" class="h-100">
-          <adv-table-three :tableFields="taskFields" :tableData="localData" :lazyComponent="lazyComponent" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" @create-row="createTask" :drag="false" :key="templateKey" :editSection="groupBy"  ></adv-table-three>              
+
+      <template v-if="localData.length > 0">
+        <div v-show="gridType == 'list'" id="task-table-wrapper" class="listview h-100 position-relative" :style="{ 'width': contentWidth }">  
+          <div v-if="groupVisible" class="h-100">
+            <adv-table-three :tableFields="taskFields" :tableData="localData" :lazyComponent="lazyComponent" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @row-click="openSidebar" @title-click="openSidebar" @table-sort="sortBy"  @update-field="updateTask" @create-row="createTask" :drag="false" :key="templateKey" :editSection="groupBy"  ></adv-table-three>              
+          </div>
+          <div v-else class="h-100">
+            <advance-table :tableFields="taskFields" :tableData="localData" :lazyComponent="lazyComponent" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" sectionTitle="" :drag="false" :key="templateKey"></advance-table>
+          </div> 
         </div>
-        <div v-else class="h-100">
-          <advance-table :tableFields="taskFields" :tableData="localData" :lazyComponent="lazyComponent" :contextItems="contextMenuItems" @context-open="contextOpen"  @context-item-event="contextItemClick" @row-click ="openSidebar" @table-sort="sortBy" @title-click="openSidebar" @update-field="updateTask" @create-row="createTask" sectionTitle="" :drag="false" :key="templateKey"></advance-table>
-        </div> 
-      </div>
+      </template>
+
+      <no-data v-else></no-data>
     
       <!-- <div v-show="gridType == 'grid'" id="task-grid-wrapper" class="d-flex gridview h-100" >
         <div class="task-grid-section">

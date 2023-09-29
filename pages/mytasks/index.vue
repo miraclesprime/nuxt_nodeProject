@@ -5,6 +5,7 @@
 
       <user-tasks-actions :gridType="gridType" v-on:filterView="filterView" :group="groupby" @myTaskGroup="myTaskGroup($event)" @sort="sortBy" v-on:create-task="toggleSidebar($event)" v-on:add-section="toggleNewsection" @change-grid-type="($event)=>gridType = $event" @search-mytasks="searchTasks"></user-tasks-actions>
 
+      <template v-if="localdata.length > 0">
         <!-- <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form> -->
         <div v-show="gridType == 'list'" id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative " :style="{ 'width': contentWidth }">
 
@@ -60,6 +61,9 @@
             <!-- <div class="task-grid-section " id="task-grid-section-blank-4"></div> -->
           </draggable>
         </div>
+      </template>
+
+      <no-data v-else></no-data>
           
         <!-- user-picker for board view -->
         <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee({label: 'Assignee', field:'userId', value: $event.id, historyText: $event.label})" @close="userPickerOpen = false"></user-picker>
@@ -202,13 +206,6 @@ export default {
           this.updateKey()
         
       });
-      // this.$nuxt.$on("update-key", (msg) => {
-      //   this.$store.dispatch("todo/fetchTodos", { filter: this.filterViews,sName:this.groupby }).then((res) => { 
-      //     this.key += 1 })
-      //   if (msg) {
-      //     this.popupMessages.push({text: msg, variant: 'success'})
-      //   }
-      // })
     }
   },
 
@@ -220,10 +217,6 @@ export default {
       }
     }
     this.$store.dispatch("todo/setMyfetchTodos")
-    // this.$nuxt.$on("close-sidebar", (msg) => {
-    //     this.updateKey()
-    //   });
-    // this.updateKey()
       setTimeout(() => {
         this.gridType=this.grid
       }, 300);
@@ -1298,9 +1291,6 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-  /*display: grid;
-  grid-template-rows: auto auto calc(100vh - 150px);
-  grid-template-columns: 1fr;*/
 }
 .mytask-table-wrapper {
   overflow: auto;
@@ -1313,14 +1303,7 @@ export default {
 }
 .highlight {
   outline: 2px skyblue dashed;
-  // background-color: azure;
   background-color: #e6e6e6;
 }
-
-/*@media screen and (max-width: 1600px) {
-  .mytask-table-wrapper {
-    min-width: 1440px;
-  }
-}*/
 
 </style>

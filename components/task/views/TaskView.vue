@@ -10,6 +10,7 @@
       @search-projectTasks="searchTasks"
       v-on:add-section="toggleNewsection"
     ></task-actions>
+    <template v-if="localdata.length > 0">
     <div v-show="gridType === 'list'" class="calc-height " :style="{ 'width': contentWidth }">
 
       <adv-table-three :tableFields="tableFields" :tableData="localdata" :lazyComponent="true" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" :newRow="newRow" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :drag="true" :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
@@ -35,6 +36,9 @@
       >
       </task-grid-section>
     </div>
+    </template>
+
+    <no-data v-else></no-data>
 
     <!-- user-picker for list and board view -->
     <user-picker

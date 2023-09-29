@@ -2,7 +2,7 @@
   <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll" @scroll="handleScroll" ref="myTable">
 
       <div :id="'advTableTwo-'+componentKey" class="adv-table position-relative bg-white" :style="{'width': tableWidth}"  >
-        <div class="table resizable w-100 position-absolute" ref="headrow" style="inset: 0;">
+        <div class="table resizable w-100 " ref="headrow" style="">
           <div class="tr " role="row" >
             <div v-if="drag && filterViews == 'all'" class="width-2 th" role="cell" ></div>
             <div v-for="(field, index) in tableFields" :key="field+index" class="th height-2" role="cell" :style="{width: colSizes[index]+'%'}" :ref="'th'+field.key" :data-key="field.key" >
@@ -159,6 +159,7 @@
               </span></div>
             </div>
           </div>
+          <div ref="splitHint" class="split-indicator h-100 position-absolute"></div>
         </div>
       </div>
     <template v-if="contextItems">
@@ -255,6 +256,7 @@ export default {
       filterViews:"",
       isRendered: false,
       sectionClass:'section-content',
+      testIsLoadingData: false,
       colIds: [],
       colSizes: [],
       colmw: [],
@@ -418,15 +420,24 @@ export default {
       this.colmw.push(Number(c.getAttribute("minwidth")))
     }
 
+    var pg = this.$route.path.replace(/\//g,'-')
+    var sizes = sessionStorage.getItem('cols'+pg)
+
+    if (sizes) {
+      this.colSizes = JSON.parse(sizes)
+    }
+
     Split(this.colIds, {
       sizes: this.colSizes,
       minSize: this.colmw,
       gutterSize: 5,
       snapOffset: 4,
+      /*onDragStart: (sizes) => {
+        console.info(this.$refs.splitHint)
+      },*/
       onDragEnd: (sizes) => {
-        // console.log(sizes)
         this.colSizes = sizes
-        localStorage.setItem("colsizes", JSON.stringify(sizes))
+        sessionStorage.setItem("cols"+pg, JSON.stringify(sizes))
         // this.colWidth = sizes
         // console.info(this.split.getSizs())
       }
@@ -436,6 +447,7 @@ export default {
     this.itemsPerPage = parseInt((divHeight - 40) / 40);
     this.$on('sectionExpandedEvent', (event) => {
       this.sectionShow(event.sectionId)
+    })
     })*/
   },
 
@@ -471,22 +483,25 @@ export default {
         return; // Stop adding data if all data has been displayed
       }
       const scrollPercentage = (tableContainer.scrollTop + tableContainer.clientHeight) / tableContainer.scrollHeight;
-  if (scrollPercentage >= 0.8 ) {
-      // tableContainer.scrollBy({
-      //   top: -200,
-      //   behavior: 'smooth'
-      // });
-      this.showData();   
-      }
+      if (scrollPercentage >= 0.7 ) {
+
+          if (this.testIsLoadingData) return;
+            this.testIsLoadingData = true;
+            new Promise((resolve, reject) => {
+              setTimeout(() => {
+                resolve('Changed successfully!');
+              }, 1000);
+            }).then(() => {
+              this.showData();
+            this.testIsLoadingData = false;
+            });
+
+          }
 
     },
     showData() {
       
       let allTasks = this.newValue.length > 0 ? [...this.newValue] : [...this.tableData];
-      // allTasks =allTasks.map((item) => {
-      //             item.dataCount = item.tasks?.length||0;
-      //             return item;
-      //           });
       allTasks=this.modifyDateFormat(allTasks)
       let remainingCount = this.itemsPerPage;
       let start = this.lastDisplayedIndex.curIdxInGroup;
@@ -517,7 +532,7 @@ export default {
         else {
 
             let tmp = {};
-            if (start + remainingCount + 1 < allTasks[i].tasks?.length) {
+            if (start + remainingCount + 1 <=allTasks[i].tasks?.length) {
               Object.assign(tmp, this.localData[i])
 
               tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, start + remainingCount + 1))
@@ -540,15 +555,17 @@ export default {
         if (remainingCount == 0) break;
 
       }
-      this.isRendered = false;
-      new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve('Changed successfully!');
-        }, 100)
-      }).then(() => {
-        this.isRendered = true;
-      });
-
+      if(!this.allDataDisplayed){
+        this.isRendered = false;
+        new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve('Changed successfully!');
+          }, 100)
+        }).then(() => {
+          this.isRendered = true;
+        });
+      }
+    
       if (i >= allTasks.length - 1 && start === -1) 
       {
         this.allDataDisplayed = true;
@@ -556,7 +573,7 @@ export default {
         this.lastDisplayedIndex.curIdxInGroup = -1;
         return 
       }
-  
+
       Object.assign(this.previousIndex, this.lastDisplayedIndex);
       this.lastDisplayedIndex.groupIdx = i;
       this.lastDisplayedIndex.curIdxInGroup = start;
@@ -1066,6 +1083,7 @@ export default {
       }
     }
   }
+  .split-indicator { width: 2px; background-color: $gray9; top: 0; bottom: 0; display: none; }
 }
 
 .table { display: table; table-layout: fixed; }
