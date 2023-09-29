@@ -286,4 +286,10 @@ export default {
   }
 }
 
+@media screen and (max-width: 1440px){
+  .inbox-wrapper {
+    aside { flex-basis: 50%; }
+  }
+}
+
 </style>
