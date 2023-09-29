@@ -117,6 +117,7 @@
             </span></div>
           </div>
         </div>
+        <div ref="splitHint" class="split-indicator h-100 position-absolute"></div>
       </div>
     </draggable>
     <!-- </div> -->
@@ -280,15 +281,25 @@ export default {
       this.colmw.push(Number(c.getAttribute("minwidth")))
     }
 
+    var pg = this.$route.path.replace(/\//g,'-')
+    var sizes = sessionStorage.getItem('cols'+pg)
+
+    if (sizes) {
+      this.colSizes = JSON.parse(sizes)
+    }
+
     Split(this.colIds, {
       sizes: this.colSizes,
       minSize: this.colmw,
       gutterSize: 5,
       snapOffset: 4,
+      /*onDragStart: (sizes) => {
+        console.info(this.$refs.splitHint)
+      },*/
       onDragEnd: (sizes) => {
         // console.log(sizes)
         this.colSizes = sizes
-        localStorage.setItem("colsizes", JSON.stringify(sizes))
+        sessionStorage.setItem("cols"+pg, JSON.stringify(sizes))
         // this.colWidth = sizes
         // console.info(this.split.getSizs())
       }
@@ -665,6 +676,7 @@ export default {
       }
     }
   }
+  .split-indicator { width: 2px; background-color: $gray9; top: 0; bottom: 0; display: none; }
 
 }
 

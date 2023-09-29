@@ -14,6 +14,7 @@
       ></company-tasks-actions>
       <div id="task-table-wrapper" class="task-table-wrapper position-relative overflow-y-auto" :class="{ 'bg-light': gridType != 'list' }" :style="{ 'width': contentWidth }">
 
+        <template v-if="localData.length > 0">
           <div v-if="gridType === 'list'" class="h-100">
             <!-- <template v-if="!showPlaceholder"> -->
               
@@ -37,6 +38,9 @@
             >
             </task-grid-section>
           </div>
+        </template>
+
+        <no-data v-else></no-data>
 
         <!-- user-picker for board view -->
         <user-picker :show="userPickerOpen" :coordinates="popupCoords" @selected="updateAssignee('Assignee', 'userId', $event.id, $event.label)" @close="userPickerOpen = false"
