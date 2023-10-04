@@ -150,7 +150,8 @@
             </draggable>
           </section>
         </draggable>
-        <div class="position-absolute " style="inset: 0; z-index: 5; pointer-events: none;">
+        <!-- <div class="position-absolute " style="inset: 0; z-index: 5; pointer-events: none;"> -->
+        <div class="position-absolute " style="inset: 0; pointer-events: none;">
           <div class="split position-sticky " style="top: 0; z-index: 1; pointer-events: all" >
             <div v-if="drag && filterViews == 'all'" class="width-2 border-bottom-gray2" id="advtable-th-1" ></div>
             <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :id="'split'+index" :minwidth="field.minwidth" >
@@ -490,7 +491,7 @@ export default {
             new Promise((resolve, reject) => {
               setTimeout(() => {
                 resolve('Changed successfully!');
-              }, 1000);
+              }, 1200);
             }).then(() => {
               this.showData();
             this.testIsLoadingData = false;
