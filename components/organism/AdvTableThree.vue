@@ -444,12 +444,12 @@ export default {
       }
     })
 
-    /*const divHeight = this.$refs.myTable.clientHeight;
+    const divHeight = this.$refs.myTable.clientHeight;
     this.itemsPerPage = parseInt((divHeight - 40) / 40);
     this.$on('sectionExpandedEvent', (event) => {
       this.sectionShow(event.sectionId)
     })
-    })*/
+    // })*/
   },
 
   beforeDestroy(){
