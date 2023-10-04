@@ -21,7 +21,7 @@
                     </div>
                     <div class="position-sticky align-center gap-05" style="left: 0.5rem;" >
                       <bib-icon icon="arrow-down" :scale="0.5" style="transform: rotate(-90deg);" ></bib-icon> 
-                      <span class="font-w-700 cursor-pointer ml-025" >
+                      <span class="font-w-700 cursor-pointer " >
                         <input type="text" class="editable-input section-title" placeholder="Enter title..." ref="newsectioninput" @input="debounceNewSection($event.target.value, $event)" @blur="restoreField" />
                       </span>
                     </div>
@@ -46,13 +46,13 @@
                     <div v-show="drag&&filterViews=='all'" class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                     </div>
                     <div class="position-sticky align-center" style="left: 0.5rem;" >
-                      <span class="width-1 cursor-pointer" @click.stop="collapseItem(section.id)">
+                      <span class="width-1 text-center cursor-pointer" @click.stop="collapseItem(section.id)">
                         <bib-icon icon="arrow-down" :scale="0.5" :ref="'collapseIcon'+section.id" ></bib-icon> 
                       </span>
-                      <span class="font-w-700 cursor-pointer ml-025" v-if="editSection" >
+                      <span class="font-w-700 cursor-pointer " v-if="editSection" >
                        {{ section.title }}
                       </span>
-                      <span class="font-w-700 cursor-pointer ml-025" v-else >
+                      <span class="font-w-700 cursor-pointer " v-else >
                         <input type="text" class="editable-input section-title"  :value="section.title.includes('_section') ? 'Untitled section'
                       : section.title" @input="debounceRenameSection(section.id, $event)" @blur="restoreField" />
                       </span>
@@ -112,12 +112,10 @@
                     </template>
                   </template>
                   <template v-if="field.key == 'startDate'" >
-                    
                     <bib-datetime-picker v-if="isLazy(groupIdx, itemIdx) || isRendered" v-model="item[field.key]" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                     <skeleton-box v-else></skeleton-box>
                   </template>
                   <template v-if="field.key == 'dueDate'" >
-                    
                     <bib-datetime-picker v-if="isLazy(groupIdx, itemIdx) || isRendered" v-model="item[field.key]" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                     <skeleton-box v-else></skeleton-box>
                   </template>
@@ -150,11 +148,11 @@
             </draggable>
           </section>
         </draggable>
-        <!-- <div class="position-absolute " style="inset: 0; z-index: 5; pointer-events: none;"> -->
-        <div class="position-absolute " style="inset: 0; pointer-events: none;">
+        <div class="position-absolute " style="inset: 0; z-index: 5; pointer-events: none;">
+        <!-- <div class="position-absolute " style="inset: 0; pointer-events: none;"> -->
           <div class="split position-sticky " style="top: 0; z-index: 1; pointer-events: all" >
             <div v-if="drag && filterViews == 'all'" class="width-2 border-bottom-gray2" id="advtable-th-1" ></div>
-            <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :id="'split'+index" :minwidth="field.minwidth" >
+            <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :class="'splitcell'+componentKey" :id="'split'+index+componentKey" :minwidth="field.minwidth" >
               <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
                 <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
               </span></div>
@@ -238,7 +236,7 @@ export default {
       contextVisible: false,
       popupCoords: { left: 0, top: 0 },
       activeItem: {},
-      resizableTables: [],
+      // resizableTables: [],
       format: "D MMM YYYY",
       // highlight: false,
       validTitle: false,
@@ -414,7 +412,7 @@ export default {
     this.colSizes = colwidthArr
     // console.log(colwidthArr, nowidth, nowidthIndex)
     
-    let elemIds = document.getElementsByClassName("splitcell")
+    let elemIds = document.getElementsByClassName("splitcell"+this.componentKey)
     for(let c of elemIds){
       // console.log(c.getAttribute("id"))
       this.colIds.push("#"+c.getAttribute("id"))
@@ -456,7 +454,7 @@ export default {
     this.localData = null
     this.available_tasks = []
     this.activeItem = {}
-    this.resizableTables = []
+    // this.resizableTables = []
     // console.info("before destroy hook")
   },
 
@@ -651,7 +649,7 @@ export default {
     },
     
     // main class prototype
-    columnResize(table) {
+    /*columnResize(table) {
       // console.log(table.rows[0].cells)
       // if (table.tagName != 'TABLE') return;
       this.id = table.id;
@@ -722,10 +720,6 @@ export default {
         let col2 = document.querySelectorAll(`.th[data-key="${col2key}"]`)
 
         // console.log(col1, col2)
-        /*for (var i = 0; i < col1.length; i++) {
-          col1[i].style.width = dragColumns[no].clientWidth + "px"
-          col2[i].style.width = dragColumns[no + 1].clientWidth + "px"
-        }*/
 
         self.resizeNestedCols(col1, col2, no);
 
@@ -872,14 +866,14 @@ export default {
         })
       }
 
-    },
-    resizableColumns() {
+    },*/
+    /*resizableColumns() {
       var table = this.$refs.headrow
       // console.log(table)
       if (table.className.match(/resizable/)) {
         this.resizableTables = this.columnResize(table);
       }
-    },
+    },*/
 
     sectionDragend(newValue){
       // console.log(newValue)
