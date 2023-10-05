@@ -6,7 +6,7 @@ import global_fr from './node_modules/@bizinbox/bib-ui-lib/dist/lang/global_fr.j
 export default {
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
-    title: "BIB Projects and Tasks",
+    title: "BIB Tasks and Projects",
     meta: [
       { charset: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },

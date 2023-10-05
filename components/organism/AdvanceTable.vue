@@ -18,7 +18,7 @@
               <span class="width-1 cursor-pointer" @click.stop="isCollapsed = !isCollapsed">
                 <bib-icon icon="arrow-down" :scale="0.5" :style="{transform: iconRotate}"></bib-icon> 
               </span>
-              <span class="font-w-700 cursor-pointer ml-1" id="adv-table-section-title" >
+              <span class="font-w-700 cursor-pointer " id="adv-table-section-title" >
                 {{sectionTitle}}
               </span>
             </div>
@@ -108,11 +108,11 @@
         </template>
 
       </template>
-      <!-- <div class="position-absolute " style="inset: 0; z-index: 5; pointer-events: none;"> -->
-      <div class="position-absolute " style="inset: 0; pointer-events: none;">
+      <div class="position-absolute " style="inset: 0; z-index: 5; pointer-events: none;">
+      <!-- <div class="position-absolute " style="inset: 0; pointer-events: none;"> -->
         <div class="split position-sticky " style="top: 0; z-index: 1; pointer-events: all" >
           <div v-if="drag" class="width-2 " id="advtable-th-1" ></div>
-          <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :id="'split'+index" :minwidth="field.minwidth" >
+          <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :class="'splitcell'+componentKey" :id="'split'+index+componentKey" :minwidth="field.minwidth" >
             <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
               <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
             </span></div>
@@ -186,7 +186,6 @@ export default {
       contextVisible: false,
       popupCoords: { left: 0, top: 0 },
       activeItem: {},
-      resizableTables: [],
       format: "DD MMM YYYY",
       validTitle: false,
       localData: [],
@@ -246,7 +245,6 @@ export default {
   mounted() {
     this.localData = _.cloneDeep(this.tableData)
     this.modifyDateFormat()
-    // this.resizableColumns()
 
     let nowidth = 0;
     let nowidthIndex = [];
@@ -266,16 +264,12 @@ export default {
     // nowidthIndex.length
       if (nowidthIndex.length == 1) {
         colwidthArr[nowidthIndex[0]] = 100 - nowidth
-      } else {
-        /*for (var i = 0; i < colwidthArr.length; i++) {
-
-        }*/
-      }
+      } 
 
     this.colSizes = colwidthArr
     // console.log(colwidthArr, nowidth, nowidthIndex)
     
-    let elemIds = document.getElementsByClassName("splitcell")
+    let elemIds = document.getElementsByClassName("splitcell"+this.componentKey)
     for(let c of elemIds){
       // console.log(c.getAttribute("id"))
       this.colIds.push("#"+c.getAttribute("id"))
@@ -300,9 +294,10 @@ export default {
       onDragEnd: (sizes) => {
         // console.log(sizes)
         this.colSizes = sizes
-        sessionStorage.setItem("cols"+pg, JSON.stringify(sizes))
+        if (pg.indexOf("favorite") < 0) {
+          sessionStorage.setItem("cols"+pg, JSON.stringify(sizes))
+        }
         // this.colWidth = sizes
-        // console.info(this.split.getSizs())
       }
     })
   },
@@ -310,7 +305,6 @@ export default {
   beforeDestroy(){
     this.localData = null
     this.activeItem = {}
-    this.resizableTables = []
     // console.info("before destroy hook")
   },
 
@@ -333,200 +327,6 @@ export default {
       )
     },
     
-    // main class prototype
-    columnResize(table) {
-      this.id = table.id;
-
-      // ============================================================
-      // private data
-      var self = this;
-
-      var dragColumns = table.children[0].children
-      // console.log(dragColumns)
-      if (!dragColumns) return; // return if no table exists or no one row exists
-
-      var dragColumnNo; // current dragging column
-      var dragX; // last event X mouse coordinate
-
-      var saveOnmouseup; // save document onmouseup event handler
-      var saveOnmousemove; // save document onmousemove event handler
-      var saveBodyCursor; // save body cursor property
-      
-      var colContent = new Array();
-      for (var i = 0; i < dragColumns.length; i++) {
-        // console.log(dragColumns[i].innerText)
-        colContent[i] = (dragColumns[i].innerText.length*8)+30
-      }
-
-      // ============================================================
-      // methods
-
-      // ============================================================
-      this.preventEvent = function(e) {
-        var ev = e || window.event;
-        if (ev.preventDefault) ev.preventDefault();
-        else ev.returnValue = false;
-        if (ev.stopPropagation)
-          ev.stopPropagation();
-        return false;
-      }
-      this.getWidth = function(x) {
-        if (x.currentStyle)
-          // in IE
-          var y = x.clientWidth - parseInt(x.currentStyle["paddingLeft"]) - parseInt(x.currentStyle["paddingRight"]);
-        // for IE5: var y = x.offsetWidth;
-        else if (window.getComputedStyle)
-          // in Gecko
-          var y = document.defaultView.getComputedStyle(x, null).getPropertyValue("width");
-        return y || 0;
-      }
-
-      // do changes columns widths
-      // returns true if success and false otherwise
-      this.changeColumnWidth = function(no, w) {
-        if (!dragColumns) return false;
-
-        if (no < 0) return false;
-        if (dragColumns.length < no) return false;
-
-        if (parseInt(dragColumns[no].style.width) <= -w) return false;
-        if (dragColumns[no + 1] && parseInt(dragColumns[no + 1].style.width) <= w) return false;
-
-        dragColumns[no].style.width = parseInt(dragColumns[no].style.width) + w + 'px';
-        if (dragColumns[no + 1])
-          dragColumns[no + 1].style.width = parseInt(dragColumns[no + 1].style.width) - w + 'px';
-
-        // if (parseInt(dragColumns[no].style.width) < colContent[no] || parseInt(dragColumns[no+1].style.width) < colContent[no]) return false;
-        return true;
-      }
-
-      // do drag column width
-      this.columnDrag = function(e) {
-        var e = e || window.event;
-        var X = e.clientX || e.pageX;
-        // console.log(e.movementX, 'col-1', parseInt(dragColumns[dragColumnNo].style.width), colContent[dragColumnNo])
-        // console.log(e.movementX, 'col-2', parseInt(dragColumns[dragColumnNo+1].style.width), colContent[dragColumnNo+1])
-
-        if (parseInt(dragColumns[dragColumnNo].style.width) <= colContent[dragColumnNo]) {
-          self.stopColumnDrag(e)
-          if (e.movementX <= 0) {
-            dragColumns[dragColumnNo].style.width = colContent[dragColumnNo]+4+"px"
-            dragColumns[dragColumnNo+1].style.width -= 4+"px"
-          } 
-          console.log('col-1', parseInt(dragColumns[dragColumnNo].style.width), colContent[dragColumnNo])
-        } 
-
-        if (parseInt(dragColumns[dragColumnNo+1].style.width) <= colContent[dragColumnNo+1]) {
-          self.stopColumnDrag(e)
-          if(e.movementX > 0) {
-            dragColumns[dragColumnNo+1].style.width = colContent[dragColumnNo+1]+4+"px"
-            dragColumns[dragColumnNo].style.width -= 4+"px"
-          }
-          console.log('col-2', parseInt(dragColumns[dragColumnNo+1].style.width), colContent[dragColumnNo+1])
-        }
-
-        if (!self.changeColumnWidth(dragColumnNo, X - dragX)) {
-          // stop drag!
-          self.stopColumnDrag(e);
-        }
-
-        dragX = X;
-        // prevent other event handling
-        self.preventEvent(e);
-        return false;
-      }
-
-      // stops column dragging
-      this.stopColumnDrag = function(e) {
-        var e = e || window.event;
-        if (!dragColumns) return;
-
-        // restore handlers & cursor
-        document.onmouseup = saveOnmouseup;
-        document.onmousemove = saveOnmousemove;
-        document.body.style.cursor = saveBodyCursor;
-
-        // remember columns widths in cookies for server side
-        var colWidth = [];
-        // var separator = '';
-        for (var i = 1; i < dragColumns.length; i++) {
-          // colWidth += separator + parseInt(self.getWidth(dragColumns[i]));
-          colWidth.push(parseInt(self.getWidth(dragColumns[i])))
-          // separator = '+';
-        }
-        /*var expire = new Date();
-        expire.setDate(expire.getDate() + 365); // year
-        document.cookie = self.id + '-width=' + colWidth +
-          '; expires=' + expire.toGMTString();*/
-        // console.log(colWidth, colContent)
-        self.preventEvent(e);
-      }
-
-      // init data and start dragging
-      this.startColumnDrag = function(e) {
-        var e = e || window.event;
-
-        // if not first button was clicked
-        //if (e.button != 0) return;
-
-        // remember dragging object
-        var dragEl = (e.target || e.srcElement).offsetParent.parentElement
-        dragColumnNo = Array.from(dragEl.parentElement.children).indexOf(dragEl);
-        dragX = e.clientX || e.pageX;
-
-        // set up current columns widths in their particular attributes
-        // do it in two steps to avoid jumps on page!
-        var colWidth = new Array();
-        // var colContent = new Array();
-        for (var i = 0; i < dragColumns.length; i++){
-          colWidth[i] = parseInt(self.getWidth(dragColumns[i]));
-          // colContent[i] = dragColumns[i].children[0].textContent.trim().length
-          // console.log(dragColumns[i].children[0].textContent.trim())
-        }
-        for (var i = 0; i < dragColumns.length; i++) {
-          dragColumns[i].width = ""; // for sure
-          dragColumns[i].style.width = colWidth[i] + "px";
-        }
-
-        saveOnmouseup = document.onmouseup;
-        document.onmouseup = self.stopColumnDrag;
-
-        saveBodyCursor = document.body.style.cursor;
-        document.body.style.cursor = 'w-resize';
-
-        // fire!
-        saveOnmousemove = document.onmousemove;
-        document.onmousemove = self.columnDrag;
-
-        self.preventEvent(e);
-      }
-
-      // prepare table header to be draggable
-      // it runs during class creation
-      for (var i = 0; i < dragColumns.length; i++) {
-        dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'><div class='resize-drag-handle position-absolute h-100' ></div>"+dragColumns[i].innerHTML+"</div>";
-        // BUGBUG: calculate real border width instead of 5px!!!
-        dragColumns[i].firstChild.firstChild.onmousedown = this.startColumnDrag;
-      }
-      
-      const sorttrig = document.getElementsByClassName('sortingtrigger')
-
-      for (var i = 0; i < sorttrig.length; i++) {
-        // console.log(sorttrig[i])
-        sorttrig[i].addEventListener("click", (e) => {
-          // console.log(e.currentTarget, e.currentTarget.dataset)
-          this.$emit(e.currentTarget.dataset.event, e.currentTarget.dataset.key)
-        })
-      }
-    },
-    resizableColumns() {
-      var table = document.getElementById(`advTable-${this.componentKey}`);
-      // console.log(table)
-
-      if (table.className.match(/resizable/)) {
-        this.resizableTables = this.columnResize(table);
-      }
-    },
     rowDragStart(e) {
       console.log(e.type, e);
     },
