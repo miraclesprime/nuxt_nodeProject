@@ -515,6 +515,7 @@ export const PROJECT_FAVORITES = [
   {
     label: 'Project name',
     key: 'title',
+    minwidth: 300,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -525,7 +526,8 @@ export const PROJECT_FAVORITES = [
   {
     label: 'Status',
     key: 'status',
-    width: '150px',
+    width: 150,
+    minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -535,7 +537,8 @@ export const PROJECT_FAVORITES = [
   {
     label: 'Priority',
     key: 'priority',
-    width: '150px',
+    width: 150,
+    minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -545,7 +548,8 @@ export const PROJECT_FAVORITES = [
   {
     label: 'Department',
     key: 'department',
-    width: '150px',
+    width: 150,
+    minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -555,7 +559,8 @@ export const PROJECT_FAVORITES = [
   {
     label: 'Assignee',
     key: 'userId',
-    width: '150px',
+    width: 160,
+    minwidth: 140,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -565,7 +570,8 @@ export const PROJECT_FAVORITES = [
   {
     label: 'Start Date',
     key: 'startDate',
-    width: '160px',
+    width: 160,
+    minwidth: 140,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -575,7 +581,8 @@ export const PROJECT_FAVORITES = [
   {
     label: 'Due Date',
     key: 'dueDate',
-    width: '160px',
+    width: 160,
+    minwidth: 140,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -589,6 +596,7 @@ export const TASK_FAVORITES = [
   {
     label: 'Task name',
     key: 'title',
+    minwidth: 300,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -608,7 +616,8 @@ export const TASK_FAVORITES = [
   {
     label: 'Status',
     key: 'status',
-    width: '150px',
+    width: 150,
+    minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -618,7 +627,8 @@ export const TASK_FAVORITES = [
   {
     label: 'Priority',
     key: 'priority',
-    width: '150px',
+    width: 150,
+    minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -628,7 +638,8 @@ export const TASK_FAVORITES = [
   {
     label: 'Difficulty',
     key: 'difficultyId',
-    width: '150px',
+    width: 150,
+    minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -638,7 +649,8 @@ export const TASK_FAVORITES = [
   {
     label: 'Department',
     key: 'department',
-    width: '150px',
+    width: 150,
+    minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -648,7 +660,8 @@ export const TASK_FAVORITES = [
   {
     label: 'Assignee',
     key: 'userId',
-    width: '150px',
+    width: 160,
+    minwidth: 140,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -658,7 +671,8 @@ export const TASK_FAVORITES = [
   {
     label: 'Start Date',
     key: 'startDate',
-    width: '160px',
+    width: 160,
+    minwidth: 140,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -668,7 +682,8 @@ export const TASK_FAVORITES = [
   {
     label: 'Due Date',
     key: 'dueDate',
-    width: '160px',
+    width: 160,
+    minwidth: 140,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -785,7 +800,8 @@ export const DEMO_TASK = [
   {
     label: "Project",
     key: "project",
-    width: '150px',
+    width: 150,
+    minwidth: 120,
     header_icon: {
       icon: "swap-vertical",
       event: "table-sort",
@@ -795,7 +811,8 @@ export const DEMO_TASK = [
   {
     label: "Department",
     key: "department",
-    width: '150px',
+    width: 150,
+    minwidth: 120,
     header_icon: {
       icon: "swap-vertical",
       event: "table-sort",
@@ -805,7 +822,8 @@ export const DEMO_TASK = [
   {
     label: 'Status',
     key: 'status',
-    width: '150px',
+    width: 150,
+    minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -815,7 +833,8 @@ export const DEMO_TASK = [
   {
     label: 'Priority',
     key: 'priority',
-    width: '150px',
+    width: 150,
+    minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
@@ -825,7 +844,8 @@ export const DEMO_TASK = [
   {
     label: 'Assignee',
     key: 'userId',
-    width: '150px',
+    width: 150,
+    minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
