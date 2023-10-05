@@ -3,18 +3,53 @@
     <div id="inbox-wrapper" class="inbox-wrapper d-flex h-100">
       <main class="position-relative">
         <page-title title="Inbox" ></page-title>
-        <div class="position-relative h-100 overflow-y-auto" >
-          <div v-for="(value, key) in combinedInbox">
-            <h4 class="font-md text-gray6 text-capitalize py-05 px-2 border-bottom-light">{{key}}</h4>
-            <template v-for="(o, index) in value">
-              <inbox-item :item="o" :key="o.id" @task-click="fetchTask" @project-click="fetchProject" :active="active" :members="members"></inbox-item>
-            </template>
-          </div>
-          <div ref="infinitescrolltrigger" v-show="currentPage <= pageCount" class="align-center justify-center py-05">
-            <!-- <bib-spinner variant="gray5"></bib-spinner> -->
-            <div class="animated-background width-10" style="height: 2px;"></div>
-            <!-- <skeleton-box></skeleton-box> -->
-          </div>
+        <bib-tabs class="border-bottom-light" :tabs="bibTabs" :value="activeTab" @change="handleChange_Tabs"></bib-tabs>
+        <div class="position-relative h-100  overflow-y-auto" style="background-color: var(--bib-gray9)" >
+          <template v-if="activeTab == 'inbox'">
+            <div v-for="(value, key) in combinedInbox">
+              <h4 class="font-md text-gray6 text-capitalize py-05 px-2 border-bottom-light">{{key}}</h4>
+              <template v-for="(o, index) in value">
+                <inbox-item :item="o" :key="o.id" @task-click="fetchTask" @project-click="fetchProject" :active="active" :members="members"></inbox-item>
+              </template>
+            </div>
+            <div ref="infinitescrolltrigger" v-show="currentPage <= pageCount" class="align-center justify-center py-05">
+              <!-- <bib-spinner variant="gray5"></bib-spinner> -->
+              <div class="animated-background width-10" style="height: 2px;"></div>
+              <!-- <skeleton-box></skeleton-box> -->
+            </div>
+          </template>
+          <template v-if="activeTab == 'flagged' || activeTab == 'archived'">
+            <div v-for="inb in inboxState" class="py-05 px-1">
+              <user-info :userId="inb.userId"></user-info>
+
+              <div class="align-center gap-05 mt-05">
+                <tippy arrow >
+                  <template slot="trigger">
+                    <bib-icon v-if="markFlag" icon="bookmark-solid" variant="success"></bib-icon>
+                    <bib-icon v-else icon="bookmark"></bib-icon>
+                  </template>
+                  <div>Bookmark</div>
+                </tippy>
+                <tippy arrow>
+                  <template slot="trigger">
+                    <bib-icon v-if="markArchive" icon="collection-solid" variant="success"></bib-icon>
+                    <bib-icon v-else icon="collection"></bib-icon>
+                  </template>
+                  <div>Archive</div>
+                </tippy>
+                <tippy arrow>
+                  <template slot="trigger">
+                    <bib-icon v-if="markRead" icon="mail-new-solid" variant="success"></bib-icon>
+                    <bib-icon v-else icon="mail"></bib-icon>
+                  </template>
+                  <div>Mark read/unread</div>
+                </tippy>
+              </div>
+            </div>
+          </template>
+          <!-- <template v-if="activeTab == 'archived'">
+            
+          </template> -->
         </div>
       </main>
       <aside class="position-relative bg-white border-left-gray4">
@@ -29,10 +64,18 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import _ from 'lodash'
+import { TippyComponent } from 'vue-tippy';
+import "~/assets/tippy-theme.scss";
+
 export default {
 
   name: 'Inbox',
+  components: {
+    tippy: TippyComponent,
+
+  },
 
   data() {
     return {
@@ -45,9 +88,28 @@ export default {
       taskProject: '',
       currentPage: -1,
       pageCount: 1,
+      bibTabs: [
+        {
+          title: "Inbox",
+          value: "inbox",
+        },
+        {
+          title: "Flagged",
+          value: "flagged",
+        },
+        {
+          title: "Archived",
+          value: "archived",
+        },
+        
+      ],
+      activeTab: "inbox",
     }
   },
   computed: {
+    ...mapGetters({
+      inboxState: 'inbox/getInbox'
+    }),
     combinedInbox() {
 
       const organizedData = {
@@ -196,6 +258,9 @@ export default {
     this.scrollTrigger();
   },
   methods: {
+    handleChange_Tabs(tab) {
+      this.activeTab = tab.value
+    },
     scrollTrigger() {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -209,7 +274,7 @@ export default {
                   this.inbox.push(...h.data.data)
                 }
               })
-            }, 800)
+            }, 600)
 
             newdata()
           }

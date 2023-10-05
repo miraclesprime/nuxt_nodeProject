@@ -633,7 +633,7 @@ ul {
 
 }
 .button--drop .menu details .wrapper{
-  z-index: 4 !important;
+  z-index: 6 !important;
 
 }
 .app-wrapper__navigation {
@@ -676,4 +676,8 @@ ul {
 
 .bib-collapse {
   display: none;
+}
+
+.shape-pill {
+  border-radius: 100px;
 }
