@@ -442,12 +442,12 @@ export default {
       }
     })
 
-    /*const divHeight = this.$refs.myTable.clientHeight;
+    const divHeight = this.$refs.myTable.clientHeight;
     this.itemsPerPage = parseInt((divHeight - 40) / 40);
     this.$on('sectionExpandedEvent', (event) => {
       this.sectionShow(event.sectionId)
     })
-    })*/
+    // })*/
   },
 
   beforeDestroy(){
@@ -489,7 +489,7 @@ export default {
             new Promise((resolve, reject) => {
               setTimeout(() => {
                 resolve('Changed successfully!');
-              }, 1200);
+              }, 1500);
             }).then(() => {
               this.showData();
             this.testIsLoadingData = false;
