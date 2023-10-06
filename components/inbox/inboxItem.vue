@@ -1,5 +1,5 @@
 <template>
-  <div class="inbox-item border-bottom-gray2 py-1 px-105 position-relative cursor-pointer" :class="{'active': active == item.data[0].id}" @click="itemClick" id="inbox-item-wrapper">
+  <div class="inbox-item border-bottom-gray2 py-105 px-105 position-relative cursor-pointer" :class="{'active': active == item.data[0].id}" @click="itemClick" id="inbox-item-wrapper">
     <!-- <div v-if="!status.markRead" class="new text-white font-xs position-absolute" id="inbox-item-new">New
       <span class="triangle" id="inbox-item-triangle"></span>
     </div> -->
@@ -41,7 +41,7 @@
       </span>
     </div> -->
 
-    <div class="content font-md py-05" id="ii-history-comment-wrap">
+    <div class="content font-md pt-05" id="ii-history-comment-wrap">
       <!-- <div v-if="item.content || item.comment" id="ii-content" class="inbox-item-content mb-05">
         <template v-for="(cn, i) in item.content">
           <div class="history" :id="'ii-history-'+i">{{truncateText(cn.title)}}</div>
@@ -59,7 +59,7 @@
             <div>
               <span :id="'li-name-'+i" class="font-w-600">{{$userInfo(it.userId).Name}}</span>
               <span class="history" :id="'ii-history-'+i">{{truncateText(it.text)}}</span>
-              <div class="text-secondary font-sm mt-025" :id="'ii-updatedAt-'+i"><format-date :datetime="item.data[0].updatedAt"></format-date> @ {{$toTime(it.updatedAt)}}</div>
+              <div class="text-secondary font-sm mt-025" :id="'ii-updatedAt-'+i"><format-date :datetime="item.data[0].updatedAt"></format-date> at {{$toTime(it.updatedAt)}}</div>
             </div>
           </div>
         </template>
@@ -207,11 +207,14 @@ export default {
     outline: $gray1 solid 1px;
     outline-offset: -1px;
 
-    .new {
+    /*.new {
       span {
         border-right-color: $light;
       }
-    }
+    }*/
+  }
+  &:hover {
+    background-color: white;
   }
 }
 
