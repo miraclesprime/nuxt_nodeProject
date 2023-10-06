@@ -3,9 +3,9 @@
     <div id="inbox-wrapper" class="inbox-wrapper d-flex h-100">
       <main class="position-relative">
         <page-title title="Inbox" ></page-title>
-        <bib-tabs class="border-bottom-light" :tabs="bibTabs" :value="activeTab" @change="handleChange_Tabs"></bib-tabs>
+        <!-- <bib-tabs class="border-bottom-light" :tabs="bibTabs" :value="activeTab" @change="handleChange_Tabs"></bib-tabs> -->
         <div class="position-relative h-100  overflow-y-auto" style="background-color: var(--bib-gray9)" >
-          <template v-if="activeTab == 'inbox'">
+          <!-- <template v-if="activeTab == 'inbox'"> -->
             <div v-for="(value, key) in combinedInbox">
               <h4 class="font-md text-gray6 text-capitalize py-05 px-2 border-bottom-light">{{key}}</h4>
               <template v-for="(o, index) in value">
@@ -14,11 +14,11 @@
             </div>
             <div ref="infinitescrolltrigger" v-show="currentPage <= pageCount" class="align-center justify-center py-05">
               <!-- <bib-spinner variant="gray5"></bib-spinner> -->
-              <div class="animated-background width-10" style="height: 2px;"></div>
+              <div class="animated-background w-100" style="height: 2px;"></div>
               <!-- <skeleton-box></skeleton-box> -->
             </div>
-          </template>
-          <template v-if="activeTab == 'flagged' || activeTab == 'archived'">
+          <!-- </template> -->
+          <!-- <template v-if="activeTab == 'flagged' || activeTab == 'archived'">
             <div v-for="inb in inboxState" class="py-05 px-1">
               <user-info :userId="inb.userId"></user-info>
 
@@ -46,7 +46,7 @@
                 </tippy>
               </div>
             </div>
-          </template>
+          </template> -->
           <!-- <template v-if="activeTab == 'archived'">
             
           </template> -->

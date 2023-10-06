@@ -8,10 +8,10 @@
         <bib-icon icon="briefcase-solid" variant="secondary" :scale="0.8"></bib-icon> {{projTitle}}
       </div>
       <div class="inbox-flags d-inline-flex align-center ml-auto">
-        <span id="inbox-item-flag-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Flag message'">
+        <span id="inbox-item-flag-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Flag message'" @click.stop="markFavorite">
           <bib-icon icon="bookmark-solid" variant="gray5"></bib-icon>
         </span>
-        <span id="inbox-item-file-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Archive'">
+        <span id="inbox-item-file-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Archive'" @click.stop="markArchive">
           <bib-icon icon="collection-solid" variant="gray5"></bib-icon>
         </span>
         <span id="inbox-item-bell-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="readText" @click.stop="markRead">
@@ -24,22 +24,22 @@
       </div>
     </div>
 
-    <div class="d-flex align-center justify-between py-1" id="inbox-item-project-task-title">
-      <div class="align-center gap-05">
+    <div class="d-flex align-center  py-1" id="inbox-item-project-task-title">
+      <div v-if="item.mode == 'task'" class="align-center gap-05">
         <bib-icon icon="check-circle-solid" variant="gray5" :scale="1.25"></bib-icon>
-        <h4 id="task-project-title">{{item.title || taskTitle || projTitle}}</h4>
+        <h4 id="task-project-title">{{item.title || taskTitle }}</h4>
       </div>
-      <span id="calendar-date-wrapper" class="duedate d-inline-flex align-center shape-pill gap-05 bg-light px-05 py-025 text-dark font-xs">
+      <span id="calendar-date-wrapper" class="duedate d-inline-flex align-center shape-pill gap-05 bg-light px-05 py-025 ml-auto text-dark font-xs">
         <!-- <bib-icon icon="calendar" variant="gray5"></bib-icon> -->
         <format-date :datetime="item.data[0].updatedAt"></format-date>
       </span>
     </div>
 
-    <div id="inbox-item-tile-wrapper" class="w-100 d-inline-flex align-center gap-05 pb-05 text-secondary font-md">
+    <!-- <div id="inbox-item-tile-wrapper" class="w-100 d-inline-flex align-center gap-05 pb-05 text-secondary font-md">
       <span>
         <user-info :userId="item.data[0].userId" :members="members"></user-info>
       </span>
-    </div>
+    </div> -->
 
     <div class="content font-md py-05" id="ii-history-comment-wrap">
       <!-- <div v-if="item.content || item.comment" id="ii-content" class="inbox-item-content mb-05">
@@ -52,10 +52,16 @@
           <div :id="'ii-updatedAt-'+i">@ {{$toTime(cm.updatedAt)}}</div>
         </template>
       </div> -->
-      <div v-if="item.data.length > 0" id="ii-content" class="inbox-item-content mb-05">
+      <div v-if="item.data.length > 0" id="ii-content" class="inbox-item-content ">
         <template v-for="(it, i) in item.data">
-            <div class="history" :id="'ii-history-'+i">{{truncateText(it.text)}}</div>
-            <div class="text-secondary" :id="'ii-updatedAt-'+i">@ {{$toTime(it.updatedAt)}}</div>
+          <div class="d-flex gap-05 my-05">
+            <bib-avatar :src="$userInfo(it.userId).Photo"></bib-avatar>
+            <div>
+              <span :id="'li-name-'+i" class="font-w-600">{{$userInfo(it.userId).Name}}</span>
+              <span class="history" :id="'ii-history-'+i">{{truncateText(it.text)}}</span>
+              <div class="text-secondary font-sm mt-025" :id="'ii-updatedAt-'+i"><format-date :datetime="item.data[0].updatedAt"></format-date> @ {{$toTime(it.updatedAt)}}</div>
+            </div>
+          </div>
         </template>
       </div>
         <!-- <span v-html="it.text"><br></span> -->
@@ -123,6 +129,7 @@ export default {
     readText() {
       return this.inboxStatus.markRead ? 'Mark as Unread' : 'Mark as Read'
     },
+
   },
   methods: {
     itemClick() {
@@ -164,6 +171,13 @@ export default {
       let t = _.truncate(text, {length: 200})
       return t.replace(/(<([^>]+)>)/gi, "")
     },
+
+    markArchive(){
+      alert("In-Progress")
+    },
+    markFavorite(){
+      alert("In-Progress")
+    },
   }
 }
 
@@ -175,17 +189,17 @@ export default {
   }
 
   &-content {
-    background-color: white;
+    /*background-color: white;
     display: grid;
     grid-template-columns: 1fr max-content;
     border-top: 1px solid $light;
-    border-right: 1px solid $light;
+    border-right: 1px solid $light;*/
 
-    >* {
+    /*>* {
       padding: 0.325rem;
       border-bottom: 1px solid $light;
       border-left: 1px solid $light;
-    }
+    }*/
   }
 
   &.active {
