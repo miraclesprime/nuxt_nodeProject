@@ -489,7 +489,7 @@ export default {
             new Promise((resolve, reject) => {
               setTimeout(() => {
                 resolve('Changed successfully!');
-              }, 1200);
+              }, 1500);
             }).then(() => {
               this.showData();
             this.testIsLoadingData = false;

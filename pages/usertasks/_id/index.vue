@@ -544,7 +544,7 @@ export default {
         } else {
           data = { [payload.field]: null }
           this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          this.updateKey();
+          // this.updateKey();
           return false
         }
         }
@@ -563,7 +563,7 @@ export default {
         } else {
           data = { [payload.field]: null }
           this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          this.updateKey();
+          // this.updateKey();
           return false
         }
         }
@@ -583,7 +583,7 @@ export default {
       })
       .then(async (t) => {
         // console.log("tt",t)
-          this.updateKey();
+          // this.updateKey();
     
       })
       .catch((e) => console.warn(e));

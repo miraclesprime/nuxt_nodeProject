@@ -49,6 +49,7 @@
 import { PROJECT_CONTEXT_MENU, PROJECT_FIELDS } from '../../config/constants';
 import { mapGetters } from 'vuex';
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
+import { combineTransactionSteps } from '@tiptap/core';
 
 export default {
   name: "Projects",
@@ -521,7 +522,7 @@ export default {
           else{
               data = { [field]: null }
               this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-              this.updateKey()
+              // this.updateKey()
               return false
             }
         }
@@ -539,7 +540,7 @@ export default {
             data = { [field]: null }
             this.popupMessages.push({ text: "Invalid date", variant: "danger" });
             // this.templateKey+=1;
-            this.updateKey()
+            // this.updateKey()
             return false
           }
          }
@@ -556,7 +557,7 @@ export default {
         .then(t => {
           if(t.statusCode == 200){
             if(this.groupBy == '' || this.groupBy == 'default'){
-              this.updateKey()
+              // this.updateKey()
             }
           }
         })

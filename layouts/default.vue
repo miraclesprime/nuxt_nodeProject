@@ -352,7 +352,7 @@ export default {
         } else {
           this.$store.dispatch("project/setSingleProject", {});
         }
-        this.$store.dispatch("task/setSingleTask", payload);
+        this.$store.dispatch("task/fetchSingleTask", payload.id);
         this.$store.dispatch("task/fetchTeamMember", { id: payload.id });
       }
 
@@ -419,7 +419,7 @@ export default {
       // }
 
       // Dhruv (admin)
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4OTg1MDM0ODYxMCwiZXhwIjoxNjk3NjI2MzQ4NjEwLCJqdGkiOiIxYWI4MDVlMC0zYTkyLTQxNDMtYmMyOC0zNGM2ZmRhZGFkZDgifQ.5-G-YJ16WfrZBp5VhK_p2-qULAP9jpF5ZOqsQ7Phs_0";
+      let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4OTg1MDM0ODYxMCwiZXhwIjoxNjk3NjI2MzQ4NjEwLCJqdGkiOiIxYWI4MDVlMC0zYTkyLTQxNDMtYmMyOC0zNGM2ZmRhZGFkZDgifQ.5-G-YJ16WfrZBp5VhK_p2-qULAP9jpF5ZOqsQ7Phs_0";
     
       // Vishwajeet
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2OTY0MDk1MjkwMTYsImV4cCI6MTcwNDE4NTUyOTAxNiwianRpIjoiNzZhZGIwMWEtMmVlMy00YTAzLWJhZGMtMjU5NGQ0YThmODE2In0.7yryx4JhYce42qtAdTQlbl9dglpcalfWYQdYVsMIJs8"
@@ -433,7 +433,7 @@ export default {
       // Charan (admin)
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQeTdMRGR3cE9xMWUxWUtYIiwic3ViZSI6ImNoYXJhbi5wYWxAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJBRE1JTiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2OTI4NTE5NDE2NzIsImV4cCI6MTcwMDYyNzk0MTY3MiwianRpIjoiMzU2YmM4OTUtNjE3Mi00NjE3LTk2NzEtNWI5NmU0OWIzMGEwIn0.0zMvHg45zgJ6L51qGICZRa31xzA3t9OzyKPXp5YuqTs"
 
-      // this.$cookies.set(process.env.SSO_COOKIE_NAME, cookie);
+      this.$cookies.set(process.env.SSO_COOKIE_NAME, cookie);
 
       if (this.$cookies.get(process.env.SSO_COOKIE_NAME)) {
         let jwt = this.$cookies.get(process.env.SSO_COOKIE_NAME);
