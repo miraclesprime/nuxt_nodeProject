@@ -7,7 +7,7 @@
         <div class="position-relative h-100  overflow-y-auto" style="background-color: var(--bib-gray9)" >
           <!-- <template v-if="activeTab == 'inbox'"> -->
             <div v-for="(value, key) in combinedInbox">
-              <h4 class="font-md text-gray6 text-capitalize py-05 px-2 border-bottom-light">{{key}}</h4>
+              <h4 class="font-md text-gray6 text-capitalize py-1 px-105 border-bottom-gray2">{{key}}</h4>
               <template v-for="(o, index) in value">
                 <inbox-item :item="o" :key="o.id" @task-click="fetchTask" @project-click="fetchProject" :active="active" :members="members"></inbox-item>
               </template>
@@ -55,9 +55,10 @@
       <aside class="position-relative bg-white border-left-gray4">
         <inbox-task v-if="taskProject == 'task'" :task="task" @update-key="task = $event"></inbox-task>
         <inbox-project v-if="taskProject == 'project'" :project="project"></inbox-project>
-        <figure v-if="taskProject == ''" class="position-absolute d-flex align-center justify-center" style="inset:45%; z-index: 5;">
-          <bib-icon icon="bib-logo" variant="light" :scale="3"></bib-icon>
-        </figure>
+        <div v-if="taskProject == ''" class="position-absolute align-center justify-center" style="inset:5rem; z-index: 2;">
+          <!-- <bib-icon icon="bib-logo" variant="light" :scale="3"></bib-icon> -->
+          <no-data></no-data>
+        </div>
       </aside>
     </div>
   </client-only>
