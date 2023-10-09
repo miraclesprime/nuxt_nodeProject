@@ -1,36 +1,47 @@
 <template>
-  <div class="inbox-item border-bottom-gray2 py-1 px-3 position-relative cursor-pointer" :class="{'active': active == item.data[0].id}" @click="itemClick" id="inbox-item-wrapper">
-    <div v-if="!status.markRead" class="new text-white font-xs position-absolute" id="inbox-item-new">New
+  <div class="inbox-item border-bottom-gray2 py-105 px-105 position-relative cursor-pointer" :class="{'active': active == item.data[0].id}" @click="itemClick" id="inbox-item-wrapper">
+    <!-- <div v-if="!status.markRead" class="new text-white font-xs position-absolute" id="inbox-item-new">New
       <span class="triangle" id="inbox-item-triangle"></span>
-    </div>
-    <div id="inbox-item-tile-wrapper" class="w-100 d-inline-flex align-center gap-05 pb-05 text-secondary font-md">
-      <span>
-        <user-info :userId="item.data[0].userId" :members="members"></user-info>
-      </span>
-      <span v-if="projTitle" class="align-center gap-025" id="inbox-item-briefcase-icon">
-        <bib-icon icon="briefcase" variant="gray5"></bib-icon> {{projTitle}}
-      </span>
+    </div> -->
+    <div class="align-center justify-between">
+      <div v-if="projTitle" class="align-center d-inline-flex gap-025 shape-pill bg-light font-sm text-secondary py-025 px-075" id="inbox-item-project" >
+        <bib-icon icon="briefcase-solid" variant="secondary" :scale="0.8"></bib-icon> {{projTitle}}
+      </div>
       <div class="inbox-flags d-inline-flex align-center ml-auto">
-        <!-- <span id="inbox-item-flag-racing-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Flag message'">
-          <bib-icon icon="flag-racing" variant="gray5"></bib-icon>
-        </span> -->
-        <span id="inbox-item-mail-solid-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="readText" @click.stop="markRead">
-          <bib-icon icon="mail-solid" :variant="status.markRead ? 'gray6' : 'gray5'"></bib-icon>
+        <span id="inbox-item-flag-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Flag message'" @click.stop="markFavorite">
+          <bib-icon icon="bookmark-solid" variant="gray5"></bib-icon>
         </span>
-        <!-- <span id="inbox-item-file-multiple-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Archive'">
-          <bib-icon icon="file-multiple" variant="gray5"></bib-icon>
-        </span> -->
+        <span id="inbox-item-file-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Archive'" @click.stop="markArchive">
+          <bib-icon icon="collection-solid" variant="gray5"></bib-icon>
+        </span>
+        <span id="inbox-item-bell-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="readText" @click.stop="markRead">
+          <bib-icon icon="notification-solid" :variant="status.markRead ? 'gray6' : 'gray5'"></bib-icon>
+        </span>
+        <span v-if="!status.markRead" id="inbox-item-new-icon" class="shape-rounded px-025 bg-success text-white font-xs">
+          NEW
+        </span>
         <!-- <span id="inbox-item-icon" class="shape-rounded px-025 border-gray5 text-gray5 font-xs">{{item.id}}</span> -->
       </div>
     </div>
-    <div class="d-flex align-center justify-between" id="inbox-item-project-task-title">
-      <h4 id="task-project-title">{{item.title || taskTitle || projTitle}}</h4>
-      <span id="calendar-date-wrapper" class="duedate d-inline-flex align-center gap-05 text-secondary font-md">
-        <bib-icon icon="calendar" variant="gray5"></bib-icon>
+
+    <div class="d-flex align-center  py-1" id="inbox-item-project-task-title">
+      <div v-if="item.mode == 'task'" class="align-center gap-05">
+        <bib-icon icon="check-circle-solid" variant="gray5" :scale="1.25"></bib-icon>
+        <h4 id="task-project-title">{{item.title || taskTitle }}</h4>
+      </div>
+      <span id="calendar-date-wrapper" class="duedate d-inline-flex align-center shape-pill gap-05 bg-light px-05 py-025 ml-auto text-dark font-xs">
+        <!-- <bib-icon icon="calendar" variant="gray5"></bib-icon> -->
         <format-date :datetime="item.data[0].updatedAt"></format-date>
       </span>
     </div>
-    <div class="content font-md py-05" id="ii-history-comment-wrap">
+
+    <!-- <div id="inbox-item-tile-wrapper" class="w-100 d-inline-flex align-center gap-05 pb-05 text-secondary font-md">
+      <span>
+        <user-info :userId="item.data[0].userId" :members="members"></user-info>
+      </span>
+    </div> -->
+
+    <div class="content font-md pt-05" id="ii-history-comment-wrap">
       <!-- <div v-if="item.content || item.comment" id="ii-content" class="inbox-item-content mb-05">
         <template v-for="(cn, i) in item.content">
           <div class="history" :id="'ii-history-'+i">{{truncateText(cn.title)}}</div>
@@ -41,10 +52,9 @@
           <div :id="'ii-updatedAt-'+i">@ {{$toTime(cm.updatedAt)}}</div>
         </template>
       </div> -->
-      <div v-if="item.data.length > 0" id="ii-content" class="inbox-item-content mb-05">
+      <div v-if="item.data.length > 0" id="ii-content" class="inbox-item-content ">
         <template v-for="(it, i) in item.data">
-            <div class="history" :id="'ii-history-'+i">{{truncateText(it.text)}}</div>
-            <div class="text-secondary" :id="'ii-updatedAt-'+i">@ {{$toTime(it.updatedAt)}}</div>
+          <inbox-history :history="it"></inbox-history>
         </template>
       </div>
         <!-- <span v-html="it.text"><br></span> -->
@@ -60,6 +70,7 @@ import _ from 'lodash'
 
 export default {
   name: 'InboxItem',
+  
   props: {
     item: Object,
     active: [Number, String],
@@ -67,6 +78,7 @@ export default {
   },
   data() {
     return {
+  
       fields: [{
           key: "title",
           label: "Task name",
@@ -112,6 +124,7 @@ export default {
     readText() {
       return this.inboxStatus.markRead ? 'Mark as Unread' : 'Mark as Read'
     },
+
   },
   methods: {
     itemClick() {
@@ -153,6 +166,13 @@ export default {
       let t = _.truncate(text, {length: 200})
       return t.replace(/(<([^>]+)>)/gi, "")
     },
+
+    markArchive(){
+      alert("In-Progress")
+    },
+    markFavorite(){
+      alert("In-Progress")
+    },
   }
 }
 
@@ -164,27 +184,33 @@ export default {
   }
 
   &-content {
-    background-color: white;
+    /*background-color: white;
     display: grid;
     grid-template-columns: 1fr max-content;
     border-top: 1px solid $light;
-    border-right: 1px solid $light;
+    border-right: 1px solid $light;*/
 
-    >* {
+    /*>* {
       padding: 0.325rem;
       border-bottom: 1px solid $light;
       border-left: 1px solid $light;
-    }
+    }*/
+      
   }
 
   &.active {
-    background-color: $light;
+    background-color: white;
+    outline: $gray1 solid 1px;
+    outline-offset: -1px;
 
-    .new {
+    /*.new {
       span {
         border-right-color: $light;
       }
-    }
+    }*/
+  }
+  &:hover {
+    background-color: white;
   }
 }
 
