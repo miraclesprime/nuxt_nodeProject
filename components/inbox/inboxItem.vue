@@ -54,14 +54,7 @@
       </div> -->
       <div v-if="item.data.length > 0" id="ii-content" class="inbox-item-content ">
         <template v-for="(it, i) in item.data">
-          <div class="d-flex gap-05 my-05">
-            <bib-avatar :src="$userInfo(it.userId).Photo"></bib-avatar>
-            <div>
-              <span :id="'li-name-'+i" class="font-w-600">{{$userInfo(it.userId).Name}}</span>
-              <span class="history" :id="'ii-history-'+i">{{truncateText(it.text)}}</span>
-              <div class="text-secondary font-sm mt-025" :id="'ii-updatedAt-'+i"><format-date :datetime="item.data[0].updatedAt"></format-date> at {{$toTime(it.updatedAt)}}</div>
-            </div>
-          </div>
+          <inbox-history :history="it"></inbox-history>
         </template>
       </div>
         <!-- <span v-html="it.text"><br></span> -->
@@ -77,6 +70,7 @@ import _ from 'lodash'
 
 export default {
   name: 'InboxItem',
+  
   props: {
     item: Object,
     active: [Number, String],
@@ -84,6 +78,7 @@ export default {
   },
   data() {
     return {
+  
       fields: [{
           key: "title",
           label: "Task name",
@@ -200,6 +195,7 @@ export default {
       border-bottom: 1px solid $light;
       border-left: 1px solid $light;
     }*/
+      
   }
 
   &.active {
