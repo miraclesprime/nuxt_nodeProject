@@ -352,7 +352,7 @@ export default {
         } else {
           this.$store.dispatch("project/setSingleProject", {});
         }
-        this.$store.dispatch("task/setSingleTask", payload);
+        this.$store.dispatch("task/fetchSingleTask", payload.id);
         this.$store.dispatch("task/fetchTeamMember", { id: payload.id });
       }
 

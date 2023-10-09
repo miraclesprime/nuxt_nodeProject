@@ -1103,7 +1103,7 @@ export default {
           } else {
             data = { [field]: null }
             this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-            this.updateKey()
+            // this.updateKey()
             return false
           }
         }
@@ -1118,7 +1118,7 @@ export default {
           } else {
             data = { [field]: null }
             this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-            this.updateKey()
+            // this.updateKey()
             return false
           }
         }
@@ -1132,7 +1132,7 @@ export default {
           text: `${historyText || value}`,
         })
         .then((t) => {
-          this.updateKey();
+          // this.updateKey();
         })
         .catch((e) => console.warn(e));
     },

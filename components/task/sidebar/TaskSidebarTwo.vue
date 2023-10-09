@@ -443,14 +443,8 @@ export default {
         text: htext || taskData.historyText || taskData.value,
       })
         .then((u) => {
-           this.$store.dispatch("task/setSingleTask", u)
-           this.$nuxt.$emit("update-key")
-          // if(this.expandVisible){
-          //   console.log("111")
-          //   this.$nuxt.$emit("update-key","update")
-          // }
-          
-         
+          //  this.$store.dispatch("task/setSingleTask", u)
+          //  this.$nuxt.$emit("update-key")
           this.reloadHistory += 1
         })
         .catch(e => {

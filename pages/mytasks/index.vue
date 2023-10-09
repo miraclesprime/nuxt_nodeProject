@@ -203,7 +203,7 @@ export default {
   created() {
     if (process.client) {
       this.$nuxt.$on("update-key", (msg) => {
-          this.updateKey()
+          // this.updateKey()
         
       });
     }
@@ -438,7 +438,7 @@ export default {
         } else{
           data = { [field]: null }
           this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          this.updateKey()
+          // this.updateKey()
           return false
         }
         }
@@ -455,7 +455,7 @@ export default {
         } else {
           data = { [field]: null }
           this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          this.updateKey()
+          // this.updateKey()
           return false
         }
         }   
@@ -468,7 +468,7 @@ export default {
         text: historyText
       })
         .then(t => {
-          this.updateKey()
+          // this.updateKey()
         })
         .catch(e => console.warn(e))
     },
