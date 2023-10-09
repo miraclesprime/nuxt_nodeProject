@@ -241,12 +241,23 @@ export default {
               this.selectedUser = u;
             }
           });
-        let data=_.cloneDeep(this.allTasks)
-          data=data.filter((item)=>{
-            if(item.userId==this.$route.params.id){
-              return item
-            }
-          })
+      
+        // let data=_.cloneDeep(this.all_tasks)
+        //   data=data.filter((item)=>{
+        //     if(item.userId==this.$route.params.id){
+        //       return item
+        //     }
+        //   })
+        // this.$store.dispatch("user/getUserTasks", {
+        //   userId: this.$route.params.id,
+        //   filter: 'all',
+        //   })
+        //   .then(res=> {
+        //   this.$store.commit('user/setFetchUserTasks', {data:res,filter:this.filterViews,key:this.groupBy})
+        //   this.$store.commit('user/setInitialUserTasks', {initial:res});
+        //   })
+        this.localData = this.userTasks
+
           if(this.groupBy!==''||this.groupBy=="default"){
             this.groupVisible=true
           }
@@ -256,9 +267,7 @@ export default {
             this.lazyComponent=true
             }, 30);
           }
-            this.$store.commit('user/setFetchUserTasks',{data:data,filter:this.filterViews,key:this.groupBy})     
-            this.$store.commit('user/setInitialUserTasks', {initial:data});
-          
+
   } 
   else {
       let teamMembers= [];
@@ -292,25 +301,25 @@ export default {
     }
   },
 
-  // async asyncData({$axios, app,store, params}) {
+  async asyncData({$axios, app,store, params}) {
 
-  //   const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
-  //     let response = await $axios.get("user/user-tasks", {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //         Userid: params.id,
-  //         filter: 'all',
-  //       }
-  //     })
+    const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
+      let response = await $axios.get("user/user-tasks", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Userid: params.id,
+          filter: 'all',
+        }
+      })
 
-  //   if(response.data.statusCode == 200) {
-  //     // store.commit('user/setInitialUserTasks', {initial:response.data.data});
-  //     store.commit('user/setFetchUserTasks', {data:response.data.data, filter: store.getters['task/getFilterView'], key:''})
+    if(response.data.statusCode == 200) {
+      store.commit('user/setInitialUserTasks', {initial:response.data.data});
+      store.commit('user/setFetchUserTasks', {data:response.data.data, filter: store.getters['task/getFilterView'], key:store.getters["user/getGroupBy"]})
 
-  //     return { localData: response.data.data };
-  //   } 
+      // return { localData: response.data.data };
+    } 
    
-  // },
+  },
 
   methods: {
 
