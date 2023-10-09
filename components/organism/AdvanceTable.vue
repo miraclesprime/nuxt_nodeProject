@@ -241,7 +241,21 @@ export default {
       return Math.floor((Math.random() * 999))
     },
   },
+  created() {
+    this.$nuxt.$on("update_table", async (payload) => {
+      if (this.localData !== null) {
+      this.localData = this.localData.map((items) => {
+          if (items.id == payload.id) {
+            return { ...items, ...payload };
+          } else {
+            return items;
+          }
+      });
+      
+    }
+      });
 
+  },
   mounted() {
     this.localData = _.cloneDeep(this.tableData)
     this.modifyDateFormat()
@@ -411,12 +425,37 @@ export default {
     markComplete($event, item){
       // console.log($event, item.statusId)
       if (item.statusId == 5) {
+          this.localData=this.localData.map((task)=>{
+            if(task.id==item.id){
+               return { ...task, statusId: 1, status:{id:1,text:'Not Started'} };
+            }
+            else {
+                return task
+            } 
+          })
+       
         this.$emit("update-field", { id: item.id, field: "statusId", value: 1, label: "Status", historyText: "changed Status to Not Started" ,item: item} )
       } else {
+        this.localData=this.localData.map((task)=>{
+            if(task.id==item.id){
+               return { ...task, statusId: 5, status:{id:5,text:'Done'} };
+            }
+            else {
+                return task
+            } 
+          })
         this.$emit("update-field", { id: item.id, field: "statusId", value: 5, label: "Status", historyText: "changed Status to Done" ,item: item})
       }
     },
     updateStatus(status, item) {
+      this.localData=this.localData.map((task)=>{
+            if(task.id==item.id){
+               return { ...task, statusId: status.value, status:{id:status.id,text:status.label}};
+            }
+            else {
+                return task
+            } 
+          })
       this.$emit("update-field", { id: item.id, field: "statusId", value: status.value, label: "Status", historyText: `changed Status to ${status.label}`, item: item })
     },
     updatePriority(priority, item) {
