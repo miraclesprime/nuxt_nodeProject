@@ -1087,7 +1087,7 @@ export const actions = {
       const res = await this.$axios.$post(`/project/${payload.id}/comments`, {
         comment: payload.comment,
         text: `new comment ${trimComment}`,
-        isHidden: true,
+        isHidden: false,
       }, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
       });
