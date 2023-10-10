@@ -485,6 +485,7 @@ export default {
         }
       )
       return value
+
     },
     isLazy(groupIdx, itemIdx) {
       if (groupIdx > this.previousIndex.groupIdx || (itemIdx > this.previousIndex.curIdxInGroup && groupIdx === this.previousIndex.groupIdx) ) {
@@ -1001,7 +1002,7 @@ export default {
        this.localData= this.localData.map((items)=>{
           const updateTasks=items.tasks.map((task)=>{
             if(task.id==item.id){
-               return { ...task, statusId: 1, status:{id:1,text:'Not Started'} };
+               return { ...task, statusId: 2, status:{id:2,text:'In-Progress'} };
             }
             else {
                 return task
@@ -1009,7 +1010,7 @@ export default {
           })
           return { ...items, tasks: updateTasks };
         })
-        this.$emit("update-field", { id: item.id, field: "statusId", value: 1, label: "Status", historyText: "changed Status to Not Started" ,item})
+        this.$emit("update-field", { id: item.id, field: "statusId", value: 2, label: "Status", historyText: "changed Status to Not Started" ,item})
       } else {
         this.localData= this.localData.map((items)=>{
           const updateTasks=items.tasks.map((task)=>{

@@ -426,14 +426,14 @@ export default {
       if (item.statusId == 5) {
           this.localData=this.localData.map((task)=>{
             if(task.id==item.id){
-               return { ...task, statusId: 1, status:{id:1,text:'Not Started'} };
+               return { ...task, statusId: 2, status:{id:2,text:'In-Progress'} };
             }
             else {
                 return task
             } 
           })
        
-        this.$emit("update-field", { id: item.id, field: "statusId", value: 1, label: "Status", historyText: "changed Status to Not Started" ,item: item} )
+        this.$emit("update-field", { id: item.id, field: "statusId", value: 2, label: "Status", historyText: "changed Status to Not Started" ,item: item} )
       } else {
         this.localData=this.localData.map((task)=>{
             if(task.id==item.id){
