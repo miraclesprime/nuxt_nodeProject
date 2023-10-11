@@ -395,7 +395,7 @@ export default {
         }
 
         this.$store.dispatch("task/createTask", {
-          "sectionId": this.$route.params.id ? "_section" + this.$route.params.id : taskform.sectionId,
+          "sectionId": this.$route.fullPath.includes("usertasks")?taskform.sectionId:(this.$route.params.id ? "_section" + this.$route.params.id : taskform.sectionId),
           "projectId": Number(this.$route.params.id || taskform.projectId),
           "title": this.form.title,
           "description": taskform.description,
