@@ -492,5 +492,18 @@ export const actions = {
     } catch (e) {
       console.log(e);
     }
-  }
+  },
+  async fetchTaskCommentReactions(ctx, payload){
+    try {
+      const react = await this.$axios.get('/task/' + payload.id + "/reactions", {
+        headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
+       })
+      // console.log(react.data)
+      if (react.data.statusCode == 200) {
+        return react.data.data
+      }
+    } catch(e) {
+      console.log(e);
+    }
+  },
 };
