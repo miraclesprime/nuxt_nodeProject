@@ -1,16 +1,76 @@
 <template>
     <client-only>
-        <div id="page" class="project-id-wrapper ">
+        <div id="page" class="project-id-wrapper h-100 overflow-y-auto">
             <page-title title="Import"></page-title>
-            <!-- <task-actions :gridType="gridType" @change-grid-type="changeGridType" @create-task="openSidebar" @add-section="toggleNewsection"></task-actions> -->
             <!-- Task View -->
-            <div id="project-id-content" class="project-id-content position-relative overflow-y-auto" :style="{ 'width': contentWidth }">
+            <div id="project-id-content" class="project-id-content position-relative " :style="{ 'width': contentWidth }">
                 <div class="d-flex justify-center p-1">
-                  <div class="border-gray2 shape-rounded py-1" style="max-width:300px;">
-                    <bib-input type="file" ref="filesUploaded"  @files-dropped="onFileInput" variant="accepted" iconLeft="upload" placeholder="Drop file here or click to upload"></bib-input>
-                  </div>
+                    <div class="border-gray2 shape-rounded py-1" style="min-width: 300px; max-width:400px;">
+                        <bib-input type="file" ref="csvImport" @files-dropped="onFileInput" multiple="false" variant="accepted" iconLeft="upload" placeholder="Click to upload"></bib-input>
+                        <div class="mx-1 mt-1 align-center">
+                          <bib-button :disabled="loading" variant="secondary" label="Import CSV" @click="checkUser"></bib-button> <bib-spinner v-if="loading" :scale="2" ></bib-spinner>
+                        </div>
+                    </div>
                 </div>
             </div>
+            <!-- <div class="row">
+                <div v-if="appMembers.length > 0" class="col-4">
+                    <h3>Users in Central Biztree</h3>
+                    <ol>
+                        <li v-for="(user, index) in appMembers">{{user.label}} ({{user.email}})</li>
+                    </ol>
+                </div>
+                <div v-if="userList.length > 0" class="col-4">
+                    <h3>Users from Asana Project</h3>
+                    <ol>
+                        <li v-for="(user, index) in userList">{{user}}</li>
+                    </ol>
+                </div>
+                <div v-if="missingMembers.length > 0" class="col-4">
+                    <h3>Missing members from import</h3>
+                    <ol>
+                        <li v-for="(mm, index) in missingMembers">{{mm}}</li>
+                    </ol>
+                </div>
+            </div> -->
+            <!-- modal -->
+            <bib-modal-wrapper v-if="importmodal" size="xl" title="Import result" @close="closeModal">
+              <!-- <template slot="header">
+                
+              </template> -->
+                <template slot="content">
+                    <template v-if="!importfinish">
+                        <h4>Import will be done in steps</h4>
+                        <div v-for="item in steps" class="align-center gap-05">
+                            <div class="width-105 height-105 align-center justify-center">
+                                <bib-spinner v-if="item.progress == 'progress'" :scale="2" variant="orange" ></bib-spinner>
+                                <bib-icon v-else-if="item.progress == 'done'" icon="check-circle-solid" :variant="item.variant"></bib-icon>
+                                <bib-icon v-else-if="item.progress == 'error'" icon="close-circle-solid" :variant="item.variant"></bib-icon>
+                                <bib-icon v-else icon="check-circle" :variant="item.variant"></bib-icon>
+                            </div>
+                            <div :class="'text-'+item.variant" >{{item.status}} {{item.label}} </div>
+                        </div>
+                        <div v-show="missingMembers.length > 0" class="of-scroll-y mt-1" style="max-height: 400px">
+                            <h4>Missing member(s) from import</h4>
+                            <p v-for="(mm, index) in missingMembers"> {{index+1}}. {{mm}}</p>
+                        </div>
+                    </template>
+                    
+                    <div v-show="importfinish" class="shape-rounded align-center gap-05 border-success text-success p-05">
+                      <bib-icon icon="tick" variant="success"></bib-icon>
+                      Import finished successfully
+                    </div>
+                </template>
+                <template slot="footer">
+                    <div v-show="missingMembers.length > 0 && steps[0].progress == 'done'" class="justify-between">
+                        <bib-button label="Add users" variant="secondary" class="mr-1" pill @click="closeModal"></bib-button>
+                        <bib-button label="Continue" variant="primary" pill @click="importProject"></bib-button>
+                    </div>
+                    <div v-show="importfinish">
+                        <bib-button label="Finish" variant="success" pill @click="()=>{$router.push('/projects')}"></bib-button>
+                    </div>
+                </template>
+            </bib-modal-wrapper>
             <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
             <!-- notification -->
             <bib-popup-notification-wrapper>
@@ -25,18 +85,11 @@
 <script>
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
-// import { DEMO_TASK, TASK_CONTEXT_MENU } from "config/constants";
-// import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
-// import { Container, Draggable } from 'vue-smooth-dnd'
-// import { applyDrag, generateItems } from '~/utils/helpers'
-// import draggable from 'vuedraggable'
 
 export default {
     name: 'Import',
-    // components: {Container, Draggable, draggable},
     data() {
         return {
-            // tableFields: DEMO_TASK,
             contentWidth: "100%",
             loading: false,
 
@@ -50,105 +103,174 @@ export default {
                 icon: "add",
             },
 
+            userList: [],
+            importmodal: false,
+            importfinish: false,
+            missingMembers: [],
+            steps: [
+                {id: 0, label: "Analyzing Users", progress: "progress", variant:"orange"},
+                {id: 1, label: "Importing Project", progress: "pending", variant:"gray5"},
+                {id: 2, label: "Importing Section/Tasks", progress: "pending", variant:"gray5"},
+                {id: 3, label: "Importing Subtasks", progress: "pending", variant:"gray5"},
+                {id: 4, label: "Importing Tags", progress: "pending", variant:"gray5"},
+                ],
         }
-    },
-
-    watch: {
-        /*sidebar(newVal){
-          const page = document.getElementById("page")
-          this.$nextTick(() => {
-            const panel = document.getElementById("side-panel-wrapper")
-            // console.log("page width="+page.scrollWidth+", panel width="+panel.offsetWidth)
-            if (this.sidebar) {
-              this.contentWidth = (page.scrollWidth - panel.offsetWidth) + 'px'
-            } else {
-              this.contentWidth = '100%'
-            }
-          });
-        }*/
     },
 
     computed: {
 
-        /*...mapGetters({
-            project: 'project/getSingleProject',
-            projects: 'project/getAllProjects',
-            team: "project/getProjectMembers",
-            sections: "section/getProjectSections",
-            projectTasks: "task/tasksForListView",
-            taskFields: "task/tableFields",
-            favProjects: "project/getFavProjects",
-            user2: "user/getUser2",
-            sidebar: "task/getSidebarVisible",
-        }),*/
+        ...mapGetters({
+            appMembers: "user/getAppMembers",
+        }),
 
-    },
-
-    mounted() {
-        if (process.client) {
-
-
-        }
-    },
-
-    beforeDestroy() {
-        // console.info("before destroy hook");
-        // this.localdata = null
     },
 
     methods: {
-        onFileInput(files) {
-            console.log(files);
+        async onFileInput(file) {
+          // console.log(file) 
         },
 
-        /*onsubmit(data) {
-          if (this.editMessage?.id) {
-            this.$store.dispatch("project/updateProjectComment", { projectId: this.project?.id, commentId: this.editMessage.id, comment: data.text })
-            .then(res => {
-              if (this.value.files.length > 0) {
-                this.uploadFile(this.value.files, this.editMessage)
-                this.value.files = []
-              }
-              this.$nuxt.$emit('refresh-list')
-              this.editMessage = {}
 
-            })
-            .catch(e => console.log(e))
-          } else {
-            this.$store.dispatch("project/createProjectComment", { id: this.project?.id, comment: data.text })
-              .then(res => {
-                if (this.value.files.length > 0) {
-                  this.uploadFile(this.value.files, res.data)
-                  this.value.files = []
+        closeModal(){
+          this.importmodal = false
+          this.missingMembers = []
+          this.importfinish = false
+        },
+
+        async checkUser() {
+          // this.loading = true
+            this.importmodal = true
+            let file = this.$refs.csvImport.filesUploaded;
+
+            let formdata = new FormData();
+            formdata.append('file', file[0])
+
+            let users = await this.$axios.post("/import/check-user", formdata, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 }
-                this.$nuxt.$emit('refresh-list')
-              })
-              .catch(e => console.log(e))
-          }
-        },*/
-        /*async uploadFile(commentFiles, data){
-          let formdata = new FormData()
-          let filelist = []
+            })
 
-          commentFiles.forEach(file => {
-            formdata.append('files', file)
-            filelist.push(file.name)
-          })
-          formdata.append('projectId', this.project?.id)
-          formdata.append('projCommentId', data.id)
-          formdata.append('text', `uploaded file(s) "${filelist.join(", ")}" to comment`)
+            if (users.data.statusCode == 200) {
+              let appMemberEmails = this.appMembers.map(member => member.email); 
+              this.missingMembers = users.data.data.filter(email => !appMemberEmails.includes(email)); 
 
-          const fi = await this.$axios.post("/file/upload", formdata, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+              this.steps[0].progress = "done"
+              this.steps[0].variant = "success"
+            } else {
+              this.popupMessages.push({text: "Some error occured", variant: "danger"})
+              // this.loading = false
+              this.steps[0].progress = "error"
+              this.steps[0].variant = "danger"
             }
-          })
-          if (fi.data.statusCode == 200) {
-            this.value.files = []
-            this.$nuxt.$emit("get-msg-files")
-          }
-        }*/
+
+            this.userList = await users?.data?.data;
+        },
+
+        async importProject(){
+            this.missingMembers = []
+            this.steps[1].progress = "progress"
+            this.steps[1].variant = "orange"
+
+            let file = this.$refs.csvImport.filesUploaded;
+
+            let formdata = new FormData();
+            formdata.append('file', file[0])
+
+            let res = await this.$axios.post("/import/project", formdata, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                }
+            })
+
+            if(res.data.statusCode == 200) {
+              this.importSections(res.data.data)
+              this.steps[1].progress = "done"
+              this.steps[1].variant = "success"
+            } else {
+              this.popupMessages.push({text: "Some error occured", variant: "danger"})
+              // this.loading = false
+              this.steps[1].progress = "error"
+              this.steps[1].variant = "danger"
+            }
+        },
+
+        async importSections(data) {
+            // console.log('Started Importing Sections...')
+            this.steps[2].progress = "progress"
+            this.steps[2].variant = "orange"
+            
+            let res = await this.$axios.post("/import/sections", {data: data}, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                }
+            })
+
+            if(res.data.statusCode == 200) {
+              this.importSubTasks(res.data.data)
+              this.steps[2].progress = "done"
+              this.steps[2].variant = "success"
+            } else {
+              this.popupMessages.push({text: "Some error occured", variant: "danger"})
+              // this.loading = false
+              this.steps[2].progress = "error"
+              this.steps[2].variant = "danger"
+            }
+        },
+
+        async importSubTasks(data) {
+            // console.log('Started Importing SubTasks...')
+            this.steps[3].progress = "progress"
+            this.steps[3].variant = "orange"
+
+            let res = await this.$axios.post("/import/subtasks", {data: data}, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                }
+            })
+
+            if(res.data.statusCode == 200) {
+                this.importTags(res.data.data)
+                this.steps[3].progress = "done"
+                this.steps[3].variant = "success"
+            } else {
+              this.popupMessages.push({text: "Some error occured", variant: "danger"})
+              // this.loading = false
+              this.steps[3].progress = "error"
+              this.steps[3].variant = "danger"
+            }
+
+        },
+
+        async importTags(data) {
+            // console.log('Started Importing Tags...')
+            this.steps[4].progress = "progress"
+            this.steps[4].variant = "orange"
+
+            let res = await this.$axios.post("/import/tags", {data: data}, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                }
+            })
+
+            if(res.data.statusCode == 200) {
+              // console.log('Import Successful!!!')
+              // this.missingMembers = []
+                this.steps[4].progress = "done"
+                this.steps[4].variant = "success"
+                this.importfinish = true
+            } else {
+              this.popupMessages.push({text: "Some error occured", variant: "danger"})
+              // this.loading = false
+              this.steps[4].progress = "error"
+              this.steps[4].variant = "danger"
+            }
+        }
 
     }
 }
