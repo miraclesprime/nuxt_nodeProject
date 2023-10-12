@@ -379,12 +379,14 @@ export default {
     debounceUpdateField: _.debounce(function(name, field, value) {
       if (this.form?.id) {
          if(value.text){
+          var hText = _.truncate(value.text, {'length': 40})
+          this.$emit("update-field", { name, field, value: value.text, historyText: `changed ${name} to ${hText}`})
          }
          else {
           this.$emit("update-field", { name: name, field: field, value: value, historyText: `changed ${name} to ${value}` });          
          }
       }
-      // console.log(...arguments)
+      console.log(...arguments)
     }, 800),
 
     debounceProjectUpdateField: _.debounce(function(pName, pField, pValue, sName, sField, sValue, oldProjValue) {

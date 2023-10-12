@@ -111,11 +111,7 @@
             placeholder="Enter task description..."
             label="Description"
             v-on:keyup.native="
-              debounceUpdateField(
-                'Description',
-                'description',
-                form.description
-              )
+              debounceUpdateField('Description', 'description', form.description)
             "
           ></bib-input>
         </div>
@@ -409,7 +405,7 @@ export default {
     },
     debounceUpdateField: _.debounce(function (name, field, value) {
       if (this.form?.id) {
-        if((field==="startDate"||field==="dueDate")&&!this.validationDate) return;
+        if((field === "startDate" || field === "dueDate") && !this.validationDate) return;
         this.$emit("update-field", { name: name, field: field, value: value });
       } 
     }, 800),

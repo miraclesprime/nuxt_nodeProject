@@ -421,8 +421,8 @@ export default {
     },
 
     updateTask(taskData) {
-      let updata = { [taskData.field]: taskData.value }
       let updatedvalue = taskData.value
+      let updata = { [taskData.field]: updatedvalue }
       let projectId = null
       let htext = null
 
@@ -430,11 +430,11 @@ export default {
         updatedvalue = dayjs(taskData.value).format('DD MMM YYYY')
       }
 
-      if (taskData.name == "Description") {
+      /*if (taskData.name == "Description") {
         htext = _.truncate(taskData.historyText, {'length': 15})
-      }
+      }*/
 
-      console.log(htext)
+      console.log(updatedvalue)
       
       this.$store.dispatch("task/updateTask", {
         id: this.form.id,
@@ -446,6 +446,7 @@ export default {
           //  this.$store.dispatch("task/setSingleTask", u)
           //  this.$nuxt.$emit("update-key")
           this.reloadHistory += 1
+          // console.info(u)
         })
         .catch(e => {
           console.log(e)

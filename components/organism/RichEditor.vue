@@ -258,8 +258,7 @@ export default {
         }),
       ],
       onBlur: ({ editor, event }) => {
-        // The editor isn’t focused anymore.
-        console.log(editor.getHTML())
+        // console.log(editor.getHTML())
         this.$emit('submit', { text: editor.getHTML(), ...this.value });
       },
     });
