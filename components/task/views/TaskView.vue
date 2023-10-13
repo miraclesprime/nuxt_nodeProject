@@ -256,6 +256,9 @@ export default {
       this.showDatePicker(payload);
     });
   },
+  beforeDestroy(){
+    this.localdata = []
+  },
 
   methods: {
     changeSection($event){

@@ -296,7 +296,7 @@ export default {
       this.isMenuOpen = false;
     },
     onReactionClick({ data }) {
-      console.log(data)
+      // console.log(data)
       this.isReactionPickerOpen = false;
       this.reactionSpinner = true
       let duplicateReaction = this.reactions.some(r => r.userId == this.user.Id && r.reaction == data)

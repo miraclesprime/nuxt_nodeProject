@@ -344,6 +344,7 @@ export default {
       this.$emit("row-click", item)
     },
     titleClick(fieldEvent, item){
+      // console.log(event)
       this.unselectAll().then(r => {
         let elem = event.currentTarget.closest(".tr")
         elem.classList.add('active')
