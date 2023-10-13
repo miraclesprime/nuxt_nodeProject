@@ -5,15 +5,7 @@
             <span id="li-name" class="font-w-600">{{$userInfo(history.userId).Name}}</span>
             <template v-if="comment">
                 <span id="ii-history" class="history" >commented</span>
-                <template v-if="history.projectCommentId">
-                    <div v-html="history.projectComment.comment"></div>
-                </template>
-                <template v-if="history.taskCommentId">
-                    <div v-html="history.taskComment.comment"></div>
-                </template>
-                <template v-if="history.subtaskCommentId">
-                    <div v-html="history.subtaskComment.comment"></div>
-                </template>
+                <div v-html="comment"></div>
             </template>
             <span v-else id="ii-history" class="history" >{{truncateText(history.text)}}</span>
             <div id="ii-updatedAt" class="text-secondary font-sm mt-025" >
@@ -21,8 +13,17 @@
             </div>
         </div>
         <div class="reaction align-center gap-05 position-absolute" @click.stop>
+            <div v-for="(react, index) in reactionGroup" :key="reactionKey + react.reaction" class="reaction " :id="'react-'+index">
+              {{ react.reaction }} <span class="count font-sm text-secondary" :id="'react-count-'+index" v-show="react.count > 1">{{react.count}}</span>
+            </div>
             <div class="action" @click.stop="onLikeClick">
                 <fa :icon="faThumbsUp" />
+                <!-- <tippy>
+                    <template slot="trigger">
+                        <span>{{r.reaction}}</span>
+                    </template>
+                    <div>{{$userInfo(r.userId).Name}}</div>
+                </tippy> -->
             </div>
             <!-- <tippy :visible="isReactionPickerOpen" theme="light-border p-0" :animate-fill="false" :distance="6" interactive trigger="manual" :onHide="() => defer(() => (isReactionPickerOpen = false))">
                 <template slot="trigger">
@@ -42,7 +43,7 @@
 import _ from 'lodash'
 // import { VEmojiPicker } from 'v-emoji-picker';
 
-// import { TippyComponent } from 'vue-tippy';
+import { TippyComponent } from 'vue-tippy';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faThumbsUp, faSmile } from '@fortawesome/free-solid-svg-icons';
 // import "~/assets/tippy-theme.scss";
@@ -51,7 +52,7 @@ export default {
     name: 'InboxHistory',
     components: {
         fa: FontAwesomeIcon,
-        // tippy: TippyComponent,
+        tippy: TippyComponent,
         // VEmojiPicker,
     },
     props: {
@@ -63,12 +64,50 @@ export default {
             faThumbsUp,
             faSmile,
             isReactionPickerOpen: false,
+            reactions: [],
+            reactionKey: 1,
         }
     },
     computed: {
       comment () {
-        return this.history.projectCommentId || this.history.taskCommentId || this.history.subtaskCommentId;
-      }
+        if (this.history.projectCommentId) {
+            return this.history.projectComment.comment
+        }
+        if (this.history.taskCommentId) {
+            return this.history.taskComment.comment
+        }
+        if (this.history.subtaskCommentId) {
+            return this.history.subtaskComment.comment
+        }
+        return null
+      },
+      reactionGroup() {
+          let rg = []
+          if (this.reactions) {
+            this.reactions.map(r => {
+              let rindex = rg.findIndex((el) => el.reaction == r.reaction)
+              let relem = rg.find((el, index) => el.reaction == r.reaction)
+              if (relem == undefined) {
+                rg.push({ reaction: r.reaction, count: 1, data: [{ id: r.id, user: r.user }] })
+              } else {
+                rg[rindex].count += 1
+                rg[rindex].data.push({ id: r.id, user: r.user })
+              }
+            })
+          }
+          this.reactionKey += 1
+          return rg
+        },
+    },
+    mounted() {
+        if (this.history.taskCommentId) {
+            this.$store.dispatch("task/fetchTaskCommentReactions", {id: this.history.taskCommentId}).then(c => {
+                // console.log(c)
+                this.reactions = c
+                this.reactionKey += 1
+                return c
+            }).catch(e => console.warn(e))
+        }
     },
     methods: {
         truncateText(text) {
@@ -80,7 +119,7 @@ export default {
             // this.isMenuOpen = false;
         },
         onLikeClick() {
-            alert("liked")
+            alert("work in progress")
             // this.reactionSpinner = true
             /*let duplicateReaction = this.reactions.some(r => r.userId == this.user.Id && r.reaction == "👍")
             if (duplicateReaction) {
@@ -103,6 +142,21 @@ export default {
         defer(func) {
             setTimeout(func, 0);
         },
+        /*fetchReactions (type, commentId){
+            if (type == "task") {
+              this.$axios.get('/task/' + this.history.taskCommentId + "/reactions", {
+                  headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
+                })
+                .then(r => {
+                  if (r.data.statusCode == 200) {
+                    this.reactionKey += 1
+                    return r.data.data
+                  }
+                })
+                .catch(e => throw new Error(message: e))
+            }
+    
+        },*/
         onReactionClick({ data }) {
             alert("you reacted " + data)
         }
@@ -112,19 +166,18 @@ export default {
 <style lang="css" scoped>
 .inbox-history {
     &:hover {
-        .reaction {
+        .action {
             opacity:1;
         }
     }
 }
 
 .reaction {
-    transition: opacity 200ms;
     top: 0;
     right: 0;
-    opacity: 0;
     .action {
-        color: $gray5;
+        opacity: 0;
+        transition: opacity 200ms;
         color: var(--bib-gray5);
     }
 }
