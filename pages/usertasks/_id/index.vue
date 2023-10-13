@@ -201,7 +201,7 @@ export default {
         }
         else {
           
-          this.$store.commit('user/updateFetchUserTasks',{createORupdate:payload,data:this.selectedTask,filter:this.filterViews,key:this.groupBy})
+          // this.$store.commit('user/updateFetchUserT asks',{createORupdate:payload,data:this.selectedTask,filter:this.filterViews,key:this.groupBy})
         }
         this.templateKey += 1
         // await this.fetchUserTasks();
@@ -607,7 +607,9 @@ export default {
           .dispatch("task/deleteTask", task)
           .then((t) => {
             if (t.statusCode == 200) {
-              this.updateKey(t.message);
+              
+              this.$nuxt.$emit("delete_update_table",task)
+
             } else {
               this.popupMessages.push({ text: t.message, variant: "orange" });
               console.warn(t.message);

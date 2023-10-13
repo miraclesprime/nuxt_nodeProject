@@ -242,17 +242,12 @@ export default {
     },
   },
   created() {
-    this.$nuxt.$on("update_table", async (payload) => {
-      if (this.localData !== null) {
-      this.localData = this.localData.map((items) => {
-          if (items.id == payload.id) {
-            return { ...items, ...payload };
-          } else {
-            return items;
-          }
-      });
-    }
-      });
+  
+
+    this.$nuxt.$on("add_newTask_table", (payload)=>{
+      //  this.localData = Object.assign([], this.localData, payload);
+       this.localData.push(payload);
+    })
 
   },
   mounted() {
@@ -313,15 +308,49 @@ export default {
         // this.colWidth = sizes
       }
     })
+
+    this.$nuxt.$on("delete_update_table", this.delete_UpdateLocalData)
+    this.$nuxt.$on("update_table", this.edit_UpdateLocalData)
   },
 
   beforeDestroy(){
-    this.localData = null
+    this.localData = [];
     this.activeItem = {}
     // console.info("before destroy hook")
+    this.$nuxt.$off("delete_update_table", this.delete_UpdateLocalData)
+    this.$nuxt.$off("update_table", this.edit_UpdateLocalData)
+    // this.$nuxt.$off("add_newTask_table")
   },
 
   methods: {
+
+    delete_UpdateLocalData(payload) {
+      if (this.localData != null) {
+        this.localData = this.localData.filter(obj => obj.id !== payload.id)
+        console.log("delete",this.localData)
+      }
+    },
+    edit_UpdateLocalData(payload) {
+      if (this.localData !== null) {
+            this.localData = this.localData.map((items) => {
+                if (items.id == payload.id) {
+                  return { ...items, ...payload };
+                } else {
+                  return items;
+                }
+            });
+          }
+    },
+    // add_UpdateLocalData(payload) {
+    //   console.log("add")
+    //   console.log("addbefore",this.localData)
+
+    //   // if(this.localData!=null) {
+    //    this.localData.push(payload)
+    //   console.log("addafter",this.localData)
+
+    //   // }
+    // },
     parseDate(dateString, format) {
         return new Date(dateString);
     },
