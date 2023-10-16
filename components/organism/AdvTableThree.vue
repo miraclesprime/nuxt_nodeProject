@@ -380,7 +380,23 @@ export default {
     },
 
   },
+  created() {
+    this.$nuxt.$on("update_table", async (payload) => {
+      if (this.localData !== null) {
+      this.localData = this.localData.map((items) => {
+        const updatedTasks = items.tasks.map((task) => {
+          if (task.id == payload.id) {
+            return { ...task, ...payload };
+          } else {
+            return task;
+          }
+        });
+        return { ...items, tasks: updatedTasks };
+      });
+    }
+      });
 
+  },
   mounted() {
     // this.localData=_.cloneDeep(this.tableData)
     // this.resizableColumns()
@@ -442,8 +458,8 @@ export default {
       }
     })
 
-    const divHeight = this.$refs.myTable.clientHeight;
-    this.itemsPerPage = parseInt((divHeight - 40) / 40);
+    // const divHeight = this.$refs.myTable.clientHeight;
+    // this.itemsPerPage = parseInt((divHeight - 40) / 40);
     this.$on('sectionExpandedEvent', (event) => {
       this.sectionShow(event.sectionId)
     })
@@ -469,6 +485,7 @@ export default {
         }
       )
       return value
+
     },
     isLazy(groupIdx, itemIdx) {
       if (groupIdx > this.previousIndex.groupIdx || (itemIdx > this.previousIndex.curIdxInGroup && groupIdx === this.previousIndex.groupIdx) ) {
@@ -982,14 +999,47 @@ export default {
     markComplete($event, item){
       // console.log($event, item.statusId)
       if (item.statusId == 5) {
-        this.$emit("update-field", { id: item.id, field: "statusId", value: 1, label: "Status", historyText: "changed Status to Not Started" ,item})
+       this.localData= this.localData.map((items)=>{
+          const updateTasks=items.tasks.map((task)=>{
+            if(task.id==item.id){
+               return { ...task, statusId: 2, status:{id:2,text:'In-Progress'} };
+            }
+            else {
+                return task
+            } 
+          })
+          return { ...items, tasks: updateTasks };
+        })
+        this.$emit("update-field", { id: item.id, field: "statusId", value: 2, label: "Status", historyText: "changed Status to Not Started" ,item})
       } else {
+        this.localData= this.localData.map((items)=>{
+          const updateTasks=items.tasks.map((task)=>{
+            if(task.id==item.id){
+               return { ...task, statusId: 5 ,status:{id:5,text:'Done'}};
+            }
+            else {
+                return task
+            } 
+          })
+          return { ...items, tasks: updateTasks };
+        })
         this.$emit("update-field", { id: item.id, field: "statusId", value: 5, label: "Status", historyText: "changed Status to Done",item })
       }
     },
     updateStatus(status, item) {
-      // console.log(status, item)
+      this.localData= this.localData.map((items)=>{
+          const updateTasks=items.tasks.map((task)=>{
+            if(task.id==item.id){
+               return { ...task, statusId: status.value, status:{id:status.id,text:status.label}};
+            }
+            else {
+                return task
+            } 
+          })
+          return { ...items, tasks: updateTasks };
+        })
       this.$emit("update-field", { id: item.id, field: "statusId", value: status.value, label: "Status", historyText: `changed Status to ${status.label}`, item })
+
     },
     updatePriority(priority, item) {
       // console.log(priority, item)
