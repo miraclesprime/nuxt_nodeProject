@@ -39,7 +39,15 @@ export default {
       localStatus: {},
     }
   },
-
+  watch: {
+    status(newVal) {
+      if(newVal && newVal.id) {
+        this.localStatus = this.statusItems.find( st => st.value == newVal.id )
+      }else {
+        this.localStatus = { label: '--', value: 0, color: "gray4" }
+      }
+    }
+  },
   computed: {
 
     statusList() {

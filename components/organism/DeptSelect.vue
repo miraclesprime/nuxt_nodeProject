@@ -42,6 +42,13 @@ export default {
     }
   },
   watch: {
+    dept(newVal) {
+          if (newVal) {
+          this.localDept = this.departments.find( d => d.value == newVal.id)
+        } else {
+          this.localDept = { label: '--', value: null }
+        }
+    },
     departments(newValue){
       if (this.dept) {
         this.localDept = newValue.find( d => d.value == this.dept.id)

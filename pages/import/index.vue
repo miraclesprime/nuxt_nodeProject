@@ -39,7 +39,7 @@
                 
               </template> -->
                 <template slot="content">
-                    <template v-if="!importfinish">
+                    <template v-if="!importfinish && !importError">
                         <h4>Import will be done in steps</h4>
                         <div v-for="item in steps" class="align-center gap-05">
                             <div class="width-105 height-105 align-center justify-center">
@@ -55,7 +55,12 @@
                             <p v-for="(mm, index) in missingMembers"> {{index+1}}. {{mm}}</p>
                         </div>
                     </template>
-                    
+
+                    <div v-show="importError" class="shape-rounded align-center gap-05 border-danger text-danger p-05">
+                      <bib-icon icon="close" variant="danger"></bib-icon>
+                        {{importError}}
+                    </div>
+
                     <div v-show="importfinish" class="shape-rounded align-center gap-05 border-success text-success p-05">
                       <bib-icon icon="tick" variant="success"></bib-icon>
                       Import finished successfully
@@ -67,7 +72,7 @@
                         <bib-button label="Continue" variant="primary" pill @click="importProject"></bib-button>
                     </div>
                     <div v-show="importfinish">
-                        <bib-button label="Finish" variant="success" pill @click="()=>{$router.push('/projects')}"></bib-button>
+                        <bib-button label="Finish" variant="success" pill @click="finishImport"></bib-button>
                     </div>
                 </template>
             </bib-modal-wrapper>
@@ -114,6 +119,7 @@ export default {
                 {id: 3, label: "Importing Subtasks", progress: "pending", variant:"gray5"},
                 {id: 4, label: "Importing Tags", progress: "pending", variant:"gray5"},
                 ],
+            importError: false
         }
     },
 
@@ -135,6 +141,14 @@ export default {
           this.importmodal = false
           this.missingMembers = []
           this.importfinish = false
+          this.importError = false
+          this.steps = [
+                {id: 0, label: "Analyzing Users", progress: "progress", variant:"orange"},
+                {id: 1, label: "Importing Project", progress: "pending", variant:"gray5"},
+                {id: 2, label: "Importing Section/Tasks", progress: "pending", variant:"gray5"},
+                {id: 3, label: "Importing Subtasks", progress: "pending", variant:"gray5"},
+                {id: 4, label: "Importing Tags", progress: "pending", variant:"gray5"},
+                ]
         },
 
         async checkUser() {
@@ -158,14 +172,20 @@ export default {
 
               this.steps[0].progress = "done"
               this.steps[0].variant = "success"
-            } else {
+                this.userList = await users?.data?.data;
+                return false
+            } 
+            if (users.data.statusCode == 201) {
+                this.importError = users.data.message
+                return false
+            }
+             
               this.popupMessages.push({text: "Some error occured", variant: "danger"})
               // this.loading = false
               this.steps[0].progress = "error"
               this.steps[0].variant = "danger"
-            }
+            
 
-            this.userList = await users?.data?.data;
         },
 
         async importProject(){
@@ -270,6 +290,10 @@ export default {
               this.steps[4].progress = "error"
               this.steps[4].variant = "danger"
             }
+        },
+        finishImport(){
+            this.closeModal()
+            this.$router.push('/projects')
         }
 
     }

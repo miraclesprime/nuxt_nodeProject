@@ -37,6 +37,15 @@ export default {
       localValue: {},
     }
   },
+  watch : {
+    difficulty(newVal) {
+      if (newVal) {
+      this.localValue = this.difficultyItems.find( d => d.value == newVal )
+    } else {
+      this.localValue = { label: '--', value: 0, color: "gray4", bgcolor: "gray4" }
+    }
+    }
+  },
   computed: {
     difficultyList() {
       let diff = []

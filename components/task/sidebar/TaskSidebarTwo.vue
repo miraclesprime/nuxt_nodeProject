@@ -443,6 +443,7 @@ export default {
         text: htext || taskData.historyText || taskData.value,
       })
         .then((u) => {
+          this.$nuxt.$emit("update_table",u)
           //  this.$store.dispatch("task/setSingleTask", u)
           //  this.$nuxt.$emit("update-key")
           this.reloadHistory += 1
@@ -597,7 +598,7 @@ export default {
       this.$store.dispatch('task/updateTaskStatus', this.currentTask)
         .then((d) => {
           this.loading = false
-          this.$nuxt.$emit("update-key")
+          this.$nuxt.$emit("update_table",d)
           this.$store.dispatch("task/setSingleTask", d)
           this.reloadComments += 1
         }).catch(e => {
@@ -712,7 +713,7 @@ export default {
         .then(res => {
           // console.log(res)
           this.getTags()
-          this.$nuxt.$emit("update-key","tagStatus")
+          // this.$nuxt.$emit("update-key","tagStatus")
         })
         .catch(e => console.error(e))
       } else {
@@ -735,7 +736,7 @@ export default {
               }).then((res) => {
                 // console.log(res)
                 this.getTags()
-                this.$nuxt.$emit("update-key")
+                // this.$nuxt.$emit("update-key")
               }).catch(e=>console.error(e))
             } else {
               console.warn("error creating tag")
@@ -757,9 +758,12 @@ export default {
       }).then(res => {
         console.log(res.data.message)
         this.getTags()
-        this.$nuxt.$emit("update-key","tagStatus")
+        // this.$nuxt.$emit("update-key","tagStatus")
       }).catch(e => console.warn(e))
     },
+    beforeDestroy(){
+    this.$nuxt.$off("update_table");
+  },
   },
 };
 
