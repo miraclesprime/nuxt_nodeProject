@@ -26,6 +26,19 @@
                     </tippy>
                 </div>
             </template>
+            <template v-if="historyReaction.count > 0">
+                <tippy>
+                    <template slot="trigger">
+                        <fa :icon="faThumbsUp" /> <span class="count font-sm text-secondary" id="histreact-count" >{{historyReaction.count}}</span>
+                    </template>
+                    <!-- <template v-if="react.data.length > 1"> -->
+                        <div v-for="(u, index) in historyReaction.users" :key="index + u" class="reaction " :id="'histreact-'+index">
+                            <span>{{$userInfo(u).Name}}<template v-if="index+1 < historyReaction.users.length">, </template></span>
+                        </div>
+                    <!-- </template> -->
+                    <!-- <div v-else>{{react.data[0].user.firstName}} {{react.data[0].user.lastName}}</div> -->
+                </tippy>
+            </template>
             <div class="action" @click.stop="onLikeClick">
                 <fa :icon="faThumbsUp" />
                 <!-- <tippy>
@@ -103,6 +116,23 @@ export default {
         }
         return null
       },
+      historyReaction(){
+        if (this.history.reactions.length > 0) {
+            let hru = {count: 0, users: []}
+            this.history.reactions.map(r => {
+                let rindex = hru.users.findIndex((el) => el == r.userId)
+                console.log(r.id, r.userId, rindex)
+                if (r.id) {
+                    hru.count += 1
+                    if(rindex) hru.users.push(r.userId)
+                }
+            })
+            return hru
+            // return this.history.reactions.reduce((acc, curr) => acc + 1, 0)
+        } else {
+            return null
+        }
+      },
       reactionGroup() {
           let rg = []
           if (this.reactions) {
@@ -150,9 +180,9 @@ export default {
                         Authorization: "Bearer " + localStorage.getItem("accessToken")
                     }
                 }).then(res => {
-                    console.log(res)
+                    // console.log(res)
                     if (res.data.statusCode == 200) {
-                        this.popupMessages.push({text: "You 👍 the comment", variant: "success"})
+                        this.popupMessages.push({text: "You 👍 the comment", variant: "white"})
                     }
                 }).catch(e => {
                     console.warn(e)
@@ -205,18 +235,18 @@ export default {
 </script>
 <style lang="css" scoped>
 .inbox-history {
-    &:hover {
+    /*&:hover {
         .action {
             opacity:1;
         }
-    }
+    }*/
 }
 
 .reaction {
     top: 0;
     right: 0;
     .action {
-        opacity: 0;
+        /*opacity: 0;*/
         transition: opacity 200ms;
         color: var(--bib-gray5);
     }
