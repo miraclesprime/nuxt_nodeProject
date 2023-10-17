@@ -201,8 +201,8 @@ export default {
         }
         else {
           
-          this.$store.commit('user/updateFetchUserTasks',{createORupdate:payload,data:this.selectedTask,filter:this.filterViews,key:this.groupBy})
-          this.templateKey += 1
+          // this.$store.commit('user/updateFetchUserTasks',{createORupdate:payload,data:this.selectedTask,filter:this.filterViews,key:this.groupBy})
+          // this.templateKey += 1
         }
         // await this.fetchUserTasks();
         // this.beforeLocal = this.localData
@@ -217,10 +217,10 @@ export default {
         this.showDatePicker(payload);
       });
 
-      // this.$nuxt.$on("refresh-table", () => {
-      //   console.log("on-refresh")
-      //   this.updateKey();
-      // });
+      this.$nuxt.$on("refresh-table", () => {
+        console.log("on-refresh")
+        this.updateKey();
+      });
     }
   },
 
@@ -307,7 +307,7 @@ export default {
     }
   },
   beforeDestroy(){ 
-    // this.$nuxt.$off("refresh-table");
+    this.$nuxt.$off("refresh-table");
     // this.$nuxt.$off("newTask");
     this.$nuxt.$off("update-key");
   },
@@ -617,8 +617,8 @@ export default {
           .dispatch("task/deleteTask", task)
           .then((t) => {
             if (t.statusCode == 200) {
-              this.updateKey();
-              // this.$nuxt.$emit("delete_update_table",task)
+              // this.updateKey();
+              this.$nuxt.$emit("delete_update_table",task)
 
             } else {
               this.popupMessages.push({ text: t.message, variant: "orange" });

@@ -242,30 +242,30 @@ export default {
     },
   },
   created() {
-  //   const handleNewTask = (payload) => {
-  //   if (this.localData != null) {
-  //     this.localData.push(payload);
-  //     let temp = this.localData.filter((item) => item.id === payload.id);
-  //     if (temp && temp.length) {
-  //       return;
-  //     } else {
-  //       if (this.localData.length) {
-  //         this.localData.push(payload);
-  //       } else {
-  //         this.$nuxt.$emit("refresh-table");
-  //       }
-  //     }
-  //   } else {
-  //     this.$nuxt.$emit("refresh-table");
-  //   }
-  //   // Remove the listener after handling the event
-  //   this.$nuxt.$off("newTask", handleNewTask);
-  // };
+    const handleNewTask = (payload) => {
+    if (this.localData != null) {
+      this.localData.push(payload);
+      let temp = this.localData.filter((item) => item.id === payload.id);
+      if (temp && temp.length) {
+        return;
+      } else {
+        if (this.localData.length) {
+          this.localData.push(payload);
+        } else {
+          this.$nuxt.$emit("refresh-table");
+        }
+      }
+    } else {
+      this.$nuxt.$emit("refresh-table");
+    }
+    // Remove the listener after handling the event
+    this.$nuxt.$off("newTask", handleNewTask);
+  };
   
-  // // Register the listener for the "newTask" event
-  //   this.$nuxt.$on("newTask", handleNewTask);
+  // Register the listener for the "newTask" event
+    this.$nuxt.$on("newTask", handleNewTask);
     // this.$nuxt.$on("add_newTask_table", this.handleAddNewTask);
-    // this.$nuxt.$on("delete_update_table", this.delete_UpdateLocalData)
+    this.$nuxt.$on("delete_update_table", this.delete_UpdateLocalData)
     this.$nuxt.$on("update_table", this.edit_UpdateLocalData)
  
 },
@@ -337,24 +337,24 @@ export default {
     // console.info("before destroy hook")
     // this.$nuxt.$off("add_newTask_table", this.handleAddNewTask);
     // this.$nuxt.$off("newTask")
-    // this.$nuxt.$off("delete_update_table", this.delete_UpdateLocalData)
+    this.$nuxt.$off("delete_update_table", this.delete_UpdateLocalData)
     this.$nuxt.$off("update_table", this.edit_UpdateLocalData)
    
   },
 
   methods: {
     
-    // delete_UpdateLocalData(payload) {
-    //   if(this.localData.length==1){
+    delete_UpdateLocalData(payload) {
+      if(this.localData.length==1){
         
-    //     this.$nuxt.$emit("refresh-table");
+        this.$nuxt.$emit("refresh-table");
 
-    //   }
-    //   else {
-    //       this.localData = this.localData.filter(obj => obj.id !== payload.id)
-    //   }
+      }
+      else {
+          this.localData = this.localData.filter(obj => obj.id !== payload.id)
+      }
 
-    // },
+    },
     edit_UpdateLocalData(payload) {
       this.localData = this.localData.map((items) => {
                 if (items.id == payload.id) {
