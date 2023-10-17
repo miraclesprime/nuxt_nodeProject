@@ -381,20 +381,30 @@ export default {
 
   },
   created() {
-    this.$nuxt.$on("update_table", async (payload) => {
-      if (this.localData !== null) {
-      this.localData = this.localData.map((items) => {
-        const updatedTasks = items.tasks.map((task) => {
-          if (task.id == payload.id) {
-            return { ...task, ...payload };
-          } else {
-            return task;
-          }
-        });
-        return { ...items, tasks: updatedTasks };
-      });
-    }
-      });
+      // const handleNewTask = (payload) => {
+    // if (this.localData != null) {
+    //   let temp = this.localData.filter((item) => item.id === payload.id);
+    //   if (temp && temp.length) {
+    //     return;
+    //   } else {
+    //     if (this.localData.length) {
+    //       this.localData.push(payload);
+    //     } else {
+    //       this.$nuxt.$emit("refresh-table");
+    //     }
+    //   }
+    // } else {
+    //   this.$nuxt.$emit("refresh-table");
+    // }
+    // // Remove the listener after handling the event
+    // this.$nuxt.$off("newTask", handleNewTask);
+  // };
+  
+  // Register the listener for the "newTask" event
+    // this.$nuxt.$on("newTask", handleNewTask);
+    // this.$nuxt.$on("add_newTask_table", this.handleAddNewTask);
+    // this.$nuxt.$on("delete_update_table", this.delete_UpdateLocalData)
+    this.$nuxt.$on("update_table", this.edit_UpdateLocalData)
 
   },
   mounted() {
@@ -467,14 +477,44 @@ export default {
   },
 
   beforeDestroy(){
-    this.localData = null
+    this.localData = []
     this.available_tasks = []
     this.activeItem = {}
     // this.resizableTables = []
     // console.info("before destroy hook")
+    // this.$nuxt.$off("delete_update_table", this.delete_UpdateLocalData)
+    this.$nuxt.$off("update_table", this.edit_UpdateLocalData)
   },
 
   methods: {
+
+    // delete_UpdateLocalData(payload) {
+    //   if(this.localData.reduce((acc, td) => acc + td.tasks.length, 0)==1){
+    //     this.$nuxt.$emit("refresh-table");
+    //   }
+    //   else {
+    //     this.localData = this.localData.map((items) => {
+    //       const updatedTasks=items.tasks.filter(obj=>obj.id!==payload.id)
+    //         return {...items,tasks:updatedTasks}
+    //       });
+    //   }
+
+    // },
+    edit_UpdateLocalData(payload) {
+          if (this.localData !== null) {
+          this.localData = this.localData.map((items) => {
+            const updatedTasks = items.tasks.map((task) => {
+              if (task.id == payload.id) {
+                return { ...task, ...payload };
+              } else {
+                return task;
+              }
+            });
+            return { ...items, tasks: updatedTasks };
+          });
+        }
+    },
+
     modifyDateFormat(value){
      value.map((item) => {
           item.tasks?.forEach((items)=>{
@@ -1030,7 +1070,7 @@ export default {
       this.localData= this.localData.map((items)=>{
           const updateTasks=items.tasks.map((task)=>{
             if(task.id==item.id){
-               return { ...task, statusId: status.value, status:{id:status.id,text:status.label}};
+               return { ...task, statusId: status.value, status:{id:status.value,text:status.label}};
             }
             else {
                 return task

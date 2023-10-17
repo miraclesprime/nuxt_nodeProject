@@ -504,9 +504,15 @@ export default {
     
     updateProject(payload){
       const { item, label, field, value, historyText } = payload
+      let user
+      if(item.userId){
+        user = this.teamMembers.find(t => t.id == item.userId)
+      }
+      else {
+        user=null
+      }
       
-      let user = this.teamMembers.find(t => t.id == item.userId)
-
+        console.log(user)
       let data = { [field]: value }
     
       if(field == "dueDate" && item.startDate){
@@ -555,6 +561,7 @@ export default {
         groupBy: this.groupBy,
       })
         .then(t => {
+          console.log("update",t)
           if(t.statusCode == 200){
             if(this.groupBy == '' || this.groupBy == 'default'){
               // this.updateKey()

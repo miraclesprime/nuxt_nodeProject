@@ -242,15 +242,35 @@ export default {
     },
   },
   created() {
+  //   const handleNewTask = (payload) => {
+  //   if (this.localData != null) {
+  //     this.localData.push(payload);
+  //     let temp = this.localData.filter((item) => item.id === payload.id);
+  //     if (temp && temp.length) {
+  //       return;
+  //     } else {
+  //       if (this.localData.length) {
+  //         this.localData.push(payload);
+  //       } else {
+  //         this.$nuxt.$emit("refresh-table");
+  //       }
+  //     }
+  //   } else {
+  //     this.$nuxt.$emit("refresh-table");
+  //   }
+  //   // Remove the listener after handling the event
+  //   this.$nuxt.$off("newTask", handleNewTask);
+  // };
   
-
-    this.$nuxt.$on("add_newTask_table", (payload)=>{
-      //  this.localData = Object.assign([], this.localData, payload);
-       this.localData.push(payload);
-    })
-
-  },
+  // // Register the listener for the "newTask" event
+  //   this.$nuxt.$on("newTask", handleNewTask);
+    // this.$nuxt.$on("add_newTask_table", this.handleAddNewTask);
+    // this.$nuxt.$on("delete_update_table", this.delete_UpdateLocalData)
+    this.$nuxt.$on("update_table", this.edit_UpdateLocalData)
+ 
+},
   mounted() {
+    
     this.localData = _.cloneDeep(this.tableData)
     this.modifyDateFormat()
 
@@ -308,49 +328,59 @@ export default {
         // this.colWidth = sizes
       }
     })
-
-    this.$nuxt.$on("delete_update_table", this.delete_UpdateLocalData)
-    this.$nuxt.$on("update_table", this.edit_UpdateLocalData)
+  
   },
 
   beforeDestroy(){
     this.localData = [];
     this.activeItem = {}
     // console.info("before destroy hook")
-    this.$nuxt.$off("delete_update_table", this.delete_UpdateLocalData)
+    // this.$nuxt.$off("add_newTask_table", this.handleAddNewTask);
+    // this.$nuxt.$off("newTask")
+    // this.$nuxt.$off("delete_update_table", this.delete_UpdateLocalData)
     this.$nuxt.$off("update_table", this.edit_UpdateLocalData)
-    // this.$nuxt.$off("add_newTask_table")
+   
   },
 
   methods: {
+    
+    // delete_UpdateLocalData(payload) {
+    //   if(this.localData.length==1){
+        
+    //     this.$nuxt.$emit("refresh-table");
 
-    delete_UpdateLocalData(payload) {
-      if (this.localData != null) {
-        this.localData = this.localData.filter(obj => obj.id !== payload.id)
-        console.log("delete",this.localData)
-      }
-    },
+    //   }
+    //   else {
+    //       this.localData = this.localData.filter(obj => obj.id !== payload.id)
+    //   }
+
+    // },
     edit_UpdateLocalData(payload) {
-      if (this.localData !== null) {
-            this.localData = this.localData.map((items) => {
+      this.localData = this.localData.map((items) => {
                 if (items.id == payload.id) {
                   return { ...items, ...payload };
                 } else {
                   return items;
                 }
             });
-          }
     },
-    // add_UpdateLocalData(payload) {
-    //   console.log("add")
-    //   console.log("addbefore",this.localData)
-
-    //   // if(this.localData!=null) {
-    //    this.localData.push(payload)
-    //   console.log("addafter",this.localData)
-
-    //   // }
-    // },
+  //   handleAddNewTask(payload) {
+  //     console.log(payload)
+  //   if (this.localData != null) {
+  //     let temp = this.localData.filter((item) => item.id === payload.id);
+  //     if (temp && temp.length) {
+  //       return;
+  //     } else {
+  //       if (this.localData.length) {
+  //         this.localData.push(payload);
+  //       } else {
+  //         this.$nuxt.$emit("refresh-table");
+  //       }
+  //     }
+  //   } else {
+  //     this.$nuxt.$emit("refresh-table");
+  //   }
+  // },
     parseDate(dateString, format) {
         return new Date(dateString);
     },
@@ -478,7 +508,7 @@ export default {
     updateStatus(status, item) {
       this.localData=this.localData.map((task)=>{
             if(task.id==item.id){
-               return { ...task, statusId: status.value, status:{id:status.id,text:status.label}};
+               return { ...task, statusId: status.value, status:{id:status.value,text:status.label}};
             }
             else {
                 return task
