@@ -1030,7 +1030,7 @@ export const actions = {
       })
 
       if (fav.data.statusCode == 200) {
-        console.log(fav.data)
+        // console.log(fav.data)
         ctx.dispatch("fetchFavProjects")
         return fav.data.message
       } else {
