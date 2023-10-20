@@ -295,6 +295,8 @@ try {
 
   beforeDestroy(){
     // console.info("before destroy hook");
+    this.project = {}
+    this.userProj = {}
     this.$store.dispatch('project/setSingleProject', {})
   },
 
