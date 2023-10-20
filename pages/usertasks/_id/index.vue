@@ -150,7 +150,12 @@ export default {
       if (this.groupBy == "") {
         return this.userTasks.length
       } else {
+        console.log(this.userTasks)
+        if(this.userTasks.length>0){
+
         return this.userTasks.reduce((acc, td) => acc + td.tasks.length, 0)
+
+        }
       }
     },
   },
@@ -351,8 +356,9 @@ export default {
       if ($event ==="default" ) {
         this.groupVisible = false;
         // this.groupBy = '';
-        this.$store.commit('user/flatTasks');
+        // this.$store.commit('user/flatTasks');
         this.$store.commit('user/setGroupBy','')
+        this.updateKey()
         this.localData = this.userTasks
         setTimeout(() => {
             this.lazyComponent=true
@@ -361,8 +367,9 @@ export default {
       }
       // this.groupBy = $event;
       this.groupVisible = true
-      this.$store.commit('user/groupUserTasks',{key:$event})
+      // this.$store.commit('user/groupUserTasks',{key:$event})
       this.$store.commit('user/setGroupBy',$event)
+      this.updateKey()
       this.localData = this.userTasks
     },
 

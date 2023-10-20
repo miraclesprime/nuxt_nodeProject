@@ -374,7 +374,7 @@ export default {
     createTask(taskform) {
 
       if (this.error == "valid") {
-        this.loading = true
+        // this.loading = true
 
         let user;
         if (!taskform.userId || taskform.userId != "") {
@@ -409,12 +409,12 @@ export default {
           "text": `task "${this.form.title}" created`,
           "mode": this.$route.fullPath.includes("usertasks")?null:(this.$route.params.id ? "project" : null),
         }).then((task) => {
-          this.$nuxt.$emit("newTask",task.data)
+          this.$nuxt.$emit("newTask",task.data,this.$route.fullPath)
           // this.$nuxt.$emit("add_newTask_table",task.data);
           this.$store.dispatch("task/setSingleTask", task.data)
           // this.$emit("update-key")
           // this.$nuxt.$emit("update-key","create")
-          this.loading = false
+          // this.loading = false
         }).catch(e => {
           console.warn(e)
           this.loading = false

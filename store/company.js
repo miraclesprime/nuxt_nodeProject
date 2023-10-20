@@ -492,6 +492,7 @@ export const actions = {
     });
 
     ctx.commit('setCompanyTasks', res.data);
+    ctx.commit('groupTasks', payload)
     return res.data
   },
   async fetchInitialCompanyTasks(ctx, payload) {

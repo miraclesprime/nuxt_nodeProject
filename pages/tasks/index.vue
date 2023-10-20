@@ -221,13 +221,17 @@ export default {
         // emitted from <task-grid>
         this.showDatePicker(payload);
       });
+        this.$nuxt.$on("refresh-table", () => {
+          console.log("task_created_on-refresh")
+          this.updateKey();
+        });
     }
   },
-//   beforeDestroy() {
-//   if (process.client) {
-//     this.$nuxt.$off("close-expand", this.updateKey);
-//   }
-// },
+      beforeDestroy(){ 
+
+      this.$nuxt.$off("refresh-table");
+
+      },
   mounted() {
 
   if(process.client) {
@@ -242,6 +246,7 @@ export default {
       }
     }
     this.$store.dispatch("company/fetchInitialCompanyTasks",{filter:'all'})
+    this.$store.commit('task/setGroupBy',"department")
     // this.updateKey()
       setTimeout(() => {
         this.gridType=this.grid
@@ -593,11 +598,14 @@ export default {
       } else {
         this.group='department'
         this.dragTable = true;
-        this.$store.commit('company/groupTasks',{sName:"department"})
-        return;
+        // this.$store.commit('todo/setGroupBy',this.group)
+        // this.$store.commit('company/groupTasks',{sName:"department"})
+        // return;
       }
+      this.$store.commit('task/setGroupBy',this.group)
+      this.updateKey()
       this.lazyComponent = true
-      this.$store.commit('company/groupTasks',{sName:this.group})
+      // this.$store.commit('company/groupTasks',{sName:this.group})
     },
 
     resetOtherSorts(sName) {

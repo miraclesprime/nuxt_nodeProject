@@ -243,16 +243,17 @@ export default {
   },
   created() {
     const handleNewTask = (payload) => {
-    if (this.localData != null) {
+    if (this.localData.length>0) {
       this.localData.push(payload);
       let temp = this.localData.filter((item) => item.id === payload.id);
       if (temp && temp.length) {
         return;
       } else {
-        if (this.localData.length) {
+        if (this.localData.length>0) {
           this.localData.push(payload);
         } else {
           this.$nuxt.$emit("refresh-table");
+          this.localData.push(payload);
         }
       }
     } else {

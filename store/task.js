@@ -10,7 +10,9 @@ export const state = () => ({
   sidebarVisible: false,
   expandVisible:true,
   filterView:"all",
-  gridType:"list"
+  gridType:"list",
+  groupByValue:"department",
+
 });
 
 export const getters = {
@@ -57,11 +59,17 @@ export const getters = {
   getGridType(state){
 
     return state.gridType
-  }
+  },
+  getGroupBy (state) {
+    return state.groupByValue 
+  },
 
 };
 
 export const mutations = {
+  setGroupBy(state,payload) {
+    state.groupByValue=payload
+  },
   gridType(state,payload){
     state.gridType=payload.gridType
   },

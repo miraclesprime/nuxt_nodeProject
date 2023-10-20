@@ -84,7 +84,15 @@ export default {
       lazyComponent: false,
     }
   },
+  created() {
+    if (process.client) {
 
+      this.$nuxt.$on("refresh-table", () => {
+        this.updateKey();
+      });
+
+    }
+  },
   mounted() {
 
     // this.loading = true;
@@ -107,6 +115,9 @@ export default {
 
 
     this.templateKey++;
+  },
+  beforeDestroy(){ 
+    this.$nuxt.$off("refresh-table");
   },
   computed: {
     ...mapGetters({
@@ -579,7 +590,8 @@ export default {
           .then((t) => {
             if (t.statusCode == 200) {
               this.popupMessages.push({ text: t.message, variant: "success" });
-              this.updateKey();
+              this.$nuxt.$emit("delete_update_table",t.data)
+              // this.updateKey();
               
              this.loading = false;
             } else {

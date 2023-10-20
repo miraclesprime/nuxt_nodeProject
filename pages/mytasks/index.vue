@@ -202,9 +202,13 @@ export default {
 
   created() {
     if (process.client) {
-      this.$nuxt.$on("update-key", (msg) => {
-          // this.updateKey()
+      // this.$nuxt.$on("update-key", (msg) => {
+      //     // this.updateKey()
         
+      // });
+      this.$nuxt.$on("refresh-table", () => {
+        console.log("mytask_created_on-refresh")
+        this.updateKey();
       });
     }
   },
@@ -220,7 +224,13 @@ export default {
       setTimeout(() => {
         this.gridType=this.grid
       }, 300);
-    
+      this.$store.commit('todo/setGroupBy',"")
+  },
+
+  beforeDestroy(){ 
+
+    this.$nuxt.$off("refresh-table");
+
   },
 
   async asyncData({$axios, app,store,context}) {
@@ -249,7 +259,9 @@ export default {
         this.groupby=''
         this.dragTable = true;
       }
-      this.$store.commit('todo/groupMyTasks',{sName:this.groupby,team:this.teamMembers })
+      this.$store.commit('todo/setGroupBy',this.groupby)
+      // this.$store.commit('todo/groupMyTasks',{sName:this.groupby,team:this.teamMembers })
+      this.updateKey()
       },
     checkActive(sortName) {
       for(let i=0; i<this.taskFields.length; i++) {
@@ -564,7 +576,9 @@ export default {
         this.$store.dispatch("task/deleteTask", task)
         .then(t => {
           if (t.statusCode == 200) {
-            this.updateKey(t.message)
+            // this.updateKey(t.message)
+            this.popupMessages.push({ text: t.message, variant: "success" })
+            this.$nuxt.$emit("delete_update_table",task)
           } else {
             this.popupMessages.push({ text: t.message, variant: "orange" })
             console.warn(t.message);

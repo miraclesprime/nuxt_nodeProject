@@ -4,7 +4,9 @@ export const strict = false;
 export const state = () => ({
   todos: [],
   initialData:[],
-  gridType:"list"
+  gridType:"list",
+  groupByValue:"",
+
 });
 
 export const getters = {
@@ -15,11 +17,16 @@ export const getters = {
   getGridType(state){
 
     return state.gridType
-  }
+  },
+  getGroupBy (state) {
+    return state.groupByValue 
+  },
 };
 
 export const mutations = {
-
+  setGroupBy(state,payload) {
+    state.groupByValue=payload
+  },
   fetchTodos(state, payload) {
     let arr = [...payload];
     arr.sort((a, b) => a.uOrder - b.uOrder);

@@ -335,11 +335,22 @@ export default {
         this.$emit('sectionExpandedEvent', { sectionId: 1 })
       }
     },
+    myTaskGroupBy(newValue){
+      return _.cloneDeep(newValue)
+    },
+    taskGroupBy(newValue){
+      return _.cloneDeep(newValue)
+    },
   },
 
   computed: {
     ...mapGetters({
       teamMembers: "user/getTeamMembers",
+      myTaskGroupBy:"todo/getGroupBy",
+      // projectGroupBy:"project/getGroupBy",  
+      taskGroupBy:"task/getGroupBy",  
+      usertaskGroupBy:"user/getGroupBy",  
+      // singleProjectGroupBy:"task/getGroupBy",  
     }),
 
     /*teamOptions(){
@@ -381,29 +392,12 @@ export default {
 
   },
   created() {
-      // const handleNewTask = (payload) => {
-    // if (this.localData != null) {
-    //   let temp = this.localData.filter((item) => item.id === payload.id);
-    //   if (temp && temp.length) {
-    //     return;
-    //   } else {
-    //     if (this.localData.length) {
-    //       this.localData.push(payload);
-    //     } else {
-    //       this.$nuxt.$emit("refresh-table");
-    //     }
-    //   }
-    // } else {
-    //   this.$nuxt.$emit("refresh-table");
-    // }
-    // // Remove the listener after handling the event
-    // this.$nuxt.$off("newTask", handleNewTask);
-  // };
+      
+    
   
-  // Register the listener for the "newTask" event
-    // this.$nuxt.$on("newTask", handleNewTask);
-    // this.$nuxt.$on("add_newTask_table", this.handleAddNewTask);
-    // this.$nuxt.$on("delete_update_table", this.delete_UpdateLocalData)
+    // Register the listener for the "newTask" event
+    this.$nuxt.$on("newTask", this.handleNewTask);
+    this.$nuxt.$on("delete_update_table", this.delete_UpdateLocalData)
     this.$nuxt.$on("update_table", this.edit_UpdateLocalData)
 
   },
@@ -481,25 +475,84 @@ export default {
     this.available_tasks = []
     this.activeItem = {}
     // this.resizableTables = []
-    // console.info("before destroy hook")
-    // this.$nuxt.$off("delete_update_table", this.delete_UpdateLocalData)
+    this.$nuxt.$off("delete_update_table", this.delete_UpdateLocalData)
     this.$nuxt.$off("update_table", this.edit_UpdateLocalData)
+    this.$nuxt.$off("newTask", this.handleNewTask);
   },
 
   methods: {
 
-    // delete_UpdateLocalData(payload) {
-    //   if(this.localData.reduce((acc, td) => acc + td.tasks.length, 0)==1){
-    //     this.$nuxt.$emit("refresh-table");
-    //   }
-    //   else {
-    //     this.localData = this.localData.map((items) => {
-    //       const updatedTasks=items.tasks.filter(obj=>obj.id!==payload.id)
-    //         return {...items,tasks:updatedTasks}
-    //       });
-    //   }
+    delete_UpdateLocalData(payload) {
+      if(this.localData.reduce((acc, td) => acc + td.tasks.length, 0)==1){
+        this.$nuxt.$emit("refresh-table");
+      }
+      else {
+        this.localData = this.localData.map((items) => {
+          const updatedTasks=items.tasks.filter(obj=>obj.id!==payload.id)
+            return {...items,tasks:updatedTasks}
+          });
+      }
 
-    // },
+    },
+    handleNewTask (payload,param){
+
+// console.log("localData_value",this.localData)
+
+  if (this.localData.length>0) {
+    
+        if(param=="/mytasks"){
+            if(this.myTaskGroupBy=="") 
+                {
+                    if(this.localData?.[0]?.tasks.length>0)
+                    {
+                      this.localData[0].tasks.push(payload);
+                      
+                    }
+                    else
+                    {
+                      this.$nuxt.$emit("refresh-table");
+                    }
+            
+                }
+                else 
+                {
+                    this.changeIntoGroupBy(payload,this.myTaskGroupBy)
+                }
+        }
+       if(param=="/tasks"){
+       this.changeIntoGroupBy(payload,this.taskGroupBy)
+       }   
+       if(param.includes("usertasks")){
+       this.changeIntoGroupBy(payload,this.usertaskGroupBy)
+       }   
+  }
+  else 
+  {
+    this.$nuxt.$emit("refresh-table");
+  }
+
+// Remove the listener after handling the event
+
+},
+    changeIntoGroupBy (payload,groupBy) {
+        if (this.localData?.[0]?.tasks?.length>0)
+        {
+          //To groupBy, change the localData
+          this.localData = this.localData.reduce((acc, ele) => {
+            return [...acc, ...ele.tasks];
+          }, []);
+          //insert the newTask
+          if (!this.localData.some(item => item.id === payload.id)) {
+            this.localData.push(payload);
+          }
+          //change the localData into groupBy
+          this.localData=this.$groupBy( this.localData,groupBy)
+        } 
+        else 
+        {
+          this.$nuxt.$emit("refresh-table");
+        }  
+    },
     edit_UpdateLocalData(payload) {
           if (this.localData !== null) {
           this.localData = this.localData.map((items) => {
@@ -599,6 +652,8 @@ export default {
               remainingCount = 0;
             } else {
               Object.assign(tmp, this.localData[i])
+              console.log(tmp)
+              console.log(allTasks[i])
               tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, allTasks[i].tasks?.length))
               this.available_tasks[allTasks[i].title] = tmp.tasks;
               this.localData.length -= 1;
