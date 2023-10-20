@@ -507,7 +507,7 @@ export const actions = {
       console.warn(e);
     }
   },
-  async fetchTaskCommentReactions(ctx, payload){
+  async fetchCommentReactions(ctx, payload){
     try {
       const react = await this.$axios.get('/task/' + payload.id + "/reactions", {
         headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }

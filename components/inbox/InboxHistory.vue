@@ -16,7 +16,7 @@
             <!-- <span v-show="comment" class="border-gray1 shape-rounded font-sm" >{{history.taskCommentId}} {{history.projectCommentId}}</span> -->
             <!-- history reactions -->
             <div v-if="historyReaction.count > 0" class="history-reaction">
-                <tippy>
+                <tippy arrow="true" arrowType="round">
                     <template slot="trigger">
                         <div class="action h-105" @click.stop="onLikeClick">
                             <bib-spinner v-if="reactionSpinner" :scale="1.25"></bib-spinner>
@@ -34,7 +34,7 @@
                 </tippy>
             </div>
 
-            <div class="action" v-if="historyReaction.count == 0 && commentReactions.length == 0" @click.stop="onLikeClick">
+            <div class="action" v-if="historyReaction.count == 0" @click.stop="onLikeClick">
                 <bib-spinner v-if="reactionSpinner" :scale="1.25"></bib-spinner>
                 <fa v-else :icon="faThumbsUp" />
             </div>
@@ -42,7 +42,7 @@
             <!-- comment reactions -->
             <div v-if="commentReactions.length > 0" class="comment-reaction">
                 <div v-for="(react, index) in reactionGroup" :key="reactionKey + react.reaction" class="reaction " :id="'react-'+index">
-                    <tippy>
+                    <tippy arrow="true" arrowType="round">
                         <template slot="trigger">
                             {{ react.reaction }} <span class="count font-sm text-secondary" :id="'react-count-'+index" >{{react.count}}</span>
                         </template>
@@ -55,7 +55,7 @@
             </div>
 
             <template v-if="reactionPicker">
-                <tippy :visible="isReactionPickerOpen" theme="light-border p-0" :animate-fill="false" :distance="6" interactive trigger="manual" :onHide="() => defer(() => (isReactionPickerOpen = false))">
+                <tippy :visible="isReactionPickerOpen" arrow theme="light-border p-0" :animate-fill="false" :distance="6" interactive trigger="manual" :onHide="() => defer(() => (isReactionPickerOpen = false))">
                     <template slot="trigger">
                         <div class="action" @click="toggleReactionPicker">
                             <fa :icon="faSmile" />
@@ -83,6 +83,7 @@
     </div>
 </template>
 <script>
+import { mapGetters } from "vuex"
 import _ from 'lodash'
 import { VEmojiPicker } from 'v-emoji-picker';
 import { TippyComponent } from 'vue-tippy';
@@ -108,12 +109,16 @@ export default {
             isReactionPickerOpen: false,
             historyReactions:[],
             commentReactions: [],
+            // projCommentReactions: [],
             reactionKey: 1,
             reactionSpinner: false,
             popupMessages: [],
         }
     },
     computed: {
+        ...mapGetters({
+            user: "user/getUser2"
+        }),
       comment () {
         if (this.history.projectCommentId) {
             return this.history.projectComment.comment
@@ -175,17 +180,14 @@ export default {
         },
     },
     mounted() {
-        if (this.history.reactions[0].id) {
+        if (this.history.reactions[0]?.id) {
             this.historyReactions = this.history.reactions
         }
         if (this.history.taskCommentId) {
-            this.fetchCommentReactions()
-            /*this.$store.dispatch("task/fetchTaskCommentReactions", {id: this.history.taskCommentId}).then(c => {
-                // console.log(c)
-                this.commentReactions = c
-                this.reactionKey += 1
-                return c
-            }).catch(e => console.warn(e))*/
+            this.fetchTaskCommentReactions()
+        }
+        if (this.history.projectCommentId) {
+            this.fetchProjCommentReactions()
         }
     },
     methods: {
@@ -204,10 +206,16 @@ export default {
                 console.log("comment->",this.comment)
                 this.$store.dispatch("task/addTaskCommentReaction", {taskCommentId: this.history.taskCommentId, reaction: "👍", taskId: this.history.task.id, text: "liked the comment" }).then(res => {
                     console.log(res.data)
-                    this.fetchCommentReactions()
+                    this.fetchTaskCommentReactions()
                 }).catch(e => console.warn(e))
                 // this.reactionSpinner = false
-            } else {
+                return false
+            }
+
+            let ownLike = this.historyReactions.find(el => el.userId == this.user.Id)
+            let ownLikeIndex = this.historyReactions.findIndex(el => el.userId == this.user.Id)
+            console.log(ownLike, ownLikeIndex)
+            if(typeof ownLike != "object") {
                 this.$axios.post(`/history/${this.history.id}/reaction`, { reaction: "👍" }, {
                     headers: {
                         Authorization: "Bearer " + localStorage.getItem("accessToken")
@@ -215,7 +223,7 @@ export default {
                 }).then(res => {
                     // console.log(res)
                     if (res.data.statusCode == 200) {
-                        this.popupMessages.push({text: "You 👍 the comment", variant: "success"})
+                        this.popupMessages.push({text: "You liked the comment", variant: "secondary"})
                         this.historyReactions.push(res.data.data)
                     }
                     this.reactionSpinner = false
@@ -224,51 +232,40 @@ export default {
                     this.popupMessages.push({text: "There was some issue", variant: "danger"})
                     this.reactionSpinner = false
                 })
+            } else {
+                this.$axios.delete(`/history/${this.history.id}/reaction`, {
+                    data: {
+                        reactionId: ownLike.id,
+                        userId: ownLike.userId
+                    },
+                    headers: {
+                        Authorization: "Bearer " + localStorage.getItem("accessToken"),
+                    }
+                }).then(r => {
+                    this.popupMessages.push({text: "You removed your reaction", variant: "orange"})
+                    this.historyReactions.splice(0, 1)
+                    this.reactionSpinner = false
+                }).catch(e => {
+                    console.warn(e)
+                    this.reactionSpinner = false
+                })
             }
             // this.reactionSpinner = true
-            /*let duplicateReaction = this.reactions.some(r => r.userId == this.user.Id && r.reaction == "👍")
-            if (duplicateReaction) {
-                this.alertDialog = true
-                this.alertMsg = "Reaction already exists"
-                // this.reactionSpinner = false
-            } else {
-                this.$axios.post("/task/" + this.msg.id + "/reaction", { reaction: "👍", taskId: this.task.id, text: "liked 👍 the comment" }, {
-                        headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
-                    })
-                    .then(d => {
-                        if (d.data.statusCode == 200) {
-                            this.fetchReactions()
-                            this.reactionSpinner = false
-                        }
-                    })
-                    .catch(e => console.log(e))
-            }*/
         },
         defer(func) {
             setTimeout(func, 0);
         },
-        /*fetchReactions (type, commentId){
-            if (type == "task") {
-              this.$axios.get('/task/' + this.history.taskCommentId + "/reactions", {
-                  headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
-                })
-                .then(r => {
-                  if (r.data.statusCode == 200) {
-                    this.reactionKey += 1
-                    return r.data.data
-                  }
-                })
-                .catch(e => throw new Error(message: e))
-            }
-    
-        },*/
         onReactionClick({ data }) {
-            alert("you reacted " + data)
+            // alert("you reacted " + data)
             this.isReactionPickerOpen = false
+            this.$store.dispatch("task/addTaskCommentReaction", {taskCommentId: this.history.taskCommentId, reaction: data, taskId: this.history.task.id, text: "reacted to comment" }).then(res => {
+                    console.log(res.data)
+                    this.fetchTaskCommentReactions()
+                }).catch(e => console.warn(e))
         },
-        fetchCommentReactions(){
+        fetchTaskCommentReactions(){
             this.reactionSpinner = true
-            this.$store.dispatch("task/fetchTaskCommentReactions", {id: this.history.taskCommentId}).then(c => {
+            this.$store.dispatch("task/fetchCommentReactions", {id: this.history.taskCommentId}).then(c => {
                 // console.log(c)
                 this.commentReactions = c
                 this.reactionKey += 1
@@ -278,7 +275,18 @@ export default {
                 this.reactionSpinner = false
                 console.warn(e)
             })
-        }
+        },
+        fetchProjCommentReactions(){
+            this.reactionSpinner = true
+            this.$store.dispatch("project/fetchCommentReactions", {id: this.history.projectCommentId}).then(r => {
+                // console.log(r)
+                this.commentReactions = r
+                this.reactionSpinner = false
+            }).catch(e => {
+                console.warn(e)
+                this.reactionSpinner = false
+            })
+        },
     }
 }
 </script>
