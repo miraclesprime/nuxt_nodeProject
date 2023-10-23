@@ -150,7 +150,7 @@ export default {
       if (this.groupBy == "") {
         return this.userTasks.length
       } else {
-        console.log(this.userTasks)
+        // console.log(this.userTasks)
         if(this.userTasks.length>0){
 
         return this.userTasks.reduce((acc, td) => acc + td.tasks.length, 0)

@@ -347,10 +347,10 @@ export default {
     ...mapGetters({
       teamMembers: "user/getTeamMembers",
       myTaskGroupBy:"todo/getGroupBy",
-      // projectGroupBy:"project/getGroupBy",  
+      projectGroupBy:"project/getGroupBy",  
       taskGroupBy:"task/getGroupBy",  
       usertaskGroupBy:"user/getGroupBy",  
-      // singleProjectGroupBy:"task/getGroupBy",  
+      singleProjectGroupBy:"section/getGroupBy",  
     }),
 
     /*teamOptions(){
@@ -392,9 +392,6 @@ export default {
 
   },
   created() {
-      
-    
-  
     // Register the listener for the "newTask" event
     this.$nuxt.$on("newTask", this.handleNewTask);
     this.$nuxt.$on("delete_update_table", this.delete_UpdateLocalData)
@@ -496,8 +493,6 @@ export default {
     },
     handleNewTask (payload,param){
 
-// console.log("localData_value",this.localData)
-
   if (this.localData.length>0) {
     
         if(param=="/mytasks"){
@@ -525,6 +520,32 @@ export default {
        if(param.includes("usertasks")){
        this.changeIntoGroupBy(payload,this.usertaskGroupBy)
        }   
+       if(param=="/projects"){
+       this.changeIntoGroupBy(payload,this.projectGroupBy)
+       }   
+       if(param.includes("/projects/")){
+        console.log(this.singleProjectGroupBy)
+        if(this.singleProjectGroupBy=="") 
+                {
+                    if(this.localData?.[0]?.tasks.length>0)
+                    {
+                      this.localData[0].tasks.push(payload);
+                      
+                    }
+                    else
+                    {
+                      this.$nuxt.$emit("refresh-table");
+                    }
+            
+                }
+                else 
+                {
+                  this.changeIntoGroupBy(payload,this.singleProjectGroupBy)
+                }
+
+       
+       }  
+      //  if (param)
   }
   else 
   {
@@ -535,6 +556,9 @@ export default {
 
 },
     changeIntoGroupBy (payload,groupBy) {
+      console.log("groupBy",groupBy)
+      console.log(payload, this.singleProjectGroupBy)
+      console.log("localDaata",this.localData)
         if (this.localData?.[0]?.tasks?.length>0)
         {
           //To groupBy, change the localData

@@ -3,7 +3,8 @@ export const strict = false;
 export const state = () => ({
   sections: [],
   projectSections: [],
-  initialSections:[]
+  initialSections:[],
+  groupByValue:"",
 });
 
 export const getters = {
@@ -14,11 +15,16 @@ export const getters = {
 
   getProjectSections(state) {
     return state.projectSections
-  }
-
+  },
+  getGroupBy (state) {
+    return state.groupByValue 
+  },
 };
 
 export const mutations = {
+  setGroupBy(state,payload) {
+    state.groupByValue=payload
+  },
   fetchSections(state, payload) {
     state.sections = payload;
   },

@@ -7,6 +7,8 @@ export const state = () => ({
   sortOrder: "asc",
   initialAllTasks:[],
   tags: [],
+  groupByValue:"",
+
 });
 
 export const getters = {
@@ -31,12 +33,16 @@ export const getters = {
   },
   getCompanyTags(state){
     return state.tags
-  }
-
+  },
+  getGroupBy (state) {
+    return state.groupByValue 
+  },
 };
 
 export const mutations = {
-
+  setGroupBy(state,payload) {
+    state.groupByValue=payload
+  },
   fetchCompanies(state, payload) {
     state.companies = payload;
   },

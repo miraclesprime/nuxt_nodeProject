@@ -8,11 +8,15 @@ export const state = () => ({
   projectHistory: [],
   initialData:[],
   gridType:"list",
-  collapseStatus:"true"
+  collapseStatus:"true",
+  groupByValue:"",
+
 });
 
 export const getters = {
-
+  getGroupBy (state) {
+    return state.groupByValue 
+  },
   // get projects
   getAllProjects(state) {
     return state.projects;
@@ -59,6 +63,9 @@ export const getters = {
 };
 
 export const mutations = {
+  setGroupBy(state,payload) {
+    state.groupByValue=payload
+  },
   setCollapseStatus (state,payload) {
     state.collapseStatus=payload
   },
@@ -862,12 +869,12 @@ export const actions = {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
     if (res.statusCode == 200) {
-      if (payload.groupBy != undefined && payload.groupBy != "") {
-        ctx.commit("createProjectForGroup", res.data);
-        ctx.commit("groupProjects", { key: payload.groupBy});
-      } else {
-        ctx.commit("createProject", res.data);
-      }
+      // if (payload.groupBy != undefined && payload.groupBy != "") {
+      //   ctx.commit("createProjectForGroup", res.data);
+      //   ctx.commit("groupProjects", { key: payload.groupBy});
+      // } else {
+      //   ctx.commit("createProject", res.data);
+      // }
       return res;
     } else {
       return res
@@ -875,7 +882,7 @@ export const actions = {
   },
 
   async updateProject(ctx, payload) {
-
+    console.log("payload",payload)
     let res = await this.$axios.$put("/project", {
       id: payload.id,
       user: payload.user,

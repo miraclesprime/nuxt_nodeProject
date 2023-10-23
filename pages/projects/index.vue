@@ -96,6 +96,7 @@ export default {
   mounted() {
 
     // this.loading = true;
+    this.$store.commit('project/setGroupBy',"")
 
     for(let field of this.tableFields) {
       if(field.header_icon) {
@@ -131,7 +132,7 @@ export default {
       if (this.groupBy == "") {
         return this.projects.length
       } else {
-        return this.projects.reduce((acc, td) => acc + td.tasks.length, 0)
+        return this.projects.reduce((acc, td) => acc + td.tasks?.length, 0)
       }
     },
   },
@@ -216,18 +217,29 @@ export default {
       if ($event ==="default" ) {
         this.groupVisible = false;
         this.groupBy = '';
-        this.$store.commit('project/flatProjects');
+        this.$store.commit('project/setGroupBy','')
+        this.updateKey()
+        // this.$store.commit('project/flatProjects');
         setTimeout(() => {
             this.lazyComponent=true
             }, 30);
         return;
       }
       this.groupBy = $event;
-      this.$store.dispatch('project/groupProjects', { key: $event}).then((res) => {
-        this.groupVisible = true
+      this.$store.commit('project/setGroupBy',$event)
+      this.groupVisible = true
+      this.$store.dispatch("project/fetchProjects").then(() => {
+        if(this.groupVisible){
+            this.$store.dispatch('project/groupProjects', { key: this.groupBy}).then((res) => {
+        })
+      }
         this.templateKey += 1;
-
       })
+      // this.$store.dispatch('project/groupProjects', { key: $event}).then((res) => {
+      //   this.groupVisible = true
+      //   this.templateKey += 1;
+
+      // })
     },
     ProjectView($event){
       this.$store.commit('task/setFilterView', {filter:$event})
@@ -514,6 +526,7 @@ export default {
     
     
     updateProject(payload){
+      console.log(payload)
       const { item, label, field, value, historyText } = payload
       let user
       if(item.userId){
@@ -523,7 +536,7 @@ export default {
         user=null
       }
       
-        console.log(user)
+        // console.log(user)
       let data = { [field]: value }
     
       if(field == "dueDate" && item.startDate){
@@ -590,7 +603,7 @@ export default {
           .then((t) => {
             if (t.statusCode == 200) {
               this.popupMessages.push({ text: t.message, variant: "success" });
-              this.$nuxt.$emit("delete_update_table",t.data)
+              this.$nuxt.$emit("delete_update_table",project)
               // this.updateKey();
               
              this.loading = false;

@@ -245,7 +245,7 @@ export default {
 
   created() {
     this.$nuxt.$on("update-key", () => {
-      this.updateKey();
+      // this.updateKey();
     });
     this.$nuxt.$on("user-picker", (payload) => {
       // emitted from <task-grid>
@@ -255,8 +255,12 @@ export default {
       // emitted from <task-grid>
       this.showDatePicker(payload);
     });
+    this.$nuxt.$on("refresh-table", () => {
+        this.updateKey();
+    });
   },
   beforeDestroy(){
+    this.$nuxt.$off("refresh-table");
     this.localdata = []
   },
 
@@ -784,6 +788,7 @@ export default {
     },
     
     async SingleProjectGroup($event) {
+
       this.groupby=$event
       if($event != 'default') {
         this.dragTable = false;
@@ -791,7 +796,9 @@ export default {
         this.groupby=''
         this.dragTable = true;
       }
-      await this.$store.commit('section/groupSectionProject', { sName: this.groupby })
+      this.$store.commit('section/setGroupBy',this.groupby)
+      this.updateKey()
+      // await this.$store.commit('section/groupSectionProject', { sName: this.groupby })
     
     },
 
@@ -1202,7 +1209,8 @@ export default {
           .dispatch("task/deleteTask", task)
           .then((t) => {
             if (t.statusCode == 200) {
-              this.updateKey(t.message);
+              this.$nuxt.$emit("delete_update_table",task)
+              // this.updateKey(t.message);
               // this.taskToDelete = {};
             } else {
               this.popupMessages.push({ text: t.message, variant: "orange" });
