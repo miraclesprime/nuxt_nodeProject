@@ -179,6 +179,14 @@ export default {
             }
         },
     },
+    created(){
+        this.$nuxt.$off("reload-taskComments")
+        this.$nuxt.$on("reload-taskComments", (msg) => {
+          console.log("reload task comments", msg);
+          // this.fetchTaskComments()
+          this.fetchTaskCommentReactions()
+        })
+    },
     mounted() {
         if (this.history.reactions[0]?.id) {
             this.historyReactions = this.history.reactions
@@ -204,9 +212,12 @@ export default {
             this.reactionSpinner = true
             if (this.comment != null) {
                 console.log("comment->",this.comment)
-                this.$store.dispatch("task/addTaskCommentReaction", {taskCommentId: this.history.taskCommentId, reaction: "👍", taskId: this.history.task.id, text: "liked the comment" }).then(res => {
-                    console.log(res.data)
-                    this.fetchTaskCommentReactions()
+                this.$store.dispatch("task/addCommentReaction", {taskCommentId: this.history.taskCommentId, reaction: "👍", taskId: this.history.task.id, text: "liked the comment" }).then(res => {
+                    console.log("add task comment reaction", res.data)
+                    if (res.statusCode == 200) {
+                        this.fetchTaskCommentReactions()
+                        // this.$nuxt.$emit("reload-comments")
+                    }
                 }).catch(e => console.warn(e))
                 // this.reactionSpinner = false
                 return false
@@ -266,7 +277,7 @@ export default {
         fetchTaskCommentReactions(){
             this.reactionSpinner = true
             this.$store.dispatch("task/fetchCommentReactions", {id: this.history.taskCommentId}).then(c => {
-                // console.log(c)
+                console.log(c)
                 this.commentReactions = c
                 this.reactionKey += 1
                 this.reactionSpinner = false

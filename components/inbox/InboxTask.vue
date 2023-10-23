@@ -69,15 +69,6 @@
         </div>
       </div>
 
-        <!-- editable fields -->
-        <!-- <sidebar-fields :task="form" @update-project-field="updateProject" @update-field="updateTask"></sidebar-fields> -->
-        <!-- subtasks -->
-        <!-- <sidebar-subtask @view-subtask="viewSubtask($event)"></sidebar-subtask> -->
-        <!-- conversation -->
-        <!-- <sidebar-conversation :reloadComments="reloadComments" :reloadHistory="reloadHistory"></sidebar-conversation> -->
-        <!-- files -->
-        <!-- <sidebar-files :reloadFiles="reloadFiles"></sidebar-files> -->
-
       <sidebar-fields-two :task="form" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform"  :activeProp="form.id"></sidebar-fields-two>
       <sidebar-tag :tags="tags" @add-tag="addTag" @change="addTag" @delete-tag="removeTag"  :activeProp="form.id"></sidebar-tag>
       <sidebar-subtask id="inbox_task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false"  :activeProp="form.id"></sidebar-subtask>
@@ -107,6 +98,7 @@ export default {
   name: 'InboxTask',
   props: {
     task: Object,
+    // commentKey: Number,
   },
 
   data() {
@@ -141,6 +133,9 @@ export default {
         this.$store.dispatch("subtask/fetchSubtasks", this.task )
       }
     },
+    /*commentKey(newValue){
+      this.reloadComments += 1
+    },*/
   },
   computed: {
     ...mapGetters({
@@ -176,6 +171,13 @@ export default {
       this.editMessage = msg
     })
   },
+
+  /*created(){
+    this.$nuxt.$on("reload-comments", () => {
+      console.log("emitted from inbox history")
+      this.reloadComments += 1
+    })
+  },*/
 
   methods: {
     markComplete() {

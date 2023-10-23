@@ -493,7 +493,7 @@ export const actions = {
       console.log(e);
     }
   },
-  async addTaskCommentReaction(ctx, payload){
+  async addCommentReaction(ctx, payload){
     try {
       const res = await this.$axios.post(`/task/${payload.taskCommentId}/reaction`, {
         reaction: payload.reaction,

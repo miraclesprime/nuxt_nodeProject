@@ -53,8 +53,8 @@
         </div>
       </main>
       <aside class="position-relative bg-white border-left-gray4">
-        <inbox-task v-if="taskProject == 'task'" :task="task" @update-key="task = $event"></inbox-task>
-        <inbox-project v-if="taskProject == 'project'" :project="project"></inbox-project>
+        <inbox-task v-if="taskProject == 'task'" :task="task" @update-key="task = $event" ></inbox-task>
+        <inbox-project v-if="taskProject == 'project'" :project="project" ></inbox-project>
         <div v-if="taskProject == ''" class="position-absolute align-center justify-center" style="inset:5rem; z-index: 2;">
           <!-- <bib-icon icon="bib-logo" variant="light" :scale="3"></bib-icon> -->
           <no-data></no-data>
@@ -105,6 +105,7 @@ export default {
         
       ],
       activeTab: "inbox",
+      reloadComments: 0,
     }
   },
   computed: {
@@ -232,6 +233,7 @@ export default {
 
   created() {
     if(process.client) {
+      
       let members= [];
 
       this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${JSON.parse(localStorage.getItem('user')).subb}/users`, {
@@ -332,9 +334,9 @@ export default {
         })
     },
 
-    refreshTask(task) {
+    /*refreshTask(task) {
       this.task = task
-    }
+    }*/
   },
 }
 

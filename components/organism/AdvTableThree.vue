@@ -153,7 +153,7 @@
           <div class="split position-sticky " style="top: 0; z-index: 1; pointer-events: all" >
             <div v-if="drag && filterViews == 'all'" class="width-2 border-bottom-gray2" id="advtable-th-1" ></div>
             <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :class="'splitcell'+componentKey" :id="'split'+index+componentKey" :minwidth="field.minwidth" >
-              <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
+              <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}" style="white-space: nowrap;">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
                 <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
               </span></div>
             </div>

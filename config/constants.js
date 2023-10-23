@@ -924,7 +924,7 @@ export const COMPANY_TASK_FIELDS = [
   {
     label: "Project",
     key: "project",
-    width: '160px',
+    width: 160,
     minwidth: 120,
     header_icon: {
       icon: "swap-vertical",
@@ -935,7 +935,7 @@ export const COMPANY_TASK_FIELDS = [
   {
     label: 'Status',
     key: 'status',
-    width: '140px',
+    width: 140,
     minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
@@ -946,7 +946,7 @@ export const COMPANY_TASK_FIELDS = [
   {
     label: 'Priority',
     key: 'priority',
-    width: '140px',
+    width: 140,
     minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
@@ -957,7 +957,7 @@ export const COMPANY_TASK_FIELDS = [
   {
     label: 'Difficulty',
     key: 'difficultyId',
-    width: '140px',
+    width: 140,
     minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
@@ -968,7 +968,7 @@ export const COMPANY_TASK_FIELDS = [
   {
     label: 'Department',
     key: 'department',
-    width: '140px',
+    width: 140,
     minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
@@ -979,7 +979,7 @@ export const COMPANY_TASK_FIELDS = [
   {
     label: 'Assignee',
     key: 'userId',
-    width: '140px',
+    width: 140,
     minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
@@ -995,7 +995,7 @@ export const COMPANY_TASK_FIELDS = [
   {
     label: 'Start Date',
     key: 'startDate',
-    width: '160px',
+    width: 160,
     minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',
@@ -1006,7 +1006,7 @@ export const COMPANY_TASK_FIELDS = [
   {
     label: 'Due Date',
     key: 'dueDate',
-    width: '160px',
+    width: 160,
     minwidth: 120,
     header_icon: {
       icon: 'swap-vertical',

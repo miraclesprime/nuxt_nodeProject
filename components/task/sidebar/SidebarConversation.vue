@@ -89,9 +89,11 @@ export default {
     this.$nuxt.$on("refresh-history", () => {
       this.fetchHistory()
     })
-    this.$nuxt.$on("refresh-comments", () => {
+    /*this.$nuxt.$off("reload-taskComments")
+    this.$nuxt.$on("reload-taskComments", (msg) => {
+      console.log("reload task comments", msg);
       this.fetchTaskComments()
-    })
+    })*/
   },
   methods: {
     
