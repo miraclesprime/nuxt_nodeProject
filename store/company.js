@@ -8,6 +8,7 @@ export const state = () => ({
   initialAllTasks:[],
   tags: [],
   groupByValue:"",
+  taskCount:0
 
 });
 
@@ -37,9 +38,21 @@ export const getters = {
   getGroupBy (state) {
     return state.groupByValue 
   },
+  getTaskCount (state) {
+    return state.taskCount
+  }
 };
 
 export const mutations = {
+  setAddTaskCount (state, payload) {
+    state.taskCount ++
+  },
+  setDeleteTaskCount (state, payload) {
+    state.taskCount--
+  },
+  setTaskCount ( state, payload) {
+    state.taskCount=payload.reduce((acc, td) => acc + td.tasks.length, 0)
+  },
   setGroupBy(state,payload) {
     state.groupByValue=payload
   },
@@ -108,6 +121,7 @@ export const mutations = {
    }
 
     state.companyTasks=arr
+    state.taskCount=arr.reduce((acc, td) => acc + td.tasks.length, 0)
   },
   
   groupTasks(state, payload) {
@@ -476,6 +490,8 @@ export const actions = {
   },
   async setCompanyTasks(ctx,payload){
     ctx.commit('setCompanyTasks', payload.data);
+    ctx.commit('setTaskCount',payload.data)
+
   },
   async fetchCompanyMembers(ctx, companyId) {
     const res = await this.$axios.$get("/company/" + companyId + "/members/", {

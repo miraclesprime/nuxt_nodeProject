@@ -63,10 +63,12 @@ export const getters = {
   getGroupBy (state) {
     return state.groupByValue 
   },
+ 
 
 };
 
 export const mutations = {
+
   setGroupBy(state,payload) {
     state.groupByValue=payload
   },

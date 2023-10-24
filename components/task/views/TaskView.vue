@@ -1209,7 +1209,7 @@ export default {
           .dispatch("task/deleteTask", task)
           .then((t) => {
             if (t.statusCode == 200) {
-              this.$nuxt.$emit("delete_update_table",task)
+              this.$nuxt.$emit("delete_update_table",task,this.$route.fullPath)
               // this.updateKey(t.message);
               // this.taskToDelete = {};
             } else {

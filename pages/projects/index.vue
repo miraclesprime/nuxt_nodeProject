@@ -110,6 +110,7 @@ export default {
 
     setTimeout(() => {
       this.$store.dispatch("project/setProjects", this.localData)
+      this.$store.commit("project/setTaskCount",this.localData)
       this.$store.dispatch("project/fetchInitialProjects")
       this.lazyComponent = true
     }, 50)
@@ -126,15 +127,16 @@ export default {
         favProjects: 'project/getFavProjects',
         teamMembers: "user/getTeamMembers",
         user: "user/getUser2",
-        filterViews :'task/getFilterView'
+        filterViews :'task/getFilterView',
+        projectcount:"project/getTaskCount"
     }),
-    projectcount(){
-      if (this.groupBy == "") {
-        return this.projects.length
-      } else {
-        return this.projects.reduce((acc, td) => acc + td.tasks?.length, 0)
-      }
-    },
+    // projectcount(){
+    //   if (this.groupBy == "") {
+    //     return this.projects.length
+    //   } else {
+    //     return this.projects.reduce((acc, td) => acc + td.tasks?.length, 0)
+    //   }
+    // },
   },
   watch: {
     projects(newVal) {
@@ -162,7 +164,6 @@ export default {
         newArr.push(res.data.data[i])
       }
     }
-
     return { localData: newArr }
    
   },
@@ -603,7 +604,7 @@ export default {
           .then((t) => {
             if (t.statusCode == 200) {
               this.popupMessages.push({ text: t.message, variant: "success" });
-              this.$nuxt.$emit("delete_update_table",project)
+              this.$nuxt.$emit("delete_update_table",project,this.$route.fullPath)
               // this.updateKey();
               
              this.loading = false;
@@ -690,6 +691,7 @@ export default {
       delete proj.sectionId;
       
       this.$store.dispatch('project/createProject', proj).then(res => {
+        console.log(res)
       });
     },
 

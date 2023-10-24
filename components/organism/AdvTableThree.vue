@@ -341,6 +341,12 @@ export default {
     taskGroupBy(newValue){
       return _.cloneDeep(newValue)
     },
+    usertaskGroupBy(newValue){
+      return _.cloneDeep(newValue)
+    },
+    singleProjectGroupBy(newValue){
+      return _.cloneDeep(newValue)
+    },
   },
 
   computed: {
@@ -479,7 +485,7 @@ export default {
 
   methods: {
 
-    delete_UpdateLocalData(payload) {
+    delete_UpdateLocalData(payload,param) {
       if(this.localData.reduce((acc, td) => acc + td.tasks.length, 0)==1){
         this.$nuxt.$emit("refresh-table");
       }
@@ -489,7 +495,21 @@ export default {
             return {...items,tasks:updatedTasks}
           });
       }
-
+      if(param=="/mytasks"){
+          this.$store.commit("todo/setDeleteTaskCount")
+        }
+        if(param=="/tasks"){
+          this.$store.commit("company/setDeleteTaskCount")
+        }
+        if(param.includes("usertasks")){
+          this.$store.commit("user/setDeleteTaskCount")
+        }
+        if(param=="/projects"){
+          this.$store.commit("project/setDeleteTaskCount")
+        }
+        if(param.includes("/projects/")){
+          this.$store.commit("section/setDeleteTaskCount")
+        }
     },
     handleNewTask (payload,param){
 
@@ -506,25 +526,30 @@ export default {
                     else
                     {
                       this.$nuxt.$emit("refresh-table");
+                      
                     }
+                    this.$store.commit("todo/setAddTaskCount")
             
                 }
                 else 
                 {
                     this.changeIntoGroupBy(payload,this.myTaskGroupBy)
+                    this.$store.commit("todo/setAddTaskCount")
                 }
         }
        if(param=="/tasks"){
        this.changeIntoGroupBy(payload,this.taskGroupBy)
+       this.$store.commit("company/setAddTaskCount")
        }   
        if(param.includes("usertasks")){
        this.changeIntoGroupBy(payload,this.usertaskGroupBy)
+       this.$store.commit("user/setAddTaskCount")
        }   
        if(param=="/projects"){
        this.changeIntoGroupBy(payload,this.projectGroupBy)
+       this.$store.commit("project/setAddTaskCount")
        }   
        if(param.includes("/projects/")){
-        console.log(this.singleProjectGroupBy)
         if(this.singleProjectGroupBy=="") 
                 {
                     if(this.localData?.[0]?.tasks.length>0)
@@ -536,11 +561,12 @@ export default {
                     {
                       this.$nuxt.$emit("refresh-table");
                     }
-            
+                    this.$store.commit("section/setAddTaskCount")
                 }
                 else 
                 {
                   this.changeIntoGroupBy(payload,this.singleProjectGroupBy)
+                  this.$store.commit("section/setAddTaskCount")
                 }
 
        
@@ -550,15 +576,13 @@ export default {
   else 
   {
     this.$nuxt.$emit("refresh-table");
+    // this.$store.commit("todo/setAddTaskCount")
   }
 
 // Remove the listener after handling the event
 
 },
     changeIntoGroupBy (payload,groupBy) {
-      console.log("groupBy",groupBy)
-      console.log(payload, this.singleProjectGroupBy)
-      console.log("localDaata",this.localData)
         if (this.localData?.[0]?.tasks?.length>0)
         {
           //To groupBy, change the localData
@@ -571,6 +595,7 @@ export default {
           }
           //change the localData into groupBy
           this.localData=this.$groupBy( this.localData,groupBy)
+         
         } 
         else 
         {

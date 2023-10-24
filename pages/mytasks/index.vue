@@ -164,14 +164,19 @@ export default {
       loggedUser: "user/getUser2",
       filterViews :'task/getFilterView',
       expandVisible:"task/getExpandVisible",
-      grid:"todo/getGridType"
+      grid:"todo/getGridType",
+      taskcount: "todo/getTaskCount"
     }),
-    taskcount(){
-      return this.todos.reduce((acc, td) => acc + td.tasks.length, 0)
-    },
+ 
+    // taskcount(){
+    //   return this.todos.reduce((acc, td) => acc + td.tasks.length, 0)
+    // },
   },
 
   watch: {
+    taskcount(newValue){
+      return _.cloneDeep(newValue)
+    },
       filterViews(newVal) {
           return _.cloneDeep(newVal)
       },
@@ -578,7 +583,7 @@ export default {
           if (t.statusCode == 200) {
             // this.updateKey(t.message)
             this.popupMessages.push({ text: t.message, variant: "success" })
-            this.$nuxt.$emit("delete_update_table",task)
+            this.$nuxt.$emit("delete_update_table",task,this.$route.fullPath)
           } else {
             this.popupMessages.push({ text: t.message, variant: "orange" })
             console.warn(t.message);
@@ -604,8 +609,8 @@ export default {
       // console.log(taskdata)
       this.$store.dispatch("task/createTask", taskdata)
       .then(t => {
-        // console.log(t)
-        this.updateKey()
+        console.log(t)
+        // this.updateKey()
       })
       .catch(e => console.warn(e))
     },

@@ -6,6 +6,7 @@ export const state = () => ({
   initialData:[],
   gridType:"list",
   groupByValue:"",
+  taskCount:0
 
 });
 
@@ -21,9 +22,22 @@ export const getters = {
   getGroupBy (state) {
     return state.groupByValue 
   },
+  getTaskCount (state) {
+    return state.taskCount
+  }
 };
 
 export const mutations = {
+  setAddTaskCount (state, payload) {
+    state.taskCount ++
+  },
+  setDeleteTaskCount (state, payload) {
+    state.taskCount--
+  },
+  setTaskCount ( state, payload) {
+
+    state.taskCount=payload.reduce((acc, td) => acc + td.tasks.length, 0)
+  },
   setGroupBy(state,payload) {
     state.groupByValue=payload
   },
@@ -108,6 +122,7 @@ export const mutations = {
      } 
    }
   state.todos=arr
+  state.taskCount=arr.reduce((acc, td) => acc + td.tasks.length, 0)
   },
 
   groupMyTasks(state, payload) {
@@ -163,6 +178,8 @@ export const actions = {
         }
       });
       ctx.commit('setInitialFetchTodos',res.data)
+      ctx.commit('setTaskCount',res.data)
+      return res
 
   },
 

@@ -157,15 +157,19 @@ export default {
       teamMembers: "user/getTeamMembers",
       filterViews :'task/getFilterView',
       sidebar: "task/getSidebarVisible",
-      grid:"task/getGridType"
+      grid:"task/getGridType",
+      taskcount: "company/getTaskCount"
     }),
-    taskcount(){
-      return this.tasks.reduce((acc, td) => acc + td.tasks.length, 0)
-    },
+    // taskcount(){
+    //   return this.tasks.reduce((acc, td) => acc + td.tasks.length, 0)
+    // },
   
   },
 
   watch: {
+    taskcount(newValue){
+      return _.cloneDeep(newValue)
+    },
     filterViews(newValue){
          return _.cloneDeep(newValue)
     },
@@ -225,6 +229,15 @@ export default {
           console.log("task_created_on-refresh")
           this.updateKey();
         });
+      this.$nuxt.$on('updateTaskCount', (payload) => {
+        if (payload.action === 'increase') {
+          console.log("increase")
+          this.projectcount += 1 // Increase taskcount
+        } else if (payload.action === 'decrease') {
+          console.log("decrease")
+          this.projectcount -= 1 // Decrease taskcount
+        }
+      })
     }
   },
       beforeDestroy(){ 
@@ -551,8 +564,8 @@ export default {
           .dispatch("task/deleteTask", task)
           .then((t) => {
             if (t.statusCode == 200) {
-              
-              this.updateKey(t.message);
+              this.$nuxt.$emit("delete_update_table",task,this.$route.fullPath)
+              // this.updateKey(t.message);
             } else {
               this.popupMessages.push({ text: t.message, variant: "orange" });
               console.warn(t.message);
@@ -1007,7 +1020,8 @@ export default {
         })
         .then((t) => {
           this.resetNewRow();
-          this.updateKey();
+          this.$nuxt.$emit("newTask",t.data,this.$route.fullPath)
+          // this.updateKey();
         })
         .catch((e) => {
           console.warn(e);

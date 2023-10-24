@@ -10,10 +10,14 @@ export const state = () => ({
   gridType:"list",
   collapseStatus:"true",
   groupByValue:"",
+  taskCount:0
 
 });
 
 export const getters = {
+  getTaskCount (state) {
+    return state.taskCount
+  },
   getGroupBy (state) {
     return state.groupByValue 
   },
@@ -63,6 +67,19 @@ export const getters = {
 };
 
 export const mutations = {
+  setAddTaskCount (state, payload) {
+    state.taskCount ++
+  },
+  setDeleteTaskCount (state, payload) {
+    state.taskCount--
+  },
+  setTaskCount ( state, payload) {
+    if (state.groupByValue == "") {
+      state.taskCount=payload.length
+    } else {
+      state.taskCount= payload.reduce((acc, td) => acc + td.tasks?.length, 0)
+    }
+  },
   setGroupBy(state,payload) {
     state.groupByValue=payload
   },
@@ -186,6 +203,11 @@ export const mutations = {
    }
 
   state.projects=arr
+  if (state.groupByValue == "") {
+    state.taskCount=arr.length
+  } else {
+    state.taskCount= arr.reduce((acc, td) => acc + td.tasks?.length, 0)
+  }
   },
   groupProjects(state, payload) {
     let arr = JSON.parse(JSON.stringify(state.projects));

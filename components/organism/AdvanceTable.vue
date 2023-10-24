@@ -345,7 +345,7 @@ export default {
 
   methods: {
     
-    delete_UpdateLocalData(payload) {
+    delete_UpdateLocalData(payload,param) {
       if(this.localData.length==1){
         
         this.$nuxt.$emit("refresh-table");
@@ -353,9 +353,25 @@ export default {
       }
       else {
           this.localData = this.localData.filter(obj => obj.id !== payload.id)
+          // this.$nuxt.$emit("updateTaskCount", {action: 'decrease'})
       }
-
+      if(param=="/mytasks"){
+          this.$store.commit("todo/setDeleteTaskCount")
+        }
+        if(param=="/tasks"){
+          this.$store.commit("company/setDeleteTaskCount")
+        }
+        if(param.includes("usertasks")){
+          this.$store.commit("user/setDeleteTaskCount")
+        }
+        if(param=="/projects"){
+          this.$store.commit("project/setDeleteTaskCount")
+        }
+        if(param.includes("/projects/")){
+          this.$store.commit("section/setDeleteTaskCount")
+        }
     },
+    
     edit_UpdateLocalData(payload) {
       this.localData = this.localData.map((items) => {
                 if (items.id == payload.id) {

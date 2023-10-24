@@ -144,20 +144,22 @@ export default {
       selectedTask :'task/getSelectedTask',
       userInfo :"user/getUserInfo",
       allTasks: "company/getInitialAllTasks",
-      groupBy:"user/getGroupBy"
+      groupBy:"user/getGroupBy",
+      taskcount:"user/getTaskCount"
+
     }),
-    taskcount(){
-      if (this.groupBy == "") {
-        return this.userTasks.length
-      } else {
-        // console.log(this.userTasks)
-        if(this.userTasks.length>0){
+    // taskcount(){
+    //   if (this.groupBy == "") {
+    //     return this.userTasks.length
+    //   } else {
+    //     // console.log(this.userTasks)
+    //     if(this.userTasks.length>0){
 
-        return this.userTasks.reduce((acc, td) => acc + td.tasks.length, 0)
+    //     return this.userTasks.reduce((acc, td) => acc + td.tasks?.length, 0)
 
-        }
-      }
-    },
+    //     }
+    //   }
+    // },
   },
  
   watch: {
@@ -491,8 +493,9 @@ export default {
       }
       delete proj.show
       delete proj.sectionId
-      this.$store.dispatch('task/createTask', proj).then(() => {
-        this.updateKey();
+      this.$store.dispatch('task/createTask', proj).then((res) => {
+        this.$nuxt.$emit("newTask",res.data,this.$route.fullPath)
+        // this.updateKey();
       });
     },
 
@@ -625,7 +628,7 @@ export default {
           .then((t) => {
             if (t.statusCode == 200) {
               // this.updateKey();
-              this.$nuxt.$emit("delete_update_table",task)
+              this.$nuxt.$emit("delete_update_table",task,this.$route.fullPath)
 
             } else {
               this.popupMessages.push({ text: t.message, variant: "orange" });
