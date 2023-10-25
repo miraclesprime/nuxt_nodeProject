@@ -28,6 +28,7 @@ export const PROJECT_FIELDS = [
   {
     label: 'Project name',
     key: 'title',
+    width: 400,
     minwidth: 300,
     icon: {
       icon: 'check-circle-solid',
@@ -123,7 +124,7 @@ export const TASK_FIELDS = [
   {
     label: 'Task name',
     key: 'title',
-    // width: 300,
+    width: 360,
     minwidth: 260,
     icon: {
       icon: 'check-circle-solid',
@@ -515,6 +516,7 @@ export const PROJECT_FAVORITES = [
   {
     label: 'Project name',
     key: 'title',
+    width: 400,
     minwidth: 300,
     header_icon: {
       icon: 'swap-vertical',
@@ -596,6 +598,7 @@ export const TASK_FAVORITES = [
   {
     label: 'Task name',
     key: 'title',
+    width: 400,
     minwidth: 300,
     header_icon: {
       icon: 'swap-vertical',
@@ -908,7 +911,7 @@ export const COMPANY_TASK_FIELDS = [
     label: 'Task name',
     key: 'title',
     minwidth: 200,
-    // width: "260px",
+    width: 260,
     icon: {
       icon: 'check-circle-solid',
       variant: 'gray2',
@@ -1018,11 +1021,11 @@ export const COMPANY_TASK_FIELDS = [
 
 
 export const USER_TASKS = [
-
+  
   {
     label: 'Task name',
     key: 'title',
-    /*width: "300px",*/
+    width: 300,
     minwidth: 260,
     icon: {
       icon: 'check-circle-solid',
@@ -1040,7 +1043,7 @@ export const USER_TASKS = [
     label: 'Project',
     key: 'project',
     width: 200,
-    minwidth: 150,
+    minwidth: 160,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',
