@@ -68,7 +68,7 @@
 
                     <div v-show="importfinish" class="shape-rounded align-center gap-05 border-success text-success p-05">
                       <bib-icon icon="tick" variant="success"></bib-icon>
-                      Import finished successfully
+                        {{importCompleteMsg}}
                     </div>
                 </template>
                 <template slot="footer">
@@ -131,6 +131,8 @@ export default {
                 ],
             importError: false,
             dupProject: false,
+            duplicateProjId: null,
+            importCompleteMsg: ''
         }
     },
 
@@ -164,18 +166,18 @@ export default {
 
 
         closeModal(){
-          this.importmodal = false
-          this.missingMembers = []
-          this.importfinish = false
-          this.importError = false
-          this.steps = [
-                {id: 0, label: "Analyzing Users", progress: "progress", variant:"orange"},
-                {id: 1, label: "Importing Project", progress: "pending", variant:"gray5"},
-                {id: 2, label: "Importing Section/Tasks", progress: "pending", variant:"gray5"},
-                {id: 3, label: "Importing Subtasks", progress: "pending", variant:"gray5"},
-                {id: 4, label: "Importing Tags", progress: "pending", variant:"gray5"},
-                ]
-          this.files = []
+            this.importmodal = false
+            this.missingMembers = []
+            this.importfinish = false
+            this.importError = false
+            this.steps = [
+                    {id: 0, label: "Analyzing Users", progress: "progress", variant:"orange"},
+                    {id: 1, label: "Importing Project", progress: "pending", variant:"gray5"},
+                    {id: 2, label: "Importing Section/Tasks", progress: "pending", variant:"gray5"},
+                    {id: 3, label: "Importing Subtasks", progress: "pending", variant:"gray5"},
+                    {id: 4, label: "Importing Tags", progress: "pending", variant:"gray5"},
+                    ]
+            this.files = []
             this.$refs.csvImport.filesUploaded = []
         },
 
@@ -205,6 +207,7 @@ export default {
             } 
             if (users.data.statusCode == 201) {
                 if (users.data.importError == "duplicate-project") {
+                    this.duplicateProjId = users.data.projectId,
                     this.dupProject = "This project already exists. Continue will overwrite the project data."
                     return
                 } else {
@@ -316,6 +319,7 @@ export default {
               // this.missingMembers = []
                 this.steps[4].progress = "done"
                 this.steps[4].variant = "success"
+                this.importCompleteMsg = 'Imported Project Successfully!'
                 this.importfinish = true
             } else {
               this.popupMessages.push({text: "Some error occured", variant: "danger"})
@@ -324,9 +328,27 @@ export default {
               this.steps[4].variant = "danger"
             }
         },
-        reimportCSV(){
-            alert("re import")
+
+        async reimportCSV(){
+
+            let file = this.$refs.csvImport.filesUploaded;
+
+            let formdata = new FormData();
+            formdata.append('file', file[0])
+            formdata.append('projectId', Number(this.duplicateProjId))
+
+            let res = await this.$axios.post("/import/re-import", formdata, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                }
+            })
+
+            if(res.data.statusCode == 200) {
+                this.importCompleteMsg = 'Re-Imported Project Successfully!'
+            } 
         },
+
         finishImport(){
             this.closeModal()
             this.$router.push('/projects')
