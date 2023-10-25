@@ -242,30 +242,10 @@ export default {
     },
   },
   created() {
-    const handleNewTask = (payload) => {
-    if (this.localData.length>0) {
-      this.localData.push(payload);
-      let temp = this.localData.filter((item) => item.id === payload.id);
-      if (temp && temp.length) {
-        return;
-      } else {
-        if (this.localData.length>0) {
-          this.localData.push(payload);
-        } else {
-          this.$nuxt.$emit("refresh-table");
-          this.localData.push(payload);
-        }
-      }
-    } else {
-      this.$nuxt.$emit("refresh-table");
-    }
-    // Remove the listener after handling the event
-    this.$nuxt.$off("newTask", handleNewTask);
-  };
+
   
   // Register the listener for the "newTask" event
-    this.$nuxt.$on("newTask", handleNewTask);
-    // this.$nuxt.$on("add_newTask_table", this.handleAddNewTask);
+    this.$nuxt.$on("newTask", this.handleNewTask);
     this.$nuxt.$on("delete_update_table", this.delete_UpdateLocalData)
     this.$nuxt.$on("update_table", this.edit_UpdateLocalData)
  
@@ -335,15 +315,26 @@ export default {
   beforeDestroy(){
     this.localData = [];
     this.activeItem = {}
-    // console.info("before destroy hook")
-    // this.$nuxt.$off("add_newTask_table", this.handleAddNewTask);
-    // this.$nuxt.$off("newTask")
+    this.$nuxt.$off("newTask", this.handleNewTask);
     this.$nuxt.$off("delete_update_table", this.delete_UpdateLocalData)
     this.$nuxt.$off("update_table", this.edit_UpdateLocalData)
    
   },
 
   methods: {
+    handleNewTask (payload,param) {
+      if (this.localData.length>0) {
+          this.localData.push(payload);
+        } else {
+          this.$nuxt.$emit("refresh-table");
+        }
+      if(param=="/projects"){
+       this.$store.commit("project/setAddTaskCount")
+       }   
+      if(param.includes("usertasks")){
+      this.$store.commit("user/setAddTaskCount")
+      }   
+  },
     
     delete_UpdateLocalData(payload,param) {
       if(this.localData.length==1){
@@ -353,7 +344,6 @@ export default {
       }
       else {
           this.localData = this.localData.filter(obj => obj.id !== payload.id)
-          // this.$nuxt.$emit("updateTaskCount", {action: 'decrease'})
       }
       if(param=="/mytasks"){
           this.$store.commit("todo/setDeleteTaskCount")

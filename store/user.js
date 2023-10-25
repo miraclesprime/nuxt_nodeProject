@@ -174,12 +174,15 @@ export const mutations = {
     state.userTasks=arr
 
     if(payload.key=="") {
-      state.taskCount= arr.length
+      state.taskCount= arr?arr.length:0
       
     }
     else {
       if(arr.length>0){
         state.taskCount=arr.reduce((acc, td) => acc + td.tasks.length, 0)
+      }
+      else {
+        state.taskCount=0
       }
     }
   },
