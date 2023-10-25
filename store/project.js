@@ -1190,6 +1190,24 @@ export const actions = {
 
   setProjects(ctx, payload) {
     ctx.commit('fetchProjects', payload)
-  }
+  },
+
+  async fetchCommentReactions(ctx, payload){
+    try {
+      const res = await this.$axios.get(`/project/${payload.id}/reactions`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          'obj': JSON.stringify({ "projectId": payload.id })
+        }
+      })
+      // console.log(res.data)
+      if (res.data.statusCode == 200) {
+        return res.data.data
+      }
+    } catch(e) {
+      console.log(e);
+      return e
+    }
+  },
 
 }

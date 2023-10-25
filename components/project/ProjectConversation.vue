@@ -32,7 +32,7 @@ export default {
   props: {
     project: {
       type: Object, // String, Number, Boolean, Function, Object, Array
-      default: null
+      reloadComments: { type: Number, default: 0 },
     },
   },
   data: function() {
@@ -65,12 +65,22 @@ export default {
         this.fetchComments()
       }
     },
+    reloadComments(newValue, oldValue){
+      if (newValue != oldValue) {
+        this.fetchComments()
+      }
+    },
   },
   created() {
     this.$nuxt.$on("edit-message", (msg) => {
       this.editMessage = msg
     })
     this.$nuxt.$on("refresh-list", () => {
+      this.fetchComments()
+    })
+    this.$nuxt.$off("reload-projectComments")
+    this.$nuxt.$on("reload-projectComments", (msg) => {
+      console.log("reload project comments", msg)
       this.fetchComments()
     })
   },
