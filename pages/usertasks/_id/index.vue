@@ -144,15 +144,22 @@ export default {
       selectedTask :'task/getSelectedTask',
       userInfo :"user/getUserInfo",
       allTasks: "company/getInitialAllTasks",
-      groupBy:"user/getGroupBy"
+      groupBy:"user/getGroupBy",
+      taskcount:"user/getTaskCount"
+
     }),
-    taskcount(){
-      if (this.groupBy == "") {
-        return this.userTasks.length
-      } else {
-        return this.userTasks.reduce((acc, td) => acc + td.tasks.length, 0)
-      }
-    },
+    // taskcount(){
+    //   if (this.groupBy == "") {
+    //     return this.userTasks.length
+    //   } else {
+    //     // console.log(this.userTasks)
+    //     if(this.userTasks.length>0){
+
+    //     return this.userTasks.reduce((acc, td) => acc + td.tasks?.length, 0)
+
+    //     }
+    //   }
+    // },
   },
  
   watch: {
@@ -201,12 +208,13 @@ export default {
         }
         else {
           
-          this.$store.commit('user/updateFetchUserTasks',{createORupdate:payload,data:this.selectedTask,filter:this.filterViews,key:this.groupBy})
+          // this.$store.commit('user/updateFetchUserTasks',{createORupdate:payload,data:this.selectedTask,filter:this.filterViews,key:this.groupBy})
+          // this.templateKey += 1
         }
-        this.templateKey += 1
         // await this.fetchUserTasks();
         // this.beforeLocal = this.localData
       });
+ 
       this.$nuxt.$on("user-picker", (payload) => {
         // emitted from <task-grid>
         this.showUserPicker(payload);
@@ -214,6 +222,11 @@ export default {
       this.$nuxt.$on("date-picker", (payload) => {
         // emitted from <task-grid>
         this.showDatePicker(payload);
+      });
+
+      this.$nuxt.$on("refresh-table", () => {
+        console.log("on-refresh")
+        this.updateKey();
       });
     }
   },
@@ -300,7 +313,11 @@ export default {
 
     }
   },
-
+  beforeDestroy(){ 
+    this.$nuxt.$off("refresh-table");
+    // this.$nuxt.$off("newTask");
+    this.$nuxt.$off("update-key");
+  },
   async asyncData({$axios, app,store, params}) {
 
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
@@ -341,8 +358,9 @@ export default {
       if ($event ==="default" ) {
         this.groupVisible = false;
         // this.groupBy = '';
-        this.$store.commit('user/flatTasks');
+        // this.$store.commit('user/flatTasks');
         this.$store.commit('user/setGroupBy','')
+        this.updateKey()
         this.localData = this.userTasks
         setTimeout(() => {
             this.lazyComponent=true
@@ -351,8 +369,9 @@ export default {
       }
       // this.groupBy = $event;
       this.groupVisible = true
-      this.$store.commit('user/groupUserTasks',{key:$event})
+      // this.$store.commit('user/groupUserTasks',{key:$event})
       this.$store.commit('user/setGroupBy',$event)
+      this.updateKey()
       this.localData = this.userTasks
     },
 
@@ -474,8 +493,9 @@ export default {
       }
       delete proj.show
       delete proj.sectionId
-      this.$store.dispatch('task/createTask', proj).then(() => {
-        this.updateKey();
+      this.$store.dispatch('task/createTask', proj).then((res) => {
+        this.$nuxt.$emit("newTask",res.data,this.$route.fullPath)
+        // this.updateKey();
       });
     },
 
@@ -526,7 +546,7 @@ export default {
         });
     },
     updateTask(payload) {
-      // console.log(payload)
+      console.log(payload)
 
       let user, projectId;
       if (payload.field == "userId" && payload.value != "") {
@@ -607,7 +627,9 @@ export default {
           .dispatch("task/deleteTask", task)
           .then((t) => {
             if (t.statusCode == 200) {
-              this.updateKey(t.message);
+              // this.updateKey();
+              this.$nuxt.$emit("delete_update_table",task,this.$route.fullPath)
+
             } else {
               this.popupMessages.push({ text: t.message, variant: "orange" });
               console.warn(t.message);
