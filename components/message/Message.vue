@@ -232,9 +232,17 @@ export default {
           headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
         })
         .then(r => {
+          // console.log('fetch reactions', r.data)
           if (r.data.statusCode == 200) {
             this.reactions = r.data.data
             this.reactionKey += 1
+            if (process.server) return
+            if (this.msg?.taskId) {
+              this.$nuxt.$emit("reload-taskComments", this.msg)
+            }
+            if (this.msg?.projectId) {
+              this.$nuxt.$emit("reload-projectComments", this.msg)
+            }
           }
         })
         .catch(e => console.log(e))
@@ -245,7 +253,7 @@ export default {
     async deleteOwnReaction(reaction) {
       this.reactionSpinner = true
       let react = reaction.data.find(rd => rd.user.id == this.user.Id)
-      console.log(reaction, react)
+      // console.log(reaction, react)
       if (react) {
         const res = await this.$axios.delete(`/${this.fieldkey}/${this.msg.id}/reaction`, {
             headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") },

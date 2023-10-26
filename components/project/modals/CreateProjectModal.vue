@@ -113,6 +113,8 @@ export default {
             this.projectName = ''
             this.owner = {}
             this.showCreateProjectModal = false
+           this.$nuxt.$emit("newTask",res.data,this.$route.fullPath)
+
           }
           console.log(res.message)
         }).catch(e => {

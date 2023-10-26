@@ -113,7 +113,7 @@
         <div class="split position-sticky " style="top: 0; z-index: 1; pointer-events: all" >
           <div v-if="drag" class="width-2 " id="advtable-th-1" ></div>
           <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :class="'splitcell'+componentKey" :id="'split'+index+componentKey" :minwidth="field.minwidth" >
-            <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
+            <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}" style="white-space: nowrap;">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
               <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
             </span></div>
           </div>
@@ -242,20 +242,16 @@ export default {
     },
   },
   created() {
-    this.$nuxt.$on("update_table", async (payload) => {
-      if (this.localData !== null) {
-      this.localData = this.localData.map((items) => {
-          if (items.id == payload.id) {
-            return { ...items, ...payload };
-          } else {
-            return items;
-          }
-      });
-    }
-      });
 
-  },
+  
+  // Register the listener for the "newTask" event
+    this.$nuxt.$on("newTask", this.handleNewTask);
+    this.$nuxt.$on("delete_update_table", this.delete_UpdateLocalData)
+    this.$nuxt.$on("update_table", this.edit_UpdateLocalData)
+ 
+},
   mounted() {
+    
     this.localData = _.cloneDeep(this.tableData)
     this.modifyDateFormat()
 
@@ -313,15 +309,85 @@ export default {
         // this.colWidth = sizes
       }
     })
+  
   },
 
   beforeDestroy(){
-    this.localData = null
+    this.localData = [];
     this.activeItem = {}
-    // console.info("before destroy hook")
+    this.$nuxt.$off("newTask", this.handleNewTask);
+    this.$nuxt.$off("delete_update_table", this.delete_UpdateLocalData)
+    this.$nuxt.$off("update_table", this.edit_UpdateLocalData)
+   
   },
 
   methods: {
+    handleNewTask (payload,param) {
+      if (this.localData.length>0) {
+          this.localData.push(payload);
+        } else {
+          this.$nuxt.$emit("refresh-table");
+        }
+      if(param=="/projects"){
+       this.$store.commit("project/setAddTaskCount")
+       }   
+      if(param.includes("usertasks")){
+      this.$store.commit("user/setAddTaskCount")
+      }   
+  },
+    
+    delete_UpdateLocalData(payload,param) {
+      if(this.localData.length==1){
+        
+        this.$nuxt.$emit("refresh-table");
+
+      }
+      else {
+          this.localData = this.localData.filter(obj => obj.id !== payload.id)
+      }
+      if(param=="/mytasks"){
+          this.$store.commit("todo/setDeleteTaskCount")
+        }
+        if(param=="/tasks"){
+          this.$store.commit("company/setDeleteTaskCount")
+        }
+        if(param.includes("usertasks")){
+          this.$store.commit("user/setDeleteTaskCount")
+        }
+        if(param=="/projects"){
+          this.$store.commit("project/setDeleteTaskCount")
+        }
+        if(param.includes("/projects/")){
+          this.$store.commit("section/setDeleteTaskCount")
+        }
+    },
+    
+    edit_UpdateLocalData(payload) {
+      this.localData = this.localData.map((items) => {
+                if (items.id == payload.id) {
+                  return { ...items, ...payload };
+                } else {
+                  return items;
+                }
+            });
+    },
+  //   handleAddNewTask(payload) {
+  //     console.log(payload)
+  //   if (this.localData != null) {
+  //     let temp = this.localData.filter((item) => item.id === payload.id);
+  //     if (temp && temp.length) {
+  //       return;
+  //     } else {
+  //       if (this.localData.length) {
+  //         this.localData.push(payload);
+  //       } else {
+  //         this.$nuxt.$emit("refresh-table");
+  //       }
+  //     }
+  //   } else {
+  //     this.$nuxt.$emit("refresh-table");
+  //   }
+  // },
     parseDate(dateString, format) {
         return new Date(dateString);
     },
@@ -450,7 +516,7 @@ export default {
     updateStatus(status, item) {
       this.localData=this.localData.map((task)=>{
             if(task.id==item.id){
-               return { ...task, statusId: status.value, status:{id:status.id,text:status.label}};
+               return { ...task, statusId: status.value, status:{id:status.value,text:status.label}};
             }
             else {
                 return task

@@ -2,12 +2,12 @@
   <div id="favorite-action-wrapper" class="favorite-actions ">
     
     <div id="fa-add-project-wrapper" class="action-left d-flex gap-1">
-      <div class="d-flex align-center gap-05 cursor-pointer text-success bg-success-sub6 bg-hover-success-sub3 shape-rounded py-025 px-05 font-md" id="fa-add-project-button" v-on:click="$nuxt.$emit('create-project-modal')">
+      <!-- <div class="d-flex align-center gap-05 cursor-pointer text-success bg-success-sub6 bg-hover-success-sub3 shape-rounded py-025 px-05 font-md" id="fa-add-project-button" v-on:click="$nuxt.$emit('create-project-modal')">
         <bib-icon icon="add" variant="success" :scale="1.1" class=""></bib-icon> <span id="fa-add-prject-text" class="">New Project</span>
       </div>
       <div class="d-flex align-center gap-05 cursor-pointer text-success bg-success-sub6 bg-hover-success-sub3 shape-rounded py-025 px-05 font-md" id="fa-add-task-button" v-on:click.stop="$nuxt.$emit('open-sidebar', false)">
         <bib-icon icon="add" variant="success" :scale="1.1" class=""></bib-icon> <span id="fa-add-task-text" class="">New Task</span>
-      </div>
+      </div> -->
     </div>
 
     <div class="action-right d-flex gap-05" id="fa-action-right">

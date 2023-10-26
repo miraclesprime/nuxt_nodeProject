@@ -64,7 +64,7 @@
 
             <draggable :class="sectionClass" tag="article" :list="section.tasks" :group="{ name: 'tasks' }" :data-section="section.id" :ref="'sectionContent' + section.id" @end="rowDragEnd">
               <div v-for="(item, itemIdx) in section.tasks" :key="item.id" ref="trdata" role="row" class="tr sortable drag-item" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)">
-                <div v-if="drag && filterViews == 'all'" class="td" role="cell" >
+                <div v-if="drag && filterViews == 'all'" class="td width-105" role="cell" >
                   <div class="drag-handle width-105 height-2" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                   </div>
                 </div>
@@ -153,7 +153,7 @@
           <div class="split position-sticky " style="top: 0; z-index: 1; pointer-events: all" >
             <div v-if="drag && filterViews == 'all'" class="width-2 border-bottom-gray2" id="advtable-th-1" ></div>
             <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :class="'splitcell'+componentKey" :id="'split'+index+componentKey" :minwidth="field.minwidth" >
-              <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
+              <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}" style="white-space: nowrap;">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
                 <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
               </span></div>
             </div>
@@ -310,7 +310,7 @@ export default {
     tableFields(newValue){
       let nowidth = 0;
       let arr = newValue.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100 )
-      console.log(arr)
+      // console.log(arr)
       for (var i = 0; i < arr.length; i++) {
         if(isNaN(arr[i])){
           arr[i] = 30
@@ -335,11 +335,28 @@ export default {
         this.$emit('sectionExpandedEvent', { sectionId: 1 })
       }
     },
+    myTaskGroupBy(newValue){
+      return _.cloneDeep(newValue)
+    },
+    taskGroupBy(newValue){
+      return _.cloneDeep(newValue)
+    },
+    usertaskGroupBy(newValue){
+      return _.cloneDeep(newValue)
+    },
+    singleProjectGroupBy(newValue){
+      return _.cloneDeep(newValue)
+    },
   },
 
   computed: {
     ...mapGetters({
       teamMembers: "user/getTeamMembers",
+      myTaskGroupBy:"todo/getGroupBy",
+      projectGroupBy:"project/getGroupBy",  
+      taskGroupBy:"task/getGroupBy",  
+      usertaskGroupBy:"user/getGroupBy",  
+      singleProjectGroupBy:"section/getGroupBy",  
     }),
 
     /*teamOptions(){
@@ -381,20 +398,10 @@ export default {
 
   },
   created() {
-    this.$nuxt.$on("update_table", async (payload) => {
-      if (this.localData !== null) {
-      this.localData = this.localData.map((items) => {
-        const updatedTasks = items.tasks.map((task) => {
-          if (task.id == payload.id) {
-            return { ...task, ...payload };
-          } else {
-            return task;
-          }
-        });
-        return { ...items, tasks: updatedTasks };
-      });
-    }
-      });
+    // Register the listener for the "newTask" event
+    this.$nuxt.$on("newTask", this.handleNewTask);
+    this.$nuxt.$on("delete_update_table", this.delete_UpdateLocalData)
+    this.$nuxt.$on("update_table", this.edit_UpdateLocalData)
 
   },
   mounted() {
@@ -404,7 +411,7 @@ export default {
     let nowidth = 0;
     let nowidthIndex = [];
     let colwidthArr = this.tableFields.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100 )
-    // console.log(colwidthArr)
+    console.log(colwidthArr)
     for (var i = 0; i < colwidthArr.length; i++) {
       if(!isNaN(colwidthArr[i])){
         nowidth += colwidthArr[i]
@@ -467,14 +474,149 @@ export default {
   },
 
   beforeDestroy(){
-    this.localData = null
+    this.localData = []
     this.available_tasks = []
     this.activeItem = {}
     // this.resizableTables = []
-    // console.info("before destroy hook")
+    this.$nuxt.$off("delete_update_table", this.delete_UpdateLocalData)
+    this.$nuxt.$off("update_table", this.edit_UpdateLocalData)
+    this.$nuxt.$off("newTask", this.handleNewTask);
   },
 
   methods: {
+
+    delete_UpdateLocalData(payload,param) {
+      if(this.localData.reduce((acc, td) => acc + td.tasks.length, 0)==1){
+        this.$nuxt.$emit("refresh-table");
+      }
+      else {
+        this.localData = this.localData.map((items) => {
+          const updatedTasks=items.tasks.filter(obj=>obj.id!==payload.id)
+            return {...items,tasks:updatedTasks}
+          });
+      }
+      if(param=="/mytasks"){
+          this.$store.commit("todo/setDeleteTaskCount")
+        }
+        if(param=="/tasks"){
+          this.$store.commit("company/setDeleteTaskCount")
+        }
+        if(param.includes("usertasks")){
+          this.$store.commit("user/setDeleteTaskCount")
+        }
+        if(param=="/projects"){
+          this.$store.commit("project/setDeleteTaskCount")
+        }
+        if(param.includes("/projects/")){
+          this.$store.commit("section/setDeleteTaskCount")
+        }
+    },
+    handleNewTask (payload,param){
+
+  if (this.localData.length>0) {
+    
+        if(param=="/mytasks"){
+            if(this.myTaskGroupBy=="") 
+                {
+                    if(this.localData?.[0]?.tasks.length>0)
+                    {
+                      this.localData[0].tasks.push(payload);
+                      
+                    }
+                    else
+                    {
+                      this.$nuxt.$emit("refresh-table");
+                      
+                    }
+                    this.$store.commit("todo/setAddTaskCount")
+            
+                }
+                else 
+                {
+                    this.changeIntoGroupBy(payload,this.myTaskGroupBy)
+                    this.$store.commit("todo/setAddTaskCount")
+                }
+        }
+       if(param=="/tasks"){
+       this.changeIntoGroupBy(payload,this.taskGroupBy)
+       this.$store.commit("company/setAddTaskCount")
+       }   
+       if(param.includes("usertasks")){
+       this.changeIntoGroupBy(payload,this.usertaskGroupBy)
+       this.$store.commit("user/setAddTaskCount")
+       }   
+       if(param=="/projects"){
+       this.changeIntoGroupBy(payload,this.projectGroupBy)
+       this.$store.commit("project/setAddTaskCount")
+       }   
+       if(param.includes("/projects/")){
+        if(this.singleProjectGroupBy=="") 
+                {
+                    if(this.localData?.[0]?.tasks.length>0)
+                    {
+                      this.localData[0].tasks.push(payload);
+                      
+                    }
+                    else
+                    {
+                      this.$nuxt.$emit("refresh-table");
+                    }
+                    this.$store.commit("section/setAddTaskCount")
+                }
+                else 
+                {
+                  this.changeIntoGroupBy(payload,this.singleProjectGroupBy)
+                  this.$store.commit("section/setAddTaskCount")
+                }
+
+       
+       }  
+      //  if (param)
+  }
+  else 
+  {
+    this.$nuxt.$emit("refresh-table");
+    // this.$store.commit("todo/setAddTaskCount")
+  }
+
+// Remove the listener after handling the event
+
+},
+    changeIntoGroupBy (payload,groupBy) {
+        if (this.localData?.[0]?.tasks?.length>0)
+        {
+          //To groupBy, change the localData
+          this.localData = this.localData.reduce((acc, ele) => {
+            return [...acc, ...ele.tasks];
+          }, []);
+          //insert the newTask
+          if (!this.localData.some(item => item.id === payload.id)) {
+            this.localData.push(payload);
+          }
+          //change the localData into groupBy
+          this.localData=this.$groupBy( this.localData,groupBy)
+         
+        } 
+        else 
+        {
+          this.$nuxt.$emit("refresh-table");
+        }  
+    },
+    edit_UpdateLocalData(payload) {
+          if (this.localData !== null) {
+          this.localData = this.localData.map((items) => {
+            const updatedTasks = items.tasks.map((task) => {
+              if (task.id == payload.id) {
+                return { ...task, ...payload };
+              } else {
+                return task;
+              }
+            });
+            return { ...items, tasks: updatedTasks };
+          });
+        }
+    },
+
     modifyDateFormat(value){
      value.map((item) => {
           item.tasks?.forEach((items)=>{
@@ -559,6 +701,8 @@ export default {
               remainingCount = 0;
             } else {
               Object.assign(tmp, this.localData[i])
+              console.log(tmp)
+              console.log(allTasks[i])
               tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, allTasks[i].tasks?.length))
               this.available_tasks[allTasks[i].title] = tmp.tasks;
               this.localData.length -= 1;
@@ -664,233 +808,6 @@ export default {
       }
 
     },
-    
-    // main class prototype
-    /*columnResize(table) {
-      // console.log(table.rows[0].cells)
-      // if (table.tagName != 'TABLE') return;
-      this.id = table.id;
-
-      // ============================================================
-      // private data
-      var self = this;
-
-      // var dragColumns  = table.rows[0].cells; // first row columns, used for changing of width
-      var dragColumns = table.children[0].children
-      // console.log(dragColumns)
-      if (!dragColumns) return; // return if no table exists or no one row exists
-
-      var dragColumnNo; // current dragging column
-      var dragX; // last event X mouse coordinate
-
-      var saveOnmouseup; // save document onmouseup event handler
-      var saveOnmousemove; // save document onmousemove event handler
-      var saveBodyCursor; // save body cursor property
-
-      var colContent = new Array();
-      for (var i = 0; i < dragColumns.length; i++) {
-        // console.log(dragColumns[i].innerText)
-        colContent[i] = (dragColumns[i].innerText.length*8)+30
-      }
-
-      // ============================================================
-      // methods
-
-      // ============================================================
-      this.preventEvent = function(e) {
-        var ev = e || window.event;
-        if (ev.preventDefault) ev.preventDefault();
-        else ev.returnValue = false;
-        if (ev.stopPropagation)
-          ev.stopPropagation();
-        return false;
-      }
-      this.getWidth = function(x) {
-        if (x.currentStyle)
-          // in IE
-          var y = x.clientWidth - parseInt(x.currentStyle["paddingLeft"]) - parseInt(x.currentStyle["paddingRight"]);
-        // for IE5: var y = x.offsetWidth;
-        else if (window.getComputedStyle)
-          // in Gecko
-          var y = document.defaultView.getComputedStyle(x, null).getPropertyValue("width");
-        return y || 0;
-      }
-
-      // do changes columns widths
-      // returns true if success and false otherwise
-      this.changeColumnWidth = function(no, w) {
-        if (!dragColumns) return false;
-
-        if (no < 0) return false;
-        if (dragColumns.length < no) return false;
-
-        if (parseInt(dragColumns[no].style.width) <= -w) return false;
-        if (dragColumns[no + 1] && parseInt(dragColumns[no + 1].style.width) <= w) return false;
-
-        dragColumns[no].style.width = parseInt(dragColumns[no].style.width) + w + 'px';
-        if (dragColumns[no + 1])
-          dragColumns[no + 1].style.width = parseInt(dragColumns[no + 1].style.width) - w + 'px';
-        
-        let col1key = dragColumns[no].dataset.key
-        let col2key = dragColumns[no + 1].dataset.key
-        let col1 = document.querySelectorAll(`.th[data-key="${col1key}"]`)
-        let col2 = document.querySelectorAll(`.th[data-key="${col2key}"]`)
-
-        // console.log(col1, col2)
-
-        self.resizeNestedCols(col1, col2, no);
-
-        // if (parseInt(dragColumns[no].style.width) < colContent[no] || parseInt(dragColumns[no+1].style.width) < colContent[no]) return false;
-        return true;
-      }
-
-      this.resizeNestedCols = _.debounce(function (col1, col2, no) {
-        // console.log(col1, col2, no)
-        for (var i = 0; i < col1.length; i++) {
-          col1[i].style.width = dragColumns[no].clientWidth + "px"
-          col2[i].style.width = dragColumns[no + 1].clientWidth + "px"
-        }
-      }, 300)
-
-      // ============================================================
-      // do drag column width
-      this.columnDrag = function(e) {
-        var e = e || window.event;
-        var X = e.clientX || e.pageX;
-        
-        if (parseInt(dragColumns[dragColumnNo].style.width) <= colContent[dragColumnNo]) {
-          self.stopColumnDrag(e)
-          if (e.movementX <= 0) {
-            dragColumns[dragColumnNo].style.width = colContent[dragColumnNo]+4+"px"
-            dragColumns[dragColumnNo+1].style.width -= 4+"px"
-          } 
-          console.log('col-1', parseInt(dragColumns[dragColumnNo].style.width), colContent[dragColumnNo])
-        } 
-
-        if (parseInt(dragColumns[dragColumnNo+1].style.width) <= colContent[dragColumnNo+1]) {
-          self.stopColumnDrag(e)
-          if(e.movementX > 0) {
-            dragColumns[dragColumnNo+1].style.width = colContent[dragColumnNo+1]+4+"px"
-            dragColumns[dragColumnNo].style.width -= 4+"px"
-          }
-          console.log('col-2', parseInt(dragColumns[dragColumnNo+1].style.width), colContent[dragColumnNo+1])
-        }
-
-        if (!self.changeColumnWidth(dragColumnNo, X - dragX)) {
-          // stop drag!
-          self.stopColumnDrag(e);
-        }
-
-        dragX = X;
-        // prevent other event handling
-        self.preventEvent(e);
-        // console.log(dragColumnNo, X, dragX)
-        return false;
-      }
-
-      // ============================================================
-      // stops column dragging
-      this.stopColumnDrag = function(e) {
-
-        var ev = e || window.event;
-        ev.stopPropagation()
-        ev.stopImmediatePropagation()
-        // console.log(ev)
-
-        if (!dragColumns) return;
-
-        // restore handlers & cursor
-        document.onmouseup = saveOnmouseup;
-        document.onmousemove = saveOnmousemove;
-        document.body.style.cursor = saveBodyCursor;
-
-        // remember columns widths in cookies for server side
-        var colWidth = '';
-        var separator = '';
-        for (var i = 0; i < dragColumns.length; i++) {
-          colWidth += separator + parseInt(self.getWidth(dragColumns[i]));
-          separator = '+';
-        }
-        // console.log(colWidth)
-
-        self.preventEvent(ev);
-      }
-
-      // ============================================================
-      // init data and start dragging
-      this.startColumnDrag = function(e) {
-        var e = e || window.event;
-        // e.cancelBubble = true
-        // e.preventDefault()
-        e.stopPropagation()
-        e.stopImmediatePropagation()
-        // console.log(e)
-        // if not first button was clicked
-        if (e.button != 0) return;
-
-        // remember dragging object
-        var dragEl = (e.target || e.srcElement).offsetParent.parentElement
-        // dragColumnNo = (e.target || e.srcElement).parentNode.parentNode;
-        dragColumnNo = Array.from(dragEl.parentElement.children).indexOf(dragEl);
-        // dragColumnNo = (e.target || e.srcElement).parentNode.parentNode.cellIndex;
-        dragX = e.clientX || e.pageX;
-
-        // console.log(dragEl, dragColumnNo, dragX)
-        // set up current columns widths in their particular attributes
-        // do it in two steps to avoid jumps on page!
-        var colWidth = new Array();
-        for (var i = 0; i < dragColumns.length; i++)
-          colWidth[i] = parseInt(self.getWidth(dragColumns[i]));
-        for (var i = 0; i < dragColumns.length; i++) {
-          dragColumns[i].width = ""; // for sure
-          dragColumns[i].style.width = colWidth[i] + "px";
-        }
-
-        saveOnmouseup = document.onmouseup;
-        document.onmouseup = self.stopColumnDrag;
-
-        saveBodyCursor = document.body.style.cursor;
-        document.body.style.cursor = 'w-resize';
-
-        // fire!
-        saveOnmousemove = document.onmousemove;
-        document.onmousemove = self.columnDrag;
-
-        self.preventEvent(e);
-      }
-
-      // prepare table header to be draggable
-      // it runs during class creation
-      for (var i = 1; i < dragColumns.length; i++) {
-        let clientw = dragColumns[i].clientWidth
-        dragColumns[i].style.width = clientw + 'px'
-        // console.log(dragColumns[i], clientw)
-
-        dragColumns[i].innerHTML = "<div style='position:relative;height:100%;width:100%;padding:8px 5px;'><div class='resize-drag-handle position-absolute h-100' ></div>"+dragColumns[i].innerHTML+"</div>";
-        // BUGBUG: calculate real border width instead of 5px!!!
-        
-        dragColumns[i].firstChild.firstChild.onmousedown = this.startColumnDrag;
-      }
-
-      // const headElems = document.getElementsByClassName("th")
-      const sorttrig = document.getElementsByClassName('sortingtrigger')
-
-      for (var i = 0; i < sorttrig.length; i++) {
-        // console.log(sorttrig[i])
-        sorttrig[i].addEventListener("click", (e) => {
-          // console.log(e.currentTarget, e.currentTarget.dataset)
-          this.$emit(e.currentTarget.dataset.event, e.currentTarget.dataset.key)
-        })
-      }
-
-    },*/
-    /*resizableColumns() {
-      var table = this.$refs.headrow
-      // console.log(table)
-      if (table.className.match(/resizable/)) {
-        this.resizableTables = this.columnResize(table);
-      }
-    },*/
 
     sectionDragend(newValue){
       // console.log(newValue)
@@ -1030,7 +947,7 @@ export default {
       this.localData= this.localData.map((items)=>{
           const updateTasks=items.tasks.map((task)=>{
             if(task.id==item.id){
-               return { ...task, statusId: status.value, status:{id:status.id,text:status.label}};
+               return { ...task, statusId: status.value, status:{id:status.value,text:status.label}};
             }
             else {
                 return task

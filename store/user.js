@@ -10,11 +10,14 @@ export const state = () => ({
   userInfo:[],
   isAdmin:false,
   groupByValue:"",
-
+  taskCount:0
 
 });
 
 export const getters = {
+  getTaskCount (state) {
+    return state.taskCount
+  },
   getUser(state) {
     return state.user;
   },
@@ -57,9 +60,19 @@ export const getters = {
   getIsAdmin(state) {
     return state.isAdmin
   }
+
 };
 
 export const mutations = {
+  setAddTaskCount (state, payload) {
+    state.taskCount ++
+  },
+  setDeleteTaskCount (state, payload) {
+    state.taskCount--
+  },
+  setTaskCount ( state, payload) {
+    state.taskCount=payload.reduce((acc, td) => acc + td.tasks.length, 0)
+  },
   setGroupBy(state,payload) {
     state.groupByValue=payload
   },
@@ -159,6 +172,19 @@ export const mutations = {
       }  
     }
     state.userTasks=arr
+
+    if(payload.key=="") {
+      state.taskCount= arr?arr.length:0
+      
+    }
+    else {
+      if(arr.length>0){
+        state.taskCount=arr.reduce((acc, td) => acc + td.tasks.length, 0)
+      }
+      else {
+        state.taskCount=0
+      }
+    }
   },
   flatTasks(state, payload) {
     let arr = JSON.parse(JSON.stringify(state.userTasks));
