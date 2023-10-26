@@ -242,20 +242,16 @@ export default {
     },
   },
   created() {
-    this.$nuxt.$on("update_table", async (payload) => {
-      if (this.localData !== null) {
-      this.localData = this.localData.map((items) => {
-          if (items.id == payload.id) {
-            return { ...items, ...payload };
-          } else {
-            return items;
-          }
-      });
-    }
-      });
 
-  },
+  
+  // Register the listener for the "newTask" event
+    this.$nuxt.$on("newTask", this.handleNewTask);
+    this.$nuxt.$on("delete_update_table", this.delete_UpdateLocalData)
+    this.$nuxt.$on("update_table", this.edit_UpdateLocalData)
+ 
+},
   mounted() {
+    
     this.localData = _.cloneDeep(this.tableData)
     this.modifyDateFormat()
 
@@ -313,15 +309,85 @@ export default {
         // this.colWidth = sizes
       }
     })
+  
   },
 
   beforeDestroy(){
-    this.localData = null
+    this.localData = [];
     this.activeItem = {}
-    // console.info("before destroy hook")
+    this.$nuxt.$off("newTask", this.handleNewTask);
+    this.$nuxt.$off("delete_update_table", this.delete_UpdateLocalData)
+    this.$nuxt.$off("update_table", this.edit_UpdateLocalData)
+   
   },
 
   methods: {
+    handleNewTask (payload,param) {
+      if (this.localData.length>0) {
+          this.localData.push(payload);
+        } else {
+          this.$nuxt.$emit("refresh-table");
+        }
+      if(param=="/projects"){
+       this.$store.commit("project/setAddTaskCount")
+       }   
+      if(param.includes("usertasks")){
+      this.$store.commit("user/setAddTaskCount")
+      }   
+  },
+    
+    delete_UpdateLocalData(payload,param) {
+      if(this.localData.length==1){
+        
+        this.$nuxt.$emit("refresh-table");
+
+      }
+      else {
+          this.localData = this.localData.filter(obj => obj.id !== payload.id)
+      }
+      if(param=="/mytasks"){
+          this.$store.commit("todo/setDeleteTaskCount")
+        }
+        if(param=="/tasks"){
+          this.$store.commit("company/setDeleteTaskCount")
+        }
+        if(param.includes("usertasks")){
+          this.$store.commit("user/setDeleteTaskCount")
+        }
+        if(param=="/projects"){
+          this.$store.commit("project/setDeleteTaskCount")
+        }
+        if(param.includes("/projects/")){
+          this.$store.commit("section/setDeleteTaskCount")
+        }
+    },
+    
+    edit_UpdateLocalData(payload) {
+      this.localData = this.localData.map((items) => {
+                if (items.id == payload.id) {
+                  return { ...items, ...payload };
+                } else {
+                  return items;
+                }
+            });
+    },
+  //   handleAddNewTask(payload) {
+  //     console.log(payload)
+  //   if (this.localData != null) {
+  //     let temp = this.localData.filter((item) => item.id === payload.id);
+  //     if (temp && temp.length) {
+  //       return;
+  //     } else {
+  //       if (this.localData.length) {
+  //         this.localData.push(payload);
+  //       } else {
+  //         this.$nuxt.$emit("refresh-table");
+  //       }
+  //     }
+  //   } else {
+  //     this.$nuxt.$emit("refresh-table");
+  //   }
+  // },
     parseDate(dateString, format) {
         return new Date(dateString);
     },
@@ -450,7 +516,7 @@ export default {
     updateStatus(status, item) {
       this.localData=this.localData.map((task)=>{
             if(task.id==item.id){
-               return { ...task, statusId: status.value, status:{id:status.id,text:status.label}};
+               return { ...task, statusId: status.value, status:{id:status.value,text:status.label}};
             }
             else {
                 return task

@@ -335,11 +335,28 @@ export default {
         this.$emit('sectionExpandedEvent', { sectionId: 1 })
       }
     },
+    myTaskGroupBy(newValue){
+      return _.cloneDeep(newValue)
+    },
+    taskGroupBy(newValue){
+      return _.cloneDeep(newValue)
+    },
+    usertaskGroupBy(newValue){
+      return _.cloneDeep(newValue)
+    },
+    singleProjectGroupBy(newValue){
+      return _.cloneDeep(newValue)
+    },
   },
 
   computed: {
     ...mapGetters({
       teamMembers: "user/getTeamMembers",
+      myTaskGroupBy:"todo/getGroupBy",
+      projectGroupBy:"project/getGroupBy",  
+      taskGroupBy:"task/getGroupBy",  
+      usertaskGroupBy:"user/getGroupBy",  
+      singleProjectGroupBy:"section/getGroupBy",  
     }),
 
     /*teamOptions(){
@@ -381,20 +398,10 @@ export default {
 
   },
   created() {
-    this.$nuxt.$on("update_table", async (payload) => {
-      if (this.localData !== null) {
-      this.localData = this.localData.map((items) => {
-        const updatedTasks = items.tasks.map((task) => {
-          if (task.id == payload.id) {
-            return { ...task, ...payload };
-          } else {
-            return task;
-          }
-        });
-        return { ...items, tasks: updatedTasks };
-      });
-    }
-      });
+    // Register the listener for the "newTask" event
+    this.$nuxt.$on("newTask", this.handleNewTask);
+    this.$nuxt.$on("delete_update_table", this.delete_UpdateLocalData)
+    this.$nuxt.$on("update_table", this.edit_UpdateLocalData)
 
   },
   mounted() {
@@ -467,14 +474,149 @@ export default {
   },
 
   beforeDestroy(){
-    this.localData = null
+    this.localData = []
     this.available_tasks = []
     this.activeItem = {}
     // this.resizableTables = []
-    // console.info("before destroy hook")
+    this.$nuxt.$off("delete_update_table", this.delete_UpdateLocalData)
+    this.$nuxt.$off("update_table", this.edit_UpdateLocalData)
+    this.$nuxt.$off("newTask", this.handleNewTask);
   },
 
   methods: {
+
+    delete_UpdateLocalData(payload,param) {
+      if(this.localData.reduce((acc, td) => acc + td.tasks.length, 0)==1){
+        this.$nuxt.$emit("refresh-table");
+      }
+      else {
+        this.localData = this.localData.map((items) => {
+          const updatedTasks=items.tasks.filter(obj=>obj.id!==payload.id)
+            return {...items,tasks:updatedTasks}
+          });
+      }
+      if(param=="/mytasks"){
+          this.$store.commit("todo/setDeleteTaskCount")
+        }
+        if(param=="/tasks"){
+          this.$store.commit("company/setDeleteTaskCount")
+        }
+        if(param.includes("usertasks")){
+          this.$store.commit("user/setDeleteTaskCount")
+        }
+        if(param=="/projects"){
+          this.$store.commit("project/setDeleteTaskCount")
+        }
+        if(param.includes("/projects/")){
+          this.$store.commit("section/setDeleteTaskCount")
+        }
+    },
+    handleNewTask (payload,param){
+
+  if (this.localData.length>0) {
+    
+        if(param=="/mytasks"){
+            if(this.myTaskGroupBy=="") 
+                {
+                    if(this.localData?.[0]?.tasks.length>0)
+                    {
+                      this.localData[0].tasks.push(payload);
+                      
+                    }
+                    else
+                    {
+                      this.$nuxt.$emit("refresh-table");
+                      
+                    }
+                    this.$store.commit("todo/setAddTaskCount")
+            
+                }
+                else 
+                {
+                    this.changeIntoGroupBy(payload,this.myTaskGroupBy)
+                    this.$store.commit("todo/setAddTaskCount")
+                }
+        }
+       if(param=="/tasks"){
+       this.changeIntoGroupBy(payload,this.taskGroupBy)
+       this.$store.commit("company/setAddTaskCount")
+       }   
+       if(param.includes("usertasks")){
+       this.changeIntoGroupBy(payload,this.usertaskGroupBy)
+       this.$store.commit("user/setAddTaskCount")
+       }   
+       if(param=="/projects"){
+       this.changeIntoGroupBy(payload,this.projectGroupBy)
+       this.$store.commit("project/setAddTaskCount")
+       }   
+       if(param.includes("/projects/")){
+        if(this.singleProjectGroupBy=="") 
+                {
+                    if(this.localData?.[0]?.tasks.length>0)
+                    {
+                      this.localData[0].tasks.push(payload);
+                      
+                    }
+                    else
+                    {
+                      this.$nuxt.$emit("refresh-table");
+                    }
+                    this.$store.commit("section/setAddTaskCount")
+                }
+                else 
+                {
+                  this.changeIntoGroupBy(payload,this.singleProjectGroupBy)
+                  this.$store.commit("section/setAddTaskCount")
+                }
+
+       
+       }  
+      //  if (param)
+  }
+  else 
+  {
+    this.$nuxt.$emit("refresh-table");
+    // this.$store.commit("todo/setAddTaskCount")
+  }
+
+// Remove the listener after handling the event
+
+},
+    changeIntoGroupBy (payload,groupBy) {
+        if (this.localData?.[0]?.tasks?.length>0)
+        {
+          //To groupBy, change the localData
+          this.localData = this.localData.reduce((acc, ele) => {
+            return [...acc, ...ele.tasks];
+          }, []);
+          //insert the newTask
+          if (!this.localData.some(item => item.id === payload.id)) {
+            this.localData.push(payload);
+          }
+          //change the localData into groupBy
+          this.localData=this.$groupBy( this.localData,groupBy)
+         
+        } 
+        else 
+        {
+          this.$nuxt.$emit("refresh-table");
+        }  
+    },
+    edit_UpdateLocalData(payload) {
+          if (this.localData !== null) {
+          this.localData = this.localData.map((items) => {
+            const updatedTasks = items.tasks.map((task) => {
+              if (task.id == payload.id) {
+                return { ...task, ...payload };
+              } else {
+                return task;
+              }
+            });
+            return { ...items, tasks: updatedTasks };
+          });
+        }
+    },
+
     modifyDateFormat(value){
      value.map((item) => {
           item.tasks?.forEach((items)=>{
@@ -559,6 +701,8 @@ export default {
               remainingCount = 0;
             } else {
               Object.assign(tmp, this.localData[i])
+              console.log(tmp)
+              console.log(allTasks[i])
               tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, allTasks[i].tasks?.length))
               this.available_tasks[allTasks[i].title] = tmp.tasks;
               this.localData.length -= 1;
@@ -803,7 +947,7 @@ export default {
       this.localData= this.localData.map((items)=>{
           const updateTasks=items.tasks.map((task)=>{
             if(task.id==item.id){
-               return { ...task, statusId: status.value, status:{id:status.id,text:status.label}};
+               return { ...task, statusId: status.value, status:{id:status.value,text:status.label}};
             }
             else {
                 return task

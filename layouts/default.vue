@@ -313,6 +313,7 @@ export default {
   },
   created() {
     this.$root.$on("open-sidebar", (payload) => {
+      console.log(payload)
       this.openSidebar = true;
       this.$store.dispatch("task/setSidebarVisible", true)
       this.scrollId = payload.scrollId;
@@ -331,7 +332,7 @@ export default {
         this.$store.dispatch("task/setSingleTask", {});
         this.$store.commit("task/fetchTeamMember", []);
       } else {
-        if (payload.project[0]?.project?.id) {
+        if (payload.project?.[0]?.project?.id) {
           // this.$store.dispatch("section/fetchProjectSections", {
           //   projectId: payload.project[0].project.id,
           //   filter: "all",
@@ -428,12 +429,12 @@ export default {
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnRUxZcWFRV1FHOWRuamsyIiwic3ViZSI6InJhamVldi5zaGFybWFAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJVU0VSIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY5NDQxNzE3NjQ4NCwiZXhwIjoxNzAyMTkzMTc2NDg0LCJqdGkiOiI3ZGJkMDg3Zi1iNzVhLTRmZjktODU4OS0wOWY4ZjExZjMzODAifQ.vjpNKpncvcpBcoyWEVBHNLN9b_cc1n0u-bDwHgfgQFw"
 
       //free
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJWWW14a2F6cFJqWWRKMFBvIiwic3ViZSI6ImFyaXR6YTNAc2hhcGVkY3YuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJEWE1WeWI4MmtEM2V2QVpFIiwic3ViYnMiOiJGUkVFVFJJQUwiLCJzdWJyIjoiQURNSU4iLCJzdWJjIjoiVW5pdGVkIFN0YXRlcyIsImVudiI6ImRldiIsImlhdCI6MTY3OTYzNzM2MzkxMiwiZXhwIjoxNjg3NDEzMzYzOTEyLCJqdGkiOiJkZGJiMzE1MC04ODkxLTQ5MjAtYTVjYy0yNDBhYTcxZTdhMDQifQ.7Xy5W1dEFUN-R6rHXYL3awJ5QjDa_73uxhGl_nqcvEc"
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJEWE1WeWI4MmtabWV2QVpFIiwic3ViZSI6Imxlb25hbmMwMDIyQGdtYWlsLmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY5ODA3OTAxMzEzOCwiZXhwIjoxNzA1ODU1MDEzMTM4LCJqdGkiOiI4OGJmZTJlMC1jNDY0LTQyZWYtOWE5Yi05M2MzYmJkODc0ODYifQ.mBBvbmhhS1PmUM7SvYlbIp3aeF4RlbscmrXmcWVSQBE"
 
       // Charan (admin)
-      let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQeTdMRGR3cE9xMWUxWUtYIiwic3ViZSI6ImNoYXJhbi5wYWxAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJBRE1JTiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2OTI4NTE5NDE2NzIsImV4cCI6MTcwMDYyNzk0MTY3MiwianRpIjoiMzU2YmM4OTUtNjE3Mi00NjE3LTk2NzEtNWI5NmU0OWIzMGEwIn0.0zMvHg45zgJ6L51qGICZRa31xzA3t9OzyKPXp5YuqTs"
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQeTdMRGR3cE9xMWUxWUtYIiwic3ViZSI6ImNoYXJhbi5wYWxAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJBRE1JTiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2OTI4NTE5NDE2NzIsImV4cCI6MTcwMDYyNzk0MTY3MiwianRpIjoiMzU2YmM4OTUtNjE3Mi00NjE3LTk2NzEtNWI5NmU0OWIzMGEwIn0.0zMvHg45zgJ6L51qGICZRa31xzA3t9OzyKPXp5YuqTs"
 
-      this.$cookies.set(process.env.SSO_COOKIE_NAME, cookie);
+      // this.$cookies.set(process.env.SSO_COOKIE_NAME, cookie);
 
       if (this.$cookies.get(process.env.SSO_COOKIE_NAME)) {
         let jwt = this.$cookies.get(process.env.SSO_COOKIE_NAME);
