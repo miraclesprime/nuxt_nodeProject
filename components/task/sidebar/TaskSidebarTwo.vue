@@ -436,7 +436,7 @@ export default {
         htext = _.truncate(taskData.historyText, {'length': 15})
       }*/
 
-      console.log(updatedvalue)
+      // console.log(updatedvalue)
       
       this.$store.dispatch("task/updateTask", {
         id: this.form.id,

@@ -150,6 +150,7 @@ export default {
   name: 'InboxProject',
   props: {
     project: Object,
+    // commentKey: Number,
   },
 
   data() {
@@ -277,14 +278,6 @@ export default {
       this.editMessage = msg
     })
   },
-
-  // mounted() {
-  //   setTimeout(() => {
-  //     this.$store.dispatch("project/fetchTeamMember", { projectId: this.activeProject?.id }).then(() => {
-  //       this.canDeleteProject();
-  //     })
-  //   }, 2500)
-  // },
 
   methods: {
     validate(name, value) {

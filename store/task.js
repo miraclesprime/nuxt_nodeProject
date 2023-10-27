@@ -503,7 +503,21 @@ export const actions = {
       console.log(e);
     }
   },
-  async fetchTaskCommentReactions(ctx, payload){
+  async addCommentReaction(ctx, payload){
+    try {
+      const res = await this.$axios.post(`/task/${payload.taskCommentId}/reaction`, {
+        reaction: payload.reaction,
+        taskId: payload.taskId,
+        text: payload.text
+      }, {
+        headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
+      })
+      return res.data
+    } catch(e) {
+      console.warn(e);
+    }
+  },
+  async fetchCommentReactions(ctx, payload){
     try {
       const react = await this.$axios.get('/task/' + payload.id + "/reactions", {
         headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
@@ -513,7 +527,7 @@ export const actions = {
         return react.data.data
       }
     } catch(e) {
-      console.log(e);
+      console.warn(e);
     }
   },
 };
