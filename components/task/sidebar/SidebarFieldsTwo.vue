@@ -15,19 +15,19 @@
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Project</label></div>
-        <div class="col-5">
+        <div class="col-6">
           <select-two :options="companyProjects" :value="form.projectId" title="Project" search icon="briefcase-solid" @change="changeProject"></select-two>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Section</label></div>
-        <div class="col-5">
+        <div class="col-6">
           <section-select-two :options="sectionOpts" :value="form.sectionId" icon="menu-hamburger" title="Section" search :disabled="!form.projectId" @change="updateField('Section', 'sectionId', $event.value, $event.label)" ></section-select-two>
         </div>
       </div>
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Department</label></div>
-        <div class="col-5">
+        <div class="col-6">
           <select-two :options="departments" :value="form.departmentId" icon="projects" title="Department" @change="updateField('Department','departmentId', $event.value, $event.label)"></select-two>
         </div>
       </div>
