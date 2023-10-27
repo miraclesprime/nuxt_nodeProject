@@ -6,9 +6,9 @@
             <div id="project-id-content" class="project-id-content position-relative " :style="{ 'width': contentWidth }">
                 <div class="d-flex justify-center p-1">
                     <div class="border-gray2 shape-rounded py-1" style="min-width: 300px; max-width:400px;">
-                        <bib-input type="file" ref="csvImport" @files-dropped="onFileInput" multiple="false" variant="accepted" iconLeft="upload" placeholder="Click to upload"></bib-input>
-                        <div class="mx-1 mt-1 align-center">
-                          <bib-button :disabled="loading" variant="secondary" label="Import CSV" @click="checkUser"></bib-button> <bib-spinner v-if="loading" :scale="2" ></bib-spinner>
+                        <bib-input type="file" ref="csvImport" @files-dropped="onFileInput" multiple="false" variant="accepted" iconLeft="upload" placeholder="Select file to upload"></bib-input>
+                        <div v-show="files.length > 0" class="mx-1 mt-1 align-center">
+                          <bib-button :disabled="loading" variant="primary" label="Import CSV" @click="checkUser"></bib-button> <bib-spinner v-if="loading" :scale="2" ></bib-spinner>
                         </div>
                     </div>
                 </div>
@@ -39,7 +39,7 @@
                 
               </template> -->
                 <template slot="content">
-                    <template v-if="!importfinish">
+                    <template v-if="!importfinish && !importError && !dupProject">
                         <h4>Import will be done in steps</h4>
                         <div v-for="item in steps" class="align-center gap-05">
                             <div class="width-105 height-105 align-center justify-center">
@@ -55,19 +55,33 @@
                             <p v-for="(mm, index) in missingMembers"> {{index+1}}. {{mm}}</p>
                         </div>
                     </template>
-                    
+
+                    <div v-show="importError" class="shape-rounded align-center gap-05 border-danger text-danger p-05">
+                      <bib-icon icon="close" variant="danger"></bib-icon>
+                        {{importError}}
+                    </div>
+
+                    <div v-show="dupProject && !importCompleteMsg" class="shape-rounded align-center gap-05 border-orange text-orange p-05">
+                      <bib-icon icon="urgent" variant="orange"></bib-icon>
+                        {{dupProject}}
+                    </div>
+
                     <div v-show="importfinish" class="shape-rounded align-center gap-05 border-success text-success p-05">
                       <bib-icon icon="tick" variant="success"></bib-icon>
-                      Import finished successfully
+                        {{importCompleteMsg}}
                     </div>
                 </template>
                 <template slot="footer">
-                    <div v-show="missingMembers.length > 0 && steps[0].progress == 'done'" class="justify-between">
+                    <div v-show="missingMembers.length > 0 && steps[0].progress == 'done' && !dupProject" class="justify-between">
                         <bib-button label="Add users" variant="secondary" class="mr-1" pill @click="closeModal"></bib-button>
                         <bib-button label="Continue" variant="primary" pill @click="importProject"></bib-button>
                     </div>
+                    <div v-show="dupProject && !importfinish && !importCompleteMsg">
+                        <bib-button label="Cancel" variant="secondary" class="mr-1" pill @click="closeModal"></bib-button>
+                        <bib-button label="Continue" variant="primary" pill @click="reimportCSV"></bib-button>
+                    </div>
                     <div v-show="importfinish">
-                        <bib-button label="Finish" variant="success" pill @click="()=>{$router.push('/projects')}"></bib-button>
+                        <bib-button label="Finish" variant="success" pill @click="finishImport"></bib-button>
                     </div>
                 </template>
             </bib-modal-wrapper>
@@ -75,7 +89,7 @@
             <!-- notification -->
             <bib-popup-notification-wrapper>
                 <template #wrapper>
-                    <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
+                    <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" :autohide="4500">
                     </bib-popup-notification>
                 </template>
             </bib-popup-notification-wrapper>
@@ -96,6 +110,7 @@ export default {
             popupMessages: [],
             alertDialog: false,
             alertMsg: "",
+            files: [],
 
             plusButton: {
                 show: true,
@@ -114,6 +129,10 @@ export default {
                 {id: 3, label: "Importing Subtasks", progress: "pending", variant:"gray5"},
                 {id: 4, label: "Importing Tags", progress: "pending", variant:"gray5"},
                 ],
+            importError: false,
+            dupProject: false,
+            duplicateProjId: null,
+            importCompleteMsg: null
         }
     },
 
@@ -127,14 +146,39 @@ export default {
 
     methods: {
         async onFileInput(file) {
-          // console.log(file) 
+            // let csvfile = this.$refs.csvImport.filesUploaded;
+            // console.log(file, csvfile) 
+
+            if (file.length > 0) {
+                if (file[0]?.type != 'text/csv') {
+                    this.popupMessages.push({text: "Only csv allowed", variant: "orange"})
+                    this.files = []
+                    return
+                } 
+                if (file[0]?.size > 2000000) {
+                    this.popupMessages.push({text: "File size must be less than 2mb", variant: "orange"})
+                    this.files = []
+                    return
+                }
+            }
+            this.files = file
         },
 
 
         closeModal(){
-          this.importmodal = false
-          this.missingMembers = []
-          this.importfinish = false
+            this.importmodal = false
+            this.missingMembers = []
+            this.importfinish = false
+            this.importError = false
+            this.steps = [
+                    {id: 0, label: "Analyzing Users", progress: "progress", variant:"orange"},
+                    {id: 1, label: "Importing Project", progress: "pending", variant:"gray5"},
+                    {id: 2, label: "Importing Section/Tasks", progress: "pending", variant:"gray5"},
+                    {id: 3, label: "Importing Subtasks", progress: "pending", variant:"gray5"},
+                    {id: 4, label: "Importing Tags", progress: "pending", variant:"gray5"},
+                    ]
+            this.files = []
+            this.$refs.csvImport.filesUploaded = []
         },
 
         async checkUser() {
@@ -158,14 +202,26 @@ export default {
 
               this.steps[0].progress = "done"
               this.steps[0].variant = "success"
-            } else {
+                this.userList = await users?.data?.data;
+                return false
+            } 
+            if (users.data.statusCode == 201) {
+                if (users.data.importError == "duplicate-project") {
+                    this.duplicateProjId = users.data.projectId,
+                    this.dupProject = "This project already exists. Continue will overwrite the project data."
+                    return
+                } else {
+                    this.importError = users.data.message
+                    return false
+                }
+            }
+             
               this.popupMessages.push({text: "Some error occured", variant: "danger"})
               // this.loading = false
               this.steps[0].progress = "error"
               this.steps[0].variant = "danger"
-            }
+            
 
-            this.userList = await users?.data?.data;
         },
 
         async importProject(){
@@ -263,6 +319,7 @@ export default {
               // this.missingMembers = []
                 this.steps[4].progress = "done"
                 this.steps[4].variant = "success"
+                this.importCompleteMsg = 'Imported Project Successfully!'
                 this.importfinish = true
             } else {
               this.popupMessages.push({text: "Some error occured", variant: "danger"})
@@ -270,6 +327,32 @@ export default {
               this.steps[4].progress = "error"
               this.steps[4].variant = "danger"
             }
+        },
+
+        async reimportCSV(){
+
+            let file = this.$refs.csvImport.filesUploaded;
+
+            let formdata = new FormData();
+            formdata.append('file', file[0])
+            formdata.append('projectId', Number(this.duplicateProjId))
+
+            let res = await this.$axios.post("/import/re-import", formdata, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                }
+            })
+
+            if(res.data.statusCode == 200) {
+                this.importCompleteMsg = 'Re-Imported Project Successfully!'
+                this.importfinish = true;
+            } 
+        },
+
+        finishImport(){
+            this.closeModal()
+            this.$router.push('/projects')
         }
 
     }
