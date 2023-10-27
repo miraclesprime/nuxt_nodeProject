@@ -137,11 +137,9 @@ export default {
     },
 
     computed: {
-
         ...mapGetters({
             appMembers: "user/getAppMembers",
         }),
-
     },
 
     methods: {
@@ -163,7 +161,6 @@ export default {
             }
             this.files = file
         },
-
 
         closeModal(){
             this.importmodal = false
@@ -221,7 +218,6 @@ export default {
               this.steps[0].progress = "error"
               this.steps[0].variant = "danger"
             
-
         },
 
         async importProject(){
@@ -299,7 +295,6 @@ export default {
               this.steps[3].progress = "error"
               this.steps[3].variant = "danger"
             }
-
         },
 
         async importTags(data) {
@@ -353,7 +348,7 @@ export default {
         finishImport(){
             this.closeModal()
             this.$router.push('/projects')
-        }
+        },
 
     }
 }
