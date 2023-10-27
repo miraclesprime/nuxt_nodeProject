@@ -13,26 +13,7 @@
                     </div>
                 </div>
             </div>
-            <!-- <div class="row">
-                <div v-if="appMembers.length > 0" class="col-4">
-                    <h3>Users in Central Biztree</h3>
-                    <ol>
-                        <li v-for="(user, index) in appMembers">{{user.label}} ({{user.email}})</li>
-                    </ol>
-                </div>
-                <div v-if="userList.length > 0" class="col-4">
-                    <h3>Users from Asana Project</h3>
-                    <ol>
-                        <li v-for="(user, index) in userList">{{user}}</li>
-                    </ol>
-                </div>
-                <div v-if="missingMembers.length > 0" class="col-4">
-                    <h3>Missing members from import</h3>
-                    <ol>
-                        <li v-for="(mm, index) in missingMembers">{{mm}}</li>
-                    </ol>
-                </div>
-            </div> -->
+            
             <!-- modal -->
             <bib-modal-wrapper v-if="importmodal" size="xl" title="Import result" @close="closeModal">
               <!-- <template slot="header">
