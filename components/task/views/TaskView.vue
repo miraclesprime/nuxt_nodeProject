@@ -987,7 +987,8 @@ export default {
     filterView($event) {
       this.filterData=$event
       this.$store.commit('task/setFilterView', {filter:$event})
-      this.$store.commit("section/getFilterSections",{filter:$event, groupBy:this.groupby})
+      this.updateKey()
+      // this.$store.commit("section/getFilterSections",{filter:$event, groupBy:this.groupby})
       // this.loading = true;
       // if ($event == "complete") {
       //   this.$store

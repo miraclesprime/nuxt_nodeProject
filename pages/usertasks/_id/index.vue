@@ -330,7 +330,7 @@ export default {
       })
 
     if(response.data.statusCode == 200) {
-      store.commit('user/setInitialUserTasks', {initial:response.data.data});
+      // store.commit('user/setInitialUserTasks', {initial:response.data.data});
       store.commit('user/setFetchUserTasks', {data:response.data.data, filter: store.getters['task/getFilterView'], key:store.getters["user/getGroupBy"]})
 
       // return { localData: response.data.data };
@@ -647,7 +647,8 @@ export default {
     async filterView($event) {
       this.filterData=$event
       this.$store.commit('task/setFilterView', {filter:$event})
-      this.$store.commit("user/getFilterUserTasks",{filter:$event, groupBy:this.groupBy})
+      this.updateKey()
+      // this.$store.commit("user/getFilterUserTasks",{filter:$event, groupBy:this.groupBy})
     
     },
 

@@ -258,7 +258,7 @@ export default {
         field.header_icon.isActive = false;
       }
     }
-    this.$store.dispatch("company/fetchInitialCompanyTasks",{filter:'all'})
+    // this.$store.dispatch("company/fetchInitialCompanyTasks",{filter:'all'})
     this.$store.commit('task/setGroupBy',"department")
     // this.updateKey()
       setTimeout(() => {
@@ -584,7 +584,8 @@ export default {
 
     async filterView($event) {
       this.$store.commit('task/setFilterView', {filter:$event})
-      this.$store.commit("company/getFilterTasks",{filter:$event, groupBy:this.group})
+      this.updateKey()
+      // this.$store.commit("company/getFilterTasks",{filter:$event, groupBy:this.group})
     },
 
     checkActive() {

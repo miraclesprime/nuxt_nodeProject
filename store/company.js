@@ -95,34 +95,34 @@ export const mutations = {
   setSortOrder(state, payload){
     state.sortOrder = payload
   },
-  getFilterTasks(state,payload){
-    let arr=[]
-    arr=state.initialAllTasks
-   if(payload.filter=="incomplete")
-   {
-     arr=arr.filter((item)=>item.statusId!==5)
+  // getFilterTasks(state,payload){
+  //   let arr=[]
+  //   arr=state.initialAllTasks
+  //  if(payload.filter=="incomplete")
+  //  {
+  //    arr=arr.filter((item)=>item.statusId!==5)
      
-       arr=this.$groupBy(arr,payload.groupBy)
+  //      arr=this.$groupBy(arr,payload.groupBy)
      
-   }
+  //  }
 
-   if(payload.filter=="complete")
-   {
-     arr=arr.filter((item)=>item.statusId==5)
+  //  if(payload.filter=="complete")
+  //  {
+  //    arr=arr.filter((item)=>item.statusId==5)
      
-       arr=this.$groupBy(arr,payload.groupBy)
+  //      arr=this.$groupBy(arr,payload.groupBy)
      
-   }
-   if(payload.filter=="all")
-   {
+  //  }
+  //  if(payload.filter=="all")
+  //  {
     
-       arr=this.$groupBy(arr,payload.groupBy)
+  //      arr=this.$groupBy(arr,payload.groupBy)
     
-   }
+  //  }
 
-    state.companyTasks=arr
-    state.taskCount=arr.reduce((acc, td) => acc + td.tasks.length, 0)
-  },
+  //   state.companyTasks=arr
+  //   state.taskCount=arr.reduce((acc, td) => acc + td.tasks.length, 0)
+  // },
   
   groupTasks(state, payload) {
     let arr = state.companyTasks
@@ -514,6 +514,7 @@ export const actions = {
     });
 
     ctx.commit('setCompanyTasks', res.data);
+    ctx.commit('setTaskCount',res.data)
     ctx.commit('groupTasks', payload)
     return res.data
   },

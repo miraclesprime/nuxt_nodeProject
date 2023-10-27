@@ -225,7 +225,7 @@ export default {
         field.header_icon.isActive = false;
       }
     }
-    this.$store.dispatch("todo/setMyfetchTodos")
+    // this.$store.dispatch("todo/setMyfetchTodos")
       setTimeout(() => {
         this.gridType=this.grid
       }, 300);
@@ -773,7 +773,14 @@ export default {
 
     filterView($event) {
       this.$store.commit('task/setFilterView', {filter:$event})
-      this.$store.commit("todo/getFilterMyTasks",{filter:$event, groupBy:this.groupby})
+      this.$store.dispatch("todo/fetchTodos", { filter: $event,sName:this.groupby})
+      // this.$store.dispatch("todo/fetchTodos", { filter: this.filterViews,sName:this.groupby}).then((res) => {
+      //   if (res.statusCode == 200) {
+      //     this.key += 1
+      //     this.templateKey += 1
+      //   }
+      // })
+      // this.$store.commit("todo/getFilterMyTasks",{filter:$event, groupBy:this.groupby})
 
     },
 
