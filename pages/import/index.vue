@@ -42,14 +42,14 @@
                         {{importError}}
                     </div>
 
-                    <div v-show="dupProject" class="shape-rounded align-center gap-05 border-orange text-orange p-05">
+                    <div v-show="dupProject && !importCompleteMsg" class="shape-rounded align-center gap-05 border-orange text-orange p-05">
                       <bib-icon icon="urgent" variant="orange"></bib-icon>
                         {{dupProject}}
                     </div>
 
                     <div v-show="importfinish" class="shape-rounded align-center gap-05 border-success text-success p-05">
                       <bib-icon icon="tick" variant="success"></bib-icon>
-                      Import finished successfully
+                      {{importCompleteMsg}}
                     </div>
                 </template>
                 <template slot="footer">
@@ -57,7 +57,7 @@
                         <bib-button label="Add users" variant="secondary" class="mr-1" pill @click="closeModal"></bib-button>
                         <bib-button label="Continue" variant="primary" pill @click="importProject"></bib-button>
                     </div>
-                    <div v-show="dupProject && !importfinish">
+                    <div v-show="dupProject && !importfinish && !importCompleteMsg">
                         <bib-button label="Cancel" variant="secondary" class="mr-1" pill @click="closeModal"></bib-button>
                         <bib-button label="Continue" variant="primary" pill @click="reimportCSV"></bib-button>
                     </div>
@@ -112,6 +112,8 @@ export default {
                 ],
             importError: false,
             dupProject: false,
+            duplicateProjId: null,
+            importCompleteMsg: null
         }
     },
 
@@ -186,6 +188,7 @@ export default {
             } 
             if (users.data.statusCode == 201) {
                 if (users.data.importError == "duplicate-project") {
+                    this.duplicateProjId = users.data.projectId
                     this.dupProject = "This project already exists. Continue will overwrite the project data."
                     return
                 } else {
@@ -297,6 +300,7 @@ export default {
               // this.missingMembers = []
                 this.steps[4].progress = "done"
                 this.steps[4].variant = "success"
+                this.importCompleteMsg = 'Imported Project Successfully!'
                 this.importfinish = true
             } else {
               this.popupMessages.push({text: "Some error occured", variant: "danger"})
@@ -305,8 +309,24 @@ export default {
               this.steps[4].variant = "danger"
             }
         },
-        reimportCSV(){
-            alert("re import")
+        async reimportCSV(){
+            let file = this.$refs.csvImport.filesUploaded;
+
+            let formdata = new FormData();
+            formdata.append('file', file[0])
+            formdata.append('projectId', Number(this.duplicateProjId))
+
+            let res = await this.$axios.post("/import/re-import", formdata, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                }
+            })
+
+            if(res.data.statusCode == 200) {
+                this.importCompleteMsg = 'Re-Imported Project Successfully!'
+                this.importfinish = true;
+            } 
         },
         finishImport(){
             this.closeModal()
