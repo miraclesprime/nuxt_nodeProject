@@ -836,10 +836,11 @@ export const actions = {
     const res = await this.$axios.$get(`/project/company/all`, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-        'Filter': payload ? payload : 'all'
+        'Filter': payload ? payload.filter : 'all'
       }
     });
     ctx.commit('fetchProjects', res.data);
+    ctx.commit('setTaskCount',res.data)
     return res.data;
   },
   async fetchInitialProjects(ctx, payload) {
@@ -1219,6 +1220,7 @@ export const actions = {
 
   setProjects(ctx, payload) {
     ctx.commit('fetchProjects', payload)
+    ctx.commit('setTaskCount',payload)
   },
 
   async fetchCommentReactions(ctx, payload){
