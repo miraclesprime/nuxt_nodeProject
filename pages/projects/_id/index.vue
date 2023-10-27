@@ -165,7 +165,8 @@ export default {
         favProjects: "project/getFavProjects",
         user2: "user/getUser2",
         filterViews :'task/getFilterView', 
-        grid:"project/getGridType"
+        grid:"project/getGridType",
+        taskcount:"section/getTaskCount"
 
     }),
 
@@ -186,12 +187,16 @@ export default {
         return { variant: "gray5", text: "Add to favorites", status: false }
       }
     },
-    taskcount(){
-      return this.projectSections.reduce((acc, td) => acc + td.tasks.length, 0)
-    },
+    // taskcount(){
+    //   return this.projectSections.reduce((acc, td) => acc + td.tasks.length, 0)
+    // },
 
   },
-
+  watch:{
+    taskcount(newValue){
+      return _.cloneDeep(newValue)
+    },
+  },
   created() {
     this.$nuxt.$on("change-grid-type", (type) => {
       this.gridType = type;
@@ -257,6 +262,7 @@ try {
       // const newUrl = locationHref.split(`/${this.$route.params.id}`)[0] + `/${hexEncoded}`
       // history.pushState(null, null, newURL);
       this.$store.commit("task/setExpandVisible",true);
+      this.$store.commit('section/setGroupBy',"")
       let p = JSON.parse(JSON.stringify(this.project))
 
       // this.$axios.get(`project/${this.$route.params.id}`, {
@@ -295,6 +301,8 @@ try {
 
   beforeDestroy(){
     // console.info("before destroy hook");
+    this.project = {}
+    this.userProj = {}
     this.$store.dispatch('project/setSingleProject', {})
   },
 

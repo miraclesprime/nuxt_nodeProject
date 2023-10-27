@@ -42,7 +42,9 @@
                         {{importError}}
                     </div>
 
+
                     <div v-show="dupProject && !importCompleteMsg" class="shape-rounded align-center gap-05 border-orange text-orange p-05">
+
                       <bib-icon icon="urgent" variant="orange"></bib-icon>
                         {{dupProject}}
                     </div>
@@ -57,6 +59,7 @@
                         <bib-button label="Add users" variant="secondary" class="mr-1" pill @click="closeModal"></bib-button>
                         <bib-button label="Continue" variant="primary" pill @click="importProject"></bib-button>
                     </div>
+
                     <div v-show="dupProject && !importfinish && !importCompleteMsg">
                         <bib-button label="Cancel" variant="secondary" class="mr-1" pill @click="closeModal"></bib-button>
                         <bib-button label="Continue" variant="primary" pill @click="reimportCSV"></bib-button>
@@ -114,6 +117,7 @@ export default {
             dupProject: false,
             duplicateProjId: null,
             importCompleteMsg: null
+
         }
     },
 
@@ -309,6 +313,7 @@ export default {
               this.steps[4].variant = "danger"
             }
         },
+
         async reimportCSV(){
             let file = this.$refs.csvImport.filesUploaded;
 
@@ -327,6 +332,7 @@ export default {
                 this.importCompleteMsg = 'Re-Imported Project Successfully!'
                 this.importfinish = true;
             } 
+
         },
         finishImport(){
             this.closeModal()

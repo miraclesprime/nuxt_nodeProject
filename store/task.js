@@ -10,7 +10,9 @@ export const state = () => ({
   sidebarVisible: false,
   expandVisible:true,
   filterView:"all",
-  gridType:"list"
+  gridType:"list",
+  groupByValue:"department",
+
 });
 
 export const getters = {
@@ -57,11 +59,19 @@ export const getters = {
   getGridType(state){
 
     return state.gridType
-  }
+  },
+  getGroupBy (state) {
+    return state.groupByValue 
+  },
+ 
 
 };
 
 export const mutations = {
+
+  setGroupBy(state,payload) {
+    state.groupByValue=payload
+  },
   gridType(state,payload){
     state.gridType=payload.gridType
   },
@@ -208,9 +218,10 @@ export const actions = {
   },
 
   async updateTask(ctx, payload) {
-    if(payload.title == "") {
+    // console.log(payload)
+    /*if(payload.title == "") {
       throw new Error("Task can't have empty Value")
-    }
+    }*/
     const res = await this.$axios.$put("/task", payload, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
@@ -491,5 +502,32 @@ export const actions = {
     } catch (e) {
       console.log(e);
     }
-  }
+  },
+  async addCommentReaction(ctx, payload){
+    try {
+      const res = await this.$axios.post(`/task/${payload.taskCommentId}/reaction`, {
+        reaction: payload.reaction,
+        taskId: payload.taskId,
+        text: payload.text
+      }, {
+        headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
+      })
+      return res.data
+    } catch(e) {
+      console.warn(e);
+    }
+  },
+  async fetchCommentReactions(ctx, payload){
+    try {
+      const react = await this.$axios.get('/task/' + payload.id + "/reactions", {
+        headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
+       })
+      // console.log(react.data)
+      if (react.data.statusCode == 200) {
+        return react.data.data
+      }
+    } catch(e) {
+      console.warn(e);
+    }
+  },
 };

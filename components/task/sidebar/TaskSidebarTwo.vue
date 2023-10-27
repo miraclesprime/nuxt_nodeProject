@@ -374,7 +374,7 @@ export default {
     createTask(taskform) {
 
       if (this.error == "valid") {
-        this.loading = true
+        // this.loading = true
 
         let user;
         if (!taskform.userId || taskform.userId != "") {
@@ -395,8 +395,8 @@ export default {
         }
 
         this.$store.dispatch("task/createTask", {
-          "sectionId": this.$route.params.id ? "_section" + this.$route.params.id : taskform.sectionId,
-          "projectId": Number(this.$route.params.id || taskform.projectId),
+          "sectionId": this.$route.fullPath.includes("usertasks")?taskform.sectionId:(this.$route.params.id ? "_section" + this.$route.params.id : taskform.sectionId),
+          "projectId": this.$route.fullPath.includes("usertasks")?taskform.projectId:Number(this.$route.params.id || taskform.projectId),
           "title": this.form.title,
           "description": taskform.description,
           "startDate": taskform.startDate,
@@ -407,12 +407,14 @@ export default {
           "statusId": taskform.statusId,
           user,
           "text": `task "${this.form.title}" created`,
-          "mode": this.$route.params.id ? "project" : null
+          "mode": this.$route.fullPath.includes("usertasks")?null:(this.$route.params.id ? "project" : null),
         }).then((task) => {
+          this.$nuxt.$emit("newTask",task.data,this.$route.fullPath)
+          // this.$nuxt.$emit("add_newTask_table",task.data);
           this.$store.dispatch("task/setSingleTask", task.data)
-          this.$emit("update-key")
-          this.$nuxt.$emit("update-key","create")
-          this.loading = false
+          // this.$emit("update-key")
+          // this.$nuxt.$emit("update-key","create")
+          // this.loading = false
         }).catch(e => {
           console.warn(e)
           this.loading = false
@@ -421,8 +423,8 @@ export default {
     },
 
     updateTask(taskData) {
-      let updata = { [taskData.field]: taskData.value }
       let updatedvalue = taskData.value
+      let updata = { [taskData.field]: updatedvalue }
       let projectId = null
       let htext = null
 
@@ -430,11 +432,11 @@ export default {
         updatedvalue = dayjs(taskData.value).format('DD MMM YYYY')
       }
 
-      if (taskData.name == "Description") {
+      /*if (taskData.name == "Description") {
         htext = _.truncate(taskData.historyText, {'length': 15})
-      }
+      }*/
 
-      console.log(htext)
+      // console.log(updatedvalue)
       
       this.$store.dispatch("task/updateTask", {
         id: this.form.id,
@@ -443,9 +445,11 @@ export default {
         text: htext || taskData.historyText || taskData.value,
       })
         .then((u) => {
+          this.$nuxt.$emit("update_table",u)
           //  this.$store.dispatch("task/setSingleTask", u)
           //  this.$nuxt.$emit("update-key")
           this.reloadHistory += 1
+          // console.info(u)
         })
         .catch(e => {
           console.log(e)
@@ -596,7 +600,7 @@ export default {
       this.$store.dispatch('task/updateTaskStatus', this.currentTask)
         .then((d) => {
           this.loading = false
-          this.$nuxt.$emit("update-key")
+          this.$nuxt.$emit("update_table",d)
           this.$store.dispatch("task/setSingleTask", d)
           this.reloadComments += 1
         }).catch(e => {
@@ -605,7 +609,7 @@ export default {
         })
     },
     deleteTask(task) {
-      if (task) {
+      if (task) { 
         this.$store.dispatch("task/deleteTask", task)
         .then(t => {
           if (t.statusCode == 200) {
@@ -711,7 +715,7 @@ export default {
         .then(res => {
           // console.log(res)
           this.getTags()
-          this.$nuxt.$emit("update-key","tagStatus")
+          // this.$nuxt.$emit("update-key","tagStatus")
         })
         .catch(e => console.error(e))
       } else {
@@ -734,7 +738,7 @@ export default {
               }).then((res) => {
                 // console.log(res)
                 this.getTags()
-                this.$nuxt.$emit("update-key")
+                // this.$nuxt.$emit("update-key")
               }).catch(e=>console.error(e))
             } else {
               console.warn("error creating tag")
@@ -756,9 +760,13 @@ export default {
       }).then(res => {
         console.log(res.data.message)
         this.getTags()
-        this.$nuxt.$emit("update-key","tagStatus")
+        // this.$nuxt.$emit("update-key","tagStatus")
       }).catch(e => console.warn(e))
     },
+    beforeDestroy(){
+    this.$nuxt.$off("update_table");
+    this.$nuxt.$off("newTask");
+  },
   },
 };
 

@@ -10,11 +10,14 @@ export const state = () => ({
   userInfo:[],
   isAdmin:false,
   groupByValue:"",
-
+  taskCount:0
 
 });
 
 export const getters = {
+  getTaskCount (state) {
+    return state.taskCount
+  },
   getUser(state) {
     return state.user;
   },
@@ -57,9 +60,19 @@ export const getters = {
   getIsAdmin(state) {
     return state.isAdmin
   }
+
 };
 
 export const mutations = {
+  setAddTaskCount (state, payload) {
+    state.taskCount ++
+  },
+  setDeleteTaskCount (state, payload) {
+    state.taskCount--
+  },
+  setTaskCount ( state, payload) {
+    state.taskCount=payload.reduce((acc, td) => acc + td.tasks.length, 0)
+  },
   setGroupBy(state,payload) {
     state.groupByValue=payload
   },
@@ -71,69 +84,69 @@ export const mutations = {
   setUserForTask(state,payload) {
     state.userInfo=payload
   },
-  updateFetchUserTasks(state,payload) {
-    let userTasks=state.userTasks
-    let selectedTask=payload.data
-    if(payload.createORupdate=="create"){
-      if (!state.initialData.some(item => item.id === selectedTask.id)) {
-        state.initialData.push(selectedTask);
-      }
-      let arr=[]
-      arr=state.initialData
-      if(payload.filter=="incomplete")
-      {
-        arr=arr.filter((item)=>item.statusId!==5)
-        if(payload.key!=""){
-          arr=this.$groupBy(arr,payload.key)
-        }  
-      }
+  // updateFetchUserTasks(state,payload) {
+  //   let userTasks=state.userTasks
+  //   let selectedTask=payload.data
+  //   if(payload.createORupdate=="create"){
+  //     if (!state.initialData.some(item => item.id === selectedTask.id)) {
+  //       state.initialData.push(selectedTask);
+  //     }
+  //     let arr=[]
+  //     arr=state.initialData
+  //     if(payload.filter=="incomplete")
+  //     {
+  //       arr=arr.filter((item)=>item.statusId!==5)
+  //       if(payload.key!=""){
+  //         arr=this.$groupBy(arr,payload.key)
+  //       }  
+  //     }
   
-      if(payload.filter=="complete")
-      {
-        arr=arr.filter((item)=>item.statusId==5)
-        if(payload.key!=""){
-          arr=this.$groupBy(arr,payload.key)
-        }  
-      }
-      if(payload.filter=="all")
-      {
-        if(payload.key!=""){
-          arr=this.$groupBy(arr,payload.key)
-        }  
-      }
-      state.userTasks=arr
+  //     if(payload.filter=="complete")
+  //     {
+  //       arr=arr.filter((item)=>item.statusId==5)
+  //       if(payload.key!=""){
+  //         arr=this.$groupBy(arr,payload.key)
+  //       }  
+  //     }
+  //     if(payload.filter=="all")
+  //     {
+  //       if(payload.key!=""){
+  //         arr=this.$groupBy(arr,payload.key)
+  //       }  
+  //     }
+  //     state.userTasks=arr
      
-    }
-    else{
-      state.initialData = state.initialData.map((item) => {
-        if (item.id === selectedTask.id) {
-          return selectedTask;
-        }
-        return item;
-      });
-      if(userTasks[0]?.tasks){
-        let sectionID, taskID;
-        state.userTasks.forEach((section, section_idx) => {
-            section.tasks.forEach((task, task_idx) => {
-            if (task.id === selectedTask.id) {
-              sectionID = section_idx;
-              taskID = task_idx;
-            }
-          });   
-        });
-        state.userTasks[sectionID].tasks[taskID] = selectedTask;
-      }
-      else {
-        state.userTasks = state.userTasks.map((item) => {
-          if (item.id === selectedTask.id) {
-            return selectedTask;
-          }
-          return item;
-        });
-      }
-    } 
+  //   }
+  //   else{
+  //     state.initialData = state.initialData.map((item) => {
+  //       if (item.id === selectedTask.id) {
+  //         return selectedTask;
+  //       }
+  //       return item;
+  //     });
+  //     if(userTasks[0]?.tasks){
+  //       let sectionID, taskID;
+  //       state.userTasks.forEach((section, section_idx) => {
+  //           section.tasks.forEach((task, task_idx) => {
+  //           if (task.id === selectedTask.id) {
+  //             sectionID = section_idx;
+  //             taskID = task_idx;
+  //           }
+  //         });   
+  //       });
+  //       state.userTasks[sectionID].tasks[taskID] = selectedTask;
+  //     }
+  //     else {
+  //       state.userTasks = state.userTasks.map((item) => {
+  //         if (item.id === selectedTask.id) {
+  //           return selectedTask;
+  //         }
+  //         return item;
+  //       });
+  //     }
+  //   } 
   
-  },
+  // },
   setFetchUserTasks(state,payload) {
       let arr=[]
       arr=payload.data
@@ -159,6 +172,19 @@ export const mutations = {
       }  
     }
     state.userTasks=arr
+
+    if(payload.key=="") {
+      state.taskCount= arr?arr.length:0
+      
+    }
+    else {
+      if(arr.length>0){
+        state.taskCount=arr.reduce((acc, td) => acc + td.tasks.length, 0)
+      }
+      else {
+        state.taskCount=0
+      }
+    }
   },
   flatTasks(state, payload) {
     let arr = JSON.parse(JSON.stringify(state.userTasks));
@@ -939,7 +965,7 @@ async setFetchUserTasks (ctx,payload) {
     });
    
     if(res.data.statusCode==200){
-      ctx.commit('setInitialUserTasks', {initial:res.data.data});
+      // ctx.commit('setInitialUserTasks', {initial:res.data.data});
       return res.data.data
     }
   

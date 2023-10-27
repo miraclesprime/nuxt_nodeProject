@@ -7,6 +7,9 @@ export const state = () => ({
   sortOrder: "asc",
   initialAllTasks:[],
   tags: [],
+  groupByValue:"",
+  taskCount:0
+
 });
 
 export const getters = {
@@ -31,12 +34,28 @@ export const getters = {
   },
   getCompanyTags(state){
     return state.tags
+  },
+  getGroupBy (state) {
+    return state.groupByValue 
+  },
+  getTaskCount (state) {
+    return state.taskCount
   }
-
 };
 
 export const mutations = {
-
+  setAddTaskCount (state, payload) {
+    state.taskCount ++
+  },
+  setDeleteTaskCount (state, payload) {
+    state.taskCount--
+  },
+  setTaskCount ( state, payload) {
+    state.taskCount=payload.reduce((acc, td) => acc + td.tasks.length, 0)
+  },
+  setGroupBy(state,payload) {
+    state.groupByValue=payload
+  },
   fetchCompanies(state, payload) {
     state.companies = payload;
   },
@@ -76,33 +95,34 @@ export const mutations = {
   setSortOrder(state, payload){
     state.sortOrder = payload
   },
-  getFilterTasks(state,payload){
-    let arr=[]
-    arr=state.initialAllTasks
-   if(payload.filter=="incomplete")
-   {
-     arr=arr.filter((item)=>item.statusId!==5)
+  // getFilterTasks(state,payload){
+  //   let arr=[]
+  //   arr=state.initialAllTasks
+  //  if(payload.filter=="incomplete")
+  //  {
+  //    arr=arr.filter((item)=>item.statusId!==5)
      
-       arr=this.$groupBy(arr,payload.groupBy)
+  //      arr=this.$groupBy(arr,payload.groupBy)
      
-   }
+  //  }
 
-   if(payload.filter=="complete")
-   {
-     arr=arr.filter((item)=>item.statusId==5)
+  //  if(payload.filter=="complete")
+  //  {
+  //    arr=arr.filter((item)=>item.statusId==5)
      
-       arr=this.$groupBy(arr,payload.groupBy)
+  //      arr=this.$groupBy(arr,payload.groupBy)
      
-   }
-   if(payload.filter=="all")
-   {
+  //  }
+  //  if(payload.filter=="all")
+  //  {
     
-       arr=this.$groupBy(arr,payload.groupBy)
+  //      arr=this.$groupBy(arr,payload.groupBy)
     
-   }
+  //  }
 
-    state.companyTasks=arr
-  },
+  //   state.companyTasks=arr
+  //   state.taskCount=arr.reduce((acc, td) => acc + td.tasks.length, 0)
+  // },
   
   groupTasks(state, payload) {
     let arr = state.companyTasks
@@ -470,6 +490,8 @@ export const actions = {
   },
   async setCompanyTasks(ctx,payload){
     ctx.commit('setCompanyTasks', payload.data);
+    ctx.commit('setTaskCount',payload.data)
+
   },
   async fetchCompanyMembers(ctx, companyId) {
     const res = await this.$axios.$get("/company/" + companyId + "/members/", {
@@ -492,6 +514,8 @@ export const actions = {
     });
 
     ctx.commit('setCompanyTasks', res.data);
+    ctx.commit('setTaskCount',res.data)
+    ctx.commit('groupTasks', payload)
     return res.data
   },
   async fetchInitialCompanyTasks(ctx, payload) {

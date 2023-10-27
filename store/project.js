@@ -8,11 +8,19 @@ export const state = () => ({
   projectHistory: [],
   initialData:[],
   gridType:"list",
-  collapseStatus:"true"
+  collapseStatus:"true",
+  groupByValue:"",
+  taskCount:0
+
 });
 
 export const getters = {
-
+  getTaskCount (state) {
+    return state.taskCount
+  },
+  getGroupBy (state) {
+    return state.groupByValue 
+  },
   // get projects
   getAllProjects(state) {
     return state.projects;
@@ -59,6 +67,22 @@ export const getters = {
 };
 
 export const mutations = {
+  setAddTaskCount (state, payload) {
+    state.taskCount ++
+  },
+  setDeleteTaskCount (state, payload) {
+    state.taskCount--
+  },
+  setTaskCount ( state, payload) {
+    if (state.groupByValue == "") {
+      state.taskCount=payload.length
+    } else {
+      state.taskCount= payload.reduce((acc, td) => acc + td.tasks?.length, 0)
+    }
+  },
+  setGroupBy(state,payload) {
+    state.groupByValue=payload
+  },
   setCollapseStatus (state,payload) {
     state.collapseStatus=payload
   },
@@ -179,6 +203,11 @@ export const mutations = {
    }
 
   state.projects=arr
+  if (state.groupByValue == "") {
+    state.taskCount=arr.length
+  } else {
+    state.taskCount= arr.reduce((acc, td) => acc + td.tasks?.length, 0)
+  }
   },
   groupProjects(state, payload) {
     let arr = JSON.parse(JSON.stringify(state.projects));
@@ -807,10 +836,11 @@ export const actions = {
     const res = await this.$axios.$get(`/project/company/all`, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-        'Filter': payload ? payload : 'all'
+        'Filter': payload ? payload.filter : 'all'
       }
     });
     ctx.commit('fetchProjects', res.data);
+    ctx.commit('setTaskCount',res.data)
     return res.data;
   },
   async fetchInitialProjects(ctx, payload) {
@@ -862,12 +892,12 @@ export const actions = {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
     if (res.statusCode == 200) {
-      if (payload.groupBy != undefined && payload.groupBy != "") {
-        ctx.commit("createProjectForGroup", res.data);
-        ctx.commit("groupProjects", { key: payload.groupBy});
-      } else {
-        ctx.commit("createProject", res.data);
-      }
+      // if (payload.groupBy != undefined && payload.groupBy != "") {
+      //   ctx.commit("createProjectForGroup", res.data);
+      //   ctx.commit("groupProjects", { key: payload.groupBy});
+      // } else {
+      //   ctx.commit("createProject", res.data);
+      // }
       return res;
     } else {
       return res
@@ -875,7 +905,7 @@ export const actions = {
   },
 
   async updateProject(ctx, payload) {
-
+    console.log("payload",payload)
     let res = await this.$axios.$put("/project", {
       id: payload.id,
       user: payload.user,
@@ -1030,7 +1060,7 @@ export const actions = {
       })
 
       if (fav.data.statusCode == 200) {
-        console.log(fav.data)
+        // console.log(fav.data)
         ctx.dispatch("fetchFavProjects")
         return fav.data.message
       } else {
@@ -1190,6 +1220,25 @@ export const actions = {
 
   setProjects(ctx, payload) {
     ctx.commit('fetchProjects', payload)
-  }
+    ctx.commit('setTaskCount',payload)
+  },
+
+  async fetchCommentReactions(ctx, payload){
+    try {
+      const res = await this.$axios.get(`/project/${payload.id}/reactions`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          'obj': JSON.stringify({ "projectId": payload.id })
+        }
+      })
+      // console.log(res.data)
+      if (res.data.statusCode == 200) {
+        return res.data.data
+      }
+    } catch(e) {
+      console.log(e);
+      return e
+    }
+  },
 
 }

@@ -4,7 +4,10 @@ export const strict = false;
 export const state = () => ({
   todos: [],
   initialData:[],
-  gridType:"list"
+  gridType:"list",
+  groupByValue:"",
+  taskCount:0
+
 });
 
 export const getters = {
@@ -15,11 +18,29 @@ export const getters = {
   getGridType(state){
 
     return state.gridType
+  },
+  getGroupBy (state) {
+    return state.groupByValue 
+  },
+  getTaskCount (state) {
+    return state.taskCount
   }
 };
 
 export const mutations = {
+  setAddTaskCount (state, payload) {
+    state.taskCount ++
+  },
+  setDeleteTaskCount (state, payload) {
+    state.taskCount--
+  },
+  setTaskCount ( state, payload) {
 
+    state.taskCount=payload.reduce((acc, td) => acc + td.tasks.length, 0)
+  },
+  setGroupBy(state,payload) {
+    state.groupByValue=payload
+  },
   fetchTodos(state, payload) {
     let arr = [...payload];
     arr.sort((a, b) => a.uOrder - b.uOrder);
@@ -38,70 +59,71 @@ export const mutations = {
   setTodos(state, payload) {
     state.todos = payload;
   },
-  setInitialFetchTodos(state,payload){
-    payload.sort((a, b) => a.uOrder - b.uOrder);
-    state.initialData=payload
-  },
+  // setInitialFetchTodos(state,payload){
+  //   payload.sort((a, b) => a.uOrder - b.uOrder);
+  //   state.initialData=payload
+  // },
 
-  getFilterMyTasks(state,payload){
-    let arr=JSON.parse(JSON.stringify(state.initialData));
-    // arr=arr.filter((item)=>{
-    //   if(item.tasks.length>0){
-    //     return item
-    //   }
-    // })
-    if(payload.groupBy!=""){ 
-      if(arr[0].tasks){
-        let _arr = [];
-          arr.forEach((ele) => {
-            _arr = _arr.concat(ele.tasks);
-          });
-          arr = _arr;
-      }
+  // getFilterMyTasks(state,payload){
+  //   let arr=JSON.parse(JSON.stringify(state.initialData));
+  //   // arr=arr.filter((item)=>{
+  //   //   if(item.tasks.length>0){
+  //   //     return item
+  //   //   }
+  //   // })
+  //   if(payload.groupBy!=""){ 
+  //     if(arr[0].tasks){
+  //       let _arr = [];
+  //         arr.forEach((ele) => {
+  //           _arr = _arr.concat(ele.tasks);
+  //         });
+  //         arr = _arr;
+  //     }
 
-    }
+  //   }
 
-   if(payload.filter=="incomplete")
-   {
+  //  if(payload.filter=="incomplete")
+  //  {
     
-     if(payload.groupBy!=""){
-      arr=arr.filter((item)=>item.statusId!==5)
-       arr=this.$groupBy(arr,payload.groupBy)
-     }
-     else {
-       arr = arr.filter((ele) => {
-        ele.tasks = ele.tasks.filter((item) => item.statusId != 5);
-        return ele.tasks
-        // return ele.tasks.length > 0; // Return true only if ele.tasks has at least one remaining task
-      });
-     }  
-   }
+  //    if(payload.groupBy!=""){
+  //     arr=arr.filter((item)=>item.statusId!==5)
+  //      arr=this.$groupBy(arr,payload.groupBy)
+  //    }
+  //    else {
+  //      arr = arr.filter((ele) => {
+  //       ele.tasks = ele.tasks.filter((item) => item.statusId != 5);
+  //       return ele.tasks
+  //       // return ele.tasks.length > 0; // Return true only if ele.tasks has at least one remaining task
+  //     });
+  //    }  
+  //  }
 
-   if(payload.filter=="complete")
-   {
-     if(payload.groupBy!=""){
-      arr=arr.filter((item)=>item.statusId==5)
-       arr=this.$groupBy(arr,payload.groupBy)
-     }
-     else {
-          arr = arr.filter((ele) => {
-        ele.tasks = ele.tasks.filter((item) => item.statusId == 5);
-        return ele.tasks
-        // return ele.tasks.length > 0; // Return true only if ele.tasks has at least one remaining task
-      });
-     }    
-   }
-   if(payload.filter=="all")
-   {
-     if(payload.groupBy!=""){
-       arr=this.$groupBy(arr,payload.groupBy)
-     }  
-     else{
-      arr=state.initialData
-     } 
-   }
-  state.todos=arr
-  },
+  //  if(payload.filter=="complete")
+  //  {
+  //    if(payload.groupBy!=""){
+  //     arr=arr.filter((item)=>item.statusId==5)
+  //      arr=this.$groupBy(arr,payload.groupBy)
+  //    }
+  //    else {
+  //         arr = arr.filter((ele) => {
+  //       ele.tasks = ele.tasks.filter((item) => item.statusId == 5);
+  //       return ele.tasks
+  //       // return ele.tasks.length > 0; // Return true only if ele.tasks has at least one remaining task
+  //     });
+  //    }    
+  //  }
+  //  if(payload.filter=="all")
+  //  {
+  //    if(payload.groupBy!=""){
+  //      arr=this.$groupBy(arr,payload.groupBy)
+  //    }  
+  //    else{
+  //     arr=state.initialData
+  //    } 
+  //  }
+  // state.todos=arr
+  // state.taskCount=arr.reduce((acc, td) => acc + td.tasks.length, 0)
+  // },
 
   groupMyTasks(state, payload) {
     let arr = JSON.parse(JSON.stringify(state.todos));
@@ -119,7 +141,7 @@ export const mutations = {
         arr = _arr;
     }
     if(payload.sName==""){
-      state.todos=state.initialData
+      state.todos=state.arr
     }
     else {
      state.todos=this.$groupBy(arr,payload.sName)
@@ -144,24 +166,28 @@ export const actions = {
         }
         ctx.commit('groupMyTasks', data)
       }
+      ctx.commit('setTaskCount',res.data)
     }
 
     return res
   },
-  async setMyfetchTodos(ctx, payload) {
-      const res = await this.$axios.$get('/todo/all', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-          'Filter': 'all'
-        }
-      });
-      ctx.commit('setInitialFetchTodos',res.data)
+  // async setMyfetchTodos(ctx, payload) {
+  //     const res = await this.$axios.$get('/todo/all', {
+  //       headers: {
+  //         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+  //         'Filter': 'all'
+  //       }
+  //     });
+  //     ctx.commit('setInitialFetchTodos',res.data)
+  //     ctx.commit('setTaskCount',res.data)
+  //     return res
 
-  },
+  // },
 
 
   setTodos(ctx, payload) {
     ctx.commit('setTodos', payload)
+    ctx.commit('setTaskCount',payload)
   },
 
   async createTodo(ctx, payload) {

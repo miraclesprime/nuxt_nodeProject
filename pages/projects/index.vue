@@ -84,10 +84,19 @@ export default {
       lazyComponent: false,
     }
   },
+  created() {
+    if (process.client) {
 
+      this.$nuxt.$on("refresh-table", () => {
+        this.updateKey();
+      });
+
+    }
+  },
   mounted() {
 
     // this.loading = true;
+    this.$store.commit('project/setGroupBy',"")
 
     for(let field of this.tableFields) {
       if(field.header_icon) {
@@ -101,12 +110,16 @@ export default {
 
     setTimeout(() => {
       this.$store.dispatch("project/setProjects", this.localData)
-      this.$store.dispatch("project/fetchInitialProjects")
+      // this.$store.commit("project/setTaskCount",this.localData)
+      // this.$store.dispatch("project/fetchInitialProjects")
       this.lazyComponent = true
     }, 50)
 
 
     this.templateKey++;
+  },
+  beforeDestroy(){ 
+    this.$nuxt.$off("refresh-table");
   },
   computed: {
     ...mapGetters({
@@ -114,15 +127,16 @@ export default {
         favProjects: 'project/getFavProjects',
         teamMembers: "user/getTeamMembers",
         user: "user/getUser2",
-        filterViews :'task/getFilterView'
+        filterViews :'task/getFilterView',
+        projectcount:"project/getTaskCount"
     }),
-    projectcount(){
-      if (this.groupBy == "") {
-        return this.projects.length
-      } else {
-        return this.projects.reduce((acc, td) => acc + td.tasks.length, 0)
-      }
-    },
+    // projectcount(){
+    //   if (this.groupBy == "") {
+    //     return this.projects.length
+    //   } else {
+    //     return this.projects.reduce((acc, td) => acc + td.tasks?.length, 0)
+    //   }
+    // },
   },
   watch: {
     projects(newVal) {
@@ -150,7 +164,6 @@ export default {
         newArr.push(res.data.data[i])
       }
     }
-
     return { localData: newArr }
    
   },
@@ -205,22 +218,34 @@ export default {
       if ($event ==="default" ) {
         this.groupVisible = false;
         this.groupBy = '';
-        this.$store.commit('project/flatProjects');
+        this.$store.commit('project/setGroupBy','')
+        this.updateKey()
+        // this.$store.commit('project/flatProjects');
         setTimeout(() => {
             this.lazyComponent=true
             }, 30);
         return;
       }
       this.groupBy = $event;
-      this.$store.dispatch('project/groupProjects', { key: $event}).then((res) => {
-        this.groupVisible = true
+      this.$store.commit('project/setGroupBy',$event)
+      this.groupVisible = true
+      this.$store.dispatch("project/fetchProjects").then(() => {
+        if(this.groupVisible){
+            this.$store.dispatch('project/groupProjects', { key: this.groupBy}).then((res) => {
+        })
+      }
         this.templateKey += 1;
-
       })
+      // this.$store.dispatch('project/groupProjects', { key: $event}).then((res) => {
+      //   this.groupVisible = true
+      //   this.templateKey += 1;
+
+      // })
     },
     ProjectView($event){
       this.$store.commit('task/setFilterView', {filter:$event})
-      this.$store.commit("project/getFilterProjects",{filter:$event, groupBy:this.groupBy})
+      this.updateKey()
+      // this.$store.commit("project/getFilterProjects",{filter:$event, groupBy:this.groupBy})
     },
 
     resetOtherSorts(sName) {
@@ -503,10 +528,17 @@ export default {
     
     
     updateProject(payload){
+      console.log(payload)
       const { item, label, field, value, historyText } = payload
+      let user
+      if(item.userId){
+        user = this.teamMembers.find(t => t.id == item.userId)
+      }
+      else {
+        user=null
+      }
       
-      let user = this.teamMembers.find(t => t.id == item.userId)
-
+        // console.log(user)
       let data = { [field]: value }
     
       if(field == "dueDate" && item.startDate){
@@ -555,6 +587,7 @@ export default {
         groupBy: this.groupBy,
       })
         .then(t => {
+          console.log("update",t)
           if(t.statusCode == 200){
             if(this.groupBy == '' || this.groupBy == 'default'){
               // this.updateKey()
@@ -572,7 +605,8 @@ export default {
           .then((t) => {
             if (t.statusCode == 200) {
               this.popupMessages.push({ text: t.message, variant: "success" });
-              this.updateKey();
+              this.$nuxt.$emit("delete_update_table",project,this.$route.fullPath)
+              // this.updateKey();
               
              this.loading = false;
             } else {
@@ -658,6 +692,7 @@ export default {
       delete proj.sectionId;
       
       this.$store.dispatch('project/createProject', proj).then(res => {
+        console.log(res)
       });
     },
 
@@ -673,7 +708,9 @@ export default {
 
     updateKey() {
       // this.loading=true
-      this.$store.dispatch("project/fetchProjects").then(() => {
+      this.$store.dispatch("project/fetchProjects",{
+          filter:this.filterViews,
+        }).then(() => {
         if(this.groupVisible){
             this.$store.dispatch('project/groupProjects', { key: this.groupBy}).then((res) => {
         })

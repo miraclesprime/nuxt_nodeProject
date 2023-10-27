@@ -313,6 +313,7 @@ export default {
   },
   created() {
     this.$root.$on("open-sidebar", (payload) => {
+      // console.log(payload)
       this.openSidebar = true;
       this.$store.dispatch("task/setSidebarVisible", true)
       this.scrollId = payload.scrollId;
@@ -331,7 +332,7 @@ export default {
         this.$store.dispatch("task/setSingleTask", {});
         this.$store.commit("task/fetchTeamMember", []);
       } else {
-        if (payload.project[0]?.project?.id) {
+        if (payload.project?.[0]?.project?.id) {
           // this.$store.dispatch("section/fetchProjectSections", {
           //   projectId: payload.project[0].project.id,
           //   filter: "all",
@@ -419,7 +420,7 @@ export default {
       // }
 
       // Dhruv (admin)
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY4OTg1MDM0ODYxMCwiZXhwIjoxNjk3NjI2MzQ4NjEwLCJqdGkiOiIxYWI4MDVlMC0zYTkyLTQxNDMtYmMyOC0zNGM2ZmRhZGFkZDgifQ.5-G-YJ16WfrZBp5VhK_p2-qULAP9jpF5ZOqsQ7Phs_0";
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY5NzYyOTAxMjg5MiwiZXhwIjoxNzA1NDA1MDEyODkyLCJqdGkiOiIzZWRjYWU5OC05NzEyLTRlODktOWFlNC1hNjVjMzY0OTY4ZTAifQ.vYyPrVezlN6SjRMplYjglCH_K9n_ozoWG2DFwHkj6zg";
     
       // Vishwajeet
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2OTY0MDk1MjkwMTYsImV4cCI6MTcwNDE4NTUyOTAxNiwianRpIjoiNzZhZGIwMWEtMmVlMy00YTAzLWJhZGMtMjU5NGQ0YThmODE2In0.7yryx4JhYce42qtAdTQlbl9dglpcalfWYQdYVsMIJs8"
@@ -428,7 +429,7 @@ export default {
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnRUxZcWFRV1FHOWRuamsyIiwic3ViZSI6InJhamVldi5zaGFybWFAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJVU0VSIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY5NDQxNzE3NjQ4NCwiZXhwIjoxNzAyMTkzMTc2NDg0LCJqdGkiOiI3ZGJkMDg3Zi1iNzVhLTRmZjktODU4OS0wOWY4ZjExZjMzODAifQ.vjpNKpncvcpBcoyWEVBHNLN9b_cc1n0u-bDwHgfgQFw"
 
       //free
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJWWW14a2F6cFJqWWRKMFBvIiwic3ViZSI6ImFyaXR6YTNAc2hhcGVkY3YuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJEWE1WeWI4MmtEM2V2QVpFIiwic3ViYnMiOiJGUkVFVFJJQUwiLCJzdWJyIjoiQURNSU4iLCJzdWJjIjoiVW5pdGVkIFN0YXRlcyIsImVudiI6ImRldiIsImlhdCI6MTY3OTYzNzM2MzkxMiwiZXhwIjoxNjg3NDEzMzYzOTEyLCJqdGkiOiJkZGJiMzE1MC04ODkxLTQ5MjAtYTVjYy0yNDBhYTcxZTdhMDQifQ.7Xy5W1dEFUN-R6rHXYL3awJ5QjDa_73uxhGl_nqcvEc"
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJEWE1WeWI4MmtabWV2QVpFIiwic3ViZSI6Imxlb25hbmMwMDIyQGdtYWlsLmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY5ODA3OTAxMzEzOCwiZXhwIjoxNzA1ODU1MDEzMTM4LCJqdGkiOiI4OGJmZTJlMC1jNDY0LTQyZWYtOWE5Yi05M2MzYmJkODc0ODYifQ.mBBvbmhhS1PmUM7SvYlbIp3aeF4RlbscmrXmcWVSQBE"
 
       // Charan (admin)
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQeTdMRGR3cE9xMWUxWUtYIiwic3ViZSI6ImNoYXJhbi5wYWxAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJBRE1JTiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2OTI4NTE5NDE2NzIsImV4cCI6MTcwMDYyNzk0MTY3MiwianRpIjoiMzU2YmM4OTUtNjE3Mi00NjE3LTk2NzEtNWI5NmU0OWIzMGEwIn0.0zMvHg45zgJ6L51qGICZRa31xzA3t9OzyKPXp5YuqTs"
@@ -728,6 +729,6 @@ html {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 3;  
+  z-index: 6;  
 }
 </style>

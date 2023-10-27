@@ -38,6 +38,15 @@ export default {
       localValue: {},
     }
   },
+  watch: {
+    priority(newVal) {
+        if (newVal && newVal.id) {
+        this.localValue = this.priorityItems.find( pt => pt.value == newVal.id )
+      } else {
+        this.localValue = { label: '--', value: 0, color: "gray4", bgcolor: "gray4" }
+      }
+    }
+  },
   computed: {
     priorityList() {
       let prio = []
