@@ -13,26 +13,7 @@
                     </div>
                 </div>
             </div>
-            <!-- <div class="row">
-                <div v-if="appMembers.length > 0" class="col-4">
-                    <h3>Users in Central Biztree</h3>
-                    <ol>
-                        <li v-for="(user, index) in appMembers">{{user.label}} ({{user.email}})</li>
-                    </ol>
-                </div>
-                <div v-if="userList.length > 0" class="col-4">
-                    <h3>Users from Asana Project</h3>
-                    <ol>
-                        <li v-for="(user, index) in userList">{{user}}</li>
-                    </ol>
-                </div>
-                <div v-if="missingMembers.length > 0" class="col-4">
-                    <h3>Missing members from import</h3>
-                    <ol>
-                        <li v-for="(mm, index) in missingMembers">{{mm}}</li>
-                    </ol>
-                </div>
-            </div> -->
+            
             <!-- modal -->
             <bib-modal-wrapper v-if="importmodal" size="xl" title="Import result" @close="closeModal">
               <!-- <template slot="header">
@@ -61,14 +42,16 @@
                         {{importError}}
                     </div>
 
+
                     <div v-show="dupProject && !importCompleteMsg" class="shape-rounded align-center gap-05 border-orange text-orange p-05">
+
                       <bib-icon icon="urgent" variant="orange"></bib-icon>
                         {{dupProject}}
                     </div>
 
                     <div v-show="importfinish" class="shape-rounded align-center gap-05 border-success text-success p-05">
                       <bib-icon icon="tick" variant="success"></bib-icon>
-                        {{importCompleteMsg}}
+                      {{importCompleteMsg}}
                     </div>
                 </template>
                 <template slot="footer">
@@ -207,7 +190,7 @@ export default {
             } 
             if (users.data.statusCode == 201) {
                 if (users.data.importError == "duplicate-project") {
-                    this.duplicateProjId = users.data.projectId,
+                    this.duplicateProjId = users.data.projectId
                     this.dupProject = "This project already exists. Continue will overwrite the project data."
                     return
                 } else {
@@ -330,7 +313,6 @@ export default {
         },
 
         async reimportCSV(){
-
             let file = this.$refs.csvImport.filesUploaded;
 
             let formdata = new FormData();

@@ -110,8 +110,8 @@ export default {
 
     setTimeout(() => {
       this.$store.dispatch("project/setProjects", this.localData)
-      this.$store.commit("project/setTaskCount",this.localData)
-      this.$store.dispatch("project/fetchInitialProjects")
+      // this.$store.commit("project/setTaskCount",this.localData)
+      // this.$store.dispatch("project/fetchInitialProjects")
       this.lazyComponent = true
     }, 50)
 
@@ -244,7 +244,8 @@ export default {
     },
     ProjectView($event){
       this.$store.commit('task/setFilterView', {filter:$event})
-      this.$store.commit("project/getFilterProjects",{filter:$event, groupBy:this.groupBy})
+      this.updateKey()
+      // this.$store.commit("project/getFilterProjects",{filter:$event, groupBy:this.groupBy})
     },
 
     resetOtherSorts(sName) {
@@ -707,7 +708,9 @@ export default {
 
     updateKey() {
       // this.loading=true
-      this.$store.dispatch("project/fetchProjects").then(() => {
+      this.$store.dispatch("project/fetchProjects",{
+          filter:this.filterViews,
+        }).then(() => {
         if(this.groupVisible){
             this.$store.dispatch('project/groupProjects', { key: this.groupBy}).then((res) => {
         })

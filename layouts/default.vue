@@ -313,7 +313,7 @@ export default {
   },
   created() {
     this.$root.$on("open-sidebar", (payload) => {
-      console.log(payload)
+      // console.log(payload)
       this.openSidebar = true;
       this.$store.dispatch("task/setSidebarVisible", true)
       this.scrollId = payload.scrollId;

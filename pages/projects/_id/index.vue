@@ -165,7 +165,8 @@ export default {
         favProjects: "project/getFavProjects",
         user2: "user/getUser2",
         filterViews :'task/getFilterView', 
-        grid:"project/getGridType"
+        grid:"project/getGridType",
+        taskcount:"section/getTaskCount"
 
     }),
 
@@ -186,12 +187,16 @@ export default {
         return { variant: "gray5", text: "Add to favorites", status: false }
       }
     },
-    taskcount(){
-      return this.projectSections.reduce((acc, td) => acc + td.tasks.length, 0)
-    },
+    // taskcount(){
+    //   return this.projectSections.reduce((acc, td) => acc + td.tasks.length, 0)
+    // },
 
   },
-
+  watch:{
+    taskcount(newValue){
+      return _.cloneDeep(newValue)
+    },
+  },
   created() {
     this.$nuxt.$on("change-grid-type", (type) => {
       this.gridType = type;
