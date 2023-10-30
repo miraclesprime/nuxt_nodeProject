@@ -1286,26 +1286,29 @@ export default {
     },
 
     searchTasks(text) {
-      let formattedText = text.toLowerCase().trim();
-      let Ts = JSON.parse(JSON.stringify(this.todos))
-      let newArr = Ts.map((todo) => {
-        let filtered = todo.tasks.filter((t) => {
-          if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
-              return t
-            } 
-          })
+      this.$store.dispatch("todo/fetchTodos", { filter: this.filterViews,sName:this.groupby}).then((res) => {
+        let formattedText = text.toLowerCase().trim();
+        let Ts = JSON.parse(JSON.stringify(this.todos))
+        let newArr = Ts.map((todo) => {
+          let filtered = todo.tasks.filter((t) => {
+            if(t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
+                return t
+              } 
+            })
 
-        todo.tasks = filtered
-        return todo;
+          todo.tasks = filtered
+          return todo;
+        })
+
+        if(newArr.length >= 0) {
+          this.localdata = newArr
+          this.key++;
+        } else {
+          this.localdata = this.todos;
+          this.key++;
+        }
       })
-
-      if(newArr.length >= 0) {
-        this.localdata = newArr
-        this.key++;
-      } else {
-        this.localdata = this.todos;
-        this.key++;
-      }
+  
     }
   },
 

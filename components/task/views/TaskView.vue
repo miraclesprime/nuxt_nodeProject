@@ -1321,29 +1321,36 @@ export default {
     },
 
     searchTasks(text) {
-      let formattedText = text.toLowerCase().trim();
+      this.$store
+        .dispatch("section/fetchProjectSections", {
+          projectId: this.$route.params.id,
+          filter: this.filterViews,
+          sName:this.groupby
+        })
+        .then(() => {
+            let formattedText = text.toLowerCase().trim();
+            let secs = JSON.parse(JSON.stringify(this.sections));
+            let newArr = secs.map((s) => {
+              let filtered = s.tasks.filter((t) => {
+                if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
+                    return t;
+                  }
+              });
 
-      let secs = JSON.parse(JSON.stringify(this.sections));
+              s.tasks = filtered;
 
-      let newArr = secs.map((s) => {
-        let filtered = s.tasks.filter((t) => {
-          if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
-              return t;
+              return s;
+            });
+
+            if (newArr.length >= 0) {
+              this.localdata = newArr;
+              this.templateKey++;
+            } else {
+              this.localdata = this.sections;
+              this.templateKey++;
             }
         });
 
-        s.tasks = filtered;
-
-        return s;
-      });
-
-      if (newArr.length >= 0) {
-        this.localdata = newArr;
-        this.templateKey++;
-      } else {
-        this.localdata = this.sections;
-        this.templateKey++;
-      }
     },
   },
 };

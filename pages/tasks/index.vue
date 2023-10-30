@@ -893,30 +893,36 @@ export default {
     },
 
     searchTasks(text) {
-      let formattedText = text.toLowerCase().trim();
 
-      let depts = JSON.parse(JSON.stringify(this.tasks));
+      let compid = JSON.parse(localStorage.getItem("user")).subb;
+      this.$store
+        .dispatch("company/fetchCompanyTasks", {
+          companyId: compid,
+          filter:this.filterViews,
+          sName:this.group
+        })
+        .then(() => {
+            let formattedText = text.toLowerCase().trim();
+            let depts = JSON.parse(JSON.stringify(this.tasks));
+            let newArr = depts.map((d) => {
+              let filtered = d.tasks.filter((t) => {
+                if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
+                  return t;
+                }
+              });
 
-     
+              d["tasks"] = filtered;
+              return d;
+            });
 
-      let newArr = depts.map((d) => {
-        let filtered = d.tasks.filter((t) => {
-          if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
-            return t;
-          }
+            if (newArr.length >= 0) {
+              this.localData = newArr;
+              this.key++;
+            } else {
+              this.localData = JSON.parse(JSON.stringify(this.tasks));
+              this.key++;
+            }
         });
-
-        d["tasks"] = filtered;
-        return d;
-      });
-
-      if (newArr.length >= 0) {
-        this.localData = newArr;
-        this.key++;
-      } else {
-        this.localData = JSON.parse(JSON.stringify(this.tasks));
-        this.key++;
-      }
     },
 
     sectionDragEnd: _.debounce(async function (payload) {

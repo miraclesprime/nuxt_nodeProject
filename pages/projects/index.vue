@@ -720,8 +720,31 @@ export default {
       
       
     },
-
-    searchProjects(text) {
+    calcProjects() {
+      return new Promise((resolve, reject) => {
+        this.$store.dispatch("project/fetchProjects", {
+          filter: this.filterViews,
+        })
+          .then(() => {
+            if (this.groupVisible) {
+              this.$store.dispatch('project/groupProjects', { key: this.groupBy })
+                .then(() => {
+                  resolve();
+                })
+                .catch(error => {
+                  reject(error);
+                });
+            } else {
+              resolve();
+            }
+          })
+          .catch(error => {
+            reject(error);
+          });
+      });
+},
+    async searchProjects(text) {
+      await this.calcProjects();
       let newArr
       let formattedText = text.toLowerCase().trim();
       if(this.projects[0]?.tasks){
