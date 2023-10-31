@@ -768,7 +768,8 @@ export default {
       }
     },
 
-    sortBy($event) {
+    async sortBy($event) {
+      await this.calcUserTasks();
       this.sortName = $event;
       if ($event == "title") {
         this.$store

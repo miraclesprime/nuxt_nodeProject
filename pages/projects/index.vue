@@ -326,7 +326,8 @@ export default {
       }
     },
 
-    sortProject($event) {
+    async sortProject($event) {
+      await this.calcProjects();
       
       if($event == 'title') {
           if(this.titleSort == 'asc') {
