@@ -768,7 +768,8 @@ export default {
       }
     },
 
-    sortBy($event) {
+    async sortBy($event) {
+      await this.calcUserTasks();
       this.sortName = $event;
       if ($event == "title") {
         this.$store
@@ -907,36 +908,54 @@ export default {
       }
       this.flag = !this.flag;
     },
-
-    searchUserTasks(text) {
-      let formattedText = text.toLowerCase().trim();
-      let newArr
-      if(this.userTasks[0]?.tasks){
-        newArr = this.userTasks.map((item) => {
-          const filteredTasks = item.tasks.filter((ele) => {
-            if (ele.title.includes(formattedText) || ele.title.toLowerCase().includes(formattedText)) {
-              console.log("Found matching task:", ele);
-              return ele;
-            } 
-          })
-          return { ...item, tasks: filteredTasks };
+    calcUserTasks() {
+      return new Promise((resolve, reject) => {
+        this.$store.dispatch("user/getUserTasks", {
+          userId: this.$route.params.id,
+          filter: 'all',
         })
-      }
-      else {
-        newArr = this.userTasks.filter((t) => {
-          if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
-              return t;
-          }
+        .then(res => {
+          this.$store.commit('user/setFetchUserTasks', { data: res, filter: this.filterViews, key: this.groupBy });
+          resolve();
+        })
+        .catch(error => {
+          reject(error);
         });
-      }
+      });
+    },
+   async searchUserTasks(text) {
+      await this.calcUserTasks();
+        let formattedText = text.toLowerCase().trim();
+                let newArr
+              if(this.userTasks[0]?.tasks){
+                newArr = this.userTasks.map((item) => {
+                  const filteredTasks = item.tasks.filter((ele) => {
+                    if (ele.title.includes(formattedText) || ele.title.toLowerCase().includes(formattedText)) {
+                      console.log("Found matching task:", ele);
+                      return ele;
+                    } 
+                  })
+                  return { ...item, tasks: filteredTasks };
+                })
+              }
+              else 
+              {
+                    newArr = this.userTasks.filter((t) => {
+                      if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
+                          return t;
+                      }
+                    });
+              }
 
-      if (newArr.length >= 0) {
-        this.localData = newArr;
-        this.key++;
-      } else {
-        this.localData = this.userTasks;
-        this.key++;
-      }
+                if (newArr.length >= 0) {
+                  this.localData = newArr;
+                  this.key++;
+                } else {
+                  this.localData = this.userTasks;
+                  this.key++;
+                }
+      
+
     },
   },
 };
