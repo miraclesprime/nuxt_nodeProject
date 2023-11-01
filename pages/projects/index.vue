@@ -693,7 +693,10 @@ export default {
       delete proj.sectionId;
       
       this.$store.dispatch('project/createProject', proj).then(res => {
-        console.log(res)
+        if (res.statusCode == 200) {
+           this.$nuxt.$emit("newTask",res.data,this.$route.fullPath)
+
+          }
       });
     },
 

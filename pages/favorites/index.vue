@@ -968,10 +968,14 @@ export default {
           this.taskSubtaskLocalData = taskDeptArr;
 
           if (this.tDepartmentSort == "asc") {
-            this.taskSubtaskLocalData.sort((a, b) => a.department.title.localeCompare(b.department.title));
+            this.taskSubtaskLocalData.sort((a, b) => {
+              if (a.departmentId && b.departmentId)  return a.department.title.localeCompare(b.department.title)
+            });
             this.tDepartmentSort = "desc"
           } else {
-            this.taskSubtaskLocalData.sort((a, b) => b.department.title.localeCompare(a.department.title));
+            this.taskSubtaskLocalData.sort((a, b) => {
+              if (a.departmentId && b.departmentId) return b.department.title.localeCompare(a.department.title)
+            });
             this.tDepartmentSort = "asc"
           }
           this.key += 1
