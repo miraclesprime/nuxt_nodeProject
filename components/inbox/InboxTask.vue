@@ -73,7 +73,7 @@
       <sidebar-tag :tags="tags" @add-tag="addTag" @change="addTag" @delete-tag="removeTag"  :activeProp="form.id"></sidebar-tag>
       <sidebar-subtask id="inbox_task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false"  :activeProp="form.id"></sidebar-subtask>
       <sidebar-files id="inbox_task_files" :reloadFiles="reloadFiles" :activeProp="form.id"></sidebar-files>
-      <sidebar-conversation id="inbox_task_conversation" :reloadComments="reloadComments" :reloadHistory="reloadHistory" :activeProp="form.id"></sidebar-conversation>
+      <sidebar-conversation id="inbox_task_conversation" :reloadComments="reloadComments+inboxObj.msgKey" :reloadHistory="reloadHistory" :activeProp="form.id"></sidebar-conversation>
     </div>
     <!-- message input -->
     <div id="it-message-input" class=" d-flex gap-1 border-top-light py-1 px-105">
@@ -136,6 +136,9 @@ export default {
     /*commentKey(newValue){
       this.reloadComments += 1
     },*/
+    inboxObj(newValue) {
+      console.log(newValue)
+    }
   },
   computed: {
     ...mapGetters({
@@ -145,7 +148,8 @@ export default {
       teamMembers: "user/getTeamMembers",
       projects: "project/getAllProjects",
       sections: "section/getProjectSections",
-      alltags: "company/getCompanyTags"
+      alltags: "company/getCompanyTags",
+      inboxObj: "inbox/getKey"
     }),
     isFavorite() {
       let fav = this.favTasks.some(t => t.task.id == this.task.id)

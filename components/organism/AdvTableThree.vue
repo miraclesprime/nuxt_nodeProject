@@ -411,14 +411,8 @@ export default {
 
     let nowidth = 0;
     let nowidthIndex = [];
-    let colwidthArr = this.tableFields.map(w => {
-      if (w.width < w.minWidth ) {
-        return (parseInt(w.minWidth) / parseInt(this.tableWidth)) * 100
-      } else {
-        return (parseInt(w.width) / parseInt(this.tableWidth)) * 100
-      }
-    })
-    console.log(colwidthArr)
+    let colwidthArr = this.tableFields.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100 )
+    // console.log(colwidthArr)
     for (var i = 0; i < colwidthArr.length; i++) {
       if(!isNaN(colwidthArr[i])){
         nowidth += colwidthArr[i]

@@ -115,9 +115,28 @@ export default {
             popupMessages: [],
         }
     },
+    watch: {
+        msgKey(newValue) {
+            if(this.history.taskCommentId == newValue.msgId) {
+                console.log(newValue)
+                this.reactionSpinner = true
+                this.$store.dispatch("task/fetchCommentReactions", {id: this.history.taskCommentId}).then(c => {
+                    console.log(c)
+                    this.commentReactions = c
+                    this.reactionKey += 1
+                    this.reactionSpinner = false
+                    // return c
+                }).catch(e => {
+                    this.reactionSpinner = false
+                    console.warn(e)
+                })
+            }
+        }
+    },
     computed: {
         ...mapGetters({
-            user: "user/getUser2"
+            user: "user/getUser2",
+            msgKey: "inbox/getKey"
         }),
       comment () {
         if (this.history.projectCommentId) {
@@ -269,9 +288,9 @@ export default {
         onReactionClick({ data }) {
             // alert("you reacted " + data)
             this.isReactionPickerOpen = false
-            this.$store.dispatch("task/addTaskCommentReaction", {taskCommentId: this.history.taskCommentId, reaction: data, taskId: this.history.task.id, text: "reacted to comment" }).then(res => {
-                    console.log(res.data)
-                    this.fetchTaskCommentReactions()
+            this.$store.dispatch("task/addTaskCommentReaction", {taskCommentId: this.history.taskCommentId, reaction: data, taskId: this.history.task.id, text: "reacted to comment" }).then((res) => {
+                    // console.log(res.data)
+                    this.fetchTaskCommentReactions();
                 }).catch(e => console.warn(e))
         },
         fetchTaskCommentReactions(){
@@ -280,6 +299,8 @@ export default {
                 console.log(c)
                 this.commentReactions = c
                 this.reactionKey += 1
+                let inboxKey = this.msgKey.key+1;
+                this.$store.dispatch("inbox/setKey", {key: inboxKey, msgId: this.history.taskCommentId})
                 this.reactionSpinner = false
                 // return c
             }).catch(e => {

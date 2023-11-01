@@ -1,6 +1,7 @@
 export const state = () => ({
     inbox: null,
-    singleInbox: {}
+    singleInbox: {},
+    msgKey: {msgId: null, key: 0}
   });
   
   export const getters = {
@@ -11,6 +12,10 @@ export const state = () => ({
 
     getInbox(state) {
         return state.inbox;
+    },
+
+    getKey(state) {
+        return state.msgKey;
     }
   };
 
@@ -30,6 +35,10 @@ export const state = () => ({
 
     setInbox(state, payload) {
         state.inbox = payload;
+    },
+
+    setKey(state, payload) {
+        state.msgKey = payload;
     }
   };
   
@@ -66,6 +75,11 @@ export const state = () => ({
           ctx.commit('setInbox', res.data.data);
         }
         return res.data
+    },
+
+    setKey(ctx, payload) {
+      ctx.commit('setKey', payload);
+      return payload;
     }
   };
   

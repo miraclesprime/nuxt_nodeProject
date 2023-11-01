@@ -110,8 +110,8 @@ export default {
 
     setTimeout(() => {
       this.$store.dispatch("project/setProjects", this.localData)
-      this.$store.commit("project/setTaskCount",this.localData)
-      this.$store.dispatch("project/fetchInitialProjects")
+      // this.$store.commit("project/setTaskCount",this.localData)
+      // this.$store.dispatch("project/fetchInitialProjects")
       this.lazyComponent = true
     }, 50)
 
@@ -244,7 +244,8 @@ export default {
     },
     ProjectView($event){
       this.$store.commit('task/setFilterView', {filter:$event})
-      this.$store.commit("project/getFilterProjects",{filter:$event, groupBy:this.groupBy})
+      this.updateKey()
+      // this.$store.commit("project/getFilterProjects",{filter:$event, groupBy:this.groupBy})
     },
 
     resetOtherSorts(sName) {
@@ -325,7 +326,8 @@ export default {
       }
     },
 
-    sortProject($event) {
+    async sortProject($event) {
+      await this.calcProjects();
       
       if($event == 'title') {
           if(this.titleSort == 'asc') {
@@ -691,7 +693,10 @@ export default {
       delete proj.sectionId;
       
       this.$store.dispatch('project/createProject', proj).then(res => {
-        console.log(res)
+        if (res.statusCode == 200) {
+           this.$nuxt.$emit("newTask",res.data,this.$route.fullPath)
+
+          }
       });
     },
 
@@ -707,7 +712,9 @@ export default {
 
     updateKey() {
       // this.loading=true
-      this.$store.dispatch("project/fetchProjects").then(() => {
+      this.$store.dispatch("project/fetchProjects",{
+          filter:this.filterViews,
+        }).then(() => {
         if(this.groupVisible){
             this.$store.dispatch('project/groupProjects', { key: this.groupBy}).then((res) => {
         })
@@ -717,8 +724,31 @@ export default {
       
       
     },
-
-    searchProjects(text) {
+    calcProjects() {
+      return new Promise((resolve, reject) => {
+        this.$store.dispatch("project/fetchProjects", {
+          filter: this.filterViews,
+        })
+          .then(() => {
+            if (this.groupVisible) {
+              this.$store.dispatch('project/groupProjects', { key: this.groupBy })
+                .then(() => {
+                  resolve();
+                })
+                .catch(error => {
+                  reject(error);
+                });
+            } else {
+              resolve();
+            }
+          })
+          .catch(error => {
+            reject(error);
+          });
+      });
+},
+    async searchProjects(text) {
+      await this.calcProjects();
       let newArr
       let formattedText = text.toLowerCase().trim();
       if(this.projects[0]?.tasks){

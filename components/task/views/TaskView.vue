@@ -459,332 +459,342 @@ export default {
     },
 
     taskSort($event) {
-      let newData = JSON.parse(JSON.stringify(this.localdata));
-      if ($event == "title") {
-        if (this.titleSort == "asc") {
-          this.titleSort = "desc";
-          newData.forEach(function (sec, index) {
-            sec["tasks"] = sec.tasks.sort((a, b) => {
-              if(a.title && b.title) {
-                return a.title.localeCompare(b.title)
+      this.$store
+        .dispatch("section/fetchProjectSections", {
+          projectId: this.$route.params.id,
+          filter: this.filterViews,
+          sName:this.groupby
+        })
+        .then(() => {
+              let newData = JSON.parse(JSON.stringify(this.localdata));
+              if ($event == "title") {
+                if (this.titleSort == "asc") {
+                  this.titleSort = "desc";
+                  newData.forEach(function (sec, index) {
+                    sec["tasks"] = sec.tasks.sort((a, b) => {
+                      if(a.title && b.title) {
+                        return a.title.localeCompare(b.title)
+                      }
+                    });
+                  });
+                } else {
+                  this.titleSort = "asc";
+                  newData.forEach(function (sec, index) {
+                    sec["tasks"] = sec.tasks.sort((a, b) => {
+                      if(a.title && b.title) {
+                        return b.title.localeCompare(a.title)
+                      }
+                    });
+                  });
+                }
+                this.sortName = "title";
+                this.resetOtherSorts($event);
+                this.localdata = newData;
+                this.checkActive();
               }
-            });
-          });
-        } else {
-          this.titleSort = "asc";
-          newData.forEach(function (sec, index) {
-            sec["tasks"] = sec.tasks.sort((a, b) => {
-              if(a.title && b.title) {
-                return b.title.localeCompare(a.title)
+              // Sort By owner
+              if ($event == "userId") {
+
+                let userArr = [];
+
+                for (let i = 0; i < newData.length; i++) {
+                  let t = []
+                  for(let j=0; j<newData[i].tasks.length; j++) {
+                    if (newData[i].tasks[j].userId) {
+                      t.unshift(newData[i].tasks[j])
+                    } else {
+                      t.push(newData[i].tasks[j])
+                    }
+                  }
+                  newData[i].tasks = t;
+                  userArr.push(newData[i]);
+                }
+
+                if (this.userSort == "asc") {
+                  this.userSort = "desc";
+                  userArr.forEach(function (sec) {
+                    sec["tasks"] = sec.tasks.sort((a, b) => {
+                      if (a.user && b.user) {
+                        return a.user.firstName.localeCompare(b.user.firstName);
+                      }
+                    });
+                  });
+                } else {
+                  this.userSort = "asc";
+                  userArr.forEach(function (sec) {
+                    sec["tasks"] = sec.tasks.sort((a, b) => {
+                      if (a.user && b.user) {
+                        return b.user.firstName.localeCompare(a.user.firstName);
+                      }
+                    });
+                  });
+                }
+                this.sortName = "userId";
+                this.resetOtherSorts($event);
+                this.localdata = userArr
+                this.checkActive();
               }
-            });
-          });
-        }
-        this.sortName = "title";
-        this.resetOtherSorts($event);
-        this.localdata = newData;
-        this.checkActive();
-      }
-      // Sort By owner
-      if ($event == "userId") {
+              // sort By Status
+              if ($event == "status") {
 
-        let userArr = [];
+                let statusArr = [];
 
-        for (let i = 0; i < newData.length; i++) {
-          let t = []
-          for(let j=0; j<newData[i].tasks.length; j++) {
-            if (newData[i].tasks[j].userId) {
-              t.unshift(newData[i].tasks[j])
-            } else {
-              t.push(newData[i].tasks[j])
-            }
-          }
-          newData[i].tasks = t;
-          userArr.push(newData[i]);
-        }
+                for (let i = 0; i < newData.length; i++) {
+                  let t = []
+                  for(let j=0; j<newData[i].tasks.length; j++) {
+                    if (newData[i].tasks[j].statusId) {
+                      t.unshift(newData[i].tasks[j])
+                    } else {
+                      t.push(newData[i].tasks[j])
+                    }
+                  }
+                  newData[i].tasks = t;
+                  statusArr.push(newData[i]);
+                }
 
-        if (this.userSort == "asc") {
-          this.userSort = "desc";
-          userArr.forEach(function (sec) {
-            sec["tasks"] = sec.tasks.sort((a, b) => {
-              if (a.user && b.user) {
-                return a.user.firstName.localeCompare(b.user.firstName);
+                if (this.statusSort == "asc") {
+                  this.statusSort = "desc";
+                  statusArr.forEach(function (sec) {
+                    sec["tasks"] = sec.tasks.sort((a, b) => {
+                      if(a.statusId && b.statusId) {
+                        return a.status.text.localeCompare(b.status.text)
+                      }
+                    });
+                  });
+                } else {
+                  this.statusSort = "asc";
+                  statusArr.forEach(function (sec) {
+                    sec["tasks"] = sec.tasks.sort((a, b) => {
+                      if(a.statusId && b.statusId) {
+                        return b.status.text.localeCompare(a.status.text)
+                      }
+                    });
+                  });
+                }
+                this.sortName = "status";
+                this.resetOtherSorts($event);
+                this.localdata = statusArr
+                this.checkActive();
               }
-            });
-          });
-        } else {
-          this.userSort = "asc";
-          userArr.forEach(function (sec) {
-            sec["tasks"] = sec.tasks.sort((a, b) => {
-              if (a.user && b.user) {
-                return b.user.firstName.localeCompare(a.user.firstName);
+              // Sort By Priotity
+              if ($event == "priority") {
+
+                let priorityArr = [];
+
+                for (let i = 0; i < newData.length; i++) {
+                  let t = []
+                  for(let j=0; j<newData[i].tasks.length; j++) {
+                    if (newData[i].tasks[j].priorityId) {
+                      t.unshift(newData[i].tasks[j])
+                    } else {
+                      t.push(newData[i].tasks[j])
+                    }
+                  }
+                  newData[i].tasks = t;
+                  priorityArr.push(newData[i]);
+                }
+
+                if (this.prioritySort == "asc") {
+                  this.prioritySort = "desc";
+                  priorityArr.forEach(function (sec) {
+                    sec["tasks"] = sec.tasks.sort((a, b) => {
+                      if(a.priorityId && b.priorityId) {
+                        return a.priority.id - b.priority.id
+                      }
+                    });
+                  });
+                } else {
+                  this.prioritySort = "asc";
+                  priorityArr.forEach(function (sec) {
+                    sec["tasks"] = sec.tasks.sort((a, b) => {
+                      if(a.priorityId && b.priorityId) {
+                        return b.priority.id - a.priority.id
+                      }
+                    });
+                  });
+                }
+                this.sortName = "priority";
+                this.resetOtherSorts($event);
+                this.localdata = priorityArr
+                this.checkActive();
               }
-            });
-          });
-        }
-        this.sortName = "userId";
-        this.resetOtherSorts($event);
-        this.localdata = userArr
-        this.checkActive();
-      }
-      // sort By Status
-      if ($event == "status") {
 
-        let statusArr = [];
+              // Sort By Department
+              if ($event == "department") {
 
-        for (let i = 0; i < newData.length; i++) {
-          let t = []
-          for(let j=0; j<newData[i].tasks.length; j++) {
-            if (newData[i].tasks[j].statusId) {
-              t.unshift(newData[i].tasks[j])
-            } else {
-              t.push(newData[i].tasks[j])
-            }
-          }
-          newData[i].tasks = t;
-          statusArr.push(newData[i]);
-        }
+                let deptArr = [];
 
-        if (this.statusSort == "asc") {
-          this.statusSort = "desc";
-          statusArr.forEach(function (sec) {
-            sec["tasks"] = sec.tasks.sort((a, b) => {
-              if(a.statusId && b.statusId) {
-                return a.status.text.localeCompare(b.status.text)
+                for (let i = 0; i < newData.length; i++) {
+                  let t = []
+                  for(let j=0; j<newData[i].tasks.length; j++) {
+                    if (newData[i].tasks[j].departmentId) {
+                      t.unshift(newData[i].tasks[j])
+                    } else {
+                      t.push(newData[i].tasks[j])
+                    }
+                  }
+                  newData[i].tasks = t;
+                  deptArr.push(newData[i]);
+                }
+
+                if (this.departmentSort == "asc") {
+                  this.departmentSort = "desc";
+                  deptArr.forEach(function (sec) {
+                    sec["tasks"] = sec.tasks.sort((a, b) => {
+                      if (a.departmentId && b.departmentId) {
+                        return a.department.title.localeCompare(b.department.title);
+                      }
+                    });
+                  });
+                } else {
+                  this.departmentSort = "asc";
+                  deptArr.forEach(function (sec) {
+                    sec["tasks"] = sec.tasks.sort((a, b) => {
+                      if (a.departmentId && b.departmentId) {
+                        return b.department.title.localeCompare(a.department.title);
+                      }
+                    });
+                  });
+                }
+                this.sortName = "department";
+                this.resetOtherSorts($event);
+                this.localdata = deptArr
+                this.checkActive();
               }
-            });
-          });
-        } else {
-          this.statusSort = "asc";
-          statusArr.forEach(function (sec) {
-            sec["tasks"] = sec.tasks.sort((a, b) => {
-              if(a.statusId && b.statusId) {
-                return b.status.text.localeCompare(a.status.text)
+
+              // Sort By Difficulty
+              if ($event == "difficultyId") {
+
+                let deptArr = [];
+
+                for (let i = 0; i < newData.length; i++) {
+                  let t = []
+                  for(let j=0; j<newData[i].tasks.length; j++) {
+                    if (newData[i].tasks[j].difficultyId) {
+                      t.unshift(newData[i].tasks[j])
+                    } else {
+                      t.push(newData[i].tasks[j])
+                    }
+                  }
+                  newData[i].tasks = t;
+                  deptArr.push(newData[i]);
+                }
+
+                if (this.difficultySort == "asc") {
+                  this.difficultySort = "desc";
+                  deptArr.forEach(function (sec) {
+                    sec["tasks"] = sec.tasks.sort((a, b) => {
+                      if (a.difficultyId && b.difficultyId) {
+                        return a.difficultyId - b.difficultyId;
+                      }
+                    });
+                  });
+                } else {
+                  this.difficultySort = "asc";
+                  deptArr.forEach(function (sec) {
+                    sec["tasks"] = sec.tasks.sort((a, b) => {
+                      if (a.difficultyId && b.difficultyId) {
+                        return b.difficultyId - a.difficultyId;
+                      }
+                    });
+                  });
+                }
+                this.sortName = "difficulty";
+                this.resetOtherSorts($event);
+                this.localdata = deptArr;
+                this.checkActive();
               }
-            });
-          });
-        }
-        this.sortName = "status";
-        this.resetOtherSorts($event);
-        this.localdata = statusArr
-        this.checkActive();
-      }
-      // Sort By Priotity
-      if ($event == "priority") {
 
-        let priorityArr = [];
+              // sort By Start Date
+              if ($event == "startDate") {
 
-        for (let i = 0; i < newData.length; i++) {
-          let t = []
-          for(let j=0; j<newData[i].tasks.length; j++) {
-            if (newData[i].tasks[j].priorityId) {
-              t.unshift(newData[i].tasks[j])
-            } else {
-              t.push(newData[i].tasks[j])
-            }
-          }
-          newData[i].tasks = t;
-          priorityArr.push(newData[i]);
-        }
+                let sdArr = [];
 
-        if (this.prioritySort == "asc") {
-          this.prioritySort = "desc";
-          priorityArr.forEach(function (sec) {
-            sec["tasks"] = sec.tasks.sort((a, b) => {
-              if(a.priorityId && b.priorityId) {
-                return a.priority.id - b.priority.id
+                for (let i = 0; i < newData.length; i++) {
+                  let t = []
+                  for(let j=0; j<newData[i].tasks.length; j++) {
+                    if (newData[i].tasks[j].startDate) {
+                      t.unshift(newData[i].tasks[j])
+                    } else {
+                      t.push(newData[i].tasks[j])
+                    }
+                  }
+                  newData[i].tasks = t;
+                  sdArr.push(newData[i]);
+                }
+
+                if (this.startDateSort == "asc") {
+                  this.startDateSort = "desc";
+                  sdArr.forEach(function (sec) {
+                    sec["tasks"] = sec.tasks.sort((a, b) => {
+                      if(a.startDate && b.startDate) {
+                        return new Date(a.startDate) - new Date(b.startDate)
+                      }
+                    });
+                  });
+                } else {
+                  this.startDateSort = "asc";
+                  sdArr.forEach(function (sec) {
+                    sec["tasks"] = sec.tasks.sort((a, b) => {
+                      if(a.startDate && b.startDate) {
+                        return new Date(b.startDate) - new Date(a.startDate)
+                      }
+                    });
+                  });
+                }
+                this.sortName = "startDate";
+                this.resetOtherSorts($event);
+                this.localdata = sdArr
+                this.checkActive();
               }
-            });
-          });
-        } else {
-          this.prioritySort = "asc";
-          priorityArr.forEach(function (sec) {
-            sec["tasks"] = sec.tasks.sort((a, b) => {
-              if(a.priorityId && b.priorityId) {
-                return b.priority.id - a.priority.id
+
+              // sort By DueDate
+              if ($event == "dueDate") {
+
+                let ddArr = [];
+
+                for (let i = 0; i < newData.length; i++) {
+                  let t = []
+                  for(let j=0; j<newData[i].tasks.length; j++) {
+                    if (newData[i].tasks[j].dueDate) {
+                      t.unshift(newData[i].tasks[j])
+                    } else {
+                      t.push(newData[i].tasks[j])
+                    }
+                  }
+                  newData[i].tasks = t;
+                  ddArr.push(newData[i]);
+                }
+
+                if (this.dueDateSort == "asc") {
+                  this.dueDateSort = "desc";
+                  ddArr.forEach(function (sec) {
+                    sec["tasks"] = sec.tasks.sort((a, b) => {
+                      if(a.dueDate && b.dueDate) {
+                        return new Date(a.dueDate) - new Date(b.dueDate)
+                      }
+                    });
+                  });
+                } else {
+                  this.dueDateSort = "asc";
+                  ddArr.forEach(function (sec) {
+                    sec["tasks"] = sec.tasks.sort((a, b) => {
+                      if(a.dueDate && b.dueDate) {
+                        return new Date(b.dueDate) - new Date(a.dueDate)
+                      }
+                    });
+                  });
+                }
+                this.sortName = "dueDate";
+                this.resetOtherSorts($event);
+                this.localdata = ddArr
+                this.checkActive();
               }
-            });
-          });
-        }
-        this.sortName = "priority";
-        this.resetOtherSorts($event);
-        this.localdata = priorityArr
-        this.checkActive();
-      }
 
-      // Sort By Department
-      if ($event == "department") {
+              this.templateKey += 1;
+        })
 
-        let deptArr = [];
-
-        for (let i = 0; i < newData.length; i++) {
-          let t = []
-          for(let j=0; j<newData[i].tasks.length; j++) {
-            if (newData[i].tasks[j].departmentId) {
-              t.unshift(newData[i].tasks[j])
-            } else {
-              t.push(newData[i].tasks[j])
-            }
-          }
-          newData[i].tasks = t;
-          deptArr.push(newData[i]);
-        }
-
-        if (this.departmentSort == "asc") {
-          this.departmentSort = "desc";
-          deptArr.forEach(function (sec) {
-            sec["tasks"] = sec.tasks.sort((a, b) => {
-              if (a.departmentId && b.departmentId) {
-                return a.department.title.localeCompare(b.department.title);
-              }
-            });
-          });
-        } else {
-          this.departmentSort = "asc";
-          deptArr.forEach(function (sec) {
-            sec["tasks"] = sec.tasks.sort((a, b) => {
-              if (a.departmentId && b.departmentId) {
-                return b.department.title.localeCompare(a.department.title);
-              }
-            });
-          });
-        }
-        this.sortName = "department";
-        this.resetOtherSorts($event);
-        this.localdata = deptArr
-        this.checkActive();
-      }
-
-      // Sort By Difficulty
-      if ($event == "difficultyId") {
-
-        let deptArr = [];
-
-        for (let i = 0; i < newData.length; i++) {
-          let t = []
-          for(let j=0; j<newData[i].tasks.length; j++) {
-            if (newData[i].tasks[j].difficultyId) {
-              t.unshift(newData[i].tasks[j])
-            } else {
-              t.push(newData[i].tasks[j])
-            }
-          }
-          newData[i].tasks = t;
-          deptArr.push(newData[i]);
-        }
-
-        if (this.difficultySort == "asc") {
-          this.difficultySort = "desc";
-          deptArr.forEach(function (sec) {
-            sec["tasks"] = sec.tasks.sort((a, b) => {
-              if (a.difficultyId && b.difficultyId) {
-                return a.difficultyId - b.difficultyId;
-              }
-            });
-          });
-        } else {
-          this.difficultySort = "asc";
-          deptArr.forEach(function (sec) {
-            sec["tasks"] = sec.tasks.sort((a, b) => {
-              if (a.difficultyId && b.difficultyId) {
-                return b.difficultyId - a.difficultyId;
-              }
-            });
-          });
-        }
-        this.sortName = "difficulty";
-        this.resetOtherSorts($event);
-        this.localdata = deptArr;
-        this.checkActive();
-      }
-
-      // sort By Start Date
-      if ($event == "startDate") {
-
-        let sdArr = [];
-
-        for (let i = 0; i < newData.length; i++) {
-          let t = []
-          for(let j=0; j<newData[i].tasks.length; j++) {
-            if (newData[i].tasks[j].startDate) {
-              t.unshift(newData[i].tasks[j])
-            } else {
-              t.push(newData[i].tasks[j])
-            }
-          }
-          newData[i].tasks = t;
-          sdArr.push(newData[i]);
-        }
-
-        if (this.startDateSort == "asc") {
-          this.startDateSort = "desc";
-          sdArr.forEach(function (sec) {
-            sec["tasks"] = sec.tasks.sort((a, b) => {
-              if(a.startDate && b.startDate) {
-                return new Date(a.startDate) - new Date(b.startDate)
-              }
-            });
-          });
-        } else {
-          this.startDateSort = "asc";
-          sdArr.forEach(function (sec) {
-            sec["tasks"] = sec.tasks.sort((a, b) => {
-              if(a.startDate && b.startDate) {
-                return new Date(b.startDate) - new Date(a.startDate)
-              }
-            });
-          });
-        }
-        this.sortName = "startDate";
-        this.resetOtherSorts($event);
-        this.localdata = sdArr
-        this.checkActive();
-      }
-
-      // sort By DueDate
-      if ($event == "dueDate") {
-
-        let ddArr = [];
-
-        for (let i = 0; i < newData.length; i++) {
-          let t = []
-          for(let j=0; j<newData[i].tasks.length; j++) {
-            if (newData[i].tasks[j].dueDate) {
-              t.unshift(newData[i].tasks[j])
-            } else {
-              t.push(newData[i].tasks[j])
-            }
-          }
-          newData[i].tasks = t;
-          ddArr.push(newData[i]);
-        }
-
-        if (this.dueDateSort == "asc") {
-          this.dueDateSort = "desc";
-          ddArr.forEach(function (sec) {
-            sec["tasks"] = sec.tasks.sort((a, b) => {
-              if(a.dueDate && b.dueDate) {
-                return new Date(a.dueDate) - new Date(b.dueDate)
-              }
-            });
-          });
-        } else {
-          this.dueDateSort = "asc";
-          ddArr.forEach(function (sec) {
-            sec["tasks"] = sec.tasks.sort((a, b) => {
-              if(a.dueDate && b.dueDate) {
-                return new Date(b.dueDate) - new Date(a.dueDate)
-              }
-            });
-          });
-        }
-        this.sortName = "dueDate";
-        this.resetOtherSorts($event);
-        this.localdata = ddArr
-        this.checkActive();
-      }
-
-      this.templateKey += 1;
+      
     },
     
     async SingleProjectGroup($event) {
@@ -987,7 +997,8 @@ export default {
     filterView($event) {
       this.filterData=$event
       this.$store.commit('task/setFilterView', {filter:$event})
-      this.$store.commit("section/getFilterSections",{filter:$event, groupBy:this.groupby})
+      this.updateKey()
+      // this.$store.commit("section/getFilterSections",{filter:$event, groupBy:this.groupby})
       // this.loading = true;
       // if ($event == "complete") {
       //   this.$store
@@ -1320,29 +1331,36 @@ export default {
     },
 
     searchTasks(text) {
-      let formattedText = text.toLowerCase().trim();
+      this.$store
+        .dispatch("section/fetchProjectSections", {
+          projectId: this.$route.params.id,
+          filter: this.filterViews,
+          sName:this.groupby
+        })
+        .then(() => {
+            let formattedText = text.toLowerCase().trim();
+            let secs = JSON.parse(JSON.stringify(this.sections));
+            let newArr = secs.map((s) => {
+              let filtered = s.tasks.filter((t) => {
+                if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
+                    return t;
+                  }
+              });
 
-      let secs = JSON.parse(JSON.stringify(this.sections));
+              s.tasks = filtered;
 
-      let newArr = secs.map((s) => {
-        let filtered = s.tasks.filter((t) => {
-          if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
-              return t;
+              return s;
+            });
+
+            if (newArr.length >= 0) {
+              this.localdata = newArr;
+              this.templateKey++;
+            } else {
+              this.localdata = this.sections;
+              this.templateKey++;
             }
         });
 
-        s.tasks = filtered;
-
-        return s;
-      });
-
-      if (newArr.length >= 0) {
-        this.localdata = newArr;
-        this.templateKey++;
-      } else {
-        this.localdata = this.sections;
-        this.templateKey++;
-      }
     },
   },
 };
