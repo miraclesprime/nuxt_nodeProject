@@ -14,5 +14,6 @@
 }
 .error-link {
   text-decoration: underline;
+  color: $danger-sub2;
 }
 </style>
