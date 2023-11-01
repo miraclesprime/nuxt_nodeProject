@@ -178,7 +178,8 @@ export default {
   computed: {
     ...mapGetters({
       user: "user/getUser2",
-      members: 'user/getTeamMembers'
+      members: 'user/getTeamMembers',
+      inboxKey: "inbox/getKey"
     }),
     displayDate() {
       return dayjs(this.msg.updatedAt).fromNow()
@@ -342,6 +343,8 @@ export default {
             if (d.data.statusCode == 200) {
               this.fetchReactions()
               this.reactionSpinner = false
+              let iK = this.inboxKey.key+1;
+              this.$store.dispatch('inbox/setKey', {key: iK, msgId: this.msg.id})
             }
           })
           .catch(e => console.log(e))
