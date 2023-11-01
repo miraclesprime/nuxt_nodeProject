@@ -19,10 +19,5 @@ export const actions = {
         
         let token = app.$cookies.get('b_ssojwt')
         commit('setToken', token);
-        // console.log("In Nuxt SERVER INIT >>>>>",token) 
-
-        //   beforeNuxtRender(({ nuxtState }) => {
-            
-        //   })
       }
   }

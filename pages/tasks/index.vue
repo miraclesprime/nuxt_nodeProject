@@ -740,137 +740,147 @@ export default {
 
     // Sort By Action List
     sortBy($event) {
-      this.sortName = $event;
-      if ($event == "title") {
-        this.$store
-          .dispatch("company/sortCompanyTasks", {
-            sName: $event,
-            order: this.titleSort,
-          })
+      let compid = JSON.parse(localStorage.getItem("user")).subb;
+      this.$store
+        .dispatch("company/fetchCompanyTasks", {
+          companyId: compid,
+          filter:this.filterViews,
+          sName:this.group
+        })
+        .then(() => {
+          this.sortName = $event;
+            if ($event == "title") {
+              this.$store
+                .dispatch("company/sortCompanyTasks", {
+                  sName: $event,
+                  order: this.titleSort,
+                })
 
-          if (this.titleSort == "asc") {
-            this.titleSort = "desc";
-          } else {
-            this.titleSort = "asc";
-          }
-      }
+                if (this.titleSort == "asc") {
+                  this.titleSort = "desc";
+                } else {
+                  this.titleSort = "asc";
+                }
+            }
 
-      if ($event == "userId") {
-        this.$store
-          .dispatch("company/sortCompanyTasks", {
-            sName: $event,
-            order: this.userSort,
-          })
+            if ($event == "userId") {
+              this.$store
+                .dispatch("company/sortCompanyTasks", {
+                  sName: $event,
+                  order: this.userSort,
+                })
 
-        if (this.userSort == "asc") {
-            this.userSort = "desc";
-          } else {
-            this.userSort = "asc";
-          }
+              if (this.userSort == "asc") {
+                  this.userSort = "desc";
+                } else {
+                  this.userSort = "asc";
+                }
 
-      }
+            }
 
-      if ($event == "project") {
-        this.$store
-          .dispatch("company/sortCompanyTasks", {
-            sName: $event,
-            order: this.projectSort,
-          })
-        
-        if (this.projectSort == "asc") {
-            this.projectSort = "desc";
-          } else {
-            this.projectSort = "asc";
-          }
-      }
+            if ($event == "project") {
+              this.$store
+                .dispatch("company/sortCompanyTasks", {
+                  sName: $event,
+                  order: this.projectSort,
+                })
+              
+              if (this.projectSort == "asc") {
+                  this.projectSort = "desc";
+                } else {
+                  this.projectSort = "asc";
+                }
+            }
 
-      if ($event == "department") {
-        this.$store
-          .dispatch("company/sortCompanyTasks", {
-            sName: $event,
-            order: this.departmentSort,
-          })
+            if ($event == "department") {
+              this.$store
+                .dispatch("company/sortCompanyTasks", {
+                  sName: $event,
+                  order: this.departmentSort,
+                })
 
-        if (this.departmentSort == "asc") {
-            this.departmentSort = "desc";
-          } else {
-            this.departmentSort = "asc";
-          }
-      }
+              if (this.departmentSort == "asc") {
+                  this.departmentSort = "desc";
+                } else {
+                  this.departmentSort = "asc";
+                }
+            }
 
-      if ($event == "difficultyId") {
-        this.$store
-          .dispatch("company/sortCompanyTasks", {
-            sName: $event,
-            order: this.difficultySort,
-          })
+            if ($event == "difficultyId") {
+              this.$store
+                .dispatch("company/sortCompanyTasks", {
+                  sName: $event,
+                  order: this.difficultySort,
+                })
 
-        if (this.difficultySort == "asc") {
-            this.difficultySort = "desc";
-          } else {
-            this.difficultySort = "asc";
-          }
-      }
+              if (this.difficultySort == "asc") {
+                  this.difficultySort = "desc";
+                } else {
+                  this.difficultySort = "asc";
+                }
+            }
 
-      if ($event == "status") {
-        this.$store
-          .dispatch("company/sortCompanyTasks", {
-            sName: $event,
-            order: this.statusSort,
-          })
+            if ($event == "status") {
+              this.$store
+                .dispatch("company/sortCompanyTasks", {
+                  sName: $event,
+                  order: this.statusSort,
+                })
 
-        if (this.statusSort == "asc") {
-            this.statusSort = "desc";
-          } else {
-            this.statusSort = "asc";
-          }
-      }
+              if (this.statusSort == "asc") {
+                  this.statusSort = "desc";
+                } else {
+                  this.statusSort = "asc";
+                }
+            }
 
-      if ($event == "priority") {
-        this.$store
-          .dispatch("company/sortCompanyTasks", {
-            sName: $event,
-            order: this.prioritySort,
-          })
+            if ($event == "priority") {
+              this.$store
+                .dispatch("company/sortCompanyTasks", {
+                  sName: $event,
+                  order: this.prioritySort,
+                })
 
-        if (this.prioritySort == "asc") {
-            this.prioritySort = "desc";
-          } else {
-            this.prioritySort = "asc";
-          }
-      }
+              if (this.prioritySort == "asc") {
+                  this.prioritySort = "desc";
+                } else {
+                  this.prioritySort = "asc";
+                }
+            }
 
-      if ($event == "startDate") {
-        this.$store
-          .dispatch("company/sortCompanyTasks", {
-            sName: $event,
-            order: this.startDateSort,
-          })
+            if ($event == "startDate") {
+              this.$store
+                .dispatch("company/sortCompanyTasks", {
+                  sName: $event,
+                  order: this.startDateSort,
+                })
 
-        if (this.startDateSort == "asc") {
-            this.startDateSort = "desc";
-          } else {
-            this.startDateSort = "asc";
-          }
-      }
+              if (this.startDateSort == "asc") {
+                  this.startDateSort = "desc";
+                } else {
+                  this.startDateSort = "asc";
+                }
+            }
 
-      if ($event == "dueDate") {
-        this.$store
-          .dispatch("company/sortCompanyTasks", {
-            sName: $event,
-            order: this.dueDateSort,
-          })
+            if ($event == "dueDate") {
+              this.$store
+                .dispatch("company/sortCompanyTasks", {
+                  sName: $event,
+                  order: this.dueDateSort,
+                })
 
-          if (this.dueDateSort == "asc") {
-            this.dueDateSort = "desc";
-          } else {
-            this.dueDateSort = "asc";
-          }
-      }
+                if (this.dueDateSort == "asc") {
+                  this.dueDateSort = "desc";
+                } else {
+                  this.dueDateSort = "asc";
+                }
+            }
 
-      this.resetOtherSorts($event)
-      this.checkActive();
-      this.key += 1;
+            this.resetOtherSorts($event)
+            this.checkActive();
+            this.key += 1;
+        })
+     
     },
 
     toggleSidebar($event) {
@@ -893,30 +903,36 @@ export default {
     },
 
     searchTasks(text) {
-      let formattedText = text.toLowerCase().trim();
 
-      let depts = JSON.parse(JSON.stringify(this.tasks));
+      let compid = JSON.parse(localStorage.getItem("user")).subb;
+      this.$store
+        .dispatch("company/fetchCompanyTasks", {
+          companyId: compid,
+          filter:this.filterViews,
+          sName:this.group
+        })
+        .then(() => {
+            let formattedText = text.toLowerCase().trim();
+            let depts = JSON.parse(JSON.stringify(this.tasks));
+            let newArr = depts.map((d) => {
+              let filtered = d.tasks.filter((t) => {
+                if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
+                  return t;
+                }
+              });
 
-     
+              d["tasks"] = filtered;
+              return d;
+            });
 
-      let newArr = depts.map((d) => {
-        let filtered = d.tasks.filter((t) => {
-          if (t.title.includes(formattedText) || t.title.toLowerCase().includes(formattedText)) {
-            return t;
-          }
+            if (newArr.length >= 0) {
+              this.localData = newArr;
+              this.key++;
+            } else {
+              this.localData = JSON.parse(JSON.stringify(this.tasks));
+              this.key++;
+            }
         });
-
-        d["tasks"] = filtered;
-        return d;
-      });
-
-      if (newArr.length >= 0) {
-        this.localData = newArr;
-        this.key++;
-      } else {
-        this.localData = JSON.parse(JSON.stringify(this.tasks));
-        this.key++;
-      }
     },
 
     sectionDragEnd: _.debounce(async function (payload) {

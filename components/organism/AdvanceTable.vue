@@ -108,17 +108,27 @@
         </template>
 
       </template>
-      <div class="position-absolute " style="inset: 0; z-index: 5; pointer-events: none;">
-      <!-- <div class="position-absolute " style="inset: 0; pointer-events: none;"> -->
-        <div class="split position-sticky " style="top: 0; z-index: 1; pointer-events: all" >
+      <div class="position-absolute " style="inset: 0; z-index: 5; ">
+        <!-- <div class="split position-sticky " style="top: 0; z-index: 1; pointer-events: all" >
           <div v-if="drag" class="width-2 " id="advtable-th-1" ></div>
-          <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :class="'splitcell'+componentKey" :id="'split'+index+componentKey" :minwidth="field.minwidth" >
+          <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :class="['splitcell'+componentKey]" :id="'split'+index+componentKey" :minwidth="field.minwidth" >
             <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}" style="white-space: nowrap;">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
               <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
             </span></div>
           </div>
-        </div>
-        <div ref="splitHint" class="split-indicator h-100 position-absolute"></div>
+        </div> -->
+        <table border="1" class=" w-100" ref="table">
+          <thead>
+            <tr>
+              <th v-for="(field, index) in tableFields" >
+                <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}" style="white-space: nowrap;">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
+                  <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
+                </span></div>
+              </th>
+            </tr>
+          </thead>
+        </table>
+        <!-- <div ref="splitHint" class="split-indicator h-100 position-absolute"></div> -->
       </div>
     </draggable>
     <!-- </div> -->
@@ -131,7 +141,9 @@
 <script>
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
-import Split from 'split.js'
+// import Split from 'split.js'
+import ColumnResizer from 'column-resizer';
+// import '~/node_modules/column-resizer/dist/column-resizer.js'
 import dayjs from 'dayjs'
 import draggable from 'vuedraggable'
 
@@ -194,6 +206,7 @@ export default {
       colSizes: [],
       colmw: [],
       // columns: []
+      pageWidth: "100%"
     }
   },
 
@@ -203,7 +216,7 @@ export default {
       this.localData = _.cloneDeep(newValue)
       this.modifyDateFormat()
     },
-    tableFields(newValue){
+    /*tableFields(newValue){
       let nowidth = 0;
       let arr = newValue.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100 )
       console.log(arr)
@@ -217,12 +230,13 @@ export default {
         this.colSizes = arr[i]
       }
       
-    },
+    },*/
   },
 
   computed: {
     ...mapGetters({
       teamMembers: "user/getTeamMembers",
+      // sidebarVisible: "task/getSidebarVisible",
     }),
 
     iconRotate(){
@@ -232,10 +246,17 @@ export default {
         return 'rotate(0deg)'
       }
     },
-    tableWidth() {
-      const main = document.getElementById("main-content")
-      let w = main.scrollWidth - 18
-      return w + "px"
+    tableWidth: {
+      get: function() {
+        const main = document.getElementById("main-content")
+        let w = main.scrollWidth - 18
+        this.pageWidth = w + "px"
+        return w + "px"
+      },
+      set: function(newValue){
+        console.log(newValue)
+        this.pageWidth = newValue
+      }
     },
     componentKey(){
       return Math.floor((Math.random() * 999))
@@ -243,7 +264,6 @@ export default {
   },
   created() {
 
-  
   // Register the listener for the "newTask" event
     this.$nuxt.$on("newTask", this.handleNewTask);
     this.$nuxt.$on("delete_update_table", this.delete_UpdateLocalData)
@@ -251,28 +271,48 @@ export default {
  
 },
   mounted() {
+    /*const main = document.getElementById("main-content")
+    let pageWidth
+    const resizeObserver = new ResizeObserver((entries) => {
+      console.log(entries[0].contentRect)
+      if (entries[0].contentRect) {
+        pageWidth = entries[0].contentRect.width
+      } else {
+        pageWidth = main.scrollWidth - 18
+      }
+    });
+
+    resizeObserver.observe(main);*/
     
     this.localData = _.cloneDeep(this.tableData)
     this.modifyDateFormat()
 
     let nowidth = 0;
     let nowidthIndex = [];
-    let colwidthArr = this.tableFields.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100 )
-    // console.log(colwidthArr)
+    let colwidthArr = this.tableFields.map(w => {
+      // console.info("width->", w.width, pageWidth)
+      if (w.width) {
+        return (parseInt(w.width) / parseInt(this.tableWidth)) * 100
+      } else {
+        return (parseInt(w.minwidth) / parseInt(this.tableWidth)) * 100
+      }
+    })
+    console.log(colwidthArr)
     for (var i = 0; i < colwidthArr.length; i++) {
+      console.info(colwidthArr[i])
       if(!isNaN(colwidthArr[i])){
         nowidth += colwidthArr[i]
         colwidthArr[i] = Number(colwidthArr[i].toFixed(4))
       } else {
         nowidthIndex.push(i)
-        colwidthArr[i] = 100-nowidth
+        colwidthArr[i] = Math.abs(100-nowidth)
       }
       // this.colSizes.push(colwidthArr[i])
     }
 
     // nowidthIndex.length
       if (nowidthIndex.length == 1) {
-        colwidthArr[nowidthIndex[0]] = 100 - nowidth
+        colwidthArr[nowidthIndex[0]] = Math.abs(100-nowidth)
       } 
 
     this.colSizes = colwidthArr
@@ -292,14 +332,12 @@ export default {
       this.colSizes = JSON.parse(sizes)
     }
 
-    Split(this.colIds, {
+    /*Split(this.colIds, {
       sizes: this.colSizes,
       minSize: this.colmw,
-      gutterSize: 5,
+      gutterSize: 4,
       snapOffset: 4,
-      /*onDragStart: (sizes) => {
-        console.info(this.$refs.splitHint)
-      },*/
+      
       onDragEnd: (sizes) => {
         // console.log(sizes)
         this.colSizes = sizes
@@ -307,6 +345,30 @@ export default {
           sessionStorage.setItem("cols"+pg, JSON.stringify(sizes))
         }
         // this.colWidth = sizes
+      }
+    })*/
+
+    // let resizable = ColumnResizer.default
+    // console.log(resizable)
+    new ColumnResizer(this.$refs.table, {
+      // liveDrag: true,
+      draggingClass: "rangeDrag",
+      gripInnerHtml: "<div class='rangeGrip'></div>",
+      innerGripHtml: "<div class='gripHint'></div>",
+      minWidth: 120,
+      // disabledColumns: [0],
+      headerOnly: true,
+      widths: this.colSizes,
+      onResize: (e) => {
+        // console.log("onresize ->",...arguments)
+        let tabl = this.$refs.table.children[0]
+        let cells = tabl.children[0].cells
+        console.info(cells)
+        // let wa = cells.map(c => c.clientWidth)
+        // console.log(wa)
+      },
+      onDrag: function() {
+        console.log('ondrag ->', ...arguments)
       }
     })
   
@@ -566,10 +628,12 @@ export default {
     display: flex;
     flex-direction: row;
     width: 100%;
+    min-width: 100%;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     background-color: $gray9;
+
     .splitcell {
       transition: width 50ms linear;
       will-change: width;

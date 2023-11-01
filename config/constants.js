@@ -124,7 +124,7 @@ export const TASK_FIELDS = [
   {
     label: 'Task name',
     key: 'title',
-    width: 360,
+    // width: 360,
     minwidth: 260,
     icon: {
       icon: 'check-circle-solid',
@@ -911,7 +911,7 @@ export const COMPANY_TASK_FIELDS = [
     label: 'Task name',
     key: 'title',
     minwidth: 200,
-    width: 260,
+    // width: 260,
     icon: {
       icon: 'check-circle-solid',
       variant: 'gray2',
@@ -1025,8 +1025,8 @@ export const USER_TASKS = [
   {
     label: 'Task name',
     key: 'title',
-    width: 300,
-    minwidth: 260,
+    // width: 300,
+    minwidth: 300,
     icon: {
       icon: 'check-circle-solid',
       variant: 'gray2',
