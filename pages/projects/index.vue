@@ -94,7 +94,9 @@ export default {
     }
   },
   mounted() {
-
+    if (!this.projects) {
+      this.updateKey();
+    }
     // this.loading = true;
     this.$store.commit('project/setGroupBy',"")
 
@@ -229,13 +231,15 @@ export default {
       this.groupBy = $event;
       this.$store.commit('project/setGroupBy',$event)
       this.groupVisible = true
-      this.$store.dispatch("project/fetchProjects").then(() => {
-        if(this.groupVisible){
-            this.$store.dispatch('project/groupProjects', { key: this.groupBy}).then((res) => {
-        })
-      }
-        this.templateKey += 1;
-      })
+      this.updateKey()
+
+      // this.$store.dispatch("project/fetchProjects").then(() => {
+      //   if(this.groupVisible){
+      //       this.$store.dispatch('project/groupProjects', { key: this.groupBy}).then((res) => {
+      //   })
+      // }
+      //   this.templateKey += 1;
+      // })
       // this.$store.dispatch('project/groupProjects', { key: $event}).then((res) => {
       //   this.groupVisible = true
       //   this.templateKey += 1;
@@ -695,7 +699,6 @@ export default {
       this.$store.dispatch('project/createProject', proj).then(res => {
         if (res.statusCode == 200) {
            this.$nuxt.$emit("newTask",res.data,this.$route.fullPath)
-
           }
       });
     },

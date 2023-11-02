@@ -253,7 +253,9 @@ try {
 
   async mounted() {
     if (process.client) {
-
+      if (!this.project) {
+          this.updateKey();
+      }
       // const text = "projects" + this.$route.params.id;
       // this.projectId = this.$route.params.id;
       // const hexEncoded = Buffer.from(text).toString('hex');
