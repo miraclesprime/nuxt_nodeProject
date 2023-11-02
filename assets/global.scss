@@ -484,7 +484,7 @@ ul {
 }
 
 .gutter {
-  background-color: $gray2;
+  background-color: $gray8;
   pointer-events: auto;
   // background-repeat: no-repeat;
   // background-position: 50%;
@@ -496,7 +496,7 @@ ul {
     flex-shrink: 0;
   }
   &:hover {
-    background-color: $primary-sub2;
+    background-color: $primary-sub3;
   }
 }
 

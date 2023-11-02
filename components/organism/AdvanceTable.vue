@@ -4,7 +4,7 @@
     <draggable class="task-draggable adv-table bg-white position-relative" :id="'advTable-'+componentKey" handle=".drag-handle"  role="table" @start="rowDragStart" @end="rowDragEnd" :move="moveTask" >
       <div slot="header" class="tr position-relative" role="row" id="advtable-row1">
         <div v-if="drag" class="width-2 th" id="advtable-th" role="cell"></div>
-        <div v-for="(field, index) in tableFields" :key="field+'-'+index" class="th height-2" :id="'advtable-th'+index" role="cell" :width="colSizes[index]+'%'" :style="{width: `calc(1% * ${colSizes[index]})`}" >
+        <div v-for="(field, index) in tableFields" :key="field+'-'+index" class="th height-2" :id="'advtable-th'+index" role="cell" :width="colSizes[index]+'%'" :style="{width: `calc(1.0045% * ${colSizes[index]})`}" >
           <!-- <div class="align-center gap-05" :style="{'min-width': field.minWidth}">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
               <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
             </span></div> -->
@@ -112,7 +112,7 @@
       <div id="header_wrap" class="position-absolute header-wrap" >
         <div class="split position-sticky " >
           <div v-if="drag" class="width-2 " id="advtable-th-1" ></div>
-          <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :class="['splitcell'+componentKey]" :id="'split'+index+componentKey" >
+          <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :class="['splitcell'+componentKey]" :id="'split'+index+componentKey" :minwidth="field.minwidth" >
             <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}" style="white-space: nowrap;">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
               <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
             </span></div>
@@ -294,7 +294,7 @@ export default {
     this.tableWidth = this.tableFields.reduce((acc, curr) => curr.width + acc, 0)
     this.colSizes = this.tableFields.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100)
     // this.colSizes = this.tableFields.map(w => parseInt(100 / (this.tableWidth / w.width)))
-    console.log(" column width->",this.colSizes)
+    // console.log(" column width->",this.colSizes)
 
     /*for (var i = 0; i < colwidthArr.length; i++) {
       // console.info(colwidthArr[i])
@@ -325,16 +325,16 @@ export default {
     }
 
     var pg = this.$route.path.replace(/\//g,'-')
-    // var sizes = sessionStorage.getItem('cols'+pg)
+    var sizes = sessionStorage.getItem('cols'+pg)
 
-    /*if (sizes) {
+    if (sizes) {
       this.colSizes = JSON.parse(sizes)
-    }*/
+    }
 
     Split(this.colIds, {
       sizes: this.colSizes,
       minSize: this.colmw,
-      gutterSize: 4,
+      gutterSize: 6,
       snapOffset: 4,
       dragInterval: 5,
       
