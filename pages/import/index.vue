@@ -59,7 +59,6 @@
                         <bib-button label="Add users" variant="secondary" class="mr-1" pill @click="closeModal"></bib-button>
                         <bib-button label="Continue" variant="primary" pill @click="importProject"></bib-button>
                     </div>
-
                     <div v-show="dupProject && !importfinish && !importCompleteMsg">
                         <bib-button label="Cancel" variant="secondary" class="mr-1" pill @click="closeModal"></bib-button>
                         <bib-button label="Continue" variant="primary" pill @click="reimportCSV"></bib-button>
@@ -117,7 +116,6 @@ export default {
             dupProject: false,
             duplicateProjId: null,
             importCompleteMsg: null
-
         }
     },
 
@@ -151,18 +149,18 @@ export default {
 
 
         closeModal(){
-          this.importmodal = false
-          this.missingMembers = []
-          this.importfinish = false
-          this.importError = false
-          this.steps = [
-                {id: 0, label: "Analyzing Users", progress: "progress", variant:"orange"},
-                {id: 1, label: "Importing Project", progress: "pending", variant:"gray5"},
-                {id: 2, label: "Importing Section/Tasks", progress: "pending", variant:"gray5"},
-                {id: 3, label: "Importing Subtasks", progress: "pending", variant:"gray5"},
-                {id: 4, label: "Importing Tags", progress: "pending", variant:"gray5"},
-                ]
-          this.files = []
+            this.importmodal = false
+            this.missingMembers = []
+            this.importfinish = false
+            this.importError = false
+            this.steps = [
+                    {id: 0, label: "Analyzing Users", progress: "progress", variant:"orange"},
+                    {id: 1, label: "Importing Project", progress: "pending", variant:"gray5"},
+                    {id: 2, label: "Importing Section/Tasks", progress: "pending", variant:"gray5"},
+                    {id: 3, label: "Importing Subtasks", progress: "pending", variant:"gray5"},
+                    {id: 4, label: "Importing Tags", progress: "pending", variant:"gray5"},
+                    ]
+            this.files = []
             this.$refs.csvImport.filesUploaded = []
         },
 
@@ -332,8 +330,8 @@ export default {
                 this.importCompleteMsg = 'Re-Imported Project Successfully!'
                 this.importfinish = true;
             } 
-
         },
+
         finishImport(){
             this.closeModal()
             this.$router.push('/projects')

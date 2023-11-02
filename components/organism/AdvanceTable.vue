@@ -1,14 +1,15 @@
 <template>
-  <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll">
+  <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll" :style="{minWidth: tableWidth+'px'}">
 
-    <draggable class="task-draggable adv-table resizable bg-white position-relative" :id="'advTable-'+componentKey" handle=".drag-handle" :style="{'width': tableWidth}" role="table" @start="rowDragStart" @end="rowDragEnd" :move="moveTask" >
+    <draggable class="task-draggable adv-table bg-white position-relative" :id="'advTable-'+componentKey" handle=".drag-handle"  role="table" @start="rowDragStart" @end="rowDragEnd" :move="moveTask" >
       <div slot="header" class="tr position-relative" role="row" id="advtable-row1">
         <div v-if="drag" class="width-2 th" id="advtable-th" role="cell"></div>
-        <div v-for="(field, index) in tableFields" :key="field+'-'+index" class="th height-2" :id="'advtable-th'+index" role="cell" :style="{ width: colSizes[index]+'%'}" >
+        <div v-for="(field, index) in tableFields" :key="field+'-'+index" class="th height-2" :id="'advtable-th'+index" role="cell" :width="colSizes[index]+'%'" :style="{width: `calc(1% * ${colSizes[index]})`}" >
           <!-- <div class="align-center gap-05" :style="{'min-width': field.minWidth}">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
               <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
             </span></div> -->
         </div>
+        <div class="td" role="cell"></div>
       </div>
 
       <div class="tr position-relative height-2" id="adv-table-tr1" v-if="sectionTitle">
@@ -108,17 +109,30 @@
         </template>
 
       </template>
-      <div class="position-absolute " style="inset: 0; z-index: 5; pointer-events: none;">
-      <!-- <div class="position-absolute " style="inset: 0; pointer-events: none;"> -->
-        <div class="split position-sticky " style="top: 0; z-index: 1; pointer-events: all" >
+      <div id="header_wrap" class="position-absolute header-wrap" >
+        <div class="split position-sticky " >
           <div v-if="drag" class="width-2 " id="advtable-th-1" ></div>
-          <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :class="'splitcell'+componentKey" :id="'split'+index+componentKey" :minwidth="field.minwidth" >
+          <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :class="['splitcell'+componentKey]" :id="'split'+index+componentKey" >
             <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}" style="white-space: nowrap;">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
               <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
             </span></div>
           </div>
+          <div class="border-bottom-gray2"></div>
         </div>
-        <div ref="splitHint" class="split-indicator h-100 position-absolute"></div>
+
+
+        <!-- <table class="header-table border-bottom-gray2 w-100 position-sticky" id="header_table" ref="table">
+          <thead>
+            <tr>
+              <th v-for="(field, index) in tableFields" class="position-relative " :width="field.width+'%'" :minwidth="field.minwidth" >
+                <div class="align-center gap-05 height-2 px-05" :style="{minWidth: field.minwidth+'px'}" style="white-space: nowrap;">{{field.label}} <span v-if="field.header_icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
+                  <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
+                </span></div>
+              </th>
+            </tr>
+          </thead>
+        </table> -->
+        <!-- <div ref="splitHint" class="split-indicator h-100 position-absolute"></div> -->
       </div>
     </draggable>
     <!-- </div> -->
@@ -132,6 +146,7 @@
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
 import Split from 'split.js'
+// import ColumnResizer from 'column-resizer';
 import dayjs from 'dayjs'
 import draggable from 'vuedraggable'
 
@@ -194,6 +209,7 @@ export default {
       colSizes: [],
       colmw: [],
       // columns: []
+      tableWidth: "100%",
     }
   },
 
@@ -203,7 +219,7 @@ export default {
       this.localData = _.cloneDeep(newValue)
       this.modifyDateFormat()
     },
-    tableFields(newValue){
+    /*tableFields(newValue){
       let nowidth = 0;
       let arr = newValue.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100 )
       console.log(arr)
@@ -217,12 +233,13 @@ export default {
         this.colSizes = arr[i]
       }
       
-    },
+    },*/
   },
 
   computed: {
     ...mapGetters({
       teamMembers: "user/getTeamMembers",
+      // sidebarVisible: "task/getSidebarVisible",
     }),
 
     iconRotate(){
@@ -232,50 +249,72 @@ export default {
         return 'rotate(0deg)'
       }
     },
-    tableWidth() {
-      const main = document.getElementById("main-content")
-      let w = main.scrollWidth - 18
-      return w + "px"
-    },
+    /*tableWidth: {
+      get: function() {
+        const main = document.getElementById("main-content")
+        let w = main.scrollWidth - 18
+        
+        return w + "px"
+      },
+      set: function(newValue){
+        console.log(newValue)
+      }
+    },*/
     componentKey(){
       return Math.floor((Math.random() * 999))
     },
   },
   created() {
 
-  
   // Register the listener for the "newTask" event
     this.$nuxt.$on("newTask", this.handleNewTask);
     this.$nuxt.$on("delete_update_table", this.delete_UpdateLocalData)
     this.$nuxt.$on("update_table", this.edit_UpdateLocalData)
  
-},
+  },
   mounted() {
+    /*const main = document.getElementById("main-content")
+    let pageWidth
+    const resizeObserver = new ResizeObserver((entries) => {
+      console.log(entries[0].contentRect)
+      if (entries[0].contentRect) {
+        pageWidth = entries[0].contentRect.width
+      } else {
+        pageWidth = main.scrollWidth - 18
+      }
+    });
+
+    resizeObserver.observe(main);*/
     
     this.localData = _.cloneDeep(this.tableData)
     this.modifyDateFormat()
 
     let nowidth = 0;
     let nowidthIndex = [];
-    let colwidthArr = this.tableFields.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100 )
-    // console.log(colwidthArr)
-    for (var i = 0; i < colwidthArr.length; i++) {
+    this.tableWidth = this.tableFields.reduce((acc, curr) => curr.width + acc, 0)
+    this.colSizes = this.tableFields.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100)
+    // this.colSizes = this.tableFields.map(w => parseInt(100 / (this.tableWidth / w.width)))
+    console.log(" column width->",this.colSizes)
+
+    /*for (var i = 0; i < colwidthArr.length; i++) {
+      // console.info(colwidthArr[i])
       if(!isNaN(colwidthArr[i])){
         nowidth += colwidthArr[i]
-        colwidthArr[i] = Number(colwidthArr[i].toFixed(4))
+        colwidthArr[i] = Number(colwidthArr[i].toFixed(2))
       } else {
         nowidthIndex.push(i)
-        colwidthArr[i] = 100-nowidth
+        colwidthArr[i] = Math.abs(100-nowidth)
       }
       // this.colSizes.push(colwidthArr[i])
-    }
+    }*/
 
     // nowidthIndex.length
-      if (nowidthIndex.length == 1) {
-        colwidthArr[nowidthIndex[0]] = 100 - nowidth
-      } 
+    // console.log(nowidthIndex, nowidth, colwidthArr)
+    /*if (nowidthIndex.length == 1) {
+      colwidthArr[nowidthIndex[0]] = Math.abs(100-nowidth)
+    } */
 
-    this.colSizes = colwidthArr
+    // this.colSizes = colwidthArr
     // console.log(colwidthArr, nowidth, nowidthIndex)
     
     let elemIds = document.getElementsByClassName("splitcell"+this.componentKey)
@@ -286,20 +325,19 @@ export default {
     }
 
     var pg = this.$route.path.replace(/\//g,'-')
-    var sizes = sessionStorage.getItem('cols'+pg)
+    // var sizes = sessionStorage.getItem('cols'+pg)
 
-    if (sizes) {
+    /*if (sizes) {
       this.colSizes = JSON.parse(sizes)
-    }
+    }*/
 
     Split(this.colIds, {
       sizes: this.colSizes,
       minSize: this.colmw,
-      gutterSize: 5,
+      gutterSize: 4,
       snapOffset: 4,
-      /*onDragStart: (sizes) => {
-        console.info(this.$refs.splitHint)
-      },*/
+      dragInterval: 5,
+      
       onDragEnd: (sizes) => {
         // console.log(sizes)
         this.colSizes = sizes
@@ -309,7 +347,43 @@ export default {
         // this.colWidth = sizes
       }
     })
-  
+
+    /*new ColumnResizer(this.$refs.table, {
+      liveDrag: true,
+      draggingClass: "rangeDrag",
+      gripInnerHtml: "<div class='rangeGrip'></div>",
+      innerGripHtml: "<div class='gripHint'></div>",
+      minWidth: 120,
+      // disabledColumns: [0],
+      headerOnly: true,
+      widths: this.colSizes,
+      partialRefresh: true,
+      // serialize: false,
+      onResize: (e) => {
+        // console.log("onresize ->",...arguments)
+        let tabl = this.$refs.table.children[0]
+        let cells = tabl.children[0].cells
+        console.info(cells)
+        let sizes = []
+        for (var i = 0; i < cells.length; i++) {
+          console.info(cells[i].innerText, "->", cells[i].clientWidth, cells[i].style.width)
+          sizes.push(cells[i].clientWidth)
+        }
+        // let ss = sessionStorage.getItem("header_table")
+        // if (ss) {
+        //   console.log(ss.split(";"))
+        //   this.colSizes = ss.split(";")
+        // }
+      },
+      onDrag: function() {
+        // console.log('ondrag ->', ...arguments)
+      }
+    })*/
+
+    /* Init Resizable */
+    /*const table = document.querySelector('table');
+    this.resizeTable(table);*/
+    
   },
 
   beforeDestroy(){
@@ -322,6 +396,86 @@ export default {
   },
 
   methods: {
+    /*resizeTable(table, selector = 'thead tr th',  minWidth = 6) {
+      if (!table) return;
+      const cols = table.querySelectorAll(selector);
+      const parent = table.parentNode;
+      // const tableWidth = table.offsetWidth;
+      this.tableWidth = this.totalcolswidth;
+      let value = 0;
+
+      parent.dataset.tableParent = '';
+      parent.style.setProperty(`--th`, `${table.offsetHeight}px`);
+      const div = document.createElement('div');
+      div.classList.add("input_wrap")
+      parent.appendChild(div)
+
+      cols.forEach((col, index) => {
+        // const colWidth = parseInt(100 / (this.tableWidth / col.offsetWidth));
+        const colw = parseInt(col.getAttribute("width"))
+        const inpval = parseInt(100 / (this.tableWidth / colw));
+        const colWidth = colw
+        this.colSizes[index] = colw
+        col.style.width = `calc(1% * var(--c${index}))`;
+        table.style.setProperty(`--c${index}`, colWidth);
+
+        // console.log(colw, colWidth)
+
+        if (index > 0) {
+          const input = document.createElement('input');
+          input.dataset.tableCol = index;
+          input.setAttribute('aria-hidden', true);
+          input.type = 'range';
+          input.value = value;
+          // input.value = colWpx;
+          // input.step = 0.2;
+          //input.min = 0
+          input.max = this.totalcolswidth//
+          input.setAttribute("data-colwidth", value)
+          div.appendChild(input);
+
+          // console.log(table.offsetWidth, col.offsetWidth)
+
+          input.addEventListener('input', () => {
+            if (input.value < minWidth) input.value = minWidth;
+            if (input.value > 100 - minWidth) input.value = 100 - minWidth;
+
+            const next = input.nextElementSibling;
+            const prev = input.previousElementSibling;
+
+            if (next?.nodeName === 'INPUT' && (input.valueAsNumber > (next.valueAsNumber - minWidth))) {
+              input.value = next.valueAsNumber - minWidth;
+              return;
+            }
+            if (prev?.nodeName === 'INPUT' && (input.valueAsNumber < (prev.valueAsNumber + minWidth))) {
+              input.value = prev.valueAsNumber + minWidth;
+              return;
+            }
+
+            table.style.setProperty(`--c${index-1}`, prev?.nodeName === 'INPUT' ? input.valueAsNumber - prev.valueAsNumber : input.valueAsNumber);
+            table.style.setProperty(`--c${index}`, next?.nodeName === 'INPUT' ? next.valueAsNumber - input.valueAsNumber : 100 - input.valueAsNumber);
+            // console.log(table.style.getPropertyValue(`--c${index-1}`, `--c${index}`))
+            
+            this.colSizes.splice(index-1, 2, parseInt(table.style.getPropertyValue(`--c${index-1}`)), parseInt(table.style.getPropertyValue(`--c${index}`)) )
+          });
+        }
+        // value += colWidth;
+        value += inpval;
+        console.log(index, 'value->',value, 'colwidth->',colw, inpval)
+      });
+
+
+      
+    // HACK TO INIT FIREFOX: Trigger input event on last range to re-position sliders 
+      const lastRange = table.parentNode.lastChild;
+      if (lastRange?.nodeName === 'INPUT') {
+        lastRange.dispatchEvent(new Event('input', {
+          bubbles: true,
+          cancelable: true,
+        }));
+      }
+    },*/
+
     handleNewTask (payload,param) {
       if (this.localData.length>0) {
           this.localData.push(payload);
@@ -565,11 +719,14 @@ export default {
   .split {
     display: flex;
     flex-direction: row;
-    width: 100%;
+    /*width: 100%;
+    min-width: 100%;*/
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     background-color: $gray9;
+    top: 0; z-index: 1;
+
     .splitcell {
       transition: width 50ms linear;
       will-change: width;
@@ -682,7 +839,6 @@ export default {
   }
 
 }
-
 
 .editable-input {
   font-size: $base-size;

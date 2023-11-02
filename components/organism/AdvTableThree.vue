@@ -2,7 +2,7 @@
   <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll" @scroll="handleScroll" ref="myTable">
 
       <div :id="'advTableTwo-'+componentKey" class="adv-table position-relative bg-white" :style="{'width': tableWidth}"  >
-        <div class="table resizable w-100 " ref="headrow" style="">
+        <div class="table w-100 " ref="headrow" style="">
           <div class="tr " role="row" >
             <div v-if="drag && filterViews == 'all'" class="width-2 th" role="cell" ></div>
             <div v-for="(field, index) in tableFields" :key="field+index" class="th height-2" role="cell" :style="{width: colSizes[index]+'%'}" :ref="'th'+field.key" :data-key="field.key" >
@@ -148,16 +148,19 @@
             </draggable>
           </section>
         </draggable>
-        <div class="position-absolute " style="inset: 0; z-index: 5; pointer-events: none;">
-        <!-- <div class="position-absolute " style="inset: 0; pointer-events: none;"> -->
-          <div class="split position-sticky " style="top: 0; z-index: 1; pointer-events: all" >
-            <div v-if="drag && filterViews == 'all'" class="width-2 border-bottom-gray2" id="advtable-th-1" ></div>
-            <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :class="'splitcell'+componentKey" :id="'split'+index+componentKey" :minwidth="field.minwidth" >
-              <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}" style="white-space: nowrap;">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
-                <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
-              </span></div>
+        <div class="position-absolute " style="inset: 0; z-index: 5; pointer-events: none; ">
+            
+          <!-- <div class="w-100 position-sticky" style=" display: table; top: 0; z-index: 1;"> -->
+            <div class="split position-sticky" style="top:0; pointer-events: all" :style="{'width': tableWidth}" >
+              <div v-if="drag && filterViews == 'all'"  class="width-2 border-bottom-gray2 " id="advtable-th-1" ></div>
+              <div v-for="(field, index) in tableFields"  class="splitcell border-bottom-gray2" :class="'splitcell'+componentKey" :id="'split'+index+componentKey" :minwidth="field.minwidth" >
+                <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}" style="white-space: nowrap;">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
+                  <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
+                </span></div>
+              </div>
             </div>
-          </div>
+          <!-- </div> -->
+
           <div ref="splitHint" class="split-indicator h-100 position-absolute"></div>
         </div>
       </div>
@@ -236,7 +239,6 @@ export default {
       contextVisible: false,
       popupCoords: { left: 0, top: 0 },
       activeItem: {},
-      // resizableTables: [],
       format: "D MMM YYYY",
       // highlight: false,
       validTitle: false,
@@ -406,7 +408,6 @@ export default {
   },
   mounted() {
     // this.localData=_.cloneDeep(this.tableData)
-    // this.resizableColumns()
 
     let nowidth = 0;
     let nowidthIndex = [];
@@ -418,14 +419,14 @@ export default {
         colwidthArr[i] = Number(colwidthArr[i].toFixed(4))
       } else {
         nowidthIndex.push(i)
-        colwidthArr[i] = 100-nowidth
+        colwidthArr[i] = Math.abs(100-nowidth)
       }
       // this.colSizes.push(colwidthArr[i])
     }
 
     // nowidthIndex.length
       if (nowidthIndex.length == 1) {
-        colwidthArr[nowidthIndex[0]] = 100 - nowidth
+        colwidthArr[nowidthIndex[0]] = Math.abs(100-nowidth)
       } else {
         /*for (var i = 0; i < colwidthArr.length; i++) {
 
@@ -452,7 +453,7 @@ export default {
     Split(this.colIds, {
       sizes: this.colSizes,
       minSize: this.colmw,
-      gutterSize: 5,
+      gutterSize: 4,
       snapOffset: 4,
       /*onDragStart: (sizes) => {
         console.info(this.$refs.splitHint)
@@ -477,10 +478,10 @@ export default {
     this.localData = []
     this.available_tasks = []
     this.activeItem = {}
-    // this.resizableTables = []
     this.$nuxt.$off("delete_update_table", this.delete_UpdateLocalData)
     this.$nuxt.$off("update_table", this.edit_UpdateLocalData)
     this.$nuxt.$off("newTask", this.handleNewTask);
+    
   },
 
   methods: {
@@ -701,8 +702,8 @@ export default {
               remainingCount = 0;
             } else {
               Object.assign(tmp, this.localData[i])
-              console.log(tmp)
-              console.log(allTasks[i])
+              // console.log(tmp)
+              // console.log(allTasks[i])
               tmp.tasks.push(...allTasks[i].tasks.slice(start + 1, allTasks[i].tasks?.length))
               this.available_tasks[allTasks[i].title] = tmp.tasks;
               this.localData.length -= 1;
@@ -1028,11 +1029,13 @@ export default {
   .split {
     display: flex;
     flex-direction: row;
-    width: 100%;
+    /*width: 100%;*/
+    min-width: 100%;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     background-color: $gray9;
+    
     .splitcell {
       transition: width 50ms linear;
       will-change: width;

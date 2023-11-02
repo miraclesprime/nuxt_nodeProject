@@ -30,6 +30,7 @@
     "@tiptap/starter-kit": "^2.0.0-beta.220",
     "@tiptap/suggestion": "^2.0.0-beta.220",
     "@tiptap/vue-2": "^2.0.0-beta.220",
+    "column-resizer": "^1.4.0",
     "cookie-universal-nuxt": "^2.1.5",
     "core-js": "^3.19.0",
     "lodash": "^4.17.21",
