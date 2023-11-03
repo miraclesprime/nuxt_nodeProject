@@ -248,7 +248,9 @@ export default {
   mounted() {
 
   if(process.client) {
-
+    if (!this.tasks) {
+      this.updateKey();
+    }
     if (JSON.parse(localStorage.getItem("user")).subr != "ADMIN") {
       this.$router.push('/error/403')    
     } 
