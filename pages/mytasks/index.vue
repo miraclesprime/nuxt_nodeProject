@@ -219,7 +219,10 @@ export default {
   },
 
   mounted() {
-
+    if (!this.todos) {
+      this.updateKey();
+    }
+    // if(this.todos)
     for(let field of this.taskFields) {
       if(field.header_icon) {
         field.header_icon.isActive = false;
