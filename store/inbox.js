@@ -1,7 +1,7 @@
 export const state = () => ({
     inbox: null,
     singleInbox: {},
-    msgKey: {msgId: null, key: 0}
+    msgKey: { msgId: null, key: 0 }
   });
   
   export const getters = {

@@ -83,6 +83,7 @@ export default {
         this.fetchHistory()
       }
     },
+
   },
   
   mounted() {

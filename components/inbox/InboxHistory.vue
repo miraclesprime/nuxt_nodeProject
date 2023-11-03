@@ -117,11 +117,11 @@ export default {
     },
     watch: {
         msgKey(newValue) {
+            // console.log(newValue.key, newValue.msgId, this.history.taskCommentId)
             if(this.history.taskCommentId == newValue.msgId) {
-                console.log(newValue)
                 this.reactionSpinner = true
                 this.$store.dispatch("task/fetchCommentReactions", {id: this.history.taskCommentId}).then(c => {
-                    console.log(c)
+                    // console.log(c)
                     this.commentReactions = c
                     this.reactionKey += 1
                     this.reactionSpinner = false
@@ -198,14 +198,14 @@ export default {
             }
         },
     },
-    created(){
+    /*created(){
         this.$nuxt.$off("reload-taskComments")
         this.$nuxt.$on("reload-taskComments", (msg) => {
           console.log("reload task comments", msg);
           // this.fetchTaskComments()
-          this.fetchTaskCommentReactions()
+          // this.fetchTaskCommentReactions()
         })
-    },
+    },*/
     mounted() {
         if (this.history.reactions[0]?.id) {
             this.historyReactions = this.history.reactions
@@ -288,7 +288,7 @@ export default {
         onReactionClick({ data }) {
             // alert("you reacted " + data)
             this.isReactionPickerOpen = false
-            this.$store.dispatch("task/addTaskCommentReaction", {taskCommentId: this.history.taskCommentId, reaction: data, taskId: this.history.task.id, text: "reacted to comment" }).then((res) => {
+            this.$store.dispatch("task/addCommentReaction", {taskCommentId: this.history.taskCommentId, reaction: data, taskId: this.history.task.id, text: "reacted to comment" }).then((res) => {
                     // console.log(res.data)
                     this.fetchTaskCommentReactions();
                 }).catch(e => console.warn(e))
@@ -296,7 +296,7 @@ export default {
         fetchTaskCommentReactions(){
             this.reactionSpinner = true
             this.$store.dispatch("task/fetchCommentReactions", {id: this.history.taskCommentId}).then(c => {
-                console.log(c)
+                // console.log(c)
                 this.commentReactions = c
                 this.reactionKey += 1
                 let inboxKey = this.msgKey.key+1;

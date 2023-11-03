@@ -135,7 +135,8 @@ export default {
       default: () => { 
         return 'project'
       }
-    }
+    },
+    reloadReactions: { type: Number }
   },
   components: {
     fa: FontAwesomeIcon,
@@ -173,6 +174,13 @@ export default {
       fileLoader: false,
       alertDialog: false,
       alertMsg:"",
+    }
+  },
+  watch: {
+    inboxKey(newValue, oldValue){
+      if (newValue.msgId == this.msg.id) {
+        this.fetchReactions()
+      }
     }
   },
   computed: {
@@ -237,13 +245,15 @@ export default {
           if (r.data.statusCode == 200) {
             this.reactions = r.data.data
             this.reactionKey += 1
-            if (process.server) return
-            if (this.msg?.taskId) {
+            let iK = this.inboxKey.key+1;
+            this.$store.dispatch('inbox/setKey', {key: iK, msgId: this.msg.id})
+            // if (process.server) return
+            /*if (this.msg?.taskId) {
               this.$nuxt.$emit("reload-taskComments", this.msg)
             }
             if (this.msg?.projectId) {
               this.$nuxt.$emit("reload-projectComments", this.msg)
-            }
+            }*/
           }
         })
         .catch(e => console.log(e))
@@ -343,8 +353,6 @@ export default {
             if (d.data.statusCode == 200) {
               this.fetchReactions()
               this.reactionSpinner = false
-              let iK = this.inboxKey.key+1;
-              this.$store.dispatch('inbox/setKey', {key: iK, msgId: this.msg.id})
             }
           })
           .catch(e => console.log(e))
