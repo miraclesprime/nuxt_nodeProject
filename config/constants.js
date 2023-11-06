@@ -1026,7 +1026,7 @@ export const USER_TASKS = [
     label: 'Task name',
     key: 'title',
     width: 300,
-    minwidth: 300,
+    minwidth: 260,
     icon: {
       icon: 'check-circle-solid',
       variant: 'gray2',
@@ -1043,7 +1043,7 @@ export const USER_TASKS = [
     label: 'Project',
     key: 'project',
     width: 200,
-    minwidth: 170,
+    minwidth: 180,
     header_icon: {
       icon: 'swap-vertical',
       event: 'table-sort',

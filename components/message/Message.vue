@@ -177,9 +177,15 @@ export default {
     }
   },
   watch: {
-    inboxKey(newValue, oldValue){
-      if (newValue.msgId == this.msg.id) {
-        this.fetchReactions()
+    msgkey(newValue){
+      console.log(this.fieldkey, newValue.project, this.msg.id)
+      if (this.msg.taskId && (newValue.taskMsgid == this.msg.id)) {
+        this.$store.dispatch("task/fetchCommentReactions",{id: newValue.taskMsgid}).then(rect => this.reactions = rect)
+      }
+      if (this.msg.projectId && (newValue.projMsgid == this.msg.id)) {
+        // this.fetchReactions()
+        // console.log(this.fieldkey, this.msg.id)
+        this.$store.dispatch("project/fetchCommentReactions",{id: newValue.projMsgid}).then(rect => this.reactions = rect)
       }
     }
   },
@@ -187,7 +193,7 @@ export default {
     ...mapGetters({
       user: "user/getUser2",
       members: 'user/getTeamMembers',
-      inboxKey: "inbox/getKey"
+      msgkey: "inbox/getKey"
     }),
     displayDate() {
       return dayjs(this.msg.updatedAt).fromNow()
@@ -245,8 +251,15 @@ export default {
           if (r.data.statusCode == 200) {
             this.reactions = r.data.data
             this.reactionKey += 1
-            let iK = this.inboxKey.key+1;
-            this.$store.dispatch('inbox/setKey', {key: iK, msgId: this.msg.id})
+            
+            let iK = this.msgkey.key+1;
+            if (this.fieldkey == "task") {
+              this.$store.dispatch('inbox/setKey', {key: iK, taskMsgid: this.msg.id, projMsgid: null })
+            }
+            if (this.fieldkey == "project") {
+              this.$store.dispatch('inbox/setKey', {key: iK, taskMsgid: null, projMsgid: this.msg.id })
+            }
+
             // if (process.server) return
             /*if (this.msg?.taskId) {
               this.$nuxt.$emit("reload-taskComments", this.msg)

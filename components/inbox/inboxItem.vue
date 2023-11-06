@@ -3,11 +3,26 @@
     <!-- <div v-if="!status.markRead" class="new text-white font-xs position-absolute" id="inbox-item-new">New
       <span class="triangle" id="inbox-item-triangle"></span>
     </div> -->
-    <div class="align-center justify-between">
+    <div class="align-center justify-between gap-05">
       <div v-if="projTitle" class="align-center d-inline-flex gap-025 shape-pill bg-light font-sm text-secondary py-025 px-075" id="inbox-item-project" >
-        <bib-icon icon="briefcase-solid" variant="secondary" :scale="0.8"></bib-icon> {{projTitle}}
+        <bib-icon icon="briefcase-solid" variant="secondary" :scale="0.8"></bib-icon> {{projTitle}} 
       </div>
-      <div class="inbox-flags d-inline-flex align-center ml-auto">
+
+      <div class="d-flex align-center justify-between " id="inbox-item-project-task-title" v-else>
+        <div v-if="item.mode == 'task'" class="align-center gap-05">
+          <bib-icon icon="check-circle-solid" variant="gray5" :scale="1.25"></bib-icon>
+          <h4 id="task-project-title">{{item.title || taskTitle }}</h4>
+        </div>
+        <!-- <span id="calendar-date-wrapper" class="duedate d-inline-flex align-center shape-pill gap-05 bg-light px-05 py-025 ml-auto text-dark font-xs">
+          <format-date :datetime="item.data[0].updatedAt"></format-date>
+        </span> -->
+      </div>
+
+      <span id="calendar-date-wrapper" class="duedate d-inline-flex align-center shape-pill gap-05 bg-light px-05 py-025 ml-auto text-dark font-xs">
+        <format-date :datetime="item.data[0].updatedAt"></format-date>
+      </span>
+
+      <div class="inbox-flags d-inline-flex align-center ">
         <span id="inbox-item-flag-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Flag message'" @click.stop="markFavorite">
           <bib-icon icon="bookmark-solid" variant="gray5"></bib-icon>
         </span>
@@ -24,13 +39,12 @@
       </div>
     </div>
 
-    <div class="d-flex align-center  py-1" id="inbox-item-project-task-title">
+    <div class="d-flex align-center  py-1" id="inbox-item-project-task-title" v-if="item.mode == 'task' && projTitle">
       <div v-if="item.mode == 'task'" class="align-center gap-05">
         <bib-icon icon="check-circle-solid" variant="gray5" :scale="1.25"></bib-icon>
         <h4 id="task-project-title">{{item.title || taskTitle }}</h4>
       </div>
       <span id="calendar-date-wrapper" class="duedate d-inline-flex align-center shape-pill gap-05 bg-light px-05 py-025 ml-auto text-dark font-xs">
-        <!-- <bib-icon icon="calendar" variant="gray5"></bib-icon> -->
         <format-date :datetime="item.data[0].updatedAt"></format-date>
       </span>
     </div>

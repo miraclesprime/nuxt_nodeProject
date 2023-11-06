@@ -324,12 +324,12 @@ export default {
       this.colmw.push(Number(c.getAttribute("minwidth")))
     }
 
-    var pg = this.$route.path.replace(/\//g,'-')
+    /*var pg = this.$route.path.replace(/\//g,'-')
     var sizes = sessionStorage.getItem('cols'+pg)
 
     if (sizes) {
       this.colSizes = JSON.parse(sizes)
-    }
+    }*/
 
     Split(this.colIds, {
       sizes: this.colSizes,
@@ -338,51 +338,14 @@ export default {
       snapOffset: 4,
       dragInterval: 5,
       
-      onDragEnd: (sizes) => {
+      /*onDragEnd: (sizes) => {
         // console.log(sizes)
         this.colSizes = sizes
         if (pg.indexOf("favorite") < 0) {
           sessionStorage.setItem("cols"+pg, JSON.stringify(sizes))
         }
-        // this.colWidth = sizes
-      }
+      }*/
     })
-
-    /*new ColumnResizer(this.$refs.table, {
-      liveDrag: true,
-      draggingClass: "rangeDrag",
-      gripInnerHtml: "<div class='rangeGrip'></div>",
-      innerGripHtml: "<div class='gripHint'></div>",
-      minWidth: 120,
-      // disabledColumns: [0],
-      headerOnly: true,
-      widths: this.colSizes,
-      partialRefresh: true,
-      // serialize: false,
-      onResize: (e) => {
-        // console.log("onresize ->",...arguments)
-        let tabl = this.$refs.table.children[0]
-        let cells = tabl.children[0].cells
-        console.info(cells)
-        let sizes = []
-        for (var i = 0; i < cells.length; i++) {
-          console.info(cells[i].innerText, "->", cells[i].clientWidth, cells[i].style.width)
-          sizes.push(cells[i].clientWidth)
-        }
-        // let ss = sessionStorage.getItem("header_table")
-        // if (ss) {
-        //   console.log(ss.split(";"))
-        //   this.colSizes = ss.split(";")
-        // }
-      },
-      onDrag: function() {
-        // console.log('ondrag ->', ...arguments)
-      }
-    })*/
-
-    /* Init Resizable */
-    /*const table = document.querySelector('table');
-    this.resizeTable(table);*/
     
   },
 
@@ -396,85 +359,6 @@ export default {
   },
 
   methods: {
-    /*resizeTable(table, selector = 'thead tr th',  minWidth = 6) {
-      if (!table) return;
-      const cols = table.querySelectorAll(selector);
-      const parent = table.parentNode;
-      // const tableWidth = table.offsetWidth;
-      this.tableWidth = this.totalcolswidth;
-      let value = 0;
-
-      parent.dataset.tableParent = '';
-      parent.style.setProperty(`--th`, `${table.offsetHeight}px`);
-      const div = document.createElement('div');
-      div.classList.add("input_wrap")
-      parent.appendChild(div)
-
-      cols.forEach((col, index) => {
-        // const colWidth = parseInt(100 / (this.tableWidth / col.offsetWidth));
-        const colw = parseInt(col.getAttribute("width"))
-        const inpval = parseInt(100 / (this.tableWidth / colw));
-        const colWidth = colw
-        this.colSizes[index] = colw
-        col.style.width = `calc(1% * var(--c${index}))`;
-        table.style.setProperty(`--c${index}`, colWidth);
-
-        // console.log(colw, colWidth)
-
-        if (index > 0) {
-          const input = document.createElement('input');
-          input.dataset.tableCol = index;
-          input.setAttribute('aria-hidden', true);
-          input.type = 'range';
-          input.value = value;
-          // input.value = colWpx;
-          // input.step = 0.2;
-          //input.min = 0
-          input.max = this.totalcolswidth//
-          input.setAttribute("data-colwidth", value)
-          div.appendChild(input);
-
-          // console.log(table.offsetWidth, col.offsetWidth)
-
-          input.addEventListener('input', () => {
-            if (input.value < minWidth) input.value = minWidth;
-            if (input.value > 100 - minWidth) input.value = 100 - minWidth;
-
-            const next = input.nextElementSibling;
-            const prev = input.previousElementSibling;
-
-            if (next?.nodeName === 'INPUT' && (input.valueAsNumber > (next.valueAsNumber - minWidth))) {
-              input.value = next.valueAsNumber - minWidth;
-              return;
-            }
-            if (prev?.nodeName === 'INPUT' && (input.valueAsNumber < (prev.valueAsNumber + minWidth))) {
-              input.value = prev.valueAsNumber + minWidth;
-              return;
-            }
-
-            table.style.setProperty(`--c${index-1}`, prev?.nodeName === 'INPUT' ? input.valueAsNumber - prev.valueAsNumber : input.valueAsNumber);
-            table.style.setProperty(`--c${index}`, next?.nodeName === 'INPUT' ? next.valueAsNumber - input.valueAsNumber : 100 - input.valueAsNumber);
-            // console.log(table.style.getPropertyValue(`--c${index-1}`, `--c${index}`))
-            
-            this.colSizes.splice(index-1, 2, parseInt(table.style.getPropertyValue(`--c${index-1}`)), parseInt(table.style.getPropertyValue(`--c${index}`)) )
-          });
-        }
-        // value += colWidth;
-        value += inpval;
-        console.log(index, 'value->',value, 'colwidth->',colw, inpval)
-      });
-
-
-      
-    // HACK TO INIT FIREFOX: Trigger input event on last range to re-position sliders 
-      const lastRange = table.parentNode.lastChild;
-      if (lastRange?.nodeName === 'INPUT') {
-        lastRange.dispatchEvent(new Event('input', {
-          bubbles: true,
-          cancelable: true,
-        }));
-      }
-    },*/
 
     handleNewTask (payload,param) {
       if (this.localData.length>0) {

@@ -54,7 +54,7 @@
                 </div>
             </div>
 
-            <template v-if="reactionPicker">
+            <template v-if="comment">
                 <tippy :visible="isReactionPickerOpen" arrow theme="light-border p-0" :animate-fill="false" :distance="6" interactive trigger="manual" :onHide="() => defer(() => (isReactionPickerOpen = false))">
                     <template slot="trigger">
                         <div class="action" @click="toggleReactionPicker">
@@ -66,6 +66,11 @@
                     </div>
                 </tippy>
             </template>
+            <!-- <div v-else>
+                <div class="action" @click="toggleReactionPicker">
+                    <fa :icon="faSmile" />
+                </div>
+            </div> -->
         </div>
 
         <bib-popup-notification-wrapper>
@@ -117,19 +122,31 @@ export default {
     },
     watch: {
         msgKey(newValue) {
-            // console.log(newValue.key, newValue.msgId, this.history.taskCommentId)
-            if(this.history.taskCommentId == newValue.msgId) {
-                this.reactionSpinner = true
+            if(newValue.taskMsgid && (newValue.taskMsgid == this.history.taskCommentId)) {
+                // console.log(newValue.taskMsgid, this.history.taskCommentId)
+                // this.reactionSpinner = true
                 this.$store.dispatch("task/fetchCommentReactions", {id: this.history.taskCommentId}).then(c => {
                     // console.log(c)
                     this.commentReactions = c
                     this.reactionKey += 1
-                    this.reactionSpinner = false
-                    // return c
+                    // this.reactionSpinner = false
                 }).catch(e => {
-                    this.reactionSpinner = false
+                    // this.reactionSpinner = false
                     console.warn(e)
                 })
+            }
+            if (newValue.projMsgid && (newValue.projMsgid == this.history.projectCommentId)) {
+                // console.log(newValue.projMsgid, this.history.projectCommentId)
+                this.$store.dispatch("project/fetchCommentReactions", {id: this.history.projectCommentId}).then(c => {
+                    // console.log(c)
+                    this.commentReactions = c
+                    this.reactionKey += 1
+                    // this.reactionSpinner = false
+                }).catch(e => {
+                    // this.reactionSpinner = false
+                    console.warn(e)
+                })
+
             }
         }
     },
@@ -186,9 +203,11 @@ export default {
           return rg
         },
         reactionPicker(){
+            // console.info(this.commentReactions.length, this.comment)
             if (this.commentReactions.length > 0 && this.comment) {
                 let react = this.commentReactions.findIndex(el => el.reaction != "👍")
-                if (react) {
+                console.info(react)
+                if (react >= 0) {
                     return false
                 } else {
                     return true
@@ -198,14 +217,6 @@ export default {
             }
         },
     },
-    /*created(){
-        this.$nuxt.$off("reload-taskComments")
-        this.$nuxt.$on("reload-taskComments", (msg) => {
-          console.log("reload task comments", msg);
-          // this.fetchTaskComments()
-          // this.fetchTaskCommentReactions()
-        })
-    },*/
     mounted() {
         if (this.history.reactions[0]?.id) {
             this.historyReactions = this.history.reactions
@@ -230,15 +241,22 @@ export default {
             // alert("work in progress")
             this.reactionSpinner = true
             if (this.comment != null) {
-                console.log("comment->",this.comment)
-                this.$store.dispatch("task/addCommentReaction", {taskCommentId: this.history.taskCommentId, reaction: "👍", taskId: this.history.task.id, text: "liked the comment" }).then(res => {
-                    console.log("add task comment reaction", res.data)
-                    if (res.statusCode == 200) {
-                        this.fetchTaskCommentReactions()
-                        // this.$nuxt.$emit("reload-comments")
-                    }
-                }).catch(e => console.warn(e))
-                // this.reactionSpinner = false
+
+                if(this.history.taskCommentId) {
+                    this.$store.dispatch("task/addCommentReaction", {taskCommentId: this.history.taskCommentId, reaction: "👍", taskId: this.history.task.id, text: "liked the comment" }).then(res => {
+                        console.log("add task comment reaction", res.data)
+                        if (res.statusCode == 200) {
+                            this.fetchTaskCommentReactions()
+                        }
+                    }).catch(e => console.warn(e))
+                } else {
+                    this.$store.dispatch("project/addCommentReaction", {projectCommentId: this.history.projectCommentId, reaction: "👍", projectId: this.history.project.id, text: "liked the comment" }).then(res => {
+                        console.log("add project comment reaction", res.data)
+                        if (res.statusCode == 200) {
+                            this.fetchProjCommentReactions()
+                        }
+                    }).catch(e => console.warn(e))
+                }
                 return false
             }
 
@@ -288,10 +306,19 @@ export default {
         onReactionClick({ data }) {
             // alert("you reacted " + data)
             this.isReactionPickerOpen = false
-            this.$store.dispatch("task/addCommentReaction", {taskCommentId: this.history.taskCommentId, reaction: data, taskId: this.history.task.id, text: "reacted to comment" }).then((res) => {
-                    // console.log(res.data)
-                    this.fetchTaskCommentReactions();
+            if(this.history.taskCommentId) {
+                this.$store.dispatch("task/addCommentReaction", {taskCommentId: this.history.taskCommentId, reaction: data, taskId: this.history.task.id, text: "reacted to comment" }).then((res) => {
+                        // console.log(res.data)
+                        this.fetchTaskCommentReactions();
+                    }).catch(e => console.warn(e))
+            } else {
+                this.$store.dispatch("project/addCommentReaction", {projectCommentId: this.history.projectCommentId, reaction: data, projectId: this.history.project.id, text: "reacted to comment" }).then((res) => {
+                    console.log("add task comment reaction", res.data)
+                    // if (res.statusCode == 200) {
+                        this.fetchProjCommentReactions()
+                    // }
                 }).catch(e => console.warn(e))
+            }
         },
         fetchTaskCommentReactions(){
             this.reactionSpinner = true
@@ -300,7 +327,7 @@ export default {
                 this.commentReactions = c
                 this.reactionKey += 1
                 let inboxKey = this.msgKey.key+1;
-                this.$store.dispatch("inbox/setKey", {key: inboxKey, msgId: this.history.taskCommentId})
+                this.$store.dispatch("inbox/setKey", {key: inboxKey, taskMsgid: this.history.taskCommentId, projMsgid: null})
                 this.reactionSpinner = false
                 // return c
             }).catch(e => {
@@ -313,6 +340,9 @@ export default {
             this.$store.dispatch("project/fetchCommentReactions", {id: this.history.projectCommentId}).then(r => {
                 // console.log(r)
                 this.commentReactions = r
+                this.reactionKey += 1
+                let inboxKey = this.msgKey.key+1;
+                this.$store.dispatch("inbox/setKey", {key: inboxKey, taskMsgid: null, projMsgid: this.history.projectCommentId})
                 this.reactionSpinner = false
             }).catch(e => {
                 console.warn(e)
