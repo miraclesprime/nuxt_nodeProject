@@ -173,13 +173,6 @@ export default {
     })
   },
 
-  /*created(){
-    this.$nuxt.$on("reload-comments", () => {
-      console.log("emitted from inbox history")
-      this.reloadComments += 1
-    })
-  },*/
-
   methods: {
     markComplete() {
       this.loading = true
