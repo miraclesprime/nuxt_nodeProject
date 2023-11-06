@@ -5,7 +5,7 @@
         <div class="table w-100 " ref="headrow" >
           <div class="tr " role="row" >
             <div v-if="drag && filterViews == 'all'" class="width-2 th" role="cell" ></div>
-            <div v-for="(field, index) in tableFields" :key="field+index" class="th height-2" role="cell" :style="{width: colSizes[index]+'%'}" :ref="'th'+field.key" :data-key="field.key" >
+            <div v-for="(field, index) in tableFields" :key="field+index" class="th height-2" role="cell" :width="colSizes[index]+'%'" :style="{width: `calc(1.0045% * ${colSizes[index]})`}" :ref="'th'+field.key" :data-key="field.key" >
               <!-- <div class="align-center gap-05" >{{field.label}} <span v-if="field.header_icon" :id="'adv-table-header-icon'+index" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null" >
                   <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
                 </span>
@@ -148,16 +148,22 @@
             </draggable>
           </section>
         </draggable>
-        <div class="position-absolute " style="inset: 0; z-index: 5; pointer-events: none; ">
+        <div id="header_wrap" class="position-absolute header-wrap" >
             
           <!-- <div class="w-100 position-sticky" style=" display: table; top: 0; z-index: 1;"> -->
-            <div class="split position-sticky" style="top:0; pointer-events: all" >
-              <div v-if="drag && filterViews == 'all'"  class="width-2 border-bottom-gray2 " id="advtable-th-1" ></div>
-              <div v-for="(field, index) in tableFields"  class="splitcell border-bottom-gray2" :class="'splitcell'+componentKey" :id="'split'+index+componentKey" :minwidth="field.minwidth" >
+            <div class="split position-sticky" >
+              <div v-if="drag && filterViews == 'all'"  class="width-2 border-bottom-gray2" id="advtable-th-1" ></div>
+              <!-- <div v-for="(field, index) in tableFields"  class="splitcell border-bottom-gray2" :class="'splitcell'+componentKey" :id="'split'+index+componentKey" :minwidth="field.minwidth" >
+                <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}" style="white-space: nowrap;">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
+                  <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
+                </span></div>
+              </div> -->
+              <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :class="['splitcell'+componentKey]" :id="'split'+index+componentKey" :minwidth="field.minwidth" >
                 <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}" style="white-space: nowrap;">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
                   <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
                 </span></div>
               </div>
+              <div class="border-bottom-gray2"></div>
             </div>
           <!-- </div> -->
 
@@ -399,7 +405,8 @@ export default {
     // let nowidth = 0;
     // let nowidthIndex = [];
     this.tableWidth = this.tableFields.reduce((acc, curr) => curr.width + acc, 0)
-    let colwidthArr = this.tableFields.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100 )
+    this.colSizes = this.tableFields.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100)
+    // let colwidthArr = this.tableFields.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100 )
     // console.log(colwidthArr)
     /*for (var i = 0; i < colwidthArr.length; i++) {
       if(!isNaN(colwidthArr[i])){
@@ -427,22 +434,23 @@ export default {
       this.colmw.push(Number(c.getAttribute("minwidth")))
     }
 
-    var pg = this.$route.path.replace(/\//g,'-')
+    /*var pg = this.$route.path.replace(/\//g,'-')
     var sizes = sessionStorage.getItem('cols'+pg)
 
     if (sizes) {
       this.colSizes = JSON.parse(sizes)
-    }
+    }*/
 
     Split(this.colIds, {
       sizes: this.colSizes,
       minSize: this.colmw,
       gutterSize: 6,
       snapOffset: 4,
-      onDragEnd: (sizes) => {
+      dragInterval: 5,
+      /*onDragEnd: (sizes) => {
         this.colSizes = sizes
         sessionStorage.setItem("cols"+pg, JSON.stringify(sizes))
-      }
+      }*/
     })
 
     // const divHeight = this.$refs.myTable.clientHeight;
@@ -1007,18 +1015,19 @@ export default {
   .split {
     display: flex;
     flex-direction: row;
-    /*width: 100%;*/
-    min-width: 100%;
+    /*width: 100%;
+    min-width: 100%;*/
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     background-color: $gray9;
-    
+    top: 0; z-index: 1;
+
     .splitcell {
       transition: width 50ms linear;
       will-change: width;
 
-      &:nth-child(2) {
+      &:nth-child(1) {
         background-color: $gray9;
         position: sticky;
         left:0;
