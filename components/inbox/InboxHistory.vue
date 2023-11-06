@@ -117,19 +117,22 @@ export default {
     },
     watch: {
         msgKey(newValue) {
-            // console.log(newValue.key, newValue.msgId, this.history.taskCommentId)
-            if(this.history.taskCommentId == newValue.msgId) {
-                this.reactionSpinner = true
+            if(newValue.taskMsgid && (newValue.taskMsgid == this.history.taskCommentId)) {
+                console.log(newValue.taskMsgid, this.history.taskCommentId)
+                // this.reactionSpinner = true
                 this.$store.dispatch("task/fetchCommentReactions", {id: this.history.taskCommentId}).then(c => {
                     // console.log(c)
                     this.commentReactions = c
                     this.reactionKey += 1
-                    this.reactionSpinner = false
-                    // return c
+                    // this.reactionSpinner = false
                 }).catch(e => {
-                    this.reactionSpinner = false
+                    // this.reactionSpinner = false
                     console.warn(e)
                 })
+            }
+            if (newValue.projMsgid && (newValue.projMsgid == this.history.projectCommentId)) {
+                console.log(newValue.projMsgid, this.history.projectCommentId)
+
             }
         }
     },
@@ -198,14 +201,6 @@ export default {
             }
         },
     },
-    /*created(){
-        this.$nuxt.$off("reload-taskComments")
-        this.$nuxt.$on("reload-taskComments", (msg) => {
-          console.log("reload task comments", msg);
-          // this.fetchTaskComments()
-          // this.fetchTaskCommentReactions()
-        })
-    },*/
     mounted() {
         if (this.history.reactions[0]?.id) {
             this.historyReactions = this.history.reactions
@@ -235,7 +230,6 @@ export default {
                     console.log("add task comment reaction", res.data)
                     if (res.statusCode == 200) {
                         this.fetchTaskCommentReactions()
-                        // this.$nuxt.$emit("reload-comments")
                     }
                 }).catch(e => console.warn(e))
                 // this.reactionSpinner = false
@@ -300,7 +294,7 @@ export default {
                 this.commentReactions = c
                 this.reactionKey += 1
                 let inboxKey = this.msgKey.key+1;
-                this.$store.dispatch("inbox/setKey", {key: inboxKey, msgId: this.history.taskCommentId})
+                this.$store.dispatch("inbox/setKey", {key: inboxKey, taskMsgid: this.history.taskCommentId, projMsgid: null})
                 this.reactionSpinner = false
                 // return c
             }).catch(e => {

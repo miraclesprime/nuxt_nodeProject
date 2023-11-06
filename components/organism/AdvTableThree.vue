@@ -1,8 +1,8 @@
 <template>
-  <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll" @scroll="handleScroll" ref="myTable">
+  <div id="adv-table-wrapper" class="adv-table-wrapper position-relative" v-click-outside="unselectAll" @scroll="handleScroll" ref="myTable" :style="{minWidth: tableWidth+'px'}">
 
-      <div :id="'advTableTwo-'+componentKey" class="adv-table position-relative bg-white" :style="{'width': tableWidth}"  >
-        <div class="table w-100 " ref="headrow" style="">
+      <div :id="'advTableTwo-'+componentKey" class="adv-table position-relative bg-white" >
+        <div class="table w-100 " ref="headrow" >
           <div class="tr " role="row" >
             <div v-if="drag && filterViews == 'all'" class="width-2 th" role="cell" ></div>
             <div v-for="(field, index) in tableFields" :key="field+index" class="th height-2" role="cell" :style="{width: colSizes[index]+'%'}" :ref="'th'+field.key" :data-key="field.key" >
@@ -151,7 +151,7 @@
         <div class="position-absolute " style="inset: 0; z-index: 5; pointer-events: none; ">
             
           <!-- <div class="w-100 position-sticky" style=" display: table; top: 0; z-index: 1;"> -->
-            <div class="split position-sticky" style="top:0; pointer-events: all" :style="{'width': tableWidth}" >
+            <div class="split position-sticky" style="top:0; pointer-events: all" >
               <div v-if="drag && filterViews == 'all'"  class="width-2 border-bottom-gray2 " id="advtable-th-1" ></div>
               <div v-for="(field, index) in tableFields"  class="splitcell border-bottom-gray2" :class="'splitcell'+componentKey" :id="'split'+index+componentKey" :minwidth="field.minwidth" >
                 <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}" style="white-space: nowrap;">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
@@ -261,6 +261,7 @@ export default {
       colIds: [],
       colSizes: [],
       colmw: [],
+      tableWidth: "100%"
     }
   },
   watch: {
@@ -305,11 +306,8 @@ export default {
         });
       },
     },
-    // tableData(newValue){
-    //   this.localData = _.cloneDeep(newValue)
-      
-    // },
-    tableFields(newValue){
+    
+    /*tableFields(newValue){
       let nowidth = 0;
       let arr = newValue.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100 )
       // console.log(arr)
@@ -323,7 +321,7 @@ export default {
         this.colSizes = arr[i]
       }
       
-    },
+    },*/
 
     showNewsection(newValue){
       process.nextTick(() => {
@@ -378,25 +376,14 @@ export default {
       return Math.floor((Math.random() * 999))
     },
 
-    tableWidth() {
+    /*tableWidth() {
       const main = document.getElementById("main-content")
       // console.log(main.clientWidth, main.offsetWidth, main.scrollWidth)
       let w = main.scrollWidth - 18
 
       return w + "px"
 
-      /*const resizeObserver = new ResizeObserver((entries) => {
-        console.log(entries[0])
-        if (entries[0].contentRect) {
-          return entries[0].contentRect.width + "px"
-        } else {
-          return main.scrollWidth + "px"
-        }
-      });
-
-      resizeObserver.observe(main);*/
-
-    },
+    },*/
 
   },
   created() {
@@ -409,11 +396,12 @@ export default {
   mounted() {
     // this.localData=_.cloneDeep(this.tableData)
 
-    let nowidth = 0;
-    let nowidthIndex = [];
+    // let nowidth = 0;
+    // let nowidthIndex = [];
+    this.tableWidth = this.tableFields.reduce((acc, curr) => curr.width + acc, 0)
     let colwidthArr = this.tableFields.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100 )
     // console.log(colwidthArr)
-    for (var i = 0; i < colwidthArr.length; i++) {
+    /*for (var i = 0; i < colwidthArr.length; i++) {
       if(!isNaN(colwidthArr[i])){
         nowidth += colwidthArr[i]
         colwidthArr[i] = Number(colwidthArr[i].toFixed(4))
@@ -422,18 +410,14 @@ export default {
         colwidthArr[i] = Math.abs(100-nowidth)
       }
       // this.colSizes.push(colwidthArr[i])
-    }
+    }*/
 
     // nowidthIndex.length
-      if (nowidthIndex.length == 1) {
+      /*if (nowidthIndex.length == 1) {
         colwidthArr[nowidthIndex[0]] = Math.abs(100-nowidth)
-      } else {
-        /*for (var i = 0; i < colwidthArr.length; i++) {
+      } */
 
-        }*/
-      }
-
-    this.colSizes = colwidthArr
+    // this.colSizes = colwidthArr
     // console.log(colwidthArr, nowidth, nowidthIndex)
     
     let elemIds = document.getElementsByClassName("splitcell"+this.componentKey)
@@ -453,16 +437,11 @@ export default {
     Split(this.colIds, {
       sizes: this.colSizes,
       minSize: this.colmw,
-      gutterSize: 4,
+      gutterSize: 6,
       snapOffset: 4,
-      /*onDragStart: (sizes) => {
-        console.info(this.$refs.splitHint)
-      },*/
       onDragEnd: (sizes) => {
         this.colSizes = sizes
         sessionStorage.setItem("cols"+pg, JSON.stringify(sizes))
-        // this.colWidth = sizes
-        // console.info(this.split.getSizs())
       }
     })
 
@@ -471,7 +450,6 @@ export default {
     this.$on('sectionExpandedEvent', (event) => {
       this.sectionShow(event.sectionId)
     })
-    // })*/
   },
 
   beforeDestroy(){
