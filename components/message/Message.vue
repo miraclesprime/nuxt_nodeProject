@@ -178,13 +178,14 @@ export default {
   },
   watch: {
     msgkey(newValue){
-      // console.log(this.fieldkey, newValue, this.msg.id)
-      if (this.msg.taskId && newValue.taskMsgid == this.msg.id) {
+      console.log(this.fieldkey, newValue.project, this.msg.id)
+      if (this.msg.taskId && (newValue.taskMsgid == this.msg.id)) {
         this.$store.dispatch("task/fetchCommentReactions",{id: newValue.taskMsgid}).then(rect => this.reactions = rect)
       }
-      if (this.msg.projectId && newValue.projectMsgid == this.msg.id) {
+      if (this.msg.projectId && (newValue.projMsgid == this.msg.id)) {
         // this.fetchReactions()
-        console.log(this.fieldkey, this.msg.id)
+        // console.log(this.fieldkey, this.msg.id)
+        this.$store.dispatch("project/fetchCommentReactions",{id: newValue.projMsgid}).then(rect => this.reactions = rect)
       }
     }
   },
