@@ -54,7 +54,7 @@
                 </div>
             </div>
 
-            <template v-if="reactionPicker">
+            <template v-if="comment">
                 <tippy :visible="isReactionPickerOpen" arrow theme="light-border p-0" :animate-fill="false" :distance="6" interactive trigger="manual" :onHide="() => defer(() => (isReactionPickerOpen = false))">
                     <template slot="trigger">
                         <div class="action" @click="toggleReactionPicker">
@@ -66,6 +66,11 @@
                     </div>
                 </tippy>
             </template>
+            <!-- <div v-else>
+                <div class="action" @click="toggleReactionPicker">
+                    <fa :icon="faSmile" />
+                </div>
+            </div> -->
         </div>
 
         <bib-popup-notification-wrapper>
@@ -198,9 +203,11 @@ export default {
           return rg
         },
         reactionPicker(){
+            // console.info(this.commentReactions.length, this.comment)
             if (this.commentReactions.length > 0 && this.comment) {
                 let react = this.commentReactions.findIndex(el => el.reaction != "👍")
-                if (react) {
+                console.info(react)
+                if (react >= 0) {
                     return false
                 } else {
                     return true
