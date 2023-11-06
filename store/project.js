@@ -1223,6 +1223,21 @@ export const actions = {
     ctx.commit('setTaskCount',payload)
   },
 
+  async addCommentReaction(ctx, payload){
+    try {
+      const res = await this.$axios.post(`/project/${payload.projectCommentId}/reaction`, {
+        reaction: payload.reaction,
+        projectId: payload.projectId,
+        text: payload.text
+      }, {
+        headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") }
+      })
+      return res.data
+    } catch(e) {
+      console.warn(e);
+    }
+  },
+
   async fetchCommentReactions(ctx, payload){
     try {
       const res = await this.$axios.get(`/project/${payload.id}/reactions`, {

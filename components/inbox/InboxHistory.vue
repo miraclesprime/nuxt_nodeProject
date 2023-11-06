@@ -118,7 +118,7 @@ export default {
     watch: {
         msgKey(newValue) {
             if(newValue.taskMsgid && (newValue.taskMsgid == this.history.taskCommentId)) {
-                console.log(newValue.taskMsgid, this.history.taskCommentId)
+                // console.log(newValue.taskMsgid, this.history.taskCommentId)
                 // this.reactionSpinner = true
                 this.$store.dispatch("task/fetchCommentReactions", {id: this.history.taskCommentId}).then(c => {
                     // console.log(c)
@@ -131,7 +131,16 @@ export default {
                 })
             }
             if (newValue.projMsgid && (newValue.projMsgid == this.history.projectCommentId)) {
-                console.log(newValue.projMsgid, this.history.projectCommentId)
+                // console.log(newValue.projMsgid, this.history.projectCommentId)
+                this.$store.dispatch("project/fetchCommentReactions", {id: this.history.projectCommentId}).then(c => {
+                    // console.log(c)
+                    this.commentReactions = c
+                    this.reactionKey += 1
+                    // this.reactionSpinner = false
+                }).catch(e => {
+                    // this.reactionSpinner = false
+                    console.warn(e)
+                })
 
             }
         }
@@ -225,14 +234,22 @@ export default {
             // alert("work in progress")
             this.reactionSpinner = true
             if (this.comment != null) {
-                console.log("comment->",this.comment)
-                this.$store.dispatch("task/addCommentReaction", {taskCommentId: this.history.taskCommentId, reaction: "👍", taskId: this.history.task.id, text: "liked the comment" }).then(res => {
-                    console.log("add task comment reaction", res.data)
-                    if (res.statusCode == 200) {
-                        this.fetchTaskCommentReactions()
-                    }
-                }).catch(e => console.warn(e))
-                // this.reactionSpinner = false
+
+                if(this.history.taskCommentId) {
+                    this.$store.dispatch("task/addCommentReaction", {taskCommentId: this.history.taskCommentId, reaction: "👍", taskId: this.history.task.id, text: "liked the comment" }).then(res => {
+                        console.log("add task comment reaction", res.data)
+                        if (res.statusCode == 200) {
+                            this.fetchTaskCommentReactions()
+                        }
+                    }).catch(e => console.warn(e))
+                } else {
+                    this.$store.dispatch("project/addCommentReaction", {projectCommentId: this.history.projectCommentId, reaction: "👍", projectId: this.history.project.id, text: "liked the comment" }).then(res => {
+                        console.log("add project comment reaction", res.data)
+                        if (res.statusCode == 200) {
+                            this.fetchProjCommentReactions()
+                        }
+                    }).catch(e => console.warn(e))
+                }
                 return false
             }
 
@@ -282,10 +299,19 @@ export default {
         onReactionClick({ data }) {
             // alert("you reacted " + data)
             this.isReactionPickerOpen = false
-            this.$store.dispatch("task/addCommentReaction", {taskCommentId: this.history.taskCommentId, reaction: data, taskId: this.history.task.id, text: "reacted to comment" }).then((res) => {
-                    // console.log(res.data)
-                    this.fetchTaskCommentReactions();
+            if(this.history.taskCommentId) {
+                this.$store.dispatch("task/addCommentReaction", {taskCommentId: this.history.taskCommentId, reaction: data, taskId: this.history.task.id, text: "reacted to comment" }).then((res) => {
+                        // console.log(res.data)
+                        this.fetchTaskCommentReactions();
+                    }).catch(e => console.warn(e))
+            } else {
+                this.$store.dispatch("project/addCommentReaction", {projectCommentId: this.history.projectCommentId, reaction: data, projectId: this.history.project.id, text: "reacted to comment" }).then((res) => {
+                    console.log("add task comment reaction", res.data)
+                    // if (res.statusCode == 200) {
+                        this.fetchProjCommentReactions()
+                    // }
                 }).catch(e => console.warn(e))
+            }
         },
         fetchTaskCommentReactions(){
             this.reactionSpinner = true
@@ -307,6 +333,9 @@ export default {
             this.$store.dispatch("project/fetchCommentReactions", {id: this.history.projectCommentId}).then(r => {
                 // console.log(r)
                 this.commentReactions = r
+                this.reactionKey += 1
+                let inboxKey = this.msgKey.key+1;
+                this.$store.dispatch("inbox/setKey", {key: inboxKey, taskMsgid: null, projMsgid: this.history.projectCommentId})
                 this.reactionSpinner = false
             }).catch(e => {
                 console.warn(e)
