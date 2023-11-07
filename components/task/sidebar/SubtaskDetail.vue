@@ -121,7 +121,7 @@
         </div>
       </div>
 
-      <sidebar-tag :tags="tags" @add-tag="addTag" @change="addTag" @delete-tag="removeTag" ></sidebar-tag>
+      <sidebar-tag :activeProp="true" :tags="tags" @add-tag="addTag" @change="addTag" @delete-tag="removeTag" ></sidebar-tag>
 
       <div class="py-05 px-105" id="std-conv-wrap">
         <div class="d-flex justify-between sub-title pb-05 mb-05 border-bottom-gray2 " id="std-conv-heading">
@@ -143,7 +143,7 @@
           </div>
         </template>
 
-        <sidebar-files id="subtask_files" mode="subtask" :reloadFiles="reloadFiles"></sidebar-files>
+        <sidebar-files :activeProp="true" id="subtask_files" mode="subtask" :reloadFiles="reloadFiles"></sidebar-files>
 
       </div>
     </div>
