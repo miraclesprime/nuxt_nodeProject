@@ -68,7 +68,11 @@
       </div> -->
       <div v-if="item.data.length > 0" id="ii-content" class="inbox-item-content ">
         <template v-for="(it, i) in item.data">
-          <inbox-history :history="it"></inbox-history>
+          <!-- <p>{{it.taskCommentId , it.projectCommentId}}</p> -->
+          <template v-if="it.taskCommentId || it.projectCommentId">
+            <inbox-comment :history="it"></inbox-comment>
+          </template>
+          <inbox-history v-else :history="it"></inbox-history>
         </template>
       </div>
         <!-- <span v-html="it.text"><br></span> -->
@@ -176,10 +180,10 @@ export default {
 
     },
 
-    truncateText(text){
+    /*truncateText(text){
       let t = _.truncate(text, {length: 200})
       return t.replace(/(<([^>]+)>)/gi, "")
-    },
+    },*/
 
     markArchive(){
       alert("In-Progress")

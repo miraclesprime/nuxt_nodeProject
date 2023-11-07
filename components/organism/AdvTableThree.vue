@@ -447,10 +447,10 @@ export default {
       gutterSize: 6,
       snapOffset: 4,
       dragInterval: 5,
-      /*onDragEnd: (sizes) => {
+      onDragEnd: (sizes) => {
         this.colSizes = sizes
-        sessionStorage.setItem("cols"+pg, JSON.stringify(sizes))
-      }*/
+        // sessionStorage.setItem("cols"+pg, JSON.stringify(sizes))
+      }
     })
 
     // const divHeight = this.$refs.myTable.clientHeight;
