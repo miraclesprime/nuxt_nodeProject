@@ -245,7 +245,7 @@ export default {
 
   created() {
     this.$nuxt.$on("update-key", () => {
-      // this.updateKey();
+      this.updateKey();
     });
     this.$nuxt.$on("user-picker", (payload) => {
       // emitted from <task-grid>

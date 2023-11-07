@@ -207,10 +207,9 @@ export default {
 
   created() {
     if (process.client) {
-      // this.$nuxt.$on("update-key", (msg) => {
-      //     // this.updateKey()
-        
-      // });
+      this.$nuxt.$on("update-key", (payload) => {
+        this.updateKey()
+      });
       this.$nuxt.$on("refresh-table", () => {
         console.log("mytask_created_on-refresh")
         this.updateKey();
