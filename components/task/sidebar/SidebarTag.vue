@@ -47,12 +47,13 @@
     </div>
   </client-only>
 </template>
+
 <script>
 import { mapGetters, mapActions } from "vuex"
+
 export default {
 
   name: 'SidebarTag',
-
   props: {
     tags: { type: Array, default: function() { return [] }},
     activeProp: { default: null }

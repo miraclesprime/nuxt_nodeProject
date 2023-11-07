@@ -338,13 +338,13 @@ export default {
       snapOffset: 4,
       dragInterval: 5,
       
-      /*onDragEnd: (sizes) => {
+      onDragEnd: (sizes) => {
         // console.log(sizes)
         this.colSizes = sizes
-        if (pg.indexOf("favorite") < 0) {
+        /*if (pg.indexOf("favorite") < 0) {
           sessionStorage.setItem("cols"+pg, JSON.stringify(sizes))
-        }
-      }*/
+        }*/
+      }
     })
     
   },
