@@ -20,7 +20,7 @@
           <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item3" @click="modalOpen('files', 'Files')" v-tooltip="'Files'">
             <bib-icon icon="folder-solid" variant="gray5" class="m-auto"></bib-icon>
           </div>
-          <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark" @click="setFavorite" v-tooltip="'Bookmark'">
+          <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark" @click="setFavorite" v-tooltip="'Add to Favorite'">
             <bib-spinner v-if="favLoading" :scale="2" ></bib-spinner>
             <bib-icon v-else class="m-auto" icon="bookmark-solid" :variant="isFavorite.variant"></bib-icon>
           </div>
@@ -253,9 +253,7 @@ try {
 
   async mounted() {
     if (process.client) {
-      if (!this.project) {
-          this.updateKey();
-      }
+ 
       // const text = "projects" + this.$route.params.id;
       // this.projectId = this.$route.params.id;
       // const hexEncoded = Buffer.from(text).toString('hex');
