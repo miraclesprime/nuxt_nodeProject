@@ -1255,5 +1255,16 @@ export const actions = {
       return e
     }
   },
+  async deleteCommentReaction(ctx, payload){
+    try {
+      const del = await this.$axios.delete(`project/${payload.projectCommentId}/reaction`, {
+        headers: { "Authorization": "Bearer " + localStorage.getItem("accessToken") },
+        data: { reactionId: payload.reactionId, userId: payload.userId },
+      })
+      return del.data
+    } catch(e) {
+      console.log(e);
+    }
+  }
 
 }
