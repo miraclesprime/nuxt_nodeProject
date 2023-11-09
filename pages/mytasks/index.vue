@@ -218,7 +218,7 @@ export default {
   },
 
   mounted() {
-    if (!this.todos) {
+    if (this.todos.length<=0) {
       this.updateKey();
     }
     // if(this.todos)
