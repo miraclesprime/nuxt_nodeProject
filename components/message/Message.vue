@@ -17,7 +17,7 @@
     <!-- message reactions -->
     <div v-if="reactionsExist" class="reactions-section my-025" :id="'msg-reaction-section'+msg.id">
       <div class="reactions" :id="'msg-reactions'+msg.id">
-        <div v-for="(react, index) in reactionGroup" :key="reactionKey + react.reaction + msg.id" class="reaction " :class=" ownReaction(react) " name="reaction1" @click.stop="deleteOwnReaction(react)" :id="'msg-'+index">
+        <div v-for="(react, index) in reactionGroup" :key="reactionKey + react.reaction + msg.id" class="reaction shape-pill" :class=" ownReaction(react) " name="reaction1" @click.stop="deleteOwnReaction(react)" :id="'msg-'+index">
           {{ react.reaction }} <span class="count" :id="'msg-count-'+index">{{react.count}}</span>
         </div>
         <bib-spinner v-if="reactionSpinner" :scale="2" variant="primary"></bib-spinner>
@@ -178,7 +178,7 @@ export default {
   },
   watch: {
     msgkey(newValue){
-      console.log(this.fieldkey, newValue.project, this.msg.id)
+      // console.log(this.fieldkey, newValue.project, this.msg.id)
       if (this.msg.taskId && (newValue.taskMsgid == this.msg.id)) {
         this.$store.dispatch("task/fetchCommentReactions",{id: newValue.taskMsgid}).then(rect => this.reactions = rect)
       }
@@ -751,9 +751,8 @@ export default {
   }
 
   .reaction {
-    font-size: 16px;
+    font-size: $base-size;
     border: 1px solid $gray4;
-    border-radius: 8px;
     padding: 2px 4px;
     cursor: pointer;
 
