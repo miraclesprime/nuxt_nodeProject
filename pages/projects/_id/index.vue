@@ -28,7 +28,9 @@
             <bib-popup pop="horizontal-dots" id="project-id-horizontal-dots">
               <template v-slot:menu>
                 <div class="list" id="project-id-list">
-                  <span class="list__item" id="project-id-list-item1" @click="modalOpen('overview', 'Overview')">View details</span>
+                  <span class="list__item" id="project-id-list-item1" @click="modalOpen('overview', 'Overview')">
+                   <bib-icon icon="info" class="mr-075"></bib-icon> View details
+                  </span>
                   <span class="list__item" id="project-id-list-item2" @click="setFavorite">
                     <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
                   </span>
@@ -48,7 +50,9 @@
                     <bib-icon icon="warning" class="mr-075"></bib-icon> Report
                   </span> -->
                   <hr id="project-id-hr2">
-                  <span v-if="cdp" class="list__item list__item__danger" id="project-id-list-item6" @click="deleteProject(project)">Delete </span>
+                  <span v-if="cdp" class="list__item list__item__danger" id="project-id-list-item6" @click="deleteProject(project)">
+                    <bib-icon icon="trash" variant='danger' hover-variant='white' class="mr-075"></bib-icon> Delete 
+                  </span>
                 </div>
               </template>
             </bib-popup>
@@ -65,8 +69,10 @@
       <!-- project modals -->
       <bib-modal-wrapper v-if="projectModal" :title="projectModalTitle" size="xl" @close="projectModal = false">
         <template slot="content">
-          <project-overview v-if="projectModalContent == 'overview'" :sections="projectSections" ></project-overview>
-          <project-files v-if="projectModalContent == 'files'"></project-files>
+          <div class="of-scroll-y m-1" style="max-height: 500px">
+            <project-overview v-if="projectModalContent == 'overview'" :sections="projectSections" ></project-overview>
+            <project-files v-if="projectModalContent == 'files'"></project-files>
+          </div>
         </template>
       </bib-modal-wrapper>
 
