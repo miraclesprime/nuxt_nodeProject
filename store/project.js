@@ -44,7 +44,7 @@ export const getters = {
   getFavProjects(state) {
     let fav = []
     state.favProjects.map(f => {
-      fav.push({ label: f.projects.title, icon: "folder-solid", id: f.projects.id })
+      fav.push({ label: f.projects.title, icon: "briefcase-solid", id: f.projects.id })
     })
     return fav
   },
