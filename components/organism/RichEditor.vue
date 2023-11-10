@@ -2,8 +2,8 @@
   <client-only>
   <div id="message-input-wrapper" v-if="editor" class="wrapper" @click.stop>
     <div class="container" id="message-input-container">
-      <div class="toolbar-top" id="message-input-toolbar-top">
-        <div class="toolbar-icon border-gray2" id="message-input-toolbar-icon-1" :class="{ 'is-active': editor.isActive('bold') }" @click="editor.chain().focus().toggleBold().run()">
+      <div class="toolbar-top border-bottom-gray2" id="message-input-toolbar-top">
+        <div class="toolbar-icon " id="message-input-toolbar-icon-1" :class="{ 'is-active': editor.isActive('bold') }" @click="editor.chain().focus().toggleBold().run()">
           <fa :icon="faBold"></fa>
         </div>
         <div class="toolbar-icon"  id="message-input-toolbar-icon-2" :class="{ 'is-active': editor.isActive('italic') }" @click="editor.chain().focus().toggleItalic().run()">
@@ -15,22 +15,22 @@
         <div class="toolbar-icon"  id="message-input-toolbar-icon-4" :class="{ 'is-active': editor.isActive('strike') }" @click="editor.chain().focus().toggleStrike().run()">
           <fa :icon="faStrikethrough"></fa>
         </div>
-        <div class="toolbar-separator"  id="message-input-toolbar-separator"></div>
+        <!-- <div class="toolbar-separator"  id="message-input-toolbar-separator"></div> -->
         <div class="toolbar-icon"  id="message-input-toolbar-icon-5" :class="{ 'is-active': editor.isActive('link') }" @click="toggleLink">
           <fa :icon="faLink"></fa>
         </div>
-        <div class="toolbar-separator"  id="message-input-toolbar-separator-2"></div>
+        <!-- <div class="toolbar-separator"  id="message-input-toolbar-separator-2"></div> -->
         <div class="toolbar-icon"  id="message-input-toolbar-icon-6" :class="{ 'is-active': editor.isActive('bulletList') }" @click="editor.chain().focus().toggleBulletList().run()">
           <fa :icon="faListUl"></fa>
         </div>
         <div class="toolbar-icon"  id="message-input-toolbar-icon-7" :class="{ 'is-active': editor.isActive('orderedList') }" @click="editor.chain().focus().toggleOrderedList().run()">
           <fa :icon="faListOl"></fa>
         </div>
-        <div class="toolbar-separator"  id="message-input-toolbar-separator-3"></div>
-        <div class="toolbar-icon" @click="onAttachmentClick"  id="message-input-toolbar-icon-8">
+        <!-- <div class="toolbar-separator"  id="message-input-toolbar-separator-3"></div> -->
+        <!-- <div class="toolbar-icon" @click="onAttachmentClick"  id="message-input-toolbar-icon-8">
           <fa :icon="faPaperclip"></fa>
           <input ref="file" multiple type="file" id="message-input-attachment-input" class="attachment-input" @change="onFilesSelect" />
-        </div>
+        </div> -->
         <mention-popup @select="mentionUser"></mention-popup>
         <tippy ref="emojiPickerTippy" arrow trigger="click" theme="light-border p-0" interactive :animate-fill="false" :distance="10" placement="top-start" >
           <div slot="trigger" class="toolbar-icon" id="message-input-toolbar-icon-9">
@@ -46,7 +46,7 @@
       </div>
       <div class="editor-container" id="message-input-editor-container">
         <div class="editor-wrapper" id="message-input-editor-container-wrapper">
-          <div v-if="value.files.length > 0" class="files" id="message-input-files-wrapper">
+          <!-- <div v-if="value.files.length > 0" class="files" id="message-input-files-wrapper">
             <div v-for="(file, idx) in value.files" :key="idx" class="file" :id="'message-input-'+idx">
               <div class="file-thumbnail" id="message-input-fafile">
                 <fa :icon="faFile"></fa>
@@ -60,7 +60,7 @@
                 <fa :icon="faTimes"></fa>
               </button>
             </div>
-          </div>
+          </div> -->
           <editor-content :editor="editor" class="editor" />
         </div>
       </div>
@@ -85,6 +85,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
 import { Mention } from '@tiptap/extension-mention';
 import Link from '@tiptap/extension-link'
+import Focus from '@tiptap/extension-focus'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   faGrin,
@@ -175,6 +176,10 @@ export default {
       extensions: [
         StarterKit,
         Link.configure({
+          HTMLAttributes: {
+            // Remove target entirely so links open in current tab
+            target: null,
+          },
           openOnClick: false,
           validate: href => /^https?:\/\//.test(href)
         }),
@@ -256,6 +261,9 @@ export default {
             },
           },
         }),
+        Focus.configure({
+          className: 'focus',
+        }),
       ],
       onBlur: ({ editor, event }) => {
         // console.log(editor.getHTML())
@@ -263,10 +271,6 @@ export default {
       },
     });
     }
-  },
-
-  beforeUnmount() {
-    this.editor.destroy();
   },
   
   beforeDestroy() {
@@ -288,9 +292,9 @@ export default {
     onAttachmentClick() {
       this.$refs.file.click();
     },
-    removeAttachment(id) {
+    /*removeAttachment(id) {
       this.$emit('input', { ...this.value, files: this.value.files.filter((f) => f.id !== id) });
-    },
+    },*/
     onFilesSelect(evt) {
       if (!evt.target.files?.length) {
         return;
@@ -308,12 +312,7 @@ export default {
     /*reset() {
       this.editor.commands.setContent('');
     },*/
-    /*getMessage() {
-      return !this.editor.isEmpty ? this.editor.getHTML() : null;
-    },
-    setMessage(message) {
-      this.editor.commands.setContent(message);
-    },*/
+    
     toggleLink() {
       if (this.editor.isActive('link')) {
         this.editor.chain().focus().unsetLink().run();
@@ -349,10 +348,10 @@ export default {
       let checkHttp = url.split('http://') ? url.split('http://')[1] : null;
       let checkHttps = url.split('https://') ? url.split('https://')[1] : null;
 
-      console.log(urlPattern.test(url))
+      // console.log(urlPattern.test(url))
 
       if(urlPattern.test(url)) {
-        console.log(checkHttp, checkHttps)
+        // console.log(checkHttp, checkHttps)
         if(checkHttp) {
           checkHttp = 'http://' + checkHttp
           this.editor
@@ -409,16 +408,20 @@ export default {
 
 .container {
   width: auto;
-  border: 1px solid var(--bib-gray9);
-  background-color: var(--bib-gray9);
+  border: 1px solid $gray2;
+  background-color: $gray9;
   border-radius: 6px;
   overflow: hidden;
   padding: 0;
   display: flex;
   flex-direction: column;
-  &:hover {
+  /*&:hover {
     border-color: var(--bib-gray2);
-  }
+  }*/
+    &:focus-within {
+      background-color: white;
+      border-color: $gray8;
+    }
 }
 
 .hint {
@@ -451,9 +454,10 @@ export default {
 .editor {
   font-size: $base-size;
 
-  /*.ProseMirror {
-    font-size: $base-size;
-  }*/
+  .ProseMirror {
+    /*font-size: $base-size;*/
+    ul { list-style-type: disc; }
+  }
 
   ::v-deep {
     p {
@@ -469,17 +473,17 @@ export default {
   }
 }
 
-.toolbar-bottom {
+/*.toolbar-bottom {
   display: flex;
   font-size: 0.9rem;
   color: #b1b1b4;
   padding: 6px 5px 5px;
-}
+}*/
 
-.toolbar-section {
+/*.toolbar-section {
   display: flex;
   margin-right: 10px;
-}
+}*/
 
 .attachment-input {
   display: none;
@@ -554,25 +558,26 @@ export default {
 
 .toolbar-top {
   display: flex;
-  gap: 0.25rem;
+  /*gap: 0.25rem;*/
   font-size: 0.9rem;
-  padding: 6px 5px 5px;
+  /*padding: 6px 5px 5px;*/
 }
 
 ::v-deep .toolbar-icon {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border-radius: 4px;
+  /*border-radius: 4px;*/
   color: var(--bib-secondary);
   /*background-color: var(--bib-light);*/
-
+  border-right: 1px solid $gray2;
 
   &.is-active {
-    color: rgb(34, 34, 34);
+    color: $text;
+    background-color: $gray2;
   }
 
   svg {

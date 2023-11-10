@@ -631,6 +631,10 @@ ul {
     width: 35rem;
   }
 }
+.ProseMirror {
+    ul { list-style-type: disc; }
+    a { color: royalblue; text-decoration: underline;}
+}
 
 .ProseMirror-focused {
   outline: none !important;

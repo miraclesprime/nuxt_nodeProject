@@ -69,7 +69,7 @@
       <!-- project modals -->
       <bib-modal-wrapper v-if="projectModal" :title="projectModalTitle" size="xl" @close="projectModal = false">
         <template slot="content">
-          <div class="of-scroll-y m-1" style="max-height: 500px">
+          <div class="overflow-y-auto " style="max-height: 500px">
             <project-overview v-if="projectModalContent == 'overview'" :sections="projectSections" ></project-overview>
             <project-files v-if="projectModalContent == 'files'"></project-files>
           </div>
