@@ -558,9 +558,7 @@ export default {
 
 .toolbar-top {
   display: flex;
-  /*gap: 0.25rem;*/
   font-size: 0.9rem;
-  /*padding: 6px 5px 5px;*/
 }
 
 ::v-deep .toolbar-icon {
@@ -570,9 +568,8 @@ export default {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  /*border-radius: 4px;*/
+  
   color: var(--bib-secondary);
-  /*background-color: var(--bib-light);*/
   border-right: 1px solid $gray2;
 
   &.is-active {
