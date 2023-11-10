@@ -13,6 +13,8 @@
 
 <script>
 import dayjs from 'dayjs'
+import { mapGetters } from "vuex"
+
 var relativeTime = require('dayjs/plugin/relativeTime')
 dayjs.extend(relativeTime)
 
@@ -22,12 +24,53 @@ export default {
   props: {
     history: Object,
   },
-
-  data() {
-    return {
-      user: this.$userInfo(this.history.userId)
-    }
+  computed: {
+    ...mapGetters({
+      teamMembers: "user/getTeamMembers",
+    }),
   },
+  data: function() {
+    return {
+      user:""
+    };
+  },
+
+  mounted () {
+if(this.teamMembers.length>0) {
+  this.user=this.$userInfo(this.history.userId)
+
+}
+else {
+      this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${JSON.parse(localStorage.getItem('user')).subb}/users`, {
+            headers: {
+              "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
+            }
+          }).then((res) => {
+             this.user=this.getUserInfo(res,this.history.userId)
+          })
+      }
+     
+  },
+  methods:{
+    getUserInfo(members,userID)
+    {
+      if (members.length > 0 && userID) 
+                {
+                      let u = members.find((m) => m.Id == userID)
+                        if (u) {
+                          return { Name: `${u.FirstName} ${u.LastName}`}
+                        }
+                        else
+                        {
+                            return {Name: ''}
+                        }
+                } 
+                else 
+                {
+                  return { Name: "no user found" }
+                }
+    }
+  }
 }
 
 </script>

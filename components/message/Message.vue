@@ -272,7 +272,7 @@ export default {
         .catch(e => console.log(e))
     },
     ownReaction(reaction) {
-      return { sent: reaction.data.some(d => d.user.id == this.user.Id) }
+      return { sent: reaction.data.some(d => d.user.id == this.user?.Id) }
     },
     async deleteOwnReaction(reaction) {
       this.reactionSpinner = true

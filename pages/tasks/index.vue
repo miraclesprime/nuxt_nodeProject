@@ -248,7 +248,7 @@ export default {
   mounted() {
 
   if(process.client) {
-    if (!this.tasks) {
+    if (this.tasks.length<=0) {
       this.updateKey();
     }
     if (JSON.parse(localStorage.getItem("user")).subr != "ADMIN") {

@@ -23,6 +23,7 @@
   <div class="bg-light p-1 my-05 shape-rounded">
   
     <label class="text-gray6 font-md" id="ptm-team-label">Team</label>
+    <div class="of-scroll-y m-1" style="max-height: 170px">
     <template v-if="projectMembers.length">
       <bib-table :key="'tt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="this.teamMembers.filter(item=>this.projectMembers.some(value=>value.id===item.id)).filter(item1=>!this.newTeam.some(val=>val.id===item1.id))"  :hide-no-column="true" headless>
         <template #cell(name)="data">
@@ -53,6 +54,7 @@
         </template>
       </bib-table>
     </template>
+    </div>
     <template v-if="norecord">
       <span id="ptm-projects-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
         <bib-icon icon="warning"></bib-icon> No records found
