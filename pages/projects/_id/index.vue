@@ -50,8 +50,11 @@
                     <bib-icon icon="warning" class="mr-075"></bib-icon> Report
                   </span> -->
                   <hr id="project-id-hr2">
-                  <span v-if="cdp" class="list__item list__item__danger" id="project-id-list-item6" @click="deleteProject(project)">
-                    <bib-icon icon="trash" variant='danger' hover-variant='white' class="mr-075"></bib-icon> Delete 
+                  <span v-if="cdp" class="list__item list__item__danger" 
+                      @mouseenter="deleteBtnHover = true"
+                      @mouseleave="deleteBtnHover = false" 
+                      id="project-id-list-item6" @click="deleteProject(project)">
+                    <bib-icon icon="trash" :variant='deleteBtnHover ? `white` : `danger`' class="mr-075"></bib-icon> Delete 
                   </span>
                 </div>
               </template>
@@ -156,7 +159,8 @@ export default {
       alertMsg:"",
       cdp: false,
       project: {},
-      userProj: {}
+      userProj: {},
+      deleteBtnHover: false
     }
   },
 
