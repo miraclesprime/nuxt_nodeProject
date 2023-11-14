@@ -14,6 +14,11 @@
 }
 .error-link {
   text-decoration: underline;
-  color: $danger-sub2;
+  color: $primary-sub1;
+  text-decoration-color: $primary-sub3;
+  &:hover {
+    color: $primary;
+    text-decoration-color: $primary-sub2;
+  }
 }
 </style>

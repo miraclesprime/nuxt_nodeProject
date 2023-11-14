@@ -94,7 +94,9 @@
         </div>
         <div id="ip-proj-row6" class="row">
           <div id="ip-proj-row6-col1" class="col-12">
-            <bib-input type="textarea" label="Brief" v-model="activeProject.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate('Project brief', activeProject.description)"></bib-input>
+            <!-- <bib-input type="textarea" label="Brief" v-model="activeProject.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate('Project brief', activeProject.description)"></bib-input> -->
+            <div class="mb-05 text-gray6"><label>Brief</label></div>
+            <rich-editor :editingMessage="activeProject.description" @submit="debounceUpdate('Project brief', 'description', $event.text)" ></rich-editor>
           </div>
         </div>
         <loading :loading="loading"></loading>

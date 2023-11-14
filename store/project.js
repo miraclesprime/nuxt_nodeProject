@@ -905,7 +905,7 @@ export const actions = {
   },
 
   async updateProject(ctx, payload) {
-    console.log("payload",payload)
+    // console.log("payload",payload)
     let res = await this.$axios.$put("/project", {
       id: payload.id,
       user: payload.user,

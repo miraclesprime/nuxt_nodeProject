@@ -428,12 +428,8 @@ export default {
       let projectId = null
       let htext = null
 
-      if (taskData.name == "Due date" || taskData.name == "Start date") {
+      /*if (taskData.name == "Due date" || taskData.name == "Start date") {
         updatedvalue = dayjs(taskData.value).format('DD MMM YYYY')
-      }
-
-      /*if (taskData.name == "Description") {
-        htext = _.truncate(taskData.historyText, {'length': 15})
       }*/
 
       // console.log(updatedvalue)
