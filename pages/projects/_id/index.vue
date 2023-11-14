@@ -227,31 +227,20 @@ export default {
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
     const filter = store.getters['task/getFilterView']
 try {
-      const res = await $axios.get(`project/${params.id}`, {
-          headers: { 'Authorization': `Bearer ${token}`,'filter':filter }
-        })
-      store.dispatch('project/setProject', res.data.data)
-      // let resp = await $axios.$get(`/project/company/all`, {
-      //   headers: {
-      //     'Authorization': `Bearer ${token}`,
-      //     'Filter': filter
-      //   }
-      // });
-      // console.log(resp.data)
+
       let all_projects= store.getters['project/getAllProjects']
-      // store.dispatch('project/setProjects', resp.data);
       
       let proj =all_projects?.find((p) => {
         if(p.id == params.id) {
           return p;
         } 
       })
+      store.dispatch('project/setProject', proj)
       const sections = await $axios.$get(`/section/project/${params.id}`, {
         headers: { 'Authorization': `Bearer ${token}`,'Filter':filter }
-
     });
       store.dispatch("section/setProjectSections",{data:sections.data})
-      return { project: res.data.data, projectTitle: res.data?.data?.title, userProj: proj }
+      return { project: proj, projectTitle: proj?.title, userProj: proj }
       
     } catch(err) {
 
@@ -263,23 +252,23 @@ try {
 
   async mounted() {
     if (process.client) {
- 
-      // const text = "projects" + this.$route.params.id;
-      // this.projectId = this.$route.params.id;
-      // const hexEncoded = Buffer.from(text).toString('hex');
+      if(this.projectSections.length<=0) {
+            this.$store.dispatch("section/fetchProjectSections",{projectId:this.$route.params.id})
+            const res = await this.$axios.get(`project/${this.$route.params.id}`, {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,'filter':this.filterViews }
+              })
+            this.$store.dispatch('project/setProject', res.data.data)
+            
+            this.projectTitle = res.data?.data?.title;
+            this.project=res.data.data
 
-      // const locationHref = window.location.href;
-      // const newUrl = locationHref.split(`/${this.$route.params.id}`)[0] + `/${hexEncoded}`
-      // history.pushState(null, null, newURL);
-      this.$store.commit("task/setExpandVisible",true);
-      this.$store.commit('section/setGroupBy',"")
-      let p = JSON.parse(JSON.stringify(this.project))
-
-      // this.$axios.get(`project/${this.$route.params.id}`, {
-      //     headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`}
-      //   }).then((res) => {
-      //     this.projectTitle = res.data?.data?.title;
-      //   })
+         
+      }
+           this.$store.commit("task/setExpandVisible",true);
+            this.$store.commit('section/setGroupBy',"")
+        let p = JSON.parse(JSON.stringify(this.project))
+        // this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
+      
 
       if(!p) {
         this.$router.push('/notfound')
@@ -288,7 +277,7 @@ try {
 
       if(p?.isDeleted != true) {
 
-        if((this.userProj && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN'){
+        if((this.project && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN'){
             console.info('user has access!')
             this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id, userId: this.project.userId ? this.project.userId : null })
         } else {
@@ -301,8 +290,7 @@ try {
         this.$router.push('/notfound')
       }
 
-      this.$store.dispatch("section/fetchProjectInitialSections", { projectId: this.$route.params.id, filter: 'all' })
-      this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
+      // this.$store.dispatch("section/fetchProjectInitialSections", { projectId: this.$route.params.id, filter: 'all' })
       setTimeout(() => {
         this.gridType = this.grid
       }, 200);
