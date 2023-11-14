@@ -65,7 +65,7 @@
         <div class="col-12">
           <!-- <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter task description..." label="Description" class="w-100" v-on:keyup.native="debounceUpdateField('Description','description',form.description)"></bib-input> -->
           <div class="mb-05"><label>Description</label></div>
-          <rich-editor :value="value" :editingMessage="form.description" @submit="debounceUpdateField('Description', 'description', $event)" @input="()=>console.log(...arguments)" ></rich-editor>
+          <rich-editor :value="value" :editingMessage="form.description" @submit="debounceUpdateField('Description', 'description', $event)" ></rich-editor>
         </div>
       </div>
       <bib-popup-notification-wrapper>
@@ -388,7 +388,7 @@ export default {
          }
       }
       // console.log(...arguments)
-    }, 800),
+    }, 600),
 
     debounceProjectUpdateField: _.debounce(function(pName, pField, pValue, sName, sField, sValue, oldProjValue) {
       // console.log(...arguments)

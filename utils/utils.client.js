@@ -225,7 +225,7 @@ export default ({ store, app, context }, inject) => {
             const selectedDate = new Date(changeDueDate.toISOString().substring(0, 10));
             
             selectedDate.setHours(0, 0, 0, 0);
-            if(selectedDate=="Wed Dec 31 1969 00:00:00 GMT-0500 (Eastern Standard Time)")
+            if(selectedDate=="Wed Dec 31 1969 00:00:00 GMT-0500 (Eastern Standard Time)"||selectedDate=="Wed Dec 31 1969 00:00:00 GMT-0600 (Central Standard Time)")
             {
               _dueDate="Unassigned";
             }else

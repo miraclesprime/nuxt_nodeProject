@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <div id="proj-overview-wrapper" class="row " >
+    <div id="proj-overview-wrapper" class="row overflow-y-auto" style="max-height: 70vh" >
       <div id="proj-overview-inner" class="overview-wrapper mx-auto position-relative">
         <div class="d-flex align-center gap-05" id="proj-overview-bib-avatar-wrap">
           <div class="width-2 height-2 d-inline-flex align-center justify-center cursor-pointer" id="proj-overview-bib-avatar-inner-wrap">
@@ -74,8 +74,10 @@
           </div>
         </div>
         <div id="proj-overview-row6" class="row">
-          <div id="proj-overview-row6-col1" class="col-12">
-            <bib-input type="textarea" label="Brief" v-model="activeProject.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate('Project brief', 'description', activeProject.description)"></bib-input>
+          <div id="proj-overview-row6-col1" class="col-12 mb-05">
+            <!-- <bib-input type="textarea" label="Brief" v-model="activeProject.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate('Project brief', 'description', activeProject.description)"></bib-input> -->
+            <div class="mb-05 text-gray6"><label>Brief</label></div>
+            <rich-editor :editingMessage="activeProject.description" @submit="debounceUpdate('Project brief', 'description', $event.text)" ></rich-editor>
           </div>
         </div>
         <!-- <loading :loading="loading"></loading> -->
@@ -91,6 +93,7 @@ import { STATUS, PRIORITY } from '~/config/constants.js'
 import dayjs from 'dayjs'
 
 export default {
+  name: "Project Overview",
   props: {
     sections: Array
   },
@@ -329,6 +332,8 @@ export default {
     },
 
     debounceUpdate: _.debounce(function(label, field, value) {
+
+      // console.log(...arguments)
 
       let updatedvalue = value
       if (label == "Owner") {

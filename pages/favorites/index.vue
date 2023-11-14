@@ -213,6 +213,9 @@ export default {
   },
 
   mounted() {
+    if(this.favProjects.length<=0 || this.getFavTasks.length<=0) {
+      this.updateKey ()
+    }
 
     for(let field of this.projectTableFields) {
       if(field.header_icon) {

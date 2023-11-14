@@ -115,7 +115,7 @@ import { snipFileName } from '~/utils/file';
 import "~/assets/tippy-theme.scss";
 
 import MentionList from '~/components/message/MessageMentionList.vue';
-
+import _ from 'lodash'
 export default {
   name: "RichEditor",
   components: {
@@ -165,112 +165,126 @@ export default {
       faAddressCard,
       /*faMicrophone,
       faVideo,*/
+      oldValue: "",
     };
   },
 
   mounted() {
     if (process.client) {
+      this.oldValue = this.editingMessage || ""
 
-    this.editor = new Editor({
-      content: this.editingMessage || '',
-      extensions: [
-        StarterKit,
-        Link.configure({
-          HTMLAttributes: {
-            // Remove target entirely so links open in current tab
-            target: null,
-          },
-          openOnClick: false,
-          validate: href => /^https?:\/\//.test(href)
-        }),
-        Underline,
-        Placeholder.configure({ placeholder: this.placeholder }),
-        Extension.create({
-          name: 'SendShortcut',
-          addKeyboardShortcuts: () => ({
-            'Shift-Enter': () => {
-              this.sendMessage();
+      this.editor = new Editor({
+        content: this.editingMessage || '',
+        extensions: [
+          StarterKit,
+          Link.configure({
+            HTMLAttributes: {
+              // Remove target entirely so links open in current tab
+              target: null,
+            },
+            openOnClick: false,
+            validate: href => /^https?:\/\//.test(href)
+          }),
+          Underline,
+          Placeholder.configure({ placeholder: this.placeholder }),
+          /*Extension.create({
+            name: 'SendShortcut',
+            addKeyboardShortcuts: () => ({
+              'Shift-Enter': () => {
+                this.sendMessage();
 
-              // prevent default
-              return true;
+                // prevent default
+                return true;
+              },
+            }),
+          }),*/
+          Mention.configure({
+            HTMLAttributes: {
+              class: 'mention',
+            },
+            renderLabel: ({ node }) => {
+              const user = this.contacts.find(c => c.id == node.attrs.id)
+              return `@${user.firstName} ${user.lastName}`;
+            },
+            suggestion: {
+              items: ({ query }) => {
+                if (query === '') {
+                  return Object.values(this.contacts).slice(0, 10);
+                }
+
+                const regex = new RegExp(query, 'i');
+                return Object.values(this.contacts)
+                  .filter(({ firstName, lastName }) => regex.test(firstName) || regex.test(lastName))
+                  .slice(0, 10);
+              },
+              render: () => {
+                let component;
+                let popup;
+
+                return {
+                  onStart: (props) => {
+                    component = new VueRenderer(MentionList, {
+                      parent: this,
+                      propsData: props,
+                      editor: props.editor,
+                    });
+
+                    popup = tippy('body', {
+                      getReferenceClientRect: props.clientRect,
+                      appendTo: () => document.body,
+                      content: component.element,
+                      showOnCreate: true,
+                      interactive: true,
+                      trigger: 'manual',
+                      placement: 'bottom-start',
+                    });
+                  },
+                  onUpdate(props) {
+                    component.updateProps(props);
+
+                    popup[0].setProps({
+                      getReferenceClientRect: props.clientRect,
+                    });
+                  },
+                  onKeyDown(props) {
+                    if (props.event.key === 'Escape') {
+                      popup[0].hide();
+
+                      return true;
+                    }
+
+                    return component.ref?.onKeyDown(props);
+                  },
+                  onExit() {
+                    popup[0].destroy();
+                    component.destroy();
+                  },
+                };
+              },
             },
           }),
-        }),
-        Mention.configure({
-          HTMLAttributes: {
-            class: 'mention',
-          },
-          renderLabel: ({ node }) => {
-            const user = this.contacts.find(c => c.id == node.attrs.id)
-            return `@${user.firstName} ${user.lastName}`;
-          },
-          suggestion: {
-            items: ({ query }) => {
-              if (query === '') {
-                return Object.values(this.contacts).slice(0, 10);
-              }
+          Focus.configure({
+            className: 'focus',
+          }),
+        ],
+        /*onBlur: ({ editor, event }) => {
+          // console.log("blur", editor.getHTML(), event.target)
+          emitData(editor)
+        },*/
+        /*onUpdate({ editor }) {
+          // console.log('update', editor.getHTML())
+          th(editor)
+        },*/
 
-              const regex = new RegExp(query, 'i');
-              return Object.values(this.contacts)
-                .filter(({ firstName, lastName }) => regex.test(firstName) || regex.test(lastName))
-                .slice(0, 10);
-            },
-            render: () => {
-              let component;
-              let popup;
+      });
 
-              return {
-                onStart: (props) => {
-                  component = new VueRenderer(MentionList, {
-                    parent: this,
-                    propsData: props,
-                    editor: props.editor,
-                  });
-
-                  popup = tippy('body', {
-                    getReferenceClientRect: props.clientRect,
-                    appendTo: () => document.body,
-                    content: component.element,
-                    showOnCreate: true,
-                    interactive: true,
-                    trigger: 'manual',
-                    placement: 'bottom-start',
-                  });
-                },
-                onUpdate(props) {
-                  component.updateProps(props);
-
-                  popup[0].setProps({
-                    getReferenceClientRect: props.clientRect,
-                  });
-                },
-                onKeyDown(props) {
-                  if (props.event.key === 'Escape') {
-                    popup[0].hide();
-
-                    return true;
-                  }
-
-                  return component.ref?.onKeyDown(props);
-                },
-                onExit() {
-                  popup[0].destroy();
-                  component.destroy();
-                },
-              };
-            },
-          },
-        }),
-        Focus.configure({
-          className: 'focus',
-        }),
-      ],
-      onBlur: ({ editor, event }) => {
-        // console.log(editor.getHTML())
-        this.$emit('submit', { text: editor.getHTML(), ...this.value });
-      },
-    });
+      this.editor.on('update', ({ editor }) => {
+        this.oldValue = editor.getHTML()
+        this.deb()
+      })
+    
     }
+    
   },
   
   beforeDestroy() {
@@ -278,24 +292,32 @@ export default {
   },
 
   methods: {
-    sendMessage() {
+    deb: _.debounce(function() {
+          // console.log("throttle", this.editor.getHTML())
+          if (this.editor.isEmpty) {
+            return
+          } else {
+            this.$emit('submit', { text: this.oldValue, ...this.value });
+          }
+        }, 1500, { leading: false }),
+    /*sendMessage() {
       if (this.editor.isEmpty && [...Object.values(this.value)].flat().length === 0) {
         return;
       }
 
       this.$emit('submit', { text: this.editor.getHTML(), ...this.value });
       // this.editor.commands.setContent('');
-    },
+    },*/
     /*cancelMessage(){
       this.editor.commands.clearContent()
     },*/
-    onAttachmentClick() {
+    /*onAttachmentClick() {
       this.$refs.file.click();
-    },
+    },*/
     /*removeAttachment(id) {
       this.$emit('input', { ...this.value, files: this.value.files.filter((f) => f.id !== id) });
     },*/
-    onFilesSelect(evt) {
+    /*onFilesSelect(evt) {
       if (!evt.target.files?.length) {
         return;
       }
@@ -303,7 +325,7 @@ export default {
       const newFiles = [...evt.target.files];
       newFiles.forEach((file) => (file.id = uuidV4()));
       this.$emit('input', { ...this.value, files: [...this.value.files, ...newFiles] });
-    },
+    },*/
     selectEmoji(emoji) {
       const transaction = this.editor.state.tr.insertText(emoji.data);
       this.editor.view.dispatch(transaction);

@@ -408,24 +408,6 @@ export default {
     this.colSizes = this.tableFields.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100)
     // let colwidthArr = this.tableFields.map(w => (parseInt(w.width) / parseInt(this.tableWidth)) * 100 )
     // console.log(colwidthArr)
-    /*for (var i = 0; i < colwidthArr.length; i++) {
-      if(!isNaN(colwidthArr[i])){
-        nowidth += colwidthArr[i]
-        colwidthArr[i] = Number(colwidthArr[i].toFixed(4))
-      } else {
-        nowidthIndex.push(i)
-        colwidthArr[i] = Math.abs(100-nowidth)
-      }
-      // this.colSizes.push(colwidthArr[i])
-    }*/
-
-    // nowidthIndex.length
-      /*if (nowidthIndex.length == 1) {
-        colwidthArr[nowidthIndex[0]] = Math.abs(100-nowidth)
-      } */
-
-    // this.colSizes = colwidthArr
-    // console.log(colwidthArr, nowidth, nowidthIndex)
     
     let elemIds = document.getElementsByClassName("splitcell"+this.componentKey)
     for(let c of elemIds){
@@ -539,11 +521,18 @@ export default {
        if(param.includes("/projects/")){
         if(this.singleProjectGroupBy=="") 
                 {
-                    if(this.localData?.[0]?.tasks.length>0)
-                    {
-                      this.localData[0].tasks.push(payload);
-                      
-                    }
+                  if(this.localData.length>=0){
+                      let exist_item= this.localData.find((item)=>item.title=="_section32")
+                      if(exist_item) {
+                        let index = this.localData.findIndex((item) => item.title == "_section32");
+                        this.localData[index].tasks.push(payload);
+                      }
+                      else {
+                        this.$nuxt.$emit("refresh-table");
+                    // this.$store.commit("section/setAddTaskCount")
+
+                      }
+                  }
                     else
                     {
                       this.$nuxt.$emit("refresh-table");
