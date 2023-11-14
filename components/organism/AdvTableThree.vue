@@ -539,11 +539,18 @@ export default {
        if(param.includes("/projects/")){
         if(this.singleProjectGroupBy=="") 
                 {
-                    if(this.localData?.[0]?.tasks.length>0)
-                    {
-                      this.localData[0].tasks.push(payload);
-                      
-                    }
+                  if(this.localData.length>=0){
+                      let exist_item= this.localData.find((item)=>item.title=="_section32")
+                      if(exist_item) {
+                        let index = this.localData.findIndex((item) => item.title == "_section32");
+                        this.localData[index].tasks.push(payload);
+                      }
+                      else {
+                        this.$nuxt.$emit("refresh-table");
+                    // this.$store.commit("section/setAddTaskCount")
+
+                      }
+                  }
                     else
                     {
                       this.$nuxt.$emit("refresh-table");

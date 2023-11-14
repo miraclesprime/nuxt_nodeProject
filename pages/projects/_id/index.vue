@@ -262,10 +262,10 @@ try {
             this.projectTitle = res.data?.data?.title;
             this.project=res.data.data
 
-            this.$store.commit("task/setExpandVisible",true);
-            this.$store.commit('section/setGroupBy',"")
+         
       }
-   
+           this.$store.commit("task/setExpandVisible",true);
+            this.$store.commit('section/setGroupBy',"")
         let p = JSON.parse(JSON.stringify(this.project))
         // this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
       
