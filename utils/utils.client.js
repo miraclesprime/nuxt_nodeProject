@@ -211,38 +211,32 @@ export default ({ store, app, context }, inject) => {
           })
           const groupDueDate = arr.reduce((acc, task) => {
             // calc dueDate
-            let _dueDate=""
-            const oneDay = 24 * 60 * 60 * 1000; // one week in milliseconds
+            let _dueDate = "";
+            const oneDay = 24 * 60 * 60 * 1000; // one day in milliseconds
             const today = new Date();
-            const todayTime=new Date (today.toISOString().substring(0, 10))
-            todayTime.setHours(0, 0, 0, 0)
-            today.setHours(0, 0, 0, 0);
+            const todayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+            todayUTC.setUTCHours(0, 0, 0, 0);
+            const lastSundayUTC = new Date(todayUTC.getTime() - todayUTC.getUTCDay() * oneDay); // get date of last Sunday in UTC
+            const nextSundayUTC = new Date(lastSundayUTC.getTime() + 7 * oneDay); // get date of next Sunday in UTC
+            const nextNextSundayUTC = new Date(nextSundayUTC.getTime() + 7 * oneDay); // get date of Sunday after next in UTC
             
-            const lastSunday = new Date(today - today.getDay() * oneDay); // get date of last Sunday
-            const nextSunday = new Date(lastSunday.getTime() + 7 * oneDay); // get date of next Sunday
-            const nextNextSunday = new Date(nextSunday.getTime() + 7 * oneDay); // get date of Sunday after next
-            const changeDueDate=new Date (task.dueDate)
-            const selectedDate = new Date(changeDueDate.toISOString().substring(0, 10));
+            const changeDueDate = new Date(task.dueDate);
+            const selectedDateUTC = new Date(Date.UTC(changeDueDate.getUTCFullYear(), changeDueDate.getUTCMonth(), changeDueDate.getUTCDate()));
+            selectedDateUTC.setUTCHours(0, 0, 0, 0);
             
-            selectedDate.setHours(0, 0, 0, 0);
-            if(selectedDate=="Wed Dec 31 1969 00:00:00 GMT-0500 (Eastern Standard Time)"||selectedDate=="Wed Dec 31 1969 00:00:00 GMT-0600 (Central Standard Time)")
-            {
-              _dueDate="Unassigned";
-            }else
-            if (selectedDate < lastSunday ) {
-              
-              _dueDate=  "Past Due";
-            } else if(todayTime.getTime() === selectedDate.getTime()){
-              _dueDate="Today";
-            } else
-            if (selectedDate < nextSunday) {
-              _dueDate= "This week";
-            } else if (selectedDate < nextNextSunday) {
-              _dueDate= "Next week";
+            if (isNaN(selectedDateUTC.getTime())|| selectedDateUTC.getTime() === 0) {
+              _dueDate = "Unassigned";
+            } else if (selectedDateUTC < lastSundayUTC) {
+              _dueDate = "Past Due";
+            } else if (todayUTC.getTime() === selectedDateUTC.getTime()) {
+              _dueDate = "Today";
+            } else if (selectedDateUTC < nextSundayUTC) {
+              _dueDate = "This week";
+            } else if (selectedDateUTC < nextNextSundayUTC) {
+              _dueDate = "Next week";
             } else {
-              _dueDate= "Later";
+              _dueDate = "Later";
             }
-
             const dueDate =_dueDate ?? "Unassigned"
             if (!acc[dueDate]) {
               acc[dueDate] = [];
