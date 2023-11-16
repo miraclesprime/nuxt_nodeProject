@@ -150,22 +150,16 @@
         </draggable>
         <div id="header_wrap" class="position-absolute header-wrap" >
             
-          <!-- <div class="w-100 position-sticky" style=" display: table; top: 0; z-index: 1;"> -->
-            <div class="split position-sticky" >
-              <div v-if="drag && filterViews == 'all'"  class="width-2 border-bottom-gray2" id="advtable-th-1" ></div>
-              <!-- <div v-for="(field, index) in tableFields"  class="splitcell border-bottom-gray2" :class="'splitcell'+componentKey" :id="'split'+index+componentKey" :minwidth="field.minwidth" >
-                <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}" style="white-space: nowrap;">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
+          <div class="split position-sticky" >
+            <div v-if="drag && filterViews == 'all'"  class="width-2 border-bottom-gray2" id="advtable-th-1" ></div>
+            <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :class="['splitcell'+componentKey]" :id="'split'+index+componentKey" :minwidth="field.minwidth" >
+              <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}" style="white-space: nowrap;">{{field.label}} <span v-if="field.header_icon" id="advtable-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
                   <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
-                </span></div>
-              </div> -->
-              <div v-for="(field, index) in tableFields" class="splitcell border-bottom-gray2" :class="['splitcell'+componentKey]" :id="'split'+index+componentKey" :minwidth="field.minwidth" >
-                <div class="align-center gap-05 height-2 px-05" :style="{'min-width': field.minWidth}" style="white-space: nowrap;">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
-                  <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
-                </span></div>
+                </span>
               </div>
-              <div class="border-bottom-gray2"></div>
             </div>
-          <!-- </div> -->
+            <div class="border-bottom-gray2"></div>
+          </div>
 
           <div ref="splitHint" class="split-indicator h-100 position-absolute"></div>
         </div>
@@ -1074,13 +1068,9 @@ export default {
     }
 
     .th {
-      /*position: sticky;
-      top: 0;
-      z-index: 9;*/
       background: $gray9;
       font-weight: bold;
       color: $secondary;
-      /*padding: 0.325rem 0.25rem;*/
       padding: 0;
       border-bottom-color: $gray2;
 
@@ -1101,7 +1091,6 @@ export default {
     }
     &.active {
       /*background-color: $secondary-sub3;*/
-      /*outline: 1px solid $gray4;*/
       .td { background-color: $gray9; }
     }
   }

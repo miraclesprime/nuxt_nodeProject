@@ -15,7 +15,7 @@
           <bib-icon icon="comment-forum-solid" variant="gray5"></bib-icon>
         </div>
         <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='it-icon-5' v-tooltip="'Files'" @click="scrollToFiles">
-          <bib-icon icon="folder-solid" variant="gray5"></bib-icon>
+          <bib-icon icon="files" variant="gray5"></bib-icon>
         </div>
         <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="it-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
           <bib-icon icon="bookmark-solid" :variant="isFavorite.variant"></bib-icon>
@@ -40,7 +40,7 @@
                   <bib-icon icon="comment-forum-solid" variant="gray5" class="mr-075"></bib-icon> Conversation
                 </span>
                 <span class="list__item" id="'it-list-item-7'" @click="scrollToFiles">
-                  <bib-icon icon="folder-solid" variant="gray5" class="mr-075"></bib-icon> Files
+                  <bib-icon icon="files" variant="gray5" class="mr-075"></bib-icon> Files
                 </span>
                 <hr>
                 <span class="list__item list__item__danger" id="it-list-item-8" @click="deleteTask(item.taskId)">Delete</span>

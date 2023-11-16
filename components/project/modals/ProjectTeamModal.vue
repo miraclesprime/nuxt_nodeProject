@@ -12,7 +12,7 @@
         </ul>
       </template>
     </bib-button>
-    <div id="ptm-project-team-members" class="">
+    <div id="ptm-project-team-members" class="overflow-y-auto" style="max-height: 200px;">
       <template v-for="t in team">
         <email-chip :key="t.id" :email="t.email" :name="t.label" :avatar="t.avatar" class="mt-05" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
       </template>
@@ -21,39 +21,38 @@
     </div>
   </div> 
   <div class="bg-light p-1 my-05 shape-rounded">
-  
     <label class="text-gray6 font-md" id="ptm-team-label">Team</label>
-    <div class="of-scroll-y m-1" style="max-height: 170px">
-    <template v-if="projectMembers.length">
-      <bib-table :key="'tt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="this.teamMembers.filter(item=>this.projectMembers.some(value=>value.id===item.id)).filter(item1=>!this.newTeam.some(val=>val.id===item1.id))"  :hide-no-column="true" headless>
-        <template #cell(name)="data">
-          <div class="d-flex align-center gap-05" id="ptm-owner-text">
-            <bib-avatar :src="data.value.avatar" class="mt-auto mb-auto" size="1.5rem"></bib-avatar>
-            <strong class="text-dark px-030 font-sm" >{{ data.value.label }}</strong>
-            <span class="text-black px-030 font-sm">{{ data.value.email }}</span>
-          </div>
-        </template>
-        <template #cell_action="data">
-          <div v-if="!data.value.isOwner" id="ptm-trash-solid" class="cursor-pointer shape-circle" v-on:click="deleteMember(data.value)">
-            <bib-icon icon="trash-solid" variant="gray5"></bib-icon>
-          </div>
-        </template>
-      </bib-table>
-      <bib-table :key="'ttt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="this.teamMembers.filter(item=>this.newTeam.some(value=>value.id===item.id))" :hide-no-column="true" headless>
-        <template #cell(name)="data">
-          <div class="d-flex align-center gap-05" id="ptm-owner-text">
-            <bib-avatar :src="data.value.avatar" class="mt-auto mb-auto" size="1.5rem"></bib-avatar>
-            <strong class="text-dark px-030 font-sm" >{{ data.value.label }}</strong>
-            <span class="text-black px-030 font-sm">{{ data.value.email }}</span>
-          </div>
-        </template>
-        <template #cell_action="data">
-          <div v-if="!data.value.isOwner" id="ptm-trash-solid" class="cursor-pointer shape-circle" v-on:click="deleteMember(data.value)">
-            <bib-icon icon="trash-solid" variant="gray5"></bib-icon>
-          </div>
-        </template>
-      </bib-table>
-    </template>
+    <div class="overflow-y-auto mt-1" style="max-height: 200px">
+      <template v-if="projectMembers.length">
+        <bib-table :key="'tt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="this.teamMembers.filter(item=>this.projectMembers.some(value=>value.id===item.id)).filter(item1=>!this.newTeam.some(val=>val.id===item1.id))"  :hide-no-column="true" headless>
+          <template #cell(name)="data">
+            <div class="d-flex align-center gap-05" id="ptm-owner-text">
+              <bib-avatar :src="data.value.avatar" class="mt-auto mb-auto" size="1.5rem"></bib-avatar>
+              <strong class="text-dark px-030 font-sm" >{{ data.value.label }}</strong>
+              <span class="text-black px-030 font-sm">{{ data.value.email }}</span>
+            </div>
+          </template>
+          <template #cell_action="data">
+            <div v-if="!data.value.isOwner" id="ptm-trash-solid" class="cursor-pointer shape-circle" v-on:click="deleteMember(data.value)">
+              <bib-icon icon="trash-solid" variant="gray5"></bib-icon>
+            </div>
+          </template>
+        </bib-table>
+        <bib-table :key="'ttt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="this.teamMembers.filter(item=>this.newTeam.some(value=>value.id===item.id))" :hide-no-column="true" headless>
+          <template #cell(name)="data">
+            <div class="d-flex align-center gap-05" id="ptm-owner-text">
+              <bib-avatar :src="data.value.avatar" class="mt-auto mb-auto" size="1.5rem"></bib-avatar>
+              <strong class="text-dark px-030 font-sm" >{{ data.value.label }}</strong>
+              <span class="text-black px-030 font-sm">{{ data.value.email }}</span>
+            </div>
+          </template>
+          <template #cell_action="data">
+            <div v-if="!data.value.isOwner" id="ptm-trash-solid" class="cursor-pointer shape-circle" v-on:click="deleteMember(data.value)">
+              <bib-icon icon="trash-solid" variant="gray5"></bib-icon>
+            </div>
+          </template>
+        </bib-table>
+      </template>
     </div>
     <template v-if="norecord">
       <span id="ptm-projects-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
