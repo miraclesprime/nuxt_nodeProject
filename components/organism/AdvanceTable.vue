@@ -101,7 +101,7 @@
             </div>
             <template v-for="(td,index) in tableFields">
               <div v-if="td.key == 'title'" class="td" role="cell" :id="'adv-table-newRow2-td-'+index">
-                <input type="text" ref="newrowInput" class="editable-input" :id="'adv-table-editable-input-2-'+index" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate" @keyup.esc="unselectAll" required placeholder="Enter title...">
+                <input type="text" ref="newrowInput" class="editable-input" :id="'adv-table-editable-input-2-'+index" v-model="localNewrow.title" :class="{'error': validTitle}" @blur="testCreateNewRow" @keyup.esc="unselectAll" @keyup.enter="testCreateNewRow" required placeholder="Enter title...">
               </div>
               <div v-else class="td" role="cell" :id="'adv-table-else-td-'+index"></div>
             </template>
@@ -486,8 +486,10 @@ export default {
         row.classList.remove('active');
       }
       // this.newRow.show = false
+      if (!this.localNewrow.show) {
+        this.localNewrow.title = ""
+      }
       this.localNewrow.sectionId = null
-      this.localNewrow.title = ""
       this.localNewrow.show = false;
       this.contextVisible = false
       return 'success'
@@ -512,7 +514,20 @@ export default {
       });
     },
 
+    testCreateNewRow() {
+      if (!this.localNewrow.title) {
+        console.warn("title is required")
+        this.validTitle = "alert"
+        return false
+      }
+      this.validTitle = ""
+      // console.info("valid input->", this.localNewrow.title)
+      this.$emit("create-row", this.localNewrow)
+      this.localNewrow.title = ""
+    },  
+
     newRowCreate: _.debounce(function() {
+      console.log("here is blur event")
       if (!this.localNewrow.title) {
         console.warn("title is required")
         this.validTitle = "alert"
