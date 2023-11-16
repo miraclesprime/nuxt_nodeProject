@@ -109,16 +109,14 @@
                 <div v-for="n in tableFields.length-1" class="td" id="adv-table-newRow-td3" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
               </div>
 
-              <div v-show="localNewrow.show" class="tr" role="row" id="adv-table-newRow-2">
-                <!-- <div v-if="drag" class="td text-center" id="adv-table-newRow2-td" role="cell">
-                  <span class="d-inline-flex align-center height-105 bg-secondary-sub4 shape-rounded" id="adv-table-newRow2-drag"><bib-icon icon="drag" variant="white"></bib-icon></span>
-                </div> -->
-                <template v-for="(td,index) in tableFields">
-                  <div v-if="td.key == 'title'" class="td" role="cell" :id="'adv-table-newRow2-td-'+index">
-                    <input type="text" ref="newrowInput" class="editable-input" :id="'adv-table-editable-input-2-'+index" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate" @keyup.esc="unselectAll" required placeholder="Enter title...">
-                  </div>
-                  <div v-else class="td" role="cell" :id="'adv-table-else-td-'+index"></div>
-                </template>
+
+          <div v-show="localNewrow.show" class="tr" role="row" id="adv-table-newRow-2">
+            <!-- <div v-if="drag" class="td text-center" id="adv-table-newRow2-td" role="cell">
+              <span class="d-inline-flex align-center height-105 bg-secondary-sub4 shape-rounded" id="adv-table-newRow2-drag"><bib-icon icon="drag" variant="white"></bib-icon></span>
+            </div> -->
+            <template v-for="(td,index) in tableFields">
+              <div v-if="td.key == 'title'" class="td" role="cell" :id="'adv-table-newRow2-td-'+index">
+                <input type="text" ref="newrowInput" class="editable-input" :id="'adv-table-editable-input-2-'+index" v-model="localNewrow.title" :class="{'error': validTitle}" @blur="testCreateNewRow" @keyup.esc="unselectAll" @keyup.enter="testCreateNewRow" required placeholder="Enter title...">
               </div>
             </template>
           <!-- </article> -->
@@ -468,8 +466,10 @@ export default {
         row.classList.remove('active');
       }
       // this.newRow.show = false
+      if (!this.localNewrow.show) {
+        this.localNewrow.title = ""
+      }
       this.localNewrow.sectionId = null
-      this.localNewrow.title = ""
       this.localNewrow.show = false;
       this.contextVisible = false
       return 'success'
@@ -494,7 +494,20 @@ export default {
       });
     },
 
+    testCreateNewRow() {
+      if (!this.localNewrow.title) {
+        console.warn("title is required")
+        this.validTitle = "alert"
+        return false
+      }
+      this.validTitle = ""
+      // console.info("valid input->", this.localNewrow.title)
+      this.$emit("create-row", this.localNewrow)
+      this.localNewrow.title = ""
+    },  
+
     newRowCreate: _.debounce(function() {
+      console.log("here is blur event")
       if (!this.localNewrow.title) {
         console.warn("title is required")
         this.validTitle = "alert"

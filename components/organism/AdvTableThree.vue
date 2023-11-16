@@ -139,7 +139,7 @@
                     <span class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
                   </div>
                   <div class="td" role="cell" style="border-right-color: transparent;">
-                    <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}" @input="newRowCreate(section)" @blur="unselectAll" @keyup.esc="unselectAll" required placeholder="Enter title...">
+                    <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}"  @blur="testNewRowCreate(section)" @keyup.esc="unselectAll" @keyup.enter="testCreateNewRow" required placeholder="Enter title...">
                   </div>
 		              <div class="position-absolute" style="left:0; bottom:0; right:0; z-index:1; height: 1px; border-bottom: 1px solid var(--bib-light)"></div>
                 </div>
@@ -834,7 +834,9 @@ export default {
         row.classList.remove('active');
       }
       this.localNewrow.sectionId = null
-      this.localNewrow.title = ""
+      if (!this.localNewrow.show) {
+        this.localNewrow.title = ""
+      }
       this.localNewrow.show = false;
       this.akey+=1
       this.$emit("toggle-newsection", 'hide') //send any string to hide
@@ -865,6 +867,18 @@ export default {
         this.$refs['newrowInput'+sectionId][0].focus()
       });
 
+    },
+
+    testNewRowCreate(section) {
+      if (!this.localNewrow.title) {
+        // console.warn("title is required")
+        this.validTitle = "alert"
+        return false
+      }
+      this.validTitle = ""
+      // console.info("valid input->", this.localNewrow.title)
+      this.$emit("create-row", this.localNewrow, section)
+      this.localNewrow.title = ""
     },
 
     newRowCreate: _.debounce(function(section) {
