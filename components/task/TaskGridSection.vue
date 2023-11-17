@@ -16,12 +16,13 @@
                       <bib-icon icon="add"></bib-icon>
                       <span class="ml-05" :id="'tgs-list-span'+section.id">Add task</span>
                     </div>
-                  </span><span v-if="sectionType != 'department'" class="list__item" :id="'tgs-list-2'+section.id" v-on:click="$emit('section-rename',{id: section.id, title: section.title })">
+                  </span>
+                  <!-- <span v-if="sectionType != 'department'" class="list__item" :id="'tgs-list-2'+section.id" v-on:click="$emit('section-rename',{id: section.id, title: section.title })">
                     <div class="d-flex align-center" :id="'tgs-list-flex-2'+section.id">
                       <bib-icon icon="pencil"></bib-icon>
                       <span class="ml-05" :id="'tgs-list-span'+section.id">Rename</span>
                     </div>
-                  </span>
+                  </span> -->
                   <hr v-if="sectionType != 'department'">
                   <span v-if="sectionType != 'department'" class="list__item list__item__danger" :id="'tgs-list-3'+section.id" v-on:click="$emit('section-delete',{id: section.id, title: section.title, projectId: section.projectId })">
                     Delete section
