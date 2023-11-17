@@ -33,7 +33,7 @@
                     <bib-icon icon="check-square-solid" variant="gray4" class="mr-075"></bib-icon> Subtasks
                   </span>
                   <span class="list__item" id="tsb-list-item-3"   @click="scrollToFiles">
-                    <bib-icon icon="folder-solid" variant="gray4" class="mr-075"></bib-icon> Files
+                    <bib-icon icon="files" variant="gray4" class="mr-075"></bib-icon> Files
                   </span>
                   <span class="list__item" id="tsb-list-item-7" @click="scrollToConversation">
                     <bib-icon icon="comment-forum-solid" variant="gray4" class="mr-075"></bib-icon> Conversation
