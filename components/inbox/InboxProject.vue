@@ -7,7 +7,7 @@
         <bib-icon icon="comment-forum-solid" class="m-auto"></bib-icon>
       </div>
       <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="inbox-project-menu-item3" v-tooltip="'Files'" @click="scrollToFiles">
-        <bib-icon icon="folder-solid" class="m-auto"></bib-icon>
+        <bib-icon icon="files" class="m-auto"></bib-icon>
       </div>
       <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex align-center justify-center cursor-pointer" id="inbox-project-bookmark" @click="setFavorite" v-tooltip="isFavorite.text">
         <bib-icon icon="bookmark-solid" :variant="isFavorite.variant"></bib-icon>
@@ -26,7 +26,7 @@
                 <bib-icon icon="comment-forum-solid" class="mr-075"></bib-icon> Conversation
               </span>
               <span class="list__item" id="inbox_project_list-item5" @click="scrollToFiles">
-                <bib-icon icon="folder-solid" class="mr-075"></bib-icon> Files
+                <bib-icon icon="files" class="mr-075"></bib-icon> Files
               </span>
               <!-- <span class="list__item" id="inbox-project-list-item5" @click="reportModal = !reportModal">
                 <bib-icon icon="warning" class="mr-075"></bib-icon> Report

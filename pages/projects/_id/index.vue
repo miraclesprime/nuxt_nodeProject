@@ -18,7 +18,7 @@
             <bib-icon icon="comment-forum-solid" variant="gray5" class="m-auto"></bib-icon>
           </div>
           <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item3" @click="modalOpen('files', 'Files')" v-tooltip="'Files'">
-            <bib-icon icon="folder-solid" variant="gray5" class="m-auto"></bib-icon>
+            <bib-icon icon="files" variant="gray5" class="m-auto"></bib-icon>
           </div>
           <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark" @click="setFavorite" v-tooltip="'Add to Favorite'">
             <bib-spinner v-if="favLoading" :scale="2" ></bib-spinner>
@@ -41,7 +41,7 @@
                     <bib-icon icon="comment-forum-solid" class="mr-075"></bib-icon> Conversation
                   </span>
                   <span class="list__item" id="project-id-list-item3" @click="modalOpen('files', 'Files')">
-                    <bib-icon icon="folder-solid" class="mr-075"></bib-icon> Files
+                    <bib-icon icon="files" class="mr-075"></bib-icon> Files
                   </span>
                   <span class="list__item" id="project-id-list-item3" @click="copyProjectLink">
                     <bib-icon icon="duplicate" class="mr-075"></bib-icon> Copy Link

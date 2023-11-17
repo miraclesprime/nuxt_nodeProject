@@ -1,19 +1,19 @@
 <template>
-  <div id="user-select-wrapper" class="picker-wrapper " :class="{'w-100': mode!='avatar', 'width-2': mode=='avatar'}" v-click-outside="onClickOutside">
+  <div id="user-select-wrapper" class="picker-wrapper " v-click-outside="onClickOutside">
     <div id="user-select-trigger-open" class="user-data cursor-pointer height-2 align-center justify-between gap-05" @click.stop="triggerOpen">
-      <div v-if="user" id="user-select-user-avatar" class="align-center gap-025 " style="max-width: calc(100% - 12px);">
-        <tippy arrow v-if="mode == 'full'" >
+      <div v-if="user" id="user-select-user-avatar" class="align-center gap-025 " style="max-width: calc(100% - 16px);">
+        <!-- <tippy arrow v-if="mode == 'full'" >
           <template v-slot:trigger>
             <bib-avatar :src="user.avatar" size="2rem"></bib-avatar>
           </template>
           {{user.label}}
-        </tippy>
+        </tippy> -->
         
-        <bib-avatar v-if="mode == 'full'" :src="user.avatar" size="2rem"></bib-avatar>
+        <bib-avatar v-if="mode == 'full'" :src="user.avatar" size="2rem" class="flex-shrink-0"></bib-avatar>
         
         <span class="user-label text-truncate" :style="{ maxWidth: 'calc(${maxWidth} - 3rem)'}">{{user.label}}</span>
       </div>
-      <div v-else id="user-select-user-avatar" class="align-center gap-025" style="max-width: calc(100% - 12px);">
+      <div v-else id="user-select-user-avatar" class="align-center gap-025" style="max-width: calc(100% - 16px);">
         <span v-if="mode == 'full'" class="shape-circle d-inline-flex width-2 height-2 ">
           <bib-avatar size="2rem"></bib-avatar>
         </span>
@@ -22,7 +22,7 @@
       <bib-icon icon="arrow-down" variant="gray4" :scale="0.5"></bib-icon>
     </div>
 
-    <div v-if="show" ref="pickerContent" class="picker-content p-025" :style="styleObj" id="user-select-content">
+    <div v-if="show" id="user-select-content" ref="pickerContent" class="picker-content p-025" :style="styleObj" >
       <p class="font-sm text-left border-bottom-light p-025">{{title}}</p>
       <input type="text" class="picker-input m-025" id="user-select-input" ref="userFilterInput" v-model="filterKey" @keyup.esc="$emit('close')" autofocus>
       <div class="mt-05" style="max-height: 12rem; overflow-y: auto" id="user-select-user-avatar-list-wrapper">
@@ -38,7 +38,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { TippyComponent } from "vue-tippy";
+// import { TippyComponent } from "vue-tippy";
 export default {
 
   name: 'UserSelect',
@@ -48,13 +48,14 @@ export default {
     mode: { type: String, default: "name"}, //name, full, 
     title: { type: String, default: "Assign to" },
     // avatarSize: { type: String, default: "2rem" },
+    // width: { type: String },
     minWidth: { type: String, default: "calc(100% + 10px)" },
     maxWidth: { type: String, default: "15rem" },
   },
 
-  components: {
+  /*components: {
     tippy: TippyComponent,
-  },
+  },*/
 
   data() {
     return {
@@ -174,6 +175,8 @@ export default {
 .picker-wrapper {
   position: relative;
   color: var(--bib-text);
+  display: inline-block;
+  width: 100%;
 
   .user-data {
     border: 0 none;
