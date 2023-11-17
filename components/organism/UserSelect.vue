@@ -1,17 +1,19 @@
 <template>
   <div id="user-select-wrapper" class="picker-wrapper " v-click-outside="onClickOutside">
     <div id="user-select-trigger-open" class="user-data cursor-pointer height-2 align-center justify-between gap-05" @click.stop="triggerOpen">
-      <div v-if="user" id="user-select-user-avatar" class="align-center gap-025 " style="max-width: calc(100% - 16px);">
-        <!-- <tippy arrow v-if="mode == 'full'" >
-          <template v-slot:trigger>
-            <bib-avatar :src="user.avatar" size="2rem"></bib-avatar>
+      <div v-if="user" id="user-select-user-avatar" style="max-width: calc(100% - 16px);">
+        <tippy arrow >
+          <template v-slot:trigger >
+            <span class="align-center gap-025">
+              <bib-avatar v-if="mode == 'full'" :src="user.avatar" size="2rem"></bib-avatar>
+              <span class="user-label text-truncate" :style="{ maxWidth: 'calc(${maxWidth} - 3rem)'}">{{user.label}}</span>
+            </span>
           </template>
           {{user.label}}
-        </tippy> -->
+        </tippy>
         
-        <bib-avatar v-if="mode == 'full'" :src="user.avatar" size="2rem" class="flex-shrink-0"></bib-avatar>
+        <!-- <bib-avatar v-if="mode == 'full'" :src="user.avatar" size="2rem" class="flex-shrink-0"></bib-avatar> -->
         
-        <span class="user-label text-truncate" :style="{ maxWidth: 'calc(${maxWidth} - 3rem)'}">{{user.label}}</span>
       </div>
       <div v-else id="user-select-user-avatar" class="align-center gap-025" style="max-width: calc(100% - 16px);">
         <span v-if="mode == 'full'" class="shape-circle d-inline-flex width-2 height-2 ">
@@ -38,7 +40,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-// import { TippyComponent } from "vue-tippy";
+import { TippyComponent } from "vue-tippy";
 export default {
 
   name: 'UserSelect',
@@ -53,9 +55,9 @@ export default {
     maxWidth: { type: String, default: "15rem" },
   },
 
-  /*components: {
+  components: {
     tippy: TippyComponent,
-  },*/
+  },
 
   data() {
     return {
