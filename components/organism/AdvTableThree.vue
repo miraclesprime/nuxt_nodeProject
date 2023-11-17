@@ -45,8 +45,8 @@
                   <div class="section-header d-flex align-center gap-05 height-205 " >
                     <div v-show="drag&&filterViews=='all'" class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                     </div>
-                    <div class="position-sticky align-center" style="left: 0.5rem;" >
-                      <span class="width-1 text-center cursor-pointer" @click.stop="collapseItem(section.id)">
+                    <div class="position-sticky align-center" style="left: 0.5rem; z-index: 2;" >
+                      <span class="width-105 text-center cursor-pointer" @click.stop="collapseItem(section.id)">
                         <bib-icon icon="arrow-down" :scale="0.5" :ref="'collapseIcon'+section.id" ></bib-icon> 
                       </span>
                       <span class="font-w-700 cursor-pointer " v-if="editSection" >
@@ -56,6 +56,25 @@
                         <input type="text" class="editable-input section-title"  :value="section.title.includes('_section') ? 'Untitled section'
                       : section.title" @input="debounceRenameSection(section.id, $event)" @blur="restoreField" />
                       </span>
+                      <div v-if="sectionMenu" class="shape-circle width-105 height-105 bg-hover-light">
+                        <bib-popup  pop="horizontal-dots" icon-variant="gray5" size="sm" >
+                          <template v-slot:menu>
+                            <div :id="'tgs-list'+section.id" class="list border-light box-shadow" >
+                              <span class="list__item" :id="'tgs-list-1'+section.id" v-on:click.stop="newRowClick(section.id)">
+                                <div class="d-flex align-center" :id="'tgs-list-flex-1'+section.id">
+                                  <bib-icon icon="add"></bib-icon>
+                                  <span class="ml-05" :id="'tgs-list-span'+section.id">Add task</span>
+                                </div>
+                              </span>
+                              <hr >
+                              <span class="list__item list__item__danger" :id="'tgs-list-3'+section.id" v-on:click="$emit('section-delete',{id: section.id, title: section.title })" @mouseenter="deleteBtnHover = true" @mouseleave="deleteBtnHover = false">
+                                <bib-icon icon="trash" :variant="deleteBtnHover ? 'white' : 'danger'"></bib-icon>
+                                <span class="ml-05">Delete section</span>
+                              </span>
+                            </div>
+                          </template>
+                        </bib-popup>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -139,7 +158,7 @@
                     <span class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
                   </div>
                   <div class="td" role="cell" style="border-right-color: transparent;">
-                    <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}"  @blur="testNewRowCreate(section)" @keyup.esc="unselectAll" @keyup.enter="testCreateNewRow" required placeholder="Enter title...">
+                    <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}"  @blur="testNewRowCreate(section)" @keyup.esc="unselectAll" @keyup.enter="testCreateNewRow(section)" required placeholder="Enter title...">
                   </div>
 		              <div class="position-absolute" style="left:0; bottom:0; right:0; z-index:1; height: 1px; border-bottom: 1px solid var(--bib-light)"></div>
                 </div>
@@ -230,7 +249,7 @@ export default {
     showNewsection: { type: Boolean, default: false},
     lazyComponent: false,
     // isProject: { type: Boolean, default: false},
-    
+    sectionMenu: { type: Boolean, default: false },
   },
 
   data() {
@@ -261,7 +280,8 @@ export default {
       colIds: [],
       colSizes: [],
       colmw: [],
-      tableWidth: "100%"
+      tableWidth: "100%",
+      deleteBtnHover: false,
     }
   },
   watch: {

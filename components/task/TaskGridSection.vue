@@ -10,21 +10,23 @@
             </div>
             <bib-popup pop="elipsis" icon-variant="gray5" class="bg-hover-gray2" :scale="1">
               <template v-slot:menu>
-                <div :id="'tgs-list'+section.id" class="list">
+                <div :id="'tgs-list'+section.id" class="list border-light box-shadow" >
                   <span class="list__item" :id="'tgs-list-1'+section.id" v-on:click.stop="showBlankTask(section.id)">
                     <div class="d-flex align-center" :id="'tgs-list-flex-1'+section.id">
                       <bib-icon icon="add"></bib-icon>
                       <span class="ml-05" :id="'tgs-list-span'+section.id">Add task</span>
                     </div>
-                  </span><span v-if="sectionType != 'department'" class="list__item" :id="'tgs-list-2'+section.id" v-on:click="$emit('section-rename',{id: section.id, title: section.title })">
+                  </span>
+                  <!-- <span v-if="sectionType != 'department'" class="list__item" :id="'tgs-list-2'+section.id" v-on:click="$emit('section-rename',{id: section.id, title: section.title })">
                     <div class="d-flex align-center" :id="'tgs-list-flex-2'+section.id">
                       <bib-icon icon="pencil"></bib-icon>
                       <span class="ml-05" :id="'tgs-list-span'+section.id">Rename</span>
                     </div>
-                  </span>
+                  </span> -->
                   <hr v-if="sectionType != 'department'">
-                  <span v-if="sectionType != 'department'" class="list__item list__item__danger" :id="'tgs-list-3'+section.id" v-on:click="$emit('section-delete',{id: section.id, title: section.title, projectId: section.projectId })">
-                    Delete section
+                  <span v-if="sectionType != 'department'" class="list__item list__item__danger" :id="'tgs-list-3'+section.id" v-on:click="$emit('section-delete',{id: section.id, title: section.title, projectId: section.projectId })" @mouseenter="deleteBtnHover = true" @mouseleave="deleteBtnHover = false">
+                      <bib-icon icon="trash" :variant="deleteBtnHover ? 'white' : 'danger'"></bib-icon>
+                      <span class="ml-05">Delete section</span>
                   </span>
                 </div>
               </template>
@@ -92,6 +94,7 @@ export default {
       allDataDisplayed: false,
       lastDisplayedIndex:{},
       dataDisplayed: false, 
+      deleteBtnHover: false,
     };
   },
   props: {
@@ -246,6 +249,7 @@ export default {
 
     },
     closeOtherBlankGrid($event){
+      // console.log($event, this.$refs)
         for (var ref in this.$refs) {
           if(this.$refs[ref][0].title != $event){
             this.$refs[ref][0].newTask = false
@@ -350,14 +354,14 @@ export default {
 }
 
 .section-draggable {
-  // min-height: calc(100vh - 260px);
+  /*min-height: calc(100vh - 260px);*/
   border-radius: 3px;
 }
 
 .highlight {
   outline: 2px skyblue dashed;
   background-color: #e6e6e6;
-  // background-color: azure;
+  /*background-color: azure;*/
 }
 
 .flip-list-move {
@@ -366,12 +370,12 @@ export default {
 
 .section-title-wrapper {
   min-height: 50px;
-  max-width: 280px;
+  /*max-width: 280px;*/
   border-radius: 0.35rem;
   border: 1px dashed transparent;
-  position: sticky;
+  /*position: sticky;
   top: 0;
-  z-index: 2;
+  z-index: 2;*/
   background-color: var(--bib-light);
   &.active {
     background-color: white;

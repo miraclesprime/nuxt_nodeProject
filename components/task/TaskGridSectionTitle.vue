@@ -3,7 +3,7 @@
     <template v-if="sectionEdit">
       <input type="text" class="editable-input" id="tgst-section-edit-input" ref="sectionEditInput" :value="section.title" @input.stop="debounceUpdateTitle" @blur="() => {sectionEdit = false}" @keyup.esc="() => {sectionEdit = false}">
     </template>
-    <span v-else style="cursor: text" id="tgst-mark-section-editable" @click.stop="makeSectionEditable">{{ section.title.includes('_section') ? 'Untitled section' : section.title }}</span>
+    <span v-else style="cursor: text" id="tgst-mark-section-editable" class="editable-input" @click.stop="makeSectionEditable">{{ section.title.includes('_section') ? 'Untitled section' : section.title }}</span>
   </div>
 </template>
 

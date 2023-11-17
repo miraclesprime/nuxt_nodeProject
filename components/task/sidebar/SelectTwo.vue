@@ -14,7 +14,7 @@
         <ul class="m-0 p-0 text-left" id="select-two-list">
           <li v-for="(opt, index) in filtered" :id="'dept-select-list-'+index" :key="opt.index" class="p-025 pr-05 align-center gap-05 font-md cursor-pointer bg-hover-light text-hover-dark" :class="{'bg-light': opt.value == localData}" @click.stop="selected(opt)">
             <bib-icon v-if="icon" :icon="icon" :variant="opt.color || 'gray4'"></bib-icon>
-            {{opt.label}}
+            <span class="d-inline-block text-truncate" style="max-width: 16rem;">{{opt.label}}</span>
           </li>
         </ul>
       </div>
