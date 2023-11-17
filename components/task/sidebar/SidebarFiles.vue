@@ -28,7 +28,7 @@
       @close="uploadModal = false"
     >
       <template slot="content">
-        <div style="margin-left: -1rem; margin-right: -1rem" id="sbf-upload-from-device">
+        <div style="margin-left: -1rem; margin-right: -1rem;  max-height: 300px; overflow-y: auto;" id="sbf-upload-from-device">
           <bib-input
             type="file"
             ref="files"

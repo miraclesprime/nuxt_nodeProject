@@ -7,12 +7,12 @@
       <div id="favorite-scroll-wrap" class="favorite-tables position-relative " >
    
         <!-- task table -->
-        <div style="height:50%;margin-bottom: 15px;">
+        <div style="height:50%; overflow-x: auto; margin-bottom: 15px;">
           <advance-table :drag="false" :tableFields="taskTableFields" :tableData="taskSubtaskLocalData" :lazyComponent="true" :contextItems="taskContextMenuItems" @context-item-event="taskContextItemClick" @row-click ="openSidebar" @table-sort="sortTask" @context-open="taskContextOpen"  @title-click="openSidebar" @update-field="updateTask" sectionTitle="Favorite Tasks" :plusButton="false" :key="templateKey"></advance-table>
         </div>
         
         <!-- project table -->
-        <div style="height:50%;">
+        <div style="height:50%; overflow-x: auto;">
           <advance-table :drag="false" :tableFields="projectTableFields" :tableData="projLocalData" :lazyComponent="true" :contextItems="projectContextItems" @context-item-event="projContextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @context-open="projectContextOpen" @title-click="projectRoute" @update-field="updateProject" sectionTitle="Favorite Projects" :plusButton="false" :key="templateKey"></advance-table>
         </div>
         <!-- <loading :loading="loading"></loading> -->
