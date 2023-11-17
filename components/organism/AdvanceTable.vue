@@ -136,11 +136,12 @@
         <!-- <div ref="splitHint" class="split-indicator h-100 position-absolute"></div> -->
       </div>
     </div>
+  </template>
     
     <template v-if="contextItems">
       <table-context-menu :items="contextItems" :show="contextVisible" :coordinates="popupCoords" @close-context="closePopups" @item-click="contextItemClick" ></table-context-menu>
     </template>
-    
+    </div>
   </div>
 </template>
 <script>
