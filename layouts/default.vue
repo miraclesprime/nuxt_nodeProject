@@ -21,7 +21,7 @@
             :mainAction="btnText"
             noResultText="No results, type a project or task name to begin search."
             @my-account-link="myAccount"
-            @logout="logout"
+            @logout="$logout"
           >
             <template #avatar_menu>
               <bib-button pop="arrowhead-right" :scale="1.3">
@@ -642,8 +642,14 @@ export default {
       this.$router.push({ path: `/usertasks/${id}` });
     },
 
+    removeCookie(cookieName) {
+      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    },
+
     // Handle User logout
     logout() {
+      this.removeCookie('b_ssojwt');
+      localStorage.removeItem('accessToken')
       window.location.href = this.logoutUrl
     },
     myAccount(){

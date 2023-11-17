@@ -31,6 +31,7 @@ export default {
     "~/plugins/statusFormat.client.js",
     "~/plugins/priorityFormat.client.js",
     "~/plugins/datepicker.client.js",
+    "~/plugins/logout.js",
     // "~/plugins/chatLink.client.js",
     // "~/plugins/userInfo.js",
     "~/utils/userInfo.client.js",

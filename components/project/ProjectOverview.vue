@@ -93,7 +93,7 @@ import { STATUS, PRIORITY } from '~/config/constants.js'
 import dayjs from 'dayjs'
 
 export default {
-  name: "Project Overview",
+  name: "ProjectOverview",
   props: {
     sections: Array
   },
