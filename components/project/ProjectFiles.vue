@@ -68,7 +68,7 @@
     
     <bib-modal-wrapper v-if="uploadModal" title="Select file(s)" @close="uploadModal = false">
       <template slot="content">
-        <div style="margin-left: -1rem; margin-right: -1rem;"  id="pf-file-select-files-modal">
+        <div style="margin-left: -1rem; margin-right: -1rem; max-height: 300px; overflow-y: auto;"  id="pf-file-select-files-modal">
           <bib-input type="file" ref="files" @files-dropped="handleChangeFile" variant="accepted" iconLeft="upload" placeholder="Upload from device"></bib-input>
         </div>
         <loading :loading="fileLoader"></loading>
