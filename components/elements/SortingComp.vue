@@ -71,8 +71,4 @@ export default {
 }
 
 </script>
-<style lang="css" scoped>
-.box-shadow{
-  box-shadow: 0 6px 30px -2px rgba(0,0,0,.38);
-}
-</style>
+

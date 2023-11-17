@@ -66,7 +66,7 @@
                   <!-- <div style="text-wrap: wrap;">
                     {{field.width}} - {{field.minwidth}} - {{item[field.key]}}
                   </div> -->
-                  <lazy-user-select v-if="lazyComponent" :ref="'userSelect'+item.id" :userId="item[field.key]" :maxWidth="field.width+'px'" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></lazy-user-select>
+                  <lazy-user-select v-if="lazyComponent" :ref="'userSelect'+item.id" :userId="item[field.key]" @change="updateAssignee($event, item)" @close-other="closePopups('userSelect'+item.id)" ></lazy-user-select>
                   <!-- <skeleton-box v-else></skeleton-box> -->
                 </template>
                 <template v-if="field.key == 'status'">

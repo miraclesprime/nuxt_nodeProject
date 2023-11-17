@@ -13,7 +13,7 @@
     <template v-if="localdata.length > 0">
     <div v-show="gridType === 'list'" class="calc-height " :style="{ 'width': contentWidth }">
 
-      <adv-table-three :tableFields="tableFields" :tableData="localdata" :lazyComponent="true" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" :newRow="newRow" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createSection" @edit-section="renameSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :drag="true" :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
+      <adv-table-three :tableFields="tableFields" :tableData="localdata" :lazyComponent="true" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" :newRow="newRow" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createSection" @edit-section="renameSection" :sectionMenu="true" @section-delete="deleteSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :drag="true" :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
 
     </div>
 
@@ -62,12 +62,7 @@
     <!-- popup notification -->
     <bib-popup-notification-wrapper>
       <template #wrapper>
-        <bib-popup-notification
-          v-for="(msg, index) in popupMessages"
-          :key="index"
-          :message="msg.text"
-          :variant="msg.variant"
-        >
+        <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" autohide="4000">
         </bib-popup-notification>
       </template>
     </bib-popup-notification-wrapper>
@@ -1232,10 +1227,7 @@ export default {
             console.warn(e);
           });
       } else {
-        this.popupMessages.push({
-          text: "Action cancelled",
-          variant: "orange",
-        });
+        this.popupMessages.push({ text: "Action cancelled", variant: "orange" });
         // this.taskToDelete = {};
       }
     },
@@ -1248,6 +1240,7 @@ export default {
           .dispatch("section/deleteSection", section)
           .then((s) => {
             if (s.statusCode == 200) {
+              this.popupMessages.push({text: s.message, variant: "success"})
               this.updateKey();
             } else {
               console.warn(t.message);
