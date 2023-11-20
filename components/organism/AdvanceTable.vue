@@ -50,7 +50,7 @@
                     <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success-sub3"></bib-icon>
                   </span>
                   <span v-if="field.event" class=" flex-grow-1" style="line-height:1.25;" id="adv-table-field-event">
-                    <input type="text" class="editable-input" id="adv-table-editable-input" :value="item[field.key]"  @focus="item.project?$nuxt.$emit('open-sidebar', item):''"  @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
+                    <input type="text" class="editable-input" id="advtable-editable-input" :value="item[field.key]"  @focus="item.project?$nuxt.$emit('open-sidebar', item):''"  @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
                   </span>
                   <span v-else class="flex-grow-1" id="adv-table-item-field-key">
                     {{item[field.key]}}
@@ -99,29 +99,27 @@
             </div>
             <template v-if="plusButton">
               
-              <div v-show="!localNewrow.show" class="tr" role="row" style="border-bottom: var(--bib-light)" id="adv-table-newRow-wrapper">
+              <div v-show="!newrowDisplay" class="tr" role="row" style="border-bottom: var(--bib-light)" id="advtable-newRow-wrapper">
                 <!-- <div v-if="drag" class="td " id="adv-table-newRow-td1" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div> -->
-                <div class="td" id="adv-table-newRow-td2" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
-                  <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" id="adv-table-newRow-newTaskBtn" v-on:click.stop="newRowClick()">
+                <div class="td" id="advtable-newRow-td2" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
+                  <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" id="advtable-newRow-newTaskBtn" v-on:click.stop="newRowClick()">
                     <bib-icon :icon="plusButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{plusButton.label}}</span>
                   </div>
                 </div>
-                <div v-for="n in tableFields.length-1" class="td" id="adv-table-newRow-td3" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
+                <div v-for="(n, index) in tableFields.length-1" class="td" :id="'advtable-newRow-td2'+index" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
               </div>
 
-
-          <div v-show="localNewrow.show" class="tr" role="row" id="adv-table-newRow-2">
-            <!-- <div v-if="drag" class="td text-center" id="adv-table-newRow2-td" role="cell">
-              <span class="d-inline-flex align-center height-105 bg-secondary-sub4 shape-rounded" id="adv-table-newRow2-drag"><bib-icon icon="drag" variant="white"></bib-icon></span>
-            </div> -->
-            <template v-for="(td,index) in tableFields">
-              <div v-if="td.key == 'title'" class="td" role="cell" :id="'adv-table-newRow2-td-'+index">
-                <input type="text" ref="newrowInput" class="editable-input" :id="'adv-table-editable-input-2-'+index" v-model="localNewrow.title" :class="{'error': validTitle}" @blur="testCreateNewRow" @keyup.esc="unselectAll" @keyup.enter="testCreateNewRow" required placeholder="Enter title...">
+              <div v-show="newrowDisplay" class="tr" role="row" id="advtable-newRow2">
+                <!-- <div v-if="drag" class="td text-center" id="adv-table-newRow2-td" role="cell">
+                  <span class="d-inline-flex align-center height-105 bg-secondary-sub4 shape-rounded" id="adv-table-newRow2-drag"><bib-icon icon="drag" variant="white"></bib-icon></span>
+                </div> -->
+                <template v-for="(td,index) in tableFields">
+                  <div v-if="td.key == 'title'" class="td" role="cell" :id="'advtable-newRow2-td-'+index">
+                    <input type="text" ref="newrowInput" class="editable-input" :id="'advtable-editable-input2-'+index" v-model="localNewrow.title" :class="{'error': validTitle}" @blur="testCreateNewRow" @keyup.esc="unselectAll" required placeholder="Enter title...">
+                  </div>
+                </template>
               </div>
             </template>
-          <!-- </article> -->
-        </div>
-      </template>
 
       <div id="header_wrap" class="position-absolute header-wrap" >
         <div class="split position-sticky " >
@@ -207,6 +205,7 @@ export default {
       validTitle: false,
       localData: [],
       localNewrow: _.cloneDeep(this.newRow),
+      newrowDisplay: false,
       colIds: [],
       colSizes: [],
       colmw: [],
@@ -333,6 +332,10 @@ export default {
   beforeDestroy(){
     this.localData = [];
     this.activeItem = {}
+    this.localNewrow = {}
+    this.colIds = []
+    this.colSizes = []
+    this.colmw = []
     this.$nuxt.$off("newTask", this.handleNewTask);
     this.$nuxt.$off("delete_update_table", this.delete_UpdateLocalData)
     this.$nuxt.$off("update_table", this.edit_UpdateLocalData)
@@ -357,12 +360,10 @@ export default {
     
     delete_UpdateLocalData(payload,param) {
       if(this.localData.length==1){
-        
         this.$nuxt.$emit("refresh-table");
-
       }
       else {
-          this.localData = this.localData.filter(obj => obj.id !== payload.id)
+        this.localData = this.localData.filter(obj => obj.id !== payload.id)
       }
       if(param=="/mytasks"){
           this.$store.commit("todo/setDeleteTaskCount")
@@ -467,11 +468,12 @@ export default {
         row.classList.remove('active');
       }
       // this.newRow.show = false
-      if (!this.localNewrow.show) {
+      /*if (!this.newrowDisplay) {
         this.localNewrow.title = ""
-      }
+      }*/
+      this.localNewrow.title = ""
       this.localNewrow.sectionId = null
-      this.localNewrow.show = false;
+      this.newrowDisplay = false;
       this.contextVisible = false
       return 'success'
     },
@@ -488,8 +490,10 @@ export default {
     },
 
     newRowClick() {
-      this.unselectAll()
-      this.localNewrow.show = true
+      this.unselectAll().then(() => {
+        this.newrowDisplay = true
+        console.log('click event after unselectAll')
+      })
       process.nextTick(() => {
         this.$refs.newrowInput[0].focus()
       });
@@ -497,24 +501,28 @@ export default {
 
     testCreateNewRow() {
       if (!this.localNewrow.title) {
-        console.warn("title is required")
-        this.validTitle = "alert"
+        // console.warn("title is required")
+        this.validTitle = "Title is required"
         return false
       }
-      this.validTitle = ""
+      this.validTitle = false
       // console.info("valid input->", this.localNewrow.title)
       this.$emit("create-row", this.localNewrow)
-      this.localNewrow.title = ""
+      // this.localNewrow.title = ""
+      // this.newrowDisplay = false
+      process.nextTick(() => {
+        this.unselectAll()
+      });
     },  
 
     newRowCreate: _.debounce(function() {
-      console.log("here is blur event")
+      // console.log("here is blur event")
       if (!this.localNewrow.title) {
-        console.warn("title is required")
-        this.validTitle = "alert"
+        // console.warn("title is required")
+        this.validTitle = "Title is required"
         return false
       }
-      this.validTitle = ""
+      this.validTitle = false
       // console.info("valid input->", this.localNewrow.title)
       this.$emit("create-row", this.localNewrow)
     }, 800),

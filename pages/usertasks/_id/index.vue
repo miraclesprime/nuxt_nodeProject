@@ -396,7 +396,6 @@ export default {
       }
       // if (process.client) {
         this.$store.dispatch("user/getUserTasks", {
-
           userId: this.$route.params.id,
           filter: 'all',
       })
@@ -405,7 +404,6 @@ export default {
           this.key += 1;
           this.templateKey+=1
         })
-   
     },
 
     openSidebar(task, scroll) {
