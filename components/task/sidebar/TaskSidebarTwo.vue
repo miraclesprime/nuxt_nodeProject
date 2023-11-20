@@ -409,6 +409,24 @@ export default {
           "text": `task "${this.form.title}" created`,
           "mode": this.$route.fullPath.includes("usertasks")?null:(this.$route.params.id ? "project" : null),
         }).then((task) => {
+          if(this.$route.path=="/mytasks"){
+            const res =  this.$axios.$get('/todo/all', {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter':  'all' }
+              });
+              console.log(res.data)
+          }
+          if(this.$route.path=="/tasks"){
+            
+          }
+          if(this.$route.path=="/projects"){
+            
+          }
+          if(this.$route.path.includes("/projects/")){
+            
+          }
+          if(this.$route.path=="/usertasks/"){
+            
+          }
           this.$nuxt.$emit("newTask",task.data,this.$route.fullPath)
           // this.$nuxt.$emit("add_newTask_table",task.data);
           this.$store.dispatch("task/setSingleTask", task.data)
