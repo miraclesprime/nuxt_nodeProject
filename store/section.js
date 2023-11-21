@@ -233,9 +233,10 @@ export const actions = {
   },
 
   async deleteSection(ctx, payload){
-   const res = await this.$axios.$delete("/section", {
+    console.log(payload)
+    const res = await this.$axios.$delete("/section", {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` },
-      data: { id: payload.id, projectId: payload.projectId, text: `section '${payload.title}' deleted` },
+      data: { id: payload.id, projectId: payload.projectId, retainTasks: payload.retainTasks, text: `deleted section '${payload.title}'` },
     })
     
     return res 

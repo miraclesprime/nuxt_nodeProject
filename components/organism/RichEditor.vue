@@ -111,7 +111,7 @@ import { mapGetters } from 'vuex';
 import tippy from 'tippy.js';
 import { TippyComponent } from 'vue-tippy';
 import { VEmojiPicker } from 'v-emoji-picker';
-import { snipFileName } from '~/utils/file';
+// import { snipFileName } from '~/utils/file';
 import "~/assets/tippy-theme.scss";
 
 import MentionList from '~/components/message/MessageMentionList.vue';
@@ -280,7 +280,14 @@ export default {
 
       this.editor.on('update', ({ editor }) => {
         this.oldValue = editor.getHTML()
-        this.deb()
+        // this.deb()
+      })
+
+      this.editor.on('blur', ({ editor }) => {
+        // this.oldValue = editor.getHTML()
+        // this.deb()
+        // console.log(editor.getText())
+        this.sendMessage()
       })
     
     }
@@ -288,26 +295,29 @@ export default {
   },
   
   beforeDestroy() {
+    // console.log('beforeDestroy', this.oldValue)
     this.editor.destroy()
   },
 
   methods: {
     deb: _.debounce(function() {
-          // console.log("throttle", this.editor.getHTML())
+          console.log("debounce ", this.editor.getHTML() == this.oldValue, _.truncate(this.oldValue, 40))
           if (this.editor.isEmpty) {
             return
           } else {
             this.$emit('submit', { text: this.oldValue, ...this.value });
           }
-        }, 1500, { leading: false }),
-    /*sendMessage() {
-      if (this.editor.isEmpty && [...Object.values(this.value)].flat().length === 0) {
+        }, 2000, { leading: false }),
+
+    sendMessage() {
+      if (this.editor.isEmpty) {
         return;
       }
+      // console.log("blur", this.editor.isEmpty, this.editor.isFocused, this.oldValue)
 
-      this.$emit('submit', { text: this.editor.getHTML(), ...this.value });
+      this.$emit('submit', { text: this.oldValue, ...this.value });
       // this.editor.commands.setContent('');
-    },*/
+    },
     /*cancelMessage(){
       this.editor.commands.clearContent()
     },*/
@@ -329,11 +339,9 @@ export default {
     selectEmoji(emoji) {
       const transaction = this.editor.state.tr.insertText(emoji.data);
       this.editor.view.dispatch(transaction);
+      this.editor.chain().focus()
       this.$refs.emojiPickerTippy.tip.hide()
     },
-    /*reset() {
-      this.editor.commands.setContent('');
-    },*/
     
     toggleLink() {
       if (this.editor.isActive('link')) {
@@ -410,7 +418,7 @@ export default {
         ])
         .run();
     },
-    snipFileName,
+    // snipFileName,
   },
 
   watch: {
@@ -453,9 +461,9 @@ export default {
 }
 
 .editor-container {
-  display: flex;
+  /*display: flex;
   flex-grow: 1;
-  align-items: center;
+  align-items: center;*/
   padding: 5px 8px;
 }
 
@@ -468,18 +476,13 @@ export default {
 }
 
 .editor-wrapper {
-  display: flex;
+  /*display: flex;
   flex-direction: column;
-  flex: 1 1 0;
+  flex: 1 1 0;*/
 }
 
 .editor {
   font-size: $base-size;
-
-  .ProseMirror {
-    /*font-size: $base-size;*/
-    ul { list-style-type: disc; }
-  }
 
   ::v-deep {
     p {
@@ -487,10 +490,16 @@ export default {
     }
     .mention { 
       color: #a975ff;
+      /*color: $purple;*/
       background-color: rgba(169, 117, 255, .1);
       border-radius: .3rem;
       padding: .1rem .3rem;
       cursor: pointer;
+    }
+    .ProseMirror {
+      /*font-size: $base-size;*/
+      min-height: 4rem;
+      ul { list-style-type: disc; }
     }
   }
 }
