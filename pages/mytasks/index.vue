@@ -1305,6 +1305,7 @@ export default {
 
         if(newArr.length >= 0) {
           this.localdata = newArr
+          this.$store.commit('todo/setTaskCount',newArr)
           this.key++;
         } else {
           this.localdata = this.todos;
