@@ -43,7 +43,12 @@
                   <bib-icon icon="files" variant="gray5" class="mr-075"></bib-icon> Files
                 </span>
                 <hr>
-                <span class="list__item list__item__danger" id="it-list-item-8" @click="deleteTask(item.taskId)">Delete</span>
+                <span class="list__item list__item__danger" 
+                      @mouseenter="deleteBtnHover = true"
+                      @mouseleave="deleteBtnHover = false" 
+                      id="it-list-item-8" @click="deleteTask(item.taskId)">
+                    <bib-icon icon="trash" :variant='deleteBtnHover ? `white` : `danger`' class="mr-075"></bib-icon> Delete 
+                  </span>
               </div>
             </template>
           </bib-popup>
@@ -117,6 +122,7 @@ export default {
       reloadFiles: 1,
       showSubtaskDetail: false,
       tags: [],
+      deleteBtnHover: false
     }
   },
   watch: {

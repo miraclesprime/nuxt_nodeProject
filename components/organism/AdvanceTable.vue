@@ -115,7 +115,7 @@
                 </div> -->
                 <template v-for="(td,index) in tableFields">
                   <div v-if="td.key == 'title'" class="td" role="cell" :id="'advtable-newRow2-td-'+index">
-                    <input type="text" ref="newrowInput" class="editable-input" :id="'advtable-editable-input2-'+index" v-model="localNewrow.title" :class="{'error': validTitle}" @blur="testCreateNewRow" @keyup.esc="unselectAll" required placeholder="Enter title...">
+                    <input type="text" ref="newrowInput" class="editable-input" :id="'advtable-editable-input2-'+index" v-model="localNewrow.title" :class="{'error': validTitle}" @blur="testCreateNewRow" @keyup.enter="testCreateNewRow" @keyup.esc="unselectAll" required placeholder="Enter title...">
                   </div>
                 </template>
               </div>

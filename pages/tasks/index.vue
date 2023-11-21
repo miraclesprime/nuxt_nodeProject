@@ -929,6 +929,7 @@ export default {
 
             if (newArr.length >= 0) {
               this.localData = newArr;
+              this.$store.commit('company/setTaskCount',newArr)
               this.key++;
             } else {
               this.localData = JSON.parse(JSON.stringify(this.tasks));

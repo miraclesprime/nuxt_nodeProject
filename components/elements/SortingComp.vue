@@ -22,7 +22,7 @@ export default {
     }),
     selectedView() {
       if(this.filterViews=="incomplete"){
-        return 'Incompleted'
+        return 'Incomplete'
       }
       if(this.filterViews=="complete"){
         return 'Completed'
@@ -35,7 +35,7 @@ export default {
   watch: {
     selectedView(newValue){
       if(newValue=="incomplete"){
-        return 'Incompleted'
+        return 'Incomplete'
       }
       if(newValue=="complete"){
         return 'Completed'

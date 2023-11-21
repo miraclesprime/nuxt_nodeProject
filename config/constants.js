@@ -396,7 +396,7 @@ export const GOAL_TAB_TITLES = {
 };
 
 export const VIEW_FILTER = [
-  { label: 'Incomplete', key: 'incomplete', },
+  { label: 'Incomplete', key: 'incomplete' },
   { label: 'Completed', key: 'complete' },
   { label: 'All', key: 'all', selected: true }
 ]
