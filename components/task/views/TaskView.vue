@@ -1347,6 +1347,7 @@ export default {
 
             if (newArr.length >= 0) {
               this.localdata = newArr;
+              this.$store.commit('section/setTaskCount',newArr)
               this.templateKey++;
             } else {
               this.localdata = this.sections;

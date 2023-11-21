@@ -947,6 +947,7 @@ export default {
 
                 if (newArr.length >= 0) {
                   this.localData = newArr;
+                  this.$store.commit('user/setTaskCount',newArr)
                   this.key++;
                 } else {
                   this.localData = this.userTasks;
