@@ -460,6 +460,10 @@ export default {
     this.localData = []
     this.available_tasks = []
     this.activeItem = {}
+    this.localNewrow = {}
+    this.colIds = []
+    this.colSizes = []
+    this.colmw = []
     this.$nuxt.$off("delete_update_table", this.delete_UpdateLocalData)
     this.$nuxt.$off("update_table", this.edit_UpdateLocalData)
     this.$nuxt.$off("newTask", this.handleNewTask);
@@ -892,7 +896,7 @@ export default {
     testNewRowCreate(section) {
       if (!this.localNewrow.title) {
         // console.warn("title is required")
-        this.validTitle = "alert"
+        this.validTitle = "Title is required"
         return false
       }
       this.validTitle = ""
@@ -905,7 +909,7 @@ export default {
       // console.table([this.newRow.sectionId, this.newRow.title]);
       if (!this.localNewrow.title) {
         // console.warn("title is required")
-        this.validTitle = "alert"
+        this.validTitle = "Title is required"
         return false
       }
       this.validTitle = ""

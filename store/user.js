@@ -71,7 +71,13 @@ export const mutations = {
     state.taskCount--
   },
   setTaskCount ( state, payload) {
-    state.taskCount=payload.reduce((acc, td) => acc + td.tasks.length, 0)
+    if(payload[0]?.tasks){
+      state.taskCount= payload.reduce((acc, td) => acc + td.tasks?.length, 0)
+    }
+    else {
+      state.taskCount=payload.length
+
+    }
   },
   setGroupBy(state,payload) {
     state.groupByValue=payload

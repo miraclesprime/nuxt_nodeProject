@@ -752,7 +752,7 @@ export default {
 },
     async searchProjects(text) {
       await this.calcProjects();
-      let newArr
+      let newArr=[]
       let formattedText = text.toLowerCase().trim();
       if(this.projects[0]?.tasks){
               newArr = this.projects.map((item) => {
@@ -776,6 +776,7 @@ export default {
     }
     if(newArr.length >= 0) {
         this.localData = newArr
+        this.$store.commit("project/setTaskCount",newArr)
         this.templateKey++;
       } else {
         this.localData = JSON.parse(JSON.stringify(this.projects));

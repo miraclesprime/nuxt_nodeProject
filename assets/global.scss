@@ -691,86 +691,9 @@ ul {
 }
 
 .header-wrap { inset:0; z-index:5; width: 100%; pointer-events: none;
-  // input { pointer-events: all; }
-  .input_wrap { position: sticky; top: 0; width: 100%; height: 2rem; background-color: antiquewhite;}
-  [data-table-col] {
-    --rng-h: 1px;
-    --rng-thumb-bgc: transparent;
-    --rng-thumb-h: var(--th, 6rem);
-    --rng-thumb-ico: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M15.5 8l-4.5 4.5v-3.5h-6v3.5l-4.5-4.5 4.5-4.5v3.5h6v-3.5l4.5 4.5z"></path></svg>');
-    --rng-thumb-w: 2rem;
-
-    background: transparent;
-    box-sizing: border-box;
-    font-family: inherit;
-    height: 1px;
-    margin: 0;
-    outline: none;
-    position: absolute;
-    // position: sticky;
-    // top: 0;
-    width: 100%;
-    pointer-events: auto;
-  }
-  [data-table-col]::-webkit-slider-thumb {
-    /*background-color: var(--rng-thumb-bgc);
-    background-position: 50% 0;
-    background-repeat: no-repeat;
-    background-size: 80%;
-    border: 0;*/
-    cursor: ew-resize;
-    height: var(--rng-thumb-h);  
-    width: var(--rng-thumb-w);
-  }
-  [data-table-col]:focus-visible::-webkit-slider-thumb {
-    --rng-thumb-bgc: rgb(0, 0, 0, 0.1);
-    background-image: var(--rng-thumb-ico);
-    outline: 2px solid rgb(0, 0, 0, 0.8)
-  }
-  [data-table-col]::-webkit-slider-runnable-track {
-    background: transparent;
-    height: var(--rng-h);
-  }
-  [data-table-col],
-  [data-table-col]::-webkit-slider-runnable-track,
-  [data-table-col]::-webkit-slider-thumb {
-    /*-webkit-appearance: none;
-    appearance: none;*/
-  }
-
-  /* Firefox */
-  @-moz-document url-prefix() {
-    [data-table-col] {
-      top: calc(var(--rng-thumb-h) / 2);
-    }
-  }
-  [data-table-col]::-moz-range-thumb {
-    /*background-color: var(--rng-thumb-bgc);
-    background-position: 50% 0;
-    background-repeat: no-repeat;
-    background-size: 80%;
-    border: 0;*/
-    height: var(--rng-thumb-h);
-    width: var(--rng-thumb-w);
-    cursor: ew-resize;
-  }
-  [data-table-col]:focus-visible::-moz-range-thumb {
-    --rng-thumb-bgc: rgb(0, 0, 0, 0.1);
-    background-image: var(--rng-thumb-ico);
-    outline: 2px solid rgb(0, 0, 0, 0.8);
-  }
-
-  .header-table { background-color: $gray9; top: 0; border-collapse: collapse; table-layout: fixed;  
-    td, th { background-color: var(--gray9); border-left: 2px solid $gray2; border-right: 2px solid $gray2; overflow: hidden; white-space: nowrap;
-      &:first-child { position: sticky; left: 0; z-index: 2; background-color: $gray9; border-left: 0 none; }
-      &:last-child { border-right: 0 none;}
-    }
-    .sortingtrigger { pointer-events: all;}
-  }
+  .sortingtrigger { pointer-events: auto;}
 }
-[data-table-parent] {
-  position: relative;
-}
+
 
 .box-shadow {
   box-shadow: 0 2px 20px -1px rgba(80,90,100,.5);

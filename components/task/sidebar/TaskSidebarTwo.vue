@@ -377,7 +377,7 @@ export default {
         this.$nuxt.$emit("close-sidebar");
       }
     },
-    createTask(taskform) {
+    async createTask(taskform) {
 
       if (this.error == "valid") {
         // this.loading = true
@@ -415,19 +415,70 @@ export default {
           "text": `task "${this.form.title}" created`,
           "mode": this.$route.fullPath.includes("usertasks")?null:(this.$route.params.id ? "project" : null),
         }).then((task) => {
-          this.$nuxt.$emit("newTask",task.data,this.$route.fullPath)
-          // this.$nuxt.$emit("add_newTask_table",task.data);
+
+          this.$nuxt.$emit("newTask",task.data,this.$route.path)
+          this.getTableCount(this.$route.path,task.data)
           this.$store.dispatch("task/setSingleTask", task.data)
-          // this.$emit("update-key")
-          // this.$nuxt.$emit("update-key","create")
-          // this.loading = false
+
         }).catch(e => {
           console.warn(e)
           this.loading = false
         })
       }
     },
+    async getTableCount(param,data) {
+      if(param=="/mytasks"){
+            const res =  await this.$axios.$get('/todo/all', {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter':  'all' }
+              });
+              if (res.data?.[0]?.tasks?.length==1) {
+                this.$nuxt.$emit("refresh-table");
+              }
+          }
+          if(param=="/tasks"){
+            const res = await this.$axios.$get(`company/tasks/all`, {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
+              });
+              if (res.data.data?.[0]?.tasks?.length==1) {
 
+              }
+          }
+          if(param=="/projects"){
+             const res = await this.$axios.$get(`/project/company/all`, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+                  'Filter': 'all'
+                }
+              });
+              if(res.data.length==1)
+              {
+                this.$nuxt.$emit("refresh-table");
+              }
+            
+
+          }
+          if(param.includes("/projects/")){
+            const res = await this.$axios.$get('/section/project/' + this.$route.params.id, {
+              headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': 'all' }
+            });
+            if (res.data?.[0]?.tasks?.length==1) {
+              this.$nuxt.$emit("refresh-table");
+            }
+          }
+          if(param.includes("/usertasks/")){
+            const res = await this.$axios.get("user/user-tasks", {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                Filter: 'all',
+                userid: this.$route.params.id,
+              },
+            });
+            if(res.data.data.length==1)
+              {
+                this.$nuxt.$emit("refresh-table");
+              }
+          }
+    },
     updateTask(taskData) {
       let updatedvalue = taskData.value
       let updata = { [taskData.field]: updatedvalue }
