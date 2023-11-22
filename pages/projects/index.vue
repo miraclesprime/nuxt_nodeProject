@@ -5,7 +5,7 @@
    
     <div id="projects-list-wrapper" class="projects-list-wrapper position-relative" >
     
-      <template v-if="localData.length > 0">
+      <template v-if="projectcount > 0">
         <template v-if="groupVisible">
          
           <adv-table-three :tableFields="tableFields" :tableData="localData" :lazyComponent="lazyComponent" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @context-open="contextOpen" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" @create-row="createProject" :drag="false" :key="templateKey" :editSection="groupBy" :filter="filterViews"></adv-table-three>

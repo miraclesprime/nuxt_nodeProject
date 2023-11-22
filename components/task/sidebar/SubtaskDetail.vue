@@ -34,8 +34,10 @@
       </div>
     
       <!-- title input -->
-      <div class="border-bottom-gray3 position-relative px-105 pt-05 pb-105 mb-1" id="std-fields-wrap">
-        <input type="text" id="std-title-editable-input" class="editable-input" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" v-model="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdateField({field: 'title', value: form.title, name: 'Title'})">
+      <div class="border-bottom-gray3 position-relative px-105 py-05 mb-1" id="std-fields-wrap">
+        <!-- <input type="text" id="std-title-editable-input" class="editable-input" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" v-model="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdateField({field: 'title', value: form.title, name: 'Title'})"> -->
+        <textarea id="std-title-input" class="editable-input multiline position-absolute" v-model="form.title" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" placeholder="Enter title..." v-on:keyup="debounceUpdateField({field: 'title', value: form.title, name: 'Title'})"></textarea>
+        <div class="pseudo-title" aria-hidden="true" role="textarea">{{form.title}}</div>
       </div>
     </div>
 
@@ -749,6 +751,21 @@ export default {
   font-size: $font-size-sm;
 }
 .editable-input { border-color: var(--bib-light)}
-
+.multiline {
+  box-sizing: border-box;
+  resize: none;
+  overflow: hidden;
+  inset: 0.25rem 1.5rem;
+  width: calc(100% - 3rem);
+  height: calc(100% - 0.75rem);
+}
+.pseudo-title {
+  visibility: hidden;
+  min-height: 1.75rem;
+  font-size: 1.125rem;
+  pointer-events: none;
+  padding: 0 0.4rem;
+  border: 1px solid transparent;
+}
 
 </style>

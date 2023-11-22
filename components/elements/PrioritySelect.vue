@@ -88,7 +88,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .picker-wrapper {
-  /*background-color: $white;*/
   position: relative;
 
   .picker-content {
@@ -115,16 +114,6 @@ export default {
 
   .picker-list-wrap {}
 
-}
-
-.circle {
-  width: 24px;
-  height: 24px;
-
-  .dot {
-    width: 8px;
-    height: 8px;
-  }
 }
 
 </style>

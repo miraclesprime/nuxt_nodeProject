@@ -665,8 +665,8 @@ export default {
 
   .tr {
     display: table-row;
-    .th:nth-child(2),
-    .td:nth-child(2) {
+    .th:nth-child(1),
+    .td:nth-child(1) {
       position: sticky;
       min-width: 2rem;
       left: 0;
