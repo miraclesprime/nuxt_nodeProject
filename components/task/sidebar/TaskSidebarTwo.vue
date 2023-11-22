@@ -124,7 +124,6 @@
 <script>
 import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 import { mapGetters } from "vuex"
-import dayjs from 'dayjs'
 import _ from 'lodash'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
