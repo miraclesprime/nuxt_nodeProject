@@ -62,8 +62,10 @@
           </div>
         </div>
       </div>
-      <div class=" border-bottom-gray3 position-relative px-105 pt-05 pb-05 " id="tsb-row">
-        <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="taskTitleInput" v-model.trim="form.title" placeholder="Enter Task Name ..." v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" >
+      <div class=" border-bottom-gray3 position-relative px-105 py-05 " id="tsb-title">
+        <!-- <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="taskTitleInput" v-model.trim="form.title" placeholder="Enter Task Name ..." v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" > -->
+        <textarea v-model.trim="form.title" ref="taskTitleInput" class="editable-input multiline position-absolute" :class="{'error': error == 'invalid'}" v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" placeholder="Enter Task Name ..." ></textarea>
+        <div class="pseudo-title" aria-hidden="true" role="textarea">{{form.title}}</div>
       </div>
       
     </div>
@@ -156,7 +158,8 @@ export default {
       tags: [],
       showSubtaskDetail: false,
       popupMessages: [],
-      deleteBtnHover: false
+      deleteBtnHover: false,
+      // titleHt: "2rem",
     };
   },
 
@@ -222,7 +225,18 @@ export default {
       } else {
         return "invalid"
       }
-    }
+    },/*
+    titleHt(){
+      if (this.form?.title) {
+        // let matches = this.form.title.match(/\n/g)
+        // return matches ? matches.length : 1
+        let ele = this.$refs['taskTitleInput']
+        console.log(ele)
+        return ele.scrollHeight + "px"
+      } else {
+        return "2rem"
+      }
+    }*/
   },
 
   watch: {
@@ -235,9 +249,15 @@ export default {
         } else {
           this.form.projectId = this.project?.id
         }
+
         this.reloadFiles += 1
         // this.realodTags += 1
         this.getTags()
+        
+        /*let ele = this.$refs['taskTitleInput']
+        let eleHt = ele.scrollHeight + 2 + "px"
+        ele.style.height = eleHt
+        console.log(eleHt)*/
       } else {
         this.form = {
           id: null,
@@ -838,7 +858,23 @@ export default {
   color: var(--bib-secondary);
 }
 
-.editable-input { border-color: var(--bib-light)}
+.editable-input { border-color: var(--bib-light); }
+.multiline {
+  box-sizing: border-box;
+  resize: none;
+  overflow: hidden;
+  inset: 0.25rem 1.5rem 0.5rem;
+  width: calc(100% - 3rem);
+  height: calc(100% - 0.75rem);
+}
+.pseudo-title {
+  visibility: hidden;
+  min-height: 1.75rem;
+  font-size: 1.125rem;
+  pointer-events: none;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid transparent;
+}
 
 .row {
   padding: 0 1rem;

@@ -182,7 +182,7 @@ export default {
 
     projectName: {
       get() {
-        return this.project.title
+        return this.project?.title
       },
       set(value) {
         this.projectTitle = value
@@ -229,8 +229,8 @@ export default {
 try {
 
       let all_projects= store.getters['project/getAllProjects']
-      
-      let proj =all_projects?.find((p) => {
+      let proj=[]
+       proj =all_projects?.find((p) => {
         if(p.id == params.id) {
           return p;
         } 
@@ -266,14 +266,22 @@ try {
       }
            this.$store.commit("task/setExpandVisible",true);
             this.$store.commit('section/setGroupBy',"")
-        let p = JSON.parse(JSON.stringify(this.project))
+            console.log("this.project",this.project)
+            let p
+            if(this.project){
+              console.log("11")
+                 p = JSON.parse(JSON.stringify(this.project))
+            }
+             else {
+              this.$router.push('/notfound')
+                return;
+             }
         // this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
       
 
-      if(!p) {
-        this.$router.push('/notfound')
-        return;
-      }
+      // if(!p) {
+        
+      // }
 
       if(p?.isDeleted != true) {
 

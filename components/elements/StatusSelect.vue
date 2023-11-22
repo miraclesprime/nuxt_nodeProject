@@ -85,7 +85,6 @@ export default {
     },
 
     onStatusChange(status) {
-
       this.$emit("change", status)
       this.show = false
       this.localStatus = status
@@ -129,11 +128,6 @@ export default {
 .circle {
   width: 16px;
   height: 16px;
-
-  /*.dot {
-    width: 8px;
-    height: 8px;
-  }*/
 }
 
 </style>
