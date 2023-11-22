@@ -10,7 +10,7 @@
       @search-projectTasks="searchTasks"
       v-on:add-section="toggleNewsection"
     ></task-actions>
-    <template v-if="localdata.length > 0">
+    <template v-if="taskcount > 0">
     <div v-show="gridType === 'list'" class="calc-height overflow-y-auto" :style="{ 'width': contentWidth }">
 
       <adv-table-three :tableFields="tableFields" :tableData="localdata" :lazyComponent="true" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" :newRow="newRow" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createSection" @edit-section="renameSection" :sectionMenu="true" @section-delete="deleteSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :drag="true" :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
@@ -193,7 +193,9 @@ export default {
       project: "project/getSingleProject",
       sections: "section/getProjectSections",
       sidebar: "task/getSidebarVisible",
-      filterViews :'task/getFilterView'
+      filterViews :'task/getFilterView',
+      taskcount:"section/getTaskCount"
+
     }),
   },
 

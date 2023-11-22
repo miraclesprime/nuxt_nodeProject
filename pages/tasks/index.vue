@@ -14,7 +14,7 @@
       ></company-tasks-actions>
       <div id="task-table-wrapper" class="task-table-wrapper position-relative overflow-y-auto" :class="{ 'bg-light': gridType != 'list' }" :style="{ 'width': contentWidth }">
 
-        <template v-if="localData.length > 0">
+        <template v-if="taskcount > 0">
           <div v-if="gridType === 'list'" class="h-100">
             <!-- <template v-if="!showPlaceholder"> -->
               
