@@ -3,7 +3,7 @@
     <div id="proj-overview-wrapper" class="row overflow-y-auto" style="max-height: 70vh" >
       <div id="proj-overview-inner" class="overview-wrapper mx-auto position-relative">
         <div class="d-flex align-center gap-05" id="proj-overview-bib-avatar-wrap">
-          <div class="width-2 height-2 d-inline-flex align-center justify-center cursor-pointer" id="proj-overview-bib-avatar-inner-wrap">
+          <div class="width-2 height-2 d-inline-flex align-center justify-center " id="proj-overview-bib-avatar-inner-wrap">
             <bib-avatar></bib-avatar>
           </div>
           <div class="flex-grow-1" id="proj-overview-proj-title-input-wrap">
@@ -397,8 +397,7 @@ export default {
 
 @media screen and (max-width:1600px) {
   .overview-wrapper {
-    max-width: $overview-width - 160px;
-    width: 60%;
+    max-width: 90%;
   }
 }
 
