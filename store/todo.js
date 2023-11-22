@@ -211,7 +211,7 @@ export const actions = {
     // console.log(payload)
     const res = await this.$axios.$delete("/todo", {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` },
-      data: { id: payload.id }
+      data: { id: payload.id, retainTasks: payload.retainTasks }
     })
 
     return res

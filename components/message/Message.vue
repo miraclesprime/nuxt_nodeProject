@@ -71,7 +71,7 @@
         </div>
       </tippy>
     </div>
-    <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
+    <!-- <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog> -->
 
     <!-- file upload modal -->
     <bib-modal-wrapper v-if="uploadModal" title="Select file(s)" @close="uploadModal = false">

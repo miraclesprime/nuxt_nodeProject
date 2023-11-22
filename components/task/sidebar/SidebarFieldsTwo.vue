@@ -65,7 +65,7 @@
         <div class="col-12">
           <!-- <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter task description..." label="Description" class="w-100" v-on:keyup.native="debounceUpdateField('Description','description',form.description)"></bib-input> -->
           <div class="mb-05"><label>Description</label></div>
-          <rich-editor :value="value" :editingMessage="form.description" @submit="debounceUpdateField('Description', 'description', $event)" ></rich-editor>
+          <rich-editor :value="value" :editingMessage="form.description" @submit="updateDescription('Description', 'description', $event)" ></rich-editor>
         </div>
       </div>
       <bib-popup-notification-wrapper>
@@ -114,6 +114,8 @@ export default {
       value: {
         files: []
       },
+      id: null,
+      description: "",
     };
   },
   computed: {
@@ -123,7 +125,8 @@ export default {
       departments: "department/getAllDepartments",
       project: "project/getSingleProject",
       projects: "project/getAllProjects",
-      filterViews :'task/getFilterView'
+      filterViews :'task/getFilterView',
+      sidebarOpen: 'task/getSidebarVisible',
     }),
     orgUsers() {
       let data = this.teamMembers.map((u) => {
@@ -200,6 +203,30 @@ export default {
       this.sdate = this.$formatDate(this.form?.startDate)
       this.ddate = this.$formatDate(this.form?.dueDate)
     },
+    sidebarOpen(newValue){
+      if (!newValue) {
+        if (this.form.description == this.description) { return }
+        let hText = this.description.replace( /(<([^>]+)>)/ig, '');
+        hText = _.truncate(hText, {'length': 30})
+        console.log(newValue, hText, this.form.description == this.description)
+        
+        this.$store.dispatch("task/updateTask", {
+          id: this.id,
+          data: { 'description': this.description },
+          projectId: null,
+          text: `changed description - ${hText}`,
+        })
+          .then((u) => {
+            // this.$nuxt.$emit("update_table",u)
+            console.info(u)
+          })
+          .catch(e => {
+            console.warning(e)
+          })
+      } else {
+        this.description = ""
+      }
+    }
   },
  mounted () {
   if (Object.keys(this.task).length) {
@@ -380,7 +407,9 @@ export default {
     debounceUpdateField: _.debounce(function(name, field, value) {
       if (this.form?.id) {
          if(value.text){
-          var hText = _.truncate(value.text, {'length': 40})
+          let hText = value.text.replace( /(<([^>]+)>)/ig, '');
+          hText = _.truncate(hText, {'length': 30})
+          // console.log(hText)
           this.$emit("update-field", { name, field, value: value.text, historyText: `changed ${name} to ${hText}`})
          }
          else {
@@ -405,6 +434,11 @@ export default {
       }
     },
     600),
+    updateDescription(name, field, value){
+      this.description = value.text
+      this.id = _.clone(this.task.id)
+      console.log('submit', value.text)
+    }
   },
 };
 

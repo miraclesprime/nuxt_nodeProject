@@ -2,7 +2,7 @@ export default function (req, res, next) {
   const redirects = [
     {
       from: "/",
-      to: "/projects",
+      to: "/mytasks",
     },
   ];
   const redirect = redirects.find((r) => r.from === req.url);

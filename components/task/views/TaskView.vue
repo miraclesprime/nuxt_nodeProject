@@ -13,7 +13,7 @@
     <template v-if="taskcount > 0">
     <div v-show="gridType === 'list'" class="calc-height overflow-y-auto" :style="{ 'width': contentWidth }">
 
-      <adv-table-three :tableFields="tableFields" :tableData="localdata" :lazyComponent="true" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" :newRow="newRow" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createSection" @edit-section="renameSection" :sectionMenu="true" @section-delete="deleteSection" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :drag="true" :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
+      <adv-table-three :tableFields="tableFields" :tableData="localdata" :lazyComponent="true" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" :newRow="newRow" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createSection" @edit-section="renameSection" :sectionMenu="true" @section-delete="sectionDeleteConfirm" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :drag="true" :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
 
     </div>
 
@@ -23,7 +23,7 @@
         :activeTask="activeTask"
         :templateKey="templateKey"
         @create-section="createSection"
-        @section-delete="deleteSection"
+        @section-delete="sectionDeleteConfirm"
         v-on:update-key="updateKey"
         v-on:create-task="toggleSidebar($event)"
         v-on:set-favorite="setFavorite"
@@ -72,8 +72,23 @@
       @close="alertDialog = false"
     ></alert-dialog>
 
+    <bib-modal-wrapper v-if="sectionConfirmModal" title="Delete section" @close="sectionConfirmModal = false">
+      <template slot="content">
+          <div class="d-grid gap-2 text-center" style="grid-template-columns: repeat(2, 1fr)">
+            <p class="text-secondary"><!-- <span class="text-primary">Keep tasks</span> <br> -->Delete Section but keep the tasks as is.</p>
+            <p class="text-secondary"><!-- <span class="text-danger">Delete tasks</span> <br> -->Delete Section and delete the tasks </p>
+          </div>
+      </template>
+      <template slot="footer">
+          <div class="justify-around">
+            <bib-button label="Keep tasks" variant="primary" pill @click="deleteSection(true)"></bib-button>
+            <bib-button label="Delete tasks" variant="danger" pill @click="deleteSection(false)"></bib-button>
+          </div>
+      </template>
+    </bib-modal-wrapper>
+
     <!-- section rename modal -->
-    <bib-modal-wrapper
+    <!-- <bib-modal-wrapper
       v-if="renameModal"
       title="Rename section"
       @close="renameModal = false"
@@ -104,7 +119,7 @@
           ></bib-button>
         </div>
       </template>
-    </bib-modal-wrapper>
+    </bib-modal-wrapper> -->
   </div>
 </template>
 
@@ -181,7 +196,10 @@ export default {
       contentWidth: "100%",
       groupby:'',
       dragTable: true,
-      lazyComponent:false
+      lazyComponent:false,
+      sectionConfirmModal: false,
+      sectionToDelete: {},
+      retainTasks: null,
     };
   },
   computed: {
@@ -1233,13 +1251,19 @@ export default {
         // this.taskToDelete = {};
       }
     },
+    sectionDeleteConfirm(section){
+      this.sectionConfirmModal = true
+      this.sectionToDelete = section
+    },
 
-    deleteSection(section) {
-      this.loading = true;
-      let del = confirm("Are you sure?");
-      if (del) {
+    deleteSection(retainTasks) {
+      // this.loading = true;
+      // let del = confirm("Are you sure?");
+      console.log({...this.sectionToDelete, retainTasks})
+      // return
+      // if (del) {
         this.$store
-          .dispatch("section/deleteSection", section)
+          .dispatch("section/deleteSection", {...this.sectionToDelete, retainTasks})
           .then((s) => {
             if (s.statusCode == 200) {
               this.popupMessages.push({text: s.message, variant: "success"})
@@ -1247,15 +1271,18 @@ export default {
             } else {
               console.warn(t.message);
             }
-            this.loading = false;
+            // this.loading = false;
+            this.sectionConfirmModal = false
+            this.sectionToDelete = {}
           })
           .catch((e) => {
-            this.loading = false;
+            // this.loading = false;
+            this.sectionConfirmModal = false
             console.log(e);
           });
-      } else {
+      /*} else {
         this.loading = false;
-      }
+      }*/
     },
 
     sectionDragEnd: _.debounce(async function (payload) {

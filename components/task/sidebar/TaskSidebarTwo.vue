@@ -44,7 +44,12 @@
                       <bib-icon icon="duplicate" class="mr-075"></bib-icon> Copy Link
                   </span>
                   <hr>
-                  <span class="list__item list__item__danger" id="tsb-list-item-8" @click="deleteTask(currentTask)">Delete</span>
+                  <span class="list__item list__item__danger" 
+                      @mouseenter="deleteBtnHover = true"
+                      @mouseleave="deleteBtnHover = false" 
+                      id="tsb-list-item-8" @click="deleteTask(currentTask)">
+                    <bib-icon icon="trash" :variant='deleteBtnHover ? `white` : `danger`' class="mr-075"></bib-icon> Delete 
+                  </span>
                 </div>
               </template>
             </bib-button>
@@ -152,6 +157,7 @@ export default {
       tags: [],
       showSubtaskDetail: false,
       popupMessages: [],
+      deleteBtnHover: false
     };
   },
 
