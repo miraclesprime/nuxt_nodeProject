@@ -21,3 +21,30 @@ export function downloadFile(file) {
   anchor.download = file.name;
   anchor.click();
 }
+
+export function fileIcon(fileType) {
+  
+  if (fileType.includes('image')) {
+    return "file-text"
+  }
+  if (fileType.includes('video')) {
+    return "video-solid"
+  }
+  if (fileType.includes('audio')) {
+    return "sales"
+  }
+  if (fileType.includes('pdf')) {
+    return "pdf"
+  }
+  if (fileType.includes('msword') || fileType.includes("wordprocessingml") || fileType.includes("rtf")) {
+    return "word"
+  }
+  if (fileType.includes('presentation')) {
+    return "powerpoint"
+  }
+  if (fileType.includes('ms-excel') || fileType.includes("sheet")) {
+    return "excel"
+  }
+  return "file-text-solid"
+
+}

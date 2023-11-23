@@ -414,7 +414,7 @@ try {
         filelist.push(file.name)
       })
       formdata.append('projectId', this.project?.id)
-      formdata.append('projCommentId', data.id)
+      formdata.append('projectCommentId', data.id)
       formdata.append('text', `uploaded file(s) "${filelist.join(", ")}" to comment`)
 
       const fi = await this.$axios.post("/file/upload", formdata, {
