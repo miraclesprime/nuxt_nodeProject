@@ -140,16 +140,17 @@ export const actions = {
       return delMulsub
 
     }
-    else {
-      const delsub = await this.$axios.$delete("/subtask/" + payload.id, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-          "text": payload.text,
-          "taskid": payload.taskId,
-          "userid": payload.userId
-        }
-      })
-      return delsub
+    else{
+        const delsub = await this.$axios.$delete("/subtask", {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+              "text": payload.text,
+              "subtaskid": payload.id,
+              // "taskid": payload.taskId,
+              "userid": payload.userId
+            }
+          })
+          return delsub
     }
   },
 

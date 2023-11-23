@@ -28,33 +28,15 @@
       @close="uploadModal = false"
     >
       <template slot="content">
-        <div style="margin-left: -1rem; margin-right: -1rem; max-height: 300px; overflow-y: auto;" id="sbf-upload-from-device">
-          <bib-input
-            type="file"
-            ref="files"
-            @files-dropped="handleChangeFile"
-            variant="accepted"
-            iconLeft="upload"
-            placeholder="Upload from device"
-          ></bib-input>
+        <div style="margin-inline: -1rem; max-height: 65vh; overflow-y: auto;" id="sbf-upload-from-device">
+          <bib-input type="file" ref="files" variant="accepted" iconLeft="upload" placeholder="Upload from device"></bib-input>
         </div>
         <loading :loading="fileLoader"></loading>
       </template>
       <template slot="footer">
         <div class="d-flex" id="sbf-footer">
-          <bib-button
-            label="Cancel"
-            variant="light"
-            pill
-            @click="uploadModal = false"
-          ></bib-button>
-          <bib-button
-            label="Upload"
-            variant="success"
-            class="ml-auto"
-            pill
-            @click="uploadFiles"
-          ></bib-button>
+          <bib-button label="Cancel" variant="light" pill @click="uploadModal = false" ></bib-button>
+          <bib-button label="Upload" variant="success" class="ml-auto" pill @click="uploadFiles"></bib-button>
         </div>
       </template>
     </bib-modal-wrapper>
@@ -186,7 +168,7 @@ export default {
       }
     },
 
-    handleChangeFile(files, event) {},
+    // handleChangeFile(files, event) {},
 
     async uploadFiles() {
       this.fileLoader = true;

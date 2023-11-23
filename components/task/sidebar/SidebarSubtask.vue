@@ -90,6 +90,7 @@ import {  STATUS, PRIORITY, SUBTASK_CONTEXT_MENU } from '~/config/constants.js'
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
 import _ from 'lodash'
+
 export default {
   name: "SidebarSubtask",
   props: {
