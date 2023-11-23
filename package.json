@@ -11,7 +11,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@bizinbox/bib-ui-lib": "^1.1.73",
+    "@bizinbox/bib-ui-lib": "^1.1.77",
     "@fortawesome/fontawesome-svg-core": "^6.1.2",
     "@fortawesome/free-regular-svg-icons": "^6.1.2",
     "@fortawesome/free-solid-svg-icons": "^6.1.2",

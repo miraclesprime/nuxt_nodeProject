@@ -34,8 +34,8 @@
                   <span class="list__item" id="project-id-list-item2" @click="setFavorite">
                     <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
                   </span>
-                  <span class="list__item" id="project-id-list-item3">
-                    <bib-icon icon="user-group-solid" class="mr-075"></bib-icon> Team
+                  <span class="list__item" id="project-id-list-item3" @click="projectTeamModal = true">
+                    <bib-icon icon="user-group-solid" class="mr-075" ></bib-icon> Team
                   </span>
                   <span class="list__item" id="project-id-list-item3" @click="conversationModal = true">
                     <bib-icon icon="comment-forum-solid" class="mr-075"></bib-icon> Conversation
