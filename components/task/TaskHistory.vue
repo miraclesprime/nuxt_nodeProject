@@ -23,6 +23,7 @@ export default {
   name: 'TaskHistory',
   props: {
     history: Object,
+    teamMems:Array
   },
   computed: {
     ...mapGetters({
@@ -35,30 +36,26 @@ export default {
     };
   },
 
+  
   mounted () {
-if(this.teamMembers.length>0) {
-  this.user=this.$userInfo(this.history.userId)
+    if(this.teamMembers.length>0) {
+      this.user=this.$userInfo(this.history.userId)
 
-}
-else {
-      this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${JSON.parse(localStorage.getItem('user')).subb}/users`, {
-            headers: {
-              "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
-            }
-          }).then((res) => {
-             this.user=this.getUserInfo(res,this.history.userId)
-          })
+    }
+    else {
+      if(this.teamMems.length>0) {
+        this.user=this.getUserInfo(this.teamMems,this.history.userId)
       }
-     
+        }
   },
   methods:{
     getUserInfo(members,userID)
     {
       if (members.length > 0 && userID) 
                 {
-                      let u = members.find((m) => m.Id == userID)
+                      let u = members.find((m) => m.id == userID)
                         if (u) {
-                          return { Name: `${u.FirstName} ${u.LastName}`}
+                          return { Name: `${u.firstName} ${u.lastName}`}
                         }
                         else
                         {

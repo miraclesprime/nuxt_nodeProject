@@ -64,6 +64,9 @@ export const getters = {
 };
 
 export const mutations = {
+  setTeams (state, payload) {
+    state.teamMems=payload
+  },
   setAddTaskCount (state, payload) {
     state.taskCount ++
   },
