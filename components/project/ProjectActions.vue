@@ -20,7 +20,7 @@
       </template>
       <ul class="actions" id="pa-actions-list">
         <li class="action" id="pa-action-item1" >
-          <sorting-comp label="Viewing" :items="viewing" icon="eye-open" tooltip="View" v-on:change-sort="viewProjects($event)"></sorting-comp>
+          <sorting-comp label="Viewing" :items="viewing" icon="eye-open" activeIcon="tick" tooltip="View" v-on:change-sort="viewProjects($event)"></sorting-comp>
         </li>
         <li class="action" id="pa-action3" >
           <sorting-comp label="Group by" :items="groupBy" icon="accessibility-braille-solid" tooltip="Group By" v-on:change-sort="groupProjects($event)"></sorting-comp>
