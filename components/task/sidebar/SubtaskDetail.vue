@@ -486,7 +486,7 @@ export default {
     },
     markComplete() {
       if (this.form.isDone) {
-        this.form.statusId = 1
+        this.form.statusId = 2
         this.form.isDone = false
       } else {
         this.form.isDone = true
@@ -598,6 +598,7 @@ export default {
         this.$store.dispatch("subtask/setSelectedSubtask", sub.data)
         this.$store.dispatch('subtask/fetchSubTask', sub.data).then((res) => {
           this.form = res;
+          this.$nuxt.$emit("update_table",res)
         })
         this.$store.dispatch("subtask/fetchSubtaskHistory", this.subtask)
       } else {
