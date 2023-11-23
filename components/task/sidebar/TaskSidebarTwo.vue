@@ -64,8 +64,8 @@
       </div>
       <div class=" border-bottom-gray3 position-relative px-105 py-05 " id="tsb-title">
         <!-- <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="taskTitleInput" v-model.trim="form.title" placeholder="Enter Task Name ..." v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" > -->
-        <textarea v-model.trim="form.title" ref="taskTitleInput" class="editable-input multiline position-absolute" :class="{'error': error == 'invalid'}" v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" placeholder="Enter Task Name ..." ></textarea>
-        <div class="pseudo-title" aria-hidden="true" role="textarea">{{form.title}}</div>
+        <textarea v-model.trim="form.title" ref="taskTitleInput" class="editable-input multiline position-absolute" :class="{'error': error == 'invalid'}" v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" placeholder="Enter Task Name ..." style="height: calc(100% - 1rem);" ></textarea>
+        <div class="pseudo-title" aria-hidden="true" >{{form.title}}</div>
       </div>
       
     </div>
@@ -225,18 +225,7 @@ export default {
       } else {
         return "invalid"
       }
-    },/*
-    titleHt(){
-      if (this.form?.title) {
-        // let matches = this.form.title.match(/\n/g)
-        // return matches ? matches.length : 1
-        let ele = this.$refs['taskTitleInput']
-        console.log(ele)
-        return ele.scrollHeight + "px"
-      } else {
-        return "2rem"
-      }
-    }*/
+    },
   },
 
   watch: {
@@ -254,10 +243,6 @@ export default {
         // this.realodTags += 1
         this.getTags()
         
-        /*let ele = this.$refs['taskTitleInput']
-        let eleHt = ele.scrollHeight + 2 + "px"
-        ele.style.height = eleHt
-        console.log(eleHt)*/
       } else {
         this.form = {
           id: null,
@@ -283,6 +268,7 @@ export default {
           this.form.sectionId = this.sectionIdActive
         }
       }
+      this.$refs.taskTitleInput.style.height = 'calc(100% - 1rem)'
     },
     /*scrollId(newValue, oldValue){
       this.$nextTick(() => {
@@ -865,7 +851,7 @@ export default {
   overflow: hidden;
   inset: 0.25rem 1.5rem 0.5rem;
   width: calc(100% - 3rem);
-  height: calc(100% - 0.75rem);
+  height: calc(100% - 1rem);
 }
 .pseudo-title {
   visibility: hidden;
