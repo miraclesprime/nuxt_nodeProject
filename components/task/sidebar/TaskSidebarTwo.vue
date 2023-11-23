@@ -62,8 +62,10 @@
           </div>
         </div>
       </div>
-      <div class=" border-bottom-gray3 position-relative px-105 pt-05 pb-05 " id="tsb-row">
-        <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="taskTitleInput" v-model.trim="form.title" placeholder="Enter Task Name ..." v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" >
+      <div class=" border-bottom-gray3 position-relative px-105 py-05 " id="tsb-title">
+        <!-- <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="taskTitleInput" v-model.trim="form.title" placeholder="Enter Task Name ..." v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" > -->
+        <textarea v-model.trim="form.title" ref="taskTitleInput" class="editable-input multiline position-absolute" :class="{'error': error == 'invalid'}" v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" placeholder="Enter Task Name ..." style="height: calc(100% - 1rem);" ></textarea>
+        <div class="pseudo-title" aria-hidden="true" >{{form.title}}</div>
       </div>
       
     </div>
@@ -124,7 +126,6 @@
 <script>
 import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 import { mapGetters } from "vuex"
-import dayjs from 'dayjs'
 import _ from 'lodash'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
 
@@ -157,7 +158,8 @@ export default {
       tags: [],
       showSubtaskDetail: false,
       popupMessages: [],
-      deleteBtnHover: false
+      deleteBtnHover: false,
+      // titleHt: "2rem",
     };
   },
 
@@ -223,7 +225,7 @@ export default {
       } else {
         return "invalid"
       }
-    }
+    },
   },
 
   watch: {
@@ -236,9 +238,11 @@ export default {
         } else {
           this.form.projectId = this.project?.id
         }
+
         this.reloadFiles += 1
         // this.realodTags += 1
         this.getTags()
+        
       } else {
         this.form = {
           id: null,
@@ -264,6 +268,7 @@ export default {
           this.form.sectionId = this.sectionIdActive
         }
       }
+      this.$refs.taskTitleInput.style.height = 'calc(100% - 1rem)'
     },
     /*scrollId(newValue, oldValue){
       this.$nextTick(() => {
@@ -839,7 +844,23 @@ export default {
   color: var(--bib-secondary);
 }
 
-.editable-input { border-color: var(--bib-light)}
+.editable-input { border-color: var(--bib-light); }
+.multiline {
+  box-sizing: border-box;
+  resize: none;
+  overflow: hidden;
+  inset: 0.25rem 1.5rem 0.5rem;
+  width: calc(100% - 3rem);
+  height: calc(100% - 1rem);
+}
+.pseudo-title {
+  visibility: hidden;
+  min-height: 1.75rem;
+  font-size: 1.125rem;
+  pointer-events: none;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid transparent;
+}
 
 .row {
   padding: 0 1rem;

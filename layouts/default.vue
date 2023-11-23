@@ -436,10 +436,11 @@ export default {
       // Charan (admin)
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQeTdMRGR3cE9xMWUxWUtYIiwic3ViZSI6ImNoYXJhbi5wYWxAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJBRE1JTiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2OTI4NTE5NDE2NzIsImV4cCI6MTcwMDYyNzk0MTY3MiwianRpIjoiMzU2YmM4OTUtNjE3Mi00NjE3LTk2NzEtNWI5NmU0OWIzMGEwIn0.0zMvHg45zgJ6L51qGICZRa31xzA3t9OzyKPXp5YuqTs"
 
-    // Obuli test
-      let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2SjRvcGVuNUJ3NGQ3QXoxIiwic3ViZSI6ImFscGhhdGVzdEBtYWlsaW5hdG9yLmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiVm9KWDdheGtQRXFleXY0RSIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkluZGlhIiwiZW52IjoiZGV2IiwiaWF0IjoxNzAwMTE4MjQxODcxLCJleHAiOjE3MDc4OTQyNDE4NzEsImp0aSI6ImUxNjA4MjIxLWQzN2YtNGY2ZS05MTQzLWVmMDc4Mjk2Y2FmYyJ9.irTQ_a3wvBDzxoYIK0l0v1PyR1EWAMhTr3Nm-TrwHBY"
 
-      this.$cookies.set(process.env.SSO_COOKIE_NAME, cookie);
+      // Obuli test
+      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2SjRvcGVuNUJ3NGQ3QXoxIiwic3ViZSI6ImFscGhhdGVzdEBtYWlsaW5hdG9yLmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiVm9KWDdheGtQRXFleXY0RSIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkluZGlhIiwiZW52IjoiZGV2IiwiaWF0IjoxNzAwMTE4MjQxODcxLCJleHAiOjE3MDc4OTQyNDE4NzEsImp0aSI6ImUxNjA4MjIxLWQzN2YtNGY2ZS05MTQzLWVmMDc4Mjk2Y2FmYyJ9.irTQ_a3wvBDzxoYIK0l0v1PyR1EWAMhTr3Nm-TrwHBY"
+
+      // this.$cookies.set(process.env.SSO_COOKIE_NAME, cookie);
 
       if (this.$cookies.get(process.env.SSO_COOKIE_NAME)) {
         let jwt = this.$cookies.get(process.env.SSO_COOKIE_NAME);
