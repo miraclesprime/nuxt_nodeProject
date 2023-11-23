@@ -24,7 +24,13 @@
                   </span>
                   
                   <hr>
-                  <span class="list__item list__item__danger" id="std-list-item-8" @click="$nuxt.$emit('delete-subtask', subtask)">Delete</span>
+                  <!-- <span class="list__item list__item__danger" id="std-list-item-8" @click="$nuxt.$emit('delete-subtask', subtask)">Delete</span> -->
+                  <span class="list__item list__item__danger" 
+                      @mouseenter="deleteBtnHover = true"
+                      @mouseleave="deleteBtnHover = false" 
+                      id="std-list-item-8" @click="$nuxt.$emit('delete-subtask', subtask)">
+                    <bib-icon icon="trash" :variant='deleteBtnHover ? `white` : `danger`' class="mr-075"></bib-icon> Delete 
+                  </span>
                 </div>
               </template>
             </bib-button>
@@ -201,7 +207,8 @@ export default {
       format: "DD MMM YYYY",
       sdate: "",
       ddate: "",
-      tags: []
+      tags: [],
+      deleteBtnHover: false
     }
   },
   computed: {

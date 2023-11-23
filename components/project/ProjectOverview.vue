@@ -202,7 +202,7 @@ export default {
     },
     filterUser() {
       return this.teamMembers.map((u) => {
-        return { value: u.id, id: u.id, label: u.firstName + ' ' + u.lastName, firstName: u.firstName, lastName: u.lastName, email: u.email, img: u.avatar }
+        return { value: u.id, id: u.id, label: u.firstName + ' ' + u.lastName, firstName: u.firstName, lastName: u.lastName, email: u.email, img: u.avatar, role: u.role }
       })
     },
 

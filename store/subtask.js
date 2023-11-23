@@ -137,11 +137,12 @@ export const actions = {
 
     }
     else{
-        const delsub = await this.$axios.$delete("/subtask/" + payload.id, {
+        const delsub = await this.$axios.$delete("/subtask", {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
               "text": payload.text,
-              "taskid": payload.taskId,
+              "subtaskid": payload.id,
+              // "taskid": payload.taskId,
               "userid": payload.userId
             }
           })

@@ -170,7 +170,7 @@ export default {
 .file-wrap {}
 
 .file-text {
-  max-width: 16rem;
+  max-width: 15rem;
 }
 
 table {

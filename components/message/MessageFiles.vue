@@ -1,15 +1,14 @@
 <template>
   <client-only>
-    <div class="file-wrap d-flex " id="msg-file-wrapper">
-      <figure class="position-relative w-100 align-center justify-center" v-tooltip="`${property.name}`">
+    <div class="file-wrap border-gray2 shape-rounded d-flex " style="flex-direction: column;" id="msg-file-wrapper">
+      <figure class="position-relative w-100 align-center justify-center" >
         <img id="msg-file-filePreview" v-if="filePreview" :src="filePreview" class="shape-rounded d-block" :alt="property.name">
-        <div v-else class="text-gray5 font-heading-lg">{{property.extension}}</div>
-        <div id="msg-file-file-click" class="file-overlay d-flex align-center justify-center cursor-pointer" @click="$emit('file-click')">
-          <!-- <fa :icon="faMagnifyingGlassPlus" class="width-2 height-2"></fa> -->
+        <bib-icon v-else :icon="fileIcon(property.type)" :scale="3" variant="gray2"></bib-icon>
+        <!-- <div id="msg-file-file-click" class="file-overlay d-flex align-center justify-center cursor-pointer" @click="$emit('file-click')">
           <bib-icon icon="eye-open" :scale="2" variant="secondary"></bib-icon>
-        </div>
+        </div> -->
         <div id="msg-file-list-wrapper" class="shape-circle bg-gray4 width-2 height-2 d-flex justify-center align-center file-menu">
-          <bib-button pop="elipsis" :scale="1">
+          <bib-popup pop="elipsis" :scale="1">
             <template v-slot:menu>
               <div id="msg-file-list" class="list ">
                 <span id="msg-file-list-item-1" class="list__item" v-if="canPreview" @click="$emit('file-click')">Preview</span>
@@ -19,9 +18,14 @@
                 <span id="msg-file-list-item-5" v-show="canDelete" class="list__item list__item__danger" @click.stop="deleteFile(property)">Delete File</span>
               </div>
             </template>
-          </bib-button>
+          </bib-popup>
         </div>
       </figure>
+      <div class="file-info align-center flex-grow-1 gap-05 bg-light py-05 px-075">
+        <bib-icon :icon="fileIcon(property.type)" variant="gray5" :scale="1.25"></bib-icon>
+        <div class="file-name text-black">{{property.key}}</div>
+      </div>
+
       <bib-modal-wrapper v-if="fileDetailModal" title="File Details" @close="fileDetailModal = false">
         <template slot="content">
           <table class="table">
@@ -43,15 +47,10 @@
           </div>
         </template>
       </bib-modal-wrapper>
+
       <bib-popup-notification-wrapper>
         <template #wrapper>
-          <bib-popup-notification
-            v-for="(msg, index) in popupMessages"
-            :key="index"
-            :message="msg.text"
-            :variant="msg.variant"
-            :autohide="5000"
-          >
+          <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" :autohide="5000" >
           </bib-popup-notification>
         </template>
       </bib-popup-notification-wrapper>
@@ -63,6 +62,7 @@
 // import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 // import { faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
 import dayjs from 'dayjs'
+import { fileIcon } from '~/utils/file';
 
 export default {
 
@@ -108,7 +108,7 @@ export default {
       }
     },
     canDelete() {
-      if((this.property.owner == JSON.parse(localStorage.getItem('user')).sub ) || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
+      if((this.property.userId == JSON.parse(localStorage.getItem('user')).sub ) || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
         return true
       } else {
         return false
@@ -120,6 +120,7 @@ export default {
 
   },
   methods: {
+    fileIcon,
     async previewFile() {
       if (this.property.type.indexOf('image/') == 0 && "url" in this.property) {
         let imgtype = this.property.type.split("/")[1]
@@ -130,7 +131,6 @@ export default {
         })
         this.filePreview = `data:image/${imgtype};base64,${prev.data.data}`
       } else {
-        // this.filePreview = "https://via.placeholder.com/200x160/f0f0f0/6f6f79?text=" + this.property.extension
         // this.filePreview = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAB9AAAAXcAQMAAABAq4doAAAABGdBTUEAALGPC/xhBQAAAANQTFRFAAAAp3o92gAAAAF0Uk5TAEDm2GYAAAGESURBVHic7cExAQAAAMKg9U9tCU+gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICnAb7/AAE0lx4oAAAAAElFTkSuQmCC"
         this.filePreview = null
       }
@@ -157,14 +157,15 @@ export default {
 
     deleteFile(file) {
       
-      if((file.owner == JSON.parse(localStorage.getItem('user')).sub ) || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
+      if((file.userId == JSON.parse(localStorage.getItem('user')).sub ) || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
           this.$axios.delete("file/" + file.key, {
               headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-                'projectid': this.project.id,
+                'taskid': this.property.taskId || null,
+                'projectid': this.property.projectId || null,
                 'text': `file ${file.name} deleted`,
-                'isHidden': true,
-                'userid': file.owner
+                'ishidden': true,
+                'userid': file.userId,
               }
             }).then(f => {
               // console.log(f.data)
@@ -188,27 +189,26 @@ export default {
 </script>
 <style lang="scss" scoped>
 .file-wrap {
-  min-height: 8rem;
-  font-size: 1rem;
-  background-color: rgb(240, 240, 240);
-  flex: 0 1 14rem;
+  font-size: $base-size;
+  background-color: $gray9;
 
   figure {
+    aspect-ratio: 1.77 / 1;
     img {
       width: 100%;
       object-fit: cover;
-      aspect-ratio: 1.5 / 1;
+      aspect-ratio: 1.77 / 1;
     }
   }
 
-  .file-overlay {
+  /*.file-overlay {
     position: absolute;
     inset: 0;
     z-index: 3;
     background-color: rgba(220, 220, 225, 0.75);
     opacity: 0;
     transition: opacity 200ms ease-in;
-  }
+  }*/
 
   .file-menu {
     opacity: 0;
@@ -222,22 +222,24 @@ export default {
       max-width: 12rem;
     }
 
+  }
+  .file-info {
+
     .file-name {
       white-space: normal;
       word-break: break-all;
       height: auto;
       cursor: default;
     }
+
   }
 
   &:hover {
+    box-shadow: 0 1px 10px rgba(100,100,100,0.25);
     .file-menu {
       opacity: 1;
     }
 
-    .file-overlay {
-      opacity: 1;
-    }
   }
 }
 

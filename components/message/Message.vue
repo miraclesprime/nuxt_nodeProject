@@ -29,8 +29,8 @@
       <message-collapsible-section>
         <template slot="title">Files ({{ files.length }})</template>
         <template slot="content">
-          <div class="d-flex align-start flex-wrap gap-1 mt-05 mb-075" id="msg-files-wrap">
-            <message-files v-for="file in files" :property="file" :key="file.key" @file-click="showPreviewModal(file)" ></message-files>
+          <div class="d-grid gap-2 " style="grid-template-columns: repeat(2, 1fr);" id="msg-files-wrap">
+            <message-files v-for="file in files" :property="file" :key="file.key" @file-click="showPreviewModal(file)" @reload-files="getFiles" ></message-files>
           </div>
         </template>
       </message-collapsible-section>
@@ -90,7 +90,7 @@
     </bib-modal-wrapper>
 
     <!-- file preview modal -->
-    <bib-modal-wrapper v-if="previewModal" title="Preview" size="lg" @close="closePreviewModal">
+    <bib-modal-wrapper v-if="previewModal" title="Preview" size="xl" @close="closePreviewModal">
       <template slot="content">
         <div id="msg-image-preview" class="text-center">
           <img id="msg-img-preview" v-if="imgPreview" :src="imgPreview" class="w-fit" style="max-width:100%;" alt="preview">
@@ -193,7 +193,8 @@ export default {
     ...mapGetters({
       user: "user/getUser2",
       members: 'user/getTeamMembers',
-      msgkey: "inbox/getKey"
+      msgkey: "inbox/getKey",
+      task: "task/getSelectedTask",
     }),
     displayDate() {
       return dayjs(this.msg.updatedAt).fromNow()
@@ -417,10 +418,10 @@ export default {
       if (fi.data.statusCode == 200) {
         _.delay(() => {
           this.getFiles()
-          _.delay(() => {
+          /*_.delay(() => {
               this.getFiles()
-            }, 3500)
-        }, 2000);
+            }, 3500)*/
+        }, 5000);
       }
       this.fileLoader = false
       this.uploadModal = false
@@ -456,8 +457,13 @@ export default {
             'preview': 'preview'
           }
         })
-        this.imgPreview = `data:image/${imgtype};base64,${prev.data.data}`
-        this.pdfPreview = ''
+        // console.log(prev.data)
+        if (prev.data.statusCode == 200) {
+          this.imgPreview = `data:image/${imgtype};base64,${prev.data.data}`
+          this.pdfPreview = ''
+        } else {
+          this.imgPreview = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgYXJpYS1sYWJlbGxlZGJ5PSJlcnJvckljb25UaXRsZSIgY29sb3I9IiMyMzI5RDYiIGZpbGw9Im5vbmUiIGhlaWdodD0iNDhweCIgcm9sZT0iaW1nIiBzdHJva2U9IiMyMzI5RDYiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiIHN0cm9rZS1saW5lam9pbj0ibWl0ZXIiIHN0cm9rZS13aWR0aD0iMSIgdmlld0JveD0iMCAwIDI0IDI0IiB3aWR0aD0iNDhweCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGUgaWQ9ImVycm9ySWNvblRpdGxlIi8+PHBhdGggZD0iTTEyIDhMMTIgMTMiLz48bGluZSB4MT0iMTIiIHgyPSIxMiIgeTE9IjE2IiB5Mj0iMTYiLz48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIvPjwvc3ZnPg=="
+        }
       } else if(file.type.indexOf('pdf') && "url" in file) { 
 
         const prev = await this.$axios.get("file/single/"+file.key, {
@@ -466,8 +472,12 @@ export default {
             'preview': 'preview'
           }
         })
-        this.pdfPreview = `data:application/pdf;base64,${prev.data.data}`
-        this.imgPreview = ''
+        if (prev.data.statusCode == 200) {
+          this.pdfPreview = `data:application/pdf;base64,${prev.data.data}`
+          this.imgPreview = ''
+        } else {
+          this.imgPreview = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgYXJpYS1sYWJlbGxlZGJ5PSJlcnJvckljb25UaXRsZSIgY29sb3I9IiMyMzI5RDYiIGZpbGw9Im5vbmUiIGhlaWdodD0iNDhweCIgcm9sZT0iaW1nIiBzdHJva2U9IiMyMzI5RDYiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiIHN0cm9rZS1saW5lam9pbj0ibWl0ZXIiIHN0cm9rZS13aWR0aD0iMSIgdmlld0JveD0iMCAwIDI0IDI0IiB3aWR0aD0iNDhweCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGUgaWQ9ImVycm9ySWNvblRpdGxlIi8+PHBhdGggZD0iTTEyIDhMMTIgMTMiLz48bGluZSB4MT0iMTIiIHgyPSIxMiIgeTE9IjE2IiB5Mj0iMTYiLz48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIvPjwvc3ZnPg=="
+        }
         
       } else {
         this.downloadFile(file)
