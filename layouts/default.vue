@@ -181,56 +181,114 @@ export default {
       flag: false,
       navKey: 0,
       historyLength: 2,
-      appItems: [
+      appItems: 
+      // [
+      //   {
+      //     img: "layers-solid",
+      //     color: "secondary",
+      //     text: "Templates",
+      //     href: process.env.BIB_TEMPLATES_APP_URL,
+      //   },
+      //   {
+      //     img: "cloud-solid",
+      //     color: "success-sub1",
+      //     text: "Files",
+      //     href: process.env.BIB_DRIVE_URL,
+      //   },
+      //   {
+      //     img: "signature",
+      //     color: "orange",
+      //     text: "eSign",
+      //     href: process.env.BIB_ESIGN_APP_URL,
+      //   },
+      //   {
+      //     img: "projects",
+      //     color: "primary",
+      //     text: "Projects",
+      //     active: true,
+      //     href: process.env.VUE_APP_URL,
+      //   },
+      //   {
+      //     img: "chat",
+      //     color: "purple",
+      //     text: "Chat",
+      //     href: process.env.BIB_CHAT_APP_URL,
+      //   },
+      //   {
+      //     img: "editor",
+      //     color: "primary-sub1",
+      //     text: "Editor",
+      //     href: "http://dev.editor.business-in-a-box.com",
+      //   },
+      //   {
+      //     img: "meetings",
+      //     color: "warning",
+      //     text: "Video",
+      //     href: "https://dev-video-conf.business-in-a-box.com",
+      //   },
+      //   // {
+      //   //   img: "data-storage-single",
+      //   //   color: "primary",
+      //   //   text: "Drive",
+      //   //   href: "",
+      //   // },
+      // ],
+      [
         {
-          img: "layers-solid",
-          color: "secondary",
+          img: "Layers",
+          color: "primary",
+          active: false,
           text: "Templates",
           href: process.env.BIB_TEMPLATES_APP_URL,
         },
         {
-          img: "cloud-solid",
+          img: "cloud-data-network-solid",
           color: "success-sub1",
-          text: "Files",
-          href: process.env.BIB_DRIVE_URL,
-        },
-        {
-          img: "signature",
-          color: "orange",
-          text: "eSign",
-          href: process.env.BIB_ESIGN_APP_URL,
-        },
-        {
-          img: "projects",
-          color: "primary",
-          text: "Projects",
-          active: true,
-          href: process.env.VUE_APP_URL,
-        },
-        {
-          img: "chat",
-          color: "purple",
-          text: "Chat",
-          href: process.env.BIB_CHAT_APP_URL,
+          active: false,
+          text: this.$i18n.tc("drive"),
+          href: "",
         },
         {
           img: "editor",
           color: "primary-sub1",
+          active: false,
           text: "Editor",
-          href: "http://dev.editor.business-in-a-box.com",
+          href: process.env.WEB_EDITOR_APP_URL,
+        },
+        {
+          img: "chat",
+          color: "purple",
+          active: false,
+          text: "Chat",
+          href: process.env.BIB_CHAT_APP_URL,
+        },
+        {
+          img: "Signature",
+          color: "orange",
+          active: false,
+          text: "eSign",
+          href: process.env.BIB_ESIGN_APP_URL,
         },
         {
           img: "meetings",
           color: "warning",
-          text: "Video",
-          href: "https://dev-video-conf.business-in-a-box.com",
+          active: false,
+          text: "Meetings",
+          href: process.env.BIB_VIDEO_CONF_URL,
         },
-        // {
-        //   img: "data-storage-single",
-        //   color: "primary",
-        //   text: "Drive",
-        //   href: "",
-        // },
+        {
+          img: "projects",
+          color: "primary",
+          active: true,
+          text: "Projects",
+          href: process.env.BIB_PROJECT_APP_URL,
+        },
+        {
+          img: "table",
+          active: false,
+          text: "Sheets",
+          href: process.env.WEB_SHEET_EDITOR_APP_URL,
+        },
       ],
       navItems1: [
         /*{
@@ -420,7 +478,7 @@ export default {
       // }
 
       // Dhruv (admin)
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY5NzYyOTAxMjg5MiwiZXhwIjoxNzA1NDA1MDEyODkyLCJqdGkiOiIzZWRjYWU5OC05NzEyLTRlODktOWFlNC1hNjVjMzY0OTY4ZTAifQ.vYyPrVezlN6SjRMplYjglCH_K9n_ozoWG2DFwHkj6zg";
+      let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY5NzYyOTAxMjg5MiwiZXhwIjoxNzA1NDA1MDEyODkyLCJqdGkiOiIzZWRjYWU5OC05NzEyLTRlODktOWFlNC1hNjVjMzY0OTY4ZTAifQ.vYyPrVezlN6SjRMplYjglCH_K9n_ozoWG2DFwHkj6zg";
     
       // Vishwajeet
       let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2OTY0MDk1MjkwMTYsImV4cCI6MTcwNDE4NTUyOTAxNiwianRpIjoiNzZhZGIwMWEtMmVlMy00YTAzLWJhZGMtMjU5NGQ0YThmODE2In0.7yryx4JhYce42qtAdTQlbl9dglpcalfWYQdYVsMIJs8"
