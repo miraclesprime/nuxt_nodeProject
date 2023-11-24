@@ -118,19 +118,23 @@ export const actions = {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     })
     if (res.statusCode == 200) {
+
       ctx.commit("updateSingleSubtask", res.data)
-      ctx.commit("setSelectedSubtask", res.data)
+      const newSub = await this.$axios.$get("/subtask/" + payload.id, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+      })
+      ctx.commit("setSelectedSubtask", newSub.data)
     }
     return res
   },
 
   // delete subtask
   async deleteSubtask(ctx, payload) {
-    if(payload.key=="multi"){
+    if (payload.key == "multi") {
       const delMulsub = await this.$axios.$delete("/subtask/", {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-          "subtasks":JSON.stringify(payload.delData)
+          "subtasks": JSON.stringify(payload.delData)
         }
       })
       return delMulsub
@@ -150,7 +154,7 @@ export const actions = {
     }
   },
 
-  async removeFromFavorite(ctx, payload){
+  async removeFromFavorite(ctx, payload) {
     try {
       const stf = await this.$axios.delete(`subtask/${payload.id}/favorite`, {
         headers: {
@@ -158,7 +162,7 @@ export const actions = {
         }
       })
       return stf.data
-    } catch(e) {
+    } catch (e) {
       console.warn(e);
     }
   },
@@ -340,10 +344,10 @@ export const actions = {
   },
 
   async setSubtasks(ctx, payload) {
-    try{
+    try {
       ctx.commit("fetchSubTasks", payload)
       return ctx.state.subtasks;
-    }catch(e) {
+    } catch (e) {
       console.log(e)
     }
   }
