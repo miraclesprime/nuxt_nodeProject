@@ -230,7 +230,7 @@ export default {
         this.updateKey()
       });
       this.$nuxt.$on("refresh-table", () => {
-        console.log("mytask_created_on-refresh")
+        // console.log("mytask_created_on-refresh")
         this.updateKey();
       });
     }
@@ -574,7 +574,7 @@ export default {
         if(newDate.getTime() > new Date(this.activeTask.startDate).getTime()){
           data = { [this.datepickerArgs.field]: newDate }
           // newDate = this.$formatDate(value)
-          console.log('valid date', newDate, this.activeTask.startDate)
+          // console.log('valid date', newDate, this.activeTask.startDate)
         } else {
           // console.log('Invalid date', newDate, this.activeTask.startDate)
           data = { [this.datepickerArgs.field]: null }
@@ -630,7 +630,7 @@ export default {
       // console.log(taskdata)
       this.$store.dispatch("task/createTask", taskdata)
       .then(t => {
-        console.log(t)
+        // console.log(t)
         // this.updateKey()
       })
       .catch(e => console.warn(e))
