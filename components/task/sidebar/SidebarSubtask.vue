@@ -41,7 +41,7 @@
             <td id="sbs-td-3">
               <div class="d-flex gap-05 align-center" id="sbs-white-check-circle-solid">
                 <bib-icon icon="check-circle-solid" variant="white" :scale="1.25"></bib-icon>
-                <input class="sub-input" ref="subtaskNameInput" type="text" v-model.trim="title" id="sbs-subtaskNameInput" :disabled="loading" pattern="[a-zA-Z0-9-_ ]+" @blur="validateInput" @keyup.enter="validateInput" required placeholder="Enter text...">
+                <input class="sub-input" ref="subtaskNameInput" type="text" v-model.trim="title" id="sbs-subtaskNameInput" :disabled="loading" pattern="[a-zA-Z0-9-_ ]+"  @keyup.enter="validateInput" required placeholder="Enter text...">
               </div>
             </td>
             <td id="sbs-td-5">
@@ -244,6 +244,7 @@ export default {
     },
     openCreateSubtask() {
       this.newSubtask = true
+      this.title=""
       this.$nextTick(() => {
         this.$refs.subtaskNameInput.focus()
       })

@@ -38,13 +38,17 @@ export default {
 
   
   mounted () {
+    // console.log(this.teamMems)
+
     if(this.teamMembers.length>0) {
       this.user=this.$userInfo(this.history.userId)
 
     }
     else {
       if(this.teamMems.length>0) {
+        // console.log(this.teamMems)
         this.user=this.getUserInfo(this.teamMems,this.history.userId)
+        // console.log(this.user.Name)
       }
         }
   },
