@@ -140,64 +140,70 @@ export default {
       },
     },
 
-    async asyncData({$axios, app,store}){
+  //   async asyncData({$axios, app,store}){
 
-  const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
-  const filter=store.getters['task/getFilterView']
-  const favProject = await $axios.get("project/user/favorites", {
-        headers: {
-          "Authorization": `Bearer ${token}`,'Filter': filter 
-        }
-      })
-      let prArr = []
-      let newAr = []
-      let favpro = _.cloneDeep(favProject.data.data)
-      favpro.forEach(p => { prArr.push(p.projects) })
+  // const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
+  // const filter=store.getters['task/getFilterView']
+  // const favProject = await $axios.get("project/user/favorites", {
+  //       headers: {
+  //         "Authorization": `Bearer ${token}`,'Filter': filter 
+  //       }
+  //     })
+  //     let prArr = []
+  //     let newAr = []
+  //     let favpro = _.cloneDeep(favProject.data.data)
+  //     favpro.forEach(p => { prArr.push(p.projects) })
 
-      for(let i=0; i < prArr.length; i++) {
-          if(prArr[i].priorityId) {
-              newAr.unshift(prArr[i])
-          } else {
-              newAr.push(prArr[i])
-          }
-      }
+  //     for(let i=0; i < prArr.length; i++) {
+  //         if(prArr[i].priorityId) {
+  //             newAr.unshift(prArr[i])
+  //         } else {
+  //             newAr.push(prArr[i])
+  //         }
+  //     }
 
-      newAr.sort((a,b) => {
-          if(a.priorityId && b.priorityId) {
-              return a.priorityId - b.priorityId
-          }
-      })
+  //     newAr.sort((a,b) => {
+  //         if(a.priorityId && b.priorityId) {
+  //             return a.priorityId - b.priorityId
+  //         }
+  //     })
+  //     const fetchSubtask = await this.$axios.get("subtask/user/favorites", {
+  //       headers: {
+  //         "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+  //       }
+  //     })
+
+  //   const favTask = await $axios.get("/task/user/favorites", {
+  //     headers: {
+  //       "Authorization": `Bearer ${token}`,'Filter': filter 
+  //     }
+  //   })
+  //     let favData=[]
+  //     let newArr = []
+
+  //     console.log("faveDtaa",favTask.data.data)
+  //     favTask.data.data.forEach(d => { 
+  //       favData.push(d.task)
+  //     })
+  //   for(let i=0; i <favData.length; i++) {
+  //     if(favData?.[i]?.priorityId) {
+  //       newArr.unshift(favData[i])
+  //     } else {
+  //       newArr.push(favData[i])
+  //     }
+  //   }
+
+  //   newArr.sort((a,b) => {
+  //     if(a.priorityId && b.priorityId) {
+  //       return a.priorityId - b.priorityId
+  //     }
+  //   })
 
 
-    const favTask = await $axios.get("/task/user/favorites", {
-      headers: {
-        "Authorization": `Bearer ${token}`,'Filter': filter 
-      }
-    })
-      let favData=[]
-      let newArr = []
-      favTask.data.data.forEach(d => { 
-        favData.push(d.task)
-      })
-    for(let i=0; i <favData.length; i++) {
-      if(favData?.[i]?.priorityId) {
-        newArr.unshift(favData[i])
-      } else {
-        newArr.push(favData[i])
-      }
-    }
-
-    newArr.sort((a,b) => {
-      if(a.priorityId && b.priorityId) {
-        return a.priorityId - b.priorityId
-      }
-    })
+  // return { taskSubtaskLocalData: newArr,projLocalData: newAr,sortedProject:newAr, sortedTask:newArr}
 
 
-  return { taskSubtaskLocalData: newArr,projLocalData: newAr,sortedProject:newAr, sortedTask:newArr}
-
-
-  },
+  // },
 
   created() {
     if (process.client) {
@@ -212,72 +218,133 @@ export default {
     }
   },
 
+  // mounted() {
+  //   // if(this.favProjects.length<=0 || this.getFavTasks.length<=0) {
+  //   //   this.updateKey ()
+  //   // }
+
+  //   for(let field of this.projectTableFields) {
+  //     if(field.header_icon) {
+  //       if(field.key == 'priority') {
+  //         field.header_icon.isActive = true;
+  //       } else {
+  //         field.header_icon.isActive = false;
+  //       }
+  //     }
+  //   }
+
+  //   for(let field of this.taskTableFields) {
+  //     if(field.header_icon) {
+  //       if(field.key == 'priority') {
+  //         field.header_icon.isActive = true;
+  //       } else {
+  //         field.header_icon.isActive = false;
+  //       }
+  //     }
+  //   }
+
+  //   // this.loading = true
+  //   let user = JSON.parse(localStorage.getItem("user"))
+  //   // this.$store.dispatch("company/fetchCompanyMembers", user.subb)
+  //   this.$store.dispatch('project/fetchFavProjects')
+
+  //   const fetchTask = this.$store.dispatch('task/getFavTasks')
+  //   const fetchSubtask = this.$store.dispatch("subtask/fetchFavorites")
+  //   Promise.all([fetchTask, fetchSubtask]).then((values) => {
+  //     values[0].data.forEach(d => { 
+  //       this.taskSubtaskLocalData.push(d.task)
+  //       this.sortedTask.push(d.task)
+  //       })
+  //     values[1].data.forEach(d => {
+  //       if(d.subtasks){
+  //         this.taskSubtaskLocalData.push({...d.subtasks, project: d.subtasks.task?.project || {}})
+  //         this.sortedTask.push({...d.subtasks, project: d.subtasks.task?.project || {}})
+  //       }
+  //     })
+
+  //     let newArr = []
+
+  //     for(let i=0; i < this.taskSubtaskLocalData.length; i++) {
+  //       if(this.taskSubtaskLocalData[i].priorityId) {
+  //         newArr.unshift(this.taskSubtaskLocalData[i])
+  //       } else {
+  //         newArr.push(this.taskSubtaskLocalData[i])
+  //       }
+  //     }
+
+  //     newArr.sort((a,b) => {
+  //       if(a.priorityId && b.priorityId) {
+  //         return a.priorityId - b.priorityId
+  //       }
+  //     })
+
+  //     this.taskSubtaskLocalData = newArr;
+  //     console.log(this.taskSubtaskLocalData)
+  //   })
+  // },
   mounted() {
-    if(this.favProjects.length<=0 || this.getFavTasks.length<=0) {
-      this.updateKey ()
+
+for(let field of this.projectTableFields) {
+  if(field.header_icon) {
+    if(field.key == 'priority') {
+      field.header_icon.isActive = true;
+    } else {
+      field.header_icon.isActive = false;
     }
+  }
+}
 
-    for(let field of this.projectTableFields) {
-      if(field.header_icon) {
-        if(field.key == 'priority') {
-          field.header_icon.isActive = true;
-        } else {
-          field.header_icon.isActive = false;
-        }
-      }
+for(let field of this.taskTableFields) {
+  if(field.header_icon) {
+    if(field.key == 'priority') {
+      field.header_icon.isActive = true;
+    } else {
+      field.header_icon.isActive = false;
     }
+  }
+}
 
-    for(let field of this.taskTableFields) {
-      if(field.header_icon) {
-        if(field.key == 'priority') {
-          field.header_icon.isActive = true;
-        } else {
-          field.header_icon.isActive = false;
-        }
-      }
+// let user = JSON.parse(localStorage.getItem("user"))
+// this.$store.dispatch("company/fetchCompanyMembers", user.subb)
+this.$store.dispatch('project/fetchFavProjects')
+.then(() => {
+  this.fetchProjects()
+})
+
+const fetchTask = this.$store.dispatch('task/getFavTasks')
+const fetchSubtask = this.$store.dispatch("subtask/fetchFavorites")
+Promise.all([fetchTask, fetchSubtask]).then((values) => {
+  values[0].data.forEach(d => { 
+    this.taskSubtaskLocalData.push(d.task)
+    this.sortedTask.push(d.task)
+    })
+  values[1].data.forEach(d => {
+    if(d.subtasks){
+      this.taskSubtaskLocalData.push({...d.subtasks, project: d.subtasks.task?.project || {}})
+      this.sortedTask.push({...d.subtasks, project: d.subtasks.task?.project || {}})
     }
+  })
 
-    // this.loading = true
-    // let user = JSON.parse(localStorage.getItem("user"))
-    // this.$store.dispatch("company/fetchCompanyMembers", user.subb)
-    // this.$store.dispatch('project/fetchFavProjects')
-    // .then(() => {
-    //   this.+()
-    // })
+  let newArr = []
 
-    // const fetchTask = this.$store.dispatch('task/getFavTasks')
-    // const fetchSubtask = this.$store.dispatch("subtask/fetchFavorites")
-    // Promise.all([fetchTask, fetchSubtask]).then((values) => {
-    //   values[0].data.forEach(d => { 
-    //     this.taskSubtaskLocalData.push(d.task)
-    //     this.sortedTask.push(d.task)
-    //     })
-    //   values[1].data.forEach(d => {
-    //     if(d.subtasks){
-    //       this.taskSubtaskLocalData.push({...d.subtasks, project: d.subtasks.task?.project || {}})
-    //       this.sortedTask.push({...d.subtasks, project: d.subtasks.task?.project || {}})
-    //     }
-    //   })
+  for(let i=0; i < this.taskSubtaskLocalData.length; i++) {
+    if(this.taskSubtaskLocalData[i].priorityId) {
+      newArr.unshift(this.taskSubtaskLocalData[i])
+    } else {
+      newArr.push(this.taskSubtaskLocalData[i])
+    }
+  }
 
-    //   let newArr = []
+  newArr.sort((a,b) => {
+    if(a.priorityId && b.priorityId) {
+      return a.priorityId - b.priorityId
+    }
+  })
 
-    //   for(let i=0; i < this.taskSubtaskLocalData.length; i++) {
-    //     if(this.taskSubtaskLocalData[i].priorityId) {
-    //       newArr.unshift(this.taskSubtaskLocalData[i])
-    //     } else {
-    //       newArr.push(this.taskSubtaskLocalData[i])
-    //     }
-    //   }
-
-    //   newArr.sort((a,b) => {
-    //     if(a.priorityId && b.priorityId) {
-    //       return a.priorityId - b.priorityId
-    //     }
-    //   })
-
-    //   this.taskSubtaskLocalData = newArr;
-    // })
-  },
+  this.taskSubtaskLocalData = newArr;
+  console.log(this.taskSubtaskLocalData)
+})
+},
 
   methods: {
 
@@ -1335,7 +1402,7 @@ export default {
         } else{
           data = { [field]: null }
           this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          this.updateKey()
+          // this.updateKey()
           return false
         }
         }
@@ -1352,7 +1419,7 @@ export default {
         } else {
           data = { [field]: null }
           this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          this.updateKey()
+          // this.updateKey()
           return false
         }
         }
@@ -1360,14 +1427,23 @@ export default {
       }
 
       if (item.task) {
+    if(payload.field=="statusId") {
+      if(payload.statusId=="5") {
+            data= { [field]: value, ['isDone']:true }
+      }
+      else {
+        data= { [field]: value, ['isDone']:false }
+      }
+    }
         this.$store.dispatch("subtask/updateSubtask", {
           id: taskId,
           data: data,
           user:user ? [user] : null,
           text: `updated ${label} to ${historyText || value}`
         })
-        .then(() => this.updateKey())
-        .catch(e => console.warn(e))
+        .then(() => {
+          // this.updateKey()
+        })
       } else {
         this.$store.dispatch("task/updateTask", {
           id: taskId,
@@ -1376,7 +1452,7 @@ export default {
           user:user ? [user] : null,
           text: `changed ${label} to ${historyText || value}`
         }).then(t => {
-          this.updateKey()
+          // this.updateKey()
         }).catch(e => console.warn(e))
       }
     },
@@ -1515,7 +1591,8 @@ export default {
 
     // task context menu methods ------------------------------------------
     openSidebar(task, scroll) {
-      // console.log(...arguments)
+      console.log(task)
+      console.log(scroll)
       let fwd = this.$donotCloseSidebar(event.target.classList)
       if (!fwd) {
         this.$nuxt.$emit("close-sidebar");

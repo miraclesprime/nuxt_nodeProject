@@ -271,7 +271,6 @@ export default {
     this.$nuxt.$on("newTask", this.handleNewTask);
     this.$nuxt.$on("delete_update_table", this.delete_UpdateLocalData)
     this.$nuxt.$on("update_table", this.edit_UpdateLocalData)
- 
   },
   mounted() {
     /*const main = document.getElementById("main-content")
@@ -443,7 +442,6 @@ export default {
       this.$emit("row-click", item)
     },
     titleClick(fieldEvent, item){
-      // console.log(event)
       this.unselectAll().then(r => {
         let elem = event.currentTarget.closest(".tr")
         elem.classList.add('active')

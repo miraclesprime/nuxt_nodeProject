@@ -67,7 +67,7 @@
                                 </div>
                               </span>
                               <hr >
-                              <span class="list__item list__item__danger" :id="'tgs-list-3'+section.id" v-on:click="$emit('section-delete',{id: section.id, title: section.title })" @mouseenter="deleteBtnHover = true" @mouseleave="deleteBtnHover = false">
+                              <span v-show="section.hasOwnProperty('isDeletable') ? section.isDeletable : true" class="list__item list__item__danger" :id="'tgs-list-3'+section.id" v-on:click="$emit('section-delete',{id: section.id, title: section.title })" @mouseenter="deleteBtnHover = true" @mouseleave="deleteBtnHover = false">
                                 <bib-icon icon="trash" :variant="deleteBtnHover ? 'white' : 'danger'"></bib-icon>
                                 <span class="ml-05">Delete section</span>
                               </span>

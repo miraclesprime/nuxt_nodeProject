@@ -42,7 +42,7 @@
       <!-- title input -->
       <div class="border-bottom-gray3 position-relative px-105 py-05 mb-1" id="std-fields-wrap">
         <!-- <input type="text" id="std-title-editable-input" class="editable-input" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" v-model="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdateField({field: 'title', value: form.title, name: 'Title'})"> -->
-        <textarea id="std-title-input" class="editable-input multiline position-absolute" v-model="form.title" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" placeholder="Enter title..." v-on:keyup="debounceUpdateField({field: 'title', value: form.title, name: 'Title'})"></textarea>
+        <textarea id="std-title-input" class="editable-input multiline position-absolute" v-model="form.title" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" placeholder="Enter title..." v-on:keyup="debounceUpdateField({field: 'title', value: form.title, name: 'Title'})" v-on:keydown.enter.prevent></textarea>
         <div class="pseudo-title" aria-hidden="true" role="textarea">{{form.title}}</div>
       </div>
     </div>
@@ -495,7 +495,7 @@ export default {
     },
     markComplete() {
       if (this.form.isDone) {
-        this.form.statusId = 1
+        this.form.statusId = 2
         this.form.isDone = false
       } else {
         this.form.isDone = true
@@ -607,6 +607,7 @@ export default {
         this.$store.dispatch("subtask/setSelectedSubtask", sub.data)
         this.$store.dispatch('subtask/fetchSubTask', sub.data).then((res) => {
           this.form = res;
+          this.$nuxt.$emit("update_table",res)
         })
         this.$store.dispatch("subtask/fetchSubtaskHistory", this.subtask)
       } else {
