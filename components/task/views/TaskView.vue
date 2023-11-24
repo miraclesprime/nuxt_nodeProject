@@ -1258,31 +1258,26 @@ export default {
 
     deleteSection(retainTasks) {
       // this.loading = true;
-      // let del = confirm("Are you sure?");
-      console.log({...this.sectionToDelete, retainTasks})
-      // return
-      // if (del) {
-        this.$store
-          .dispatch("section/deleteSection", {...this.sectionToDelete, retainTasks})
-          .then((s) => {
-            if (s.statusCode == 200) {
-              this.popupMessages.push({text: s.message, variant: "success"})
-              this.updateKey();
-            } else {
-              console.warn(t.message);
-            }
-            // this.loading = false;
-            this.sectionConfirmModal = false
-            this.sectionToDelete = {}
-          })
-          .catch((e) => {
-            // this.loading = false;
-            this.sectionConfirmModal = false
-            console.log(e);
-          });
-      /*} else {
-        this.loading = false;
-      }*/
+      
+      this.$store
+        .dispatch("section/deleteSection", {...this.sectionToDelete, retainTasks})
+        .then((s) => {
+          if (s.statusCode == 200) {
+            this.popupMessages.push({text: s.message, variant: "success"})
+            this.updateKey();
+          } else {
+            console.warn(t.message);
+          }
+          // this.loading = false;
+          this.sectionConfirmModal = false
+          this.sectionToDelete = {}
+        })
+        .catch((e) => {
+          // this.loading = false;
+          this.sectionConfirmModal = false
+          console.log(e);
+        });
+      
     },
 
     sectionDragEnd: _.debounce(async function (payload) {
