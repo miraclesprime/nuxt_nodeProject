@@ -57,7 +57,7 @@
             <fa :icon="faEllipsisH" />
           </div>
         </template>
-        <div id="msg-isMenuOpen" class="menu" :class="{ open: isMenuOpen }">
+        <div id="msg-isMenuOpen" class="menu" style="text-align: left" :class="{ open: isMenuOpen }">
           <div id="msg-menu-item1" v-if="msg.userId == user.Id" class="menu-item">
             <a id="msg-editMessage" @click.stop="editMessage">Edit</a>
           </div>
