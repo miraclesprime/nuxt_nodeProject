@@ -73,7 +73,7 @@
       <bib-modal-wrapper v-if="projectModal" :title="projectModalTitle" size="xl" @close="projectModal = false">
         <template slot="content">
           <!-- <div class="overflow-y-auto " style="max-height: 500px"> -->
-            <project-overview v-if="projectModalContent == 'overview'" :sections="projectSections" ></project-overview>
+            <project-overview v-if="projectModalContent == 'overview'" :sections="projectSections" @update-desc="projectDesc = $event" ></project-overview>
             <project-files v-if="projectModalContent == 'files'"></project-files>
           <!-- </div> -->
         </template>
@@ -160,7 +160,35 @@ export default {
       cdp: false,
       project: {},
       userProj: {},
-      deleteBtnHover: false
+      deleteBtnHover: false,
+      projectDesc: null,
+    }
+  },
+  watch: {
+    taskcount(newValue){
+      return _.cloneDeep(newValue)
+    },
+    projectModal(newValue){
+      // console.log(newValue, this.projectDesc?.value)
+      if (this.projectDesc) {
+        
+        if (!newValue && this.projectModalContent == "overview") {
+          
+          let hText = this.projectDesc?.value.replace( /(<([^>]+)>)/ig, '');
+          hText = _.truncate(hText, {'length': 30})
+          // console.log(hText)
+          let owner = this.teamMembers.find(tm => tm.id == this.project.userId)
+
+          this.$store.dispatch("project/updateProject", {
+            id: this.project?.id,
+            user: owner,
+            data: { "description": this.projectDesc.value },
+            text: `changed ${this.projectDesc.label} - ${hText}`
+          }).then(p => {
+            this.$store.dispatch("project/fetchSingleProject", this.project.id )
+          }).catch(e => console.warn(e))
+        } 
+      } 
     }
   },
 
@@ -168,6 +196,7 @@ export default {
 
     ...mapGetters({
         projects: 'project/getAllProjects',
+        teamMembers: "user/getTeamMembers",
         team: "project/getProjectMembers",
         projectSections: 'section/getProjectSections',
         // projectTasks: "task/tasksForListView",
@@ -202,11 +231,6 @@ export default {
     // },
 
   },
-  watch:{
-    taskcount(newValue){
-      return _.cloneDeep(newValue)
-    },
-  },
   created() {
     this.$nuxt.$on("change-grid-type", (type) => {
       this.gridType = type;
@@ -226,7 +250,7 @@ export default {
   async asyncData({$axios, app, params, store}) {
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
     const filter = store.getters['task/getFilterView']
-try {
+    try {
 
       let all_projects= store.getters['project/getAllProjects']
       let proj=[]
@@ -244,7 +268,7 @@ try {
       
     } catch(err) {
 
-      console.log("There was an issue in project API", err);
+      // console.log("There was an issue in project API", err);
       return { project: {}, userProj: {} }
     }
 
@@ -252,25 +276,22 @@ try {
 
   async mounted() {
     if (process.client) {
-      if(this.projectSections.length<=0) {
-            this.$store.dispatch("section/fetchProjectSections",{projectId:this.$route.params.id})
-            const res = await this.$axios.get(`project/${this.$route.params.id}`, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,'filter':this.filterViews }
-              })
-            this.$store.dispatch('project/setProject', res.data.data)
-            
-            this.projectTitle = res.data?.data?.title;
-            this.project=res.data.data
-
+      if(this.projectSections.length <= 0) {
+        this.$store.dispatch("section/fetchProjectSections",{projectId:this.$route.params.id})
+        const res = await this.$axios.get(`project/${this.$route.params.id}`, {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,'filter':this.filterViews }
+          })
+        this.$store.dispatch('project/setProject', res.data.data)
+        this.projectTitle = res.data?.data?.title;
+        this.project = res.data.data
          
       }
            this.$store.commit("task/setExpandVisible",true);
             this.$store.commit('section/setGroupBy',"")
-            console.log("this.project",this.project)
+            // console.log("this.project", this.project)
             let p
             if(this.project){
-              console.log("11")
-                 p = JSON.parse(JSON.stringify(this.project))
+              p = JSON.parse(JSON.stringify(this.project))
             }
              else {
               this.$router.push('/notfound')
@@ -286,7 +307,7 @@ try {
       if(p?.isDeleted != true) {
 
         if((this.project && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN'){
-            console.info('user has access!')
+            // console.info('user has access!')
             this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id, userId: this.project.userId ? this.project.userId : null })
         } else {
             this.$router.push('/error/403');
@@ -318,6 +339,7 @@ try {
       this.projectModal = true
       this.projectModalTitle = title
       this.projectModalContent = content
+      this.projectDesc = null
     },
 
     setFavorite() {
