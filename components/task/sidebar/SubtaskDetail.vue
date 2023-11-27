@@ -647,10 +647,9 @@ export default {
           })
           .catch(e => console.log(e))
       } else {
-        this.$store.dispatch("subtask/createSubtaskComment", { id: this.subtask.id, comment: data.text, text: `added comment "${trimComment}"` })
-          .then(res => {
+        this.$store.dispatch("subtask/createSubtaskComment", { id: this.subtask.id, comment: data.text, text: `added comment "${trimComment}"` }).then(res => {
             if (res.data.statusCode == 200) {
-
+              this.fetchSubtaskComments({id: res.data.subtaskId})
             }
             if (this.value.files.length > 0) {
               this.uploadFiles(this.value.files, res.data)
