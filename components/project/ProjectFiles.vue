@@ -27,7 +27,7 @@
           </template>
           <template #cell(type)="data">
             <div class=" text-gray1" id="pf-file-data-ext">
-              {{ data.value.extension }}
+              {{ data.value.extension?.split('.')[1] }}
             </div>
           </template>
           <template #cell(size)="data">
@@ -103,6 +103,10 @@
             <template v-if="file.key == 'size'">
               <th id="pf-th1" class="text-right font-w-400">{{file.key}}:</th>
               <td class="text-left text-gray6 pl-1" id="pf-td1">{{$formatBytes(file.value)}}</td>
+            </template>
+            <template v-else-if="file.key == 'extension'">
+              <th id="pf-th-3" class="text-right font-w-400">{{file.key}}:</th>
+              <td class="text-left text-gray6 pl-1" id="pf-td3">{{file.value?.split('.')[1]}}</td>
             </template>
             <template v-else>
               <th id="pf-th2" class="text-right font-w-400">{{file.key}}:</th>
