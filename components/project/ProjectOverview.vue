@@ -77,7 +77,7 @@
           <div id="proj-overview-row6-col1" class="col-12 mb-05">
             <!-- <bib-input type="textarea" label="Brief" v-model="activeProject.description" placeholder="Project brief" v-on:keyup.native="debounceUpdate('Project brief', 'description', activeProject.description)"></bib-input> -->
             <div class="mb-05 text-gray6"><label>Brief</label></div>
-            <rich-editor :editingMessage="activeProject.description" @submit="debounceUpdate('Project brief', 'description', $event.text)" ></rich-editor>
+            <rich-editor :editingMessage="activeProject.description" @submit="emitDesc($event.text)" ></rich-editor>
           </div>
         </div>
         <!-- <loading :loading="loading"></loading> -->
@@ -242,7 +242,7 @@ export default {
       return this.$formatDate(dateObj)
     },
     startdateProcess(newValue, repeat){
-      console.log(newValue, repeat, this.ddate)
+      // console.log(newValue, repeat, this.ddate)
       const oldValue = this.sdate
       const newStartDate = new Date(newValue);
       this.sdate = newValue;
@@ -283,7 +283,7 @@ export default {
     },
 
     duedateProcess(newValue, repeat){
-      console.log(newValue, repeat, "startdate != null", this.sdate != null)
+      // console.log(newValue, repeat, "startdate != null", this.sdate != null)
       const oldValue = this.activeProject.dueDate
       const newDueDate = new Date(newValue);
       this.activeProject.dueDate = newValue;
@@ -378,7 +378,11 @@ export default {
         data: { [field]: value },
         text: `changed ${label} to ${updatedvalue}`
       })
-    }, 800)
+    }, 800),
+    
+    emitDesc(value){
+      this.$emit("update-desc", { label: "Project brief", field: "description", value } )
+    }
 
   },
 

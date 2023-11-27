@@ -3,7 +3,7 @@
     <div class="notfound">
       <h2 class="text-danger">Not Found!</h2>
       <h4>The project you're looking for, does not exist or is deleted.</h4>
-      <p>Go to <nuxt-link to="/projects" class="">Projects page</nuxt-link>
+      <p>Go to <nuxt-link to="/" class="">Home page</nuxt-link>
       </p>
     </div>
   </div>
