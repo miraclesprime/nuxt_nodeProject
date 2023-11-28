@@ -10,7 +10,7 @@ export const state = () => ({
   userInfo:[],
   isAdmin:false,
   groupByValue:"",
-  taskCount:0
+  taskCount:0,
 
 });
 

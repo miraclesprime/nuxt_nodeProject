@@ -314,7 +314,8 @@ export default ({ store, app, context }, inject) => {
         }
   })
   inject('donotCloseSidebar', (classes) => {
-    const cl = ['editable-input', 'user-info', 'date-info']
+    // const cl = ['editable-input', 'user-info', 'date-info']
+    const cl = [ 'user-info', 'date-info']
     let out = true
     cl.forEach((c) => {
       let cd = classes.contains(c)

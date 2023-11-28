@@ -439,7 +439,14 @@ export default {
       // if (this.$router.history.current.fullPath == "/dashboard") {
       //   this.navItems1[0].selected = true;
       // }
-
+      if(localStorage.getItem('lightcheck')) {
+          if(localStorage.getItem('lightcheck')=='true') {
+            this.lightThemeChecked=true    
+          }
+          else {
+            this.lightThemeChecked=false    
+          }
+      }
       if (this.$router.history.current.fullPath == "/inbox") {
         this.navItems1[0].selected = true;
       }
@@ -486,7 +493,7 @@ export default {
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnRUxZcWFRV1FHOWRuamsyIiwic3ViZSI6InJhamVldi5zaGFybWFAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJVU0VSIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY5NDQxNzE3NjQ4NCwiZXhwIjoxNzAyMTkzMTc2NDg0LCJqdGkiOiI3ZGJkMDg3Zi1iNzVhLTRmZjktODU4OS0wOWY4ZjExZjMzODAifQ.vjpNKpncvcpBcoyWEVBHNLN9b_cc1n0u-bDwHgfgQFw"
       
       //Wen Yang
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJEWE1WeWI4MmtabWV2QVpFIiwic3ViZSI6Imxlb25hbmMwMDIyQGdtYWlsLmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTcwMDY4MDY4MDYwNSwiZXhwIjoxNzA4NDU2NjgwNjA1LCJqdGkiOiJjMjZiM2M0Yi0wYTliLTQ4NWQtODJkNy0wZDU1MTc3N2YzNjAifQ.w_lMqnBU-5O45EaagtdUzo_u4pgBZvpLCHFukl_s0Jw"  
+      let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJEWE1WeWI4MmtabWV2QVpFIiwic3ViZSI6Imxlb25hbmMwMDIyQGdtYWlsLmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTcwMDY4MDY4MDYwNSwiZXhwIjoxNzA4NDU2NjgwNjA1LCJqdGkiOiJjMjZiM2M0Yi0wYTliLTQ4NWQtODJkNy0wZDU1MTc3N2YzNjAifQ.w_lMqnBU-5O45EaagtdUzo_u4pgBZvpLCHFukl_s0Jw"  
       
       //free
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJEWE1WeWI4MmtabWV2QVpFIiwic3ViZSI6Imxlb25hbmMwMDIyQGdtYWlsLmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY5ODg1MTgyOTMzOCwiZXhwIjoxNzA2NjI3ODI5MzM4LCJqdGkiOiI4NDY0NmQwYy1hMmU4LTQ1ZmYtODFiZC1hMTFiYTMxYmNiMTAifQ.HMiWQ-GzmlRS-cQPtWiT68H7WmsLnmcSdzsfqmlKAVk"
@@ -607,7 +614,7 @@ export default {
   watch: {
     appMembers(newVal){
       this.teamMembers=newVal
-    }
+    },
  },
   methods: {
     /*handleStateChange() {
@@ -717,6 +724,7 @@ export default {
       window.location.href = this.userProfileUrl
     },
     handleToggleWrapperTheme(value) {
+      localStorage.setItem("lightcheck", value);
       this.lightThemeChecked = value;
     },
   },

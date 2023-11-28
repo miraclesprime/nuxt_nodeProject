@@ -428,6 +428,18 @@ export default {
             data: {startDate: newStartDate},
             // user,
             text: `updated Start date to ${newValue}`
+          }).then ((res)=>{
+            if (res.statusCode == 200) {
+              this.$store.dispatch("subtask/setSelectedSubtask", res.data)
+              this.$store.dispatch('subtask/fetchSubTask', res.data).then((res) => {
+                this.form = res;
+                this.$nuxt.$emit("update_table",res)
+              })
+              this.$store.dispatch("subtask/fetchSubtaskHistory", this.subtask)
+            } else {
+              console.warn(sub.statusCode, sub.message)
+              this.popupMessages.push({text: sub.message, variant: "danger"})
+            }
           })
         }
       } else {
@@ -436,6 +448,18 @@ export default {
           data: {startDate: newStartDate},
           // user,
           text: `updated Start date to ${newValue}`
+        }).then ((res)=>{
+          if (res.statusCode == 200) {
+              this.$store.dispatch("subtask/setSelectedSubtask", res.data)
+              this.$store.dispatch('subtask/fetchSubTask', res.data).then((res) => {
+                this.form = res;
+                this.$nuxt.$emit("update_table",res)
+              })
+              this.$store.dispatch("subtask/fetchSubtaskHistory", this.subtask)
+            } else {
+              console.warn(sub.statusCode, sub.message)
+              this.popupMessages.push({text: sub.message, variant: "danger"})
+            }
         })
       }
 
@@ -466,12 +490,25 @@ export default {
           this.ddate = oldValue
           // return
         } else {
-          this.$store.dispatch("subtask/updateSubtask", {
+         this.$store.dispatch("subtask/updateSubtask", {
             id: this.form.id,
             data: {dueDate: newDueDate},
             // user,
             text: `updated Due date to ${newValue}`
+          }).then((res)=>{
+            if (res.statusCode == 200) {
+              this.$store.dispatch("subtask/setSelectedSubtask", res.data)
+              this.$store.dispatch('subtask/fetchSubTask', res.data).then((res) => {
+                this.form = res;
+                this.$nuxt.$emit("update_table",res)
+              })
+              this.$store.dispatch("subtask/fetchSubtaskHistory", this.subtask)
+            } else {
+              console.warn(sub.statusCode, sub.message)
+              this.popupMessages.push({text: sub.message, variant: "danger"})
+            }
           })
+
         }
       } else {
         this.$store.dispatch("subtask/updateSubtask", {
@@ -479,6 +516,18 @@ export default {
           data: {dueDate: newDueDate},
           // user,
           text: `updated Due date to ${newValue}`
+        }).then ((res)=>{
+          if (res.statusCode == 200) {
+              this.$store.dispatch("subtask/setSelectedSubtask", res.data)
+              this.$store.dispatch('subtask/fetchSubTask', res.data).then((res) => {
+                this.form = res;
+                this.$nuxt.$emit("update_table",res)
+              })
+              this.$store.dispatch("subtask/fetchSubtaskHistory", this.subtask)
+            } else {
+              console.warn(sub.statusCode, sub.message)
+              this.popupMessages.push({text: sub.message, variant: "danger"})
+            }
         })
       }
       
@@ -546,6 +595,7 @@ export default {
         this.$store.dispatch("subtask/setSelectedSubtask", sub.data)
         this.$store.dispatch('subtask/fetchSubTask', sub.data).then((res) => {
           this.form = res;
+          this.$nuxt.$emit("update_table",res)
         })
         this.$store.dispatch("subtask/fetchSubtaskHistory", this.subtask)
       } else {
@@ -602,11 +652,12 @@ export default {
         data: updata,
         text: `updated ${data.name} to ${data.text || data.value}`
       })
-      
+      console.log(sub)
       if (sub.statusCode == 200) {
-        this.$store.dispatch("subtask/setSelectedSubtask", sub.data)
+        // this.$store.dispatch("subtask/setSelectedSubtask", sub.data)
         this.$store.dispatch('subtask/fetchSubTask', sub.data).then((res) => {
           this.form = res;
+          console.log(res)
           this.$nuxt.$emit("update_table",res)
         })
         this.$store.dispatch("subtask/fetchSubtaskHistory", this.subtask)

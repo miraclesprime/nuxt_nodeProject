@@ -9,7 +9,7 @@
         <!-- <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form> -->
         <div v-show="gridType == 'list'" id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative " :style="{ 'width': contentWidth }">
 
-          <adv-table-three :tableFields="taskFields" :tableData="localdata" :lazyComponent="true" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @title-click="openSidebar" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createTodo" @edit-section="renameTodo" :sectionMenu="true" @section-delete="deleteTodoConfirm($event)" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd" :drag="true" :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
+          <adv-table-three :tableFields="taskFields" :tableData="localdata" :lazyComponent="true" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @title-click="openSidebar" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createTodo" @edit-section="renameTodo" :sectionMenu="true" @section-delete="deleteTodoConfirm($event)" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd" :drag="true" :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
               
           <!-- <loading :loading="loading"></loading> -->
 
