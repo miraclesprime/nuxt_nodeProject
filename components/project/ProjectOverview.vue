@@ -37,6 +37,9 @@
           <div id="proj-overview-row2-col1" class="col-6">
             <bib-select label="Owner" test_id="po-owner-dd1" :options="filterUser" v-model="activeProject.userId" v-on:change="debounceUpdate('Owner', 'userId', activeProject.userId)"></bib-select>
           </div>
+        </div>
+        <div id="proj-overview-row2" class="row">
+          
           <div id="proj-overview-row2-col2" class="col-3">
             <!-- <bib-datepicker test_id="date01" v-model="startDate" :value="startDate" :maxDate="dueDate" format="dd MMM yyyy" @input="debounceUpdate('Start date', 'startDate', startDate)" label="Start date" name="startDate" placeholder="Start date" ></bib-datepicker> -->
             <bib-datetime-picker v-model="sdate" :format="format" :parseDate="parseDate" label="Start date" placeholder="Start date" @input="startdateProcess" ></bib-datetime-picker>

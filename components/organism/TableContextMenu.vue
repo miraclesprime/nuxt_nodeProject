@@ -84,7 +84,7 @@ export default {
           return this.variant='success'
         }
         if (item.label=='Remove favorite') {
-          return this.variant='orange'
+          return this.variant='primary'
         }
       if (this.activeItem) {
         if (item.label.includes('Complete')) {
@@ -96,7 +96,7 @@ export default {
         if (item.label.includes('Favorites')) {
           let fata = this.favTasks.some(ft=>ft.taskId == this.activeItem.id)
           let fapo = this.favProjects.some(fp=>fp.id == this.activeItem.id)
-          return fata ? 'orange': 'gray5'
+          return fata ? 'primary': 'gray5'
         }
       }
     }

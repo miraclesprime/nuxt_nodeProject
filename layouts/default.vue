@@ -439,7 +439,14 @@ export default {
       // if (this.$router.history.current.fullPath == "/dashboard") {
       //   this.navItems1[0].selected = true;
       // }
-
+      if(localStorage.getItem('lightcheck')) {
+          if(localStorage.getItem('lightcheck')=='true') {
+            this.lightThemeChecked=true    
+          }
+          else {
+            this.lightThemeChecked=false    
+          }
+      }
       if (this.$router.history.current.fullPath == "/inbox") {
         this.navItems1[0].selected = true;
       }
@@ -607,7 +614,7 @@ export default {
   watch: {
     appMembers(newVal){
       this.teamMembers=newVal
-    }
+    },
  },
   methods: {
     /*handleStateChange() {
@@ -717,6 +724,7 @@ export default {
       window.location.href = this.userProfileUrl
     },
     handleToggleWrapperTheme(value) {
+      localStorage.setItem("lightcheck", value);
       this.lightThemeChecked = value;
     },
   },
