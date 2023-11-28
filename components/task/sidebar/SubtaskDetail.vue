@@ -340,7 +340,7 @@ export default {
     isFavorite(){
         let fav = this.favsubtasks.findIndex(fv => fv.subtaskId == this.subtask.id)
         if (fav >= 0) {
-            return { variant: "orange", text: "Remove favorite", status: true }
+            return { variant: "primary", text: "Remove favorite", status: true }
         } else {
             return { variant: "gray5", text: "Add to favorites", status: false }
         }

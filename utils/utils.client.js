@@ -3,7 +3,7 @@ export default ({ store, app, context }, inject) => {
     const favtasks = store.state.task.favTasks
     let fav = favtasks.some(t => t.id == idx)
     if (fav) {
-      return { variant: "orange", text: "Remove favorite", status: true }
+      return { variant: "primary", text: "Remove favorite", status: true }
     } else {
       return { variant: "gray5", text: "Add to favorites", status: false }
     }
@@ -12,7 +12,7 @@ export default ({ store, app, context }, inject) => {
     const favprojects = store.state.project.favProjects
     let fav = favprojects.some(p => p.projectId == idx)
     if (fav) {
-      return { variant: "orange", text: "Remove favorite", status: true }
+      return { variant: "primary", text: "Remove favorite", status: true }
     } else {
       return { variant: "gray5", text: "Add to favorites", status: false }
     }

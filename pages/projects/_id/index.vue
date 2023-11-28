@@ -221,7 +221,7 @@ export default {
     isFavorite() {
       let fav = this.favProjects.some(t => t.id == this.project?.id)
       if (fav) {
-        return { variant: "orange", text: "Remove favorite", status: true }
+        return { variant: "primary", text: "Remove favorite", status: true }
       } else {
         return { variant: "gray5", text: "Add to favorites", status: false }
       }

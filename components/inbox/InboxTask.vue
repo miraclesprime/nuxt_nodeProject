@@ -157,7 +157,7 @@ export default {
     isFavorite() {
       let fav = this.favTasks.some(t => t.task.id == this.task.id)
       if (fav) {
-        return { variant: "orange", text: "Remove favorite", status: true }
+        return { variant: "primary", text: "Remove favorite", status: true }
       } else {
         return { variant: "gray5", text: "Add to favorites", status: false }
       }
