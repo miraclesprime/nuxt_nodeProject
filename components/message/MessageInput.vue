@@ -67,9 +67,10 @@
             </div>
           </tippy>
         </div>
-        <button class="send-btn"  id="message-input-send-btn" type="button" @click="sendMessage"> Send
+        <!-- <button class="send-btn" id="message-input-send-btn" type="button" @click="sendMessage"> Send
           <fa :icon="faPaperPlane"></fa>
-        </button>
+        </button> -->
+        <bib-button label="Send" variant="primary" icon="send" class="" @click="sendMessage"></bib-button>
       </div>
     </div>
     <bib-modal-wrapper v-if="isLinkModalShown" title="Link URL" @close="isLinkModalShown = false">
@@ -77,7 +78,7 @@
         <bib-input label="URL" v-model="linkUrl" />
         <div class="d-flex"  id="message-input-closemodal-setlink-wrap">
           <bib-button label="Cancel"  id="message-input-cancel-btn" variant="light" pill @click="closeAndResetLinkModal" ></bib-button>
-          <bib-button label="Set Link"  id="message-input-set-link-btn" variant="success" class="ml-auto" pill @click="setLink" ></bib-button>
+          <bib-button label="Set Link"  id="message-input-set-link-btn" variant="primary" class="ml-auto" pill @click="setLink" ></bib-button>
         </div>
       </template>
     </bib-modal-wrapper>
@@ -463,20 +464,19 @@ export default {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background-color: transparent;
-  color: rgba(43, 160, 38, 1);
-  background-color: rgba(43, 160, 38, .16);
-  border-radius: 5px;
+  background-color: $primary-24;
+  color: white;
+  border-radius: 4px;
 
   svg {
     /*width: 14px;*/
-    fill: rgba(43, 160, 38, 1);
+    fill: white;
   }
-  &:hover {
-    background-color:rgba(43, 160, 38, 1);
+  /*&:hover {
+    background-color: $primary-24-sub;
     color: white;
     svg { fill: white;}
-  }
+  }*/
 }
 
 .toolbar-bottom {

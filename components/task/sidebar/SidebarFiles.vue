@@ -4,10 +4,12 @@
       <p class="text-gray6 font-sm" id="sbf-task-files-para">Files</p>
     </div>
     <div id="sbf-task-file-actions-wrapper" class="file-actions d-flex align-center flex-wrap gap-05 py-025" v-show="activeProp">
-      <div class="d-inline-flex gap-05 align-center cursor-pointer shape-rounded height-2 px-1 bg-success-sub6 bg-hover-success-sub3 text-success" id="sbf-file-upload-button" @click="uploadModal = true">
+      <!-- <div class="d-inline-flex gap-05 align-center cursor-pointer shape-rounded height-2 px-1 bg-success-sub6 bg-hover-success-sub3 text-success" id="sbf-file-upload-button" @click="uploadModal = true">
         <bib-icon icon="add" variant="success" :scale="1" class=""></bib-icon>
         <span id="sbf-file-upload-text" class=""> Files</span>
-      </div>
+      </div> -->
+      <bib-button label="Files" variant="primary" icon="add" class="" @click="uploadModal = true"></bib-button>
+
 
       <file-comp v-for="file in files" :key="file.key + fileKey" :property="file" @delete-file="deleteFile" @preview-file="showPreviewModal(file)" ></file-comp>
     </div>
@@ -29,14 +31,14 @@
     >
       <template slot="content">
         <div style="margin-inline: -1rem; max-height: 65vh; overflow-y: auto;" id="sbf-upload-from-device">
-          <bib-input type="file" ref="files" variant="accepted" iconLeft="upload" placeholder="Upload from device"></bib-input>
+          <bib-input type="file" ref="files" variant="primary" iconLeft="upload" placeholder="Upload from device"></bib-input>
         </div>
         <loading :loading="fileLoader"></loading>
       </template>
       <template slot="footer">
         <div class="d-flex" id="sbf-footer">
           <bib-button label="Cancel" variant="light" pill @click="uploadModal = false" ></bib-button>
-          <bib-button label="Upload" variant="success" class="ml-auto" pill @click="uploadFiles"></bib-button>
+          <bib-button label="Upload" variant="primary" class="ml-auto" pill @click="uploadFiles"></bib-button>
         </div>
       </template>
     </bib-modal-wrapper>

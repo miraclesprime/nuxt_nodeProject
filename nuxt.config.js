@@ -117,12 +117,12 @@ export default {
       "~/node_modules/@bizinbox/bib-ui-lib/dist/utilities.scss",
     ],
   },
-  /*router: {
+  router: {
   //   // base: '/dashboard',
-    // middleware: ["defineNuxtRouteMiddleware"],
-    trailingSlash: false
-  },*/
-  serverMiddleware: ["~/middleware/redirects"],
+    middleware: ["redirects"],
+    // trailingSlash: false
+  },
+  // serverMiddleware: ["~/middleware/redirects"],
   // proxy: {
   //   '/auth': {
   //     target: process.env.VUE_APP_API_ENDPOINT+'/auth',

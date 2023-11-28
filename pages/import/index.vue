@@ -5,10 +5,10 @@
             <!-- Task View -->
             <div id="project-id-content" class="project-id-content position-relative " :style="{ 'width': contentWidth }">
                 <div class="d-flex justify-center p-1">
-                    <div class="border-gray2 shape-rounded py-1" style="min-width: 300px; max-width:400px;">
-                        <bib-input type="file" ref="csvImport" @files-dropped="onFileInput" multiple="false" variant="accepted" iconLeft="upload" placeholder="Select file to upload"></bib-input>
-                        <div v-show="files.length > 0" class="mx-1 mt-1 align-center">
-                          <bib-button :disabled="loading" variant="primary" label="Import CSV" @click="checkUser"></bib-button> <bib-spinner v-if="loading" :scale="2" ></bib-spinner>
+                    <div class="border-gray2 shape-rounded py-1 px-05" style="min-width: 400px; max-width:600px;">
+                        <bib-input type="file" ref="csvImport" @files-dropped="onFileInput" multiple="false" variant="primary" iconLeft="upload" placeholder="Select file to upload"></bib-input>
+                        <div v-show="files.length > 0" class=" mt-1 align-center">
+                          <bib-button :disabled="loading" variant="primary" label="Import CSV" @click="checkUser" pill></bib-button> <bib-spinner v-if="loading" :scale="2" ></bib-spinner>
                         </div>
                     </div>
                 </div>

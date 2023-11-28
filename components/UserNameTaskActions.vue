@@ -1,9 +1,10 @@
 <template>
   <div id="task-actions-wrapper" class="task-actions p-025 bg-white">
-    <div class="action-left d-flex " id="ta-action-left">
-      <div class="d-flex gap-05 py-025 px-05 shape-rounded cursor-pointer text-success bg-success-sub6 bg-hover-success-sub3 " id="ta-add-task-button" v-on:click.stop="showCreateTaskModal">
+    <div class="action-left  " id="ta-action-left">
+      <!-- <div class="d-flex gap-05 py-025 px-05 shape-rounded cursor-pointer text-success bg-success-sub6 bg-hover-success-sub3 " id="ta-add-task-button" v-on:click.stop="showCreateTaskModal">
         <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="ta-add-task-text" class="">New Task</span>
-      </div>
+      </div> -->
+      <bib-button label="New Task" variant="primary" icon="add" class="" @click.native.stop="showCreateTaskModal"></bib-button>
     </div>
     <div class="action-right d-flex gap-05" id="ta-action-right">
       <template>

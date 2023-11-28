@@ -41,7 +41,7 @@
           </div>
         </tippy>
         <!-- <div class="toolbar-button d-inline-flex align-center ml-auto"  id="message-input-toolbar-btn-wrap">
-          <button type="button" id="message-input-toolbar-btn" class="cursor-pointer text-secondary text-underline border-none bg-white text-hover-dark" @click.stop="cancelMessage">Cancel</button> 
+          <button type="button" id="message-input-toolbar-btn" class="cursor-pointer text-secondary text-underline border-none bg-white text-hover-dark" @click.native.stop="cancelMessage">Cancel</button> 
         </div> -->
       </div>
       <div class="editor-container" id="message-input-editor-container">

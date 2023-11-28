@@ -210,7 +210,7 @@ export default {
     },
     isComplete() {
       if (this.currentTask.statusId == 5) {
-        return { variant: "success", text: "Completed" }
+        return { variant: "primary", text: "Completed" }
       } else {
         return { variant: "light", text: "Mark Completed" }
       }
