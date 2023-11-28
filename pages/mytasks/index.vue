@@ -9,7 +9,7 @@
         <!-- <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form> -->
         <div v-show="gridType == 'list'" id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative " :style="{ 'width': contentWidth }">
 
-          <adv-table-three :tableFields="taskFields" :tableData="localdata" :lazyComponent="true" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @title-click="openSidebar" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createTodo" @edit-section="renameTodo"  @section-dragend="todoDragEnd" @row-dragend="taskDragEnd" :drag="true" :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
+          <adv-table-three :tableFields="taskFields" :tableData="localdata" :lazyComponent="true" :plusButton="false" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @title-click="openSidebar" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createTodo" @edit-section="renameTodo" :sectionMenu="true" @section-delete="deleteTodoConfirm($event)" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd" :drag="true" :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
               
           <!-- <loading :loading="loading"></loading> -->
 
@@ -35,12 +35,13 @@
                         <span class="list__item" :id="'tgs-list-1'+todo.id" v-on:click.stop="$nuxt.$emit('open-sidebar', todo.id)">
                           <div class="d-flex align-center" :id="'tgs-list-flex-1'+todo.id">
                             <bib-icon icon="add"></bib-icon>
-                            <span class="ml-05" :id="'tgs-list-span'+todo.id">Add task</span>
+                            <span class="ml-05" :id="'tgs-list-add'+todo.id">Add task</span>
                           </div>
                         </span>
                         <hr>
-                        <span class="list__item list__item__danger" :id="'tgs-list-3'+todo.id" v-on:click="deleteTodo(todo)">
-                          Delete section
+                        <span v-if="todo.isDeletable" class="list__item list__item__danger" :id="'tgs-list-3'+todo.id" v-on:click="deleteTodoConfirm(todo)" @mouseenter="deleteBtnHover = true" @mouseleave="deleteBtnHover = false">
+                          <bib-icon icon="trash" :variant="deleteBtnHover ? 'white' : 'danger'"></bib-icon>
+                          <span :id="'tgs-list-del'+todo.id" class="ml-05">Delete section</span>
                         </span>
                       </div>
                     </template>
@@ -74,6 +75,21 @@
         <!-- <priority-picker :show="priorityPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Priority', field:'priorityId', value: $event.value, historyText: $event.label})" @close="priorityPickerOpen = false" ></priority-picker> -->
         <!-- department-picker for list view -->
         <!-- <dept-picker :show="deptPickerOpen" :coordinates="popupCoords" @selected="updateTask({ task: activeTask, label:'Department', field:'departmentId', value: $event.value, historyText: $event.label })" @close="deptPickerOpen = false"></dept-picker> -->
+
+        <bib-modal-wrapper v-if="todoConfirmModal" title="Delete section" @close="todoConfirmModal = false">
+          <template slot="content">
+              <div class="d-grid gap-2 text-center" style="grid-template-columns: repeat(2, 1fr)">
+                <p class="text-secondary">Delete Section but keep the tasks as is.</p>
+                <p class="text-secondary">Delete Section and delete the tasks </p>
+              </div>
+          </template>
+          <template slot="footer">
+              <div class="justify-around">
+                <bib-button label="Keep tasks" variant="primary" pill @click="deleteTodo(true)"></bib-button>
+                <bib-button label="Delete tasks" variant="danger" pill @click="deleteTodo(false)"></bib-button>
+              </div>
+          </template>
+        </bib-modal-wrapper>
 
         <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
 
@@ -149,7 +165,11 @@ export default {
       contentWidth: "100%",
       tasksKey: 'tasks',
       groupby: "",
-      dragTable: true
+      dragTable: true,
+      deleteBtnHover: false,
+      todoConfirmModal: false,
+      todoToDelete: {},
+      retainTasks: null,
     }
   },
 
@@ -210,7 +230,7 @@ export default {
         this.updateKey()
       });
       this.$nuxt.$on("refresh-table", () => {
-        console.log("mytask_created_on-refresh")
+        // console.log("mytask_created_on-refresh")
         this.updateKey();
       });
     }
@@ -554,7 +574,7 @@ export default {
         if(newDate.getTime() > new Date(this.activeTask.startDate).getTime()){
           data = { [this.datepickerArgs.field]: newDate }
           // newDate = this.$formatDate(value)
-          console.log('valid date', newDate, this.activeTask.startDate)
+          // console.log('valid date', newDate, this.activeTask.startDate)
         } else {
           // console.log('Invalid date', newDate, this.activeTask.startDate)
           data = { [this.datepickerArgs.field]: null }
@@ -610,7 +630,7 @@ export default {
       // console.log(taskdata)
       this.$store.dispatch("task/createTask", taskdata)
       .then(t => {
-        console.log(t)
+        // console.log(t)
         // this.updateKey()
       })
       .catch(e => console.warn(e))
@@ -682,12 +702,23 @@ export default {
       }).catch(e => console.warn(e))
     },
 
-    deleteTodo(todo) {
-      this.$store.dispatch("todo/deleteTodo", {id: todo.id, title: todo.title})
+    deleteTodoConfirm(todo){
+      this.todoConfirmModal = true
+      this.todoToDelete = todo
+    },
+
+    deleteTodo(retainTasks) {
+      this.$store.dispatch("todo/deleteTodo", {id: this.todoToDelete.id, title: this.todoToDelete.title, retainTasks})
         .then((d) => {
-          this.updateKey(t.message)
+          // console.log(d)
+          this.updateKey(d.message)
         })
-        .catch(e => console.log(e))
+        .catch(e => {
+          console.warn(e)
+        }).then(() => {
+          this.todoConfirmModal = false
+          this.todoToDelete = {}
+        })
     },
 
     taskDragStart(e) {

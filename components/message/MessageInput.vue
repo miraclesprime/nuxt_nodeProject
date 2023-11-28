@@ -33,7 +33,7 @@
         </div>
       </div>
       <div class="editor-container" id="message-input-editor-container">
-        <div class="editor-wrapper" id="message-input-editor-container-wrapper">
+        <div class="editor-wrapper overflow-y-auto" id="message-input-editor-container-wrapper" style="max-height: 12rem;">
           <div v-if="value.files.length > 0" class="files" id="message-input-files-wrapper">
             <div v-for="(file, idx) in value.files" :key="idx" class="file" :id="'message-input-'+idx">
               <div class="file-thumbnail" id="message-input-fafile">

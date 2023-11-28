@@ -64,7 +64,7 @@
       </div>
       <div class=" border-bottom-gray3 position-relative px-105 py-05 " id="tsb-title">
         <!-- <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="taskTitleInput" v-model.trim="form.title" placeholder="Enter Task Name ..." v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" > -->
-        <textarea v-model.trim="form.title" ref="taskTitleInput" class="editable-input multiline position-absolute" :class="{'error': error == 'invalid'}" v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" placeholder="Enter Task Name ..." style="height: calc(100% - 1rem);" ></textarea>
+        <textarea v-model.trim="form.title" ref="taskTitleInput" class="editable-input multiline position-absolute" :class="{'error': error == 'invalid'}" v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" v-on:keydown.enter.prevent placeholder="Enter Task Name ..." style="height: calc(100% - 1rem);" ></textarea>
         <div class="pseudo-title" aria-hidden="true" >{{form.title}}</div>
       </div>
       
@@ -118,7 +118,7 @@
       </template>
     </bib-popup-notification-wrapper>
     
-    <subtask-detail v-if="showSubtaskDetail" @close-sidebar-detail="showSubtaskDetail = false"></subtask-detail>
+    <subtask-detail v-if="showSubtaskDetail" @close-sidebar-detail="showSubtaskDetail = false" @subtask-desc="subtaskDesc = $event"></subtask-detail>
 
   </article>
 </template>
@@ -160,6 +160,7 @@ export default {
       popupMessages: [],
       deleteBtnHover: false,
       // titleHt: "2rem",
+      subtaskDesc: null,
     };
   },
 
@@ -278,7 +279,21 @@ export default {
     showSubtaskDetail(newValue){
       if(!newValue){
         this.$store.dispatch("subtask/fetchSubtasks", this.currentTask )
-      } 
+        // console.log("false", newValue, this.subtaskDesc)
+        if (this.subtaskDesc) {
+          let hText = this.subtaskDesc?.value.replace( /(<([^>]+)>)/ig, '');
+          hText = _.truncate(hText, {'length': 30})
+          // console.log(hText)
+
+          this.$store.dispatch("subtask/updateSubtask", {
+            id: this.subtaskDesc.id,
+            data: { "description": this.subtaskDesc.value },
+            text: `updated ${this.subtaskDesc.name} - ${hText}`
+          })
+        }
+      } else {
+        this.subtaskDesc = null
+      }
     },
 
     sidebarOpen(newValue){

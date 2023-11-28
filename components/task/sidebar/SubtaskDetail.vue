@@ -42,7 +42,7 @@
       <!-- title input -->
       <div class="border-bottom-gray3 position-relative px-105 py-05 mb-1" id="std-fields-wrap">
         <!-- <input type="text" id="std-title-editable-input" class="editable-input" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" v-model="form.title" placeholder="Enter title..." v-on:keyup="debounceUpdateField({field: 'title', value: form.title, name: 'Title'})"> -->
-        <textarea id="std-title-input" class="editable-input multiline position-absolute" v-model="form.title" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" placeholder="Enter title..." v-on:keyup="debounceUpdateField({field: 'title', value: form.title, name: 'Title'})"></textarea>
+        <textarea id="std-title-input" class="editable-input multiline position-absolute" v-model="form.title" :class="{'error': error == 'invalid'}" ref="subtaskTitleInput" placeholder="Enter title..." v-on:keyup="debounceUpdateField({field: 'title', value: form.title, name: 'Title'})" v-on:keydown.enter.prevent></textarea>
         <div class="pseudo-title" aria-hidden="true" role="textarea">{{form.title}}</div>
       </div>
     </div>
@@ -124,7 +124,7 @@
         <div class="row " id="sd-other-fields-row7">
           <div class="col-12" id="sd-other-fields-r7-c1">
             <!-- <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter subtask description..." label="Description" v-on:keyup.native="debounceUpdateField({name: 'Description', field: 'description', value: form.description })"></bib-input> -->
-            <rich-editor :value="value" :editingMessage="form.description" @submit="debounceUpdateField({name: 'Description', field: 'description', value: $event.text})" ></rich-editor>
+            <rich-editor :value="value" :editingMessage="form.description" @submit="$emit('subtask-desc',{ id: form.id, name: 'Description', field: 'description', value: $event.text})" ></rich-editor>
           </div>
         </div>
       </div>
@@ -350,7 +350,7 @@ export default {
   watch: {
     subtask (newVal, oldVal) {
       if (newVal != oldVal) {
-        console.log('watch subtask change')
+        // console.log('watch subtask change')
         this.fetchSubtaskMembers(this.subtask)
         this.fetchSubtaskComments(this.subtask)
         this.fetchSubtaskHistory(this.subtask)
@@ -645,7 +645,7 @@ export default {
       if (data.name == 'Status' && data.value != 5) {
         updata = { [data.field]: data.value, isDone: false }
       }
-      console.log(data, updata)
+      // console.log(data, updata)
       
       const sub = await this.$store.dispatch("subtask/updateSubtask", {
         id: this.form.id,
@@ -698,10 +698,9 @@ export default {
           })
           .catch(e => console.log(e))
       } else {
-        this.$store.dispatch("subtask/createSubtaskComment", { id: this.subtask.id, comment: data.text, text: `added comment "${trimComment}"` })
-          .then(res => {
+        this.$store.dispatch("subtask/createSubtaskComment", { id: this.subtask.id, comment: data.text, text: `added comment "${trimComment}"` }).then(res => {
             if (res.data.statusCode == 200) {
-
+              this.fetchSubtaskComments({id: res.data.subtaskId})
             }
             if (this.value.files.length > 0) {
               this.uploadFiles(this.value.files, res.data)

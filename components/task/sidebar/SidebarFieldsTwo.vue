@@ -208,7 +208,7 @@ export default {
         if (this.form.description == this.description) { return }
         let hText = this.description.replace( /(<([^>]+)>)/ig, '');
         hText = _.truncate(hText, {'length': 30})
-        console.log(newValue, hText, this.form.description == this.description)
+        // console.log(newValue, hText, this.form.description == this.description)
         
         this.$store.dispatch("task/updateTask", {
           id: this.id,
@@ -437,7 +437,7 @@ export default {
     updateDescription(name, field, value){
       this.description = value.text
       this.id = _.clone(this.task.id)
-      console.log('submit', value.text)
+      // console.log('submit', value.text)
     }
   },
 };

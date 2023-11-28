@@ -57,7 +57,7 @@
             <fa :icon="faEllipsisH" />
           </div>
         </template>
-        <div id="msg-isMenuOpen" class="menu" :class="{ open: isMenuOpen }">
+        <div id="msg-isMenuOpen" class="menu" style="text-align: left" :class="{ open: isMenuOpen }">
           <div id="msg-menu-item1" v-if="msg.userId == user.Id" class="menu-item">
             <a id="msg-editMessage" @click.stop="editMessage">Edit</a>
           </div>
@@ -239,7 +239,12 @@ export default {
     })
   },
   mounted() {
-    this.reactions = _.cloneDeep(this.msg.reactions);
+    let reactions = this.msg.reactions ? this.msg.reactions : [];
+    if(reactions.length > 0) {
+      this.reactions = _.cloneDeep(reactions);
+    } else {
+      this.reactions = []
+    }
     this.getFiles()
   },
   methods: {
@@ -332,7 +337,7 @@ export default {
       // console.log(data)
       this.isReactionPickerOpen = false;
       this.reactionSpinner = true
-      let duplicateReaction = this.reactions.some(r => r.userId == this.user.Id && r.reaction == data)
+      let duplicateReaction = this.reactions?.some(r => r.userId == this.user.Id && r.reaction == data)
       
       if (duplicateReaction) {
         this.alertDialog = true
