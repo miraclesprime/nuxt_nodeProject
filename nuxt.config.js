@@ -1,8 +1,5 @@
 import { resolve } from "path";
-/*import i18n from "./config/i18n";
-import global_en from './node_modules/@bizinbox/bib-ui-lib/dist/lang/global_en.json'
-import global_fr from './node_modules/@bizinbox/bib-ui-lib/dist/lang/global_fr.json'*/
-import local_en from "./config/lang/en.json";
+import i18n from "./config/i18n";
 import global_en from "./node_modules/@bizinbox/bib-ui-lib/dist/lang/global_en.json";
 
 export default {
@@ -74,7 +71,7 @@ export default {
         vueI18n: {
           locale: "en",
           fallbackLocale: "en",
-          messages: { en: { ...global_en, ...local_en } },
+          messages: { en: { ...global_en } },
         },
       }
     ],
@@ -94,12 +91,12 @@ export default {
       "~/node_modules/@bizinbox/bib-ui-lib/dist/utilities.scss",
     ],
   },
-  router: {
+  /*router: {
   //   // base: '/dashboard',
     middleware: ["redirects"],
     // trailingSlash: false
-  },
-  // serverMiddleware: ["~/middleware/redirects"],
+  },*/
+  serverMiddleware: ["~/middleware/redirects"],
   // proxy: {
   //   '/auth': {
   //     target: process.env.VUE_APP_API_ENDPOINT+'/auth',
