@@ -81,9 +81,6 @@
           </div> -->
         
           <div class="align-center height-2 cursor-pointer" > 
-            <!-- <div class="width-2 height-2 bg-success-sub6 align-center justify-center shape-circle">
-              <bib-icon icon="add" variant="success"></bib-icon>
-            </div> -->
             <user-select-two userId="" mode="icon" title="Add to team" min-width="15rem" max-width="18rem" @change="addTeamMember"></user-select-two>
             <team-list-two :team="team" @delete-member="deleteMember"></team-list-two>
             <!-- <bib-icon icon="user-group-solid"></bib-icon> -->

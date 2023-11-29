@@ -1,7 +1,9 @@
 import { resolve } from "path";
-import i18n from "./config/i18n";
+/*import i18n from "./config/i18n";
 import global_en from './node_modules/@bizinbox/bib-ui-lib/dist/lang/global_en.json'
-import global_fr from './node_modules/@bizinbox/bib-ui-lib/dist/lang/global_fr.json'
+import global_fr from './node_modules/@bizinbox/bib-ui-lib/dist/lang/global_fr.json'*/
+import local_en from "./config/lang/en.json";
+import global_en from "./node_modules/@bizinbox/bib-ui-lib/dist/lang/global_en.json";
 
 export default {
   // Global page headers (https://go.nuxtjs.dev/config-head)
@@ -58,24 +60,6 @@ export default {
     "@nuxtjs/style-resources",
     [
       "nuxt-i18n",
-      /*{
-        vueI18nLoader: true,
-        defaultLocale: "fr",
-        locales: [
-          {
-            code: "en",
-            name: "English",
-            file: "en.json",
-          },
-          {
-            code: "fr",
-            name: "Français",
-            file: "fr.json",
-          },
-        ],
-        vueI18n: i18n,
-        langDir: "~/node_modules/@bizinbox/bib-ui-lib/dist/lang",
-      },*/
       {
         vueI18nLoader: true,
         defaultLocale: 'en',
@@ -83,12 +67,6 @@ export default {
           {
             code: "en",
             name: "English",
-            // file: "global_en.json",
-          },
-          {
-            code: "fr",
-            name: "Français",
-            // file: "global_fr.json",
           },
         ],
         globalInjection: true,
@@ -96,9 +74,8 @@ export default {
         vueI18n: {
           locale: "en",
           fallbackLocale: "en",
-          messages: { en: { ...global_en }, fr: { ...global_fr }},
+          messages: { en: { ...global_en, ...local_en } },
         },
-        // langDir: "~/node_modules/@bizinbox/bib-ui-lib/dist/lang",
       }
     ],
   ],
