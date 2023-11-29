@@ -43,7 +43,7 @@
           </template>
           <template #cell_action="data">
             <div class="shape-circle bg-light bg-hover-gray4 width-2 height-2 d-flex justify-center align-center file-menu" id="pf-file-shape-circle">
-              <bib-button pop="horizontal-dots" :scale="1">
+              <bib-button :scale="1" dropdown="horizontal-dots">
                 <template v-slot:menu>
                   <div class="list " id="pf-file-list">
                     <span class="list__item"  id="pf-file-list-item-1" v-if="canPreview(data.value)" @click="showPreviewModal(data.value)">Preview</span>
@@ -452,5 +452,10 @@ table {
   .table {
     th, td { padding: 0.15rem 0.3rem;}
   }
+
+  .button--drop .menu details .wrapper {
+    left: -50%!important;
+    transform: translate(-80%,0)!important;
+}
 }
 </style>
