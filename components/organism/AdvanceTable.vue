@@ -722,13 +722,13 @@ export default {
 
   .new-button {
     padding-inline: 0.7rem;
-    padding-block: 0.35rem;
+    padding-block: 0.3rem;
     background-color: $primary-24;
     color: white;
     span { max-width: 0; overflow: hidden; transition: all 200ms ease-in; }
 
     &:hover {
-      /*background-color: $primary-24-sub;*/
+      background-color: $primary-24-sub;
       span { max-width: 8rem; padding-left: 0.25rem; padding-right: 0.5rem; }
     }
   }

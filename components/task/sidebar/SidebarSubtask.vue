@@ -63,13 +63,13 @@
           <bib-icon icon="close" variant="success" :scale="1.2"></bib-icon>
           <span id="sbs-cancel">Cancel</span>
         </div> -->
-        <bib-button v-if="newSubtask" label="Cancel" variant="primary" icon="close" class="" @click="newSubtask = false"></bib-button>
+        <bib-button v-if="newSubtask" label="Cancel" variant="primary-24" icon="close" class="" @click="newSubtask = false"></bib-button>
 
         <!-- <div v-else id="sbs-openCreateSubtask" class="d-inline-flex gap-05 align-center py-025 px-1 shape-rounded bg-success-sub6 bg-hover-success-sub3 text-success  cursor-pointer" @click="openCreateSubtask">
           <bib-icon icon="add" variant="success" :scale="1.2"></bib-icon>
           <span id="sbs-addSubtask">Add subtask</span>
         </div> -->
-        <bib-button v-else label="Add subtask" variant="primary" icon="add" class="" @click="openCreateSubtask"></bib-button>
+        <bib-button v-else label="Add subtask" variant="primary-24" icon="add" class="" @click="openCreateSubtask"></bib-button>
 
       </div>
     <!-- subtask context menu -->

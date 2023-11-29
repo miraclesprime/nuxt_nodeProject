@@ -111,7 +111,7 @@
         <template slot="footer">
           <div class="text-center d-flex justify-between">
             <bib-button label="Cancel" variant="light" pill v-on:click="reportModal = false"></bib-button>
-            <bib-button label="Send" variant="primary" pill v-on:click="submitReport"></bib-button>
+            <bib-button label="Send" variant="primary-24" pill v-on:click="submitReport"></bib-button>
           </div>
         </template>
       </bib-modal-wrapper>

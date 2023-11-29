@@ -8,7 +8,7 @@
                     <div class="border-gray2 shape-rounded py-1 px-05" style="min-width: 400px; max-width:600px;">
                         <bib-input type="file" ref="csvImport" @files-dropped="onFileInput" multiple="false" variant="primary" iconLeft="upload" placeholder="Select file to upload"></bib-input>
                         <div v-show="files.length > 0" class=" mt-1 align-center">
-                          <bib-button :disabled="loading" variant="primary" label="Import CSV" @click="checkUser" pill></bib-button> <bib-spinner v-if="loading" :scale="2" ></bib-spinner>
+                          <bib-button :disabled="loading" variant="primary-24" label="Import CSV" @click="checkUser" pill></bib-button> <bib-spinner v-if="loading" :scale="2" ></bib-spinner>
                         </div>
                     </div>
                 </div>
@@ -57,11 +57,11 @@
                 <template slot="footer">
                     <div v-show="missingMembers.length > 0 && steps[0].progress == 'done' && !dupProject" class="justify-between">
                         <bib-button label="Add users" variant="secondary" class="mr-1" pill @click="closeModal"></bib-button>
-                        <bib-button label="Continue" variant="primary" pill @click="importProject"></bib-button>
+                        <bib-button label="Continue" variant="primary-24" pill @click="importProject"></bib-button>
                     </div>
                     <div v-show="dupProject && !importfinish && !importCompleteMsg">
                         <bib-button label="Cancel" variant="secondary" class="mr-1" pill @click="closeModal"></bib-button>
-                        <bib-button label="Continue" variant="primary" pill @click="reimportCSV"></bib-button>
+                        <bib-button label="Continue" variant="primary-24" pill @click="reimportCSV"></bib-button>
                     </div>
                     <div v-show="importfinish">
                         <bib-button label="Finish" variant="success" pill @click="finishImport"></bib-button>

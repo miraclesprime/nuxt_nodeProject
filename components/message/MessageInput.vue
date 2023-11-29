@@ -67,10 +67,10 @@
             </div>
           </tippy>
         </div>
-        <!-- <button class="send-btn" id="message-input-send-btn" type="button" @click="sendMessage"> Send
+        <button class="send-btn" id="message-input-send-btn" type="button" @click="sendMessage"> Send
           <fa :icon="faPaperPlane"></fa>
-        </button> -->
-        <bib-button label="Send" variant="primary" icon="send" class="" @click="sendMessage"></bib-button>
+        </button>
+        <!-- <bib-button label="Send" variant="primary-24" icon="send" class="" @click="sendMessage"></bib-button> -->
       </div>
     </div>
     <bib-modal-wrapper v-if="isLinkModalShown" title="Link URL" @close="isLinkModalShown = false">
@@ -78,7 +78,7 @@
         <bib-input label="URL" v-model="linkUrl" />
         <div class="d-flex"  id="message-input-closemodal-setlink-wrap">
           <bib-button label="Cancel"  id="message-input-cancel-btn" variant="light" pill @click="closeAndResetLinkModal" ></bib-button>
-          <bib-button label="Set Link"  id="message-input-set-link-btn" variant="primary" class="ml-auto" pill @click="setLink" ></bib-button>
+          <bib-button label="Set Link"  id="message-input-set-link-btn" variant="primary-24" class="ml-auto" pill @click="setLink" ></bib-button>
         </div>
       </template>
     </bib-modal-wrapper>
@@ -147,7 +147,7 @@ export default {
   data() {
     return {
       editor: null,
-      showingPicker: false,
+      // showingPicker: false,
       isLinkModalShown: false,
       linkUrl: '',
 
@@ -459,7 +459,7 @@ export default {
   color: #fff;
   border: 0;
   cursor: pointer;
-  padding: 0.35rem 1rem;
+  padding: 0.4rem 1.2rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -472,11 +472,11 @@ export default {
     /*width: 14px;*/
     fill: white;
   }
-  /*&:hover {
+  &:hover {
     background-color: $primary-24-sub;
     color: white;
     svg { fill: white;}
-  }*/
+  }
 }
 
 .toolbar-bottom {

@@ -28,7 +28,7 @@
       <template v-slot:footer>
         <div class="m-auto pt-1 d-flex justify-between" id='cpm-create-project-model'>
           <bib-button @click.native="closeModal" variant="light" size="lg" pill label="Cancel"></bib-button>
-          <bib-button @click.native="createProject()" variant="primary" size="lg" id="create-project-btn" pill label="Create"></bib-button>
+          <bib-button @click.native="createProject()" variant="primary-24" size="lg" id="create-project-btn" pill label="Create"></bib-button>
         </div>
       </template>
     </bib-modal-wrapper>

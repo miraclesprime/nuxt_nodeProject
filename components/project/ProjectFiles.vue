@@ -5,7 +5,7 @@
         <!-- <div class="d-flex gap-05 cursor-pointer shape-rounded bg-success-sub6 bg-hover-success-sub3 py-025 px-05 text-success " id="pf-file-upload-button" @click="uploadModal = true">
           <bib-icon icon="add" variant="success" :scale="1.25" class=""></bib-icon> <span id="pf-file-upload-text" class="">Upload File</span>
         </div> -->
-        <bib-button label="Upload File" variant="primary" icon="add" class="" @click="uploadModal = true"></bib-button>
+        <bib-button label="Upload File" variant="primary-24" icon="upload" class="" @click="uploadModal = true"></bib-button>
       </div>
       <div class="action-right d-flex gap-05" id="pf-file-action-right">
         <div class="d-flex width-2 height-2 align-center justify-center bg-light bg-hover-gray4 shape-circle p-025 cursor-pointer" id="pf-file-action5-link">
@@ -77,7 +77,7 @@
       <template slot="footer">
         <div class="d-flex"  id="pf-file-select-files-btns">
           <bib-button label="Cancel"  id="pf-file-cancel-btn" variant="light" pill @click="uploadModal = false"></bib-button>
-          <bib-button label="Upload"  id="pf-file-upload-btn" variant="primary" class="ml-auto" pill @click="uploadFiles"></bib-button>
+          <bib-button label="Upload"  id="pf-file-upload-btn" variant="primary-24" class="ml-auto" pill @click="uploadFiles"></bib-button>
         </div>
       </template>
     </bib-modal-wrapper>
