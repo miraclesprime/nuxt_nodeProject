@@ -69,7 +69,6 @@
             :items="navItems1"
             @click="goToRoute"
             :isLightTheme="lightThemeChecked"
-            style="margin-left:-0.5rem"
           ></bib-app-navigation>
           <!-- separator -->
           <div
@@ -81,7 +80,6 @@
             :items="navItems2"
             @click="goToRoute"
             :isLightTheme="lightThemeChecked"
-            style="margin-left:-0.5rem"
           ></bib-app-navigation>
           <!-- separator -->
           <div

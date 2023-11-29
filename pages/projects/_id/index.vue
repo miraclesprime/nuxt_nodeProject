@@ -96,7 +96,7 @@
       <bib-modal-wrapper v-if="projectTeamModal" title="Team" size="lg" @close="projectTeamModal = false">
         <template slot="content">
           <div style="min-height: 12rem;">
-            <project-team-modal :project="project"></project-team-modal>
+          <project-team-modal :project="project"></project-team-modal>
           </div>
         </template>
       </bib-modal-wrapper>
@@ -111,7 +111,7 @@
         <template slot="footer">
           <div class="text-center d-flex justify-between">
             <bib-button label="Cancel" variant="light" pill v-on:click="reportModal = false"></bib-button>
-            <bib-button label="Send" variant="success" pill v-on:click="submitReport"></bib-button>
+            <bib-button label="Send" variant="primary-24" pill v-on:click="submitReport"></bib-button>
           </div>
         </template>
       </bib-modal-wrapper>

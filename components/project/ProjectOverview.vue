@@ -10,6 +10,7 @@
             <input type="text" class="editable-input" id="proj-overview-proj-title-input" ref="taskTitleInput" placeholder="Project name" v-model="activeProject.title" v-on:keyup="debounceUpdate('title', 'title', activeProject.title)" >
           </div>
         </div>
+        
         <div id="proj-overview-row1" class="row my-1">
           <div id="proj-overview-row1-col1" class="col-4">
             <div id="proj-overview-progress-wrap1" class="bg-light shape-rounded text-center px-05 py-1 h-100">
@@ -33,28 +34,28 @@
             </div>
           </div>
         </div>
+
         <div id="proj-overview-row2" class="row">
-          <div id="proj-overview-row2-col1" class="col-6">
+          <div id="proj-overview-row2-col1" class="col-12">
             <bib-select label="Owner" test_id="po-owner-dd1" :options="filterUser" v-model="activeProject.userId" v-on:change="debounceUpdate('Owner', 'userId', activeProject.userId)"></bib-select>
           </div>
         </div>
+
         <div id="proj-overview-row2" class="row">
-          
           <div id="proj-overview-row2-col2" class="col-3">
-            <!-- <bib-datepicker test_id="date01" v-model="startDate" :value="startDate" :maxDate="dueDate" format="dd MMM yyyy" @input="debounceUpdate('Start date', 'startDate', startDate)" label="Start date" name="startDate" placeholder="Start date" ></bib-datepicker> -->
             <bib-datetime-picker v-model="sdate" :format="format" :parseDate="parseDate" label="Start date" placeholder="Start date" @input="startdateProcess" ></bib-datetime-picker>
           </div>
           <div id="proj-overview-row2-col3" class="col-3">
-            <!-- <bib-datepicker test_id="date02" v-model="dueDate" :value="dueDate" :minDate="startDate" format="dd MMM yyyy" @input="debounceUpdate('Due date', 'dueDate', dueDate)" label="Due date" name="dueDate" class="align-right" placeholder="Due date"></bib-datepicker> -->
             <bib-datetime-picker v-model="ddate" :format="format" :parseDate="parseDate" label="Due date" placeholder="Due date" @input="duedateProcess"></bib-datetime-picker>
-
           </div>
-        </div>
-        <div id="proj-overview-row3" class="row">
-          <div id="proj-overview-row3-col2" class="col-12">
+          <div id="proj-overview-row3-col2" class="col-6">
             <bib-input type="select" label="Department" v-model="activeProject.departmentId" :options="departments" size="md"  v-on:change.native="debounceUpdate('Department', 'departmentId', activeProject.departmentId)"></bib-input>
           </div>
         </div>
+
+        <!-- <div id="proj-overview-row3" class="row">
+        </div> -->
+
         <div id="proj-overview-row4" class="row">
           <div id="proj-overview-row4-col1" class="col-6">
             <bib-input type="select" label="Priority" v-model.number="activeProject.priorityId" :options="priority" placeholder="Please select..." v-on:change.native="debounceUpdate('Priority', 'priorityId', activeProject.priorityId)"></bib-input>
@@ -63,6 +64,7 @@
             <bib-input type="select" label="Status" v-model.number="activeProject.statusId" :options="status" placeholder="Please select..." v-on:change.native="debounceUpdate('Status', 'statusId', activeProject.statusId)"></bib-input>
           </div>
         </div>
+
         <div id="proj-overview-row5" class="row">
           <!-- <div id="proj-overview-row5-col1" class="col-4">
             <label class="text-gray6" id="proj-overview-span1">Time</label>

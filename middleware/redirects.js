@@ -1,4 +1,13 @@
-export default function (req, res, next) {
+export default function ({ route, redirect }, next) {
+  // Your redirect logic here
+  if (route.path === '/') {
+    return redirect('/mytasks')
+  } else {
+    next()
+  }
+}
+
+/*export default function (req, res, next) {
   const redirects = [
     {
       from: "/",
@@ -13,3 +22,4 @@ export default function (req, res, next) {
     next();
   }
 }
+*/

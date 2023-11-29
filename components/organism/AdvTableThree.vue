@@ -146,8 +146,8 @@
                 <div v-show="localNewrow.sectionId != section.id" :key="'plusbtn'+akey" class="tr position-relative" role="row" >
                   <div v-if="drag && filterViews == 'all'" class="td width-2" role="cell" style="border-right-color: transparent;"></div>
                   <div class="td" role="cell" style="border-right-color: transparent; width: 360px;">
-                    <div class="d-inline-flex align-center px-05 py-025 font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
-                      <bib-icon :icon="plusButton.icon" variant="success" :scale="1.1" class=""></bib-icon> <span class="text-truncate">{{plusButton.label}}</span>
+                    <div class="d-inline-flex align-center font-md cursor-pointer new-button shape-rounded" v-on:click.stop="newRowClick(section.id)">
+                      <bib-icon :icon="plusButton.icon" variant="white" :scale="0.85" class=""></bib-icon> <span class="text-truncate">{{plusButton.label}}</span>
                     </div>
                   </div>
 		              <div class="position-absolute" style="left:0; bottom:0; right:0; z-index:1; height: 1px; border-bottom: 1px solid var(--bib-light)"></div>
@@ -1159,13 +1159,15 @@ export default {
   }
 
   .new-button {
-    background-color: $success-sub6;
-    color: $success;
+    padding-inline: 0.7rem;
+    padding-block: 0.3rem;
+    background-color: $primary-24;
+    color: white;
     span { max-width: 0; overflow: hidden; transition: all 200ms ease-in; }
 
     &:hover {
-      background-color: $success-sub3;
-      span { max-width: 8rem; padding-left: 0.5rem; }
+      background-color: $primary-24-sub;
+      span { max-width: 8rem; padding-left: 0.5rem; padding-right: 0.5rem; }
     }
   }
 

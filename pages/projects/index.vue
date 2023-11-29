@@ -20,6 +20,7 @@
       <no-data v-else></no-data>
 
       <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
+      
       <!-- project rename modal -->
       <bib-modal-wrapper v-if="renameModal" title="Rename project" @close="renameModal = false">
         <template slot="content">

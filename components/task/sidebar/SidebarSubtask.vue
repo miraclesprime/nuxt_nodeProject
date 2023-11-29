@@ -59,14 +59,18 @@
         </tbody>
       </table>
       <div id="sbs-subtask-title-wrapper" class="section-title w-100 py-025" v-show="activeProp">
-        <div v-if="newSubtask" class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded bg-success-sub6 bg-hover-success-sub3 text-success  cursor-pointer" id="sbs-newSubtask" @click="newSubtask = false">
+        <!-- <div v-if="newSubtask" class="d-inline-flex gap-05 align-center py-025 px-05 shape-rounded bg-success-sub6 bg-hover-success-sub3 text-success  cursor-pointer" id="sbs-newSubtask" @click="newSubtask = false">
           <bib-icon icon="close" variant="success" :scale="1.2"></bib-icon>
           <span id="sbs-cancel">Cancel</span>
-        </div>
-        <div v-else id="sbs-openCreateSubtask" class="d-inline-flex gap-05 align-center py-025 px-1 shape-rounded bg-success-sub6 bg-hover-success-sub3 text-success  cursor-pointer" @click="openCreateSubtask">
+        </div> -->
+        <bib-button v-if="newSubtask" label="Cancel" variant="primary-24" icon="close" class="" @click="newSubtask = false"></bib-button>
+
+        <!-- <div v-else id="sbs-openCreateSubtask" class="d-inline-flex gap-05 align-center py-025 px-1 shape-rounded bg-success-sub6 bg-hover-success-sub3 text-success  cursor-pointer" @click="openCreateSubtask">
           <bib-icon icon="add" variant="success" :scale="1.2"></bib-icon>
           <span id="sbs-addSubtask">Add subtask</span>
-        </div>
+        </div> -->
+        <bib-button v-else label="Add subtask" variant="primary-24" icon="add" class="" @click="openCreateSubtask"></bib-button>
+
       </div>
     <!-- subtask context menu -->
     <table-context-menu :items="subtaskContextMenu" :show="showContext" :coordinates="popupCoords" :activeItem="activeSubtask" @close-context="closeContext" ref="task_menu" @item-click="contextItemClick"></table-context-menu>
