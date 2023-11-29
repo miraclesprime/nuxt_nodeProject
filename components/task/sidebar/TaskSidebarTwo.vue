@@ -203,7 +203,7 @@ export default {
     isFavorite() {
       let fav = this.favTasks.some(t => t.task.id == this.currentTask.id)
       if (fav) {
-        return { variant: "orange", text: "Remove favorite", status: true }
+        return { variant: "primary", text: "Remove favorite", status: true }
       } else {
         return { variant: "gray4", text: "Add to favorites", status: false }
       }
@@ -451,8 +451,13 @@ export default {
             const res =  await this.$axios.$get('/todo/all', {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter':  'all' }
               });
-              if (res.data?.[0]?.tasks?.length==1) {
-                this.$nuxt.$emit("refresh-table");
+              for (let i=0;i < res.data.length ; i++ ) {
+                if ( data[i].task && data[i].task.length !==0 ) {
+
+                }
+                else {
+                  this.$nuxt.$emit("refresh-table");
+                }
               }
           }
           if(param=="/tasks"){
@@ -460,7 +465,7 @@ export default {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
               });
               if (res.data.data?.[0]?.tasks?.length==1) {
-
+                this.$nuxt.$emit("refresh-table");
               }
           }
           if(param=="/projects"){
@@ -481,9 +486,17 @@ export default {
             const res = await this.$axios.$get('/section/project/' + this.$route.params.id, {
               headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': 'all' }
             });
-            if (res.data?.[0]?.tasks?.length==1) {
-              this.$nuxt.$emit("refresh-table");
-            }
+            for (let i=0;i < res.data.length ; i++ ) {
+                if ( data[i].task && data[i].task.length !==0 ) {
+
+                }
+                else {
+                  this.$nuxt.$emit("refresh-table");
+                }
+              }
+            // if (res.data?.[0]?.tasks?.length==1) {
+            //   this.$nuxt.$emit("refresh-table");
+            // }
           }
           if(param.includes("/usertasks/")){
             const res = await this.$axios.get("user/user-tasks", {

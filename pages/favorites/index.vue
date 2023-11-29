@@ -342,7 +342,6 @@ Promise.all([fetchTask, fetchSubtask]).then((values) => {
   })
 
   this.taskSubtaskLocalData = newArr;
-  console.log(this.taskSubtaskLocalData)
 })
 },
 
@@ -1593,6 +1592,7 @@ Promise.all([fetchTask, fetchSubtask]).then((values) => {
     openSidebar(task, scroll) {
       console.log(task)
       console.log(scroll)
+      
       let fwd = this.$donotCloseSidebar(event.target.classList)
       if (!fwd) {
         this.$nuxt.$emit("close-sidebar");
