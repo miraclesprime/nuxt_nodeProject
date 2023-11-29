@@ -669,7 +669,7 @@ export default {
         proj.departmentId = section.tasks[0]?.departmentId
       }
       delete proj.show
-      // delete proj.sectionId
+      delete proj.sectionId
       this.$store.dispatch("task/createTask", {
           ...proj,
           text: `created task ${proj.title}`,
