@@ -9,7 +9,7 @@
         <!-- <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form> -->
         <div v-show="gridType == 'list'" id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative " :style="{ 'width': contentWidth }">
 
-          <adv-table-three :tableFields="taskFields" :tableData="localdata" :lazyComponent="true" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @title-click="openSidebar" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createTodo" @edit-section="renameTodo" :sectionMenu="true" @section-delete="deleteTodoConfirm($event)" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd" :drag="true" :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
+          <adv-table-three :tableFields="taskFields" :tableData="localdata" :lazyComponent="true" :contextItems="contextMenuItems" @create-row="createNewTask" :newRow="newRow"  @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @title-click="openSidebar" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createTodo" @edit-section="renameTodo" :sectionMenu="true" @section-delete="deleteTodoConfirm($event)" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd" :drag="true" :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
               
           <!-- <loading :loading="loading"></loading> -->
 
@@ -170,6 +170,22 @@ export default {
       todoConfirmModal: false,
       todoToDelete: {},
       retainTasks: null,
+      newRow: {
+        show: false,
+        id: "",
+        title: "",
+        userId: "",
+        statusId: null,
+        priorityId: null,
+        departmentId: null,
+        startDate: "",
+        sectionId:null,
+        dueDate: "",
+        department: "",
+        description: "",
+        budget: "",
+        text: "",
+      },
     }
   },
 
@@ -623,24 +639,94 @@ export default {
         this.popupMessages.push({ text: "Action cancelled", variant: "orange" })
       }
     },
-
-    createTask(item){
-      let taskdata = item
-
-      taskdata.user = [{
+    createNewTask(proj, section) {
+      proj.group = this.groupby;
+      proj.status = null
+      proj.statusId = null
+      proj.priority = null
+      proj.priorityId = null
+      proj.departmentId = null;
+      proj.department = null;
+      proj.user = {
         id: this.loggedUser.Id,
         email: this.loggedUser.Email,
         firstName: this.loggedUser.FirstName,
         lastName: this.loggedUser.LastName
-      }]
-      // console.log(taskdata)
-      this.$store.dispatch("task/createTask", taskdata)
-      .then(t => {
-        // console.log(t)
-        // this.updateKey()
-      })
-      .catch(e => console.warn(e))
+      }
+      proj.userId = this.loggedUser.Id
+      proj.projectId=null
+      proj.todoId = this.groupby ? null : section.id
+
+      if(this.groupby == "priority"){
+        proj.priority = section.tasks[0]?.priority
+        proj.priorityId = section.tasks[0]?.priorityId
+     
+      }
+      if(this.groupby == "status"){
+        proj.status = section.tasks[0]?.status
+        proj.statusId = section.tasks[0]?.statusId
+      }
+      if(this.groupby=="assignee"){
+        proj.user=[section.tasks[0]?.user]
+        proj.userId=section.tasks[0]?.userId
+      }
+      if(this.groupby == "department"){
+        proj.department = section.tasks[0]?.department
+        proj.departmentId = section.tasks[0]?.departmentId
+      }
+      delete proj.show
+      delete proj.sectionId
+      this.$store.dispatch("task/createTask", {
+          ...proj,
+          text: `created task ${proj.title}`,
+        })
+        .then((t) => {
+          console.log("res",t.data)
+          this.resetNewRow();
+          this.$nuxt.$emit("newTask",t.data,this.$route.fullPath)
+        })
+        .catch((e) => {
+          console.warn(e);
+        });
     },
+    resetNewRow() {
+      this.newRow = {
+        show: false,
+        id: "",
+        title: "",
+   
+        statusId: null,
+        status: null,
+        priority: null,
+        priorityId: null,
+        departmentId: null,
+        department: null,
+        startDate: "",
+        dueDate: "",
+        description: "",
+        budget: "",
+        text: "",
+      };
+    },
+    // createNewTask(item,section){
+    //   console.log(item)
+    //   let taskdata = item
+    //   taskdata.todoId = this.groupby ? null : section.id
+    //   taskdata.user = [{
+    //     id: this.loggedUser.Id,
+    //     email: this.loggedUser.Email,
+    //     firstName: this.loggedUser.FirstName,
+    //     lastName: this.loggedUser.LastName
+    //   }]
+    //   taskdata.userId=this.loggedUser.Id
+    //   // console.log(taskdata)
+    //   this.$store.dispatch("task/createTask", taskdata)
+    //   .then(t => {
+    //     console.log("$$$$",t)
+    //     this.$nuxt.$emit("newTask",t.data,this.$route.fullPath)
+    //   })
+    //   .catch(e => console.warn(e))
+    // },
 
     updateKey($event) {
       if ($event) {

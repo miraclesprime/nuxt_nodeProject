@@ -243,8 +243,8 @@ export default {
           img: "cloud-data-network-solid",
           color: "success-sub1",
           active: false,
-          text: this.$i18n.tc("drive"),
-          href: "",
+          text: "Drive",
+          href: process.env.BIB_DRIVE_URL,
         },
         {
           img: "editor",

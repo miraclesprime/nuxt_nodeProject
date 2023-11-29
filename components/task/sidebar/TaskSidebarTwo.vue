@@ -449,7 +449,7 @@ export default {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter':  'all' }
               });
               for (let i=0;i < res.data.length ; i++ ) {
-                if ( data[i].task && data[i].task.length !==0 ) {
+                if ( data[i]?.task && data[i]?.task.length !==0 ) {
 
                 }
                 else {
