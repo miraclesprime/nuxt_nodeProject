@@ -11,7 +11,7 @@
         <!-- buttons -->
         <div class="d-flex justify-between pt-105" id="confirm-dialogue-cancel-ok-btn-wrap">
           <bib-button label="Cancel" id="confirm-dialogue-cancel-btn" variant="secondary" pill @click.native.stop="close(false)"></bib-button>
-          <bib-button label="Ok" id="confirm-dialogue-ok-btn" variant="primary" pill @click.native.stop="close(true)"></bib-button>
+          <bib-button label="Ok" id="confirm-dialogue-ok-btn" variant="primary-24" pill @click.native.stop="close(true)"></bib-button>
         </div>
       </div>
     </transition>

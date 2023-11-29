@@ -9,7 +9,7 @@
           </div>
         </div>
         <div class="d-flex justify-end pt-105" id="alert-dialogue-close-btn">
-          <bib-button label="Ok" variant="primary" pill @click.native.stop="$emit('close')"></bib-button>
+          <bib-button label="Ok" variant="primary-24" pill @click.native.stop="$emit('close')"></bib-button>
         </div>
       </div>
     </transition>
