@@ -505,16 +505,26 @@ export default {
         if(param=="/mytasks"){
             if(this.myTaskGroupBy=="") 
                 {
-                    if(this.localData?.[0]?.tasks.length>0)
-                    {
-                      this.localData[0].tasks.push(payload);
+                      if(payload.todoId) {
+                        let exist_item= this.localData.find((item)=>item.id==payload.todoId)
+                        if(exist_item) {
+                          let index = this.localData.findIndex((item) => item.id==payload.todoId);
+                          this.localData[index].tasks.push(payload);
+                        }
+                      }
+                      else {
+                        let exist_item= this.localData.find((item)=>item.title=="Recently Assigned")
+                        if(exist_item) {
+                          let index = this.localData.findIndex((item) => item.title == "Recently Assigned");
+                          this.localData[index].tasks.push(payload);
+                        }
+                      }
+
+                    // else
+                    // {
+                    //   this.$nuxt.$emit("refresh-table");
                       
-                    }
-                    else
-                    {
-                      this.$nuxt.$emit("refresh-table");
-                      
-                    }
+                    // }
                     this.$store.commit("todo/setAddTaskCount")
             
                 }
