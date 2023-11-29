@@ -158,11 +158,10 @@ export const actions = {
 
     if (res.statusCode == 200) {
       ctx.commit('setTodos', res.data);
-      if(payload.sName&&payload.sName!=="default"){
-        const data={
-          sName:payload.sName,
-          team:ctx.rootState.user.teamMembers
-
+      if(payload.sName && payload.sName!=="default"){
+        const data = {
+          sName: payload.sName,
+          team: ctx.rootState.user.teamMembers
         }
         ctx.commit('groupMyTasks', data)
       }

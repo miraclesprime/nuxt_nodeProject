@@ -243,8 +243,8 @@ export default {
           img: "cloud-data-network-solid",
           color: "success-sub1",
           active: false,
-          text: this.$i18n.tc("drive"),
-          href: "",
+          text: "Drive",
+          href: process.env.BIB_DRIVE_URL,
         },
         {
           img: "editor",
@@ -504,6 +504,8 @@ export default {
       // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2SjRvcGVuNUJ3NGQ3QXoxIiwic3ViZSI6ImFscGhhdGVzdEBtYWlsaW5hdG9yLmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiVm9KWDdheGtQRXFleXY0RSIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkluZGlhIiwiZW52IjoiZGV2IiwiaWF0IjoxNzAwMTE4MjQxODcxLCJleHAiOjE3MDc4OTQyNDE4NzEsImp0aSI6ImUxNjA4MjIxLWQzN2YtNGY2ZS05MTQzLWVmMDc4Mjk2Y2FmYyJ9.irTQ_a3wvBDzxoYIK0l0v1PyR1EWAMhTr3Nm-TrwHBY"
 
       // this.$cookies.set(process.env.SSO_COOKIE_NAME, cookie);
+
+      // console.log(this.$auth.getToken())
 
       if (this.$cookies.get(process.env.SSO_COOKIE_NAME)) {
         let jwt = this.$cookies.get(process.env.SSO_COOKIE_NAME);

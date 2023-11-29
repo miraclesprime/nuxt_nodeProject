@@ -884,6 +884,7 @@ export default {
     },
 
     createNewTask(proj, section) {
+      console.log(proj, section)
       proj.group = this.groupby;
       proj.status = null
       proj.statusId = null
@@ -923,7 +924,8 @@ export default {
         })
         .then((t) => {
           this.resetNewRow();
-          this.updateKey();
+          this.$nuxt.$emit("newTask",t.data,this.$route.fullPath)
+          // this.updateKey();
         })
         .catch((e) => {
           console.warn(e);

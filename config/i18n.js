@@ -1,11 +1,11 @@
 import en from "@bizinbox/bib-ui-lib/dist/lang/global_en.json";
+import fr from "@bizinbox/bib-ui-lib/dist/lang/global_fr.json";
+
+// import en from "@bizinbox/bib-ui-lib/dist/lang/global_en.json";
 
 export default {
   locale: "en",
   fallbackLocale: "en",
-  messages: { en },
+  messages: { en, fr },
 };
 
-/*import en from "@bizinbox/bib-ui-lib/dist/lang/global_en.json";
-import fr from "@bizinbox/bib-ui-lib/dist/lang/global_fr.json";
-}*/
