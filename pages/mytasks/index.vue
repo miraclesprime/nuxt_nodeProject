@@ -184,7 +184,8 @@ export default {
       filterViews :'task/getFilterView',
       expandVisible:"task/getExpandVisible",
       grid:"todo/getGridType",
-      taskcount: "todo/getTaskCount"
+      taskcount: "todo/getTaskCount",
+      filter: "task/getFilterView",
     }),
  
     // taskcount(){
@@ -237,6 +238,11 @@ export default {
   },
 
   mounted() {
+    
+    /*this.$store.dispatch("todo/fetchTodos", {filter: "all"}).then(res => {
+      this.localdata = res.data
+    }).catch(e => console.warn(e))*/
+
     if (this.todos.length<=0) {
       this.updateKey();
     }
@@ -263,7 +269,7 @@ export default {
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
 
     // console.log(token)
-    const filter=store.getters['task/getFilterView']
+    const filter = store.getters['task/getFilterView']
     const response = await $axios.get('/todo/all', {
       headers: {
         Authorization: `Bearer ${token}`,

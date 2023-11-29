@@ -505,6 +505,8 @@ export default {
 
       // this.$cookies.set(process.env.SSO_COOKIE_NAME, cookie);
 
+      // console.log(this.$auth.getToken())
+
       if (this.$cookies.get(process.env.SSO_COOKIE_NAME)) {
         let jwt = this.$cookies.get(process.env.SSO_COOKIE_NAME);
 

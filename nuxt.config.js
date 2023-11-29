@@ -1,6 +1,6 @@
 import { resolve } from "path";
-import i18n from "./config/i18n";
-import global_en from "./node_modules/@bizinbox/bib-ui-lib/dist/lang/global_en.json";
+import local_en from './config/lang/en.json'
+import global_en from './node_modules/@bizinbox/bib-ui-lib/dist/lang/global_en.json'
 
 export default {
   // Global page headers (https://go.nuxtjs.dev/config-head)
@@ -71,7 +71,7 @@ export default {
         vueI18n: {
           locale: "en",
           fallbackLocale: "en",
-          messages: { en: { ...global_en } },
+          messages: { en: { ...global_en, ...local_en } },
         },
       }
     ],
@@ -131,21 +131,20 @@ export default {
   },
   ssr: true,
   target: "static",
-  // auth: {
-  //   plugins: ["~/plugins/auth"],
-  //   redirect: {
-  //     login:
-  //       process.env.AUTH_REDIRECT_URL + process.env.VUE_APP_URL + "/dashboard",
-  //     callback: "/auth/login",
-  //     home: "/"
-  //   },
-  //   strategies: {
-  //     local: {
-  //       autoFetchUser: false,
-  //       tokenName: "Authorization",
-  //       required: true,
-  //       tokenType: "Bearer"
-  //     }
-  //   }
-  // }
+  /*auth: {
+    plugins: ["~/plugins/authentication"],
+    redirect: {
+      login: process.env.AUTH_REDIRECT_URL + process.env.VUE_APP_URL + "/mytasks",
+      callback: false,
+      home: false
+    },
+    strategies: {
+      local: {
+        autoFetchUser: false,
+        tokenName: "Authorization",
+        required: true,
+        tokenType: "Bearer"
+      }
+    }
+  }*/
 };
