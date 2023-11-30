@@ -249,12 +249,14 @@ export default {
 
     },
     closeOtherBlankGrid($event){
-      // console.log($event, this.$refs)
+      if(this.$refs.length>0) {
         for (var ref in this.$refs) {
-          if(this.$refs[ref][0].title != $event){
+          if(this.$refs[ref][0]?.title != $event){
             this.$refs[ref][0].newTask = false
           }
         }
+      }
+        
     },
     isFavorite(task) {
       let fav = this.favTasks.some(t => t.task.id == task.id)
