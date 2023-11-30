@@ -43,10 +43,13 @@
 
         <div id="proj-overview-row2" class="row">
           <div id="proj-overview-row2-col2" class="col-3">
-            <bib-datetime-picker v-model="sdate" :format="format" :parseDate="parseDate" label="Start date" placeholder="Start date" @input="startdateProcess" ></bib-datetime-picker>
+            <!-- <bib-datepicker test_id="date01" v-model="startDate" :value="startDate" :maxDate="dueDate" format="dd MMM yyyy" @input="debounceUpdate('Start date', 'startDate', startDate)" label="Start date" name="startDate" placeholder="Start date" ></bib-datepicker> -->
+            <bib-datetime-picker v-model="sdate" :formatDate="formatDate" :parseDate="parseDate" label="Start date" placeholder="Start date" @input="startdateProcess" ></bib-datetime-picker>
           </div>
           <div id="proj-overview-row2-col3" class="col-3">
-            <bib-datetime-picker v-model="ddate" :format="format" :parseDate="parseDate" label="Due date" placeholder="Due date" @input="duedateProcess"></bib-datetime-picker>
+            <!-- <bib-datepicker test_id="date02" v-model="dueDate" :value="dueDate" :minDate="startDate" format="dd MMM yyyy" @input="debounceUpdate('Due date', 'dueDate', dueDate)" label="Due date" name="dueDate" class="align-right" placeholder="Due date"></bib-datepicker> -->
+            <bib-datetime-picker v-model="ddate" :formatDate="formatDate" :parseDate="parseDate" label="Due date" placeholder="Due date" @input="duedateProcess"></bib-datetime-picker>
+
           </div>
           <div id="proj-overview-row3-col2" class="col-6">
             <bib-input type="select" label="Department" v-model="activeProject.departmentId" :options="departments" size="md"  v-on:change.native="debounceUpdate('Department', 'departmentId', activeProject.departmentId)"></bib-input>
@@ -85,6 +88,12 @@
             <rich-editor :editingMessage="activeProject.description" @submit="emitDesc($event.text)" ></rich-editor>
           </div>
         </div>
+        <bib-popup-notification-wrapper>
+      <template #wrapper>
+        <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
+        </bib-popup-notification>
+      </template>
+    </bib-popup-notification-wrapper>
         <!-- <loading :loading="loading"></loading> -->
       </div>
     </div>
@@ -115,6 +124,7 @@ export default {
       format: "DD MMM YYYY",
       sdate: "",
       ddate: "",
+      popupMessages:[]
     };
   },
 
@@ -255,7 +265,7 @@ export default {
 
       if (newValue == "") {
         this.$store.dispatch("project/updateProject", {
-          id: this.project?.id,
+          id: this.activeProject?.id,
           user: this.owner,
           data: { "startdate": newValue },
           text: "removed Start date"
@@ -270,17 +280,17 @@ export default {
           // return
         } else {
           this.$store.dispatch("project/updateProject", {
-            id: this.project?.id,
+            id: this.activeProject?.id,
             user: this.owner,
-            data: { "startdate": newValue },
+            data: { "startdate": new Date(newValue) },
             text: `changed Start date to ${this.$formatDate(newValue)}`
           })
         }
       } else {
         this.$store.dispatch("project/updateProject", {
-          id: this.project?.id,
+          id: this.activeProject?.id,
           user: this.owner,
-          data: { "startdate": newValue },
+          data: { "startdate": new Date(newValue) },
           text: `changed Start date to ${this.$formatDate(newValue)}`
         })
       }
@@ -296,7 +306,7 @@ export default {
 
       if (newValue == "") {
         this.$store.dispatch("project/updateProject", {
-          id: this.project?.id,
+          id: this.activeProject?.id,
           user: this.owner,
           data: { "dueDate": newValue },
           text: "removed Due date"
@@ -312,17 +322,19 @@ export default {
           // return
         } else {
           this.$store.dispatch("project/updateProject", {
-          id: this.project?.id,
+          id: this.activeProject?.id,
           user: this.owner,
-          data: { "dueDate": newValue },
+          data: { "dueDate": new Date(newValue) },
           text: `changed Due date to ${this.$formatDate(newValue)}`
+        }).then ((t)=>{
+          console.log("result",t)
         })
         }
       } else {
         this.$store.dispatch("project/updateProject", {
-          id: this.project?.id,
+          id: this.activeProject?.id,
           user: this.owner,
-          data: { "dueDate": newValue },
+          data: { "dueDate": new Date(newValue) },
           text: `changed Due date to ${this.$formatDate(newValue)}`
         })
       }
@@ -378,7 +390,7 @@ export default {
         this.activeProject.statusId = null
       }
       this.$store.dispatch("project/updateProject", {
-        id: this.project?.id,
+        id: this.activeProject?.id,
         user: this.owner,
         data: { [field]: value },
         text: `changed ${label} to ${updatedvalue}`

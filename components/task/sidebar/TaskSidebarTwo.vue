@@ -394,6 +394,7 @@ export default {
         this.$nuxt.$emit("close-sidebar");
       }
     },
+
     async createTask(taskform) {
 
       if (this.error == "valid") {
@@ -434,6 +435,7 @@ export default {
         }).then((task) => {
 
           this.$nuxt.$emit("newTask",task.data,this.$route.path)
+          // this.$nuxt.$emit("gridNewTask",task.data,this.$route.path)
           this.getTableCount(this.$route.path,task.data)
           this.$store.dispatch("task/setSingleTask", task.data)
 

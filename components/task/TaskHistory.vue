@@ -37,27 +37,24 @@ export default {
   },
 
   
-  mounted () {
-    // console.log(this.teamMems)
+  async mounted () {
 
     if(this.teamMembers.length>0) {
-      this.user=this.$userInfo(this.history.userId)
+      this.user=await this.$userInfo(this.history.userId)
 
     }
     else {
       if(this.teamMems.length>0) {
-        // console.log(this.teamMems)
-        this.user=this.getUserInfo(this.teamMems,this.history.userId)
-        // console.log(this.user.Name)
+        this.user=await this.getUserInfo(this.teamMems,this.history.userId)
       }
         }
   },
   methods:{
-    getUserInfo(members,userID)
+    async getUserInfo(members,userID)
     {
       if (members.length > 0 && userID) 
                 {
-                      let u = members.find((m) => m.id == userID)
+                      let u = await members.find((m) => m.id == userID)
                         if (u) {
                           return { Name: `${u.firstName} ${u.lastName}`}
                         }
