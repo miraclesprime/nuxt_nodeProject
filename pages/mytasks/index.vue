@@ -85,7 +85,7 @@
           </template>
           <template slot="footer">
               <div class="justify-around">
-                <bib-button label="Keep tasks" variant="primary" pill @click="deleteTodo(true)"></bib-button>
+                <bib-button label="Keep tasks" variant="primary-24" pill @click="deleteTodo(true)"></bib-button>
                 <bib-button label="Delete tasks" variant="danger" pill @click="deleteTodo(false)"></bib-button>
               </div>
           </template>
@@ -200,7 +200,8 @@ export default {
       filterViews :'task/getFilterView',
       expandVisible:"task/getExpandVisible",
       grid:"todo/getGridType",
-      taskcount: "todo/getTaskCount"
+      taskcount: "todo/getTaskCount",
+      filter: "task/getFilterView",
     }),
  
     // taskcount(){
@@ -253,6 +254,11 @@ export default {
   },
 
   mounted() {
+    
+    /*this.$store.dispatch("todo/fetchTodos", {filter: "all"}).then(res => {
+      this.localdata = res.data
+    }).catch(e => console.warn(e))*/
+
     if (this.todos.length<=0) {
       this.updateKey();
     }
@@ -279,7 +285,7 @@ export default {
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
 
     // console.log(token)
-    const filter=store.getters['task/getFilterView']
+    const filter = store.getters['task/getFilterView']
     const response = await $axios.get('/todo/all', {
       headers: {
         Authorization: `Bearer ${token}`,

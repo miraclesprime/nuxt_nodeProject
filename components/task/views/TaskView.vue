@@ -81,7 +81,7 @@
       </template>
       <template slot="footer">
           <div class="justify-around">
-            <bib-button label="Keep tasks" variant="primary" pill @click="deleteSection(true)"></bib-button>
+            <bib-button label="Keep tasks" variant="primary-24" pill @click="deleteSection(true)"></bib-button>
             <bib-button label="Delete tasks" variant="danger" pill @click="deleteSection(false)"></bib-button>
           </div>
       </template>

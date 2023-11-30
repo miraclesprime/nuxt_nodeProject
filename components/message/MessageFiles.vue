@@ -90,8 +90,11 @@ export default {
       let arr = []
       if (this.property.hasOwnProperty("key")) {
         Object.entries(this.property).map(([key, value]) => {
-          if (key == 'name' || key == "extension" || key == "size") {
+          if (key == 'name' || key == "size") {
             arr.push({ value: value, key: key })
+          }
+          if(key == 'extension') {
+            arr.push({key: key, value: value?.split('.')[1]})
           }
           if (key == "createdAt" || key == "updatedAt") {
             arr.push({key: key, value: dayjs(value).format('DD MMM YYYY')})

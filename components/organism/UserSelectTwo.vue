@@ -50,8 +50,8 @@ export default {
     userId: { type: String },
     mode: { type: String, default: "avatar"}, //avatar, icon
     icon: { type: String, default: "add"},
-    iconBg: { type: String, default: "success-sub6"},
-    iconVariant: { type: String, default: "success"},
+    iconBg: { type: String, default: "primary-24"},
+    iconVariant: { type: String, default: "white"},
     title: { type: String, default: "Assign to" },
     // avatarSize: { type: String, default: "2rem" },
     minWidth: { type: String, default: "calc(100% + 10px)" },

@@ -60,8 +60,8 @@
       </span>
     </template>
     </div>
-    <div v-show="team.length > 0" class="pt-05 pb-1 justify-end" id="ptm-addIteamMember">
-      <bib-button label="Add" variant="success" pill @click="addTeamMember"></bib-button>
+    <div v-show="team.length > 0" class="pt-05 justify-end" id="ptm-addIteamMember">
+      <bib-button label="Add" variant="primary-24" pill @click="addTeamMember"></bib-button>
     </div>
     <loading :loading="loading"></loading>
   </div>
