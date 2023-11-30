@@ -44,11 +44,11 @@
         <div id="proj-overview-row2" class="row">
           <div id="proj-overview-row2-col2" class="col-3">
             <!-- <bib-datepicker test_id="date01" v-model="startDate" :value="startDate" :maxDate="dueDate" format="dd MMM yyyy" @input="debounceUpdate('Start date', 'startDate', startDate)" label="Start date" name="startDate" placeholder="Start date" ></bib-datepicker> -->
-            <bib-datetime-picker v-model="sdate" :format="format" :parseDate="parseDate" label="Start date" placeholder="Start date" @input="startdateProcess" ></bib-datetime-picker>
+            <bib-datetime-picker v-model="sdate" :formatDate="formatDate" :parseDate="parseDate" label="Start date" placeholder="Start date" @input="startdateProcess" ></bib-datetime-picker>
           </div>
           <div id="proj-overview-row2-col3" class="col-3">
             <!-- <bib-datepicker test_id="date02" v-model="dueDate" :value="dueDate" :minDate="startDate" format="dd MMM yyyy" @input="debounceUpdate('Due date', 'dueDate', dueDate)" label="Due date" name="dueDate" class="align-right" placeholder="Due date"></bib-datepicker> -->
-            <bib-datetime-picker v-model="ddate" :format="format" :parseDate="parseDate" label="Due date" placeholder="Due date" @input="duedateProcess"></bib-datetime-picker>
+            <bib-datetime-picker v-model="ddate" :formatDate="formatDate" :parseDate="parseDate" label="Due date" placeholder="Due date" @input="duedateProcess"></bib-datetime-picker>
 
           </div>
           <div id="proj-overview-row3-col2" class="col-6">
