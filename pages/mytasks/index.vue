@@ -243,6 +243,7 @@ export default {
 
   created() {
     if (process.client) {
+      this.$nuxt.$on("gridNewTask", this.handleNewTask);
       this.$nuxt.$on("update-key", (payload) => {
         this.updateKey()
       });
@@ -278,6 +279,7 @@ export default {
   beforeDestroy(){ 
 
     this.$nuxt.$off("refresh-table");
+    this.$nuxt.$off("gridNewTask", this.handleNewTask);
 
   },
 
@@ -298,6 +300,74 @@ export default {
   },
 
   methods: {
+
+    handleNewTask (payload,param){
+        if (this.localdata.length>0) {
+          let gridData=[...this.localdata]
+              if(param=="/mytasks"){  
+                  if(this.groupby=="") 
+                      {
+                            if(payload.todoId) {
+                              let exist_item= gridData. find((item)=>item.id==payload.todoId)
+                              if(exist_item) {
+                                let index = gridData. findIndex((item) => item.id==payload.todoId);
+                                gridData[ index].tasks.push(payload);
+                                this.localdata=gridData
+                              }
+                            }
+                            else {
+                              let exist_item= gridData.find((item)=>item.title=="Recently Assigned")
+                              if(exist_item) {
+                                let index = gridData.findIndex((item) => item.title == "Recently Assigned");
+                                gridData[index].tasks.push(payload);
+                                this.localdata=gridData
+
+                              }
+                            }
+
+                          // else
+                          // {
+                          //   this.$nuxt.$emit("refresh-table");
+                            
+                          // }
+                          this.$store.commit("todo/setAddTaskCount")
+                  
+                      }
+                      else 
+                      {
+                          this.changeIntoGroupBy(payload,this.myTaskGroupBy)
+                          this.$store.commit("todo/setAddTaskCount")
+                      }
+              }
+            //  if (param)
+        }
+        else 
+        {
+          this.updateKey();
+          // this.$store.commit("todo/setAddTaskCount")
+        }
+
+},
+    changeIntoGroupBy (payload,groupBy) {
+            if (this.localData?.[0]?.tasks?.length>0)
+            {
+              //To groupBy, change the localData
+              this.localData = this.localData.reduce((acc, ele) => {
+                return [...acc, ...ele.tasks];
+              }, []);
+              //insert the newTask
+              if (!this.localData.some(item => item.id === payload.id)) {
+                this.localData.push(payload);
+              }
+              //change the localData into groupBy
+              this.localData=this.$groupBy( this.localData,groupBy)
+            
+            } 
+            else 
+            {
+              this.updateKey();
+            }  
+        },
     //group by
     myTaskGroup($event) {
       this.groupby=$event
