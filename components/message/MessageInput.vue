@@ -27,7 +27,7 @@
           <fa :icon="faListOl"></fa>
         </div>
         <div class="toolbar-separator"  id="message-input-toolbar-separator-3"></div>
-        <mention-popup @select="mentionUser"></mention-popup>
+        <mention-popup @select.native.stop="mentionUser(event, $event)"></mention-popup>
         <div class="toolbar-button d-inline-flex align-center ml-auto"  id="message-input-toolbar-btn-wrap">
           <button type="button" id="message-input-toolbar-btn" class="cursor-pointer text-secondary text-underline border-none bg-white text-hover-dark" @click.stop="cancelMessage">Cancel</button> 
         </div>
@@ -363,6 +363,7 @@ export default {
     },
 
     mentionUser(user) {
+      event.stopPropagation()
       // console.log(user)
       const anchorPos = this.editor.state.selection.anchor;
       this.editor

@@ -420,7 +420,7 @@ export default {
         if (newStartDate.getTime() > new Date(this.form.dueDate).getTime()) {
           this.popupMessages.push({ text: "Invalid date", variant: "danger" });
           this.form.startDate = oldValue
-          this.sdate = oldValue
+          this.sdate = this.$formatDate(oldValue)
           // return
         } else {
           this.$store.dispatch("subtask/updateSubtask", {
@@ -487,7 +487,7 @@ export default {
         if (newDueDate.getTime() < new Date(this.form.startDate).getTime()) {
           this.popupMessages.push({ text: "Invalid date", variant: "danger" });
           this.form.dueDate = oldValue
-          this.ddate = oldValue
+          this.ddate = this.$formatDate(oldValue)
           // return
         } else {
          this.$store.dispatch("subtask/updateSubtask", {

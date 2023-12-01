@@ -19,10 +19,10 @@
             <div class="position-absolute" id="adv-table-section-header-wrapper" style="inset: 0; border-bottom: 1px solid var(--bib-light);">
               <div class="section-header d-flex align-center gap-05 height-2 px-075" id="adv-table-section-header">
                 <div class="position-sticky align-center" style="left: 0.5rem;" >
-                  <span class="width-1 cursor-pointer" @click.stop="isCollapsed = !isCollapsed">
+                  <!-- <span class="width-1 cursor-pointer" @click.stop="isCollapsed = !isCollapsed">
                     <bib-icon icon="arrow-down" :scale="0.5" :style="{transform: iconRotate}"></bib-icon> 
-                  </span>
-                  <span class="font-w-700 cursor-pointer " id="adv-table-section-title" >
+                  </span> -->
+                  <span class="font-w-700 " id="adv-table-section-title" >
                     {{sectionTitle}}
                   </span>
                 </div>
@@ -32,7 +32,7 @@
         </div>
       </div>
 
-      <template v-if="!isCollapsed">
+      <template >
         <div class="table w-100">
           <!-- <article class="tbody"> -->
             <div class="tr hidden" role="row" >
@@ -92,7 +92,7 @@
                 </template>
                 <template v-if="field.key.includes('Date')" class="date-cell">
                   <!-- {{$formatDate(item[field.key])}} -->
-                  <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+                  <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, index, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                   <skeleton-box v-else></skeleton-box>
                 </template>
               </div>
@@ -115,7 +115,8 @@
                 </div> -->
                 <template v-for="(td,index) in tableFields">
                   <div v-if="td.key == 'title'" class="td" role="cell" :id="'advtable-newRow2-td-'+index">
-                    <input type="text" ref="newrowInput" class="editable-input" :id="'advtable-editable-input2-'+index" v-model="localNewrow.title" :class="{'error': validTitle}" @blur="testCreateNewRow" @keyup.enter="testCreateNewRow" @keyup.esc="unselectAll" required placeholder="Enter title...">
+                    <!-- :class="{'error': validTitle}" -->
+                    <input type="text" ref="newrowInput" class="editable-input" :id="'advtable-editable-input2-'+index" v-model="localNewrow.title"  @blur="testCreateNewRow" @keyup.enter="testCreateNewRow" @keyup.esc="unselectAll" required placeholder="Enter title...">
                   </div>
                 </template>
               </div>
@@ -139,6 +140,13 @@
     <template v-if="contextItems">
       <table-context-menu :items="contextItems" :show="contextVisible" :coordinates="popupCoords" @close-context="closePopups" @item-click="contextItemClick" ></table-context-menu>
     </template>
+
+    <bib-popup-notification-wrapper>
+      <template #wrapper>
+        <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" :autohide="4000">
+        </bib-popup-notification>
+      </template>
+    </bib-popup-notification-wrapper>
     </div>
   </div>
 </template>
@@ -211,6 +219,7 @@ export default {
       colmw: [],
       // columns: []
       tableWidth: "100%",
+      popupMessages: [],
     }
   },
 
@@ -383,12 +392,13 @@ export default {
     
     edit_UpdateLocalData(payload) {
       this.localData = this.localData.map((items) => {
-                if (items.id == payload.id) {
-                  return { ...items, ...payload };
-                } else {
-                  return items;
-                }
-            });
+        if (items.id == payload.id) {
+          return { ...items, ...payload };
+        } else {
+          return items;
+        }
+      });
+      this.modifyDateFormat()
     },
   //   handleAddNewTask(payload) {
   //     console.log(payload)
@@ -576,10 +586,31 @@ export default {
     updateAssignee(user, item) { 
       this.$emit("update-field", { id: item.id, field: "userId", value: user.id, label: "Assignee", historyText: `Changed Assignee To ${user.label}`, item: item })
     },
-    updateDate(d, item, field, label) {
+    updateDate(d, item, index, field, label) {
       // console.log(...arguments)
       let jd = new Date(d);
-      this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
+
+      if (field == "startDate" ) {
+        if (item.dueDate && new Date(d).getTime() > new Date(item.dueDate).getTime() ) {
+          // console.warn("invalid startDate", this.localData[index].startDate, this.tableData[index].startDate)
+          this.localData[index].startDate = this.tableData[index].startDate
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          // this.modifyDateFormat()
+        } else {
+          // console.info("valid startDate" )
+          this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
+        }
+      } else {
+        if (item.startDate && new Date(d).getTime() < new Date(item.startDate).getTime() ) {
+          // console.warn("invalid dueDate", this.localData[index].dueDate, this.tableData[index].dueDate)
+          this.localData[index].dueDate = this.tableData[index].dueDate
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+        } else {
+          // console.info("valid dueDate" )
+          this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
+        }
+      }
+
     },
   }
 }

@@ -5,7 +5,7 @@
       :key="index"
       class="item"
       :class="{ 'is-selected': index === selectedIndex }"
-      @click="selectItem(index)"
+      @click.stop="selectItem(index)"
       :id="'message-mention-list-wrapper-'+index"
     >
       {{ item.firstName }} {{ item.lastName }}

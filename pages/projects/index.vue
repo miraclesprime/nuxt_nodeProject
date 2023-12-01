@@ -534,7 +534,7 @@ export default {
     
     
     updateProject(payload){
-      console.log(payload)
+      // console.log(payload)
       const { item, label, field, value, historyText } = payload
       let user
       if(item.userId){
@@ -593,7 +593,7 @@ export default {
         groupBy: this.groupBy,
       })
         .then(t => {
-          console.log("update",t)
+          // console.log("update",t)
           if(t.statusCode == 200){
             if(this.groupBy == '' || this.groupBy == 'default'){
               // this.updateKey()

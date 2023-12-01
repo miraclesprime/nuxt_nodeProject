@@ -131,11 +131,11 @@
                     </template>
                   </template>
                   <template v-if="field.key == 'startDate'" >
-                    <bib-datetime-picker v-if="isLazy(groupIdx, itemIdx) || isRendered" v-model="item[field.key]" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+                    <bib-datetime-picker v-if="isLazy(groupIdx, itemIdx) || isRendered" v-model="item[field.key]" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, groupIdx, itemIdx, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                     <skeleton-box v-else></skeleton-box>
                   </template>
                   <template v-if="field.key == 'dueDate'" >
-                    <bib-datetime-picker v-if="isLazy(groupIdx, itemIdx) || isRendered" v-model="item[field.key]" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+                    <bib-datetime-picker v-if="isLazy(groupIdx, itemIdx) || isRendered" v-model="item[field.key]" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, groupIdx, itemIdx, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                     <skeleton-box v-else></skeleton-box>
                   </template>
                    
@@ -158,7 +158,7 @@
                     <span class="d-inline-flex align-center justify-center width-105 h-100 bg-secondary-sub4 shape-rounded"><bib-icon icon="drag" variant="white"></bib-icon></span>
                   </div>
                   <div class="td" role="cell" style="border-right-color: transparent;">
-                    <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title" :class="{'error': validTitle}"  @blur="testNewRowCreate(section)" @keyup.esc="unselectAll" @keyup.enter="testNewRowCreate(section)" required placeholder="Enter title...">
+                    <input type="text" :ref="'newrowInput'+section.id" class="editable-input" v-model="localNewrow.title"   @blur="testNewRowCreate(section)" @keyup.esc="unselectAll" @keyup.enter="testNewRowCreate(section)" required placeholder="Enter title...">
                   </div>
 		              <div class="position-absolute" style="left:0; bottom:0; right:0; z-index:1; height: 1px; border-bottom: 1px solid var(--bib-light)"></div>
                 </div>
@@ -183,10 +183,18 @@
           <div ref="splitHint" class="split-indicator h-100 position-absolute"></div>
         </div>
       </div>
+
     <template v-if="contextItems">
       <table-context-menu :items="contextItems" :show="contextVisible" :coordinates="popupCoords" @close-context="closePopups" @item-click="contextItemClick" ></table-context-menu>
     </template>
     
+    <bib-popup-notification-wrapper>
+      <template #wrapper>
+        <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" :autohide="4000">
+        </bib-popup-notification>
+      </template>
+    </bib-popup-notification-wrapper>
+
   </div>
 </template>
 <script>
@@ -282,6 +290,7 @@ export default {
       colmw: [],
       tableWidth: "100%",
       deleteBtnHover: false,
+      popupMessages: [],
     }
   },
   watch: {
@@ -500,7 +509,7 @@ export default {
     },
     handleNewTask (payload,param){
 
-  if (this.localData.length>0) {
+    if (this.localData.length>0) {
     
         if(param=="/mytasks"){
             if(this.myTaskGroupBy=="") 
@@ -574,18 +583,14 @@ export default {
                 }
 
        
-       }  
-      //  if (param)
-  }
-  else 
-  {
-    this.$nuxt.$emit("refresh-table");
-    // this.$store.commit("todo/setAddTaskCount")
-  }
+        }  
+          //  if (param)
+      } else {
+        this.$nuxt.$emit("refresh-table");
+        // this.$store.commit("todo/setAddTaskCount")
+      }
 
-// Remove the listener after handling the event
-
-},
+    },
     changeIntoGroupBy (payload,groupBy) {
         if (this.localData?.[0]?.tasks?.length>0)
         {
@@ -607,18 +612,19 @@ export default {
         }  
     },
     edit_UpdateLocalData(payload) {
-          if (this.localData !== null) {
-          this.localData = this.localData.map((items) => {
-            const updatedTasks = items.tasks.map((task) => {
-              if (task.id == payload.id) {
-                return { ...task, ...payload };
-              } else {
-                return task;
-              }
-            });
-            return { ...items, tasks: updatedTasks };
+      if (this.localData !== null) {
+        this.localData = this.localData.map((items) => {
+          const updatedTasks = items.tasks.map((task) => {
+            if (task.id == payload.id) {
+              return { ...task, ...payload };
+            } else {
+              return task;
+            }
           });
-        }
+          return { ...items, tasks: updatedTasks };
+        });
+        this.modifyDateFormat(this.localData)
+      }
     },
 
     modifyDateFormat(value){
@@ -991,10 +997,32 @@ export default {
       // console.log(user, item)
       this.$emit("update-field", { id: item.id, field: "userId", value: user.id, label: "Assignee", historyText: `changed Assignee to ${user.label}`, item })
     },
-    updateDate(d, item, field, label) {
+    updateDate(d, item, sectionIdx, itemIdx, field, label) {
       // console.log(...arguments)
       // let d = new Date(date)
-      this.$emit("update-field", { id: item.id, field, value: new Date(d), label, historyText: `Changed ${label} to ${dayjs(d).format('D MMM YYYY')}`, item: item})
+      // this.$emit("update-field", { id: item.id, field, value: new Date(d), label, historyText: `Changed ${label} to ${dayjs(d).format('D MMM YYYY')}`, item: item})
+      let jd = new Date(d);
+
+      if (field == "startDate" ) {
+        if (item.dueDate && new Date(d).getTime() > new Date(item.dueDate).getTime() ) {
+          // console.warn("invalid startDate", this.localData[sectionIdx].tasks[itemIdx].startDate, this.tableData[sectionIdx].tasks[itemIdx].startDate)
+          this.localData[sectionIdx].tasks[itemIdx].startDate = this.tableData[sectionIdx].tasks[itemIdx].startDate
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          // this.modifyDateFormat()
+        } else {
+          // console.info("valid startDate" )
+          this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
+        }
+      } else {
+        if (item.startDate && new Date(d).getTime() < new Date(item.startDate).getTime() ) {
+          // console.warn("invalid dueDate", this.localData[sectionIdx].tasks[itemIdx].dueDate, this.tableData[sectionIdx].tasks[itemIdx].dueDate)
+          this.localData[sectionIdx].tasks[itemIdx].dueDate = this.tableData[sectionIdx].tasks[itemIdx].dueDate
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+        } else {
+          // console.info("valid dueDate" )
+          this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
+        }
+      }
     },
     debounceNewSection: _.debounce(function(value, event) {
       if (value) {

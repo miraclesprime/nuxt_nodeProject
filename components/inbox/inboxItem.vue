@@ -1,5 +1,5 @@
 <template>
-  <div class="inbox-item border-bottom-gray2 py-105 px-105 position-relative cursor-pointer" :class="{'active': active == item.data[0].id}" @click="itemClick" id="inbox-item-wrapper">
+  <div class="inbox-item border-bottom-gray2 py-105 px-105 position-relative cursor-pointer" :class="{'active': active == inboxItem[0].id}" @click="itemClick" id="inbox-item-wrapper">
     <!-- <div v-if="!status.markRead" class="new text-white font-xs position-absolute" id="inbox-item-new">New
       <span class="triangle" id="inbox-item-triangle"></span>
     </div> -->
@@ -14,12 +14,12 @@
           <h4 id="task-project-title">{{item.title || taskTitle }}</h4>
         </div>
         <!-- <span id="calendar-date-wrapper" class="duedate d-inline-flex align-center shape-pill gap-05 bg-light px-05 py-025 ml-auto text-dark font-xs">
-          <format-date :datetime="item.data[0].updatedAt"></format-date>
+          <format-date :datetime="inboxItem[0].updatedAt"></format-date>
         </span> -->
       </div>
 
       <span id="calendar-date-wrapper" class="duedate d-inline-flex align-center shape-pill gap-05 bg-light px-05 py-025 ml-auto text-dark font-xs">
-        <format-date :datetime="item.data[0].updatedAt"></format-date>
+        <format-date :datetime="inboxItem[0].updatedAt"></format-date>
       </span>
 
       <div class="inbox-flags d-inline-flex align-center ">
@@ -45,13 +45,13 @@
         <h4 id="task-project-title">{{item.title || taskTitle }}</h4>
       </div>
       <span id="calendar-date-wrapper" class="duedate d-inline-flex align-center shape-pill gap-05 bg-light px-05 py-025 ml-auto text-dark font-xs">
-        <format-date :datetime="item.data[0].updatedAt"></format-date>
+        <format-date :datetime="inboxItem[0].updatedAt"></format-date>
       </span>
     </div>
 
     <!-- <div id="inbox-item-tile-wrapper" class="w-100 d-inline-flex align-center gap-05 pb-05 text-secondary font-md">
       <span>
-        <user-info :userId="item.data[0].userId" :members="members"></user-info>
+        <user-info :userId="inboxItem[0].userId" :members="members"></user-info>
       </span>
     </div> -->
 
@@ -66,8 +66,8 @@
           <div :id="'ii-updatedAt-'+i">@ {{$toTime(cm.updatedAt)}}</div>
         </template>
       </div> -->
-      <div v-if="item.data.length > 0" id="ii-content" class="inbox-item-content ">
-        <template v-for="(it, i) in item.data">
+      <div v-if="inboxItem.length > 0" id="ii-content" class="inbox-item-content ">
+        <template v-for="(it, i) in inboxItem">
           <!-- <p>{{it.taskCommentId , it.projectCommentId}}</p> -->
           <template v-if="it.taskCommentId || it.projectCommentId">
             <inbox-comment :history="it"></inbox-comment>
@@ -118,6 +118,14 @@ export default {
     ...mapGetters({
       userInbox: "inbox/getInbox",
     }),
+    inboxItem(){
+      let loggedUser = JSON.parse( localStorage.getItem("user") )
+      let arr = this.item.data.filter(inb => {
+        return inb.userId != loggedUser.sub
+      })
+      console.log(arr)
+      return arr
+    },
     taskTitle() {
       return this.item['task'] ? this.item.task.title : ''
     },

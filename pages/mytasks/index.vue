@@ -26,13 +26,13 @@
               <div class="w-100 d-flex justify-between bg-light" style="margin-bottom: 10px; position: sticky; top: 0; z-index: 2;">
                 <task-grid-section-title :section="todo" @update-title="renameTodo"></task-grid-section-title>
                 <div class="d-flex align-center section-options" :id="'tg-section-options-'+todo.id">
-                  <div class="cursor-pointer mx-05 d-flex align-center" :id="'tg-section-addtask-'+todo.id" v-on:click.stop="$nuxt.$emit('open-sidebar', todo.id)">
+                  <div class="cursor-pointer mx-05 d-flex align-center" :id="'tg-section-addtask-'+todo.id" v-on:click.stop="showBlankTask(todo.id)">
                     <bib-icon icon="add" variant="gray5" :scale="1.25"></bib-icon>
                   </div>
                   <bib-popup pop="elipsis" icon-variant="gray5" :scale="1.1">
                     <template v-slot:menu>
                       <div :id="'tgs-list'+todo.id" class="list">
-                        <span class="list__item" :id="'tgs-list-1'+todo.id" v-on:click.stop="$nuxt.$emit('open-sidebar', todo.id)">
+                        <span class="list__item" :id="'tgs-list-1'+todo.id" v-on:click.stop="showBlankTask(todo.id)">
                           <div class="d-flex align-center" :id="'tgs-list-flex-1'+todo.id">
                             <bib-icon icon="add"></bib-icon>
                             <span class="ml-05" :id="'tgs-list-add'+todo.id">Add task</span>
@@ -53,6 +53,7 @@
                   <template v-for="(task, index) in todo.tasks">
                     <task-grid :task="task" :key="task.id + '-' + index + key" :class="[ currentTask.id == task.id ? 'active' : '']" @update-key="updateKey" @open-sidebar="openSidebar" @date-picker="showDatePicker" @user-picker="showUserPicker"></task-grid>
                   </template>
+                 <task-grid-blank :sectionType="sectionType" :section="todo" :key="'blankTaskGrid'+todo.id" :ref="'blankTaskGrid'+todo.id" @close-other="closeOtherBlankGrid"></task-grid-blank>
                 </draggable>
               </div>
             </div>
@@ -186,6 +187,7 @@ export default {
         budget: "",
         text: "",
       },
+      sectionType:"myTask"
     }
   },
 
@@ -202,6 +204,7 @@ export default {
       grid:"todo/getGridType",
       taskcount: "todo/getTaskCount",
       filter: "task/getFilterView",
+
     }),
  
     // taskcount(){
@@ -614,6 +617,7 @@ export default {
     },
 
     updateTask(payload) {
+      console.log("111",payload)
       let user
       if (payload.field == "userId" && payload.value != '') {
         user = this.teamMembers.filter(t => t.id == payload.value)
@@ -657,7 +661,22 @@ export default {
         })
         .catch(e => console.warn(e))
     },
-
+    showBlankTask(sectionId) {
+      // this.$emit("create-task", sectionId) //event will be captured by parent only
+      // this.$nuxt.$emit("create-task", sectionId) //event will be available to all
+      // console.log(sectionId)
+      this.$refs[`blankTaskGrid${sectionId}`][0].showNewTask()
+    },
+    closeOtherBlankGrid($event){
+      if(this.$refs.length>0) {
+        for (var ref in this.$refs) {
+          if(this.$refs[ref][0]?.title != $event){
+            this.$refs[ref][0].newTask = false
+          }
+        }
+      }
+        
+    },
     updateDuedate(value){
       let newDate = new Date(value) || null
       let data = { [this.datepickerArgs.field]: newDate }
@@ -717,12 +736,12 @@ export default {
       proj.priorityId = null
       proj.departmentId = null;
       proj.department = null;
-      proj.user = {
+      proj.user = [{
         id: this.loggedUser.Id,
         email: this.loggedUser.Email,
         firstName: this.loggedUser.FirstName,
         lastName: this.loggedUser.LastName
-      }
+      }]
       proj.userId = this.loggedUser.Id
       proj.projectId=null
       proj.todoId = this.groupby ? null : section.id
