@@ -176,6 +176,10 @@ export default {
       favTasks: "task/getFavTasks",
       sideBarUser:"user/getSideBarUser",
       alltags: "company/getCompanyTags",
+      mytaskGrid:"todo/getGridType",
+      tasksGrid:"task/getGridType",
+      singleProjectGrid:"project/getGridType",
+
     }),
     teammates() {
       let tm = { main: [], extra: [], all: [] }
@@ -433,7 +437,8 @@ export default {
           "text": `task "${this.form.title}" created`,
           "mode": this.$route.fullPath.includes("usertasks")?null:(this.$route.params.id ? "project" : null),
         }).then((task) => {
-
+          // this.$nuxt.$emit("refresh-table");
+  
           this.$nuxt.$emit("newTask",task.data,this.$route.path)
           // this.$nuxt.$emit("gridNewTask",task.data,this.$route.path)
           this.getTableCount(this.$route.path,task.data)
@@ -461,7 +466,7 @@ export default {
           }
           if(param=="/tasks"){
             const res = await this.$axios.$get(`company/tasks/all`, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': payload.filter || 'all' }
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': 'all' }
               });
               if (res.data.data?.[0]?.tasks?.length==1) {
                 this.$nuxt.$emit("refresh-table");
@@ -530,10 +535,29 @@ export default {
         text: htext || taskData.historyText || taskData.value,
       })
         .then((u) => {
+          if(this.$route.path=="/mytasks" && this.mytaskGrid=="grid") {
+            this.$nuxt.$emit("update-key")
+            this.reloadHistory += 1
+            this.reloadComments+=1
+            return; 
+          }
+          if(this.$route.path=="/tasks" && this.tasksGrid=="grid") {
+            this.$nuxt.$emit("update-key")
+            this.reloadHistory += 1
+            this.reloadComments+=1
+            return;
+          }
+          if(this.$route.path.includes("/projects/") && this.singleProjectGrid=="grid"){
+            this.$nuxt.$emit("update-key")
+            this.reloadHistory += 1
+            this.reloadComments+=1
+            return;
+          }
           this.$nuxt.$emit("update_table",u)
-          //  this.$store.dispatch("task/setSingleTask", u)
-          //  this.$nuxt.$emit("update-key")
           this.reloadHistory += 1
+          this.reloadComments+=1
+          //  this.$store.dispatch("task/setSingleTask", u)
+          
           // console.info(u)
         })
         .catch(e => {
@@ -557,6 +581,8 @@ export default {
           this.$nuxt.$emit("update-key")
           this.$store.dispatch("task/setSingleTask", u)
           this.reloadHistory += 1
+          this.reloadComments+=1
+
         })
         .catch(e => {
           console.log(e)
@@ -628,6 +654,8 @@ export default {
           //   this.$nuxt.$emit("update-key","update")
           // }
           this.reloadHistory += 1
+          this.reloadComments+=1
+
         })
         .catch(e => {
           console.log(e)
@@ -684,10 +712,34 @@ export default {
       this.loading = true
       this.$store.dispatch('task/updateTaskStatus', this.currentTask)
         .then((d) => {
+          if(this.$route.path=="/mytasks" && this.mytaskGrid=="grid") {
+            this.$nuxt.$emit("update-key")
+           this.$store.dispatch("task/setSingleTask", d)
+            this.reloadHistory += 1
+            this.reloadComments+=1
+            return; 
+          }
+          if(this.$route.path=="/tasks" && this.tasksGrid=="grid") {
+            this.$nuxt.$emit("update-key")
+            this.$store.dispatch("task/setSingleTask", d)
+            this.reloadHistory += 1
+            this.reloadComments+=1
+            return;
+          }
+          if(this.$route.path.includes("/projects/") && this.singleProjectGrid=="grid"){
+            this.$nuxt.$emit("update-key")
+            this.$store.dispatch("task/setSingleTask", d)
+            this.reloadHistory += 1
+            this.reloadComments+=1
+            return;
+          }
+          
           this.loading = false
           this.$nuxt.$emit("update_table",d)
           this.$store.dispatch("task/setSingleTask", d)
-          this.reloadComments += 1
+          this.reloadHistory += 1
+          this.reloadComments+=1
+          
         }).catch(e => {
           console.log(e)
           this.loading = false
@@ -718,7 +770,8 @@ export default {
       if (this.editMessage?.id) {
         this.$store.dispatch("task/updateTaskComment", { taskId: this.currentTask.id, commentId: this.editMessage.id, comment: data.text, text: `updated comment ${trimComment}` })
         .then(res => {
-          this.reloadComments += 1
+          this.reloadHistory += 1
+          this.reloadComments+=1
           this.editMessage = {}
         })
         .catch(e => console.log(e))
@@ -728,7 +781,8 @@ export default {
             if (this.value.files.length > 0) {
               this.uploadFiles(this.value.files, res.data)
             }
-            this.reloadComments += 1
+            this.reloadHistory += 1
+          this.reloadComments+=1
           })
           .catch(e => console.log(e))
       }

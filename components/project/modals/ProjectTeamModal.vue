@@ -16,7 +16,8 @@
       <template v-for="t in team">
         <email-chip :key="t.id" :email="t.email" :name="t.label" :avatar="t.avatar" class="mt-05" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
       </template>
-      <small v-show="team.length == 0 && projectMembers.length<2" class="text-danger font-xs" id="ptm-team-length">Select at least 1 team member.</small>
+      <!-- team.length == 0 && projectMembers.length<2 -->
+      <small v-show="showMsg" class="text-danger font-xs" id="ptm-team-length">Select at least 1 team member.</small>
       <p v-if="message" v-text="message" class="font-sm mt-025 text-orange" id="ptm-message"></p>
     </div>
   </div> 
@@ -87,6 +88,7 @@ export default {
       key: 0,
       loading: false,
       norecord: false,
+      showMsg:false
     };
   },
 
@@ -146,6 +148,7 @@ export default {
         }
         this.team.push(m[0])
         this.filterKey = ""
+        this.showMsg=false
       } else {
         this.message = "User already exists"
       }
@@ -154,6 +157,9 @@ export default {
       let rm = this.team.map(t => t.id == tm.id)
       // console.log(rm.indexOf(true))
       this.team.splice(rm.indexOf(true), 1)
+      if(this.team==0) {
+        this.showMsg=true
+      }
     },
     addTeamMember() {
       this.loading = true

@@ -7,7 +7,7 @@
             <bib-icon icon="check-circle-solid" :scale="1.5" variant="light"></bib-icon>
           </span>
           <span class=" flex-grow-1" id="task-title-input">
-            <textarea id="newtaskInput" ref="newtaskInput" class="editable-input" rows="1" v-model="taskTitle" @input="debounceCreate" @keyup.esc="newTask = false" placeholder="Enter title..."></textarea>
+            <textarea id="newtaskInput" ref="newtaskInput" class="editable-input" rows="1" v-model="taskTitle" @input="debounceCreate" @keyup.esc="newTask = false"  placeholder="Enter title..."></textarea>
           </span>
         </div>
       </div>
@@ -29,11 +29,21 @@
 
 <script>
 import _ from 'lodash'
+import { mapGetters } from 'vuex'
 export default {
   name: "TaskGridBlank",
   props: {
     section: { type: Object },
     sectionType: { type: String }
+  },
+  computed: {
+    ...mapGetters({
+      myTaskGroupBy:"todo/getGroupBy",
+      projectGroupBy:"project/getGroupBy",  
+      taskGroupBy:"task/getGroupBy",  
+      singleProjectGroupBy:"section/getGroupBy",  
+      loggedUser: "user/getUser2",
+    }),
   },
   data() {
     return {
@@ -68,15 +78,70 @@ export default {
     closeNewTask($event) {
       this.newTask = false
     },
-    debounceCreate: _.debounce(function() {
-      
-      if(this.sectionType == 'department') {
+    createNewTask(section) {
+      console.log(section)
+      let proj={}
+      proj.group = this.myTaskGroupBy;
+      proj.status = null
+      proj.statusId = null
+      proj.priority = null
+      proj.priorityId = null
+      proj.departmentId = null;
+      proj.department = null;
+      proj.budget=0;
+      proj.user = [{
+        id: this.loggedUser.Id,
+        email: this.loggedUser.Email,
+        firstName: this.loggedUser.FirstName,
+        lastName: this.loggedUser.LastName
+      }]
+      proj.userId = this.loggedUser.Id
+      proj.todoId =  section.id
+      proj.title=this.taskTitle
+      if(this.myTaskGroupBy == "priority"){
+        proj.priority = section.tasks[0]?.priority
+        proj.priorityId = section.tasks[0]?.priorityId
+     
+      }
+      if(this.myTaskGroupBy == "status"){
+        proj.status = section.tasks[0]?.status
+        proj.statusId = section.tasks[0]?.statusId
+      }
+      if(this.myTaskGroupBy=="assignee"){
+        proj.user=[section.tasks[0]?.user]
+        proj.userId=section.tasks[0]?.userId
+      }
+      if(this.myTaskGroupBy == "department"){
+        proj.department = section.tasks[0]?.department
+        proj.departmentId = section.tasks[0]?.departmentId
+      }
+      console.log(proj)
+      this.$store.dispatch("task/createTask", {
+          ...proj,
+          text: `created task ${this.taskTitle}`,
+        })
+        .then((t) => {
+          console.log(t)
+          this.$nuxt.$emit("refresh-table");
+          this.newTask = false
+          this.taskTitle = ""
+          
+        })
+        .catch((e) => {
+          console.warn(e);
+        });
+    },
 
+    debounceCreate: _.debounce(function() {
+      if(this.sectionType=="myTask") {
+          this.createNewTask(this.section)
+      }
+      if(this.sectionType == 'department') {
         this.loading = true
         this.$store.dispatch("task/createTask", {
           title: this.taskTitle,
           description: "",
-          departmentId: this.section.id,
+          departmentId: this.section.id?this.section.id:null,
           statusId: null,
           dueDate: "",
           priorityId: null,
@@ -93,26 +158,26 @@ export default {
 
       } else {
 
-        this.loading = true
-        this.$store.dispatch("task/createTask", {
-          sectionId: this.section.id,
-          title: this.taskTitle,
-          description: "",
-          statusId: null,
-          dueDate: "",
-          priorityId: null,
-          departmentId: null,
-          projectId: this.section.projectId,
-          budget: 0,
-          text: `task "${this.taskTitle}" created`,
-        }).then(t => {
-          if (t.statusCode == 200) {
-            this.$nuxt.$emit("update-key")
-          }
-          this.taskTitle = ""
-          this.newTask = false
-          this.loading = false
-        }).catch(e => console.warn(e))
+        // this.loading = true
+        // this.$store.dispatch("task/createTask", {
+        //   sectionId: this.section.id,
+        //   title: this.taskTitle,
+        //   description: "",
+        //   statusId: null,
+        //   dueDate: "",
+        //   priorityId: null,
+        //   departmentId: null,
+        //   projectId: this.section.projectId,
+        //   budget: 0,
+        //   text: `task "${this.taskTitle}" created`,
+        // }).then(t => {
+        //   if (t.statusCode == 200) {
+        //     this.$nuxt.$emit("update-key")
+        //   }
+        //   this.taskTitle = ""
+        //   this.newTask = false
+        //   this.loading = false
+        // }).catch(e => console.warn(e))
       
       }
 
