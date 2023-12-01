@@ -447,13 +447,13 @@ export default {
     outline: none;
   }
 
-  &:focus:invalid {
-    outline: 3px solid $danger-sub3;
-  }
+        // &:focus:invalid {
+        //   outline: 3px solid $danger-sub3;
+        // }
 
-  &:invalid {
-    border-color: $danger;
-  }
+        // &:invalid {
+        //   border-color: $danger;
+        // }
 }
 .selectedSubRow {
   background-color:#fbf2f2
