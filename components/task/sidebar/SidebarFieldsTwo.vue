@@ -216,13 +216,7 @@ export default {
           projectId: null,
           text: `changed description - ${hText}`,
         })
-          .then((u) => {
-            // this.$nuxt.$emit("update_table",u)
-            console.info(u)
-          })
-          .catch(e => {
-            console.warning(e)
-          })
+          
       } else {
         this.description = ""
       }

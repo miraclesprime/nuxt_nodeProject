@@ -26,14 +26,18 @@
 
     <!-- message files -->
     <div v-if="files.length > 0" class="msg-files pb-05" id="msg-file-content-wrapper">
-      <message-collapsible-section>
+      <p class="pb-025">Files ({{ files.length }})</p>
+      <div class="d-flex flex-wrap gap-05 " id="msg-files-wrap">
+        <file-comp v-for="file in files" :key="file.key" :property="file" @delete-file="deleteFile" @preview-file="showPreviewModal(file)" ></file-comp>
+      </div>
+      <!-- <message-collapsible-section>
         <template slot="title">Files ({{ files.length }})</template>
         <template slot="content">
-          <div class="d-grid gap-2 " style="grid-template-columns: repeat(2, 1fr);" id="msg-files-wrap">
+          <div class="d-flex flex-wrap gap-05 "  id="msg-files-wrap">
             <message-files v-for="file in files" :property="file" :key="file.key" @file-click="showPreviewModal(file)" @reload-files="getFiles" ></message-files>
           </div>
         </template>
-      </message-collapsible-section>
+      </message-collapsible-section> -->
     </div>
 
     <!-- message action bar -->
@@ -104,6 +108,12 @@
         </div>
       </template>
     </bib-modal-wrapper>
+    <bib-popup-notification-wrapper>
+      <template #wrapper>
+        <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" :autohide="4000">
+        </bib-popup-notification>
+      </template>
+    </bib-popup-notification-wrapper>
   </div>
 </template>
 
@@ -174,6 +184,7 @@ export default {
       fileLoader: false,
       alertDialog: false,
       alertMsg:"",
+      popupMessages: [],
     }
   },
   watch: {
@@ -494,6 +505,34 @@ export default {
       this.pdfPreview = ''
       this.imgPreview = ''
       this.previewModal = false
+    },
+
+    deleteFile(file) {
+      if((file.userId == JSON.parse(localStorage.getItem('user')).sub ) || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
+          this.$axios.delete("file/" + file.key, {
+              headers: {
+                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+                'taskid': file.taskId || null,
+                'projectid': file.projectId || null,
+                'text': `deleted file ${file.name}`,
+                'ishidden': true,
+                'userid': file.userId,
+              }
+            }).then(f => {
+              // console.log(f.data)
+              if (f.data.statusCode == 200) {
+                this.popupMessages.push({text: f.data.message, variant: "success"})
+                _.delay(() => {
+                  this.getFiles()
+                  // this.$emit("reload-files")
+                }, 3000);
+              }
+            })
+            .catch(e => console.error(e))
+      } else {
+        // console.log("you don't have enough permission to delete this file")
+        this.popupMessages.push({text: "you do not have permission to delete this file", variant: "orange"})
+      }
     }
   }
 }

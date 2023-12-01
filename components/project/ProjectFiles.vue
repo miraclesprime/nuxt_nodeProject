@@ -19,8 +19,7 @@
           <template #cell(name)="data">
             <div class="d-flex align-center text-left gap-05 cursor-pointer" id="pf-file-extensions" @click="showPreviewModal(data.value)">
               <!-- <bib-avatar v-if="imageType(data.value)" shape="rounded" :src="data.value.url" size="1.5rem"></bib-avatar> -->
-              <bib-icon :icon="fileIcon(data.value)" ></bib-icon>
-              
+              <bib-icon :icon="fileIcon(data.value.type)" ></bib-icon>
               <span class="text-gray1 text-truncate" id="pf-file-data-name" v-tooltip="data.value.name" style="max-width: 6rem;">
                 {{ data.value.name }}
               </span>
@@ -142,6 +141,7 @@
 import { mapGetters } from 'vuex'
 import { FILE_FIELDS } from "~/config/constants"
 import dayjs from 'dayjs'
+import { fileIcon } from '~/utils/file'
 
 export default {
   name: "ProjectFiles",
@@ -196,30 +196,8 @@ export default {
     this.getFiles()
   },
   methods: {
-    fileIcon(file){
-      if (file.type.includes('image')) {
-        return "file-text-solid"
-      }
-      if (file.type.includes('video')) {
-        return "video-solid"
-      }
-      if (file.type.includes('audio')) {
-        return "sales"
-      }
-      if (file.type.includes('pdf')) {
-        return "pdf"
-      }
-      if (file.type.includes('msword') || file.type.includes("wordprocessingml") || file.type.includes("rtf")) {
-        return "word"
-      }
-      if (file.type.includes('presentation')) {
-        return "powerpoint"
-      }
-      if (file.type.includes('ms-excel') || file.type.includes("sheet")) {
-        return "excel"
-      }
-      return "file-text-solid"
-    },
+    fileIcon,
+
     /*imageType(data) {
       if (data.type.indexOf("image/") == 0) {
         return true

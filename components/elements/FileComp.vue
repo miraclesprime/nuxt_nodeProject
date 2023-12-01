@@ -1,8 +1,8 @@
 <template>
   <div id="file-comp-wrapper" class="file-wrap bg-light shape-rounded px-05 ">
     <div id="file-comp-pn-ps" class="d-flex gap-05 align-center height-2" >
-      <bib-icon :scale="1" :icon="icon" variant="gray4"></bib-icon>
-      <span id="file-comp-pn" class="file-text font-md text-truncate cursor-pointer" v-tooltip="`${property.name} (${$formatBytes(property.size)})`" @click.stop="previewFile(property)">{{property.name}} </span>
+      <bib-icon :scale="1" :icon="fileIcon(property.type)" variant="gray4"></bib-icon>
+      <span id="file-comp-pn" class="file-text font-md text-truncate cursor-pointer" v-tooltip="`${property.key} (${$formatBytes(property.size)})`" @click.stop="previewFile(property)">{{property.key}} </span>
       <span v-if="cdtf" class="d-inline-flex align-center justify-center height-1 width-1 shape-circle cursor-pointer bg-white" @click.stop="deleteFile"><bib-icon icon="close-circle-solid" :scale="1" variant="gray4" ></bib-icon></span>
       <!-- <div id="file-comp-elipsis-icon" class="width-2 height-2 bg-light shape-circle d-flex align-center justify-center">
         <bib-popup pop="elipsis" icon-variant="gray5" icon-hover-variant="gray6">
@@ -20,7 +20,7 @@
       </div> -->
     </div>
     <!-- file detail modal -->
-    <bib-modal-wrapper v-if="fileDetailModal" title="File Details" @close="fileDetailModal = false">
+    <!-- <bib-modal-wrapper v-if="fileDetailModal" title="File Details" @close="fileDetailModal = false">
       <template slot="content">
         <table class="table">
           <tr v-for="file in fileDetail">
@@ -40,11 +40,12 @@
           <bib-button label="Close" variant="light" pill @click="fileDetailModal = false"></bib-button>
         </div>
       </template>
-    </bib-modal-wrapper>
+    </bib-modal-wrapper> -->
   </div>
 </template>
 <script>
 import dayjs from 'dayjs'
+import { fileIcon } from '~/utils/file'
 export default {
 
   name: 'FileComp',
@@ -67,7 +68,7 @@ export default {
 
   data() {
     return {
-      fileDetailModal: false,
+      // fileDetailModal: false,
       cdtf: false
     }
   },
@@ -94,45 +95,23 @@ export default {
         return false
       }
     },
-    icon(){
-      if (this.property.type.includes('image')) {
-        return "file-text-solid"
-      }
-      if (this.property.type.includes('video')) {
-        return "video-solid"
-      }
-      if (this.property.type.includes('audio')) {
-        return "sales"
-      }
-      if (this.property.type.includes('pdf')) {
-        return "pdf"
-      }
-      if (this.property.type.includes('msword') || this.property.type.includes("wordprocessingml") || this.property.type.includes("rtf")) {
-        return "word"
-      }
-      if (this.property.type.includes('presentation')) {
-        return "powerpoint"
-      }
-      if (this.property.type.includes('ms-excel') || this.property.type.includes("sheet")) {
-        return "excel"
-      }
-      return "file-text-solid"
-    },
+    
   },
   mounted() {
     this.canDeleteTaskFile()
   },
   methods: {
+    fileIcon,
     openFile() {
       this.$emit("open-file", this.property)
     },
     previewFile() {
       this.$emit("preview-file", this.property)
     },
-    detailFile() {
+    /*detailFile() {
       this.$emit("detail-file", this.property)
-    },
-    downloadFile() {
+    },*/
+    /*downloadFile() {
       this.$axios.get("file/" + this.property.key, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
@@ -149,7 +128,7 @@ export default {
           }
         })
         .catch(e => console.error(e))
-    },
+    },*/
     deleteFile() {
       this.$emit("delete-file", this.property)
     },
