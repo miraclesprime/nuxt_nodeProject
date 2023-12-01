@@ -169,27 +169,26 @@ export default {
 
     taskOverdue() {
       if (this.totalTasks.length < 1) {
-        return 0
+        return 0;
       } else {
         let over = this.totalTasks.filter(t => {
-          if (t.statusId != 5 && new Date(t.dueDate) < new Date()) {
-            return t
-          }
-        })
-        return Math.round(over.length)
+          return t.dueDate && t.dueDate.trim() !== '' && t.statusId !== 5 && new Date(t.dueDate) < new Date();
+        });
+        return Math.round(over.length);
       }
     },
+    
     taskDuesoon() {
       if (this.totalTasks.length < 1) {
-        return 0
+        return 0;
       } else {
         let due = this.totalTasks.filter(t => {
-          let dd = new Date(t.dueDate).getDate();
-          return (dd + 7) < new Date().getDate()
-        })
-        return Math.round(due.length)
+          return t.dueDate && t.dueDate.trim() !== '' && t.statusId !== 5 && new Date(t.dueDate) > new Date() && new Date(t.dueDate) <= new Date().getTime() + 7 * 24 * 60 * 60 * 1000;
+        });
+        return Math.round(due.length);
       }
     },
+
     taskInprogress() {
       if (this.totalTasks.length < 1) {
         return 0
@@ -198,6 +197,7 @@ export default {
         return Math.round(prog.length)
       }
     },
+    
     taskComplete() {
       if (this.totalTasks.length < 1) {
         return 0

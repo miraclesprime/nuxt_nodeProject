@@ -20,7 +20,7 @@
             <div class="d-flex align-center text-left gap-05 cursor-pointer" id="pf-file-extensions" @click="showPreviewModal(data.value)">
               <!-- <bib-avatar v-if="imageType(data.value)" shape="rounded" :src="data.value.url" size="1.5rem"></bib-avatar> -->
               <bib-icon :icon="fileIcon(data.value.type)" ></bib-icon>
-              <span class="text-gray1 text-truncate" id="pf-file-data-name" v-tooltip="data.value.name" style="max-width: 6rem;">
+              <span class="text-gray1 text-truncate" id="pf-file-data-name" v-tooltip="data.value.key" style="max-width: 6rem;">
                 {{ data.value.name }}
               </span>
             </div>
