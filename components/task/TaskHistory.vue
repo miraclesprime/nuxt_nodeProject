@@ -38,7 +38,6 @@ export default {
 
   
   async mounted () {
-
     if(this.teamMembers.length>0) {
       this.user=await this.$userInfo(this.history.userId)
 

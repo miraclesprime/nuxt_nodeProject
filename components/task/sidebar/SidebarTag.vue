@@ -10,7 +10,7 @@
             <bib-icon icon="add" variant="success" :scale="1" class=""></bib-icon>
             <span id="task-tags-add-text" class=""> Tags</span>
           </div> -->
-          <bib-button v-show="activeProp" label="Tags" variant="primary-24" icon="add" class="" @click.native.stop="triggerOpen()"></bib-button>
+          <bib-button v-show="activeProp" label="Tags" variant="primary--outline" icon="add" class="" @click.native.stop="triggerOpen()"></bib-button>
 
           <!-- dropdown -->
           <div v-show="show" class="picker-content p-025" id="tags-select-content" style="min-width: 10rem;">

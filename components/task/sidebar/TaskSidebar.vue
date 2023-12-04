@@ -21,7 +21,7 @@
             <bib-icon icon="comment-forum-solid" variant="gray5" ></bib-icon>
           </div>
           <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='tsb-icon-5' v-tooltip="'Files'">
-            <bib-icon icon="files" variant="gray5" ></bib-icon>
+            <bib-icon icon="file" variant="gray5" ></bib-icon>
           </div>
           <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="tsb-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
             <bib-spinner v-if="favProcess" :scale="2" ></bib-spinner>

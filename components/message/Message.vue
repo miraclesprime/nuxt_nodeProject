@@ -30,14 +30,6 @@
       <div class="d-flex flex-wrap gap-05 " id="msg-files-wrap">
         <file-comp v-for="file in files" :key="file.key" :property="file" @delete-file="deleteFile" @preview-file="showPreviewModal(file)" ></file-comp>
       </div>
-      <!-- <message-collapsible-section>
-        <template slot="title">Files ({{ files.length }})</template>
-        <template slot="content">
-          <div class="d-flex flex-wrap gap-05 "  id="msg-files-wrap">
-            <message-files v-for="file in files" :property="file" :key="file.key" @file-click="showPreviewModal(file)" @reload-files="getFiles" ></message-files>
-          </div>
-        </template>
-      </message-collapsible-section> -->
     </div>
 
     <!-- message action bar -->
@@ -552,6 +544,7 @@ export default {
   &__content {
     /*color: $text;*/
     /*refer global.scss*/
+    ul, ol { list-style: initial; }
   }
 
   &__files {

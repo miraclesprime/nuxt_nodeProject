@@ -86,10 +86,10 @@ export default {
     },
 
   },
-  created () {
+  async created () {
 
 
-    this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${JSON.parse(localStorage.getItem('user')).subb}/users`, {
+   await this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${JSON.parse(localStorage.getItem('user')).subb}/users`, {
       headers: {
         "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
       }
@@ -100,8 +100,8 @@ export default {
         });
   },
 
-  mounted() {
-    this.$nuxt.$on("refresh-history", () => {
+  async mounted() {
+    await this.$nuxt.$on("refresh-history", () => {
       this.fetchHistory()
     })
 

@@ -21,28 +21,34 @@
               <template v-slot:menu>
                 <div class="list" id="tsb-list">
                   <span class="list__item" id="tsb-list-item-1" @click="markComplete">
-                    <bib-icon icon="check-circle-solid" :variant="isComplete.variant" class="mr-075"></bib-icon> {{isComplete.text}}
+                    <bib-icon icon="check-circle-solid" :variant="isComplete.iconVariant" class="mr-05"></bib-icon> {{isComplete.text}}
                   </span>
                   <hr>
                   <span class="list__item" id="tsb-list-item-2" @click="setFavorite">
                     <bib-spinner v-if="favProcess" :scale="2" ></bib-spinner>
-                    <bib-icon v-else icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon>
+                    <bib-icon v-else icon="bookmark-solid" :variant="isFavorite.variant" class="mr-05"></bib-icon>
                     {{isFavorite.text}}
                   </span>
                   <span class="list__item" id="tsb-list-item-5"  @click="scrollToSubtasks">
-                    <bib-icon icon="check-square-solid" variant="gray4" class="mr-075"></bib-icon> Subtasks
+                    <bib-icon icon="check-square-solid" variant="gray4" class="mr-05"></bib-icon> Subtasks
                   </span>
                   <span class="list__item" id="tsb-list-item-3"   @click="scrollToFiles">
-                    <bib-icon icon="files" variant="gray4" class="mr-075"></bib-icon> Files
+                    <bib-icon icon="file" variant="gray4" class="mr-05"></bib-icon> Files
                   </span>
                   <span class="list__item" id="tsb-list-item-7" @click="scrollToConversation">
-                    <bib-icon icon="comment-forum-solid" variant="gray4" class="mr-075"></bib-icon> Conversation
+                    <bib-icon icon="comment-forum-solid" variant="gray4" class="mr-05"></bib-icon> Conversation
                   </span>
                   <span class="list__item" id="tsb-project-id-list-item3" @click="copyTaskLink">
-                      <bib-icon icon="duplicate" class="mr-075"></bib-icon> Copy Link
+                      <bib-icon icon="duplicate" variant="gray4" class="mr-05"></bib-icon> Copy Link
                   </span>
                   <hr>
-                  <span class="list__item list__item__danger" id="tsb-list-item-8" @click="deleteTask(currentTask)">Delete</span>
+                  <!-- <span class="list__item list__item__danger" id="tsb-list-item-8" @click="deleteTask(currentTask)">Delete</span> -->
+                  <span class="list__item list__item__danger" 
+                      @mouseenter="deleteBtnHover = true"
+                      @mouseleave="deleteBtnHover = false" 
+                      id="tsb-list-item-8" @click="deleteTask(currentTask)">
+                    <bib-icon icon="trash" :variant='deleteBtnHover ? `white` : `danger`' class="mr-05"></bib-icon> Delete 
+                  </span>
                 </div>
               </template>
             </bib-button>
@@ -141,6 +147,7 @@ export default {
       showSubtaskDetail: false,
       popupMessages: [],
       _expandVisible: true,
+      deleteBtnHover: false,
     };
   },
 
@@ -190,9 +197,9 @@ export default {
     },
     isComplete() {
       if (this.currentTask.statusId == 5) {
-        return { variant: "success", text: "Completed" }
+        return { variant: "primary-24", iconVariant: "primary-24", text: "Completed" }
       } else {
-        return { variant: "light", text: "Mark Completed" }
+        return { variant: "primary--outline", iconVariant: "gray4", text: "Mark Completed" }
       }
     },
     userPhoto(){
@@ -452,7 +459,7 @@ export default {
             this.$nuxt.$emit("update-key","update")
           }
           
-         
+         this.reloadComments+=1
           this.reloadHistory += 1
         })
         .catch(e => {
@@ -545,6 +552,7 @@ export default {
           if(this._expandVisible){
             this.$nuxt.$emit("update-key","update")
           }
+          this.reloadComments+=1
           this.reloadHistory += 1
         })
         .catch(e => {
@@ -569,7 +577,8 @@ export default {
           this.form.statusId = null
         }
         this.updateTask({ name: payload.name, field: payload.field, value: payload.value, historyText: `changed ${payload.name} to ${payload.value}` })
-        this.reloadComments += 1
+        this.reloadComments+=1
+          this.reloadHistory += 1
 
       } else {
         // if new task
@@ -605,7 +614,8 @@ export default {
           this.loading = false
           this.$nuxt.$emit("update-key")
           this.$store.dispatch("task/setSingleTask", d)
-          this.reloadComments += 1
+          this.reloadComments+=1
+          this.reloadHistory += 1
         }).catch(e => {
           console.log(e)
           this.loading = false
@@ -636,7 +646,8 @@ export default {
       if (this.editMessage?.id) {
         this.$store.dispatch("task/updateTaskComment", { taskId: this.currentTask.id, commentId: this.editMessage.id, comment: data.text, text: `updated comment ${trimComment}` })
         .then(res => {
-          this.reloadComments += 1
+          this.reloadComments+=1
+          this.reloadHistory += 1
           this.editMessage = {}
         })
         .catch(e => console.log(e))
@@ -646,7 +657,8 @@ export default {
             if (this.value.files.length > 0) {
               this.uploadFiles(this.value.files, res.data)
             }
-            this.reloadComments += 1
+            this.reloadComments+=1
+          this.reloadHistory += 1
           })
           .catch(e => console.log(e))
       }
