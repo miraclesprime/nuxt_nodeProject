@@ -235,7 +235,7 @@ export const actions = {
   async deleteTask(ctx, payload) {
     const res = await this.$axios.$delete("/task", {
       headers: { "Authorization": `Bearer ${localStorage.getItem('accessToken')}` },
-      data: { id: payload.id, task: payload, text: `task "${payload.title}" deleted` },
+      data: { id: payload.id, task: payload, retainSubtasks: payload.retainSubtasks, text: `task "${payload.title}" deleted` },
     })
     return res
   },

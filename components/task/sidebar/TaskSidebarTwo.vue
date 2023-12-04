@@ -23,31 +23,31 @@
               <template v-slot:menu>
                 <div class="list" id="tsb-list">
                   <span class="list__item" id="tsb-list-item-1" @click="markComplete">
-                    <bib-icon icon="check-circle-solid" :variant="isComplete.variant" class="mr-075"></bib-icon> {{isComplete.text}}
+                    <bib-icon icon="check-circle-solid" :variant="isComplete.iconVariant" class="mr-05"></bib-icon> {{isComplete.text}}
                   </span>
                   <hr>
                   <span class="list__item" id="tsb-list-item-2" @click="setFavorite">
                     <bib-spinner v-if="favProcess" :scale="2" ></bib-spinner>
-                    <bib-icon v-else icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon>
+                    <bib-icon v-else icon="bookmark-solid" :variant="isFavorite.variant" class="mr-05"></bib-icon>
                     {{isFavorite.text}}
                   </span>
                   <span class="list__item" id="tsb-list-item-5"  @click="scrollToSubtasks">
-                    <bib-icon icon="check-square-solid" variant="gray4" class="mr-075"></bib-icon> Subtasks
+                    <bib-icon icon="check-square-solid" variant="gray4" class="mr-05"></bib-icon> Subtasks
                   </span>
                   <span class="list__item" id="tsb-list-item-3"   @click="scrollToFiles">
-                    <bib-icon icon="files" variant="gray4" class="mr-075"></bib-icon> Files
+                    <bib-icon icon="file" variant="gray4" class="mr-05"></bib-icon> Files
                   </span>
                   <span class="list__item" id="tsb-list-item-7" @click="scrollToConversation">
-                    <bib-icon icon="comment-forum-solid" variant="gray4" class="mr-075"></bib-icon> Conversation
+                    <bib-icon icon="comment-forum-solid" variant="gray4" class="mr-05"></bib-icon> Conversation
                   </span>
                   <span class="list__item" id="tsb-project-id-list-item3" @click="copyTaskLink">
-                      <bib-icon icon="duplicate" class="mr-075"></bib-icon> Copy Link
+                    <bib-icon icon="duplicate" variant="gray4" class="mr-05"></bib-icon> Copy Link
                   </span>
                   <hr>
                   <span class="list__item list__item__danger" 
                       @mouseenter="deleteBtnHover = true"
                       @mouseleave="deleteBtnHover = false" 
-                      id="tsb-list-item-8" @click="deleteTask(currentTask)">
+                      id="tsb-list-item-8" @click="deleteTaskConfirm(currentTask)">
                     <bib-icon icon="trash" :variant='deleteBtnHover ? `white` : `danger`' class="mr-075"></bib-icon> Delete 
                   </span>
                 </div>
@@ -108,6 +108,18 @@
       </template>
     </bib-modal-wrapper> -->
 
+    <bib-modal-wrapper v-if="taskConfirmModal" title="Delete subtask(s)" @close="taskConfirmModal = false">
+      <template slot="content">
+        <p>Delete subtasks as well.</p>
+      </template>
+      <template slot="footer">
+          <div class="justify-end gap-1">
+            <bib-button label="Retain" variant="secondary--outline" pill @click="deleteTask(true)"></bib-button>
+            <bib-button label="Delete" variant="primary-24" pill @click="deleteTask(false)"></bib-button>
+          </div>
+      </template>
+    </bib-modal-wrapper>
+
     <bib-popup-notification-wrapper>
       <template #wrapper>
         <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" :autohide="4000">
@@ -158,6 +170,7 @@ export default {
       deleteBtnHover: false,
       // titleHt: "2rem",
       subtaskDesc: null,
+      taskConfirmModal: false,
     };
   },
 
@@ -204,16 +217,16 @@ export default {
     isFavorite() {
       let fav = this.favTasks.some(t => t.task.id == this.currentTask.id)
       if (fav) {
-        return { variant: "primary", text: "Remove favorite", status: true }
+        return { variant: "primary-24", text: "Remove favorite", status: true }
       } else {
         return { variant: "gray4", text: "Add to favorites", status: false }
       }
     },
     isComplete() {
       if (this.currentTask.statusId == 5) {
-        return { variant: "primary-24", text: "Completed" }
+        return { variant: "primary-24", iconVariant: "primary-24", text: "Completed" }
       } else {
-        return { variant: "primary--outline", text: "Mark Completed" }
+        return { variant: "primary--outline", iconVariant: "gray4", text: "Mark Completed" }
       }
     },
     userPhoto(){
@@ -745,21 +758,30 @@ export default {
           this.loading = false
         })
     },
-    deleteTask(task) {
-      if (task) { 
-        this.$store.dispatch("task/deleteTask", task)
+    deleteTaskConfirm(task){
+      this.taskConfirmModal = true
+      // this.todoToDelete = task
+    },
+
+    deleteTask(confirm) {
+
+      // if (task) { 
+        this.$store.dispatch("task/deleteTask", {...this.form, retainSubtasks: confirm})
         .then(t => {
+          this.taskConfirmModal = false
           if (t.statusCode == 200) {
             this.$nuxt.$emit("close-sidebar");
             this.$nuxt.$emit("update-key", t.message)
           } else {
+            this.popupMessages.push({text: t.message, variant: "orange"})
             console.warn(t.message);
           }
         })
         .catch(e => {
+          this.taskConfirmModal = false
           console.warn(e)
         })
-      } 
+      // } 
     },
     onFileInput(payload) {
       this.value.files = payload.files

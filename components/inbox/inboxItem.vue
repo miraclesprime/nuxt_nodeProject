@@ -23,12 +23,12 @@
       </span>
 
       <div class="inbox-flags d-inline-flex align-center ">
-        <span id="inbox-item-flag-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Flag message'" @click.stop="markFavorite">
+        <!-- <span id="inbox-item-flag-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Flag message'" @click.stop="markFavorite">
           <bib-icon icon="bookmark-solid" variant="gray5"></bib-icon>
         </span>
         <span id="inbox-item-file-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Archive'" @click.stop="markArchive">
           <bib-icon icon="collection-solid" variant="gray5"></bib-icon>
-        </span>
+        </span> -->
         <span id="inbox-item-bell-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="readText" @click.stop="markRead">
           <bib-icon icon="notification-solid" :variant="status.markRead ? 'gray6' : 'gray5'"></bib-icon>
         </span>
