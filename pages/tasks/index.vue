@@ -319,7 +319,7 @@ export default {
     },
     updateKey(value) {
       if (value) {
-        this.popupMessages.push({ text: value, variant: "success" });
+        //this.popupMessages.push({ text: value, variant: "success" });
       }
       let compid = JSON.parse(localStorage.getItem("user")).subb;
       this.$store
@@ -469,7 +469,7 @@ export default {
           text: `changed ${label} to ${historyText}`,
         })
         .then((t) => {
-            this.updateKey("success")
+            // this.updateKey("success")
         })
         .catch((e) => console.warn(e));
     },

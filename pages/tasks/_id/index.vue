@@ -452,7 +452,7 @@ export default {
             this.$nuxt.$emit("update-key","update")
           }
           
-         
+         this.reloadComments+=1
           this.reloadHistory += 1
         })
         .catch(e => {
@@ -545,6 +545,7 @@ export default {
           if(this._expandVisible){
             this.$nuxt.$emit("update-key","update")
           }
+          this.reloadComments+=1
           this.reloadHistory += 1
         })
         .catch(e => {
@@ -569,7 +570,8 @@ export default {
           this.form.statusId = null
         }
         this.updateTask({ name: payload.name, field: payload.field, value: payload.value, historyText: `changed ${payload.name} to ${payload.value}` })
-        this.reloadComments += 1
+        this.reloadComments+=1
+          this.reloadHistory += 1
 
       } else {
         // if new task
@@ -605,7 +607,8 @@ export default {
           this.loading = false
           this.$nuxt.$emit("update-key")
           this.$store.dispatch("task/setSingleTask", d)
-          this.reloadComments += 1
+          this.reloadComments+=1
+          this.reloadHistory += 1
         }).catch(e => {
           console.log(e)
           this.loading = false
@@ -636,7 +639,8 @@ export default {
       if (this.editMessage?.id) {
         this.$store.dispatch("task/updateTaskComment", { taskId: this.currentTask.id, commentId: this.editMessage.id, comment: data.text, text: `updated comment ${trimComment}` })
         .then(res => {
-          this.reloadComments += 1
+          this.reloadComments+=1
+          this.reloadHistory += 1
           this.editMessage = {}
         })
         .catch(e => console.log(e))
@@ -646,7 +650,8 @@ export default {
             if (this.value.files.length > 0) {
               this.uploadFiles(this.value.files, res.data)
             }
-            this.reloadComments += 1
+            this.reloadComments+=1
+          this.reloadHistory += 1
           })
           .catch(e => console.log(e))
       }
