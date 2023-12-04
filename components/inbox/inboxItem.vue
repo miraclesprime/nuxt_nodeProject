@@ -1,5 +1,5 @@
 <template>
-  <div class="inbox-item border-bottom-gray2 py-105 px-105 position-relative cursor-pointer" :class="{'active': active == inboxItem[0].id}" @click="itemClick" id="inbox-item-wrapper">
+  <div class="inbox-item border-bottom-gray2 py-105 px-105 position-relative cursor-pointer" :class="{'active': active == inboxItem[0]?.id}" @click="itemClick" id="inbox-item-wrapper">
     <!-- <div v-if="!status.markRead" class="new text-white font-xs position-absolute" id="inbox-item-new">New
       <span class="triangle" id="inbox-item-triangle"></span>
     </div> -->
@@ -19,16 +19,16 @@
       </div>
 
       <span id="calendar-date-wrapper" class="duedate d-inline-flex align-center shape-pill gap-05 bg-light px-05 py-025 ml-auto text-dark font-xs">
-        <format-date :datetime="inboxItem[0].updatedAt"></format-date>
+        <format-date :datetime="inboxItem[0]?.updatedAt"></format-date>
       </span>
 
       <div class="inbox-flags d-inline-flex align-center ">
-        <span id="inbox-item-flag-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Flag message'" @click.stop="markFavorite">
+        <!-- <span id="inbox-item-flag-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Flag message'" @click.stop="markFavorite">
           <bib-icon icon="bookmark-solid" variant="gray5"></bib-icon>
         </span>
         <span id="inbox-item-file-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="'Archive'" @click.stop="markArchive">
           <bib-icon icon="collection-solid" variant="gray5"></bib-icon>
-        </span>
+        </span> -->
         <span id="inbox-item-bell-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="readText" @click.stop="markRead">
           <bib-icon icon="notification-solid" :variant="status.markRead ? 'gray6' : 'gray5'"></bib-icon>
         </span>
@@ -45,7 +45,7 @@
         <h4 id="task-project-title">{{item.title || taskTitle }}</h4>
       </div>
       <span id="calendar-date-wrapper" class="duedate d-inline-flex align-center shape-pill gap-05 bg-light px-05 py-025 ml-auto text-dark font-xs">
-        <format-date :datetime="inboxItem[0].updatedAt"></format-date>
+        <format-date :datetime="inboxItem[0]?.updatedAt"></format-date>
       </span>
     </div>
 

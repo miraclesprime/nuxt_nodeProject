@@ -15,7 +15,7 @@
           <bib-icon icon="comment-forum-solid" variant="gray5"></bib-icon>
         </div>
         <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id='it-icon-5' v-tooltip="'Files'" @click="scrollToFiles">
-          <bib-icon icon="files" variant="gray5"></bib-icon>
+          <bib-icon icon="file" variant="gray5"></bib-icon>
         </div>
         <div class="p-025 cursor-pointer bg-light bg-hover-gray2 shape-circle width-2 height-2 d-flex align-center justify-center" id="it-icon-6" v-tooltip="isFavorite.text" @click="setFavorite">
           <bib-icon icon="bookmark-solid" :variant="isFavorite.variant"></bib-icon>
@@ -25,29 +25,29 @@
             <template v-slot:menu>
               <div class="list" id="it-list">
                 <span class="list__item" id="it-list-item-1" @click="markComplete">
-                  <bib-icon icon="check-circle-solid" :variant="isComplete.variant" class="mr-075"></bib-icon> {{isComplete.text}}
+                  <bib-icon icon="check-circle-solid" :variant="isComplete.iconVariant" class="mr-05"></bib-icon> {{isComplete.text}}
                 </span>
                 <span class="list__item" id="it-list-item-2" @click="setFavorite">
-                  <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
+                  <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-05"></bib-icon> {{isFavorite.text}}
                 </span>
                 <!-- <span class="list__item" id="it-list-item-4" @click="showAddTeamModal">
-                  <bib-icon icon="user-group-solid" variant="gray5" class="mr-075"></bib-icon> Team
+                  <bib-icon icon="user-group-solid" variant="gray5" class="mr-05"></bib-icon> Team
                 </span> -->
                 <span class="list__item" id="'it-list-item-5'"  @click="scrollToSubtasks">
-                  <bib-icon icon="check-square-solid" variant="gray5" class="mr-075"></bib-icon> Subtasks
+                  <bib-icon icon="check-square-solid" variant="gray5" class="mr-05"></bib-icon> Subtasks
                 </span>
                 <span class="list__item" id="'it-list-item-6'" @click="scrollToConversation">
-                  <bib-icon icon="comment-forum-solid" variant="gray5" class="mr-075"></bib-icon> Conversation
+                  <bib-icon icon="comment-forum-solid" variant="gray5" class="mr-05"></bib-icon> Conversation
                 </span>
                 <span class="list__item" id="'it-list-item-7'" @click="scrollToFiles">
-                  <bib-icon icon="files" variant="gray5" class="mr-075"></bib-icon> Files
+                  <bib-icon icon="file" variant="gray5" class="mr-05"></bib-icon> Files
                 </span>
                 <hr>
                 <span class="list__item list__item__danger" 
                       @mouseenter="deleteBtnHover = true"
                       @mouseleave="deleteBtnHover = false" 
                       id="it-list-item-8" @click="deleteTask(item.taskId)">
-                    <bib-icon icon="trash" :variant='deleteBtnHover ? `white` : `danger`' class="mr-075"></bib-icon> Delete 
+                    <bib-icon icon="trash" :variant='deleteBtnHover ? `white` : `danger`' class="mr-05"></bib-icon> Delete 
                   </span>
               </div>
             </template>
@@ -164,9 +164,9 @@ export default {
     },
     isComplete() {
       if (this.task.statusId == 5) {
-        return { variant: "success", text: "Completed" }
+        return { variant: "primary-24", iconVariant: "primary-24", text: "Completed" }
       } else {
-        return { variant: "gray4", text: "Mark Completed" }
+        return { variant: "primary--outline", iconVariant: "gray4", text: "Mark Completed" }
       }
     },
     user() {

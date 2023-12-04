@@ -21,7 +21,7 @@
               <template v-slot:menu>
                 <div class="list" id="tsb-list">
                   <span class="list__item" id="tsb-list-item-1" @click="markComplete">
-                    <bib-icon icon="check-circle-solid" :variant="isComplete.variant" class="mr-075"></bib-icon> {{isComplete.text}}
+                    <bib-icon icon="check-circle-solid" :variant="isComplete.iconVariant" class="mr-075"></bib-icon> {{isComplete.text}}
                   </span>
                   <hr>
                   <span class="list__item" id="tsb-list-item-2" @click="setFavorite">
@@ -33,13 +33,13 @@
                     <bib-icon icon="check-square-solid" variant="gray4" class="mr-075"></bib-icon> Subtasks
                   </span>
                   <span class="list__item" id="tsb-list-item-3"   @click="scrollToFiles">
-                    <bib-icon icon="files" variant="gray4" class="mr-075"></bib-icon> Files
+                    <bib-icon icon="file" variant="gray4" class="mr-075"></bib-icon> Files
                   </span>
                   <span class="list__item" id="tsb-list-item-7" @click="scrollToConversation">
                     <bib-icon icon="comment-forum-solid" variant="gray4" class="mr-075"></bib-icon> Conversation
                   </span>
                   <span class="list__item" id="tsb-project-id-list-item3" @click="copyTaskLink">
-                      <bib-icon icon="duplicate" class="mr-075"></bib-icon> Copy Link
+                      <bib-icon icon="duplicate" variant="gray4" class="mr-075"></bib-icon> Copy Link
                   </span>
                   <hr>
                   <span class="list__item list__item__danger" id="tsb-list-item-8" @click="deleteTask(currentTask)">Delete</span>
@@ -190,9 +190,9 @@ export default {
     },
     isComplete() {
       if (this.currentTask.statusId == 5) {
-        return { variant: "success", text: "Completed" }
+        return { variant: "primary-24", iconVariant: "primary-24", text: "Completed" }
       } else {
-        return { variant: "light", text: "Mark Completed" }
+        return { variant: "primary--outline", iconVariant: "gray4", text: "Mark Completed" }
       }
     },
     userPhoto(){

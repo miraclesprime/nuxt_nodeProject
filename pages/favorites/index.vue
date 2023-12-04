@@ -7,7 +7,7 @@
       <div id="favorite-scroll-wrap" class="favorite-tables position-relative " >
    
         <!-- task table -->
-        <div style="height:50%; margin-bottom: 15px;" class="fav-table">
+        <div style="height:50%;" class="fav-table">
           <advance-table :drag="false" :tableFields="taskTableFields" :tableData="taskSubtaskLocalData" :lazyComponent="true" :contextItems="taskContextMenuItems" @context-item-event="taskContextItemClick" @row-click ="openSidebar" @table-sort="sortTask" @context-open="taskContextOpen"  @title-click="openSidebar" @update-field="updateTask" sectionTitle="Favorite Tasks" :plusButton="false" :key="templateKey"></advance-table>
         </div>
         
