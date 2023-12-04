@@ -21,28 +21,34 @@
               <template v-slot:menu>
                 <div class="list" id="tsb-list">
                   <span class="list__item" id="tsb-list-item-1" @click="markComplete">
-                    <bib-icon icon="check-circle-solid" :variant="isComplete.iconVariant" class="mr-075"></bib-icon> {{isComplete.text}}
+                    <bib-icon icon="check-circle-solid" :variant="isComplete.iconVariant" class="mr-05"></bib-icon> {{isComplete.text}}
                   </span>
                   <hr>
                   <span class="list__item" id="tsb-list-item-2" @click="setFavorite">
                     <bib-spinner v-if="favProcess" :scale="2" ></bib-spinner>
-                    <bib-icon v-else icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon>
+                    <bib-icon v-else icon="bookmark-solid" :variant="isFavorite.variant" class="mr-05"></bib-icon>
                     {{isFavorite.text}}
                   </span>
                   <span class="list__item" id="tsb-list-item-5"  @click="scrollToSubtasks">
-                    <bib-icon icon="check-square-solid" variant="gray4" class="mr-075"></bib-icon> Subtasks
+                    <bib-icon icon="check-square-solid" variant="gray4" class="mr-05"></bib-icon> Subtasks
                   </span>
                   <span class="list__item" id="tsb-list-item-3"   @click="scrollToFiles">
-                    <bib-icon icon="file" variant="gray4" class="mr-075"></bib-icon> Files
+                    <bib-icon icon="file" variant="gray4" class="mr-05"></bib-icon> Files
                   </span>
                   <span class="list__item" id="tsb-list-item-7" @click="scrollToConversation">
-                    <bib-icon icon="comment-forum-solid" variant="gray4" class="mr-075"></bib-icon> Conversation
+                    <bib-icon icon="comment-forum-solid" variant="gray4" class="mr-05"></bib-icon> Conversation
                   </span>
                   <span class="list__item" id="tsb-project-id-list-item3" @click="copyTaskLink">
-                      <bib-icon icon="duplicate" variant="gray4" class="mr-075"></bib-icon> Copy Link
+                      <bib-icon icon="duplicate" variant="gray4" class="mr-05"></bib-icon> Copy Link
                   </span>
                   <hr>
-                  <span class="list__item list__item__danger" id="tsb-list-item-8" @click="deleteTask(currentTask)">Delete</span>
+                  <!-- <span class="list__item list__item__danger" id="tsb-list-item-8" @click="deleteTask(currentTask)">Delete</span> -->
+                  <span class="list__item list__item__danger" 
+                      @mouseenter="deleteBtnHover = true"
+                      @mouseleave="deleteBtnHover = false" 
+                      id="tsb-list-item-8" @click="deleteTask(currentTask)">
+                    <bib-icon icon="trash" :variant='deleteBtnHover ? `white` : `danger`' class="mr-05"></bib-icon> Delete 
+                  </span>
                 </div>
               </template>
             </bib-button>
@@ -141,6 +147,7 @@ export default {
       showSubtaskDetail: false,
       popupMessages: [],
       _expandVisible: true,
+      deleteBtnHover: false,
     };
   },
 

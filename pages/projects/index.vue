@@ -537,14 +537,15 @@ export default {
       // console.log(payload)
       const { item, label, field, value, historyText } = payload
       let user
-      if(item.userId){
-        user = this.teamMembers.find(t => t.id == item.userId)
+
+      if(field == "userId"){
+        user = this.teamMembers.find(t => t.id == value)
       }
       else {
-        user=null
+        user = null
       }
       
-        // console.log(user)
+      console.log(user)
       let data = { [field]: value }
     
       if(field == "dueDate" && item.startDate){

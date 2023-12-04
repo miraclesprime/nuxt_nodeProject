@@ -123,7 +123,7 @@ export default {
       let arr = this.item.data.filter(inb => {
         return inb.userId != loggedUser.sub
       })
-      console.log(arr)
+      // console.log(arr)
       return arr
     },
     taskTitle() {

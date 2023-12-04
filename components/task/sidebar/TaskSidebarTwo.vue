@@ -137,6 +137,7 @@ import { DEPARTMENT, STATUS, PRIORITY } from '~/config/constants.js'
 import { mapGetters } from "vuex"
 import _ from 'lodash'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
+import { stripHTMLandTrim } from '~/utils/helpers.js'
 
 export default {
   name: "TaskSidebar",
@@ -787,7 +788,9 @@ export default {
       this.value.files = payload.files
     },
     onsubmit(data) {
-      let trimComment = _.truncate(data.text.slice(3, -4), { length: 128 })
+      // let trimComment = _.truncate(data.text.slice(3, -4), { length: 128 })
+      let trimComment = stripHTMLandTrim(data.text, 128)
+      console.log(trimComment)
 
       if (this.editMessage?.id) {
         this.$store.dispatch("task/updateTaskComment", { taskId: this.currentTask.id, commentId: this.editMessage.id, comment: data.text, text: `updated comment ${trimComment}` })
