@@ -545,7 +545,7 @@ export default {
         user = null
       }
       
-      console.log(user)
+      // console.log(user)
       let data = { [field]: value }
     
       if(field == "dueDate" && item.startDate){

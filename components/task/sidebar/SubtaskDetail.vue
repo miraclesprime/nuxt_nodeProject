@@ -17,10 +17,10 @@
               <template v-slot:menu>
                 <div class="list" id="std-list">
                   <span class="list__item" id="std-list-item-1" @click="markComplete">
-                    <bib-icon icon="check-circle-solid" :variant="isComplete.variant" class="mr-075"></bib-icon> {{isComplete.text}}
+                    <bib-icon icon="check-circle-solid" :variant="isComplete.variant" class="mr-05"></bib-icon> {{isComplete.text}}
                   </span>
                   <span class="list__item" id="std-list-item-2" @click="setFavorite">
-                    <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
+                    <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-05"></bib-icon> {{isFavorite.text}}
                   </span>
                   
                   <hr>
@@ -29,7 +29,7 @@
                       @mouseenter="deleteBtnHover = true"
                       @mouseleave="deleteBtnHover = false" 
                       id="std-list-item-8" @click="$nuxt.$emit('delete-subtask', subtask)">
-                    <bib-icon icon="trash" :variant='deleteBtnHover ? `white` : `danger`' class="mr-075"></bib-icon> Delete 
+                    <bib-icon icon="trash" :variant='deleteBtnHover ? `white` : `danger`' class="mr-05"></bib-icon> Delete 
                   </span>
                 </div>
               </template>
@@ -338,9 +338,9 @@ export default {
     isFavorite(){
         let fav = this.favsubtasks.findIndex(fv => fv.subtaskId == this.subtask.id)
         if (fav >= 0) {
-            return { variant: "primary", text: "Remove favorite", status: true }
+            return { variant: "primary-24", text: "Remove favorite", status: true }
         } else {
-            return { variant: "gray5", text: "Add to favorites", status: false }
+            return { variant: "gray4", text: "Add to favorites", status: false }
         }
     },
   },

@@ -206,7 +206,7 @@ export const actions = {
 
   // create Task
   async createTask(ctx, payload) {
-    console.log(payload)
+    // console.log(payload)
     const res = await this.$axios.$post('/task', payload, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });

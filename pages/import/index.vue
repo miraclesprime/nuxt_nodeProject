@@ -1,7 +1,7 @@
 <template>
     <client-only>
         <div id="page" class="project-id-wrapper h-100 overflow-y-auto">
-            <page-title title="Import"></page-title>
+            <page-title title="Import project"></page-title>
             <!-- Task View -->
             <div id="project-id-content" class="project-id-content position-relative " :style="{ 'width': contentWidth }">
                 <div class="d-flex justify-center p-1">
