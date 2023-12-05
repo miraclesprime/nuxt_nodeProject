@@ -73,7 +73,7 @@
       <bib-modal-wrapper v-if="projectModal" :title="projectModalTitle" size="xl" @close="projectModal = false">
         <template slot="content">
           <!-- <div class="overflow-y-auto " style="max-height: 500px"> -->
-            <project-overview v-if="projectModalContent == 'overview'" :sections="projectSections" @update-desc="projectDesc = $event" ></project-overview>
+            <project-overview v-if="projectModalContent == 'overview'" @update-desc="projectDesc = $event" ></project-overview>
             <project-files v-if="projectModalContent == 'files'"></project-files>
           <!-- </div> -->
         </template>
@@ -226,9 +226,6 @@ export default {
         return { variant: "gray5", text: "Add to favorites", status: false }
       }
     },
-    // taskcount(){
-    //   return this.projectSections.reduce((acc, td) => acc + td.tasks.length, 0)
-    // },
 
   },
   created() {
@@ -251,23 +248,25 @@ export default {
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
     const filter = store.getters['task/getFilterView']
     try {
+      // let all_projects = store.getters['project/getAllProjects']
+      const all_projects = await $axios.$get(`/project/company/all`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Filter': 'all'
+        }
+      });
+      // console.log(all_projects, filter)
 
-      let all_projects= store.getters['project/getAllProjects']
-      let proj=[]
-       proj =all_projects?.find((p) => {
-        if(p.id == params.id) {
-          return p;
-        } 
-      })
+      let proj = all_projects.data?.find((p) => p.id == params.id )
+      // console.log("asyncData", proj)
       store.dispatch('project/setProject', proj)
       const sections = await $axios.$get(`/section/project/${params.id}`, {
         headers: { 'Authorization': `Bearer ${token}`,'Filter':filter }
-    });
+      });
       store.dispatch("section/setProjectSections",{data:sections.data})
       return { project: proj, projectTitle: proj?.title, userProj: proj }
       
     } catch(err) {
-
       // console.log("There was an issue in project API", err);
       return { project: {}, userProj: {} }
     }
@@ -276,6 +275,7 @@ export default {
 
   async mounted() {
     if (process.client) {
+      // console.log(this.project )
       if(this.projectSections.length <= 0) {
         this.$store.dispatch("section/fetchProjectSections",{projectId:this.$route.params.id})
         const res = await this.$axios.get(`project/${this.$route.params.id}`, {
@@ -286,23 +286,18 @@ export default {
         this.project = res.data.data
          
       }
-           this.$store.commit("task/setExpandVisible",true);
-            this.$store.commit('section/setGroupBy',"")
-            // console.log("this.project", this.project)
-            let p
-            if(this.project){
-              p = JSON.parse(JSON.stringify(this.project))
-            }
-             else {
-              this.$router.push('/notfound')
-                return;
-             }
-        // this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
+      this.$store.commit("task/setExpandVisible",true);
+      this.$store.commit('section/setGroupBy',"")
+      // console.log("this.project", this.project)
+      let p
+      if(this.project){
+        p = JSON.parse(JSON.stringify(this.project))
+      } else {
+        this.$router.push('/notfound')
+        return;
+       }
       
-
-      // if(!p) {
-        
-      // }
+      // this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
 
       if(p?.isDeleted != true) {
 

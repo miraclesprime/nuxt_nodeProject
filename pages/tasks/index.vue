@@ -994,15 +994,15 @@ export default {
 
     createNewTask(task,section) {
       task.group = this.group;
-          task.status = null
-          task.statusId = null
-          task.priority = null
-          task.priorityId = null
-          task.departmentId = null;
-          task.department = null;
-          task.user = null
-          task.userId = null
-          task.projectId = null
+      task.status = null
+      task.statusId = null
+      task.priority = null
+      task.priorityId = null
+      task.departmentId = null;
+      task.department = null;
+      task.user = null
+      task.userId = null
+      task.projectId = null
       
       if(this.group == "priority"){
         task.priority = section.tasks[0]?.priority
@@ -1029,9 +1029,10 @@ export default {
         el.dOrder = i;
       });
 
-      // console.log(task, section)
+      section["id"] = task.departmentId
       delete task.show
       delete task.sectionId
+      
       this.$store.dispatch("task/createTask", {
           ...task,
           data: section,
