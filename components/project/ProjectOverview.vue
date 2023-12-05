@@ -7,7 +7,7 @@
             <bib-avatar></bib-avatar>
           </div>
           <div class="flex-grow-1" id="proj-overview-proj-title-input-wrap">
-            <input type="text" class="editable-input" id="proj-overview-proj-title-input" ref="taskTitleInput" placeholder="Project name" v-model="activeProject.title" v-on:keyup="debounceUpdate('title', 'title', activeProject.title)" >
+            <input type="text" class="editable-input" id="proj-overview-proj-title-input" ref="taskTitleInput" placeholder="Project name" v-model="activeProject.title" v-on:keyup="debounceUpdate('Title', 'title', activeProject.title)" >
           </div>
         </div>
         
@@ -89,12 +89,12 @@
           </div>
         </div>
         <bib-popup-notification-wrapper>
-      <template #wrapper>
-        <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
-        </bib-popup-notification>
-      </template>
-    </bib-popup-notification-wrapper>
-        <!-- <loading :loading="loading"></loading> -->
+          <template #wrapper>
+            <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant">
+            </bib-popup-notification>
+          </template>
+        </bib-popup-notification-wrapper>
+        <loading :loading="loading"></loading>
       </div>
     </div>
   </client-only>
@@ -102,14 +102,11 @@
 
 <script>
 import _ from 'lodash'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import { STATUS, PRIORITY } from '~/config/constants.js'
 
 export default {
   name: "ProjectOverview",
-  props: {
-    sections: Array
-  },
   
   data() {
     return {
@@ -157,6 +154,8 @@ export default {
     ...mapGetters({
       teamMembers: "user/getTeamMembers",
       departments: "department/getAllDepartments",
+      thisProject: "project/getSingleProject",
+      sections: "section/getProjectSections",
     }),
 
     totalTasks(){
@@ -237,12 +236,16 @@ export default {
 
   mounted() {
     if (process.client) {
-      this.$store.dispatch("project/fetchSingleProject", this.$route.params.id)
+      // console.log('mounted')
+      this.loading = true
+      this.fetchSingleProject(this.$route.params.id)
       .then((res) => {
         // console.log(res)
         if (res.statusCode == 200) {
           this.project = res.data;
         }
+        this.fetchProjectSections({projectId: this.$route.params.id})
+        this.loading = false
       }).catch(err => {
         console.warn(err);
       })
@@ -250,6 +253,10 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      fetchSingleProject: "project/fetchSingleProject",
+      fetchProjectSections: "section/fetchProjectSections",
+    }),
     parseDate(dateString, format) {
       return new Date(dateString);
     },

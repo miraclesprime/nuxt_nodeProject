@@ -500,7 +500,7 @@ export default {
     newRowClick() {
       this.unselectAll().then(() => {
         this.newrowDisplay = true
-        console.log('click event after unselectAll')
+        // console.log('click event after unselectAll')
       })
       process.nextTick(() => {
         this.$refs.newrowInput[0].focus()
