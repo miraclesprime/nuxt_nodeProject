@@ -342,14 +342,14 @@ export default {
       if (this.isFavorite.status) {
         this.$store.dispatch("project/removeFromFavorite", { id: this.$route.params.id })
           .then(msg => {
-            this.popupMessages.push({ text: msg, variant: "orange" })
+            this.popupMessages.push({ text: msg, variant: "primary-24" })
           })
           .catch(e => console.log(e))
           .then(() => this.favLoading = false)
       } else {
         this.$store.dispatch("project/addToFavorite", { id: this.$route.params.id })
           .then(msg => {
-            this.popupMessages.push({ text: msg, variant: "success" })
+            this.popupMessages.push({ text: msg, variant: "primary-24" })
           })
           .catch(e => console.log(e))
           .then(() => this.favLoading = false)
@@ -363,7 +363,7 @@ export default {
         if (p.statusCode == 200) {
           this.$router.push('/projects')
         } else {
-          this.popupMessages.push({ text: p.message, variant: "warning" })
+          this.popupMessages.push({ text: p.message, variant: "primary-24" })
           console.warn(p.message);
         }
         this.loading = false

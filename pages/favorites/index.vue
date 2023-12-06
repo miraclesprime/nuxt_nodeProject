@@ -211,7 +211,7 @@ export default {
         this.fetchFavProjects()
         this.getFavTasks()
         if (msg) {
-          this.popupMessages.push({ text: msg, variant: 'success' })
+          this.popupMessages.push({ text: msg, variant: 'primary-24' })
         }
       })
 
@@ -1557,14 +1557,14 @@ Promise.all([fetchTask, fetchSubtask]).then((values) => {
                 // this.taskToDelete = {}
                 this.updateKey(t.message)
               } else {
-                this.popupMessages.push({ text: t.message, variant: "orange" })
+                this.popupMessages.push({ text: t.message, variant: "primary-24" })
                 console.warn(t.message);
               }
             })
             .catch(e => console.warn(e))
         }
       } else {
-        this.popupMessages.push({ text: "Action cancelled", variant: "orange" })
+        this.popupMessages.push({ text: "Action cancelled", variant: "primary-24" })
         // this.taskToDelete = {}
       }
       // this.taskToDelete = task
@@ -1574,7 +1574,7 @@ Promise.all([fetchTask, fetchSubtask]).then((values) => {
 
     async updateKey($event) {
       if ($event) {
-        this.popupMessages.push({ text: $event, variant: "success" })
+        this.popupMessages.push({ text: $event, variant: "primary-24" })
       }
 
       this.$store.dispatch('project/fetchFavProjects').then(() => {

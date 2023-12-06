@@ -615,13 +615,13 @@ export default {
           .dispatch("project/deleteProject", project)
           .then((t) => {
             if (t.statusCode == 200) {
-              this.popupMessages.push({ text: t.message, variant: "success" });
+              this.popupMessages.push({ text: t.message, variant: "primary-24" });
               this.$nuxt.$emit("delete_update_table",project,this.$route.fullPath)
               // this.updateKey();
               
              this.loading = false;
             } else {
-              this.popupMessages.push({ text: t.message, variant: "orange" });
+              this.popupMessages.push({ text: t.message, variant: "primary-24" });
               console.warn(t.message);
               
             this.loading = false;
@@ -635,7 +635,7 @@ export default {
       } else {
         this.popupMessages.push({
           text: "Action cancelled",
-          variant: "orange",
+          variant: "primary-24",
         });
       }
 

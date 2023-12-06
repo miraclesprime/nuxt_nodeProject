@@ -392,7 +392,7 @@ export default {
     },
     updateKey($event) {
       if ($event) {
-        this.popupMessages.push({ text: $event, variant: "success" });
+        this.popupMessages.push({ text: $event, variant: "primary-24" });
       }
       // if (process.client) {
         this.$store.dispatch("user/getUserTasks", {
@@ -629,7 +629,7 @@ export default {
               this.$nuxt.$emit("delete_update_table",task,this.$route.fullPath)
 
             } else {
-              this.popupMessages.push({ text: t.message, variant: "orange" });
+              this.popupMessages.push({ text: t.message, variant: "primary-24" });
               console.warn(t.message);
             }
             this.loading = false;
@@ -639,7 +639,7 @@ export default {
             this.loading = false;
           });
       } else {
-        this.popupMessages.push({ text: "Action cancelled", variant: "orange" });
+        this.popupMessages.push({ text: "Action cancelled", variant: "primary-24" });
       }
     },
     async filterView($event) {

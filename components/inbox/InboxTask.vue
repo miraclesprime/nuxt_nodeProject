@@ -157,7 +157,7 @@ export default {
     isFavorite() {
       let fav = this.favTasks.some(t => t.task.id == this.task.id)
       if (fav) {
-        return { variant: "primary", text: "Remove favorite", status: true }
+        return { variant: "primary-24", text: "Remove favorite", status: true }
       } else {
         return { variant: "gray5", text: "Add to favorites", status: false }
       }
@@ -234,10 +234,10 @@ export default {
       this.$store.dispatch('task/addMember', { taskId: this.form.id, team: [userData], text: `added ${userData.label} to task` })
         .then((res) => {
           if (res.statusCode == 200) {
-            this.popupMessages.push({text: res.message, variant: "success"})
+            this.popupMessages.push({text: res.message, variant: "primary-24"})
             this.$store.dispatch('task/fetchTeamMember', { id: this.form.id })
           } else {
-            this.popupMessages.push({text: res.message, variant: "warning"})
+            this.popupMessages.push({text: res.message, variant: "primary-24"})
             console.warn(res)
           }
         })
@@ -251,7 +251,7 @@ export default {
       await this.$store.dispatch("task/deleteMember", { taskId: this.form.id, memberId: member.id, text: `removed ${member.label}` })
         .then((res) => {
           this.$store.dispatch('task/fetchTeamMember', { id: this.form.id })
-          this.popupMessages.push({text: "Deleted successfully", variant: "success"})
+          this.popupMessages.push({text: "Deleted successfully", variant: "primary-24"})
         })
         .catch(e => console.warn(e))
     },
@@ -465,7 +465,7 @@ export default {
         let tagExist = this.alltags.find(t => t.content == tag)
         if (tagExist) {
           // console.log('tag already exists', tag)
-          this.popupMessages.push({text: "tag already exists", variant: "orange"})
+          this.popupMessages.push({text: "tag already exists", variant: "primary-24"})
           return
         } else {
           this.$store.dispatch("company/addCompanyTag", {content: tag})

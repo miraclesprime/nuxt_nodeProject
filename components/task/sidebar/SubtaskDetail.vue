@@ -626,7 +626,7 @@ export default {
       })
       .then((res) => {
         if(res.statusCode == 200) {
-          this.popupMessages.push({text: res.message, variant: "success"})
+          this.popupMessages.push({text: res.message, variant: "primary-24"})
           this.$store.dispatch('subtask/fetchSubtaskMembers', { id: this.form.id })
         }
       })
@@ -752,7 +752,7 @@ export default {
         let tagExist = this.alltags.find(t => t.content == tag)
         if (tagExist) {
           // console.log('tag already exists', tag)
-          this.popupMessages.push({text: "tag already exists", variant: "orange"})
+          this.popupMessages.push({text: "tag already exists", variant: "primary-24"})
           return
         } else {
           this.$store.dispatch("company/addCompanyTag", {content: tag})

@@ -9,7 +9,7 @@
         <!-- <new-section-form :showNewsection="newSection" :showLoading="sectionLoading" :showError="sectionError" v-on:toggle-newsection="newSection = $event" v-on:create-section="createTodo"></new-section-form> -->
         <div v-show="gridType == 'list'" id="mytask-table-wrapper" class="h-100 mytask-table-wrapper position-relative " :style="{ 'width': contentWidth }">
 
-          <adv-table-three :tableFields="taskFields" :tableData="localdata" :lazyComponent="true" :contextItems="contextMenuItems" @create-row="createNewTask" :newRow="newRow"  @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @title-click="openSidebar" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createTodo" @edit-section="renameTodo" :sectionMenu="true" @section-delete="deleteTodoConfirm($event)" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd" :drag="true" :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
+          <adv-table-three :tableFields="taskFields" :tableData="localdata" :lazyComponent="true" :contextItems="contextMenuItems" @create-row="createNewTask" :newRow="newRow"  @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @title-click="openSidebar" @row-click="openSidebar" @update-field="updateField" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createTodo" @edit-section="renameTodo" :sectionMenu="true" @section-delete="deleteTodoConfirm($event)" @section-dragend="todoDragEnd" @row-dragend="taskDragEnd" :drag="groupby == ''" :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
               
           <!-- <loading :loading="loading"></loading> -->
 
@@ -594,16 +594,21 @@ export default {
         }   
       }
 
-      this.$store.dispatch("task/updateTask", {
-        id: payload.id,
-        projectId: item.project[0]?.projectId || null,
-        data: { [field]: value },
-        text: historyText
-      })
-        .then(t => {
-          // this.updateKey()
+      if(this.groupby != '') {
+        this.updateKey();
+      } else {
+
+        this.$store.dispatch("task/updateTask", {
+          id: payload.id,
+          projectId: item.project[0]?.projectId || null,
+          data: { [field]: value },
+          text: historyText
         })
-        .catch(e => console.warn(e))
+          .then(t => {
+            // this.updateKey()
+          })
+          .catch(e => console.warn(e))
+      }
     },
 
     taskMarkComplete(task) {
@@ -616,27 +621,27 @@ export default {
         })
     },
 
-    updateTask(payload) {
-      console.log("111",payload)
-      let user
-      if (payload.field == "userId" && payload.value != '') {
-        user = this.teamMembers.filter(t => t.id == payload.value)
-      } else {
-        user = null
-      }
+    // updateTask(payload) {
+    //   console.log("111",payload)
+    //   let user
+    //   if (payload.field == "userId" && payload.value != '') {
+    //     user = this.teamMembers.filter(t => t.id == payload.value)
+    //   } else {
+    //     user = null
+    //   }
 
-      this.$store.dispatch("task/updateTask", {
-        id: payload.task.id,
-        projectId: payload.task.project[0].projectId || payload.task.project[0].project.id,
-        data: { [payload.field]: payload.value },
-        user,
-        text: `changed ${payload.label} to ${payload.historyText || payload.value}`
-      })
-        .then(t => {
-          this.updateKey()
-        })
-        .catch(e => console.warn(e))
-    },
+    //   this.$store.dispatch("task/updateTask", {
+    //     id: payload.task.id,
+    //     projectId: payload.task.project[0].projectId || payload.task.project[0].project.id,
+    //     data: { [payload.field]: payload.value },
+    //     user,
+    //     text: `changed ${payload.label} to ${payload.historyText || payload.value}`
+    //   })
+    //     .then(t => {
+    //       this.updateKey()
+    //     })
+    //     .catch(e => console.warn(e))
+    // },
 
     updateAssignee(payload){
       // console.log(payload)
@@ -714,10 +719,10 @@ export default {
         .then(t => {
           if (t.statusCode == 200) {
             // this.updateKey(t.message)
-            this.popupMessages.push({ text: t.message, variant: "success" })
+            this.popupMessages.push({ text: t.message, variant: "primary-24" })
             this.$nuxt.$emit("delete_update_table",task,this.$route.fullPath)
           } else {
-            this.popupMessages.push({ text: t.message, variant: "orange" })
+            this.popupMessages.push({ text: t.message, variant: "primary-24" })
             console.warn(t.message);
           }
         })
@@ -725,7 +730,7 @@ export default {
           console.warn(e)
         })
       } else {
-        this.popupMessages.push({ text: "Action cancelled", variant: "orange" })
+        this.popupMessages.push({ text: "Action cancelled", variant: "primary-24" })
       }
     },
     createNewTask(proj, section) {
@@ -819,7 +824,7 @@ export default {
 
     updateKey($event) {
       if ($event) {
-        this.popupMessages.push({ text: $event, variant: "success" })
+        this.popupMessages.push({ text: $event, variant: "primary-24" })
       }
       this.$store.dispatch("todo/fetchTodos", { filter: this.filterViews,sName:this.groupby}).then((res) => {
         if (res.statusCode == 200) {
@@ -929,23 +934,28 @@ export default {
         e.tOrder = i
       })
 
-      let taskDnD = await this.$axios.$put("/todo/crossTodoDragDrop", { data: dragData.tasks, todoId: dragData.sectionId }, {
-        headers: {
-          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-          "Content-Type": "application/json"
-        }
-      })
+      if(this.groupby != '') {
+        this.updateKey();
+      } else {
 
-      if (taskDnD.statusCode != 200) {
-        this.alertDialog = true
-        this.alertMsg = taskDnD.message
+        let taskDnD = await this.$axios.$put("/todo/crossTodoDragDrop", { data: dragData.tasks, todoId: dragData.sectionId }, {
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+            "Content-Type": "application/json"
+          }
+        })
+
+        if (taskDnD.statusCode != 200) {
+          this.alertDialog = true
+          this.alertMsg = taskDnD.message
+        }
+
+        this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
+          if (res.statusCode == 200) {
+            this.key += 1
+          }
+        })
       }
-
-      this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
-        if (res.statusCode == 200) {
-          this.key += 1
-        }
-      })
     }, 400),
 
     moveTodo(e) {
@@ -962,24 +972,29 @@ export default {
         el.uOrder = i
       })
 
-      let todoDnD = await this.$axios.$put("/todo/dragdrop", { data: todos }, {
-        headers: {
-          "Authorization": "Bearer " + localStorage.getItem("accessToken"),
-          "Content-Type": "application/json"
-        }
-      })
+      if(this.groupby != '') {
+        this.updateKey();
+      } else {
 
-      if (todoDnD.statusCode != 200) {
-        this.alertDialog = true
-        this.alertMsg = taskDnD.message
+        let todoDnD = await this.$axios.$put("/todo/dragdrop", { data: todos }, {
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem("accessToken"),
+            "Content-Type": "application/json"
+          }
+        })
+
+        if (todoDnD.statusCode != 200) {
+          this.alertDialog = true
+          this.alertMsg = taskDnD.message
+        }
+
+        this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
+          if (res.statusCode == 200) {
+            this.key += 1
+            this.loading = false;
+          }
+        })
       }
-
-      this.$store.dispatch("todo/fetchTodos", { filter: 'all' }).then((res) => {
-        if (res.statusCode == 200) {
-          this.key += 1
-          this.loading = false;
-        }
-      })
 
     }, 600),
 

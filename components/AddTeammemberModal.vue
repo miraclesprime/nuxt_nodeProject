@@ -26,7 +26,7 @@
       </template>
       <template v-slot:footer>
         <div class=" d-flex justify-end" id="create-team-model-footer">
-          <bib-button @click.native="addTeamMember" variant="success" size="lg" id="create-team-btn" pill label="Done"></bib-button>
+          <bib-button @click.native="addTeamMember" variant="primary-24" size="lg" id="create-team-btn" pill label="Done"></bib-button>
         </div>
       </template>
     </bib-modal-wrapper>
@@ -138,10 +138,9 @@ export default {
     copyUrl() {
 
       navigator.clipboard.writeText(this.projectUrl).then(() => {
-        this.popupMessages.push({ text: "Copied successfully", variant: "success" })
+        this.popupMessages.push({ text: "Copied successfully", variant: "primary-24" })
       }, () => {
         this.popupMessages.push({ text: "Failed to copy", variant: "danger" })
-        console.log("failed to copy")
       });
 
     },

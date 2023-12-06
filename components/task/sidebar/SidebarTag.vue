@@ -104,7 +104,7 @@ export default {
     selected(tag) {
       let tagExist = this.tags.find(t => t.id == tag.id)
       if (tagExist) {
-        this.popupMessages.push({text: "tag already exists", variant: "orange"})
+        this.popupMessages.push({text: "tag already exists", variant: "primary-24"})
       } else {
         this.onClickOutside()
         this.$emit("change", tag)

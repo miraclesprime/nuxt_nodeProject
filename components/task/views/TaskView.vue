@@ -1241,7 +1241,7 @@ export default {
               // this.updateKey(t.message);
               // this.taskToDelete = {};
             } else {
-              this.popupMessages.push({ text: t.message, variant: "orange" });
+              this.popupMessages.push({ text: t.message, variant: "primary-24" });
               console.warn(t.message);
             }
           })
@@ -1249,7 +1249,7 @@ export default {
             console.warn(e);
           });
       } else {
-        this.popupMessages.push({ text: "Action cancelled", variant: "orange" });
+        this.popupMessages.push({ text: "Action cancelled", variant: "primary-24" });
         // this.taskToDelete = {};
       }
     },
@@ -1265,7 +1265,7 @@ export default {
         .dispatch("section/deleteSection", {...this.sectionToDelete, retainTasks})
         .then((s) => {
           if (s.statusCode == 200) {
-            this.popupMessages.push({text: s.message, variant: "success"})
+            this.popupMessages.push({text: s.message, variant: "primary-24"})
             this.updateKey();
           } else {
             console.warn(t.message);
