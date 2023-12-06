@@ -544,7 +544,7 @@ export default {
         });
     },
     updateTask(payload) {
-      console.log(payload)
+      // console.log(payload)
 
       let user, projectId;
       if (payload.field == "userId" && payload.value != "") {

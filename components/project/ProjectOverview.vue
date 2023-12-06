@@ -14,7 +14,7 @@
         <div id="proj-overview-row1" class="row my-1">
           <div id="proj-overview-row1-col1" class="col-4">
             <div id="proj-overview-progress-wrap1" class="bg-light shape-rounded text-center px-05 py-1 h-100">
-              <p id="proj-overview-progress-title1" class="text-left text-gray5">Progress</p>
+              <p id="proj-overview-progress-title1" class="text-left text-gray5">Completion progress</p>
               <progress-circle variant="success" :radius="55" :progress="progress" class="mx-auto mt-1"></progress-circle>
             </div>
           </div>

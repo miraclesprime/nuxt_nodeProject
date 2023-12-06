@@ -432,6 +432,7 @@ export default {
       this.description = value.text
       this.id = _.clone(this.task.id)
       // console.log('submit', value.text)
+      this.$emit("update-description", {name, field, value})
     }
   },
 };
