@@ -286,7 +286,7 @@ export default {
             if (f.data.statusCode == 200) {
               // this.alertDialog = true;
               // this.alertMsg = f.data.message;
-              this.popupMessages.push({ text: f.data.message, variant: "success"})
+              this.popupMessages.push({ text: f.data.message, variant: "primary-24"})
               _.delay(() => {
                 this.getFiles().then((res) => {
                   this.fileKey += 1;

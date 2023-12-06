@@ -600,7 +600,7 @@ export default {
 
   &.favorite.favorited {
     ::v-deep svg {
-      fill: #2ba026;
+      fill: $primary-24;
     }
   }
 

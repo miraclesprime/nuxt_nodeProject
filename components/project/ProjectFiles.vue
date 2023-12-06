@@ -307,7 +307,7 @@ export default {
             a.click();
             window.URL.revokeObjectURL(f.data.data);
             // alert('your file downloaded!');
-            this.popupMessages.push({text: "your file downloaded", variant: "success"})
+            this.popupMessages.push({text: "your file downloaded", variant: "primary-24"})
           }
         })
         .catch(e => console.error(e))
@@ -335,7 +335,7 @@ export default {
             })
             .catch(e => console.error(e))
       } else {
-        this.popupMessages.push({text: "you do not have permission to delete this file", variant: "orange"})
+        this.popupMessages.push({text: "you do not have permission to delete this file", variant: "primary-24"})
         // console.log("you don't have enough permission to delete this file")
       }
     },

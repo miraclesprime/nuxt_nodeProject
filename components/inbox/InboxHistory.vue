@@ -138,13 +138,13 @@ export default {
                 }).then(res => {
                     // console.log(res)
                     if (res.data.statusCode == 200) {
-                        this.popupMessages.push({text: "You liked the comment", variant: "secondary"})
+                        this.popupMessages.push({text: "You liked the comment", variant: "primary-24"})
                         this.historyReactions.push(res.data.data)
                     }
                     this.reactionSpinner = false
                 }).catch(e => {
                     console.warn(e)
-                    this.popupMessages.push({text: "There was some issue", variant: "danger"})
+                    this.popupMessages.push({text: "There was some issue", variant: "primary-24"})
                     this.reactionSpinner = false
                 })
             } else {
@@ -157,7 +157,7 @@ export default {
                         Authorization: "Bearer " + localStorage.getItem("accessToken"),
                     }
                 }).then(r => {
-                    this.popupMessages.push({text: "You removed your reaction", variant: "orange"})
+                    this.popupMessages.push({text: "You removed your reaction", variant: "primary-24"})
                     this.historyReactions.splice(0, 1)
                     this.reactionSpinner = false
                 }).catch(e => {

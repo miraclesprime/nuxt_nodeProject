@@ -56,7 +56,7 @@
                 </template>
                 <template slot="footer">
                     <div v-show="missingMembers.length > 0 && steps[0].progress == 'done' && !dupProject" class="justify-between">
-                        <bib-button label="Add users" variant="secondary" class="mr-1" pill @click="closeModal"></bib-button>
+                        <!-- <bib-button label="Add users" variant="secondary" class="mr-1" pill @click="closeModal"></bib-button> -->
                         <bib-button label="Continue" variant="primary-24" pill @click="importProject"></bib-button>
                     </div>
                     <div v-show="dupProject && !importfinish && !importCompleteMsg">
@@ -134,12 +134,12 @@ export default {
 
             if (file.length > 0) {
                 if (file[0]?.type != 'text/csv') {
-                    this.popupMessages.push({text: "Only csv allowed", variant: "orange"})
+                    this.popupMessages.push({text: "Only csv allowed", variant: "primary-24"})
                     this.files = []
                     return
                 } 
                 if (file[0]?.size > 2000000) {
-                    this.popupMessages.push({text: "File size must be less than 2mb", variant: "orange"})
+                    this.popupMessages.push({text: "File size must be less than 2mb", variant: "primary-24"})
                     this.files = []
                     return
                 }
