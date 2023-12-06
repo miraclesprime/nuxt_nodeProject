@@ -65,7 +65,8 @@
       <div class=" border-bottom-gray3 position-relative px-105 py-05 " id="tsb-title">
         <!-- :class="{'error': error == 'invalid'}" -->
         <!-- <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="taskTitleInput" v-model.trim="form.title" placeholder="Enter Task Name ..." v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" > -->
-        <textarea v-model.trim="form.title" ref="taskTitleInput" class="editable-input multiline position-absolute"  v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" v-on:keydown.enter.prevent placeholder="Enter Task Name ..." style="height: calc(100% - 1rem);" ></textarea>
+        <!-- <textarea v-model.trim="form.title" ref="taskTitleInput" class="editable-input multiline position-absolute" @blur="" v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" v-on:keydown.enter.prevent placeholder="Enter Task Name ..." style="height: calc(100% - 1rem);" ></textarea> -->
+        <textarea v-model.trim="form.title" ref="taskTitleInput" class="editable-input multiline position-absolute" @blur="debounceUpdate({name:'Title', field:'title', value:form.title})" @keyup.enter="debounceUpdate({name:'Title', field:'title', value:form.title})" v-on:keydown.enter.prevent placeholder="Enter Task Name ..." style="height: calc(100% - 1rem);" ></textarea>
         <div class="pseudo-title" aria-hidden="true" >{{form.title}}</div>
       </div>
       
@@ -675,11 +676,31 @@ export default {
       })
         .then((u) => {
           // console.log(u)
-          this.$store.dispatch("task/setSingleTask", u)
+          if(this.expandVisible){
           this.$nuxt.$emit("update-key")
-          // if(this.expandVisible){
-          //   this.$nuxt.$emit("update-key","update")
-          // }
+          this.reloadHistory += 1
+          this.reloadComments+=1
+          return;
+          }  
+          if(this.$route.path=="/mytasks" && this.mytaskGrid=="grid") {
+            this.$nuxt.$emit("update-key")
+            this.reloadHistory += 1
+            this.reloadComments+=1
+            return; 
+          }
+          if(this.$route.path=="/tasks" && this.tasksGrid=="grid") {
+            this.$nuxt.$emit("update-key")
+            this.reloadHistory += 1
+            this.reloadComments+=1
+            return;
+          }
+          if(this.$route.path.includes("/projects/") && this.singleProjectGrid=="grid"){
+            this.$nuxt.$emit("update-key")
+            this.reloadHistory += 1
+            this.reloadComments+=1
+            return;
+          }
+          this.$nuxt.$emit("update_table",u)
           this.reloadHistory += 1
           this.reloadComments+=1
 

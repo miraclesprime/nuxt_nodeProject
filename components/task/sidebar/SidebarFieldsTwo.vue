@@ -58,7 +58,8 @@
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Budget</label></div>
         <div class="col-5">
-          <input-two type="number" :value="form.budget" icon="currency-dollar" @input="validate('Budget','budget', $event)" ></input-two>
+          <!-- <input-two type="number" :value="form.budget" icon="currency-dollar" @input="validate('Budget','budget', $event)" ></input-two> -->
+          <input-two type="number" :value="form.budget" icon="currency-dollar" @blur="validate('Budget','budget', $event)"  @keyup.enter="validate('Budget','budget', $event)"></input-two>
         </div>
       </div>
       <div class="row ">
@@ -396,6 +397,7 @@ export default {
     },
     validate(name, field, value) {
       let dec = Number.parseFloat(value).toFixed(2)
+      console.log("dec",dec)
       this.debounceUpdateField(name, field, dec)
     },
     debounceUpdateField: _.debounce(function(name, field, value) {
@@ -403,7 +405,7 @@ export default {
          if(value.text){
           let hText = value.text.replace( /(<([^>]+)>)/ig, '');
           hText = _.truncate(hText, {'length': 30})
-          // console.log(hText)
+          console.log(hText)
           this.$emit("update-field", { name, field, value: value.text, historyText: `changed ${name} to ${hText}`})
          }
          else {

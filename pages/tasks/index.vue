@@ -470,7 +470,10 @@ export default {
           text: `changed ${label} to ${historyText}`,
         })
         .then((t) => {
-            // this.updateKey("success")
+          if(this.grid=="grid") {
+            this.updateKey()
+          }
+           
         })
         .catch((e) => console.warn(e));
     },
