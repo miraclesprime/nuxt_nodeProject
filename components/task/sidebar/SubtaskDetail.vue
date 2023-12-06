@@ -65,39 +65,32 @@
       
       <div class="subtask-info position-relative py-05 px-105" id="sd-input-wrap">
         <div class="row mt-05 mb-05" id="sd-other-fields-row1">
-          
           <div class="col-2 align-center" id="sd-other-fields-r1-c1"><label>Start Date</label></div>
           <div class="col-5" id="sd-other-fields-r1-c2">
-          
             <bib-datetime-picker v-model="sdate" :format="format" :parseDate="parseDate" :formatDate="formatDate" size="sm" placeholder="Start date" @input="startdateProcess" ></bib-datetime-picker>
           </div>
         </div>
         <div class="row mt-05 mb-05" id="sd-other-fields-row2">
           <div class="col-2 align-center" id="sd-other-fields-r2-c1"><label>Due Date</label></div>
           <div class="col-5" id="sd-other-fields-r2-c2">
-          
             <bib-datetime-picker v-model="ddate" :format="format" :parseDate="parseDate" :formatDate="formatDate" size="sm" placeholder="Due date" @input="duedateProcess"></bib-datetime-picker>
           </div>
         </div>
         <div class="row mt-05 mb-05" id="sd-other-fields-row3">
           <div class="col-2 align-center" id="sd-other-fields-r3-c1"><label>Department</label></div>
           <div class="col-5" id="sd-other-fields-r3-c2">
-          
             <select-two :options="departments" :value="form.departmentId" icon="projects" title="Department" @change="updateSubtask({name: 'Department', field:'departmentId', value: $event.value, text: $event.label})"></select-two>
           </div>
         </div>
         <div class="row mt-05 mb-05"  id="sd-other-fields-row4">
           <div class="col-2 align-center" id="sd-other-fields-r4-c1"><label>Priority</label></div>
           <div class="col-5"  id="sd-other-fields-r4-c2">
-          
             <priority-select-two :priority="form.priority" @change="updateSubtask({name: 'Priority', field: 'priorityId', value: $event.value, text: $event.label})"></priority-select-two>
           </div>
         </div>
-
         <div class="row mt-05 mb-05"  id="sd-other-fields-row5">
           <div class="col-2 align-center" id="sd-other-fields-r5-c1"><label>Status</label></div>
           <div class="col-5" id="sd-other-fields-r5-c2">
-          
             <status-select-two :status="form.status" @change="updateSubtask({name: 'Status', field: 'statusId', value: $event.value, text: $event.label})" ></status-select-two>
           </div>
         </div>
@@ -121,7 +114,7 @@
         </div>
         <div class="row " id="sd-other-fields-row7">
           <div class="col-12" id="sd-other-fields-r7-c1">
-            
+            <div class="col-2 align-center" id="sd-other-fields-r9-c1"><label>Desciption</label></div>
             <rich-editor :value="value" :editingMessage="form.description" @submit="$emit('subtask-desc',{ id: form.id, name: 'Description', field: 'description', value: $event.text})" ></rich-editor>
           </div>
         </div>

@@ -302,7 +302,7 @@ export default {
           selected: false,
         },
         {
-          label: "My tasks",
+          label: "My Tasks",
           icon: "check-circle-solid",
           key: "mytasks",
           selected: false,

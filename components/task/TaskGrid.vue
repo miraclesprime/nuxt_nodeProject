@@ -188,8 +188,10 @@ export default {
           text: `changed ${label} to ${historyText ?? value}`
         })
         .then(res => {
-          this.loading = false
           this.$nuxt.$emit("update-key")
+          // this.loading = false
+          // this.$store.dispatch("task/setSingleTask", res.data)
+
         })
         .catch(e => console.warn(e))
     },

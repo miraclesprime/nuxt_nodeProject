@@ -617,7 +617,6 @@ export default {
     },
 
     updateTask(payload) {
-      console.log("111",payload)
       let user
       if (payload.field == "userId" && payload.value != '') {
         user = this.teamMembers.filter(t => t.id == payload.value)
