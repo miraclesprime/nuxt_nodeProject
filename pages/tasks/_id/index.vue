@@ -154,9 +154,9 @@ export default {
   computed: {
     ...mapGetters({
       user: "user/getUser2",
-      teamMembers: "user/getTeamMembers",
       tasks: "task/tasksForListView",
       team: 'task/getTaskMembers',
+      teamMembers: "user/getTeamMembers",
       sidebarOpen: 'task/getSidebarVisible',
       departments: "department/getAllDepartments",
       project: "project/getSingleProject",
@@ -222,6 +222,7 @@ export default {
       if (Object.keys(this.currentTask).length) {
         this.form = _.cloneDeep(this.currentTask);
         if (this.currentTask.project?.length) {
+          console.log("this.currentTask",this.currentTask)
           this.form.projectId = this.currentTask.project[0]?.projectId || this.currentTask.project[0].project?.id
         } else {
           this.form.projectId = this.project?.id
@@ -275,7 +276,7 @@ export default {
 
   },
 
-  created(){
+  async created(){
 
 
           this.$nuxt.$on("edit-message", (msg) => {
@@ -283,26 +284,57 @@ export default {
           })
 
           this.setExpand();
+///get current task
           this.$axios.$get(`task/${this.$route.params.id}`, {
               headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
           }).then((res) => {
               if (res) {
                   if (!res.data || res.data.isDeleted) {
                       this.$router.push("/notfound")
-                  } else {
+                  } 
+                  else {
                       this.$store.dispatch('task/setSingleTask', res.data);
-                      
-              }
+
+                      this.$axios.get(`/task/${this.$route.params.id}/members`, {
+                          headers: {
+                            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                          },
+                        }).then ((tm)=>{
+                          let teams = tm.data.data.members;
+
+                          let data = teams.map((el) => {
+                            if (res.data.userId == el.user.id) {
+                              el.isOwner = true
+                            } else {
+                              el.isOwner = false
+                            }
+                            return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName, isOwner: el.isOwner };
+                          });
+                          this.$store.commit('task/fetchTeamMember',data)
+                        })
+                    }
               } else {
                   this.$router.push("/notfound")
               }
           }).catch(err => {
               console.log("There was an issue in project API", err);
           })
+// get all members
+        this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${JSON.parse(localStorage.getItem('user')).subb}/users`, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
+      }
+    }).then((res) => {
+      console.log(res)
+      this.$store.commit('user/setTeamMembers',res)
+ 
+        });
+  //team members
   },
 
   mounted() {
     this.showSubtaskDetail = false;
+    
     this.$store.dispatch("project/fetchProjects")
     if (Object.keys(this.currentTask).length) {
         this.form = _.cloneDeep(this.currentTask);
@@ -482,6 +514,7 @@ export default {
         .then((u) => {
           this.$nuxt.$emit("update-key")
           this.$store.dispatch("task/setSingleTask", u)
+          this.reloadComments+=1
           this.reloadHistory += 1
         })
         .catch(e => {

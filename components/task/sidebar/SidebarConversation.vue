@@ -20,7 +20,7 @@
           <template v-else-if="sortedData.length > 0">
             <div v-for="(item, index) in sortedData" :key="index" :id="'sc-sortedData-'+index">
               <message v-if="item.comment" :msg="item" fieldkey="task" @delete-message="onDeleteMessage" @upload-file="uploadFileTrigger"></message>
-              <task-history v-if="item.text && !item.isHidden" :history="item" :teamMems="teamMems"></task-history>
+              <task-history v-if="item.text && !item.isHidden" :history="item" ></task-history>
             </div>
           </template>
         </div>
@@ -40,7 +40,6 @@ export default {
       },
       comments: [],
       history: [],
-      teamMems:[],
       showPlaceholder: false,
       msgLoading: false,
     };
@@ -85,19 +84,6 @@ export default {
       }
     },
 
-  },
-  async created () {
-
-
-   await this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${JSON.parse(localStorage.getItem('user')).subb}/users`, {
-      headers: {
-        "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
-      }
-    }).then((res) => {
-          res.map(t => {
-            this.teamMems.push({ label: t.FirstName + ' ' + t.LastName, firstName: t.FirstName, lastName: t.LastName, email: t.Email, icon: "user", id: t.Id, status: t.Status, role: t.Role, avatar: t.Photo, selected: false })
-          })
-        });
   },
 
   async mounted() {

@@ -4,7 +4,7 @@
       <template v-slot:content>
         <label class="text-gray6" id="cpm-project-name">Project name <span class="text-danger">*</span></label>
         <bib-input v-model.trim="projectName" placeholder="Name your project"></bib-input>
-        <small class="text-danger mb-05" id="cpm-project-name-alert" style="margin-top:-0.5rem; display:block;">{{projectName ? '' : 'Project name is required'}}</small>
+        <small v-if="btnCreate" class="text-danger mb-05" id="cpm-project-name-alert" style="margin-top:-0.5rem; display:block;">{{projectName ? '' : 'Project name is required'}}</small>
         <template>
             <bib-input v-model="department" :options="departments" size="md" type="select"></bib-input>
         </template>
@@ -20,8 +20,13 @@
           </template>
         </bib-button>
         <div id="cpm-project-team-members" class="d-flex pt-025">
-          <email-chip v-if="Object.keys(owner).length > 0" :name="owner.label" :email="owner.email ? owner.email : owner.sube" :avatar="owner.avatar" v-bind:close="true" v-on:remove-email="owner = {}"></email-chip>
-          <small v-else class="text-danger">Project owner is required</small>
+          <template v-if="btnCreate">
+            <email-chip v-if="Object.keys(owner).length > 0" :name="owner.label" :email="owner.email ? owner.email : owner.sube" :avatar="owner.avatar" v-bind:close="true" v-on:remove-email="owner = {}"></email-chip>
+            <small v-else class="text-danger">Project owner is required</small>
+          </template>
+          <template v-else>
+            <email-chip v-if="Object.keys(owner).length > 0" :name="owner.label" :email="owner.email ? owner.email : owner.sube" :avatar="owner.avatar" v-bind:close="true" v-on:remove-email="owner = {}"></email-chip>
+          </template>
         </div>
         <loading :loading="loading"></loading>
       </template>
@@ -51,6 +56,7 @@ export default {
       error: false,
       errorMsg: "",
       loading: false,
+      btnCreate:false
     };
   },
 
@@ -94,6 +100,7 @@ export default {
       console.log('inviteViaEmail')
     },
     closeModal() {
+      this.btnCreate=false
       this.projectName = ''
       this.owner = {}
       this.showCreateProjectModal = false
@@ -105,6 +112,7 @@ export default {
       }
     },
     createProject() {
+      this.btnCreate=true
       this.loading = true
       if (this.projectName && this.owner.id) {
         this.$store.dispatch('project/createProject', { user: this.owner, title: this.projectName, departmentId: this.department }).then((res) => {
@@ -113,6 +121,10 @@ export default {
             this.projectName = ''
             this.owner = {}
             this.showCreateProjectModal = false
+            if(res.data.length==1){
+              this.$nuxt.$emit("project-refresh-table");
+              return;
+            }
            this.$nuxt.$emit("newTask",res.data,this.$route.fullPath)
 
           }

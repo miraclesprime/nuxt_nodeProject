@@ -5,7 +5,7 @@
    
     <div id="projects-list-wrapper" class="projects-list-wrapper position-relative" >
     
-      <template v-if="projectcount > 0">
+      <template v-if="projectcount > 0 ">
         <template v-if="groupVisible">
          
           <adv-table-three :tableFields="tableFields" :tableData="localData" :lazyComponent="lazyComponent" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @context-open="contextOpen" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" @create-row="createProject" :drag="false" :key="templateKey" :editSection="groupBy" :filter="filterViews"></adv-table-three>
@@ -50,7 +50,6 @@
 import { PROJECT_CONTEXT_MENU, PROJECT_FIELDS } from '../../config/constants';
 import { mapGetters } from 'vuex';
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
-import { combineTransactionSteps } from '@tiptap/core';
 
 export default {
   name: "Projects",
@@ -89,6 +88,11 @@ export default {
     if (process.client) {
 
       this.$nuxt.$on("refresh-table", () => {
+        
+        this.updateKey();
+      });
+      this.$nuxt.$on("project-refresh-table", () => {
+        console.log("111")
         this.updateKey();
       });
 
