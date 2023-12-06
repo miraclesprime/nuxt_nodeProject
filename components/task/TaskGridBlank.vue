@@ -7,7 +7,7 @@
             <bib-icon icon="check-circle-solid" :scale="1.5" variant="light"></bib-icon>
           </span>
           <span class=" flex-grow-1" id="task-title-input">
-            <textarea id="newtaskInput" ref="newtaskInput" class="editable-input" rows="1" v-model="taskTitle" @input="debounceCreate" @keyup.esc="newTask = false"  placeholder="Enter title..."></textarea>
+            <input id="newtaskInput" ref="newtaskInput" class="editable-input" rows="1" v-model="taskTitle" @input="debounceCreate" @keyup.esc="newTask = false"  placeholder="Enter title...">
           </span>
         </div>
       </div>
@@ -79,10 +79,10 @@ export default {
     closeNewTask($event) {
       this.newTask = false
     },
-    createNewTask(section) {
+    createNewTask(section, group) {
       console.log(section)
       let proj={}
-      proj.group = this.myTaskGroupBy;
+      proj.group = group;
       proj.status = null
       proj.statusId = null
       proj.priority = null
@@ -99,22 +99,31 @@ export default {
       proj.userId = this.loggedUser.Id
       proj.todoId =  section.id
       proj.title=this.taskTitle
-      if(this.myTaskGroupBy == "priority"){
+      if(group == "priority"){
         proj.priority = section.tasks[0]?.priority
         proj.priorityId = section.tasks[0]?.priorityId
      
       }
-      if(this.myTaskGroupBy == "status"){
+      if(group== "status"){
         proj.status = section.tasks[0]?.status
         proj.statusId = section.tasks[0]?.statusId
       }
-      if(this.myTaskGroupBy=="assignee"){
+      if(group=="assignee"){
         proj.user=[section.tasks[0]?.user]
         proj.userId=section.tasks[0]?.userId
       }
-      if(this.myTaskGroupBy == "department"){
+      if(group == "department"){
         proj.department = section.tasks[0]?.department
         proj.departmentId = section.tasks[0]?.departmentId
+      }
+      if(this.$route.path.includes("/projects/")){
+          proj.projectId=Number(this.$route.params.id)   
+          proj.sectionId= group ? "_section"+this.$route.params.id : section.id          
+        }
+      if(this.$route.path=="/tasks") {
+          if(group == "project"){
+          proj.projectId = section.tasks[0]?.project?.[0].project?.id || null 
+        }
       }
       console.log(proj)
       this.$store.dispatch("task/createTask", {
@@ -132,10 +141,10 @@ export default {
           console.warn(e);
         });
     },
-
+    
     debounceCreate: _.debounce(function() {
       if(this.sectionType=="myTask") {
-          this.createNewTask(this.section)
+          this.createNewTask(this.section,this.myTaskGroupBy)
       }
       if(this.sectionType == 'department') {
         this.loading = true
@@ -157,29 +166,9 @@ export default {
           this.loading = false
         }).catch(e => console.warn(e))
 
-      } else {
-
-        // this.loading = true
-        // this.$store.dispatch("task/createTask", {
-        //   sectionId: this.section.id,
-        //   title: this.taskTitle,
-        //   description: "",
-        //   statusId: null,
-        //   dueDate: "",
-        //   priorityId: null,
-        //   departmentId: null,
-        //   projectId: this.section.projectId,
-        //   budget: 0,
-        //   text: `task "${this.taskTitle}" created`,
-        // }).then(t => {
-        //   if (t.statusCode == 200) {
-        //     this.$nuxt.$emit("update-key")
-        //   }
-        //   this.taskTitle = ""
-        //   this.newTask = false
-        //   this.loading = false
-        // }).catch(e => console.warn(e))
-      
+      } 
+      if(this.sectionType=="singleProject"){
+        this.createNewTask(this.section,this.singleProjectGroupBy)
       }
 
 

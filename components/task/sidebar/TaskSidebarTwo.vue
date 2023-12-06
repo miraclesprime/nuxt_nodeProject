@@ -470,11 +470,16 @@ export default {
             const res =  await this.$axios.$get('/todo/all', {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter':  'all' }
               });
+       
               for (let i=0;i < res.data.length ; i++ ) {
-                if ( data[i]?.task && data[i]?.task.length !==0 ) {
-
-                }
-                else {
+               let hasTaskWithLength = false;
+              if (res.data[i]&&res.data[i].task && res.data[i].task.length > 0) {
+                hasTaskWithLength = true;
+                break; // Once we find a task with length > 0, we can stop looping
+              }
+              if (hasTaskWithLength) {
+                  
+                } else {
                   this.$nuxt.$emit("refresh-table");
                 }
               }
@@ -486,6 +491,8 @@ export default {
               if (res.data.data?.[0]?.tasks?.length==1) {
                 this.$nuxt.$emit("refresh-table");
               }
+
+           
           }
           if(param=="/projects"){
              const res = await this.$axios.$get(`/project/company/all`, {
@@ -506,13 +513,18 @@ export default {
               headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': 'all' }
             });
             for (let i=0;i < res.data.length ; i++ ) {
-                if ( data[i].task && data[i].task.length !==0 ) {
-
-                }
-                else {
+               let hasTaskWithLength = false;
+              if (res.data[i]&&res.data[i].task && res.data[i].task.length > 0) {
+                hasTaskWithLength = true;
+                break; // Once we find a task with length > 0, we can stop looping
+              }
+              if (hasTaskWithLength) {
+                  
+                } else {
                   this.$nuxt.$emit("refresh-table");
                 }
               }
+
             // if (res.data?.[0]?.tasks?.length==1) {
             //   this.$nuxt.$emit("refresh-table");
             // }

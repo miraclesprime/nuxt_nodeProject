@@ -229,6 +229,7 @@ export default {
           console.log("task_created_on-refresh")
           this.updateKey();
         });
+  
       this.$nuxt.$on('updateTaskCount', (payload) => {
         if (payload.action === 'increase') {
           console.log("increase")
@@ -993,6 +994,8 @@ export default {
     }, 600),
 
     createNewTask(task,section) {
+      console.log(task)
+      console.log("section",section)
       task.group = this.group;
       task.status = null
       task.statusId = null
@@ -1025,14 +1028,13 @@ export default {
         task.projectId = section.tasks[0]?.project?.[0].project?.id || null 
       }
 
-      section.tasks.forEach((el, i) => {
-        el.dOrder = i;
-      });
+      // section.tasks.forEach((el, i) => {
+      //   el.dOrder = i;
+      // });
 
       section["id"] = task.departmentId
       delete task.show
-      delete task.sectionId
-      
+      // delete task.sectionId
       this.$store.dispatch("task/createTask", {
           ...task,
           data: section,
@@ -1040,6 +1042,7 @@ export default {
           text: `created task ${task.title}`,
         })
         .then((t) => {
+          console.log("t",t)
           this.resetNewRow();
           this.$nuxt.$emit("newTask",t.data,this.$route.fullPath)
           // this.updateKey();
