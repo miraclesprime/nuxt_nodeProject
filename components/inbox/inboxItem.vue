@@ -30,7 +30,8 @@
           <bib-icon icon="collection-solid" variant="gray5"></bib-icon>
         </span> -->
         <span id="inbox-item-bell-icon" class="width-2 height-2 shape-circle d-flex align-center justify-center" v-tooltip="readText" @click.stop="markRead">
-          <bib-icon icon="notification-solid" :variant="status.markRead ? 'gray6' : 'gray5'"></bib-icon>
+          <bib-icon icon="mail" variant="gray5" v-if="!status.markRead"></bib-icon>
+          <bib-icon icon="mail-new" variant="gray5" v-else></bib-icon>
         </span>
         <span v-if="!status.markRead" id="inbox-item-new-icon" class="shape-rounded px-025 bg-success text-white font-xs">
           NEW
