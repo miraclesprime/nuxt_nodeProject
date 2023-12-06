@@ -288,7 +288,7 @@ export default {
 
       if (this.form.dueDate && this.form.dueDate != null) {
         if (newStartDate.getTime() > new Date(this.form.dueDate).getTime()) {
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.popupMessages.push({ text: "Start date should be before Due date", variant: "danger" });
           this.form.startDate = oldValue
           this.sdate = this.$formatDate(oldValue)
           // return
@@ -331,7 +331,7 @@ export default {
       if (this.form.startDate && this.form.startDate != null) {
           // console.log(this.form.startDate )
         if (newDueDate.getTime() < new Date(this.form.startDate).getTime()) {
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
           this.form.dueDate = oldValue
           this.ddate = this.$formatDate(oldValue)
           // return

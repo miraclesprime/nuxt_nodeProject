@@ -50,7 +50,7 @@
                     <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success-sub3"></bib-icon>
                   </span>
                   <span v-if="field.event" class=" flex-grow-1" style="line-height:1.25;" id="adv-table-field-event">
-                    <input type="text" class="editable-input" id="advtable-editable-input" :value="item[field.key]"  @focus="item.project?$emit(`${field.event}`, item):''"  @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
+                    <input type="text" class="editable-input" id="advtable-editable-input" :value="item[field.key]" @focus="item.project?$emit(`${field.event}`, item):''" @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
                   </span>
                   <span v-else class="flex-grow-1" id="adv-table-item-field-key">
                     {{item[field.key]}}
@@ -322,7 +322,7 @@ export default {
     Split(this.colIds, {
       sizes: this.colSizes,
       minSize: this.colmw,
-      gutterSize: 6,
+      gutterSize: 2,
       snapOffset: 4,
       dragInterval: 5,
       
@@ -594,7 +594,7 @@ export default {
         if (item.dueDate && new Date(d).getTime() > new Date(item.dueDate).getTime() ) {
           // console.warn("invalid startDate", this.localData[index].startDate, this.tableData[index].startDate)
           this.localData[index].startDate = this.tableData[index].startDate
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.popupMessages.push({ text: "Start date should be before Due date", variant: "danger" });
           // this.modifyDateFormat()
         } else {
           // console.info("valid startDate" )
@@ -604,7 +604,7 @@ export default {
         if (item.startDate && new Date(d).getTime() < new Date(item.startDate).getTime() ) {
           // console.warn("invalid dueDate", this.localData[index].dueDate, this.tableData[index].dueDate)
           this.localData[index].dueDate = this.tableData[index].dueDate
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
         } else {
           // console.info("valid dueDate" )
           this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})

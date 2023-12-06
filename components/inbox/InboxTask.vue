@@ -537,5 +537,5 @@ export default {
 
 </script>
 <style lang="scss" scoped>
-  .inbox-task { display: grid; grid-template-columns: none; grid-template-rows: 1fr 1fr minmax(400px, auto) 1fr; }
+  .inbox-task { display: grid; grid-template-columns: none; grid-template-rows: 1fr 1fr minmax(10rem, 10fr) minmax(10rem, auto); }
 </style>

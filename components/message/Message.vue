@@ -544,7 +544,6 @@ export default {
   &__content {
     /*color: $text;*/
     /*refer global.scss*/
-    ul, ol { list-style: initial; }
   }
 
   &__files {

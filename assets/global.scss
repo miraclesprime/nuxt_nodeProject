@@ -420,12 +420,15 @@ ul {
   p {
     margin-bottom: 3px;
   }
+  ul { list-style: disc; }
+  ol { list-style: decimal;}
 }
 
 .mention {
-  color: #a975ff;
+  color: $primary-24;
   /*color: $purple;*/
-  background-color: rgba(169, 117, 255, .1);
+  // background-color: rgba(169, 117, 255, .1);
+  background-color: $primary-24-sub2;
   border-radius: .3rem;
   padding: .1rem .3rem;
   cursor: pointer;

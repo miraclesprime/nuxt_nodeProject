@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <div id="inbox-wrapper" class="inbox-wrapper d-flex h-100">
+    <div id="inbox-wrapper" class="inbox-wrapper  h-100">
       <main class="position-relative">
         <page-title title="Inbox" ></page-title>
         <!-- <bib-tabs class="border-bottom-light" :tabs="bibTabs" :value="activeTab" @change="handleChange_Tabs"></bib-tabs> -->
@@ -343,6 +343,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 .inbox-wrapper {
+  /*grid-template-columns: 3fr $sidebar-width;*/
+  display: flex;
+  
   main {
     flex: 1 1 auto;
     display: flex;
@@ -356,6 +359,7 @@ export default {
 
 @media screen and (max-width: 1600px){
   .inbox-wrapper {
+    /*grid-template-columns: 3fr 50%;*/
     aside { flex-basis: 50%; }
   }
 }

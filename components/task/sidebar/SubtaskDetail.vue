@@ -17,7 +17,7 @@
               <template v-slot:menu>
                 <div class="list" id="std-list">
                   <span class="list__item" id="std-list-item-1" @click="markComplete">
-                    <bib-icon icon="check-circle-solid" :variant="isComplete.variant" class="mr-05"></bib-icon> {{isComplete.text}}
+                    <bib-icon icon="check-circle-solid" :variant="isComplete.iconVariant" class="mr-05"></bib-icon> {{isComplete.text}}
                   </span>
                   <span class="list__item" id="std-list-item-2" @click="setFavorite">
                     <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-05"></bib-icon> {{isFavorite.text}}
@@ -240,9 +240,9 @@ export default {
 
     isComplete() {
       if (this.form.isDone) {
-        return { variant: "success", text: "Completed" }
+        return { variant: "primary-24", text: "Completed", iconVariant: "primary-24" }
       } else {
-        return { variant: "light", text: "Mark Completed" }
+        return { variant: "primary--outline", text: "Mark Completed", iconVariant: "gray4" }
       }
     },
 

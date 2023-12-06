@@ -959,7 +959,7 @@ export default {
 }
 .side-panel {
   display: grid;
-  grid-template-rows: 1fr minmax(4fr, auto) 1fr;
+  grid-template-rows: 1fr minmax(40vh, 80vh) 1fr;
   color: var(--bib-secondary);
 }
 
