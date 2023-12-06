@@ -74,6 +74,7 @@ export default {
       return eArr.join(', ')
     },
   },
+
   methods: {
     showAll(){
       this.showall = !this.showall
