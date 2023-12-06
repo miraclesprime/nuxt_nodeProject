@@ -27,13 +27,13 @@
           <fa :icon="faListOl"></fa>
         </div>
         <div class="toolbar-separator"  id="message-input-toolbar-separator-3"></div>
-        <mention-popup @select.native.stop="mentionUser(event, $event)"></mention-popup>
+        <mention-popup @select="mentionUser"></mention-popup>
         <div class="toolbar-button d-inline-flex align-center ml-auto"  id="message-input-toolbar-btn-wrap">
           <button type="button" id="message-input-toolbar-btn" class="cursor-pointer text-secondary text-underline border-none bg-white text-hover-dark" @click.stop="cancelMessage">Cancel</button> 
         </div>
       </div>
       <div class="editor-container" id="message-input-editor-container">
-        <div class="editor-wrapper overflow-y-auto" id="message-input-editor-container-wrapper" style="max-height: 12rem;">
+        <div class="editor-wrapper overflow-y-auto" id="message-input-editor-container-wrapper" style="max-height: 10rem;">
           <div v-if="value.files.length > 0" class="files" id="message-input-files-wrapper">
             <div v-for="(file, idx) in value.files" :key="idx" class="file" :id="'message-input-'+idx">
               <div class="file-thumbnail" id="message-input-fafile">
@@ -447,8 +447,8 @@ export default {
       margin: 8px 0 0 0;
     }
     .mention { 
-      color: #a975ff;
-      background-color: rgba(169, 117, 255, .1);
+      color: $primary-24;
+      background-color: $primary-24-sub2;
       border-radius: .3rem;
       padding: .1rem .3rem;
       cursor: pointer;

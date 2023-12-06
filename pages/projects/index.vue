@@ -5,10 +5,10 @@
    
     <div id="projects-list-wrapper" class="projects-list-wrapper position-relative" >
     
-      <template v-if="projectcount > 0">
+      <template v-if="projectcount > 0 ">
         <template v-if="groupVisible">
          
-          <adv-table-three :tableFields="tableFields" :tableData="localData" :lazyComponent="lazyComponent" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @context-open="contextOpen" @title-click="projectRoute" @table-sort="sortProject"  @update-field="updateProject" @create-row="createProject" :drag="false" :key="templateKey" :editSection="groupBy" :filter="filterViews"></adv-table-three>
+          <adv-table-three :tableFields="tableFields" :tableData="localData" :lazyComponent="lazyComponent" :contextItems="projectContextItems" @context-item-event="contextItemClick" @row-click="projectRoute" @context-open="contextOpen" @title-click="projectRoute" @table-sort="sortProject" @update-field="updateProject" @create-row="createProject" :drag="false" :key="templateKey" :editSection="groupBy" :filter="filterViews"></adv-table-three>
         </template>
 
         <template v-else>
@@ -50,7 +50,6 @@
 import { PROJECT_CONTEXT_MENU, PROJECT_FIELDS } from '../../config/constants';
 import { mapGetters } from 'vuex';
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
-import { combineTransactionSteps } from '@tiptap/core';
 
 export default {
   name: "Projects",
@@ -89,6 +88,11 @@ export default {
     if (process.client) {
 
       this.$nuxt.$on("refresh-table", () => {
+        
+        this.updateKey();
+      });
+      this.$nuxt.$on("project-refresh-table", () => {
+        console.log("111")
         this.updateKey();
       });
 
@@ -187,7 +191,7 @@ export default {
     },
 
     projectRoute(project) {
-
+      
       let fwd = this.$donotCloseSidebar(event.target.classList)
       if (!fwd) {
         return false
@@ -611,13 +615,13 @@ export default {
           .dispatch("project/deleteProject", project)
           .then((t) => {
             if (t.statusCode == 200) {
-              this.popupMessages.push({ text: t.message, variant: "success" });
+              this.popupMessages.push({ text: t.message, variant: "primary-24" });
               this.$nuxt.$emit("delete_update_table",project,this.$route.fullPath)
               // this.updateKey();
               
              this.loading = false;
             } else {
-              this.popupMessages.push({ text: t.message, variant: "orange" });
+              this.popupMessages.push({ text: t.message, variant: "primary-24" });
               console.warn(t.message);
               
             this.loading = false;
@@ -631,7 +635,7 @@ export default {
       } else {
         this.popupMessages.push({
           text: "Action cancelled",
-          variant: "orange",
+          variant: "primary-24",
         });
       }
 

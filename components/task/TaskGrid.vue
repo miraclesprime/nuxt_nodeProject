@@ -188,8 +188,10 @@ export default {
           text: `changed ${label} to ${historyText ?? value}`
         })
         .then(res => {
-          this.loading = false
           this.$nuxt.$emit("update-key")
+          // this.loading = false
+          // this.$store.dispatch("task/setSingleTask", res.data)
+
         })
         .catch(e => console.warn(e))
     },
@@ -252,19 +254,18 @@ export default {
         this.$store.dispatch("task/deleteTask", task)
         .then(t => {
           if (t.statusCode == 200) {
-            this.popupMessages.push({ text: t.message, variant: "success" })
+            this.popupMessages.push({ text: t.message, variant: "primary-24" })
             this.$emit("update-key", t.message)
             // this.taskToDelete = {}
           } else {
-            this.popupMessages.push({ text: t.message, variant: "orange" })
-            console.warn(t.message);
+            this.popupMessages.push({ text: t.message, variant: "primary-24" })
           }
         })
         .catch(e => {
           console.warn(e)
         })
       } else {
-        this.popupMessages.push({ text: "Action cancelled", variant: "orange" })
+        this.popupMessages.push({ text: "Action cancelled", variant: "primary-24" })
         // this.taskToDelete = {}
       }
       // this.taskToDelete = task
@@ -276,7 +277,7 @@ export default {
           return this.variant='success'
         }
         if (item.label=='Remove favorite') {
-          return this.variant='warning'
+          return this.variant='primary-24'
         }
       if (item.label.includes('Complete')) {
         return this.task.statusId == 5 ? 'success' : 'gray5'

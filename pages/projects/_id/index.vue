@@ -275,40 +275,52 @@ export default {
 
   async mounted() {
     if (process.client) {
-      // console.log(this.project )
+      // console.log(this.project, this.projectSections)
       if(this.projectSections.length <= 0) {
         this.$store.dispatch("section/fetchProjectSections",{projectId:this.$route.params.id})
         const res = await this.$axios.get(`project/${this.$route.params.id}`, {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,'filter':this.filterViews }
-          })
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,'filter':this.filterViews }
+        })
+
         this.$store.dispatch('project/setProject', res.data.data)
         this.projectTitle = res.data?.data?.title;
-        this.project = res.data.data
-         
+        this.project = res.data.data         
       }
+
+      const p = await this.$store.dispatch("project/fetchSingleProject", this.$route.params.id )
+      // console.log(p.data)
+      this.project = p.data
+      this.projectTitle = p.data?.title
+
       this.$store.commit("task/setExpandVisible",true);
       this.$store.commit('section/setGroupBy',"")
-      // console.log("this.project", this.project)
-      let p
-      if(this.project){
-        p = JSON.parse(JSON.stringify(this.project))
-      } else {
+      
+      if(!this.project?.id){
         this.$router.push('/notfound')
-        return;
-       }
+        return
+        // p = JSON.parse(JSON.stringify(this.project))
+      } 
       
       // this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
+      console.log(p.data, this.project)
+      // return
+      if(this.project?.isDeleted != true) {
 
-      if(p?.isDeleted != true) {
-
-        if((this.project && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN'){
-            // console.info('user has access!')
-            this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id, userId: this.project.userId ? this.project.userId : null })
+        if((this.project?.id && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN'){
+          // console.info('user has access!')
+          this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id, userId: this.project?.userId ? this.project?.userId : null })
         } else {
-            this.$router.push('/error/403');
+          this.$router.push('/error/403')
         }
 
-        this.canDeleteProject()
+        // this.canDeleteProject()
+        if (this.project?.userId == JSON.parse(localStorage.getItem('user')).sub || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN' ) {
+          this.cdp = true
+          return true;
+        } else {
+          this.cdp = false
+          return false
+        }
         
       } else {
         this.$router.push('/notfound')
@@ -342,14 +354,14 @@ export default {
       if (this.isFavorite.status) {
         this.$store.dispatch("project/removeFromFavorite", { id: this.$route.params.id })
           .then(msg => {
-            this.popupMessages.push({ text: msg, variant: "orange" })
+            this.popupMessages.push({ text: msg, variant: "primary-24" })
           })
           .catch(e => console.log(e))
           .then(() => this.favLoading = false)
       } else {
         this.$store.dispatch("project/addToFavorite", { id: this.$route.params.id })
           .then(msg => {
-            this.popupMessages.push({ text: msg, variant: "success" })
+            this.popupMessages.push({ text: msg, variant: "primary-24" })
           })
           .catch(e => console.log(e))
           .then(() => this.favLoading = false)
@@ -363,7 +375,7 @@ export default {
         if (p.statusCode == 200) {
           this.$router.push('/projects')
         } else {
-          this.popupMessages.push({ text: p.message, variant: "warning" })
+          this.popupMessages.push({ text: p.message, variant: "primary-24" })
           console.warn(p.message);
         }
         this.loading = false

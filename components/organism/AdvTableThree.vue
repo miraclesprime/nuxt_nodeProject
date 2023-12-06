@@ -93,7 +93,7 @@
                       <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success-sub3"></bib-icon>
                     </span>
                     <span v-if="field.event" class=" flex-grow-1" style="line-height:1.25;">
-                      <input type="text" class="editable-input" :value="item[field.key]" @focus="$nuxt.$emit('open-sidebar', item)"  @click.stop @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
+                      <input type="text" class="editable-input" :value="item[field.key]" @click.stop="titleClick(`${field.event}`, item)" @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
                     </span>
                     <span v-else class="flex-grow-1">
                       {{item[field.key]}}
@@ -449,7 +449,7 @@ export default {
     Split(this.colIds, {
       sizes: this.colSizes,
       minSize: this.colmw,
-      gutterSize: 6,
+      gutterSize: 2,
       snapOffset: 4,
       dragInterval: 5,
       onDragEnd: (sizes) => {
@@ -850,9 +850,14 @@ export default {
       this.unselectAll().then(r => {
         let elem = event.currentTarget.closest(".tr")
         elem.classList.add('active')
-        // console.log(elem)
       })
+      // console.log(fieldEvent, item.hasOwnProperty('sectionId'))
+      if (item.hasOwnProperty('sectionId')) {
+        this.$emit(`${fieldEvent}`, item)
+        return
+      } 
       this.$emit(`${fieldEvent}`, item)
+      
     },
    
     contextOpen($event, item) {
@@ -1007,7 +1012,7 @@ export default {
         if (item.dueDate && new Date(d).getTime() > new Date(item.dueDate).getTime() ) {
           // console.warn("invalid startDate", this.localData[sectionIdx].tasks[itemIdx].startDate, this.tableData[sectionIdx].tasks[itemIdx].startDate)
           this.localData[sectionIdx].tasks[itemIdx].startDate = this.tableData[sectionIdx].tasks[itemIdx].startDate
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.popupMessages.push({ text: "Start date should be before Due date", variant: "danger" });
           // this.modifyDateFormat()
         } else {
           // console.info("valid startDate" )
@@ -1017,7 +1022,7 @@ export default {
         if (item.startDate && new Date(d).getTime() < new Date(item.startDate).getTime() ) {
           // console.warn("invalid dueDate", this.localData[sectionIdx].tasks[itemIdx].dueDate, this.tableData[sectionIdx].tasks[itemIdx].dueDate)
           this.localData[sectionIdx].tasks[itemIdx].dueDate = this.tableData[sectionIdx].tasks[itemIdx].dueDate
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
         } else {
           // console.info("valid dueDate" )
           this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
@@ -1131,14 +1136,14 @@ export default {
   .tr {
     display: table-row;
 
-    .th:nth-child(2),
+    /*.th:nth-child(2),
     .td:nth-child(2) {
       position: sticky;
       min-width: 2rem;
       left: 0;
       z-index: 1;
       background: #fff;
-    }
+    }*/
     &.hidden { visibility: hidden;
       .th { height: 2px; padding: 0;}
     }

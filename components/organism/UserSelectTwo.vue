@@ -9,7 +9,7 @@
           {{user.label}}
         </tippy>
         
-        <div v-if="mode == 'icon'" class="width-2 height-2 align-center justify-center shape-circle" :class="['bg-'+iconBg]">
+        <div v-if="mode == 'icon'" class="width-2 height-2 align-center justify-center shape-circle" :class="['bg-'+iconBg]" v-tooltip="'Add to team'">
           <bib-icon :icon="icon" :variant="iconVariant"></bib-icon>
         </div>
         
@@ -18,7 +18,7 @@
         <span v-if="mode == 'avatar'" class="shape-circle d-inline-flex width-2 height-2 ">
           <bib-avatar size="2rem"></bib-avatar>
         </span>
-        <div v-if="mode == 'icon'" class="width-2 height-2 align-center justify-center shape-circle" :class="['bg-'+iconBg]">
+        <div v-if="mode == 'icon'" class="width-2 height-2 align-center justify-center shape-circle" :class="['bg-'+iconBg]" v-tooltip="'Add to team'">
           <bib-icon :icon="icon" :variant="iconVariant"></bib-icon>
         </div>
       </div>

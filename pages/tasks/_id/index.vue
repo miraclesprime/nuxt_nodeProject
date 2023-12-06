@@ -1,5 +1,5 @@
 <template>
-  <article id="side-panel-wrapper" class="side-panel expandVisible" v-click-outside="closeSidebar">
+  <article id="side-panel-wrapper" class="side-panel expandVisible" >
     
     <div class="side-panel__header" id="tsb-header">
       <div class="d-flex justify-between pt-105 px-105 pb-05" id="ts-side-panel">
@@ -85,7 +85,7 @@
         </div>
       </div>
 
-      <sidebar-fields-two :task="currentTask" @update-project-field="updateProject" @update-field="updateTask" @newtask-fields="updateTaskform" :activeProp="form.id"></sidebar-fields-two>
+      <sidebar-fields-two :task="currentTask" @update-project-field="updateProject" @update-field="updateTask" @update-description="storeDescription" @newtask-fields="updateTaskform" :activeProp="form.id"></sidebar-fields-two>
       <sidebar-tag :tags="tags" @add-tag="addTag" @change="addTag" @delete-tag="removeTag" :activeProp="form.id"></sidebar-tag>
       <sidebar-subtask id="task_subtasks" @view-subtask="viewSubtask($event)" @close-sidebar-detail="showSubtaskDetail = false" :activeProp="form.id"></sidebar-subtask>
       <sidebar-files id="task_files" :reloadFiles="reloadFiles" :activeProp="form.id"></sidebar-files>
@@ -123,6 +123,7 @@ import { mapGetters } from "vuex"
 import dayjs from 'dayjs'
 import _ from 'lodash'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
+import { stripHTMLandTrim } from '~/utils/helpers.js'
 
 export default {
   name: "SingleTask",
@@ -148,15 +149,16 @@ export default {
       popupMessages: [],
       _expandVisible: true,
       deleteBtnHover: false,
+      description: null,
     };
   },
 
   computed: {
     ...mapGetters({
       user: "user/getUser2",
-      teamMembers: "user/getTeamMembers",
       tasks: "task/tasksForListView",
       team: 'task/getTaskMembers',
+      teamMembers: "user/getTeamMembers",
       sidebarOpen: 'task/getSidebarVisible',
       departments: "department/getAllDepartments",
       project: "project/getSingleProject",
@@ -222,6 +224,7 @@ export default {
       if (Object.keys(this.currentTask).length) {
         this.form = _.cloneDeep(this.currentTask);
         if (this.currentTask.project?.length) {
+          console.log("this.currentTask",this.currentTask)
           this.form.projectId = this.currentTask.project[0]?.projectId || this.currentTask.project[0].project?.id
         } else {
           this.form.projectId = this.project?.id
@@ -275,7 +278,7 @@ export default {
 
   },
 
-  created(){
+  async created(){
 
 
           this.$nuxt.$on("edit-message", (msg) => {
@@ -283,26 +286,57 @@ export default {
           })
 
           this.setExpand();
+///get current task
           this.$axios.$get(`task/${this.$route.params.id}`, {
               headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
           }).then((res) => {
               if (res) {
                   if (!res.data || res.data.isDeleted) {
                       this.$router.push("/notfound")
-                  } else {
+                  } 
+                  else {
                       this.$store.dispatch('task/setSingleTask', res.data);
-                      
-              }
+
+                      this.$axios.get(`/task/${this.$route.params.id}/members`, {
+                          headers: {
+                            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                          },
+                        }).then ((tm)=>{
+                          let teams = tm.data.data.members;
+
+                          let data = teams.map((el) => {
+                            if (res.data.userId == el.user.id) {
+                              el.isOwner = true
+                            } else {
+                              el.isOwner = false
+                            }
+                            return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName, isOwner: el.isOwner };
+                          });
+                          this.$store.commit('task/fetchTeamMember',data)
+                        })
+                    }
               } else {
                   this.$router.push("/notfound")
               }
           }).catch(err => {
               console.log("There was an issue in project API", err);
           })
+// get all members
+        this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${JSON.parse(localStorage.getItem('user')).subb}/users`, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
+      }
+    }).then((res) => {
+      console.log(res)
+      this.$store.commit('user/setTeamMembers',res)
+ 
+        });
+  //team members
   },
 
   mounted() {
     this.showSubtaskDetail = false;
+    
     this.$store.dispatch("project/fetchProjects")
     if (Object.keys(this.currentTask).length) {
         this.form = _.cloneDeep(this.currentTask);
@@ -338,36 +372,40 @@ export default {
   },
 
   methods: {
-  scrollToSubtasks() {
-    this.$nextTick(() => {
-      const element = document.getElementById('task_subtasks');
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' ,block: "center" });
-      }
-    });
-  },
-  scrollToFiles() {
-    this.$nextTick(() => {
-      const element = document.getElementById('task_files');
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth',block: "center" });
-      }
-    });
-  },
-  scrollToConversation() {
-    this.$nextTick(() => {
-      const element = document.getElementById('task_conversation');
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' ,block: "end"});
-      }
-    });
-  },
+    scrollToSubtasks() {
+      this.$nextTick(() => {
+        const element = document.getElementById('task_subtasks');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' ,block: "center" });
+        }
+      });
+    },
+    scrollToFiles() {
+      this.$nextTick(() => {
+        const element = document.getElementById('task_files');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth',block: "center" });
+        }
+      });
+    },
+    scrollToConversation() {
+      this.$nextTick(() => {
+        const element = document.getElementById('task_conversation');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' ,block: "end"});
+        }
+      });
+    },
 
     /*showAddTeamModal() {
       // this.taskTeamModal = true
       console.info("clicked to open team modal")
     },*/
     closeExpand(){
+      if (this.description) {
+        let hText = stripHTMLandTrim(this.description.value.text, 128)
+        this.updateTask({name: this.description.name, field: this.description.field, value: this.description.value.text, historyText: hText })
+      }
       if (this.currentTask.project.length !== 0) {
           this.$router.push('/projects/' + this.currentTask.project[0].projectId);
       } else {
@@ -375,7 +413,7 @@ export default {
       }
       // this.$nuxt.$emit("close-expand")
     },
-    closeSidebar(event) {
+    /*closeSidebar(event) {
       let main = document.getElementById("main-content").className
       if(main.indexOf('open-sidebar') > 0){
         const classlist = ["cursor-pointer", "menu-item", "task-grid", "table__irow"]
@@ -388,7 +426,7 @@ export default {
         this.showSubtaskDetail = false
         this.$nuxt.$emit("close-sidebar");
       }
-    },
+    },*/
     createTask(taskform) {
 
       if (this.error == "valid") {
@@ -443,6 +481,7 @@ export default {
       let updatedvalue = taskData.value
       let projectId = null
 
+      // console.log(taskData)
       if (taskData.name == "Due date" || taskData.name == "Start date") {
         updatedvalue = dayjs(taskData.value).format('DD MMM YYYY')
       }
@@ -482,6 +521,7 @@ export default {
         .then((u) => {
           this.$nuxt.$emit("update-key")
           this.$store.dispatch("task/setSingleTask", u)
+          this.reloadComments+=1
           this.reloadHistory += 1
         })
         .catch(e => {
@@ -496,7 +536,7 @@ export default {
         .then((res) => {
 
           if (res.statusCode == 200) {
-            this.popupMessages.push({text: res.message, variant: "success"})
+            this.popupMessages.push({text: res.message, variant: "primary-24"})
             this.$store.dispatch('task/fetchTeamMember', { id: this.form.id })
           } else {
             console.warn(res)
@@ -563,6 +603,11 @@ export default {
     updateTaskform(taskfields){
       this.form = taskfields
       this.createTask(this.form)
+    },
+
+    storeDescription(payload){
+      console.log("desc->", payload)
+      this.description = payload
     },
 
     debounceUpdate: _.debounce(function(payload) {
@@ -641,7 +686,8 @@ export default {
       this.value.files = payload.files
     },
     onsubmit(data) {
-      let trimComment = _.truncate(data.text.slice(3, -4), { length: 128 })
+      // let trimComment = _.truncate(data.text.slice(3, -4), { length: 128 })
+      let trimComment = stripHTMLandTrim(data.text, 128)
 
       if (this.editMessage?.id) {
         this.$store.dispatch("task/updateTaskComment", { taskId: this.currentTask.id, commentId: this.editMessage.id, comment: data.text, text: `updated comment ${trimComment}` })
@@ -738,7 +784,7 @@ export default {
         let tagExist = this.alltags.find(t => t.content == tag)
         if (tagExist) {
           // console.log('tag already exists', tag)
-          this.popupMessages.push({text: "tag already exists", variant: "orange"})
+          this.popupMessages.push({text: "tag already exists", variant: "primary-24"})
           return
         } else {
           this.$store.dispatch("company/addCompanyTag", {content: tag})

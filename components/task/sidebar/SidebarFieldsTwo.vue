@@ -58,7 +58,8 @@
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Budget</label></div>
         <div class="col-5">
-          <input-two type="number" :value="form.budget" icon="currency-dollar" @input="validate('Budget','budget', $event)" ></input-two>
+          <!-- <input-two type="number" :value="form.budget" icon="currency-dollar" @input="validate('Budget','budget', $event)" ></input-two> -->
+          <input-two type="number" :value="form.budget" icon="currency-dollar" @blur="validate('Budget','budget', $event)"  @keyup.enter="validate('Budget','budget', $event)"></input-two>
         </div>
       </div>
       <div class="row ">
@@ -288,7 +289,7 @@ export default {
 
       if (this.form.dueDate && this.form.dueDate != null) {
         if (newStartDate.getTime() > new Date(this.form.dueDate).getTime()) {
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.popupMessages.push({ text: "Start date should be before Due date", variant: "danger" });
           this.form.startDate = oldValue
           this.sdate = this.$formatDate(oldValue)
           // return
@@ -331,7 +332,7 @@ export default {
       if (this.form.startDate && this.form.startDate != null) {
           // console.log(this.form.startDate )
         if (newDueDate.getTime() < new Date(this.form.startDate).getTime()) {
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
           this.form.dueDate = oldValue
           this.ddate = this.$formatDate(oldValue)
           // return
@@ -396,6 +397,7 @@ export default {
     },
     validate(name, field, value) {
       let dec = Number.parseFloat(value).toFixed(2)
+      console.log("dec",dec)
       this.debounceUpdateField(name, field, dec)
     },
     debounceUpdateField: _.debounce(function(name, field, value) {
@@ -403,7 +405,7 @@ export default {
          if(value.text){
           let hText = value.text.replace( /(<([^>]+)>)/ig, '');
           hText = _.truncate(hText, {'length': 30})
-          // console.log(hText)
+          console.log(hText)
           this.$emit("update-field", { name, field, value: value.text, historyText: `changed ${name} to ${hText}`})
          }
          else {
@@ -432,6 +434,7 @@ export default {
       this.description = value.text
       this.id = _.clone(this.task.id)
       // console.log('submit', value.text)
+      this.$emit("update-description", {name, field, value})
     }
   },
 };

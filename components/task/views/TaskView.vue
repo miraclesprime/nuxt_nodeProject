@@ -10,7 +10,7 @@
       @search-projectTasks="searchTasks"
       v-on:add-section="toggleNewsection"
     ></task-actions>
-    <template v-if="taskcount > 0">
+    <template v-if="taskcount > 0 || groupby=='' ">
     <div v-show="gridType === 'list'" class="calc-height overflow-y-auto" :style="{ 'width': contentWidth }">
 
       <adv-table-three :tableFields="tableFields" :tableData="localdata" :lazyComponent="true" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" :newRow="newRow" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createSection" @edit-section="renameSection" :sectionMenu="true" @section-delete="sectionDeleteConfirm" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :drag="true" :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
@@ -1241,7 +1241,7 @@ export default {
               // this.updateKey(t.message);
               // this.taskToDelete = {};
             } else {
-              this.popupMessages.push({ text: t.message, variant: "orange" });
+              this.popupMessages.push({ text: t.message, variant: "primary-24" });
               console.warn(t.message);
             }
           })
@@ -1249,7 +1249,7 @@ export default {
             console.warn(e);
           });
       } else {
-        this.popupMessages.push({ text: "Action cancelled", variant: "orange" });
+        this.popupMessages.push({ text: "Action cancelled", variant: "primary-24" });
         // this.taskToDelete = {};
       }
     },
@@ -1265,7 +1265,7 @@ export default {
         .dispatch("section/deleteSection", {...this.sectionToDelete, retainTasks})
         .then((s) => {
           if (s.statusCode == 200) {
-            this.popupMessages.push({text: s.message, variant: "success"})
+            this.popupMessages.push({text: s.message, variant: "primary-24"})
             this.updateKey();
           } else {
             console.warn(t.message);

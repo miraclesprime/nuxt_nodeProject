@@ -4,7 +4,7 @@
       <bib-avatar :src="user.Photo" size="2rem" ></bib-avatar>
     </figure> -->
     <div id="task-history-titles-wrapper">
-      <span class="font-w-600" id="th-username">{{user.Name}}</span>
+      <span class="font-w-600" id="th-username">{{$userInfo(history.userId).Name}}</span>
       <span class="mx-05 " id="th-historytext">{{history.text}}</span>
       <span class="text-gray4 " id="th-historyupdatedat">{{$displayDate(history.updatedAt)}}</span>
     </div>
@@ -23,7 +23,6 @@ export default {
   name: 'TaskHistory',
   props: {
     history: Object,
-    teamMems:Array
   },
   computed: {
     ...mapGetters({
@@ -36,38 +35,6 @@ export default {
     };
   },
 
-  
-  async mounted () {
-    if(this.teamMembers.length>0) {
-      this.user=await this.$userInfo(this.history.userId)
-
-    }
-    else {
-      if(this.teamMems.length>0) {
-        this.user=await this.getUserInfo(this.teamMems,this.history.userId)
-      }
-        }
-  },
-  methods:{
-    async getUserInfo(members,userID)
-    {
-      if (members.length > 0 && userID) 
-                {
-                      let u = await members.find((m) => m.id == userID)
-                        if (u) {
-                          return { Name: `${u.firstName} ${u.lastName}`}
-                        }
-                        else
-                        {
-                            return {Name: ''}
-                        }
-                } 
-                else 
-                {
-                  return { Name: "no user found" }
-                }
-    }
-  }
 }
 
 </script>

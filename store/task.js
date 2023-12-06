@@ -219,7 +219,6 @@ export const actions = {
   },
 
   async updateTask(ctx, payload) {
-    // console.log(payload)
     /*if(payload.title == "") {
       throw new Error("Task can't have empty Value")
     }*/

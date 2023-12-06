@@ -206,6 +206,12 @@ import { mapGetters } from "vuex";
         let collapse = this.$refs.content;
         if (collapse) collapse.classList.toggle("bib-collapse");
         let icon = this.$refs.icon.$vnode.elm;
+        if(this.collapseCount%2==0){
+          icon.style.transform = 'rotate(0deg)';
+        }
+        else {
+          icon.style.transform = 'rotate(-90deg)';
+        }
         if (icon) icon.classList.toggle("flip");
         this.$emit("click");
       },

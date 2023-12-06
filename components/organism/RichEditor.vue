@@ -489,9 +489,10 @@ export default {
       margin: 0 0 2px;
     }
     .mention { 
-      color: #a975ff;
-      /*color: $purple;*/
-      background-color: rgba(169, 117, 255, .1);
+      /*color: #a975ff;*/
+      color: $primary-24;
+      /* background-color: rgba(169, 117, 255, .1);*/
+      background-color: $primary-24-sub2;
       border-radius: .3rem;
       padding: .1rem .3rem;
       cursor: pointer;

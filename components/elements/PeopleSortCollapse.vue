@@ -150,7 +150,8 @@ import { mapGetters } from "vuex";
         sortUser:[],
         collapseStatus:"true",
         favoriteProjects:[],
-        favoHeight:0
+        favoHeight:0,
+        collapseCount:0
       };
     },
     computed: {
@@ -217,11 +218,28 @@ import { mapGetters } from "vuex";
       this.$store.commit("user/sortPeople",{sort:item,data:this.sortUser});
     },
       openDetails() {
-        if (this.nonExpandable) return;
-        let collapse = this.$refs.content;
-        if (collapse) collapse.classList.toggle("bib-collapse");
         let icon = this.$refs.icon.$vnode.elm;
-        if (icon) icon.classList.toggle("flip");
+        this.collapseCount++;
+        if(this.collapseCount%2==0) {
+          icon.style.transform = 'rotate(0deg)';
+        }
+        else {
+          icon.style.transform = 'rotate(-90deg)';
+        }
+        
+        if (this.nonExpandable){
+          return;
+        } 
+        let collapse = this.$refs.content;
+        if (collapse) {
+          collapse.classList.toggle("bib-collapse");
+        }
+       
+        if (icon) 
+        {
+          icon.classList.toggle("flip");
+          
+      }
         this.$emit("click");
       },
     },

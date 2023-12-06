@@ -34,6 +34,10 @@ export default {
       this.name.lastName = newValue.LastName
       this.avatar = newValue.Photo
     }
+  },
+
+  mounted() {
+    this.$router.push('/mytasks')
   }
 
 }

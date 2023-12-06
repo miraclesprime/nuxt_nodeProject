@@ -65,7 +65,8 @@
       <div class=" border-bottom-gray3 position-relative px-105 py-05 " id="tsb-title">
         <!-- :class="{'error': error == 'invalid'}" -->
         <!-- <input type="text" class="editable-input" :class="{'error': error == 'invalid'}" ref="taskTitleInput" v-model.trim="form.title" placeholder="Enter Task Name ..." v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" > -->
-        <textarea v-model.trim="form.title" ref="taskTitleInput" class="editable-input multiline position-absolute"  v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" v-on:keydown.enter.prevent placeholder="Enter Task Name ..." style="height: calc(100% - 1rem);" ></textarea>
+        <!-- <textarea v-model.trim="form.title" ref="taskTitleInput" class="editable-input multiline position-absolute" @blur="" v-on:keyup="debounceUpdate({name:'Title', field:'title', value:form.title})" v-on:keydown.enter.prevent placeholder="Enter Task Name ..." style="height: calc(100% - 1rem);" ></textarea> -->
+        <textarea v-model.trim="form.title" ref="taskTitleInput" class="editable-input multiline position-absolute" @blur="debounceUpdate({name:'Title', field:'title', value:form.title})" @keyup.enter="debounceUpdate({name:'Title', field:'title', value:form.title})" v-on:keydown.enter.prevent placeholder="Enter Task Name ..." style="height: calc(100% - 1rem);" ></textarea>
         <div class="pseudo-title" aria-hidden="true" >{{form.title}}</div>
       </div>
       
@@ -470,11 +471,16 @@ export default {
             const res =  await this.$axios.$get('/todo/all', {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter':  'all' }
               });
+       
               for (let i=0;i < res.data.length ; i++ ) {
-                if ( data[i]?.task && data[i]?.task.length !==0 ) {
-
-                }
-                else {
+               let hasTaskWithLength = false;
+              if (res.data[i]&&res.data[i].task && res.data[i].task.length > 0) {
+                hasTaskWithLength = true;
+                break; // Once we find a task with length > 0, we can stop looping
+              }
+              if (hasTaskWithLength) {
+                  
+                } else {
                   this.$nuxt.$emit("refresh-table");
                 }
               }
@@ -486,6 +492,8 @@ export default {
               if (res.data.data?.[0]?.tasks?.length==1) {
                 this.$nuxt.$emit("refresh-table");
               }
+
+           
           }
           if(param=="/projects"){
              const res = await this.$axios.$get(`/project/company/all`, {
@@ -506,13 +514,18 @@ export default {
               headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': 'all' }
             });
             for (let i=0;i < res.data.length ; i++ ) {
-                if ( data[i].task && data[i].task.length !==0 ) {
-
-                }
-                else {
+               let hasTaskWithLength = false;
+              if (res.data[i]&&res.data[i].task && res.data[i].task.length > 0) {
+                hasTaskWithLength = true;
+                break; // Once we find a task with length > 0, we can stop looping
+              }
+              if (hasTaskWithLength) {
+                  
+                } else {
                   this.$nuxt.$emit("refresh-table");
                 }
               }
+
             // if (res.data?.[0]?.tasks?.length==1) {
             //   this.$nuxt.$emit("refresh-table");
             // }
@@ -611,7 +624,7 @@ export default {
         .then((res) => {
 
           if (res.statusCode == 200) {
-            this.popupMessages.push({text: res.message, variant: "success"})
+            this.popupMessages.push({text: res.message, variant: "primary-24"})
             this.$store.dispatch('task/fetchTeamMember', { id: this.form.id })
           } else {
             console.warn(res)
@@ -663,11 +676,31 @@ export default {
       })
         .then((u) => {
           // console.log(u)
-          this.$store.dispatch("task/setSingleTask", u)
+          if(this.expandVisible){
           this.$nuxt.$emit("update-key")
-          // if(this.expandVisible){
-          //   this.$nuxt.$emit("update-key","update")
-          // }
+          this.reloadHistory += 1
+          this.reloadComments+=1
+          return;
+          }  
+          if(this.$route.path=="/mytasks" && this.mytaskGrid=="grid") {
+            this.$nuxt.$emit("update-key")
+            this.reloadHistory += 1
+            this.reloadComments+=1
+            return; 
+          }
+          if(this.$route.path=="/tasks" && this.tasksGrid=="grid") {
+            this.$nuxt.$emit("update-key")
+            this.reloadHistory += 1
+            this.reloadComments+=1
+            return;
+          }
+          if(this.$route.path.includes("/projects/") && this.singleProjectGrid=="grid"){
+            this.$nuxt.$emit("update-key")
+            this.reloadHistory += 1
+            this.reloadComments+=1
+            return;
+          }
+          this.$nuxt.$emit("update_table",u)
           this.reloadHistory += 1
           this.reloadComments+=1
 
@@ -775,7 +808,7 @@ export default {
             this.$nuxt.$emit("close-sidebar");
             this.$nuxt.$emit("update-key", t.message)
           } else {
-            this.popupMessages.push({text: t.message, variant: "orange"})
+            this.popupMessages.push({text: t.message, variant: "primary-24"})
             console.warn(t.message);
           }
         })
@@ -888,7 +921,7 @@ export default {
         let tagExist = this.alltags.find(t => t.content == tag)
         if (tagExist) {
           // console.log('tag already exists', tag)
-          this.popupMessages.push({text: "tag already exists", variant: "orange"})
+          this.popupMessages.push({text: "tag already exists", variant: "primary-24"})
           return
         } else {
           this.$store.dispatch("company/addCompanyTag", {content: tag})
@@ -947,7 +980,7 @@ export default {
 }
 .side-panel {
   display: grid;
-  grid-template-rows: 1fr minmax(4fr, auto) 1fr;
+  grid-template-rows: 1fr minmax(40vh, 80vh) 1fr;
   color: var(--bib-secondary);
 }
 

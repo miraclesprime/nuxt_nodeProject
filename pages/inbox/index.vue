@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <div id="inbox-wrapper" class="inbox-wrapper d-flex h-100">
+    <div id="inbox-wrapper" class="inbox-wrapper  h-100">
       <main class="position-relative">
         <page-title title="Inbox" ></page-title>
         <!-- <bib-tabs class="border-bottom-light" :tabs="bibTabs" :value="activeTab" @change="handleChange_Tabs"></bib-tabs> -->
@@ -9,7 +9,8 @@
             <div v-for="(value, key) in combinedInbox">
               <h4 class="font-md text-gray6 text-capitalize py-1 px-105 border-bottom-gray2">{{key}}</h4>
               <template v-for="(o, index) in value">
-                <inbox-item :item="o" :key="o.id" @task-click="fetchTask" @project-click="fetchProject" :active="active" :members="members"></inbox-item>
+                <inbox-item v-if="o.mode != 'project'" :item="o" :key="o.id" @task-click="fetchTask" :active="active" :members="members"></inbox-item>
+                <!--  @project-click="fetchProject" -->
               </template>
             </div>
             <div ref="infinitescrolltrigger" v-show="currentPage <= pageCount" class="align-center justify-center py-05">
@@ -54,7 +55,7 @@
       </main>
       <aside class="position-relative bg-white border-left-gray4">
         <inbox-task v-if="taskProject == 'task'" :task="task" @update-key="task = $event" ></inbox-task>
-        <inbox-project v-if="taskProject == 'project'" :project="project" ></inbox-project>
+        <!-- <inbox-project v-if="taskProject == 'project'" :project="project" ></inbox-project> -->
         <div v-if="taskProject == ''" class="position-absolute align-center justify-center" style="inset:5rem; z-index: 2;">
           <!-- <bib-icon icon="bib-logo" variant="light" :scale="3"></bib-icon> -->
           <no-data></no-data>
@@ -343,6 +344,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 .inbox-wrapper {
+  /*grid-template-columns: 3fr $sidebar-width;*/
+  display: flex;
+  
   main {
     flex: 1 1 auto;
     display: flex;
@@ -356,6 +360,7 @@ export default {
 
 @media screen and (max-width: 1600px){
   .inbox-wrapper {
+    /*grid-template-columns: 3fr 50%;*/
     aside { flex-basis: 50%; }
   }
 }
