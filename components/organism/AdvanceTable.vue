@@ -102,8 +102,8 @@
               <div v-show="!newrowDisplay" class="tr" role="row" style="border-bottom: var(--bib-light)" id="advtable-newRow-wrapper">
                 <!-- <div v-if="drag" class="td " id="adv-table-newRow-td1" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;"></div> -->
                 <div class="td" id="advtable-newRow-td2" role="cell" style="border-bottom-color: transparent; border-right-color: transparent;">
-                  <div class="d-inline-flex align-center font-md cursor-pointer new-button shape-rounded" id="advtable-newRow-newTaskBtn" v-on:click.stop="newRowClick()">
-                    <bib-icon :icon="plusButton.icon" variant="white" :scale="0.85" class=""></bib-icon><span class="text-truncate ">{{plusButton.label}}</span>
+                  <div class="d-inline-flex align-center font-md cursor-pointer new-button border-primary-24 shape-rounded" id="advtable-newRow-newTaskBtn" v-on:click.stop="newRowClick()">
+                    <bib-icon :icon="plusButton.icon" variant="" :scale="0.8" class=""></bib-icon><span class="text-truncate ">{{plusButton.label}}</span>
                   </div>
                 </div>
                 <div v-for="(n, index) in tableFields.length-1" class="td" :id="'advtable-newRow-td2'+index" style="border-bottom-color: transparent; border-right-color: transparent;"></div>
@@ -500,7 +500,7 @@ export default {
     newRowClick() {
       this.unselectAll().then(() => {
         this.newrowDisplay = true
-        console.log('click event after unselectAll')
+        // console.log('click event after unselectAll')
       })
       process.nextTick(() => {
         this.$refs.newrowInput[0].focus()
@@ -584,7 +584,7 @@ export default {
       this.$emit("update-field", { id: item.id, field: "departmentId", value: dept.value, label: "Department", historyText: `changed department to ${dept.label}`, item: item })
     },
     updateAssignee(user, item) { 
-      this.$emit("update-field", { id: item.id, field: "userId", value: user.id, label: "Assignee", historyText: `Changed Assignee To ${user.label}`, item: item })
+      this.$emit("update-field", { id: item.id, field: "userId", value: user.id, label: "Assignee", historyText: `changed Assignee to ${user.label}`, item: item })
     },
     updateDate(d, item, index, field, label) {
       // console.log(...arguments)
@@ -754,13 +754,24 @@ export default {
   .new-button {
     padding-inline: 0.7rem;
     padding-block: 0.3rem;
-    background-color: $primary-24;
-    color: white;
+    background-color: white;
+    color: $primary-24;
     span { max-width: 0; overflow: hidden; transition: all 200ms ease-in; }
-
+    
     &:hover {
       background-color: $primary-24-sub;
+      color: white;
       span { max-width: 8rem; padding-left: 0.25rem; padding-right: 0.5rem; }
+    }
+    ::v-deep {
+      .icon {
+        svg { fill: $primary-24; }
+      }
+      &:hover {
+        .icon {
+          svg { fill: white;}
+        }
+      }
     }
   }
 

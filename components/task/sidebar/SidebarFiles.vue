@@ -8,7 +8,7 @@
         <bib-icon icon="add" variant="success" :scale="1" class=""></bib-icon>
         <span id="sbf-file-upload-text" class=""> Files</span>
       </div> -->
-      <bib-button label="Files" variant="primary-24" icon="add" class="" @click="uploadModal = true"></bib-button>
+      <bib-button label="Files" variant="primary--outline" icon="add" class="" @click="uploadModal = true"></bib-button>
 
 
       <file-comp v-for="file in files" :key="file.key + fileKey" :property="file" @delete-file="deleteFile" @preview-file="showPreviewModal(file)" ></file-comp>

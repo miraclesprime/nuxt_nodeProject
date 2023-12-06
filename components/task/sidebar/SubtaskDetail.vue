@@ -17,10 +17,10 @@
               <template v-slot:menu>
                 <div class="list" id="std-list">
                   <span class="list__item" id="std-list-item-1" @click="markComplete">
-                    <bib-icon icon="check-circle-solid" :variant="isComplete.variant" class="mr-075"></bib-icon> {{isComplete.text}}
+                    <bib-icon icon="check-circle-solid" :variant="isComplete.variant" class="mr-05"></bib-icon> {{isComplete.text}}
                   </span>
                   <span class="list__item" id="std-list-item-2" @click="setFavorite">
-                    <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
+                    <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-05"></bib-icon> {{isFavorite.text}}
                   </span>
                   
                   <hr>
@@ -29,7 +29,7 @@
                       @mouseenter="deleteBtnHover = true"
                       @mouseleave="deleteBtnHover = false" 
                       id="std-list-item-8" @click="$nuxt.$emit('delete-subtask', subtask)">
-                    <bib-icon icon="trash" :variant='deleteBtnHover ? `white` : `danger`' class="mr-075"></bib-icon> Delete 
+                    <bib-icon icon="trash" :variant='deleteBtnHover ? `white` : `danger`' class="mr-05"></bib-icon> Delete 
                   </span>
                 </div>
               </template>
@@ -65,33 +65,31 @@
       
       <div class="subtask-info position-relative py-05 px-105" id="sd-input-wrap">
         <div class="row mt-05 mb-05" id="sd-other-fields-row1">
-          <!-- <div class="col-4" id="sd-other-fields-col-1">
-            <bib-select label="Assignee" test_id="subtask_assignee_select" :options="orgUsers" v-model="form.userId" v-on:change="updateSubtask({field: 'userId', value: form.userId, name: 'User' })"></bib-select>
-          </div> -->
+          
           <div class="col-2 align-center" id="sd-other-fields-r1-c1"><label>Start Date</label></div>
           <div class="col-5" id="sd-other-fields-r1-c2">
-            <!-- <bib-datepicker v-model="startDateInput" :value="startDateInput" format="dd MMM yyyy"  ref="startDate" label="Start date" placeholder="Start date" @input="updateSubtask({name: 'Start date', field: 'startDate', value: form.startDate})"></bib-datepicker> -->
+          
             <bib-datetime-picker v-model="sdate" :format="format" :parseDate="parseDate" :formatDate="formatDate" size="sm" placeholder="Start date" @input="startdateProcess" ></bib-datetime-picker>
           </div>
         </div>
         <div class="row mt-05 mb-05" id="sd-other-fields-row2">
           <div class="col-2 align-center" id="sd-other-fields-r2-c1"><label>Due Date</label></div>
           <div class="col-5" id="sd-other-fields-r2-c2">
-            <!-- <bib-datepicker class="align-right" v-model="dueDateInput" :value="dueDateInput" format="dd MMM yyyy"   ref="dueDate" label="Due date" placeholder="Due date" @input="updateSubtask({field: 'dueDate', value: form.dueDate, name: 'Due date'})"></bib-datepicker> -->
+          
             <bib-datetime-picker v-model="ddate" :format="format" :parseDate="parseDate" :formatDate="formatDate" size="sm" placeholder="Due date" @input="duedateProcess"></bib-datetime-picker>
           </div>
         </div>
         <div class="row mt-05 mb-05" id="sd-other-fields-row3">
           <div class="col-2 align-center" id="sd-other-fields-r3-c1"><label>Department</label></div>
           <div class="col-5" id="sd-other-fields-r3-c2">
-            <!-- <bib-input type="select" label="Department" :options="departments" v-model.number="form.departmentId" v-on:change.native="updateSubtask({name:'Department', field: 'departmentId', value: form.departmentId})"></bib-input> -->
+          
             <select-two :options="departments" :value="form.departmentId" icon="projects" title="Department" @change="updateSubtask({name: 'Department', field:'departmentId', value: $event.value, text: $event.label})"></select-two>
           </div>
         </div>
         <div class="row mt-05 mb-05"  id="sd-other-fields-row4">
           <div class="col-2 align-center" id="sd-other-fields-r4-c1"><label>Priority</label></div>
           <div class="col-5"  id="sd-other-fields-r4-c2">
-            <!-- <bib-input type="select" label="Priority" v-model.number="form.priorityId" :options="priorityValues" placeholder="Please select..." v-on:change.native="updateSubtask({field: 'priorityId', value: form.priorityId, name: 'Priority'})"></bib-input> -->
+          
             <priority-select-two :priority="form.priority" @change="updateSubtask({name: 'Priority', field: 'priorityId', value: $event.value, text: $event.label})"></priority-select-two>
           </div>
         </div>
@@ -99,7 +97,7 @@
         <div class="row mt-05 mb-05"  id="sd-other-fields-row5">
           <div class="col-2 align-center" id="sd-other-fields-r5-c1"><label>Status</label></div>
           <div class="col-5" id="sd-other-fields-r5-c2">
-            <!-- <bib-input type="select" label="Status" v-model.number="form.statusId" :options="statusValues" placeholder="Please select..." v-on:change.native="updateSubtask({field: 'statusId', value: form.statusId, name: 'Status'})"></bib-input> -->
+          
             <status-select-two :status="form.status" @change="updateSubtask({name: 'Status', field: 'statusId', value: $event.value, text: $event.label})" ></status-select-two>
           </div>
         </div>
@@ -123,7 +121,7 @@
         </div>
         <div class="row " id="sd-other-fields-row7">
           <div class="col-12" id="sd-other-fields-r7-c1">
-            <!-- <bib-input type="textarea" v-model.trim="form.description" placeholder="Enter subtask description..." label="Description" v-on:keyup.native="debounceUpdateField({name: 'Description', field: 'description', value: form.description })"></bib-input> -->
+            
             <rich-editor :value="value" :editingMessage="form.description" @submit="$emit('subtask-desc',{ id: form.id, name: 'Description', field: 'description', value: $event.text})" ></rich-editor>
           </div>
         </div>
@@ -131,8 +129,10 @@
 
       <sidebar-tag :activeProp="true" :tags="tags" @add-tag="addTag" @change="addTag" @delete-tag="removeTag" ></sidebar-tag>
 
-      <div class="py-05 px-105" id="std-conv-wrap">
-        <div class="d-flex justify-between sub-title pb-05 mb-05 border-bottom-gray2 " id="std-conv-heading">
+      <div class="pb-05 px-105" id="std-conv-wrap">
+        <sidebar-files :activeProp="true" id="subtask_files" mode="subtask" :reloadFiles="reloadFiles"></sidebar-files>
+
+        <div class="d-flex justify-between sub-title mb-05  " id="std-conv-heading">
           <p class="text-gray5 font-md " id="std-conv-para-text">Conversation </p>
         </div>
         <div v-if="loadingComments" class="my-05" id="sd-loading-comments">
@@ -150,8 +150,6 @@
             <task-history v-if="item.text && !item.isHidden" :history="item"></task-history>
           </div>
         </template>
-
-        <sidebar-files :activeProp="true" id="subtask_files" mode="subtask" :reloadFiles="reloadFiles"></sidebar-files>
 
       </div>
     </div>
@@ -340,9 +338,9 @@ export default {
     isFavorite(){
         let fav = this.favsubtasks.findIndex(fv => fv.subtaskId == this.subtask.id)
         if (fav >= 0) {
-            return { variant: "primary", text: "Remove favorite", status: true }
+            return { variant: "primary-24", text: "Remove favorite", status: true }
         } else {
-            return { variant: "gray5", text: "Add to favorites", status: false }
+            return { variant: "gray4", text: "Add to favorites", status: false }
         }
     },
   },

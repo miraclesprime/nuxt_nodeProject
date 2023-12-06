@@ -23,3 +23,9 @@ export const generateItems = (count, creator) => {
   }
   return result
 }
+
+export function stripHTMLandTrim(data, trim = 30) {
+  let hText = data.replace( /(<([^>]+)>)/ig, '');
+        hText = _.truncate(hText, {'length': trim})
+  return hText
+}

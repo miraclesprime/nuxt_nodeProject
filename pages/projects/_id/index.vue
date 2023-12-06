@@ -6,8 +6,8 @@
           <bib-icon icon="arrowhead-left" :scale="1.5" variant="gray5"></bib-icon>
         </button>
         <bib-avatar></bib-avatar>
-        <span id="project-id-project-title" class="font-w-700 " style="font-size: 1.25rem;">{{projectTitle}}</span>
-        <span :id="projectName+'-count'" class="text-secondary-sub1 " style="font-size: 1.2rem;">({{taskcount}})</span>
+        <span id="project-id-project-title" class="font-w-600 " style="font-size: 1.125rem;">{{projectTitle}}</span>
+        <span :id="projectName+'-count'" class="text-secondary-sub1 " style="font-size: 1rem;">({{taskcount}})</span>
         <div class="ml-auto d-flex gap-05 align-center position-relative" id="project-id-button-wraps">
           <team-avatar-list :team="team"></team-avatar-list>
 
@@ -18,7 +18,7 @@
             <bib-icon icon="comment-forum-solid" variant="gray5" class="m-auto"></bib-icon>
           </div>
           <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-menu-item3" @click="modalOpen('files', 'Files')" v-tooltip="'Files'">
-            <bib-icon icon="files" variant="gray5" class="m-auto"></bib-icon>
+            <bib-icon icon="file" variant="gray5" class="m-auto"></bib-icon>
           </div>
           <div class="shape-circle bg-light bg-hover-gray2 width-2 height-2 d-flex cursor-pointer" id="project-id-bookmark" @click="setFavorite" v-tooltip="'Add to Favorite'">
             <bib-spinner v-if="favLoading" :scale="2" ></bib-spinner>
@@ -29,32 +29,32 @@
               <template v-slot:menu>
                 <div class="list" id="project-id-list">
                   <span class="list__item" id="project-id-list-item1" @click="modalOpen('overview', 'Overview')">
-                   <bib-icon icon="info" class="mr-075"></bib-icon> View details
+                   <bib-icon icon="info" variant="gray5" class="mr-05"></bib-icon> View details
                   </span>
                   <span class="list__item" id="project-id-list-item2" @click="setFavorite">
-                    <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-075"></bib-icon> {{isFavorite.text}}
+                    <bib-icon icon="bookmark-solid" :variant="isFavorite.variant" class="mr-05"></bib-icon> {{isFavorite.text}}
                   </span>
                   <span class="list__item" id="project-id-list-item3" @click="projectTeamModal = true">
-                    <bib-icon icon="user-group-solid" class="mr-075" ></bib-icon> Team
+                    <bib-icon icon="user-group-solid" variant="gray5" class="mr-05" ></bib-icon> Team
                   </span>
                   <span class="list__item" id="project-id-list-item3" @click="conversationModal = true">
-                    <bib-icon icon="comment-forum-solid" class="mr-075"></bib-icon> Conversation
+                    <bib-icon icon="comment-forum-solid" variant="gray5" class="mr-05"></bib-icon> Conversation
                   </span>
                   <span class="list__item" id="project-id-list-item3" @click="modalOpen('files', 'Files')">
-                    <bib-icon icon="files" class="mr-075"></bib-icon> Files
+                    <bib-icon icon="file" variant="gray5" class="mr-05"></bib-icon> Files
                   </span>
                   <span class="list__item" id="project-id-list-item3" @click="copyProjectLink">
-                    <bib-icon icon="duplicate" class="mr-075"></bib-icon> Copy Link
+                    <bib-icon icon="duplicate" variant="gray5" class="mr-05"></bib-icon> Copy Link
                   </span>
                   <!-- <span class="list__item" id="project-id-list-item5" @click="reportModal = !reportModal">
-                    <bib-icon icon="warning" class="mr-075"></bib-icon> Report
+                    <bib-icon icon="warning" variant="gray5" class="mr-05"></bib-icon> Report
                   </span> -->
                   <hr id="project-id-hr2">
                   <span v-if="cdp" class="list__item list__item__danger" 
                       @mouseenter="deleteBtnHover = true"
                       @mouseleave="deleteBtnHover = false" 
                       id="project-id-list-item6" @click="deleteProject(project)">
-                    <bib-icon icon="trash" :variant='deleteBtnHover ? `white` : `danger`' class="mr-075"></bib-icon> Delete 
+                    <bib-icon icon="trash" :variant='deleteBtnHover ? `white` : `danger`' class="mr-05"></bib-icon> Delete 
                   </span>
                 </div>
               </template>
@@ -73,7 +73,7 @@
       <bib-modal-wrapper v-if="projectModal" :title="projectModalTitle" size="xl" @close="projectModal = false">
         <template slot="content">
           <!-- <div class="overflow-y-auto " style="max-height: 500px"> -->
-            <project-overview v-if="projectModalContent == 'overview'" :sections="projectSections" @update-desc="projectDesc = $event" ></project-overview>
+            <project-overview v-if="projectModalContent == 'overview'" @update-desc="projectDesc = $event" ></project-overview>
             <project-files v-if="projectModalContent == 'files'"></project-files>
           <!-- </div> -->
         </template>
@@ -226,9 +226,6 @@ export default {
         return { variant: "gray5", text: "Add to favorites", status: false }
       }
     },
-    // taskcount(){
-    //   return this.projectSections.reduce((acc, td) => acc + td.tasks.length, 0)
-    // },
 
   },
   created() {
@@ -251,23 +248,25 @@ export default {
     const token = app.$cookies.get(process.env.SSO_COOKIE_NAME)
     const filter = store.getters['task/getFilterView']
     try {
+      // let all_projects = store.getters['project/getAllProjects']
+      const all_projects = await $axios.$get(`/project/company/all`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Filter': 'all'
+        }
+      });
+      // console.log(all_projects, filter)
 
-      let all_projects= store.getters['project/getAllProjects']
-      let proj=[]
-       proj =all_projects?.find((p) => {
-        if(p.id == params.id) {
-          return p;
-        } 
-      })
+      let proj = all_projects.data?.find((p) => p.id == params.id )
+      // console.log("asyncData", proj)
       store.dispatch('project/setProject', proj)
       const sections = await $axios.$get(`/section/project/${params.id}`, {
         headers: { 'Authorization': `Bearer ${token}`,'Filter':filter }
-    });
+      });
       store.dispatch("section/setProjectSections",{data:sections.data})
       return { project: proj, projectTitle: proj?.title, userProj: proj }
       
     } catch(err) {
-
       // console.log("There was an issue in project API", err);
       return { project: {}, userProj: {} }
     }
@@ -276,6 +275,7 @@ export default {
 
   async mounted() {
     if (process.client) {
+      // console.log(this.project )
       if(this.projectSections.length <= 0) {
         this.$store.dispatch("section/fetchProjectSections",{projectId:this.$route.params.id})
         const res = await this.$axios.get(`project/${this.$route.params.id}`, {
@@ -286,23 +286,18 @@ export default {
         this.project = res.data.data
          
       }
-           this.$store.commit("task/setExpandVisible",true);
-            this.$store.commit('section/setGroupBy',"")
-            // console.log("this.project", this.project)
-            let p
-            if(this.project){
-              p = JSON.parse(JSON.stringify(this.project))
-            }
-             else {
-              this.$router.push('/notfound')
-                return;
-             }
-        // this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
+      this.$store.commit("task/setExpandVisible",true);
+      this.$store.commit('section/setGroupBy',"")
+      // console.log("this.project", this.project)
+      let p
+      if(this.project){
+        p = JSON.parse(JSON.stringify(this.project))
+      } else {
+        this.$router.push('/notfound')
+        return;
+       }
       
-
-      // if(!p) {
-        
-      // }
+      // this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
 
       if(p?.isDeleted != true) {
 

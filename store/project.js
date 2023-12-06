@@ -901,9 +901,8 @@ export const actions = {
       // if (payload.groupBy != undefined && payload.groupBy != "") {
       //   ctx.commit("createProjectForGroup", res.data);
       //   ctx.commit("groupProjects", { key: payload.groupBy});
-      // } else {
-      //   ctx.commit("createProject", res.data);
-      // }
+      // } 
+      // ctx.commit("createProject", res.data);
       return res;
     } else {
       return res

@@ -879,10 +879,10 @@ export const DEMO_TASK = [
 
 export const PROJECT_CONTEXT_MENU = [
   { label: 'Add to Favorites', event: 'fav-project', variant: '', icon: 'bookmark-solid', iconVariant: 'gray5' },
-  { label: 'Rename', event: 'rename-project', variant: '', icon: 'pencil', iconVariant: 'gray5' },
+  // { label: 'Rename', event: 'rename-project', variant: '', icon: 'pencil', iconVariant: 'gray5' },
   { label: 'Copy Link', event: 'copy-project', variant: '', icon: 'duplicate', iconVariant: 'gray5' },
   // { label: 'Report', event: 'report-project', variant: '', icon: 'warning', iconVariant: 'gray5' },
-  { label: 'Delete', event: 'delete-project', variant: 'danger', icon: 'trash', iconVariant: 'gray5' },
+  { label: 'Delete', event: 'delete-project', variant: 'danger', icon: 'trash', iconVariant: 'white' },
 ]
 
 export const TASK_CONTEXT_MENU = [
@@ -894,7 +894,7 @@ export const TASK_CONTEXT_MENU = [
   // { label: 'Files', event: 'gotoFiles', variant: '', icon: 'files', iconVariant: 'gray5' },
   { label: 'Copy Link', event: 'copy-task', variant: '', icon: 'duplicate', iconVariant: 'gray5' },
   // { label: 'Report', event: 'report-task', variant: '', icon: 'warning', iconVariant: 'gray5' },
-  { label: 'Delete', event: 'delete-task', variant: 'danger', icon: 'trash', iconVariant: 'gray5' },
+  { label: 'Delete', event: 'delete-task', variant: 'danger', icon: 'trash', iconVariant: 'white' },
 ]
 
 export const SUBTASK_CONTEXT_MENU = [
