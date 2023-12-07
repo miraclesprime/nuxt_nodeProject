@@ -121,14 +121,25 @@ export default {
             this.projectName = ''
             this.owner = {}
             this.showCreateProjectModal = false
-            if(res.data.length==1){
-              this.$nuxt.$emit("project-refresh-table");
-              return;
-            }
-           this.$nuxt.$emit("newTask",res.data,this.$route.fullPath)
 
+             this.$axios.$get(`/project/company/all`, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+                  'Filter': 'all'
+                }
+              }).then((pro)=>{
+                if(pro.data.length==1){
+                  this.$nuxt.$emit("project-refresh-table");
+                  return;
+
+                }
+                else{
+                  this.$nuxt.$emit("newTask",res.data,this.$route.fullPath)
+                }
+              })
+
+         
           }
-          console.log(res.message)
         }).catch(e => {
           console.log(e.message)
           this.loading = false

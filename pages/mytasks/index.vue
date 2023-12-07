@@ -42,7 +42,7 @@
                         <span v-if="todo.isDeletable" class="list__item list__item__danger" :id="'tgs-list-3'+todo.id" v-on:click="deleteTodoConfirm(todo)" @mouseenter="deleteBtnHover = true" @mouseleave="deleteBtnHover = false">
                           <bib-icon icon="trash" :variant="deleteBtnHover ? 'white' : 'danger'"></bib-icon>
                           <span :id="'tgs-list-del'+todo.id" class="ml-05">Delete section</span>
-                        </span>
+                        </span>user-picker
                       </div>
                     </template>
                   </bib-popup>
@@ -114,6 +114,7 @@ import { USER_TASKS, TASK_CONTEXT_MENU } from "../../config/constants";
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
+import { combineTransactionSteps } from '@tiptap/core';
 
 export default {
   name: "MyTasks",
@@ -229,6 +230,7 @@ export default {
 
     gridType() {
       this.$store.commit('todo/gridType',{gridType:this.gridType})
+      localStorage.setItem('mygrid', this.gridType)
       this.key++;
     },
     sidebar(newVal){
@@ -262,7 +264,6 @@ export default {
     /*this.$store.dispatch("todo/fetchTodos", {filter: "all"}).then(res => {
       this.localdata = res.data
     }).catch(e => console.warn(e))*/
-
     if (this.todos.length<=0) {
       this.updateKey();
     }
@@ -274,14 +275,25 @@ export default {
     }
     // this.$store.dispatch("todo/setMyfetchTodos")
       setTimeout(() => {
-        this.gridType=this.grid
+        if(localStorage.getItem('mygrid')!=null){
+          if(localStorage.getItem('mygrid')=='grid'){
+            this.gridType='grid'
+          }
+          if(localStorage.getItem('mygrid')=='list')
+            this.gridType='list'
+        }
+        else {
+          this.gridType=this.grid
+        }
+
       }, 300);
       this.$store.commit('todo/setGroupBy',"")
   },
 
   beforeDestroy(){ 
-
+  
     this.$nuxt.$off("refresh-table");
+    this.$nuxt.$off("update-key");
     this.$nuxt.$off("gridNewTask", this.handleNewTask);
 
   },
@@ -297,6 +309,7 @@ export default {
         Filter:filter
       },
     });
+    console.log("response",response)
     store.dispatch('todo/setTodos', response.data.data)
     return { localdata: response.data.data }
     

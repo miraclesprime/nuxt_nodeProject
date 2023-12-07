@@ -92,7 +92,6 @@ export default {
         this.updateKey();
       });
       this.$nuxt.$on("project-refresh-table", () => {
-        console.log("111")
         this.updateKey();
       });
 

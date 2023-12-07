@@ -454,7 +454,6 @@ export default {
           "mode": this.$route.fullPath.includes("usertasks")?null:(this.$route.params.id ? "project" : null),
         }).then((task) => {
           // this.$nuxt.$emit("refresh-table");
-  
           this.$nuxt.$emit("newTask",task.data,this.$route.path)
           // this.$nuxt.$emit("gridNewTask",task.data,this.$route.path)
           this.getTableCount(this.$route.path,task.data)
@@ -474,7 +473,7 @@ export default {
        
               for (let i=0;i < res.data.length ; i++ ) {
                let hasTaskWithLength = false;
-              if (res.data[i]&&res.data[i].task && res.data[i].task.length > 0) {
+              if (res.data[i]&&res.data[i].tasks && res.data[i].tasks.length > 0) {
                 hasTaskWithLength = true;
                 break; // Once we find a task with length > 0, we can stop looping
               }
@@ -489,7 +488,7 @@ export default {
             const res = await this.$axios.$get(`company/tasks/all`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter': 'all' }
               });
-              if (res.data.data?.[0]?.tasks?.length==1) {
+              if (res.data[0].tasks.length==1) {
                 this.$nuxt.$emit("refresh-table");
               }
 
@@ -515,7 +514,7 @@ export default {
             });
             for (let i=0;i < res.data.length ; i++ ) {
                let hasTaskWithLength = false;
-              if (res.data[i]&&res.data[i].task && res.data[i].task.length > 0) {
+              if (res.data[i]&&res.data[i].tasks && res.data[i].tasks.length > 0) {
                 hasTaskWithLength = true;
                 break; // Once we find a task with length > 0, we can stop looping
               }

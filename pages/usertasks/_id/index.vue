@@ -313,6 +313,12 @@ export default {
 
     }
   },
+  showUserPicker(payload){
+      this.closeAllPickers()
+      this.userPickerOpen = true
+      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
+      this.activeTask = payload.task
+    },
   beforeDestroy(){ 
     this.$nuxt.$off("refresh-table");
     // this.$nuxt.$off("newTask");
