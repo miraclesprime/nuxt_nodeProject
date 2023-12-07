@@ -637,7 +637,6 @@ export default {
         }
       )
       return value
-
     },
     isLazy(groupIdx, itemIdx) {
       if (groupIdx > this.previousIndex.groupIdx || (itemIdx > this.previousIndex.curIdxInGroup && groupIdx === this.previousIndex.groupIdx) ) {
@@ -1013,7 +1012,7 @@ export default {
           // console.warn("invalid startDate", this.localData[sectionIdx].tasks[itemIdx].startDate, this.tableData[sectionIdx].tasks[itemIdx].startDate)
           this.localData[sectionIdx].tasks[itemIdx].startDate = this.tableData[sectionIdx].tasks[itemIdx].startDate
           this.popupMessages.push({ text: "Start date should be before Due date", variant: "danger" });
-          // this.modifyDateFormat()
+          this.modifyDateFormat(this.localData)
         } else {
           // console.info("valid startDate" )
           this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
@@ -1023,6 +1022,7 @@ export default {
           // console.warn("invalid dueDate", this.localData[sectionIdx].tasks[itemIdx].dueDate, this.tableData[sectionIdx].tasks[itemIdx].dueDate)
           this.localData[sectionIdx].tasks[itemIdx].dueDate = this.tableData[sectionIdx].tasks[itemIdx].dueDate
           this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
+          this.modifyDateFormat(this.localData)
         } else {
           // console.info("valid dueDate" )
           this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})

@@ -428,21 +428,21 @@ export const PROJECT_TEAM_FIELDS = [
   { label: 'Name', key: 'name' },
 ]
 export const PROJECT_GROUP = [
-  { label: 'Default', key:'default' },
   { label: 'Priority', key:'priority' },
   { label: 'Status', key:'status' },
   { label: 'Assignee', key:'assignee' },
   { label: 'Department', key:'department' },
   { label: 'Due Date', key: 'dueDate' },
+  { label: 'Reset', key:'default' },
 ]
 export const SINGLE_PROJECT_GROUP = [
-  { label: 'Default', key:'default' },
   { label: 'Priority', key:'priority' },
   { label: 'Difficulty', key:'difficulty' },
   { label: 'Status', key:'status' },
   { label: 'Assignee', key:'assignee' },
   { label: 'Department', key:'department' },
   { label: 'Due Date', key: 'dueDate' },
+  { label: 'Reset', key:'default' },
 ]
 export const TASK_SORT = [
   { label: 'Name', key: 'title' },
@@ -456,7 +456,6 @@ export const TASK_SORT = [
 ]
 
 export const TASK_GROUP = [
-  { label: 'Default', key:'default' },
   { label: 'Project', key:'project' },
   { label: 'Priority', key:'priority' },
   { label: 'Difficulty', key:'difficulty' },
@@ -464,15 +463,16 @@ export const TASK_GROUP = [
   { label: 'Status', key:'status' },
   { label: 'Department', key:'department' },
   { label: 'Due Date', key:'dueDate' },
+  { label: 'Reset', key:'default' },
 ]
 export const MY_TASK_GROUP = [
-  { label: 'Default', key:'default' },
   { label: 'Project', key:'project' },
   { label: 'Department', key:'department' },
   { label: 'Difficulty', key:'difficulty' },
   { label: 'Priority', key:'priority' },
   { label: 'Status', key:'status' },
   { label: 'Due Date', key:'dueDate' },
+  { label: 'Reset', key:'default' },
 ]
 
 export const FAVORITE_SORT = [

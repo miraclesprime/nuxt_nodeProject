@@ -19,7 +19,7 @@
             </ul>
           </template>
         </bib-button> -->
-        <bib-select label="Assign a project lead" test_id="po-owner-dd2" :options="users" v-model="owner" v-on:change="dd1ItemClick('Owner', 'userId', $event)"></bib-select>
+        <bib-select label="Assign a project lead" test_id="po-owner-dd2" :options="userOptions" v-model="owner" v-on:change="dd1ItemClick($event)"></bib-select>
         <!-- <div id="cpm-project-team-members" class="d-flex pt-025">
           <template v-if="btnCreate">
             <email-chip v-if="Object.keys(owner).length > 0" :name="owner.label" :email="owner.email ? owner.email : owner.sube" :avatar="owner.avatar" v-bind:close="true" v-on:remove-email="owner = {}"></email-chip>
@@ -50,7 +50,8 @@ export default {
     return {
       showCreateProjectModal: false,
       projectName: "",
-      owner: {},
+      owner: null,
+      user2: {},
       department: null,
       projectlead: "Enter name or email",
       filterKey: "",
@@ -66,12 +67,14 @@ export default {
       user: "user/getUser",
       teamMembers: "user/getTeamMembers",
       departments: "department/getAllDepartments",
+      userOptions: "user/getUsersList",
     }),
-    users(){
+    options(){
       return this.teamMembers.map(u => {
         return {label: u.label, img: u.avatar, value: u.id, role: u.role}
       })
     },
+    
     /*filterUser() {
       return this.teamMembers.filter((u) => {
         if (u.email.indexOf(this.filterKey) >= 0) {
@@ -88,7 +91,8 @@ export default {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
           }
         }).then((res) => {
-          this.owner = {id: res.data.Id, firstName: res.data.FirstName, lastName: res.data.LastName, avatar: res.data.Photo, email: res.data.Email};
+          this.user2 = {id: res.data.Id, firstName: res.data.FirstName, lastName: res.data.LastName, avatar: res.data.Photo, email: res.data.Email};
+          this.owner = res.data.Id
         })
     }
 
@@ -99,7 +103,7 @@ export default {
     dropdownInputKeydown($event) {
       this.filterKey = $event
     },
-    dd1ItemClick(name, field, value) {
+    dd1ItemClick(value) {
       console.log(...arguments)
       this.owner = value
     },
@@ -109,7 +113,7 @@ export default {
     closeModal() {
       this.btnCreate=false
       this.projectName = ''
-      this.owner = {}
+      this.owner = null
       this.showCreateProjectModal = false
     },
     bindEnter(event, button) {
@@ -121,12 +125,12 @@ export default {
     createProject() {
       this.btnCreate=true
       this.loading = true
-      if (this.projectName && this.owner.id) {
-        this.$store.dispatch('project/createProject', { user: this.owner, title: this.projectName, departmentId: this.department }).then((res) => {
+      if (this.projectName && this.owner) {
+        this.$store.dispatch('project/createProject', { user: this.user2, title: this.projectName, departmentId: this.department }).then((res) => {
           this.loading = false
           if (res.statusCode == 200) {
             this.projectName = ''
-            this.owner = {}
+            this.owner = null
             this.showCreateProjectModal = false
             if(res.data.length==1){
               this.$nuxt.$emit("project-refresh-table");

@@ -595,7 +595,7 @@ export default {
           // console.warn("invalid startDate", this.localData[index].startDate, this.tableData[index].startDate)
           this.localData[index].startDate = this.tableData[index].startDate
           this.popupMessages.push({ text: "Start date should be before Due date", variant: "danger" });
-          // this.modifyDateFormat()
+          this.modifyDateFormat(this.localData)
         } else {
           // console.info("valid startDate" )
           this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
@@ -605,6 +605,7 @@ export default {
           // console.warn("invalid dueDate", this.localData[index].dueDate, this.tableData[index].dueDate)
           this.localData[index].dueDate = this.tableData[index].dueDate
           this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
+          this.modifyDateFormat(this.localData)
         } else {
           // console.info("valid dueDate" )
           this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})

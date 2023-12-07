@@ -867,14 +867,14 @@ export const actions = {
       }
     });
     if (proj.statusCode == 200) {
-      ctx.commit('setSingleProject', proj.data);
+      ctx.commit('setSingleProject', {currentProject: proj.data});
     }
     return proj
   },
 
   // for dispatching setting single project object
   setSingleProject(ctx, payload) {
-    ctx.commit('setSingleProject', payload)
+    ctx.commit('setSingleProject', {currentProject: payload})
   },
 
   // create project 
