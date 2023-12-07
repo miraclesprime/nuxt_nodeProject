@@ -42,7 +42,7 @@
                         <span v-if="todo.isDeletable" class="list__item list__item__danger" :id="'tgs-list-3'+todo.id" v-on:click="deleteTodoConfirm(todo)" @mouseenter="deleteBtnHover = true" @mouseleave="deleteBtnHover = false">
                           <bib-icon icon="trash" :variant="deleteBtnHover ? 'white' : 'danger'"></bib-icon>
                           <span :id="'tgs-list-del'+todo.id" class="ml-05">Delete section</span>
-                        </span>user-picker
+                        </span>
                       </div>
                     </template>
                   </bib-popup>

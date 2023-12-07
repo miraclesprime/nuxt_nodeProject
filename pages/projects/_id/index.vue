@@ -74,7 +74,7 @@
         <template slot="content">
           <!-- <div class="overflow-y-auto " style="max-height: 500px"> -->
             <project-overview v-if="projectModalContent == 'overview'" @update-desc="projectDesc = $event" ></project-overview>
-            <project-files v-if="projectModalContent == 'files'"></project-files>
+            <project-files v-if="projectModalContent == 'files'" :proj="project"></project-files>
           <!-- </div> -->
         </template>
       </bib-modal-wrapper>

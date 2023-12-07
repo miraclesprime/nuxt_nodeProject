@@ -6,7 +6,7 @@
             <div id="project-id-content" class="project-id-content position-relative " :style="{ 'width': contentWidth }">
                 <div class="d-flex justify-center p-1">
                     <div class="border-gray2 shape-rounded py-1 px-05" style="min-width: 400px; max-width:600px;">
-                        <bib-input type="file" ref="csvImport" @files-dropped="onFileInput" multiple="false" variant="primary" iconLeft="upload" placeholder="Select file to upload"></bib-input>
+                        <bib-input type="file" ref="csvImport" @files-dropped="onFileInput" multiple="false" variant="light" iconLeft="upload" placeholder="Select file to upload"></bib-input>
                         <div v-show="files.length > 0" class=" mt-1 align-center">
                           <bib-button :disabled="loading" variant="primary-24" label="Import CSV" @click="checkUser" pill></bib-button> <bib-spinner v-if="loading" :scale="2" ></bib-spinner>
                         </div>
