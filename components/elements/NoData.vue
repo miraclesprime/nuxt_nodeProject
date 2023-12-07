@@ -1,5 +1,5 @@
 <template>
-	<figure class="text-center py-1">
+	<figure class="text-center py-2">
 		<img :src="notask" alt="no data">
 		<!-- <figcaption>Add tasks to start achieving your goals!</figcaption> -->
 	</figure>

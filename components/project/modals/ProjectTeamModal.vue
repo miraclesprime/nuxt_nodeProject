@@ -1,8 +1,8 @@
 <template>
   <div id="ptm-task-team-wrapper" class="task-group position-relative w-100">
-    <div class="bg-light p-1 shape-rounded">
-    <label id="ptm-create-team-modal-heading" class="text-gray6 font-md">Invite people </label>
-    <bib-button test_id="teamlist-dd1" dropdown1="add1" label="Type name or email" v-model="member" v-on:input-keydown="teamInputKeydown" class="mt-05 mb-05">
+    <!-- <div class="bg-light p-1 shape-rounded"> -->
+    <!-- <label id="ptm-create-team-modal-heading" class="text-gray6 font-md">Invite people </label> -->
+    <!-- <bib-button test_id="teamlist-dd1" dropdown1="add1" label="Type name or email" v-model="member" v-on:input-keydown="teamInputKeydown" class="mt-05 mb-05">
       <template v-slot:menu>
         <ul id="ptm-atm-fields" class="border-gray1" style="border-radius: 0 !important; border: 1px solid var(--bib-gray1);">
           <li :id="'ptm-atm-field-'+index" v-for="(tm, index) in filterTeam" :key="'atm-items'+index" v-on:click="teamItemClick(tm)">
@@ -11,16 +11,17 @@
           </li>
         </ul>
       </template>
-    </bib-button>
+    </bib-button> -->
+    <bib-select label="Invite people" test_id="po-owner-dd2"  :options="userOptions" v-model="owner" v-on:change="teamItemClick($event)"></bib-select>
     <div id="ptm-project-team-members" class="overflow-y-auto" style="max-height: 200px;">
       <template v-for="t in team">
-        <email-chip :key="t.id" :email="t.email" :name="t.label" :avatar="t.avatar" class="mt-05" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
+        <email-chip :key="t.id" :email="t.email" :name="t.label" :avatar="t.avatar" class="mt-025" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
       </template>
       <!-- team.length == 0 && projectMembers.length<2 -->
       <small v-show="showMsg" class="text-danger font-xs" id="ptm-team-length">Select at least 1 team member.</small>
       <p v-if="message" v-text="message" class="font-sm mt-025 text-orange" id="ptm-message"></p>
     </div>
-  </div> 
+  <!-- </div>  -->
   <div class="bg-light p-1 my-05 shape-rounded">
     <label class="text-gray6 font-md" id="ptm-team-label">Team</label>
     <div class="overflow-y-auto mt-1" style="max-height: 200px">
@@ -88,7 +89,8 @@ export default {
       key: 0,
       loading: false,
       norecord: false,
-      showMsg:false
+      showMsg: false,
+      owner: null,
     };
   },
 
@@ -109,6 +111,7 @@ export default {
       // project: "project/getSingleProject",
       projectMembers: 'project/getProjectMembers',
       teamMembers: "user/getTeamMembers",
+      userOptions: "user/getUsersList",
     }),
     filterTeam() {
       let regex = new RegExp(this.filterKey, 'g\i')
@@ -139,10 +142,10 @@ export default {
       this.filterKey = $event
     },
     teamItemClick(tm) {
-      let existing = this.projectMembers.filter(ex => ex.id == tm.id)
+      let existing = this.projectMembers.filter(ex => ex.id == tm)
       if (existing.length == 0) {
         this.message = ""
-        let m = this.teamMembers.filter(t => t.id == tm.id)
+        let m = this.teamMembers.filter(t => t.id == tm)
         if (this.team.some(el => el.id == m[0].id)) {
           return false
         }

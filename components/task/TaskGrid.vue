@@ -344,7 +344,7 @@ export default {
 }
 .task-grid {
   font-size: 14px;
-  margin: 1rem 0;
+  margin: 0 0 1rem;
   border: 1px solid var(--bib-gray4);
   border-radius: 6px;
   cursor: pointer;
@@ -363,6 +363,10 @@ export default {
     /*background-color: $gray9;*/
     /*border-color: $gray4;*/
     box-shadow: 0 0 0 2px $gray5 inset;
+  }
+  &:hover {
+    /*box-shadow: 0 2px 20px -1px rgba(80,90,100,.5);*/
+    border-color: $primary-sub1;
   }
 
   .task-image {

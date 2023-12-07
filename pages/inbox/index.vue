@@ -1,7 +1,7 @@
 <template>
   <client-only>
     <div id="inbox-wrapper" class="inbox-wrapper  h-100">
-      <main class="position-relative">
+      <main v-if="combinedInbox" class="position-relative">
         <page-title title="Inbox" ></page-title>
         <!-- <bib-tabs class="border-bottom-light" :tabs="bibTabs" :value="activeTab" @change="handleChange_Tabs"></bib-tabs> -->
         <div class="position-relative h-100  overflow-y-auto" style="background-color: var(--bib-gray9)" >
@@ -14,9 +14,7 @@
               </template>
             </div>
             <div ref="infinitescrolltrigger" v-show="currentPage <= pageCount" class="align-center justify-center py-05">
-              <!-- <bib-spinner variant="gray5"></bib-spinner> -->
-              <div class="animated-background w-100" style="height: 2px;"></div>
-              <!-- <skeleton-box></skeleton-box> -->
+              <div class="w-100 height-1" ></div>
             </div>
           <!-- </template> -->
           <!-- <template v-if="activeTab == 'flagged' || activeTab == 'archived'">
@@ -53,7 +51,7 @@
           </template> -->
         </div>
       </main>
-      <aside class="position-relative bg-white border-left-gray4">
+      <aside v-if="combinedInbox" class="position-relative bg-white border-left-gray4">
         <inbox-task v-if="taskProject == 'task'" :task="task" @update-key="task = $event" ></inbox-task>
         <!-- <inbox-project v-if="taskProject == 'project'" :project="project" ></inbox-project> -->
         <div v-if="taskProject == ''" class="position-absolute align-center justify-center" style="inset:5rem; z-index: 2;">
@@ -61,6 +59,10 @@
           <no-data></no-data>
         </div>
       </aside>
+      <div v-else class="flex-grow-1 ">
+        <page-title title="Inbox" ></page-title>
+        <no-data class="mt-3"></no-data>
+      </div>
     </div>
   </client-only>
 </template>

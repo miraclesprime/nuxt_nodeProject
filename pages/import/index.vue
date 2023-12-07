@@ -49,7 +49,7 @@
                         {{dupProject}}
                     </div>
 
-                    <div v-show="importfinish" class="shape-rounded align-center gap-05 border-success text-success p-05">
+                    <div v-show="importfinish" class="shape-rounded align-center gap-05 border-primary text-primary p-05">
                       <bib-icon icon="tick" variant="success"></bib-icon>
                       {{importCompleteMsg}}
                     </div>
@@ -64,7 +64,7 @@
                         <bib-button label="Continue" variant="primary-24" pill @click="reimportCSV"></bib-button>
                     </div>
                     <div v-show="importfinish">
-                        <bib-button label="Finish" variant="success" pill @click="finishImport"></bib-button>
+                        <bib-button label="Finish" variant="primary-24" pill @click="finishImport"></bib-button>
                     </div>
                 </template>
             </bib-modal-wrapper>
