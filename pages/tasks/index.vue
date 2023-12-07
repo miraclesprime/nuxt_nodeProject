@@ -178,7 +178,9 @@ export default {
       this.localData = data
     },
     gridType() {
+
       this.$store.commit('task/gridType',{gridType:this.gridType})
+      localStorage.setItem('grid', this.gridType)
       this.key++;
     },
     sidebar(newVal){
@@ -265,7 +267,22 @@ export default {
     this.$store.commit('task/setGroupBy',"department")
     // this.updateKey()
       setTimeout(() => {
-        this.gridType=this.grid
+      //   if(this.grid){
+      //     this.gridType=this.grid
+      //   }
+      // else {
+        if(localStorage.getItem('grid')!=null){
+          if(localStorage.getItem('grid')=='grid'){
+            this.gridType='grid'
+          }
+          if(localStorage.getItem('grid')=='list')
+        this.gridType='list'
+        }
+        else {
+          this.gridType=this.grid
+        }
+      // }
+      
         this.lazyComponent=true
       }, 300);
   }

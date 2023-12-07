@@ -23,7 +23,7 @@
         </div>
       </div>
     </div>
-    <div class="border-primary-24 shape-rounded cursor-pointer bg-hover-primary-24-sub text-center " style="padding-block: 0.1rem;" @mouseenter="variant = 'white'" @mouseleave="variant = 'primary-24'" @click.stop="showNewTask"><bib-icon icon="add" :scale="0.8" :variant="variant"></bib-icon></div>
+    <div class="bg-success-sub6 shape-rounded cursor-pointer bg-hover-success-sub3 px-05 text-success text-center font-lg" @click.stop="showNewTask">+</div>
   </div>
 </template>
 
@@ -51,7 +51,6 @@ export default {
       taskTitle: "",
       newTask: false,
       loading: false,
-      variant: "primary-24",
     };
   },
   mounted() {
@@ -123,7 +122,7 @@ export default {
       if(this.$route.path=="/tasks") {
           if(group == "project"){
           proj.projectId = section.tasks[0]?.project?.[0].project?.id || null 
-        }
+          }
       }
       console.log(proj)
       this.$store.dispatch("task/createTask", {

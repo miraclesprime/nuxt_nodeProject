@@ -232,6 +232,7 @@ export default {
     this.$nuxt.$on("change-grid-type", (type) => {
       this.gridType = type;
       this.$store.commit('project/gridType',{gridType:this.gridType})
+      localStorage.setItem('singlegrid', this.gridType)
     });
 
     this.$nuxt.$on("set-active-task", (task) => {
@@ -337,7 +338,16 @@ export default {
 
       // this.$store.dispatch("section/fetchProjectInitialSections", { projectId: this.$route.params.id, filter: 'all' })
       setTimeout(() => {
-        this.gridType = this.grid
+        if(localStorage.getItem('singlegrid')!=null){
+          if(localStorage.getItem('singlegrid')=='grid'){
+            this.gridType='grid'
+          }
+          if(localStorage.getItem('singlegrid')=='list')
+        this.gridType='list'
+        }
+        else {
+          this.gridType=this.grid
+        }
       }, 200);
     }
   },
