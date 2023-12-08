@@ -88,6 +88,7 @@ export default {
       proj.priorityId = null
       proj.departmentId = null;
       proj.department = null;
+      proj.difficultyId = null;
       proj.budget=0;
       proj.user = [{
         id: this.loggedUser.Id,
@@ -96,7 +97,7 @@ export default {
         lastName: this.loggedUser.LastName
       }]
       proj.userId = this.loggedUser.Id
-      proj.todoId =  section.id
+      proj.todoId =  section.tasks[0]?.todoId
       proj.title=this.taskTitle
       if(group == "priority"){
         proj.priority = section.tasks[0]?.priority
@@ -115,11 +116,14 @@ export default {
         proj.department = section.tasks[0]?.department
         proj.departmentId = section.tasks[0]?.departmentId
       }
+      if(group == "difficulty"){
+        proj.difficultyId = section.tasks[0]?.difficultyId
+      }
       if(this.$route.path.includes("/projects/")){
           proj.projectId=Number(this.$route.params.id)   
-          proj.sectionId= group ? "_section"+this.$route.params.id : section.id          
+          // proj.sectionId= group ? "_section"+this.$route.params.id :section.tasks[0]?.todoId         
         }
-      if(this.$route.path=="/tasks") {
+      if(this.$route.path=="/tasks"||this.$route.path=="/mytasks") {
           if(group == "project"){
           proj.projectId = section.tasks[0]?.project?.[0].project?.id || null 
           }

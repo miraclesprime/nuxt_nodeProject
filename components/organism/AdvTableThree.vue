@@ -1011,7 +1011,7 @@ export default {
       if (field == "startDate" ) {
         if (item.dueDate && new Date(d).getTime() > new Date(item.dueDate).getTime() ) {
           // console.warn("invalid startDate", this.localData[sectionIdx].tasks[itemIdx].startDate, this.tableData[sectionIdx].tasks[itemIdx].startDate)
-          this.localData[sectionIdx].tasks[itemIdx].startDate = this.tableData[sectionIdx].tasks[itemIdx].startDate
+          this.localData[sectionIdx].tasks[itemIdx].startDate = this.newValue[sectionIdx].tasks[itemIdx].startDate
           this.popupMessages.push({ text: "Start date should be before Due date", variant: "danger" });
           // this.modifyDateFormat()
         } else {
@@ -1021,7 +1021,7 @@ export default {
       } else {
         if (item.startDate && new Date(d).getTime() < new Date(item.startDate).getTime() ) {
           // console.warn("invalid dueDate", this.localData[sectionIdx].tasks[itemIdx].dueDate, this.tableData[sectionIdx].tasks[itemIdx].dueDate)
-          this.localData[sectionIdx].tasks[itemIdx].dueDate = this.tableData[sectionIdx].tasks[itemIdx].dueDate
+          this.localData[sectionIdx].tasks[itemIdx].dueDate = this.newValue[sectionIdx].tasks[itemIdx].dueDate
           this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
         } else {
           // console.info("valid dueDate" )
