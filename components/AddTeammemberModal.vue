@@ -18,8 +18,8 @@
             <template v-for="t in team">
               <email-chip :key="t.id" :email="t.email" :name="t.label" :avatar="t.avatar" class="mt-05" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
             </template>
-            <small v-show="team.length == 0" class="text-danger" id="ctm-alert-1">Select at least 1 team member.</small>
-            <p v-if="message" v-text="message" class="font-sm mt-025 text-orange" id="ctm-alert-else"></p>
+            <!-- <small v-show="team.length == 0" class="text-danger" id="ctm-alert-1">Select at least 1 team member.</small> -->
+            <p v-if="message" v-text="message" class="font-sm mb-025 text-danger" id="ctm-alert-else"></p>
           </div>
           <loading :loading="loading"></loading>
         </div>

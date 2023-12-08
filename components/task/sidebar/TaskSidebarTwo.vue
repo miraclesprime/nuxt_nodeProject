@@ -807,7 +807,7 @@ export default {
             this.$nuxt.$emit("close-sidebar");
             this.$nuxt.$emit("update-key", t.message)
           } else {
-            this.popupMessages.push({text: t.message, variant: "primary-24"})
+            this.popupMessages.push({text: "File(s) deleted successfully", variant: "primary-24"})
             console.warn(t.message);
           }
         })
@@ -823,7 +823,7 @@ export default {
     onsubmit(data) {
       // let trimComment = _.truncate(data.text.slice(3, -4), { length: 128 })
       let trimComment = stripHTMLandTrim(data.text, 128)
-      console.log(trimComment)
+      // console.log(trimComment)
 
       if (this.editMessage?.id) {
         this.$store.dispatch("task/updateTaskComment", { taskId: this.currentTask.id, commentId: this.editMessage.id, comment: data.text, text: `updated comment ${trimComment}` })
@@ -856,7 +856,7 @@ export default {
       })
       formdata.append('taskId', commentRes.taskId)
       formdata.append('taskCommentId', commentRes.id)
-      formdata.append('text', `uploaded file(s) "${filelist.join(", ")}" to task`)
+      formdata.append('text', `uploaded file(s) "${filelist.join(", ")}"`)
 
       const fi = await this.$axios.post("/file/upload", formdata, {
         headers: {
