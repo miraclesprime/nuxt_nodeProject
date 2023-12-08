@@ -113,8 +113,6 @@ import draggable from 'vuedraggable'
 import { USER_TASKS, TASK_CONTEXT_MENU } from "../../config/constants";
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs'
-import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
-import { combineTransactionSteps } from '@tiptap/core';
 
 export default {
   name: "MyTasks",
@@ -324,9 +322,9 @@ export default {
                   if(this.groupby=="") 
                       {
                             if(payload.todoId) {
-                              let exist_item= gridData. find((item)=>item.id==payload.todoId)
+                              let exist_item= gridData.find((item)=>item.id==payload.todoId)
                               if(exist_item) {
-                                let index = gridData. findIndex((item) => item.id==payload.todoId);
+                                let index = gridData.findIndex((item) => item.id==payload.todoId);
                                 gridData[ index].tasks.push(payload);
                                 this.localdata=gridData
                               }
@@ -754,6 +752,7 @@ export default {
       proj.priorityId = null
       proj.departmentId = null;
       proj.department = null;
+      proj.difficultyId = null;
       proj.user = [{
         id: this.loggedUser.Id,
         email: this.loggedUser.Email,
@@ -762,7 +761,7 @@ export default {
       }]
       proj.userId = this.loggedUser.Id
       proj.projectId=null
-      proj.todoId = this.groupby ? null : section.id
+      proj.todoId = section.tasks[0]?.todoId
 
       if(this.groupby == "priority"){
         proj.priority = section.tasks[0]?.priority
@@ -776,6 +775,9 @@ export default {
       if(this.groupby=="assignee"){
         proj.user=[section.tasks[0]?.user]
         proj.userId=section.tasks[0]?.userId
+      }
+      if(this.groupby=="difficulty"){
+        proj.difficultyId = section.tasks[0]?.difficultyId
       }
       if(this.groupby == "department"){
         proj.department = section.tasks[0]?.department

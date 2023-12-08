@@ -23,7 +23,9 @@
         </div>
       </div>
     </div>
-    <div class="bg-success-sub6 shape-rounded cursor-pointer bg-hover-success-sub3 px-05 text-success text-center font-lg" @click.stop="showNewTask">+</div>
+    <bib-button label="+" variant="primary-24" class="w-100 text-center align-center" @click.native.stop="showNewTask"></bib-button>
+    <!-- <div  class="bg-primary-24 shape-rounded cursor-pointer bg-hover-success-24 px-05  text-center font-lg" @click.stop="showNewTask"> -->
+      <!-- +</div> -->
   </div>
 </template>
 
@@ -88,6 +90,7 @@ export default {
       proj.priorityId = null
       proj.departmentId = null;
       proj.department = null;
+      proj.difficultyId = null;
       proj.budget=0;
       proj.user = [{
         id: this.loggedUser.Id,
@@ -96,7 +99,14 @@ export default {
         lastName: this.loggedUser.LastName
       }]
       proj.userId = this.loggedUser.Id
-      proj.todoId =  section.id
+      if(this.sectionType == 'myTask'){
+        proj.todoId =  section.tasks[0]?.todoId
+      } 
+      if(this.sectionType=="department" ||this.sectionType=="singleProject") {
+        proj.todoId =  section.tasks[0]?.todoId
+        proj.sectionId=section.tasks[0]?.sectionId
+      }
+      
       proj.title=this.taskTitle
       if(group == "priority"){
         proj.priority = section.tasks[0]?.priority
@@ -115,11 +125,14 @@ export default {
         proj.department = section.tasks[0]?.department
         proj.departmentId = section.tasks[0]?.departmentId
       }
+      if(group == "difficulty"){
+        proj.difficultyId = section.tasks[0]?.difficultyId
+      }
       if(this.$route.path.includes("/projects/")){
           proj.projectId=Number(this.$route.params.id)   
-          proj.sectionId= group ? "_section"+this.$route.params.id : section.id          
+          // proj.sectionId= group ? "_section"+this.$route.params.id :section.tasks[0]?.todoId         
         }
-      if(this.$route.path=="/tasks") {
+      if(this.$route.path=="/tasks"||this.$route.path=="/mytasks") {
           if(group == "project"){
           proj.projectId = section.tasks[0]?.project?.[0].project?.id || null 
           }
@@ -146,24 +159,7 @@ export default {
           this.createNewTask(this.section,this.myTaskGroupBy)
       }
       if(this.sectionType == 'department') {
-        this.loading = true
-        this.$store.dispatch("task/createTask", {
-          title: this.taskTitle,
-          description: "",
-          departmentId: this.section.id?this.section.id:null,
-          statusId: null,
-          dueDate: "",
-          priorityId: null,
-          budget: 0,
-          text: `task "${this.taskTitle}" created`,
-        }).then(t => {
-          if (t.statusCode == 200) {
-            this.$nuxt.$emit("update-key")
-          }
-          this.taskTitle = ""
-          this.newTask = false
-          this.loading = false
-        }).catch(e => console.warn(e))
+        this.createNewTask(this.section,this.taskGroupBy)
 
       } 
       if(this.sectionType=="singleProject"){

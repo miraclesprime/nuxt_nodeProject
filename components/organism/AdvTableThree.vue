@@ -624,6 +624,7 @@ export default {
           return { ...items, tasks: updatedTasks };
         });
         this.modifyDateFormat(this.localData)
+   
       }
     },
 
@@ -987,7 +988,37 @@ export default {
 
     },
     updatePriority(priority, item) {
-      // console.log(priority, item)
+      console.log(item)
+      console.log(priority)
+      this.localData= this.localData.map((items)=>{
+          const updateTasks=items.tasks.map((task)=>{
+            if(task.id==item.id){
+               return { ...task, priorityId: priority.value,priority:{id:priority.value,text:priority.label} };
+            }
+            else {
+                return task
+            } 
+          })
+          return { ...items, tasks: updateTasks };
+        })
+
+          if(this.$route.path=="/mytasks") {
+          this.changeIntoGroupBy(this.localData,this.myTaskGroupBy)
+        }
+        if(this.$route.path=="/tasks") {
+          this.changeIntoGroupBy(this.localData,this.taskGroupBy)
+ 
+        }
+        if(this.$route.path=="/projects") {
+          this.changeIntoGroupBy(this.localData,this.projectGroupBy)
+        }
+        if(this.$route.path.includes("usertasks")) {
+          this.changeIntoGroupBy(this.localData,this.usertaskGroupBy)
+        }
+        if(this.$route.path.includes("/projects/")) {
+          this.changeIntoGroupBy(this.localData,this.singleProjectGroupBy)
+        }
+
       this.$emit("update-field", { id: item.id, field: "priorityId", value: priority.value, label: "Priority", historyText: `changed Priority to ${priority.label}`, item })
     },
     updateDifficulty(difficulty, item) {
@@ -1010,7 +1041,7 @@ export default {
       if (field == "startDate" ) {
         if (item.dueDate && new Date(d).getTime() > new Date(item.dueDate).getTime() ) {
           // console.warn("invalid startDate", this.localData[sectionIdx].tasks[itemIdx].startDate, this.tableData[sectionIdx].tasks[itemIdx].startDate)
-          this.localData[sectionIdx].tasks[itemIdx].startDate = this.tableData[sectionIdx].tasks[itemIdx].startDate
+          this.localData[sectionIdx].tasks[itemIdx].startDate = this.newValue[sectionIdx].tasks[itemIdx].startDate
           this.popupMessages.push({ text: "Start date should be before Due date", variant: "danger" });
           this.modifyDateFormat(this.localData)
         } else {
@@ -1020,7 +1051,7 @@ export default {
       } else {
         if (item.startDate && new Date(d).getTime() < new Date(item.startDate).getTime() ) {
           // console.warn("invalid dueDate", this.localData[sectionIdx].tasks[itemIdx].dueDate, this.tableData[sectionIdx].tasks[itemIdx].dueDate)
-          this.localData[sectionIdx].tasks[itemIdx].dueDate = this.tableData[sectionIdx].tasks[itemIdx].dueDate
+          this.localData[sectionIdx].tasks[itemIdx].dueDate = this.newValue[sectionIdx].tasks[itemIdx].dueDate
           this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
           this.modifyDateFormat(this.localData)
         } else {
@@ -1171,7 +1202,7 @@ export default {
       .td { background-color: rgba(lightgray, 0.15); }
     }
     &.active {
-      /*background-color: $secondary-sub3;*/
+      outline: $gray2 solid 1px;
       .td { background-color: $gray9; }
     }
   }

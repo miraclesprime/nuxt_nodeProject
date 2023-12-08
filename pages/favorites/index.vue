@@ -1527,14 +1527,14 @@ Promise.all([fetchTask, fetchSubtask]).then((values) => {
     //             this.taskToDelete = {}
     //             this.updateKey(t.message)
     //           } else {
-    //             this.popupMessages.push({ text: t.message, variant: "orange" })
+    //             this.popupMessages.push({ text: t.message, variant: "primary-24" })
     //             console.warn(t.message);
     //           }
     //         })
     //         .catch(e => console.warn(e))
     //     }
     //   } else {
-    //     this.popupMessages.push({ text: "Action cancelled", variant: "orange" })
+    //     this.popupMessages.push({ text: "Action cancelled", variant: "primary-24" })
     //     this.taskToDelete = {}
     //   }
     // },
