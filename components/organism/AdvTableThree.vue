@@ -624,6 +624,7 @@ export default {
           return { ...items, tasks: updatedTasks };
         });
         this.modifyDateFormat(this.localData)
+   
       }
     },
 
@@ -987,7 +988,37 @@ export default {
 
     },
     updatePriority(priority, item) {
-      // console.log(priority, item)
+      console.log(item)
+      console.log(priority)
+      this.localData= this.localData.map((items)=>{
+          const updateTasks=items.tasks.map((task)=>{
+            if(task.id==item.id){
+               return { ...task, priorityId: priority.value,priority:{id:priority.value,text:priority.label} };
+            }
+            else {
+                return task
+            } 
+          })
+          return { ...items, tasks: updateTasks };
+        })
+
+          if(this.$route.path=="/mytasks") {
+          this.changeIntoGroupBy(this.localData,this.myTaskGroupBy)
+        }
+        if(this.$route.path=="/tasks") {
+          this.changeIntoGroupBy(this.localData,this.taskGroupBy)
+ 
+        }
+        if(this.$route.path=="/projects") {
+          this.changeIntoGroupBy(this.localData,this.projectGroupBy)
+        }
+        if(this.$route.path.includes("usertasks")) {
+          this.changeIntoGroupBy(this.localData,this.usertaskGroupBy)
+        }
+        if(this.$route.path.includes("/projects/")) {
+          this.changeIntoGroupBy(this.localData,this.singleProjectGroupBy)
+        }
+
       this.$emit("update-field", { id: item.id, field: "priorityId", value: priority.value, label: "Priority", historyText: `changed Priority to ${priority.label}`, item })
     },
     updateDifficulty(difficulty, item) {

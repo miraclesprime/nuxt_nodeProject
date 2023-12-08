@@ -23,7 +23,9 @@
         </div>
       </div>
     </div>
-    <div class="bg-success-sub6 shape-rounded cursor-pointer bg-hover-success-sub3 px-05 text-success text-center font-lg" @click.stop="showNewTask">+</div>
+    <bib-button label="+" variant="primary-24" class="w-100 text-center align-center" @click.native.stop="showNewTask"></bib-button>
+    <!-- <div  class="bg-primary-24 shape-rounded cursor-pointer bg-hover-success-24 px-05  text-center font-lg" @click.stop="showNewTask"> -->
+      <!-- +</div> -->
   </div>
 </template>
 
@@ -97,7 +99,14 @@ export default {
         lastName: this.loggedUser.LastName
       }]
       proj.userId = this.loggedUser.Id
-      proj.todoId =  section.tasks[0]?.todoId
+      if(this.sectionType == 'myTask'){
+        proj.todoId =  section.tasks[0]?.todoId
+      } 
+      if(this.sectionType=="department" ||this.sectionType=="singleProject") {
+        proj.todoId =  section.tasks[0]?.todoId
+        proj.sectionId=section.tasks[0]?.sectionId
+      }
+      
       proj.title=this.taskTitle
       if(group == "priority"){
         proj.priority = section.tasks[0]?.priority
@@ -150,24 +159,7 @@ export default {
           this.createNewTask(this.section,this.myTaskGroupBy)
       }
       if(this.sectionType == 'department') {
-        this.loading = true
-        this.$store.dispatch("task/createTask", {
-          title: this.taskTitle,
-          description: "",
-          departmentId: this.section.id?this.section.id:null,
-          statusId: null,
-          dueDate: "",
-          priorityId: null,
-          budget: 0,
-          text: `task "${this.taskTitle}" created`,
-        }).then(t => {
-          if (t.statusCode == 200) {
-            this.$nuxt.$emit("update-key")
-          }
-          this.taskTitle = ""
-          this.newTask = false
-          this.loading = false
-        }).catch(e => console.warn(e))
+        this.createNewTask(this.section,this.taskGroupBy)
 
       } 
       if(this.sectionType=="singleProject"){
