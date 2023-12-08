@@ -19,7 +19,7 @@
           <sorting-comp label="Viewing" :items="viewing" icon="eye-open" activeIcon="tick" tooltip="View" v-on:change-sort="changeViewName"></sorting-comp>
         </li>
         <li class="action" id="ta-action3"  >
-          <sorting-comp label="Group by" :items="groupby" icon="accessibility-braille-solid" tooltip="Group By" v-on:change-sort="groupBy"></sorting-comp>
+          <group-comp label="Group by" :items="groupby" activeIcon="tick" icon="accessibility-braille-solid" tooltip="Group By" v-on:change-sort="groupBy"></group-comp>
         </li>
         <li class="action" id="ta-action2" title="Sort by" >
           <sorting-comp label="Sort by" :items="sorting" icon="swap-vertical" tooltip="Sort By" v-on:change-sort="sortBy"></sorting-comp>

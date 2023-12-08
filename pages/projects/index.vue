@@ -113,7 +113,7 @@ export default {
     }
   },
   mounted() {
-    if (this.projects.length<=0) {
+    if (this.projects?.length<=0) {
       this.updateKey();
     }
     // this.loading = true;
