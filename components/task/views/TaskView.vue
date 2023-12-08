@@ -884,7 +884,7 @@ export default {
     },
 
     createNewTask(proj, section) {
-      console.log(proj, section)
+      // console.log(proj, section)
       proj.group = this.groupby;
       proj.status = null
       proj.statusId = null
@@ -972,7 +972,7 @@ export default {
         return el
       })
       tempSections.unshift({title: $event, projectId: this.project?.currentProject?.id || this.$route.params.id, order: 0 })
-      console.log($event, tempSections, this.project.currentProject, this.$route.params.id)
+      // console.log($event, tempSections, this.project.currentProject, this.$route.params.id)
       // return
       const res = await this.$store.dispatch("section/createSection", {
         projectId: this.project?.currentProject?.id || this.$route.params.id,
