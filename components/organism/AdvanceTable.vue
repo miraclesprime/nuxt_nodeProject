@@ -474,13 +474,13 @@ export default {
       return event.target.className !== 'side-panel'
     },
     async unselectAll(event) {
-      if (event) {
+      /*if (event) {
         let sidebar = event.target.closest("#side-panel-wrapper")
         // console.log(sidebar.classList.contains("side-panel"))
         if(sidebar.classList.contains("side-panel")){
           return false
         }
-      }
+      }*/
       let rows = document.getElementsByClassName('tr');
       for (let row of rows) {
         row.classList.remove('active');

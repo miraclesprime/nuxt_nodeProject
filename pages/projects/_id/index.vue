@@ -1,11 +1,11 @@
 <template>
   <client-only>
     <div id="page" class="project-id-wrapper ">
-      <nav id="project-id-nav" class="d-flex align-center gap-05 py-075 px-025 "> 
+      <nav id="project-id-nav" class="d-flex align-center gap-025 py-075 px-025 "> 
         <button type="button" @click="$router.push('/projects')" class="d-flex cursor-pointer bg-white border-white">
           <bib-icon icon="arrowhead-left" :scale="1.5" variant="gray5"></bib-icon>
         </button>
-        <bib-avatar></bib-avatar>
+        <!-- <bib-avatar></bib-avatar> -->
         <span id="project-id-project-title" class="font-w-600 " style="font-size: 1.125rem;">{{projectTitle}}</span>
         <span :id="projectName+'-count'" class="text-secondary-sub1 " style="font-size: 1rem;">({{taskcount}})</span>
         <div class="ml-auto d-flex gap-05 align-center position-relative" id="project-id-button-wraps">

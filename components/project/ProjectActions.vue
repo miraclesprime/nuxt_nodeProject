@@ -19,7 +19,7 @@
           <sorting-comp label="Viewing" :items="viewing" icon="eye-open" activeIcon="tick" tooltip="View" v-on:change-sort="viewProjects($event)"></sorting-comp>
         </li>
         <li class="action" id="pa-action3" >
-          <group-comp label="Group by" :items="groupBy" activeIcon="tick" icon="accessibility-braille-solid" tooltip="Group By" v-on:change-sort="groupProjects($event)"></group-comp>
+          <sorting-comp label="Group by" :items="groupBy" icon="accessibility-braille-solid" tooltip="Group By" v-on:change-sort="groupProjects($event)"></sorting-comp>
         </li>
         
         <li class="action" id="pa-action-item3" >

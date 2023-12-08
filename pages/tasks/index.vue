@@ -244,7 +244,7 @@ export default {
     }
   },
       beforeDestroy(){ 
-      this.$nuxt.$off("update-key");
+
       this.$nuxt.$off("refresh-table");
 
       },
@@ -1014,6 +1014,8 @@ export default {
     }, 600),
 
     createNewTask(task,section) {
+      console.log(task)
+      console.log("section",section)
       task.group = this.group;
       task.status = null
       task.statusId = null
@@ -1024,8 +1026,7 @@ export default {
       task.user = null
       task.userId = null
       task.projectId = null
-      task.difficultyId =null
-      proj.todoId = section.tasks[0]?.todoId
+      
       if(this.group == "priority"){
         task.priority = section.tasks[0]?.priority
         task.priorityId = section.tasks[0]?.priorityId
@@ -1042,9 +1043,6 @@ export default {
       if(this.group == "department"){
         task.department = section.tasks[0]?.department
         task.departmentId = section.tasks[0]?.departmentId
-      }
-      if(this.group == "difficulty"){
-        task.difficultyId = section.tasks[0]?.difficultyId
       }
       if(this.group == "project"){
         task.projectId = section.tasks[0]?.project?.[0].project?.id || null 

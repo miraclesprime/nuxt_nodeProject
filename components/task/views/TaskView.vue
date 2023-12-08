@@ -8,7 +8,7 @@
       v-on:sort="taskSort($event)"
       @SingleProjectGroup="SingleProjectGroup($event)"
       @search-projectTasks="searchTasks"
-      v-on:add-section="toggleNewsection"
+      @add-section="toggleNewsection"
     ></task-actions>
     <template v-if="taskcount > 0 || groupby=='' ">
     <div v-show="gridType === 'list'" class="calc-height overflow-y-auto" :style="{ 'width': contentWidth }">
@@ -22,6 +22,7 @@
         :sections="localdata"
         :activeTask="activeTask"
         :templateKey="templateKey"
+        :showNewsection="newSection"
         @create-section="createSection"
         @section-delete="sectionDeleteConfirm"
         v-on:update-key="updateKey"
@@ -286,7 +287,6 @@ export default {
     toggleNewsection(flag) {
       // console.log(flag)
       this.newSection = flag ? false : true
-
     },
     taskByOrder() {
       this.localdata = JSON.parse(JSON.stringify(this.sections));
@@ -971,10 +971,11 @@ export default {
         el.order = index+1
         return el
       })
-      tempSections.unshift({title: $event.title, projectId: this.project?.id, order: 0 })
-      // console.log(tempSections)
+      tempSections.unshift({title: $event, projectId: this.project?.currentProject?.id || this.$route.params.id, order: 0 })
+      console.log($event, tempSections, this.project.currentProject, this.$route.params.id)
+      // return
       const res = await this.$store.dispatch("section/createSection", {
-        projectId: this.project?.id,
+        projectId: this.project?.currentProject?.id || this.$route.params.id,
         title: $event.title || $event,
         isDeleted: false,
         data: tempSections,

@@ -5,12 +5,12 @@
         <bib-avatar size="1.5rem" :src="$userInfo(msg.userId).Photo"></bib-avatar>
       </figure>
 
-      <div class="msg__owner text-dark font-w-600" id="msg-owner">{{$userInfo(msg.userId).Name}} <span id="msg-timepast" class="ml-1 font-sm text-gray4">{{displayDate}}</span>
+      <div class="msg__owner text-dark font-w-500" id="msg-owner">{{$userInfo(msg.userId).Name}} <span id="msg-timepast" class="ml-1 font-sm text-gray4">{{displayDate}}</span>
       </div>
     </div>
 
     <!-- message content -->
-    <div class="msg__content text-dark" v-html="msg.comment" :id="'msg-content'+msg.id">
+    <div class="msg__content text-dark pl-2" v-html="msg.comment" :id="'msg-content'+msg.id">
       <p>Lorem ipsum dolor sit amet consectetur 🙂, <a href="http://dev.proj-mgmt.business-in-a-box.com">ipsum project management</a> adipisicing elit. Sit eum praesentium animi error delectus reprehenderit neque odit? Nesciunt facere quod ab veniam eligendi architecto vitae?</p>
     </div>
 
