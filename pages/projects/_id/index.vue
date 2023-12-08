@@ -53,7 +53,7 @@
                   <span v-if="cdp" class="list__item list__item__danger" 
                       @mouseenter="deleteBtnHover = true"
                       @mouseleave="deleteBtnHover = false" 
-                      id="project-id-list-item6" @click="projectDeleteConfirm = true">
+                      id="project-id-list-item6" @click="deleteProject(project)">
                     <bib-icon icon="trash" :variant='deleteBtnHover ? `white` : `danger`' class="mr-05"></bib-icon> Delete 
                   </span>
                 </div>
@@ -98,20 +98,6 @@
           <div style="min-height: 12rem;">
           <project-team-modal :project="project"></project-team-modal>
           </div>
-        </template>
-      </bib-modal-wrapper>
-
-      <!-- project delete confirm -->
-      <bib-modal-wrapper v-if="projectDeleteConfirm" title="Delete project" @close="projectDeleteConfirm = false">
-        <template slot="content">
-          <p>Are you sure?</p>
-          <loading :loading="loading"></loading>
-        </template>
-        <template slot="footer">
-            <div v-show="!loading" class="justify-between gap-1">
-              <bib-button label="Cancel" variant="secondary" pill @click="projectDeleteConfirm = false"></bib-button>
-              <bib-button label="Delete" variant="primary-24" pill @click="deleteProject"></bib-button>
-            </div>
         </template>
       </bib-modal-wrapper>
 
@@ -176,7 +162,6 @@ export default {
       userProj: {},
       deleteBtnHover: false,
       projectDesc: null,
-      projectDeleteConfirm: false,
     }
   },
   watch: {
@@ -402,23 +387,22 @@ export default {
       }
     },
 
-    deleteProject() {
+    deleteProject(project) {
       this.loading = true
-      this.$store.dispatch("project/deleteProject", this.project).then(p => {
+      this.$store.dispatch("project/deleteProject", project).then(p => {
+
         if (p.statusCode == 200) {
-          this.popupMessages.push({ text: "Project deleted successfully", variant: "primary-24" })
           this.$router.push('/projects')
         } else {
-          this.popupMessages.push({ text: p.message, variant: "primary-24" });
+          this.popupMessages.push({ text: p.message, variant: "primary-24" })
           console.warn(p.message);
         }
+        this.loading = false
       }).catch(e => {
+        this.loading = false
         this.popupMessages.push({ text: e, variant: "danger" })
         console.log(e)
-      }).then(() => {
-        this.loading = false;
-        this.projectDeleteConfirm = false
-      });
+      })
     },
 
     canDeleteProject() {

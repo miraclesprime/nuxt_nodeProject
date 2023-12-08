@@ -219,15 +219,6 @@ export default {
         // await this.fetchUserTasks();
         // this.beforeLocal = this.localData
       });
- 
-      /*this.$nuxt.$on("user-picker", (payload) => {
-        // emitted from <task-grid>
-        this.showUserPicker(payload);
-      });
-      this.$nuxt.$on("date-picker", (payload) => {
-        // emitted from <task-grid>
-        this.showDatePicker(payload);
-      });*/
 
       this.$nuxt.$on("refresh-table", () => {
         console.log("on-refresh")
@@ -319,12 +310,7 @@ export default {
 
     }
   },
-  /*showUserPicker(payload){
-      this.closeAllPickers()
-      this.userPickerOpen = true
-      this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
-      this.activeTask = payload.task
-    },*/
+
   beforeDestroy(){ 
     this.$nuxt.$off("refresh-table");
     // this.$nuxt.$off("newTask");

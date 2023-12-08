@@ -470,9 +470,7 @@ export default {
       this.$emit("context-item-event", $event, this.activeItem)
       this.unselectAll()
     },
-    middleware (event) {
-      return event.target.className !== 'side-panel'
-    },
+    
     async unselectAll(event) {
       /*if (event) {
         let sidebar = event.target.closest("#side-panel-wrapper")
@@ -481,6 +479,7 @@ export default {
           return false
         }
       }*/
+
       let rows = document.getElementsByClassName('tr');
       for (let row of rows) {
         row.classList.remove('active');
@@ -739,7 +738,7 @@ export default {
       .td { background-color: rgba(lightgray, 0.15); }
     }
     &.active {
-      outline: $gray2 solid 1px;
+      /*background-color: $secondary-sub4;*/
       .td { background-color: $gray9; }
     }
   }

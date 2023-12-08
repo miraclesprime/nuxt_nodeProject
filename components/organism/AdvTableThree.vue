@@ -1171,7 +1171,7 @@ export default {
       .td { background-color: rgba(lightgray, 0.15); }
     }
     &.active {
-      outline: $gray2 solid 1px;
+      /*background-color: $secondary-sub3;*/
       .td { background-color: $gray9; }
     }
   }

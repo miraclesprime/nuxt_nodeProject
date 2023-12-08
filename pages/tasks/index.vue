@@ -337,7 +337,7 @@ export default {
     },
     updateKey(value) {
       if (value) {
-        //this.popupMessages.push({ text: value, variant: "primary-24" });
+        //this.popupMessages.push({ text: value, variant: "success" });
       }
       let compid = JSON.parse(localStorage.getItem("user")).subb;
       this.$store
