@@ -1,8 +1,8 @@
 <template>
   <div id="task-team-wrapper" class="task-group position-relative w-100">
-    <!-- <div class="bg-light p-1 shape-rounded"> -->
-    <!-- <label id="create-team-modal-heading" class="text-gray6 font-md">Invite people </label> -->
-    <!-- <bib-button test_id="teamlist-dd1" dropdown1="add1" label="Type name or email" v-model="member" v-on:input-keydown="teamInputKeydown" class="mt-05 mb-05">
+    <div class="bg-light p-1 shape-rounded">
+    <label id="create-team-modal-heading" class="text-gray6 font-md">Invite people </label>
+    <bib-button test_id="teamlist-dd1" dropdown1="add1" label="Type name or email" v-model="member" v-on:input-keydown="teamInputKeydown" class="mt-05 mb-05">
       <template v-slot:menu>
         <ul id="atm-fields" class="border-gray1" style="border-radius: 0 !important; border: 1px solid var(--bib-gray1);">
           <li :id="'atm-field-'+index" v-for="(tm, index) in filterTeam" :key="'atm-items'+index" v-on:click="teamItemClick(tm)">
@@ -11,25 +11,26 @@
           </li>
         </ul>
       </template>
-    </bib-button> -->
-    <bib-select label="Invite people" test_id="po-owner-dd2" :options="userOptions" v-model="owner" v-on:change="teamItemClick($event)"></bib-select>
-    <div id="task-team-members" class="pb-05">
+    </bib-button>
+    <div id="task-team-members" class="py-025">
       <template v-for="t in team">
-        <email-chip :key="t.id" :email="t.email" :name="t.label" :avatar="t.avatar" class="mt-025" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
+        <email-chip :key="t.id" :email="t.email" :name="t.label" :avatar="t.avatar" class="mt-05" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
       </template>
-      <!-- <small v-show="team.length == 0" class="text-danger">Select at least 1 team member.</small> -->
-      <p v-if="message" v-text="message" class="font-sm mt-025 text-danger"></p>
+      <small v-show="team.length == 0" class="text-danger">Select at least 1 team member.</small>
+      <p v-if="message" v-text="message" class="font-sm mt-025 text-orange"></p>
     </div>
-    <!-- </div> -->
-    <div class="bg-light p-1 mt-05 shape-rounded">
+     </div>
+      <div class="bg-light p-1 mt-05 shape-rounded">
     <label class="text-gray6 font-md">Team</label>
     <template v-if="taskMembers.length && mode == 'task'">
       <bib-table :key="'tt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="this.teamMembers.filter(item=>this.taskMembers.some(value=>value.id===item.id)).filter(item1=>!this.newTeam.some(val=>val.id===item1.id))" :hide-no-column="true" headless>
         <template #cell(name)="data">
-          <div class="d-flex align-center gap-05">
-            <bib-avatar :src="data.value.avatar" class="flex-shrink-0" size="1.5rem"></bib-avatar>
-            <strong class="text-dark text-truncate font-sm" style="max-width: 15rem;" >{{ data.value.label }}</strong>
-            <span class=" text-black text-truncate font-sm" style="max-width: 10rem;">{{ data.value.email }}</span>
+          <div class="d-flex gap-05">
+            <bib-avatar :src="data.value.avatar" class="mt-auto mb-auto" size="1.5rem"></bib-avatar>
+            <!-- <bib-avatar class="mt-auto mb-auto" size="1.5rem"> -->
+            <!-- </bib-avatar> -->
+              <strong class="text-dark px-030 font-sm" >{{ data.value.label }}</strong>
+              <span class=" text-black px-030 font-sm">{{ data.value.email }}</span>
           </div>
         </template>
         <template #cell_action="data">
@@ -41,10 +42,13 @@
       <!-- <div v-show="this.newTeam.length >0 " class="border-top-success" ></div> -->
        <bib-table :key="'ttt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="this.teamMembers.filter(item=>this.newTeam.some(value=>value.id===item.id))" :hide-no-column="true" headless>
         <template #cell(name)="data">
-          <div class="d-flex align-center gap-05">
-            <bib-avatar :src="data.value.avatar" class="flex-shrink-0" size="1.5rem"></bib-avatar>
-            <strong class="text-dark text-truncate font-sm" style="max-width: 15rem;" >{{ data.value.label }}</strong>
-            <span class=" text-black text-truncate font-sm" style="max-width: 10rem;">{{ data.value.email }}</span>
+          <div class="d-flex gap-05">
+            <bib-avatar :src="data.value.avatar" class="mt-auto mb-auto" size="1.5rem"></bib-avatar>
+
+            <!-- <bib-avatar class="mt-auto mb-auto" size="1.5rem">
+            </bib-avatar> -->
+               <strong class="text-dark px-030 font-sm" >{{ data.value.label }}</strong>
+              <span class=" text-black px-030 font-sm">{{ data.value.email }}</span>
           </div>
         </template>
         <template #cell_action="data">
@@ -78,8 +82,8 @@
       </span>
     </template>
       </div>
-    <div v-show="team.length > 0" class="pt-1 justify-end">
-      <bib-button label="Add" variant="primary-24" pill @click="addTeamMember"></bib-button>
+    <div v-show="team.length > 0" class="pt-05 pb-1 justify-end">
+      <bib-button label="Add" variant="success" class="w-20" @click="addTeamMember"></bib-button>
     </div>
     <loading :loading="loading"></loading>
   </div>
@@ -105,8 +109,7 @@ export default {
       flag: false,
       key: 0,
       loading: false,
-      norecord: false,
-      owner: null,
+      norecord: false
     };
   },
 
@@ -140,7 +143,6 @@ export default {
       taskMembers: 'task/getTaskMembers',
       teamMembers: "user/getTeamMembers",
       subtaskMembers: 'subtask/getSubtaskMembers',
-      userOptions: "user/getUsersList",
     }),
 
     filterTeam() {
@@ -177,10 +179,10 @@ export default {
       this.filterKey = $event
     },
     teamItemClick(tm) {
-      let existing = this.taskMembers.filter(ex => ex.id == tm)
+      let existing = this.taskMembers.filter(ex => ex.id == tm.id)
       if (existing.length == 0) {
         this.message = ""
-        let m = this.teamMembers.filter(t => t.id == tm)
+        let m = this.teamMembers.filter(t => t.id == tm.id)
         if (this.team.some(el => el.id == m[0].id)) {
           return false
         }

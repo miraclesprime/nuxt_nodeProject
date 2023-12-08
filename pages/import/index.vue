@@ -3,21 +3,10 @@
         <div id="page" class="project-id-wrapper h-100 overflow-y-auto">
             <page-title title="Import project"></page-title>
             <!-- Task View -->
-            <div id="import-content" class="import-content position-relative " >
-                <div class=" p-1 m-auto w-50" >
-                    <div class="font-md py-1" >
-                        <p class="font-w-500">How to export an Asana Project as a .CSV</p>
-                        <ol>
-                            <li>First, navigate to the dropdown header of the project next to the project.</li>
-                            <li>Next, within the dropdown menu, select the Export/Print option.</li>
-                            <li>Select the .CSV file type to download this project as a .CSV.</li>
-                        </ol>
-                        <p >Know more <a href="https://blog.asana.com/2014/09/export-to-csv/" class="text-primary" target="_blank">https://blog.asana.com/2014/09/export-to-csv/</a></p>
-                    </div>
-
-                    <div class="border-gray2 shape-rounded py-1 px-05 mt-2" style="min-width: 400px; max-width:600px;">
-                        <label class="font-md mb-075 d-inline-block text-secondary">Click to import projects as .csv file from Asana</label>
-                        <bib-input type="file" ref="csvImport" @files-dropped="onFileInput" multiple="false" variant="primary-24" iconLeft="upload" placeholder="Select .csv file to upload"></bib-input>
+            <div id="project-id-content" class="project-id-content position-relative " :style="{ 'width': contentWidth }">
+                <div class="d-flex justify-center p-1">
+                    <div class="border-gray2 shape-rounded py-1 px-05" style="min-width: 400px; max-width:600px;">
+                        <bib-input type="file" ref="csvImport" @files-dropped="onFileInput" multiple="false" variant="light" iconLeft="upload" placeholder="Select file to upload"></bib-input>
                         <div v-show="files.length > 0" class=" mt-1 align-center">
                           <bib-button :disabled="loading" variant="primary-24" label="Import CSV" @click="checkUser" pill></bib-button> <bib-spinner v-if="loading" :scale="2" ></bib-spinner>
                         </div>
@@ -35,7 +24,7 @@
                         <h4>Import will be done in steps</h4>
                         <div v-for="item in steps" class="align-center gap-05">
                             <div class="width-105 height-105 align-center justify-center">
-                                <bib-spinner v-if="item.progress == 'progress'" :scale="2" variant="primary-24" ></bib-spinner>
+                                <bib-spinner v-if="item.progress == 'progress'" :scale="2" variant="orange" ></bib-spinner>
                                 <bib-icon v-else-if="item.progress == 'done'" icon="check-circle-solid" :variant="item.variant"></bib-icon>
                                 <bib-icon v-else-if="item.progress == 'error'" icon="close-circle-solid" :variant="item.variant"></bib-icon>
                                 <bib-icon v-else icon="check-circle" :variant="item.variant"></bib-icon>
@@ -53,13 +42,15 @@
                         {{importError}}
                     </div>
 
-                    <div v-show="dupProject && !importCompleteMsg" class="shape-rounded align-center gap-05 border-primary text-primary p-05">
-                      <bib-icon icon="urgent" variant="primary-24"></bib-icon>
+
+                    <div v-show="dupProject && !importCompleteMsg" class="shape-rounded align-center gap-05 border-orange text-orange p-05">
+
+                      <bib-icon icon="urgent" variant="orange"></bib-icon>
                         {{dupProject}}
                     </div>
 
                     <div v-show="importfinish" class="shape-rounded align-center gap-05 border-primary text-primary p-05">
-                      <bib-icon icon="tick" variant="primary-24"></bib-icon>
+                      <bib-icon icon="tick" variant="success"></bib-icon>
                       {{importCompleteMsg}}
                     </div>
                 </template>
@@ -96,6 +87,7 @@ export default {
     name: 'Import',
     data() {
         return {
+            contentWidth: "100%",
             loading: false,
 
             popupMessages: [],
@@ -114,7 +106,7 @@ export default {
             importfinish: false,
             missingMembers: [],
             steps: [
-                {id: 0, label: "Analyzing Users", progress: "progress", variant:"primary-24"},
+                {id: 0, label: "Analyzing Users", progress: "progress", variant:"orange"},
                 {id: 1, label: "Importing Project", progress: "pending", variant:"gray5"},
                 {id: 2, label: "Importing Section/Tasks", progress: "pending", variant:"gray5"},
                 {id: 3, label: "Importing Subtasks", progress: "pending", variant:"gray5"},
@@ -142,7 +134,7 @@ export default {
 
             if (file.length > 0) {
                 if (file[0]?.type != 'text/csv') {
-                    this.popupMessages.push({text: "Only csv file allowed", variant: "primary-24"})
+                    this.popupMessages.push({text: "Only csv allowed", variant: "primary-24"})
                     this.files = []
                     return
                 } 
@@ -162,7 +154,7 @@ export default {
             this.importfinish = false
             this.importError = false
             this.steps = [
-                    {id: 0, label: "Analyzing Users", progress: "progress", variant:"primary-24"},
+                    {id: 0, label: "Analyzing Users", progress: "progress", variant:"orange"},
                     {id: 1, label: "Importing Project", progress: "pending", variant:"gray5"},
                     {id: 2, label: "Importing Section/Tasks", progress: "pending", variant:"gray5"},
                     {id: 3, label: "Importing Subtasks", progress: "pending", variant:"gray5"},
@@ -218,7 +210,7 @@ export default {
         async importProject(){
             this.missingMembers = []
             this.steps[1].progress = "progress"
-            this.steps[1].variant = "primary-24"
+            this.steps[1].variant = "orange"
 
             let file = this.$refs.csvImport.filesUploaded;
 
@@ -247,7 +239,7 @@ export default {
         async importSections(data) {
             // console.log('Started Importing Sections...')
             this.steps[2].progress = "progress"
-            this.steps[2].variant = "primary-24"
+            this.steps[2].variant = "orange"
             
             let res = await this.$axios.post("/import/sections", {data: data}, {
                 headers: {
@@ -271,7 +263,7 @@ export default {
         async importSubTasks(data) {
             // console.log('Started Importing SubTasks...')
             this.steps[3].progress = "progress"
-            this.steps[3].variant = "primary-24"
+            this.steps[3].variant = "orange"
 
             let res = await this.$axios.post("/import/subtasks", {data: data}, {
                 headers: {
@@ -296,7 +288,7 @@ export default {
         async importTags(data) {
             // console.log('Started Importing Tags...')
             this.steps[4].progress = "progress"
-            this.steps[4].variant = "primary-24"
+            this.steps[4].variant = "orange"
 
             let res = await this.$axios.post("/import/tags", {data: data}, {
                 headers: {
@@ -349,11 +341,4 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.import-content {
-    line-height: 1.6;
-    p, ol, ul, li { line-height: 1.75; }
-    p { margin-bottom: 0.25rem; }
-    ol, ul { margin-block: 0.25rem; }
-
-}
 </style>

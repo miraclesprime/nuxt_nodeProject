@@ -307,7 +307,7 @@ export default {
             a.click();
             window.URL.revokeObjectURL(f.data.data);
             // alert('your file downloaded!');
-            this.popupMessages.push({text: "File downloaded", variant: "primary-24"})
+            this.popupMessages.push({text: "your file downloaded", variant: "primary-24"})
           }
         })
         .catch(e => console.error(e))
@@ -324,10 +324,10 @@ export default {
                 'userid': file.userId
               }
             }).then(f => {
-              // console.log(f.data)
+              console.log(f.data)
               if (f.data.statusCode == 200) {
                 // alert(f.data.message);
-                this.popupMessages.push({text: "File(s) deleted successfully", variant: "primary-24"})
+                this.popupMessages.push({text: f.data.message, variant: "orange"})
                 _.delay(() => {
                   this.getFiles()
                 }, 3000);
@@ -335,7 +335,7 @@ export default {
             })
             .catch(e => console.error(e))
       } else {
-        this.popupMessages.push({text: "You do not have permission to delete this file", variant: "primary-24"})
+        this.popupMessages.push({text: "you do not have permission to delete this file", variant: "primary-24"})
         // console.log("you don't have enough permission to delete this file")
       }
     },

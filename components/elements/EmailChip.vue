@@ -6,8 +6,8 @@
     <template v-else>
       <bib-avatar :text="email[0].toUpperCase()" size="1.25rem" class="mr-025"></bib-avatar>
     </template>
-    <strong v-if="name" class="px-025 font-sm text-truncate" style="max-width:16rem" id="email-chip-strong">{{name}}</strong>
-    <span id="email" class="px-025 font-sm text-truncate" style="max-width:12rem">{{email}}</span>
+    <strong v-if="name" class="px-025 font-sm" id="email-chip-strong">{{name}}</strong>
+    <span id="email" class="px-025 font-sm">{{email}}</span>
     <template v-if="close">
       <bib-icon icon="trash-solid" variant="gray5" :scale="0.8" class="cursor-pointer ml-05 mr-025" v-on:click="onClose" ></bib-icon>
     </template>
