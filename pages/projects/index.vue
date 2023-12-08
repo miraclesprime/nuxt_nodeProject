@@ -26,7 +26,7 @@
         <template slot="content">
           <div>
             <bib-input type="text" v-model.trim="renameProjectData.title" placeholder="Enter name..."></bib-input>
-            <loading :loading="loading"></loading>
+            <!-- <loading :loading="loading"></loading> -->
           </div>
         </template>
         <template slot="footer">
@@ -34,19 +34,6 @@
             <bib-button label="Cancel" variant="light" pill @click="renameModal = false"></bib-button>
             <bib-button label="Rename" variant="success" pill v-on:click="renameProject"></bib-button>
           </div>
-        </template>
-      </bib-modal-wrapper>
-      <!-- project delete confirmation -->
-      <bib-modal-wrapper v-if="projectDeleteConfirm" title="Delete project" @close="projectDeleteConfirm = false">
-        <template slot="content">
-          <p>Are you sure?</p>
-          <loading :loading="loading"></loading>
-        </template>
-        <template slot="footer">
-            <div v-show="!loading" class="justify-between gap-1">
-              <bib-button label="Cancel" variant="secondary" pill @click="projectDeleteConfirm = false"></bib-button>
-              <bib-button label="Delete" variant="primary-24" pill @click="deleteTask"></bib-button>
-            </div>
         </template>
       </bib-modal-wrapper>
       <bib-popup-notification-wrapper>
@@ -95,8 +82,6 @@ export default {
       groupVisible: false,
       groupBy: '',
       lazyComponent: false,
-      projectDeleteConfirm: false,
-      projectToDelete: {},
     }
   },
   created() {
@@ -113,7 +98,7 @@ export default {
     }
   },
   mounted() {
-    if (this.projects?.length<=0) {
+    if (this.projects.length<=0) {
       this.updateKey();
     }
     // this.loading = true;
@@ -506,9 +491,7 @@ export default {
           this.renameModal = true
           break;
         case 'delete-project':
-          // this.deleteTask(item)
-          this.projectDeleteConfirm = true
-          this.projectToDelete = item
+          this.deleteTask(item)
           break;
         case 'copy-project':
           this.copyProjectLink(item)
@@ -624,29 +607,29 @@ export default {
         .catch(e => console.warn(e))
     },
 
-    deleteTask() {
-       if (this.projectToDelete) {
+    deleteTask(project) {
+       if (project) {
         this.loading = true
         this.$store
-          .dispatch("project/deleteProject", this.projectToDelete)
+          .dispatch("project/deleteProject", project)
           .then((t) => {
             if (t.statusCode == 200) {
-              this.popupMessages.push({ text: "Project deleted successfully", variant: "primary-24" });
-              this.$nuxt.$emit("delete_update_table",this.projectToDelete,this.$route.fullPath)
+              this.popupMessages.push({ text: t.message, variant: "primary-24" });
+              this.$nuxt.$emit("delete_update_table",project,this.$route.fullPath)
               // this.updateKey();
+              
+             this.loading = false;
             } else {
               this.popupMessages.push({ text: t.message, variant: "primary-24" });
               console.warn(t.message);
+              
+            this.loading = false;
             }
           })
           .catch((e) => {
-            this.popupMessages.push({text: e, variant: "danger"})
             console.warn(e);
-          })
-          .then(() => {
-            this.loading = false;
-            this.projectToDelete = {}
-            this.projectDeleteConfirm = false
+            
+          this.loading = false;
           });
       } else {
         this.popupMessages.push({
@@ -654,6 +637,9 @@ export default {
           variant: "primary-24",
         });
       }
+
+      // this.confirmMsg = "Are you sure ";
+      // this.confirmModal = true;
     },
 
     async renameProject() {

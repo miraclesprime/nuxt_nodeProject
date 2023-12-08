@@ -15,14 +15,14 @@
     <bib-select label="Invite people" test_id="po-owner-dd2"  :options="userOptions" v-model="owner" v-on:change="teamItemClick($event)"></bib-select>
     <div id="ptm-project-team-members" class="overflow-y-auto" style="max-height: 200px;">
       <template v-for="t in team">
-        <email-chip :key="t.id" :email="t.email" :name="t.label" :avatar="t.avatar" class="mb-025" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
+        <email-chip :key="t.id" :email="t.email" :name="t.label" :avatar="t.avatar" class="mt-025" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
       </template>
       <!-- team.length == 0 && projectMembers.length<2 -->
-      <!-- <small v-show="showMsg" class="text-danger font-xs" id="ptm-team-length">Select at least 1 team member.</small> -->
-      <p v-if="message" v-text="message" class="font-sm mb-025 text-danger" id="ptm-message"></p>
+      <small v-show="showMsg" class="text-danger font-xs" id="ptm-team-length">Select at least 1 team member.</small>
+      <p v-if="message" v-text="message" class="font-sm mt-025 text-orange" id="ptm-message"></p>
     </div>
   <!-- </div>  -->
-  <div class="bg-light p-1 my-075 shape-rounded">
+  <div class="bg-light p-1 my-05 shape-rounded">
     <label class="text-gray6 font-md" id="ptm-team-label">Team</label>
     <div class="overflow-y-auto mt-1" style="max-height: 200px">
       <template v-if="projectMembers.length">

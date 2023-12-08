@@ -91,7 +91,7 @@ export default {
     // isFavorite() {
     //   let fav = this.favTasks.some(t => t.task.id == this.task.id)
     //   if (fav) {
-    //     return { variant: "primary", text: "Remove favorite", status: true }
+    //     return { variant: "orange", text: "Remove favorite", status: true }
     //   } else {
     //     return { variant: "gray5", text: "Add to favorites", status: false }
     //   }
@@ -233,11 +233,11 @@ export default {
     //     this.$store.dispatch("task/deleteTask", this.taskToDelete)
     //     .then(t => {
     //       if (t.statusCode == 200) {
-    //         this.popupMessages.push({ text: t.message, variant: "primary-24" })
+    //         this.popupMessages.push({ text: t.message, variant: "success" })
     //         this.$emit("update-key", t.message)
     //         this.taskToDelete = {}
     //       } else {
-    //         this.popupMessages.push({ text: t.message, variant: "primary-24" })
+    //         this.popupMessages.push({ text: t.message, variant: "orange" })
     //         console.warn(t.message);
     //       }
     //     })
@@ -245,7 +245,7 @@ export default {
     //       console.warn(e)
     //     })
     //   } else {
-    //     this.popupMessages.push({ text: "Action cancelled", variant: "primary-24" })
+    //     this.popupMessages.push({ text: "Action cancelled", variant: "orange" })
     //     this.taskToDelete = {}
     //   }
     // },
@@ -287,7 +287,7 @@ export default {
       }
       // if (item.label.includes('Favorites')) {
       //   let fata = this.favTasks.some(ft => ft.taskId == this.task.id)
-      //   return fata ? 'primary' : 'gray5'
+      //   return fata ? 'orange' : 'gray5'
       // }
     },
     contextItemClick(item) {
