@@ -4,9 +4,9 @@
       <bib-avatar :src="user.Photo" size="2rem" ></bib-avatar>
     </figure> -->
     <div id="task-history-titles-wrapper">
-      <span class="font-w-600" id="th-username">{{$userInfo(history.userId).Name}}</span>
-      <span class="mx-05 " id="th-historytext">{{history.text}}</span>
-      <span class="text-gray4 " id="th-historyupdatedat">{{$displayDate(history.updatedAt)}}</span>
+      <span class="font-w-500" id="th-username">{{$userInfo(history.userId).Name}}</span>
+      <span class="mx-05 text-secondary font-sm" id="th-historytext">{{history.text}}</span>
+      <span class="text-gray4 font-sm" id="th-historyupdatedat">{{$displayDate(history.updatedAt)}}</span>
     </div>
   </div>
 </template>

@@ -23,7 +23,7 @@
         </div>
       </div>
     </div>
-    <div class="bg-success-sub6 shape-rounded cursor-pointer bg-hover-success-sub3 px-05 text-success text-center font-lg" @click.stop="showNewTask">+</div>
+    <div class=" border-primary-24 shape-rounded cursor-pointer bg-hover-primary-24 px-05 text-primary-24 text-hover-white text-center font-lg" @click.stop="showNewTask">+</div>
   </div>
 </template>
 

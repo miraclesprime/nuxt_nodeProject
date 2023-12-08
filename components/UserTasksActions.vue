@@ -25,12 +25,12 @@
           <sorting-comp :items="sorting" icon="swap-vertical" tooltip="Sort By" v-on:change-sort="sortBy"></sorting-comp>
         </li>
         
-        <li class="action" id="ta-action5" >
+        <!-- <li class="action" id="ta-action5" >
           <div class="d-flex width-2 height-2 align-center justify-center bg-light bg-hover-gray2 shape-circle p-025 cursor-pointer" id="ta-action5-link" v-tooltip="'List/Grid'">
             <bib-icon v-if="gridType == 'list'" icon="table" variant="gray6" @click.native="changeGridType('grid')"></bib-icon>
             <bib-icon v-if="gridType == 'grid'" icon="list" variant="gray6" @click.native="changeGridType('list')"></bib-icon>
           </div>
-        </li>
+        </li> -->
       </ul>
     </div>
     
