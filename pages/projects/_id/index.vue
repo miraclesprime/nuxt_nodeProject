@@ -74,7 +74,7 @@
         <template slot="content">
           <!-- <div class="overflow-y-auto " style="max-height: 500px"> -->
             <project-overview v-if="projectModalContent == 'overview'" @update-desc="projectDesc = $event" ></project-overview>
-            <project-files v-if="projectModalContent == 'files'"></project-files>
+            <project-files v-if="projectModalContent == 'files'" :proj="project"></project-files>
           <!-- </div> -->
         </template>
       </bib-modal-wrapper>
@@ -293,7 +293,8 @@ export default {
       this.project = p.data
       this.projectTitle = p.data?.title
 
-      this.$store.commit("task/setExpandVisible",true);
+      this.$store.dispatch("project/setSingleProject", {currentProject: p.data})
+      this.$store.commit("task/setExpandVisible",true)
       this.$store.commit('section/setGroupBy',"")
       
       if(!this.project?.id){
@@ -303,16 +304,24 @@ export default {
       } 
       
       // this.$store.dispatch("task/fetchTasks", { id: this.$route.params.id, filter: 'all' })
-      console.log(p.data, this.project)
+      // console.log(p.data, this.project)
       // return
       if(this.project?.isDeleted != true) {
+        let ut = await this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id, userId: this.project?.userId ? this.project?.userId : null })
+        let ptm = ut.find(u => u.id == this.user2.Id)
+        // console.log(ut, this.project, JSON.parse(localStorage.getItem('user')).subr)
 
-        if((this.project?.id && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN'){
+        if (ptm || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN') {
           // console.info('user has access!')
-          this.$store.dispatch("project/fetchTeamMember", { projectId: this.$route.params.id, userId: this.project?.userId ? this.project?.userId : null })
         } else {
           this.$router.push('/error/403')
+          return
         }
+        /*if((this.project?.id && JSON.parse(localStorage.getItem('user')).subr == 'USER') || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN'){
+          console.info('user has access!')
+        } else {
+          this.$router.push('/error/403')
+        }*/
 
         // this.canDeleteProject()
         if (this.project?.userId == JSON.parse(localStorage.getItem('user')).sub || JSON.parse(localStorage.getItem('user')).subr == 'ADMIN' ) {

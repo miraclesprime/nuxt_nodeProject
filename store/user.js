@@ -11,7 +11,7 @@ export const state = () => ({
   isAdmin:false,
   groupByValue:"",
   taskCount:0,
-
+  usersList: [],
 });
 
 export const getters = {
@@ -40,7 +40,7 @@ export const getters = {
   getAppMembers(state) {
     let members=[]
     state.appMembers.map(t => {
-      members.push({ label: t.FirstName + ' ' + t.LastName, firstName: t.FirstName, lastName: t.LastName, email: t.Email, icon: "user", id: t.Id, status: t.Status, role: t.Role, avatar: t.Photo, selected: false,completeTask:t.completeTask,taskCount:t.taskCount })
+      members.push({ label: t.FirstName + ' ' + t.LastName, firstName: t.FirstName, lastName: t.LastName, email: t.Email, icon: "user", id: t.Id, status: t.Status, role: t.Role, avatar: t.Photo, selected: false, completeTask: t.completeTask, taskCount:t.taskCount })
     })
     return members
   },
@@ -59,13 +59,16 @@ export const getters = {
   },
   getIsAdmin(state) {
     return state.isAdmin
+  },
+  getUsersList(state){
+    return state.usersList
   }
 
 };
 
 export const mutations = {
   setTeams (state, payload) {
-    state.teamMems=payload
+    state.teamMems = payload
   },
   setAddTaskCount (state, payload) {
     state.taskCount ++
@@ -842,9 +845,7 @@ export const mutations = {
 
   setTeamMembers(state, payload) {
     state.teamMembers = payload;
-    
   },
-
 
   setAppMembers(state, payload) {
     state.appMembers = payload.map((ele) => {
@@ -909,6 +910,11 @@ export const mutations = {
     //         });
     //       state.userTasks=newArr;
     //  }
+  },
+  setUsersList(state, payload){
+    state.usersList = payload.map(u => {
+      return {email: u.Email, label: u.FirstName + " " + u.LastName, img: u.Photo, value: u.Id, role: u.Role}
+    })
   }
 
 };
@@ -934,6 +940,7 @@ async setFetchUserTasks (ctx,payload) {
     })
 
     ctx.commit("setTeamMembers", members)
+    ctx.commit("setUsersList", members)
 
     if (JSON.parse(localStorage.getItem('user')).subr == 'USER') {
       const userlist = await this.$axios.$get("/user/list", {

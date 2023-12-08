@@ -2,14 +2,14 @@
   <div id="create-project-modal-wrapper">
     <bib-modal-wrapper @close="closeModal" v-show="showCreateProjectModal" title="Create Project" id="create-project" @keypress.native="bindEnter($event, 'create-project-btn')">
       <template v-slot:content>
-        <label class="text-gray6" id="cpm-project-name">Project name <span class="text-danger">*</span></label>
-        <bib-input v-model.trim="projectName" placeholder="Name your project"></bib-input>
+        <!-- <label class="text-gray6" id="cpm-project-name">Project name <span class="text-danger">*</span></label> -->
+        <bib-input label="Project name" v-model.trim="projectName" placeholder="Name your project"></bib-input>
         <small v-if="btnCreate" class="text-danger mb-05" id="cpm-project-name-alert" style="margin-top:-0.5rem; display:block;">{{projectName ? '' : 'Project name is required'}}</small>
         <template>
-            <bib-input v-model="department" :options="departments" size="md" type="select"></bib-input>
+            <bib-input label="Select department" v-model="department" :options="departments" type="select"></bib-input>
         </template>
-        <label id="create-project-modal-heading" class="text-gray6" style="margin-bottom: -0.5rem;">Assign a project lead <span class="text-danger">*</span></label>
-        <bib-button test_id="create-project-dd1" dropdown1="add" label="Type name or email" v-model="owner" v-on:input-keydown="dropdownInputKeydown" :footer="{icon: 'add', label: 'Invite via email', event: 'footer-action'}" @footer-action="inviteViaEmail" class="mb-05">
+        <!-- <label id="create-project-modal-heading" class="text-gray6" style="margin-bottom: -0.5rem;">Assign a project lead <span class="text-danger">*</span></label> -->
+        <!-- <bib-button test_id="create-project-dd1" dropdown1="add" label="Type name or email" v-model="owner" v-on:input-keydown="dropdownInputKeydown" :footer="{icon: 'add', label: 'Invite via email', event: 'footer-action'}" @footer-action="inviteViaEmail" class="mb-05">
           <template v-slot:menu>
             <ul id="cpm-fields" class="border-gray1" style="border-radius: 0 !important; border: 1px solid var(--bib-gray1);">
               <li :id="'cpm-field-'+index" v-for="(tm, index) in filterUser" :key="'cpm-item-'+index" v-on:click="dd1ItemClick(tm)">
@@ -18,8 +18,9 @@
               </li>
             </ul>
           </template>
-        </bib-button>
-        <div id="cpm-project-team-members" class="d-flex pt-025">
+        </bib-button> -->
+        <bib-select label="Assign a project lead" test_id="po-owner-dd2" :options="userOptions" v-model="owner" v-on:change="dd1ItemClick($event)"></bib-select>
+        <!-- <div id="cpm-project-team-members" class="d-flex pt-025">
           <template v-if="btnCreate">
             <email-chip v-if="Object.keys(owner).length > 0" :name="owner.label" :email="owner.email ? owner.email : owner.sube" :avatar="owner.avatar" v-bind:close="true" v-on:remove-email="owner = {}"></email-chip>
             <small v-else class="text-danger">Project owner is required</small>
@@ -27,7 +28,7 @@
           <template v-else>
             <email-chip v-if="Object.keys(owner).length > 0" :name="owner.label" :email="owner.email ? owner.email : owner.sube" :avatar="owner.avatar" v-bind:close="true" v-on:remove-email="owner = {}"></email-chip>
           </template>
-        </div>
+        </div> -->
         <loading :loading="loading"></loading>
       </template>
       <template v-slot:footer>
@@ -49,7 +50,8 @@ export default {
     return {
       showCreateProjectModal: false,
       projectName: "",
-      owner: {},
+      owner: null,
+      user2: {},
       department: null,
       projectlead: "Enter name or email",
       filterKey: "",
@@ -65,14 +67,21 @@ export default {
       user: "user/getUser",
       teamMembers: "user/getTeamMembers",
       departments: "department/getAllDepartments",
+      userOptions: "user/getUsersList",
     }),
-    filterUser() {
+    options(){
+      return this.teamMembers.map(u => {
+        return {label: u.label, img: u.avatar, value: u.id, role: u.role}
+      })
+    },
+    
+    /*filterUser() {
       return this.teamMembers.filter((u) => {
         if (u.email.indexOf(this.filterKey) >= 0) {
           return u
         }
       })
-    },
+    }*/
   },
   mounted() {
     
@@ -82,7 +91,8 @@ export default {
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
           }
         }).then((res) => {
-          this.owner = {id: res.data.Id, firstName: res.data.FirstName, lastName: res.data.LastName, avatar: res.data.Photo, email: res.data.Email};
+          this.user2 = {id: res.data.Id, firstName: res.data.FirstName, lastName: res.data.LastName, avatar: res.data.Photo, email: res.data.Email};
+          this.owner = res.data.Id
         })
     }
 
@@ -93,16 +103,17 @@ export default {
     dropdownInputKeydown($event) {
       this.filterKey = $event
     },
-    dd1ItemClick(tm) {
-      this.owner = tm
+    dd1ItemClick(value) {
+      console.log(...arguments)
+      this.owner = value
     },
-    inviteViaEmail() {
+    /*inviteViaEmail() {
       console.log('inviteViaEmail')
-    },
+    },*/
     closeModal() {
       this.btnCreate=false
       this.projectName = ''
-      this.owner = {}
+      this.owner = null
       this.showCreateProjectModal = false
     },
     bindEnter(event, button) {
@@ -114,12 +125,12 @@ export default {
     createProject() {
       this.btnCreate=true
       this.loading = true
-      if (this.projectName && this.owner.id) {
-        this.$store.dispatch('project/createProject', { user: this.owner, title: this.projectName, departmentId: this.department }).then((res) => {
+      if (this.projectName && this.owner) {
+        this.$store.dispatch('project/createProject', { user: this.user2, title: this.projectName, departmentId: this.department }).then((res) => {
           this.loading = false
           if (res.statusCode == 200) {
             this.projectName = ''
-            this.owner = {}
+            this.owner = null
             this.showCreateProjectModal = false
 
              this.$axios.$get(`/project/company/all`, {
