@@ -1025,7 +1025,7 @@ export default {
       task.userId = null
       task.projectId = null
       task.difficultyId =null
-      proj.todoId = section.tasks[0]?.todoId
+      proj.todoId = proj.todoId = section.tasks[0]?.todoId?section.tasks[0]?.todoId:section.id
       if(this.group == "priority"){
         task.priority = section.tasks[0]?.priority
         task.priorityId = section.tasks[0]?.priorityId

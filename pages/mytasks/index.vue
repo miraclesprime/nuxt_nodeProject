@@ -605,10 +605,8 @@ export default {
         }   
       }
 
-      if(this.groupby != '') {
-        this.updateKey();
-      } else {
-
+      if(this.groupby != '') 
+      {
         this.$store.dispatch("task/updateTask", {
           id: payload.id,
           projectId: item.project[0]?.projectId || null,
@@ -616,7 +614,18 @@ export default {
           text: historyText
         })
           .then(t => {
-            // this.updateKey()
+          })
+          .catch(e => console.warn(e))
+      }
+       else {
+        this.$store.dispatch("task/updateTask", {
+          id: payload.id,
+          projectId: item.project[0]?.projectId || null,
+          data: { [field]: value },
+          text: historyText
+        })
+          .then(t => {
+            this.updateKey()
           })
           .catch(e => console.warn(e))
       }
@@ -745,6 +754,7 @@ export default {
       }
     },
     createNewTask(proj, section) {
+      console.log(section)
       proj.group = this.groupby;
       proj.status = null
       proj.statusId = null
@@ -761,7 +771,7 @@ export default {
       }]
       proj.userId = this.loggedUser.Id
       proj.projectId=null
-      proj.todoId = section.tasks[0]?.todoId
+      proj.todoId = this.groupby ? section.tasks[0]?.todoId : section.id
 
       if(this.groupby == "priority"){
         proj.priority = section.tasks[0]?.priority

@@ -23,9 +23,9 @@
         </div>
       </div>
     </div>
-    <bib-button label="+" variant="primary-24" class="w-100 text-center align-center" @click.native.stop="showNewTask"></bib-button>
-    <!-- <div  class="bg-primary-24 shape-rounded cursor-pointer bg-hover-success-24 px-05  text-center font-lg" @click.stop="showNewTask"> -->
-      <!-- +</div> -->
+    <!-- <bib-button label="+" variant="primary-24" class="w-100 text-center align-center" @click.native.stop="showNewTask"></bib-button> -->
+    <div  class="bg-primary-24 shape-rounded cursor-pointer bg-hover-primary-22 px-05  text-center font-lg" @click.stop="showNewTask">
+      +</div>
   </div>
 </template>
 
@@ -100,10 +100,16 @@ export default {
       }]
       proj.userId = this.loggedUser.Id
       if(this.sectionType == 'myTask'){
-        proj.todoId =  section.tasks[0]?.todoId
+        if(this.myTaskGroupBy==''){
+          proj.todoId = section.id
+        }
+        else {
+          proj.todoId = section.tasks[0]?.todoId?section.tasks[0]?.todoId:null
+        }
+        
       } 
       if(this.sectionType=="department" ||this.sectionType=="singleProject") {
-        proj.todoId =  section.tasks[0]?.todoId
+        proj.todoId = section.tasks[0]?.todoId?section.tasks[0]?.todoId:null
         proj.sectionId=section.tasks[0]?.sectionId
       }
       
