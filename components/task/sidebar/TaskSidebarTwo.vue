@@ -440,7 +440,6 @@ export default {
 
         this.$store.dispatch("task/createTask", {
           "sectionId": this.$route.fullPath.includes("usertasks")?taskform.sectionId:(this.$route.params.id ? "_section" + this.$route.params.id : taskform.sectionId),
-          "todoId": this.$route.fullPath.includes("usertasks")?taskform.sectionId:(this.$route.params.id ? "_section" + this.$route.params.id : taskform.sectionId),
           "projectId": this.$route.fullPath.includes("usertasks")?taskform.projectId:Number(this.$route.params.id || taskform.projectId),
           "title": this.form.title,
           "description": taskform.description,
@@ -455,26 +454,6 @@ export default {
           "mode": this.$route.fullPath.includes("usertasks")?null:(this.$route.params.id ? "project" : null),
         }).then((task) => {
           // this.$nuxt.$emit("refresh-table");
-
-          if(this.$route.path=="/mytasks" && this.mytaskGrid=="grid") {
-            this.$nuxt.$emit("update-key")
-            this.reloadHistory += 1
-            this.reloadComments+=1
-            return; 
-          }
-          if(this.$route.path=="/tasks" && this.tasksGrid=="grid") {
-            this.$nuxt.$emit("update-key")
-            this.reloadHistory += 1
-            this.reloadComments+=1
-            return;
-          }
-          if(this.$route.path.includes("/projects/") && this.singleProjectGrid=="grid"){
-            this.$nuxt.$emit("update-key")
-            this.reloadHistory += 1
-            this.reloadComments+=1
-            return;
-          }
-
           this.$nuxt.$emit("newTask",task.data,this.$route.path)
           // this.$nuxt.$emit("gridNewTask",task.data,this.$route.path)
           this.getTableCount(this.$route.path,task.data)

@@ -100,7 +100,8 @@ export default {
   props: {
     sections: { type: Array, required: true },
     templateKey: { default: 0 },
-    sectionType: { type: String }
+    sectionType: { type: String },
+    showNewsection: Boolean,
   },
 
   computed: {
@@ -110,7 +111,6 @@ export default {
       favTasks: "task/getFavTasks",
       filterViews :'task/getFilterView',
       // grid:"project/getGridType"
-
     }),
 
   },
@@ -152,6 +152,14 @@ export default {
     },
     templateKey(){
       this.newSectionLoader = false
+    },
+    showNewsection(newVal){
+      if (newVal) {
+        this.sectionInput = true
+        this.$nextTick(()=>{
+          this.$refs.newsectioninput.focus()
+        })
+      }
     }
   },
 

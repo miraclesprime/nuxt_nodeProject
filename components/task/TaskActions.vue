@@ -18,7 +18,7 @@
         <li class="action" id="ta-action1" title="Viewing" >
           <sorting-comp label="Viewing" :items="viewing" icon="eye-open" activeIcon="tick" tooltip="View" v-on:change-sort="changeViewName"></sorting-comp>
         </li>
-        <li class="action" id="ta-action3"  >
+        <li class="action" id="ta-action3" >
           <group-comp label="Group by" :items="groupby" activeIcon="tick" icon="accessibility-braille-solid" tooltip="Group By" v-on:change-sort="groupBy"></group-comp>
         </li>
         <li class="action" id="ta-action2" title="Sort by" >
@@ -94,7 +94,6 @@ export default {
         }
       }
     },
-
 
     sortBy($event) {
       this.$emit("sort", $event)

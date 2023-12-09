@@ -207,22 +207,18 @@ export default {
           this.updateKey();
         }
         else {
-          
-          // this.$store.commit('user/updateFetchUserTasks',{createORupdate:payload,data:this.selectedTask,filter:this.filterViews,key:this.groupBy})
+          this.$store.dispatch("user/getUserTasks", { userId: this.$route.params.id, filter: 'all' })
+            .then(res => {
+              this.$store.commit('user/setFetchUserTasks', { data:res, filter:this.filterViews, key:this.groupBy })
+              this.key += 1;
+              this.templateKey+=1
+            })
+          // this.$store.commit('user/updateFetchUserTasks',{createORupdate:payload, data:this.selectedTask, filter:this.filterViews, key:this.groupBy})
           // this.templateKey += 1
         }
         // await this.fetchUserTasks();
         // this.beforeLocal = this.localData
       });
- 
-      // this.$nuxt.$on("user-picker", (payload) => {
-      //   // emitted from <task-grid>
-      //   this.showUserPicker(payload);
-      // });
-      // this.$nuxt.$on("date-picker", (payload) => {
-      //   // emitted from <task-grid>
-      //   this.showDatePicker(payload);
-      // });
 
       this.$nuxt.$on("refresh-table", () => {
         console.log("on-refresh")
@@ -249,12 +245,12 @@ export default {
         }
       }
       if(this.teamMembers.length>0){
-          this.teamMembers.find((u) => {
-            if (u.id == this.$route.params.id) {
-              this.selectedUser = u;
-            }
-          });
-      
+        this.teamMembers.find((u) => {
+          if (u.id == this.$route.params.id) {
+            this.selectedUser = u;
+          }
+        });
+    
         // let data=_.cloneDeep(this.all_tasks)
         //   data=data.filter((item)=>{
         //     if(item.userId==this.$route.params.id){
@@ -269,17 +265,18 @@ export default {
         //   this.$store.commit('user/setFetchUserTasks', {data:res,filter:this.filterViews,key:this.groupBy})
         //   this.$store.commit('user/setInitialUserTasks', {initial:res});
         //   })
+
         this.localData = this.userTasks
 
-          if(this.groupBy!==''||this.groupBy=="default"){
-            this.groupVisible=true
-          }
-          else {
-            this.groupVisible=false
-            setTimeout(() => {
+        if(this.groupBy!==''||this.groupBy=="default"){
+          this.groupVisible=true
+        }
+        else {
+          this.groupVisible=false
+          setTimeout(() => {
             this.lazyComponent=true
-            }, 30);
-          }
+          }, 30);
+        }
 
   } 
   else {
@@ -313,17 +310,7 @@ export default {
 
     }
   },
-  // showUserPicker(payload){
-  //     this.closeAllPickers()
-  //     this.userPickerOpen = true
-  //     this.popupCoords = { left: event.clientX + 'px', top: event.clientY + 'px' }
-  //     this.activeTask = payload.task
-  //   },
-  //   closeAllPickers() {
-  //     this.userPickerOpen = false;
-  //     this.datePickerOpen = false;
-  //     this.activeTask = {};
-  //   },
+
   beforeDestroy(){ 
     this.$nuxt.$off("refresh-table");
     // this.$nuxt.$off("newTask");
@@ -386,8 +373,6 @@ export default {
       this.localData = this.userTasks
     },
 
-
-
     contextOpen(item){
       if(this.$CheckFavTask(item.id)){
        this.contextMenuItems=this.contextMenuItems.map(item => item.label === "Add to Favorites" ? { ...item, label: "Remove favorite"} : item);
@@ -405,10 +390,9 @@ export default {
       if ($event) {
         this.popupMessages.push({ text: $event, variant: "primary-24" });
       }
-      // if (process.client) {
-        this.$store.dispatch("user/getUserTasks", {
-          userId: this.$route.params.id,
-          filter: 'all',
+      this.$store.dispatch("user/getUserTasks", {
+        userId: this.$route.params.id,
+        filter: 'all',
       })
         .then(res=> {
           this.$store.commit('user/setFetchUserTasks', {data:res,filter:this.filterViews,key:this.groupBy})
@@ -635,10 +619,11 @@ export default {
         this.$store
           .dispatch("task/deleteTask", task)
           .then((t) => {
+            console.log(t)
             if (t.statusCode == 200) {
               // this.updateKey();
               this.$nuxt.$emit("delete_update_table",task,this.$route.fullPath)
-
+              this.popupMessages.push({ text: "Task deleted successfully", variant: "primary-24" });
             } else {
               this.popupMessages.push({ text: t.message, variant: "primary-24" });
               console.warn(t.message);

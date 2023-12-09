@@ -3,14 +3,27 @@
         <div id="page" class="project-id-wrapper h-100 overflow-y-auto">
             <page-title title="Import project"></page-title>
             <!-- Task View -->
-            <div id="project-id-content" class="project-id-content position-relative " :style="{ 'width': contentWidth }">
-                <div class="d-flex justify-center p-1">
-                    <div class="border-gray2 shape-rounded py-1 px-05" style="min-width: 400px; max-width:600px;">
-                        <bib-input type="file" ref="csvImport" @files-dropped="onFileInput" multiple="false" variant="light" iconLeft="upload" placeholder="Select file to upload"></bib-input>
+            <div id="import-content" class="import-content position-relative " >
+                <div class=" p-1 m-auto w-50" >
+                    <div class="border-gray2 shape-rounded py-1 px-05 mt-1 mb-2" style="min-width: 400px; max-width:600px;">
+                        <label class="font-md mb-075 d-inline-block text-secondary">Click to import projects as .csv file from Asana</label>
+                        <bib-input type="file" ref="csvImport" @files-dropped="onFileInput" multiple="false" variant="primary-24" iconLeft="upload" placeholder="Select .csv file to upload"></bib-input>
+
                         <div v-show="files.length > 0" class=" mt-1 align-center">
                           <bib-button :disabled="loading" variant="primary-24" label="Import CSV" @click="checkUser" pill></bib-button> <bib-spinner v-if="loading" :scale="2" ></bib-spinner>
                         </div>
                     </div>
+
+                    <div class="font-md py-1" >
+                        <p class="font-w-500">How to export an Asana Project as a .CSV</p>
+                        <ol>
+                            <li>First, navigate to the dropdown header of the project next to the project.</li>
+                            <li>Next, within the dropdown menu, select the Export/Print option.</li>
+                            <li>Select the .CSV file type to download this project as a .CSV.</li>
+                        </ol>
+                        <p >Know more <a href="https://blog.asana.com/2014/09/export-to-csv/" class="text-primary" target="_blank">https://blog.asana.com/2014/09/export-to-csv/</a></p>
+                    </div>
+
                 </div>
             </div>
             
