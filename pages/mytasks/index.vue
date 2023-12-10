@@ -231,7 +231,8 @@ export default {
     gridType() {
       this.$store.commit('todo/gridType',{gridType:this.gridType})
       localStorage.setItem('mygrid', this.gridType)
-      this.key++;
+      this.updateKey();
+      // this.key++;
     },
     sidebar(newVal){
       const page = document.getElementById("page")
@@ -764,6 +765,7 @@ export default {
       proj.priorityId = null
       proj.departmentId = null;
       proj.department = null;
+      proj.difficultyId = null;
       proj.user = [{
         id: this.loggedUser.Id,
         email: this.loggedUser.Email,
@@ -787,6 +789,9 @@ export default {
       if(this.groupby=="assignee"){
         proj.user=[section.tasks[0]?.user]
         proj.userId=section.tasks[0]?.userId
+      }
+      if(this.groupby=="difficulty"){
+        proj.difficultyId = section.tasks[0]?.difficultyId
       }
       if(this.groupby == "department"){
         proj.department = section.tasks[0]?.department
@@ -875,7 +880,8 @@ export default {
     }, 800),
 
     async createTodo($event) {
-      let tempTodos = this.localdata.map((el, index) => {
+      let tTodos=JSON.parse(JSON.stringify(this.localdata))
+      let tempTodos = tTodos.map((el, index) => {
         el.uOrder = index+1
         return el
       })
@@ -888,8 +894,9 @@ export default {
       })
 
       if (todo.statusCode == 200) {
+
         this.newSection = false
-        this.$store.dispatch("todo/fetchTodos", { filter: 'all' })
+        this.$store.dispatch("todo/fetchTodos", { filter:this.filterViews })
       } else {
         console.warn(todo)
       }

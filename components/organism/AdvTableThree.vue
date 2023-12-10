@@ -558,10 +558,11 @@ export default {
        if(param.includes("/projects/")){
         if(this.singleProjectGroupBy=="") 
                 {
+
                   if(this.localData.length>=0){
-                      let exist_item= this.localData.find((item)=>item.title=="_section32")
+                      let exist_item= this.localData.find((item)=>item.id==payload.sectionId)
                       if(exist_item) {
-                        let index = this.localData.findIndex((item) => item.title == "_section32");
+                        let index = this.localData.findIndex((item) => item.id==payload.sectionId);
                         this.localData[index].tasks.push(payload);
                       }
                       else {

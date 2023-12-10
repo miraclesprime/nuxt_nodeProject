@@ -58,8 +58,8 @@
       <div class="row mb-05 ">
         <div class="col-2 align-center"><label>Budget</label></div>
         <div class="col-5">
-          <!-- <input-two type="number" :value="form.budget" icon="currency-dollar" @input="validate('Budget','budget', $event)" ></input-two> -->
-          <input-two type="number" :value="form.budget" icon="currency-dollar" @blur="validate('Budget','budget', $event)"  @keyup.enter="validate('Budget','budget', $event)"></input-two>
+          <input-two type="number" :value="form.budget" icon="currency-dollar" @input="validate('Budget','budget', $event)" ></input-two>
+          <!-- <input-two type="number" :value="form.budget" icon="currency-dollar" @blur="validate('Budget','budget', $event)"  @keyup.enter="validate('Budget','budget', $event)"></input-two> -->
         </div>
       </div>
       <div class="row ">

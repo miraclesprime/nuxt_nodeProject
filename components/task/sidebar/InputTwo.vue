@@ -3,9 +3,9 @@
     <div class="align-center gap-01 px-05" id="input-two-span-wrap">
       <bib-icon v-if="icon && iconPosition == 'left'" :icon="icon" :variant="iconVariant"></bib-icon>
       <input v-if="type == 'text'" type="text" v-model="localData" class="height-2 " :style="{width: inputwidth}" @input="onInput" >
-      <input v-if="type == 'number'" type="text" v-model="localData" class="height-2 " :class="{'text-danger': !validNumber}" :style="{width: inputwidth}" @input="handleInput" >
+      <input v-if="type == 'number'" type="text" v-model="localData" class="height-2 " :class="{'text-danger': !isValid}" :style="{width: inputwidth}" @blur="handleInput" >
       <bib-icon v-if="icon && iconPosition == 'right'" :icon="icon" :variant="iconVariant"></bib-icon>
-      <bib-icon v-if="!validNumber" icon="urgent" variant="danger"></bib-icon>
+      <bib-icon v-if="!isValid" icon="urgent" variant="danger"></bib-icon>
       <!-- {{visibleText.label}} -->
     </div>
   </div>
@@ -29,7 +29,7 @@ export default {
   data() {
     return {
       localData: 0,
-      
+      isValid: true,
     }
   },
   watch: {
@@ -45,26 +45,6 @@ export default {
     inputwidth(){
       // console.log(this.localData.length)
       return this.localData.length >= 6 ? (this.localData.length + 1) * 8 + "px" : "60px"
-    },
-    validNumber(){
-      if (this.type == 'number') {
-        // Convert the input to a string to handle both numbers and strings as input
-        const inputString = this.localData.toString();
-
-        if (inputString.length == 0) {
-          return true
-        } else {
-          // Use a regular expression to check for valid number format
-          // This regex matches numbers with up to 2 decimal places
-          // const regex = /^[+-]?\d+(\.\d{1,2})?$/;
-          const regex = /^[+-]?\d*\.?\d{1,2}$/;
-          return regex.test(inputString);
-        }
-        // return (typeof(this.localData) === 'number' || typeof(this.localData) === "string" && this.localData.trim() !== '') && !isNaN(this.localData);
-      } else {
-        return true
-      }
-      // return /^-?\d+$/.test(this.localData);
     },
   },
   mounted() {
@@ -94,14 +74,36 @@ export default {
       cleanedValue = parts.length == 1 ? integerPart : `${integerPart}.${decimalPart}`;
 
       // Update the input value
-      this.localData = cleanedValue;
+      // this.localData = cleanedValue;
+      this.validNumber()
       this.onInput()
     },
     onInput: _.debounce(function() {
       // console.log(this.localData)
       this.$emit("input", this.localData.trim())
-    }, 600)
-  }
+    }, 600),
+    validNumber(){
+      console.log(this.localData)
+      if (this.type == 'number') {
+        // Convert the input to a string to handle both numbers and strings as input
+        const inputString = this.localData.toString();
+
+        if (inputString.length == 0) {
+          this.isValid = true
+        } else {
+          // Use a regular expression to check for valid number format
+          // This regex matches numbers with up to 2 decimal places
+          // const regex = /^[+-]?\d+(\.\d{1,2})?$/;
+          const regex = /^[+-]?\d*\.?\d{1,2}$/;
+          this.isValid = regex.test(inputString);
+        }
+        // return (typeof(this.localData) === 'number' || typeof(this.localData) === "string" && this.localData.trim() !== '') && !isNaN(this.localData);
+      } else {
+        this.isValid = true
+      }
+      // return /^-?\d+$/.test(this.localData);
+    },
+  },
 }
 
 </script>
