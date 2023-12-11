@@ -181,7 +181,8 @@ export default {
 
       this.$store.commit('task/gridType',{gridType:this.gridType})
       localStorage.setItem('grid', this.gridType)
-      this.key++;
+      this.updateKey()
+      // this.key++;
     },
     sidebar(newVal){
       const page = document.getElementById("page")
@@ -244,7 +245,7 @@ export default {
     }
   },
       beforeDestroy(){ 
-
+      this.$nuxt.$off("update-key");
       this.$nuxt.$off("refresh-table");
 
       },
@@ -1015,10 +1016,7 @@ export default {
       this.loading = false;
     }, 600),
 
-    createNewTask(task, section) {
-      /*console.log("task", task)
-      console.log("section",section)*/
-      
+    createNewTask(task,section) {
       task.group = this.group;
       task.status = null
       task.statusId = null
@@ -1029,6 +1027,8 @@ export default {
       task.user = null
       task.userId = null
       task.projectId = null
+      task.difficultyId =null
+      task.todoId = section.tasks[0]?.todoId?section.tasks[0]?.todoId:section.id
       
       if(this.group == "priority"){
         task.priority = section.tasks[0]?.priority
@@ -1044,8 +1044,11 @@ export default {
         task.userId = section.tasks[0]?.userId
       }
       if(this.group == "department"){
-        task.department = section.tasks[0]?.department
-        task.departmentId = section.tasks[0]?.departmentId
+        task.department = section.tasks[0]?.department?section.tasks[0]?.department:null
+        task.departmentId = section.tasks[0]?.departmentId?section.tasks[0]?.departmentId:null
+      }
+         if(this.group == "difficulty"){
+        task.difficultyId = section.tasks[0]?.difficultyId
       }
       if(this.group == "project"){
         task.projectId = section.tasks[0]?.project?.[0].project?.id || null 

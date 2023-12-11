@@ -208,8 +208,10 @@ export default {
   created() {
     if (process.client) {
       this.$nuxt.$on("update-key", (msg) => {
-        this.fetchFavProjects()
-        this.getFavTasks()
+        this.updateKey()
+       this.templateKey++;
+        // this.fetchFavProjects()
+        // this.getFavTasks()
         if (msg) {
           this.popupMessages.push({ text: msg, variant: 'primary-24' })
         }
@@ -1586,6 +1588,7 @@ Promise.all([fetchTask, fetchSubtask]).then((values) => {
       Promise.all([tsk, sbtsk]).then((values) => {
         this.fetchTasks()
       })
+      
     },
 
     // task context menu methods ------------------------------------------

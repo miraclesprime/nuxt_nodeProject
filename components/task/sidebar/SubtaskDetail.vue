@@ -114,7 +114,7 @@
         </div>
         <div class="row " id="sd-other-fields-row7">
           <div class="col-12" id="sd-other-fields-r7-c1">
-            <div class="col-2 align-center" id="sd-other-fields-r9-c1"><label>Desciption</label></div>
+            <div class="mb-05" id="sd-other-fields-r9-c1"><label>Desciption</label></div>
             <rich-editor :value="value" :editingMessage="form.description" @submit="$emit('subtask-desc',{ id: form.id, name: 'Description', field: 'description', value: $event.text})" ></rich-editor>
           </div>
         </div>
@@ -842,5 +842,30 @@ export default {
   padding: 0 0.4rem;
   border: 1px solid transparent;
 }
+::v-deep {
+  // .input {
 
+  //   &--sm {
+  //     .wrapper {
+  //       .icon { top: 0.5rem; }
+  //     }
+  //   }
+  //   input {
+  //     display: inline;
+  //     margin-block: 0;
+  //     width: auto;
+  //     min-width: 5rem;
+  //     max-width: max-content;
+  //     background-color: var(--bib-gray9);
+  //     border: 1px solid transparent;
+  //     color: var(--bib-secondary);
+  //     &:hover, &:focus {
+  //       border-color: var(--bib-gray2);
+  //       color: var(--bib-text);
+  //     }
+  //   }
+  // }
+  .bib-datepicker__input,
+  .vdpComponent__input { margin-block: 0;}
+}
 </style>

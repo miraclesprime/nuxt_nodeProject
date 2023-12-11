@@ -480,7 +480,12 @@ export default {
   },
 
   methods: {
-
+    parseDate(dateString, format) {
+      return new Date(dateString);
+    },
+    formatDate(dateObj, format) {
+      return this.$formatDate(dateObj)
+    },
     delete_UpdateLocalData(payload,param) {
       if(this.localData.reduce((acc, td) => acc + td.tasks.length, 0)==1){
         this.$nuxt.$emit("refresh-table");
@@ -558,10 +563,11 @@ export default {
        if(param.includes("/projects/")){
         if(this.singleProjectGroupBy=="") 
                 {
+
                   if(this.localData.length>=0){
-                      let exist_item= this.localData.find((item)=>item.title=="_section32")
+                      let exist_item= this.localData.find((item)=>item.id==payload.sectionId)
                       if(exist_item) {
-                        let index = this.localData.findIndex((item) => item.title == "_section32");
+                        let index = this.localData.findIndex((item) => item.id==payload.sectionId);
                         this.localData[index].tasks.push(payload);
                       }
                       else {
@@ -750,12 +756,12 @@ export default {
     },
     
 
-    parseDate(dateString, format) {
-        return new Date(dateString)
-    },
-    formatDate(dateObj, format) {
-        return dayjs(dateObj).format(format);
-    },
+    // parseDate(dateString, format) {
+    //     return new Date(dateString)
+    // },
+    // formatDate(dateObj, format) {
+    //     return dayjs(dateObj).format(format);
+    // },
     startdateValid(date, duedate){
       // console.log(...arguments)
       const maxDate = new Date(duedate)

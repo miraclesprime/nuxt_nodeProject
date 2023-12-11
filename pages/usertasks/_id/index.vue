@@ -481,6 +481,9 @@ export default {
         proj.department=section.tasks[0]?.department
         proj.departmentId=section.tasks[0]?.departmentId
       }
+      if(this.groupBy=="difficulty"){
+        proj.difficultyId=section.tasks[0]?.difficultyId
+      }
       if(this.groupBy=="project"){
         proj.projectId=section.tasks[0]?.project?.[0].project?.id||null 
       }

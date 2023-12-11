@@ -475,6 +475,26 @@ export default {
           "data": this.unassignedTasks ? { id: null, ...this.unassignedTasks } : null
         }).then((task) => {
           // this.$nuxt.$emit("refresh-table");
+
+          if(this.$route.path=="/mytasks" && this.mytaskGrid=="grid") {
+            this.$nuxt.$emit("update-key")
+            this.reloadHistory += 1
+            this.reloadComments+=1
+            return; 
+          }
+          if(this.$route.path=="/tasks" && this.tasksGrid=="grid") {
+            this.$nuxt.$emit("update-key")
+            this.reloadHistory += 1
+            this.reloadComments+=1
+            return;
+          }
+          if(this.$route.path.includes("/projects/") && this.singleProjectGrid=="grid"){
+            this.$nuxt.$emit("update-key")
+            this.reloadHistory += 1
+            this.reloadComments+=1
+            return;
+          }
+
           this.$nuxt.$emit("newTask",task.data,this.$route.path)
           // this.$nuxt.$emit("gridNewTask",task.data,this.$route.path)
           this.getTableCount(this.$route.path,task.data)
@@ -768,12 +788,21 @@ export default {
       this.favProcess = true
       if (this.isFavorite.status) {
         this.$store.dispatch("task/removeFromFavorite", { id: this.currentTask.id })
-          .then(msg => console.log(msg))
+          .then(msg =>{
+            if(this.$route.path=="/favorites"){
+             this.$nuxt.$emit("update-key",msg)
+            }
+          })
           .catch(e => console.log(e))
+          
           .then(()=>this.favProcess = false)
       } else {
         this.$store.dispatch("task/addToFavorite", { id: this.currentTask.id })
-          .then(msg => console.log(msg))
+          .then(msg => {
+            if(this.$route.path=="/favorites"){
+             this.$nuxt.$emit("update-key",msg)
+            }
+          })
           .catch(e => console.log(e))
           .then(()=>this.favProcess = false)
       }
