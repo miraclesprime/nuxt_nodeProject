@@ -275,7 +275,7 @@ export default {
           color: "warning",
           active: false,
           text: "Meetings",
-          href: process.env.BIB_VIDEO_CONF_URL,
+          href: process.env.VIDEO_CONF_APP_URL,
         },
         {
           img: "projects",
