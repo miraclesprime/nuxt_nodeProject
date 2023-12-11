@@ -703,7 +703,7 @@ export default {
 
     async uploadFiles(files, commentRes) {
       let filelist = []
-      console.log(...arguments)
+      // console.log(...arguments)
       let formdata = new FormData()
       files.forEach(file => {
         formdata.append('files', file)
