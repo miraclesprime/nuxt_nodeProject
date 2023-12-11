@@ -5,7 +5,7 @@
         <div class="table w-100 " ref="headrow" >
           <div class="tr " role="row" >
             <div v-if="drag && filterViews == 'all'" class="width-2 th" role="cell" ></div>
-            <div v-for="(field, index) in tableFields" :key="field+index" class="th height-2" role="cell" :width="colSizes[index]+'%'" :style="{width: `calc(1.0045% * ${colSizes[index]})`}" :ref="'th'+field.key" :data-key="field.key" >
+            <div v-for="(field, index) in tableFields" :key="field+index" class="th height-2" role="cell" :width="colSizes[index]+'%'" :style="{width: `calc(1.001% * ${colSizes[index]})`}" :ref="'th'+field.key" :data-key="field.key" >
               <!-- <div class="align-center gap-05" >{{field.label}} <span v-if="field.header_icon" :id="'adv-table-header-icon'+index" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null" >
                   <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
                 </span>

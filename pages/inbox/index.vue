@@ -261,6 +261,15 @@ export default {
       console.warn(err)
     })
 
+    this.$store.dispatch("user/fetchUserHistory", { page: this.currentPage + 1})
+      .then(h => {
+        if (h.data.statusCode == 200) {
+          this.pageCount = h.data.totalPage
+          this.currentPage++
+          this.inbox.push(...h.data.data)
+        }
+      })
+
     this.scrollTrigger();
   },
   methods: {
