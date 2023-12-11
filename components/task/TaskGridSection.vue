@@ -23,8 +23,8 @@
                       <span class="ml-05" :id="'tgs-list-span'+section.id">Rename</span>
                     </div>
                   </span> -->
-                  <hr v-if="sectionType != 'department'">
-                  <span v-if="sectionType != 'department'" class="list__item list__item__danger" :id="'tgs-list-3'+section.id" v-on:click="$emit('section-delete',{id: section.id, title: section.title, projectId: section.projectId })" @mouseenter="deleteBtnHover = true" @mouseleave="deleteBtnHover = false">
+                  <hr v-if="sectionType != 'department' && section.isDeletable == true">
+                  <span v-if="sectionType != 'department' && section.isDeletable == true" class="list__item list__item__danger" :id="'tgs-list-3'+section.id" v-on:click="$emit('section-delete',{id: section.id, title: section.title, projectId: section.projectId })" @mouseenter="deleteBtnHover = true" @mouseleave="deleteBtnHover = false">
                       <bib-icon icon="trash" :variant="deleteBtnHover ? 'white' : 'danger'"></bib-icon>
                       <span class="ml-05">Delete section</span>
                   </span>
