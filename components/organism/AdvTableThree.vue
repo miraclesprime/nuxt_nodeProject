@@ -480,7 +480,12 @@ export default {
   },
 
   methods: {
-
+    parseDate(dateString, format) {
+      return new Date(dateString);
+    },
+    formatDate(dateObj, format) {
+      return this.$formatDate(dateObj)
+    },
     delete_UpdateLocalData(payload,param) {
       if(this.localData.reduce((acc, td) => acc + td.tasks.length, 0)==1){
         this.$nuxt.$emit("refresh-table");
@@ -751,12 +756,12 @@ export default {
     },
     
 
-    parseDate(dateString, format) {
-        return new Date(dateString)
-    },
-    formatDate(dateObj, format) {
-        return dayjs(dateObj).format(format);
-    },
+    // parseDate(dateString, format) {
+    //     return new Date(dateString)
+    // },
+    // formatDate(dateObj, format) {
+    //     return dayjs(dateObj).format(format);
+    // },
     startdateValid(date, duedate){
       // console.log(...arguments)
       const maxDate = new Date(duedate)

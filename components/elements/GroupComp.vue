@@ -4,7 +4,7 @@
       <bib-button :dropdown="icon" icon-variant="gray6" :tooltip-title="tooltip" size="sm">
         <template v-slot:menu>
           <div class="list border-light box-shadow" id="sc-dd-menu">
-            <span :id="'sc-dd-item-' + item.key" v-for="(item, index) in items" :key="'sc-dd-item-' + item.label + index" class="list__item d-flex justify-between" :class="{'dark': selectedView == item.label}" @click="changeViewName(item)" >{{item.label}} <bib-icon v-if="selectedView == item.label && activeIcon" :icon="activeIcon" :scale="1" variant="gray6"></bib-icon></span>
+            <span :id="'sc-dd-item-' + item.key" v-for="(item, index) in items" :key="'sc-dd-item-' + item.label + index" class="list__item d-flex justify-between" :class="{'dark': selectedView == item.label}" @click="changeViewName(item)" >{{item.label}} <bib-icon v-if="selectedView!='Reset'&&selectedView == item.label && activeIcon" :icon="activeIcon" :scale="1" variant="gray6"></bib-icon></span>
           </div>
         </template>
       </bib-button>
