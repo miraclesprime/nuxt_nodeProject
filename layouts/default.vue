@@ -149,14 +149,10 @@
       <add-teammember-modal ref="teammemberModal"></add-teammember-modal>
       <add-member-to-task ref="taskTeamModal"></add-member-to-task>
     </div>
-    <!-- <div class="blackbox" v-else>
+    <div class="blackbox" v-else>
         <bib-app-wrapper>
         <template #content>
-          <div
-            class="main blackbox"
-            id="main-content"
-            :class="openSidebar ? 'open-sidebar' : ''"
-          >
+          <div class="main blackbox" id="main-content" :class="openSidebar ? 'open-sidebar' : ''" >
             <Nuxt />
             <div class="blackbox"></div>
             <transition name="drawer">
@@ -165,7 +161,7 @@
           </div>
         </template>
       </bib-app-wrapper>  
-      </div> -->
+      </div>
   </client-only>
 </template>
 
