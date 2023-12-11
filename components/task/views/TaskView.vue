@@ -213,8 +213,8 @@ export default {
       sections: "section/getProjectSections",
       sidebar: "task/getSidebarVisible",
       filterViews :'task/getFilterView',
-      taskcount:"section/getTaskCount"
-
+      taskcount:"section/getTaskCount",
+      loggedUser: "user/getUser2",
     }),
   },
 
@@ -892,10 +892,17 @@ export default {
       proj.priorityId = null
       proj.departmentId = null;
       proj.department = null;
-      proj.user = null
-      proj.userId = null
-      proj.sectionId = this.groupby ? null : section.id
+      proj.user = [{
+        id: this.loggedUser.Id,
+        email: this.loggedUser.Email,
+        firstName: this.loggedUser.FirstName,
+        lastName: this.loggedUser.LastName
+      }]
+      proj.userId = this.loggedUser.Id
 
+      proj.sectionId=this.groupby ? "_section"+this.$route.params.id : section.id
+      
+      // proj.todoId=this.groupby ? "_section"+this.$route.params.id : section.id
       if(this.groupby == "priority"){
         proj.priority = section.tasks[0]?.priority
         proj.priorityId = section.tasks[0]?.priorityId
@@ -904,6 +911,9 @@ export default {
       if(this.groupby == "status"){
         proj.status = section.tasks[0]?.status
         proj.statusId = section.tasks[0]?.statusId
+      }
+      if(this.groupby == "difficulty"){
+        proj.difficultyId = section.tasks[0]?.difficultyId
       }
       if(this.groupby=="assignee"){
         proj.user=[section.tasks[0]?.user]
@@ -919,10 +929,11 @@ export default {
       this.$store.dispatch("task/createTask", {
           ...proj,
           projectId: Number(this.$route.params.id),
-          sectionId: this.groupby ? "_section"+this.$route.params.id : section.id,
+         
           text: `created task ${proj.title}`,
         })
         .then((t) => {
+          console.log("project",t.data)
           this.resetNewRow();
           this.$nuxt.$emit("newTask",t.data,this.$route.fullPath)
           // this.updateKey();

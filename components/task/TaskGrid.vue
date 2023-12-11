@@ -62,7 +62,6 @@ import { mapGetters } from 'vuex'
 import dayjs from 'dayjs'
 import { TASK_CONTEXT_MENU } from "../../config/constants";
 import { unsecuredCopyToClipboard } from '~/utils/copy-util.js'
-import { conditionalExpression } from '@babel/types';
 
 export default {
   name: "TaskGrid",

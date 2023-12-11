@@ -231,7 +231,8 @@ export default {
     gridType() {
       this.$store.commit('todo/gridType',{gridType:this.gridType})
       localStorage.setItem('mygrid', this.gridType)
-      this.key++;
+      this.updateKey();
+      // this.key++;
     },
     sidebar(newVal){
       const page = document.getElementById("page")
@@ -607,10 +608,8 @@ export default {
         }   
       }
 
-      if(this.groupby != '') {
-        this.updateKey();
-      } else {
-
+      if(this.groupby != '') 
+      {
         this.$store.dispatch("task/updateTask", {
           id: payload.id,
           projectId: item.project[0]?.projectId || null,
@@ -618,7 +617,18 @@ export default {
           text: historyText
         })
           .then(t => {
-            // this.updateKey()
+          })
+          .catch(e => console.warn(e))
+      }
+       else {
+        this.$store.dispatch("task/updateTask", {
+          id: payload.id,
+          projectId: item.project[0]?.projectId || null,
+          data: { [field]: value },
+          text: historyText
+        })
+          .then(t => {
+            this.updateKey()
           })
           .catch(e => console.warn(e))
       }
@@ -747,6 +757,7 @@ export default {
       }
     },
     createNewTask(proj, section) {
+      console.log(section)
       proj.group = this.groupby;
       proj.status = null
       proj.statusId = null
@@ -754,6 +765,7 @@ export default {
       proj.priorityId = null
       proj.departmentId = null;
       proj.department = null;
+      proj.difficultyId = null;
       proj.user = [{
         id: this.loggedUser.Id,
         email: this.loggedUser.Email,
@@ -762,7 +774,8 @@ export default {
       }]
       proj.userId = this.loggedUser.Id
       proj.projectId=null
-      proj.todoId = this.groupby ? null : section.id
+      proj.todoId = this.groupby ? section.tasks[0]?.todoId : section.id
+
 
       if(this.groupby == "priority"){
         proj.priority = section.tasks[0]?.priority
@@ -776,6 +789,9 @@ export default {
       if(this.groupby=="assignee"){
         proj.user=[section.tasks[0]?.user]
         proj.userId=section.tasks[0]?.userId
+      }
+      if(this.groupby=="difficulty"){
+        proj.difficultyId = section.tasks[0]?.difficultyId
       }
       if(this.groupby == "department"){
         proj.department = section.tasks[0]?.department
@@ -864,7 +880,8 @@ export default {
     }, 800),
 
     async createTodo($event) {
-      let tempTodos = this.localdata.map((el, index) => {
+      let tTodos=JSON.parse(JSON.stringify(this.localdata))
+      let tempTodos = tTodos.map((el, index) => {
         el.uOrder = index+1
         return el
       })
@@ -877,8 +894,9 @@ export default {
       })
 
       if (todo.statusCode == 200) {
+
         this.newSection = false
-        this.$store.dispatch("todo/fetchTodos", { filter: 'all' })
+        this.$store.dispatch("todo/fetchTodos", { filter:this.filterViews })
       } else {
         console.warn(todo)
       }
