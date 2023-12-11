@@ -310,7 +310,6 @@ export default {
         Filter:filter
       },
     });
-    console.log("response",response)
     store.dispatch('todo/setTodos', response.data.data)
     return { localdata: response.data.data }
     
@@ -570,7 +569,6 @@ export default {
 
     updateField(payload){
       // console.log(payload)
-      
       const { item, label, field, value, historyText } = payload
       let data = { [field]: value }
     
@@ -968,7 +966,6 @@ export default {
       if(this.groupby != '') {
         this.updateKey();
       } else {
-
         let taskDnD = await this.$axios.$put("/todo/crossTodoDragDrop", { data: dragData.tasks, todoId: dragData.sectionId }, {
           headers: {
             "Authorization": "Bearer " + localStorage.getItem("accessToken"),
