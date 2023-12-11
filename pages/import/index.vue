@@ -56,9 +56,9 @@
                     </div>
 
 
-                    <div v-show="dupProject && !importCompleteMsg" class="shape-rounded align-center gap-05 border-orange text-orange p-05">
+                    <div v-show="dupProject && !importCompleteMsg" class="shape-rounded align-center gap-05 border-primary text-primary p-05">
 
-                      <bib-icon icon="urgent" variant="orange"></bib-icon>
+                      <bib-icon icon="urgent" variant="primary-24"></bib-icon>
                         {{dupProject}}
                     </div>
 
@@ -119,7 +119,7 @@ export default {
             importfinish: false,
             missingMembers: [],
             steps: [
-                {id: 0, label: "Analyzing Users", progress: "progress", variant:"orange"},
+                {id: 0, label: "Analyzing Users", progress: "progress", variant:"primary-24"},
                 {id: 1, label: "Importing Project", progress: "pending", variant:"gray5"},
                 {id: 2, label: "Importing Section/Tasks", progress: "pending", variant:"gray5"},
                 {id: 3, label: "Importing Subtasks", progress: "pending", variant:"gray5"},
@@ -167,7 +167,7 @@ export default {
             this.importfinish = false
             this.importError = false
             this.steps = [
-                    {id: 0, label: "Analyzing Users", progress: "progress", variant:"orange"},
+                    {id: 0, label: "Analyzing Users", progress: "progress", variant:"primary-24"},
                     {id: 1, label: "Importing Project", progress: "pending", variant:"gray5"},
                     {id: 2, label: "Importing Section/Tasks", progress: "pending", variant:"gray5"},
                     {id: 3, label: "Importing Subtasks", progress: "pending", variant:"gray5"},

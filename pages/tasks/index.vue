@@ -908,11 +908,13 @@ export default {
     },
 
     toggleSidebar($event) {
+      // console.log($event)
+      let t = this.localData.find(ld => ld.title == "Unassigned")
       this.flag = !this.flag;
       if ($event.id) {
         this.$nuxt.$emit("open-sidebar", $event.id);
       } else {
-        this.$nuxt.$emit("open-sidebar", { department: $event });
+        this.$nuxt.$emit("open-sidebar", { department: $event, data: { tasks: t.tasks} });
       }
     },
 
@@ -1058,7 +1060,13 @@ export default {
 
       section["id"] = task.departmentId
       delete task.show
-      // delete task.sectionId
+      if (this.group || this.group == "department") {
+        delete task.sectionId
+      }
+
+      console.log("task", task)
+      console.log("section",section)
+      // return
       this.$store.dispatch("task/createTask", {
           ...task,
           data: section,

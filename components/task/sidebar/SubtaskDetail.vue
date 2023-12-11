@@ -701,6 +701,32 @@ export default {
       }
     },
 
+    async uploadFiles(files, commentRes) {
+      let filelist = []
+      // console.log(...arguments)
+      let formdata = new FormData()
+      files.forEach(file => {
+        formdata.append('files', file)
+        filelist.push(file.name)
+      })
+      formdata.append('subtaskId', commentRes.subtaskId)
+      formdata.append('subtaskCommentId', commentRes.id)
+      formdata.append('text', `uploaded file(s) "${filelist.join(", ")}"`)
+
+      const fi = await this.$axios.post("/file/upload", formdata, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      })
+      
+      if (fi.data.statusCode == 200) {
+        this.reloadFiles += 1
+        this.value.files = []
+        this.$nuxt.$emit("get-msg-files")
+      }
+    },
+
     async onDeleteMessage(payload) {
       // console.log(payload)
       this.loadingComments = true
