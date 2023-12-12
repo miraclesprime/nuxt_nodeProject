@@ -133,14 +133,14 @@ export default {
       } else {
         this.activeProject = {
           title: "",
-          startDate: "",
-          dueDate: "",
+          startDate: null,
+          dueDate: null,
           priorityId: null,
           statusId: null,
           departmentId: null,
           budget: 0,
           user: {},
-          userId: "",
+          userId: null,
           description: "",
         }
 
@@ -274,7 +274,7 @@ export default {
         this.$store.dispatch("project/updateProject", {
           id: this.activeProject?.id,
           user: this.owner,
-          data: { "startdate": newValue },
+          data: { "startDate": newValue },
           text: "removed Start date"
         })
         return
@@ -282,14 +282,14 @@ export default {
 
       if (this.activeProject.dueDate && this.activeProject.dueDate != null) {
         if (newStartDate.getTime() > new Date(this.activeProject.dueDate).getTime()) {
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          this.sdate = oldValue
+          this.popupMessages.push({ text: "Start date should be before Due date", variant: "danger" });
+          this.sdate = this.$formatDate(oldValue)
           // return
         } else {
           this.$store.dispatch("project/updateProject", {
             id: this.activeProject?.id,
             user: this.owner,
-            data: { "startdate": new Date(newValue) },
+            data: { "startDate": new Date(newValue) },
             text: `changed Start date to ${this.$formatDate(newValue)}`
           })
         }
@@ -297,7 +297,7 @@ export default {
         this.$store.dispatch("project/updateProject", {
           id: this.activeProject?.id,
           user: this.owner,
-          data: { "startdate": new Date(newValue) },
+          data: { "startDate": new Date(newValue) },
           text: `changed Start date to ${this.$formatDate(newValue)}`
         })
       }
@@ -324,8 +324,9 @@ export default {
       if (this.activeProject.startDate && this.activeProject.startDate != null) {
           // console.log(this.activeProject.startDate )
         if (newDueDate.getTime() < new Date(this.activeProject.startDate).getTime()) {
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
           this.activeProject.dueDate = oldValue
+          this.ddate = this.$formatDate(oldValue)
           // return
         } else {
           this.$store.dispatch("project/updateProject", {
