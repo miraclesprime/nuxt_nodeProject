@@ -972,7 +972,6 @@ export default {
         el.order = i;
       });
 
-      console.log(clone)
       // this.$store.dispatch("company/setCompanyTasks",{data:clone})
 
       let sectionDnD = await this.$axios.$put(

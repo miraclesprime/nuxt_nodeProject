@@ -616,8 +616,8 @@ export default {
 
         if (item.dueDate &&selectedDateUTC.getTime() > DueDateUTC.getTime() ) {
           this.localData[index].startDate = this.tableData[index].startDate
-          // this.popupMessages.push({ text: "Start date should be before Due date", variant: "danger" });
-          this.popupMessages.push({ text: "Invalid Date", variant: "danger" });
+          this.popupMessages.push({ text: "Start date should be before Due date", variant: "danger" });
+          // this.popupMessages.push({ text: "Invalid Date", variant: "danger" });
           this.modifyDateFormat(this.localData)
         } else {
           // console.info("valid startDate" )
@@ -634,7 +634,7 @@ export default {
             let selectDueDate = new Date(d);
             let selectedDateUTC = new Date(Date.UTC(selectDueDate.getUTCFullYear(), selectDueDate.getUTCMonth(), selectDueDate.getUTCDate()));
             selectedDateUTC.setUTCHours(0, 0, 0, 0);
-            
+
             let startDueDate = new Date(item.startDate);
             let startDateUTC = new Date(Date.UTC(startDueDate.getUTCFullYear(), startDueDate.getUTCMonth(), startDueDate.getUTCDate()));
             startDateUTC.setUTCHours(0, 0, 0, 0);
@@ -642,8 +642,8 @@ export default {
         if (item.startDate && selectedDateUTC.getTime() < startDateUTC.getTime() ) {
 
           this.localData[index].dueDate = this.tableData[index].dueDate
-          // this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
-          this.popupMessages.push({ text: "Invalid Date", variant: "danger" });
+          this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
+          // this.popupMessages.push({ text: "Invalid Date", variant: "danger" });
           this.modifyDateFormat(this.localData)
         } else {
           // console.info("valid dueDate" )

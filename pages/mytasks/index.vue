@@ -960,7 +960,6 @@ export default {
     taskDragEnd: _.debounce(async function(payload) {
       let dragData=_.cloneDeep(payload)
       this.highlight = null
-
       dragData.tasks.forEach((e, i) => {
         e.tOrder = i
       })

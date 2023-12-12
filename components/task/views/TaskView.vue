@@ -1327,14 +1327,17 @@ export default {
     }, 600),
 
     taskDragEnd: _.debounce(async function (payload) {
-      console.log("11",payload)
-      this.loading = true;
+      // this.loading = true;
       let tasks = _.cloneDeep(payload.tasks);
 
       tasks.forEach((el, i) => {
         el.order = i;
       });
-
+      if(this.groupby!='') {
+        this.updateKey()
+      }
+      else {
+          
       let taskDnD = await this.$axios.$put(
         "/section/crossSectionDragDrop",
         { data: tasks, sectionId: payload.sectionId },
@@ -1351,7 +1354,9 @@ export default {
       } else {
         console.warn(taskDnD.message);
       }
-      this.loading = false;
+      }
+
+      // this.loading = false;
     }, 600),
 
     copyTaskLink(task) {

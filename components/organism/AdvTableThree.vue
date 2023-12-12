@@ -1030,11 +1030,10 @@ export default {
         if (item.dueDate &&selectedDateUTC.getTime() > DueDateUTC.getTime() ) {
           // console.warn("invalid startDate", this.localData[sectionIdx].tasks[itemIdx].startDate, this.tableData[sectionIdx].tasks[itemIdx].startDate)
           this.localData[sectionIdx].tasks[itemIdx].startDate = this.tableData[sectionIdx].tasks[itemIdx].startDate
-          // this.popupMessages.push({ text: "Start date should be before Due date", variant: "danger" });
-          this.popupMessages.push({ text: "Invalid Date", variant: "danger" });
+          this.popupMessages.push({ text: "Start date should be before Due date", variant: "danger" });
+          // this.popupMessages.push({ text: "Invalid Date", variant: "danger" });
           this.modifyDateFormat(this.localData)
         } else {
-          console.log("212")
           this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
         }
       } else {
@@ -1052,14 +1051,12 @@ export default {
             startDateUTC.setUTCHours(0, 0, 0, 0);
 
         if (item.startDate && selectedDateUTC.getTime() < startDateUTC.getTime() ) {
-          console.log("1")
           // console.warn("invalid dueDate", this.localData[sectionIdx].tasks[itemIdx].dueDate, this.tableData[sectionIdx].tasks[itemIdx].dueDate)
           this.localData[sectionIdx].tasks[itemIdx].dueDate = this.tableData[sectionIdx].tasks[itemIdx].dueDate
-          // this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
-          this.popupMessages.push({ text: "Invalid Date", variant: "danger" });
+          this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
+          // this.popupMessages.push({ text: "Invalid Date", variant: "danger" });
           this.modifyDateFormat(this.localData)
         } else {
-          console.log("2")
           // console.info("valid dueDate" )
           this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
         }
