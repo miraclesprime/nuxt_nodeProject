@@ -563,15 +563,16 @@ export default {
         if(payload.value=="Invalid Date"){
           data = { [payload.field]: null }
         }else {
-          if(new Date(payload.value).getTime() > new Date(payload.item.startDate).getTime()){
-          // console.log('dueDate > startDate')
           data = { [payload.field]: payload.value }
-        } else {
-          data = { [payload.field]: null }
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          // this.updateKey();
-          return false
-        }
+        //   if(new Date(payload.value).getTime() > new Date(payload.item.startDate).getTime()){
+        //   // console.log('dueDate > startDate')
+        //   data = { [payload.field]: payload.value }
+        // } else {
+        //   data = { [payload.field]: null }
+        //   this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+        //   // this.updateKey();
+        //   return false
+        // }
         }
         // console.log(payload.value, 'startDate', payload.item.startDate)
         // if(new Date(payload.value).toISOString().slice(0, 10)>new Date(payload.item.startDate).toISOString().slice(0, 10)){
@@ -582,15 +583,16 @@ export default {
         if(payload.value=="Invalid Date"){
           data = { [payload.field]: null }
         }else {
-          if(new Date(payload.value).getTime() < new Date(payload.item.dueDate).getTime()) {
-          // console.log('startDate < dueDate')
           data = { [payload.field]: payload.value }
-        } else {
-          data = { [payload.field]: null }
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          // this.updateKey();
-          return false
-        }
+        //   if(new Date(payload.value).getTime() < new Date(payload.item.dueDate).getTime()) {
+        //   // console.log('startDate < dueDate')
+        //   data = { [payload.field]: payload.value }
+        // } else {
+        //   data = { [payload.field]: null }
+        //   this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+        //   // this.updateKey();
+        //   return false
+        // }
         }
         // console.log(payload.value, 'dueDate', payload.item.dueDate)
   
