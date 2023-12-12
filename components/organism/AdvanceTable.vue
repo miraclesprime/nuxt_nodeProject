@@ -327,7 +327,7 @@ export default {
       dragInterval: 5,
       
       onDragEnd: (sizes) => {
-        console.log(sizes[1])
+        // console.log(sizes[1])
         this.colSizes = sizes
         /*if (pg.indexOf("favorite") < 0) {
           sessionStorage.setItem("cols"+pg, JSON.stringify(sizes))

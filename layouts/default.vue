@@ -155,9 +155,9 @@
           <div class="main blackbox" id="main-content" :class="openSidebar ? 'open-sidebar' : ''" >
             <Nuxt />
             <div class="blackbox"></div>
-            <!-- <transition name="drawer">
+            <transition name="drawer">
               <task-sidebar-two v-show="openSidebar" :expandVisible="expandVisible" :unassignedTasks="unassignedTasks" ></task-sidebar-two>
-            </transition> -->
+            </transition>
           </div>
         </template>
       </bib-app-wrapper>  
