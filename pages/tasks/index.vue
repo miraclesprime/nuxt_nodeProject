@@ -991,7 +991,6 @@ export default {
     taskDragEnd: _.debounce(async function (payload) {
       this.loading = true;
       let tasks = _.cloneDeep(payload.tasks);
-
       tasks.forEach((el, i) => {
         el.dOrder = i;
       });
