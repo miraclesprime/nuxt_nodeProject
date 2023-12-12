@@ -23,7 +23,7 @@
         </div>
       </div>
     </div>
-    <div class=" border-primary-24 shape-rounded cursor-pointer bg-hover-primary-24 px-05 text-primary-24 text-hover-white text-center font-lg" @click.stop="showNewTask">+</div>
+    <div v-show="!newTask" class=" border-primary-24 shape-rounded cursor-pointer bg-hover-primary-24 px-05 text-primary-24 text-hover-white text-center font-lg" @click.stop="showNewTask">+</div>
   </div>
 </template>
 
@@ -34,7 +34,7 @@ export default {
   name: "TaskGridBlank",
   props: {
     section: { type: Object },
-    sectionType: { type: String }
+    sectionType: { type: String },
   },
   computed: {
     ...mapGetters({
@@ -79,7 +79,8 @@ export default {
       this.newTask = false
     },
     createNewTask(section, group) {
-      console.log(section)
+      // console.log(...arguments)
+      // return
       let proj={}
       proj.group = group;
       proj.status = null
@@ -134,41 +135,59 @@ export default {
         proj.difficultyId = section.tasks[0]?.difficultyId
       }
       if(this.$route.path.includes("/projects/")){
-          proj.projectId=Number(this.$route.params.id)   
-          proj.sectionId= group ? "_section"+this.$route.params.id : section.id          
-        }
-      if(this.$route.path=="/tasks"||this.$route.path=="/mytasks") {
-          if(group == "project"){
-          proj.projectId = section.tasks[0]?.project?.[0].project?.id || null 
-          }
+        proj.projectId = Number(this.$route.params.id)   
+        proj.sectionId = group ? "_section"+this.$route.params.id : section.id
+        proj["mode"] = "project"
+        proj.userId = null
+        proj.user = null
       }
-      console.log(proj)
+      if(this.$route.path=="/tasks" || this.$route.path=="/mytasks") {
+        if(group == "project"){
+          proj.projectId = section.tasks[0]?.project?.[0].project?.id || null 
+        }
+      }
+      let dataNeeded = false
+      // on tasks page
+      if (this.$route.path == '/tasks') {
+        proj["mode"] = "department"
+        proj.sectionId = null
+        proj.userId = null
+        proj.user = null
+        section.id = section.tasks[0]?.departmentId || null
+        // proj.departmentId = section.tasks[0]?.departmentId
+        dataNeeded = true
+      }
+
+      console.log("task",proj, "section->",section)
+      // return
+
       this.$store.dispatch("task/createTask", {
-          ...proj,
-          text: `created task ${this.taskTitle}`,
-        })
-        .then((t) => {
-          console.log(t)
-          this.$nuxt.$emit("refresh-table");
-          this.newTask = false
-          this.taskTitle = ""
-          
-        })
-        .catch((e) => {
-          console.warn(e);
-        });
+        ...proj,
+        text: `created task ${this.taskTitle}`,
+        data: dataNeeded ? section : null,
+      })
+      .then((t) => {
+        // console.log(t)
+        this.$nuxt.$emit("refresh-table");
+        this.newTask = false
+        this.taskTitle = ""
+        
+      })
+      .catch((e) => {
+        console.warn(e);
+      });
     },
     
     debounceCreate: _.debounce(function() {
       if(this.sectionType=="myTask") {
-          this.createNewTask(this.section,this.myTaskGroupBy)
+        this.createNewTask(this.section, this.myTaskGroupBy)
       }
       if(this.sectionType == 'department') {
-        this.createNewTask(this.section,this.taskGroupBy)
+        this.createNewTask(this.section, this.taskGroupBy)
 
       } 
       if(this.sectionType=="singleProject"){
-        this.createNewTask(this.section,this.singleProjectGroupBy)
+        this.createNewTask(this.section, this.singleProjectGroupBy)
       }
 
 

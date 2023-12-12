@@ -856,7 +856,7 @@ export default {
         let elem = event.currentTarget.closest(".tr")
         elem.classList.add('active')
       })
-      console.log(fieldEvent, item.hasOwnProperty('sectionId'))
+      // console.log(fieldEvent, item.hasOwnProperty('sectionId'))
       if (item.hasOwnProperty('sectionId')) {
         this.$emit(`${fieldEvent}`, item)
         return
