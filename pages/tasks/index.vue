@@ -429,14 +429,15 @@ export default {
         if(payload.value=="Invalid Date"){
           data = { [payload.field]: null }
         }else {
-          if(new Date(payload.value).getTime() > new Date(payload.item.startDate).getTime()){
           data = { [payload.field]: payload.value }
-        } else{
-          data = { [payload.field]: null }
-          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          // this.updateKey()
-          return false
-        }
+        //   if(new Date(payload.value).getTime() > new Date(payload.item.startDate).getTime()){
+        //   data = { [payload.field]: payload.value }
+        // } else{
+        //   data = { [payload.field]: null }
+        //   this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+        //   // this.updateKey()
+        //   return false
+        // }
         }
   
       }
@@ -444,14 +445,15 @@ export default {
         if(payload.value=="Invalid Date"){
           data = { [payload.field]: null }
         }else {
-            if(new Date(payload.value).getTime() < new Date(payload.item.dueDate).getTime()){
-            data = { [payload.field]: payload.value }
-          } else {
-            data = { [payload.field]: null }
-            this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-            // this.updateKey()
-            return false
-          }
+          data = { [payload.field]: payload.value }
+          //   if(new Date(payload.value).getTime() < new Date(payload.item.dueDate).getTime()){
+          //   data = { [payload.field]: payload.value }
+          // } else {
+          //   data = { [payload.field]: null }
+          //   this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          //   // this.updateKey()
+          //   return false
+          // }
         }
       }
       
