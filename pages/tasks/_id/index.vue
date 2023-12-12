@@ -224,7 +224,7 @@ export default {
       if (Object.keys(this.currentTask).length) {
         this.form = _.cloneDeep(this.currentTask);
         if (this.currentTask.project?.length) {
-          console.log("this.currentTask",this.currentTask)
+          // console.log("this.currentTask",this.currentTask)
           this.form.projectId = this.currentTask.project[0]?.projectId || this.currentTask.project[0].project?.id
         } else {
           this.form.projectId = this.project?.id
@@ -301,8 +301,28 @@ export default {
                           headers: {
                             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
                           },
-                        }).then ((tm)=>{
+                        }).then (async (tm)=>{
                           let teams = tm.data.data.members;
+
+                          let projectMembers; 
+                          if(tm.data.data.project[0]) {
+                            let mems = await this.$axios.get(`/project/${tm.data.data.project[0].projectId}/members`, {
+                              headers: {
+                                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                              }
+                            });
+                            projectMembers = mems.data.data.members;
+                          }
+
+                          let checkMemberInTasks = teams.find((tm) => tm.userId == JSON.parse(localStorage.getItem("user")).sub);
+
+                          let checkMemberInProjects = projectMembers.find((tm) => tm.userId == JSON.parse(localStorage.getItem("user")).sub);
+
+                          if(((checkMemberInTasks || checkMemberInProjects) && JSON.parse(localStorage.getItem("user")).subr == 'USER') || JSON.parse(localStorage.getItem("user")).subr == 'ADMIN') {
+                            alert("You are good")
+                          } else {
+                            alert("You are not a Member of this Task or Project")
+                          }
 
                           let data = teams.map((el) => {
                             if (res.data.userId == el.user.id) {
@@ -327,7 +347,6 @@ export default {
         "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
       }
     }).then((res) => {
-      console.log(res)
       this.$store.commit('user/setTeamMembers',res)
  
         });
@@ -606,7 +625,7 @@ export default {
     },
 
     storeDescription(payload){
-      console.log("desc->", payload)
+      // console.log("desc->", payload)
       this.description = payload
     },
 
@@ -819,7 +838,7 @@ export default {
           "taskid": this.form.id,
         }
       }).then(res => {
-        console.log(res.data.message)
+        // console.log(res.data.message)
         this.getTags()
         this.$nuxt.$emit("update-key","tagStatus")
       }).catch(e => console.warn(e))
