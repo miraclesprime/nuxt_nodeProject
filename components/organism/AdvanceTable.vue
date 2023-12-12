@@ -6,7 +6,7 @@
         <div class="thead">
           <div  class="tr position-relative" role="row" id="advtable-head-row">
             <!-- <div v-if="drag" class="width-2 th" id="advtable-th" role="cell"></div> -->
-            <div v-for="(field, index) in tableFields" :key="field+index" class="th height-2" :id="'advtable-th'+index" role="cell" :width="colSizes[index]+'%'" :style="{width: `calc(1.001% * ${colSizes[index]})`}" >
+            <div v-for="(field, index) in tableFields" :key="field+index" class="th height-2" :id="'advtable-th'+index" role="cell" :style="{width: `calc(1.0% * ${colSizes[index]})`}" >
               {{field.label}}
               <!-- <div class="align-center gap-05" :style="{'min-width': field.minWidth}">{{field.label}} <span v-if="field.header_icon" id="adv-table-header-icon" class="height-1 cursor-pointer sortingtrigger" :data-event="field.header_icon.event" :data-key="field.key" @click="field.header_icon?.event ? $emit(field.header_icon.event, field.key) : null">
                   <bib-icon :icon="field.header_icon.icon" :variant="field.header_icon.isActive ? 'dark' : 'gray4'"></bib-icon>
@@ -36,7 +36,7 @@
         <div class="table w-100">
           <!-- <article class="tbody"> -->
             <div class="tr hidden" role="row" >
-              <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{ width: colSizes[index]+'%'}" >
+              <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{ width: `calc(1.0% * ${colSizes[index]})`}" >
               </div>
             </div>
             <div v-for="(item, index) in localData" :key="item.id+'-'+index" class="tr" :id="'advtable-row-'+index" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)"  >
@@ -319,7 +319,7 @@ export default {
       this.colSizes = JSON.parse(sizes)
     }*/
 
-    Split(this.colIds, {
+    let splitCol = Split(this.colIds, {
       sizes: this.colSizes,
       minSize: this.colmw,
       gutterSize: 2,
@@ -327,14 +327,14 @@ export default {
       dragInterval: 5,
       
       onDragEnd: (sizes) => {
-        // console.log(sizes)
+        // console.log(sizes[1])
         this.colSizes = sizes
         /*if (pg.indexOf("favorite") < 0) {
           sessionStorage.setItem("cols"+pg, JSON.stringify(sizes))
         }*/
       }
     })
-    
+
   },
 
   beforeDestroy(){

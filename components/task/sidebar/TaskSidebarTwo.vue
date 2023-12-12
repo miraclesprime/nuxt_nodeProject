@@ -130,7 +130,6 @@
     </bib-popup-notification-wrapper>
     
     <subtask-detail v-if="showSubtaskDetail" @close-sidebar-detail="showSubtaskDetail = false" @subtask-desc="subtaskDesc = $event"></subtask-detail>
-
   </article>
 </template>
 
@@ -278,7 +277,7 @@ export default {
           budget: 0,
         }
         this.$nextTick(() => {
-          this.$refs.taskTitleInput.focus()
+          this.$refs.taskTitleInput?.focus()
           this.tags = []
           this.reload
         });
@@ -356,7 +355,7 @@ export default {
           budget: 0,
         }
         this.$nextTick(() => {
-          this.$refs.taskTitleInput.focus()
+          this.$refs.taskTitleInput?.focus()
         });
         if (this.sectionIdActive) {
           this.form.sectionId = this.sectionIdActive

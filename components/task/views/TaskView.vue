@@ -857,7 +857,6 @@ export default {
     },
 
     toggleSidebar($event) {
-
       this.flag = !this.flag;
       if ($event.id) {
         this.$nuxt.$emit("open-sidebar", $event.id);
