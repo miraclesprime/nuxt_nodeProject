@@ -574,17 +574,16 @@ export default {
         }
         else
          {
-          data = { [field]: value }
-          //  if(new Date(value).getTime() > new Date(item.startDate).getTime())
-          //  {
-          //     data = { [field]: value }
-          //   } 
-          // else{
-          //     data = { [field]: null }
-          //     this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          //     // this.updateKey()
-          //     return false
-          //   }
+           if(new Date(value).getTime() > new Date(item.startDate).getTime())
+           {
+              data = { [field]: value }
+            } 
+          else{
+              data = { [field]: null }
+              this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+              // this.updateKey()
+              return false
+            }
         }
      
       }
@@ -594,16 +593,15 @@ export default {
         }
         else
          {
-          data = { [field]: value }
-          //   if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
-          //   data = { [field]: value }
-          // } else {
-          //   data = { [field]: null }
-          //   this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          //   // this.templateKey+=1;
-          //   // this.updateKey()
-          //   return false
-          // }
+            if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
+            data = { [field]: value }
+          } else {
+            data = { [field]: null }
+            this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+            // this.templateKey+=1;
+            // this.updateKey()
+            return false
+          }
          }
     
       }
@@ -637,7 +635,6 @@ export default {
               this.popupMessages.push({ text: "Project deleted successfully", variant: "primary-24" });
               this.$nuxt.$emit("delete_update_table",this.projectToDelete,this.$route.fullPath)
               // this.updateKey();
-              this.$store.dispatch('project/fetchFavProjects')
 
             } else {
               this.popupMessages.push({ text: t.message, variant: "primary-24" });
