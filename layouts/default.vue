@@ -24,37 +24,10 @@
             @my-account-link="myAccount"
             @logout="$logout"
             hide-search-box
+            @support-link="supportURL"
+            @billing-link="billingURL"
+            @team-link="teamURL"
           >
-            <template #avatar_menu>
-              <bib-button pop="arrowhead-right" :scale="1.3">
-                <template v-slot:menu>
-                  <div class="list" id="layout-list">
-                    <span class="list__item" id="layout-list-item1">
-                      <a :href="userProfileUrl" id="layout-list-item1-link">
-                        <bib-icon
-                          icon="user-canonical"
-                          :scale="1.1"
-                          variant="gray5"
-                          class="mr-075"
-                        ></bib-icon>
-                        My Profile
-                      </a>
-                    </span>
-                    <span class="list__item" id="layout-list-item2">
-                      <a :href="logoutUrl" id="layout-list-item2-link">
-                        <bib-icon
-                          icon="output"
-                          :scale="1.1"
-                          variant="gray5"
-                          class="mr-075"
-                        ></bib-icon>
-                        Logout
-                      </a>
-                    </span>
-                  </div>
-                </template>
-              </bib-button>
-            </template>
           </bib-header>
         </template>
         <template #switcher>
@@ -176,57 +149,6 @@ export default {
       navKey: 0,
       historyLength: 2,
       appItems: 
-      // [
-      //   {
-      //     img: "layers-solid",
-      //     color: "secondary",
-      //     text: "Templates",
-      //     href: process.env.BIB_TEMPLATES_APP_URL,
-      //   },
-      //   {
-      //     img: "cloud-solid",
-      //     color: "success-sub1",
-      //     text: "Files",
-      //     href: process.env.BIB_DRIVE_URL,
-      //   },
-      //   {
-      //     img: "signature",
-      //     color: "orange",
-      //     text: "eSign",
-      //     href: process.env.BIB_ESIGN_APP_URL,
-      //   },
-      //   {
-      //     img: "projects",
-      //     color: "primary",
-      //     text: "Projects",
-      //     active: true,
-      //     href: process.env.VUE_APP_URL,
-      //   },
-      //   {
-      //     img: "chat",
-      //     color: "purple",
-      //     text: "Chat",
-      //     href: process.env.BIB_CHAT_APP_URL,
-      //   },
-      //   {
-      //     img: "editor",
-      //     color: "primary-sub1",
-      //     text: "Editor",
-      //     href: "http://dev.editor.business-in-a-box.com",
-      //   },
-      //   {
-      //     img: "meetings",
-      //     color: "warning",
-      //     text: "Video",
-      //     href: "https://dev-video-conf.business-in-a-box.com",
-      //   },
-      //   // {
-      //   //   img: "data-storage-single",
-      //   //   color: "primary",
-      //   //   text: "Drive",
-      //   //   href: "",
-      //   // },
-      // ],
       [
         {
           img: "layers-solid",
@@ -274,7 +196,7 @@ export default {
           img: "meetings",
           color: "warning",
           active: false,
-          text: "Meetings",
+          text: "Connect",
           href: process.env.VIDEO_CONF_APP_URL,
         },
         {
@@ -718,16 +640,17 @@ export default {
     removeCookie(cookieName) {
       document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     },
-
-    // Handle User logout
-    logout() {
-      this.removeCookie('b_ssojwt');
-      localStorage.removeItem('accessToken')
-      localStorage.removeItem("user")
-      window.location.href = this.logoutUrl
-    },
     myAccount(){
-      window.location.href = this.userProfileUrl
+      window.location.href = process.env.USER_PROFILE_URL;
+    },
+    teamURL() {
+      window.location.href = process.env.TEAM_URL;
+    },
+    billingURL() {
+      window.location.href = process.env.BILLING_URL;
+    },
+    supportURL() {
+      window.location.href = process.env.SUPPORT_URL;
     },
     handleToggleWrapperTheme(value) {
       localStorage.setItem("lightcheck", value);
