@@ -310,6 +310,7 @@ export default {
         Filter:filter
       },
     });
+    console.log("response",response)
     store.dispatch('todo/setTodos', response.data.data)
     return { localdata: response.data.data }
     
@@ -569,6 +570,7 @@ export default {
 
     updateField(payload){
       // console.log(payload)
+      
       const { item, label, field, value, historyText } = payload
       let data = { [field]: value }
     
@@ -578,15 +580,14 @@ export default {
           data = { [field]: null }
         }
         else {
+          if(new Date(value).getTime() > new Date(item.startDate).getTime()){
           data = { [field]: value }
-        //   if(new Date(value).getTime() > new Date(item.startDate).getTime()){
-        //   data = { [field]: value }
-        // } else{
-        //   data = { [field]: null }
-        //   // this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-        //   // this.updateKey()
-        //   return false
-        // }
+        } else{
+          data = { [field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          // this.updateKey()
+          return false
+        }
         }
       }
       
@@ -596,15 +597,14 @@ export default {
         }
         else 
         {
-          data = { [field]: value }
-        //     if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
-        //     data = { [field]: value }
-        // } else {
-        //   data = { [field]: null }
-        //   // this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-        //   // this.updateKey()
-        //   return false
-        // }
+            if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
+            data = { [field]: value }
+        } else {
+          data = { [field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          // this.updateKey()
+          return false
+        }
         }   
       }
 
@@ -968,6 +968,7 @@ export default {
       if(this.groupby != '') {
         this.updateKey();
       } else {
+
         let taskDnD = await this.$axios.$put("/todo/crossTodoDragDrop", { data: dragData.tasks, todoId: dragData.sectionId }, {
           headers: {
             "Authorization": "Bearer " + localStorage.getItem("accessToken"),

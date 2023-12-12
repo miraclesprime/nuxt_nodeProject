@@ -429,15 +429,14 @@ export default {
         if(payload.value=="Invalid Date"){
           data = { [payload.field]: null }
         }else {
+          if(new Date(payload.value).getTime() > new Date(payload.item.startDate).getTime()){
           data = { [payload.field]: payload.value }
-        //   if(new Date(payload.value).getTime() > new Date(payload.item.startDate).getTime()){
-        //   data = { [payload.field]: payload.value }
-        // } else{
-        //   data = { [payload.field]: null }
-        //   this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-        //   // this.updateKey()
-        //   return false
-        // }
+        } else{
+          data = { [payload.field]: null }
+          this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          // this.updateKey()
+          return false
+        }
         }
   
       }
@@ -445,15 +444,14 @@ export default {
         if(payload.value=="Invalid Date"){
           data = { [payload.field]: null }
         }else {
-          data = { [payload.field]: payload.value }
-          //   if(new Date(payload.value).getTime() < new Date(payload.item.dueDate).getTime()){
-          //   data = { [payload.field]: payload.value }
-          // } else {
-          //   data = { [payload.field]: null }
-          //   this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-          //   // this.updateKey()
-          //   return false
-          // }
+            if(new Date(payload.value).getTime() < new Date(payload.item.dueDate).getTime()){
+            data = { [payload.field]: payload.value }
+          } else {
+            data = { [payload.field]: null }
+            this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+            // this.updateKey()
+            return false
+          }
         }
       }
       
@@ -995,13 +993,14 @@ export default {
     taskDragEnd: _.debounce(async function (payload) {
       this.loading = true;
       let tasks = _.cloneDeep(payload.tasks);
+
       tasks.forEach((el, i) => {
         el.dOrder = i;
       });
 
       let taskDnD = await this.$axios.$put(
         "/department/crossDepartmentDragDrop",
-        { data: tasks, departmentId: payload.sectionId?payload.sectionId:null },
+        { data: tasks, departmentId: payload.sectionId },
         {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("accessToken"),
