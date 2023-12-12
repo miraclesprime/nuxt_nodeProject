@@ -19,7 +19,7 @@
       </template>
       <!-- team.length == 0 && projectMembers.length<2 -->
       <small v-show="showMsg" class="text-danger font-xs" id="ptm-team-length">Select at least 1 team member.</small>
-      <p v-if="message" v-text="message" class="font-sm mt-025 text-orange" id="ptm-message"></p>
+      <p v-if="message" v-text="message" class="font-sm mt-025 text-danger" id="ptm-message"></p>
     </div>
   <!-- </div>  -->
   <div class="bg-light p-1 my-05 shape-rounded">
