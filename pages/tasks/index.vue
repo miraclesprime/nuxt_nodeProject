@@ -998,6 +998,7 @@ export default {
       tasks.forEach((el, i) => {
         el.dOrder = i;
       });
+
       let taskDnD = await this.$axios.$put(
         "/department/crossDepartmentDragDrop",
         { data: tasks, departmentId: payload.sectionId?payload.sectionId:null },

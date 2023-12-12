@@ -637,6 +637,7 @@ export default {
               this.popupMessages.push({ text: "Project deleted successfully", variant: "primary-24" });
               this.$nuxt.$emit("delete_update_table",this.projectToDelete,this.$route.fullPath)
               // this.updateKey();
+              this.$store.dispatch('project/fetchFavProjects')
 
             } else {
               this.popupMessages.push({ text: t.message, variant: "primary-24" });
