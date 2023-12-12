@@ -31,14 +31,14 @@
     >
       <template slot="content">
         <div style="margin-inline: -1rem; max-height: 65vh; overflow-y: auto;" id="sbf-upload-from-device">
-          <bib-input type="file" ref="files" variant="primary" iconLeft="upload" placeholder="Upload from device"></bib-input>
+          <bib-input type="file" ref="files" variant="primary" iconLeft="upload" placeholder="Upload from device" @files-dropped="handleChangeFile"></bib-input>
         </div>
         <loading :loading="fileLoader"></loading>
       </template>
       <template slot="footer">
         <div class="d-flex" id="sbf-footer">
           <bib-button label="Cancel" variant="light" pill @click="uploadModal = false" ></bib-button>
-          <bib-button label="Upload" variant="primary-24" class="ml-auto" pill @click="uploadFiles"></bib-button>
+          <bib-button label="Upload" variant="primary-24" class="ml-auto" pill @click="uploadFiles" :disabled="inputFiles.length <= 0"></bib-button>
         </div>
       </template>
     </bib-modal-wrapper>
@@ -79,7 +79,7 @@
     </bib-modal-wrapper>
     <bib-popup-notification-wrapper>
       <template #wrapper>
-        <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" :autohide="4000">
+        <bib-popup-notification v-for="(msg, index) in popupMessages" :key="index" :message="msg.text" :variant="msg.variant" :autohide="4500">
         </bib-popup-notification>
       </template>
     </bib-popup-notification-wrapper>
@@ -110,6 +110,7 @@ export default {
       // alertDialog: false,
       // alertMsg: "",
       popupMessages: [],
+      inputFiles: [],
     };
   },
   props: {
@@ -170,7 +171,10 @@ export default {
       }
     },
 
-    // handleChangeFile(files, event) {},
+    handleChangeFile(files, event) {
+      // console.log(files)
+      this.inputFiles = files
+    },
 
     async uploadFiles() {
       this.fileLoader = true;
@@ -286,7 +290,7 @@ export default {
             if (f.data.statusCode == 200) {
               // this.alertDialog = true;
               // this.alertMsg = f.data.message;
-              this.popupMessages.push({ text: f.data.message, variant: "primary-24"})
+              this.popupMessages.push({ text: "File(s) deleted successfully", variant: "primary-24"})
               _.delay(() => {
                 this.getFiles().then((res) => {
                   this.fileKey += 1;
@@ -297,7 +301,8 @@ export default {
           .catch((e) => console.error(e));
       }
       } else {
-        console.log("you don't have enough permission to delete this file")
+        this.popupMessages.push({text: "You do not have permission to delete this file", variant: "primary-24"})
+        // console.log("You don't have enough permission to delete this file")
       }
     },
 

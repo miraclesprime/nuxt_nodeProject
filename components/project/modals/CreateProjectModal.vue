@@ -2,12 +2,12 @@
   <div id="create-project-modal-wrapper">
     <bib-modal-wrapper @close="closeModal" v-show="showCreateProjectModal" title="Create Project" id="create-project" @keypress.native="bindEnter($event, 'create-project-btn')">
       <template v-slot:content>
-        <!-- <label class="text-gray6" id="cpm-project-name">Project name <span class="text-danger">*</span></label> -->
-        <bib-input label="Project name" v-model.trim="projectName" placeholder="Name your project"></bib-input>
-        <small v-if="btnCreate" class="text-danger mb-05" id="cpm-project-name-alert" style="margin-top:-0.5rem; display:block;">{{projectName ? '' : 'Project name is required'}}</small>
-        <template>
+        <label class="text-gray6" id="cpm-project-name">Project name <span class="text-danger">*</span></label>
+        <bib-input label="" v-model.trim="projectName" placeholder="Name your project"></bib-input>
+        <small v-if="titleError" class="text-danger " id="cpm-project-name-alert" style="margin-top:-0.25rem; display:block;">{{projectName ? '' : 'Project name is required'}}</small>
+        <div class="mt-1 mb-075">
             <bib-input label="Select department" v-model="department" :options="departments" type="select"></bib-input>
-        </template>
+        </div>
         <!-- <label id="create-project-modal-heading" class="text-gray6" style="margin-bottom: -0.5rem;">Assign a project lead <span class="text-danger">*</span></label> -->
         <!-- <bib-button test_id="create-project-dd1" dropdown1="add" label="Type name or email" v-model="owner" v-on:input-keydown="dropdownInputKeydown" :footer="{icon: 'add', label: 'Invite via email', event: 'footer-action'}" @footer-action="inviteViaEmail" class="mb-05">
           <template v-slot:menu>
@@ -19,7 +19,9 @@
             </ul>
           </template>
         </bib-button> -->
-        <bib-select label="Assign a project lead" test_id="po-owner-dd2" :options="userOptions" v-model="owner" v-on:change="dd1ItemClick($event)"></bib-select>
+        <label id="create-project-modal-heading" class="text-gray6" style="margin-bottom: -0.5rem;">Assign a project lead <span class="text-danger">*</span></label>
+        <bib-select label="" test_id="po-owner-dd2" :options="userOptions" v-model="owner" v-on:change="dd1ItemClick($event)"></bib-select>
+        <small v-if="ownerError" class="text-danger" style="margin-top:-0.25rem; display:block;">Project owner is required</small>
         <!-- <div id="cpm-project-team-members" class="d-flex pt-025">
           <template v-if="btnCreate">
             <email-chip v-if="Object.keys(owner).length > 0" :name="owner.label" :email="owner.email ? owner.email : owner.sube" :avatar="owner.avatar" v-bind:close="true" v-on:remove-email="owner = {}"></email-chip>
@@ -32,7 +34,7 @@
         <loading :loading="loading"></loading>
       </template>
       <template v-slot:footer>
-        <div class="m-auto pt-1 d-flex justify-between" id='cpm-create-project-model'>
+        <div class="d-flex justify-between" id='cpm-create-project-model'>
           <bib-button @click.native="closeModal" variant="light" size="lg" pill label="Cancel"></bib-button>
           <bib-button @click.native="createProject()" variant="primary-24" size="lg" id="create-project-btn" pill label="Create"></bib-button>
         </div>
@@ -53,12 +55,11 @@ export default {
       owner: null,
       user2: {},
       department: null,
-      projectlead: "Enter name or email",
-      filterKey: "",
-      error: false,
-      errorMsg: "",
+      // filterKey: "",
       loading: false,
-      btnCreate:false
+      // btnCreate:false,
+      titleError: false,
+      ownerError: false,
     };
   },
 
@@ -83,7 +84,7 @@ export default {
       })
     }*/
   },
-  mounted() {
+  /*mounted() {
     
     if (this.user) {
       this.$axios.get(`${process.env.USER_API_ENDPOINT}/${this.user.sub}`, {
@@ -92,28 +93,32 @@ export default {
           }
         }).then((res) => {
           this.user2 = {id: res.data.Id, firstName: res.data.FirstName, lastName: res.data.LastName, avatar: res.data.Photo, email: res.data.Email};
-          this.owner = res.data.Id
+          // this.owner = res.data.Id
         })
     }
 
-  },
+  },*/
   methods: {
-    dropdownInputChange($event) {
-    },
-    dropdownInputKeydown($event) {
+    
+    /*dropdownInputKeydown($event) {
       this.filterKey = $event
-    },
+    },*/
     dd1ItemClick(value) {
-      console.log(...arguments)
+      // console.log(...arguments)
       this.owner = value
+      this.ownerError = false
+      this.user2 = this.teamMembers.find((tm) => tm.id == value)
     },
     /*inviteViaEmail() {
       console.log('inviteViaEmail')
     },*/
     closeModal() {
-      this.btnCreate=false
+      // this.btnCreate = false
       this.projectName = ''
       this.owner = null
+      this.titleError = false
+      this.ownerError = false
+      this.user2 = null
       this.showCreateProjectModal = false
     },
     bindEnter(event, button) {
@@ -123,43 +128,47 @@ export default {
       }
     },
     createProject() {
-      this.btnCreate=true
-      this.loading = true
-      if (this.projectName && this.owner) {
-        this.$store.dispatch('project/createProject', { user: this.user2, title: this.projectName, departmentId: this.department }).then((res) => {
-          this.loading = false
-          if (res.statusCode == 200) {
-            this.projectName = ''
-            this.owner = null
-            this.showCreateProjectModal = false
-
-             this.$axios.$get(`/project/company/all`, {
-                headers: {
-                  'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-                  'Filter': 'all'
-                }
-              }).then((pro)=>{
-                if(pro.data.length==1){
-                  this.$nuxt.$emit("project-refresh-table");
-                  return;
-
-                }
-                else{
-                  this.$nuxt.$emit("newTask",res.data,this.$route.fullPath)
-                }
-              })
-
-         
-          }
-        }).catch(e => {
-          console.log(e.message)
-          this.loading = false
-        })
-      } else {
-        this.loading = false
-        console.error("required fields");
-
+      // console.log(this.projectName, this.owner, this.user2)
+      if (!this.projectName) {
+        this.titleError = true
+        return
       }
+      if (!this.owner) {
+        this.ownerError = true
+        return
+      }
+      this.loading = true
+      this.$store.dispatch('project/createProject', {
+        user: this.user2,
+        title: this.projectName,
+        departmentId: this.department
+      }).then((res) => {
+        this.loading = false
+        if (res.statusCode == 200) {
+          this.projectName = ''
+          this.owner = null
+          this.showCreateProjectModal = false
+
+           this.$axios.$get(`/project/company/all`, {
+              headers: {
+                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+                'Filter': 'all'
+              }
+            }).then((pro)=>{
+              if(pro.data.length == 1){
+                this.$nuxt.$emit("project-refresh-table");
+                return;
+              }
+              else {
+                this.$nuxt.$emit("newTask", res.data, this.$route.fullPath)
+              }
+            })
+
+        }
+      }).catch(e => {
+        console.log(e.message)
+        this.loading = false
+      })
     },
   },
 
