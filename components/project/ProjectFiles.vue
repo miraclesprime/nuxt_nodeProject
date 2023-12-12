@@ -20,7 +20,7 @@
             <div class="d-flex align-center text-left gap-05 cursor-pointer" id="pf-file-extensions" @click="showPreviewModal(data.value)">
               <!-- <bib-avatar v-if="imageType(data.value)" shape="rounded" :src="data.value.url" size="1.5rem"></bib-avatar> -->
               <bib-icon :icon="fileIcon(data.value.type)" ></bib-icon>
-              <span class="text-gray1 text-truncate" id="pf-file-data-name" v-tooltip="data.value.key" style="max-width: 6rem;">
+              <span class="text-gray1 text-truncate" id="pf-file-data-name" v-tooltip="data.value.key" style="max-width: 8rem;">
                 {{ data.value.key }}
               </span>
             </div>
@@ -69,14 +69,14 @@
     <bib-modal-wrapper v-if="uploadModal" title="Select file(s)" @close="uploadModal = false">
       <template slot="content">
         <div style="margin-left: -1rem; margin-right: -1rem; max-height: 300px; overflow-y: auto;"  id="pf-file-select-files-modal">
-          <bib-input type="file" ref="files" @files-dropped="handleChangeFile" variant="accepted" iconLeft="upload" placeholder="Upload from device"></bib-input>
+          <bib-input type="file" ref="files" @files-dropped="handleChangeFile" variant="primary-24" iconLeft="upload" placeholder="Upload from device"></bib-input>
         </div>
         <loading :loading="fileLoader"></loading>
       </template>
       <template slot="footer">
         <div class="d-flex"  id="pf-file-select-files-btns">
           <bib-button label="Cancel"  id="pf-file-cancel-btn" variant="light" pill @click="uploadModal = false"></bib-button>
-          <bib-button label="Upload"  id="pf-file-upload-btn" variant="primary-24" class="ml-auto" pill @click="uploadFiles"></bib-button>
+          <bib-button label="Upload"  id="pf-file-upload-btn" variant="primary-24" class="ml-auto" pill @click="uploadFiles" :disabled="inputFiles.length <= 0"></bib-button>
         </div>
       </template>
     </bib-modal-wrapper>
@@ -165,6 +165,7 @@ export default {
       fileDetailModal: false,
       fileDetail: {},
       popupMessages: [],
+      inputFiles: [],
     }
   },
   computed: {
@@ -204,6 +205,8 @@ export default {
       } else { return false }
     },*/
     handleChangeFile(files, event) {
+      // console.log(files)
+      this.inputFiles = files
     },
     async uploadFiles() {
       this.fileLoader = true
@@ -228,7 +231,7 @@ export default {
       if (fi.data.statusCode == 200) {
         _.delay(() => {
           this.getFiles()
-        }, 2000);
+        }, 3000);
       }
       this.fileLoader = false
       this.uploadModal = false
@@ -327,7 +330,7 @@ export default {
               console.log(f.data)
               if (f.data.statusCode == 200) {
                 // alert(f.data.message);
-                this.popupMessages.push({text: f.data.message, variant: "orange"})
+                this.popupMessages.push({text: "File(s) deleted successfully", variant: "primary-24"})
                 _.delay(() => {
                   this.getFiles()
                 }, 3000);
@@ -335,7 +338,7 @@ export default {
             })
             .catch(e => console.error(e))
       } else {
-        this.popupMessages.push({text: "you do not have permission to delete this file", variant: "primary-24"})
+        this.popupMessages.push({text: "You do not have permission to delete this file", variant: "primary-24"})
         // console.log("you don't have enough permission to delete this file")
       }
     },

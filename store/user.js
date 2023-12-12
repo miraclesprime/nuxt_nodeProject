@@ -915,6 +915,7 @@ export const mutations = {
     state.usersList = payload.map(u => {
       return {email: u.Email, label: u.FirstName + " " + u.LastName, img: u.Photo, value: u.Id, role: u.Role}
     })
+    state.usersList.unshift({ label: 'Select user', value: null })
   }
 
 };
