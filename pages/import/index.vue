@@ -37,7 +37,7 @@
                         <h4>Import will be done in steps</h4>
                         <div v-for="item in steps" class="align-center gap-05">
                             <div class="width-105 height-105 align-center justify-center">
-                                <bib-spinner v-if="item.progress == 'progress'" :scale="2" variant="orange" ></bib-spinner>
+                                <bib-spinner v-if="item.progress == 'progress'" :scale="2" variant="primary-24" ></bib-spinner>
                                 <bib-icon v-else-if="item.progress == 'done'" icon="check-circle-solid" :variant="item.variant"></bib-icon>
                                 <bib-icon v-else-if="item.progress == 'error'" icon="close-circle-solid" :variant="item.variant"></bib-icon>
                                 <bib-icon v-else icon="check-circle" :variant="item.variant"></bib-icon>
@@ -56,14 +56,14 @@
                     </div>
 
 
-                    <div v-show="dupProject && !importCompleteMsg" class="shape-rounded align-center gap-05 border-orange text-orange p-05">
+                    <div v-show="dupProject && !importCompleteMsg" class="shape-rounded align-center gap-05 border-primary text-primary p-05">
 
-                      <bib-icon icon="urgent" variant="orange"></bib-icon>
+                      <bib-icon icon="urgent" variant="primary-24"></bib-icon>
                         {{dupProject}}
                     </div>
 
                     <div v-show="importfinish" class="shape-rounded align-center gap-05 border-primary text-primary p-05">
-                      <bib-icon icon="tick" variant="success"></bib-icon>
+                      <bib-icon icon="tick" variant="primary-24"></bib-icon>
                       {{importCompleteMsg}}
                     </div>
                 </template>
@@ -119,7 +119,7 @@ export default {
             importfinish: false,
             missingMembers: [],
             steps: [
-                {id: 0, label: "Analyzing Users", progress: "progress", variant:"orange"},
+                {id: 0, label: "Analyzing Users", progress: "progress", variant:"primary-24"},
                 {id: 1, label: "Importing Project", progress: "pending", variant:"gray5"},
                 {id: 2, label: "Importing Section/Tasks", progress: "pending", variant:"gray5"},
                 {id: 3, label: "Importing Subtasks", progress: "pending", variant:"gray5"},
@@ -167,7 +167,7 @@ export default {
             this.importfinish = false
             this.importError = false
             this.steps = [
-                    {id: 0, label: "Analyzing Users", progress: "progress", variant:"orange"},
+                    {id: 0, label: "Analyzing Users", progress: "progress", variant:"primary-24"},
                     {id: 1, label: "Importing Project", progress: "pending", variant:"gray5"},
                     {id: 2, label: "Importing Section/Tasks", progress: "pending", variant:"gray5"},
                     {id: 3, label: "Importing Subtasks", progress: "pending", variant:"gray5"},
@@ -197,7 +197,7 @@ export default {
               this.missingMembers = users.data.data.filter(email => !appMemberEmails.includes(email)); 
 
               this.steps[0].progress = "done"
-              this.steps[0].variant = "success"
+              this.steps[0].variant = "primary-24"
                 this.userList = await users?.data?.data;
                 return false
             } 
@@ -223,7 +223,7 @@ export default {
         async importProject(){
             this.missingMembers = []
             this.steps[1].progress = "progress"
-            this.steps[1].variant = "orange"
+            this.steps[1].variant = "primary-24"
 
             let file = this.$refs.csvImport.filesUploaded;
 
@@ -240,7 +240,7 @@ export default {
             if(res.data.statusCode == 200) {
               this.importSections(res.data.data)
               this.steps[1].progress = "done"
-              this.steps[1].variant = "success"
+              this.steps[1].variant = "primary-24"
             } else {
               this.popupMessages.push({text: "Some error occured", variant: "danger"})
               // this.loading = false
@@ -252,7 +252,7 @@ export default {
         async importSections(data) {
             // console.log('Started Importing Sections...')
             this.steps[2].progress = "progress"
-            this.steps[2].variant = "orange"
+            this.steps[2].variant = "primary-24"
             
             let res = await this.$axios.post("/import/sections", {data: data}, {
                 headers: {
@@ -264,7 +264,7 @@ export default {
             if(res.data.statusCode == 200) {
               this.importSubTasks(res.data.data)
               this.steps[2].progress = "done"
-              this.steps[2].variant = "success"
+              this.steps[2].variant = "primary-24"
             } else {
               this.popupMessages.push({text: "Some error occured", variant: "danger"})
               // this.loading = false
@@ -276,7 +276,7 @@ export default {
         async importSubTasks(data) {
             // console.log('Started Importing SubTasks...')
             this.steps[3].progress = "progress"
-            this.steps[3].variant = "orange"
+            this.steps[3].variant = "primary-24"
 
             let res = await this.$axios.post("/import/subtasks", {data: data}, {
                 headers: {
@@ -288,7 +288,7 @@ export default {
             if(res.data.statusCode == 200) {
                 this.importTags(res.data.data)
                 this.steps[3].progress = "done"
-                this.steps[3].variant = "success"
+                this.steps[3].variant = "primary-24"
             } else {
               this.popupMessages.push({text: "Some error occured", variant: "danger"})
               // this.loading = false
@@ -301,7 +301,7 @@ export default {
         async importTags(data) {
             // console.log('Started Importing Tags...')
             this.steps[4].progress = "progress"
-            this.steps[4].variant = "orange"
+            this.steps[4].variant = "primary-24"
 
             let res = await this.$axios.post("/import/tags", {data: data}, {
                 headers: {
@@ -314,7 +314,7 @@ export default {
               // console.log('Import Successful!!!')
               // this.missingMembers = []
                 this.steps[4].progress = "done"
-                this.steps[4].variant = "success"
+                this.steps[4].variant = "primary-24"
                 this.importCompleteMsg = 'Imported Project Successfully!'
                 this.importfinish = true
             } else {

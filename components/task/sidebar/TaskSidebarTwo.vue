@@ -147,8 +147,9 @@ export default {
     sectionIdActive: Number,
     // scrollId: {type: String, default: "sidebar-inner-wrap"},
     departmentId: {type: Number},
-    expandVisible:{type:Boolean,default:true}
+    expandVisible:{type:Boolean,default:true},
     // visible: Boolean,
+    unassignedTasks: { default: () => { return null }},
   },
   data: function() {
     return {
@@ -437,6 +438,26 @@ export default {
           taskform.sectionId = null
         }
 
+        // on tasks page
+        if (this.$route.path == '/tasks') {
+          taskform["mode"] = "department"
+          taskform["sectionId"] = null
+          // taskform["data"] = this.unassignedTasks
+          taskform["userId"] = null
+          taskform["user"] = null
+        }
+        // on project task page
+        if (this.$route.path.includes("/projects/")) {
+          taskform["mode"] = "project"
+          taskform["userId"] = null
+          taskform["user"] = null
+        }
+        if (this.$route.fullPath.includes("usertasks")) {
+          taskform["mode"] = null
+        }
+
+        // console.log(taskform)
+
         this.$store.dispatch("task/createTask", {
           "sectionId": this.$route.fullPath.includes("usertasks")?taskform.sectionId:(this.$route.params.id ? "_section" + this.$route.params.id : taskform.sectionId),
           "projectId": this.$route.fullPath.includes("usertasks")?taskform.projectId:Number(this.$route.params.id || taskform.projectId),
@@ -450,7 +471,8 @@ export default {
           "statusId": taskform.statusId,
           user,
           "text": `task "${this.form.title}" created`,
-          "mode": this.$route.fullPath.includes("usertasks")?null:(this.$route.params.id ? "project" : null),
+          "mode": taskform.mode,
+          "data": this.unassignedTasks ? { id: null, ...this.unassignedTasks } : null
         }).then((task) => {
           // this.$nuxt.$emit("refresh-table");
 
@@ -751,7 +773,9 @@ export default {
         // if new task
         // this.$refs.taskTitleInput.blur()
         this.form.projectId = this.project?.id || ""
-        this.form.userId=this.sideBarUser?.id || this.sideBarUser || "";
+        this.form.userId = this.sideBarUser?.id || this.sideBarUser || "";
+        
+        // console.log(this.form)
         this.createTask(this.form)
         this.$store.dispatch("user/setSideBarUser",[])
         
@@ -851,7 +875,7 @@ export default {
     onsubmit(data) {
       // let trimComment = _.truncate(data.text.slice(3, -4), { length: 128 })
       let trimComment = stripHTMLandTrim(data.text, 128)
-      console.log(trimComment)
+      // console.log(trimComment)
 
       if (this.editMessage?.id) {
         this.$store.dispatch("task/updateTaskComment", { taskId: this.currentTask.id, commentId: this.editMessage.id, comment: data.text, text: `updated comment ${trimComment}` })
@@ -983,7 +1007,7 @@ export default {
           "taskid": this.form.id,
         }
       }).then(res => {
-        console.log(res.data.message)
+        // console.log(res.data.message)
         this.getTags()
         // this.$nuxt.$emit("update-key","tagStatus")
       }).catch(e => console.warn(e))

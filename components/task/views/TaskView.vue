@@ -929,6 +929,7 @@ export default {
       this.$store.dispatch("task/createTask", {
           ...proj,
           projectId: Number(this.$route.params.id),
+          sectionId: this.groupby ? "_section"+this.$route.params.id : section.id,
           mode: "project",
           text: `created task ${proj.title}`,
         })

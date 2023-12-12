@@ -139,8 +139,7 @@
           >
             <Nuxt />
             <transition name="drawer">
-              <!-- <task-sidebar v-show="openSidebar" :visible="openSidebar" :sectionIdActive="sectionPreselect" :scrollId="scrollId" :departmentId="departmentId" ></task-sidebar> -->
-              <task-sidebar-two v-show="openSidebar" :expandVisible="expandVisible" ></task-sidebar-two>
+              <task-sidebar-two v-show="openSidebar" :expandVisible="expandVisible" :unassignedTasks="unassignedTasks"></task-sidebar-two>
             </transition>
           </div>
         </template>
@@ -153,16 +152,11 @@
     <div class="blackbox" v-else>
         <bib-app-wrapper>
         <template #content>
-          <div
-            class="main blackbox"
-            id="main-content"
-            :class="openSidebar ? 'open-sidebar' : ''"
-          >
+          <div class="main blackbox" id="main-content" :class="openSidebar ? 'open-sidebar' : ''" >
             <Nuxt />
             <div class="blackbox"></div>
             <transition name="drawer">
-              <!-- <task-sidebar v-show="openSidebar" :visible="openSidebar" :sectionIdActive="sectionPreselect" :scrollId="scrollId" :departmentId="departmentId" ></task-sidebar> -->
-              <task-sidebar-two v-show="openSidebar" :expandVisible="expandVisible"></task-sidebar-two>
+              <task-sidebar-two v-show="openSidebar" :expandVisible="expandVisible" :unassignedTasks="unassignedTasks" ></task-sidebar-two>
             </transition>
           </div>
         </template>
@@ -235,7 +229,7 @@ export default {
       // ],
       [
         {
-          img: "Layers",
+          img: "layers-solid",
           color: "primary",
           active: false,
           text: "Templates",
@@ -256,6 +250,13 @@ export default {
           href: process.env.WEB_EDITOR_APP_URL,
         },
         {
+          img: "table",
+          color: 'primary',
+          active: false,
+          text: "Sheets",
+          href: process.env.WEB_SHEET_EDITOR_APP_URL,
+        },
+        {
           img: "chat",
           color: "purple",
           active: false,
@@ -263,7 +264,7 @@ export default {
           href: process.env.BIB_CHAT_APP_URL,
         },
         {
-          img: "Signature",
+          img: "signature",
           color: "orange",
           active: false,
           text: "eSign",
@@ -274,7 +275,7 @@ export default {
           color: "warning",
           active: false,
           text: "Meetings",
-          href: process.env.BIB_VIDEO_CONF_URL,
+          href: process.env.VIDEO_CONF_APP_URL,
         },
         {
           img: "projects",
@@ -282,12 +283,6 @@ export default {
           active: true,
           text: "Projects",
           href: process.env.BIB_PROJECT_APP_URL,
-        },
-        {
-          img: "table",
-          active: false,
-          text: "Sheets",
-          href: process.env.WEB_SHEET_EDITOR_APP_URL,
         },
       ],
       navItems1: [
@@ -366,7 +361,8 @@ export default {
       departmentId: null,
       sortCompleteTasks:[],
       sortAllTasks:[],
-      teamMembers:[]
+      teamMembers:[],
+      unassignedTasks: null,
     };
   },
   created() {
@@ -388,6 +384,9 @@ export default {
         }
         this.$store.dispatch("task/setSingleTask", {});
         this.$store.commit("task/fetchTeamMember", []);
+        if (payload?.data) {
+          this.unassignedTasks = payload.data
+        }
       } else {
         if (payload.project?.[0]?.project?.id) {
           // this.$store.dispatch("section/fetchProjectSections", {
@@ -422,6 +421,7 @@ export default {
       this.openSidebar = false;
       this.$store.dispatch("task/setSidebarVisible", false)
       this.$store.dispatch("task/setSingleTask", {});
+      this.unassignedTasks = null
     });
     this.$root.$on("create-project-modal", () => {
       this.$refs["projectModals"].showCreateProjectModal = true;
@@ -723,6 +723,7 @@ export default {
     logout() {
       this.removeCookie('b_ssojwt');
       localStorage.removeItem('accessToken')
+      localStorage.removeItem("user")
       window.location.href = this.logoutUrl
     },
     myAccount(){

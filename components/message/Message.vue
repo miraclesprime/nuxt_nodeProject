@@ -25,7 +25,7 @@
     </div>
 
     <!-- message files -->
-    <div v-if="files.length > 0" class="msg-files pb-05" id="msg-file-content-wrapper">
+    <div v-if="files.length > 0" class="msg-files pb-05 pl-2" id="msg-file-content-wrapper">
       <p class="pb-025">Files ({{ files.length }})</p>
       <div class="d-flex flex-wrap gap-05 " id="msg-files-wrap">
         <file-comp v-for="file in files" :key="file.key" :property="file" @delete-file="deleteFile" @preview-file="showPreviewModal(file)" ></file-comp>
