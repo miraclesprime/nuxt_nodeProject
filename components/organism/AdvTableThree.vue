@@ -93,7 +93,7 @@
                       <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success-sub3"></bib-icon>
                     </span>
                     <span v-if="field.event" class=" flex-grow-1" style="line-height:1.25;">
-                      <input type="text" class="editable-input" :value="item[field.key]" @click.stop="titleClick(`${field.event}`, item)" @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
+                      <input type="text" class="editable-input" :value="item[field.key]" @click.stop="titleInputClick(`${field.event}`, item)" @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
                     </span>
                     <span v-else class="flex-grow-1">
                       {{item[field.key]}}
@@ -838,6 +838,7 @@ export default {
       this.$emit("row-dragend", {
         [this.tasksKey]: sectionData[0][this.tasksKey],
         sectionId: e.to.dataset.section,
+        title: sectionData[0]?.title
       });
     },
     
@@ -856,14 +857,19 @@ export default {
         elem.classList.add('active')
       })
       // console.log(fieldEvent, item.hasOwnProperty('sectionId'))
+      
+      this.$emit(`${fieldEvent}`, item)
+    },
+    titleInputClick(fieldEvent, item){
+      this.unselectAll().then(r => {
+        let elem = event.currentTarget.closest(".tr")
+        elem.classList.add('active')
+      })
       if (item.hasOwnProperty('sectionId')) {
         this.$emit(`${fieldEvent}`, item)
         return
-      } else {
-        return
-      }
-      this.$emit(`${fieldEvent}`, item)
-      
+      } 
+
     },
    
     contextOpen($event, item) {
