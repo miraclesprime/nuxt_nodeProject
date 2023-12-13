@@ -330,8 +330,13 @@ export default {
                       }
 
                       let checkMemberInTasks = teams.find((tm) => tm.userId == JSON.parse(localStorage.getItem("user")).sub);
-
-                      let checkMemberInProjects = projectMembers.find((tm) => tm.userId == JSON.parse(localStorage.getItem("user")).sub);
+                      let checkMemberInProjects
+                      // console.log(projectMembers)
+                      if (projectMembers) {
+                        checkMemberInProjects = projectMembers.find((tm) => tm.userId == JSON.parse(localStorage.getItem("user")).sub);
+                      } else {
+                        checkMemberInProjects = null
+                      }
 
                       if(((checkMemberInTasks || checkMemberInProjects) && JSON.parse(localStorage.getItem("user")).subr == 'USER') || JSON.parse(localStorage.getItem("user")).subr == 'ADMIN') {
                         // alert("You are good")
