@@ -485,16 +485,10 @@ export default {
       }
     }
   },
-  /*watch: {
-    $route: function () {
-      this.$store.commit("project/setArrowVisible", this.historyLength + 1);
-      this.historyLength = this.historyLength + 1;
-    },
-  },*/
+
   computed: {
     ...mapGetters({
       favProjects: "project/getFavProjects",
-      // teammate: "user/getTeamMembers",
       appMembers: "user/getAppMembers",
       user2: "user/getUser2",
       expandVisible:"task/getExpandVisible",
