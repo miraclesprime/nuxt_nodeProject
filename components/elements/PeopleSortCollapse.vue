@@ -159,34 +159,34 @@ import { mapGetters } from "vuex";
         return `font-w-${this.labelWeight}`;
       },
       ...mapGetters({
-      allTasks:"company/getInitialAllTasks",
+      // allTasks:"company/getInitialAllTasks",
       favoriteCollapse:"project/getCollapseStatus",
       favProjects: "project/getFavProjects",
 
     }),
     },
     watch: {
-      allTasks(newVal)
-      {
-            let data = _.cloneDeep(newVal)
-            this.sortUser= Object.values(
-                  data.reduce((acc, curr) => {
-                    if (acc[curr.userId]) {
-                      acc[curr.userId].taskCount++;
-                      if (curr.statusId === 5) {
-                        acc[curr.userId].complete++;
-                      }
-                    } else {
-                      acc[curr.userId] = {
-                        userId: curr.userId,
-                        taskCount: 1,
-                        complete: curr.statusId === 5 ? 1 : 0
-                      };
-                    }
-                    return acc;
-                  }, {})
-                );
-        },
+      // allTasks(newVal)
+      // {
+      //       let data = _.cloneDeep(newVal)
+      //       this.sortUser= Object.values(
+      //             data.reduce((acc, curr) => {
+      //               if (acc[curr.userId]) {
+      //                 acc[curr.userId].taskCount++;
+      //                 if (curr.statusId === 5) {
+      //                   acc[curr.userId].complete++;
+      //                 }
+      //               } else {
+      //                 acc[curr.userId] = {
+      //                   userId: curr.userId,
+      //                   taskCount: 1,
+      //                   complete: curr.statusId === 5 ? 1 : 0
+      //                 };
+      //               }
+      //               return acc;
+      //             }, {})
+      //           );
+      //   },
         favProjects : {
           immediate:true,
           handler(newVal){
@@ -215,7 +215,37 @@ import { mapGetters } from "vuex";
     methods: {
 
       changeSortPeople(item){
-      this.$store.commit("user/sortPeople",{sort:item,data:this.sortUser});
+    this.$axios.$get(`company/tasks/all`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`, 'Filter':'all' }
+    }).then ((res)=>{
+        
+       let arr=[]
+        arr=res.data
+        arr = arr.reduce((acc, ele) => {
+          return [...acc, ...ele.tasks];
+        }, []);
+
+        this.sortUser= Object.values(
+          arr.reduce((acc, curr) => {
+                      if (acc[curr.userId]) {
+                        acc[curr.userId].taskCount++;
+                        if (curr.statusId === 5) {
+                          acc[curr.userId].complete++;
+                        }
+                      } else {
+                        acc[curr.userId] = {
+                          userId: curr.userId,
+                          taskCount: 1,
+                          complete: curr.statusId === 5 ? 1 : 0
+                        };
+                      }
+                      return acc;
+                    }, {})
+                  );
+        console.log("111",this.sortUser)
+        this.$store.commit("user/sortPeople",{sort:item,data:this.sortUser});
+    });
+       
     },
       openDetails() {
         let icon = this.$refs.icon.$vnode.elm;

@@ -48,7 +48,7 @@
           <!-- separator -->
           <div
             class="mt-05 mb-05"
-            :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']"
+            :class="[lightThemeChecked ? 'line-light' : 'bg-dark-sub1']"
             style="height: 1px"
           ></div>
           <bib-app-navigation
@@ -59,7 +59,7 @@
           <!-- separator -->
           <div
             class="mt-05 mb-05"
-            :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']"
+            :class="[lightThemeChecked ? 'line-light' : 'bg-dark-sub1']"
             style="height: 1px"
             v-show="!collapseNavigation"
           ></div>
@@ -80,7 +80,7 @@
           <!-- separator -->
           <div
             class="mt-05 mb-05"
-            :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']"
+            :class="[lightThemeChecked ? 'line-light' : 'bg-dark-sub1']"
             style="height: 1px"
             v-show="!collapseNavigation"
           ></div>
@@ -714,5 +714,8 @@ html {
   top: 0;
   left: 0;
   z-index: 6;  
+}
+.line-light{
+  border-bottom: 1px solid rgba(29,29,32,.08);
 }
 </style>

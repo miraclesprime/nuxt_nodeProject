@@ -1,7 +1,7 @@
 <template>
   <div id="task-team-wrapper" class="task-group position-relative w-100">
-    <div class="bg-light p-1 shape-rounded">
-    <label id="create-team-modal-heading" class="text-gray6 font-md">Invite people </label>
+    <div >
+    <!-- <label id="create-team-modal-heading" class="text-gray6 font-md">Invite people </label>
     <bib-button test_id="teamlist-dd1" dropdown1="add1" label="Type name or email" v-model="member" v-on:input-keydown="teamInputKeydown" class="mt-05 mb-05">
       <template v-slot:menu>
         <ul id="atm-fields" class="border-gray1" style="border-radius: 0 !important; border: 1px solid var(--bib-gray1);">
@@ -11,13 +11,14 @@
           </li>
         </ul>
       </template>
-    </bib-button>
+    </bib-button> -->
+    <bib-select label="Invite people" test_id="po-owner-dd2"  :options="userOptions" v-model="owner" v-on:change="teamItemClick($event)"></bib-select>
     <div id="task-team-members" class="py-025">
       <template v-for="t in team">
         <email-chip :key="t.id" :email="t.email" :name="t.label" :avatar="t.avatar" class="mt-05" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
       </template>
-      <small v-show="team.length == 0" class="text-danger">Select at least 1 team member.</small>
-      <p v-if="message" v-text="message" class="font-sm mt-025 text-orange"></p>
+      <small v-show="showMsg" class="text-danger font-xs">Select at least 1 team member.</small>
+      <p v-if="message" v-text="message" class="font-sm mt-025 text-danger"></p>
     </div>
      </div>
       <div class="bg-light p-1 mt-05 shape-rounded">
@@ -77,13 +78,13 @@
       </bib-table>
     </template>
     <template v-if="norecord">
-      <span id="projects-0" class="d-inline-flex gap-05 align-center my-1 text-gray5 font-md">
+      <span id="projects-0" class="d-inline-flex gap-1 align-center my-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
         <bib-icon icon="warning" variant="gray4"></bib-icon> No records found
       </span>
     </template>
       </div>
     <div v-show="team.length > 0" class="pt-05 pb-1 justify-end">
-      <bib-button label="Add" variant="success" class="w-20" @click="addTeamMember"></bib-button>
+      <bib-button  variant="primary-24" size="lg"   @click="addTeamMember"  pill label="Add"></bib-button>
     </div>
     <loading :loading="loading"></loading>
   </div>
@@ -108,8 +109,10 @@ export default {
       tableFields: PROJECT_TEAM_FIELDS,
       flag: false,
       key: 0,
+      showMsg:false,
       loading: false,
-      norecord: false
+      norecord: false,
+      owner: null,
     };
   },
 
@@ -143,6 +146,8 @@ export default {
       taskMembers: 'task/getTaskMembers',
       teamMembers: "user/getTeamMembers",
       subtaskMembers: 'subtask/getSubtaskMembers',
+      userOptions: "user/getUsersList",
+
     }),
 
     filterTeam() {
@@ -179,14 +184,16 @@ export default {
       this.filterKey = $event
     },
     teamItemClick(tm) {
-      let existing = this.taskMembers.filter(ex => ex.id == tm.id)
+
+      let existing = this.taskMembers.filter(ex => ex.id == tm)
       if (existing.length == 0) {
         this.message = ""
-        let m = this.teamMembers.filter(t => t.id == tm.id)
+        let m = this.teamMembers.filter(t => t.id == tm)
         if (this.team.some(el => el.id == m[0].id)) {
           return false
         }
         this.team.push(m[0])
+        this.showMsg=false
       } else {
         this.message = "User already exists"
       }
@@ -194,6 +201,7 @@ export default {
     removeMember(tm) {
       let rm = this.team.map(t => t.id == tm.id)
       this.team.splice(rm.indexOf(true), 1)
+      this.showMsg=true
     },
     addTeamMember() {
       this.loading = true
