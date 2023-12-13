@@ -396,6 +396,9 @@ ul {
   .section-drag-handle {
     cursor: grab;
   }
+  &.non-draggable {
+    .section-drag-handle { cursor: auto;}
+  }
 
   /*&:not(:first-child) {
     border-left: 1px solid $gray4;
@@ -404,7 +407,6 @@ ul {
   &:last-child {
     border-right: 1px solid $gray4;
   }*/
-
   .title {
     font-weight: 600;
   }

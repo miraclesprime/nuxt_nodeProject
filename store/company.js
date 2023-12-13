@@ -77,7 +77,6 @@ export const mutations = {
 
   setCompanyTasks(state, payload) {
     state.companyTasks = payload;
-
   },
   setInitialTasks(state,payload) {
      let arr=[]
@@ -95,34 +94,6 @@ export const mutations = {
   setSortOrder(state, payload){
     state.sortOrder = payload
   },
-  // getFilterTasks(state,payload){
-  //   let arr=[]
-  //   arr=state.initialAllTasks
-  //  if(payload.filter=="incomplete")
-  //  {
-  //    arr=arr.filter((item)=>item.statusId!==5)
-     
-  //      arr=this.$groupBy(arr,payload.groupBy)
-     
-  //  }
-
-  //  if(payload.filter=="complete")
-  //  {
-  //    arr=arr.filter((item)=>item.statusId==5)
-     
-  //      arr=this.$groupBy(arr,payload.groupBy)
-     
-  //  }
-  //  if(payload.filter=="all")
-  //  {
-    
-  //      arr=this.$groupBy(arr,payload.groupBy)
-    
-  //  }
-
-  //   state.companyTasks=arr
-  //   state.taskCount=arr.reduce((acc, td) => acc + td.tasks.length, 0)
-  // },
   
   groupTasks(state, payload) {
     let arr = state.companyTasks
@@ -525,15 +496,6 @@ export const actions = {
     });
 
     if (res.data) {
-      // await res.data.map(item=>{
-      //   if(item.id){
-      //     return item
-      //   }
-      //   else {
-      //     item['id']=res.data.length
-      //     return item
-      //   }
-      // })
       ctx.commit('setInitialTasks', res.data);
       return res.data
     }

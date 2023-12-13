@@ -48,7 +48,7 @@
           <!-- separator -->
           <div
             class="mt-05 mb-05"
-            :class="[isLightTheme ? 'bg-gray2' : 'bg-dark-sub1']"
+            :class="[isLightTheme ? 'line-light' : 'bg-dark-sub1']"
             style="height: 1px"
           ></div>
           <bib-app-navigation
@@ -59,7 +59,8 @@
           <!-- separator -->
           <div
             class="mt-05 mb-05"
-            :class="[isLightTheme ? 'bg-gray2' : 'bg-dark-sub1']"
+
+            :class="[isLightTheme ? 'line-light' : 'bg-dark-sub1']"
             style="height: 1px"
             v-show="!collapseNavigation"
           ></div>
@@ -78,9 +79,10 @@
             </template>
           </favorite-project-collpase>
           <!-- separator -->
+          <!-- :class="[isLightTheme ? 'bg-gray2' : 'bg-dark-sub1']" -->
           <div
             class="mt-05 mb-05"
-            :class="[isLightTheme ? 'bg-gray2' : 'bg-dark-sub1']"
+            :class="[isLightTheme ? 'line-light' : 'bg-dark-sub1']"
             style="height: 1px"
             v-show="!collapseNavigation"
           ></div>
@@ -616,9 +618,7 @@ export default {
       if (isTheme == undefined) {
           this.$cookies.set("isLightTheme", false, {
             path: "/",
-            domain: location.host.includes("business-in-a-box.com")
-              ? ".business-in-a-box.com"
-              : undefined,
+            domain: location.host.includes("business-in-a-box.com") ? ".business-in-a-box.com" : undefined,
             maxAge: 60 * 60 * 24 * 30,
           });
           this.$store.commit("setTheme", false)
@@ -707,5 +707,8 @@ html {
   top: 0;
   left: 0;
   z-index: 6;  
+}
+.line-light{
+  border-bottom: 1px solid rgba(29,29,32,.08);
 }
 </style>
