@@ -18,7 +18,7 @@
           <div v-if="gridType === 'list'" class="h-100">
             <!-- <template v-if="!showPlaceholder"> -->
               
-              <adv-table-three :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable" :key="templateKey" :editSection="group" :lazyComponent="lazyComponent" :filter="filterViews"></adv-table-three>
+            <adv-table-three :tableFields="taskFields" :tableData="localData" :plusButton="plusButton" :contextItems="contextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="sortBy" @row-click="openSidebar" @title-click="openSidebar" @update-field="updateTask" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :newRow="newRow" @create-row="createNewTask" :drag="dragTable" :key="templateKey" :editSection="group" :lazyComponent="lazyComponent" :filter="filterViews"></adv-table-three>
           
           </div>
         
@@ -122,7 +122,6 @@ export default {
       alertDialog: false,
       alertMsg: "",
       localData: [],
-      localData2: [],
       lazyComponent: false,
       plusButton: {
         show: true,
@@ -158,7 +157,8 @@ export default {
       filterViews :'task/getFilterView',
       sidebar: "task/getSidebarVisible",
       grid:"task/getGridType",
-      taskcount: "company/getTaskCount"
+      taskcount: "company/getTaskCount",
+      departments: "department/getAllDepartments",
     }),
     // taskcount(){
     //   return this.tasks.reduce((acc, td) => acc + td.tasks.length, 0)
@@ -171,14 +171,14 @@ export default {
       return _.cloneDeep(newValue)
     },
     filterViews(newValue){
-         return _.cloneDeep(newValue)
+      return _.cloneDeep(newValue)
     },
     tasks(newVal) {
       let data = _.cloneDeep(newVal);
-      this.localData = data
+      // console.info("watch tasks")
+      // this.localData = data.sort((a,b) => a.deptOrder - b.deptOrder)
     },
     gridType() {
-
       this.$store.commit('task/gridType',{gridType:this.gridType})
       localStorage.setItem('grid', this.gridType)
       this.updateKey()
@@ -244,55 +244,53 @@ export default {
       })
     }
   },
-      beforeDestroy(){ 
-      this.$nuxt.$off("update-key");
-      this.$nuxt.$off("refresh-table");
-
-      },
+  beforeDestroy(){ 
+    this.$nuxt.$off("update-key");
+    this.$nuxt.$off("refresh-table");
+  },
   mounted() {
 
-  if(process.client) {
-    if (this.tasks.length<=0) {
-      this.updateKey();
-    }
-    if (JSON.parse(localStorage.getItem("user")).subr != "ADMIN") {
-      this.$router.push('/error/403')    
-    } 
-
-    for(let field of this.taskFields) {
-      if(field.header_icon) {
-        field.header_icon.isActive = false;
+    if(process.client) {
+      if (this.tasks.length<=0) {
+        this.updateKey();
       }
-    }
-    // this.$store.dispatch("company/fetchInitialCompanyTasks",{filter:'all'})
-    this.$store.commit('task/setGroupBy',"department")
-    // this.updateKey()
-      setTimeout(() => {
-      //   if(this.grid){
-      //     this.gridType=this.grid
-      //   }
-      // else {
-        if(localStorage.getItem('grid')!=null){
-          if(localStorage.getItem('grid')=='grid'){
-            this.gridType='grid'
+      if (JSON.parse(localStorage.getItem("user")).subr != "ADMIN") {
+        this.$router.push('/error/403')    
+      } 
+
+      for(let field of this.taskFields) {
+        if(field.header_icon) {
+          field.header_icon.isActive = false;
+        }
+      }
+      // this.$store.dispatch("company/fetchInitialCompanyTasks",{filter:'all'})
+      this.$store.commit('task/setGroupBy',"department")
+      // this.updateKey()
+        setTimeout(() => {
+        //   if(this.grid){
+        //     this.gridType=this.grid
+        //   }
+        // else {
+          if(localStorage.getItem('grid')!=null){
+            if(localStorage.getItem('grid')=='grid'){
+              this.gridType='grid'
+            }
+            if(localStorage.getItem('grid')=='list')
+          this.gridType='list'
           }
-          if(localStorage.getItem('grid')=='list')
-        this.gridType='list'
-        }
-        else {
-          this.gridType=this.grid
-        }
-      // }
-      
-        this.lazyComponent=true
-      }, 300);
-  }
+          else {
+            this.gridType=this.grid
+          }
+        // }
+        
+          this.lazyComponent=true
+        }, 300);
+    }
   
   },
 
   methods: {
     
-
     showUserPicker(payload) {
       this.closeAllPickers();
       this.userPickerOpen = true;
@@ -336,6 +334,7 @@ export default {
       }
       this.$store.dispatch("task/setSingleTask", item)
     },
+
     updateKey(value) {
       if (value) {
         //this.popupMessages.push({ text: value, variant: "success" });
@@ -347,9 +346,11 @@ export default {
           filter:this.filterViews,
           sName:this.group
         })
-        .then(() => {
+        .then((res) => {
+          console.info("update key");
+          // this.localData = res.sort((a,b) => a.deptOrder - b.deptOrder)
           this.key += 1;
-          this.templateKey++;
+          this.templateKey += 1;
         });
        
     },
@@ -520,7 +521,6 @@ export default {
             }
           
         }
-        
       
     },
 
@@ -965,30 +965,26 @@ export default {
     },
 
     sectionDragEnd: _.debounce(async function (payload) {
-      // this.loading = true;
+      this.loading = true;
 
       let clone = _.cloneDeep(payload);
       clone.forEach((el, i) => {
-        el.order = i;
+        el.deptOrder = i;
       });
-
-      // this.$store.dispatch("company/setCompanyTasks",{data:clone})
-
-      let sectionDnD = await this.$axios.$put(
-        "/department/dragdrop",
-        { data: clone },
-        {
+      let filtered = clone.filter(dc => dc.title != "Unassigned")
+      console.log(clone, filtered)
+      // return
+      let sectionDnD = await this.$axios.$put("/department/dragdrop", { data: filtered }, {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("accessToken"),
             "Content-Type": "application/json",
           },
-        }
-      );
-      // if (sectionDnD.statusCode == 200) {
-      //   this.updateKey()
-      // }
+        });
+      if (sectionDnD.statusCode == 200) {
+        this.updateKey()
+      }
 
-      // this.loading = false;
+      this.loading = false;
     }, 600),
 
     taskDragEnd: _.debounce(async function (payload) {
@@ -997,10 +993,13 @@ export default {
       tasks.forEach((el, i) => {
         el.dOrder = i;
       });
-      let taskDnD = await this.$axios.$put(
-        "/department/crossDepartmentDragDrop",
-        { data: tasks, departmentId: payload.sectionId?payload.sectionId:null },
-        {
+      let dept = this.departments.find(d => d.label == payload.title)
+      console.log(payload, tasks, dept)
+      // return
+      let taskDnD = await this.$axios.$put( "/department/crossDepartmentDragDrop",{
+        data: tasks,
+        departmentId: dept ? Number(dept.value) : null
+      }, {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("accessToken"),
             "Content-Type": "application/json",

@@ -294,7 +294,8 @@ export default {
     taskDragEnd(e) {
       this.highlight = false
       let sectionData = this.localdata.filter(s => s.id == e.to.dataset.section)
-      this.$emit('task-dragend', { tasks: sectionData[0].tasks, sectionId: e.to.dataset.section })
+      // console.log(sectionData)
+      this.$emit('task-dragend', { tasks: sectionData[0].tasks, sectionId: e.to.dataset.section, title: sectionData[0].title  })
     },
 
     moveSection(e) {
