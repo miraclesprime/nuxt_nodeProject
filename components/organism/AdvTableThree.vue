@@ -834,7 +834,6 @@ export default {
       let sectionData = this.localData.filter(
         (s) => s.id == e.to.dataset.section
       );
-
       // console.log("row dragend ", e, sectionData)
       this.$emit("row-dragend", {
         [this.tasksKey]: sectionData[0][this.tasksKey],
