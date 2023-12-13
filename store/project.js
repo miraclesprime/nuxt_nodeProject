@@ -115,19 +115,19 @@ export const mutations = {
   // To set a single project
   setSingleProject(state, { currentProject }) {
     state.selectedProject = currentProject;
-    let projectData = state.projects
-      if(projectData[0]?.tasks && currentProject){
-        let sectionID, taskID;
-        state.projects.forEach((section, section_idx) => {
-            section.tasks.forEach((task, task_idx) => {
-            if (task.id === currentProject.id) {
-              sectionID = section_idx;
-              taskID = task_idx;
-            }
-          });   
-        });
-        state.projects[sectionID].tasks[taskID] = currentProject;
-      }
+    // let projectData = state.projects
+    //   if(projectData[0]?.tasks && currentProject){
+    //     let sectionID, taskID;
+    //     state.projects.forEach((section, section_idx) => {
+    //         section.tasks.forEach((task, task_idx) => {
+    //         if (task.id === currentProject.id) {
+    //           sectionID = section_idx;
+    //           taskID = task_idx;
+    //         }
+    //       });   
+    //     });
+    //     state.projects[sectionID].tasks[taskID] = currentProject;
+    //   }
   },
 
   // To create project
