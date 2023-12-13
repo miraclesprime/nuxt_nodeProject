@@ -30,8 +30,8 @@
             </div>
           </template>
         </div>
-        <draggable v-model="localData" class="sortable-list " @end="sectionDragend(localData)" >
-          <section v-for="(section, groupIdx) in localData" :key="section.id" class="sortable w-100" >
+        <draggable v-model="localData" class="sortable-list " @end="sectionDragend(localData)" :options="dragOptions" >
+          <section v-for="(section, groupIdx) in localData" :key="section.id" class="sortable w-100" :class="{'non-draggable': section.title == 'Unassigned'}">
             <div class="thead">
               
               <div class="tr hidden" role="row" >
@@ -43,7 +43,7 @@
               <div class="tr position-relative height-205" role="row">
                 <div class="position-absolute border-bottom-light" style="inset: 0; ">
                   <div class="section-header d-flex align-center gap-05 height-205 " >
-                    <div v-show="drag&&filterViews=='all'" class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
+                    <div v-show="drag && filterViews=='all'" class="section-drag-handle width-2 h-100" :class="{'no-drag': section.title == 'Unassigned'}" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                     </div>
                     <div class="position-sticky align-center" style="left: 0.5rem; z-index: 2;" >
                       <span class="width-105 text-center cursor-pointer" @click.stop="collapseItem(section.id)">
@@ -291,6 +291,9 @@ export default {
       tableWidth: "100%",
       deleteBtnHover: false,
       popupMessages: [],
+      dragOptions: {
+        filter: '.non-draggable',
+      },
     }
   },
   watch: {
@@ -1225,6 +1228,9 @@ export default {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    &.no-drag { cursor: auto;
+      .icon { display: none; opacity: 0; }
+    }
     svg {
       fill: $secondary;
     }

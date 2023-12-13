@@ -616,9 +616,7 @@ export default {
       if (isTheme == undefined) {
           this.$cookies.set("isLightTheme", false, {
             path: "/",
-            domain: location.host.includes("business-in-a-box.com")
-              ? ".business-in-a-box.com"
-              : undefined,
+            domain: location.host.includes("business-in-a-box.com") ? ".business-in-a-box.com" : undefined,
             maxAge: 60 * 60 * 24 * 30,
           });
           this.$store.commit("setTheme", false)

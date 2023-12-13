@@ -176,7 +176,7 @@ export default {
     tasks(newVal) {
       let data = _.cloneDeep(newVal);
       // console.info("watch tasks")
-      // this.localData = data.sort((a,b) => a.deptOrder - b.deptOrder)
+      this.localData = data.sort((a,b) => a.deptOrder - b.deptOrder)
     },
     gridType() {
       this.$store.commit('task/gridType',{gridType:this.gridType})
@@ -348,7 +348,7 @@ export default {
         })
         .then((res) => {
           console.info("update key");
-          // this.localData = res.sort((a,b) => a.deptOrder - b.deptOrder)
+          this.localData = res.sort((a,b) => a.deptOrder - b.deptOrder)
           this.key += 1;
           this.templateKey += 1;
         });
