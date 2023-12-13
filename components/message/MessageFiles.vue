@@ -173,7 +173,7 @@ export default {
             }).then(f => {
               // console.log(f.data)
               if (f.data.statusCode == 200) {
-                this.popupMessages.push({text: f.data.message, variant: "primary-24"})
+                this.popupMessages.push({text: "File(s) deleted successfully", variant: "primary-24"})
                 _.delay(() => {
                   // this.getFiles()
                   this.$emit("reload-files")
@@ -183,7 +183,7 @@ export default {
             .catch(e => console.error(e))
       } else {
         // console.log("you don't have enough permission to delete this file")
-        this.popupMessages.push({text: "you do not have permission to delete this file", variant: "primary-24"})
+        this.popupMessages.push({text: "You do not have permission to delete this file", variant: "primary-24"})
       }
     },
   }

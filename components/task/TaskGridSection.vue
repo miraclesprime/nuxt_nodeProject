@@ -126,16 +126,17 @@ export default {
       immediate: true, // Execute the watcher immediately on component mount
       deep: true, // Watch for changes in nested properties of tableData
       handler(newValue) {
-        this.newValue=_.cloneDeep(newValue)
-    this.newValue.map(item=>{
-      if(item.id){
-        return item
-      }
-      else {
-        item['id']=this.newValue.length
-        return item
-      }
-    })
+        this.newValue = _.cloneDeep(newValue)
+        this.newValue.map(item=>{
+          if(item.id){
+            return item
+          }
+          else {
+            item['id']=this.newValue.length
+            return item
+          }
+        })
+
         this.$nextTick(() => {
           this.localdata=[]
           this.allDataDisplayed=false

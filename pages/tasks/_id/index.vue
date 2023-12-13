@@ -97,13 +97,22 @@
       <message-input class="flex-grow-1" :value="value" key="taskMsgInput" :editingMessage="editMessage" @input="onFileInput" @submit="onsubmit"></message-input>
     </div>
 
-    <!-- <bib-modal-wrapper v-if="taskTeamModal" title="Team" size="lg" @close="taskTeamModal = false">
+    <!-- no access modal -->
+    <bib-modal-wrapper v-if="noAccess" title="No access" @close="redirect">
       <template slot="content">
-        <div style="min-height: 12rem;">
-          <task-team :task="currentTask"></task-team>
+        <div>
+          <p class="mb-05 font-w-500">You have no access to this page.</p>
+          <p class="font-md">You are not a member of the task or project.</p>
         </div>
       </template>
-    </bib-modal-wrapper> -->
+      <template slot="footer">
+        <div class="d-flex justify-end">
+          <bib-button label="Ok" variant="primary-24" pill @click="redirect"></bib-button>
+        </div>
+      </template>
+    </bib-modal-wrapper>
+
+    <!-- <alert-dialog v-show="noAccess" message="You are not a member of the task or project." @close="redirect"></alert-dialog> -->
 
     <bib-popup-notification-wrapper>
       <template #wrapper>
@@ -113,6 +122,10 @@
     </bib-popup-notification-wrapper>
     
     <subtask-detail v-if="showSubtaskDetail" @close-sidebar-detail="showSubtaskDetail = false"></subtask-detail>
+
+    <div v-show="loading" class="align-center justify-center" style="position: fixed; inset: 0; z-index: 99; background-color: rgba(0,0,0,0.9);">
+      <bib-spinner></bib-spinner>
+    </div>
 
   </article>
 </template>
@@ -150,6 +163,7 @@ export default {
       _expandVisible: true,
       deleteBtnHover: false,
       description: null,
+      noAccess: false,
     };
   },
 
@@ -224,7 +238,7 @@ export default {
       if (Object.keys(this.currentTask).length) {
         this.form = _.cloneDeep(this.currentTask);
         if (this.currentTask.project?.length) {
-          console.log("this.currentTask",this.currentTask)
+          // console.log("this.currentTask",this.currentTask)
           this.form.projectId = this.currentTask.project[0]?.projectId || this.currentTask.project[0].project?.id
         } else {
           this.form.projectId = this.project?.id
@@ -280,54 +294,81 @@ export default {
 
   async created(){
 
+    this.$nuxt.$on("edit-message", (msg) => {
+        this.editMessage = msg
+    })
 
-          this.$nuxt.$on("edit-message", (msg) => {
-              this.editMessage = msg
-          })
+    this.setExpand();
+    // get current task
+    this.loading = true
+    this.$axios.$get(`task/${this.$route.params.id}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+    }).then((res) => {
+        if (res) {
+            if (!res.data || res.data.isDeleted) {
+                this.$router.push("/notfound")
+            } 
+            else {
+                this.$store.dispatch('task/setSingleTask', res.data);
 
-          this.setExpand();
-///get current task
-          this.$axios.$get(`task/${this.$route.params.id}`, {
-              headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-          }).then((res) => {
-              if (res) {
-                  if (!res.data || res.data.isDeleted) {
-                      this.$router.push("/notfound")
-                  } 
-                  else {
-                      this.$store.dispatch('task/setSingleTask', res.data);
+                this.$axios.get(`/task/${this.$route.params.id}/members`, {
+                    headers: {
+                      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                    },
+                  }).then (async (tm)=>{
+                    let teams = tm.data.data.members;
 
-                      this.$axios.get(`/task/${this.$route.params.id}/members`, {
+                    let projectMembers; 
+                    if (tm.data.data.hasOwnProperty("project")) {
+                      if(tm.data.data.project[0]) {
+                        let mems = await this.$axios.get(`/project/${tm.data.data.project[0].projectId}/members`, {
                           headers: {
                             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                          },
-                        }).then ((tm)=>{
-                          let teams = tm.data.data.members;
+                          }
+                        });
+                        projectMembers = mems.data.data.members;
+                      }
 
-                          let data = teams.map((el) => {
-                            if (res.data.userId == el.user.id) {
-                              el.isOwner = true
-                            } else {
-                              el.isOwner = false
-                            }
-                            return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName, isOwner: el.isOwner };
-                          });
-                          this.$store.commit('task/fetchTeamMember',data)
-                        })
+                      let checkMemberInTasks = teams.find((tm) => tm.userId == JSON.parse(localStorage.getItem("user")).sub);
+
+                      let checkMemberInProjects = projectMembers.find((tm) => tm.userId == JSON.parse(localStorage.getItem("user")).sub);
+
+                      if(((checkMemberInTasks || checkMemberInProjects) && JSON.parse(localStorage.getItem("user")).subr == 'USER') || JSON.parse(localStorage.getItem("user")).subr == 'ADMIN') {
+                        // alert("You are good")
+                        this.loading = false
+                        this.noAccess = false
+                      } else {
+                        this.loading = true
+                        this.noAccess = true
+                        return
+                        // alert("You are not a Member of this Task or Project")
+                      }
                     }
-              } else {
-                  this.$router.push("/notfound")
+                    this.loading = false
+
+                    let data = teams.map((el) => {
+                      if (res.data.userId == el.user.id) {
+                        el.isOwner = true
+                      } else {
+                        el.isOwner = false
+                      }
+                      return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName, isOwner: el.isOwner };
+                    });
+                    this.$store.commit('task/fetchTeamMember',data)
+                  })
               }
-          }).catch(err => {
-              console.log("There was an issue in project API", err);
-          })
+        } else {
+            this.$router.push("/notfound")
+        }
+    }).catch(err => {
+        console.log("There was an issue in project API", err);
+    })
 // get all members
         this.$axios.$get(`${process.env.ORG_API_ENDPOINT}/${JSON.parse(localStorage.getItem('user')).subb}/users`, {
       headers: {
         "Authorization": `Bearer ${localStorage.getItem('accessToken')}`
       }
     }).then((res) => {
-      console.log(res)
       this.$store.commit('user/setTeamMembers',res)
  
         });
@@ -606,7 +647,7 @@ export default {
     },
 
     storeDescription(payload){
-      console.log("desc->", payload)
+      // console.log("desc->", payload)
       this.description = payload
     },
 
@@ -819,11 +860,14 @@ export default {
           "taskid": this.form.id,
         }
       }).then(res => {
-        console.log(res.data.message)
+        // console.log(res.data.message)
         this.getTags()
         this.$nuxt.$emit("update-key","tagStatus")
       }).catch(e => console.warn(e))
     },
+    redirect(){
+      window.location.href = '/mytasks'
+    }
   },
 };
 

@@ -859,7 +859,9 @@ export default {
       if (item.hasOwnProperty('sectionId')) {
         this.$emit(`${fieldEvent}`, item)
         return
-      } 
+      } else {
+        return
+      }
       this.$emit(`${fieldEvent}`, item)
       
     },

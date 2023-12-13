@@ -11,12 +11,12 @@
             collapseNavigation = !collapseNavigation;
           }
         "
-        :isLightTheme="lightThemeChecked"
+        :isLightTheme="isLightTheme"
       >
         <template #topbar>
           <bib-header
             :avatarLink="user2 ? user2.Photo : ''"
-            :isLightTheme="lightThemeChecked"
+            :isLightTheme="isLightTheme"
             @side-menu-expand="collapseNavigation=!collapseNavigation"
             :mainAction="btnText"
             hide-search-box
@@ -33,7 +33,7 @@
         <template #switcher>
           <bib-app-switcher
             :menuItems="appItems"
-            :isLightTheme="lightThemeChecked"
+            :isLightTheme="isLightTheme"
               v-if="!collapseNavigation"
             @toggle-theme="handleToggleWrapperTheme"
             style="z-index: 99;"
@@ -43,7 +43,7 @@
           <bib-app-navigation
             :items="navItems1"
             @click="goToRoute"
-            :isLightTheme="lightThemeChecked"
+            :isLightTheme="isLightTheme"
           ></bib-app-navigation>
           <!-- separator -->
           <div
@@ -54,7 +54,7 @@
           <bib-app-navigation
             :items="navItems2"
             @click="goToRoute"
-            :isLightTheme="lightThemeChecked"
+            :isLightTheme="isLightTheme"
           ></bib-app-navigation>
           <!-- separator -->
           <div
@@ -288,6 +288,8 @@ export default {
     };
   },
   created() {
+    this.lightThemeChecked = this.$cookies.get("isLightTheme") == undefined || this.$cookies.get("isLightTheme") ? true : false;
+
     this.$root.$on("open-sidebar", (payload) => {
       this.openSidebar = true;
       this.$store.dispatch("task/setSidebarVisible", true)
@@ -361,14 +363,14 @@ export default {
       // if (this.$router.history.current.fullPath == "/dashboard") {
       //   this.navItems1[0].selected = true;
       // }
-      if(localStorage.getItem('lightcheck')) {
+      /*if(localStorage.getItem('lightcheck')) {
           if(localStorage.getItem('lightcheck')=='true') {
             this.lightThemeChecked=true    
           }
           else {
             this.lightThemeChecked=false    
           }
-      }
+      }*/
       if (this.$router.history.current.fullPath == "/inbox") {
         this.navItems1[0].selected = true;
       }
@@ -404,35 +406,6 @@ export default {
       // if (this.$router.history.current.fullPath == '/dreams') {
       //   this.navItems2[3].selected = true;
       // }
-
-      // Dhruv (admin)
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrNjFZUWRKNko3bGRPR3BKIiwic3ViZSI6ImRocnV2LnNoYXJtYUBxc3N0ZWNobm9zb2Z0LmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY5NzYyOTAxMjg5MiwiZXhwIjoxNzA1NDA1MDEyODkyLCJqdGkiOiIzZWRjYWU5OC05NzEyLTRlODktOWFlNC1hNjVjMzY0OTY4ZTAifQ.vYyPrVezlN6SjRMplYjglCH_K9n_ozoWG2DFwHkj6zg";
-    
-      // Vishwajeet
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJES2dsOWF2Mk53bmFHMXZ6Iiwic3ViZSI6InZpc2h3YWplZXQubWFuZGFsQHFzc3RlY2hub3NvZnQuY29tIiwic3VicyI6IkFDVElWRSIsInN1YmIiOiJPM0dXcG1iazVlekpuNEtSIiwic3ViYnMiOiJDTElFTlQiLCJzdWJyIjoiVVNFUiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2OTY0MDk1MjkwMTYsImV4cCI6MTcwNDE4NTUyOTAxNiwianRpIjoiNzZhZGIwMWEtMmVlMy00YTAzLWJhZGMtMjU5NGQ0YThmODE2In0.7yryx4JhYce42qtAdTQlbl9dglpcalfWYQdYVsMIJs8"
-
-      // Rajeev
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJRWk9wbmVsQURPSmFLQnp5Iiwic3ViZSI6InJhamVldi5zaGFybWFAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJVU0VSIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImxpdmUiLCJpYXQiOjE2OTc1MjQ3Mzk4NDEsImV4cCI6MTcwNTMwMDczOTg0MSwianRpIjoiZmY2MmZjZmYtNDJjMy00NzZhLWFkYmMtOGMzMzA0Njk4ODBiIn0.15t0eN5dwfuIoRfdPQoGLyCjTjelIyT71PyVzewVh3g"
-      
-      //Wen Yang
-      //  let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJEWE1WeWI4MmtabWV2QVpFIiwic3ViZSI6Imxlb25hbmMwMDIyQGdtYWlsLmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTcwMDY4MDY4MDYwNSwiZXhwIjoxNzA4NDU2NjgwNjA1LCJqdGkiOiJjMjZiM2M0Yi0wYTliLTQ4NWQtODJkNy0wZDU1MTc3N2YzNjAifQ.w_lMqnBU-5O45EaagtdUzo_u4pgBZvpLCHFukl_s0Jw"
-      
-      //free
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJEWE1WeWI4MmtabWV2QVpFIiwic3ViZSI6Imxlb25hbmMwMDIyQGdtYWlsLmNvbSIsInN1YnMiOiJBQ1RJVkUiLCJzdWJiIjoiTzNHV3BtYms1ZXpKbjRLUiIsInN1YmJzIjoiQ0xJRU5UIiwic3ViciI6IkFETUlOIiwic3ViYyI6IkNhbmFkYSIsImVudiI6ImRldiIsImlhdCI6MTY5ODg1MTgyOTMzOCwiZXhwIjoxNzA2NjI3ODI5MzM4LCJqdGkiOiI4NDY0NmQwYy1hMmU4LTQ1ZmYtODFiZC1hMTFiYTMxYmNiMTAifQ.HMiWQ-GzmlRS-cQPtWiT68H7WmsLnmcSdzsfqmlKAVk"
-
-      // Charan (admin)
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQeTdMRGR3cE9xMWUxWUtYIiwic3ViZSI6ImNoYXJhbi5wYWxAcXNzdGVjaG5vc29mdC5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6Ik8zR1dwbWJrNWV6Sm40S1IiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJBRE1JTiIsInN1YmMiOiJDYW5hZGEiLCJlbnYiOiJkZXYiLCJpYXQiOjE2OTI4NTE5NDE2NzIsImV4cCI6MTcwMDYyNzk0MTY3MiwianRpIjoiMzU2YmM4OTUtNjE3Mi00NjE3LTk2NzEtNWI5NmU0OWIzMGEwIn0.0zMvHg45zgJ6L51qGICZRa31xzA3t9OzyKPXp5YuqTs"
-
-      // aaatest (admin)
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1cG1XWmRQTlAweWFLZ1JsIiwic3ViZSI6ImFhYXRlc3RAbWFpbGluYXRvci5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6InFMa3pQZHlQMGpXYlFyb3YiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJBRE1JTiIsInN1YmMiOiJJbmRpYSIsImVudiI6ImRldiIsImlhdCI6MTcwMTkzMDQ1NzcxNywiZXhwIjoxNzA5NzA2NDU3NzE3LCJqdGkiOiI5NDFkMzUxZS1mMGZiLTQzZGUtYTZkZC01MWQzNzFkMmVlYjYifQ.bQblxzV_N0ysz4Ygnt0ZMRMTYbInUWRVOXAupM7iftI"
-
-      // bbbtest (admin)
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnRUxZcWFRV1FZTWRuamsyIiwic3ViZSI6ImJiYnRlc3RAbWFpbGluYXRvci5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6InFMa3pQZHlQMGpXYlFyb3YiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJBRE1JTiIsInN1YmMiOiJJbmRpYSIsImVudiI6ImRldiIsImlhdCI6MTcwMTk0ODg0MjczMywiZXhwIjoxNzA5NzI0ODQyNzMzLCJqdGkiOiJjOWJlNWQ4MC1kYjAzLTQ3YzEtYjcxYy0wZTIzNzYwNWU3Y2QifQ.WkxX5YGODEbnkvOzHRjveKUSC0SGljF4kKCnQnS_Rik"
-
-      // ccctest
-      // let cookie = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3TkpBUGRSNlJaemRHeU9YIiwic3ViZSI6ImNjY3Rlc3RAbWFpbGluYXRvci5jb20iLCJzdWJzIjoiQUNUSVZFIiwic3ViYiI6InFMa3pQZHlQMGpXYlFyb3YiLCJzdWJicyI6IkNMSUVOVCIsInN1YnIiOiJVU0VSIiwic3ViYyI6IkluZGlhIiwiZW52IjoiZGV2IiwiaWF0IjoxNzAxOTMwNDM4MTA4LCJleHAiOjE3MDk3MDY0MzgxMDgsImp0aSI6ImZmZGU2MDU4LTRlNTUtNDQ5NS04ZjZjLWE5ZjM4MmQyMjllMSJ9.xyctSfy_ZzXc54EsCjUG8gJXf3PEtszKp3M_h6OG4PE"
-
-      // this.$cookies.set(process.env.SSO_COOKIE_NAME, cookie);
 
       if (this.$cookies.get(process.env.SSO_COOKIE_NAME)) {
         let jwt = this.$cookies.get(process.env.SSO_COOKIE_NAME);
@@ -537,6 +510,9 @@ export default {
       expandVisible:"task/getExpandVisible",
       sidebar: "task/getSidebarVisible",
     }),
+    isLightTheme() {
+      return this.$store.state.isLightTheme;
+    },
   },
   watch: {
     appMembers(newVal){
@@ -653,8 +629,9 @@ export default {
       window.location.href = process.env.SUPPORT_URL;
     },
     handleToggleWrapperTheme(value) {
-      localStorage.setItem("lightcheck", value);
+      // localStorage.setItem("lightcheck", value);
       this.lightThemeChecked = value;
+      this.$store.commit("setIsLightTheme", value);
     },
   },
 };
