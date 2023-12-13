@@ -7,7 +7,10 @@ export const mutations = {
     setToken(state, payload) {
         state.token = payload;
     },
-    setIsLightTheme(state, value) {
+    setTheme(state, payload){
+        state.isLightTheme = payload
+    },
+    /*setIsLightTheme(state, value) {
         if (process.client) {
           this.$cookies.set("isLightTheme", value, {
             path: "/",
@@ -16,13 +19,16 @@ export const mutations = {
           });
         }
         state.isLightTheme = value;
-      },
+      },*/
 }
 
 export const getters = {
     getToken(state) {
         return state.token;
-    }
+    },
+    getTheme(state){
+        return state.isLightTheme
+    },
   };
 
 export const actions = {
@@ -31,8 +37,8 @@ export const actions = {
         let token = app.$cookies.get('b_ssojwt')
         commit('setToken', token);
 
-        if (app.$cookies.get("isLightTheme")) {
+        /*if (app.$cookies.get("isLightTheme")) {
             commit("setIsLightTheme", app.$cookies.get("isLightTheme"));
-        }
+        }*/
     }
   }

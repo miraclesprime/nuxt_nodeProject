@@ -75,7 +75,7 @@
           <!-- separator -->
           <div
             class="mt-05 mb-05"
-            :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']"
+            :class="[isLightTheme ? 'bg-gray2' : 'bg-dark-sub1']"
             style="height: 1px"
           ></div>
           <bib-app-navigation
@@ -86,7 +86,7 @@
           <!-- separator -->
           <div
             class="mt-05 mb-05"
-            :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']"
+            :class="[isLightTheme ? 'bg-gray2' : 'bg-dark-sub1']"
             style="height: 1px"
             v-show="!collapseNavigation"
           ></div>
@@ -107,13 +107,13 @@
           <!-- separator -->
           <div
             class="mt-05 mb-05"
-            :class="[lightThemeChecked ? 'bg-gray2' : 'bg-dark-sub1']"
+            :class="[isLightTheme ? 'bg-gray2' : 'bg-dark-sub1']"
             style="height: 1px"
             v-show="!collapseNavigation"
           ></div>
           <people-sort-collapse
             v-show="!collapseNavigation"
-            :themeColor="lightThemeChecked"
+            :themeColor="isLightTheme"
             label=""
             label-weight="400"
             variant="light"
@@ -176,57 +176,6 @@ export default {
       navKey: 0,
       historyLength: 2,
       appItems: 
-      // [
-      //   {
-      //     img: "layers-solid",
-      //     color: "secondary",
-      //     text: "Templates",
-      //     href: process.env.BIB_TEMPLATES_APP_URL,
-      //   },
-      //   {
-      //     img: "cloud-solid",
-      //     color: "success-sub1",
-      //     text: "Files",
-      //     href: process.env.BIB_DRIVE_URL,
-      //   },
-      //   {
-      //     img: "signature",
-      //     color: "orange",
-      //     text: "eSign",
-      //     href: process.env.BIB_ESIGN_APP_URL,
-      //   },
-      //   {
-      //     img: "projects",
-      //     color: "primary",
-      //     text: "Projects",
-      //     active: true,
-      //     href: process.env.VUE_APP_URL,
-      //   },
-      //   {
-      //     img: "chat",
-      //     color: "purple",
-      //     text: "Chat",
-      //     href: process.env.BIB_CHAT_APP_URL,
-      //   },
-      //   {
-      //     img: "editor",
-      //     color: "primary-sub1",
-      //     text: "Editor",
-      //     href: "http://dev.editor.business-in-a-box.com",
-      //   },
-      //   {
-      //     img: "meetings",
-      //     color: "warning",
-      //     text: "Video",
-      //     href: "https://dev-video-conf.business-in-a-box.com",
-      //   },
-      //   // {
-      //   //   img: "data-storage-single",
-      //   //   color: "primary",
-      //   //   text: "Drive",
-      //   //   href: "",
-      //   // },
-      // ],
       [
         {
           img: "layers-solid",
@@ -326,7 +275,7 @@ export default {
         },
       ],
       collapseNavigation: false,
-      lightThemeChecked: true,
+      // lightThemeChecked: true,
       appHeaderActions: {
         select: {
           items: [
@@ -366,8 +315,9 @@ export default {
     };
   },
   created() {
-    this.lightThemeChecked = this.$cookies.get("isLightTheme") == undefined || this.$cookies.get("isLightTheme") ? true : false;
-
+    // this.isLightTheme = this.$cookies.get("isLightTheme") == undefined || this.$cookies.get("isLightTheme") ? true : false;
+    this.isThemeCheck()
+    // console.log(this.isLightTheme)
     this.$root.$on("open-sidebar", (payload) => {
       this.openSidebar = true;
       this.$store.dispatch("task/setSidebarVisible", true)
@@ -436,19 +386,8 @@ export default {
     });
   },
   mounted() {
-    // window.addEventListener("popstate", this.handleStateChange);
     if (process.client) {
-      // if (this.$router.history.current.fullPath == "/dashboard") {
-      //   this.navItems1[0].selected = true;
-      // }
-      /*if(localStorage.getItem('lightcheck')) {
-          if(localStorage.getItem('lightcheck')=='true') {
-            this.lightThemeChecked=true    
-          }
-          else {
-            this.lightThemeChecked=false    
-          }
-      }*/
+      
       if (this.$router.history.current.fullPath == "/inbox") {
         this.navItems1[0].selected = true;
       }
@@ -598,11 +537,6 @@ export default {
     },
  },
   methods: {
-    /*handleStateChange() {
-      this.$store.commit("project/setArrowVisible", this.historyLength - 2);
-      this.historyLength = this.historyLength - 2;
-    },*/
- 
 
     isRouteActive(id) {
       if (this.$route.path.includes(id)) {
@@ -706,10 +640,24 @@ export default {
       window.location.href = this.userProfileUrl
     },
     handleToggleWrapperTheme(value) {
-      // localStorage.setItem("lightcheck", value);
-      this.lightThemeChecked = value;
-      this.$store.commit("setIsLightTheme", value);
+      this.$store.commit("setTheme", value)
+      this.$cookies.set("isLightTheme", value)
     },
+    isThemeCheck(){
+      let isTheme = this.$cookies.get('isLightTheme');
+      if (isTheme == undefined) {
+          this.$cookies.set("isLightTheme", false, {
+            path: "/",
+            domain: location.host.includes("business-in-a-box.com")
+              ? ".business-in-a-box.com"
+              : undefined,
+            maxAge: 60 * 60 * 24 * 30,
+          });
+          this.$store.commit("setTheme", false)
+        } else {
+          this.$store.commit("setTheme", isTheme)
+        }
+    }
   },
 };
 </script>
