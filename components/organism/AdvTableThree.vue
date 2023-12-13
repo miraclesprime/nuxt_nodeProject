@@ -834,7 +834,6 @@ export default {
       let sectionData = this.localData.filter(
         (s) => s.id == e.to.dataset.section
       );
-
       // console.log("row dragend ", e, sectionData)
       this.$emit("row-dragend", {
         [this.tasksKey]: sectionData[0][this.tasksKey],
@@ -1016,20 +1015,47 @@ export default {
       let jd = new Date(d);
 
       if (field == "startDate" ) {
-        if (item.dueDate && new Date(d).getTime() > new Date(item.dueDate).getTime() ) {
+            let selectDueDate = new Date(d);
+            let selectedDateUTC = new Date(Date.UTC(selectDueDate.getUTCFullYear(), selectDueDate.getUTCMonth(), selectDueDate.getUTCDate()));
+            selectedDateUTC.setUTCHours(0, 0, 0, 0);
+
+          if(!item.dueDate){
+            this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
+            return;
+          }
+       
+            let DueDate = new Date(item.dueDate);
+            let DueDateUTC = new Date(Date.UTC(DueDate.getUTCFullYear(), DueDate.getUTCMonth(), DueDate.getUTCDate()));
+            DueDateUTC.setUTCHours(0, 0, 0, 0);
+
+        if (item.dueDate &&selectedDateUTC.getTime() > DueDateUTC.getTime() ) {
           // console.warn("invalid startDate", this.localData[sectionIdx].tasks[itemIdx].startDate, this.tableData[sectionIdx].tasks[itemIdx].startDate)
           this.localData[sectionIdx].tasks[itemIdx].startDate = this.tableData[sectionIdx].tasks[itemIdx].startDate
           this.popupMessages.push({ text: "Start date should be before Due date", variant: "danger" });
+          // this.popupMessages.push({ text: "Invalid Date", variant: "danger" });
           this.modifyDateFormat(this.localData)
         } else {
-          // console.info("valid startDate" )
           this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
         }
       } else {
-        if (item.startDate && new Date(d).getTime() < new Date(item.startDate).getTime() ) {
+        if(!item.startDate) {
+          this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
+          return;
+        }
+        
+            let selectDueDate = new Date(d);
+            let selectedDateUTC = new Date(Date.UTC(selectDueDate.getUTCFullYear(), selectDueDate.getUTCMonth(), selectDueDate.getUTCDate()));
+            selectedDateUTC.setUTCHours(0, 0, 0, 0);
+
+            let startDueDate = new Date(item.startDate);
+            let startDateUTC = new Date(Date.UTC(startDueDate.getUTCFullYear(), startDueDate.getUTCMonth(), startDueDate.getUTCDate()));
+            startDateUTC.setUTCHours(0, 0, 0, 0);
+
+        if (item.startDate && selectedDateUTC.getTime() < startDateUTC.getTime() ) {
           // console.warn("invalid dueDate", this.localData[sectionIdx].tasks[itemIdx].dueDate, this.tableData[sectionIdx].tasks[itemIdx].dueDate)
           this.localData[sectionIdx].tasks[itemIdx].dueDate = this.tableData[sectionIdx].tasks[itemIdx].dueDate
           this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
+          // this.popupMessages.push({ text: "Invalid Date", variant: "danger" });
           this.modifyDateFormat(this.localData)
         } else {
           // console.info("valid dueDate" )
