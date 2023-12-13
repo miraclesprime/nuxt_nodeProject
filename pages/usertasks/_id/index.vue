@@ -143,7 +143,6 @@ export default {
       filterViews :'task/getFilterView',
       selectedTask :'task/getSelectedTask',
       userInfo :"user/getUserInfo",
-      allTasks: "company/getInitialAllTasks",
       groupBy:"user/getGroupBy",
       taskcount:"user/getTaskCount"
 

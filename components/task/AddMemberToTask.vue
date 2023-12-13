@@ -8,7 +8,6 @@
         </div>
       </template>
     </bib-modal-wrapper>
-    
   </div>
 </template>
 

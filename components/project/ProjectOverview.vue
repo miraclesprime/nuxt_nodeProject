@@ -284,7 +284,7 @@ export default {
         if (newStartDate.getTime() > new Date(this.activeProject.dueDate).getTime()) {
           this.popupMessages.push({ text: "Start date should be before Due date", variant: "danger" });
           this.sdate = this.$formatDate(oldValue)
-          return
+          // return
         } else {
           this.$store.dispatch("project/updateProject", {
             id: this.activeProject?.id,
