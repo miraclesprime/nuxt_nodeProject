@@ -23,7 +23,7 @@
         ></bib-icon>
         <people-sort-button  dropdown="" label="People"  :themeColor="themeColor" >
                   <template v-slot:menu >
-                      <ul>
+                      <ul class="move-people-dropdown">
                           <li class="d-flex align-center">
                           <span class="ml-05" @click="changeSortPeople('Most_Tasks_Todo')">Most Tasks Todo</span>
                           </li>
@@ -315,4 +315,9 @@ import { mapGetters } from "vuex";
   .detail-collapse__content_space {
     margin-bottom: 1rem !important;
   }
+  .move-people-dropdown {
+     position: absolute;
+     left: 50% !important; 
+     transform: translate(20%,0)!important;
+}
   </style>

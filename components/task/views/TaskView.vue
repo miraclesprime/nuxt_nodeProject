@@ -13,7 +13,7 @@
     <template v-if="taskcount > 0 || groupby=='' ">
     <div v-show="gridType === 'list'" class="calc-height overflow-y-auto" :style="{ 'width': contentWidth }">
 
-      <adv-table-three :tableFields="tableFields" :tableData="localdata" :lazyComponent="true" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" :newRow="newRow" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" @toggle-newsection="toggleNewsection" @create-section="createSection" @edit-section="renameSection" :sectionMenu="true" @section-delete="sectionDeleteConfirm" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd" :drag="true" :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
+      <adv-table-three :tableFields="tableFields" :tableData="localdata" :lazyComponent="true" :contextItems="taskContextMenuItems" @context-open="contextOpen" @context-item-event="contextItemClick" @table-sort="taskSort" @row-click="openSidebar" @title-click="openSidebar" :newRow="newRow" @create-row="createNewTask" @update-field="updateTask" :showNewsection="newSection" :drag="dragTable"  @toggle-newsection="toggleNewsection" @create-section="createSection" @edit-section="renameSection" :sectionMenu="true" @section-delete="sectionDeleteConfirm" @section-dragend="sectionDragEnd" @row-dragend="taskDragEnd"  :key="templateKey" :editSection="groupby" :filter="filterViews"></adv-table-three>
 
     </div>
 
@@ -1148,14 +1148,15 @@ export default {
         if(value=="Invalid Date"){
           data = { [field]: null }
         } else {
-          if(new Date(value).getTime() > new Date(item.startDate).getTime()){
-            data = { [field]: value }
-          } else {
-            data = { [field]: null }
-            this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-            // this.updateKey()
-            return false
-          }
+          data = { [field]: value }
+          // if(new Date(value).getTime() > new Date(item.startDate).getTime()){
+          //   data = { [field]: value }
+          // } else {
+          //   data = { [field]: null }
+          //   this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          //   // this.updateKey()
+          //   return false
+          // }
         }
         
       }
@@ -1163,14 +1164,15 @@ export default {
         if(value=="Invalid Date"){
           data = { [field]: null }
         } else {
-          if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
-            data = { [field]: value }
-          } else {
-            data = { [field]: null }
-            this.popupMessages.push({ text: "Invalid date", variant: "danger" });
-            // this.updateKey()
-            return false
-          }
+          data = { [field]: value }
+          // if(new Date(value).getTime() < new Date(item.dueDate).getTime()){
+          //   data = { [field]: value }
+          // } else {
+          //   data = { [field]: null }
+          //   this.popupMessages.push({ text: "Invalid date", variant: "danger" });
+          //   // this.updateKey()
+          //   return false
+          // }
         }
      
       }
@@ -1324,14 +1326,17 @@ export default {
     }, 600),
 
     taskDragEnd: _.debounce(async function (payload) {
-      console.log("11",payload)
-      this.loading = true;
+      // this.loading = true;
       let tasks = _.cloneDeep(payload.tasks);
 
       tasks.forEach((el, i) => {
         el.order = i;
       });
-
+      if(this.groupby!='') {
+        this.updateKey()
+      }
+      else {
+          
       let taskDnD = await this.$axios.$put(
         "/section/crossSectionDragDrop",
         { data: tasks, sectionId: payload.sectionId },
@@ -1348,7 +1353,9 @@ export default {
       } else {
         console.warn(taskDnD.message);
       }
-      this.loading = false;
+      }
+
+      // this.loading = false;
     }, 600),
 
     copyTaskLink(task) {
@@ -1401,9 +1408,9 @@ export default {
 .task-view-wrapper {
   display: flex;
   flex-direction: column;
-  height: calc(100% - 57px);
+  height: calc(100% - 55px);
   .calc-height {
-    height: calc(100% - 57px);
+    height: calc(100% - 55px);
   }
 }
 

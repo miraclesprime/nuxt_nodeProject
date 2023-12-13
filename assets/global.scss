@@ -645,6 +645,8 @@ ul {
 }
 .button--drop .menu details .wrapper{
   z-index: 6 !important;
+  left: -50%!important;
+  transform: translate(-70%,0)!important;
 
 }
 .app-wrapper__navigation {
