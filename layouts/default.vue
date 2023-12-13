@@ -48,7 +48,7 @@
           <!-- separator -->
           <div
             class="mt-05 mb-05"
-            :class="[lightThemeChecked ? 'line-light' : 'bg-dark-sub1']"
+            :class="[isLightTheme ? 'line-light' : 'bg-dark-sub1']"
             style="height: 1px"
           ></div>
           <bib-app-navigation
@@ -59,7 +59,8 @@
           <!-- separator -->
           <div
             class="mt-05 mb-05"
-            :class="[lightThemeChecked ? 'line-light' : 'bg-dark-sub1']"
+
+            :class="[isLightTheme ? 'line-light' : 'bg-dark-sub1']"
             style="height: 1px"
             v-show="!collapseNavigation"
           ></div>
@@ -78,15 +79,16 @@
             </template>
           </favorite-project-collpase>
           <!-- separator -->
+          <!-- :class="[isLightTheme ? 'bg-gray2' : 'bg-dark-sub1']" -->
           <div
             class="mt-05 mb-05"
-            :class="[lightThemeChecked ? 'line-light' : 'bg-dark-sub1']"
+            :class="[isLightTheme ? 'line-light' : 'bg-dark-sub1']"
             style="height: 1px"
             v-show="!collapseNavigation"
           ></div>
           <people-sort-collapse
             v-show="!collapseNavigation"
-            :themeColor="lightThemeChecked"
+            :themeColor="isLightTheme"
             label=""
             label-weight="400"
             variant="light"
@@ -248,7 +250,7 @@ export default {
         },
       ],
       collapseNavigation: false,
-      lightThemeChecked: true,
+      // lightThemeChecked: true,
       appHeaderActions: {
         select: {
           items: [
@@ -288,8 +290,9 @@ export default {
     };
   },
   created() {
-    this.lightThemeChecked = this.$cookies.get("isLightTheme") == undefined || this.$cookies.get("isLightTheme") ? true : false;
-
+    // this.isLightTheme = this.$cookies.get("isLightTheme") == undefined || this.$cookies.get("isLightTheme") ? true : false;
+    this.isThemeCheck()
+    // console.log(this.isLightTheme)
     this.$root.$on("open-sidebar", (payload) => {
       this.openSidebar = true;
       this.$store.dispatch("task/setSidebarVisible", true)
@@ -358,19 +361,8 @@ export default {
     });
   },
   mounted() {
-    // window.addEventListener("popstate", this.handleStateChange);
     if (process.client) {
-      // if (this.$router.history.current.fullPath == "/dashboard") {
-      //   this.navItems1[0].selected = true;
-      // }
-      /*if(localStorage.getItem('lightcheck')) {
-          if(localStorage.getItem('lightcheck')=='true') {
-            this.lightThemeChecked=true    
-          }
-          else {
-            this.lightThemeChecked=false    
-          }
-      }*/
+      
       if (this.$router.history.current.fullPath == "/inbox") {
         this.navItems1[0].selected = true;
       }
@@ -495,16 +487,10 @@ export default {
       }
     }
   },
-  /*watch: {
-    $route: function () {
-      this.$store.commit("project/setArrowVisible", this.historyLength + 1);
-      this.historyLength = this.historyLength + 1;
-    },
-  },*/
+
   computed: {
     ...mapGetters({
       favProjects: "project/getFavProjects",
-      // teammate: "user/getTeamMembers",
       appMembers: "user/getAppMembers",
       user2: "user/getUser2",
       expandVisible:"task/getExpandVisible",
@@ -520,11 +506,6 @@ export default {
     },
  },
   methods: {
-    /*handleStateChange() {
-      this.$store.commit("project/setArrowVisible", this.historyLength - 2);
-      this.historyLength = this.historyLength - 2;
-    },*/
- 
 
     isRouteActive(id) {
       if (this.$route.path.includes(id)) {
@@ -629,10 +610,24 @@ export default {
       window.location.href = process.env.SUPPORT_URL;
     },
     handleToggleWrapperTheme(value) {
-      // localStorage.setItem("lightcheck", value);
-      this.lightThemeChecked = value;
-      this.$store.commit("setIsLightTheme", value);
+      this.$store.commit("setTheme", value)
+      this.$cookies.set("isLightTheme", value)
     },
+    isThemeCheck(){
+      let isTheme = this.$cookies.get('isLightTheme');
+      if (isTheme == undefined) {
+          this.$cookies.set("isLightTheme", false, {
+            path: "/",
+            domain: location.host.includes("business-in-a-box.com")
+              ? ".business-in-a-box.com"
+              : undefined,
+            maxAge: 60 * 60 * 24 * 30,
+          });
+          this.$store.commit("setTheme", false)
+        } else {
+          this.$store.commit("setTheme", isTheme)
+        }
+    }
   },
 };
 </script>
