@@ -77,8 +77,8 @@
     <alert-dialog v-show="alertDialog" :message="alertMsg" @close="alertDialog = false"></alert-dialog>
     <!-- <loading :loading="loading"></loading> -->
 
-    <bib-modal-wrapper v-if="taskTeamModal" title="Team" size="lg" @close="taskTeamModal = false">
-      <template slot="content">
+    <bib-modal-wrapper v-if="taskTeamModal" title="Assign people to subtask" @close="taskTeamModal = false">
+      <template v-slot:content>
         <div style="min-height: 12rem;" id="sbs-task-team">
           <task-team :task="activeSubtask" mode="subtask" ></task-team>
         </div>
@@ -259,12 +259,12 @@ export default {
       let subData = {
         taskId: this.currentTask.id,
         title: this.title,
-        user: {
+        user: [{
           id: this.user?.id || this.user2.Id,
           firstName: this.user?.firstName || this.user2.FirstName,
           lastName: this.user?.lastName || this.user2.LastName,
           email: this.user?.email || this.user2.Email,
-        },
+        }],
         departmentId: null,
         description: "",
         startDate: null,
@@ -512,12 +512,6 @@ export default {
 }
 
 ::v-deep {
-  .bib-select {
-    .select__real {
-      margin-top: 0;
-      margin-bottom: 0;
-    }
-  }
 
   .input {
     input {
@@ -549,15 +543,7 @@ export default {
       border-color: transparent;
     }
   }
-  .bib-select {
-    width: 12rem; height: 2rem;
-    &.bib-select--sm {
-      .select__real { margin: 0;}
-    }
-    &.bg-white {
-      .select__btn { background-color: transparent; padding: 0;}
-    }
-  }
+  
 }
 
 </style>
