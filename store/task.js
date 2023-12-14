@@ -135,13 +135,13 @@ export const mutations = {
   },
 
   fetchTeamMember(state, payload) {
-      if(state.selectedTask.userId){
-        state.taskMembers=payload.filter((item)=>item.id!==state.selectedTask.userId)
+      // if(state.selectedTask.userId){
+      //   state.taskMembers=payload.filter((item)=>item.id!==state.selectedTask.userId)
       
-        }
-        else {
+      //   }
+      //   else {
           state.taskMembers=payload
-        }
+        // }
   },
 
   // addMember(state, payload) {
@@ -315,6 +315,7 @@ export const actions = {
       })
       
       let team = tm.data.data.members;
+      // console.log(payload)
 
       let data = team.map((el) => {
         if (payload.userId == el.user.id) {
@@ -322,7 +323,7 @@ export const actions = {
         } else {
           el.isOwner = false
         }
-        return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName, isOwner: el.isOwner };
+        return { id: el.user.id, name: el.user.firstName + " " + el.user.lastName, isOwner: el.isOwner, email: el.user.email };
       });
       ctx.commit('fetchTeamMember', data)
       return data

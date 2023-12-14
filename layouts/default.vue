@@ -290,9 +290,12 @@ export default {
     };
   },
   created() {
-    // this.isLightTheme = this.$cookies.get("isLightTheme") == undefined || this.$cookies.get("isLightTheme") ? true : false;
-    this.isThemeCheck()
+    
+    if (process.client) {
+      this.isThemeCheck()
+    }
     // console.log(this.isLightTheme)
+
     this.$root.$on("open-sidebar", (payload) => {
       this.openSidebar = true;
       this.$store.dispatch("task/setSidebarVisible", true)
@@ -359,6 +362,7 @@ export default {
     this.$nuxt.$on("add-member-to-task", () => {
       this.$refs.taskTeamModal.showTaskTeamModal = true;
     });
+
   },
   mounted() {
     if (process.client) {

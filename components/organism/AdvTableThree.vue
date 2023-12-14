@@ -138,7 +138,6 @@
                     <bib-datetime-picker v-if="isLazy(groupIdx, itemIdx) || isRendered" v-model="item[field.key]" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, groupIdx, itemIdx, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                     <skeleton-box v-else></skeleton-box>
                   </template>
-                   
                 </div>
               </div>
 
@@ -1219,7 +1218,6 @@ export default {
     }
   }
 
-  
   .drag-handle,
   .section-drag-handle {
     cursor: grab;

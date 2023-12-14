@@ -9,7 +9,7 @@
                         <label class="font-md mb-075 d-inline-block text-secondary">Click to import projects as .csv file from Asana</label>
                         <bib-input type="file" ref="csvImport" @files-dropped="onFileInput" multiple="false" variant="primary-24" iconLeft="upload" placeholder="Select .csv file to upload"></bib-input>
 
-                        <div v-show="files.length > 0" class=" mt-1 align-center">
+                        <div v-show="files.length > 0" class=" mt-1 justify-end">
                           <bib-button :disabled="loading" variant="primary-24" label="Import CSV" @click="checkUser" pill></bib-button> <bib-spinner v-if="loading" :scale="2" ></bib-spinner>
                         </div>
                     </div>
@@ -102,18 +102,15 @@ export default {
         return {
             contentWidth: "100%",
             loading: false,
-
             popupMessages: [],
             alertDialog: false,
             alertMsg: "",
             files: [],
-
             plusButton: {
                 show: true,
                 label: "New Task",
                 icon: "add",
             },
-
             userList: [],
             importmodal: false,
             importfinish: false,
@@ -142,10 +139,10 @@ export default {
 
     methods: {
         async onFileInput(file) {
-            // let csvfile = this.$refs.csvImport.filesUploaded;
-            // console.log(file, csvfile) 
+            /*let csvfile = this.$refs.csvImport.filesUploaded;
+            console.log(file[0], csvfile) */
 
-            if (file.length > 0) {
+            if (file?.length > 0) {
                 if (file[0]?.type != 'text/csv') {
                     this.popupMessages.push({text: "Only csv allowed", variant: "primary-24"})
                     this.files = []
@@ -156,10 +153,12 @@ export default {
                     this.files = []
                     return
                 }
+                this.files = file
+            } else {
+                // this.$refs.csvImport.filesUploaded = []
+                this.files = []
             }
-            this.files = file
         },
-
 
         closeModal(){
             this.importmodal = false
