@@ -30,8 +30,8 @@
             </div>
           </template>
         </div>
-        <draggable v-model="localData" class="sortable-list " @end="sectionDragend(localData)" >
-          <section v-for="(section, groupIdx) in localData" :key="section.id" class="sortable w-100" >
+        <draggable v-model="localData" class="sortable-list " @end="sectionDragend(localData)" :options="dragOptions" >
+          <section v-for="(section, groupIdx) in localData" :key="section.id" class="sortable w-100" :class="{'non-draggable': section.title == 'Unassigned'}">
             <div class="thead">
               
               <div class="tr hidden" role="row" >
@@ -43,7 +43,7 @@
               <div class="tr position-relative height-205" role="row">
                 <div class="position-absolute border-bottom-light" style="inset: 0; ">
                   <div class="section-header d-flex align-center gap-05 height-205 " >
-                    <div v-show="drag&&filterViews=='all'" class="section-drag-handle width-2 h-100" ><bib-icon icon="drag" variant="gray5"></bib-icon>
+                    <div v-show="drag && filterViews=='all'" class="section-drag-handle width-2 h-100" :class="{'no-drag': section.title == 'Unassigned'}" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                     </div>
                     <div class="position-sticky align-center" style="left: 0.5rem; z-index: 2;" >
                       <span class="width-105 text-center cursor-pointer" @click.stop="collapseItem(section.id)">
@@ -93,7 +93,7 @@
                       <bib-icon :icon="field.icon.icon" :scale="1.25" :variant="item.statusId == 5 ? 'success' : field.icon.variant" hover-variant="success-sub3"></bib-icon>
                     </span>
                     <span v-if="field.event" class=" flex-grow-1" style="line-height:1.25;">
-                      <input type="text" class="editable-input" :value="item[field.key]" @click.stop="titleClick(`${field.event}`, item)" @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
+                      <input type="text" class="editable-input" :value="item[field.key]" @click.stop="titleInputClick(`${field.event}`, item)" @input.stop="debounceTitle($event.target.value, item)" @keyup.esc="unselectAll">
                     </span>
                     <span v-else class="flex-grow-1">
                       {{item[field.key]}}
@@ -291,6 +291,9 @@ export default {
       tableWidth: "100%",
       deleteBtnHover: false,
       popupMessages: [],
+      dragOptions: {
+        filter: '.non-draggable',
+      },
     }
   },
   watch: {
@@ -834,11 +837,11 @@ export default {
       let sectionData = this.localData.filter(
         (s) => s.id == e.to.dataset.section
       );
-
       // console.log("row dragend ", e, sectionData)
       this.$emit("row-dragend", {
         [this.tasksKey]: sectionData[0][this.tasksKey],
         sectionId: e.to.dataset.section,
+        title: sectionData[0]?.title
       });
     },
     
@@ -857,14 +860,19 @@ export default {
         elem.classList.add('active')
       })
       // console.log(fieldEvent, item.hasOwnProperty('sectionId'))
+      
+      this.$emit(`${fieldEvent}`, item)
+    },
+    titleInputClick(fieldEvent, item){
+      this.unselectAll().then(r => {
+        let elem = event.currentTarget.closest(".tr")
+        elem.classList.add('active')
+      })
       if (item.hasOwnProperty('sectionId')) {
         this.$emit(`${fieldEvent}`, item)
         return
-      } else {
-        return
-      }
-      this.$emit(`${fieldEvent}`, item)
-      
+      } 
+
     },
    
     contextOpen($event, item) {
@@ -1016,20 +1024,47 @@ export default {
       let jd = new Date(d);
 
       if (field == "startDate" ) {
-        if (item.dueDate && new Date(d).getTime() > new Date(item.dueDate).getTime() ) {
+            let selectDueDate = new Date(d);
+            let selectedDateUTC = new Date(Date.UTC(selectDueDate.getUTCFullYear(), selectDueDate.getUTCMonth(), selectDueDate.getUTCDate()));
+            selectedDateUTC.setUTCHours(0, 0, 0, 0);
+
+          if(!item.dueDate){
+            this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
+            return;
+          }
+       
+            let DueDate = new Date(item.dueDate);
+            let DueDateUTC = new Date(Date.UTC(DueDate.getUTCFullYear(), DueDate.getUTCMonth(), DueDate.getUTCDate()));
+            DueDateUTC.setUTCHours(0, 0, 0, 0);
+
+        if (item.dueDate &&selectedDateUTC.getTime() > DueDateUTC.getTime() ) {
           // console.warn("invalid startDate", this.localData[sectionIdx].tasks[itemIdx].startDate, this.tableData[sectionIdx].tasks[itemIdx].startDate)
           this.localData[sectionIdx].tasks[itemIdx].startDate = this.tableData[sectionIdx].tasks[itemIdx].startDate
           this.popupMessages.push({ text: "Start date should be before Due date", variant: "danger" });
+          // this.popupMessages.push({ text: "Invalid Date", variant: "danger" });
           this.modifyDateFormat(this.localData)
         } else {
-          // console.info("valid startDate" )
           this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
         }
       } else {
-        if (item.startDate && new Date(d).getTime() < new Date(item.startDate).getTime() ) {
+        if(!item.startDate) {
+          this.$emit("update-field", { id: item.id, field, value: jd, label, historyText: `changed ${label} to ${dayjs(d).format(this.format)}`, item})
+          return;
+        }
+        
+            let selectDueDate = new Date(d);
+            let selectedDateUTC = new Date(Date.UTC(selectDueDate.getUTCFullYear(), selectDueDate.getUTCMonth(), selectDueDate.getUTCDate()));
+            selectedDateUTC.setUTCHours(0, 0, 0, 0);
+
+            let startDueDate = new Date(item.startDate);
+            let startDateUTC = new Date(Date.UTC(startDueDate.getUTCFullYear(), startDueDate.getUTCMonth(), startDueDate.getUTCDate()));
+            startDateUTC.setUTCHours(0, 0, 0, 0);
+
+        if (item.startDate && selectedDateUTC.getTime() < startDateUTC.getTime() ) {
           // console.warn("invalid dueDate", this.localData[sectionIdx].tasks[itemIdx].dueDate, this.tableData[sectionIdx].tasks[itemIdx].dueDate)
           this.localData[sectionIdx].tasks[itemIdx].dueDate = this.tableData[sectionIdx].tasks[itemIdx].dueDate
           this.popupMessages.push({ text: "Due date should be after Start date", variant: "danger" });
+          // this.popupMessages.push({ text: "Invalid Date", variant: "danger" });
           this.modifyDateFormat(this.localData)
         } else {
           // console.info("valid dueDate" )
@@ -1193,6 +1228,9 @@ export default {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    &.no-drag { cursor: auto;
+      .icon { display: none; opacity: 0; }
+    }
     svg {
       fill: $secondary;
     }

@@ -1,7 +1,7 @@
 <template>
-  <div id="tgs-scroll" class="overflow-x-auto h-100 position-relative bg-light" style="min-height: 30rem;"  ref="gridTable">
-    <draggable :list="localdata" class="d-flex " :move="moveSection" v-on:end="$emit('section-dragend', localdata)" handle=".section-drag-handle">
-      <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${templateKey}${section.title}${section.id}`" style="padding-bottom: 0px !important;">
+  <div id="tgs-scroll" class="overflow-x-auto h-100 position-relative bg-light" style="min-height: 30rem;" ref="gridTable">
+    <draggable :list="localdata" class="d-flex " :move="moveSection" :options="dragOptions" v-on:end="$emit('section-dragend', localdata)" handle=".section-drag-handle">
+      <div class="task-grid-section " :id="'task-grid-section-wrapper-'+section.id" v-for="section in localdata" :key="`grid-${templateKey}${section.title}${section.id}`" :class="{'non-draggable': section.title == 'Unassigned'}" style="padding-bottom: 0px !important;">
         <div class="w-100 d-flex align-center section-title-wrapper border-bottom-gray2 mb-075" :id="'tgs-inner-wrap-'+section.id" :class="{'active': sectionEdit}" >
           <task-grid-section-title :section="section" @update-title="renameSection"></task-grid-section-title>
           <div class="d-flex align-center section-options" :id="'tgs-section-options-'+section.id">
@@ -95,6 +95,9 @@ export default {
       lastDisplayedIndex:{},
       dataDisplayed: false, 
       deleteBtnHover: false,
+      dragOptions: {
+        filter: '.non-draggable',
+      },
     };
   },
   props: {
@@ -294,7 +297,8 @@ export default {
     taskDragEnd(e) {
       this.highlight = false
       let sectionData = this.localdata.filter(s => s.id == e.to.dataset.section)
-      this.$emit('task-dragend', { tasks: sectionData[0].tasks, sectionId: e.to.dataset.section })
+      // console.log(sectionData)
+      this.$emit('task-dragend', { tasks: sectionData[0].tasks, sectionId: e.to.dataset.section, title: sectionData[0].title  })
     },
 
     moveSection(e) {

@@ -1,4 +1,3 @@
-
 export const state = () => ({
   user: null,
   user2: null,
@@ -270,7 +269,6 @@ export const mutations = {
     if (payload.sort === "Least_Task_Completed") {
       arr.sort((a, b) => a.completeTask - b.completeTask);
     }
-  
     state.appMembers = arr;
   },
   groupUserTasks(state,payload){
