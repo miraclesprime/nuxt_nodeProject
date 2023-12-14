@@ -1667,7 +1667,7 @@ Promise.all([fetchTask, fetchSubtask]).then((values) => {
 }
 /* Hide the horizontal scrollbar for a specific div */
 .fav-table {
-  /*overflow-x: auto;*/
+  overflow-x: auto;
   /*scrollbar-width: none;*/ /* Firefox */
   /*-ms-overflow-style: none;*/ /* Internet Explorer and Edge */
 }
