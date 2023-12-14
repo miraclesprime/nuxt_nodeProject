@@ -57,8 +57,8 @@
       </template>
     </div>
     <template v-if="norecord">
-      <span id="ptm-projects-0" class="d-inline-flex gap-1 align-center m-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
-        <bib-icon icon="warning"></bib-icon> No records found
+      <span id="ptm-projects-0" class="d-inline-flex gap-1 align-center m-1  shape-rounded py-05 px-1">
+         No records found
       </span>
     </template>
     </div>
@@ -163,6 +163,9 @@ export default {
       if(this.team==0) {
         this.showMsg=true
       }
+      if(this.owner) {
+          this.owner=null
+        }
     },
     addTeamMember() {
       this.loading = true
@@ -175,6 +178,9 @@ export default {
           let newObj = {id:index.id, name:index.label}
           this.newTeam.push(newObj)
         })
+        if(this.owner) {
+          this.owner=null
+        }
         // console.log(this.project.id, this.newTeam)
         this.$store.dispatch('project/addMember', { projectId: this.project?.id, team: this.team }).then(() => {
           this.loading = false;

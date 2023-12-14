@@ -13,7 +13,7 @@
       </template>
     </bib-button> -->
     <bib-select label="Invite people" test_id="po-owner-dd2"  :options="userOptions" v-model="owner" v-on:change="teamItemClick($event)"></bib-select>
-    <div id="task-team-members" class="py-025">
+    <div id="task-team-members" class="overflow-x-auto py-025">
       <template v-for="t in team">
         <email-chip :key="t.id" :email="t.email" :name="t.label" :avatar="t.avatar" class="mt-05" :close="true" v-on:remove-email="removeMember(t)"></email-chip>
       </template>
@@ -23,6 +23,7 @@
      </div>
       <div class="bg-light p-1 mt-05 shape-rounded">
     <label class="text-gray6 font-md">Team</label>
+    <div class="overflow-y-auto mt-1" style="max-height: 200px">
     <template v-if="taskMembers.length && mode == 'task'">
       <bib-table :key="'tt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="this.teamMembers.filter(item=>this.taskMembers.some(value=>value.id===item.id)).filter(item1=>!this.newTeam.some(val=>val.id===item1.id))" :hide-no-column="true" headless>
         <template #cell(name)="data">
@@ -77,9 +78,10 @@
         </template>
       </bib-table>
     </template>
+      </div>
     <template v-if="norecord">
-      <span id="projects-0" class="d-inline-flex gap-1 align-center my-1 bg-warning-sub3 border-warning shape-rounded py-05 px-1">
-        <bib-icon icon="warning" variant="gray4"></bib-icon> No records found
+      <span id="projects-0" class="d-inline-flex gap-1 align-center my-1  shape-rounded py-05 px-1">
+         No records found
       </span>
     </template>
       </div>
@@ -202,14 +204,18 @@ export default {
       let rm = this.team.map(t => t.id == tm.id)
       this.team.splice(rm.indexOf(true), 1)
       this.showMsg=true
+      if(this.owner) {
+          this.owner=null
+        }
     },
     addTeamMember() {
       this.loading = true
-
+        console.log("this.team",this.team)
       if (this.team.length == 0) {
         this.loading = false
         return false
       } else {
+      
         let teamtext = this.team.map(t => {
           return t.label
         })
@@ -218,6 +224,9 @@ export default {
           let newObj={id:index.id,name:index.label}
           this.newTeam.push(newObj)
         })
+        if(this.owner) {
+          this.owner=null
+        }
         if (this.mode == "task") {
           this.$store.dispatch('task/addMember', { taskId: this.task.id, team: this.team, text: `added ${teamtext.join(', ')} to task` }).then(() => {
             this.loading = false;
@@ -252,6 +261,7 @@ export default {
       //updated by @wen 5.25
       this.newTeam = this.newTeam.filter((item)=>item.id!==member.id);
       this.loading = true
+    
       if (this.mode == "task") {
         await this.$store.dispatch("task/deleteMember", { taskId: this.task.id, memberId: member.id, text: `${member.name} removed from task` })
           .then((res) => {
