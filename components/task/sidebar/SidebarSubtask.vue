@@ -259,12 +259,12 @@ export default {
       let subData = {
         taskId: this.currentTask.id,
         title: this.title,
-        user: {
+        user: [{
           id: this.user?.id || this.user2.Id,
           firstName: this.user?.firstName || this.user2.FirstName,
           lastName: this.user?.lastName || this.user2.LastName,
           email: this.user?.email || this.user2.Email,
-        },
+        }],
         departmentId: null,
         description: "",
         startDate: null,

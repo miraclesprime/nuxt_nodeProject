@@ -25,14 +25,15 @@
     <label class="text-gray6 font-md">Team</label>
     <div class="overflow-y-auto mt-1" style="max-height: 200px">
     <template v-if="taskMembers.length && mode == 'task'">
-      <bib-table :key="'tt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="this.teamMembers.filter(item=>this.taskMembers.some(value=>value.id===item.id)).filter(item1=>!this.newTeam.some(val=>val.id===item1.id))" :hide-no-column="true" headless>
+      <bib-table :key="'tt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="taskMembers" :hide-no-column="true" headless>
         <template #cell(name)="data">
           <div class="d-flex gap-05">
             <bib-avatar :src="data.value.avatar" class="mt-auto mb-auto" size="1.5rem"></bib-avatar>
             <!-- <bib-avatar class="mt-auto mb-auto" size="1.5rem"> -->
             <!-- </bib-avatar> -->
-              <strong class="text-dark px-030 font-sm" >{{ data.value.label }}</strong>
+              <strong class="text-dark px-030 font-sm" >{{ data.value.name }}</strong>
               <span class=" text-black px-030 font-sm">{{ data.value.email }}</span>
+              <span class=" text-secondary px-030 font-sm" v-if="data.value.isOwner">(Owner)</span>
           </div>
         </template>
         <template #cell_action="data">
@@ -42,13 +43,11 @@
         </template>
       </bib-table>
       <!-- <div v-show="this.newTeam.length >0 " class="border-top-success" ></div> -->
-       <bib-table :key="'ttt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="this.teamMembers.filter(item=>this.newTeam.some(value=>value.id===item.id))" :hide-no-column="true" headless>
+       <!-- <bib-table :key="'ttt-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="this.teamMembers.filter(item=>this.newTeam.some(value=>value.id===item.id))" :hide-no-column="true" headless>
         <template #cell(name)="data">
           <div class="d-flex gap-05">
             <bib-avatar :src="data.value.avatar" class="mt-auto mb-auto" size="1.5rem"></bib-avatar>
 
-            <!-- <bib-avatar class="mt-auto mb-auto" size="1.5rem">
-            </bib-avatar> -->
                <strong class="text-dark px-030 font-sm" >{{ data.value.label }}</strong>
               <span class=" text-black px-030 font-sm">{{ data.value.email }}</span>
           </div>
@@ -58,21 +57,22 @@
             <bib-icon icon="trash-solid" variant="gray5"></bib-icon>
           </div>
         </template>
-      </bib-table>
+      </bib-table> -->
     </template>
     <template v-else>
       <bib-table :key="'st-' + key" :fields="tableFields" class="border-top-gray3 bg-white" :sections="subtaskMembers" :hide-no-column="true" headless>
         <template #cell(name)="data">
           <div class="d-flex gap-05">
-            <bib-avatar class="mt-auto mb-auto" size="1.5rem">
-            </bib-avatar>
-            <span class="text-dark">
-              {{ data.value.name }} <span v-if="data.value.isOwner">(Owner)</span>
-            </span>
+            <bib-avatar :src="data.value.avatar" class="mt-auto mb-auto" size="1.5rem"></bib-avatar>
+            <!-- <bib-avatar class="mt-auto mb-auto" size="1.5rem"> -->
+            <!-- </bib-avatar> -->
+              <strong class="text-dark px-030 font-sm" >{{ data.value.name }}</strong>
+              <span class=" text-black px-030 font-sm">{{ data.value.email }}</span>
+              <span class=" text-secondary px-030 font-sm" v-if="data.value.isOwner">(Owner)</span>
           </div>
         </template>
         <template #cell_action="data">
-          <div v-if="!data.value.isOwner" class="cursor-pointer shape-circle" v-on:click="deleteMember(data.value)">
+          <div class="cursor-pointer shape-circle" v-on:click="deleteMember(data.value)">
             <bib-icon icon="trash-solid" variant="gray5"></bib-icon>
           </div>
         </template>
@@ -80,13 +80,14 @@
     </template>
       </div>
     <template v-if="norecord">
-      <span id="projects-0" class="d-inline-flex gap-1 align-center my-1  shape-rounded py-05 px-1">
-         No records found
+
+      <span id="projects-0" class="d-inline-flex gap-05 align-center text-gray5 font-md">
+         No Team Members
       </span>
     </template>
       </div>
     <div v-show="team.length > 0" class="pt-05 pb-1 justify-end">
-      <bib-button  variant="primary-24" size="lg"   @click="addTeamMember"  pill label="Add"></bib-button>
+      <bib-button label="Add" variant="primary-24" pill @click="addTeamMember"></bib-button>
     </div>
     <loading :loading="loading"></loading>
   </div>
@@ -164,20 +165,20 @@ export default {
 
   mounted() {
     if (this.mode == "task") {
-      this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
+      this.$store.dispatch('task/fetchTeamMember', { id: this.task.id, userId: this.task.userId })
     }
     if (this.mode == "subtask") {
-      this.$store.dispatch("subtask/fetchSubtaskMembers", { id: this.task.id })
+      this.$store.dispatch("subtask/fetchSubtaskMembers", { id: this.task.id, userId: this.task.userId })
     }
   },
 
   created() {
     this.$root.$on('update-key', ($event) => {
       if (this.mode == "task") {
-        this.$store.dispatch('task/fetchTeamMember', { id: this.task.id }).then(() => this.key += $event)
+        this.$store.dispatch('task/fetchTeamMember', { id: this.task.id, userId: this.task.userId }).then(() => this.key += $event)
       }
       if(this.mode == "subtask") {
-        this.$store.dispatch("subtask/fetchSubtaskMembers", { id: this.task.id }).then(() => this.key += $event)
+        this.$store.dispatch("subtask/fetchSubtaskMembers", { id: this.task.id, userId: this.task.userId }).then(() => this.key += $event)
       }
     })
   },
@@ -210,7 +211,6 @@ export default {
     },
     addTeamMember() {
       this.loading = true
-        console.log("this.team",this.team)
       if (this.team.length == 0) {
         this.loading = false
         return false
@@ -232,7 +232,7 @@ export default {
             this.loading = false;
             this.message = ""
             this.team = []
-            this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
+            this.$store.dispatch('task/fetchTeamMember', { id: this.task.id, userId: this.task.userId })
           }).catch((err) => {
             this.loading = false;
             this.message = ""
@@ -265,7 +265,7 @@ export default {
       if (this.mode == "task") {
         await this.$store.dispatch("task/deleteMember", { taskId: this.task.id, memberId: member.id, text: `${member.name} removed from task` })
           .then((res) => {
-            this.$store.dispatch('task/fetchTeamMember', { id: this.task.id })
+            this.$store.dispatch('task/fetchTeamMember', { id: this.task.id, userId: this.task.userId })
             this.key += 1
           })
           .catch(e => console.log(e))
@@ -274,7 +274,7 @@ export default {
       if (this.mode == "subtask") {
         await this.$store.dispatch("subtask/deleteMember", { id: this.task.id, memberId: member.id, text: `${member.name} removed from subtask` })
           .then((res) => {
-            this.$store.dispatch('subtask/fetchSubtaskMembers', { id: this.task.id })
+            this.$store.dispatch('subtask/fetchSubtaskMembers', { id: this.task.id, userId: this.task.userId })
             this.key += 1
           })
           .catch(e => console.log(e))
