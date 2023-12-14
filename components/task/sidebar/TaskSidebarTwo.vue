@@ -84,7 +84,7 @@
         
           <div class="align-center height-2 cursor-pointer" > 
             <user-select-two userId="" mode="icon" title="Add to team" min-width="15rem" max-width="18rem" @change="addTeamMember"></user-select-two>
-            <team-list-two :team="team" @delete-member="deleteMember"></team-list-two>
+            <team-list-two :reloadTeam="reloadTeam" :team="team" @delete-member="deleteMember"></team-list-two>
             <!-- <bib-icon icon="user-group-solid"></bib-icon> -->
           </div>
         </div>
@@ -165,6 +165,7 @@ export default {
       reloadComments: 1,
       reloadHistory: 1,
       reloadFiles: 1,
+      reloadTeam: 1,
       // reloadTags: 1,
       // taskTeamModal: false,
       tags: [],
@@ -197,25 +198,6 @@ export default {
       singleProjectGrid:"project/getGridType",
 
     }),
-    teammates() {
-      let tm = { main: [], extra: [], all: [] }
-      if (Object.keys(this.currentTask).length == 0) {
-        return tm
-      }
-      this.teamMembers.filter(u => {
-        this.team.forEach((t, index) => {
-          if (t.id == u.id) {
-            tm.all.push(u)
-            if (index < 4) {
-              tm.main.push(u)
-            } else {
-              tm.extra.push(u)
-            }
-          }
-        })
-      })
-      return tm
-    },
 
     isFavorite() {
       let fav = this.favTasks.some(t => t.task.id == this.currentTask.id)
@@ -258,6 +240,7 @@ export default {
         }
 
         this.reloadFiles += 1
+        this.reloadTeam += 1
         // this.realodTags += 1
         this.getTags()
         
@@ -649,7 +632,7 @@ export default {
           this.$store.dispatch("task/setSingleTask", u)
           this.reloadHistory += 1
           this.reloadComments+=1
-
+          this.reloadTeam+=1
         })
         .catch(e => {
           console.log(e)
