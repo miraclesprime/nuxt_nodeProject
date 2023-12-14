@@ -7,13 +7,16 @@
       <div id="favorite-scroll-wrap" class="favorite-tables position-relative " >
    
         <!-- task table -->
-        <div style="height:50%;" class="fav-table">
+        <div class="fav-table h-50">
           <advance-table :drag="false" :tableFields="taskTableFields" :tableData="taskSubtaskLocalData" :lazyComponent="true" :contextItems="taskContextMenuItems" @context-item-event="taskContextItemClick" @row-click ="openSidebar" @table-sort="sortTask" @context-open="taskContextOpen"  @title-click="openSidebar" @update-field="updateTask" sectionTitle="Favorite Tasks" :plusButton="false" :key="templateKey"></advance-table>
         </div>
         
         <!-- project table -->
-        <div style="height:50%;" class="fav-table">
+        <div class="fav-table h-50">
           <advance-table :drag="false" :tableFields="projectTableFields" :tableData="projLocalData" :lazyComponent="true" :contextItems="projectContextItems" @context-item-event="projContextItemClick" @row-click ="projectRoute" @table-sort="sortProject" @context-open="projectContextOpen" @title-click="projectRoute" @update-field="updateProject" sectionTitle="Favorite Projects" :plusButton="false" :key="templateKey"></advance-table>
+          <div v-if="showDatepicker" class="position-absolute " style="right:1rem; bottom:1rem; z-index:9;">
+            <bib-datetime-picker v-model="date" :hasInputElement="false"></bib-datetime-picker>
+          </div>
         </div>
         <!-- <loading :loading="loading"></loading> -->
       </div>
@@ -121,6 +124,7 @@ export default {
       taskLocalData: [],
       taskSubtaskLocalData: [],
       subPanel: false,
+      showDatepicker: false,
     }
   },
 
@@ -1658,18 +1662,18 @@ Promise.all([fetchTask, fetchSubtask]).then((values) => {
 }
 .favorite-tables {
   display: flex;
-  height: calc(100% - 100px);
+  height: calc(100% - 90px);
   flex-direction: column;
 }
 /* Hide the horizontal scrollbar for a specific div */
 .fav-table {
-  overflow-x: scroll;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* Internet Explorer and Edge */
+  /*overflow-x: auto;*/
+  /*scrollbar-width: none;*/ /* Firefox */
+  /*-ms-overflow-style: none;*/ /* Internet Explorer and Edge */
 }
 
 /* Hide scrollbar for webkit browsers for the specific div */
-.fav-table::-webkit-scrollbar {
+/*.fav-table::-webkit-scrollbar {
   display: none;
-}
+}*/
 </style>
