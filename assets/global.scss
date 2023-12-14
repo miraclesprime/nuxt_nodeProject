@@ -96,7 +96,7 @@ ul {
 }
 
 .header {
-  position: fixed;
+  position: relative;
   top: 0;
   z-index: 10;
 }
@@ -708,4 +708,9 @@ ul {
 //bib-datepicker->set repeat
 .vdpBottom {
   display: none;
+}
+.persistent__body{
+  a{
+    text-decoration: underline !important;
+  }
 }
