@@ -759,7 +759,7 @@ export default {
       }
     },
     createNewTask(proj, section) {
-      console.log(section)
+      // console.log(section)
       proj.group = this.groupby;
       proj.status = null
       proj.statusId = null
@@ -806,7 +806,7 @@ export default {
           text: `created task ${proj.title}`,
         })
         .then((t) => {
-          console.log("res",t.data)
+          // console.log("res",t.data)
           this.resetNewRow();
           this.$nuxt.$emit("newTask",t.data,this.$route.fullPath)
         })

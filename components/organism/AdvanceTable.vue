@@ -434,7 +434,7 @@ export default {
       )
     },
     
-    rowDragStart(e) {
+    /*rowDragStart(e) {
       console.log(e.type, e);
     },
     rowDragEnd(e) {
@@ -442,7 +442,7 @@ export default {
     },
     moveTask(e) {
       console.log("move event", e)
-    },
+    },*/
     rowClick($event, item) {
       this.unselectAll()
         .then(r => {
@@ -773,7 +773,7 @@ export default {
   }
 
   
-  .drag-handle {
+  /*.drag-handle {
     cursor: grab;
     opacity: 0.35;
     transition: all 300ms ease-in;
@@ -783,7 +783,7 @@ export default {
     svg {
       fill: $secondary;
     }
-  }
+  }*/
 
   /*.sortable-chosen {
     .td { background-color: $success-sub6; }

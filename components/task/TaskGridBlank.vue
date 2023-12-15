@@ -80,7 +80,6 @@ export default {
     },
     createNewTask(section, group) {
       // console.log(...arguments)
-      // return
       let proj={}
       proj.group = group;
       proj.status = null
@@ -158,8 +157,7 @@ export default {
         dataNeeded = true
       }
 
-      console.log("task",proj, "section->",section)
-      // return
+      // console.log("task",proj, "section->",section)
 
       this.$store.dispatch("task/createTask", {
         ...proj,
