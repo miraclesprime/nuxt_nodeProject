@@ -91,7 +91,7 @@
                 </template>
                 <template v-if="field.key.includes('Date')" class="date-cell">
                   <!-- {{$formatDate(item[field.key])}} -->
-                  <bib-datetime-picker v-if="lazyComponent" v-model="item[field.key]" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, index, field.key, field.label)" @click.native.stop></bib-datetime-picker>
+                  <bib-datetime-picker class="bottom-datetime-picker" v-if="lazyComponent" v-model="item[field.key]" variant="gray4" :format="format" :parseDate="parseDate" :formatDate="formatDate" placeholder="No date" @input="updateDate($event, item, index, field.key, field.label)" @click.native.stop></bib-datetime-picker>
                   <skeleton-box v-else></skeleton-box>
                 </template>
               </div>
@@ -847,10 +847,23 @@ export default {
       border-color: transparent;
     }
   }
+  
+  .bottom-datetime-picker {
+    & > div.vdpPositionBottom {
+      bottom: unset !important;
+    }
+
+    & > div.vdpPositionLeft {
+      transform-origin: top left !important;
+    }
+
+    & > div.vdpPositionRight {
+      transform-origin: top right !important;
+    }
+  }
 }
 
 #adv-table-th1.th {
   border-right: 1px solid #e3e3ea !important;
 }
-
 </style>
