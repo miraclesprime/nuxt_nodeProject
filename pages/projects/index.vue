@@ -708,9 +708,6 @@ export default {
       proj.departmentId = null;
       proj.department = null;
 
-      console.log(...arguments)
-      return
-
       if(this.groupBy=="priority"){
         proj.priority=section.tasks[0]?.priority
         proj.priorityId=section.tasks[0]?.priorityId
