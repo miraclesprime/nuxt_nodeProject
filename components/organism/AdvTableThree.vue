@@ -45,7 +45,7 @@
                   <div class="section-header d-flex align-center gap-05 height-205 " >
                     <div v-show="drag && filterViews=='all'" class="section-drag-handle width-2 h-100" :class="{'no-drag': section.title == 'Unassigned'}" ><bib-icon icon="drag" variant="gray5"></bib-icon>
                     </div>
-                    <div class="position-sticky align-center" style="left: 0.5rem; z-index: 2;" >
+                    <div class="align-center" style="" >
                       <span class="width-105 text-center cursor-pointer" @click.stop="collapseItem(section.id)">
                         <bib-icon icon="arrow-down" :scale="0.5" :ref="'collapseIcon'+section.id" ></bib-icon> 
                       </span>
@@ -57,9 +57,9 @@
                       : section.title" @input="debounceRenameSection(section.id, $event)" @blur="restoreField" />
                       </span>
                       <div v-if="sectionMenu" class="shape-circle width-105 height-105 bg-hover-light">
-                        <bib-popup  pop="horizontal-dots" icon-variant="gray5" size="sm" >
+                        <bib-popup  pop="horizontal-dots" icon-variant="gray5" size="sm">
                           <template v-slot:menu>
-                            <div :id="'tgs-list'+section.id" class="list border-light box-shadow" >
+                            <div :id="'tgs-list'+section.id" class="list border-light box-shadow popup-position-right" >
                               <span class="list__item" :id="'tgs-list-1'+section.id" v-on:click.stop="newRowClick(section.id)">
                                 <div class="d-flex align-center" :id="'tgs-list-flex-1'+section.id">
                                   <bib-icon icon="add"></bib-icon>
@@ -1312,5 +1312,9 @@ export default {
 }
 #adv-table-th1.th {
   border-right: 1px solid #e3e3ea !important;
+}
+
+div.pop:has(>.popup-position-right) {
+  left: 0 !important;
 }
 </style>
