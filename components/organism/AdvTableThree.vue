@@ -448,7 +448,7 @@ export default {
       this.colSizes = JSON.parse(sizes)
     }*/
 
-    Split(this.colIds, {
+    let splitCol = Split(this.colIds, {
       sizes: this.colSizes,
       minSize: this.colmw,
       gutterSize: 2,
@@ -459,6 +459,11 @@ export default {
         // sessionStorage.setItem("cols"+pg, JSON.stringify(sizes))
       }
     })
+
+    setTimeout(() => {
+        splitCol.setSizes(this.colSizes);
+
+    }, 100)
 
     // const divHeight = this.$refs.myTable.clientHeight;
     // this.itemsPerPage = parseInt((divHeight - 40) / 40);
