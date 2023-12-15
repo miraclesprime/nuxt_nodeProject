@@ -189,6 +189,10 @@ export default {
    
   },
 
+  beforeDestroy() {
+    this.$store.dispatch("project/fetchProjects", {filter: 'all'})
+  },
+
   methods: {
     
     checkActive() {

@@ -159,6 +159,7 @@ export default {
       grid:"task/getGridType",
       taskcount: "company/getTaskCount",
       departments: "department/getAllDepartments",
+      groupby: "task/getGroupBy",
     }),
     // taskcount(){
     //   return this.tasks.reduce((acc, td) => acc + td.tasks.length, 0)
@@ -176,7 +177,11 @@ export default {
     tasks(newVal) {
       let data = _.cloneDeep(newVal);
       // console.info("watch tasks")
-      this.localData = data.sort((a,b) => a.deptOrder - b.deptOrder)
+      if (this.group == 'department' || this.group == '') {
+        this.localData = data.sort((a,b) => a.deptOrder - b.deptOrder)
+      } else {
+        this.localData = data
+      }
     },
     gridType() {
       this.$store.commit('task/gridType',{gridType:this.gridType})
@@ -229,16 +234,16 @@ export default {
         this.showDatePicker(payload);
       });
         this.$nuxt.$on("refresh-table", () => {
-          console.log("task_created_on-refresh")
+          // console.log("task_created_on-refresh")
           this.updateKey();
         });
   
       this.$nuxt.$on('updateTaskCount', (payload) => {
         if (payload.action === 'increase') {
-          console.log("increase")
+          // console.log("increase")
           this.projectcount += 1 // Increase taskcount
         } else if (payload.action === 'decrease') {
-          console.log("decrease")
+          // console.log("decrease")
           this.projectcount -= 1 // Decrease taskcount
         }
       })
@@ -343,12 +348,14 @@ export default {
       this.$store
         .dispatch("company/fetchCompanyTasks", {
           companyId: compid,
-          filter:this.filterViews,
-          sName:this.group
+          filter: this.filterViews,
+          sName: this.group
         })
         .then((res) => {
-          console.info("update key");
-          this.localData = res.sort((a,b) => a.deptOrder - b.deptOrder)
+          // console.info("update key");
+          /*if (this.group == 'department' || this.group == '') {
+            this.localData = res.sort((a,b) => a.deptOrder - b.deptOrder)
+          }*/
           this.key += 1;
           this.templateKey += 1;
         });
@@ -473,7 +480,7 @@ export default {
     },
 
     updateAssignee(label, field, value, historyText) {
-      console.log(...arguments)
+      // console.log(...arguments)
       let user;
       if (field == "userId" && value != "") {
         user = this.teamMembers.filter((t) => t.id == value);
@@ -481,7 +488,7 @@ export default {
         user = null;
       }
       this.userPickerOpen = false;
-      console.log(user)
+      // console.log(user)
 
       this.$store
         .dispatch("task/updateTask", {
@@ -568,7 +575,7 @@ export default {
 
     taskMarkComplete(task) {
       if (typeof task == "object" && Object.keys(task).length > 0) {
-        console.log(task);
+        // console.log(task);
       } else {
         task = this.activeTask;
       }
@@ -636,7 +643,7 @@ export default {
       if($event != 'default') {
         this.dragTable = false;
       } else {
-        this.group='department'
+        this.group = 'department'
         this.dragTable = true;
         // this.$store.commit('todo/setGroupBy',this.group)
         // this.$store.commit('company/groupTasks',{sName:"department"})
@@ -972,7 +979,7 @@ export default {
         el.deptOrder = i;
       });
       let filtered = clone.filter(dc => dc.title != "Unassigned")
-      console.log(clone, filtered)
+      // console.log(clone, filtered)
       // return
       let sectionDnD = await this.$axios.$put("/department/dragdrop", { data: filtered }, {
           headers: {
@@ -994,7 +1001,7 @@ export default {
         el.dOrder = i;
       });
       let dept = this.departments.find(d => d.label == payload.title)
-      console.log(payload, tasks, dept)
+      // console.log(payload, tasks, dept)
       // return
       let taskDnD = await this.$axios.$put( "/department/crossDepartmentDragDrop",{
         data: tasks,
@@ -1045,7 +1052,7 @@ export default {
         task.department = section.tasks[0]?.department?section.tasks[0]?.department:null
         task.departmentId = section.tasks[0]?.departmentId?section.tasks[0]?.departmentId:null
       }
-         if(this.group == "difficulty"){
+      if(this.group == "difficulty"){
         task.difficultyId = section.tasks[0]?.difficultyId
       }
       if(this.group == "project"){
@@ -1062,9 +1069,6 @@ export default {
         delete task.sectionId
       }
 
-      console.log("task", task)
-      console.log("section",section)
-      // return
       this.$store.dispatch("task/createTask", {
           ...task,
           data: section,
@@ -1072,7 +1076,7 @@ export default {
           text: `created task ${task.title}`,
         })
         .then((t) => {
-          console.log("t",t)
+          // console.log("t",t)
           this.resetNewRow();
           this.$nuxt.$emit("newTask",t.data,this.$route.fullPath)
           // this.updateKey();
@@ -1113,7 +1117,7 @@ export default {
 }
 
 .task-table-wrapper {
-  height: calc(100% - 110px);
+  height: calc(100% - 100px);
 }
 
 .section-options {

@@ -104,7 +104,7 @@ export const mutations = {
       });
       arr = _arr;
     }
-    state.companyTasks=this.$groupBy(arr,payload.sName)
+    state.companyTasks = this.$groupBy(arr,payload.sName)
   },
 
   sortCompanyTasks(state, payload) {

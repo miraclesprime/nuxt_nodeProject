@@ -11,12 +11,12 @@
             collapseNavigation = !collapseNavigation;
           }
         "
-        :isLightTheme="isLightTheme"
+        :isLightTheme="isLight"
       >
         <template #topbar>
           <bib-header
             :avatarLink="user2 ? user2.Photo : ''"
-            :isLightTheme="isLightTheme"
+            :isLightTheme="isLight"
             @side-menu-expand="collapseNavigation=!collapseNavigation"
             :mainAction="btnText"
             hide-search-box
@@ -31,39 +31,34 @@
           </bib-header>
         </template>
         <template #switcher>
+          
           <bib-app-switcher
+            @toggle-theme="toggleTheme"
+            :isLightTheme="isLight"
+            v-if="!collapseNavigation"
             :menuItems="appItems"
-            :isLightTheme="isLightTheme"
-              v-if="!collapseNavigation"
-            @toggle-theme="handleToggleWrapperTheme"
-            style="z-index: 99;"
+            
           ></bib-app-switcher>
         </template>
         <template #navigation>
           <bib-app-navigation
             :items="navItems1"
             @click="goToRoute"
-            :isLightTheme="isLightTheme"
+            :isLightTheme="isLight"
           ></bib-app-navigation>
           <!-- separator -->
-          <div
-            class="mt-05 mb-05"
-            :class="[isLightTheme ? 'line-light' : 'bg-dark-sub1']"
-            style="height: 1px"
-          ></div>
+          
+          <div v-show="!collapseNavigation" class="mt-05 mb-05" :class="isLight ? `bg-secondary-sub3` : `bg-dark-sub1`" style="height: 1px"></div>
+
           <bib-app-navigation
             :items="navItems2"
             @click="goToRoute"
-            :isLightTheme="isLightTheme"
+            :isLightTheme="isLight"
           ></bib-app-navigation>
           <!-- separator -->
-          <div
-            class="mt-05 mb-05"
+          
+          <div v-show="!collapseNavigation" class="mt-05 mb-05" :class="isLight ? `bg-secondary-sub3` : `bg-dark-sub1`" style="height: 1px"></div>
 
-            :class="[isLightTheme ? 'line-light' : 'bg-dark-sub1']"
-            style="height: 1px"
-            v-show="!collapseNavigation"
-          ></div>
           <favorite-project-collpase
             v-show="!collapseNavigation"
             label="Favorite Projects"
@@ -79,23 +74,17 @@
             </template>
           </favorite-project-collpase>
           <!-- separator -->
-          <!-- :class="[isLightTheme ? 'bg-gray2' : 'bg-dark-sub1']" -->
-          <div
-            class="mt-05 mb-05"
-            :class="[isLightTheme ? 'line-light' : 'bg-dark-sub1']"
-            style="height: 1px"
-            v-show="!collapseNavigation"
-          ></div>
+          
+          <div v-show="!collapseNavigation" class="mt-05 mb-05" :class="isLight ? `bg-secondary-sub3` : `bg-dark-sub1`" style="height: 1px"></div>
           <people-sort-collapse
             v-show="!collapseNavigation"
-            :themeColor="isLightTheme"
+            :themeColor="isLight"
             label=""
             label-weight="400"
             variant="light"
             open
             v-if="isAdmin"
           >
-           
             <template v-slot:content>
               <bib-app-navigation
                 :items="teamMembers"
@@ -107,11 +96,7 @@
   
         </template>
         <template #content>
-          <div
-            class="main"
-            id="main-content"
-            :class="openSidebar ? 'open-sidebar' : ''"
-          >
+          <div class="main" id="main-content" :class="openSidebar ? 'open-sidebar' : ''">
             <Nuxt />
             <transition name="drawer">
               <task-sidebar-two v-show="openSidebar" :expandVisible="expandVisible" :unassignedTasks="unassignedTasks"></task-sidebar-two>
@@ -287,14 +272,12 @@ export default {
       sortAllTasks:[],
       teamMembers:[],
       unassignedTasks: null,
+      isLight: true,
     };
   },
   created() {
     
-    if (process.client) {
-      this.isThemeCheck()
-    }
-    // console.log(this.isLightTheme)
+    this.isLight = this.$cookies.get("isLightTheme") == undefined || this.$cookies.get("isLightTheme") ? true : false;
 
     this.$root.$on("open-sidebar", (payload) => {
       this.openSidebar = true;
@@ -613,9 +596,10 @@ export default {
     supportURL() {
       window.location.href = process.env.SUPPORT_URL;
     },
-    handleToggleWrapperTheme(value) {
-      this.$store.commit("setTheme", value)
-      this.$cookies.set("isLightTheme", value)
+    
+    toggleTheme(flag) {
+      this.isLight = flag;
+      this.$store.commit("setIsLightTheme", flag);
     },
     isThemeCheck(){
       let isTheme = this.$cookies.get('isLightTheme');

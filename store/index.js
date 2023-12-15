@@ -10,16 +10,18 @@ export const mutations = {
     setTheme(state, payload){
         state.isLightTheme = payload
     },
-    /*setIsLightTheme(state, value) {
+    setIsLightTheme(state, value) {
         if (process.client) {
           this.$cookies.set("isLightTheme", value, {
             path: "/",
-            domain: location.host.includes("business-in-a-box.com") ? ".business-in-a-box.com" : undefined,
+            domain: location.host.includes("business-in-a-box.com")
+              ? ".business-in-a-box.com"
+              : undefined,
             maxAge: 60 * 60 * 24 * 30,
           });
         }
         state.isLightTheme = value;
-      },*/
+      },
 }
 
 export const getters = {
@@ -37,8 +39,8 @@ export const actions = {
         let token = app.$cookies.get('b_ssojwt')
         commit('setToken', token);
 
-        /*if (app.$cookies.get("isLightTheme")) {
+        if (app.$cookies.get("isLightTheme")) {
             commit("setIsLightTheme", app.$cookies.get("isLightTheme"));
-        }*/
+        }
     }
   }
