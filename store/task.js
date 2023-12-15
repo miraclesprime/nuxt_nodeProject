@@ -64,13 +64,12 @@ export const getters = {
     return state.groupByValue 
   },
  
-
 };
 
 export const mutations = {
 
   setGroupBy(state,payload) {
-    state.groupByValue=payload
+    state.groupByValue = payload
   },
   gridType(state,payload){
     state.gridType=payload.gridType
@@ -116,7 +115,6 @@ export const mutations = {
   createTask(state, payload) {
     state.tasks.push(payload);
   },
-
 
   createTaskComment(state, payload) {
     state.taskComments.push(payload)
@@ -206,13 +204,14 @@ export const actions = {
 
   // create Task
   async createTask(ctx, payload) {
-    console.log("pay",payload)
+    // console.log("pay",payload)
     const res = await this.$axios.$post('/task', payload, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
 
     if (res.statusCode == 200) {
-      ctx.commit('createTask', res.data);
+      ctx.commit('createTask', res.data)
+      ctx.commit("setSingleTask", res.data)
       ctx.commit("section/addTaskToSection", res.data, { root: true });
     }
     return res
