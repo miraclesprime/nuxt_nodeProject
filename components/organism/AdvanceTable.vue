@@ -35,7 +35,7 @@
         <div class="table w-100">
           <!-- <article class="tbody"> -->
             <div class="tr hidden" role="row" >
-              <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :style="{ width: `calc(1.001% * ${colSizes[index]})`}" >
+              <div v-for="(field, index) in tableFields" :key="field+index" class="th" role="cell" :width="colSizes[index]+'%'" :style="{ width: `calc(1.001% * ${colSizes[index]})`}" >
               </div>
             </div>
             <div v-for="(item, index) in localData" :key="item.id+'-'+index" class="tr" :id="'advtable-row-'+index" role="row" @click.stop="rowClick($event, item)" @click.right.prevent="contextOpen($event, item)"  >
@@ -326,13 +326,14 @@ export default {
       dragInterval: 5,
       
       onDragEnd: (sizes) => {
-        // console.log(sizes[1])
-        this.colSizes = sizes
-        /*if (pg.indexOf("favorite") < 0) {
-          sessionStorage.setItem("cols"+pg, JSON.stringify(sizes))
-        }*/
+        this.colSizes = sizes        
       }
     })
+
+    setTimeout(() => {
+        splitCol.setSizes(this.colSizes);
+
+    }, 100)
 
   },
 
@@ -434,7 +435,7 @@ export default {
       )
     },
     
-    /*rowDragStart(e) {
+    rowDragStart(e) {
       console.log(e.type, e);
     },
     rowDragEnd(e) {
@@ -442,7 +443,7 @@ export default {
     },
     moveTask(e) {
       console.log("move event", e)
-    },*/
+    },
     rowClick($event, item) {
       this.unselectAll()
         .then(r => {
@@ -773,7 +774,7 @@ export default {
   }
 
   
-  /*.drag-handle {
+  .drag-handle {
     cursor: grab;
     opacity: 0.35;
     transition: all 300ms ease-in;
@@ -783,7 +784,7 @@ export default {
     svg {
       fill: $secondary;
     }
-  }*/
+  }
 
   /*.sortable-chosen {
     .td { background-color: $success-sub6; }
