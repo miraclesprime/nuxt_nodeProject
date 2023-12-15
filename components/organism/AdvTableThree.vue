@@ -456,7 +456,6 @@ export default {
       dragInterval: 5,
       onDragEnd: (sizes) => {
         this.colSizes = sizes
-        // sessionStorage.setItem("cols"+pg, JSON.stringify(sizes))
       }
     })
 
