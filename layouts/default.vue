@@ -372,6 +372,13 @@ export default {
       }
     }
 
+      // if (this.$router.history.current.fullPath == '/goals') {
+      //   this.navItems2[2].selected = true;
+      // }
+
+      // if (this.$router.history.current.fullPath == '/dreams') {
+      //   this.navItems2[3].selected = true;
+      // }
 
       if (this.$cookies.get(process.env.SSO_COOKIE_NAME)) {
         let jwt = this.$cookies.get(process.env.SSO_COOKIE_NAME);
