@@ -283,7 +283,6 @@ export default {
       this.openSidebar = true;
       this.$store.dispatch("task/setSidebarVisible", true)
       this.scrollId = payload.scrollId;
-      //get userinfo about userTask page and Mytask page
       if(payload.email){
           this.$store.dispatch("user/setSideBarUser",payload.email)
       }
@@ -373,13 +372,6 @@ export default {
       }
     }
 
-      // if (this.$router.history.current.fullPath == '/goals') {
-      //   this.navItems2[2].selected = true;
-      // }
-
-      // if (this.$router.history.current.fullPath == '/dreams') {
-      //   this.navItems2[3].selected = true;
-      // }
 
       if (this.$cookies.get(process.env.SSO_COOKIE_NAME)) {
         let jwt = this.$cookies.get(process.env.SSO_COOKIE_NAME);
