@@ -302,11 +302,6 @@ export default {
         }
       } else {
         if (payload.project?.[0]?.project?.id) {
-          // this.$store.dispatch("section/fetchProjectSections", {
-          //   projectId: payload.project[0].project.id,
-          //   filter: "all",
-          // });
-          // fetch single project data
           this.$axios
             .$get(`/project/${payload.project[0].project.id}`, {
               headers: {
