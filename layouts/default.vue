@@ -283,7 +283,6 @@ export default {
       this.openSidebar = true;
       this.$store.dispatch("task/setSidebarVisible", true)
       this.scrollId = payload.scrollId;
-      //get userinfo about userTask page and Mytask page
       if(payload.email){
           this.$store.dispatch("user/setSideBarUser",payload.email)
       }
