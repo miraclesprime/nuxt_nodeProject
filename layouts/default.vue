@@ -5,11 +5,11 @@
         class="test"
         :navigationCollapsed="collapseNavigation"
         :select="appHeaderActions.select"
-        @collapseNavigation="
+        <!-- @collapseNavigation="
           () => {
             resizeCalendar();
             collapseNavigation = !collapseNavigation;
-          }
+          } -->
         "
         :isLightTheme="isLight"
       >
