@@ -4,17 +4,17 @@ import global_en from './node_modules/@bizinbox/bib-ui-lib/dist/lang/global_en.j
 
 export default {
   // Global page headers (https://go.nuxtjs.dev/config-head)
-  head: {
-    title: "BIB Tasks & Projects",
-    meta: [
-      { charset: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { hid: "description", name: "description", content: "" },
-    ],
-    link: [
-      { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
-    ],
-  },
+  // head: {
+  //   title: "BIB Tasks & Projects",
+  //   meta: [
+  //     { charset: "utf-8" },
+  //     { name: "viewport", content: "width=device-width, initial-scale=1" },
+  //     { hid: "description", name: "description", content: "" },
+  //   ],
+  //   link: [
+  //     { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+  //   ],
+  // },
 
   css: ["~/assets/global.scss"],
   axios: {
