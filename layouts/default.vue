@@ -13,21 +13,7 @@
         "
         :isLightTheme="isLight"
       >
-        <template #topbar>
-          <bib-header
-            :avatarLink="user2 ? user2.Photo : ''"
-            :isLightTheme="isLight"
-            @side-menu-expand="collapseNavigation=!collapseNavigation"
-            :mainAction="btnText"
-            hide-search-box
-            noResultText="No results, type a project or task name to begin search."
-            @my-account-link="myAccount"
-            @logout="$logout"
-            hide-search-box
-            @support-link="supportURL"
-            @billing-link="billingURL"
-            @team-link="teamURL"
-          >
+       
           </bib-header>
         </template>
         <template #switcher>
