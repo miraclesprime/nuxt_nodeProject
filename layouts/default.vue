@@ -1,7 +1,7 @@
 <template>
   <client-only>
     <div id="layout-wrapper" v-if="expandVisible">
-      <bib-app-wrapper
+      <!-- <bib-app-wrapper
         class="test"
         :navigationCollapsed="collapseNavigation"
         :select="appHeaderActions.select"
@@ -12,7 +12,7 @@
           }
         "
         :isLightTheme="isLight"
-      >
+      > -->
        
           </bib-header>
         </template>
